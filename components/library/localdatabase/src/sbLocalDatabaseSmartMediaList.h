@@ -56,23 +56,6 @@ class sbISQLSelectBuilder;
 
 typedef nsDataHashtable<nsStringHashKey, nsString> sbStringMap;
 
-static nsresult
-ParseQueryStringIntoHashtable(const nsAString& aString,
-                              sbStringMap& aMap);
-
-static nsresult
-ParseAndAddChunk(const nsAString& aString,
-                 sbStringMap& aMap);
-
-static PLDHashOperator PR_CALLBACK
-JoinStringMapCallback(nsStringHashKey::KeyType aKey,
-                      nsString aEntry,
-                      void* aUserData);
-
-static nsresult
-JoinStringMapIntoQueryString(sbStringMap& aMap,
-                             nsAString& aString);
-
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPEANDNAME(_to) \
   NS_IMETHOD GetLength(PRUint32 *aLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetLength(aLength); } \

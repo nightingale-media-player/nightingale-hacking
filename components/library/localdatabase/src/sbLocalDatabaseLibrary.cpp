@@ -2392,7 +2392,7 @@ sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType 
     rv = list->GetGuid(listGuid);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
-    PRUint32 index;
+    PRUint32 index = 0;
     listGuid.Append(itemGuid);
     PRBool success = indexMap->Get(listGuid, &index);
     NS_ENSURE_TRUE(success, PL_DHASH_STOP);

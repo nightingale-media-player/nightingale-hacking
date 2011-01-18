@@ -87,7 +87,45 @@ static PRLogModuleInfo* gLocalDatabaseSmartMediaListLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-nsresult ParseQueryStringIntoHashtable(const nsAString& aString,
+static nsresult
+ParseAndAddChunk(const nsAString& aString,
+                 sbStringMap& aMap)
+{
+  nsresult rv;
+  nsCOMPtr<nsINetUtil> netUtil = do_GetService(NS_IOSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  static const PRUnichar sEquals = '=';
+
+  PRInt32 length = aString.Length();
+
+  if (length == 0) {
+    return NS_OK;
+  }
+
+  PRInt32 pos = aString.FindChar(sEquals);
+  if (pos > 1) {
+    nsAutoString name(nsDependentSubstring(aString, 0, pos));
+    nsCAutoString unescapedNameUtf8;
+    rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(name), 0, unescapedNameUtf8);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString value(nsDependentSubstring(aString, pos + 1, length - pos));
+    nsCAutoString unescapedValueUtf8;
+    if (pos < length - 1) {
+      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value), 0, unescapedValueUtf8);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    PRBool success = aMap.Put(NS_ConvertUTF8toUTF16(unescapedNameUtf8),
+                              NS_ConvertUTF8toUTF16(unescapedValueUtf8));
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+static nsresult ParseQueryStringIntoHashtable(const nsAString& aString,
                                        sbStringMap& aMap)
 {
   nsresult rv;
@@ -129,45 +167,6 @@ nsresult ParseQueryStringIntoHashtable(const nsAString& aString,
   return NS_OK;
 }
 
-nsresult
-ParseAndAddChunk(const nsAString& aString,
-                 sbStringMap& aMap)
-{
-  nsresult rv;
-  nsCOMPtr<nsINetUtil> netUtil = do_GetService(NS_IOSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  static const PRUnichar sEquals = '=';
-
-  const PRUnichar *start, *end;
-  PRInt32 length = aString.BeginReading(&start, &end);
-
-  if (length == 0) {
-    return NS_OK;
-  }
-
-  PRInt32 pos = aString.FindChar(sEquals);
-  if (pos > 1) {
-    nsAutoString name(nsDependentSubstring(aString, 0, pos));
-    nsCAutoString unescapedNameUtf8;
-    rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(name), 0, unescapedNameUtf8);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString value(nsDependentSubstring(aString, pos + 1, length - pos));
-    nsCAutoString unescapedValueUtf8;
-    if (pos < length - 1) {
-      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value), 0, unescapedValueUtf8);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    PRBool success = aMap.Put(NS_ConvertUTF8toUTF16(unescapedNameUtf8),
-                              NS_ConvertUTF8toUTF16(unescapedValueUtf8));
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  return NS_OK;
-}
-
 PLDHashOperator PR_CALLBACK
 JoinStringMapCallback(nsStringHashKey::KeyType aKey,
                       nsString aEntry,
@@ -203,7 +202,7 @@ JoinStringMapCallback(nsStringHashKey::KeyType aKey,
   return PL_DHASH_NEXT;
 }
 
-nsresult
+static nsresult
 JoinStringMapIntoQueryString(sbStringMap& aMap,
                              nsAString &aString)
 {
@@ -378,8 +377,6 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSmartMediaList,
 sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 : mInnerMonitor(nsnull)
 , mConditionsMonitor(nsnull)
-, mListenersMonitor(nsnull)
-, mSourceMonitor(nsnull)
 , mMatchType(sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY)
 , mLimitType(sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE)
 , mLimit(0)
@@ -388,6 +385,8 @@ sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 , mAutoUpdateMonitor(nsnull)
 , mAutoUpdate(false)
 , mNotExistsMode(sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO)
+, mListenersMonitor(nsnull)
+, mSourceMonitor(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseSmartMediaListLog) {
@@ -1662,7 +1661,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       rv = MediaListGuidToDB(ruleCondition->mLeftValue, longVal);
       NS_ENSURE_SUCCESS(rv, rv);
       
-      if (longVal == -1) 
+      if (longVal == (PRUint32)-1) 
         return NS_ERROR_UNEXPECTED;
       
       colId = kMediaItemId;
@@ -1772,7 +1771,7 @@ void
 sbLocalDatabaseSmartMediaList::SPrintfInt64(nsAString &aString, 
                                             PRInt64 aValue) {
   char out[32] = {0};
-  if (PR_snprintf(out, 32, gsFmtRadix10, aValue) == -1) {
+  if (PR_snprintf(out, 32, gsFmtRadix10, aValue) == (PRUint32)-1) {
     aString = NS_LITERAL_STRING("0");
   }
   NS_ConvertUTF8toUTF16 wide(out);
@@ -1852,7 +1851,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     
     PRTime now = PR_Now()/PR_USEC_PER_MSEC;
     PRTime when = now - timeValue;
-    if(PR_snprintf(out, 32, gsFmtRadix10, when) == -1) {
+    if(PR_snprintf(out, 32, gsFmtRadix10, when) == (PRUint32)-1) {
       return NS_ERROR_FAILURE;
     }
     NS_ConvertUTF8toUTF16 wide(out);
@@ -1947,11 +1946,14 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   // If this is a between operator, construct two conditions for it
   if (op.EqualsLiteral(SB_OPERATOR_BETWEEN)) {
     nsCOMPtr<sbISQLBuilderCriterion> left;
+    PRUint32 matchType;
+    if (invertRange)
+      matchType = sbISQLBuilder::MATCH_LESS;
+    else
+      matchType = sbISQLBuilder::MATCH_GREATEREQUAL;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              invertRange ?
-                                                sbISQLBuilder::MATCH_LESS :
-                                                sbISQLBuilder::MATCH_GREATEREQUAL,
+                                              matchType,
                                               value,
                                               getter_AddRefs(left));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1967,11 +1969,13 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     }
 
     nsCOMPtr<sbISQLBuilderCriterion> right;
+    if (invertRange)
+      matchType = sbISQLBuilder::MATCH_GREATER;
+    else
+      matchType = sbISQLBuilder::MATCH_LESSEQUAL;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              invertRange ?
-                                                sbISQLBuilder::MATCH_GREATER :
-                                                sbISQLBuilder::MATCH_LESSEQUAL,
+                                              matchType,
                                               rvalue,
                                               getter_AddRefs(right));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2177,7 +2181,7 @@ nsresult sbLocalDatabaseSmartMediaList::MediaListGuidToDB(nsAString &val, PRUint
   nsCOMPtr<sbIMediaItem> item;
   rv = library->GetMediaItem(val, getter_AddRefs(item));
   if (rv != NS_OK) {
-    v = -1;
+    v = (PRUint32)-1;
   } else {
     nsAutoString storageGuid;
     rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),

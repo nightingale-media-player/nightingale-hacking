@@ -57,7 +57,7 @@
 #include <sbSQLBuilderCID.h>
 
 #define DEFAULT_LIBRARY_NAME NS_LITERAL_STRING("defaultlibrary.db")
-#define NS_HASH_PROPERTY_BAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
+#define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
 #define SCHEMA_URL "chrome://songbird/content/library/localdatabase/schema.sql"
 #define SB_NAMEKEY_LIBRARY                            \
@@ -311,7 +311,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   nsCOMPtr<nsIPropertyBag2> creationParams = aCreationParameters;
   if (!creationParams) {
     nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+      do_CreateInstance(SB_PROPERTYBAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING(PROPERTY_KEY_DATABASEFILE),

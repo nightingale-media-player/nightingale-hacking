@@ -828,8 +828,10 @@ sbMediaItemControllerCleanup::sbEnumerationHelper::OnEnumeratedItem(
   NS_ENSURE_ARG_POINTER(_retval);
 
   // don't process any items beyond this one if we were asked to stop
-  *_retval = mStop ? sbIMediaListEnumerationListener::CANCEL :
-                     sbIMediaListEnumerationListener::CONTINUE;
+  if (mStop)
+    *_retval = sbIMediaListEnumerationListener::CANCEL;
+  else
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
 
   nsresult rv;
   rv = aMediaItem->SetProperties(mPropsToSet);

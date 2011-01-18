@@ -72,14 +72,6 @@
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabaseLibraryLoader:5
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
-#define TRACE(args) PR_LOG(sLibraryLoaderLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(sLibraryLoaderLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif
 
 #define NS_APPSTARTUP_CATEGORY         "app-startup"
 #define NS_FINAL_UI_STARTUP_CATEGORY   "final-ui-startup"
@@ -133,16 +125,14 @@ sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
 : m_DetectedCorruptLibrary(PR_FALSE)
 , m_DeleteLibrariesAtShutdown(PR_FALSE)
 {
-#ifdef PR_LOGGING
-  if (!sLibraryLoaderLog)
-    sLibraryLoaderLog = PR_NewLogModule("sbLocalDatabaseLibraryLoader");
-#endif
-  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Created", this));
+  SB_PRLOG_SETUP(sbLocalDatabaseLibraryLoader);
+
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Created", this);
 }
 
 sbLocalDatabaseLibraryLoader::~sbLocalDatabaseLibraryLoader()
 {
-  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Destroyed", this));
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Destroyed", this);
 }
 
 /**
@@ -151,7 +141,7 @@ sbLocalDatabaseLibraryLoader::~sbLocalDatabaseLibraryLoader()
 nsresult
 sbLocalDatabaseLibraryLoader::Init()
 {
-  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Init", this));
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Init", this);
 
   nsresult rv;
 
@@ -801,7 +791,7 @@ sbLocalDatabaseLibraryLoader::VerifyEntriesCallback(nsUint32HashKey::KeyType aKe
 NS_IMETHODIMP
 sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLibraryManager)
 {
-  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this));
+  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this);
 
   nsresult rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);

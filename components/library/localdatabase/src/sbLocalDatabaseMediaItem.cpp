@@ -81,9 +81,9 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
   mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
   mSuppressNotifications(PR_TRUE),
-  mPropertyBagLock(nsnull),
+  mItemController(nsnull),
   mItemControllerFetched(PR_FALSE),
-  mItemController(nsnull)
+  mPropertyBagLock(nsnull)
 {
 }
 

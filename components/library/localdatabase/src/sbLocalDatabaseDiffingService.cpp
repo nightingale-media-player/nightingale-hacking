@@ -1107,9 +1107,12 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
             nsString_ToUint64(propertyDestinationValue, &rv);
           // If the duration was parsed and the difference less than a second
           // then treat it as unchanged
-          if (NS_SUCCEEDED(rv)
-              && labs(sourceDuration - destDuration) < PR_USEC_PER_SEC) {
-            continue;
+          if (NS_SUCCEEDED(rv)) {
+            // MSVC has no llabs(), so do it this way.
+            PRInt64 durationDiff = sourceDuration - destDuration;
+            if ((durationDiff < 0 && -durationDiff < PR_USEC_PER_SEC) ||
+                durationDiff < PR_USEC_PER_SEC)
+              continue;
           }
         }
       }

@@ -920,7 +920,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
   // and search counts here otherwise we may clear the library
   // because the user has selected everything in the view when
   // it's in a filtered or has a search applied!
-  if((viewLength == selectionLength) && !filterCount && !searchCount && !cfsIsFiltering) {
+  if((PRInt32(viewLength) == selectionLength) && !filterCount && !searchCount && !cfsIsFiltering) {
     // If it's a library, call clear items instead. We do this so
     // that all playlists the user has are preserved.
     if(mMediaListId == 0) {

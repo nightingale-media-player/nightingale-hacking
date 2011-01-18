@@ -76,9 +76,9 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseMediaListBase,
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
+  mListContentType(sbIMediaList::CONTENTTYPE_NONE),
   mLockedEnumerationActive(PR_FALSE),
-  mPreviousListener(PR_FALSE),
-  mListContentType(sbIMediaList::CONTENTTYPE_NONE)
+  mPreviousListener(PR_FALSE)
 {
 }
 

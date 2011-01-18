@@ -112,7 +112,7 @@ static sbStaticProperty sStaticProperties[] = {
 
 static const PRUint32 sStaticPropertyCount = 10;
 
-static PRBool
+static inline PRBool
 SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
@@ -122,7 +122,7 @@ SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
   return PR_FALSE;
 }
 
-static PRBool
+static inline PRBool
 SB_IsTopLevelProperty(const nsAString& aProperty)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
@@ -132,7 +132,7 @@ SB_IsTopLevelProperty(const nsAString& aProperty)
   return PR_FALSE;
 }
 
-static nsresult
+static inline nsresult
 SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
                              nsAString& aColumnName)
 {
@@ -145,7 +145,7 @@ SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static nsresult
+static inline nsresult
 SB_GetTopLevelPropertyColumnType(const nsAString& aProperty,
                                  PRUint32 &aColumnType)
 {
@@ -158,7 +158,7 @@ SB_GetTopLevelPropertyColumnType(const nsAString& aProperty,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static nsresult
+static inline nsresult
 SB_GetTopLevelPropertyColumnType(const PRUint32 aPropertyDBID,
                                  PRUint32 &aColumnType)
 {
@@ -171,7 +171,7 @@ SB_GetTopLevelPropertyColumnType(const PRUint32 aPropertyDBID,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static nsresult
+static inline nsresult
 SB_GetTopLevelPropertyColumn(const PRUint32 aPropertyDBID,
                              nsAString& aColumnName)
 {
@@ -184,7 +184,7 @@ SB_GetTopLevelPropertyColumn(const PRUint32 aPropertyDBID,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static PRInt32
+static inline PRInt32
 SB_GetPropertyId(const nsAString& aProperty,
                  sbILocalDatabasePropertyCache* aPropertyCache)
 {

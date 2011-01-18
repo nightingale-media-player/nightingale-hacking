@@ -2384,8 +2384,6 @@ sbLocalDatabaseGUIDArray::GetMTListener(
 void 
 sbLocalDatabaseGUIDArray::GenerateCachedLengthKey()
 {
-  nsresult rv = NS_ERROR_UNEXPECTED;
-
   // Try and avoid resizing the string a bunch of times.
   mCachedLengthKey.SetLength(2048);
 

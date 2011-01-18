@@ -49,13 +49,7 @@
 #include "sbLocalDatabaseSQL.h"
 #include <sbTArrayStringEnumerator.h>
 #include <sbStringUtils.h>
-
-#ifdef PR_LOGGING
-extern PRLogModuleInfo *gLocalDatabasePropertyCacheLog;
-#endif
-
-#define TRACE(args) PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_WARN, args)
+#include <sbDebugUtils.h>
 
 PRUint32 const BAG_HASHTABLE_SIZE = 20;
 
@@ -70,6 +64,7 @@ sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDa
 , mGuid(aGuid)
 , mMediaItemId(aMediaItemId)
 {
+  SB_PRLOG_SETUP(sbLocalDatabaseResourcePropertyBag);
 }
 
 sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
@@ -270,9 +265,9 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
 #if defined(PR_LOGGING)
   if(NS_UNLIKELY(!valid)) {
-    LOG(("Failed to set property id %s with value %s",
-         NS_ConvertUTF16toUTF8(aPropertyID).get(),
-         NS_ConvertUTF16toUTF8(aValue).get()));
+    LOG("Failed to set property id %s with value %s",
+        NS_ConvertUTF16toUTF8(aPropertyID).get(),
+        NS_ConvertUTF16toUTF8(aValue).get());
   }
 #endif
 

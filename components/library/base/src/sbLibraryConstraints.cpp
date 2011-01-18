@@ -80,7 +80,7 @@ NS_IMPL_ISUPPORTS1(sbLibraryConstraintBuilder,
 
 
 static inline nsresult CheckStringAndSkip(const nsAString & aSource,
-                                          PRInt32 & offset,
+                                          PRUint32 & offset,
                                           const nsAString & aSubstring)
 {
   if (!Substring(aSource, offset, aSubstring.Length()).Equals(aSubstring)) {
@@ -98,7 +98,7 @@ sbLibraryConstraintBuilder::ParseFromString(const nsAString & aConstraint,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
-  PRInt32 offset = 0, next;
+  PRUint32 offset = 0, next;
 
   rv = EnsureConstraint();
   NS_ENSURE_SUCCESS(rv, rv);
