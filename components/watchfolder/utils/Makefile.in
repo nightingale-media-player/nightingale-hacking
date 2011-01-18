@@ -29,16 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (,$(filter macosx linux,$(SB_PLATFORM)))
-   DISABLE_DEADLY_WARNINGS = 1
-endif
-
 CPP_SRCS = sbWatchFolderUtils.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/watchfolder/public \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_IDL_DIR) \
+                     $(topsrcdir)/components/include \
                      $(NULL)
 
 STATIC_LIB = sbWatchFolderUtils

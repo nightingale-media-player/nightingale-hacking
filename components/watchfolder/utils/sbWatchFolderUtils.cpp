@@ -29,6 +29,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
+#include <sbDebugUtils.h>
 
 //==============================================================================
 // sbAutoIgnoreWatchFolderPath implementation
@@ -47,7 +48,7 @@ sbAutoIgnoreWatchFolderPath::~sbAutoIgnoreWatchFolderPath()
   // If the path was watched, it is now time to clean up and stop ignoring
   // the watch path.
   if (mIsIgnoring) {
-    nsresult rv = mWFService->RemoveIgnorePath(mWatchPath);
+    nsresult SB_UNUSED_IN_RELEASE(rv) = mWFService->RemoveIgnorePath(mWatchPath);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
         "Could not remove a file path from the watchfolders ignore list!");
   }
