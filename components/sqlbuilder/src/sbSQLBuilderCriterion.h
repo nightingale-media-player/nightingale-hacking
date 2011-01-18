@@ -112,6 +112,22 @@ private:
   PRInt32 mValue;
 };
 
+class sbSQLBuilderCriterionLongLong : public sbSQLBuilderCriterionBase
+{
+public:
+  NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBISQLBUILDERCRITERION
+
+  sbSQLBuilderCriterionLongLong(const nsAString& aTableName,
+                            const nsAString& aColumnName,
+                            PRUint32 aMatchType,
+                            PRInt64 aValue);
+
+  virtual ~sbSQLBuilderCriterionLongLong() {};
+private:
+  PRInt64 mValue;
+};
+
 class sbSQLBuilderCriterionNull : public sbSQLBuilderCriterionBase
 {
 public:

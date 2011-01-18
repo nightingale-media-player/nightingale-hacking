@@ -134,6 +134,23 @@ sbSQLWhereBuilder::CreateMatchCriterionLong(const nsAString& aTableName,
 }
 
 NS_IMETHODIMP
+sbSQLWhereBuilder::CreateMatchCriterionLongLong(const nsAString& aTableName,
+                                                const nsAString& aSrcColumnName,
+                                                PRUint32 aMatchType,
+                                                PRInt64 aValue,
+                                                sbISQLBuilderCriterion **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion =
+    new sbSQLBuilderCriterionLongLong(aTableName, aSrcColumnName, aMatchType, aValue);
+  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
+
+  NS_ADDREF(*_retval = criterion);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLWhereBuilder::CreateMatchCriterionNull(const nsAString& aTableName,
                                             const nsAString& aSrcColumnName,
                                             PRUint32 aMatchType,

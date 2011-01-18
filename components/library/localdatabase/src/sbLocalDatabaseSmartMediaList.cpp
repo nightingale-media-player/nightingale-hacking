@@ -2050,11 +2050,11 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
       PRInt64 numericValue;
       rv = ScanfInt64(value, &numericValue);
       NS_ENSURE_SUCCESS(rv, rv);
-      rv = aBuilder->CreateMatchCriterionLong(kConditionAlias,
-                                              columnName,
-                                              matchType,
-                                              numericValue,
-                                              getter_AddRefs(criterion));
+      rv = aBuilder->CreateMatchCriterionLongLong(kConditionAlias,
+                                                  columnName,
+                                                  matchType,
+                                                  numericValue,
+                                                  getter_AddRefs(criterion));
     } else {
       rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                                 columnName,

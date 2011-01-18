@@ -107,6 +107,17 @@ function runTest () {
   sql = "select name from bbc where name like '%United%' ESCAPE '\\'";
   assertEqual(sql, q.toString());
 
+  // An additional test not taken from the same source, for > 32 bit values
+  q = newQuery();
+  q.baseTableName = "bbc"
+  q.addColumn(null, "name");
+  c = q.createMatchCriterionLongLong(null, "population",
+                                     Ci.sbISQLBuilder.MATCH_GREATEREQUAL,
+                                     20000000000);
+  q.addCriterion(c);
+  sql = "select name from bbc where population >= 20000000000";
+  assertEqual(sql, q.toString());
+
   return Components.results.NS_OK;
 
 }

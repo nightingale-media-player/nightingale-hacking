@@ -27,6 +27,8 @@
 #include "sbSQLBuilderCriterion.h"
 #include "sbSQLBuilderBase.h"
 
+#include "prprf.h"
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbSQLBuilderCriterionBase,
                               sbISQLBuilderCriterion)
 
@@ -210,6 +212,33 @@ sbSQLBuilderCriterionLong::ToString(nsAString& _retval)
   nsAutoString stringValue;
   stringValue.AppendInt(mValue);
   _retval.Append(stringValue);
+  return NS_OK;
+}
+
+// sbSQLBuilderCriterionLongLong
+NS_IMPL_ISUPPORTS_INHERITED0(sbSQLBuilderCriterionLongLong,
+                             sbSQLBuilderCriterionBase)
+
+sbSQLBuilderCriterionLongLong::sbSQLBuilderCriterionLongLong(const nsAString& aTableName,
+                                                     const nsAString& aColumnName,
+                                                     PRUint32 aMatchType,
+                                                     PRInt64 aValue) :
+  sbSQLBuilderCriterionBase(aTableName, aColumnName, aMatchType, nsnull, nsnull),
+  mValue(aValue)
+{
+}
+
+NS_IMETHODIMP
+sbSQLBuilderCriterionLongLong::ToString(nsAString& _retval)
+{
+  AppendTableColumnTo(_retval);
+
+  AppendMatchTo(_retval);
+
+  // Unfortunately nsAString has no AppendInt64...
+  char out[32] = {0};
+  PR_snprintf(out, 32, "%lld", mValue);
+  _retval.Append(NS_ConvertUTF8toUTF16(out));
   return NS_OK;
 }
 
