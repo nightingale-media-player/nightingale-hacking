@@ -69,8 +69,15 @@ sbM3UPlaylistWriter.prototype = {
 
         try {
           // Show the directory containing the file and select the file.
-          // The relative descriptor is returned UTF-8 encoded.
           f.QueryInterface(Ci.nsILocalFile);
+          // The returned ACString is converted to UTF-8 encoding in the
+          // getRelativeDescriptor method of nsLocalFileCommon.cpp*. Though
+          // m3u files have not historically used UTF-8 (hence m3u8), encoding
+          // in UTF-8 has worked properly thus far.
+          //
+          // * note: While the IDL explicitly states that the charset is
+          //         undefined, the descriptor's charset will be UTF-8.
+          //
           var data = f.getRelativeDescriptor(aFile.parent) + "\n";
 
           // Some devices are picky about path separators. If the playlist
