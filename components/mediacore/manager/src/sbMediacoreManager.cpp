@@ -141,11 +141,11 @@ NS_IMPL_THREADSAFE_CI(sbMediacoreManager)
 sbMediacoreManager::sbMediacoreManager()
 : mMonitor(nsnull)
 , mLastCore(0)
-, mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
 , mFullscreen(PR_FALSE)
 , mVideoWindowMonitor(nsnull)
 , mLastVideoWindow(0)
 {
+  mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
   // mBaseEventTarget being null is handled on access
   NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
 

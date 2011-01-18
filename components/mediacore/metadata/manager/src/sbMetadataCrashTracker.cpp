@@ -250,7 +250,7 @@ sbMetadataCrashTracker::LogURLEnd(const nsACString& aURL)
   nsAutoLock lock(mLock);
   
   // Look up the index of this URL
-  PRUint32 index;
+  PRUint32 index = 0;
   PRBool success = mURLToIndexMap.Get(aURL, &index);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   mURLToIndexMap.Remove(aURL);

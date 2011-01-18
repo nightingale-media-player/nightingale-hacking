@@ -304,8 +304,8 @@ private:
   // sbIJobProgress variables
   PRUint16                                 mStatus;
   PRBool                                   mBlocked;
-  PRInt32                                  mCompletedItemCount;
-  PRInt32                                  mTotalItemCount;
+  PRUint32                                 mCompletedItemCount;
+  PRUint32                                 mTotalItemCount;
   nsTArray<nsString>                       mErrorMessages;
   nsString                                 mTitleText;
   nsString                                 mStatusText;

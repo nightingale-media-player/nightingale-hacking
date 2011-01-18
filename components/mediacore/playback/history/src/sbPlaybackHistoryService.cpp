@@ -69,6 +69,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
+#include <sbDebugUtils.h>
 
 #define NS_APPSTARTUP_CATEGORY           "app-startup"
 #define NS_APPSTARTUP_TOPIC              "app-startup"
@@ -1409,7 +1410,8 @@ sbPlaybackHistoryService::DoEntriesAddedCallback(nsIArray *aEntries)
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult rv = listeners[current]->OnEntriesAdded(aEntries);
+    nsresult SB_UNUSED_IN_RELEASE(rv) =
+        listeners[current]->OnEntriesAdded(aEntries);
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1461,7 +1463,8 @@ sbPlaybackHistoryService::DoEntriesUpdatedCallback(nsIArray *aEntries)
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult rv = listeners[current]->OnEntriesUpdated(aEntries);
+    nsresult SB_UNUSED_IN_RELEASE(rv) =
+        listeners[current]->OnEntriesUpdated(aEntries);
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1513,7 +1516,8 @@ sbPlaybackHistoryService::DoEntriesRemovedCallback(nsIArray *aEntries)
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult rv = listeners[current]->OnEntriesRemoved(aEntries);
+    nsresult SB_UNUSED_IN_RELEASE(rv) =
+        listeners[current]->OnEntriesRemoved(aEntries);
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1535,7 +1539,8 @@ sbPlaybackHistoryService::DoEntriesClearedCallback()
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult rv = listeners[current]->OnEntriesCleared();
+    nsresult SB_UNUSED_IN_RELEASE(rv) =
+        listeners[current]->OnEntriesCleared();
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);

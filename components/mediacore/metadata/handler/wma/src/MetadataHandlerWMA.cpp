@@ -1295,7 +1295,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 bytesRead;
-    rv = fileStream->Read((char*)fileData.get(), fileSize, &bytesRead);
+    rv = fileStream->Read((char*)fileData.get(), (PRUint32)fileSize, &bytesRead);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // the stream is actually already closed (CLOSE_ON_EOF), but no harm to be

@@ -625,7 +625,7 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
       // Update blocked status of jobs.  If any job is blocked, all jobs after
       // it are also blocked.
       PRBool blocked = PR_FALSE;
-      PRBool jobCount = jobs.Length();
+      PRUint32 jobCount = jobs.Length();
       for (PRUint32 i=0; i < jobCount; i++) {
         // If no jobs are blocked yet, check current job.  Otherwise, mark
         // current job as blocked.

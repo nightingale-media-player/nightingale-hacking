@@ -166,7 +166,6 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mIsVideoSupported(PR_FALSE),
     mPipeline(nsnull),
     mPlatformInterface(nsnull),
-    mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
     mPrefs(nsnull),
     mReplaygainElement(nsnull),
     mEqualizerElement(nsnull),
@@ -193,9 +192,9 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mHasVideo(PR_FALSE),
     mHasAudio(PR_FALSE)
 {
+  mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
   NS_WARN_IF_FALSE(mBaseEventTarget,
           "mBaseEventTarget is null, may be out of memory");
-
 }
 
 sbGStreamerMediacore::~sbGStreamerMediacore()
@@ -1426,7 +1425,6 @@ void sbGStreamerMediacore::HandleWarningMessage(GstMessage *message)
 {
   GError *gerror = NULL;
   gchar *debugMessage;
-  nsresult rv;
 
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
@@ -1564,6 +1562,12 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
       int denom = videoHeight * pixelAspectRatioD;
       mPlatformInterface->SetDisplayAspectRatio(num, denom);
     }
+  }
+  else {
+    // Should never be reachable, but let's be defensive here...
+    videoHeight = 240;
+    videoWidth = 320;
+    pixelAspectRatioN = pixelAspectRatioD = 0;
   }
 
   // We don't do gapless playback if video is involved. If we're already in

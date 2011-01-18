@@ -249,7 +249,7 @@ NS_IMETHODIMP sbMetadataChannel::Read(char * out_buf, PRUint32 len, PRUint32 *_r
 
   *_retval = 0;
   // Write <len> bytes of data to the output buffer, from possibly more than one block.
-  for ( PRUint32 remaining = len, count = -1; remaining && count; remaining -= count, m_Pos += count, out_buf += count, *_retval += count )
+  for ( PRUint32 remaining = len, count = (PRUint32)-1; remaining && count; remaining -= count, m_Pos += count, out_buf += count, *_retval += count )
   {
     // Either to the end of the incoming read or the end of the current block.
     PRUint32 left = (PRUint32)( BLOCK_SIZE - POS(m_Pos) );
@@ -355,7 +355,7 @@ sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
     return NS_ERROR_UNEXPECTED;
 
   // Read <count> bytes of data from the input stream, into possibly more than one block.
-  for ( PRUint32 remaining = count, read = -1; remaining && read; remaining -= read, m_Buf += read )
+  for ( PRUint32 remaining = count, read = (PRUint32)-1; remaining && read; remaining -= read, m_Buf += read )
   {
     // Either to the end of the incoming read or the end of the current block.
     PRUint32 left = (PRUint32)( BLOCK_SIZE - POS(m_Buf) );

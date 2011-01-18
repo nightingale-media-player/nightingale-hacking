@@ -405,7 +405,7 @@ sbGStreamerTranscode::GetRemainingTime(PRUint32 *aRemainingTime)
       elapsed == GST_CLOCK_TIME_NONE)
   {
     /* Unknown, so set to -1 */
-    *aRemainingTime = -1;
+    *aRemainingTime = (PRUint32)-1;
   }
   else {
     GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,
@@ -855,7 +855,7 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
 {
   nsCString cont = NS_ConvertUTF16toUTF8 (container);
 
-  for (int i = 0;
+  for (unsigned int i = 0;
        i < sizeof (SupportedContainers)/sizeof(*SupportedContainers);
        i++) 
   {
@@ -897,7 +897,7 @@ sbGStreamerTranscode::GetAudioCodec(nsAString &aCodec, nsIArray *properties,
   nsresult rv;
   nsCString codec = NS_ConvertUTF16toUTF8 (aCodec);
 
-  for (int i = 0;
+  for (unsigned int i = 0;
        i < sizeof (SupportedAudioCodecs)/sizeof(*SupportedAudioCodecs);
        i++) 
   {

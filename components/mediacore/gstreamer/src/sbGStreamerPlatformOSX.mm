@@ -306,7 +306,8 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 
   // Listen to live resize events since gecko resize events aren't posted on
   // Mac until the resize has finished. (see bug 20445).
-  [mGstGLViewDelegate startListeningToResizeEvents];
+  SBGstGLViewDelgate *delegate = (SBGstGLViewDelgate *)mGstGLViewDelegate;
+  [delegate startListeningToResizeEvents];
 
   // Now, we want to set this view as a subview of the NSView we have
   // as our window-for-displaying-video. Don't do this from a non-main
@@ -434,7 +435,8 @@ void OSXPlatformInterface::RemoveView()
                           waitUntilDone:YES];
     }
 
-    [mGstGLViewDelegate stopListeningToResizeEvents];
+    SBGstGLViewDelgate *delegate = (SBGstGLViewDelgate *)mGstGLViewDelegate;
+    [delegate stopListeningToResizeEvents];
 
     mVideoView = nsnull;
     [pool release];

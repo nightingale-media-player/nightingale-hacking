@@ -331,7 +331,7 @@ long TagLibChannelFileIO::tell() const
 
     /* Get results. */
     if (NS_SUCCEEDED(result))
-        position = channelPosition;
+        position = (long)channelPosition;
 
     return (position);
 }
@@ -450,7 +450,7 @@ nsresult TagLibChannelFileIO::Initialize()
                                                               &channelSize);
     }
     if (NS_SUCCEEDED(result))
-        mChannelSize = channelSize;
+        mChannelSize = (PRUint32)channelSize;
 
     return (result);
 }

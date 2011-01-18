@@ -253,7 +253,7 @@ NS_IMETHODIMP sbSeekableChannel::Read(
     if (mPos >= mContentLength)
         result = NS_ERROR_UNEXPECTED;
     if (NS_SUCCEEDED(result) && ((mPos + readLength) > mContentLength))
-        readLength = mContentLength - mPos;
+        readLength = (PRUint32)(mContentLength - mPos);
 
     /* Find a segment containing the data to read. */
     if (NS_SUCCEEDED(result))
@@ -705,7 +705,7 @@ nsresult sbSeekableChannel::ReadSegment(
 {
     Segment                     *pSegment = NULL;
     char                        *buffer = NULL;
-    PRUint64                    readOffset;
+    PRUint64                    readOffset = mBasePos;
     PRUint32                    bytesRead;
     nsresult                    result = NS_OK;
 
@@ -720,7 +720,6 @@ nsresult sbSeekableChannel::ReadSegment(
         result = pStream->Read(buffer, numBytes, &bytesRead);
         if (NS_SUCCEEDED(result))
         {
-            readOffset = mBasePos;
             mBasePos += bytesRead;
             if (mBasePos > mContentLength)
                 mContentLength = mBasePos;

@@ -31,8 +31,6 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_DEADLY_WARNINGS = 1
-
 DYNAMIC_LIB = sbGStreamerMediacore
 
 SUBDIRS = metadata
@@ -226,6 +224,11 @@ ifeq (macosx,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit \
                              -mmacosx-version-min=10.4 \
                              $(NULL)
+endif
+
+# The GStreamer headers trigger this warning on MSVC; it's harmless
+ifeq (windows,$(SB_PLATFORM))
+   CPP_EXTRA_FLAGS += "-wd4244"
 endif
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \

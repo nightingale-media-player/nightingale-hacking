@@ -66,10 +66,11 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerPipeline)
 sbGStreamerPipeline::sbGStreamerPipeline() :
   mPipeline(NULL),
   mMonitor(NULL),
-  mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
   mPipelineOp(GStreamer::OP_UNKNOWN)
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - Constructed", this));
+
+  mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
 }
 
 sbGStreamerPipeline::~sbGStreamerPipeline()
@@ -373,7 +374,7 @@ void sbGStreamerPipeline::HandleStateChangeMessage(GstMessage *message)
     else if (oldstate == GST_STATE_PLAYING && newstate == GST_STATE_PAUSED)
     {
       mTimeRunning += GetRunningTime();
-      mTimeStarted = -1;
+      mTimeStarted = (PRIntervalTime)-1;
     }
 
     // Dispatch START, PAUSE, STOP events
@@ -410,12 +411,12 @@ sbGStreamerPipeline::GetRunningTime()
   PRIntervalTime now = PR_IntervalNow();
   PRIntervalTime interval;
 
-  if (mTimeStarted == -1)
+  if (mTimeStarted == (PRIntervalTime)-1)
     return mTimeRunning;
 
   if (now < mTimeStarted) {
     // Wraparound occurred, deal with it.
-    PRInt64 realnow = now + 1L<<32;
+    PRInt64 realnow = (PRInt64)now + ((PRInt64)1<<32);
     interval = (PRIntervalTime)(realnow - mTimeStarted);
   }
   else {

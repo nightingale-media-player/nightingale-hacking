@@ -798,27 +798,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteMP4Image(mp4File, imageType, imageSpec);
         }
-      } else if (fileExt.EqualsLiteral("asf") ||
-                 fileExt.EqualsLiteral("wmv") ||
-                 fileExt.EqualsLiteral("wma")) {
-          LOG(("Writing ASF specific metadata"));
-          // Write MP4 specific metadata
-          TagLib::ASF::File* asfFile = static_cast<TagLib::ASF::File*>(f.file());
-
-/*          // Write Image Data
-          nsAutoString imageSpec;
-          result = mpMetadataPropertyArray->GetPropertyValue(
-            NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-            imageSpec
-          );
-          if (NS_SUCCEEDED(result)) {
-            PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
-            WriteMP4Image(oggFile, imageType, imageSpec);
-          }*/
-        }
-
-
-
+      }
 
       // Attempt to save the metadata
       if (f.save()) {

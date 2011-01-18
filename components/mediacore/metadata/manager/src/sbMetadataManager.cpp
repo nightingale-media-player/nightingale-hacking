@@ -343,5 +343,7 @@ NS_IMETHODIMP sbMetadataManager::GetNextHandlerForMediaURL(
   NS_ENSURE_ARG_POINTER(aHandler);
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv = GetHandlerInternal(aHandler, aUrl, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }

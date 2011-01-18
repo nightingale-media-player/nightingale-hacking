@@ -29,10 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq (windows,$(SB_PLATFORM))
-   DISABLE_DEADLY_WARNINGS = 1 
-endif
-
 STATIC_LIB = sbMetadataGstreamer
 
 CPP_SRCS = sbGStreamerMetadataHandler.cpp \
@@ -77,6 +73,11 @@ else
       CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
                           $(NULL)
    endif
+endif
+
+# The GStreamer headers trigger this warning on MSVC; it's harmless
+ifeq (windows,$(SB_PLATFORM))
+   CPP_EXTRA_FLAGS += "-wd4244"
 endif
 
 include $(topsrcdir)/build/rules.mk

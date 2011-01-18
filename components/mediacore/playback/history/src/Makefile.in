@@ -29,10 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (,$(filter macosx linux,$(SB_PLATFORM)))
-   DISABLE_DEADLY_WARNINGS = 1
-endif
-
 DYNAMIC_LIB = sbPlaybackHistoryService
 
 CPP_SRCS = sbPlaybackHistoryEntry.cpp \

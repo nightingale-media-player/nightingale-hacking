@@ -209,8 +209,9 @@ ConvertPropertyArrayToTagList(sbIPropertyArray *properties)
       nsCOMPtr<sbIProperty> property(do_QueryInterface(next));
 
       converted = ConvertSinglePropertyToTag (property, tags);
-      if (!converted)
+      if (!converted) {
         LOG(("Failed to convert property to tag"));
+      }
     }
   }
 

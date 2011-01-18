@@ -426,7 +426,7 @@ sbGStreamerVideoTranscoder::GetRemainingTime(PRUint32 *aRemainingTime)
       elapsed == GST_CLOCK_TIME_NONE)
   {
     /* Unknown, so set to -1 */
-    *aRemainingTime = -1;
+    *aRemainingTime = (PRUint32)-1;
   }
   else {
     GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,

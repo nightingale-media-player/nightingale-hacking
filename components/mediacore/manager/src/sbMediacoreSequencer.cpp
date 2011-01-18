@@ -186,11 +186,11 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mStopTriggeredBySequencer(PR_FALSE)
 , mCoreWillHandleNext(PR_FALSE)
 , mPositionInvalidated(PR_FALSE)
+, mErrorCount(0)
 , mCanAbort(PR_FALSE)
 , mShouldAbort(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
-, mErrorCount(0)
 , mPosition(0)
 , mViewPosition(0)
 , mCurrentItemIndex(0)
@@ -204,8 +204,8 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNeedsRecalculate(PR_FALSE)
 , mWatchingView(PR_FALSE)
 , mResumePlaybackPosition(PR_TRUE)
-, mOnHoldStatus(ONHOLD_NOTONHOLD)
 , mValidationComplete(PR_FALSE)
+, mOnHoldStatus(ONHOLD_NOTONHOLD)
 , mValidationFromUserAction(PR_FALSE)
 {
 
@@ -271,7 +271,7 @@ sbMediacoreSequencer::Init()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_ARG_RANGE(repeatMode, 0, 2);
 
-  mRepeatMode = repeatMode;
+  mRepeatMode = (PRUint32)repeatMode;
 
   nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1454,7 +1454,7 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
 
       if(aViewPosition &&
          *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX) {
-        mPosition = *aViewPosition;
+        mPosition = (PRUint32)(*aViewPosition);
       }
     }
     break;
@@ -1469,7 +1469,7 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
 
       if(aViewPosition &&
          *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX) {
-        mPosition = length - *aViewPosition;
+        mPosition = (PRUint32)(length - *aViewPosition);
       }
     }
     break;
@@ -2043,7 +2043,7 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
           mViewIndexToSequenceIndex.size() > *aViewPosition) {
     // We check to see if the view position is different than the current view
     // position before setting the new view position.
-    mPosition = mViewIndexToSequenceIndex[*aViewPosition];
+    mPosition = mViewIndexToSequenceIndex[(PRUint32)(*aViewPosition)];
     mViewPosition = mSequence[mPosition];
   }
 

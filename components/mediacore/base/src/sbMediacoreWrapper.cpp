@@ -87,8 +87,7 @@ NS_DECL_CLASSINFO(sbMediacoreWrapper)
 NS_IMPL_THREADSAFE_CI(sbMediacoreWrapper)
 
 sbMediacoreWrapper::sbMediacoreWrapper()
-: mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
-, mProxiedObjectsMonitor(nsnull)
+: mProxiedObjectsMonitor(nsnull)
 , mWindowIsReady(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -96,6 +95,8 @@ sbMediacoreWrapper::sbMediacoreWrapper()
     gMediacoreWrapper = PR_NewLogModule("sbMediacoreWrapper");
 #endif
   TRACE(("sbMediacoreWrapper[0x%x] - Created", this));
+
+  mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
 }
 
 sbMediacoreWrapper::~sbMediacoreWrapper()
