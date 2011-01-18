@@ -351,7 +351,7 @@ sbTimingService::Observe(nsISupports* aSubject,
       rv = FormatResultsToString(output);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      printf(output.BeginReading());
+      printf("%s", output.BeginReading());
 
       // If we also have a log file, output to the logfile.
       if(mLogFile) {
