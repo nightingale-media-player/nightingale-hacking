@@ -379,7 +379,7 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
   PRTime __now = PR_Now();
 
 #define SB_NOTIFY_LOG_STOP_TIMER                                          \
-  PRUint32 __delta = PR_Now() - __now;
+  PRUint32 __delta = (PRUint32)(PR_Now() - __now);
 #else
 
 #define SB_NOTIFY_LOG_COUNT(method)
