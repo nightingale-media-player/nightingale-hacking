@@ -226,7 +226,7 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbLocalDatabaseMediaListBase* a
   NS_ENSURE_ARG_POINTER(aListener);
   nsresult rv;
 
-  PRUint32 batchDepth;
+  PRUint32 batchDepth = 0;
   {
     nsAutoLock lock(mListenerArrayLock);
 
