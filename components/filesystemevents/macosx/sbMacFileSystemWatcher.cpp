@@ -26,23 +26,12 @@
 
 #include "sbMacFileSystemWatcher.h"
 
+#include <sbDebugUtils.h>
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMacFSWatcher:5
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gMacFSWatcherLog = nsnull;
-#define TRACE(args) PR_LOG(gMacFSWatcherLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMacFSWatcherLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
-
-/* make GCC pretty */
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif
 
 //------------------------------------------------------------------------------
 // FSEvents Callback
@@ -55,7 +44,7 @@ sbMacFileSystemWatcher::FSEventCallback(ConstFSEventStreamRef aStreamRef,
                                         const FSEventStreamEventFlags aEventFlags[],
                                         const FSEventStreamEventId aEventIds[])
 {
-  TRACE(("%s: %i events", __FUNCTION__, aNumEvents));
+  TRACE("%s: %i events", __FUNCTION__, aNumEvents);
   sbMacFileSystemWatcher *watcher = 
     static_cast<sbMacFileSystemWatcher *>(aClientCallbackInfo);
   if (!watcher) {
@@ -76,11 +65,8 @@ sbMacFileSystemWatcher::FSEventCallback(ConstFSEventStreamRef aStreamRef,
 
 sbMacFileSystemWatcher::sbMacFileSystemWatcher()
 {
-#ifdef PR_LOGGING
-  if (!gMacFSWatcherLog) {
-    gMacFSWatcherLog = PR_NewLogModule("sbMacFSWatcher");
-  }
-#endif
+  SB_PRLOG_SETUP(sbMacFSWatcher);
+
   // Check to see if the current runtime is at least 10.5 or higher.
   mIsSupported = PR_FALSE;
   SInt32 macVersion;
@@ -100,7 +86,7 @@ sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener,
                              const nsAString & aRootPath, 
                              PRBool aIsRecursive)
 {
-  TRACE(("%s: path=%s", __FUNCTION__, NS_ConvertUTF16toUTF8(aRootPath).get()));
+  TRACE("%s: path=%s", __FUNCTION__, NS_ConvertUTF16toUTF8(aRootPath).get());
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -112,7 +98,7 @@ NS_IMETHODIMP
 sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
                                         sbIFileSystemListener *aListener)
 {
-  TRACE(("%s: session %s", __FUNCTION__, aSessionGuid.BeginReading()));
+  TRACE("%s: session %s", __FUNCTION__, aSessionGuid.BeginReading());
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -123,7 +109,7 @@ sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
-  TRACE(("%s: save %i", __FUNCTION__, aShouldSaveSession));
+  TRACE("%s: save %i", __FUNCTION__, aShouldSaveSession);
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -161,8 +147,8 @@ NS_IMETHODIMP
 sbMacFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
                                     sbStringArray & aDirPathArray)
 {
-  TRACE(("%s: tree at %s ready", __FUNCTION__,
-         NS_ConvertUTF16toUTF8(aTreeRootPath).get()));
+  TRACE("%s: tree at %s ready", __FUNCTION__,
+         NS_ConvertUTF16toUTF8(aTreeRootPath).get());
   if (mWatchPath.IsEmpty()) {
     // If the watch path is empty here, this means that the tree was loaded
     // from a previous session. Set the watch path now.
