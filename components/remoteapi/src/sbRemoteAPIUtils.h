@@ -131,7 +131,7 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
 
 // given an existing item, create either a wrapped list
 // or wrapped item, handing it back as an item
-static nsresult
+static inline nsresult
 SB_WrapMediaItem( sbRemotePlayer *aRemotePlayer,
                   sbIMediaItem *aMediaItem,
                   sbIMediaItem **aRemoteMediaItem )
@@ -182,10 +182,10 @@ SB_WrapMediaItem( sbRemotePlayer *aRemotePlayer,
   return NS_OK;
 }
 
-// given an exiting list, create a view and hand back a wrapped
+// given an existing list, create a view and hand back a wrapped
 // list. This is merely just a wrapper around the other method to QI
 // to a sbIRemoteMediaList
-static nsresult
+static inline nsresult
 SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
                   sbIMediaList *aMediaList,
                   sbIRemoteMediaList **aRemoteMediaList )
@@ -212,7 +212,7 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
 
 // given an existing view, walk back in to the list and
 // hand back the wrapped list
-static nsresult
+static inline nsresult
 SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
                   sbIMediaListView *aMediaListView,
                   sbIRemoteMediaList **aRemoteMediaList )

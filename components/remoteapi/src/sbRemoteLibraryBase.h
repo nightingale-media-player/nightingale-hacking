@@ -93,6 +93,8 @@ public:
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE_NO_SETPROPERTY(mRemMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
+  using sbXPCScriptableStub::SetProperty;
+
   sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer);
 
   // sbILibraryResource

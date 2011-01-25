@@ -1232,7 +1232,7 @@ sbRemotePlayer::GetVolume( PRInt64 *aVolume )
   rv = volumeControl->GetVolume(&volume);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  *aVolume = volume * 255; /* normalize to 0..255 */
+  *aVolume = (PRInt64)(volume * 255); /* normalize to 0..255 */
   // constrain things, because the mediacore API says they can be out of range...
   if (NS_UNLIKELY(*aVolume < 0)) {
     *aVolume = 0;

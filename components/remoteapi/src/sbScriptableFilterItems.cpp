@@ -486,7 +486,7 @@ NS_IMETHODIMP sbScriptableFilterItems::HasMoreElements(PRBool *_retval)
   NS_ENSURE_TRUE( mHasItems, NS_ERROR_NOT_INITIALIZED );
   NS_ENSURE_STATE( mEnumerationIndex >= 0 );
 
-  *_retval = mEnumerationIndex < mItems.Count();
+  *_retval = mEnumerationIndex < (PRUint32)mItems.Count();
   return NS_OK;
 }
 
@@ -495,7 +495,7 @@ NS_IMETHODIMP sbScriptableFilterItems::GetNext(nsISupports **_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE( mHasItems, NS_ERROR_NOT_INITIALIZED );
   NS_ENSURE_STATE( mEnumerationIndex >= 0 );
-  NS_ENSURE_TRUE( mEnumerationIndex < mItems.Count(), NS_ERROR_FAILURE );
+  NS_ENSURE_TRUE( mEnumerationIndex < (PRUint32)mItems.Count(), NS_ERROR_FAILURE );
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> rawItem = mItems[mEnumerationIndex];

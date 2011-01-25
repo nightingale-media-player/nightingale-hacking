@@ -75,6 +75,9 @@ public:
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
+  using sbXPCScriptableStub::GetProperty;
+  using sbXPCScriptableStub::SetProperty;
+
   // nsIXPCScriptable
   NS_IMETHOD GetClassName(char **aClassName);
   NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
