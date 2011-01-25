@@ -30,10 +30,6 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq (macosx,$(SB_PLATFORM))
-   DISABLE_DEADLY_WARNINGS = 1
-endif
-
 SUBDIRS = content \
           $(NULL)
  

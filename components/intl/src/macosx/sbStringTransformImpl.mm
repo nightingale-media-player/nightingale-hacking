@@ -112,7 +112,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
     PRBool bypassSymbolFiltering = false;
     PRBool bypassNonalnumFiltering = false;
     
-    for(int current = 0, optr = 0; current < [str length]; ++current, ++optr) {
+    for(unsigned int current = 0, optr = 0; current < [str length]; ++current, ++optr) {
       if (bypassSymbolFiltering &&
           bypassNonalnumFiltering) 
         break;
