@@ -1347,7 +1347,7 @@ sbRemoteLibraryBase::FindMediaItemWithMatchingScope( const nsCOMArray<sbIMediaIt
   NS_ENSURE_TRUE(itemCount, nsnull);
 
   for (PRInt64 setIndex = itemCount - 1; setIndex >= 0; setIndex--) {
-    const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt(setIndex);
+    const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt((PRUint32)setIndex);
 
     nsCString path(set.scopePath);
     rv = sbURIChecker::CheckPath( path, siteScopeURI );
