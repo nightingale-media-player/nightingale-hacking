@@ -25,40 +25,42 @@
 
 #include "sbMediaExportService.h"
 
-#include <nsComponentManagerUtils.h>
-#include <nsServiceManagerUtils.h>
-#include <nsICategoryManager.h>
-#include <prlog.h>
 #include <sbILibraryManager.h>
-#include <nsIObserverService.h>
 #include <sbILibrary.h>
-#include <sbLibraryUtils.h>
-#include <sbPropertiesCID.h>
-#include <sbStandardProperties.h>
-#include <nsIClassInfoImpl.h>
-#include <nsMemory.h>
-#include <nsIProgrammingLanguage.h>
 #include <sbIMediaExportAgentService.h>
+
+#include <nsICategoryManager.h>
+#include <nsIObserverService.h>
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsIThread.h>
 #include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
 #include <nsThreadUtils.h>
 #include <nsIThreadPool.h>
-#include <sbThreadPoolService.h>
 #include <nsIUpdateService.h>
-#include <nsDirectoryServiceUtils.h>
-#include <sbStringUtils.h>
-#include <sbMediaListEnumArrayHelper.h>
+
 #include <nsAutoPtr.h>
 #include <nsArrayUtils.h>
+#include <nsDirectoryServiceUtils.h>
+#include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
+#include <nsMemory.h>
+
+#include <sbLibraryUtils.h>
+#include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
+#include <sbStringUtils.h>
+#include <sbThreadPoolService.h>
+#include <sbMediaListEnumArrayHelper.h>
+#include <sbDebugUtils.h>
+
 #include <algorithm>
 
-
-#ifdef PR_LOGGING
-PRLogModuleInfo *gMediaExportLog = nsnull;
-#endif
-
+//------------------------------------------------------------------------------
+// To log this module, set the following environment variable:
+//   NSPR_LOG_MODULES=sbMediaExportService:5
 
 template <class T>
 static nsresult
@@ -76,8 +78,8 @@ EnumerateItemsByGuids(typename T::const_iterator const aGuidStringListBegin,
   nsString mediaListName;
   rv = aMediaList->GetName(mediaListName);
   NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("%s: Enumerate items by guids on media list '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListName).get()));
+  LOG("%s: Enumerate items by guids on media list '%s'",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListName).get());
 #endif
 
   nsCOMPtr<sbIMutablePropertyArray> properties =
@@ -133,11 +135,7 @@ sbMediaExportService::sbMediaExportService()
   , mTotal(0)
   , mProgress(0)
 {
-#ifdef PR_LOGGING
-   if (!gMediaExportLog) {
-     gMediaExportLog = PR_NewLogModule("sbMediaExportService");
-   }
-#endif
+  SB_PRLOG_SETUP(sbMediaExportService);
 }
 
 sbMediaExportService::~sbMediaExportService()
@@ -147,7 +145,7 @@ sbMediaExportService::~sbMediaExportService()
 nsresult
 sbMediaExportService::Init()
 {
-  LOG(("%s: Starting the export service", __FUNCTION__));
+  LOG("%s: Starting the export service", __FUNCTION__);
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService =
@@ -180,7 +178,7 @@ sbMediaExportService::Init()
 nsresult
 sbMediaExportService::InitInternal()
 {
-  LOG(("%s: Internal initializing the export service", __FUNCTION__));
+  LOG("%s: Internal initializing the export service", __FUNCTION__);
 
   // Don't bother starting any listeners when the service should not run.
   if (!mPrefController->GetShouldExportAnyMedia()) {
@@ -237,7 +235,7 @@ sbMediaExportService::InitInternal()
 nsresult
 sbMediaExportService::Shutdown()
 {
-  LOG(("%s: Shutting down export service", __FUNCTION__));
+  LOG("%s: Shutting down export service", __FUNCTION__);
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService =
@@ -263,7 +261,7 @@ sbMediaExportService::Shutdown()
   rv = updateMgr->GetUpdateCount(&updateCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("%s: Found %i updates", __FUNCTION__, updateCount));
+  LOG("%s: Found %i updates", __FUNCTION__, updateCount);
 
   if (updateCount > 0) {
     for (PRInt32 i = 0; i < updateCount && !hasPendingUpdates; i++) {
@@ -313,7 +311,7 @@ sbMediaExportService::Shutdown()
 nsresult
 sbMediaExportService::StopListeningMediaLists()
 {
-  LOG(("%s: Removing listeners from all media lists", __FUNCTION__));
+  LOG("%s: Removing listeners from all media lists", __FUNCTION__);
 
   nsresult rv;
 
@@ -334,8 +332,8 @@ sbMediaExportService::StopListeningMediaLists()
       nsString listGuid;
       rv = curMediaList->GetGuid(listGuid);
       NS_ENSURE_SUCCESS(rv, rv);
-      LOG(("%s: Removing listener for media list '%s'",
-            __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
+      LOG("%s: Removing listener for media list '%s'",
+            __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get());
 #endif
     }
 
@@ -357,8 +355,8 @@ sbMediaExportService::StopListeningMediaLists()
       nsString listGuid;
       rv = curSmartList->GetGuid(listGuid);
       NS_ENSURE_SUCCESS(rv, rv);
-      LOG(("%s: Removing listener for smart media list '%s'",
-            __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
+      LOG("%s: Removing listener for smart media list '%s'",
+            __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get());
 #endif
     }
 
@@ -380,10 +378,10 @@ NS_IMETHODIMP
 sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
                                         const PRBool aNewPrefValue)
 {
-  LOG(("%s: '%s' pref changed : %s",
+  LOG("%s: '%s' pref changed : %s",
         __FUNCTION__,
         NS_ConvertUTF16toUTF8(aPrefName).get(),
-        (aNewPrefValue ? "true" : "false")));
+        (aNewPrefValue ? "true" : "false"));
 
   nsresult rv;
 
@@ -423,8 +421,8 @@ sbMediaExportService::ListenToMediaList(sbIMediaList *aMediaList)
   nsString listGuid;
   rv = aMediaList->GetGuid(listGuid);
   NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("%s: Adding listener for media list '%s",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
+  LOG("%s: Adding listener for media list '%s",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get());
 #endif
 
   nsString listType;
@@ -501,8 +499,8 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
   nsString mediaListName;
   rv = aMediaList->GetName(mediaListName);
   NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("%s: Deciding if medialist '%s' should be watched.",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListName).get()));
+  LOG("%s: Deciding if medialist '%s' should be watched.",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListName).get());
 #endif
 
   nsString propValue;
@@ -559,7 +557,7 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
 void
 sbMediaExportService::WriteExportData()
 {
-  nsresult rv = WriteChangesToTaskFile();
+  nsresult SB_UNUSED_IN_RELEASE(rv) = WriteChangesToTaskFile();
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                    "ERROR: Could not begin exporting songbird data!");
 }
@@ -576,11 +574,11 @@ sbMediaExportService::ProxyNotifyListeners()
 nsresult
 sbMediaExportService::WriteChangesToTaskFile()
 {
-  LOG(("%s: Writing recorded media changes to task file", __FUNCTION__));
+  LOG("%s: Writing recorded media changes to task file", __FUNCTION__);
   nsresult rv;
 
   if (GetHasRecordedChanges()) {
-    LOG(("%s: Starting to export data", __FUNCTION__));
+    LOG("%s: Starting to export data", __FUNCTION__);
 
     // The order of exported data looks like this
     // 1.) Added media lists
@@ -631,7 +629,7 @@ sbMediaExportService::WriteChangesToTaskFile()
     NS_ENSURE_SUCCESS(rv, rv);
   } // end should write data.
 
-  LOG(("%s: Done exporting data", __FUNCTION__));
+  LOG("%s: Done exporting data", __FUNCTION__);
 
   mAddedMediaList.clear();
   mAddedItemsMap.clear();
@@ -661,7 +659,7 @@ sbMediaExportService::WriteAddedMediaLists()
     return NS_OK;
   }
 
-  LOG(("%s: Writing added media lists", __FUNCTION__));
+  LOG("%s: Writing added media lists", __FUNCTION__);
 
   NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
 
@@ -698,7 +696,7 @@ sbMediaExportService::WriteRemovedMediaLists()
     return NS_OK;
   }
 
-  LOG(("%s: Writing removed media lists", __FUNCTION__));
+  LOG("%s: Writing removed media lists", __FUNCTION__);
 
   NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
 
@@ -728,8 +726,8 @@ sbMediaExportService::WriteAddedMediaItems()
     return NS_OK;
   }
 
-  LOG(("%s: Writing %i media lists with added media items",
-        __FUNCTION__, mAddedItemsMap.size()));
+  LOG("%s: Writing %i media lists with added media items",
+        __FUNCTION__, mAddedItemsMap.size());
 
   NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
 
@@ -788,9 +786,9 @@ sbMediaExportService::WriteAddedMediaItems()
 nsresult
 sbMediaExportService::WriteUpdatedMediaItems()
 {
-  TRACE(("%s: Writing %i updated media items",
+  TRACE("%s: Writing %i updated media items",
          __FUNCTION__,
-         mUpdatedItems.size()));
+         mUpdatedItems.size());
   if (mUpdatedItems.empty()) {
     return NS_OK;
   }
@@ -862,7 +860,7 @@ sbMediaExportService::WriteUpdatedSmartPlaylists()
     return NS_OK;
   }
 
-  LOG(("%s: Writing updated smart playlists", __FUNCTION__));
+  LOG("%s: Writing updated smart playlists", __FUNCTION__);
 
   NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
 
@@ -964,8 +962,8 @@ nsresult
 sbMediaExportService::GetMediaListByGuid(const nsAString & aItemGuid,
                                          sbIMediaList **aMediaList)
 {
-  LOG(("%s: Getting item by GUID '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(aItemGuid).get()));
+  LOG("%s: Getting item by GUID '%s'",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(aItemGuid).get());
 
   nsresult rv;
   nsCOMPtr<sbILibrary> mainLibrary;
@@ -999,7 +997,7 @@ sbMediaExportService::GetMediaListByGuid(const nsAString & aItemGuid,
 nsresult
 sbMediaExportService::NotifyListeners()
 {
-  LOG(("%s: updating listeners of job progress", __FUNCTION__));
+  LOG("%s: updating listeners of job progress", __FUNCTION__);
 
   nsresult rv;
   if (!NS_IsMainThread()) {
@@ -1044,8 +1042,8 @@ sbMediaExportService::GetHasPendingChanges(PRBool *aHasPendingChanges)
   NS_ENSURE_ARG_POINTER(aHasPendingChanges);
   *aHasPendingChanges = GetHasRecordedChanges();
 
-  LOG(("%s: Media-export service has pending changes == %s",
-        __FUNCTION__, (*aHasPendingChanges ? "true" : "false")));
+  LOG("%s: Media-export service has pending changes == %s",
+        __FUNCTION__, (*aHasPendingChanges ? "true" : "false"));
 
   return NS_OK;
 }
@@ -1053,7 +1051,7 @@ sbMediaExportService::GetHasPendingChanges(PRBool *aHasPendingChanges)
 NS_IMETHODIMP
 sbMediaExportService::ExportSongbirdData()
 {
-  LOG(("%s: Exporting songbird data (manual trigger)", __FUNCTION__));
+  LOG("%s: Exporting songbird data (manual trigger)", __FUNCTION__);
 
   nsresult rv;
   mStatus = sbIJobProgress::STATUS_RUNNING;
@@ -1083,7 +1081,7 @@ sbMediaExportService::Observe(nsISupports *aSubject,
 {
   NS_ENSURE_ARG_POINTER(aTopic);
 
-  LOG(("%s: Topic '%s' observed", __FUNCTION__, aTopic));
+  LOG("%s: Topic '%s' observed", __FUNCTION__, aTopic);
 
   nsresult rv;
   if (strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC) == 0) {
@@ -1115,7 +1113,7 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
                                   PRUint32 aIndex,
                                   PRBool *aRetVal)
 {
-  LOG(("%s: Media Item Added!", __FUNCTION__));
+  LOG("%s: Media Item Added!", __FUNCTION__);
 
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1199,7 +1197,7 @@ sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
                                          PRUint32 aIndex, PRBool *_retval)
 {
-  LOG(("%s: After Media Item Removed!!", __FUNCTION__));
+  LOG("%s: After Media Item Removed!!", __FUNCTION__);
 
   if (mPrefController->GetShouldExportPlaylists() ||
       mPrefController->GetShouldExportSmartPlaylists())
@@ -1260,7 +1258,7 @@ sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList,
                                     sbIPropertyArray *aProperties,
                                     PRBool *aRetVal)
 {
-  LOG(("%s: Media Item Updated!!", __FUNCTION__));
+  LOG("%s: Media Item Updated!!", __FUNCTION__);
 
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1321,7 +1319,7 @@ sbMediaExportService::OnItemMoved(sbIMediaList *aMediaList,
                                   PRUint32 aToIndex,
                                   PRBool *aRetVal)
 {
-  LOG(("%s: Media Item Moved!", __FUNCTION__));
+  LOG("%s: Media Item Moved!", __FUNCTION__);
   return NS_OK;
 }
 NS_IMETHODIMP
@@ -1329,7 +1327,7 @@ sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList,
                                           PRBool aExcludeLists,
                                           PRBool *aRetVal)
 {
-  LOG(("%s: Media List Before Cleared!", __FUNCTION__));
+  LOG("%s: Media List Before Cleared!", __FUNCTION__);
   return NS_OK;
 }
 
@@ -1338,21 +1336,21 @@ sbMediaExportService::OnListCleared(sbIMediaList *aMediaList,
                                     PRBool aExcludeLists,
                                     PRBool *aRetVal)
 {
-  LOG(("%s: Media List Cleared!", __FUNCTION__));
+  LOG("%s: Media List Cleared!", __FUNCTION__);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbMediaExportService::OnBatchBegin(sbIMediaList *aMediaList)
 {
-  LOG(("%s: Media List Batch Begin!", __FUNCTION__));
+  LOG("%s: Media List Batch Begin!", __FUNCTION__);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbMediaExportService::OnBatchEnd(sbIMediaList *aMediaList)
 {
-  LOG(("%s: Media List Batch End!", __FUNCTION__));
+  LOG("%s: Media List Batch End!", __FUNCTION__);
   return NS_OK;
 }
 
@@ -1369,8 +1367,8 @@ sbMediaExportService::OnRebuild(sbILocalDatabaseSmartMediaList *aSmartMediaList)
   rv = aSmartMediaList->GetGuid(listGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("%s: Observing updated smart media list for '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
+  LOG("%s: Observing updated smart media list for '%s'",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get());
 
   sbStringListIter result = std::find(mUpdatedSmartMediaLists.begin(),
                                       mUpdatedSmartMediaLists.end(),
@@ -1564,8 +1562,8 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
     }
   }
 
-  LOG(("%s: Export service needs to run at shutdown == %s",
-        __FUNCTION__, (*aNeedsToRunTask ? "true" : "false")));
+  LOG("%s: Export service needs to run at shutdown == %s",
+        __FUNCTION__, (*aNeedsToRunTask ? "true" : "false"));
 
   return NS_OK;
 }
@@ -1573,7 +1571,7 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
 NS_IMETHODIMP
 sbMediaExportService::StartTask()
 {
-  LOG(("%s: Starting export service shutdown task...", __FUNCTION__));
+  LOG("%s: Starting export service shutdown task...", __FUNCTION__);
 
   // This method gets called by the shutdown service when it is our turn to
   // begin processing. Simply start the export data process here.

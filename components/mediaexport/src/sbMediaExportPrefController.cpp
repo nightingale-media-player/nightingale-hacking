@@ -33,6 +33,8 @@
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
 
+#include <sbDebugUtils.h>
+
 
 NS_IMPL_ISUPPORTS1(sbMediaExportPrefController, nsIObserver)
 
@@ -43,6 +45,7 @@ sbMediaExportPrefController::sbMediaExportPrefController()
   , mShouldStartExportAgent(PR_FALSE)
   , mListener(nsnull)
 {
+  SB_PRLOG_SETUP(sbMediaExportPrefController);
 }
 
 sbMediaExportPrefController::~sbMediaExportPrefController()
@@ -52,7 +55,7 @@ sbMediaExportPrefController::~sbMediaExportPrefController()
 nsresult
 sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
 {
-  TRACE(("%s: Initializing the mediaexport pref controller", __FUNCTION__));
+  TRACE("%s: Initializing the mediaexport pref controller", __FUNCTION__);
 
   nsresult rv;
   nsCOMPtr<nsIPrefBranch2> prefBranch =
@@ -87,7 +90,7 @@ sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
 nsresult
 sbMediaExportPrefController::Shutdown()
 {
-  LOG(("%s: Shutting down the mediaexport pref controller", __FUNCTION__));
+  LOG("%s: Shutting down the mediaexport pref controller", __FUNCTION__);
 
   nsresult rv;
   nsCOMPtr<nsIPrefBranch2> prefBranch =
@@ -128,10 +131,10 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
                                &modifiedValue);
   NS_ENSURE_SUCCESS(rv, rv);
  
-  LOG(("%s: %s pref changed to %s",
+  LOG("%s: %s pref changed to %s",
         __FUNCTION__,
         NS_ConvertUTF16toUTF8(modifiedPref).get(),
-        (modifiedValue ? "true" : "false")));
+        (modifiedValue ? "true" : "false"));
 
   if (modifiedPref.EqualsLiteral(PREF_EXPORT_TRACKS)) {
     mShouldExportTracks = modifiedValue;

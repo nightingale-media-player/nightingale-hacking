@@ -87,22 +87,5 @@ const PRUint32 LISTENER_NOTIFY_ITEM_DELTA = 10;
   {0x82, 0xDC, 0x65, 0x06, 0x08, 0x02, 0xD0, 0x91}        \
 }
 
-//------------------------------------------------------------------------------
-// To log this module, set the following environment variable:
-//   NSPR_LOG_MODULES=sbMediaExportService:5
-
-#ifdef PR_LOGGING
-extern PRLogModuleInfo* gMediaExportLog;
-#define TRACE(args) PR_LOG(gMediaExportLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMediaExportLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif /* __GNUC__ */
-
-
 #endif  // sbMediaExportDefines_h_
 

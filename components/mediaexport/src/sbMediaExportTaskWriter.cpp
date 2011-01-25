@@ -31,6 +31,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <sbStandardProperties.h>
+#include <sbDebugUtils.h>
 
 
 /*
@@ -62,6 +63,7 @@ NS_IMPL_ISUPPORTS0(sbMediaExportTaskWriter)
 
 sbMediaExportTaskWriter::sbMediaExportTaskWriter()
 {
+  SB_PRLOG_SETUP(sbMediaExportTaskWriter);
 }
 
 sbMediaExportTaskWriter::~sbMediaExportTaskWriter()
@@ -71,7 +73,7 @@ sbMediaExportTaskWriter::~sbMediaExportTaskWriter()
 nsresult
 sbMediaExportTaskWriter::Init()
 {
-  LOG(("%s: Setting up a task writer instance", __FUNCTION__));
+  LOG("%s: Setting up a task writer instance", __FUNCTION__);
 
   // Create an nsINetUtil instance to do URL-escaping.
   nsresult rv;
@@ -112,8 +114,8 @@ sbMediaExportTaskWriter::Init()
   rv = taskFile->GetPath(mTaskFilepath);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("%s: Creating task file at '%s'", 
-        __FUNCTION__, NS_ConvertUTF16toUTF8(mTaskFilepath).get()));
+  LOG("%s: Creating task file at '%s'", 
+        __FUNCTION__, NS_ConvertUTF16toUTF8(mTaskFilepath).get());
   
   // Init the output stream based on the file created above.
 #if defined(XP_WIN) 
@@ -135,8 +137,8 @@ sbMediaExportTaskWriter::Init()
 nsresult
 sbMediaExportTaskWriter::Finish()
 {
-  LOG(("%s: Done writing task file at '%s'", 
-        __FUNCTION__, mTaskFilepath.get()));
+  LOG("%s: Done writing task file at '%s'", 
+        __FUNCTION__, mTaskFilepath.get());
   
   mOutputStream.close();
   return NS_OK;
@@ -145,8 +147,8 @@ sbMediaExportTaskWriter::Finish()
 nsresult
 sbMediaExportTaskWriter::WriteAddedMediaListsHeader()
 {
-  LOG(("%s Writing header '%s'",
-        __FUNCTION__, TASKFILE_ADDEDMEDIALISTS_HEADER));
+  LOG("%s Writing header '%s'",
+        __FUNCTION__, TASKFILE_ADDEDMEDIALISTS_HEADER);
   
   mOutputStream << "["
                 << TASKFILE_ADDEDMEDIALISTS_HEADER
@@ -161,8 +163,8 @@ sbMediaExportTaskWriter::WriteAddedMediaListsHeader()
 nsresult
 sbMediaExportTaskWriter::WriteRemovedMediaListsHeader()
 {
-  LOG(("%s Writing header '%s'",
-        __FUNCTION__, TASKFILE_REMOVEDMEDIALISTS_HEADER));
+  LOG("%s Writing header '%s'",
+        __FUNCTION__, TASKFILE_REMOVEDMEDIALISTS_HEADER);
   
   mOutputStream << "["
                 << TASKFILE_REMOVEDMEDIALISTS_HEADER
@@ -179,8 +181,8 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylistHeader(sbIMediaList *aMediaLis
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  LOG(("%s Writing header '%s'",
-        __FUNCTION__, TASKFILE_UPDATEDSMARTPLAYLIST_HEADER));
+  LOG("%s Writing header '%s'",
+        __FUNCTION__, TASKFILE_UPDATEDSMARTPLAYLIST_HEADER);
 
   nsresult rv;
 
@@ -225,9 +227,9 @@ sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  LOG(("%s: Writing header '%s' for medialist name '%s'",
+  LOG("%s: Writing header '%s' for medialist name '%s'",
         __FUNCTION__, 
-        TASKFILE_ADDEDMEDIAITEMS_HEADER, escaped.get()));
+        TASKFILE_ADDEDMEDIAITEMS_HEADER, escaped.get());
 
   // Header format looks like this
   // [added-mediaitems:Playlist Name]
@@ -246,9 +248,9 @@ sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList
 nsresult
 sbMediaExportTaskWriter::WriteUpdatedMediaItemsListHeader()
 {
-  LOG(("%s: Writing header '%s' for updated items",
+  LOG("%s: Writing header '%s' for updated items",
         __FUNCTION__,
-        TASKFILE_UPDATEDMEDIAITEMS_HEADER));
+        TASKFILE_UPDATEDMEDIAITEMS_HEADER);
 
   // Header format looks like this
   // [updated-mediaitems]
@@ -302,8 +304,8 @@ sbMediaExportTaskWriter::WriteAddedTrack(sbIMediaItem *aMediaItem)
   rv = aMediaItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  LOG(("%s: Writing added track '%s'",
-        __FUNCTION__, escaped.get()));
+  LOG("%s: Writing added track '%s'",
+        __FUNCTION__, escaped.get());
 
   mOutputStream << NS_LossyConvertUTF16toASCII(guid).get()
                 << "="
@@ -356,10 +358,10 @@ sbMediaExportTaskWriter::WriteUpdatedTrack(sbIMediaItem *aMediaItem)
           nsINetUtil::ESCAPE_URL_PATH, escaped);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("%s: Writing updated track '%s' -> '%s'",
+  LOG("%s: Writing updated track '%s' -> '%s'",
         __FUNCTION__,
         NS_LossyConvertUTF16toASCII(iTunesID).get(),
-        escaped.get()));
+        escaped.get());
 
   mOutputStream << NS_LossyConvertUTF16toASCII(iTunesID).get()
                 << "="
@@ -384,8 +386,8 @@ sbMediaExportTaskWriter::WriteMediaListName(sbIMediaList *aMediaList)
           nsINetUtil::ESCAPE_URL_PATH, escaped);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("%s: Writing media list name '%s'",
-        __FUNCTION__, escaped.get()));
+  LOG("%s: Writing media list name '%s'",
+        __FUNCTION__, escaped.get());
 
   mOutputStream << mCurOutputIndex++
                 << "="
@@ -403,8 +405,8 @@ sbMediaExportTaskWriter::WriteEscapedString(const nsAString & aString)
           nsINetUtil::ESCAPE_URL_PATH, escaped);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("%s: Writing string '%s'",
-        __FUNCTION__, escaped.get()));
+  LOG("%s: Writing string '%s'",
+        __FUNCTION__, escaped.get());
 
   mOutputStream << mCurOutputIndex++
                 << "="

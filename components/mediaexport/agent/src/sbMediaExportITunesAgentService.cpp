@@ -178,7 +178,7 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   FSRef agentFSRef;
   rv = agentMacFile->GetFSRef(&agentFSRef);
 
-  CFArrayRef argv;
+  CFArrayRef argv = nsnull;
   if (aShouldUnregister) {
     // Sadly, argv is a |CFArrayRef| so push the "--unregister" arg into
     // a CoreFoundation array.
@@ -198,7 +198,7 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
     &agentFSRef,        // app FSRef
     nsnull,             // asyncLaunchRefCon
     nsnull,             // enviroment variables
-    (aShouldUnregister ? argv : nsnull),
+    argv,
     nsnull,             // initial apple event
   };
 
