@@ -29,10 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (,$(filter macosx linux,$(SB_PLATFORM)))
-   DISABLE_DEADLY_WARNINGS = 1
-endif
-
 CPP_SRCS = sbBaseDeviceController.cpp \
            $(NULL)
 
@@ -41,6 +37,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/manager/public \
                      $(DEPTH)/components/devices/marshall/public \
                      $(topsrcdir)/components/devices/base/src \
+                     $(topsrcdir)/components/include \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(NULL)
 

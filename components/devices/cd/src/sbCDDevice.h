@@ -274,6 +274,9 @@ private:
   PRBool mPrefAutoEject;
   PRBool mPrefNotifySound;
 
+  /* Initialize request handler */
+  void InitRequestHandler();
+
   /**
    * Initializes the device properties
    */

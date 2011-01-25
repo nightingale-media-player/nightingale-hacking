@@ -49,23 +49,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
 #include <prlog.h>
-
-//
-// To log this module, set the following environment variable:
-//   NSPR_LOG_MODULES=sbCDDevice:5
-//
-
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gCDDeviceLog = nsnull;
-#define TRACE(args) PR_LOG(gCDDeviceLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gCDDeviceLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif /* __GNUC__ */
+#include <sbDebugUtils.h>
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbCDDeviceMarshall, SB_CDDEVICE_MARSHALL_IID)
 
@@ -86,12 +70,6 @@ sbCDDeviceMarshall::sbCDDeviceMarshall()
   : sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY))
   , mKnownDevicesLock(nsAutoMonitor::NewMonitor("sbCDDeviceMarshall::mKnownDevicesLock"))
 {
-#ifdef PR_LOGGING
-  if (!gCDDeviceLog) {
-    gCDDeviceLog = PR_NewLogModule("sbCDDevice");
-  }
-#endif
-
   mKnownDevices.Init(8);
 }
 

@@ -26,9 +26,6 @@
 #include "sbCDDevice.h"
 #include "sbCDDeviceDefines.h"
 
-// Local imports
-#include "sbCDLog.h"
-
 // Songbird imports.
 #include <sbArray.h>
 #include <sbDeviceTranscoding.h>
@@ -54,6 +51,7 @@
 #include <sbVariantUtils.h>
 #include <sbStandardProperties.h>
 #include <sbWatchFolderUtils.h>
+#include <sbDebugUtils.h>
 
 // Mozilla imports.
 #include <nsCRT.h>
@@ -147,6 +145,12 @@ private:
 
 //------------------------------------------------------------------------------
 
+void
+sbCDDevice::InitRequestHandler()
+{
+  SB_PRLOG_SETUP(sbCDDeviceRequest);
+}
+
 nsresult
 sbCDDevice::ReqHandleRequestAdded()
 {
@@ -220,7 +224,7 @@ sbCDDevice::ReqHandleRequestAdded()
       TransferRequest * request = iter->get();
 
       // Dispatch processing of request.
-      LOG(("sbCDDevice::ReqHandleRequestAdded 0x%08x\n", request->type));
+      LOG("sbCDDevice::ReqHandleRequestAdded 0x%08x\n", request->type);
       switch(request->type)
       {
         case TransferRequest::REQUEST_MOUNT :
@@ -310,7 +314,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   nsresult rv;
 
   // Log progress.
-  LOG(("Enter sbCDDevice::ReqHandleMount \n"));
+  LOG("Enter sbCDDevice::ReqHandleMount \n");
 
   // Set up to auto-disconnect in case of error.
   SB_CD_DEVICE_AUTO_INVOKE(AutoDisconnect, Disconnect()) autoDisconnect(this);
@@ -357,7 +361,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
 
-  LOG(("Exit sbCDDevice::ReqHandleMount\n"));
+  LOG("Exit sbCDDevice::ReqHandleMount\n");
   return NS_OK;
 }
 
@@ -649,7 +653,7 @@ sbCDDevice::ProxyCDLookup() {
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Initiate the metadata lookup
-  LOG(("Querying metadata lookup provider for disc"));
+  LOG("Querying metadata lookup provider for disc");
   nsCOMPtr<sbIMetadataLookupJob> job;
   rv = provider->QueryDisc(toc, getter_AddRefs(job));
   if (NS_SUCCEEDED(rv) && job) {
@@ -787,7 +791,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
                            sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
   }
 
-  LOG(("Number of metadata lookup results found: %d", numResults));
+  LOG("Number of metadata lookup results found: %d", numResults);
   // 3 cases to match up
   if (numResults == 1) {
     // Exactly 1 match found, automatically populate all the tracks with
@@ -1016,7 +1020,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
 
-  LOG(("Enter sbMSCDeviceBase::ReqHandleRead\n"));
+  LOG("Enter sbMSCDeviceBase::ReqHandleRead\n");
 
   nsresult rv;
 
@@ -1279,8 +1283,8 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
           break;
 
         // Log the error message.
-        LOG(("sbCDDevice::ReqTranscodeWrite error %s\n",
-             NS_ConvertUTF16toUTF8(errorMessage).get()));
+        LOG("sbCDDevice::ReqTranscodeWrite error %s\n",
+             NS_ConvertUTF16toUTF8(errorMessage).get());
 
         // Check for more error messages.
         rv = errorMessageEnum->HasMore(&hasMore);

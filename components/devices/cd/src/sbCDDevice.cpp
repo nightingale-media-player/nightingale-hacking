@@ -24,8 +24,6 @@
 
 #include "sbCDDevice.h"
 
-#include "sbCDLog.h"
-
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
@@ -42,29 +40,26 @@
 #include <nsILocalFile.h>
 #include <nsISound.h>
 
+#include <sbIDeviceEvent.h>
+#include <sbILibraryManager.h>
+#include <sbILocalDatabaseLibrary.h>
+#include <sbIDeviceErrorMonitor.h>
+
 #include <sbArrayUtils.h>
 #include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
 #include <sbDeviceUtils.h>
-#include <sbIDeviceEvent.h>
-#include <sbILibraryManager.h>
-#include <sbILocalDatabaseLibrary.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbVariantUtils.h>
 #include <sbStringUtils.h>
-#include <sbIDeviceErrorMonitor.h>
-
+#include <sbDebugUtils.h>
 
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbCDDevice:5
  */
-#ifdef PR_LOGGING
-PRLogModuleInfo* gCDDeviceLog = nsnull;
-#endif
-
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDevice)
 NS_IMPL_THREADSAFE_RELEASE(sbCDDevice)
@@ -79,23 +74,26 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbCDDevice, sbIDevice,
 NS_DECL_CLASSINFO(sbCDDevice)
 NS_IMPL_THREADSAFE_CI(sbCDDevice)
 
+#if _MSC_VER
+// Disable warning about 'this' used in base member initializer list.
+#pragma warning(disable: 4355)
+#endif
+
 sbCDDevice::sbCDDevice(const nsID & aControllerId,
                        nsIPropertyBag *aProperties)
-  : mConnected(PR_FALSE)
-  , mStatus(this)
-  , mCreationProperties(aProperties)
+  : mConnectLock(nsnull)
   , mControllerID(aControllerId)
+  , mConnected(PR_FALSE)
+  , mCreationProperties(aProperties)
+  , mStatus(this)
   , mIsHandlingRequests(PR_FALSE)
-  , mConnectLock(nsnull)
 {
   mPropertiesLock = nsAutoMonitor::NewMonitor("sbCDDevice::mPropertiesLock");
   NS_ENSURE_TRUE(mPropertiesLock, );
 
-#ifdef PR_LOGGING
-  if (!gCDDeviceLog) {
-    gCDDeviceLog = PR_NewLogModule( "sbCDDevice" );
-  }
-#endif
+  SB_PRLOG_SETUP(sbCDDevice);
+
+  InitRequestHandler();
 }
 
 sbCDDevice::~sbCDDevice()
@@ -173,7 +171,7 @@ sbCDDevice::InitDevice()
   nsresult rv;
 
   // Log progress.
-  LOG(("Enter sbCDDevice::InitDevice"));
+  LOG("Enter sbCDDevice::InitDevice");
 
   // Create the connect lock.
   NS_ENSURE_FALSE(mConnectLock, NS_ERROR_ALREADY_INITIALIZED);
@@ -207,7 +205,7 @@ sbCDDevice::InitDevice()
   SetState(sbIDevice::STATE_IDLE);
 
   // Log progress.
-  LOG(("Exit sbCDDevice::InitDevice"));
+  LOG("Exit sbCDDevice::InitDevice");
 
   return NS_OK;
 }
@@ -407,7 +405,7 @@ NS_IMETHODIMP sbCDDevice::Connect()
   nsresult rv;
 
   // Log progress.
-  LOG(("Enter sbCDDevice::Connect\n"));
+  LOG("Enter sbCDDevice::Connect\n");
 
   // This function should only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
@@ -468,7 +466,7 @@ NS_IMETHODIMP sbCDDevice::Connect()
   autoDisconnect.forget();
 
   // Log progress.
-  LOG(("Exit sbCDDevice::Connect\n"));
+  LOG("Exit sbCDDevice::Connect\n");
 
   return NS_OK;
 }
@@ -526,7 +524,7 @@ sbCDDevice::ReqProcessingStop()
 nsresult
 sbCDDevice::ReqDisconnect()
 {
-  LOG(("%s", __FUNCTION__));
+  LOG("%s", __FUNCTION__);
   // Clear all remaining requests.
   nsresult rv = ClearRequests();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -557,7 +555,7 @@ sbCDDevice::Disconnect()
   nsresult rv;
 
   // Log progress.
-  LOG(("Enter sbCDDevice::Disconnect\n"));
+  LOG("Enter sbCDDevice::Disconnect\n");
 
   // This function should only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
@@ -604,7 +602,7 @@ sbCDDevice::Disconnect()
      sbNewVariant(static_cast<sbIDevice*>(this)));
 
   // Log progress.
-  LOG(("Exit sbCDDevice::Disconnect\n"));
+  LOG("Exit sbCDDevice::Disconnect\n");
 
   return NS_OK;
 }
@@ -816,7 +814,7 @@ sbCDDevice::SubmitRequest(PRUint32 aRequest,
                           nsIPropertyBag2 *aRequestParameters)
 {
   // Log progress.
-  LOG(("sbCDDevice::SubmitRequest\n"));
+  LOG("sbCDDevice::SubmitRequest\n");
 
   // Function variables.
   nsresult rv;
@@ -1244,7 +1242,7 @@ sbCDDevice::QueryUserViewErrors()
 void
 sbCDDevice::ProxyQueryUserViewErrors()
 {
-  nsresult rv = sbDeviceUtils::QueryUserViewErrors(this);
+  nsresult SB_UNUSED_IN_RELEASE(rv) = sbDeviceUtils::QueryUserViewErrors(this);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not show user view errors!");
 }
 

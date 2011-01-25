@@ -148,7 +148,7 @@ sbTranscodeProgressListener::SetProgress(sbIJobProgress * aJobProgress) {
   sbStatusPropertyValue value;
   double const complete = percentComplete * 100.0;
   value.SetMode(sbStatusPropertyValue::eRipping);
-  value.SetCurrent(complete);
+  value.SetCurrent((PRUint32)complete);
   SetStatusProperty(value);
 
   return NS_OK;

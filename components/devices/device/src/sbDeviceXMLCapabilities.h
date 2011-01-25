@@ -250,7 +250,7 @@ private:
    * \param aChildNode Returned child node.
    */
   nsresult GetFirstChildByTagName(nsIDOMNode*  aNode,
-                                  char*        aTagName,
+                                  const char*        aTagName,
                                   nsIDOMNode** aChildNode);
 };
 

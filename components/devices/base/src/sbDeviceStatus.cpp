@@ -134,7 +134,7 @@ sbDeviceStatus::GetProgress(double *aProgress)
 NS_IMETHODIMP
 sbDeviceStatus::SetProgress(double aProgress)
 {
-  PRInt64 const newProgress = aProgress * 100.00 + 0.5;
+  PRInt64 const newProgress = (PRUint64)(aProgress * 100.00 + 0.5);
   if (newProgress != mCurrentProgress) {
     mCurrentProgress = newProgress;
     return mProgressRemote->SetIntValue(newProgress);
@@ -219,7 +219,7 @@ sbDeviceStatus::SetMediaList(sbIMediaList * aMediaList)
 NS_IMETHODIMP sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
 {
   NS_ENSURE_ARG_POINTER(aElapsedTime);
-  *aElapsedTime = PR_IntervalToMilliseconds(PR_IntervalNow() - mTimestamp);
+  *aElapsedTime = PR_IntervalToMilliseconds((PRIntervalTime)(PR_IntervalNow() - mTimestamp));
   return NS_OK;
 }
 

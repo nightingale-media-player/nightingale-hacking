@@ -1514,7 +1514,7 @@ sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
 
 nsresult
 sbDeviceXMLCapabilities::GetFirstChildByTagName(nsIDOMNode*  aNode,
-                                                char*        aTagName,
+                                                const char*        aTagName,
                                                 nsIDOMNode** aChildNode)
 {
   NS_ENSURE_ARG_POINTER(aTagName);

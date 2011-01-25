@@ -30,6 +30,8 @@
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 
+#include <sbDebugUtils.h>
+
 template<class T>
 PLDHashOperator sbBaseDeviceController::EnumerateIntoArray(const nsID& aKey,
                                                            T* aData,
@@ -90,7 +92,7 @@ sbBaseDeviceController::sbBaseDeviceController()
     nsAutoMonitor::NewMonitor("sbBaseDeviceController.mMonitor");
   NS_ASSERTION(mMonitor, "Failed to create monitor");
 
-  PRBool succeeded = mDevices.Init();
+  PRBool SB_UNUSED_IN_RELEASE(succeeded) = mDevices.Init();
   NS_ASSERTION(succeeded, "Failed to initialize hashtable");
 }
 

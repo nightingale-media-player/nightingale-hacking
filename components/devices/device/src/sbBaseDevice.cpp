@@ -444,12 +444,12 @@ sbBaseDevice::sbBaseDevice() :
   mDeviceImages(nsnull),
   mCanTranscodeAudio(CAN_TRANSCODE_UNKNOWN),
   mCanTranscodeVideo(CAN_TRANSCODE_UNKNOWN),
-  mConnected(PR_FALSE),
-  mReqWaitMonitor(nsnull),
-  mReqStopProcessing(0),
   mVideoInserted(false),
   mSyncType(0),
   mEnsureSpaceChecked(false),
+  mConnected(PR_FALSE),
+  mReqWaitMonitor(nsnull),
+  mReqStopProcessing(0),
   mIsHandlingRequests(PR_FALSE),
   mVolumeLock(nsnull)
 {
@@ -1145,12 +1145,14 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
       if (aRequest->item) {
         nsresult rv = aRequest->item->GetContentType(contentType);
         NS_ENSURE_SUCCESS(rv, rv);
-        if (isAudio = contentType.Equals(NS_LITERAL_STRING("audio"))) {
+        isAudio = contentType.Equals(NS_LITERAL_STRING("audio"));
+        isVideo = contentType.Equals(NS_LITERAL_STRING("video"));
+        if (isAudio) {
           aRequest->itemType = TransferRequest::REQUESTBATCH_AUDIO;
           // The syncing contains audio
           mSyncType |= TransferRequest::REQUESTBATCH_AUDIO;
         }
-        if (isVideo = contentType.Equals(NS_LITERAL_STRING("video"))) {
+        else if (isVideo) {
           aRequest->itemType = TransferRequest::REQUESTBATCH_VIDEO;
           // The syncing contains video
           mSyncType |= TransferRequest::REQUESTBATCH_VIDEO;
@@ -3133,7 +3135,6 @@ sbBaseDevice::CreateUniqueMediaFile(nsIURI  *aURI,
 
   // Try different file names until a unique one is found.  Limit the number of
   // unique names to try to the same limit as nsIFile.createUnique.
-  PRUint32 uniqueIndex = 1;
   for (PRUint32 uniqueIndex = 1;
        alreadyExists && (uniqueIndex < 10000);
        ++uniqueIndex) {
@@ -5554,10 +5555,12 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
          sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = videoMediaSyncSettings->SetMgmtType(
-         contentType == sbIMediaList::CONTENTTYPE_AUDIO
-           ? sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE
-           : sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
+  PRUint32 mgmtType;
+  if (contentType == sbIMediaList::CONTENTTYPE_AUDIO)
+    mgmtType = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE;
+  else
+    mgmtType = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS;
+  rv = videoMediaSyncSettings->SetMgmtType(mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aDstLib->SetSyncSettings(syncSettings);
@@ -7047,7 +7050,7 @@ sbBaseDevice::UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch)
     if (trackType.IsEmpty())
       continue;
 
-    PRBool isSupported;
+    PRBool isSupported = PR_FALSE;
     if (!mTrackSourceTable.Get(trackType, &isSupported)) {
       // check transferable only once.
       nsRefPtr<sbDeviceStreamingHandler> listener;

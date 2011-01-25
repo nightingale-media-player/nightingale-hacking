@@ -36,6 +36,8 @@
 #include "sbBaseDevice.h"
 #include "sbLibraryUtils.h"
 
+#include <sbDebugUtils.h>
+
 #include <nsIURI.h>
 #include <nsNetUtil.h>
 
@@ -44,24 +46,12 @@
 //   NSPR_LOG_MODULES=sbLibraryListenerHelpers:5
 //
 
-#ifdef PR_LOGGING
-  static PRLogModuleInfo* gLibraryListenerHelpersLog = nsnull;
-# define TRACE(args) PR_LOG(gLibraryListenerHelpersLog, PR_LOG_DEBUG, args)
-# define LOG(args)   PR_LOG(gLibraryListenerHelpersLog, PR_LOG_WARN, args)
-# ifdef __GNUC__
-#   define __FUNCTION__ __PRETTY_FUNCTION__
-# endif /* __GNUC__ */
-#else
-# define TRACE(args) /* nothing */
-# define LOG(args)   /* nothing */
-#endif
-
 nsresult
 sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
   if (aIgnoreListener) {
     PR_AtomicIncrement(&mIgnoreListenerCounter);
   } else {
-    PRInt32 result = PR_AtomicDecrement(&mIgnoreListenerCounter);
+    PRInt32 SB_UNUSED_IN_RELEASE(result) = PR_AtomicDecrement(&mIgnoreListenerCounter);
     NS_ASSERTION(result >= 0, "invalid device library ignore listener counter");
   }
   return NS_OK;
@@ -201,10 +191,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener,
 sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener()
 : mDevice(nsnull)
 {
-#ifdef PR_LOGGING
-  if (!gLibraryListenerHelpersLog)
-    gLibraryListenerHelpersLog = PR_NewLogModule("sbLibraryListenerHelpers");
-#endif
+  SB_PRLOG_SETUP(sbLibraryListenerHelpers);
 }
 
 sbBaseDeviceLibraryListener::~sbBaseDeviceLibraryListener()
@@ -596,10 +583,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
 sbDeviceBaseLibraryCopyListener::sbDeviceBaseLibraryCopyListener()
 : mDevice(nsnull)
 {
-#ifdef PR_LOGGING
-  if (!gLibraryListenerHelpersLog)
-    gLibraryListenerHelpersLog = PR_NewLogModule("sbLibraryListenerHelpers");
-#endif
+  SB_PRLOG_SETUP(sbLibraryListenerHelpers);
 }
 
 sbDeviceBaseLibraryCopyListener::~sbDeviceBaseLibraryCopyListener()
@@ -647,10 +631,10 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   if (NS_SUCCEEDED(rv)) {
     rv = destLib->GetGuid(destLibId);
   }
-  TRACE(("%s: %s::%s -> %s::%s",
+  TRACE("%s: %s::%s -> %s::%s",
          __FUNCTION__,
          NS_ConvertUTF16toUTF8(srcLibId).get(), srcSpec.get(),
-         NS_ConvertUTF16toUTF8(destLibId).get(), destSpec.get()));
+         NS_ConvertUTF16toUTF8(destLibId).get(), destSpec.get());
   #endif
 
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_READ,

@@ -1110,52 +1110,6 @@ sbDevCapVideoStream::~sbDevCapVideoStream()
 {
 }
 
-static nsresult
-CopyAndParseToFractions(const char ** aStrings,
-                        PRUint32 aStringCount,
-                        nsTArray<sbFraction> & aFractions)
-{
-  nsresult rv;
-
-  for (PRUint32 index = 0; index < aStringCount; ++index)
-  {
-    sbFraction fraction;
-    rv = sbFractionFromString(NS_ConvertASCIItoUTF16(aStrings[index]),
-                              fraction);
-    if (NS_SUCCEEDED(rv)) {
-      aFractions.AppendElement(fraction);
-    }
-    else {
-      nsCString msg("CopyAndParseToFractions: Unable to parse fraction ");
-      msg.Append(aStrings[index]);
-      NS_WARNING(msg.BeginReading());
-    }
-  }
-  return NS_OK;
-}
-
-static nsresult
-CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
-                          PRUint32 aStringCount,
-                          char ** &aStrings)
-{
-  aStrings = reinterpret_cast<char**>(NS_Alloc(aStringCount * sizeof(char*)));
-  NS_ENSURE_TRUE(aStrings, NS_ERROR_OUT_OF_MEMORY);
-
-  for (PRUint32 index = 0; index < aStringCount; ++index)
-  {
-    nsString string = sbFractionToString(aFractions[index]);
-    aStrings[index] = ToNewCString(NS_ConvertUTF16toUTF8(string));
-    if (!aStrings[index]) {
-      // allocation failure
-      NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(index, aStrings);
-      return NS_ERROR_OUT_OF_MEMORY;
-    }
-  }
-
-  return NS_OK;
-}
-
 NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
                                               nsIArray *aExplicitSizes,
                                               sbIDevCapRange *aWidths,

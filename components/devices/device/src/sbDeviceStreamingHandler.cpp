@@ -191,8 +191,8 @@ sbDeviceStreamingHandler::IsStreamingItemSupported()
 sbDeviceStreamingHandler::sbDeviceStreamingHandler
                             (sbIMediaItem* aMediaItem,
                              PRMonitor* aCompleteNotifyMonitor)
-: mMediaItem(aMediaItem),
-  mCompleteNotifyMonitor(aCompleteNotifyMonitor),
+: mCompleteNotifyMonitor(aCompleteNotifyMonitor),
+  mMediaItem(aMediaItem),
   mIsComplete(PR_FALSE),
   mIsSupported(PR_FALSE)
 {

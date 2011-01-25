@@ -2179,10 +2179,6 @@ static nsresult LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
                                    const nsAString & aFormat,
                                    PRLogModuleInfo *aLogModule);
 
-static nsresult LogPtrArray(PRUint32 aArraySize,
-                            char **aArray,
-                            PRLogModuleInfo *aLogModule);
-
 static nsresult LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule);
 
 static nsresult LogRange(sbIDevCapRange *aRange,
@@ -2598,21 +2594,6 @@ LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
 
   // Output style
   LOG_MODULE(aLogModule, ("\n"));
-  return NS_OK;
-}
-
-/* static */ nsresult
-LogPtrArray(PRUint32 aArraySize,
-            char **aArray,
-            PRLogModuleInfo *aLogModule)
-{
-  NS_ENSURE_ARG_POINTER(aArray);
-  NS_ENSURE_ARG_POINTER(aLogModule);
-
-  for (PRUint32 i = 0; i < aArraySize; i++) {
-    LOG_MODULE(aLogModule, ("   - %s", aArray[i]));
-  }
-
   return NS_OK;
 }
 

@@ -45,8 +45,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceEventTesterStressThreads,
                               sbIDeviceEventListener)
 
 sbDeviceEventTesterStressThreads::sbDeviceEventTesterStressThreads()
- : mCounter(-999),
-   mMonitor(nsnull)
+ : mMonitor(nsnull),
+   mCounter(-999)
 {
   /* member initializers and constructor code */
 }

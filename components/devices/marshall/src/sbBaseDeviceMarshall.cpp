@@ -154,9 +154,10 @@ PRBool CompareCompatibility(sbIDeviceCompatibility * comp1,
   PRUint32 compVal1 = sbIDeviceCompatibility::INCOMPATIBLE;
   PRUint32 compVal2 = sbIDeviceCompatibility::INCOMPATIBLE;
   
-  return (comp1 && NS_SUCCEEDED(comp1->GetCompatibility(&compVal1)))
-      || (comp2 && NS_SUCCEEDED(comp2->GetCompatibility(&compVal2))) && compVal2
-      > compVal1 && compVal2 != sbIDeviceCompatibility::INCOMPATIBLE;
+  return (comp1 && NS_SUCCEEDED(comp1->GetCompatibility(&compVal1))) || 
+         ((comp2 && NS_SUCCEEDED(comp2->GetCompatibility(&compVal2))) && 
+          compVal2 > compVal1 && 
+          compVal2 != sbIDeviceCompatibility::INCOMPATIBLE);
 }
 
 PRBool sbBaseDeviceMarshall::CompatibilityComparer::Compare(sbIDeviceController * controller,
