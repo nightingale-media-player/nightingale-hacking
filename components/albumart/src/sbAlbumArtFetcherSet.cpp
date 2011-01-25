@@ -395,14 +395,14 @@ sbAlbumArtFetcherSet::GetIsFetching(PRBool* aIsFetching)
 sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
   mType(sbIAlbumArtFetcherSet::TYPE_ALL),
   mShutdown(PR_FALSE),
+  mIsFetching(PR_FALSE),
   mListener(nsnull),
   mFetcherList(nsnull),
   mFetcherIndex(0),
   mFetcher(nsnull),
   mMediaItems(nsnull),
   mTimeoutTimerValue(ALBUMART_SCANNER_TIMEOUT),
-  mFoundAllArtwork(PR_FALSE),
-  mIsFetching(PR_FALSE)
+  mFoundAllArtwork(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gAlbumArtFetcherSetLog) {
