@@ -105,7 +105,7 @@ nsresult sbiTunesImporterStatus::Reset() {
 }
 
 void sbiTunesImporterStatus::SetProgress(PRInt64 aProgress) {
-  mProgress = (aProgress * 100L) / mProgressMax; 
+  mProgress = (PRUint32)((aProgress * 100L) / mProgressMax);
   Update();
 }
 

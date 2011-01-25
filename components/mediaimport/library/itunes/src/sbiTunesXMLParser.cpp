@@ -138,7 +138,7 @@ sbiTunesXMLParser * sbiTunesXMLParser::New() {
 
 sbiTunesXMLParser::sbiTunesXMLParser() : mState(START), mBytesRead(0) {
   MOZ_COUNT_CTOR(sbiTunesXMLParser);
-  nsISAXXMLReaderPtr const & reader = GetSAXReader();
+  GetSAXReader();
 }
 
 sbiTunesXMLParser::~sbiTunesXMLParser() {

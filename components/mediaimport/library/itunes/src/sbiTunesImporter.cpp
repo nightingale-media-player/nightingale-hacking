@@ -276,7 +276,6 @@ sbiTunesImporter::~sbiTunesImporter()
 
 nsresult
 sbiTunesImporter::Cancel() {
-  nsresult rv;
   nsString msg = SBLocalizedString("import_library.job.status.cancelled");
   mStatus->SetStatusText(msg);
   mStatus->Done();
@@ -1678,7 +1677,7 @@ sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
   rv = mProperties.Put(location, URI);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  for (int index = 0; index < NS_ARRAY_LENGTH(gPropertyMap); ++index) {
+  for (unsigned int index = 0; index < NS_ARRAY_LENGTH(gPropertyMap); ++index) {
     PropertyMap const & propertyMapEntry = gPropertyMap[index];
     nsString value;
     rv = aProperties->Get(NS_ConvertASCIItoUTF16(propertyMapEntry.ITProperty),
@@ -1801,7 +1800,7 @@ sbiTunesImporter::iTunesTrack::GetTrackURI(
   else {
     char const c = uri[0];
     if (uri.Length() > 3 && 
-        (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') &&
+        ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) &&
         uri[1] == ':' &&
         uri[2] == '/') {
       adjustedURI = "file:///";

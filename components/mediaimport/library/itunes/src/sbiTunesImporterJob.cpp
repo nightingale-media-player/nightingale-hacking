@@ -29,6 +29,7 @@
 #include <nsThreadUtils.h>
 
 #include <sbTArrayStringEnumerator.h>
+#include <sbDebugUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbiTunesImporterJob, 
                               sbIJobProgress,
@@ -218,7 +219,7 @@ nsresult
 sbiTunesImporterJob::UpdateProgress() {
   PRUint32 const listenerCount = mListeners.Count();
   for (PRUint32 index = 0; index < listenerCount; ++index) {
-    nsresult rv = mListeners[index]->OnJobProgress(this);
+    nsresult SB_UNUSED_IN_RELEASE(rv) = mListeners[index]->OnJobProgress(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "iTunes Import listener reported error");
   }
   return NS_OK;

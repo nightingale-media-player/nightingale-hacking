@@ -50,31 +50,13 @@
 #include <nsNetUtil.h>
 #include <sbILibraryUtils.h>
 #include <sbLockUtils.h>
+#include <sbDebugUtils.h>
 
 
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMediaImportFileScan:5
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gMediaImportFileScanLog = nsnull;
-#define TRACE(args) \
-  PR_BEGIN_MACRO \
-  if (!gMediaImportFileScanLog) \
-    gMediaImportFileScanLog = PR_NewLogModule("sbMediaImportFileScan"); \
-  PR_LOG(gMediaImportFileScanLog, PR_LOG_DEBUG, args); \
-  PR_END_MACRO
-#define LOG(args) \
-  PR_BEGIN_MACRO \
-  if (!gMediaImportFileScanLog) \
-    gMediaImportFileScanLog = PR_NewLogModule("sbMediaImportFileScan"); \
-  PR_LOG(gMediaImportFileScanLog, PR_LOG_WARN, args); \
-  PR_END_MACRO
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
-
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -149,17 +131,19 @@ void sbFileScanQuery::init()
 
   {
     nsAutoLock lock(m_pExtensionsLock);
-    PRBool success = m_Extensions.Init();
+    PRBool SB_UNUSED_IN_RELEASE(success) = m_Extensions.Init();
     NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
   }
 
   {
     nsAutoLock lock(m_pFlaggedFileExtensionsLock);
 
-    PRBool success = m_FlaggedExtensions.Init();
+    PRBool SB_UNUSED_IN_RELEASE(success) = m_FlaggedExtensions.Init();
     NS_ASSERTION(success,
         "FileScanQuery.m_FlaggedExtensions failed to be initialized!");
   }
+
+  SB_PRLOG_SETUP(sbMediaImportFileScan);
 }
 
 //-----------------------------------------------------------------------------
@@ -334,7 +318,7 @@ NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
     // no stack, scanning never started
     *_retval = 0;
   }
-  LOG(("sbFileScanQuery: reporting %d files\n", *_retval));
+  LOG("sbFileScanQuery: reporting %d files\n", *_retval);
   return NS_OK;
 } //GetFileCount
 
@@ -351,7 +335,7 @@ NS_IMETHODIMP sbFileScanQuery::GetFlaggedFileCount(PRUint32 *_retval)
     *_retval = 0;
   }
 
-  LOG(("sbFileScanQuery: reporting %d flagged files\n", *_retval));
+  LOG("sbFileScanQuery: reporting %d flagged files\n", *_retval);
   return NS_OK;
 } //GetFileCount
 
@@ -369,8 +353,8 @@ NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
     if (isValidExtension) {
       m_lastSeenExtension = strExtension;
     } else if (!isValidExtension && !isFlagged) {
-      LOG(("sbFileScanQuery::AddFilePath, unrecognized extension: (%s) is seen\n",
-           NS_LossyConvertUTF16toASCII(strExtension).get()));
+      LOG("sbFileScanQuery::AddFilePath, unrecognized extension: (%s) is seen\n",
+           NS_LossyConvertUTF16toASCII(strExtension).get());
       return NS_OK;
     }
   }
@@ -392,8 +376,8 @@ NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  LOG(("sbFileScanQuery::AddFilePath(%s)\n",
-       NS_LossyConvertUTF16toASCII(strFilePath).get()));
+  LOG("sbFileScanQuery::AddFilePath(%s)\n",
+       NS_LossyConvertUTF16toASCII(strFilePath).get());
   return NS_OK;
 } //AddFilePath
 
@@ -535,13 +519,13 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
 #if PR_LOGGING
       nsAutoString s;
       if (NS_SUCCEEDED(uriSpec->GetData(s)) && !s.IsEmpty()) {
-        LOG(("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(s).get()));
+        LOG("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(s).get());
       }
 #endif /* PR_LOGGING */
     }
     NS_ADDREF(*_retval = array);
   }
-  LOG(("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex));
+  LOG("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex);
 
   return NS_OK;
 }
@@ -692,7 +676,7 @@ NS_IMETHODIMP sbFileScan::SubmitQuery(sbIFileScanQuery *pQuery)
 
   // Start the query processor thread if needed.
   if (!m_ScanQueryProcessorIsRunning) {
-    nsresult rv = StartProcessScanQueriesProcessor();
+    nsresult SB_UNUSED_IN_RELEASE(rv) = StartProcessScanQueriesProcessor();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
         "ERROR: Could not start the query processor thread!");
   }
@@ -793,7 +777,7 @@ sbFileScan::ScanDirectory(const nsAString &strDirectory,
                     rv = pURI->GetSpec(u8spec);
                     if (NS_SUCCEEDED(rv))
                     {
-                      LOG(("sbFileScan::ScanDirectory (idl) found spec: %s\n", u8spec.get()));
+                      LOG("sbFileScan::ScanDirectory (idl) found spec: %s\n", u8spec.get());
                       *_retval += 1;
 
                       if(pCallback)
@@ -1028,8 +1012,8 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
                 nsCAutoString spec;
                 if (NS_SUCCEEDED(rv)) {
                   rv = pURI->GetSpec(spec);
-                  LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n",
-                       spec.get()));
+                  LOG("sbFileScan::ScanDirectory (C++) found spec: %s\n",
+                       spec.get());
                 }
 
                 // Add the file path to the query.
