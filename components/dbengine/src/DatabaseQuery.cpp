@@ -94,7 +94,7 @@ CDatabaseQuery::CDatabaseQuery()
 , m_IsAborting(PR_FALSE)
 , m_IsExecuting(PR_FALSE)
 , m_AsyncQuery(PR_FALSE)
-, m_CurrentQuery(-1)
+, m_CurrentQuery((PRUint32)-1)
 , m_LastError(0)
 , m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
 , m_QueryHasCompleted(PR_FALSE)
@@ -659,7 +659,7 @@ CDatabaseQuery::SetResultObject(CDatabaseResult *aResultObject)
   m_QueryResult = aResultObject;
 }
 
-bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRInt32 aQueryIndex)
+bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRUint32 aQueryIndex)
 {
   bindParameterArray_t* retval = nsnull;
   sbSimpleAutoLock lock(m_pLock);

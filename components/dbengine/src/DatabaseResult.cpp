@@ -364,7 +364,7 @@ nsresult CDatabaseResult::SetRowCells(PRUint32 dbRow, const std::vector<nsString
 PRUint32 CDatabaseResult::GetColumnIndexFromName(const nsAString &strColumnName)
 {
   RebuildColumnResolveMap();
-  PRUint32 retval = -1;
+  PRUint32 retval = (PRUint32)-1;
 
   if(NS_UNLIKELY(m_RequiresLocking)) {
     IfLock(m_pLock);

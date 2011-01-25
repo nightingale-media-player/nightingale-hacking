@@ -69,9 +69,7 @@
 #include <sbMemoryUtils.h>
 #include <sbStringBundle.h>
 #include <sbProxiedComponentManager.h>
-
-// The maximum characters to output in a single PR_LOG call
-#define MAX_PRLOG 400
+#include <sbDebugUtils.h>
 
 #if defined(_WIN32)
   #include <windows.h>
@@ -157,17 +155,6 @@
     #include <windows.h>
   #endif
   #define HARD_SANITY_CHECK             1
-#endif
-
-#ifdef PR_LOGGING
-static PRLogModuleInfo* sDatabaseEngineLog = nsnull;
-static PRLogModuleInfo* sDatabaseEnginePerformanceLog = nsnull;
-#define TRACE(args) PR_LOG(sDatabaseEngineLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(sDatabaseEngineLog, PR_LOG_WARN, args)
-
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
 #endif
 
 #ifdef USE_PERF_LOGGING
@@ -662,9 +649,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseDumpProcessor, nsIRunnable)
 CDatabaseDumpProcessor::CDatabaseDumpProcessor(CDatabaseEngine *aCallback,
                                                QueryProcessorQueue *aQueryProcessorQueue,
                                                nsIFile *aOutputFile)
-: mEngineCallback(aCallback)
+: mOutputFile(aOutputFile)
+, mEngineCallback(aCallback)
 , mQueryProcessorQueue(aQueryProcessorQueue)
-, mOutputFile(aOutputFile)
 {
 }
 
@@ -972,12 +959,7 @@ CDatabaseEngine::CDatabaseEngine()
 , m_Collator(nsnull)
 #endif
 {
-#ifdef PR_LOGGING
-  if (!sDatabaseEngineLog)
-    sDatabaseEngineLog = PR_NewLogModule("sbDatabaseEngine");
-  if (!sDatabaseEnginePerformanceLog)
-    sDatabaseEnginePerformanceLog = PR_NewLogModule("sbDatabaseEnginePerformance");
-#endif
+  SB_PRLOG_SETUP(sbDatabaseEngine);
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -1032,8 +1014,8 @@ CDatabaseEngine* CDatabaseEngine::GetSingleton()
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::Init()
 {
-  LOG(("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
-       this, sqlite3_libversion()));
+  LOG("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
+       this, sqlite3_libversion());
 
   PRBool success = m_QueuePool.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -1662,7 +1644,6 @@ CDatabaseEngine::DumpDatabase(const nsAString & aDatabaseGUID, nsIFile *aOutFile
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::DumpMemoryStatistics()
 {
-  int status_op  = -1;
   int current    = -1;
   int highwater  = -1;
 
@@ -1714,8 +1695,8 @@ NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
 {
   // Attempt to free a large amount of memory.
   // This will cause SQLite to free as much as it can.
-  int memReleased = sqlite3_release_memory(500000000);
-  LOG(("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased));
+  int SB_UNUSED_IN_RELEASE(memReleased) = sqlite3_release_memory(500000000);
+  LOG("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased);
 
   return NS_OK;
 }
@@ -1934,11 +1915,6 @@ CDatabaseEngine::DeleteMarkedDatabases()
       continue;
     }
 
-    // Should be something like "1".
-    nsCString keyString(StringHead(pref, keyLength));
-    PRUint32 libraryKey = keyString.ToInteger(&rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // Should be something like "songbird.library.loader.1.".
     nsCString branchString(PREF_BRANCH_LIBRARY_LOADER);
     branchString += Substring(pref, 0, keyLength + 1);
@@ -2148,8 +2124,8 @@ CDatabaseEngine::RunAnalyze()
 
     sqlite3 *pDB = pQueue->m_pHandle;
 
-    LOG(("DBE: Process Start, thread 0x%x query 0x%x",
-      PR_GetCurrentThread(), pQuery));
+    LOG("DBE: Process Start, thread 0x%x query 0x%x",
+      PR_GetCurrentThread(), pQuery);
 
     PRUint32 nQueryCount = 0;
     PRBool bFirstRow = PR_TRUE;
@@ -2178,7 +2154,7 @@ CDatabaseEngine::RunAnalyze()
       nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
       nsresult rv = pQuery->PopQuery(getter_AddRefs(preparedStatement));
       if (NS_FAILED(rv)) {
-        LOG(("DBE: Failed to get a prepared statement from the Query object."));
+        LOG("DBE: Failed to get a prepared statement from the Query object.");
         continue;
       }
       nsString strQuery;
@@ -2191,7 +2167,7 @@ CDatabaseEngine::RunAnalyze()
         actualPreparedStatement->GetStatement(pQueue->m_pHandle);
       
       if (!pStmt) {
-        LOG(("DBE: Failed to create a prepared statement from the Query object."));
+        LOG("DBE: Failed to create a prepared statement from the Query object.");
         continue;
       }
       
@@ -2206,9 +2182,9 @@ CDatabaseEngine::RunAnalyze()
 
       BEGIN_PERFORMANCE_LOG(strQuery, dbName);
 
-      LOG(("DBE: '%s' on '%s'\n",
+      LOG("DBE: '%s' on '%s'\n",
         NS_ConvertUTF16toUTF8(dbName).get(),
-        NS_ConvertUTF16toUTF8(strQuery).get()));
+        NS_ConvertUTF16toUTF8(strQuery).get());
 
       // If we have parameters for this query, bind them
       PRUint32 i = 0; // we need the index as well to know where to bind our values.
@@ -2221,14 +2197,14 @@ CDatabaseEngine::RunAnalyze()
         switch(p.type) {
           case ISNULL:
             sqlite3_bind_null(pStmt, i + 1);
-            LOG(("DBE: Parameter %d is 'NULL'", i));
+            LOG("DBE: Parameter %d is 'NULL'", i);
             break;
           case UTF8STRING:
             sqlite3_bind_text(pStmt, i + 1,
               p.utf8StringValue.get(),
               p.utf8StringValue.Length(),
               SQLITE_TRANSIENT);
-            LOG(("DBE: Parameter %d is '%s'", i, p.utf8StringValue.get()));
+            LOG("DBE: Parameter %d is '%s'", i, p.utf8StringValue.get());
             break;
           case STRING:
           {
@@ -2236,25 +2212,24 @@ CDatabaseEngine::RunAnalyze()
               p.stringValue.get(),
               p.stringValue.Length() * sizeof(PRUnichar),
               SQLITE_TRANSIENT);
-             LOG(("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get()));
+             LOG("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get());
             break;
           }
           case DOUBLE:
             sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
-            LOG(("DBE: Parameter %d is '%f'", i, p.doubleValue));
+            LOG("DBE: Parameter %d is '%f'", i, p.doubleValue);
             break;
           case INTEGER32:
             sqlite3_bind_int(pStmt, i + 1, p.int32Value);
-            LOG(("DBE: Parameter %d is '%d'", i, p.int32Value));
+            LOG("DBE: Parameter %d is '%d'", i, p.int32Value);
             break;
           case INTEGER64:
             sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
-            LOG(("DBE: Parameter %d is '%ld'", i, p.int64Value));
+            LOG("DBE: Parameter %d is '%ld'", i, p.int64Value);
             break;
         }
       }
 
-      PRInt32 nRetryCount = 0;
       PRInt32 totalRows = 0;
 
       PRUint64 rollingSum = 0;
@@ -2299,7 +2274,7 @@ CDatabaseEngine::RunAnalyze()
             std::vector<nsString> vCellValues;
             vCellValues.reserve(nCount);
 
-            TRACE(("DBE: Result row %d:", totalRows));
+            TRACE("DBE: Result row %d:", totalRows);
 
             int k = 0;
             // If this is a rolling limit query, increment the rolling
@@ -2325,8 +2300,8 @@ CDatabaseEngine::RunAnalyze()
                 }
 
                 vCellValues.push_back(strCellValue);
-                TRACE(("Column %d: '%s' ", k,
-                  NS_ConvertUTF16toUTF8(strCellValue).get()));
+                TRACE("Column %d: '%s' ", k,
+                  NS_ConvertUTF16toUTF8(strCellValue).get());
               }
               totalRows++;
 
@@ -2336,7 +2311,7 @@ CDatabaseEngine::RunAnalyze()
               if (rollingLimit > 0) {
                 pQuery->SetRollingLimitResult(rollingRowCount);
                 pQuery->SetLastError(SQLITE_OK);
-                TRACE(("Rolling limit query complete, %d rows", totalRows));
+                TRACE("Rolling limit query complete, %d rows", totalRows);
                 finishEarly = PR_TRUE;
               }
             }
@@ -2346,7 +2321,7 @@ CDatabaseEngine::RunAnalyze()
         case SQLITE_DONE:
           {
             pQuery->SetLastError(SQLITE_OK);
-            TRACE(("Query complete, %d rows", totalRows));
+            TRACE("Query complete, %d rows", totalRows);
           }
         break;
 
@@ -2399,13 +2374,13 @@ CDatabaseEngine::RunAnalyze()
       pQuery->m_IsAborting = PR_FALSE;
     }
 
-    LOG(("DBE: Notified query monitor."));
+    LOG("DBE: Notified query monitor.");
 
     //Fire off the callback if there is one.
     pEngine->DoSimpleCallback(pQuery);
-    LOG(("DBE: Simple query listeners have been processed."));
+    LOG("DBE: Simple query listeners have been processed.");
 
-    LOG(("DBE: Process End"));
+    LOG("DBE: Process End");
 
     mon.NotifyAll();
     mon.Exit();
@@ -2872,7 +2847,7 @@ CDatabaseEngine::GetCurrentCollationLocale(nsCString &aCollationLocale) {
     aCollationLocale = buf;
 
   } else {
-    LOG(("Could not retrieve the collation locale identifier"));
+    LOG("Could not retrieve the collation locale identifier");
   }
 #else
 

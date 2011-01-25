@@ -147,7 +147,7 @@ protected:
   void SetResultObject(CDatabaseResult *aResultObject);
 
   nsresult PopQuery(sbIDatabasePreparedStatement **_retval);
-  bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
+  bindParameterArray_t* GetQueryParameters(PRUint32 aQueryIndex);
   bindParameterArray_t* PopQueryParameters();
 
   PRLock *m_pLock;

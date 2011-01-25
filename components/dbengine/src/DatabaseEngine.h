@@ -226,12 +226,12 @@ public:
   NS_DECL_ISUPPORTS
 
   QueryProcessorQueue()
-  : m_Shutdown(PR_FALSE)
+  : m_pEngine(nsnull)
+  , m_Shutdown(PR_FALSE)
   , m_Running(PR_FALSE)
-  , m_pQueueMonitor(nsnull)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)
-  , m_pEngine(nsnull)
+  , m_pQueueMonitor(nsnull)
   , m_AnalyzeCount(0) {
     MOZ_COUNT_CTOR(QueryProcessorQueue);
   }
