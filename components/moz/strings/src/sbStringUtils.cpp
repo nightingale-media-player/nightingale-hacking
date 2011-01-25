@@ -304,7 +304,7 @@ PRBool IsLikelyUTF8(const nsACString& aString)
   aString.BeginReading(&begin, &end);
 
   for (; begin != end; ++begin) {
-    PRInt32 next = prefix_table[*begin];
+    PRInt32 next = prefix_table[(unsigned char)(*begin)];
     if (bytesRemaining) {
       if (next != -1) {
         // expected more bytes but didn't get a continuation

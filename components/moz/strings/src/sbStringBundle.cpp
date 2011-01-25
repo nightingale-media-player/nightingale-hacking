@@ -343,7 +343,7 @@ sbStringBundle::Format(const char*         aKey,
          __FUNCTION__,
          this,
          aKey,
-         aParam,
+         NS_ConvertUTF16toUTF8(aParam).BeginReading(),
          aDefault));
 
   nsTArray<nsString> params(1);

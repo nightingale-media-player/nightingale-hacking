@@ -1788,8 +1788,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbVariant,
                               nsIWritableVariant)
 
 sbVariant::sbVariant()
-: mWritable(PR_TRUE)
-, mDataLock(nsnull)
+: mDataLock(nsnull)
+, mWritable(PR_TRUE)
 {
   sbVariant::Initialize(&mData);
   mDataLock = nsAutoLock::NewLock("sbVariant::mLock");

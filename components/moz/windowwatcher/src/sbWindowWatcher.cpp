@@ -656,7 +656,7 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   // _last_ of a combination of events to occur (but the first instance of each)
   const char* DOM_WINDOW_READY_EVENT_TYPES[] = {  "resize", "sb-overlay-load" };
 
-  for (int i = 0; i < NS_ARRAY_LENGTH(DOM_WINDOW_READY_EVENT_TYPES); ++i) {
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH(DOM_WINDOW_READY_EVENT_TYPES); ++i) {
     rv = eventListener->AddEventListener(DOM_WINDOW_READY_EVENT_TYPES[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -973,7 +973,7 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
            __FUNCTION__,
            NS_ConvertUTF16toUTF8(eventType).get(),
            this,
-           target));
+           target.get()));
     if (mOutstandingEvents.IsEmpty()) {
       mSBWindowWatcher->OnWindowReady(mWindow);
     }
@@ -1087,7 +1087,7 @@ sbWindowWatcherEventListener::AddEventListener(const char* aEventName)
          __FUNCTION__,
          aEventName,
          this,
-         mEventTarget));
+         mEventTarget.get()));
 
   return NS_OK;
 }
@@ -1104,7 +1104,7 @@ sbWindowWatcherEventListener::ClearEventListeners()
   TRACE(("%s: clearing %p from %p",
          __FUNCTION__,
          this,
-         mEventTarget));
+         mEventTarget.get()));
 
   NS_ENSURE_TRUE(mEventTarget, NS_ERROR_NOT_INITIALIZED);
 
@@ -1113,7 +1113,7 @@ sbWindowWatcherEventListener::ClearEventListeners()
            __FUNCTION__,
            NS_ConvertUTF16toUTF8(mOutstandingEvents[i]).get(),
            this,
-           mEventTarget));
+           mEventTarget.get()));
     rv = mEventTarget->RemoveEventListener(mOutstandingEvents[i],
                                            this,
                                            PR_TRUE);

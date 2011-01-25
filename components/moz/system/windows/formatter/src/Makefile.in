@@ -29,10 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq (windows,$(SB_PLATFORM))
-   DISABLE_DEADLY_WARNINGS = 1
-endif
-
 # Ensure the DLL name is always the same (e.g., doesn't get a different name for
 # debug builds), so that the registry is properly set up by the installer.
 DISABLE_IMPLICIT_NAMING = 1
