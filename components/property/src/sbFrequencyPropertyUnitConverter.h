@@ -52,3 +52,4 @@ protected:
 };
 
 #endif // __sbFrequencyPropertyUnitConverter_H__
+

@@ -849,14 +849,14 @@ sbDeviceXMLCapabilities::ProcessImageSizes(
       do_CreateInstance(SB_IMAGESIZE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRInt32 width;
+    PRInt32 width = 0;
     rv = attributes.GetValue(WIDTH, width);
     if (NS_FAILED(rv)) {
       NS_WARNING("Invalid width found in device settings file");
       continue;
     }
 
-    PRInt32 height;
+    PRInt32 height = 0;
     rv = attributes.GetValue(HEIGHT, height);
     if (NS_FAILED(rv)) {
       continue;

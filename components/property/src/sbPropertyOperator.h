@@ -48,3 +48,4 @@ protected:
 };
 
 #endif // __SBPROPERTYOPERATOR_H__
+
