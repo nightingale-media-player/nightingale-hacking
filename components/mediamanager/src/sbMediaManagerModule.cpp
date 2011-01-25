@@ -103,7 +103,7 @@ sbMediaManagementServiceRegisterSelf(nsIComponentManager *aCompMgr,
     SB_PROPERTY_AVAILABILITY,
     SB_PROPERTY_ALBUMARTISTNAME,
   };
-  for (int i = 0; i < NS_ARRAY_LENGTH(kDefaultFileNameProperties); ++i) {
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH(kDefaultFileNameProperties); ++i) {
     char* previousEntry;
     rv = catman->AddCategoryEntry(SB_CATEGORY_MEDIA_MANAGER_FILE_NAME_PROPERTIES,
                                   kDefaultFileNameProperties[i],
@@ -142,7 +142,7 @@ sbMediaManagementServiceRegisterSelf(nsIComponentManager *aCompMgr,
     SB_PROPERTY_AVAILABILITY,
     SB_PROPERTY_ALBUMARTISTNAME,
   };
-  for (int i = 0; i < NS_ARRAY_LENGTH(kDefaultDirectoryNameProperties); ++i) {
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH(kDefaultDirectoryNameProperties); ++i) {
     char* previousEntry;
     rv = catman->AddCategoryEntry(SB_CATEGORY_MEDIA_MANAGER_DIRECTORY_NAME_PROPERTIES,
                                   kDefaultDirectoryNameProperties[i],

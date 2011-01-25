@@ -72,6 +72,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
+#include <sbDebugUtils.h>
 
 /**
  * constants
@@ -87,17 +88,6 @@
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMediaManagementService:5
  */
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gMediaManagementServiceLog = nsnull;
-#define TRACE(args) PR_LOG(gMediaManagementServiceLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMediaManagementServiceLog, PR_LOG_WARN, args)
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif /* __GNUC__ */
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
 
 /**
  * local type declarations
@@ -125,11 +115,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS5(sbMediaManagementService,
 sbMediaManagementService::sbMediaManagementService()
   : mEnabled(PR_FALSE)
 {
-#ifdef PR_LOGGING
-  if (!gMediaManagementServiceLog) {
-    gMediaManagementServiceLog = PR_NewLogModule("sbMediaManagementService");
-  }
-#endif
+  SB_PRLOG_SETUP(sbMediaManagementService);
 }
 
 sbMediaManagementService::~sbMediaManagementService()
@@ -183,7 +169,7 @@ sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    TRACE(("%s: arming delayed startup timer due to manual enable", __FUNCTION__));
+    TRACE("%s: arming delayed startup timer due to manual enable", __FUNCTION__);
     rv = mDelayedStartupTimer->InitWithCallback(this,
                                                 MMS_SCAN_DELAY,
                                                 nsITimer::TYPE_ONE_SHOT);
@@ -227,7 +213,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
   nsresult rv;
   NS_ENSURE_ARG_POINTER(aTopic);
   NS_ASSERTION(NS_IsMainThread(), "observe not on main thread");
-  TRACE(("%s: observing %s", __FUNCTION__, aTopic));
+  TRACE("%s: observing %s", __FUNCTION__, aTopic);
 
   if (!strcmp("profile-after-change", aTopic)) {
     nsCOMPtr<nsIObserverService> obs =
@@ -265,7 +251,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     }
 
     if (!mEnabled) {
-      TRACE(("not enabled, don't bother doing anything else"));
+      TRACE("not enabled, don't bother doing anything else");
       return NS_OK;
     }
 
@@ -275,7 +261,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    TRACE(("%s: arming delayed startup timer", __FUNCTION__));
+    TRACE("%s: arming delayed startup timer", __FUNCTION__);
     rv = mDelayedStartupTimer->InitWithCallback(this,
                                                 MMS_STARTUP_DELAY,
                                                 nsITimer::TYPE_ONE_SHOT);
@@ -287,7 +273,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
   }
 
   if (!strcmp(SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, aTopic)) {
-    TRACE(("%s: shutting down", __FUNCTION__));
+    TRACE("%s: shutting down", __FUNCTION__);
     rv = StopListening();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -496,7 +482,7 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
   if (itemCount > 0) {
     // have queued jobs
 
-    TRACE(("%s: job complete, has queue, setting timer", __FUNCTION__));
+    TRACE("%s: job complete, has queue, setting timer", __FUNCTION__);
     rv = mPerformActionTimer->InitWithCallback(this,
                                                MMS_SCAN_DELAY,
                                                nsITimer::TYPE_ONE_SHOT);
@@ -518,7 +504,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
   nsresult rv;
 
   if (aTimer == mDelayedStartupTimer) {
-    TRACE(("%s: delayed startup timer fired", __FUNCTION__));
+    TRACE("%s: delayed startup timer fired", __FUNCTION__);
     mDelayedStartupTimer = nsnull;
 
     rv = StartListening();
@@ -536,7 +522,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
       if (itemCount > 0) {
         // have queued jobs
 
-        TRACE(("%s: scan skipped, has queue, setting timer", __FUNCTION__));
+        TRACE("%s: scan skipped, has queue, setting timer", __FUNCTION__);
         rv = mPerformActionTimer->InitWithCallback(this,
                                                    MMS_SCAN_DELAY,
                                                    nsITimer::TYPE_ONE_SHOT);
@@ -569,7 +555,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
 
     return NS_OK;
   } else if (aTimer == mPerformActionTimer) {
-    TRACE(("%s: perform action timer fired", __FUNCTION__));
+    TRACE("%s: perform action timer fired", __FUNCTION__);
 
     NS_ENSURE_TRUE(mDirtyItemsLock, NS_ERROR_NOT_INITIALIZED);
     { /* scope */
@@ -628,7 +614,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
         }
       }
 
-      PRUint32 count = data.dirtyItems->EnumerateRead(ProcessItem, &data);
+      data.dirtyItems->EnumerateRead(ProcessItem, &data);
       // Check if errors occured and inform user...
       if (data.hadErrors) {
         // Reset the scan preference so on next run we do a full scan.
@@ -655,7 +641,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
 NS_METHOD
 sbMediaManagementService::Init()
 {
-  TRACE(("%s: initing", __FUNCTION__));
+  TRACE("%s: initing", __FUNCTION__);
   NS_ENSURE_FALSE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
   nsresult rv;
 
@@ -730,7 +716,7 @@ sbMediaManagementService::ShutdownProcessActionThread()
     // have queued jobs, flush them
     rv = Notify(mPerformActionTimer);
     if (NS_FAILED(rv)) {
-      nsresult __rv = rv;
+      nsresult SB_UNUSED_IN_RELEASE(__rv) = rv;
       NS_ENSURE_SUCCESS_BODY(rv, rv);
     }
   }
@@ -738,7 +724,7 @@ sbMediaManagementService::ShutdownProcessActionThread()
   if (mPerformActionTimer) {
     rv = mPerformActionTimer->Cancel();
     if (NS_FAILED(rv)) {
-      nsresult __rv = rv;
+      nsresult SB_UNUSED_IN_RELEASE(__rv) = rv;
       NS_ENSURE_SUCCESS_BODY(rv, rv);
     }
 
@@ -803,9 +789,9 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
       #if PR_LOGGING
         nsString src;
         rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), src);
-        TRACE(("%s: item %s not really marked for deletion",
+        TRACE("%s: item %s not really marked for deletion",
                __FUNCTION__,
-               src.get()));
+               src.get());
       #endif
       // No need to queue an item we are not asked to remove from disk.
       return NS_OK;
@@ -819,12 +805,12 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   if (mLibraryScanJob) {
-    TRACE(("%s: item changed, not setting timer due to library scan job",
-           __FUNCTION__));
+    TRACE("%s: item changed, not setting timer due to library scan job",
+           __FUNCTION__);
     return NS_OK;
   }
 
-  TRACE(("%s: item changed, setting timer", __FUNCTION__));
+  TRACE("%s: item changed, setting timer", __FUNCTION__);
   rv = mPerformActionTimer->InitWithCallback(this,
                                              MMS_SCAN_DELAY,
                                              nsITimer::TYPE_ONE_SHOT);
@@ -859,7 +845,7 @@ sbMediaManagementService::QueueItems(sbIMediaList* aList, PRUint32 aOperation)
 NS_METHOD
 sbMediaManagementService::StartListening()
 {
-  TRACE(("%s: starting", __FUNCTION__));
+  TRACE("%s: starting", __FUNCTION__);
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
@@ -880,7 +866,7 @@ sbMediaManagementService::StartListening()
 NS_METHOD
 sbMediaManagementService::StopListening()
 {
-  TRACE(("%s: stopping", __FUNCTION__));
+  TRACE("%s: stopping", __FUNCTION__);
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
@@ -912,7 +898,7 @@ sbMediaManagementService::StopListening()
 NS_METHOD
 sbMediaManagementService::ReportError()
 {
-  TRACE(("%s", __FUNCTION__));
+  TRACE("%s", __FUNCTION__);
 
   sbStringBundle bundle;
   nsString dialogTitle = bundle.Get("mediamanager.import_manage_error.title2");
@@ -1012,7 +998,7 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
     if (!success) {
       NS_WARNING("%s: OrganizeItem failed with no error code");
     } else {
-      nsresult __rv = rv;
+      nsresult SB_UNUSED_IN_RELEASE(__rv) = rv;
       NS_ENSURE_SUCCESS_BODY(rv, rv);
     }
   }
@@ -1022,7 +1008,7 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
 NS_METHOD
 sbMediaManagementService::SetupLibraryListener()
 {
-  TRACE(("%s", __FUNCTION__));
+  TRACE("%s", __FUNCTION__);
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
@@ -1057,7 +1043,7 @@ NS_METHOD
 sbMediaManagementService::AddPropertiesToFilter(const char *aKeyName,
                                                 sbIMutablePropertyArray *aFilter)
 {
-  TRACE(("%s", __FUNCTION__));
+  TRACE("%s", __FUNCTION__);
   NS_ENSURE_ARG_POINTER(aKeyName);
   nsresult rv;
 
@@ -1085,7 +1071,7 @@ sbMediaManagementService::AddPropertiesToFilter(const char *aKeyName,
 NS_METHOD
 sbMediaManagementService::CreatePropertyFilter(sbIMutablePropertyArray* aFilter)
 {
-  TRACE(("%s", __FUNCTION__));
+  TRACE("%s", __FUNCTION__);
   nsresult rv;
 
   rv = AddPropertiesToFilter(SB_PREF_MEDIA_MANAGER_FMTFILE, aFilter);

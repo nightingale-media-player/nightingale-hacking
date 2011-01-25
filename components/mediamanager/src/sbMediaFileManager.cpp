@@ -619,7 +619,7 @@ nsresult
 sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
                                     nsString& aUnknownValue)
 {
-  TRACE(("%s (%s)", __FUNCTION__, NS_ConvertUTF16toUTF8(aPropertyKey)));
+  TRACE(("%s (%s)", __FUNCTION__, NS_ConvertUTF16toUTF8(aPropertyKey).BeginReading()));
   nsresult rv;
 
   // Make sure the result is empty for return in case we can not find
