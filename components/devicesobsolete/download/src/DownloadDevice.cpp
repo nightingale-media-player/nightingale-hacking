@@ -3574,7 +3574,7 @@ nsresult sbDownloadSession::UpdateDstLibraryMetadata()
     nsRefPtr<LibraryMetadataUpdater> 
                                 pLibraryMetadataUpdater;
     nsString                    durationStr;
-    PRInt32                     duration;
+    PRInt32                     duration = 0;
     PRBool                      updateDstLibraryMetadata = PR_TRUE;
     nsresult                    result1;
     nsresult                    result = NS_OK;
