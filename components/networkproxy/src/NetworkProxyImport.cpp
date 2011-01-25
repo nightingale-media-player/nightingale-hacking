@@ -83,7 +83,7 @@ NS_IMETHODIMP CNetworkProxyImport::ImportProxySettings(const nsAString &aSource,
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
   
-  for (int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
+  for (unsigned int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
     if (aSource.
       Equals(NS_ConvertASCIItoUTF16(networkProxyImportSources[i].sourceName))) {
       return networkProxyImportSources[i].ImportProxySettingsFunction(_retval);
@@ -104,7 +104,7 @@ NS_IMETHODIMP CNetworkProxyImport::GetImportSources(nsIArray **_retval)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
+  for (unsigned int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
     nsCOMPtr<nsISupportsString> source = 
       do_CreateInstance("@mozilla.org/supports-string;1", &rv);
     source->
