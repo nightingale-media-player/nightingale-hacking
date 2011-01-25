@@ -270,7 +270,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
   PRInt32 offset = 0;
   char buffer[] = {'%','E','2','%','8','0','%','x','x'}; //escaped string
   while ((offset = unescapedSpec.Find(NS_LITERAL_CSTRING("\xE2\x80"), offset)) != -1) {
-    switch (unescapedSpec[offset + 2]) {
+    switch ((PRUint8)unescapedSpec[offset + 2]) {
       case 0x8E:  // U+200E
       case 0x8F:  // U+200F
         buffer[7] = '8';
@@ -307,7 +307,6 @@ NS_IMETHODIMP sbURIPropertyInfo::MakeSearchable(const nsAString & aValue, nsAStr
 // we don't want URIs to be searchable, we still want to sort them.
 NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
 {
-  PRBool bFailed = PR_FALSE;
   nsresult rv;
   
   if (!IsInvalidEmpty(aValue)) {

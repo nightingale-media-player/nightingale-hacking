@@ -100,7 +100,7 @@ PRInt32 sbBitratePropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
   // get number of digits
   PRUint32 d;
   if (aValue == 0) d = 1;
-  else d = (PRUint32)(log10(abs(aValue)) + 1);
+  else d = (PRUint32)(log10(fabs(aValue)) + 1);
 
   // and pick most suitable unit
   if (d <= 1) return BITRATE_UNIT_BPS;

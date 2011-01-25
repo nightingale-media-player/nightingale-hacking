@@ -149,8 +149,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyUnitConverter, sbIPropertyUnitConverter)
 
 // ctor
 sbPropertyUnitConverter::sbPropertyUnitConverter()
-: mNativeInternal(-1)
-, mLock(nsnull)
+: mLock(nsnull)
+, mNativeInternal((PRUint32)-1)
 , mDecimalPoint('.')
 {
   mLock = PR_NewLock();
@@ -208,7 +208,7 @@ nsresult
                                           nsAString &aOutValue) {
   // turn the double value into a string
   char out[64] = {0};
-  if(PR_snprintf(out, 63, gsFmtFloatOut, aValue) == -1) {
+  if(PR_snprintf(out, 63, gsFmtFloatOut, aValue) == (PRUint32)-1) {
     aOutValue = EmptyString();
     return NS_ERROR_FAILURE;
   }
@@ -286,7 +286,7 @@ sbPropertyUnitConverter::Convert(const nsAString & aValue,
 // iteratively remove all trailing zeroes, and the period if necessary
 void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
   PRUint32 decimal = aValue.FindChar(mDecimalPoint);
-  if (decimal != -1) {
+  if (decimal != (PRUint32)-1) {
     while (aValue.CharAt(aValue.Length()-1) == '0')
       aValue.Cut(aValue.Length()-1, 1);
     if (aValue.Length() == decimal+1)
@@ -298,7 +298,7 @@ void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
 void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
                                                PRUint32 aDecimals) {
   PRUint32 decimal = aValue.FindChar(mDecimalPoint);
-  if (decimal != -1) {
+  if (decimal != (PRUint32)-1) {
     PRUint32 p = decimal + aDecimals;
     if (aValue.Length() > p+1) {
       aValue.Cut(p+1, aValue.Length()-1-p);
@@ -310,7 +310,7 @@ void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
 void sbPropertyUnitConverter::ForceToNDecimals(nsAString &aValue,
                                                PRUint32 aDecimals) {
   PRUint32 decimal = aValue.FindChar(mDecimalPoint);
-  if (decimal == -1) {
+  if (decimal == (PRUint32)-1) {
     aValue += mDecimalPoint;
     decimal = aValue.Length()-1;
   }

@@ -363,7 +363,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::MakeSearchable(const nsAString & aValue, n
   }
 
   char out[32] = {0};
-  if(PR_snprintf(out, 32, gsSortFmtRadix10, value) == -1) {
+  if(PR_snprintf(out, 32, gsSortFmtRadix10, value) == (PRUint32)-1) {
     rv = NS_ERROR_FAILURE;
     _retval = EmptyString();
   }

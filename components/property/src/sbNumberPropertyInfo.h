@@ -33,10 +33,6 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-static inline PRBool IsValidRadix(PRUint32 aRadix);
-static inline const char *GetFmtFromRadix(PRUint32 aRadix);
-static inline const char *GetSortableFmtFromRadix(PRUint32 aRadix);
-
 class sbNumberPropertyInfo : public sbPropertyInfo,
                              public sbINumberPropertyInfo
 {

@@ -33,7 +33,7 @@
 #include <sbLockUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
-/*static inline*/
+static inline
 PRBool IsValidRadix(PRUint32 aRadix)
 {
   if(aRadix == 8 ||
@@ -52,7 +52,7 @@ static const char *gsFmtRadix10 = "%lld";
 static const char *gsFmtRadix16 = "%llX";
 static const char *gsFmtFloat = "%lg";
 
-/*static inline*/
+static inline
 const char *GetFmtFromRadix(PRUint32 aRadix)
 {
   const char *fmt = nsnull;
@@ -84,7 +84,7 @@ static const char *gsSortFmtRadix10 = "%+020lld";
 static const char *gsSortFmtRadix16 = "%016llX";
 static const char *gsSortFmtFloat   = "%+046.16lf";
 
-/*static inline*/
+static inline
 const char *GetSortableFmtFromRadix(PRUint32 aRadix)
 {
   const char *fmt = nsnull;
@@ -398,7 +398,7 @@ NS_IMETHODIMP sbNumberPropertyInfo::MakeSearchable(const nsAString & aValue, nsA
     outputLength = PR_snprintf(out, 64, sortableFmt, floatValue);
   }
 
-  if(outputLength == -1) {
+  if(outputLength == (PRUint32)-1) {
     rv = NS_ERROR_FAILURE;
     _retval = EmptyString();
   }

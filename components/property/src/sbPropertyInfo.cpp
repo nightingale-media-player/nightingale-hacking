@@ -106,8 +106,8 @@ sbPropertyInfo::sbPropertyInfo()
 , mRemoteReadable(PR_FALSE)
 , mRemoteWritableLock(nsnull)
 , mRemoteWritable(PR_FALSE)
-, mUnitConverter(nsnull)
 , mUnitConverterLock(nsnull)
+, mUnitConverter(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gPropInfoLog) {
