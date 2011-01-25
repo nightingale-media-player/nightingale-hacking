@@ -602,7 +602,7 @@ GetWindowAttribute(NSWindow*        aWindow,
     return NS_OK;
 
   // Convert the color string to an nscolor.
-  nscolor color;
+  nscolor color = 0;
   if (!SBParseColor(colorString, &color))
     return NS_OK;
 

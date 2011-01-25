@@ -73,6 +73,7 @@
 @interface SBMacAppDelegate (Private)
 
 - (void)_setOverride:(id)aOverrideObj;
+- (void)_addNowPlayingControls:(NSMenu *)aMenu;
 - (void)_addPlayerControlMenuItems:(NSMenu *)aMenu;
 - (void)_appendMenuItem:(NSString *)aTitle
                  action:(SEL)aSelector
@@ -285,10 +286,6 @@
                    menu:aMenu];
 
   // Track name
-  NSMenuItem *trackNameItem = 
-    [[NSMenuItem alloc] initWithTitle:trackStr
-                               action:nil
-                        keyEquivalent:@""];
   [self _appendMenuItem:trackStr action:nil menu:aMenu];
   
   // Artist name

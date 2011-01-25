@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_DEADLY_WARNINGS = 1
-
 DYNAMIC_LIB = sbIntegration
 
 CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
@@ -60,6 +58,10 @@ CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(MOZSDK_INCLUDE_DIR)/webbrwsr \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
+
+# Mozilla mac-specific headers trigger an unused function warning; disable for
+# this directory
+CMM_EXTRA_FLAGS += -Wno-unused-function
 
 CMM_SRCS = NativeWindowFromNode.mm \
            sbNativeWindowManager.mm \

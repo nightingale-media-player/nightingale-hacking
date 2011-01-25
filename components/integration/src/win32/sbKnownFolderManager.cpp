@@ -72,6 +72,8 @@ sbKnownFolderManager::Init()
   SB_WIN_ENSURE_SUCCESS(hr, NS_OK);
 
   knownFolderManager.swap(mKnownFolderManager);
+
+  return NS_OK;
 }
 
 nsresult 

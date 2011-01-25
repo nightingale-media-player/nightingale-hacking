@@ -30,8 +30,6 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_DEADLY_WARNINGS = 1
-
 DYNAMIC_LIB = sbIntegration
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \

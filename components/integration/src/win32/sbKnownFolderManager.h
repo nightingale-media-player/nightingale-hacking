@@ -34,7 +34,7 @@
 #include <windows.h>
 
 // Forward Definitions
-class IKnownFolderManager;
+struct IKnownFolderManager;
 
 class sbKnownFolderManager : public sbIKnownFolderManager
 {
