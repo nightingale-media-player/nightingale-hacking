@@ -409,7 +409,7 @@ private:
                       const nsAString& aResourceGUID);
 
   nsresult ExecuteQuery(sbIDatabaseQuery*   aDBQuery,
-                        char*               aQueryStr,
+                        const char*         aQueryStr,
                         sbIDatabaseResult** aDBResult);
 
 
@@ -580,67 +580,67 @@ private:
                                  Itdb_Track*   aTrack = NULL);
 
   nsresult GetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         gchar**       aProp);
 
   nsresult SetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         gchar*        aProp);
 
   nsresult SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                        char*                    aPropName,
+                        const char*              aPropName,
                         const nsAString&         aProp);
 
   nsresult SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                        char*                    aPropName,
+                        const char*              aPropName,
                         gchar*                   aProp);
 
   nsresult GetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         gint*         aProp);
 
   nsresult SetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         gint          aProp);
 
   nsresult SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                        char*                    aPropName,
+                        const char*              aPropName,
                         gint                     aProp);
 
   nsresult GetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         guint32*      aProp);
 
   nsresult SetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         guint32       aProp);
 
   nsresult SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                        char*                    aPropName,
+                        const char*              aPropName,
                         guint32                  aProp);
 
   nsresult GetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         guint64*      aProp);
 
   nsresult SetTrackProp(sbIMediaItem* aMediaItem,
-                        char*         aPropName,
+                        const char*   aPropName,
                         guint64       aProp);
 
   nsresult SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                        char*                    aPropName,
+                        const char*              aPropName,
                         guint64                  aProp);
 
   nsresult GetTrackPropDur(sbIMediaItem* aMediaItem,
-                           char*         aPropName,
+                           const char*   aPropName,
                            gint*         aProp);
 
   nsresult SetTrackPropDur(sbIMediaItem* aMediaItem,
-                           char*         aPropName,
+                           const char*   aPropName,
                            gint          aProp);
 
   nsresult SetTrackPropDur(sbIMutablePropertyArray* aPropertyArray,
-                           char*                    aPropName,
+                           const char*              aPropName,
                            gint                     aProp);
 
   nsresult GetTrackPropRating(sbIMediaItem* aMediaItem,

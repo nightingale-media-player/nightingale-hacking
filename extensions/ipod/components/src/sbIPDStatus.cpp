@@ -54,8 +54,10 @@
 // Songbird imports.
 #include <sbIDeviceEvent.h>
 
+#include <sbDebugUtils.h>
 
-static const char* gStateStrings[] = { "IDLE", "SYNCING", "COPYING", 
+static const char* SB_UNUSED_IN_RELEASE(gStateStrings[]) = 
+{ "IDLE", "SYNCING", "COPYING", 
   "DELETING", "UPDATING", "MOUNTING", "DOWNLOADING", "UPLOADING",
   "DOWNLOAD_PAUSED", "UPLOAD_PAUSED", "DISCONNECTED", "BUSY" };
 #define STATE_STRING(X) \
@@ -83,6 +85,8 @@ sbIPDStatus::sbIPDStatus(sbIPDDevice* aDevice) :
 {
   // Validate arguments.
   NS_ASSERTION(aDevice, "aDevice is null");
+
+  SB_PRLOG_SETUP(sbIPDStatus);
 }
 
 
@@ -481,7 +485,7 @@ nsresult sbIPDStatus::ChangeStatus(PRUint32 newState) {
   rv = mStatus->GetCurrentState(&oldState);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("sbIPDStatus::ChangeStatus(%s) from %s\n", STATE_STRING(newState), STATE_STRING(oldState)));
+  LOG("sbIPDStatus::ChangeStatus(%s) from %s\n", STATE_STRING(newState), STATE_STRING(oldState));
 
   PRUint32 currentState = newState;
   PRUint32 currentSubState = sbIDevice::STATE_IDLE;
@@ -513,7 +517,7 @@ nsresult sbIPDStatus::ChangeStatus(PRUint32 newState) {
     // XXX check result?
   }
 
-  LOG(("sbIPDStatus::ChangeStatus  to state=%s, substate=%s\n", STATE_STRING(currentState), STATE_STRING(currentSubState)));
+  LOG("sbIPDStatus::ChangeStatus  to state=%s, substate=%s\n", STATE_STRING(currentState), STATE_STRING(currentSubState));
 
   // Always update the sub state
   rv = mStatus->SetCurrentSubState(currentSubState);
@@ -528,7 +532,7 @@ nsresult sbIPDStatus::UpdateStatus(PRUint32         forState,
                                    PRInt32          currentIndex,
                                    PRInt32          totalCount,
                                    double           currentProgress) {
-  LOG(("sbIPDStatus::UpdateStatus(forState=%s, currentIndex=%d, totalCount=%d)\n", STATE_STRING(forState), currentIndex, totalCount));
+  LOG("sbIPDStatus::UpdateStatus(forState=%s, currentIndex=%d, totalCount=%d)\n", STATE_STRING(forState), currentIndex, totalCount);
   PRUint32 currentState;
   nsresult rv;
   rv = mStatus->GetCurrentState(&currentState);
@@ -559,7 +563,7 @@ nsresult sbIPDStatus::UpdateStatus(PRUint32         forState,
 void 
 sbIPDStatus::Idle()
 {
-  LOG(("sbIPDStatus::Idle()\n"));
+  LOG("sbIPDStatus::Idle()\n");
 
   // set the device status state
   mStatus->SetCurrentState(sbIDevice::STATE_IDLE);

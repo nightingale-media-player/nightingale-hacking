@@ -95,7 +95,7 @@ public:
 
   nsresult GetIEKInfoUserIDs(nsTArray<PRUint32>& aUserIDList);
 
-  nsresult AtomPathGet(char*     aAtomPath,
+  nsresult AtomPathGet(const char*     aAtomPath,
                        void*     aAtom,
                        PRUint64* aStartOffset,
                        PRUint64* aEndOffset);

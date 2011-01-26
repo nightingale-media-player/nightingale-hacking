@@ -817,7 +817,7 @@ sbIPDDevice::ReqHandleWritePrefs(TransferRequest* aRequest)
     success = itdb_prefs_write(mITDB->device, mIPodPrefs, &gError);
     if (gError) {
       if (gError->message)
-        FIELD_LOG((gError->message));
+        FIELD_LOG(("%s", gError->message));
       g_error_free(gError);
       gError = NULL;
     }
@@ -834,7 +834,7 @@ sbIPDDevice::ReqHandleWritePrefs(TransferRequest* aRequest)
                                           &gError);
     if (gError) {
       if (gError->message)
-        FIELD_LOG((gError->message));
+        FIELD_LOG(("%s", gError->message));
       g_error_free(gError);
       gError = nsnull;
     }

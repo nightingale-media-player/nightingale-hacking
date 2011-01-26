@@ -566,7 +566,7 @@ sbIPDDevice::EncodeSBID(nsAString&       aSBID,
 
 nsresult
 sbIPDDevice::ExecuteQuery(sbIDatabaseQuery*   aDBQuery,
-                          char*               aQueryStr,
+                          const char*         aQueryStr,
                           sbIDatabaseResult** aDBResult)
 {
   // Validate arguments.

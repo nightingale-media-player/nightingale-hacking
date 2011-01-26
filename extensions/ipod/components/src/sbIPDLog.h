@@ -118,18 +118,6 @@ public:
 //------------------------------------------------------------------------------
 
 /**
- * Output the logging info specified by args if debug logging is enabled.
- *
- * \param args                  Logging arguments in printf format.
- */
-
-#define LOG(args)                                                              \
-{                                                                              \
-  PR_LOG(sbIPDLog::mLogModuleInfo, PR_LOG_WARN, args);                         \
-}
-
-
-/**
  * Output the logging info specified by args if field logging is enabled.
  *
  * \param args                  Logging arguments in printf format.

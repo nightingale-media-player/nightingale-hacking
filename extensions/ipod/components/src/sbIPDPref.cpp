@@ -527,7 +527,7 @@ sbIPDDevice::PrefConnectIPodPrefs()
   mIPodPrefs = itdb_prefs_parse(mITDB->device, &gError);
   if (gError) {
     if (gError->message)
-      FIELD_LOG((gError->message));
+      FIELD_LOG(("%s", gError->message));
     g_error_free(gError);
     gError = NULL;
   }
@@ -542,7 +542,7 @@ sbIPDDevice::PrefConnectIPodPrefs()
                                        &gError);
   if (gError) {
     if (gError->message)
-      FIELD_LOG((gError->message));
+      FIELD_LOG(("%s", gError->message));
     g_error_free(gError);
     gError = NULL;
   }

@@ -903,7 +903,7 @@ sbIPDDevice::DBConnect()
     if (!itdb_init_ipod(mountPath.get(), nsnull, "iPod", &gError)) {
       if (gError) {
         if (gError->message) {
-          FIELD_LOG((gError->message));
+          FIELD_LOG(("%s", gError->message));
         }
         g_error_free(gError);
         gError = nsnull;
@@ -921,7 +921,7 @@ sbIPDDevice::DBConnect()
   mITDB = itdb_parse(mountPath.get(), &gError);
   if (gError) {
     if (gError->message) {
-      FIELD_LOG((gError->message));
+      FIELD_LOG(("%s", gError->message));
     }
     g_error_free(gError);
     gError = NULL;
@@ -1049,7 +1049,7 @@ sbIPDDevice::InitSysInfo()
       if (!success) {
         if (gError) {
           if (gError->message)
-            FIELD_LOG((gError->message));
+            FIELD_LOG(("%s", gError->message));
           g_error_free(gError);
           gError = NULL;
         }
@@ -1446,7 +1446,7 @@ sbIPDDevice::DBFlush()
   if (!itdb_write(mITDB, &gError)) {
     if (gError) {
       if (gError->message)
-        FIELD_LOG((gError->message));
+        FIELD_LOG(("%s", gError->message));
       g_error_free(gError);
       gError = NULL;
     }
@@ -1458,7 +1458,7 @@ sbIPDDevice::DBFlush()
   if (!itdb_shuffle_write(mITDB, &gError)) {
     if (gError) {
       if (gError->message)
-        FIELD_LOG((gError->message));
+        FIELD_LOG(("%s", gError->message));
       g_error_free(gError);
       gError = NULL;
     }

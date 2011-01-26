@@ -384,7 +384,7 @@ QTAtomReader::GetIEKInfoUserIDs(nsTArray<PRUint32>& aUserIDList)
  */
 
 nsresult
-QTAtomReader::AtomPathGet(char*     aAtomPath,
+QTAtomReader::AtomPathGet(const char*     aAtomPath,
                           void*     aAtom,
                           PRUint64* aStartOffset,
                           PRUint64* aEndOffset)
@@ -405,7 +405,7 @@ QTAtomReader::AtomPathGet(char*     aAtomPath,
 
   // Search for each atom in the specified path.
   int   numAtoms = strlen(aAtomPath) / 5;
-  char* pAtomType = aAtomPath;
+  const char* pAtomType = aAtomPath;
   for (int i = 0; i < numAtoms; i++) {
     // Skip leading "/".
     pAtomType += 1;

@@ -254,7 +254,7 @@ sbIPDDevice::AddTrack(sbIMediaItem* aMediaItem,
   if (!itdb_cp_track_to_ipod(track, (gchar *) trackPath.get(), &gError)) {
     if (gError) {
       if (gError->message)
-        FIELD_LOG((gError->message));
+        FIELD_LOG(("%s", gError->message));
       g_error_free(gError);
       gError = NULL;
     }
@@ -628,7 +628,7 @@ sbIPDDevice::TrackUpdateProperties(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           gchar**       aProp)
 {
   // Validate arguments.
@@ -671,7 +671,7 @@ sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           gchar*        aProp)
 {
   // Validate arguments.
@@ -707,7 +707,7 @@ sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                          char*                    aPropName,
+                          const char*              aPropName,
                           const nsAString&         aProp)
 {
   // Validate arguments.
@@ -750,7 +750,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                          char*                    aPropName,
+                          const char*              aPropName,
                           gchar*                   aProp)
 {
   // Validate arguments.
@@ -804,7 +804,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
 nsresult
 sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           gint*         aProp)
 {
   // Validate arguments.
@@ -846,7 +846,7 @@ sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           gint          aProp)
 {
   // Validate arguments.
@@ -877,7 +877,7 @@ sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                          char*                    aPropName,
+                          const char*              aPropName,
                           gint                     aProp)
 {
   // Validate arguments.
@@ -925,7 +925,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
 nsresult
 sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           guint32*      aProp)
 {
   // Validate arguments.
@@ -968,7 +968,7 @@ sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           guint32       aProp)
 {
   // Validate arguments.
@@ -1000,7 +1000,7 @@ sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                          char*                    aPropName,
+                          const char*              aPropName,
                           guint32                  aProp)
 {
   // Validate arguments.
@@ -1046,7 +1046,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
 nsresult
 sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           guint64*      aProp)
 {
   // Validate arguments.
@@ -1089,7 +1089,7 @@ sbIPDDevice::GetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
-                          char*         aPropName,
+                          const char*   aPropName,
                           guint64       aProp)
 {
   // Validate arguments.
@@ -1121,7 +1121,7 @@ sbIPDDevice::SetTrackProp(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
-                          char*                    aPropName,
+                          const char*              aPropName,
                           guint64                  aProp)
 {
   // Validate arguments.
@@ -1167,7 +1167,7 @@ sbIPDDevice::SetTrackProp(sbIMutablePropertyArray* aPropertyArray,
 
 nsresult
 sbIPDDevice::GetTrackPropDur(sbIMediaItem* aMediaItem,
-                             char*         aPropName,
+                             const char*   aPropName,
                              gint*         aProp)
 {
   // Validate arguments.
@@ -1213,7 +1213,7 @@ sbIPDDevice::GetTrackPropDur(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackPropDur(sbIMediaItem* aMediaItem,
-                             char*         aPropName,
+                             const char*         aPropName,
                              gint          aProp)
 {
   // Validate arguments.
@@ -1253,7 +1253,7 @@ sbIPDDevice::SetTrackPropDur(sbIMediaItem* aMediaItem,
 
 nsresult
 sbIPDDevice::SetTrackPropDur(sbIMutablePropertyArray* aPropertyArray,
-                             char*                    aPropName,
+                             const char*              aPropName,
                              gint                     aProp)
 {
   // Validate arguments.

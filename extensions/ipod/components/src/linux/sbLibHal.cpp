@@ -44,6 +44,8 @@
 /* Self imports. */
 #include <sbLibHal.h>
 
+#include <sbDebugUtils.h>
+
 /* D-Bus imports. */
 #include <dbus/dbus-glib-lowlevel.h>
 
@@ -65,6 +67,7 @@ sbLibHalCtx::sbLibHalCtx()
     mpLibHalCtx(NULL),
     mpDBusConnection(NULL)
 {
+  SB_PRLOG_SETUP(sbLibHalCtx);
 }
 
 
@@ -134,9 +137,9 @@ nsresult sbLibHalCtx::Initialize()
     /* Log any errors. */
     if (dbus_error_is_set(&dBusError))
     {
-        LOG(("sbLibHalCtx::Initialize error %s: %s\n",
+        LOG("sbLibHalCtx::Initialize error %s: %s\n",
              dBusError.name,
-             dBusError.message));
+             dBusError.message);
         dbus_error_init(&dBusError);
     }
 
@@ -214,9 +217,9 @@ nsresult sbLibHalCtx::GetAllDevices(
     /* Log any errors. */
     if (dbus_error_is_set(&dBusError))
     {
-        LOG(("sbLibHalCtx::GetAllDevices error %s: %s\n",
+        LOG("sbLibHalCtx::GetAllDevices error %s: %s\n",
              dBusError.name,
-             dBusError.message));
+             dBusError.message);
         dbus_error_init(&dBusError);
     }
 
@@ -266,9 +269,9 @@ nsresult sbLibHalCtx::DevicePropertyExists(
     /* Log any errors. */
     if (dbus_error_is_set(&dBusError))
     {
-        LOG(("sbLibHalCtx::DevicePropertyExists error %s: %s\n",
+        LOG("sbLibHalCtx::DevicePropertyExists error %s: %s\n",
              dBusError.name,
-             dBusError.message));
+             dBusError.message);
         dbus_error_init(&dBusError);
         rv = NS_ERROR_UNEXPECTED;
     }
@@ -586,9 +589,9 @@ nsresult sbLibHalCtx::DevicePropertyWatchAll()
     /* Log any errors. */
     if (dbus_error_is_set(&dBusError))
     {
-        LOG(("sbLibHalCtx::DevicePropertyWatchAll error %s: %s\n",
+        LOG("sbLibHalCtx::DevicePropertyWatchAll error %s: %s\n",
              dBusError.name,
-             dBusError.message));
+             dBusError.message);
         dbus_error_init(&dBusError);
     }
 
@@ -783,9 +786,9 @@ nsresult sbLibHalCtx::DeviceCallMethod(
     /* Log any errors. */
     if (dbus_error_is_set(&dBusError))
     {
-        LOG(("sbLibHalCtx::DeviceCallMethod error %s: %s\n",
+        LOG("sbLibHalCtx::DeviceCallMethod error %s: %s\n",
              dBusError.name,
-             dBusError.message));
+             dBusError.message);
         dbus_error_init(&dBusError);
     }
 
@@ -838,9 +841,9 @@ nsresult sbLibHalCtx::DeviceGetMethodRetCode(
     argType = dbus_message_iter_get_arg_type(&dBusMessageIter);
     if ((argType != DBUS_TYPE_INT32) && (argType != DBUS_TYPE_UINT32))
     {
-        LOG(("sbLibHalCtx::DeviceGetMethodRetCode "
+        LOG("sbLibHalCtx::DeviceGetMethodRetCode "
              "unexpected return code type %d\n",
-             argType));
+             argType);
         rv = NS_ERROR_UNEXPECTED;
     }
 
@@ -851,9 +854,9 @@ nsresult sbLibHalCtx::DeviceGetMethodRetCode(
     /* Log any errors. */
     if (dbus_error_is_set(&dBusError))
     {
-        LOG(("sbLibHalCtx::DeviceGetMethodRetCode error %s: %s\n",
+        LOG("sbLibHalCtx::DeviceGetMethodRetCode error %s: %s\n",
              dBusError.name,
-             dBusError.message));
+             dBusError.message);
         dbus_error_init(&dBusError);
     }
 
