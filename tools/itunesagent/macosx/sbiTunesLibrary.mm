@@ -99,7 +99,7 @@ GetElementClassCount(DescType aDescType,
   *aElementCount = -1;
 
   // Need to use a dummy descriptor if one was not passed in.
-  AEDesc *dummyDesc;
+  AEDesc *dummyDesc = NULL;
   if (!aTargetDesc) {
     dummyDesc = (AEDesc *)malloc(sizeof(AEDesc));
     dummyDesc->descriptorType = typeNull;

@@ -76,6 +76,8 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 
+#include <sbDebugUtils.h>
+
 
 //------------------------------------------------------------------------------
 //
@@ -216,6 +218,9 @@ sbIPDMarshall::sbIPDMarshall() :
   mVolumeEventHandlerRef(NULL)
 {
   nsresult rv;
+
+  SB_PRLOG_SETUP(sbIPDMarshall);
+
   // Create the device marshall services monitor.
   mMonitor = nsAutoMonitor::NewMonitor("sbIPDMarshall.mMonitor");
   NS_ENSURE_TRUE(mMonitor, /* void */);
@@ -606,7 +611,7 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
   OSStatus error = noErr;
 
   /* Trace execution. */
-  LOG(("1: IPodDevIfIsIPod\n"));
+  LOG("1: IPodDevIfIsIPod\n");
 
   /* Get the BSD device name. */
   pb.ioParam.ioNamePtr = NULL;
@@ -619,7 +624,7 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
   }
 
   /* Trace execution. */
-  LOG(("2: IPodDevIfIsIPod %s\n", bsdDevName));
+  LOG("2: IPodDevIfIsIPod %s\n", bsdDevName);
 
   /* Get the volume I/O registry node. */
   if (error == noErr) {
@@ -637,7 +642,7 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
   }
 
   /* Trace execution. */
-  LOG(("2: IPodDevIfIsIPod %d\n", (int) error));
+  LOG("2: IPodDevIfIsIPod %d\n", (int) error);
 
   /* Search for a parent SCSI I/O node. */
   if (error == noErr) {
@@ -677,7 +682,7 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
   }
 
   /* Trace execution. */
-  LOG(("3: IPodDevIfIsIPod 0x%08x\n", scsiNode));
+  LOG("3: IPodDevIfIsIPod 0x%08x\n", scsiNode);
 
   /* If a SCSI I/O node was found, check if device is an iPod. */
   if ((error == noErr) && (scsiNode != ((io_registry_entry_t) NULL))) {
@@ -691,8 +696,8 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
         CFSTR("Product Identification"), kCFAllocatorDefault, 0);
 
     /* Trace execution. */
-    LOG(("4: IPodDevIfIsIPod \"%s\" \"%s\"\n", (char *) vendorID, 
-          (char *) productID));
+    LOG("4: IPodDevIfIsIPod \"%s\" \"%s\"\n", (char *) vendorID, 
+          (char *) productID);
 
     /* Check if SCSI device is an iPod. */
     isIPod = PR_TRUE;
@@ -712,7 +717,7 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
   }
 
   /* Trace execution. */
-  LOG(("5: IPodDevIfIsIPod %d\n", (int) error));
+  LOG("5: IPodDevIfIsIPod %d\n", (int) error);
 
   /* Clean up. */
   if (scsiNode != ((io_registry_entry_t) NULL)) {

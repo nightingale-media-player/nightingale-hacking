@@ -46,6 +46,7 @@
 
 // Songbird imports.
 #include <sbDeviceCompatibility.h>
+#include <sbDebugUtils.h>
 
 // Mozilla imports.
 #include <nsAutoPtr.h>
@@ -156,7 +157,7 @@ sbIPDController::CreateDevice(nsIPropertyBag* aParams,
   // Function variables.
   nsresult rv;
 
-  LOG(("sbIPDController::CreateDevice"));
+  LOG("sbIPDController::CreateDevice");
 
   // Get the controller ID.
   nsID controllerID;
@@ -336,6 +337,8 @@ sbIPDController::GetDevices(nsIArray** aDevices)
 sbIPDController::sbIPDController()
 {
   nsresult rv;
+
+  SB_PRLOG_SETUP(sbIPDController);
 
   // Initialize the logging services.
   sbIPDLog::Initialize();

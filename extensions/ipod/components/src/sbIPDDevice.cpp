@@ -69,6 +69,7 @@
 #include <nsIPromptService.h>
 #include <prprf.h>
 #include <nsThreadUtils.h>
+#include <sbDebugUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -338,7 +339,7 @@ sbIPDDevice::SubmitRequest(PRUint32         aRequest,
                            nsIPropertyBag2* aRequestParameters)
 {
   // Log progress.
-  LOG(("Enter: sbIPDDevice::SubmitRequest\n"));
+  LOG("Enter: sbIPDDevice::SubmitRequest\n");
 
   nsRefPtr<TransferRequest> transferRequest;
   nsresult rv = CreateTransferRequest(aRequest, aRequestParameters,
@@ -376,7 +377,7 @@ sbIPDDevice::Eject()
   nsresult rv;
 
   // Log progress.
-  LOG(("Enter: sbIPDDevice::Eject\n"));
+  LOG("Enter: sbIPDDevice::Eject\n");
 
   // work out if we're playing or not...
 
@@ -486,7 +487,7 @@ sbIPDDevice::GetName(nsAString& aName)
 {
   nsresult rv;
   // Log progress.
-  LOG(("Enter: sbIPDDevice::GetName\n"));
+  LOG("Enter: sbIPDDevice::GetName\n");
   nsAutoString name;
   rv = mProperties->GetPropertyAsAString(NS_LITERAL_STRING("FriendlyName"),
                                          name);
@@ -735,7 +736,7 @@ sbIPDDevice::GetProperties(sbIDeviceProperties** aProperties)
 NS_IMETHODIMP
 sbIPDDevice::GetState(PRUint32* aState)
 {
-  LOG(("Enter: sbIPDDevice::GetState\n"));
+  LOG("Enter: sbIPDDevice::GetState\n");
   return sbBaseDevice::GetState(aState);
 }
 
@@ -821,8 +822,10 @@ sbIPDDevice::sbIPDDevice(const nsID&     aControllerID,
   mConnected(PR_FALSE),
   mIPDStatus(nsnull)
 {
+  SB_PRLOG_SETUP(sbIPDDevice);
+
   // Log progress.
-  LOG(("Enter: sbIPDDevice::sbIPDDevice\n"));
+  LOG("Enter: sbIPDDevice::sbIPDDevice\n");
 
   // Validate arguments.
   NS_ASSERTION(aProperties, "aProperties is null");
@@ -836,7 +839,7 @@ sbIPDDevice::sbIPDDevice(const nsID&     aControllerID,
 sbIPDDevice::~sbIPDDevice()
 {
   // Log progress.
-  LOG(("Enter: sbIPDDevice::~sbIPDDevice\n"));
+  LOG("Enter: sbIPDDevice::~sbIPDDevice\n");
 }
 
 

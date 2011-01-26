@@ -143,7 +143,7 @@ static OSStatus FindSystemEvents(ProcessSerialNumber *psnPtr)
 	// running, launches it.
 {
 	OSStatus		err;
-	Boolean			found;
+	Boolean			found = false;
 	ProcessInfoRec	info;
 	
 	assert(psnPtr != NULL);

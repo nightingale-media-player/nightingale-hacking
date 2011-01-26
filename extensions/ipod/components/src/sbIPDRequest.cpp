@@ -399,7 +399,7 @@ sbIPDDevice::ReqHandleWriteTrack(TransferRequest* aRequest)
   nsresult rv;
 
   // Update operation status and set for auto-completion.
-  sbAutoStatusOperationComplete autoOperationStatus;
+  sbAutoStatusOperationComplete autoOperationStatus(mIPDStatus, NS_ERROR_FAILURE);
   if (aRequest->batchIndex == 1) {
     mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_WRITE,
                                aRequest->batchIndex,
@@ -553,7 +553,7 @@ sbIPDDevice::ReqHandleDeleteTrack(TransferRequest* aRequest)
   nsresult rv;
 
   // Update operation status and set for auto-completion.
-  sbAutoStatusOperationComplete autoOperationStatus;
+  sbAutoStatusOperationComplete autoOperationStatus(mIPDStatus, NS_ERROR_FAILURE);
   if (aRequest->batchIndex == 1) {
     mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_DELETE,
                                aRequest->batchIndex,
@@ -774,7 +774,7 @@ sbIPDDevice::ReqHandleFactoryReset(TransferRequest* aRequest)
     nsString path;
     file->GetPath(path);
 
-    LOG(("sbIPDDevice::ReqHandleFactoryReset deleting directory %s\n",
+    FIELD_LOG(("sbIPDDevice::ReqHandleFactoryReset deleting directory %s\n",
          NS_LossyConvertUTF16toASCII(path).get()));
 #endif
 

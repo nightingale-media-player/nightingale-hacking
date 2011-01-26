@@ -54,6 +54,7 @@
 
 // Songbird imports
 #include <sbStandardDeviceProperties.h>
+#include <sbDebugUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -105,8 +106,10 @@ sbIPDSysDevice::sbIPDSysDevice(const nsID&     aControllerID,
   // Validate parameters.
   NS_ASSERTION(aProperties, "aProperties is null");
 
+  SB_PRLOG_SETUP(sbIPDSysDevice);
+
   // Log progress.
-  LOG(("Enter: sbIPDSysDevice::sbIPDSysDevice\n"));
+  LOG("Enter: sbIPDSysDevice::sbIPDSysDevice\n");
 }
 
 
@@ -117,7 +120,7 @@ sbIPDSysDevice::sbIPDSysDevice(const nsID&     aControllerID,
 sbIPDSysDevice::~sbIPDSysDevice()
 {
   // Log progress.
-  LOG(("Enter: sbIPDSysDevice::~sbIPDSysDevice\n"));
+  LOG("Enter: sbIPDSysDevice::~sbIPDSysDevice\n");
 
   // Finalize the iPod system dependent device object.
   Finalize();
