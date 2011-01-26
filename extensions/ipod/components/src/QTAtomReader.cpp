@@ -154,7 +154,7 @@ QTAtomReader::GetFairPlayAccountName(nsAString& aAccountName)
 
   // Get the FairPlay account name size and offset.
   offset += 16;
-  PRUint32 accountNameSize = endOffset - offset;
+  PRUint32 accountNameSize = (PRUint32)(endOffset - offset);
 
   // Allocate an account name buffer and set up for auto-disposal.
   char* accountNameBuffer = (char*) NS_Alloc(accountNameSize + 1);
@@ -222,7 +222,7 @@ QTAtomReader::GetFairPlayUserName(nsAString& aUserName)
 
   // Get the FairPlay user name size and offset.
   offset += 8;
-  PRUint32 userNameSize = endOffset - offset;
+  PRUint32 userNameSize = (PRUint32)(endOffset - offset);
 
   // Allocate a user name buffer and set up for auto-disposal.
   char* userNameBuffer = (char*) NS_Alloc(userNameSize + 1);

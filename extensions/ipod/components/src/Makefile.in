@@ -31,8 +31,6 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_DEADLY_WARNINGS = 1
-
 IS_EXTENSION = 1
 
 CPP_SRCS = MLEVL.cpp \
@@ -199,6 +197,9 @@ ifeq (windows,$(SB_PLATFORM))
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-2.0/include \
     $(DEPS_DIR)/private/windows_ddk/$(SB_CONFIGURATION)/include \
     $(NULL)
+
+   # Suppress a warning from libgpod headers.
+   CPP_EXTRA_FLAGS += "-wd4309"
 
    DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib

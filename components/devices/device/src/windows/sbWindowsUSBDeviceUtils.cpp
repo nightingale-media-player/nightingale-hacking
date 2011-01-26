@@ -52,7 +52,15 @@
 
 // Windows imports.
 #include <devioctl.h>
+
+
+// Disable warning about non-standard extensions used in this header file.
+#pragma warning (push)
+#pragma warning (disable: 4200)
+
 #include <usbioctl.h>
+
+#pragma warning (pop)
 
 
 //------------------------------------------------------------------------------

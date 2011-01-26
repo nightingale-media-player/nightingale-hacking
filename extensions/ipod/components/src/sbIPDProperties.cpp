@@ -295,6 +295,8 @@ sbIPDProperties::SetHidden(PRBool aHidden)
   rv = mDevice->CreateAndDispatchEvent(
       sbIDeviceEvent::EVENT_DEVICE_INFO_CHANGED, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
 }
 
 

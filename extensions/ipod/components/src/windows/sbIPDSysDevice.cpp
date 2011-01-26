@@ -440,7 +440,6 @@ sbIPDSysDevice::GetDevDetail(PSP_DEVICE_INTERFACE_DETAIL_DATA* aDevIfDetailData,
 
   // Function variables.
   BOOL     success;
-  nsresult rv;
 
   // Set up to get the device interface detail data.  If not successful, there's
   // no more device interfaces to enumerate.

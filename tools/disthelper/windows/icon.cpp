@@ -139,7 +139,9 @@ int CommandSetIcon(std::string aExecutable, std::string aIconFile, std::string a
   }
 
   // Allocate the group resource entry
-  if (sizeof(IconHeader) + header->ImageCount * sizeof(IconDirEntry) > filesize) {
+  if ((long)(sizeof(IconHeader) + header->ImageCount * sizeof(IconDirEntry)) >
+      filesize)
+  {
     OutputDebugString(_T("Inconsistent icon header.\n"));
     free(data);
     return DH_ERROR_PARSE;

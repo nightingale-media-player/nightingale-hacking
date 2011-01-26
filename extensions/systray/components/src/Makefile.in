@@ -56,8 +56,6 @@ CPP_SRCS = trayModule.cpp \
            $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-   DISABLE_DEADLY_WARNINGS = 1
-
    CPP_SRCS +=  nsWindowUtilWin.cpp \
                 nsSystemTrayServiceWin.cpp \
                 nsImageToBitmap.cpp \

@@ -366,7 +366,6 @@ sbIPDDevice::WipeDevice() {
   int trackCount = itdb_tracks_number(mITDB);
   GList* trackList = mITDB->tracks;
   PRUint32 trackNum = 0;
-  PRUint32 batchCount = 0;
   while (trackList) {
     // Check for abort.
     NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
