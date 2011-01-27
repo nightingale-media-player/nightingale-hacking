@@ -1,8 +1,14 @@
 <!ENTITY lastfm.menu.login "Přihlásit k Last.fm...">
 <!ENTITY lastfm.menu.logout "Odhlásit">
 <!ENTITY lastfm.menu.enable "Povolit odesílání informací o přehrávané hudbě">
-<!ENTITY lastfm.signup.label "Zaregistrovat se do Last.fm">
+<!ENTITY lastfm.login.caption.label "Přihlášení">
+<!ENTITY lastfm.username.label "Uživatelské jméno:">
+<!ENTITY lastfm.password.label "Heslo:">
+<!ENTITY lastfm.auto.login.label "Automaticky přihlásit při spuštění">
 <!ENTITY lastfm.login.button "Přihlásit se">
+<!ENTITY lastfm.newaccount.caption "Vytvořit nový účet">
+<!ENTITY lastfm.signup.label "Zaregistrovat se do Last.fm">
+<!ENTITY lastfm.signup.button.label "Vytvořit nový účet">
 <!ENTITY lastfm.loggingin.label "Přihlašování...">
 <!ENTITY lastfm.cancel.button "Zrušit">
 <!ENTITY lastfm.profile.caption "Profil">
@@ -14,7 +20,7 @@
 <!ENTITY lastfm.radio.start.top.artists "Nejoblíbenější umělci na Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Nejoblíbenější štítky na Last.fm">
 <!ENTITY lastfm.radio.register "Registrovat">
-<!ENTITY lastfm.radio.subscriber.button "Předplatit">
+<!ENTITY lastfm.radio.subscriber.button "Přihlásit">
 <!ENTITY lastfm.radio.subscriber.help "Pro poslech rádia Last.fm musíte být předplatitel.">
 <!ENTITY lastfm.radio.search "Hledat">
 <!ENTITY lastfm.radio.library "Knihovna">

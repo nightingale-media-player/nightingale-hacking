@@ -1,8 +1,14 @@
 <!ENTITY lastfm.menu.login "Войти на Last.fm...">
 <!ENTITY lastfm.menu.logout "Выйти с Last.fm">
 <!ENTITY lastfm.menu.enable "Включить скробблинг">
-<!ENTITY lastfm.signup.label "Регистрация на Last.fm">
+<!ENTITY lastfm.login.caption.label "Войти">
+<!ENTITY lastfm.username.label "Имя пользователя:">
+<!ENTITY lastfm.password.label "Пароль:">
+<!ENTITY lastfm.auto.login.label "Автоматически присоединяться при запуске">
 <!ENTITY lastfm.login.button "Вход">
+<!ENTITY lastfm.newaccount.caption "Создать новую учётную запись">
+<!ENTITY lastfm.signup.label "Регистрация на Last.fm">
+<!ENTITY lastfm.signup.button.label "Создать новую учётную запись">
 <!ENTITY lastfm.loggingin.label "Вход...">
 <!ENTITY lastfm.cancel.button "Отмена">
 <!ENTITY lastfm.profile.caption "Профиль">

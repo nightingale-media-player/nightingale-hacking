@@ -1,8 +1,14 @@
 <!ENTITY lastfm.menu.login "Bei Last.fm anmelden...">
 <!ENTITY lastfm.menu.logout "Bei Last.fm abmelden">
 <!ENTITY lastfm.menu.enable "Scrobbeln aktivieren">
-<!ENTITY lastfm.signup.label "Bei Last.fm registrieren">
+<!ENTITY lastfm.login.caption.label "Anmelden">
+<!ENTITY lastfm.username.label "Benutzername:">
+<!ENTITY lastfm.password.label "Passwort:">
+<!ENTITY lastfm.auto.login.label "Beim Start automatisch anmelden">
 <!ENTITY lastfm.login.button "Anmelden">
+<!ENTITY lastfm.newaccount.caption "Neues Konto erstellen">
+<!ENTITY lastfm.signup.label "Bei Last.fm registrieren">
+<!ENTITY lastfm.signup.button.label "Neues Konto erstellen">
 <!ENTITY lastfm.loggingin.label "Anmelden...">
 <!ENTITY lastfm.cancel.button "Abbrechen">
 <!ENTITY lastfm.profile.caption "Profil">

@@ -1,8 +1,14 @@
 <!ENTITY lastfm.menu.login "ورود به سایت">
 <!ENTITY lastfm.menu.logout "خروج از سایت">
 <!ENTITY lastfm.menu.enable "فعال سازی ثبت موسیقی">
-<!ENTITY lastfm.signup.label "ثبت نام در سایت">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
 <!ENTITY lastfm.login.button "ورود">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "ثبت نام در سایت">
+<!ENTITY lastfm.signup.button.label "Create New Account">
 <!ENTITY lastfm.loggingin.label "...در حال ورود">
 <!ENTITY lastfm.cancel.button "لغو">
 <!ENTITY lastfm.profile.caption "پروفایل">

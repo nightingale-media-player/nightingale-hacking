@@ -1,8 +1,14 @@
 <!ENTITY lastfm.menu.login "Prijavi se v Last.fm ...">
 <!ENTITY lastfm.menu.logout "Odjavi se iz Last.fm">
 <!ENTITY lastfm.menu.enable "Omogoči skroblanje">
-<!ENTITY lastfm.signup.label "Registriraj se v Last.fm">
+<!ENTITY lastfm.login.caption.label "Prijavi">
+<!ENTITY lastfm.username.label "Up. ime:">
+<!ENTITY lastfm.password.label "Geslo:">
+<!ENTITY lastfm.auto.login.label "Samoprijava ob zagonu">
 <!ENTITY lastfm.login.button "Prijavi se">
+<!ENTITY lastfm.newaccount.caption "Ustvari nov račun">
+<!ENTITY lastfm.signup.label "Registriraj se v Last.fm">
+<!ENTITY lastfm.signup.button.label "Ustvari nov račun">
 <!ENTITY lastfm.loggingin.label "Prijavljanje ...">
 <!ENTITY lastfm.cancel.button "Prekliči">
 <!ENTITY lastfm.profile.caption "Profil">

@@ -1,8 +1,14 @@
 <!ENTITY lastfm.menu.login "Bejelentkezés a Last.fm-re...">
 <!ENTITY lastfm.menu.logout "Kijelentkezés a Last.fm-ről">
 <!ENTITY lastfm.menu.enable "Továbbítás engedélyezése">
-<!ENTITY lastfm.signup.label "Regisztrálás a Last.fm-re">
+<!ENTITY lastfm.login.caption.label "Bejelentkezés">
+<!ENTITY lastfm.username.label "Felhasználónév:">
+<!ENTITY lastfm.password.label "Jelszó:">
+<!ENTITY lastfm.auto.login.label "Automatikus bejelentkezés indításkor">
 <!ENTITY lastfm.login.button "Bejelentkezés">
+<!ENTITY lastfm.newaccount.caption "Új felhasználói fiók létrehozása">
+<!ENTITY lastfm.signup.label "Regisztrálás a Last.fm-re">
+<!ENTITY lastfm.signup.button.label "Új felhasználói fiók létrehozása">
 <!ENTITY lastfm.loggingin.label "Bejelentkezés folyamatban...">
 <!ENTITY lastfm.cancel.button "Mégsem">
 <!ENTITY lastfm.profile.caption "Profil">
