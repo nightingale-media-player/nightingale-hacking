@@ -82,7 +82,8 @@ Section "-Application" Section1
       ${EndIf}
 
       Call InstallCdrip
-      Call InstallRDSConfig
+      ; Disabled for now; see bug 22964
+      ; Call InstallRDSConfig
    ${EndIf}
 
    IfRebootFlag 0 noReboot

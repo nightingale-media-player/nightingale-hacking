@@ -1,7 +1,8 @@
 #filter substitution
 [steps:update:win]
 0001=exec $APPDIR$cdriphelper.exe upgrade
-0002=exec $APPDIR$rdsconfig.exe upgrade
+; Disabled for now; see bug 22964 
+; 0002=exec $APPDIR$rdsconfig.exe upgrade
 0003=exec $APPDIR$sbAutoPlayUtil.exe -Upgrade
 
 [steps:update:mac]

@@ -63,7 +63,8 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
-   Call un.RDSConfigRemove
+   ; Disabled for now; see bug 22964
+   ; Call un.RDSConfigRemove
    Call un.RemoveCdrip
    Call un.RemoveAppRegistryKeys
 
