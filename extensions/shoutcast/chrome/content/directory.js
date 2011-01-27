@@ -387,23 +387,12 @@ var RadioDirectory = {
           .createInstance(Ci.nsIMutableArray);
       for (var i=0; i<stationList.length; i++) {
         var station = stationList[i];
-        var name = station.getAttribute("name");
-        var mimeType = station.getAttribute("mt");
-        var id = station.getAttribute("id");
-        var bitrate = parseInt(station.getAttribute("br"));
-        var currentTrack = station.getAttribute("ct");
-        var numListeners = station.getAttribute("lc");
-        var genres = station.getAttribute("genre").split(" ");
-        var thisgenre = genres.shift();
-        // Special case for 'top 40'
-        if (thisgenre == "Top" && genres.length > 0 
-            && genres[0] == "40")
-          thisgenre += " 40";
-
-        // Arbitrarily restricting to MP3 for now to eliminate
-        // dependency on AAC decoder being installed
-        if (mimeType != "audio/mpeg")
-          continue;
+        var name = station.name;
+        var id = station.id;
+        var bitrate = parseInt(station.bitrate);
+        var currentTrack = station.currentTrack;
+        var numListeners = station.numListeners;
+        var genres = station.genre;
         
         // Only list stations with listeners set above the preference
         if (checkListeners && numListeners < minLC)
@@ -425,7 +414,7 @@ var RadioDirectory = {
         }
         props.appendProperty(SC_streamName, name);
         props.appendProperty(SBProperties.bitRate, bitrate);
-        props.appendProperty(SBProperties.genre, thisgenre);
+        props.appendProperty(SBProperties.genre, genres);
         props.appendProperty(SBProperties.comment, currentTrack);
         props.appendProperty(SBProperties.contentType, "audio");
         props.appendProperty(SC_listenerCount, numListeners);
