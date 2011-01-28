@@ -168,15 +168,15 @@ window.cdripController =
     this._loadPlaylist();
 
     var servicePaneNode =
-      Cc["@songbirdnest.com/servicepane/library;1"]
-        .getService(Ci.sbILibraryServicePaneService)
-        .getNodeFromMediaListView(this._mediaListView);
+      Cc["@songbirdnest.com/servicepane/device;1"]
+        .getService(Ci.sbIDeviceServicePaneService)
+        .getNodeForDevice(this._device);
     if (servicePaneNode) {
       document.title = servicePaneNode.displayName;
     }
     else {
-      // failed to find the node, stick with the media list name
-      document.title = this._mediaListView.mediaList.name;
+      // failed to find the node, stick with the default node name
+      document.title = SBString("cdrip.service.default.node_name");
     }
 
     // Listen to transcoding pref changes.
