@@ -278,8 +278,17 @@ var mashTapePreferences = {
 			for each (var node in hbox.childNodes)
 				node.disabled = true;
 		}
-		document.getElementById("scale-photo-speed").value =
-			this._prefBranch.getIntPref("photo.speed");
+
+		/* Mozilla bugs: https://bugzilla.mozilla.org/show_bug.cgi?id=521215,
+		 *               https://bugzilla.mozilla.org/show_bug.cgi?id=499105
+		 *
+		 * XUL scale widget cannot load preference, so set the value based on
+		 * the preference, then set the preference attribute so that the widget
+		 * writes changes.
+		 */
+		var scale = document.getElementById("scale-photo-speed");
+		scale.value = this._prefBranch.getIntPref("photo.speed");
+		scale.setAttribute("preference", "photo-speed");
 
 		this.enumerateServices();
 		this.populateServices("info");

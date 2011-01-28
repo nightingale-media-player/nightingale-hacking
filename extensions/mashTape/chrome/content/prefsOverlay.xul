@@ -191,7 +191,7 @@
 					<hbox id="hbox-photo-speed">
 						<label value="&mtprefs.tab.photo.faster;" />
 						<scale id="scale-photo-speed" min="10" max="200"
-							style="width: 10em;" preference="photo-speed" />
+							style="width: 10em;" />
 						<label value="&mtprefs.tab.photo.slower;" />
 					</hbox>
 				</groupbox>
