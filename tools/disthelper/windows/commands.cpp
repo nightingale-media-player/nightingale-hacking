@@ -230,7 +230,14 @@ int CommandExecuteFile(const std::string& aExecutable,
     CloseHandle(pi.hThread);
     if (ok) {
       ok = (result == 0);
+
+      if (!ok) {
+        LogMessage("Process failed, terminated with exit code: 0x%x", result);
+      }
     }
+  }
+  else {
+   LogMessage("Process creation failed, error 0x%x", GetLastError());
   }
 
   return (ok ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
