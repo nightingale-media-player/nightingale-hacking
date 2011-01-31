@@ -41,6 +41,19 @@
   padding: 0;
 }
 
+grid,
+grid > rows > row
+{
+  -moz-box-flex: 1;
+}
+
+/* Anchors checkbox to bottom of commonDialog. Done to maintain an absolute
+   position relative to the bottom button container. */
+#checkboxContainer
+{
+  max-height: 20px;
+}
+
 .dialog-content-inner
 {
   -moz-box-pack: start;
