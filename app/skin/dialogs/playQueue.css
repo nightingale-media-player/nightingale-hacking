@@ -60,9 +60,14 @@ See chrome://songbird/content/xul/playQueue.xul
   list-style-image: url('chrome://songbird/skin/playqueue/icon-loading-white.png');
 }
 
+.sb-commands-toolbar {
+  overflow: hidden;
+}
+
 toolbarbutton {
   height: 16px;
-  width: 45px;
+  min-width: 45px !important;
+  max-width: 80px;
 }
 
 toolbarbutton[id="playqueue_cmd_clearall"] {
@@ -73,7 +78,7 @@ toolbarbutton[id="playqueue_cmd_clearall"] {
 
 
 toolbarbutton[type="menu"] {
-  min-width: 11px;
+  min-width: 11px !important;
   max-width: 11px;
   margin-left: -4px;
   -moz-border-radius-topleft: 0px;
