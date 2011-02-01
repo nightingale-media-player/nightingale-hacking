@@ -65,12 +65,11 @@ sb-player-totaltime-label {
 }
 
 
-
-
-
+/* No thumb for the miniplayer so we constrain the width to 0. */
 #miniplayer thumb.sb-player-seek-slider 
 {
-  min-width: 18px !important;
+  max-width: 0px !important;
+  min-width: 0px !important;
   background-image: none;
   background-color:transparent;
 }
