@@ -531,8 +531,9 @@ var AlbumArt = {
                    currentStatus.state == currentStatus.STATUS_UNKNOWN);
     if (stopped) {
       AlbumArt.changeNowPlaying(null);
-      AlbumArt.changeNowSelected(null);
     }
+
+    AlbumArt.changeNowSelected(null);
 
     // Setup the Now Selected display
     AlbumArt.onTabContentChange();
