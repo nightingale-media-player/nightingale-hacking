@@ -34,8 +34,6 @@
 <!DOCTYPE window [
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
 %songbirdDTD;
-<!ENTITY % songbirdPrefsDTD SYSTEM "chrome://songbird/locale/preferences-songbird.dtd">
-%songbirdPrefsDTD;
 ]>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -62,12 +60,6 @@
 
  <prefwindow id="BrowserPreferences">
    <preferences id="common_prefs">
-     <preference id="manage_media_pref_library_enable"
-                 name="songbird.media_management.library.enabled"
-		 type="bool"/>
-     <preference id="manage_media_pref_library_folder"
-                 name="songbird.media_management.library.folder"
-		 type="file"/>
      <preference id="watch_folder_enable_pref"
                  name="songbird.watch_folder.enable"
                  type="bool"/>
@@ -75,12 +67,6 @@
                  name="songbird.watch_folder.path"
                  type="unichar"/>
    </preferences>
-
-  <prefpane id="paneManageMedia"
-            label="&prefWindow.manageMedia.label;"
-            insertafter="paneMain"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/manageMediaPrefs.xul" />
 
   <!-- Hide the Applications panel for the moment -->
   <prefpane id="paneApplications"

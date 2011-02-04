@@ -358,17 +358,6 @@ var watchFolderPrefsPane = {
       return false;
     }
 
-    if (document.getElementById("manage_media_pref_library_enable").value)
-    {
-      var managed = document.getElementById("manage_media_pref_library_folder").value;
-
-      if (dir.equals(managed) || dir.contains(managed, true) || managed.contains(dir, true))
-      {
-        showErrorNotification(SBString("prefs.watch_folder.error.contains_managed"));
-        return false;
-      }
-    }
-
     // The path seems legit, if this script is supposed to set the WF path pref
     // do that now.
     if (this.shouldSetWFPathPref) {
