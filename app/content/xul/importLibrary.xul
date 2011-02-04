@@ -103,7 +103,7 @@
 
   <!-- Library import options. -->
   <vbox id="import_library_checkbox_box"
-        oncommand="importLibraryPrefsUI.doImportOptionsChange(event);">
+        oncommand="importLibraryPrefsUI.doOptionsChange(event);">
 
     <!-- Checkbox for track import. -->
     <checkbox id="import_library_import_track_checkbox"
