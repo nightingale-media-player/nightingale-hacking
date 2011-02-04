@@ -148,6 +148,12 @@ sbMediaManagementService::GetIsEnabled(PRBool *aIsEnabled)
 NS_IMETHODIMP
 sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
 {
+  // Media Management is now unconditionally disabled. We're keeping the code
+  // here for the moment though.
+  if (aIsEnabled) {
+    return NS_ERROR_FAILURE;
+  }
+
   // XXX Mook: needs to start doing things
   nsresult rv;
   if (aIsEnabled == mEnabled) {
@@ -249,6 +255,9 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     if (NS_FAILED(rv)) {
       mEnabled = PR_FALSE;
     }
+
+    // Media management is now unconditionally disabled.
+    mEnabled = PR_FALSE;
 
     if (!mEnabled) {
       TRACE("not enabled, don't bother doing anything else");
