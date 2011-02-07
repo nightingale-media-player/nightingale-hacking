@@ -171,7 +171,7 @@ SB_WITH_DEADLY_WARNINGS=
 AC_ARG_WITH(deadly-warnings,
             [  --with-deadly-warnings=<debug,release,all,none,force>,conditions under which compiler warnings are considered build failures (default=release)],
             [ SB_WITH_DEADLY_WARNINGS=$withval ],
-            [ SB_WITH_DEADLY_WARNINGS=release])
+            [ SB_WITH_DEADLY_WARNINGS=all])
 
 case "$SB_WITH_DEADLY_WARNINGS" in
   debug|release|all|none|force)
