@@ -25,8 +25,13 @@
 #ifndef SBITUNESAGENTWINDOWSPROCESSOR_H_
 #define SBITUNESAGENTWINDOWSPROCESSOR_H_
 
+// Standard library includes
 #include <fstream>
 
+// Songbird includes
+#include <sbAutoCOMInitializer.h>
+
+// Local includes
 #include "sbiTunesAgentProcessor.h"
 #include "sbiTunesLibrary.h"
 
@@ -144,7 +149,7 @@ private:
   std::wstring mCurrentTaskFile;
   HANDLE mAppExistsMutex;
   std::ofstream mOutputStream;
-  
+  sbAutoCOMInitializer mAutoCOMInit;
   /**
    * Callback for the app watcher to know when a shutdown
    * has been issued.

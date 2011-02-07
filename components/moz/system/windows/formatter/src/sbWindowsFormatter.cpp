@@ -247,9 +247,6 @@ sbWindowsFormatter::~sbWindowsFormatter()
   // Release the VDS service object.
   if (mVdsService)
     mVdsService->Release();
-
-  // Uninitialize COM.
-  CoUninitialize();
 }
 
 
@@ -282,7 +279,8 @@ sbWindowsFormatter::Initialize()
   HRESULT result;
 
   // Initialize COM.
-  result = CoInitialize(NULL);
+  mAutoCOMInitializer.Initialize();
+  result = mAutoCOMInitializer.GetHRESULT();
   SB_WIN_ENSURE_SUCCESS(result, result);
 
   // Get the VDS service loader object and set it up for auto-disposal.

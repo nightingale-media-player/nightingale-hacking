@@ -54,6 +54,7 @@
 
 #include <vds.h>
 
+#include <sbautoCOMInitializer.h>
 
 //------------------------------------------------------------------------------
 //
@@ -134,7 +135,7 @@ private:
 
   ULONG                         mRefCount;
   IVdsService*                  mVdsService;
-
+  sbAutoCOMInitializer          mAutoCOMInitializer;
 
   //
   // Private services.

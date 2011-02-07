@@ -38,6 +38,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbFileUtils.h>
+#include <sbAutoCOMInitializer.h>
 
 #include <nsIChannel.h>
 #include <nsIContentSniffer.h>
@@ -176,13 +177,6 @@ static const metadataKeyMapEntry_t kMetadataKeys[] = {
 };
 #undef KEY_MAP_ENTRY
 
-// HELPER CLASSES =============================================================
-SB_AUTO_CLASS(sbCoInitializeWrapper,
-              HRESULT,
-              SUCCEEDED(mValue),
-              Invalidate(),
-              if (SUCCEEDED(mValue)) {::CoUninitialize();} mValue = E_FAIL);
-
 // CLASSES ====================================================================
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataHandlerWMA,
@@ -297,7 +291,7 @@ sbMetadataHandlerWMA::Read(PRInt32* _retval)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(_retval);
-  sbCoInitializeWrapper coinit(::CoInitialize(0));
+  sbAutoCOMInitializer comInit(COINIT_MULTITHREADED);
 
   // We're never asynchronous.
   m_Completed = PR_TRUE;
@@ -333,7 +327,7 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_PropertyArray, NS_ERROR_NOT_INITIALIZED);
 
-  sbCoInitializeWrapper coinit(::CoInitialize(0));
+  sbAutoCOMInitializer comInit(COINIT_MULTITHREADED);
 
   nsresult rv;
   HRESULT hr;

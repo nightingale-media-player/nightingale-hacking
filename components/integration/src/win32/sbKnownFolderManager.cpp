@@ -47,22 +47,18 @@ NS_IMPL_ISUPPORTS1(sbKnownFolderManager,
                    sbIKnownFolderManager);
 
 sbKnownFolderManager::sbKnownFolderManager()
-: mCOMInitialized(E_UNEXPECTED)
 {
 }
 
 sbKnownFolderManager::~sbKnownFolderManager()
 {
-  if(SUCCEEDED(mCOMInitialized)) {
-    CoUninitialize();
-  }
 }
 
 nsresult
 sbKnownFolderManager::Init()
 {
-  mCOMInitialized = CoInitialize(NULL);
-  
+  NS_ENSURE_TRUE(mCOMInit.Initialize(COINIT_MULTITHREADED), NS_ERROR_FAILURE);
+
   nsRefPtr<IKnownFolderManager> knownFolderManager;
   HRESULT hr = ::CoCreateInstance(CLSID_KnownFolderManager, 
                                   NULL, 

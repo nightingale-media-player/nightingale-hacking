@@ -141,10 +141,9 @@ static std::wstring GetSongbirdPath() {
   return path;
 }
 
- sbiTunesAgentWindowsProcessor::sbiTunesAgentWindowsProcessor() : 
-   mAppExistsMutex(0) {
-   
-   HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+sbiTunesAgentWindowsProcessor::sbiTunesAgentWindowsProcessor() :
+  mAppExistsMutex(0),
+  mAutoCOMInit(COINIT_MULTITHREADED) {
 }
   
 sbiTunesAgentWindowsProcessor::~sbiTunesAgentWindowsProcessor() {
@@ -152,7 +151,6 @@ sbiTunesAgentWindowsProcessor::~sbiTunesAgentWindowsProcessor() {
     CloseHandle(mAppExistsMutex);
   }
   miTunesLibrary.Finalize();
-  CoUninitialize();
 }
 
 sbError
@@ -273,7 +271,10 @@ std::ofstream & sbiTunesAgentWindowsProcessor::OpenResultsFile() {
 }
 
 sbError sbiTunesAgentWindowsProcessor::Initialize() {
-  return miTunesLibrary.Initialize();  
+  if (!mAutoCOMInit.Succeeded()) {
+    return sbError("COM Failed to initialize");
+  }
+  return miTunesLibrary.Initialize();
 }
 
 void sbiTunesAgentWindowsProcessor::Log(std::string const & aMsg) {

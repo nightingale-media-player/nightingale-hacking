@@ -30,6 +30,9 @@
 // Mozilla Includes
 #include <nsAutoPtr.h>
 
+// Songbird Includes
+#include <sbAutoCOMInitializer.h>
+
 // Windows Includes
 #include <windows.h>
 
@@ -45,14 +48,14 @@ public:
   sbKnownFolderManager();
 
   nsresult Init();
-  nsresult GetDefaultDisplayName(const nsAString &aFolderPath, 
+  nsresult GetDefaultDisplayName(const nsAString &aFolderPath,
                                  nsAString &aDisplayName);
 
 private:
   ~sbKnownFolderManager();
 
 protected:
-  HRESULT                       mCOMInitialized;
+  sbAutoCOMInitializer          mCOMInit;
   nsRefPtr<IKnownFolderManager> mKnownFolderManager;
 };
 
