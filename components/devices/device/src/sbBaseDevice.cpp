@@ -5890,9 +5890,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   nsCOMPtr<nsIMutableArray>    addItemList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIMutableArray>    deleteItemList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
 
@@ -5932,24 +5929,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     {
       case sbIChangeOperation::DELETED:
         {
-          // Add the destination item to the delete list.
-          nsCOMPtr<sbIMediaItem> mediaItem;
-          rv = change->GetDestinationItem(getter_AddRefs(mediaItem));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsString originItemGuid;
-          rv = mediaItem->GetProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                            originItemGuid);
-          NS_ENSURE_SUCCESS(rv, rv);
-          // Only remove video items copied from other libraries. Don't touch
-          // the existing video items.
-          if (NS_LITERAL_STRING("video") !=
-                GetNormalizedContentTypeOfItemOrList(mediaItem) ||
-              !originItemGuid.IsEmpty()) {
-            rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
+          // We no longer remove items from the device
         } break;
 
       case sbIChangeOperation::ADDED:
@@ -5995,15 +5975,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                       hidden);
           if (rv != NS_ERROR_NOT_AVAILABLE) {
             NS_ENSURE_SUCCESS(rv, rv);
-
-            if (hidden.Equals(NS_LITERAL_STRING("1"))) {
-              NS_ENSURE_SUCCESS(rv, rv);
-              // If it's in both places, and it's has become hidden then we
-              // should delete it
-              rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
-              NS_ENSURE_SUCCESS(rv, rv);
-              break;
-            }
           }
           // If the change is to a media list, add it to the media list change
           // list.
@@ -6021,17 +5992,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
         break;
     }
   }
-
-  if (IsRequestAbortedOrDeviceDisconnected()) {
-    return NS_ERROR_ABORT;
-  }
-
-  // Delete items.
-  nsCOMPtr<nsISimpleEnumerator> deleteItemEnum;
-  rv = deleteItemList->Enumerate(getter_AddRefs(deleteItemEnum));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstLibrary->RemoveSome(deleteItemEnum);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   if (IsRequestAbortedOrDeviceDisconnected()) {
     return NS_ERROR_ABORT;
