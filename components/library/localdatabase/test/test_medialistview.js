@@ -191,10 +191,10 @@ function runTest () {
 
   try {
     view.getIndexForViewItemUID("foo");
-    fail("NS_ERROR_INVALID_ARG expected");
+    fail("'foo' is not a valid viewItemUID, NS_ERROR_NOT_AVAILABLE expected");
   }
   catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_INVALID_ARG);
+    assertEqual(e.result, Cr.NS_ERROR_NOT_AVAILABLE);
   }
   
   try {

@@ -61,7 +61,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(f106ddb9-7922-4058-adf9-901ea7b52501)]
+[scriptable, uuid(c340dbf2-4d67-4749-998f-5298205d4399)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -149,6 +149,14 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   unsigned long long getRowidByIndex(in unsigned long aIndex);
 
   /**
+   * \brief Return the viewItemUID for the item at the given index
+   * \param aIndex The index of the mediaitem in the array
+   * \return The viewItemUID (rowid-mediaItemid)
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getViewItemUIDByIndex(in unsigned long aIndex);
+
+  /**
    * \brief Invalidate the contents of the array.
    * \param aInvalidateLength - Also invalidates the cached length of the 
    *                            array.
@@ -165,7 +173,12 @@ interface sbILocalDatabaseGUIDArray : nsISupports
 
   unsigned long getFirstIndexByGuid(in AString aGuid);
 
-  unsigned long getIndexByRowid(in unsigned long long aRowid);
+  /* aViewItemUID is a concatenation of the mediaItem's rowid and mediaItemid
+   * in it's libraries database, of the form "rowid-mediaItemid".
+   *
+   * We can use this viewItemUID to find the index in the guid array
+   * of the mediaitem that it corresponds to. */
+  unsigned long getIndexByViewItemUID(in AString aViewItemUID);
 
   /**
    * \brief Return true if the array contains the given GUID.

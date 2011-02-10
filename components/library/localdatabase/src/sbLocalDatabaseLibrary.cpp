@@ -3804,13 +3804,17 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
       // Get the index of this item in the full array
-      //TODO: this scares me! investigate!
       PRUint64 rowid;
       rv = viewArray->GetRowidByIndex(index, &rowid);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      nsAutoString viewItemUID;
+      viewItemUID.AppendInt(rowid);
+      viewItemUID.Append('-');
+      viewItemUID.AppendInt(mediaItemId);
+
       PRUint32 fullArrayIndex;
-      rv = fullArray->GetIndexByRowid(rowid, &fullArrayIndex);
+      rv = fullArray->GetIndexByViewItemUID(viewItemUID, &fullArrayIndex);
       NS_ENSURE_SUCCESS(rv, rv);
 
       sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(SB_IMEDIALIST_CAST(this),
@@ -3873,8 +3877,8 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     nsCOMPtr<sbIDatabasePreparedStatement> deletePreparedStatement;
     query->PrepareQuery(NS_LITERAL_STRING("DELETE FROM simple_media_lists WHERE media_item_id = ? AND ordinal = ?"), getter_AddRefs(deletePreparedStatement));
 
-    PRUint32 mediaItemId;
-    rv = viewMediaList->GetMediaItemId(&mediaItemId);
+    PRUint32 mediaListId;
+    rv = viewMediaList->GetMediaItemId(&mediaListId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     sbAutoBatchHelper batchHelper(*viewMediaList);
@@ -3897,7 +3901,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       rv = query->AddPreparedStatement(deletePreparedStatement);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      query->BindInt32Parameter(0, mediaItemId);
+      query->BindInt32Parameter(0, mediaListId);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString ordinal;
@@ -3906,14 +3910,12 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       query->BindStringParameter(1, ordinal);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Get the index of this item in the full array
-      //TODO: this scares me! investigate!
-      PRUint64 rowid;
-      rv = viewArray->GetRowidByIndex(index, &rowid);
+      nsString viewItemUID;
+      rv = viewArray->GetViewItemUIDByIndex(index, viewItemUID);
       NS_ENSURE_SUCCESS(rv, rv);
 
       PRUint32 fullArrayIndex;
-      rv = fullArray->GetIndexByRowid(rowid, &fullArrayIndex);
+      rv = fullArray->GetIndexByViewItemUID(viewItemUID, &fullArrayIndex);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = simple->NotifyListenersBeforeItemRemoved(viewMediaList,

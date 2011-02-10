@@ -296,8 +296,8 @@ private:
   // Map of guid -> first array index
   nsDataHashtable<nsStringHashKey, PRUint32> mGuidToFirstIndexMap;
 
-  // Map of rowid -> array index
-  nsDataHashtable<sbUint64HashKey, PRUint32> mRowidToIndexMap;
+  // Map of mediaitemid + "-" + rowid -> array index for retrieval of the index
+  nsDataHashtable<nsStringHashKey, PRUint32> mViewItemUIDToIndexMap;
 
   // Get distinct values?
   PRPackedBool mIsDistinct;

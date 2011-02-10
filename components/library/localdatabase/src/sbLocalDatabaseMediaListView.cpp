@@ -587,8 +587,15 @@ sbLocalDatabaseMediaListView::GetViewItemUIDForIndex(PRUint32 aIndex,
   rv = mArray->GetRowidByIndex(aIndex, &rowid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint32 mediaItemid;
+  rv = mArray->GetMediaItemIdByIndex(aIndex, &mediaItemid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // the ViewItemUID is a concatenation of the mediaitemid and rowid
   _retval.Truncate();
-  AppendInt(_retval, rowid);
+  _retval.AppendInt(rowid);
+  _retval.Append('-');
+  _retval.AppendInt(mediaItemid);
 
   return NS_OK;
 }
@@ -601,10 +608,7 @@ sbLocalDatabaseMediaListView::GetIndexForViewItemUID(const nsAString& aViewItemU
 
   nsresult rv;
 
-  PRUint64 rowid = nsString_ToUint64(aViewItemUID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mArray->GetIndexByRowid(rowid, _retval);
+  rv = mArray->GetIndexByViewItemUID(aViewItemUID, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

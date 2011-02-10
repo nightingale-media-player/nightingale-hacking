@@ -816,8 +816,10 @@ sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRUint32 aIndex,
 {
   nsresult rv;
 
-  // For regular lists, the unique identifer is composed of the lists' guid
-  // appended to the item's guid appeneded to the item's database rowid.
+  /* For regular lists, the unique identifer is composed of the lists' guid
+   * appended to the item's guid and viewItemUID (rowid-mediaitemid)
+   * Thus the UniqueId is of the form:
+   *   "listGUID|itemGUID|rowid-mediaitemid" */
   aId.Assign(mListGUID);
   aId.Append('|');
 
@@ -827,10 +829,11 @@ sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRUint32 aIndex,
   aId.Append(guid);
   aId.Append('|');
 
-  PRUint64 rowid;
-  rv = mArray->GetRowidByIndex(aIndex, &rowid);
+  // get the viewItemUID which is "rowid-mediaitemid" and append to the UniqueId
+  nsString viewItemUID;
+  rv = mArray->GetViewItemUIDByIndex(aIndex, viewItemUID);
   NS_ENSURE_SUCCESS(rv, rv);
-  AppendInt(aId, rowid);
+  aId.Append(viewItemUID);
 
   return NS_OK;
 }
@@ -859,12 +862,12 @@ sbLocalDatabaseMediaListViewSelection::GetIndexForUniqueId
   if (idComponentList.Length() < 3)
     return NS_ERROR_NOT_AVAILABLE;
 
-  // Get the row ID.
-  PRUint64 rowid = nsString_ToUint64(idComponentList[2], &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  /* use the unique id to get the viewItemUID which can help us get
+   * the index of the item */
+  nsString viewItemUID = idComponentList[2];
 
-  // Get the index from the row ID.
-  rv = mArray->GetIndexByRowid(rowid, aIndex);
+  // Get the index from the rowid and mediaitemid.
+  rv = mArray->GetIndexByViewItemUID(viewItemUID, aIndex);
   if (rv == NS_ERROR_NOT_AVAILABLE)
     return NS_ERROR_NOT_AVAILABLE;
   NS_ENSURE_SUCCESS(rv, rv);

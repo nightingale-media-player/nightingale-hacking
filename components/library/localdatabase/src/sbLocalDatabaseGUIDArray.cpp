@@ -750,6 +750,28 @@ sbLocalDatabaseGUIDArray::GetRowidByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetViewItemUIDByIndex(PRUint32 aIndex,
+                                                nsAString& _retval)
+{
+  nsresult rv;
+
+  ArrayItem* item;
+  rv = GetByIndexInternal(aIndex, &item);
+  if (rv == NS_ERROR_INVALID_ARG) {
+    return rv;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // the viewItemUID is just a concatenation of rowid and mediaitemid in the
+  // form: "rowid-mediaitemid"
+  _retval.Truncate();
+  _retval.AppendInt(item->rowid);
+  _retval.Append('-');
+  _retval.AppendInt(item->mediaItemId);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
@@ -786,7 +808,7 @@ sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
 
     mCache.Clear();
     mGuidToFirstIndexMap.Clear();
-    mRowidToIndexMap.Clear();
+    mViewItemUIDToIndexMap.Clear();
     mPrefetchedRows = PR_FALSE;
 
     if (mPrimarySortKeyPositionCache.IsInitialized()) {
@@ -907,10 +929,11 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
       NS_ENSURE_SUCCESS(rv, rv);
       mGuidToFirstIndexMap.Remove(guid);
 
-      PRUint64 rowid;
-      rv = GetRowidByIndex(aIndex, &rowid);
+      nsString viewItemUID;
+      rv = GetViewItemUIDByIndex(aIndex, viewItemUID);
       NS_ENSURE_SUCCESS(rv, rv);
-      mRowidToIndexMap.Remove(rowid);
+
+      mViewItemUIDToIndexMap.Remove(viewItemUID);
 
       mCache.RemoveElementAt(aIndex);
     }
@@ -1098,8 +1121,11 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+/* aViewItemUID is a concatenation of a mediaitems rowid and mediaitemid from
+ * it's entry in the library's database of the form "rowid-mediaitemid" */
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
+sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
+                          (const nsAString& aViewItemUID,
                                           PRUint32* _retval)
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - GetIndexByRowid", this));
@@ -1115,7 +1141,7 @@ sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
   }
 
   // First check to see if we have this in cache
-  if (mRowidToIndexMap.Get(aRowid, _retval)) {
+  if (mViewItemUIDToIndexMap.Get(aViewItemUID, _retval)) {
     return NS_OK;
   }
 
@@ -1141,7 +1167,7 @@ sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
   NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
 
   // Either the guid is in the map or it just not in our array
-  if (mRowidToIndexMap.Get(aRowid, _retval)) {
+  if (mViewItemUIDToIndexMap.Get(aViewItemUID, _retval)) {
     return NS_OK;
   }
 
@@ -1253,8 +1279,8 @@ sbLocalDatabaseGUIDArray::Initialize()
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
-  if (!mRowidToIndexMap.IsInitialized()) {
-    PRBool success = mRowidToIndexMap.Init();
+  if (!mViewItemUIDToIndexMap.IsInitialized()) {
+    PRBool success = mViewItemUIDToIndexMap.Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -1909,8 +1935,14 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    // Add the new rowid to the rowid to index map.
-    PRBool added = mRowidToIndexMap.Put(item->rowid, index);
+    // Add the concatenated rowid and mediaitemid (a viewItemUID)
+    // as a key mapping to index so that we readily recover that index
+    nsAutoString viewItemUID;
+    viewItemUID.AppendInt(item->rowid);
+    viewItemUID.Append('-');
+    viewItemUID.AppendInt(item->mediaItemId);
+
+    PRBool added = mViewItemUIDToIndexMap.Put(viewItemUID, index);
     NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
   }
 
