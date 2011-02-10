@@ -5838,40 +5838,6 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   return NS_OK;
 }
 
-/**
- * This function returns the content type of either a media item or of the
- * contents of a media list. This insulates the logic below from having to
- * worry about the difference between media items and media lists.
- */
-static nsString
-GetNormalizedContentTypeOfItemOrList(sbIMediaItem * aMediaItem)
-{
-  nsresult rv;
-
-  // Default to audio if all else fails
-  nsString contentType(NS_LITERAL_STRING("audio"));
-
-  // Is this a media list
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
-  if (list) {
-    // If it's pure video treat it as video otherwise it's audio
-    PRUint16 listContentType;
-    rv = list->GetListContentType(&listContentType);
-    if (NS_SUCCEEDED(rv) &&
-        listContentType == sbIDeviceLibrary::CONTENTTYPE_VIDEO) {
-      contentType = NS_LITERAL_STRING("video");
-    }
-  }
-  // It's an item
-  else {
-    rv = aMediaItem->GetContentType(contentType);
-    if (NS_FAILED(rv) || contentType.IsEmpty()) {
-      contentType = NS_LITERAL_STRING("audio");
-    }
-  }
-  return contentType;
-}
-
 nsresult
 sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                sbILibraryChangeset* aChangeset)
