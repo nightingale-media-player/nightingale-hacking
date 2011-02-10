@@ -475,7 +475,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
       do_QueryInterface(lists[i], &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Again, since we removed items, it's highly likely the length has 
+    // Again, since we removed items, it's highly likely the length has
     // changed so we must invalidate the cached value.
     rv = simple->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2835,7 +2835,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 
   newItemInfo.forget();
 
-  // Invalidate our array. Creating lists also creates items so invalidate 
+  // Invalidate our array. Creating lists also creates items so invalidate
   // the cached length values.
   rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3555,7 +3555,7 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/,
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Type of media items to remove from media item table. Only used when 
+  // Type of media items to remove from media item table. Only used when
   // excluding lists from the delete operation.
   PRUint32 removeType = REMOVE_ALL_TYPES;
 
@@ -3572,7 +3572,7 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/,
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
-      
+
       // Only accept 'audio' and 'video' content types for now.
       if(aContentType.EqualsLiteral("audio")) {
         removeType = REMOVE_AUDIO_TYPE_ONLY;
@@ -3598,8 +3598,8 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/,
     // Remove only non-lists from mMediaItemTable and specific content type.
     //
     // RemoveIfNotList with removal type for media items is only implemented for
-    // sbILibrary::ClearItems and sbILibrary::ClearItemsByType. Calling 
-    // sbLocalDatabaseLibrary::ClearInternal with aExcludeLists set to FALSE 
+    // sbILibrary::ClearItems and sbILibrary::ClearItemsByType. Calling
+    // sbLocalDatabaseLibrary::ClearInternal with aExcludeLists set to FALSE
     // with a content type will ALWAYS DELETE ALL ITEMS INCLUDING LISTS!
     //
     mMediaItemTable.Enumerate(sbLocalDatabaseLibrary::RemoveIfNotList, &removeType);
@@ -3720,7 +3720,7 @@ sbLocalDatabaseLibrary::MigrateLibrary(PRUint32 aFromVersion,
   rv = migration->Migrate(aFromVersion, aToVersion, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDatabaseEngine> dbEngine = 
+  nsCOMPtr<sbIDatabaseEngine> dbEngine =
     do_GetService("@songbirdnest.com/Songbird/DatabaseEngine;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3809,7 +3809,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString viewItemUID;
-      viewItemUID.AppendInt(rowid);
+      AppendInt(viewItemUID, rowid);
       viewItemUID.Append('-');
       viewItemUID.AppendInt(mediaItemId);
 
@@ -4071,7 +4071,7 @@ sbLocalDatabaseLibrary::AddItem(sbIMediaItem* aMediaItem,
   rv = AddItemToLocalDatabase(aMediaItem, getter_AddRefs(newMediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the cached list. Adding an item will 
+  // Invalidate the cached list. Adding an item will
   // definitely invalidate the length.
   rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);

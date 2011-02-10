@@ -79,7 +79,7 @@
 class sbSuppressArrayInvalidationView
 {
 public:
-  explicit 
+  explicit
   sbSuppressArrayInvalidationView(sbILocalDatabaseGUIDArray *aArray,
                                   sbLocalDatabaseMediaListViewSelection *aSelection)
   : mArray(aArray)
@@ -593,7 +593,7 @@ sbLocalDatabaseMediaListView::GetViewItemUIDForIndex(PRUint32 aIndex,
 
   // the ViewItemUID is a concatenation of the mediaitemid and rowid
   _retval.Truncate();
-  _retval.AppendInt(rowid);
+  AppendInt(_retval, rowid);
   _retval.Append('-');
   _retval.AppendInt(mediaItemid);
 
@@ -829,7 +829,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
                                      nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbILibraryConstraintBuilder> videoViewBuilder = 
+      nsCOMPtr<sbILibraryConstraintBuilder> videoViewBuilder =
         do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -896,7 +896,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
 
     for(PRUint16 current = 0; current < cfsCount; ++current) {
       nsCOMPtr<nsIArray> filterConfig;
-      
+
       rv = mCascadeFilterSet->Get(current, getter_AddRefs(filterConfig));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -919,7 +919,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
   rv = mSelection->IsIndexSelected(currentIndex, &isSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // The user is removing all of the tracks from the view, 
+  // The user is removing all of the tracks from the view,
   // use clear instead. It's very important to check for filter
   // and search counts here otherwise we may clear the library
   // because the user has selected everything in the view when
@@ -1646,7 +1646,7 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
   }
 
   if (shouldInvalidate) {
-    // Invalidate the view array. Properties changed significantly. 
+    // Invalidate the view array. Properties changed significantly.
     // We need to invalidate length as well in this case.
     nsresult rv = Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1755,7 +1755,7 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
     }
 
     // We have to rebuild the tree manually here because there is
-    // no guarantee that the tree will be invalidated at the correct 
+    // no guarantee that the tree will be invalidated at the correct
     // time. If the tree is invalidated after the view invalidates
     // it will _never_ get its callback telling it to rebuild :(
     if (mTreeView) {

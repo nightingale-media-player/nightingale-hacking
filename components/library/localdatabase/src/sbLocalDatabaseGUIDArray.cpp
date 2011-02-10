@@ -75,10 +75,10 @@ static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
 #define TRACE(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
 #define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
 
-/*static*/ nsDataHashtableMT<nsStringHashKey, PRUint32> 
+/*static*/ nsDataHashtableMT<nsStringHashKey, PRUint32>
   sbLocalDatabaseGUIDArray::mCachedLengths;
 
-/*static*/ nsDataHashtableMT<nsStringHashKey, PRUint32> 
+/*static*/ nsDataHashtableMT<nsStringHashKey, PRUint32>
   sbLocalDatabaseGUIDArray::mCachedNonNullLengths;
 
 /*static*/ sbLocalDatabaseGUIDArray::propIdsToHashKeys_t
@@ -109,12 +109,12 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   }
 #endif
 
-  mPropIdsToHashKeysMonitor = 
+  mPropIdsToHashKeysMonitor =
     nsAutoMonitor::NewMonitor("sbLocalDatabaseGUIDArray::mPropIdsToHashKeysMonitor");
-  NS_WARN_IF_FALSE(mPropIdsToHashKeysMonitor, 
+  NS_WARN_IF_FALSE(mPropIdsToHashKeysMonitor,
                    "Failed to create mPropIdsToHashKeysMonitor");
 
-  mCacheMonitor = 
+  mCacheMonitor =
     nsAutoMonitor::NewMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor");
   NS_WARN_IF_FALSE(mCacheMonitor, "Failed to create mCacheMonitor.");
 }
@@ -265,7 +265,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 {
   mIsDistinct = aIsDistinct;
-  
+
   QueryInvalidate();
 
   return Invalidate(PR_FALSE);
@@ -291,7 +291,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetDistinctWithSortableValues(PRBool aDistinctWithSortableValues)
 {
   mDistinctWithSortableValues = aDistinctWithSortableValues;
-  
+
   QueryInvalidate();
 
   return Invalidate(PR_FALSE);
@@ -429,18 +429,18 @@ sbLocalDatabaseGUIDArray::MayInvalidate(const std::set<PRUint32> &aDirtyPropIds)
   {
     nsAutoMonitor mon(mPropIdsToHashKeysMonitor);
     for (; itCur != itEnd; ++itCur) {
-      propIdsToHashKeys_t::iterator itEntry = 
+      propIdsToHashKeys_t::iterator itEntry =
         mPropIdsToHashKeys.find(*itCur);
       if(itEntry == mPropIdsToHashKeys.end()) {
         continue;
       }
-      
+
       std::set<nsString>::iterator itKeysCur = itEntry->second.begin();
       std::set<nsString>::iterator itKeysEnd = itEntry->second.end();
       while(itKeysCur != itKeysEnd) {
         RemoveCachedLength(this, (*itKeysCur));
         RemoveCachedNonNullLength(this, (*itKeysCur));
-        
+
         // Trick so our iterator doesn't get invalidated when we
         // erase the entry from the set.
         nsString oldKey = (*itKeysCur);
@@ -765,7 +765,7 @@ sbLocalDatabaseGUIDArray::GetViewItemUIDByIndex(PRUint32 aIndex,
   // the viewItemUID is just a concatenation of rowid and mediaitemid in the
   // form: "rowid-mediaitemid"
   _retval.Truncate();
-  _retval.AppendInt(item->rowid);
+  AppendInt(_retval, item->rowid);
   _retval.Append('-');
   _retval.AppendInt(item->mediaItemId);
   return NS_OK;
@@ -814,7 +814,7 @@ sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
     if (mPrimarySortKeyPositionCache.IsInitialized()) {
       mPrimarySortKeyPositionCache.Clear();
     }
-  
+
     mValid = PR_FALSE;
   }
 
@@ -1386,7 +1386,7 @@ sbLocalDatabaseGUIDArray::UpdateLength()
                       0,
                       PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     mLength = mCache.Length();
     mNonNullLength = mLength;
   }
@@ -1403,7 +1403,7 @@ sbLocalDatabaseGUIDArray::UpdateLength()
       rv = RunLengthQuery(mFullCountStatement, &mLength);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      NS_ENSURE_TRUE(mCachedLengths.Put(mCachedLengthKey, mLength), 
+      NS_ENSURE_TRUE(mCachedLengths.Put(mCachedLengthKey, mLength),
                      NS_ERROR_OUT_OF_MEMORY);
     }
 
@@ -1477,7 +1477,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
    */
   nsresult rv;
 
-  /* 
+  /*
    * We're going to use this query to prepare the sql statements.
    * This speeds things up _significantly_
    */
@@ -1521,7 +1521,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   rv = ldq->GetFullCountQuery(mFullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->PrepareQuery(mFullCountQuery, 
+  rv = query->PrepareQuery(mFullCountQuery,
                            getter_AddRefs(mFullCountStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1529,7 +1529,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   rv = ldq->GetFullGuidRangeQuery(mFullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->PrepareQuery(mFullGuidRangeQuery, 
+  rv = query->PrepareQuery(mFullGuidRangeQuery,
                            getter_AddRefs(mFullGuidRangeStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1568,7 +1568,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = ldq->GetResortQuery(mResortQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = query->PrepareQuery(mResortQuery, 
+    rv = query->PrepareQuery(mResortQuery,
                              getter_AddRefs(mResortStatement));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1788,7 +1788,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
 
   // ReadRowRange always gets called with mCacheMonitor acquired!
   // No need to acquire this lock in this method.
-  
+
   /*
    * Set up the query with limit and offset parameters and run it
    */
@@ -1938,7 +1938,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
     // Add the concatenated rowid and mediaitemid (a viewItemUID)
     // as a key mapping to index so that we readily recover that index
     nsAutoString viewItemUID;
-    viewItemUID.AppendInt(item->rowid);
+    AppendInt(viewItemUID, item->rowid);
     viewItemUID.Append('-');
     viewItemUID.AppendInt(item->mediaItemId);
 
@@ -2258,7 +2258,7 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
     PRInt32 dbOk;
 
     nsCOMPtr<sbIDatabaseQuery> query;
-    rv = MakeQuery(mPrimarySortKeyPositionStatement, 
+    rv = MakeQuery(mPrimarySortKeyPositionStatement,
                    getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2413,7 +2413,7 @@ sbLocalDatabaseGUIDArray::GetMTListener(
   return NS_OK;
 }
 
-void 
+void
 sbLocalDatabaseGUIDArray::GenerateCachedLengthKey()
 {
   // Try and avoid resizing the string a bunch of times.
@@ -2453,15 +2453,15 @@ sbLocalDatabaseGUIDArray::GenerateCachedLengthKey()
     const FilterSpec& refSpec = mFilters.ElementAt(index);
 
     mCachedLengthKey.Append(refSpec.property);
-    
+
     PRUint32 propId = 0;
-    if(NS_SUCCEEDED(mPropertyCache->GetPropertyDBID(refSpec.property, 
+    if(NS_SUCCEEDED(mPropertyCache->GetPropertyDBID(refSpec.property,
                                                     &propId))) {
       propIds.insert(propId);
     }
-    
+
     mCachedLengthKey.AppendInt(refSpec.isSearch);
-    
+
     PRUint32 valueCount = refSpec.values.Length();
     for(PRUint32 valueIndex = 0; valueIndex < valueCount; valueIndex++) {
       mCachedLengthKey.Append(refSpec.values.ElementAt(valueIndex));
@@ -2521,7 +2521,7 @@ sbLocalDatabaseGUIDArray::GetCachedLength(sbLocalDatabaseGUIDArray *aSelf,
   return NS_OK;
 }
 
-/*static*/ nsresult 
+/*static*/ nsresult
 sbLocalDatabaseGUIDArray::RemoveCachedLength(sbLocalDatabaseGUIDArray *aSelf,
                                              const nsAString &aKey)
 {
@@ -2543,13 +2543,13 @@ sbLocalDatabaseGUIDArray::RemoveCachedLength(sbLocalDatabaseGUIDArray *aSelf,
 }
 
 /*static*/ nsresult
-sbLocalDatabaseGUIDArray::GetCachedNonNullLength(sbLocalDatabaseGUIDArray *aSelf, 
+sbLocalDatabaseGUIDArray::GetCachedNonNullLength(sbLocalDatabaseGUIDArray *aSelf,
                                                  const nsAString &aKey,
                                                  PRUint32 *aLength)
 {
   NS_ENSURE_ARG_POINTER(aSelf);
   NS_ENSURE_ARG_POINTER(aLength);
-  
+
   *aLength = 0;
 
   // Make sure we're initialized.
@@ -2565,7 +2565,7 @@ sbLocalDatabaseGUIDArray::GetCachedNonNullLength(sbLocalDatabaseGUIDArray *aSelf
   return NS_OK;
 }
 
-/*static*/ nsresult 
+/*static*/ nsresult
 sbLocalDatabaseGUIDArray::RemoveCachedNonNullLength(sbLocalDatabaseGUIDArray *aSelf,
                                                     const nsAString &aKey)
 {
