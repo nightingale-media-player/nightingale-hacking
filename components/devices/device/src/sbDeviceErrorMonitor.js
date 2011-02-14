@@ -41,6 +41,16 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
+/**
+ * Since we can't use the FUEL components until after all other components have
+ * been loaded we define a lazy getter here for when we need it.
+ */
+__defineGetter__("Application", function() {
+  delete this.Application;
+  return this.Application = Cc["@mozilla.org/fuel/application;1"]
+                              .getService(Ci.fuelIApplication);
+});
+
 var deviceErrorMonitorConfig = {
   className:      "Songbird Device Error Monitor Service",
   cid:            Components.ID("{7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}"),
@@ -57,7 +67,9 @@ var deviceErrorMonitorConfig = {
       entry: 'service-device-error-monitor',
       value: 'service,@songbirdnest.com/device/error-monitor-service;1'
     }
-  ]
+  ],
+
+  debugPref: "songbird.device.errorMonitor.debug"
 };
 
 function deviceErrorMonitor () {
@@ -82,6 +94,11 @@ deviceErrorMonitor.prototype = {
   _listenerList: [],
   _sbStrings: null,
   NONE : "none",
+  _debug: false,
+
+  // Internal Services
+  _consoleService: null,
+
   // Internal functions
 
   /**
@@ -94,6 +111,13 @@ deviceErrorMonitor.prototype = {
     var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
                 .getService(Ci.nsIStringBundleService);
     this._sbStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+
+    this._debug = Application.prefs.getValue(deviceErrorMonitorConfig.debugPref,
+                                            false);
+    if (this._debug) {
+      this._consoleService = Cc["@mozilla.org/consoleservice;1"]
+                              .getService(Ci.nsIConsoleService);
+    }
   },
 
   /**
@@ -108,6 +132,8 @@ deviceErrorMonitor.prototype = {
         this._removeDevice(this._deviceList[0].device);
       }
     }
+
+    this._consoleService = null;
   },
 
   /**
@@ -403,8 +429,255 @@ deviceErrorMonitor.prototype = {
       this._listenerList.splice(listenerIndex, 1);
   },
 
+  /**
+   * \brief Gets the current state of the device as a human readable string.
+   *
+   * \param aDeviceState device state.
+   * \return string version of the aDeviceState.
+   */
+  _getStateString: function deviceErrorMonitor__getStateString(aDeviceState) {
+    var stateString = "STATE_UNKNOWN";
+    switch (aDeviceState) {
+      case Ci.sbIDevice.STATE_IDLE:
+        stateString = "STATE_IDLE";
+        break;
+      case Ci.sbIDevice.STATE_SYNCING:
+        stateString = "STATE_SYNCING";
+        break;
+      case Ci.sbIDevice.STATE_COPYING:
+        stateString = "STATE_COPYING";
+        break;
+      case Ci.sbIDevice.STATE_DELETING:
+        stateString = "STATE_DELETING";
+        break;
+      case Ci.sbIDevice.STATE_UPDATING:
+        stateString = "STATE_UPDATING";
+        break;
+      case Ci.sbIDevice.STATE_MOUNTING:
+        stateString = "STATE_MOUNTING";
+        break;
+      case Ci.sbIDevice.STATE_DOWNLOADING:
+        stateString = "STATE_DOWNLOADING";
+        break;
+      case Ci.sbIDevice.STATE_UPLOADING:
+        stateString = "STATE_UPLOADING";
+        break;
+      case Ci.sbIDevice.STATE_DOWNLOAD_PAUSED:
+        stateString = "STATE_DOWNLOAD_PAUSED";
+        break;
+      case Ci.sbIDevice.STATE_UPLOAD_PAUSED:
+        stateString = "STATE_UPLOAD_PAUSED";
+        break;
+      case Ci.sbIDevice.STATE_DISCONNECTED:
+        stateString = "STATE_DISCONNECTED";
+        break;
+      case Ci.sbIDevice.STATE_BUSY:
+        stateString = "STATE_BUSY";
+        break;
+      case Ci.sbIDevice.STATE_CANCEL:
+        stateString = "STATE_CANCEL";
+        break;
+      case Ci.sbIDevice.STATE_TRANSCODE:
+        stateString = "STATE_TRANSCODE";
+        break;
+      case Ci.sbIDevice.STATE_FORMATTING:
+        stateString = "STATE_FORMATTING";
+        break;
+      case Ci.sbIDevice.STATE_SYNC_PREPARING:
+        stateString = "STATE_SYNC_PREPARING";
+        break;
+      case Ci.sbIDevice.STATE_SYNC_PLAYLIST:
+        stateString = "STATE_SYNC_PLAYLIST";
+        break;
+      case Ci.sbIDevice.STATE_COPY_PREPARING:
+        stateString = "STATE_COPY_PREPARING";
+        break;
+      case Ci.sbIDevice.STATE_SYNCING_TYPE:
+        stateString = "STATE_SYNCING_TYPE";
+        break;
+      case Ci.sbIDevice.STATE_COPYING_MUSIC:
+        stateString = "STATE_COPYING_MUSIC";
+        break;
+      case Ci.sbIDevice.STATE_COPYING_VIDEO:
+        stateString = "STATE_COPYING_VIDEO";
+        break;
+    }
+
+    return stateString + " (" + aDeviceState + ")";
+  },
+
+  /**
+   * \brief Gets the state and substate of a device as a human readable string.
+   *
+   * \param aDeviceEvent event information of the device
+   * \return string version of the device state and substate.
+   */
+  _getDeviceStateInformation:
+    function deviceErrorMonitor__getDeviceStateInformation(aDeviceEvent) {
+
+    var state = aDeviceEvent.deviceState;
+    var substate = aDeviceEvent.deviceSubState;
+
+    return this._getStateString(state) + " - " + this._getStateString(substate);
+  },
+
+  /**
+   * \brief Logs the device event to the console for debugging.
+   *
+   * \param aDeviceEvent event information of the device
+   */
+  _logDeviceEvent: function deviceErrorMonitor__logDeviceEvent(aDeviceEvent) {
+    var evtMsg = "Unknown Event";
+    var evtSubMsg = "";
+
+    // See if we can get a device
+    var device;
+    try {
+      device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    } catch (err) { }
+
+    switch (aDeviceEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_BASE:
+        evtMsg = "EVENT_DEVICE_BASE";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED:
+        evtMsg = "EVENT_DEVICE_ADDED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
+        evtMsg = "EVENT_DEVICE_REMOVED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_RESET:
+        evtMsg = "EVENT_DEVICE_RESET";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_INSERTED:
+        evtMsg = "EVENT_DEVICE_MEDIA_INSERTED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_REMOVED:
+        evtMsg = "EVENT_DEVICE_MEDIA_REMOVED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_READY:
+        evtMsg = "EVENT_DEVICE_READY";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_START:
+        evtMsg = "EVENT_DEVICE_MEDIA_READ_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_END:
+        evtMsg = "EVENT_DEVICE_MEDIA_READ_END";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_FAILED:
+        evtMsg = "EVENT_DEVICE_MEDIA_READ_FAILED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_START:
+        evtMsg = "EVENT_DEVICE_MEDIA_WRITE_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_END:
+        evtMsg = "EVENT_DEVICE_MEDIA_WRITE_END";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_FAILED:
+        evtMsg = "EVENT_DEVICE_MEDIA_WRITE_FAILED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_INFO_CHANGED:
+        evtMsg = "EVENT_DEVICE_INFO_CHANGED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE:
+        evtMsg = "EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE:
+        evtMsg = "EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
+        evtMsg = "EVENT_DEVICE_ACCESS_DENIED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_ENOUGH_FREESPACE:
+        evtMsg = "EVENT_DEVICE_NOT_ENOUGH_FREESPACE";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_AVAILABLE:
+        evtMsg = "EVENT_DEVICE_NOT_AVAILABLE";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ERROR_UNEXPECTED:
+        evtMsg = "EVENT_DEVICE_ERROR_UNEXPECTED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_ERROR:
+        evtMsg = "EVENT_DEVICE_TRANSCODE_ERROR";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED:
+        evtMsg = "EVENT_DEVICE_LIBRARY_ADDED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED:
+        evtMsg = "EVENT_DEVICE_LIBRARY_REMOVED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FILE_MISSING:
+        evtMsg = "EVENT_DEVICE_FILE_MISSING";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SCAN_START:
+        evtMsg = "EVENT_DEVICE_SCAN_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SCAN_END:
+        evtMsg = "EVENT_DEVICE_SCAN_END";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        evtMsg = "EVENT_DEVICE_STATE_CHANGED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
+        evtMsg = "EVENT_DEVICE_TRANSFER_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_PROGRESS:
+        evtMsg = "EVENT_DEVICE_TRANSFER_PROGRESS";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
+        evtMsg = "EVENT_DEVICE_TRANSFER_END";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_START:
+        evtMsg = "EVENT_DEVICE_MOUNTING_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
+        evtMsg = "EVENT_DEVICE_MOUNTING_PROGRESS";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
+        evtMsg = "EVENT_DEVICE_MOUNTING_END";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
+        evtMsg = "EVENT_DEVICE_PREFS_CHANGED";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_START:
+        evtMsg = "EVENT_DEVICE_TRANSCODE_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_PROGRESS:
+        evtMsg = "EVENT_DEVICE_TRANSCODE_PROGRESS";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
+        evtMsg = "EVENT_DEVICE_TRANSCODE_END";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_START:
+        evtMsg = "EVENT_DEVICE_FORMATTING_START";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_PROGRESS:
+        evtMsg = "EVENT_DEVICE_FORMATTING_PROGRESS";
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_END:
+        evtMsg = "EVENT_DEVICE_FORMATTING_END";
+        break;
+    }
+
+    var deviceGuid = "{Unknown}";
+    if (device)
+      deviceGuid = device.id + "[" + device.name + "]";
+
+    evtSubMsg = this._getDeviceStateInformation(aDeviceEvent);
+
+    var fullMsg = "Device Event " + deviceGuid + " - " + evtMsg + ": (" +
+                  aDeviceEvent.type + ")\n" +
+                  "       State " + evtSubMsg + "\n"
+
+    dump(fullMsg);
+    this._consoleService.logStringMessage(fullMsg);
+  },
+
   // sbIDeviceEventListener
   onDeviceEvent: function deviceErrorMonitor_onDeviceEvent(aDeviceEvent) {
+    if (this._debug) // Only log if the debug flag is set.
+      this._logDeviceEvent(aDeviceEvent);
+
     switch(aDeviceEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED:
         var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
