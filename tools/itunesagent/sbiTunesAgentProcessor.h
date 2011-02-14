@@ -73,6 +73,11 @@ public:
    * Clean up any resources
    */
   virtual ~sbiTunesAgentProcessor();
+
+  /**
+   * Registers the processor's profile
+   */
+  virtual void RegisterProfile(std::string const & aProfileName) = 0;
   
   /**
    * Returns true if there are any tasks file ready to process

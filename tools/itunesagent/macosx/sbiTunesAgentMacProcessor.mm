@@ -59,12 +59,13 @@ sbOSStatusError(const char *aMsg, OSStatus & aErr)
   return sbError(msg.str());
 }
 
+static NSString *gSongbirdProfileName = nil;
 static NSString *gSongbirdProfilePath = nil;
 
 static NSString * 
 GetSongbirdProfilePath()
 {
-  if (!gSongbirdProfilePath) {
+  if (!gSongbirdProfilePath && gSongbirdProfileName) {
     NSMutableString *profilePath = [[NSMutableString alloc] init];
     
     FSRef appSupportFolderRef;
@@ -84,10 +85,18 @@ GetSongbirdProfilePath()
       return profilePath;
     }
 
-    [profilePath appendFormat:@"%@/%s/", 
-      [(NSURL *)folderUrlRef path],
-      STRINGIZE(SB_APPNAME) STRINGIZE(SB_PROFILE_VERSION)];
-    
+    // Use specified --profile path.
+    if (gSongbirdProfileName) {
+      [profilePath appendFormat:@"%@/%s/", 
+        [(NSURL *)folderUrlRef path],
+        [gSongbirdProfileName UTF8String]];
+    }
+    else {
+      [profilePath appendFormat:@"%@/%s/", 
+        [(NSURL *)folderUrlRef path],
+        STRINGIZE(SB_APPNAME) STRINGIZE(SB_PROFILE_VERSION)];
+    }
+
     CFRelease(folderUrlRef);
     gSongbirdProfilePath = [[NSString alloc] initWithString:profilePath];
   }
@@ -229,6 +238,11 @@ sbiTunesAgentMacProcessor::ProcessTaskFile()
 
 //------------------------------------------------------------------------------
 // sbiTunesAgentProcessor
+
+void
+sbiTunesAgentMacProcessor::RegisterProfile(std::string const & aProfileName) {
+  gSongbirdProfileName = [NSString stringWithUTF8String:aProfileName.c_str()];
+}
 
 bool
 sbiTunesAgentMacProcessor::TaskFileExists()

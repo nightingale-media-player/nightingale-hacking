@@ -42,6 +42,7 @@ public:
   virtual ~sbiTunesAgentMacProcessor();
 
   // sbiTunesAgentProcessor
+  virtual void RegisterProfile(std::string const & aProfileName);
   virtual bool TaskFileExists();
   virtual void RemoveTaskFile();
   virtual sbError WaitForiTunes();

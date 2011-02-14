@@ -26,6 +26,8 @@
 
 #include "sbMediaExportITunesAgentService.h"
 
+#include <nsAppDirectoryServiceDefs.h>
+#include <nsDirectoryServiceUtils.h>
 #include <nsIProcess.h>
 #include <nsIFileURL.h>
 #include <nsNetUtil.h>
@@ -165,6 +167,15 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   rv = parentFolderFileURL->GetFile(getter_AddRefs(agentFile));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIFile> appRegD;
+  rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR,
+                              getter_AddRefs(appRegD));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString profile;
+  rv = appRegD->GetLeafName(profile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
 #ifdef XP_MACOSX
   // OS X is a little trickier since the agent needs to be started using
   // LaunchServices and not using the path to the binary.
@@ -179,9 +190,9 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   rv = agentMacFile->GetFSRef(&agentFSRef);
 
   CFArrayRef argv = nsnull;
+  // Sadly, argv is a |CFArrayRef| so push the args into a
+  // CoreFoundation array.
   if (aShouldUnregister) {
-    // Sadly, argv is a |CFArrayRef| so push the "--unregister" arg into
-    // a CoreFoundation array.
     CFStringRef arg[1];
     arg[0] = CFStringCreateWithCString(kCFAllocatorDefault,
                                        "--unregister",
@@ -189,6 +200,18 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
     argv = CFArrayCreate(kCFAllocatorDefault,
                          (const void **)arg,
                          1,
+                         NULL);  // callback
+  } else {
+    CFStringRef arg[2];
+    arg[0] = CFStringCreateWithCString(kCFAllocatorDefault,
+                                       "--profile",
+                                       kCFStringEncodingUTF8);
+    arg[1] = CFStringCreateWithCString(kCFAllocatorDefault,
+                                       NS_ConvertUTF16toUTF8(profile).get(),
+                                       kCFStringEncodingUTF8);
+    argv = CFArrayCreate(kCFAllocatorDefault,
+                         (const void **)arg,
+                         2,
                          NULL);  // callback
   }
 

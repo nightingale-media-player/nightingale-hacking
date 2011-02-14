@@ -118,6 +118,8 @@ std::string ConvertUTF16ToUTF8(const std::wstring& src) {
   return result;
 }
 
+static std::wstring gSongbirdProfileName;
+
 static std::wstring GetSongbirdPath() {
   WCHAR buffer[MAX_PATH + 2];
   HRESULT result = SHGetSpecialFolderPathW(NULL, buffer, CSIDL_APPDATA, true);
@@ -136,7 +138,14 @@ static std::wstring GetSongbirdPath() {
       break;
     }
   }
-  path += ConvertUTF8ToUTF16(STRINGIZE(SB_APPNAME) STRINGIZE(SB_PROFILE_VERSION));
+
+  // Use specified --profile path.
+  if (!gSongbirdProfileName.empty()) {
+    path += gSongbirdProfileName;
+  }
+  else {
+    path += ConvertUTF8ToUTF16(STRINGIZE(SB_APPNAME) STRINGIZE(SB_PROFILE_VERSION));
+  }
   path += L'/';
   return path;
 }
@@ -364,6 +373,12 @@ sbiTunesAgentWindowsProcessor::UnregisterForStartOnLogin() {
   RegCloseKey(runKey);
 
   return error;
+}
+
+void
+sbiTunesAgentWindowsProcessor::RegisterProfile(std::string const & aProfileName)
+{
+  gSongbirdProfileName = ConvertUTF8ToUTF16(aProfileName);
 }
 
 bool sbiTunesAgentWindowsProcessor::TaskFileExists() {

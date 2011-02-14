@@ -64,6 +64,11 @@ public:
   virtual sbError RegisterForStartOnLogin();
   
   /**
+   * Registers the processor's profile
+   */
+  virtual void RegisterProfile(std::string const & aProfileName);
+  
+  /**
    * Returns true if there are any tasks file ready to process
    */
   virtual bool TaskFileExists();

@@ -50,14 +50,27 @@ int main(int argc, char * argv[]) {
   if (processor->GetIsAgentRunning()) {
     return 0;
   }
+
+  int index = 1;
  
-  // Set the batch size
-  if (argc > 2 && std::string(argv[1]) == "--batch-size") {
-    unsigned int batchSize = sbiTunesAgentProcessor::BATCH_SIZE;
-    // Convert the string arg to an integer
-    std::istringstream parser(argv[2]);
-    parser >> batchSize;
-    processor->SetBatchSize(batchSize);
+  while (index < argc) {
+    std::string flag = argv[index];
+
+    // Set the batch size
+    if (argc > index+1 && flag == "--batch-size") {
+      unsigned int batchSize = sbiTunesAgentProcessor::BATCH_SIZE;
+      // Convert the string arg to an integer
+      std::istringstream parser(argv[++index]);
+      parser >> batchSize;
+      processor->SetBatchSize(batchSize);
+    }
+    // Register the profile
+    else if (argc > index+1 && flag == "--profile") {
+      std::string const profile = argv[++index];
+      processor->RegisterProfile(profile);
+    }
+
+    index++;
   }
   
   // Register the app with the run startup key
