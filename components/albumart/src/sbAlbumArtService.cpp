@@ -448,9 +448,23 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   nsresult rv;
 
   // Dispatch processing of event.
-  if (!strcmp(aTopic, "profile-after-change")) {
-    // Mark preferences as available and continue with initialization.
-    mPrefsAvailable = PR_TRUE;
+  if (!strcmp(aTopic, "app-startup")) {
+    // Add observers for other events.
+    nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
+            "@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add observers.
+    rv = obsSvc->AddObserver(this,
+                             "profile-after-change",
+                             PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obsSvc->AddObserver(this,
+                             SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                             PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (!strcmp(aTopic, "profile-after-change")) {
+    // Initialize, now that we're able to read our preferences/etc.
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
@@ -485,7 +499,6 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
 
 sbAlbumArtService::sbAlbumArtService() :
   mInitialized(PR_FALSE),
-  mPrefsAvailable(PR_FALSE),
   mCacheFlushTimer(nsnull)
 {
 #ifdef PR_LOGGING
@@ -518,27 +531,6 @@ sbAlbumArtService::Initialize()
 
   // Do nothing if already initialized.
   if (mInitialized)
-    return NS_OK;
-
-  // Add observers.
-  if (!mObserverService) {
-    // Get the observer service.
-    mObserverService = do_GetService("@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add observers.
-    rv = mObserverService->AddObserver(this,
-                                       "profile-after-change",
-                                       PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mObserverService->AddObserver(this,
-                                       SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
-                                       PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Do nothing more if preferences are not available.
-  if (!mPrefsAvailable)
     return NS_OK;
 
   // Get the I/O service
@@ -631,12 +623,10 @@ sbAlbumArtService::Finalize()
   mTemporaryCache.Clear();
 
   // Remove observers.
-  if (mObserverService) {
-    mObserverService->RemoveObserver(this, "profile-after-change");
-    mObserverService->RemoveObserver(this, 
-                                     SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
-    mObserverService = nsnull;
-  }
+  nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
+          "@mozilla.org/observer-service;1", &rv);
+  obsSvc->RemoveObserver(this, "profile-after-change");
+  obsSvc->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
 
   if (mCacheFlushTimer) {
     rv = mCacheFlushTimer->Cancel();

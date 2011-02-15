@@ -64,8 +64,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Construct the sbAlbumArtService object and call its Initialize method.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtService, Initialize)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbAlbumArtService)
 
 
 /**

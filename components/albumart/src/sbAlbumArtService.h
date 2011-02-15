@@ -165,7 +165,6 @@ private:
   };
 
   //
-  // mObserverService           Observer service.
   // mIOService                 I/O service.
   // mMIMEService               MIME service.
   // mAlbumArtCacheDir          Album art cache directory.
@@ -177,7 +176,6 @@ private:
   // mCacheFlushTimer           Timer used to empty the temporary cache
   //
 
-  nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIIOService>        mIOService;
   nsCOMPtr<nsIMIMEService>      mMIMEService;
   nsCOMPtr<nsIFile>             mAlbumArtCacheDir;
