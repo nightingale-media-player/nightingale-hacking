@@ -1383,10 +1383,15 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString contentType;
-    rv = mediaItem->GetContentType(contentType);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // We might not have a media item here (if we don't have a view), so just
+    // stop playback.
+    if (mediaItem) {
+      rv = mediaItem->GetContentType(contentType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
-    // Pause the sequencer if playback error happens to video.
+    // Pause the sequencer if playback error happens to video, or if we no
+    // longer have a current item.
     if (!contentType.Equals(NS_LITERAL_STRING("video"))) {
       rv = Next(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
