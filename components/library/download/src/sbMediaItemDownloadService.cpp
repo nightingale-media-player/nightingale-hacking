@@ -53,6 +53,8 @@
 // Mozilla imports.
 #include <nsComponentManagerUtils.h>
 
+#include <nsIObserverService.h>
+
 
 //------------------------------------------------------------------------------
 //
@@ -183,9 +185,28 @@ sbMediaItemDownloadService::Observe(nsISupports*     aSubject,
 
   // Dispatch processing of event.
   if (!strcmp(aTopic, "app-startup")) {
+    nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
+            "@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = obsSvc->AddObserver(this,
+                             "profile-after-change",
+                             PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (!strcmp(aTopic, "profile-after-change")) {
     // Initialize the component.
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Now remove the listener, since it's no longer needed.
+    nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
+            "@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = obsSvc->RemoveObserver(this,
+                                "profile-after-change");
+    NS_ENSURE_SUCCESS(rv, rv);
+
   }
 
   return NS_OK;
@@ -361,14 +382,16 @@ sbMediaItemDownloadService::Finalize()
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
 
-  // Indicate that the media item download services are no longer ready.
-  mServiceManager->SetServiceReady(SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID,
-                                   PR_FALSE);
+  if (mInitialized) {
+    // Indicate that the media item download services are no longer ready.
+    mServiceManager->SetServiceReady(SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID,
+                                     PR_FALSE);
 
-  // Clear the media item downloader list.
-  mDownloaderList.Clear();
+    // Clear the media item downloader list.
+    mDownloaderList.Clear();
 
-  // No longer initialized.
-  mInitialized = PR_FALSE;
+    // No longer initialized.
+    mInitialized = PR_FALSE;
+  }
 }
 
