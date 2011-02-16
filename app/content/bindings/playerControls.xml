@@ -182,8 +182,7 @@
             if (this.value != 0) {
               this.lastValue = this.value;
             }
-            this.remote_volume.intValue = 0;
-            this.value = 0;
+            this.mm.volumeControl.volume = 0;
           } else {
             var volume;
             if (this.value == 0) {
