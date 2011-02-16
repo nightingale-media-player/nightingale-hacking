@@ -34,8 +34,6 @@ SONGBIRD_TEST_COMPONENT = mediamanager
 SONGBIRD_TESTS = $(srcdir)/head_mediamanager.js \
                  $(srcdir)/tail_mediamanager.js \
                  $(srcdir)/test_mediafilemanager.js \
-                 $(srcdir)/test_mediamanagementjob.js \
-                 $(srcdir)/test_mediamanagementjobenum.js \
                  $(NULL)
 
 MEDIA_MANAGER_TEST_FILES = $(srcdir)/files/TestFile1.mp3 \

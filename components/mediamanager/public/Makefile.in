@@ -29,10 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIMediaManagementJob.idl \
-             sbIMediaManagementJobItem.idl \
-             sbIMediaFileManager.idl \
-             sbIMediaManagementService.idl \
+XPIDL_SRCS = sbIMediaFileManager.idl \
              $(NULL)
 
 XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/job/public \

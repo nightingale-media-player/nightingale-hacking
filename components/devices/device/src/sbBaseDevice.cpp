@@ -91,7 +91,6 @@
 #include <sbIMediaItemDownloadJob.h>
 #include <sbIMediaItemDownloadService.h>
 #include <sbIMediaList.h>
-#include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
 #include <sbIPropertyManager.h>
@@ -3276,25 +3275,26 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
 
   nsresult rv;
 
-  nsCOMPtr<sbIMediaManagementService> mms =
-    do_GetService(SB_MEDIAMANAGEMENTSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // This is disabled - but keeping the logic here because we'll be reinstating
+  // bits of this once 2-way-sync lands.
+  PRBool mediaManagementEnabled = PR_FALSE;
 
-  PRBool enable;
-  rv = mms->GetIsEnabled(&enable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // If the managed media service isn't operational use the download folder
-  if (!enable) {
+  if (!mediaManagementEnabled) {
     rv = RegenerateFromDownloadFolder(aItem, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
 
+  // Note: Keeping the rest of this code here because we'll use it for
+  // import/2-way sync (at which point the above 'RegenerateFromDownloadFolder'
+  // will go away).
+
   nsCOMPtr<sbIMediaFileManager> fileMan =
     do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // TODO:Ratatat: pass non-null properties here (or modify API?) to get files
+  // organised as we want them for import.
   rv = fileMan->Init(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 

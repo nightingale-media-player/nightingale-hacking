@@ -42,7 +42,6 @@ Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
  */
 var SB_NS = "http://songbirdnest.com/data/1.0#";
 var SB_MEDIAFILEMANAGER = "@songbirdnest.com/Songbird/media-manager/file;1";
-var SB_MEDIAMANAGERJOB = "@songbirdnest.com/Songbird/media-manager/job;1";
 
 // Media manager preferences
 var SB_MM_PREF_FOLDER = "songbird.media_management.library.folder";

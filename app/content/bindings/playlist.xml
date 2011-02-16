@@ -731,28 +731,17 @@
         var selectedDevice =
               deviceManager.getDeviceForItem(this.mediaListView.mediaList);
 
-        // We have two paths here, one is with either libraries other than the
-        // main library or if media management is turned off. The other is when
-        // we are on the main library and media management is on.
+        // We have two paths here, one is with libraries other than the
+        // main library (web libraries, device libraries, etc.), and one for
+        // the main library only.
         // For the first path we display the normal "don't show me again" check
         // box, for the second we display the "also delete files" check box.
-        // Also if we are managed then we always display this dialog even if
-        // the user checked do not show again.
-        var isManaged = false;
-
-        var mediaMgrService = Cc["@songbirdnest.com/Songbird/media-manager-service;1"]
-                                .getService(Ci.sbIMediaManagementService);
-        if (this.mediaListView.mediaList == LibraryUtils.mainLibrary &&
-            mediaMgrService.isEnabled)
-        {
-          isManaged = true;
-        }
 
         var disableDialog = false;
         if (selectedDevice) {
           disableDialog =
             !selectedDevice.getWarningDialogEnabled("remove_tracks");
-        } else if (!isManaged) {
+        } else {
           disableDialog = SBDataGetBoolValue(BYPASSKEY);
         }
 
@@ -797,13 +786,7 @@
                                           [removedItemsInfo, strContext],
                                           2);
 
-          var strCheck;
-          if (isManaged) {
-            strCheck = songbirdStrings.GetStringFromName("mediamanager.dialog.confirm.delete");
-            check.value = SBDataGetBoolValue(DELETEFILEKEY);
-          } else {
-            strCheck = songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
-          }
+          var strCheck =  songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
           var removeStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "remove");
           var cancelStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
 
@@ -832,27 +815,14 @@
                                     null,
                                     strCheck,
                                     check);
-          if (isManaged) {
-            SBDataSetBoolValue(DELETEFILEKEY, check.value);
-            if (check.value == true) {
-              // Flag all these items to be deleted by the media manager.
-              var selectedEnum = this.mediaListView.selection.selectedMediaItems;
-              while (selectedEnum.hasMoreElements()) {
-                var curItem = selectedEnum.getNext()
-                                          .QueryInterface(Ci.sbIMediaItem);
-                curItem.setProperty("http://songbirdnest.com/data/1.0#deleteFromDisk",
-                                    "1");
-              }
-            }
-          } else {
-            if (check.value == true) {
-              if (selectedDevice) {
-                selectedDevice.setWarningDialogEnabled("remove_tracks", false);
-              } else {
-                SBDataSetBoolValue(BYPASSKEY, true);
-              }
+          if (check.value == true) {
+            if (selectedDevice) {
+              selectedDevice.setWarningDialogEnabled("remove_tracks", false);
+            } else {
+              SBDataSetBoolValue(BYPASSKEY, true);
             }
           }
+
           if (retval == 1) { // 1 = cancel/X, 0 = remove
             return;
           }
