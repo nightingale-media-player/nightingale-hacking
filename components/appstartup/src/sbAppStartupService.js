@@ -898,6 +898,26 @@ sbAppStartupService.prototype =
           // update the migration version
           prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
         }
+        case 4:
+        {
+          // Songbird 1.10, bug 23299
+          // If the user is using media management, turn it off and tell them
+          // it's no longer available.
+          var mmEnabledPref = "songbird.media_management.library.enabled";
+          if (Application.prefs.getValue(mmEnabledPref, false)) {
+            // Display the dialog explaining this...
+            WindowUtils.openDialog(null,
+                                   "chrome://songbird/content/xul/mediaManagementRemovedDialog.xul",
+                                   "mediaManagementRemovedDialog",
+                                   "chrome,centerscreen",
+                                   true);
+
+            Application.prefs.setValue(mmEnabledPref, false);
+          }
+
+          // update migration version
+          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+        }
       }
     },
 
