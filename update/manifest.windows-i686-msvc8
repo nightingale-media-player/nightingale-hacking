@@ -102,6 +102,8 @@
 ./components/sbIMediacoreErrorHandler.xpt
 ./components/sbIPlayQueueService.xpt
 ./components/sbIURIImportService.xpt
+./components/sbIdentityServiceComponent.dll
+./components/sbIdentityServiceComponent.xpt
 ./components/sbImageParser.dll
 ./components/sbImageParser.xpt
 ./components/sbIntegration.dll

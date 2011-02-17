@@ -99,6 +99,8 @@
 ./components/sbIMediacoreErrorHandler.xpt
 ./components/sbIPlayQueueService.xpt
 ./components/sbIURIImportService.xpt
+./components/sbIdentityServiceComponent.dylib
+./components/sbIdentityServiceComponent.xpt
 ./components/sbImageParser.dylib
 ./components/sbImageParser.xpt
 ./components/sbIntegration.dylib
