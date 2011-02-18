@@ -798,7 +798,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //property is not user viewable.
   rv = RegisterImage(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                      NS_LITERAL_STRING("property.primary_image_url"),
-                     stringBundle, PR_FALSE, PR_FALSE, PR_TRUE, PR_TRUE);
+                     stringBundle, PR_FALSE, PR_TRUE, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Last played time
