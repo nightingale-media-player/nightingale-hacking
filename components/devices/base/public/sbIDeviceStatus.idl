@@ -40,8 +40,12 @@ interface sbIMediaList;
  * Holds the current status of a device, idle, syncing, etc with all the
  * relevent information.
  */
-[scriptable, uuid(c4b8e380-1dd1-11b2-b549-be35d52daa54)]
+[scriptable, uuid(a50eb732-08e5-4bc4-9389-e03173e79a7f)]
 interface sbIDeviceStatus: nsISupports {
+
+  // Import export transfer direction
+  const unsigned long EXPORT = 1;
+  const unsigned long IMPORT = 2;
   /**
    * \brief The current overall state of the device.
    * \sa sbIDevice::STATE_*

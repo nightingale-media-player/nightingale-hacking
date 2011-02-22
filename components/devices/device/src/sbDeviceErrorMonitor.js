@@ -95,6 +95,7 @@ deviceErrorMonitor.prototype = {
   _sbStrings: null,
   NONE : "none",
   _debug: false,
+  _direction: Ci.sbIDeviceStatus.EXPORT,
 
   // Internal Services
   _consoleService: null,
@@ -219,15 +220,17 @@ deviceErrorMonitor.prototype = {
    *
    * \param aDevIndex the device index in our array to get errors for.
    * \param aContentType  the type of content we want errors for.
+   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT]
    * \return array of errors for a device of a particular media type.
    */
   _getErrorList : function deviceErrorMonitor__getErrorList(aDevIndex,
-                                                            aContentType) {
-    var device = this._deviceList[aDevIndex];
-    var errorList = device.errorLists[aContentType];
+                                                            aContentType,
+                                                            aDirection) {
+    let device = this._deviceList[aDevIndex];
+    let errorList = device.errorLists[aDirection + aContentType];
     if (!errorList) {
       errorList = [];
-      device.errorLists[aContentType] = errorList;
+      device.errorLists[aDirection + aContentType] = errorList;
     }
     return errorList;
    },
@@ -289,7 +292,9 @@ deviceErrorMonitor.prototype = {
         // Get the contentType and add the error information to the list.
         var contentType = this._getContentType(aDeviceEvent);
         // Get the error list, if one doesn't exists create it
-        var errorList = this._getErrorList(devIndex, contentType);
+        var errorList = this._getErrorList(devIndex, 
+                                           contentType, 
+                                           this._direction);
 
         // Ignore error if an error has already been logged for item
         if (errorInfo.item) {
@@ -333,19 +338,24 @@ deviceErrorMonitor.prototype = {
    *
    * \param aDevice device to check for errors on.
    * \param aContentType type of content we want to check for errors on.
+   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT]
    * \returns true if any errors are currently registered for this device.
    */
   deviceHasErrors: function deviceErrorMonitor_deviceHasErrors(aDevice,
-                                                               aContentType) {
+                                                               aContentType,
+                                                               aDirection) {
     var devIndex = this._findDeviceIndex(aDevice);
     if (devIndex > -1) {
       var device = this._deviceList[devIndex];
       var errorList;
-      if (!aContentType)
+      if (!aContentType && !aDirection)
         errorList = this._getAllErrors(devIndex);
-      else
-        errorList = this._getErrorList(devIndex, aContentType);
-
+      else if (aContentType) {
+        errorList = this._getErrorList(devIndex, aContentType, aDirection);
+      }
+      else {
+        throw Components.results.NS_ERROR_INVALID_ARG;
+      }
       return (errorList ? (errorList.length > 0) : false);
     }
     return false;
@@ -357,6 +367,7 @@ deviceErrorMonitor.prototype = {
    *
    * \param aDevice The device to get the list of errors for.
    * \param aContentType type of content we want errosr for.
+   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT]
    * \returns array of property bags that contain error information
    *
    * The property bag currently contains
@@ -365,7 +376,8 @@ deviceErrorMonitor.prototype = {
    *  state - State of the device at the point of the error.
    */
   getDeviceErrors: function deviceErrorMonitor_getDeviceErrors(aDevice,
-                                                               aContentType) {
+                                                               aContentType,
+                                                               aDirection) {
     var devIndex = this._findDeviceIndex(aDevice);
     var errorList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                       .createInstance(Ci.nsIMutableArray);
@@ -374,11 +386,14 @@ deviceErrorMonitor.prototype = {
       return errorList;
 
     var jsErrorList;
-    if (!aContentType)
+    if (!aContentType && !aDirection)
       jsErrorList = this._getAllErrors(devIndex);
-    else
-      jsErrorList = this._getErrorList(devIndex, aContentType);
-
+    else if (aContentType && aDirection) {
+      jsErrorList = this._getErrorList(devIndex, aContentType, aDirection);
+    }
+    else {
+      throw Cr.NS_ERROR_INVALID_ARG;
+    }
     for (var index = 0; index < jsErrorList.length; index++) {
       // Add the information to a property bag
       var errorBag = Cc["@mozilla.org/hash-property-bag;1"]
@@ -738,7 +753,23 @@ deviceErrorMonitor.prototype = {
         }
         this._logError(aDeviceEvent, message);
       break;
+      
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_START:
+        // Starting an import
+        this._direction = Ci.sbIDeviceStatus.IMPORT;
+      break;
+      
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_READ_END:
+        // End of import
+        this._direction = Ci.sbIDeviceStatus.EXPORT;
+      break; 
 
+      // This is just a safety in case EVENT_DEVICE_MEDIA_READ_END doesn't get
+      // sent
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_START:
+        // Starting an export
+        this._direction = Ci.sbIDeviceStatus.EXPORT;
+      break;
     }
   },
 

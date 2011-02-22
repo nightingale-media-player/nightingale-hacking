@@ -649,7 +649,7 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasErrors;
-  rv = errMonitor->DeviceHasErrors(aDevice, EmptyString(), &hasErrors);
+  rv = errMonitor->DeviceHasErrors(aDevice, EmptyString(), 0, &hasErrors);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (hasErrors) {
@@ -739,6 +739,7 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
   nsCOMPtr<nsIArray> errorStrings;
   rv = errMonitor->GetDeviceErrors(aDevice,
                                    EmptyString(),
+                                   0,
                                    getter_AddRefs(errorStrings));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = objects->AppendElement(errorStrings, PR_FALSE);

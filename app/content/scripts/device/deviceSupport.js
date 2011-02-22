@@ -558,9 +558,12 @@ var sbDeviceVolumeSupport = {
     function sbDeviceVolumeSupport__updateServicePane(aDeviceInfo)
   {
     var selected = gServicePane.activeNode;
-    var invisible = StringSet.contains(selected.className,
+    let invisible = true;
+    if (selected) {
+      invisible = StringSet.contains(selected.className,
                                        "non-default-library-node");
-    if (!selected || invisible) {
+    }                                       
+    if (invisible) {
       // Get the device service pane node.
       var dsps = Cc["@songbirdnest.com/servicepane/device;1"]
                    .getService(Ci.sbIDeviceServicePaneService);

@@ -1177,7 +1177,7 @@ sbCDDevice::ProxyHandleRipEnd()
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   PRBool hasErrors;
-  rv = errMonitor->DeviceHasErrors(this, EmptyString(), &hasErrors);
+  rv = errMonitor->DeviceHasErrors(this, EmptyString(), 0, &hasErrors);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   if (hasErrors) {

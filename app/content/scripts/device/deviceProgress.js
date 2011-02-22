@@ -1221,16 +1221,14 @@ var DPW = {
   },
 
   /**
-   * \brief Returns true if the device has errors for the media type
-   * \param aMediaType the media type to check errors for, or if it's an
-   *                   an empty string it returns true if any media type has
-   *                   has errors.
+   * \brief Returns true if the device has errors
    */
-  _checkForDeviceErrors: function DIPW__checkForDeviceErrors(aMediaType) {
+  _checkForDeviceErrors: function DIPW__checkForDeviceErrors() {
     var hasErrors = false;
     try {
       hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device,
-                                                           aMediaType);
+                                                           "",
+                                                           0);
     } catch (err) {
       Cu.reportError(err);
     }
