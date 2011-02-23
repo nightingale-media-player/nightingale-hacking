@@ -48,6 +48,7 @@
 #include "sbFileUtils.h"
 
 // Mozilla imports.
+#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsILocalFile.h>
 #include <nsMemory.h>
@@ -175,6 +176,49 @@ sbFileUtils::SetCurrentDir(nsIFile* aCurrentDir)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbFileUtils::GetExactPath(const nsAString& aFilePath, nsAString& aExactPath)
+{
+  // Default to an empty string
+  aExactPath.Truncate();
+
+#ifdef XP_WIN
+  long length = 0;
+  nsAutoArrayPtr<WCHAR> shortPath = NULL;
+  nsAutoArrayPtr<WCHAR> longPath = NULL;
+  // First obtain the size needed by passing NULL and 0.
+  length = ::GetShortPathNameW(aFilePath.BeginReading(),
+                               NULL,
+                               0);
+  if (length == 0) return NS_OK;
+
+  // Dynamically allocate the correct size
+  shortPath = new WCHAR[length];
+  length = ::GetShortPathNameW(aFilePath.BeginReading(),
+                               shortPath,
+                               length);
+  if (length == 0) return NS_OK;
+
+  length = 0;
+  // First obtain the size needed by passing NULL and 0.
+  length = ::GetLongPathNameW(shortPath,
+                              NULL,
+                              0);
+  if (length == 0) return NS_OK;
+
+
+  // Dynamically allocate the correct size
+  longPath = new WCHAR[length];
+  length = ::GetLongPathNameW(shortPath,
+                              longPath,
+                              length);
+  if (length == 0) return NS_OK;
+
+  aExactPath.Assign(longPath);
+#endif
+
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //

@@ -32,6 +32,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
 
 var PR_WRONLY           = 0x02;
 var PR_CREATE_FILE      = 0x08;
@@ -65,11 +66,24 @@ sbM3UPlaylistWriter.prototype = {
         var uri = aMediaItem.contentSrc;
         // We don't allow non-file URIs to be written. At the moment.
         if (!uri || uri.scheme != "file") { return; }
-        var f = uri.QueryInterface(Ci.nsIFileURL).file;
 
         try {
-          // Show the directory containing the file and select the file.
+          var f = uri.QueryInterface(Ci.nsIFileURL).file;
           f.QueryInterface(Ci.nsILocalFile);
+
+          // For Windows, since we store the content source in lowercase,
+          // get the case-sensitive path.
+          var platform = PlatformUtils.platformString;
+          if (platform == "Windows_NT") {
+            var fileUtils = Cc["@songbirdnest.com/Songbird/FileUtils;1"]
+                              .getService(Ci.sbIFileUtils);
+            var exactPath = fileUtils.getExactPath(f.path);
+            if (exactPath) {
+              f.initWithPath(exactPath);
+            }
+          }
+
+          // Show the directory containing the file and select the file.
           // The returned ACString is converted to UTF-8 encoding in the
           // getRelativeDescriptor method of nsLocalFileCommon.cpp*. Though
           // m3u files have not historically used UTF-8 (hence m3u8), encoding

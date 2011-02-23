@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -37,7 +37,7 @@
 
 interface nsIFile;
 
-[scriptable, uuid(1bd939fc-1dd2-11b2-a0ef-d36ceb4e7caf)]
+[scriptable, uuid(466b66d9-7007-48d8-aee1-b600e7745be8)]
 interface sbIFileUtils : nsISupports
 {
   /**
@@ -46,6 +46,15 @@ interface sbIFileUtils : nsISupports
    */
 
   attribute nsIFile currentDir;
+
+  /**
+   * \brief Returns a file's case-sensitive path (Windows-only)
+   *
+   * \param aFilePath   File path
+   *
+   * \return Case-sensitive path or null
+   */
+  AString getExactPath(in AString aFilePath);
 };
 
 
