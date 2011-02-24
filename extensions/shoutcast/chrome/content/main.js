@@ -165,12 +165,8 @@ var mmListener = {
   },
 
   setDataRemotes: function() {
-    gMM.sequencer.mode =
-        Ci.sbIMediacoreSequencer.MODE_FORWARD;
     this._remoteShuffleDisabled.boolValue = true;
 
-    gMM.sequencer.repeatMode =
-        Ci.sbIMediacoreSequencer.MODE_REPEAT_NONE;
     this._remoteRepeatDisabled.boolValue = true;
 
     this._remotePreviousDisabled.boolValue = true;
