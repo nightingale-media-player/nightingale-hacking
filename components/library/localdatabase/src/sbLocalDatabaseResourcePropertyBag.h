@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -34,6 +34,8 @@
 #include <nsStringAPI.h>
 
 #include <set>
+
+#include <sbIIdentityService.h>
 
 class sbLocalDatabasePropertyCache;
 class sbIPropertyManager;
@@ -79,6 +81,7 @@ private:
   nsClassHashtableMT<nsUint32HashKey, sbPropertyData> mValueMap;
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
+  nsCOMPtr<sbIIdentityService> mIdService;
 
   nsString  mGuid;
   PRUint32  mMediaItemId;

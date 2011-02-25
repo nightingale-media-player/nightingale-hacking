@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -148,6 +148,14 @@ interface sbIPropertyInfo : nsISupports
    */
   attribute boolean remoteWritable;
   
+  /**
+   * \brief This attribute indicates that changing this property may
+   *        change the computed hash for the item. If a property with
+   *        usedInIdentity of true is changed, the identity is
+   *        recalculated.
+   */
+  attribute boolean usedInIdentity;
+
   /**
    * \brief True if this property has a selection list
    */

@@ -57,18 +57,20 @@ public:
 
   sbIdentityService();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
 private:
   virtual ~sbIdentityService();
 
   // internal method to generate an md5 hash of the param aString
   nsresult HashString(const nsAString  &aString,
                       nsAString        &_retval);
+
+  nsresult GetPropertyStringForAudio
+           (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+            nsAString &_retval);
+
+  nsresult GetPropertyStringForVideo
+           (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+            nsAString &_retval);
 
 protected:
   /* additional members */

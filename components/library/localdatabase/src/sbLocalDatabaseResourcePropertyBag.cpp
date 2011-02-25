@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -83,6 +83,10 @@ sbLocalDatabaseResourcePropertyBag::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mIdService =
+    do_GetService("@songbirdnest.com/Songbird/IdentityService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -344,6 +348,25 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 #endif
     sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
     rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If this property is one that may be used in the metadata
+  // hash identity and it was set, then we need to recalculate
+  // the identity for this item.
+  PRBool usedInIdentity = PR_FALSE;
+  rv = propertyInfo->GetUsedInIdentity(&usedInIdentity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (usedInIdentity) {
+    // The propertybag has all the information we need to calculate the
+    // identity. Give it to the identity service to get an identity
+    nsString identity;
+    rv = mIdService->GetIdentityForBag(this, identity);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // save that identity
+    rv = mIdService->SaveIdentityToBag(this, identity);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

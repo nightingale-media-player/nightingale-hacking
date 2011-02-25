@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -43,6 +43,7 @@ sbImmutablePropertyInfo::sbImmutablePropertyInfo() :
   mUserEditable(PR_FALSE),
   mRemoteReadable(PR_FALSE),
   mRemoteWritable(PR_FALSE),
+  mUsedInIdentity(PR_FALSE),
   mOperatorsLock(nsnull),
   mUnitConverter(nsnull)
 {
@@ -436,3 +437,17 @@ sbImmutablePropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitConvert
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetUsedInIdentity(PRBool *aUsedInIdentity)
+{
+  NS_ENSURE_ARG_POINTER(aUsedInIdentity);
+
+  *aUsedInIdentity = mUsedInIdentity;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::SetUsedInIdentity(PRBool aUsedInIdentity)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}

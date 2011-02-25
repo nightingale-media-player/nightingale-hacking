@@ -25,32 +25,61 @@
 #include "nsISupports.idl"
 
 interface sbIMediaItem;
+interface sbILocalDatabaseResourcePropertyBag;
 
 /**
 * \interface sbIIdentityService sbIIdentityService.h
-* \brief A service to provide unique identifiers for mediaitems
+* \brief A service to provide identifiers for mediaitems
 */
-[scriptable, uuid(5c236d97-6187-49df-8e6d-97e49d31ab71)]
+[scriptable, uuid(ef3bec0c-23c0-4b1f-4e87-64a99d8063d1)]
 interface sbIIdentityService : nsISupports
 {
   /**
-   * \brief GetIdentity - Generates a unique identifier for the param mediaitem
-   *                      and that identifier is returned.
+   * \brief GetIdentityForMediaItem
+   *          Generates an identifier for the param aMediaItem
+   *          and that identifier is returned.
    *
-   * \param aMediaItem    The mediaitem whose identity should be calculated and
-   *                      returned
-   * \return              A unique identifier for the param aMediaItem
+   * \param aMediaItem    The mediaitem whose identity should be calculated
+   *                      and returned
+   * \return              An identifier for the param aMediaItem
    */
-  AString getIdentity(in sbIMediaItem aMediaItem);
+  AString getIdentityForMediaItem(in sbIMediaItem aMediaItem);
 
   /**
-   * \brief SaveIdentity - Saves the param aIdentity in the database for the
-   *                       param aMediaItem
+   * \brief GetIdentityForBag -
+   *          Generates an identifier for the properties contained
+   *          within the param aPropertyBag and that identifier is
+   *          returned.
    *
-   * \param aMediaItem    The mediaitem that will be associated with the param
-   *                      aIdentity in the database
-   * \param aIdentity     The identity that should be saved for the param
+   * \param aPropertyBag  The propertybag containing properties that
+   *                      should be used to calculate a metadata hash
+   *                      identity
+   * \return              An identifier for the properties within
+   *                      the param aPropertyBag
+   */
+  AString getIdentityForBag(in sbILocalDatabaseResourcePropertyBag aPropertyBag);
+
+  /**
+   * \brief SaveIdentityToMediaItem -
+   *          Saves the param aIdentity to the param aMediaItem's propertybag
+   *          which will automatically flush that value to the database
+   *
+   * \param aMediaItem    The mediaitem that will be associated with the
+   *                      param aIdentity
+   * \param aIdentity     The metadata hash identifier for the param
    *                      aMediaItem
    */
-  void saveIdentity(in sbIMediaItem aMediaItem, in AString aIdentity);
+  void saveIdentityToMediaItem(in sbIMediaItem aMediaItem, in AString aIdentity);
+
+  /**
+   * \brief SaveIdentityToBag -
+   *          Saves the param aIdentity to the propertybag which will
+   *          automatically flush that value to the database for later retrieval
+   *
+   * \param aPropertyBag  The propertybag that will be associated with the
+   *                      param aIdentity
+   * \param aIdentity     The identity that should be saved in aPropertyBag
+   */
+  void saveIdentityToBag(in sbILocalDatabaseResourcePropertyBag aPropertyBag,
+                         in AString aIdentity);
 };

@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -101,6 +101,7 @@ private:
                         nsIStringBundle* aStringBundle,
                         PRBool aUserViewable,
                         PRBool aUserEditable,
+                        PRBool aUsedInIdentity,
                         PRUint32 aNullSort,
                         PRBool aHasNullSort,
                         PRBool aRemoteReadable,

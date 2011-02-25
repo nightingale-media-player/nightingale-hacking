@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -108,6 +108,8 @@ sbPropertyInfo::sbPropertyInfo()
 , mRemoteWritable(PR_FALSE)
 , mUnitConverterLock(nsnull)
 , mUnitConverter(nsnull)
+, mUsedInIdentityLock(nsnull)
+, mUsedInIdentity(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gPropInfoLog) {
@@ -159,6 +161,10 @@ sbPropertyInfo::sbPropertyInfo()
   mUnitConverterLock = PR_NewLock();
   NS_ASSERTION(mUnitConverterLock,
     "sbPropertyInfo::mUnitConverterLock failed to create lock!");
+
+  mUsedInIdentityLock = PR_NewLock();
+  NS_ASSERTION(mUsedInIdentityLock,
+    "sbPropertyInfo::mUsedInIdentityLock failed to create lock!");
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -205,6 +211,10 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mUnitConverterLock) {
     PR_DestroyLock(mUnitConverterLock);
+  }
+
+  if(mUsedInIdentityLock) {
+    PR_DestroyLock(mUsedInIdentityLock);
   }
 }
 
@@ -638,3 +648,19 @@ NS_IMETHODIMP sbPropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitCo
   return NS_OK;
 }
 
+NS_IMETHODIMP sbPropertyInfo::GetUsedInIdentity(PRBool *aUsedInIdentity)
+{
+  NS_ENSURE_ARG_POINTER(aUsedInIdentity);
+
+  sbSimpleAutoLock lock(mUsedInIdentityLock);
+  *aUsedInIdentity = mUsedInIdentity;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetUsedInIdentity(PRBool aUsedInIdentity)
+{
+  sbSimpleAutoLock lock(mUsedInIdentityLock);
+  mUsedInIdentity = aUsedInIdentity;
+  return NS_OK;
+}

@@ -37,10 +37,13 @@
 #include <nsStringAPI.h>
 #include <sbStringUtils.h>
 #include <sbStandardProperties.h>
-
-#include <sbDebugUtils.h>
 #include <nsICryptoHash.h>
 
+#include <sbIPropertyManager.h>
+#include <sbIPropertyInfo.h>
+#include <sbILocalDatabaseResourcePropertyBag.h>
+#include <sbILocalDatabaseMediaItem.h>
+#include <sbDebugUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbIdentityService,
                               sbIIdentityService)
@@ -48,12 +51,26 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbIdentityService,
 // the separator that will be used between parts of the metadata hash identity
 const char SEPARATOR = '|';
 
-// the properties that will be used as part of the metadata hash identity
-nsString mPropsToHash[] = {
-  NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-  NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-  NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-  NS_LITERAL_STRING(SB_PROPERTY_GENRE)
+/* the properties that will be used as part of the metadata hash identity
+ * for audio files */
+static const char* const sAudioPropsToHash[] = {
+  SB_PROPERTY_CONTENTTYPE,
+  SB_PROPERTY_TRACKNAME,
+  SB_PROPERTY_ARTISTNAME,
+  SB_PROPERTY_ALBUMNAME,
+  SB_PROPERTY_GENRE
+};
+
+// jhawk for now the properties used for Video and Audio are the same, but that
+//       will change in the near future.
+/* the properties that will be used as part of the metadata hash identity
+ * for video files */
+static const char* const sVideoPropsToHash[] = {
+  SB_PROPERTY_CONTENTTYPE,
+  SB_PROPERTY_TRACKNAME,
+  SB_PROPERTY_ARTISTNAME,
+  SB_PROPERTY_ALBUMNAME,
+  SB_PROPERTY_GENRE
 };
 
 //-----------------------------------------------------------------------------
@@ -109,30 +126,59 @@ sbIdentityService::HashString(const nsAString  &aString,
 }
 
 //-----------------------------------------------------------------------------
-/*  sbIdentityService.idl, getIdentity */
-NS_IMETHODIMP
-sbIdentityService::GetIdentity(sbIMediaItem *aMediaItem,
+nsresult
+sbIdentityService::GetPropertyStringForAudio
+                   (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
                                nsAString    &_retval)
 {
-  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
   nsresult rv;
 
-  nsString trackName;
-  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                               trackName);
-  if (NS_FAILED(rv) || trackName.IsEmpty()) {
-    trackName.AssignLiteral("No Track Name");
-  }
-  TRACE_FUNCTION("Generating an identity for \'%s\' ",
-                 NS_ConvertUTF16toUTF8(trackName).get());
-
-  // concatenate the properties that we are interested in together
   nsAutoString propString;
-  PRUint32 propCount = NS_ARRAY_LENGTH(mPropsToHash);
+  PRUint32 propCount = NS_ARRAY_LENGTH(sAudioPropsToHash);
   for (PRUint32 i = 0; i < propCount; i++) {
-    // mPropsToHash contains the ids for the properties we are interested in
+
+    // sAudioPropsToHash contains ids for the properties we are interested in
     nsString propVal;
-    rv = aMediaItem->GetProperty(mPropsToHash[i],
+    rv = aPropertyBag->GetProperty(NS_ConvertUTF8toUTF16(sAudioPropsToHash[i]),
+                                   propVal);
+
+    if (NS_FAILED(rv) || propVal.IsEmpty())
+    {
+      propVal = NS_LITERAL_STRING("");
+  }
+
+    // append this property to the concatenated string
+    if (i == 0)
+    {
+      propString.Assign(propVal);
+    }
+    else {
+      propString.AppendLiteral(&SEPARATOR);
+      propString.Append(propVal);
+    }
+  }
+
+  _retval.Assign(propString);
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+nsresult
+sbIdentityService::GetPropertyStringForVideo
+                   (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+                    nsAString &_retval)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+  nsresult rv;
+
+  nsAutoString propString;
+  PRUint32 propCount = NS_ARRAY_LENGTH(sVideoPropsToHash);
+  for (PRUint32 i = 0; i < propCount; i++) {
+
+    // sVideoPropsToHash contains ids for the properties we are interested in
+    nsString propVal;
+    rv = aPropertyBag->GetProperty(NS_ConvertUTF8toUTF16(sVideoPropsToHash[i]),
                                  propVal);
 
     if (NS_FAILED(rv) || propVal.IsEmpty())
@@ -151,6 +197,77 @@ sbIdentityService::GetIdentity(sbIMediaItem *aMediaItem,
     }
   }
 
+  _retval.Assign(propString);
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/*  sbIdentityService.idl, getIdentityForMediaItem */
+NS_IMETHODIMP
+sbIdentityService::GetIdentityForMediaItem
+                   (sbIMediaItem *aMediaItem,
+                    nsAString    &_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  nsCOMPtr<sbILocalDatabaseMediaItem> localItem =
+    do_QueryInterface(aMediaItem, &rv);
+  if (NS_FAILED(rv)) {
+    // we were passed a mediaitem that we won't be able to get a propertybag for
+    return NS_OK;
+  }
+
+  // get the propertybag underlying aMediaItem and make an identity from that
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> propertyBag;
+  rv = localItem->GetPropertyBag(getter_AddRefs(propertyBag));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetIdentityForBag(propertyBag, _retval);
+  return rv;
+}
+
+//-----------------------------------------------------------------------------
+/*  sbIdentityService.idl, getIdentityForBag */
+NS_IMETHODIMP
+sbIdentityService::GetIdentityForBag
+                   (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+                    nsAString &_retval)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+  nsresult rv;
+
+  #ifdef DEBUG
+  nsString trackName;
+  rv = aPropertyBag->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                trackName);
+  if (NS_FAILED(rv) || trackName.IsEmpty()) {
+    trackName.AssignLiteral("No Track Name");
+  }
+  TRACE_FUNCTION("Generating an identity for \'%s\' ",
+                 NS_ConvertUTF16toUTF8(trackName).get());
+  #endif
+
+  // concatenate the properties that we are interested in together
+  nsString contentType;
+  rv = aPropertyBag->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                 contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* we use different properties in the identity calculations for video and
+   * audio, so detect the type and get a string of the relvant property values
+   * concatenated together */
+  nsString propString;
+  if (contentType.EqualsLiteral("video")) {
+    GetPropertyStringForVideo(aPropertyBag, propString);
+  }
+  else if (contentType.EqualsLiteral("audio")) {
+    GetPropertyStringForAudio(aPropertyBag, propString);
+  }
+  else {
+    NS_ERROR("Cannot get identity for unrecognized contenttype");
+  }
+
   // hash the concatenated string and return it
   rv = HashString(propString, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -159,19 +276,62 @@ sbIdentityService::GetIdentity(sbIMediaItem *aMediaItem,
 }
 
 //-----------------------------------------------------------------------------
-/*  sbIdentityService.idl, saveIdentity */
+/*  sbIdentityService.idl, saveIdentityForMediaItem */
 NS_IMETHODIMP
-sbIdentityService::SaveIdentity(sbIMediaItem    *aMediaItem,
+sbIdentityService::SaveIdentityToMediaItem
+                   (sbIMediaItem    *aMediaItem,
                                 const nsAString &aIdentity)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_TRUE(!aIdentity.IsEmpty(), NS_ERROR_INVALID_ARG);
+  nsresult rv;
 
-  TRACE_FUNCTION("Saving an identity of \'%s\' ",
-                 NS_ConvertUTF16toUTF8(aIdentity).get());
+  #ifdef DEBUG
+  nsString trackName;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                               trackName);
+  if (NS_FAILED(rv) || trackName.IsEmpty()) {
+    trackName.AssignLiteral("No Track Name");
+  }
 
-  // save aIdentity to the content_hash column in the mediaitems db
-  nsresult rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HASH),
+  // present the debug string to NSPR log and console
+  TRACE_FUNCTION("Saving an identity of \'%s\' for track \'%s\'",
+                 NS_ConvertUTF16toUTF8(aIdentity).get(),
+                 NS_ConvertUTF16toUTF8(trackName).get());
+  #endif
+
+  // save aIdentity to the propertybag for the param aMediaitem
+  rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HASH), aIdentity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/*  sbIdentityService.idl, saveIdentityForBag */
+NS_IMETHODIMP
+sbIdentityService::SaveIdentityToBag
+                   (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+                    const nsAString &aIdentity)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+  nsresult rv;
+
+  #ifdef DEBUG
+  nsString trackName;
+  rv = aPropertyBag->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                 trackName);
+  if (NS_FAILED(rv) || trackName.IsEmpty()) {
+    trackName.AssignLiteral("No Track Name");
+  }
+
+  // present the debug string to NSPR log and console
+  TRACE_FUNCTION("Saving an identity of \'%s\' for track \'%s\'",
+                 NS_ConvertUTF16toUTF8(aIdentity).get(),
+                 NS_ConvertUTF16toUTF8(trackName).get());
+  #endif
+
+  // save the identity in the propertybag
+  rv = aPropertyBag->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HASH),
                                         aIdentity);
   NS_ENSURE_SUCCESS(rv, rv);
 

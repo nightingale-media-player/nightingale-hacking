@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -80,7 +80,10 @@ NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOpera
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
 NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
 NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter) { return _to SetUnitConverter(aUnitConverter); } \
-NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); }
+NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); } \
+NS_IMETHOD GetUsedInIdentity(PRBool *aUsedInIdentity) { return _to GetUsedInIdentity(aUsedInIdentity); } \
+NS_IMETHOD SetUsedInIdentity(PRBool aUsedInIdentity) { return _to SetUsedInIdentity(aUsedInIdentity); }
+
 
 #define NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to) \
 NS_IMETHOD MakeSortable(const nsAString &aValue, nsAString &retVal) { return _to MakeSortable(aValue, retVal); }
@@ -142,6 +145,9 @@ protected:
   
   PRLock*   mUnitConverterLock;
   nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
+
+  PRLock*   mUsedInIdentityLock;
+  PRBool    mUsedInIdentity;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */
