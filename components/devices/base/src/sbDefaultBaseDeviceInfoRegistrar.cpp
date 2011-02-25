@@ -200,6 +200,31 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceFolder(sbIDevice* aDevice,
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetImportRules(
+                                    sbIDevice *   aDevice,
+                                    nsIArray **   _retval NS_OUTPARAM)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  nsresult rv;
+
+  // Get the device XML info.  Just return if none available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  // Get the rules.
+  rv = deviceXMLInfo->GetImportRules(_retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetMountTimeout(sbIDevice* aDevice,
                                                   PRUint32*  retval)
 {

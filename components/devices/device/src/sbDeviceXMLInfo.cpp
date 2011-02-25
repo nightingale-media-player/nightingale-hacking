@@ -59,6 +59,7 @@
 #include <nsIMutableArray.h>
 #include <nsIPropertyBag2.h>
 #include <nsIScriptSecurityManager.h>
+#include <nsISupportsPrimitives.h>
 #include <nsIWritablePropertyBag.h>
 #include <nsIXMLHttpRequest.h>
 #include <nsMemory.h>
@@ -338,6 +339,103 @@ sbDeviceXMLInfo::GetDeviceFolder(PRUint32   aContentType,
   // Get the device folder URL.
   rv = GetDeviceFolder(folderType, aFolderURL);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// GetImportRules
+//
+
+nsresult
+sbDeviceXMLInfo::GetImportRules(nsIArray ** aImportRules)
+{
+  NS_ENSURE_ARG_POINTER(aImportRules);
+
+  nsresult rv;
+
+  // Default to no rules:
+  *aImportRules = NULL;
+
+  // Do nothing more if no device info element.
+  if (!mDeviceInfoElement) {
+    return NS_OK;
+  }
+
+  // Each import rule is defined by an element of the form
+  //
+  //    <import  url="..."  type="..." />
+  //
+  // Get the list of import nodes:
+  nsTArray< nsCOMPtr<nsIDOMNode> > importNodeList;
+  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("import"), importNodeList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the result array.  The result will be an array of import
+  // rules, where each rule is itself an array of two strings: a path
+  // and the import type of files residing (recursively) within that
+  // path:
+  nsCOMPtr<nsIMutableArray> rules =
+    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Iterate through the import nodes and assemble the result array:
+  PRUint32 nodeCount = importNodeList.Length();
+  for (PRUint32 i = 0; i < nodeCount; i++) {
+    // Get the next import element:
+    nsCOMPtr<nsIDOMElement> importElement;
+    importElement = do_QueryInterface(importNodeList[i], &rv);
+    if (NS_FAILED(rv))
+      continue;
+
+    // Get the folder path from the url attribute.  Skip if
+    // empty or unavailable:
+    nsAutoString urlAttr;
+    rv = importElement->GetAttribute(NS_LITERAL_STRING("url"), urlAttr);
+    if (NS_FAILED(rv))
+      continue;
+    if (urlAttr.IsEmpty())
+      continue;
+
+    // Get the import type.  Skip if empty or unavailable:
+    nsAutoString typeAttr;
+    rv = importElement->GetAttribute(NS_LITERAL_STRING("type"), typeAttr);
+    if (NS_FAILED(rv))
+      continue;
+    if (typeAttr.IsEmpty())
+      continue;
+
+    // Create an array for this import rule:
+    nsCOMPtr<nsIMutableArray> rule =
+      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Append the folder path as the first element of the rule:
+    nsCOMPtr<nsISupportsString> folder =
+      do_CreateInstance("@mozilla.org/supports-string;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = folder->SetData(urlAttr);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = rule->AppendElement(folder, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Append the import type as the second element of the rule:
+    nsCOMPtr<nsISupportsString> importType =
+      do_CreateInstance("@mozilla.org/supports-string;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = importType->SetData(typeAttr);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = rule->AppendElement(importType, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Append this rule to the result:
+    rv = rules->AppendElement(rule, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Return the result array:
+  NS_ADDREF(*aImportRules = rules.get());
 
   return NS_OK;
 }

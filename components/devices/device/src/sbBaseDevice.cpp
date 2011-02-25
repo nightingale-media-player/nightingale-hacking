@@ -4086,6 +4086,23 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
                            sbNewVariant(excludedFolders));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Get import rules:
+  nsCOMPtr<nsIArray> importRules;
+  rv = deviceXMLInfo->GetImportRules(getter_AddRefs(importRules));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Stow the rules, if any, in the device properties:
+  if (importRules) {
+    nsCOMPtr<nsIWritablePropertyBag2> devProps2 =
+      do_QueryInterface(deviceProperties, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = devProps2->SetPropertyAsInterface(
+                    NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMPORT_RULES),
+                    importRules);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Update media folders if needed.  Ignore errors if media folders fail to
   // update.
   if (needMediaFolderUpdate)
@@ -6744,6 +6761,22 @@ sbBaseDevice::RegisterDeviceInfo()
     rv = deviceProperties->SetProperty(
                            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
                            sbNewVariant(excludedFolders));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Get import rules:
+  nsCOMPtr<nsIArray> importRules;
+  rv = mInfoRegistrar->GetImportRules(this, getter_AddRefs(importRules));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Stow the rules, if any, in the device properties:
+  if (importRules) {
+    nsCOMPtr<nsIWritablePropertyBag2> devProps2 =
+      do_QueryInterface(deviceProperties, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = devProps2->SetPropertyAsInterface(
+                    NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMPORT_RULES),
+                    importRules);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

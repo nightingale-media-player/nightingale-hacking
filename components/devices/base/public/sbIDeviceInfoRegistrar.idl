@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(a35e99b2-1dd1-11b2-9621-d17db83fa38f)]
+[scriptable, uuid(280ea825-00bd-4e02-910b-5fd7291903c2)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -95,6 +95,19 @@ interface sbIDeviceInfoRegistrar : nsISupports
    */
   AString getDeviceFolder(in sbIDevice     aDevice,
                           in unsigned long aContentType);
+
+  /**
+   * \brief Return a list of "rules" to apply to files imported from aDevice.
+   *        Each rule is itself an nsIArray of two nsISupportsStrings: a path
+   *        and an "import type" of files residing (recursively) within that
+   *        path.  The import type is a symbolic value that determines how to
+   *        set the media item properties when importing items of that type
+   *        from aDevice.
+   *
+   * \return  the list of import rules for aDevice.  This array can be stored
+   *          with aDevice under SB_DEVICE_PROPERTY_IMPORT_RULES.
+   */
+  nsIArray getImportRules(in sbIDevice   aDevice);
 
   /**
    * \brief Return the mount timeout value in seconds for the device specified

@@ -219,6 +219,19 @@ public :
                            nsAString& aFolderURL);
 
   /**
+   * Return in aImportRules a list of "rules" to apply to files imported from
+   * the device.  Each rule is itself an nsIArray of two nsISupportsStrings:
+   * a path and an "import type" of files residing (recursively) within that
+   * path.  The import type can determine how to set the media item properties
+   * when importing items of that type from the device.
+   *
+   * \param aImportRules  an array to populate with the list of import rules.
+   *                      This array can be stored with an sbIDevice as
+   *                      SB_DEVICE_PROPERTY_IMPORT_RULES.
+   */
+  nsresult GetImportRules(nsIArray ** aImportRules);
+
+  /**
    * Return in aMountTimeout the mount timeout value in seconds.  If no mount
    * timeout value is available, return NS_ERROR_NOT_AVAILABLE.
    *
