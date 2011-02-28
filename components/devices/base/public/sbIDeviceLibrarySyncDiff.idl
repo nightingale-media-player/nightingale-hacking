@@ -1,0 +1,87 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+ 
+#include "nsISupports.idl"
+
+interface sbILibrary;
+interface sbILibraryChangeset;
+interface nsIArray;
+ 
+[scriptable, uuid(f26d3ef1-3d94-4c3e-a5b9-26a29cf92f03)]
+interface sbIDeviceLibrarySyncDiff : nsISupports
+{
+  // These two are mutually exclusive
+  const unsigned long SYNC_FLAG_EXPORT_ALL = 1<<0;
+  const unsigned long SYNC_FLAG_EXPORT_PLAYLISTS = 1<<1;
+
+  const unsigned long SYNC_FLAG_IMPORT = 1<<2;
+  
+  /**
+   * Generate lists of items to sync in 2-way sync.
+   *
+   * \param aMode            The configured sync mode. Combination of
+   *                         SYNC_FLAG_* constants.
+   * \param aMediaType       The media type to generate sync lists for. One of
+   *                         the sbIDeviceLibrary::MEDIATYPE_* constants.
+   * \param aSourceLibrary   The source library for the sync operation - usually
+   *                         the main library.
+   * \param aDestLibrary     The destination library for the sync operation -
+   *                         usually a device library
+   * \param aSourceLists     Array of playlists to sync to the destination
+   *                         library, used only if SYNC_FLAGS_EXPORT_PLAYLISTS
+   *                         is set.
+   * \param aExportChangeset The changeset describing items to be exported to
+   *                         the destination (device) library.
+   *                         This will be non-null if SYNC_FLAG_EXPORT_ALL or
+   *                         SYNC_FLAG_EXPORT_PLAYLISTS is passed (though the
+   *                         changeset may still be empty in that case!)
+   *                         In this list, an ADDED item should be added to the
+   *                         destination library, and the corresponding file
+   *                         copied (or transcoded) to the target.
+   *                         A MODIFIED item should be modified in the target
+   *                         library (the target item will be given in the
+   *                         sbILibraryChange), and the target file overwritten.
+   * \param aImportChangeset The changeset describing items to be imported to
+   *                         the source (main) library.
+   *                         This will be non-null if SYNC_FLAG_IMPORT is
+   *                         passed (though the changeset may still be empty)
+   *                         Here, an ADDED item should be added to the source
+   *                         (main) library. A MODIFIED item will, likewise,
+   *                         modify an existing item 
+   *                         (sbILibraryChange::destinationItem), but note that
+   *                         this MUST only ever occur for lists. Thus, there is
+   *                         no actual target file to overwrite.
+   *                         It would be an internal error for an
+   *                         sbILibraryChange in this list to have
+   *                         operation == MODIFIED, and isList false.
+   */
+  void generateSyncLists(in unsigned long aMode,
+                         in unsigned long aMediaType,
+                         in sbILibrary aSourceLibrary,
+                         in sbILibrary aDestLibrary,
+                         in nsIArray   aSourceLists,
+                         out sbILibraryChangeset aExportChangeset,
+                         out sbILibraryChangeset aImportChangeset);
+};
+  
