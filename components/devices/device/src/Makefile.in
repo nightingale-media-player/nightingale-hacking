@@ -36,6 +36,7 @@ STATIC_LIB = sbDeviceCore
 CPP_SRCS = sbBaseDevice.cpp \
            sbBaseDeviceVolume.cpp \
            sbDeviceEnsureSpaceForWrite.cpp \
+		   sbDeviceMediaItemDecorator.cpp \
            sbDeviceStatistics.cpp \
            sbDeviceSupportsItemHelper.cpp \
            sbDeviceProgressListener.cpp \
