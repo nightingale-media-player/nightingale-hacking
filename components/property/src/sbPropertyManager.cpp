@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -470,6 +470,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                      NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
                      NS_LITERAL_STRING("property.content_type"),
                      stringBundle);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* we label contentType as used in the identity because the identity
+   * calculation formula depends on the contentType, so if the contentType
+   * changes we need to recompute the identity using the new type's formula */
+  nsCOMPtr<sbIPropertyInfo> contentTypePropInfo;
+  rv = GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                       getter_AddRefs(contentTypePropInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = contentTypePropInfo->SetUsedInIdentity(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Content Length (-1, can't determine.)

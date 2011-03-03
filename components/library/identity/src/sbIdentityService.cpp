@@ -202,9 +202,9 @@ sbIdentityService::GetPropertyStringForVideo
 }
 
 //-----------------------------------------------------------------------------
-/*  sbIdentityService.idl, getIdentityForMediaItem */
+/*  sbIdentityService.idl, calculateIdentityForMediaItem */
 NS_IMETHODIMP
-sbIdentityService::GetIdentityForMediaItem
+sbIdentityService::CalculateIdentityForMediaItem
                    (sbIMediaItem *aMediaItem,
                     nsAString    &_retval)
 {
@@ -223,14 +223,14 @@ sbIdentityService::GetIdentityForMediaItem
   rv = localItem->GetPropertyBag(getter_AddRefs(propertyBag));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetIdentityForBag(propertyBag, _retval);
+  rv = CalculateIdentityForBag(propertyBag, _retval);
   return rv;
 }
 
 //-----------------------------------------------------------------------------
-/*  sbIdentityService.idl, getIdentityForBag */
+/*  sbIdentityService.idl, calculateIdentityForBag */
 NS_IMETHODIMP
-sbIdentityService::GetIdentityForBag
+sbIdentityService::CalculateIdentityForBag
                    (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
                     nsAString &_retval)
 {

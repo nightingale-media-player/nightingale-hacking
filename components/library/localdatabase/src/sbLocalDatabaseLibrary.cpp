@@ -724,6 +724,20 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
     getter_AddRefs(mGetTypeForGUID));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  query->PrepareQuery(NS_LITERAL_STRING("\
+    SELECT guid \
+    FROM media_items \
+    WHERE content_hash = ? and guid != ?"),
+    getter_AddRefs(mGetGUIDForIdentity));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  query->PrepareQuery(NS_LITERAL_STRING("\
+    SELECT count(media_item_id) \
+    FROM media_items \
+    WHERE content_hash = ? and guid != ?"),
+    getter_AddRefs(mGetCountForIdentity));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 /**
@@ -2552,6 +2566,153 @@ sbLocalDatabaseLibrary::Resolve(nsIURI* aUri,
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Resolve(%s)", this, spec.get()));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::ContainsItemWithSameIdentity
+                        (sbIMediaItem* aMediaItem,
+                         PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  nsCOMPtr<sbIIdentityService> idService =
+    do_GetService("@songbirdnest.com/Songbird/IdentityService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* flush the property cache so that we know the identity is based on current
+   * properties */
+  rv = Flush();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // find the identity for the param mediaitem
+  nsString identity;
+  rv = idService->CalculateIdentityForMediaItem(aMediaItem, identity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* construct the query to count the number of mediaitems with the same
+   * identity that aren't the same mediaitem (dont have the same guid) */
+  rv = query->AddPreparedStatement(mGetCountForIdentity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, identity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString paramsGuid;
+  rv = aMediaItem->GetGuid(paramsGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(1, paramsGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
+
+  nsString foundCount;
+  rv = result->GetRowCell(0, 0, foundCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = !foundCount.EqualsLiteral("0");
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetItemsWithSameIdentity(sbIMediaItem* aMediaItem,
+                                                 nsIArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  nsCOMPtr<sbIIdentityService> idService =
+    do_GetService("@songbirdnest.com/Songbird/IdentityService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* flush the property cache so that we know the identity is based on current
+   * properties */
+  rv = Flush();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // find the identity for the param mediaitem
+  nsString identity;
+  rv = idService->CalculateIdentityForMediaItem(aMediaItem, identity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* construct the query to determine if there are any mediaitems with the same
+   * identity that aren't the same mediaitem (dont have the same guid) */
+  rv = query->AddPreparedStatement(mGetGUIDForIdentity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, identity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString paramsGuid;
+  rv = aMediaItem->GetGuid(paramsGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(1, paramsGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
+
+  /* check if we got any results, if we did push them to the array and return.
+   * If not, we'll return the empty array */
+  nsCOMPtr<nsIMutableArray> sameIdentityItems =
+    do_CreateInstance(NS_ARRAY_CONTRACTID);
+
+  PRUint32 rowCount = 0;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < rowCount; i++)
+  {
+    nsString foundGUID;
+    rv = result->GetRowCell(i, 0, foundGUID);
+    if (NS_SUCCEEDED(rv) && !foundGUID.IsEmpty())
+    {
+      nsCOMPtr<sbIMediaItem> foundMediaItem;
+      rv = GetMediaItem(foundGUID, getter_AddRefs(foundMediaItem));
+      if (NS_SUCCEEDED(rv) && foundMediaItem)
+      {
+        rv = sameIdentityItems->AppendElement(foundMediaItem, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  NS_ADDREF(*_retval = sameIdentityItems.get());
+  return NS_OK;
+}
+
 
 /**
  * See sbILibrary

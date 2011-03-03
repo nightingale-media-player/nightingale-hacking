@@ -35,7 +35,7 @@ interface sbILocalDatabaseResourcePropertyBag;
 interface sbIIdentityService : nsISupports
 {
   /**
-   * \brief GetIdentityForMediaItem
+   * \brief CalculateIdentityForMediaItem
    *          Generates an identifier for the param aMediaItem
    *          and that identifier is returned.
    *
@@ -43,10 +43,10 @@ interface sbIIdentityService : nsISupports
    *                      and returned
    * \return              An identifier for the param aMediaItem
    */
-  AString getIdentityForMediaItem(in sbIMediaItem aMediaItem);
+  AString calculateIdentityForMediaItem(in sbIMediaItem aMediaItem);
 
   /**
-   * \brief GetIdentityForBag -
+   * \brief CalculateIdentityForBag -
    *          Generates an identifier for the properties contained
    *          within the param aPropertyBag and that identifier is
    *          returned.
@@ -57,7 +57,7 @@ interface sbIIdentityService : nsISupports
    * \return              An identifier for the properties within
    *                      the param aPropertyBag
    */
-  AString getIdentityForBag(in sbILocalDatabaseResourcePropertyBag aPropertyBag);
+  AString calculateIdentityForBag(in sbILocalDatabaseResourcePropertyBag aPropertyBag);
 
   /**
    * \brief SaveIdentityToMediaItem -

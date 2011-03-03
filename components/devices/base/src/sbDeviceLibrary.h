@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -62,6 +62,8 @@ struct PRMonitor;
   NS_IMETHOD GetSupportsForeignMediaItems(PRBool *aSupportsForeignMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSupportsForeignMediaItems(aSupportsForeignMediaItems); } \
   NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
   NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
+  NS_IMETHOD ContainsItemWithSameIdentity(sbIMediaItem* aMediaItem, PRBool* _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ContainsItemWithSameIdentity(aMediaItem, _retval); } \
+  NS_IMETHOD GetItemsWithSameIdentity(sbIMediaItem* aMediaItem, nsIArray** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsWithSameIdentity(aMediaItem, _retval); } \
   NS_IMETHOD Resolve(nsIURI *aUri, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Resolve(aUri, _retval); } \
   NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, PRBool aDontCopyContent, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, aDontCopyContent, _retval); } \
   NS_IMETHOD GetMediaItem(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItem(aGuid, _retval); } \

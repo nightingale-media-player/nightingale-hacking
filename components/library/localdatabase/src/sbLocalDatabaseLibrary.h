@@ -371,7 +371,7 @@ private:
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
 
-  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE, 
+  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE,
                          const nsAString &aContentType = EmptyString());
 
   /* Migration related methods */
@@ -401,6 +401,8 @@ private:
 
   nsCOMPtr<sbIDatabasePreparedStatement> mCreateMediaItemPreparedStatement;
   nsCOMPtr<sbIDatabasePreparedStatement> mGetTypeForGUID;
+  nsCOMPtr<sbIDatabasePreparedStatement> mGetCountForIdentity;
+  nsCOMPtr<sbIDatabasePreparedStatement> mGetGUIDForIdentity;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 

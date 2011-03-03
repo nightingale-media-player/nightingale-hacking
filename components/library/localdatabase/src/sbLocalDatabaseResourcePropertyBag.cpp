@@ -362,7 +362,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
     // The propertybag has all the information we need to calculate the
     // identity. Give it to the identity service to get an identity
     nsString identity;
-    rv = mIdService->GetIdentityForBag(this, identity);
+    rv = mIdService->CalculateIdentityForBag(this, identity);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // save that identity
@@ -430,7 +430,7 @@ sbLocalDatabaseResourcePropertyBag::ClearDirty()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseResourcePropertyBag::GetDirtyForInvalidation(std::set<PRUint32> &aDirty)
 {
   aDirty.clear();

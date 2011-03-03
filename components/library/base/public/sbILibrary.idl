@@ -102,6 +102,38 @@ interface sbILibrary : sbIMediaList
   readonly attribute sbILibraryFactory factory;
 
   /**
+   * \brief Checks if another mediaitem with the same identity as aMediaItem is
+   *        already present in the library.
+   *        This function can be called on the parent library of aMediaItem and
+   *        it will only return true if a mediaitem other than the param
+   *        aMediaItem has the same identity as aMediaItem.
+   *
+   * \param aMediaItem The mediaitem whose identity will be calculated and we
+   *                   will check if another mediaitem with that identity is
+   *                   already in the library.
+   *
+   * \return True if a mediaitem with the same identity as aMediaItem but with a
+   *         different guid is present in the library.
+   */
+  boolean containsItemWithSameIdentity(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Find mediaitems in the library that have the same identity as
+   *        aMediaItem. Returns an empty array if none are found.
+   *        This function can be called on the parent library of aMediaItem and
+   *        it will only return a mediaitem other than the param aMediaItem.
+   *
+   * \param aMediaItem The mediaitem whose identity will be calculated and we
+   *                   will check if other mediaitems with that identity are
+   *                   already in the library.
+   *
+   * \return An array of mediaitems with the same identity as aMediaItem that
+   *         are not the same as aMediaItem (as determined by guid).
+   *         An empty array is returned if none are found.
+   */
+  nsIArray getItemsWithSameIdentity(in sbIMediaItem aMediaItem);
+
+  /**
    * \brief Resolves a songbird schemed URL to a channel.  Throws an exception
    * if the item referenced in the URL is not found
    * \param aUri The nsIURI to a media item to resolve
@@ -125,7 +157,7 @@ interface sbILibrary : sbIMediaList
   sbIMediaItem createMediaItem(in nsIURI aContentUri,
                                [optional] in sbIPropertyArray aProperties,
                                [optional] in boolean aAllowDuplicates);
-  
+
   /**
    * \brief Create a new media item, disallowing duplicates, and return if it did.
    * \param [optional] aResultItem the item that was created (or found)
@@ -212,7 +244,7 @@ interface sbILibrary : sbIMediaList
    * \brief Called when the library should remove unsupported media list types,
    *        unknown property types, temporary items, or otherwise optimize its
    *        performance or size.
-   * \param aAnalyzeOnly - Optimize will only run analysis of the library 
+   * \param aAnalyzeOnly - Optimize will only run analysis of the library
    *                       for performance.
    */
   void optimize([optional] in boolean aAnalyzeOnly);
