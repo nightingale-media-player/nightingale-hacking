@@ -31,7 +31,7 @@ interface sbILocalDatabaseResourcePropertyBag;
 * \interface sbIIdentityService sbIIdentityService.h
 * \brief A service to provide identifiers for mediaitems
 */
-[scriptable, uuid(ef3bec0c-23c0-4b1f-4e87-64a99d8063d1)]
+[scriptable, uuid(3218b613-94cd-433a-a3fe-522ad4f1354e)]
 interface sbIIdentityService : nsISupports
 {
   /**

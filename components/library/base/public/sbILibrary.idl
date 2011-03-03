@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(e74ac7a0-df65-4e44-86cf-789bc521ed0a)]
+[scriptable, uuid(cf0b3ffd-bdc6-4319-a13a-1ad82560230a)]
 interface sbILibrary : sbIMediaList
 {
   /**
