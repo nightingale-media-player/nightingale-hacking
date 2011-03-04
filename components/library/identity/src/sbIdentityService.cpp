@@ -127,30 +127,36 @@ sbIdentityService::HashString(const nsAString  &aString,
 
 //-----------------------------------------------------------------------------
 nsresult
-sbIdentityService::GetPropertyStringForAudio
+sbIdentityService::GetPropertyStringFor
                    (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
-                               nsAString    &_retval)
+                    const char * const * aPropsToHash,
+                    PRUint32 aPropsToHashLength,
+                    nsAString &_retval)
 {
   NS_ENSURE_ARG_POINTER(aPropertyBag);
+  NS_ENSURE_ARG_POINTER(aPropsToHash);
   nsresult rv;
 
+  // Tracks whether we got a property value or not
+  bool propertyFound = false;
   nsAutoString propString;
-  PRUint32 propCount = NS_ARRAY_LENGTH(sAudioPropsToHash);
-  for (PRUint32 i = 0; i < propCount; i++) {
+  for (PRUint32 i = 0; i < aPropsToHashLength; i++) {
 
     // sAudioPropsToHash contains ids for the properties we are interested in
     nsString propVal;
-    rv = aPropertyBag->GetProperty(NS_ConvertUTF8toUTF16(sAudioPropsToHash[i]),
+    rv = aPropertyBag->GetProperty(NS_ConvertUTF8toUTF16(aPropsToHash[i]),
                                    propVal);
 
-    if (NS_FAILED(rv) || propVal.IsEmpty())
-    {
-      propVal = NS_LITERAL_STRING("");
-  }
+    if (NS_FAILED(rv) || propVal.IsEmpty()) {
+      propVal.Truncate();
+    }
+    // Content type doesn't count for determining if a property is found
+    else if (strcmp(aPropsToHash[i], SB_PROPERTY_CONTENTTYPE) != 0) {
 
+      propertyFound = true;
+    }
     // append this property to the concatenated string
-    if (i == 0)
-    {
+    if (i == 0) {
       propString.Assign(propVal);
     }
     else {
@@ -159,8 +165,28 @@ sbIdentityService::GetPropertyStringForAudio
     }
   }
 
-  _retval.Assign(propString);
+  // If we found property values return the concatenated string else return void
+  if (propertyFound) {
+    _retval.Assign(propString);
+  }
+  else {
+    _retval.SetIsVoid(PR_TRUE);
+  }
   return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+nsresult
+sbIdentityService::GetPropertyStringForAudio
+                   (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+                    nsAString &_retval)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+
+  return GetPropertyStringFor(aPropertyBag,
+                              sAudioPropsToHash,
+                              NS_ARRAY_LENGTH(sAudioPropsToHash),
+                              _retval);
 }
 
 //-----------------------------------------------------------------------------
@@ -170,35 +196,11 @@ sbIdentityService::GetPropertyStringForVideo
                     nsAString &_retval)
 {
   NS_ENSURE_ARG_POINTER(aPropertyBag);
-  nsresult rv;
 
-  nsAutoString propString;
-  PRUint32 propCount = NS_ARRAY_LENGTH(sVideoPropsToHash);
-  for (PRUint32 i = 0; i < propCount; i++) {
-
-    // sVideoPropsToHash contains ids for the properties we are interested in
-    nsString propVal;
-    rv = aPropertyBag->GetProperty(NS_ConvertUTF8toUTF16(sVideoPropsToHash[i]),
-                                 propVal);
-
-    if (NS_FAILED(rv) || propVal.IsEmpty())
-    {
-      propVal = NS_LITERAL_STRING("");
-    }
-
-    // append this property to the concatenated string
-    if (i == 0)
-    {
-      propString.Assign(propVal);
-    }
-    else {
-      propString.AppendLiteral(&SEPARATOR);
-      propString.Append(propVal);
-    }
-  }
-
-  _retval.Assign(propString);
-  return NS_OK;
+  return GetPropertyStringFor(aPropertyBag,
+                              sVideoPropsToHash,
+                              NS_ARRAY_LENGTH(sVideoPropsToHash),
+                              _retval);
 }
 
 //-----------------------------------------------------------------------------
@@ -255,23 +257,31 @@ sbIdentityService::CalculateIdentityForBag
   NS_ENSURE_SUCCESS(rv, rv);
 
   /* we use different properties in the identity calculations for video and
-   * audio, so detect the type and get a string of the relvant property values
-   * concatenated together */
+   * audio, so detect the type and get a string of the relevant property values
+   * concatenated together
+   * If the content property is not set then we don't need the hash, throw
+   * NS_ERROR_NOT_AVAILABLE.
+   */
   nsString propString;
   if (contentType.EqualsLiteral("video")) {
-    GetPropertyStringForVideo(aPropertyBag, propString);
+    rv = GetPropertyStringForVideo(aPropertyBag, propString);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else if (contentType.EqualsLiteral("audio")) {
-    GetPropertyStringForAudio(aPropertyBag, propString);
+    rv = GetPropertyStringForAudio(aPropertyBag, propString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If we didn't recognize the content type or the hash properties
+  // were not found return a void string.
+  if (propString.IsEmpty()) {
+    _retval.SetIsVoid(PR_TRUE);
   }
   else {
-    NS_ERROR("Cannot get identity for unrecognized contenttype");
+    // hash the concatenated string and return it
+    rv = HashString(propString, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  // hash the concatenated string and return it
-  rv = HashString(propString, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 

@@ -363,6 +363,10 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
     // identity. Give it to the identity service to get an identity
     nsString identity;
     rv = mIdService->CalculateIdentityForBag(this, identity);
+    // If hash isn't available for this item, then just return.
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      return NS_OK;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
 
     // save that identity

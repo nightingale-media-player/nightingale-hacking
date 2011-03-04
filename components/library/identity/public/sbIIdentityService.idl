@@ -37,7 +37,9 @@ interface sbIIdentityService : nsISupports
   /**
    * \brief CalculateIdentityForMediaItem
    *          Generates an identifier for the param aMediaItem
-   *          and that identifier is returned.
+   *          and that identifier is returned. If media item's content type is 
+   *          not video or audio or the hash property values were not found or 
+   *          empty, a void string is returned.
    *
    * \param aMediaItem    The mediaitem whose identity should be calculated
    *                      and returned
@@ -49,13 +51,16 @@ interface sbIIdentityService : nsISupports
    * \brief CalculateIdentityForBag -
    *          Generates an identifier for the properties contained
    *          within the param aPropertyBag and that identifier is
+   *          returned. If content type is not video or audio or the hash
+   *          property values were not found or empty a void string is
    *          returned.
    *
    * \param aPropertyBag  The propertybag containing properties that
    *                      should be used to calculate a metadata hash
    *                      identity
    * \return              An identifier for the properties within
-   *                      the param aPropertyBag
+   *                      the param aPropertyBag. This may be a void string
+   *                      if there are no property values to hash.
    */
   AString calculateIdentityForBag(in sbILocalDatabaseResourcePropertyBag aPropertyBag);
 

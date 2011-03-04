@@ -64,10 +64,39 @@ private:
   nsresult HashString(const nsAString  &aString,
                       nsAString        &_retval);
 
+  /**
+   * Returns a | separated string for a set of properties
+   *
+   * \param aPropertyBag a property bag to retrieve the property values from
+   * \param aPropsToHash The list of properties to retrieve
+   * \param aPropsToHashLength The lenght of the list of properties
+   * \param _retval The concatenated string or void if no properties were found
+   * \return NS_OK for success or NS_ERROR_* value for errors
+   */
+  nsresult GetPropertyStringFor
+           (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
+            const char * const * aPropsToHash,
+            PRUint32 aPropsToHashLength,
+            nsAString    &_retval);
+
+  /**
+   * Returns a | separated string for a set of properties for a audio item
+   *
+   * \param aPropertyBag a property bag to retrieve the property values from
+   * \param _retval The concatenated string or void if no properties were found
+   * \return NS_OK for success or NS_ERROR_* value for errors
+   */
   nsresult GetPropertyStringForAudio
            (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
             nsAString &_retval);
 
+  /**
+   * Returns a | separated string for a set of properties for a video item
+   *
+   * \param aPropertyBag a property bag to retrieve the property values from
+   * \param _retval The concatenated string or void if no properties were found
+   * \return NS_OK for success or NS_ERROR_* value for errors
+   */
   nsresult GetPropertyStringForVideo
            (sbILocalDatabaseResourcePropertyBag *aPropertyBag,
             nsAString &_retval);
