@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -194,6 +194,7 @@ SB_AUTO_CLASS2(sbDeviceStatusAutoState,
 class sbDeviceStatusAutoOperationComplete
 {
 public:
+  typedef sbBaseDevice::TransferRequest TransferRequest;
   static bool IsItemOp(sbDeviceStatusHelper::Operation aOperation) {
     NS_ASSERTION(aOperation != sbDeviceStatusHelper::OPERATION_TYPE_NONE,
                  "sbMSCStatusAutoOperationComplete::isItemOp pass 'none'");
@@ -225,60 +226,11 @@ public:
   sbDeviceStatusAutoOperationComplete(
                                      sbDeviceStatusHelper * aStatus,
                                      sbDeviceStatusHelper::Operation aOperation,
-                                     sbBaseDevice::TransferRequest * aRequest) :
-                                       mRequest(aRequest),
-                                       mStatus(aStatus),
-                                       mResult(NS_ERROR_FAILURE),
-                                       mOperation(aOperation)
-  {
-    PRBool copyAfterTranscode = 
-      (mOperation == sbDeviceStatusHelper::OPERATION_TYPE_WRITE &&
-       mRequest->destinationCompatibility ==
-         sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING);
-
-    // If this is the start of a batch or is not a batch thingy do start op.
-    //
-    // Some device has two phases for transcoding (MTP for example).
-    // If this is the last copying operation in the queue after the last
-    // transcoding, do a start op (initialization). The values have been
-    // destroyed by the auto complete destructor of the last transcoding
-    // operation already.
-    if (mRequest->batchIndex == sbBaseDevice::BATCH_INDEX_START ||
-        (copyAfterTranscode && mRequest->batchIndex == mRequest->batchCount)) {
-
-      // Not a new batch if this is a write operation after transcoding.
-      mStatus->OperationStart(mOperation,
-                              mRequest->batchIndex,
-                              mRequest->batchCount,
-                              mRequest->itemType,
-                              IsItemOp(mOperation) ? mRequest->list : nsnull,
-                              IsItemOp(mOperation) ? mRequest->item : nsnull,
-                              !copyAfterTranscode);
-    }
-    if (IsItemOp(mOperation)) {
-      // Update item status
-      mStatus->ItemStart(aRequest->list,
-                         aRequest->item,
-                         aRequest->batchIndex,
-                         aRequest->batchCount,
-                         aRequest->itemType);
-    }
-  }
+                                     TransferRequest * aRequest,
+                                     PRUint32 aBatchCount);
   sbDeviceStatusAutoOperationComplete(
                                    sbDeviceStatusHelper * aStatus,
-                                   sbDeviceStatusHelper::Operation aOperation) :
-                                     mRequest(nsnull),
-                                     mStatus(aStatus),
-                                     mResult(NS_ERROR_FAILURE),
-                                     mOperation(aOperation)
-  {
-    mStatus->OperationStart(mOperation,
-                            -1,
-                            -1,
-                            -1,
-                            nsnull,
-                            nsnull);
-  }
+                                   sbDeviceStatusHelper::Operation aOperation);
   /**
      * Initialize the request and status, start the operation and
      * setup to auto fail. Must Call SetResult for successful completion
@@ -287,43 +239,17 @@ public:
   sbDeviceStatusAutoOperationComplete(
                                      sbDeviceStatusHelper * aStatus,
                                      sbDeviceStatusHelper::Operation aOperation,
-                                     sbBaseDevice::TransferRequest * aRequest,
-                                     PRInt32 aBatchCount) :
-                                       mRequest(aRequest),
-                                       mStatus(aStatus),
-                                       mResult(NS_ERROR_FAILURE),
-                                       mOperation(aOperation) {
-    mStatus->OperationStart(mOperation,
-                            0,
-                            aBatchCount,
-                            aRequest->itemType,
-                            IsItemOp(mOperation) ? mRequest->list : nsnull,
-                            IsItemOp(mOperation) ? mRequest->item : nsnull);
-  }
-
+                                     TransferRequest * aRequest,
+                                     PRInt32 aBatchCount);
   /**
    * If this is the last item in the batch then call the OperationComplete
    * method.
    */
-  ~sbDeviceStatusAutoOperationComplete() {
-    Complete();
-  }
+  ~sbDeviceStatusAutoOperationComplete();
   /**
    * Complete the operation
    */
-  void Complete() {
-    if (mStatus && mRequest) {
-      if (IsItemOp(mOperation)) {
-        mStatus->ItemComplete(mResult);
-      }
-      if (mRequest->batchIndex == mRequest->batchCount) {
-        mStatus->OperationComplete(mResult);
-      }
-    }
-    // We've completed it, lets make sure we don't do it again
-    mStatus = nsnull;
-    mRequest = nsnull;
-  }
+  void Complete();
 
   /**
    * Set the result code for auto complete. Success code will set the
@@ -335,15 +261,11 @@ public:
   /**
    * Transfers the auto complete function to another object
    */
-  void Transfer(sbDeviceStatusAutoOperationComplete & aDestination) {
-    aDestination = *this;
-    // Prevent us from auto completing since aDestination now will
-    mStatus = nsnull;
-    mRequest = nsnull;
-  }
+  void Transfer(sbDeviceStatusAutoOperationComplete & aDestination);
 private:
   // This will live in the request queue as long as we're alive
-  nsRefPtr<sbBaseDevice::TransferRequest> mRequest;
+  nsRefPtr<TransferRequest> mRequest;
+  PRUint32 mBatchCount;
   sbDeviceStatusHelper * mStatus;
   nsresult mResult;
   sbDeviceStatusHelper::Operation mOperation;
@@ -352,13 +274,16 @@ private:
    * Copies the auto complete status
    */
   sbDeviceStatusAutoOperationComplete &
-  operator = (sbDeviceStatusAutoOperationComplete const & aOther) {
-    mRequest = aOther.mRequest;
-    mStatus = aOther.mStatus;
-    mResult = aOther.mResult;
-    mOperation = aOther.mOperation;
-    return *this;
-  }
+  operator = (sbDeviceStatusAutoOperationComplete const & aOther);
+
+  /**
+   * Simple helper function to extract common data from the request object
+   */
+  nsresult ExtractDataFromRequest(
+                                 PRUint32 & aType,
+                                 PRInt32 & aBatchIndex,
+                                 PRInt32 & aBatchCount,
+                                 sbBaseDevice::TransferRequest ** aRequestData);
 
   // Prevent copying
   sbDeviceStatusAutoOperationComplete(

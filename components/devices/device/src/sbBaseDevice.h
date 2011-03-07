@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -26,14 +26,17 @@
 #ifndef __SBBASEDEVICE__H__
 #define __SBBASEDEVICE__H__
 
+#include <algorithm>
 #include <list>
 #include <map>
+#include <vector>
 
 #include "sbIDevice.h"
 #include "sbBaseDeviceEventTarget.h"
 #include "sbBaseDeviceVolume.h"
 #include "sbDeviceLibrary.h"
 
+#include <nsArrayUtils.h>
 #include <nsAutoPtr.h>
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
@@ -41,17 +44,17 @@
 #include <nsDataHashtable.h>
 #include <nsIRunnable.h>
 #include <nsISupportsImpl.h>
-#include <nsIThread.h>
 #include <nsITimer.h>
 #include <nsIFile.h>
 #include <nsIURL.h>
 #include <nsTArray.h>
-#include <prlock.h>
 
 #include <sbAutoRWLock.h>
 #include <sbILibraryChangeset.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include "sbRequestItem.h"
+#include "sbDeviceRequestThreadQueue.h"
 #include <sbITemporaryFileFactory.h>
 #include <sbITranscodeManager.h>
 
@@ -60,6 +63,8 @@
 
 #include "sbDeviceStatistics.h"
 
+class nsIArray;
+class nsIMutableArray;
 class nsIPrefBranch;
 
 class sbAutoIgnoreWatchFolderPath;
@@ -104,8 +109,11 @@ public:
   friend class sbDeviceImages;
   friend class sbBatchCleanup;
   friend class sbBaseDeviceVolume;
+  friend class sbDeviceRequestThreadQueue;
 
-  struct TransferRequest : public nsISupports {
+  typedef sbRequestThreadQueue::Batch Batch;
+
+  struct TransferRequest : public sbRequestItem {
     /* types of requests. not all types necessarily apply to all types of
      * devices, and devices may have custom types.
      * Request types that should result in delaying shutdown (e.g. writing to
@@ -123,12 +131,6 @@ public:
       REQUEST_READ          = sbIDevice::REQUEST_READ,
       REQUEST_EJECT         = sbIDevice::REQUEST_EJECT,
       REQUEST_SUSPEND       = sbIDevice::REQUEST_SUSPEND,
-      REQUEST_THREAD_START  = sbIDevice::REQUEST_THREAD_START,
-      REQUEST_THREAD_STOP   = sbIDevice::REQUEST_THREAD_STOP,
-
-      /* not in sbIDevice, internal use */
-      REQUEST_BATCH_BEGIN,
-      REQUEST_BATCH_END,
 
       /* write requests */
       REQUEST_WRITE         = sbIDevice::REQUEST_WRITE,
@@ -153,8 +155,6 @@ public:
       REQUESTBATCH_IMAGE         = 4
     };
 
-    int type;                        /* one of the REQUEST_* constants,
-                                          or a custom type */
     nsCOMPtr<sbIMediaItem> item;     /* the item this request pertains to */
     nsCOMPtr<sbIMediaList> list;     /* the list this request is to act on */
     nsCOMPtr<nsISupports>  data;     /* optional data that may or may not be used by a type of request */
@@ -165,23 +165,7 @@ public:
                                                directory */
     PRUint32 index;                  /* the index in the list for this action */
     PRUint32 otherIndex;             /* any secondary index needed */
-    PRUint32 batchCount;             /* the number of items in this batch
-                                          (batch = run of requests of the same
-                                          type) */
-    PRUint32 batchIndex;             /* index of item in the batch to process */
 
-    PRUint32 itemTransferID;         /* id for this item transfer */
-
-    static const PRInt32 PRIORITY_HIGHEST   = 0x0000000;
-    static const PRInt32 PRIORITY_HIGH      = 0x1000000;
-    static const PRInt32 PRIORITY_DEFAULT   = 0x2000000;
-    static const PRInt32 PRIORITY_LOW       = 0x3000000;
-    static const PRInt32 PRIORITY_LOWEST    = 0x4000000;
-    PRInt32 priority;                /* priority for the request (lower first) */
-
-    PRInt64 timeStamp;               /* time stamp of when request was
-                                          enqueued */
-    PRUint32 batchID;                /* ID of request batch */
     PRUint32 itemType;               /* Item type: Audio, Video... */
 
     /* Write request fields. */
@@ -209,26 +193,30 @@ public:
     nsCOMPtr<nsIFile> downloadedFile; /* used if request item content source had
                                          to be downloaded */
 
-    NS_DECL_ISUPPORTS
     /**
      * Returns PR_TRUE if the request is for a playlist and PR_FALSE otherwise
      */
     PRBool IsPlaylist() const;
+
     /**
-     * Returns PR_TRUE if the request should be counted as part of he batch
+     * Returns PR_TRUE if the request should be counted as part of the batch,
      * otherwise returns PR_FALSE
      */
     PRBool IsCountable() const;
 
-    static TransferRequest * New();
+    static TransferRequest * New(PRUint32 aType,
+                                 sbIMediaItem * aItem,
+                                 sbIMediaList * aList,
+                                 PRUint32 aIndex,
+                                 PRUint32 aOtherIndex,
+                                 nsISupports * aData);
 
     /* Don't allow manual construction/destruction, but allow sub-classing. */
   protected:
     TransferRequest();
+
     ~TransferRequest(); /* we're refcounted, no manual deleting! */
   };
-  typedef nsRefPtr<TransferRequest> TransferRequestPtr;
-  typedef std::list<TransferRequestPtr> Batch;
 
 public:
   /* selected methods from sbIDevice */
@@ -256,75 +244,37 @@ public:
   NS_IMETHOD GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary);
   NS_IMETHOD SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary);
   NS_IMETHOD GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary);
-
+  NS_IMETHOD SubmitRequest(PRUint32 aRequest,
+                           nsIPropertyBag2 *aRequestParameters);
+  NS_IMETHOD CancelRequests();
 public:
-  /**
-   * Starting value for batch indexes
-   */
-  static PRUint32 const BATCH_INDEX_START = 1;
+
   sbBaseDevice();
   virtual ~sbBaseDevice();
 
-  /* add a transfer/action request to the request queue */
-  nsresult  PushRequest(const int aType,
+  /**
+   *  add a transfer/action request to the request queue
+   */
+  nsresult  PushRequest(const PRUint32 aType,
                         sbIMediaItem* aItem = nsnull,
                         sbIMediaList* aList = nsnull,
                         PRUint32 aIndex = PR_UINT32_MAX,
                         PRUint32 aOtherIndex = PR_UINT32_MAX,
-                        PRInt32 aPriority = TransferRequest::PRIORITY_DEFAULT);
-
-  virtual nsresult PushRequest(TransferRequest *aRequest);
-
-  /* remove the next request to be processed; note that _retval will be null
-     while returning NS_OK if there are no requests left */
-  nsresult PopRequest(TransferRequest** _retval);
+                        nsISupports * aData = nsnull);
 
   /**
-   * Returns the next request batch in aBatch and marks it as the current
-   * request.  The batch may be a single request if the next request is not part
-   * of a batch.
-   * \param aBatch A collection that receives the batch items found.
+   * Starts a batch of requests
    */
-  nsresult StartNextRequest(Batch & aBatch);
+  nsresult BatchBegin();
 
   /**
-   * Complete the current request (single or batch) and clear the current
-   * request.
+   * Marks the end of a batch of requests
    */
-  nsresult CompleteCurrentRequest();
-
-  /* get a reference to the next request without removing it; note that _retval
-   * will be null while returning NS_OK if there are no requests left
-   * once a request has been peeked, it will be returned for further PeekRequest
-   * and PopRequest calls until after it has been popped.
-   */
-  nsresult PeekRequest(TransferRequest** _retval);
-
-  /* remove a given request from the transfer queue
-     note: returns NS_OK on sucessful removal,
-           and NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA if no match was found.
-     if the request is not unique, removes the first matching one
-     (note that it is not possible to filter by priority) */
-  nsresult RemoveRequest(const int aType,
-                         sbIMediaItem* aItem = nsnull,
-                         sbIMediaList* aList = nsnull);
-
+  nsresult BatchEnd();
   /**
-   * clear the request queue
-   * \param aSetCancel Determines whether or not the current request is
-   *        "canceled"
+   * Clears requests from the request queue
    */
-  nsresult ClearRequests(bool aSetCancel = true);
-
-  /**
-   * Return in aRequestType the request type of the request batch specified by
-   * aBatch.
-   *
-   * \param aBatch              Request batch.
-   * \param aRequestType        Batch request type.
-   */
-  nsresult BatchGetRequestType(sbBaseDevice::Batch& aBatch,
-                               int*                 aRequestType);
+  nsresult ClearRequests();
 
   /**
    * Return in aTemporaryFileFactory a temporary file factory for the request
@@ -349,8 +299,9 @@ public:
    * \param aRequest              Request for which to download item.
    * \param aDeviceStatusHelper   Helper to use to update device status.
    */
-  nsresult DownloadRequestItem(TransferRequest*      aRequest,
-                               sbDeviceStatusHelper* aDeviceStatusHelper);
+  nsresult DownloadRequestItem(TransferRequest*       aRequest,
+                               PRUint32               aBatchCount,
+                               sbDeviceStatusHelper*  aDeviceStatusHelper);
 
   /**
    * Internally set preference specified by aPrefName to the value specified by
@@ -379,9 +330,10 @@ public:
   nsresult HasPreference(nsAString& aPrefName,
                          PRBool*    aHasPreference);
 
-  /* A request has been added, process the request
-     (or schedule it to be processed) */
-  virtual nsresult ProcessRequest() = 0;
+  /**
+   * Process this batch of requests
+   */
+  virtual nsresult ProcessBatch(Batch & aBatch) = 0;
 
   /**
    * Set the device state
@@ -558,7 +510,7 @@ public:
   nsresult UpdateOriginAndContentSrc(TransferRequest* aRequest,
                                      nsIURI*          aURI);
 
-  nsresult CreateTransferRequest(PRUint32 aRequest,
+  nsresult CreateTransferRequest(PRUint32 aRequestType,
                                  nsIPropertyBag2 *aRequestParameters,
                                  TransferRequest **aTransferRequest);
 
@@ -631,21 +583,6 @@ public:
                                nsIURI ** aURI);
 
   /**
-   * Initialize device requests.
-   */
-  nsresult InitializeRequestThread();
-
-  /**
-   * Finalize device requests.
-   */
-  void FinalizeRequestThread();
-
-  /**
-   * Stop processing device requests.
-   */
-  void ShutdownRequestThread();
-
-  /**
    * Start processing device requests.
    */
   nsresult ReqProcessingStart();
@@ -653,26 +590,13 @@ public:
   /**
    * Stop processing device requests.
    */
-  nsresult ReqProcessingStop();
-
-  /**
-   * Return true if the active request should abort; otherwise, return false.
-   *
-   * \return PR_TRUE              Active request should abort.
-   *         PR_FALSE             Active request should not abort.
-   */
-  PRBool ReqAbortActive();
+  nsresult ReqProcessingStop(nsIRunnable * aShutdownAction);
 
   /**
    * Returns true if the current request should be aborted.
+   * It also resets the abort flag.
    */
-  PRBool IsRequestAborted()
-  {
-    NS_ASSERTION(mRequestMonitor, "mRequestMonitor must be initialized");
-    nsAutoMonitor mon(mRequestMonitor);
-    return mAbortCurrentRequest;
-  }
-
+  bool CheckAndResetRequestAbort();
   /**
    * Returns true if the space has been checked.
    */
@@ -694,15 +618,12 @@ public:
                                            nsIInputStream** retval);
 
   /**
-   * Returns PR_TRUE if the request has been aborted or the device is
-   * disconnected
+   * Returns true if the request has been aborted or the device is
+   * disconnected. This calls CheckAndResetAbort and so once this is called
+   * the caller should not call this again for the current request if it returns
+   * true
    */
-  PRBool IsRequestAbortedOrDeviceDisconnected() {
-    PRUint32 deviceState;
-    return (IsRequestAborted() ||
-        NS_FAILED(GetState(&deviceState)) ||
-        deviceState == sbIDevice::STATE_DISCONNECTED) ? PR_TRUE : PR_FALSE;
-  }
+  virtual PRBool IsRequestAborted();
 
   sbDeviceTranscoding * GetDeviceTranscoding() const {
     return mDeviceTranscoding;
@@ -727,13 +648,6 @@ public:
     return mDeviceImages;
   }
 
-  /**
-   * Reset the Batch Depth when abort.
-   */
-  void ResetBatchDepth() {
-    PR_AtomicSet(&mBatchDepth, 0);
-  }
-
 protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
@@ -748,44 +662,24 @@ protected:
    * This allows the derived classes to be initialized if needed
    */
   virtual nsresult InitDevice() { return NS_OK; }
+
 private:
+  /**
+   * Derived devices must implement this to perform any disconnect logic
+   * they need. Making it a pure virtual so it's not forgotten.
+   */
+  virtual nsresult DeviceSpecificDisconnect() = 0;
   /**
    * Helper for PopRequest / PeekRequest
    */
   nsresult GetFirstRequest(bool aRemove, TransferRequest** _retval);
 protected:
-  /* to block the background thread from transferring files while the batch
-     has not completed; if a delay is active, either the request monitor OR
-     the request removal lock needs to be held.  No requests may be removed
-     while the removal lock is behind held.  No actions (including pushing
-     additional requests) may be performed while the request monitor is held. */
-  PRMonitor * mRequestMonitor;
-  nsCOMPtr<nsITimer> mBatchEndTimer;
-  PRInt32 mNextBatchID;
-  /**
-   * Tracks the REQUEST_BATCH_BEGIN/REQUEST_BATCH_END depth
-   */
-  PRInt32 mBatchDepth;
-public:
-  /**
-   * The request queue type
-   */
-  typedef std::list<nsRefPtr<TransferRequest> > TransferRequestQueue;
-  /**
-   * The type of collection used to hold request queues based on priority
-   */
-  typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
-protected:
 
-  TransferRequestQueueMap mRequests;
-  PRUint32 mLastTransferID;
-  PRInt32 mLastRequestPriority; // to make sure peek returns the same
+
   PRLock *mStateLock;
   PRUint32 mState;
   PRLock *mPreviousStateLock;
   PRUint32 mPreviousState;
-  PRBool mHaveCurrentRequest;
-  PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
 
@@ -816,34 +710,26 @@ protected:
   PRUint32 mCanTranscodeAudio;
   PRUint32 mCanTranscodeVideo;
 
-  bool mVideoInserted; // Flag on whether video is inserted
-  PRUint32 mSyncType; // syncing type to pass to the UI
-  // Iterator points to the first video request
-  TransferRequestQueue::iterator mFirstVideoIterator;
+  // This is a hack so that the UI has the information of what kind of media
+  // the set of sync changes contains. TODO: XXX we should look at replacing
+  // this at some point.
+  PRUint32 mSyncType;
 
   bool mEnsureSpaceChecked;
 
   //
-  //   mConnected               True if device is connected.
   //   mConnectLock             Connect lock.
-  //   mReqAddedEvent           Request added event object.
-  //   mReqThread               Request processing thread.
-  //   mReqWaitMonitor          Monitor used by the request thread to wait for
-  //                            various events.
-  //   mReqStopProcessing       Non-zero if request processing should stop.
-  //   mIsHandlingRequests      True if requests are being handled.
+  //   mConnected               True if device is connected.
   //   mDeferredSetupDeviceTimer Timer used to defer presentation of the device
   //                             setup dialog.
-  //
+  //   mRequestThreadQueue      This contains the logic to process requests
+  //                            for the device thread
 
   PRRWLock* mConnectLock;
   PRBool mConnected;
-  nsCOMPtr<nsIRunnable> mReqAddedEvent;
-  nsCOMPtr<nsIThread> mReqThread;
-  PRMonitor* mReqWaitMonitor;
-  PRInt32 mReqStopProcessing;
-  PRInt32 mIsHandlingRequests;
   nsCOMPtr<nsITimer> mDeferredSetupDeviceTimer;
+  nsRefPtr<sbDeviceRequestThreadQueue> mRequestThreadQueue;
+
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -951,7 +837,7 @@ protected:
    * \param aBatch        The batch to be updated.
    */
 
-  nsresult UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch);
+  nsresult UpdateStreamingItemSupported(Batch & aBatch);
 
   friend class sbDeviceSupportsItemHelper;
 
@@ -1674,15 +1560,6 @@ protected:
   nsresult GetSupportedAlbumArtFormats(nsIArray * *aFormats);
 
   /**
-   * Gets the first request. This does not lock request queue
-   * Iterator
-   */
-  nsresult FindFirstRequest(
-    TransferRequestQueueMap::iterator & aMapIter,
-    TransferRequestQueue::iterator & aQueueIter,
-    bool aRemove);
-
-  /**
    * Returns if the device pref to enable music space limiting is turned on.
    * \param aPrefBase The device preference root.
    * \param aOutShouldLimitSpace The outparam for setting if the device is
@@ -1742,10 +1619,12 @@ protected:
     groupedItems.Init();
 
     while (iter != end) {
-      nsRefPtr<sbBaseDevice::TransferRequest> request = *iter;
+      sbBaseDevice::TransferRequest * request = *iter;
+      PRUint32 type = request->GetType();
+
       // If this is a request that adds an item to the device we need to remove
       // it from the device since it never was copied
-      switch (request->type) {
+      switch (type) {
         case sbBaseDevice::TransferRequest::REQUEST_WRITE:
         case sbBaseDevice::TransferRequest::REQUEST_READ: {
           if (request->list && request->item) {
@@ -1786,16 +1665,6 @@ protected:
   nsresult GetProductNameBase(char const * aDefaultModelNumberString,
                               nsAString& aProductName);
   /**
-   * For use in the request handler thread event mechanism. This is called
-   * to process pending events. The default implementation does nothing, as
-   * not all implementations use this, and much of the implementation is
-   * device specific
-   */
-  virtual nsresult ReqHandleRequestAdded()
-  {
-    return NS_OK;
-  }
-  /**
    * Creates an ignore auto object that will cause the watch folder to ignore
    * the path while it's being created. If this is not a file URI this will
    * return nothing and not fail.
@@ -1813,122 +1682,23 @@ protected:
   static PLDHashOperator LogDeviceFoldersEnum(const unsigned int& aKey,
                                               nsString*           aData,
                                               void*               aUserArg);
-  /**
-   * Determines if a request already exists that is similar to one being
-   * submitted
-   * \param aQueue is the queue to check for a duplicate
-   * \param aRequest is the request we're checking duplicates of
-   */
-  nsresult IsRequestDuplicate(TransferRequestQueue & aQueue,
-                              TransferRequest * aRequest,
-                              bool & aIsDuplicate);
   nsresult  GetExcludedFolders(nsTArray<nsString> & aExcludedFolders);
 };
 
-void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
 
-void SBUpdateBatchCountsIgnorePlaylist(sbBaseDevice::Batch& aBatch);
-
-void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch);
-
-void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch);
-
-bool SBWriteRequestBatchSortComparator
-       (nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
-        nsRefPtr<sbBaseDevice::TransferRequest> const &p2);
-
-/**
- * This class provides an nsIRunnable interface that may be used to dispatch
- * and process device request added events.
- */
-
-class sbDeviceReqAddedEvent : public nsIRunnable
-{
-  //----------------------------------------------------------------------------
-  //
-  // Public interface.
-  //
-  //----------------------------------------------------------------------------
-
-public:
-
-  //
-  // Inherited interfaces.
-  //
-
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSIRUNNABLE
-
-
-  //
-  // Public methods.
-  //
-
-  static nsresult New(sbBaseDevice * aDevice,
-                      nsIRunnable** aEvent);
-
-
-  //----------------------------------------------------------------------------
-  //
-  // Public interface.
-  //
-  //----------------------------------------------------------------------------
-
-private:
-
-  /**
-   * Owning reference (using nsRefPtr caused ambiguities)
-   */
-  sbBaseDevice* mDevice;
-
-
-  // Make default constructor private to force use of factory methods.
-  sbDeviceReqAddedEvent() : mDevice(nsnull) {};
-  ~sbDeviceReqAddedEvent()
-  {
-    nsISupports * device = NS_ISUPPORTS_CAST(sbIDevice *,mDevice);
-    mDevice = nsnull;
-    NS_IF_RELEASE(device);
-  }
-};
-
-
+void SBWriteRequestSplitBatches(const sbBaseDevice::Batch & aInput,
+                                sbBaseDevice::Batch & aNonTranscodeItems,
+                                sbBaseDevice::Batch & aTrancodeItems,
+                                sbBaseDevice::Batch & aPlaylistItems);
 //
 // Auto-disposal class wrappers.
 //
 //   sbAutoResetEnsureSpaceChecked
 //                              Wrapper to automatically reset the space
 //                              checked flag.
-//   sbAutoDeviceCompleteCurrentRequest
-//                              Wrapper to automatically complete the current
-//                              request.
-//
 
 SB_AUTO_NULL_CLASS(sbAutoResetEnsureSpaceChecked,
                    sbBaseDevice*,
                    mValue->SetEnsureSpaceChecked(false));
-SB_AUTO_NULL_CLASS(sbAutoDeviceCompleteCurrentRequest,
-                   sbBaseDevice*,
-                   mValue->CompleteCurrentRequest());
-
-/**
- * Auto class to reset isRequestHandling flag
- */
-class sbDeviceAutoRequestHandling
-{
-public:
-  sbDeviceAutoRequestHandling(PRInt32 & aIsHandlingRequests) :
-    mIsHandlingRequests(aIsHandlingRequests) {
-    PR_AtomicSet(&mIsHandlingRequests, 1);
-  }
-  ~sbDeviceAutoRequestHandling() {
-    NS_ASSERTION(mIsHandlingRequests,
-                 "mIsHandlingRequest reset outside "
-                 "of sbMSCAutoRequestHandling");
-    PR_AtomicSet(&mIsHandlingRequests, 0);
-  }
-private:
-  PRInt32 & mIsHandlingRequests;
-};
 
 #endif /* __SBBASEDEVICE__H__ */

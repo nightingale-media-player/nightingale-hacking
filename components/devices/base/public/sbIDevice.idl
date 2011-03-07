@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -74,7 +74,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(526bebfc-1dd2-11b2-a835-e3a8d96d4fa5)]
+[scriptable, uuid(54187640-1632-49de-9ed6-3130cf7c46c8)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -256,16 +256,19 @@ interface sbIDevice : nsISupports
 
   const unsigned long STATE_USER            = 0x20000000;
 
+  /**
+   * Requests below 0x2000000 are reserved by the sbRequestThreadQueue for
+   * internal use
+   */
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
-
+  const unsigned long REQUEST_FLAG_READ  = 0x20000000;
+  
   /* read requests */
-  const unsigned long REQUEST_MOUNT        = 1;
-  const unsigned long REQUEST_READ         = 2;
-  const unsigned long REQUEST_EJECT        = 3;
-  const unsigned long REQUEST_SUSPEND      = 4;
-  const unsigned long REQUEST_THREAD_START = 5;
-  const unsigned long REQUEST_THREAD_STOP  = 6;
+  const unsigned long REQUEST_MOUNT        = REQUEST_FLAG_READ + 1;
+  const unsigned long REQUEST_READ         = REQUEST_FLAG_READ + 2;
+  const unsigned long REQUEST_EJECT        = REQUEST_FLAG_READ + 3;
+  const unsigned long REQUEST_SUSPEND      = REQUEST_FLAG_READ + 4;
   
   /* write requests */
   const unsigned long REQUEST_WRITE         = REQUEST_FLAG_WRITE + 1;

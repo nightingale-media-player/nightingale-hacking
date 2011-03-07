@@ -47,3 +47,6 @@ sbRequestItem::sbRequestItem() :
 {
 }
 
+sbRequestItem::~sbRequestItem()
+{
+}

@@ -111,13 +111,20 @@ sbRequestThreadQueue::Batch::~Batch()
 void sbRequestThreadQueue::Batch::push_back(sbRequestItem * aItem)
 {
   NS_ASSERTION(aItem, "sbRequestThreadQueue::Batch::push_back passed null");
-  // If this is countable set the batch index and if the request has not be set
-  // set the request type for the batch.
+  // If we don't have any request type then set it. If we have set a request
+  // type but it's not a user defined one then set it to the defined one.
+  // Ideally user defined and reserved requests shouldn't be mixed, but we'll
+  // handle it nicely here anyway.
   if (aItem->GetIsCountable()) {
-    if (mRequestType == REQUEST_TYPE_NOT_SET) {
+    if (mRequestType <= USER_REQUEST_TYPES) {
       mRequestType = aItem->GetType();
     }
     aItem->SetBatchIndex(mCountableItems++);
+  }
+  else {
+    if (mRequestType == REQUEST_TYPE_NOT_SET) {
+      mRequestType = aItem->GetType();
+    }
   }
   NS_ADDREF(aItem);
   mRequestItems.push_back(aItem);
@@ -330,13 +337,13 @@ nsresult sbRequestThreadQueue::Stop()
 
     mThreadStarted = false;
 
-    // Set the stop processing requests flag.
-    mStopProcessing = true;
   }
 
   // Notify external users that we're stopping
   {
     nsAutoMonitor monitor(mStopWaitMonitor);
+    // Set the stop processing requests flag.
+    mStopProcessing = true;
     monitor.NotifyAll();
   }
 
@@ -426,6 +433,8 @@ nsresult sbRequestThreadQueue::PushRequestInternal(sbRequestItem * aRequestItem)
 
 nsresult sbRequestThreadQueue::PushRequest(sbRequestItem * aRequestItem)
 {
+  NS_ENSURE_ARG_POINTER(aRequestItem);
+
   NS_ENSURE_STATE(mLock);
 
   nsresult rv;
@@ -433,11 +442,13 @@ nsresult sbRequestThreadQueue::PushRequest(sbRequestItem * aRequestItem)
   { /* scope for request lock */
     nsAutoLock lock(mLock);
 
+    nsAutoMonitor monitor(mStopWaitMonitor);
     // If we're aborting or shutting down don't accept any more requests
     if (mAbortRequests || mStopProcessing)
     {
       return NS_ERROR_ABORT;
     }
+
     rv = PushRequestInternal(aRequestItem);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -546,17 +557,20 @@ nsresult sbRequestThreadQueue::ClearRequests()
 
 nsresult sbRequestThreadQueue::CancelRequests()
 {
-  NS_ENSURE_STATE(mLock);
+  NS_ENSURE_STATE(mStopWaitMonitor);
 
   nsresult rv;
 
   Batch batch;
   {
+    // Have to lock mLock before mStopWaitMonitor to avoid deadlocks
     nsAutoLock lock(mLock);
+    nsAutoMonitor monitor(mStopWaitMonitor);
     // If we're aborting set the flag, reset batch depth and clear requests
     if (!mAbortRequests) {
       if (mIsHandlingRequests) {
         mAbortRequests = true;
+        monitor.NotifyAll();
       }
       mBatchDepth = 0;
       rv = ClearRequestsNoLock(batch);
@@ -575,25 +589,14 @@ bool sbRequestThreadQueue::CheckAndResetRequestAbort()
 {
   NS_ASSERTION(mLock, "mLock null");
 
-#ifdef DEBUG
-  nsresult rv;
-  PRBool isCurrentThread;
-  rv = mThread->IsOnCurrentThread(&isCurrentThread);
-  NS_ASSERTION(NS_SUCCEEDED(rv) && isCurrentThread,
-               "sbRequestThreadQueue::IsAbortActive called on a thread "
-               "other than the request thread");
-#endif
-  nsAutoLock lock(mLock);
-  const bool abort = mAbortRequests || mStopProcessing;
-  mAbortRequests = false;
   // Notify interested parties that we are aborting. This would be anyone that
   // called GetStopWaitMonitor and may be blocking on it. Scope just to make
   // sure we follow AB BA lock pattern with mLock
-  {
-    nsAutoMonitor monitor(mStopWaitMonitor);
-    monitor.NotifyAll();
+  nsAutoMonitor monitor(mStopWaitMonitor);
+  const bool abort = mAbortRequests || mStopProcessing;
+  if (abort) {
+    mAbortRequests = false;
   }
-
   return abort;
 }
 

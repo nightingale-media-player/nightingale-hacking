@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -27,18 +27,24 @@
 
 // Local includes
 #include "sbDeviceUtils.h"
+#include "sbRequestItem.h"
 
 // Standard includes
 #include <algorithm>
 #include <set>
 
-// Mozilla includes
+// Mozilla interfaces
 #include <nsIPropertyBag2.h>
 #include <nsIVariant.h>
 
-// Songbird includes
+// Mozilla includes
+#include <nsArrayUtils.h>
+
+// Songbird interfaces
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceProperties.h>
+
+// Songbird includes
 #include <sbLibraryUtils.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStringUtils.h>
@@ -92,23 +98,46 @@ sbDeviceEnsureSpaceForWrite::~sbDeviceEnsureSpaceForWrite() {
   // Default destruction of data members
 }
 
+static void RemoveProcessedBatchEntries(sbBaseDevice::Batch & aBatch)
+{
+  sbBaseDevice::Batch::iterator iter = aBatch.begin();
+  while (iter != aBatch.end()) {
+    sbRequestItem * request = *iter;
+    if (request->GetIsProcessed()) {
+      // Get the next iter before we remove the current entry so we can update
+      // iter
+      sbBaseDevice::Batch::iterator next = iter;
+      ++next;
+      aBatch.erase(iter);
+      iter = next;
+    }
+    else {
+      ++iter;
+    }
+  }
+}
+
 nsresult
 sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
   nsresult rv;
 
-  PRInt32 order = 0;
-  typedef std::vector<sbBaseDevice::TransferRequestPtr> RequestErrors;
+  PRUint32 order = 0;
+  // We don't need to addref these as the batch holds on to them
+  typedef std::list<sbBaseDevice::TransferRequest *> RequestErrors;
 
   // List of items that errors occurred.
   RequestErrors requestErrorList;
   // List of items that we need to report errors for
   RequestErrors requestErrorReport;
 
-  Batch::iterator const batchEnd = mBatch.end();
-  for (Batch::iterator iter = mBatch.begin(); iter != batchEnd; ++iter) {
+  PRUint32 index = 0;
+  const Batch::const_iterator end = mBatch.end();
+  for (Batch::const_iterator iter = mBatch.begin();
+       iter != end;
+       ++iter) {
     // Add item to write list.  Collect errors for later processing.
     bool errorReported = false;
-    rv = AddItemToWrite(iter, order);
+    rv = AddItemToWrite(static_cast<TransferRequest*>(*iter), index++, order);
     if (NS_FAILED(rv)) {
       // See if it's an error that would have been already reported
       switch (rv) {
@@ -118,11 +147,16 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
           errorReported = true;
           break;
       }
+      sbBaseDevice::TransferRequest * request =
+        static_cast<sbBaseDevice::TransferRequest*>(*iter);
+      NS_ENSURE_SUCCESS(rv, rv);
       if (!errorReported) {
-        requestErrorReport.push_back(*iter);
+        requestErrorReport.push_back(request);
       }
-      requestErrorList.push_back(*iter);
-      *iter = nsnull;
+      requestErrorList.push_back(request);
+      // We use the processed flag to flag for delete
+      request->SetIsProcessed(true);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
@@ -133,50 +167,49 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
        requestErrorReport.begin();
        requestErrorReportIter != requestErrorReportEnd;
        ++requestErrorReportIter) {
-      // Dispatch an error event.
-      mDevice->CreateAndDispatchEvent(
-                                  sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
-                                  sbNewVariant((*requestErrorReportIter)->item),
-                                  PR_TRUE);
-   }
+    sbBaseDevice::TransferRequest * transferRequest = *requestErrorReportIter;
+
+    // Dispatch an error event.
+    mDevice->CreateAndDispatchEvent(
+                                sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+                                sbNewVariant(transferRequest->item),
+                                PR_TRUE);
+  }
 
   // Remove the items that had errors from the device library
   mDevice->RemoveLibraryItems(requestErrorList.begin(),
                               requestErrorList.end());
 
   // Remove all the entries that errors occurred
-  mBatch.remove(nsRefPtr<sbBaseDevice::TransferRequest>(nsnull));
-
-  // Update batch if there were any errors.
-  if (!requestErrorList.empty()) {
-    SBUpdateBatchCounts(mBatch);
-    SBUpdateBatchIndex(mBatch);
-  }
+  RemoveProcessedBatchEntries(mBatch);
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceEnsureSpaceForWrite::AddItemToWrite(const Batch::iterator & aIter,
-                                            PRInt32&        aOrder)
+sbDeviceEnsureSpaceForWrite::AddItemToWrite(
+                                       TransferRequest * aRequest,
+                                       PRUint32 aIndex,
+                                       PRUint32 & aOrder)
 {
   nsresult rv;
 
-  sbBaseDevice::TransferRequest * request = *aIter;
-  if (request->type != sbBaseDevice::TransferRequest::REQUEST_WRITE) {
-    NS_WARNING("EnsureSpaceForWrite received a non-write request");
+  PRUint32 type = aRequest->GetType();
+
+  if (type != sbBaseDevice::TransferRequest::REQUEST_WRITE) {
+    NS_WARNING("EnsureSpaceForWrite received a non-write aRequest");
     return NS_OK;
   }
   nsCOMPtr<sbILibrary> requestLib =
-    do_QueryInterface(request->list, &rv);
+    do_QueryInterface(aRequest->list, &rv);
   if (NS_FAILED(rv) || !requestLib) {
-    // this is an add to playlist request, don't worry about size
+    // this is an add to playlist aRequest, don't worry about size
     return NS_OK;
   }
 
   if (!mOwnerLibrary) {
     rv = sbDeviceUtils::GetDeviceLibraryForItem(mDevice,
-                                                request->list,
+                                                aRequest->list,
                                                 getter_AddRefs(mOwnerLibrary));
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_STATE(mOwnerLibrary);
@@ -184,7 +217,7 @@ sbDeviceEnsureSpaceForWrite::AddItemToWrite(const Batch::iterator & aIter,
     #if DEBUG
       nsCOMPtr<sbIDeviceLibrary> newLibrary;
       rv = sbDeviceUtils::GetDeviceLibraryForItem(mDevice,
-                                                  request->list,
+                                                  aRequest->list,
                                                   getter_AddRefs(newLibrary));
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_STATE(newLibrary);
@@ -192,25 +225,25 @@ sbDeviceEnsureSpaceForWrite::AddItemToWrite(const Batch::iterator & aIter,
     #endif /* DEBUG */
   }
   ItemsToWrite::iterator const
-    itemToWriteIter = mItemsToWrite.find(request->item);
+    itemToWriteIter = mItemsToWrite.find(aRequest->item);
   if (itemToWriteIter != mItemsToWrite.end()) {
-    itemToWriteIter->second.mBatchIters.push_back(aIter);
+    itemToWriteIter->second.mBatchIndexes.push_back(aIndex);
     // this item is already in the set, don't worry about it
     return NS_OK;
   }
 
   PRUint64 writeLength;
   rv = sbDeviceUtils::GetDeviceWriteLength(mOwnerLibrary,
-                                           request->item,
+                                           aRequest->item,
                                            &writeLength);
   NS_ENSURE_SUCCESS(rv, rv);
   writeLength += mDevice->mPerTrackOverhead;
 
   mTotalLength += writeLength;
   LOG(("r(%p) i(%p) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
-       (void*)request, (void*)(request->item), writeLength));
+       (void*)aRequest, (void*)(aRequest->item), writeLength));
 
-  mItemsToWrite[request->item] = BatchLink(++aOrder, writeLength, aIter);
+  mItemsToWrite[aRequest->item] = BatchLink(++aOrder, writeLength, aIndex);
 
   return NS_OK;
 }
@@ -295,7 +328,6 @@ class CompareItemOrderInBatch
 public:
   typedef sbDeviceEnsureSpaceForWrite::ItemsToWrite ItemsToWrite;
   typedef sbDeviceEnsureSpaceForWrite::BatchLink BatchLink;
-  typedef sbDeviceEnsureSpaceForWrite::Batch Batch;
 
   CompareItemOrderInBatch(ItemsToWrite * aItemsToWrite) :
     mItemsToWrite(aItemsToWrite) {}
@@ -310,10 +342,10 @@ public:
       return false;
     }
     BatchLink & right = iter->second;
-    if (left.mBatchIters.empty() && !right.mBatchIters.empty()) {
+    if (left.mBatchIndexes.empty() && !right.mBatchIndexes.empty()) {
       return true;
     }
-    else if (right.mBatchIters.empty()) {
+    else if (right.mBatchIndexes.empty()) {
       return false;
     }
     return left.mOrder < right.mOrder;
@@ -399,23 +431,28 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
       // this will fit
       bytesRemaining -= length;
     } else {
-      // won't fit
-      BatchLink::BatchIters::iterator const batchEnd =
-        batchLink.mBatchIters.end();
-      for (BatchLink::BatchIters::iterator batchIter =
-             batchLink.mBatchIters.begin();
-           batchIter != batchEnd;
-           ++batchIter) {
-
-        TransferRequest * const request = **batchIter;
-        itemsToRemove.push_back(RemoveItemInfo(request->item, request->list));
-        mBatch.erase(*batchIter);
+      // won't fit, mark rest of items to be removed
+      const BatchLink::BatchIndexes::const_iterator end =
+        batchLink.mBatchIndexes.end();
+      for (BatchLink::BatchIndexes::const_iterator iter =
+             batchLink.mBatchIndexes.begin();
+           iter != end;
+           ++iter) {
+        TransferRequest * const request =
+          static_cast<TransferRequest*>(mBatch[*iter]);
+        if (request) {
+          itemsToRemove.push_back(RemoveItemInfo(request->item,
+                                                 request->list));
+          request->SetIsProcessed(true);
+        }
       }
     }
   }
+
+  RemoveProcessedBatchEntries(mBatch);
+
   rv = RemoveItemsFromLibrary(itemsToRemove.begin(), itemsToRemove.end());
-  SBUpdateBatchCounts(mBatch);
-  SBUpdateBatchIndex(mBatch);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

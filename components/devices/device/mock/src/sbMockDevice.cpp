@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -31,16 +31,21 @@
 #include <nsIWritablePropertyBag.h>
 #include <nsIWritablePropertyBag2.h>
 
+#include <nsArrayUtils.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
 #include <sbIDeviceCapabilities.h>
+#include <sbIDeviceEvent.h>
 #include <sbIDeviceLibrary.h>
+#include <sbIDeviceManager.h>
 #include <sbIDeviceProperties.h>
+#include <sbRequestItem.h>
 
 #include <sbDeviceContent.h>
+#include <sbVariantUtils.h>
 
 /* for an actual device, you would probably want to actually sort the prefs on
  * the device itself (and not the mozilla prefs system).  And even if you do end
@@ -59,10 +64,16 @@ NS_INTERFACE_MAP_BEGIN(sbMockDevice)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDeviceEventTarget)
 NS_INTERFACE_MAP_END
 
+#if _MSC_VER
+// Disable warning about 'this' used in base member initializer list.
+#pragma warning(disable: 4355)
+#endif
+
 sbMockDevice::sbMockDevice()
- : mIsConnected(PR_FALSE)
+ : mIsConnected(PR_FALSE),
+   mStatusHelper(this)
 {
-  /* member initializers and constructor code */
+  Init();
 }
 
 sbMockDevice::~sbMockDevice()
@@ -88,7 +99,7 @@ NS_IMETHODIMP sbMockDevice::GetProductName(nsAString & aProductName)
 NS_IMETHODIMP sbMockDevice::GetControllerId(nsID * *aControllerId)
 {
   NS_ENSURE_ARG_POINTER(aControllerId);
-  
+
   *aControllerId = (nsID*)NS_Alloc(sizeof(nsID));
   NS_ENSURE_TRUE(*aControllerId, NS_ERROR_OUT_OF_MEMORY);
   **aControllerId = NS_GET_IID(nsISupports);
@@ -99,10 +110,10 @@ NS_IMETHODIMP sbMockDevice::GetControllerId(nsID * *aControllerId)
 NS_IMETHODIMP sbMockDevice::GetId(nsID * *aId)
 {
   NS_ENSURE_ARG_POINTER(aId);
-  
+
   nsID mockDeviceID;
-  
-  PRBool success = 
+
+  PRBool success =
     mockDeviceID.Parse("{3572E6FC-4954-4458-AFE7-0D0A65BF5F55}");
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
@@ -120,19 +131,36 @@ NS_IMETHODIMP sbMockDevice::Connect()
   NS_ENSURE_STATE(!mIsConnected);
   nsresult rv;
 
+  // Initialize the device status helper object.
+  rv = mStatusHelper.Initialize();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Invoke the super-class.
   rv = sbBaseDevice::Connect();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceContent> deviceContent;
+  rv = GetContent(getter_AddRefs(deviceContent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Start the request processing.
+  rv = ReqProcessingStart();
   NS_ENSURE_SUCCESS(rv, rv);
 
   mIsConnected = PR_TRUE;
   return NS_OK;
 }
 
-/* void disconnect (); */
 NS_IMETHODIMP sbMockDevice::Disconnect()
 {
+  return sbBaseDevice::Disconnect();
+}
+
+/* void disconnect (); */
+nsresult sbMockDevice::DeviceSpecificDisconnect()
+{
   NS_ENSURE_STATE(mIsConnected);
-  
+
   nsresult rv;
   nsRefPtr<sbBaseDeviceVolume> volume;
   {
@@ -145,11 +173,29 @@ NS_IMETHODIMP sbMockDevice::Disconnect()
   }
   if (volume)
     RemoveVolume(volume);
-  
-  // Invoke the super-class.
-  sbBaseDevice::Disconnect();
 
   mIsConnected = PR_FALSE;
+
+  PRUint32 state = sbIDevice::STATE_IDLE;
+
+  nsCOMPtr<sbIDeviceManager2> manager =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbNewVariant data(static_cast<sbIDevice*>(static_cast<sbBaseDevice*>(this)));
+  nsCOMPtr<sbIDeviceEvent> deviceEvent;
+  rv = manager->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,
+                            sbNewVariant(static_cast<sbIDevice*>(static_cast<sbBaseDevice*>(this))),
+                            data,
+                            state,
+                            state,
+                            getter_AddRefs(deviceEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool dispatched;
+  rv = DispatchEvent(deviceEvent, PR_TRUE, &dispatched);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -179,22 +225,22 @@ NS_IMETHODIMP sbMockDevice::GetPreference(const nsAString & aPrefName, nsIVarian
   nsCOMPtr<nsIPrefService> prefRoot =
     do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIPrefBranch> prefBranch;
   rv = prefRoot->GetBranch(DEVICE_PREF_BRANCH, getter_AddRefs(prefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   NS_LossyConvertUTF16toASCII prefNameC(aPrefName);
-  
+
   PRInt32 prefType;
   rv = prefBranch->GetPrefType(prefNameC.get(),
                                &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIWritableVariant> result =
     do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   switch(prefType) {
     case nsIPrefBranch::PREF_INVALID: {
       rv = result->SetAsVoid();
@@ -231,7 +277,7 @@ NS_IMETHODIMP sbMockDevice::GetPreference(const nsAString & aPrefName, nsIVarian
       return NS_ERROR_UNEXPECTED;
     }
   }
-  
+
   return CallQueryInterface(result, _retval);
 }
 
@@ -244,21 +290,21 @@ NS_IMETHODIMP sbMockDevice::SetPreference(const nsAString & aPrefName, nsIVarian
   nsCOMPtr<nsIPrefService> prefRoot =
     do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIPrefBranch> prefBranch;
   rv = prefRoot->GetBranch(DEVICE_PREF_BRANCH, getter_AddRefs(prefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   NS_LossyConvertUTF16toASCII prefNameC(aPrefName);
-  
+
   PRUint16 prefType;
   rv = aPrefValue->GetDataType(&prefType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRInt32 oldPrefType;
   rv = prefBranch->GetPrefType(prefNameC.get(), &oldPrefType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   switch(prefType) {
     case nsIDataType::VTYPE_INT8:
     case nsIDataType::VTYPE_INT16:
@@ -279,7 +325,7 @@ NS_IMETHODIMP sbMockDevice::SetPreference(const nsAString & aPrefName, nsIVarian
       NS_ENSURE_SUCCESS(rv, rv);
       rv = prefBranch->SetIntPref(prefNameC.get(), value);
       NS_ENSURE_SUCCESS(rv, rv);
-  
+
       /* special case for state */
       if (aPrefName.Equals(NS_LITERAL_STRING("state"))) {
         mState = value;
@@ -392,7 +438,7 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
   NS_ENSURE_SUCCESS(rv, rv);
   rv = frameRateFractionArray->AppendElement(frameRateFraction, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = videoFormat->Initialize(NS_LITERAL_CSTRING("video/x-theora"),
                                videoSizeArray,
                                nsnull, // explicit sizes only
@@ -402,7 +448,7 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
                                frameRateFractionArray,
                                PR_FALSE,
                                videoBitrateRange);
-  
+
   nsCOMPtr<sbIDevCapAudioStream> audioFormat =
     do_CreateInstance(SB_IDEVCAPAUDIOSTREAM_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -455,7 +501,7 @@ NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
     rv = deviceContent->Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
     mContent = deviceContent;
-    
+
     // Create a device volume.
     nsRefPtr<sbBaseDeviceVolume> volume;
     rv = sbBaseDeviceVolume::New(getter_AddRefs(volume), this);
@@ -491,7 +537,7 @@ NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
     // Set the volume device library.
     rv = volume->SetDeviceLibrary(devLib);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = AddLibrary(devLib);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -528,7 +574,7 @@ NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
         do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIWritableVariant> deviceType = 
+  nsCOMPtr<nsIWritableVariant> deviceType =
     do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -536,7 +582,7 @@ NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
   rv = deviceType->SetAsAString(NS_LITERAL_STRING("MTP"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = writeBag->SetProperty(NS_LITERAL_STRING("DeviceType"), 
+  rv = writeBag->SetProperty(NS_LITERAL_STRING("DeviceType"),
                              deviceType);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -553,7 +599,7 @@ NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   if(!mProperties) {
-    nsCOMPtr<sbIDeviceProperties> properties = 
+    nsCOMPtr<sbIDeviceProperties> properties =
       do_CreateInstance("@songbirdnest.com/Songbird/Device/DeviceProperties;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -590,18 +636,18 @@ NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
         do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIWritableVariant> freeSpace = 
+    nsCOMPtr<nsIWritableVariant> freeSpace =
       do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = freeSpace->SetAsString("17179869184");
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = writeBag->SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/device/1.0#freeSpace"), 
+    rv = writeBag->SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/device/1.0#freeSpace"),
                                freeSpace);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIWritableVariant> totalUsedSpace = 
+    nsCOMPtr<nsIWritableVariant> totalUsedSpace =
       do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -626,29 +672,29 @@ NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
 
   NS_ADDREF(*theProperties = mProperties);
 
-  return NS_OK;  
+  return NS_OK;
 }
 
-NS_IMETHODIMP sbMockDevice::SubmitRequest(PRUint32 aRequest, nsIPropertyBag2 *aRequestParameters)
+NS_IMETHODIMP sbMockDevice::SubmitRequest(PRUint32 aRequestType,
+                                          nsIPropertyBag2 *aRequestParameters)
 {
-  nsRefPtr<TransferRequest> transferRequest;
-  nsresult rv = CreateTransferRequest(aRequest,
-                                      aRequestParameters,
-                                      getter_AddRefs(transferRequest));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  return PushRequest(transferRequest);
+  return sbBaseDevice::SubmitRequest(aRequestType, aRequestParameters);
 }
 
-nsresult sbMockDevice::ProcessRequest()
+nsresult sbMockDevice::ProcessBatch(Batch & aBatch)
 {
+  mBatch.clear();
+  std::insert_iterator<std::vector<nsRefPtr<sbRequestItem> > >
+    insertIter(mBatch, mBatch.end());
+  std::copy(aBatch.begin(), aBatch.end(), insertIter);
+
   /* don't process, let the js deal with it */
   return NS_OK;
 }
 
 NS_IMETHODIMP sbMockDevice::CancelRequests()
 {
-  return ClearRequests();
+  return mRequestThreadQueue->CancelRequests();
 }
 
 NS_IMETHODIMP sbMockDevice::Eject()
@@ -665,8 +711,8 @@ sbMockDevice::GetIsDirectTranscoding(PRBool* aIsDirect)
 NS_IMETHODIMP sbMockDevice::GetIsBusy(PRBool *aIsBusy)
 {
   nsCOMPtr<nsIVariant> busyVariant;
-  nsresult rv = 
-    GetPreference(NS_LITERAL_STRING("testing.busy"), 
+  nsresult rv =
+    GetPreference(NS_LITERAL_STRING("testing.busy"),
                   getter_AddRefs(busyVariant));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -717,7 +763,8 @@ NS_IMETHODIMP sbMockDevice::SupportsMediaItem(
 /****************************** sbIMockDevice ******************************/
 
 #define SET_PROP(type, name) \
-  rv = bag->SetPropertyAs ## type(NS_LITERAL_STRING(#name), request->name); \
+  rv = bag->SetPropertyAs ## type(NS_LITERAL_STRING(#name), \
+                                  transferRequest->name); \
   NS_ENSURE_SUCCESS(rv, rv);
 
 /* nsIPropertyBag2 PopRequest (); */
@@ -726,53 +773,45 @@ NS_IMETHODIMP sbMockDevice::PopRequest(nsIPropertyBag2 **_retval)
   // while it's easier to reuse PeekRequest, that sort of defeats the purpose
   // of testing.
   NS_ENSURE_ARG_POINTER(_retval);
-  
-  nsRefPtr<TransferRequest> request;
-  nsresult rv = sbBaseDevice::PopRequest(getter_AddRefs(request));
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(request, NS_ERROR_FAILURE);
-  
-  nsCOMPtr<nsIWritablePropertyBag2> bag =
-    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  SET_PROP(Interface, item);
-  SET_PROP(Interface, list);
-  SET_PROP(Interface, data);
-  SET_PROP(Uint32, index);
-  SET_PROP(Uint32, otherIndex);
-  SET_PROP(Uint32, batchCount);
-  SET_PROP(Uint32, batchIndex);
-  SET_PROP(Uint32, itemTransferID);
-  SET_PROP(Int32, priority);
-  
-  return CallQueryInterface(bag, _retval);
-}
 
-/* nsIPropertyBag2 PeekRequest (); */
-NS_IMETHODIMP sbMockDevice::PeekRequest(nsIPropertyBag2 **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  
-  nsRefPtr<TransferRequest> request;
-  nsresult rv = sbBaseDevice::PeekRequest(getter_AddRefs(request));
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(request, NS_ERROR_FAILURE);
-  
+  nsresult rv;
+
+  if (mBatch.empty()) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  sbRequestItem * requestItem = *mBatch.begin();
+  mBatch.erase(mBatch.begin());
+
+
   nsCOMPtr<nsIWritablePropertyBag2> bag =
     do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  SET_PROP(Interface, item);
-  SET_PROP(Interface, list);
-  SET_PROP(Interface, data);
-  SET_PROP(Uint32, index);
-  SET_PROP(Uint32, otherIndex);
-  SET_PROP(Uint32, batchCount);
-  SET_PROP(Uint32, batchIndex);
-  SET_PROP(Uint32, itemTransferID);
-  SET_PROP(Int32, priority);
-  
+
+  const PRInt32 batchCount  = mBatch.size();
+
+  rv = bag->SetPropertyAsInt32(NS_LITERAL_STRING("batchCount"), batchCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  const PRInt32 batchIndex = requestItem->GetBatchIndex();
+
+  rv = bag->SetPropertyAsInt32(NS_LITERAL_STRING("batchIndex"), batchIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  const PRInt32 requestId = requestItem->GetRequestId();
+
+  rv = bag->SetPropertyAsInt32(NS_LITERAL_STRING("itemTransferID"),
+                               requestId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (requestItem->GetType() >= sbRequestThreadQueue::USER_REQUEST_TYPES) {
+    TransferRequest * transferRequest =
+        static_cast<TransferRequest *>(requestItem);
+    SET_PROP(Interface, item);
+    SET_PROP(Interface, list);
+    SET_PROP(Interface, data);
+    SET_PROP(Uint32, index);
+    SET_PROP(Uint32, otherIndex);
+  }
   return CallQueryInterface(bag, _retval);
 }
 
@@ -799,7 +838,8 @@ NS_IMETHODIMP sbMockDevice::OpenInputStream(nsIURI*          aURI,
 
 NS_IMETHODIMP sbMockDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG(aCurrentStatus);
+  return mStatusHelper.GetCurrentStatus(aCurrentStatus);
 }
 
 

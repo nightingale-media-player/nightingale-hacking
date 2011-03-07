@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -34,6 +34,7 @@
 
 #include <nsIDOMParser.h>
 #include <nsIFileURL.h>
+#include <nsIMutableArray.h>
 #include <nsIPropertyBag2.h>
 #include <nsITimer.h>
 #include <nsIURI.h>
@@ -101,26 +102,28 @@
 #include <sbITranscodingConfigurator.h>
 
 #include <sbArray.h>
+#include <sbDeviceLibrary.h>
+#include <sbDeviceStatus.h>
 #include <sbFileUtils.h>
 #include <sbJobUtils.h>
+#include <sbLibraryUtils.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbPrefBranch.h>
 #include <sbPropertiesCID.h>
 #include <sbPropertyBagUtils.h>
 #include <sbProxiedComponentManager.h>
+#include <sbStandardDeviceProperties.h>
+#include <sbStandardProperties.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
-#include <sbProxiedComponentManager.h>
 #include <sbTranscodeUtils.h>
 #include <sbURIUtils.h>
 #include <sbVariantUtils.h>
 #include <sbWatchFolderUtils.h>
 
 #include "sbDeviceEnsureSpaceForWrite.h"
-#include "sbDeviceLibrary.h"
 #include "sbDeviceProgressListener.h"
-#include "sbDeviceStatus.h"
 #include "sbDeviceStatusHelper.h"
 #include "sbDeviceStreamingHandler.h"
 #include "sbDeviceSupportsItemHelper.h"
@@ -130,11 +133,6 @@
 #include "sbDeviceXMLCapabilities.h"
 #include "sbDeviceXMLInfo.h"
 #include "sbLibraryListenerHelpers.h"
-#include "sbLibraryUtils.h"
-#include "sbProxiedComponentManager.h"
-#include "sbStandardDeviceProperties.h"
-#include "sbStandardProperties.h"
-#include "sbVariantUtils.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -215,8 +213,6 @@ GetWritableDeviceProperties(sbIDevice * aDevice,
 
   return CallQueryInterface(roDeviceProperties, aProperties);
 }
-
-NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
 class MediaListListenerAttachingEnumerator : public sbIMediaListEnumerationListener
 {
@@ -321,9 +317,37 @@ NS_IMETHODIMP ShowMediaListEnumerator::OnEnumerationEnd(sbIMediaList*,
   return NS_OK;
 }
 
-sbBaseDevice::TransferRequest * sbBaseDevice::TransferRequest::New()
+sbBaseDevice::TransferRequest *
+sbBaseDevice::TransferRequest::New(PRUint32 aType,
+                                   sbIMediaItem * aItem,
+                                   sbIMediaList * aList,
+                                   PRUint32 aIndex,
+                                   PRUint32 aOtherIndex,
+                                   nsISupports * aData)
 {
-  return new TransferRequest();
+  TransferRequest * request;
+  NS_NEWXPCOM(request, TransferRequest);
+  if (request) {
+    request->SetType(aType);
+    request->item = aItem;
+    request->list = aList;
+    request->index = aIndex;
+    request->otherIndex = aOtherIndex;
+    request->data = aData;
+    // Delete, write, and read requests that aren't playlists are countable
+    switch (aType) {
+      case sbIDevice::REQUEST_DELETE:
+      case sbIDevice::REQUEST_WRITE:
+      case sbIDevice::REQUEST_READ:
+        // These requests are countable unless they involve playlists
+        if (!request->IsPlaylist()) {
+          request->SetIsCountable(true);
+        }
+      default:
+        break;
+    }
+  }
+  return request;
 }
 
 PRBool sbBaseDevice::TransferRequest::IsPlaylist() const
@@ -333,13 +357,6 @@ PRBool sbBaseDevice::TransferRequest::IsPlaylist() const
   // Is this a playlist
   nsCOMPtr<sbILibrary> libTest = do_QueryInterface(list);
   return libTest ? PR_FALSE : PR_TRUE;
-}
-
-PRBool sbBaseDevice::TransferRequest::IsCountable() const
-{
-  return !IsPlaylist() &&
-         type != sbIDevice::REQUEST_UPDATE &&
-         (type & REQUEST_FLAG_USER) == 0;
 }
 
 sbBaseDevice::TransferRequest::TransferRequest() :
@@ -356,83 +373,7 @@ sbBaseDevice::TransferRequest::~TransferRequest()
   NS_IF_RELEASE(transcodeProfile);
 }
 
-/**
- * Utility function to check a transfer request queue for proper batching
- */
-#if DEBUG
-static void CheckRequestBatch(sbBaseDevice::TransferRequestQueue::const_iterator aBegin,
-                              sbBaseDevice::TransferRequestQueue::const_iterator aEnd)
-{
-  PRUint32 lastIndex = 0, lastCount = 0, lastBatchID = 0, lastItemType = 0;
-  int lastType = 0;
-
-  for (;aBegin != aEnd; ++aBegin) {
-    if (!(*aBegin)->IsCountable()) {
-      // we don't care about any non-countable things
-      continue;
-    }
-    // Audio and Video batches can have same lastType. The type changes
-    // if itemTypes are different and the operation is WRITE.
-    //
-    // Audio and Video can mix together in delete batch. Skip the check
-    if (lastType == 0 || lastType != (*aBegin)->type ||
-        (lastItemType != (*aBegin)->itemType &&
-         (*aBegin)->type == sbBaseDevice::TransferRequest::REQUEST_WRITE)) {
-      // type change
-      if (lastIndex != lastCount &&
-          (*aBegin)->type != sbBaseDevice::TransferRequest::REQUEST_DELETE &&
-          lastType != sbBaseDevice::TransferRequest::REQUEST_DELETE) {
-        printf("Type change with missing items lastBatchID=%ud newBatchID=%ud\n",
-               lastBatchID, (*aBegin)->batchID);
-        NS_WARNING("Type change with missing items");
-      }
-      if ((lastType != 0) &&
-          ((*aBegin)->batchIndex != sbBaseDevice::BATCH_INDEX_START) &&
-           (*aBegin)->type != sbBaseDevice::TransferRequest::REQUEST_DELETE) {
-        printf ("batch does not start with 1 lastBatchID=%ud newBatchID=%ud\n",
-                lastBatchID, (*aBegin)->batchID);
-        NS_WARNING("batch does not start with 1");
-      }
-      if ((*aBegin)->batchCount == 0) {
-        printf("empty batch lastBatchID=%ud newBatchID=%ud\n",
-               lastBatchID, (*aBegin)->batchID);
-        NS_WARNING("empty batch;");
-      }
-      lastType = (*aBegin)->type;
-      lastCount = (*aBegin)->batchCount;
-      lastIndex = (*aBegin)->batchIndex;
-      lastBatchID = (*aBegin)->batchID;
-      lastItemType = (*aBegin)->itemType;
-    } else {
-      // continue batch
-      if (lastCount != (*aBegin)->batchCount) {
-        printf("mismatched batch count "
-               "batchID=%ud, batchCount=%ud, this Count=%ud, index=%ud\n",
-               lastBatchID, lastCount, (*aBegin)->batchCount, (*aBegin)->batchIndex);
-        NS_WARNING("mismatched batch count");
-      }
-      if (lastIndex + 1 != (*aBegin)->batchIndex &&
-          (*aBegin)->type != sbBaseDevice::TransferRequest::REQUEST_DELETE) {
-        printf("unexpected index batchID=%ud, lastIndex=%ud, index=%ud",
-               lastBatchID, lastIndex, (*aBegin)->batchIndex);
-        NS_WARNING("unexpected index");
-      }
-      lastIndex = (*aBegin)->batchIndex;
-    }
-  }
-
-  // check end of queue too
-  NS_ASSERTION(lastIndex == lastCount, "end of queue with missing items");
-}
-#endif /* DEBUG */
-
 sbBaseDevice::sbBaseDevice() :
-  mNextBatchID(1),
-  mBatchDepth(0),
-  mLastTransferID(0),
-  mLastRequestPriority(PR_INT32_MIN),
-  mHaveCurrentRequest(PR_FALSE),
-  mAbortCurrentRequest(PR_FALSE),
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
   mSyncState(sbBaseDevice::SYNC_STATE_NORMAL),
@@ -443,13 +384,9 @@ sbBaseDevice::sbBaseDevice() :
   mDeviceImages(nsnull),
   mCanTranscodeAudio(CAN_TRANSCODE_UNKNOWN),
   mCanTranscodeVideo(CAN_TRANSCODE_UNKNOWN),
-  mVideoInserted(false),
   mSyncType(0),
   mEnsureSpaceChecked(false),
   mConnected(PR_FALSE),
-  mReqWaitMonitor(nsnull),
-  mReqStopProcessing(0),
-  mIsHandlingRequests(PR_FALSE),
   mVolumeLock(nsnull)
 {
 #ifdef PR_LOGGING
@@ -469,9 +406,6 @@ sbBaseDevice::sbBaseDevice() :
 
   mPreviousStateLock = nsAutoLock::NewLock(__FILE__ "::mPreviousStateLock");
   NS_ASSERTION(mPreviousStateLock, "Failed to allocate state lock");
-
-  mRequestMonitor = nsAutoMonitor::NewMonitor(__FILE__ "::mRequestMonitor");
-  NS_ASSERTION(mRequestMonitor, "Failed to allocate request monitor");
 
   mPreferenceLock = nsAutoLock::NewLock(__FILE__ "::mPreferenceLock");
   NS_ASSERTION(mPreferenceLock, "Failed to allocate preference lock");
@@ -503,12 +437,6 @@ sbBaseDevice::sbBaseDevice() :
 /* virtual */
 sbBaseDevice::~sbBaseDevice()
 {
-  NS_WARN_IF_FALSE(mBatchDepth == 0,
-                   "Device destructed with batches remaining");
-
-  if (mBatchEndTimer)
-    mBatchEndTimer->Cancel();
-
   if (mVolumeLock)
     nsAutoLock::DestroyLock(mVolumeLock);
   mVolumeLock = nsnull;
@@ -520,9 +448,6 @@ sbBaseDevice::~sbBaseDevice()
 
   if (mPreferenceLock)
     nsAutoLock::DestroyLock(mPreferenceLock);
-
-  if (mRequestMonitor)
-    nsAutoMonitor::DestroyMonitor(mRequestMonitor);
 
   if (mStateLock)
     nsAutoLock::DestroyLock(mStateLock);
@@ -560,7 +485,27 @@ NS_IMETHODIMP sbBaseDevice::Disconnect()
     mDeferredSetupDeviceTimer = nsnull;
   }
 
+  // Tell the thread to shutdown. The thread will then invoke the device
+  // specific disconnect logic on the main thread.
+  mRequestThreadQueue->Stop();
+
   return NS_OK;
+}
+
+NS_IMETHODIMP sbBaseDevice::SubmitRequest(PRUint32 aRequestType,
+                                          nsIPropertyBag2 *aRequestParameters)
+{
+  nsRefPtr<TransferRequest> transferRequest;
+  nsresult rv = CreateTransferRequest(aRequestType,
+                                      aRequestParameters,
+                                      getter_AddRefs(transferRequest));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mRequestThreadQueue->PushRequest(transferRequest);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -591,988 +536,57 @@ NS_IMETHODIMP sbBaseDevice::SyncLibraries()
   return NS_OK;
 }
 
-nsresult sbBaseDevice::PushRequest(const int aType,
+nsresult sbBaseDevice::PushRequest(const PRUint32 aType,
                                    sbIMediaItem* aItem,
                                    sbIMediaList* aList,
                                    PRUint32 aIndex,
                                    PRUint32 aOtherIndex,
-                                   PRInt32 aPriority)
+                                   nsISupports * aData)
 {
-  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(aType != 0, NS_ERROR_INVALID_ARG);
 
-  nsRefPtr<TransferRequest> req = TransferRequest::New();
+  nsresult rv;
+
+  nsRefPtr<TransferRequest> req = TransferRequest::New(aType,
+                                                       aItem,
+                                                       aList,
+                                                       aIndex,
+                                                       aOtherIndex,
+                                                       aData);
   NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
-  req->type = aType;
-  req->item = aItem;
-  req->list = aList;
-  req->index = aIndex;
-  req->otherIndex = aOtherIndex;
-  req->priority = aPriority;
 
-  return PushRequest(req);
-}
-
-//==============================================================================
-//
-// @brief Match functions for the request queue.
-//
-//==============================================================================
-
-// Binary predicate specifies the request and the type for matching.
-struct SBCountableContentTypeMatch :
-         public std::binary_function<nsRefPtr<sbBaseDevice::TransferRequest>,
-                                     const PRUint32, PRBool>
-{
-  // Match for iterator that is countable and itemType equals.
-  PRBool operator() (const nsRefPtr<sbBaseDevice::TransferRequest> request,
-                     const PRUint32 contentType) const
-  {
-    return request->IsCountable() && request->itemType == contentType;
-  }
-};
-
-PRBool
-SBCountableMatch(const nsRefPtr<sbBaseDevice::TransferRequest> request)
-{
-  return request->IsCountable();
-}
-
-template <class T>
-void SBUpdateBatchCounts(T        batchRBegin,
-                         T        queueREnd,
-                         PRUint32 aBatchCount,
-                         PRUint32 aBatchID,
-                         PRUint32 aItemType = 0)
-{
-  // Reverse iterator from the end of the batch to the beginning and
-  // bump the batch count, skipping the non-countable stuff
-  for (;(batchRBegin != queueREnd &&
-         (!(*batchRBegin)->IsCountable() || (*batchRBegin)->batchID == aBatchID));
-       ++batchRBegin) {
-    if ((*batchRBegin)->IsCountable())
-      (*batchRBegin)->batchCount = aBatchCount;
-  }
-}
-
-void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch)
-{
-  // Do nothing if batch is empty.
-  if (aBatch.empty())
-    return;
-
-  // Update the batch counts.
-  SBUpdateBatchCounts(aBatch.rbegin(),
-                      aBatch.rend(),
-                      aBatch.size(),
-                      (*(aBatch.rbegin()))->batchID);
-}
-
-void SBUpdateBatchCountsIgnorePlaylist(sbBaseDevice::Batch& aBatch)
-{
-  // Do nothing if batch is empty.
-  if (aBatch.empty())
-    return;
-
-  // Get the batch begin.
-  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
-  sbBaseDevice::Batch::iterator lastBegin = batchBegin;
-  sbBaseDevice::TransferRequest *request = nsnull;
-  nsCOMPtr<sbIMediaList> itemList;
-  PRUint32 index = 0;
-  for (; batchBegin != aBatch.end(); ++batchBegin) {
-    request = batchBegin->get();
-    if (request->item)
-      itemList = do_QueryInterface(request->item);
-    // Reset the batch count for the items before playlists.
-    if (itemList) {
-      sbBaseDevice::TransferRequest *req = nsnull;
-      for (; lastBegin != batchBegin; ++lastBegin) {
-        req = lastBegin->get();
-        req->batchCount = index;
-      }
-      break;
-    }
-    ++index;
-  }
-
-  return;
-}
-
-void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
-{
-  // Do nothing if batch is empty.
-  if (aBatch.empty())
-    return;
-
-  // Get the batch begin.
-  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
-  PRUint32 index = sbBaseDevice::BATCH_INDEX_START;
-  sbBaseDevice::TransferRequest *request = nsnull;
-  for (; batchBegin != aBatch.end(); batchBegin++) {
-    request = batchBegin->get();
-    request->batchIndex = index++;
-  }
-}
-
-void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
-{
-  // Do nothing if batch is empty.
-  if (aBatch.empty())
-    return;
-
-  // Get the batch begin.
-  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
-  sbBaseDevice::Batch::iterator lastBegin = batchBegin;
-  sbBaseDevice::TransferRequest *request = nsnull;
-  PRUint32 index = sbBaseDevice::BATCH_INDEX_START;
-  PRBool firstTranscoding = PR_TRUE;
-  const sbBaseDevice::TransferRequest::CompatibilityType NEEDS_TRANSCODING =
-    sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
-  for (; batchBegin != aBatch.end(); ++batchBegin) {
-    request = batchBegin->get();
-    if (firstTranscoding &&
-        request->destinationCompatibility == NEEDS_TRANSCODING)
-    {
-      // Bump the index back since this it is 1 based
-      --index;
-
-      sbBaseDevice::TransferRequest *req = nsnull;
-      for (; lastBegin != batchBegin; ++lastBegin) {
-        req = lastBegin->get();
-        req->batchCount = index;
-      }
-      index = sbBaseDevice::BATCH_INDEX_START;
-      // Only the first needsTranscoding works.
-      firstTranscoding = PR_FALSE;
-    }
-    request->batchIndex = index++;
-  }
-
-  // No item needs transcoding
-  if (firstTranscoding)
-    return;
-
-  // Bump the index back since this it is 1 based
-  --index;
-
-  // Update the batch count for the batch.
-  for (; lastBegin != batchBegin; ++lastBegin) {
-    request = lastBegin->get();
-    request->batchCount = index;
-  }
-}
-
-/**
- * Put the transcode and playlist items at the end.
- * Used as a std::list::sort compare function by ReqHandleWriteBatch to reorder
- * the transcoding and playlist items to the back.
- */
-bool SBWriteRequestBatchSortComparator
-       (nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
-        nsRefPtr<sbBaseDevice::TransferRequest> const &p2)
-{
-  // Playlist items come after everything
-  // p1 < p2 if (p1 !IsPlaylist && p2 IsPlaylist)
-  if (!p1->IsPlaylist() && p2->IsPlaylist())
-    return true;
-
-  const sbBaseDevice::TransferRequest::CompatibilityType NEEDS_TRANSCODING =
-    sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
-  // p1 < p2 if (p1 !transcode && p2 transcode)
-  return p1->destinationCompatibility != NEEDS_TRANSCODING &&
-         p2->destinationCompatibility == NEEDS_TRANSCODING;
-}
-
-/**
- * Static helper class for convenience
- */
-class sbBaseDeviceRequestDupeCheck
-{
-public:
-   typedef sbBaseDevice::TransferRequest TransferRequest;
-  /**
-   * This compares two items, handling null values, returning true if they are
-   * equal
-   */
-  static bool CompareItems(sbIMediaItem * aLeft, sbIMediaItem * aRight)
-  {
-    PRBool same = PR_FALSE;
-    // They're the same if neither is specified or both are and they are "equal"
-    return (!aLeft && !aRight) ||
-           (aLeft && aRight && NS_SUCCEEDED(aLeft->Equals(aRight, &same)) &&
-            same);
-  }
-
-  /**
-     * This compares both the list and item of aRequest and mRequest
-     * \param aRequest the other request to be compared
-     * \return ture if the two requests refer to the same itema and list
-     */
-  static bool CompareRequestItems(TransferRequest * aRequest1,
-                                  TransferRequest * aRequest2)
-  {
-    return CompareItems(aRequest1->item, aRequest2->item) &&
-           CompareItems(aRequest1->list, aRequest2->list);
-  }
-
-  /**
-   * This is the primary function that does the work. It compares the two
-   * requests and if they are a dupe returns true in aIsDupe. The return value
-   * is whether the caller should continue through the queue or not.
-   * \param aQueueRequest the request that is on the queue
-   * \param aNewRequest The request that is about to be added to the queue
-   * \param aIsDupe out parameter denoting whether the new request is a dupe
-   *                of the request on the queue
-   * \return Returns false if the caller should stop and not continue with
-   *         the rest of the items on the queue. For instance if we see
-   *         new playlist request and we have a delete request we're adding
-   *         for that same playlist, then it's not a dupe, but there's no
-   *         need to look further.
-   */
-  static bool DupeCheck(TransferRequest * aQueueRequest,
-                        TransferRequest * aNewRequest,
-                        bool & aIsDupe);
-};
-
-bool sbBaseDeviceRequestDupeCheck::DupeCheck(TransferRequest * aQueueRequest,
-                                             TransferRequest * aNewRequest,
-                                             bool & aIsDupe)
-{
-  // Check the type of the request being added
-  switch (aNewRequest->type) {
-    case TransferRequest::REQUEST_BATCH_BEGIN:
-    case TransferRequest::REQUEST_BATCH_END:
-      // Bail early on these, never are dupes
-      return true;
-    case TransferRequest::REQUEST_WRITE: {
-      // is this a write to a playlist?
-      if (aNewRequest->IsPlaylist()) {
-        // And the request on queue is a playlist operation
-        if (aQueueRequest->IsPlaylist()) {
-          switch (aQueueRequest->type) {
-
-            // If the queue request is a playlist operation for the same
-            // playlist dupe it
-            case TransferRequest::REQUEST_WRITE:
-            case TransferRequest::REQUEST_MOVE:
-            case TransferRequest::REQUEST_DELETE:
-              aIsDupe = CompareItems(aNewRequest->list, aQueueRequest->list);
-              return aIsDupe;
-            default:
-              return false;
-          }
-        }
-
-        // queue request wasn't a playlist operation so check for creation,
-        // deletion, and updating of playlists
-        switch (aQueueRequest->type) {
-          // If we find a delete playlist, look no further, but it is not a dupe
-          case TransferRequest::REQUEST_DELETE:
-            aIsDupe = false;
-            return CompareItems(aNewRequest->list, aQueueRequest->item);
-
-          // If we find a new playlist request for the same playlist dupe it
-          case TransferRequest::REQUEST_NEW_PLAYLIST:
-
-          // If we find an update playlist request for the same playlist
-          // dupe it
-          case TransferRequest::REQUEST_UPDATE:
-            aIsDupe = CompareItems(aNewRequest->list, aQueueRequest->item);
-            return aIsDupe;
-
-          default:
-            return false;
-        }
-      }
-
-      // Not a playlist operation, if it's the same item and
-      // type then dupe it
-      aIsDupe = (aQueueRequest->type == TransferRequest::REQUEST_WRITE) &&
-                CompareRequestItems(aQueueRequest, aNewRequest);
-      return aIsDupe;
-    }
-    case TransferRequest::REQUEST_DELETE: {
-      // If we're dealing with a remove item from playlist
-      if (aNewRequest->IsPlaylist()) {
-        // If the playlist on the queue is the same as this one
-        if (CompareItems(aNewRequest->list, aQueueRequest->list)) {
-          switch (aQueueRequest->type) {
-            case TransferRequest::REQUEST_MOVE:
-            case TransferRequest::REQUEST_DELETE:
-            case TransferRequest::REQUEST_UPDATE:
-            case TransferRequest::REQUEST_WRITE: {
-              aIsDupe = true;
-              return true;
-            }
-            default:
-              return false;
-            break;
-          }
-        }
-        return false;
-      }
-      // If the item we're deleting has a previous request in the queue
-      // remove it unless it's another delete then dupe it
-      if (CompareRequestItems(aQueueRequest, aNewRequest)) {
-        switch (aQueueRequest->type) {
-          case TransferRequest::REQUEST_NEW_PLAYLIST:
-          case TransferRequest::REQUEST_WRITE:
-          case TransferRequest::REQUEST_UPDATE:
-            // Stop, but not a dupe
-            return true;
-          case TransferRequest::REQUEST_DELETE:
-            aIsDupe = true;
-            return true;
-          default:
-            return false;
-        }
-      }
-      return false;
-    }
-    case TransferRequest::REQUEST_NEW_PLAYLIST: {
-      // If we have new playlist request for the same item dupe this one
-      if (aQueueRequest->type == aNewRequest->type) {
-         aIsDupe = CompareItems(aNewRequest->item, aQueueRequest->item);
-         return aIsDupe;
-      }
-      // If we find a delete request for this new playlist then we want to
-      // stop looking in the queue
-      return (aQueueRequest->type == TransferRequest::REQUEST_DELETE) &&
-             CompareItems(aNewRequest->item, aQueueRequest->item);
-    }
-    case TransferRequest::REQUEST_MOVE: {
-      if (aNewRequest->IsPlaylist()) {
-        switch (aQueueRequest->type) {
-          // Move after creation is unnecessary, dupe it
-          case TransferRequest::REQUEST_NEW_PLAYLIST:
-            aIsDupe = CompareItems(aNewRequest->list, aNewRequest->item);
-            return aIsDupe;
-          // Move after writing is unnecessary, dupe it
-          case TransferRequest::REQUEST_WRITE:
-            aIsDupe = aNewRequest->IsPlaylist() &&
-                   CompareItems(aNewRequest->list, aQueueRequest->list);
-            return aIsDupe;
-          // Move after update is unnecessary, dupe it
-          case TransferRequest::REQUEST_UPDATE: {
-            aIsDupe = CompareItems(aNewRequest->list, aQueueRequest->item);
-            return aIsDupe;
-          }
-          default:
-            return false;
-        }
-      }
-      return false;
-    }
-    case TransferRequest::REQUEST_UPDATE: {
-      // If the queue item is a playlist operation then this request can
-      // be treated as a dupe
-      if (aQueueRequest->IsPlaylist()) {
-        aIsDupe = CompareItems(aNewRequest->item, aQueueRequest->list);
-        return aIsDupe;
-      }
-      switch (aQueueRequest->type) {
-        case TransferRequest::REQUEST_WRITE:
-        case TransferRequest::REQUEST_NEW_PLAYLIST:
-        case TransferRequest::REQUEST_UPDATE:
-          aIsDupe = CompareRequestItems(aQueueRequest, aNewRequest);
-          return aIsDupe;
-
-        case TransferRequest::REQUEST_DELETE:
-          aIsDupe = CompareRequestItems(aQueueRequest, aNewRequest);
-          return aIsDupe;
-
-        default:
-          return false;
-      }
-    }
-    case TransferRequest::REQUEST_EJECT:
-    case TransferRequest::REQUEST_FORMAT:
-    case TransferRequest::REQUEST_MOUNT:
-    case TransferRequest::REQUEST_THREAD_START:
-    case TransferRequest::REQUEST_THREAD_STOP:
-    case TransferRequest::REQUEST_READ:
-    case TransferRequest::REQUEST_SUSPEND:
-    case TransferRequest::REQUEST_SYNC:
-    case TransferRequest::REQUEST_WIPE:
-    default: {
-      aIsDupe = CompareRequestItems(aQueueRequest, aNewRequest) &&
-                aNewRequest->type == aQueueRequest->type;
-      return aIsDupe;
-    }
-  }
-}
-
-nsresult sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
-                                          TransferRequest * aRequest,
-                                          bool & aIsDuplicate) {
-  nsresult rv;
-
-  if (aQueue.empty()) {
-    aIsDuplicate = false;
-    return NS_OK;
-  }
-  // reverse search through the queue for a comparable request
-  TransferRequestQueue::reverse_iterator rend = aQueue.rend();
-  nsRefPtr<TransferRequest> duplicateRequest;
-  aIsDuplicate = false;
-  TransferRequestQueue::reverse_iterator iter;
-  for (iter = aQueue.rbegin();
-       iter != rend;
-       ++iter) {
-    PRBool continueChecking =
-             sbBaseDeviceRequestDupeCheck::DupeCheck(iter->get(),
-                                                     aRequest,
-                                                     aIsDuplicate);
-    if (aIsDuplicate) {
-      duplicateRequest = *iter;
-    }
-    if (!continueChecking) {
-      break;
-    }
-  }
-
-  // If the rqeuests are item update requests, merge the updated properties.
-  if (duplicateRequest &&
-      (duplicateRequest->type == TransferRequest::REQUEST_UPDATE) &&
-      !duplicateRequest->IsPlaylist()) {
-    // Create a new, merged property array.
-    nsCOMPtr<sbIMutablePropertyArray>
-      mergedPropertyList =
-        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  // If we have an item get its content type and set the request data's
+  // itemType
+  if (req->item) {
+    nsString contentType;
+    rv = req->item->GetContentType(contentType);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add the duplicate in the queue properties.
-    nsCOMPtr<sbIPropertyArray> propertyList;
-    propertyList = do_QueryInterface(duplicateRequest->data, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mergedPropertyList->AppendProperties(propertyList, PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add the new request properties.
-    propertyList = do_QueryInterface(aRequest->data, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mergedPropertyList->AppendProperties(propertyList, PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Change the duplicate in the queue properties to the merged set.
-    duplicateRequest->data = mergedPropertyList;
-  }
-
-  // If we found a duplicate playlist request, we may need to change it to
-  // update request. Currently all devices recreate playlists on any
-  // modification.
-  if (duplicateRequest && aRequest->IsPlaylist()) {
-    // If the previous request was a write or move then change it to an update
-    switch (duplicateRequest->type) {
-      case TransferRequest::REQUEST_WRITE:
-      case TransferRequest::REQUEST_MOVE: {
-        duplicateRequest->type = TransferRequest::REQUEST_UPDATE;
-        duplicateRequest->item = duplicateRequest->list;
-        nsCOMPtr<sbILibrary> library;
-        duplicateRequest->list->GetLibrary(getter_AddRefs(library));
-        duplicateRequest->list = library;
-      }
-      break;
+    if (contentType.Equals(NS_LITERAL_STRING("audio"))) {
+      req->itemType = TransferRequest::REQUESTBATCH_AUDIO;
+      mSyncType |= TransferRequest::REQUESTBATCH_AUDIO;
+    }
+    else if (contentType.Equals(NS_LITERAL_STRING("video"))) {
+      req->itemType = TransferRequest::REQUESTBATCH_VIDEO;
+      mSyncType |= TransferRequest::REQUESTBATCH_VIDEO;
+    }
+    else {
+      req->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
     }
   }
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
-{
-  NS_ENSURE_ARG_POINTER(aRequest);
-
-  #if DEBUG
-    // XXX Mook: if writing, make sure that we're writing from a file
-    if (aRequest->type == TransferRequest::REQUEST_WRITE) {
-      NS_ASSERTION(aRequest->item, "writing with no item");
-      nsCOMPtr<nsIURI> aSourceURI;
-      aRequest->item->GetContentSrc(getter_AddRefs(aSourceURI));
-      PRBool schemeIs = PR_FALSE;
-      aSourceURI->SchemeIs("file", &schemeIs);
-      NS_ASSERTION(schemeIs, "writing from device, but not from file!");
-    }
-  #endif
-
-  { /* scope for request lock */
-    nsAutoMonitor requestMon(mRequestMonitor);
-
-    // If we're aborting don't accept any more requests
-    if (mAbortCurrentRequest)
-    {
-      return NS_ERROR_ABORT;
-    }
-    // decide where this request will be inserted
-    // figure out which queue we're looking at
-    PRInt32 priority = aRequest->priority;
-    TransferRequestQueue& queue = mRequests[priority];
-
-    // Initialize the iterator if the queue is empty.
-    if (queue.empty()) {
-      mFirstVideoIterator = queue.end();
-      mSyncType = 0;
-    }
-
-    #if DEBUG
-      CheckRequestBatch(queue.begin(), queue.end());
-    #endif /* DEBUG */
-
-    // If we have received a similar request for this item we can ignore this
-    // one
-    bool isDupe;
-    nsresult rv = IsRequestDuplicate(queue, aRequest, isDupe);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (isDupe) {
-      return NS_OK;
-    }
-    // initialize some properties of the request
-    aRequest->itemTransferID = mLastTransferID++;
-    aRequest->batchIndex = BATCH_INDEX_START;
-    aRequest->batchCount = 1;
-    aRequest->batchID = 0;
-    aRequest->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
-    aRequest->timeStamp = PR_Now();
-
-    PRBool isAudio = PR_FALSE;
-    PRBool isVideo = PR_FALSE;
-    PRBool isWrite = PR_FALSE;
-    // If this request isn't countable there's nothing to be done
-    if (aRequest->IsCountable())
-    {
-      nsString contentType;
-      if (aRequest->item) {
-        nsresult rv = aRequest->item->GetContentType(contentType);
-        NS_ENSURE_SUCCESS(rv, rv);
-        isAudio = contentType.Equals(NS_LITERAL_STRING("audio"));
-        isVideo = contentType.Equals(NS_LITERAL_STRING("video"));
-        if (isAudio) {
-          aRequest->itemType = TransferRequest::REQUESTBATCH_AUDIO;
-          // The syncing contains audio
-          mSyncType |= TransferRequest::REQUESTBATCH_AUDIO;
-        }
-        else if (isVideo) {
-          aRequest->itemType = TransferRequest::REQUESTBATCH_VIDEO;
-          // The syncing contains video
-          mSyncType |= TransferRequest::REQUESTBATCH_VIDEO;
-        }
-        // Only create two audio/video batches for WRITE
-        isWrite = aRequest->type == TransferRequest::REQUEST_WRITE;
-      }
-
-      // Calculate the batch count
-      TransferRequestQueue::reverse_iterator const rbegin = queue.rbegin();
-      TransferRequestQueue::reverse_iterator const rend = queue.rend();
-      TransferRequestQueue::reverse_iterator lastCountable;
-      // Find the iterator that returns true from the match function.
-      if (isWrite && (isVideo || isAudio)) {
-        // bind2nd turns the binary predicate into an unary predicate.
-        lastCountable = std::find_if(rbegin, rend,
-                                     std::bind2nd(SBCountableContentTypeMatch(),
-                                                  aRequest->itemType));
-      } else {
-        lastCountable = std::find_if(rbegin, rend, SBCountableMatch);
-      }
-
-      // If there was a countable request found and it's the same type
-      if (lastCountable != rend && (*lastCountable)->type == aRequest->type) {
-        nsRefPtr<TransferRequest> last = *(lastCountable);
-        // batch them
-        aRequest->batchCount += last->batchCount;
-        aRequest->batchIndex = aRequest->batchCount;
-        aRequest->batchID = last->batchID;
-
-        SBUpdateBatchCounts(lastCountable,
-                            rend,
-                            aRequest->batchCount,
-                            aRequest->batchID,
-                            aRequest->itemType);
-      } else {
-        // start of a new batch.  allocate a new batch ID atomically, ensuring
-        // its value is never 0 (assuming it's not incremented 2^32-1 times
-        // between the calls to PR_AtomicIncrement and that it's OK to sometimes
-        // increment a few times too often)
-        PRInt32 batchID = PR_AtomicIncrement(&mNextBatchID);
-        if (!batchID)
-          batchID = PR_AtomicIncrement(&mNextBatchID);
-        aRequest->batchID = batchID;
-
-        PRBool isDelete = aRequest->type == TransferRequest::REQUEST_DELETE;
-        if (isVideo && (isWrite || isDelete)) {
-          // Set the flag so iterator can be set later
-          mVideoInserted = true;
-        }
-        if (!isAudio && !isWrite && !isDelete) {
-          mFirstVideoIterator = queue.end();
-        }
-      }
-    }
-
-    // Guarding against empty queue.
-    if (isAudio && !queue.empty() && mFirstVideoIterator != queue.end()) {
-      // Insert audio in front of video so that audio can be handled first.
-      queue.insert(mFirstVideoIterator, aRequest);
-    } else {
-      queue.push_back(aRequest);
-      // must be isVideo
-      if (isVideo && mVideoInserted) {
-        // Point to the first video request
-        TransferRequestQueue::iterator end = queue.end();
-        mFirstVideoIterator = --end;
-        // Set only once as iterator will point to the first video all along
-        mVideoInserted = false;
-      }
-    }
-
-    #if DEBUG
-      CheckRequestBatch(queue.begin(), queue.end());
-    #endif /* DEBUG */
-
-  } /* end scope for request lock */
-
-  // Defer process request until end of batch
-  PRInt32 batchDepth;
-  switch (aRequest->type) {
-    case TransferRequest::REQUEST_BATCH_BEGIN:
-      batchDepth = PR_AtomicIncrement(&mBatchDepth);
-      // Incrementing, no need to go further
-      return NS_OK;
-    case TransferRequest::REQUEST_BATCH_END:
-      batchDepth = PR_AtomicDecrement(&mBatchDepth);
-      break;
-    default:
-      batchDepth = mBatchDepth;
-      break;
-  }
-  NS_ASSERTION(batchDepth >= 0,
-               "Batch depth out of whack in sbBaseDevice::PushRequest");
-  if (batchDepth == 0) {
-    nsresult rv = ProcessRequest();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::FindFirstRequest(
-  TransferRequestQueueMap::iterator & aMapIter,
-  TransferRequestQueue::iterator & aQueueIter,
-  bool aRemove)
-{
-  // Note: we shouldn't remove any empty queues from the map either, if we're
-  // not going to pop the request.
-
-  // try to find the last peeked request
-  aMapIter =
-    mRequests.find(mLastRequestPriority);
-  if (aMapIter == mRequests.end()) {
-    aMapIter = mRequests.begin();
-  }
-
-  while (aMapIter != mRequests.end()) {
-    // always pop the request from the first queue
-
-    TransferRequestQueue& queue = aMapIter->second;
-
-    #if DEBUG
-      CheckRequestBatch(queue.begin(), queue.end());
-    #endif
-
-    if (queue.empty()) {
-      if (aRemove) {
-        // this queue is empty, remove it
-        mRequests.erase(aMapIter);
-        aMapIter = mRequests.begin();
-      } else {
-        // go to the next queue
-        ++aMapIter;
-      }
-      continue;
-    }
-
-    aQueueIter = queue.begin();
-
-    mLastRequestPriority = aMapIter->first;
-
-    return NS_OK;
-  }
-  // there are no queues left
-  mLastRequestPriority = PR_INT32_MIN;
-  return NS_ERROR_NOT_AVAILABLE;
-}
-
-nsresult sbBaseDevice::GetFirstRequest(bool aRemove,
-                                       sbBaseDevice::TransferRequest** retval)
-{
-  NS_ENSURE_ARG_POINTER(retval);
-  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor reqMon(mRequestMonitor);
-
-  TransferRequestQueueMap::iterator mapIter;
-  TransferRequestQueue::iterator queueIter;
-  nsresult rv = FindFirstRequest(mapIter, queueIter, aRemove);
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    // there are no queues left
-    mLastRequestPriority = PR_INT32_MIN;
-    *retval = nsnull;
-    return NS_OK;
-  }
+  rv = mRequestThreadQueue->PushRequest(req);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  *retval = queueIter->get();
-  NS_ADDREF(*retval);
-
-  if (aRemove) {
-    mapIter->second.erase(queueIter);
-    mLastRequestPriority = PR_INT32_MIN;
-  }
-
   return NS_OK;
 }
 
-nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
+nsresult sbBaseDevice::BatchBegin()
 {
-  return GetFirstRequest(true, _retval);
+  return mRequestThreadQueue->BatchBegin();
 }
 
-nsresult sbBaseDevice::StartNextRequest(sbBaseDevice::Batch & aBatch) {
-
-  aBatch.clear();
-  nsAutoMonitor reqMon(mRequestMonitor);
-
-  TransferRequestQueueMap::iterator mapIter;
-  TransferRequestQueue::iterator queueIter;
-
-  nsresult rv = FindFirstRequest(mapIter,
-                                 queueIter,
-                                 false);
-  // If nothing was found then just return with an empty batch
-  if (rv == NS_ERROR_NOT_AVAILABLE || queueIter == mapIter->second.end()) {
-    LOG(("No requests found\n"));
-    return NS_OK;
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  TransferRequestQueue & queue = mapIter->second;
-
-  nsRefPtr<TransferRequest> & request = *queueIter;
-  // If this isn't countable or isn't part of  batch then just return it
-  if (!request->IsCountable() || request->batchID == 0) {
-    LOG(("Single non-batch request found\n"));
-    aBatch.push_back(*queueIter);
-    queue.erase(queueIter);
-    return NS_OK;
-  }
-
-  typedef std::vector<TransferRequestQueue::iterator> BatchIters;
-  BatchIters batchIters;
-  batchIters.reserve(queue.size());
-
-  // find the end of the batch and keep track of the matching batch entries
-  TransferRequestQueue::iterator const queueEnd = queue.end();
-  PRUint32 batchID = (*queueIter)->batchID;
-  for (;queueIter != queueEnd; ++queueIter) {
-    // skip requests that are not a part of a batch
-    if ((*queueIter)->batchID == batchID) {
-      batchIters.push_back(queueIter);
-    }
-  }
-
-  // See if we found anything
-  if (!batchIters.empty()) {
-    BatchIters::iterator begin = batchIters.begin();
-    PRTime const now = PR_Now();
-    // Is the batch complete (batch timeout expired)
-    if (now - (**begin)->timeStamp < BATCH_TIMEOUT * PR_USEC_PER_MSEC) {
-      // Update the last batch timestamp
-      LOG(("Waiting on batch complete\n"));
-      // Leave the request monitor else we'll deadlock waiting
-      reqMon.Exit();
-      rv = WaitForBatchEnd();
-      NS_ENSURE_SUCCESS(rv, rv);
-      return NS_OK;
-    }
-  }
-
-  BatchIters::iterator const batchItersEnd = batchIters.end();
-  for (BatchIters::iterator iter = batchIters.begin();
-       iter != batchItersEnd;
-       ++iter) {
-    TransferRequestQueue::iterator const requestQueueIter = *iter;
-    aBatch.push_back(*requestQueueIter);
-    queue.erase(requestQueueIter);
-  }
-
-  // If the batch is not empty, mark that there's a current request.
-  if (!aBatch.empty())
-    mHaveCurrentRequest = PR_TRUE;
-
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::CompleteCurrentRequest() {
-  // Operate within the request monitor.
-  nsAutoMonitor reqMon(mRequestMonitor);
-
-  // There's no longer a current request, and it no longer needs to be aborted.
-  mHaveCurrentRequest = PR_FALSE;
-  mAbortCurrentRequest = PR_FALSE;
-
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::PeekRequest(sbBaseDevice::TransferRequest** _retval)
+nsresult sbBaseDevice::BatchEnd()
 {
-  return GetFirstRequest(false, _retval);
-}
-
-template <class T>
-NS_HIDDEN_(PRBool) Compare(T* left, nsCOMPtr<T> right)
-{
-  nsresult rv = NS_OK;
-  PRBool isEqual = (left == right) ? PR_TRUE : PR_FALSE;
-  if (!isEqual && left != nsnull && right != nsnull)
-    rv = left->Equals(right, &isEqual);
-  return NS_SUCCEEDED(rv) && isEqual;
-}
-
-nsresult sbBaseDevice::RemoveRequest(const int aType,
-                                     sbIMediaItem* aItem,
-                                     sbIMediaList* aList)
-{
-  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor reqMon(mRequestMonitor);
-
-  // always pop the request from the first queue
-  // can't just test for empty because we may have junk requests
-  TransferRequestQueueMap::iterator mapIt = mRequests.begin(),
-                                    mapEnd = mRequests.end();
-
-  for (; mapIt != mapEnd; ++mapIt) {
-    TransferRequestQueue& queue = mapIt->second;
-
-    // more possibly dummy item accounting
-    TransferRequestQueue::iterator queueIt = queue.begin(),
-                                   queueEnd = queue.end();
-
-    #if DEBUG
-      CheckRequestBatch(queueIt, queueEnd);
-    #endif
-
-    for (; queueIt != queueEnd; ++queueIt) {
-      nsRefPtr<TransferRequest> request = *queueIt;
-
-      if (request->type == aType &&
-          Compare(aItem, request->item) && Compare(aList, request->list))
-      {
-        // found; remove
-        queue.erase(queueIt);
-
-        #if DEBUG
-          CheckRequestBatch(queue.begin(), queue.end());
-        #endif /* DEBUG */
-
-        return NS_OK;
-      }
-    }
-
-    #if DEBUG
-      CheckRequestBatch(queue.begin(), queue.end());
-    #endif /* DEBUG */
-
-  }
-
-  // there are no queues left
-  return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
-}
-
-typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> >
-  sbBaseDeviceTransferRequests;
-
-nsresult sbBaseDevice::ClearRequests(bool aSetCancel)
-{
-  nsresult rv;
-  sbBaseDeviceTransferRequests requests;
-
-  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
-  {
-    nsAutoMonitor reqMon(mRequestMonitor);
-
-    if(!mRequests.empty() || mHaveCurrentRequest) {
-      if (aSetCancel) {
-        rv = SetState(STATE_CANCEL);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // Save off the library items that are pending to avoid any
-      // potential reenterancy issues when deleting them.
-      TransferRequestQueueMap::const_iterator mapIt = mRequests.begin(),
-                                              mapEnd = mRequests.end();
-      for (; mapIt != mapEnd; ++mapIt) {
-        const TransferRequestQueue& queue = mapIt->second;
-        TransferRequestQueue::const_iterator queueIt = queue.begin(),
-                                             queueEnd = queue.end();
-
-        #if DEBUG
-          CheckRequestBatch(queueIt, queueEnd);
-        #endif
-
-        for (; queueIt != queueEnd; ++queueIt) {
-          if ((*queueIt)->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
-            requests.push_back(*queueIt);
-          }
-        }
-
-        #if DEBUG
-          CheckRequestBatch(queue.begin(), queue.end());
-        #endif
-      }
-
-      // Clear requests from the queue.
-      mRequests.clear();
-
-      // If there is a current request being processed, abort it.  Otherwise,
-      // just set the state to idle.  Let the request processing code deal with
-      // doing a clean abort and removing library items for the current request.
-      if (mHaveCurrentRequest) {
-        mAbortCurrentRequest |= aSetCancel ? PR_TRUE : PR_FALSE;
-      } else if (aSetCancel) {
-        rv = SetState(STATE_IDLE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-  }
-
-  // must not hold onto the monitor while we create sbDeviceStatus objects
-  // because that involves proxying to the main thread
-
-  if (!requests.empty()) {
-    rv = RemoveLibraryItems(requests.begin(), requests.end());
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
-                                           int*                 aRequestType)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG(!aBatch.empty());
-  NS_ENSURE_ARG_POINTER(aRequestType);
-
-  sbBaseDevice::Batch::const_iterator iter = aBatch.begin();
-  int requestType = (*iter)->type;
-  // Skip batch begin, but if that's all there is, then punt and return it
-  if (requestType == TransferRequest::REQUEST_BATCH_BEGIN &&
-      ++iter != aBatch.end()) {
-    requestType = (*iter)->type;
-  }
-  // Use the type of the first batch request as the batch request type.
-  *aRequestType = requestType;
-
-  return NS_OK;
+  return mRequestThreadQueue->BatchEnd();
 }
 
 nsresult
@@ -1637,16 +651,20 @@ class sbDownloadAutoComplete : private sbDeviceStatusAutoOperationComplete
 {
 public:
   sbDownloadAutoComplete(sbDeviceStatusHelper * aStatus,
-                      sbDeviceStatusHelper::Operation aOperation,
-                      sbBaseDevice::TransferRequest * aRequest,
-                      sbBaseDevice * aDevice,
-                      sbIMediaItem * aItem) :
-                        sbDeviceStatusAutoOperationComplete(aStatus,
-                                                            aOperation,
-                                                            aRequest),
-                        mDevice(aDevice),
-                        mDownloadJob(nsnull),
-                        mItem(aItem) {}
+                         sbDeviceStatusHelper::Operation aOperation,
+                         TransferRequest * aRequest,
+                         PRUint32 aBatchCount,
+                         sbBaseDevice * aDevice) :
+                           sbDeviceStatusAutoOperationComplete(aStatus,
+                                                               aOperation,
+                                                               aRequest,
+                                                               aBatchCount),
+                           mDevice(aDevice),
+                           mDownloadJob(nsnull),
+                           mItem(aRequest->item)
+  {
+
+  }
   ~sbDownloadAutoComplete()
   {
     nsresult rv;
@@ -1715,6 +733,7 @@ private:
 
 nsresult
 sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
+                                  PRUint32              aBatchCount,
                                   sbDeviceStatusHelper* aDeviceStatusHelper)
 {
   // Validate arguments.
@@ -1728,12 +747,13 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
                                   aDeviceStatusHelper,
                                   sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
                                   aRequest,
-                                  this,
-                                  aRequest->item);
+                                  aBatchCount,
+                                  this);
 
   // Get the request volume info.
   nsRefPtr<sbBaseDeviceVolume> volume;
   nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
+
   rv = GetVolumeForItem(aRequest->item, getter_AddRefs(volume));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = volume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
@@ -1789,10 +809,12 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(downloadJobProgress);
   sbAutoJobCancel autoCancel(cancel);
 
+  PRMonitor * stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
+
   // Add a device job progress listener.
   nsRefPtr<sbDeviceProgressListener> listener;
   rv = sbDeviceProgressListener::New(getter_AddRefs(listener),
-                                     mReqWaitMonitor,
+                                     stopWaitMonitor,
                                      aDeviceStatusHelper);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = downloadJobProgress->AddJobProgressListener(listener);
@@ -1806,10 +828,12 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(mReqWaitMonitor);
+    nsAutoMonitor monitor(stopWaitMonitor);
 
     // Check for abort.
-    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+    if (IsRequestAborted()) {
+      return NS_ERROR_ABORT;
+    }
 
     // Check if the job is complete.
     isComplete = listener->IsComplete();
@@ -2257,11 +1281,6 @@ nsresult sbBaseDevice::SetState(PRUint32 aState)
 
   // set state, checking if it changed
   {
-    // Don't allow the state to be changed outside of the request monitor.  In
-    // order to prevent a dead lock, acquire the request monitor before the
-    // state lock.
-    nsAutoMonitor reqMon(mRequestMonitor);
-
     NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
     nsAutoLock lock(mStateLock);
 
@@ -2285,8 +1304,8 @@ nsresult sbBaseDevice::SetState(PRUint32 aState)
   // send state changed event.  do it outside of lock in case event handler gets
   // called immediately and tries to read the state
   if (stateChanged) {
-    nsCOMPtr<nsIWritableVariant> var = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1",
-                                                         &rv);
+    nsCOMPtr<nsIWritableVariant> var =
+        do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = var->SetAsUint32(aState);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2887,7 +1906,13 @@ sbBaseDevice::GetItemContentType(sbIMediaItem* aMediaItem,
                                            formatType,
                                            bitRate,
                                            sampleRate);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // Expected error no need to log it to the console just pass it on
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Return results.
   *aContentType = formatType.ContentType;
@@ -2934,19 +1959,13 @@ sbBaseDevice::UpdateOriginAndContentSrc(TransferRequest* aRequest,
 }
 
 nsresult
-sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
+sbBaseDevice::CreateTransferRequest(PRUint32 aRequestType,
                                     nsIPropertyBag2 *aRequestParameters,
                                     TransferRequest **aTransferRequest)
 {
-  NS_ENSURE_TRUE( ((aRequest >= REQUEST_MOUNT &&
-                    aRequest <= REQUEST_DELETE_FILE) ||
-                   (aRequest & REQUEST_FLAG_USER)),
-                  NS_ERROR_ILLEGAL_VALUE);
   NS_ENSURE_ARG_POINTER(aRequestParameters);
   NS_ENSURE_ARG_POINTER(aTransferRequest);
 
-  TransferRequest* req = TransferRequest::New();
-  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
 
@@ -2956,7 +1975,6 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
 
   PRUint32 index = PR_UINT32_MAX;
   PRUint32 otherIndex = PR_UINT32_MAX;
-  PRInt32 priority = TransferRequest::PRIORITY_DEFAULT;
 
   rv = aRequestParameters->GetPropertyAsInterface(NS_LITERAL_STRING("item"),
                                                   NS_GET_IID(sbIMediaItem),
@@ -2973,7 +1991,9 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
                                                   getter_AddRefs(data));
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "No data present in request parameters.");
 
-  NS_WARN_IF_FALSE(item || list || data, "No data of any kind given in request. This request will most likely fail.");
+  NS_WARN_IF_FALSE(item || list || data,
+                   "No data of any kind given in request."
+                   "This request will most likely fail.");
 
   rv = aRequestParameters->GetPropertyAsUint32(NS_LITERAL_STRING("index"),
                                                &index);
@@ -2987,21 +2007,15 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
     otherIndex = PR_UINT32_MAX;
   }
 
-  rv = aRequestParameters->GetPropertyAsInt32(NS_LITERAL_STRING("priority"),
-                                               &priority);
-  if(NS_FAILED(rv)) {
-    priority = TransferRequest::PRIORITY_DEFAULT;
-  }
+  nsRefPtr<TransferRequest> req = TransferRequest::New(aRequestType,
+                                                       item,
+                                                       list,
+                                                       index,
+                                                       otherIndex,
+                                                       data);
+  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
 
-  req->type = aRequest;
-  req->item = item;
-  req->list = list;
-  req->data = data;
-  req->index = index;
-  req->otherIndex = otherIndex;
-  req->priority = priority;
-
-  NS_ADDREF(*aTransferRequest = req);
+  req.forget(aTransferRequest);
 
   return NS_OK;
 }
@@ -3334,116 +2348,54 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
 }
 
 nsresult
-sbBaseDevice::InitializeRequestThread()
-{
-  nsresult rv;
-
-  // Clear the stop request processing flag.
-  PR_AtomicSet(&mReqStopProcessing, 0);
-
-  // Create the request wait monitor.
-  mReqWaitMonitor =
-    nsAutoMonitor::NewMonitor("sbDeviceBase::mReqWaitMonitor");
-  NS_ENSURE_TRUE(mReqWaitMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  // Create the request added event object.
-  rv = sbDeviceReqAddedEvent::New(this, getter_AddRefs(mReqAddedEvent));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create the request processing thread.
-  rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = PushRequest(TransferRequest::REQUEST_THREAD_START, nsnull, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-void
-sbBaseDevice::FinalizeRequestThread()
-{
-  // Remove object references.
-  mReqThread = nsnull;
-  mReqAddedEvent = nsnull;
-
-  // Dispose of the request wait monitor.
-  if (mReqWaitMonitor) {
-    nsAutoMonitor::DestroyMonitor(mReqWaitMonitor);
-    mReqWaitMonitor = nsnull;
-  }
-}
-
-nsresult
 sbBaseDevice::ReqProcessingStart()
 {
-  // Operate under the connect lock.
-  sbAutoReadLock autoConnectLock(mConnectLock);
-  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
-
   // Process any queued requests.
-  ProcessRequest();
+  nsresult rv = mRequestThreadQueue->Start();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-void
-sbBaseDevice::ShutdownRequestThread()
+nsresult
+sbBaseDevice::ReqProcessingStop(nsIRunnable * aShutdownAction)
 {
-  nsresult rv;
+  nsresult rv = mRequestThreadQueue->Stop();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = PushRequest(TransferRequest::REQUEST_THREAD_STOP, nsnull, nsnull);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to send thread stop message");
+  return NS_OK;
+}
 
-  // Get the current thread and wait if we get it, otherwise just shutdown
-  nsCOMPtr<nsIThread> thread;
-  rv = ::NS_GetCurrentThread(getter_AddRefs(thread));
-  if (NS_SUCCEEDED(rv)) {
-    // Wait for the thread to shutdown before shutting it down.
-    // See bug 18429 for the proxying issues this caused
-    while (::PR_AtomicAdd(&mIsHandlingRequests, 0)) {
-      PRBool processed;
-      // Process the next event and if all is OK then check and wait
-      rv = thread->ProcessNextEvent(PR_TRUE, &processed);
-      if (NS_FAILED(rv)) {
-        break;
-      }
-    }
-  }
-  mReqThread->Shutdown();
+bool
+sbBaseDevice::CheckAndResetRequestAbort()
+{
+  return mRequestThreadQueue->CheckAndResetRequestAbort();
 }
 
 nsresult
-sbBaseDevice::ReqProcessingStop()
+sbBaseDevice::ClearRequests()
 {
-  {
-    // Operate under the connect lock.
-    sbAutoReadLock autoConnectLock(mConnectLock);
-    NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
-  }
+  mRequestThreadQueue->ClearRequests();
+  return NS_OK;
+}
 
-  // Set the stop processing requests flag.
-  PR_AtomicSet(&mReqStopProcessing, 1);
-
-  // Notify the request thread of the abort.
-  {
-    nsAutoMonitor monitor(mReqWaitMonitor);
-    monitor.Notify();
-  }
-
-  // Shutdown the request processing thread.
-  ShutdownRequestThread();
+NS_IMETHODIMP
+sbBaseDevice::CancelRequests()
+{
+  mRequestThreadQueue->CancelRequests();
   return NS_OK;
 }
 
 PRBool
-sbBaseDevice::ReqAbortActive()
+sbBaseDevice::IsRequestAborted()
 {
-  // Abort if request processing has been stopped.
-  if (PR_AtomicAdd(&mReqStopProcessing, 0))
+  bool aborted = mRequestThreadQueue->CheckAndResetRequestAbort();
+  if (aborted) {
     return PR_TRUE;
-
-  return IsRequestAbortedOrDeviceDisconnected();
+  }
+  PRUint32 deviceState;
+  return NS_FAILED(GetState(&deviceState)) ||
+      deviceState == sbIDevice::STATE_DISCONNECTED ? PR_TRUE : PR_FALSE;
 }
 
 template <class T>
@@ -3468,38 +2420,6 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(Batch & aBatch)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-nsresult
-sbBaseDevice::WaitForBatchEnd()
-{
-  nsresult rv;
-
-  // wait for the complete batch to be pushed into the queue
-  rv = mBatchEndTimer->InitWithFuncCallback(WaitForBatchEndCallback,
-                                            this,
-                                            BATCH_TIMEOUT,
-                                            nsITimer::TYPE_ONE_SHOT);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/* static */
-void sbBaseDevice::WaitForBatchEndCallback(nsITimer* aTimer,
-                                           void* aClosure)
-{
-  // dispatch callback into non-static method
-  sbBaseDevice* self = reinterpret_cast<sbBaseDevice*>(aClosure);
-  NS_ASSERTION(self, "self is null");
-  self->WaitForBatchEndCallback();
-}
-
-void
-sbBaseDevice::WaitForBatchEndCallback()
-{
-  // start processing requests now that the complete batch is available
-  ProcessRequest();
 }
 
 /* a helper class to proxy sbBaseDevice::Init onto the main thread
@@ -3528,6 +2448,8 @@ private:
 
 nsresult sbBaseDevice::Init()
 {
+  nsresult rv;
+
   NS_ASSERTION(NS_IsMainThread(),
                "base device init not on main thread, implement proxying");
   if (!NS_IsMainThread()) {
@@ -3537,7 +2459,8 @@ nsresult sbBaseDevice::Init()
     return NS_DispatchToMainThread(event, NS_DISPATCH_SYNC);
   }
 
-  nsresult rv;
+  mRequestThreadQueue = sbDeviceRequestThreadQueue::New(this);
+
   // get a weak ref of the device manager
   nsCOMPtr<nsISupportsWeakReference> manager =
     do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
@@ -3548,18 +2471,6 @@ nsresult sbBaseDevice::Init()
     mParentEventTarget = nsnull;
     return rv;
   }
-
-  // create a timer used to wait for complete batches in queue
-  nsCOMPtr<nsITimer> batchEndTimer = do_CreateInstance(NS_TIMER_CONTRACTID,
-                                                       &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                            NS_GET_IID(nsITimer),
-                            batchEndTimer,
-                            nsIProxyObjectManager::INVOKE_SYNC |
-                            nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                            getter_AddRefs(mBatchEndTimer));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the media folder URL table.
   NS_ENSURE_TRUE(mMediaFolderURLTable.Init(), NS_ERROR_OUT_OF_MEMORY);
@@ -5105,12 +4016,10 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = EnsureSpaceForSync(aRequest, &abort);
   NS_ENSURE_SUCCESS(rv, rv);
   if (abort) {
-    rv = ClearRequests(PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
 
-  if (IsRequestAbortedOrDeviceDisconnected()) {
+  if (IsRequestAborted()) {
     return NS_ERROR_ABORT;
   }
 
@@ -5119,7 +4028,7 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = SyncProduceChangeset(aRequest, getter_AddRefs(changeset));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (IsRequestAbortedOrDeviceDisconnected()) {
+  if (IsRequestAborted()) {
     return NS_ERROR_ABORT;
   }
 
@@ -5140,11 +4049,60 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = status->SetCurrentSubState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Reset the sync type for the upcoming sync
+  mSyncType = TransferRequest::REQUESTBATCH_UNKNOWN;
+
   rv = SyncApplyChanges(dstLib, changeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the sync types (audio/video/image) after queuing requests
   aRequest->itemType = mSyncType;
+
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  rv = GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isSupported;
+  rv = capabilities->SupportsContent(
+                       sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY,
+                       sbIDeviceCapabilities::CONTENT_IMAGE,
+                       &isSupported);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> var;
+  rv = GetPreference(NS_LITERAL_STRING(PREF_IMAGESYNC_ENABLED),
+                     getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint16 dataType = 0;
+  rv = var->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool imageSyncEnabled = PR_FALSE;
+  // The preference is only available after user changes the image sync settings
+  if (dataType == nsIDataType::VTYPE_BOOL) {
+    rv = var->GetAsBool(&imageSyncEnabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Do not proceed to image sync request submission if image is not supported
+  // or not enabled at all.
+  if (!isSupported || !imageSyncEnabled) {
+    return NS_OK;
+  }
+
+  // If the user has enabled image sync, trigger it after the audio/video sync
+  // If the user has disabled image sync, trigger it to do the removal.
+  nsCOMPtr<nsIWritablePropertyBag2> requestParams =
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = requestParams->SetPropertyAsInterface
+                        (NS_LITERAL_STRING("list"),
+                         NS_ISUPPORTS_CAST(sbIMediaList*, mDefaultLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -5283,7 +4241,7 @@ sbBaseDevice::SyncCreateAndSyncToList
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check for abort.
-  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+  NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
   // Create a new source sync media list.
   nsCOMPtr<sbIMediaList> syncMediaList;
@@ -5296,7 +4254,7 @@ sbBaseDevice::SyncCreateAndSyncToList
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check for abort.
-  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+  NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
   // Sync to the sync media list.
   rv = SyncToMediaList(aDstLib, syncMediaList);
@@ -5618,7 +4576,7 @@ sbBaseDevice::SyncGetSyncItemSizes
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < syncListLength; i++) {
     // Check for abort.
-    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
     // Get the next sync media item.
     nsCOMPtr<sbIMediaItem> syncMI = do_QueryElementAt(syncList, i, &rv);
@@ -5677,7 +4635,7 @@ sbBaseDevice::SyncGetSyncItemSizes
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < itemCount; i++) {
     // Check for abort.
-    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
     // Get the sync item.
     nsCOMPtr<sbIMediaItem> mediaItem;
@@ -5886,7 +4844,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
 
   // Group changes for later processing but apply property updates immediately.
   for (PRUint32 i = 0; i < changeCount; i++) {
-    if (IsRequestAbortedOrDeviceDisconnected()) {
+    if (IsRequestAborted()) {
       return NS_ERROR_ABORT;
     }
     // Get the next change.
@@ -5976,7 +4934,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     }
   }
 
-  if (IsRequestAbortedOrDeviceDisconnected()) {
+  if (IsRequestAborted()) {
     return NS_ERROR_ABORT;
   }
 
@@ -5987,7 +4945,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   rv = aDstLibrary->AddSome(addItemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (IsRequestAbortedOrDeviceDisconnected()) {
+  if (IsRequestAborted()) {
     rv = sbDeviceUtils::DeleteByProperty(aDstLibrary,
                                          NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                          NS_LITERAL_STRING("1"));
@@ -5998,7 +4956,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   // Add media lists.
   PRInt32 count = addMediaListList.Count();
   for (PRInt32 i = 0; i < count; i++) {
-    if (IsRequestAbortedOrDeviceDisconnected()) {
+    if (IsRequestAborted()) {
       return NS_ERROR_ABORT;
     }
     rv = SyncAddMediaList(aDstLibrary, addMediaListList[i]);
@@ -6990,15 +5948,18 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
 }
 
 nsresult
-sbBaseDevice::UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch)
+sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
 {
   nsresult rv;
 
   // Iterate over the batch updating item transferable
-  Batch::iterator end = aBatch.end();
-  Batch::iterator iter = aBatch.begin();
-  while (iter != end) {
-    TransferRequest * const request = *iter++;
+  const Batch::const_iterator end = aBatch.end();
+  for (Batch::const_iterator iter = aBatch.begin();
+       iter != end;
+       ++iter) {
+    TransferRequest * const request = static_cast<TransferRequest*>(*iter);
+
+
     nsCOMPtr<sbIMediaItem> mediaItem = request->item;
 
     nsString trackType;
@@ -7011,11 +5972,13 @@ sbBaseDevice::UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch)
 
     PRBool isSupported = PR_FALSE;
     if (!mTrackSourceTable.Get(trackType, &isSupported)) {
+      PRMonitor * stopWaitMonitor = mRequestThreadQueue->GetStopWaitMonitor();
+
       // check transferable only once.
       nsRefPtr<sbDeviceStreamingHandler> listener;
       rv = sbDeviceStreamingHandler::New(getter_AddRefs(listener),
                                          mediaItem,
-                                         mReqWaitMonitor);
+                                         stopWaitMonitor);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = listener->CheckTransferable();
@@ -7025,10 +5988,10 @@ sbBaseDevice::UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch)
       PRBool isComplete = PR_FALSE;
       while (!isComplete) {
         // Operate within the request wait monitor.
-        nsAutoMonitor monitor(mReqWaitMonitor);
+        nsAutoMonitor monitor(stopWaitMonitor);
 
         // Check for abort.
-        NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+        NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
         // Check if the transferable check is complete.
         isComplete = listener->IsComplete();
@@ -7670,66 +6633,6 @@ sbBaseDevice::LogDeviceFoldersEnum(const unsigned int& aKey,
   return PL_DHASH_NEXT;
 }
 
-
-//------------------------------------------------------------------------------
-//
-// Device request added event nsISupports services.
-//
-//------------------------------------------------------------------------------
-
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceReqAddedEvent, nsIRunnable)
-
-
-//------------------------------------------------------------------------------
-//
-// Device request added event nsIRunnable services.
-//
-//------------------------------------------------------------------------------
-
-/**
- * Run the event.
- */
-
-NS_IMETHODIMP
-sbDeviceReqAddedEvent::Run()
-{
-  // Dispatch to the device object to handle the event.
-  mDevice->ReqHandleRequestAdded();
-
-  return NS_OK;
-}
-
-
-/**
- * Create a new sbDeviceReqAddedEvent object for the device specified by aDevice
- * and return it in aEvent.
- *
- * \param aDevice               Device for which to create event.
- * \param aEvent                Created event.
- */
-
-/* static */ nsresult
-sbDeviceReqAddedEvent::New(sbBaseDevice* aDevice,
-                           nsIRunnable**    aEvent)
-{
-  NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(aEvent);
-
-  // Create the event object.
-  sbDeviceReqAddedEvent* event;
-  NS_NEWXPCOM(event, sbDeviceReqAddedEvent);
-  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
-
-  // Set the event parameters.
-  event->mDevice = aDevice;
-  NS_ADDREF(NS_ISUPPORTS_CAST(sbIDevice*, aDevice));
-
-  // Return results.
-  NS_ADDREF(*aEvent = event);
-
-  return NS_OK;
-}
-
 PLDHashOperator
 sbBaseDevice::RemoveLibraryEnumerator(nsISupports * aList,
                                       nsCOMPtr<nsIMutableArray> & aItems,
@@ -7767,4 +6670,54 @@ sbBaseDevice::AutoListenerIgnore::~AutoListenerIgnore()
 {
   mDevice->SetIgnoreMediaListListeners(PR_FALSE);
   mDevice->mLibraryListener->SetIgnoreListener(PR_FALSE);
+}
+
+/**
+ * Split out a batch into three separate batches so that items are processed
+ * in proper order and the status reporting system reports status properly.
+ */
+void SBWriteRequestSplitBatches(const sbBaseDevice::Batch & aInput,
+                                sbBaseDevice::Batch & aNonTranscodeItems,
+                                sbBaseDevice::Batch & aTranscodeItems,
+                                sbBaseDevice::Batch & aPlaylistItems)
+{
+  const sbBaseDevice::TransferRequest::CompatibilityType NEEDS_TRANSCODING =
+    sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
+
+  const sbBaseDevice::Batch::const_iterator end = aInput.end();
+  for (sbBaseDevice::Batch::const_iterator iter = aInput.begin();
+      iter != end;
+      ++iter)
+  {
+    // We only want to split out certain requests, things like mount and format
+    // will stay in the non transcode items. This really isn't ideal, but
+    // but with the way our current status reporting system works we have to
+    // break things out. Typically requests like format and mount will never be
+    // in a batch with another request.
+    switch ((*iter)->GetType()) {
+      case sbBaseDevice::TransferRequest::REQUEST_WRITE:
+      case sbBaseDevice::TransferRequest::REQUEST_READ:
+      case sbBaseDevice::TransferRequest::REQUEST_MOVE:
+      case sbBaseDevice::TransferRequest::REQUEST_UPDATE:
+      case sbBaseDevice::TransferRequest::REQUEST_NEW_PLAYLIST:
+      case sbBaseDevice::TransferRequest::REQUEST_DELETE: {
+        sbBaseDevice::TransferRequest * request =
+          static_cast<sbBaseDevice::TransferRequest*>(*iter);
+        if (request->IsPlaylist()) {
+          aPlaylistItems.push_back(*iter);
+        }
+        else if (request->destinationCompatibility == NEEDS_TRANSCODING) {
+          aTranscodeItems.push_back(request);
+        }
+        else {
+          aNonTranscodeItems.push_back(request);
+        }
+      }
+      break;
+      default: {
+        aNonTranscodeItems.push_back(*iter);
+      }
+      break;
+    }
+  }
 }

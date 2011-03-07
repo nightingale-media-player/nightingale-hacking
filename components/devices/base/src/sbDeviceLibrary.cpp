@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -1282,57 +1282,6 @@ sbDeviceLibrary::Sync()
 
   // update the main library listeners
   rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDeviceCapabilities> capabilities;
-  rv = device->GetCapabilities(getter_AddRefs(capabilities));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool isSupported;
-  rv = capabilities->SupportsContent(
-                       sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY,
-                       sbIDeviceCapabilities::CONTENT_IMAGE,
-                       &isSupported);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIVariant> var;
-  rv = mDevice->GetPreference(NS_LITERAL_STRING(PREF_IMAGESYNC_ENABLED),
-                              getter_AddRefs(var));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint16 dataType = 0;
-  rv = var->GetDataType(&dataType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool imageSyncEnabled = PR_FALSE;
-  // The preference is only available after user changes the image sync settings
-  if (dataType == nsIDataType::VTYPE_BOOL) {
-    rv = var->GetAsBool(&imageSyncEnabled);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Do not proceed to image sync request submission if image is not supported
-  // or not enabled at all.
-  if (!isSupported || !imageSyncEnabled) {
-    return NS_OK;
-  }
-
-  // If the user has enabled image sync, trigger it after the audio/video sync
-  // If the user has disabled image sync, trigger it to do the removal.
-  nsCOMPtr<nsIWritablePropertyBag2> requestParams =
-    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  // make a low priority request so it's guaranteed to be handled after
-  // higher priority requests, such as audio and video
-  rv = requestParams->SetPropertyAsInt32(
-                          NS_LITERAL_STRING("priority"),
-                          sbBaseDevice::TransferRequest::PRIORITY_LOW);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = requestParams->SetPropertyAsInterface
-                        (NS_LITERAL_STRING("list"),
-                         NS_ISUPPORTS_CAST(sbIMediaList*, this));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

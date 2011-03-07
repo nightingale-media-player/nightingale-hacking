@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -95,6 +95,131 @@ DeviceStateString(PRUint32 aState)
 {
   return aState < NS_ARRAY_LENGTH(gDeviceStateStringList) ?
    gDeviceStateStringList[aState] : "unknown";
+}
+
+
+sbDeviceStatusAutoOperationComplete::sbDeviceStatusAutoOperationComplete(
+                                   sbDeviceStatusHelper * aStatus,
+                                   sbDeviceStatusHelper::Operation aOperation,
+                                   TransferRequest * aRequest,
+                                   PRUint32 aBatchCount) :
+                                     mRequest(aRequest),
+                                     mBatchCount(aBatchCount),
+                                     mStatus(aStatus),
+                                     mResult(NS_ERROR_FAILURE),
+                                     mOperation(aOperation)
+{
+  PRBool copyAfterTranscode =
+    (mOperation == sbDeviceStatusHelper::OPERATION_TYPE_WRITE &&
+     mRequest->destinationCompatibility ==
+       sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING);
+
+  const PRUint32 batchIndex = mRequest->GetBatchIndex();
+
+  // If this is the start of a batch or is not a batch thingy do start op.
+  //
+  // Some device has two phases for transcoding (MTP for example).
+  // If this is the last copying operation in the queue after the last
+  // transcoding, do a start op (initialization). The values have been
+  // destroyed by the auto complete destructor of the last transcoding
+  // operation already.
+  if (batchIndex == 0 ||
+      (copyAfterTranscode && batchIndex == aBatchCount - 1)) {
+
+    // Not a new batch if this is a write operation after transcoding.
+    mStatus->OperationStart(mOperation,
+                            batchIndex + 1,
+                            aBatchCount,
+                            mRequest->itemType,
+                            IsItemOp(mOperation) ? mRequest->list : nsnull,
+                            IsItemOp(mOperation) ? mRequest->item : nsnull,
+                            !copyAfterTranscode);
+  }
+  if (IsItemOp(mOperation)) {
+    // Update item status
+    mStatus->ItemStart(mRequest->list,
+                       mRequest->item,
+                       batchIndex + 1,
+                       aBatchCount,
+                       mRequest->itemType);
+  }
+}
+
+sbDeviceStatusAutoOperationComplete::sbDeviceStatusAutoOperationComplete(
+                                 sbDeviceStatusHelper * aStatus,
+                                 sbDeviceStatusHelper::Operation aOperation) :
+                                   mRequest(nsnull),
+                                   mBatchCount(0),
+                                   mStatus(aStatus),
+                                   mResult(NS_ERROR_FAILURE),
+                                   mOperation(aOperation)
+{
+  mStatus->OperationStart(mOperation,
+                          -1,
+                          -1,
+                          -1,
+                          nsnull,
+                          nsnull);
+}
+
+sbDeviceStatusAutoOperationComplete::sbDeviceStatusAutoOperationComplete(
+                                   sbDeviceStatusHelper * aStatus,
+                                   sbDeviceStatusHelper::Operation aOperation,
+                                   TransferRequest * aRequest,
+                                   PRInt32 aBatchCount) :
+                                     mRequest(aRequest),
+                                     mBatchCount(aBatchCount),
+                                     mStatus(aStatus),
+                                     mResult(NS_ERROR_FAILURE),
+                                     mOperation(aOperation) {
+
+  mStatus->OperationStart(mOperation,
+                          0,
+                          mBatchCount,
+                          aRequest->itemType,
+                          IsItemOp(mOperation) ? mRequest->list : nsnull,
+                          IsItemOp(mOperation) ? mRequest->item : nsnull);
+}
+
+sbDeviceStatusAutoOperationComplete::~sbDeviceStatusAutoOperationComplete() {
+  Complete();
+}
+
+void sbDeviceStatusAutoOperationComplete::Complete()
+{
+  if (mStatus && mRequest) {
+    const PRUint32 batchIndex = mRequest->GetBatchIndex() + 1;
+    if (IsItemOp(mOperation)) {
+      mStatus->ItemComplete(mResult);
+    }
+    if (batchIndex == mBatchCount) {
+      mStatus->OperationComplete(mResult);
+    }
+  }
+  // We've completed it, lets make sure we don't do it again
+  mStatus = nsnull;
+  mRequest = nsnull;
+}
+
+void sbDeviceStatusAutoOperationComplete::Transfer(
+                           sbDeviceStatusAutoOperationComplete & aDestination)
+{
+  aDestination = *this;
+  // Prevent us from auto completing since aDestination now will
+  mStatus = nsnull;
+  mRequest = nsnull;
+}
+
+sbDeviceStatusAutoOperationComplete &
+sbDeviceStatusAutoOperationComplete::operator = (
+                             sbDeviceStatusAutoOperationComplete const & aOther)
+{
+  mRequest = aOther.mRequest;
+  mBatchCount = aOther.mBatchCount;
+  mStatus = aOther.mStatus;
+  mResult = aOther.mResult;
+  mOperation = aOther.mOperation;
+  return *this;
 }
 
 
@@ -827,5 +952,4 @@ sbDeviceStatusHelper::sbDeviceStatusHelper(sbBaseDevice* aDevice) :
   // Validate arguments.
   NS_ASSERTION(aDevice, "aDevice is null");
 }
-
 

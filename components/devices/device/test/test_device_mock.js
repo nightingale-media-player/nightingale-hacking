@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -49,44 +49,66 @@ function runTest () {
   }
   assertTrue(device.connected);
 
+  device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
+  var wasFired = false;
+  var handler = function handler(event) { 
+    if (event.type == Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED) {
+      log("Device removed event fired");
+      try {
+        // Device was disconnected, continue on testing
+        assertFalse(device.connected);
+
+        assertFalse(device.threaded);
+
+        log("Reconnecting");
+        device.connect();
+
+        test_prefs(device);
+
+        /* TODO: device.capabilities */
+
+        /* TODO: device.content */
+
+        /* TODO: device.parameters */
+
+        test_properties(device);
+
+        test_event(device);
+
+        function continueTest()
+        {
+          if (!device.connected)
+            device.connect();
+          try {
+            test_library(device);
+
+            test_sync_settings(device);
+          }
+          finally {
+            // stop a circular reference
+            if (device.connected)
+              device.disconnect();
+          }
+          testFinished();
+        }
+        test_request(device, continueTest);
+        return;
+      }
+      catch (e) {
+        log("Exception occurred: " + e);
+        fail();
+      }    
+    }
+  }
+  device.addEventListener(handler);
+
   device.disconnect();
-  assertFalse(device.connected);
   try {
     device.disconnect();
-    fail("Re-disconnected device");
   } catch(e) {
-    /* expected to throw */
+    fail("Re-disconnected device should not fail");
   }
-  assertFalse(device.connected);
-  
-  assertFalse(device.threaded);
-  
-  test_prefs(device);
-  
-  /* TODO: device.capabilities */
-  
-  /* TODO: device.content */
-  
-  /* TODO: device.parameters */
-  
-  test_properties(device);
-  
-  test_event(device);
-  
-  test_request(device);
-  
-  if (!device.connected)
-    device.connect();
-  try {
-    test_library(device);
- 
-    test_sync_settings(device);
-  }
-  finally {
-    // stop a circular reference
-    if (device.connected)
-      device.disconnect();
-  }    
+  testPending();
 }
 
 function test_prefs(device) {
@@ -144,32 +166,9 @@ function test_event(device) {
   device.removeEventListener(handler);
 }
 
-function test_request(device) {
+function test_request(device, continueAction) {
   /* test as sbIMockDevice (request push/pop) */
   device.QueryInterface(Ci.sbIMockDevice);
-  
-  // simple index-only
-  device.submitRequest(device.REQUEST_UPDATE,
-                       createPropertyBag({index: 10}));
-  checkPropertyBag(device.popRequest(), {index: 10});
-  
-  // priority
-  const MAXINT = (-1) >>> 1; // max signed int (to test that we're not allocating)
-  device.submitRequest(device.REQUEST_UPDATE,
-                       createPropertyBag({index: MAXINT, priority: MAXINT}));
-  device.submitRequest(device.REQUEST_UPDATE,
-                       createPropertyBag({index: 99, priority: 99}));
-  device.submitRequest(device.REQUEST_UPDATE,
-                       createPropertyBag({index: 100}));
-  checkPropertyBag(device.popRequest(), {index: 99, priority: 99});
-  checkPropertyBag(device.popRequest(), {index: 100}); /* default */
-  checkPropertyBag(device.popRequest(), {index: MAXINT, priority: MAXINT});
-  
-  // peek
-  device.submitRequest(device.REQUEST_UPDATE,
-                       createPropertyBag({index: 42}));
-  checkPropertyBag(device.peekRequest(), {index: 42});
-  checkPropertyBag(device.popRequest(), {index: 42});
   
   // test the properties
   var item = { QueryInterface:function(){return this} };
@@ -182,16 +181,26 @@ function test_request(device) {
                  list: list,
                  data: data,
                  index: 999,
-                 otherIndex: 1024,
-                 priority: 37};
+                 otherIndex: 1024 };
   device.submitRequest(0x01dbeef, createPropertyBag(params));
-  var request = device.popRequest();
-  checkPropertyBag(request, params);
-  log("item transfer ID: " + request.getProperty("itemTransferID"));
-  assertTrue(request.getProperty("itemTransferID") > 3,
-             "Obviously bad item transfer ID");
-  
-  request = null; /* unleak */
+  // Wait for a request to come in using a timeout
+  function requestCheck() {
+    request = device.popRequest();
+    if (request) {
+      checkPropertyBag(request, params);
+      log("item transfer ID: " + request.getProperty("itemTransferID"));
+      assertTrue(request.getProperty("itemTransferID") > 3,
+                   "Obviously bad item transfer ID");
+
+      request = null; /* unleak */
+      continueAction();
+    }
+    else {
+      doTimeout(100, requestCheck);
+    }
+    return;
+  }
+  doTimeout(100, requestCheck);
 }
 
 function test_library(device) {

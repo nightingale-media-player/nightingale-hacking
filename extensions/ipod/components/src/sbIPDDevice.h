@@ -5,22 +5,22 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 
@@ -306,6 +306,8 @@ protected:
 
   void Finalize();
 
+  virtual nsresult DeviceSpecificDisconnect();
+
   //
   // Internal iPod device properties services.
   //
@@ -445,55 +447,38 @@ private:
   class SetNamedValueRequest : public TransferRequest
   {
   public:
+    SetNamedValueRequest(PRUint32 aType)
+    {
+      SetType(REQUEST_SET_PROPERTY);
+    }
     nsString                    name;
     nsCOMPtr<nsIVariant>        value;
   };
-
-
-  //
-  // Request services fields.
-  //
-  //   mReqAddedEvent           Request added event object.
-  //   mReqThread               Request processing thread.
-  //   mReqStopProcessing       Non-zero if request processing should stop.
-  //   mIsHandlingRequests      True if requests are being handled.
-  //
-
-  nsCOMPtr<nsIRunnable>         mReqAddedEvent;
-  nsCOMPtr<nsIThread>           mReqThread;
-  PRInt32                       mReqStopProcessing;
-  PRBool                        mIsHandlingRequests;
-
-
-  //
-  // iPod device request sbBaseDevice services.
-  //
-
-  virtual nsresult ProcessRequest();
-
 
   //
   // iPod device request handler services.
   //
 
-  nsresult ReqHandleRequestAdded();
+  virtual nsresult ProcessBatch(Batch & aBatch);
 
   void ReqHandleMount(TransferRequest* aRequest);
 
-  void ReqHandleWrite(TransferRequest* aRequest);
+  void ReqHandleWrite(TransferRequest* aRequest, PRUint32 aBatchCount);
 
-  void ReqHandleWriteTrack(TransferRequest* aRequest);
+  void ReqHandleWriteTrack(TransferRequest* aRequest, PRUint32 aBatchCount);
 
   void ReqHandleWritePlaylistTrack(TransferRequest* aRequest);
 
-  void ReqHandleDelete(TransferRequest* aRequest);
+  void ReqHandleDelete(TransferRequest* aRequest,
+                       PRUint32 aBatchCount);
 
-  void ReqHandleDeleteTrack(TransferRequest* aRequest);
+  void ReqHandleDeleteTrack(TransferRequest* aRequest,
+                            PRUint32 aBatchCount);
 
   void ReqHandleDeletePlaylistTrack(TransferRequest* aRequest);
 
   void ReqHandleDeletePlaylist(TransferRequest* aRequest);
-  
+
   void ReqHandleWipe(TransferRequest* aRequest);
 
   void ReqHandleNewPlaylist(TransferRequest* aRequest);
@@ -508,25 +493,11 @@ private:
 
   void ReqHandleSetProperty(TransferRequest* aRequest);
 
-  void ReqHandleSetPref(TransferRequest* aRequest);
+  void ReqHandleSetPref(SetNamedValueRequest* aRequest);
 
   //
   // iPod device request services.
   //
-
-  nsresult ReqInitialize();
-
-  void ReqFinalize();
-
-  nsresult ReqConnect();
-
-  void ReqDisconnect();
-
-  nsresult ReqProcessingStart();
-
-  nsresult ReqProcessingStop();
-
-  PRBool ReqAbortActive();
 
   nsresult ReqPushSetNamedValue(int              aType,
                                 const nsAString& aName,
@@ -1020,7 +991,7 @@ private:
   //
 
   PRRWLock*                     mConnectLock;
-  PRMonitor*                    mRequestLock;
+  PRMonitor*                    mDBLock;
 
   nsID                          mDeviceID;
   nsID                          mControllerID;

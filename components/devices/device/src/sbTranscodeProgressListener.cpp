@@ -165,7 +165,7 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
   // OnJobProgress.
   if (!mAborted &&
       mCancel &&
-      mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
+      mBaseDevice->IsRequestAborted()) {
     mAborted = PR_TRUE;
     nsCOMPtr<sbIJobCancelable> cancel = mCancel;
     mCancel = nsnull;

@@ -40,24 +40,22 @@ class sbDeviceEnsureSpaceForWrite
 {
 public:
   // Typedefs for types from sbBaseDevice
-  typedef sbBaseDevice::Batch Batch;
-  typedef sbBaseDevice::TransferRequestQueue TransferRequestQueue;
   typedef sbBaseDevice::TransferRequest TransferRequest;
-  
+  typedef sbBaseDevice::Batch Batch;
   /**
-   * Holds the length and iters back to the batch for the item
+   * Holds the length and indexes back to the batch for the item
    */
   struct BatchLink {
     BatchLink() : mLength(0) {}
     BatchLink(PRInt32 aOrder,
               PRInt64 aLength,
-              Batch::iterator aIter) : mOrder(aOrder), mLength(aLength) {
-      mBatchIters.push_back(aIter);
+              PRUint32 aIndex) : mOrder(aOrder), mLength(aLength) {
+      mBatchIndexes.push_back(aIndex);
     }
     PRInt32 mOrder;
     PRInt64 mLength;
-    typedef std::vector<Batch::iterator> BatchIters;
-    BatchIters mBatchIters;
+    typedef std::vector<PRUint32> BatchIndexes;
+    BatchIndexes mBatchIndexes;
   };
 
   typedef std::map<sbIMediaItem*, BatchLink> ItemsToWrite;
@@ -73,7 +71,7 @@ public:
    * Cleanup data
    */
   ~sbDeviceEnsureSpaceForWrite();
-  
+
   /**
    * Ensures there's enough space for items in the batch and removes any items
    * that don't fit.
@@ -141,14 +139,15 @@ private:
   /**
    * Adds an item to mItemsToWrite
    */
-  nsresult AddItemToWrite(const Batch::iterator & aIter,
-                          PRInt32&        aOrder);
+  nsresult AddItemToWrite(TransferRequest * aRequest,
+                          PRUint32 aIndex,
+                          PRUint32 & aOrder);
 
   /**
    * Creates an item list
    */
   void CreateItemList(ItemList & aItems);
-  
+
   /**
    * Gets the free space for the device
    */

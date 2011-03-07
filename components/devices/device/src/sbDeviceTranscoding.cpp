@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -115,7 +115,7 @@ sbDeviceTranscoding::SelectTranscodeProfile(PRUint32 transcodeType,
   if (NS_SUCCEEDED(rv)) {
     PRUint16 dataType = 0;
     rv = profileIdVariant->GetDataType(&dataType);
-    if (NS_SUCCEEDED(rv) && 
+    if (NS_SUCCEEDED(rv) &&
         dataType != nsIDataType::VTYPE_EMPTY &&
         dataType != nsIDataType::VTYPE_VOID) {
       hasProfilePref = PR_TRUE;
@@ -232,6 +232,7 @@ nsresult
 sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
 {
   TRACE(("%s", __FUNCTION__));
+
   nsresult rv;
 
   if (aBatch.empty()) {
@@ -246,16 +247,17 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
   }
 
   // Iterate over the batch getting the transcode profiles if needed.
-  Batch::iterator end = aBatch.end();
-  Batch::iterator iter = aBatch.begin();
-  while (iter != end) {
+  const Batch::const_iterator end = aBatch.end();
+  for (Batch::const_iterator iter = aBatch.begin();
+       iter != end;
+       ++iter) {
+    TransferRequest * request = static_cast<TransferRequest*>(*iter);
+
     // Check for abort.
-    if (mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
+    if (mBaseDevice->IsRequestAborted()) {
       return NS_ERROR_ABORT;
     }
 
-    // Get request and skip it if it's a write playlist track request
-    TransferRequest * const request = *iter++;
     if (request->IsPlaylist())
       continue;
 
@@ -705,12 +707,16 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(tcJob);
 
+  PRMonitor * const stopMonitor =
+    mBaseDevice->mRequestThreadQueue->GetStopWaitMonitor();
+  NS_ENSURE_TRUE(stopMonitor, NS_ERROR_UNEXPECTED);
+
   // Create our listener for transcode progress.
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(mBaseDevice,
                                      aDeviceStatusHelper,
                                      aMediaItem,
-                                     mBaseDevice->mReqWaitMonitor,
+                                     stopMonitor,
                                      sbTranscodeProgressListener::StatusProperty(),
                                      cancel);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
@@ -745,7 +751,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(mBaseDevice->mReqWaitMonitor);
+    nsAutoMonitor monitor(stopMonitor);
 
     // Check if the job is complete.
     isComplete = listener->IsComplete();
@@ -777,14 +783,14 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
   // If we abort, delete the destination file.
   if (listener->IsAborted()) {
-    nsCOMPtr<nsIFileURL> fileURL = 
+    nsCOMPtr<nsIFileURL> fileURL =
       do_QueryInterface(transcodedDestinationURIProxy);
     if (fileURL) {
       nsCOMPtr<nsIFile> file;
       rv = fileURL->GetFile(getter_AddRefs(file));
       if(NS_SUCCEEDED(rv)) {
         rv = file->Remove(PR_FALSE);
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
           "Failed to remove temporary file used for transcoding");
       }
     }

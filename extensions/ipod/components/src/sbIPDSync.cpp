@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -73,7 +73,7 @@ sbIPDDevice::SyncFromIPodTracks()
   GList* trackList = mITDB->tracks;
   while (trackList) {
     // Check for abort.
-    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
     // Get the track.
     Itdb_Track* track = (Itdb_Track*) trackList->data;
@@ -175,7 +175,7 @@ sbIPDDevice::SyncFromOTGPlaylists()
   GList* playlistList = mITDB->playlists;
   while (playlistList) {
     // Check for abort.
-    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
 
     // Get the playlist.
     Itdb_Playlist* playlist = (Itdb_Playlist*) playlistList->data;

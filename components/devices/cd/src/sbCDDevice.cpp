@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -83,10 +83,10 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
                        nsIPropertyBag *aProperties)
   : mConnectLock(nsnull)
   , mControllerID(aControllerId)
-  , mConnected(PR_FALSE)
   , mCreationProperties(aProperties)
   , mStatus(this)
-  , mIsHandlingRequests(PR_FALSE)
+  , mPrefAutoEject(PR_FALSE)
+  , mPrefNotifySound(PR_FALSE)
 {
   mPropertiesLock = nsAutoMonitor::NewMonitor("sbCDDevice::mPropertiesLock");
   NS_ENSURE_TRUE(mPropertiesLock, );
@@ -374,31 +374,6 @@ sbCDDevice::CapabilitiesReset()
   return NS_OK;
 }
 
-nsresult
-sbCDDevice::ReqConnect()
-{
-  nsresult rv;
-
-  // Clear the abort requests flag.
-  PR_AtomicSet(&mAbortRequests, 0);
-
-  mTranscodeManager =
-    do_ProxiedGetService("@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1",
-                         &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create the request wait monitor.
-  mReqWaitMonitor =
-    nsAutoMonitor::NewMonitor("sbCDDevice::mReqWaitMonitor");
-  NS_ENSURE_TRUE(mReqWaitMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  // Create the request processing thread.
-  rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 /* void connect (); */
 NS_IMETHODIMP sbCDDevice::Connect()
 {
@@ -425,9 +400,9 @@ NS_IMETHODIMP sbCDDevice::Connect()
   rv = sbBaseDevice::Connect();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Connect the request services.
-  rv = ReqConnect();
-  NS_ENSURE_SUCCESS(rv, rv);
+  mTranscodeManager = do_ProxiedGetService(
+                      "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1",
+                      &rv);
 
   // Connect the device capabilities.
   rv = CapabilitiesReset();
@@ -455,12 +430,12 @@ NS_IMETHODIMP sbCDDevice::Connect()
   rv = AddVolume(volume);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Start the request processing.
+  rv = ReqProcessingStart();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Mount volume.
   Mount(volume);
-
-  // Start the request processing.
-  rv = ProcessRequest();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Cancel auto-disconnect.
   autoDisconnect.forget();
@@ -471,73 +446,25 @@ NS_IMETHODIMP sbCDDevice::Connect()
   return NS_OK;
 }
 
-nsresult
-sbCDDevice::ProcessRequest()
+NS_IMETHODIMP
+sbCDDevice::Disconnect()
 {
+  return sbBaseDevice::Disconnect();
+}
+
+nsresult
+sbCDDevice::DeviceSpecificDisconnect()
+{
+  // Log progress.
+  LOG("Enter sbCDDevice::DeviceSpecificDisconnect\n");
+
   nsresult rv;
 
-  // Operate under the connect lock.
-  sbAutoReadLock autoConnectLock(mConnectLock);
-
-  // if we're not connected then do nothing
-  if (!mConnected) {
-    return NS_OK;
-  }
-
-  // Create the request added event object.
-  nsCOMPtr<nsIRunnable> reqAddedEvent;
-  rv = sbDeviceReqAddedEvent::New(this, getter_AddRefs(reqAddedEvent));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Dispatch processing of the request added event.
-  rv = mReqThread->Dispatch(reqAddedEvent, NS_DISPATCH_NORMAL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbCDDevice::ReqProcessingStop()
-{
-  // Operate under the connect lock.
-  sbAutoReadLock autoConnectLock(mConnectLock);
-  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
-
-  // Set the abort requests flag.
-  PR_AtomicSet(&mAbortRequests, 1);
-
-  // Clear requests.
-  ClearRequests();
-
-  // Notify the request thread of the abort.
-  {
-    nsAutoMonitor monitor(mReqWaitMonitor);
-    monitor.Notify();
-  }
-
-  // Shutdown the request processing thread.
-  mReqThread->Shutdown();
-
-  return NS_OK;
-}
-
-nsresult
-sbCDDevice::ReqDisconnect()
-{
-  LOG("%s", __FUNCTION__);
-  // Clear all remaining requests.
-  nsresult rv = ClearRequests();
-  NS_ENSURE_SUCCESS(rv, rv);
+  // This function should only be called on the main thread.
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
   // Remove object references.
-  mReqThread = nsnull;
   mTranscodeManager = nsnull;
-
-  // Dispose of the request wait monitor.
-  if (mReqWaitMonitor) {
-    nsAutoMonitor::DestroyMonitor(mReqWaitMonitor);
-    mReqWaitMonitor = nsnull;
-  }
 
   // Dispose of the library
   nsCOMPtr<sbIDeviceLibrary> deviceLib = mDeviceLibrary.forget();
@@ -545,20 +472,6 @@ sbCDDevice::ReqDisconnect()
     rv = deviceLib->Finalize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  return NS_OK;
-}
-
-/* void disconnect (); */
-NS_IMETHODIMP
-sbCDDevice::Disconnect()
-{
-  nsresult rv;
-
-  // Log progress.
-  LOG("Enter sbCDDevice::Disconnect\n");
-
-  // This function should only be called on the main thread.
-  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
   // Indicate that the device is disconnected.
   mStatus.ChangeState(STATE_DISCONNECTED);
@@ -575,10 +488,6 @@ sbCDDevice::Disconnect()
     RemoveVolume(volume);
   }
 
-  // Stop the request processing.
-  rv = ReqProcessingStop();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Mark the device as not connected.  After this, "connect lock" fields may
   // not be used.
   {
@@ -588,13 +497,6 @@ sbCDDevice::Disconnect()
 
   // Disconnect the device capabilities.
   mCapabilities = nsnull;
-
-  // Disconnect the device services.
-  rv = ReqDisconnect();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Invoke the super-class.
-  sbBaseDevice::Disconnect();
 
   // Send device removed notification.
   CreateAndDispatchDeviceManagerEvent
@@ -816,18 +718,7 @@ sbCDDevice::SubmitRequest(PRUint32 aRequest,
   // Log progress.
   LOG("sbCDDevice::SubmitRequest\n");
 
-  // Function variables.
-  nsresult rv;
-
-  // Create a transfer request.
-  nsRefPtr<TransferRequest> transferRequest;
-  rv = CreateTransferRequest(aRequest,
-                             aRequestParameters,
-                             getter_AddRefs(transferRequest));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Push the request onto the request queue.
-  return PushRequest(transferRequest);
+  return sbBaseDevice::SubmitRequest(aRequest, aRequestParameters);
 }
 
 /* void cancelRequests (); */
@@ -854,8 +745,8 @@ sbCDDevice::CancelRequests()
     }
   }
 
-  // Clear requests.
-  rv = ClearRequests();
+  // Cancel requests
+  rv = sbBaseDevice::CancelRequests();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1091,24 +982,18 @@ sbCDDevice::Unmount(sbBaseDeviceVolume* aVolume)
 }
 
 PRBool
-sbCDDevice::ReqAbortActive()
+sbCDDevice::IsRequestAborted()
 {
-  // Atomically get the abort requests flag by atomically adding 0 and reading
-  // the result.
-  PRBool abortRequests = PR_AtomicAdd(&mAbortRequests, 0);
-  if (!abortRequests) {
-    abortRequests = IsRequestAbortedOrDeviceDisconnected();
-  }
+  PRBool aborted = sbBaseDevice::IsRequestAborted();
 
   // Abort requests if disc is not inserted.
-  if (!abortRequests) {
+  if (!aborted) {
     PRBool isDiscInserted;
     nsresult rv = mCDDevice->GetIsDiscInserted(&isDiscInserted);
-    if (NS_SUCCEEDED(rv) && !isDiscInserted)
-      abortRequests = PR_TRUE;
+    aborted = NS_SUCCEEDED(rv) && !isDiscInserted ? PR_TRUE : PR_FALSE;
   }
 
-  return (abortRequests != 0);
+  return aborted;
 }
 
 // Override base class: we want to return all profiles, not just those supported

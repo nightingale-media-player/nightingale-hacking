@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -207,10 +207,6 @@ sbIPDDevice::ConnectInternal()
   rv = CapabilitiesConnect();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Connet the iPod request services.
-  rv = ReqConnect();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Connect the iPod database.
   rv = DBConnect();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -258,16 +254,12 @@ sbIPDDevice::ConnectInternal()
 NS_IMETHODIMP
 sbIPDDevice::Disconnect()
 {
-  // Stop the iPod request processing.
-  ReqProcessingStop();
+  return sbBaseDevice::Disconnect();
+}
 
-  // Mark the device as not connected.  After this, "connect lock" fields may
-  // not be used.
-  {
-    sbAutoWriteLock autoConnectLock(mConnectLock);
-    mConnected = PR_FALSE;
-  }
-
+nsresult
+sbIPDDevice::DeviceSpecificDisconnect()
+{
   // Disconnect the FairPlay services.
   FPDisconnect();
 
@@ -279,9 +271,6 @@ sbIPDDevice::Disconnect()
 
   // Disconnect the iPod database.
   DBDisconnect();
-
-  // Disconnect the iPod request services.
-  ReqDisconnect();
 
   // Invoke the super-class.
   sbBaseDevice::Disconnect();
@@ -335,18 +324,13 @@ sbIPDDevice::SetPreference(const nsAString& aPrefName,
  */
 
 NS_IMETHODIMP
-sbIPDDevice::SubmitRequest(PRUint32         aRequest,
+sbIPDDevice::SubmitRequest(PRUint32         aRequestType,
                            nsIPropertyBag2* aRequestParameters)
 {
   // Log progress.
   LOG("Enter: sbIPDDevice::SubmitRequest\n");
 
-  nsRefPtr<TransferRequest> transferRequest;
-  nsresult rv = CreateTransferRequest(aRequest, aRequestParameters,
-      getter_AddRefs(transferRequest));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return PushRequest(transferRequest);
+  return sbBaseDevice::SubmitRequest(aRequestType, aRequestParameters);
 }
 
 
@@ -357,13 +341,7 @@ sbIPDDevice::SubmitRequest(PRUint32         aRequest,
 NS_IMETHODIMP
 sbIPDDevice::CancelRequests()
 {
-  nsresult rv;
-
-  // Clear requests.
-  rv = ClearRequests();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return sbBaseDevice::CancelRequests();
 }
 
 
@@ -800,9 +778,6 @@ NS_IMETHODIMP sbIPDDevice::OpenInputStream(nsIURI*          aURI,
 
 sbIPDDevice::sbIPDDevice(const nsID&     aControllerID,
                          nsIPropertyBag* aProperties) :
-  // Request services.
-  mReqStopProcessing(0),
-  mIsHandlingRequests(PR_FALSE),
 
   // Preference services.
   mPrefLock(nsnull),
@@ -813,7 +788,6 @@ sbIPDDevice::sbIPDDevice(const nsID&     aControllerID,
 
   // Internal services.
   mConnectLock(nsnull),
-  mRequestLock(nsnull),
   mControllerID(aControllerID),
   mCreationProperties(aProperties),
   mITDB(NULL),
@@ -861,7 +835,7 @@ nsresult
 sbIPDDevice::DBConnect()
 {
   // Operate under the request lock.
-  nsAutoMonitor autoRequestLock(mRequestLock);
+  nsAutoMonitor autoDBLock(mDBLock);
 
   // Function variables.
   GError   *gError = nsnull;
@@ -955,7 +929,7 @@ void
 sbIPDDevice::DBDisconnect()
 {
   // Operate under the request lock.
-  nsAutoMonitor autoRequestLock(mRequestLock);
+  nsAutoMonitor autoDBLock(mDBLock);
 
   // Dispose of the iPod database and device data records.
   if (mITDB)
@@ -1250,6 +1224,9 @@ sbIPDDevice::Initialize()
   mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE, "sbIPDDevice::mConnectLock");
   NS_ENSURE_TRUE(mConnectLock, NS_ERROR_OUT_OF_MEMORY);
 
+  mDBLock = nsAutoMonitor::NewMonitor("sbIPDDevice::mDBLock");
+  NS_ENSURE_TRUE(mDBLock, NS_ERROR_OUT_OF_MEMORY);
+
   // Create an nsIFileProtocolHandler object.
   mFileProtocolHandler =
     do_CreateInstance("@mozilla.org/network/protocol;1?name=file", &rv);
@@ -1317,10 +1294,6 @@ sbIPDDevice::Initialize()
   rv = StatsInitialize();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Initialize the iPod request services.
-  rv = ReqInitialize();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -1332,9 +1305,6 @@ sbIPDDevice::Initialize()
 void
 sbIPDDevice::Finalize()
 {
-  // Finalize the iPod request services. */
-  ReqFinalize();
-
   // Finalize the device statistics services.
   StatsFinalize();
 
@@ -1354,6 +1324,10 @@ sbIPDDevice::Finalize()
     mProperties->Finalize();
   mProperties = nsnull;
 
+  if (mDBLock) {
+    nsAutoMonitor::DestroyMonitor(mDBLock);
+    mDBLock = nsnull;
+  }
   // Dispose of the connect lock.
   if (mConnectLock)
     PR_DestroyRWLock(mConnectLock);
@@ -1439,7 +1413,7 @@ sbIPDDevice::DBFlush()
   GError   *gError = nsnull;
 
   // Operate under the request lock.
-  nsAutoMonitor autoRequestLock(mRequestLock);
+  nsAutoMonitor autoDBLock(mDBLock);
 
   // Do nothing unless database is dirty.
   if (!mITDBDirty)

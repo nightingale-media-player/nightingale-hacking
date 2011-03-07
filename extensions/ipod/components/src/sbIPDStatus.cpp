@@ -5,22 +5,22 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 
@@ -53,11 +53,12 @@
 
 // Songbird imports.
 #include <sbIDeviceEvent.h>
+#include "sbRequestItem.h"
 
 #include <sbDebugUtils.h>
 
-static const char* SB_UNUSED_IN_RELEASE(gStateStrings[]) = 
-{ "IDLE", "SYNCING", "COPYING", 
+static const char* SB_UNUSED_IN_RELEASE(gStateStrings[]) =
+{ "IDLE", "SYNCING", "COPYING",
   "DELETING", "UPDATING", "MOUNTING", "DOWNLOADING", "UPLOADING",
   "DOWNLOAD_PAUSED", "UPLOAD_PAUSED", "DISCONNECTED", "BUSY" };
 #define STATE_STRING(X) \
@@ -155,28 +156,40 @@ sbIPDStatus::Finalize()
 //------------------------------------------------------------------------------
 
 /**
- * Process the start of a new operation of the type specified by aOperationType.
+ * Process the start of a new operation of the type specified by aOperationType
+ * with the media item specified by aMediaItem within the media list specified
+ * by aMediaList.
  *
- * \param aOperationType        Type of operation.
+ * \param aOperationType  Type of operation.
+ * \param aRequest        Request being started
  */
 
 void
-sbIPDStatus::OperationStart(PRUint32 aOperationType, 
-                            PRInt32  aItemNum, 
-                            PRInt32  aItemCount)
+sbIPDStatus::OperationStart(PRUint32        aOperationType,
+                            sbBaseDevice::TransferRequest * aRequest,
+                            PRUint32        aBatchCount)
 {
+  // Validate arguments.
+  NS_ENSURE_TRUE(aRequest, /* void */);
+
+  if (aRequest) {
+    // Update the current media item and list.
+    mMediaList = aRequest->list;
+    mMediaItem = aRequest->item;
+  }
+
+  const PRInt32 batchIndex = aRequest->GetBatchIndex() + 1;
 
   // Update the current operation type.
   mOperationType = aOperationType;
-
 
   // Dispatch operation dependent status processing.
   switch (mOperationType)
   {
     case OPERATION_TYPE_MOUNT :
       FIELD_LOG(("Starting mount operation.\n"));
-      UpdateStatus(sbIDevice::STATE_MOUNTING, NS_LITERAL_STRING("mounting"), 
-          NS_LITERAL_STRING("mounting"), aItemNum, aItemCount, 0.0);
+      UpdateStatus(sbIDevice::STATE_MOUNTING, NS_LITERAL_STRING("mounting"),
+          NS_LITERAL_STRING("mounting"), batchIndex, aBatchCount, 0.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MOUNTING_START,
                   sbIPDVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)).get());
@@ -184,8 +197,8 @@ sbIPDStatus::OperationStart(PRUint32 aOperationType,
 
     case OPERATION_TYPE_WRITE :
       FIELD_LOG(("Starting write track operation.\n"));
-      UpdateStatus(sbIDevice::STATE_COPYING, NS_LITERAL_STRING("copying"), 
-          NS_LITERAL_STRING("copying"), aItemNum, aItemCount, 0.0);
+      UpdateStatus(sbIDevice::STATE_COPYING, NS_LITERAL_STRING("copying"),
+          NS_LITERAL_STRING("copying"), batchIndex, aBatchCount, 0.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_START,
                   sbIPDVariant(mMediaItem).get());
@@ -193,8 +206,8 @@ sbIPDStatus::OperationStart(PRUint32 aOperationType,
 
     case OPERATION_TYPE_DELETE :
       FIELD_LOG(("Starting delete operation.\n"));
-      UpdateStatus(sbIDevice::STATE_DELETING, NS_LITERAL_STRING("deleting"), 
-          NS_LITERAL_STRING("deleting"), aItemNum, aItemCount, 0.0);
+      UpdateStatus(sbIDevice::STATE_DELETING, NS_LITERAL_STRING("deleting"),
+          NS_LITERAL_STRING("deleting"), batchIndex, aBatchCount, 0.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                   sbIPDVariant(mMediaItem).get());
@@ -203,35 +216,6 @@ sbIPDStatus::OperationStart(PRUint32 aOperationType,
     default :
       break;
   }
-}
-
-
-/**
- * Process the start of a new operation of the type specified by aOperationType
- * with the media item specified by aMediaItem within the media list specified
- * by aMediaList.
- *
- * \param aOperationType        Type of operation.
- * \param aMediaList            Operation media list.
- * \param aMediaItem            Operation media item.
- */
-
-void
-sbIPDStatus::OperationStart(PRUint32      aOperationType,
-                            PRInt32       aItemNum,
-                            PRInt32       aItemCount,
-                            sbIMediaList* aMediaList,
-                            sbIMediaItem* aMediaItem)
-{
-  // Validate arguments.
-  NS_ENSURE_TRUE(aMediaItem, /* void */);
-
-  // Update the current media item and list.
-  mMediaList = aMediaList;
-  mMediaItem = aMediaItem;
-
-  // Apply default status processing.
-  OperationStart(aOperationType, aItemNum, aItemCount);
 }
 
 
@@ -259,7 +243,7 @@ sbIPDStatus::OperationComplete(nsresult aResult)
   {
     case OPERATION_TYPE_MOUNT :
       FIELD_LOG(("Completed mount operation.\n"));
-      UpdateStatus(sbIDevice::STATE_MOUNTING, NS_LITERAL_STRING("mount"), stateMessage, 
+      UpdateStatus(sbIDevice::STATE_MOUNTING, NS_LITERAL_STRING("mount"), stateMessage,
           0, 0, 100.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MOUNTING_END,
@@ -268,7 +252,7 @@ sbIPDStatus::OperationComplete(nsresult aResult)
 
     case OPERATION_TYPE_WRITE :
       FIELD_LOG(("Completed write track operation.\n"));
-      UpdateStatus(sbIDevice::STATE_COPYING, NS_LITERAL_STRING("write"), stateMessage, 
+      UpdateStatus(sbIDevice::STATE_COPYING, NS_LITERAL_STRING("write"), stateMessage,
           0, 0, 100.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END,
@@ -277,7 +261,7 @@ sbIPDStatus::OperationComplete(nsresult aResult)
 
     case OPERATION_TYPE_DELETE :
       FIELD_LOG(("Completed delete track operation.\n"));
-      UpdateStatus(sbIDevice::STATE_DELETING, NS_LITERAL_STRING("delete"), stateMessage, 
+      UpdateStatus(sbIDevice::STATE_DELETING, NS_LITERAL_STRING("delete"), stateMessage,
           0, 0, 100.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
@@ -320,7 +304,7 @@ sbIPDStatus::ItemStart(PRInt32     aItemNum,
   {
     case OPERATION_TYPE_MOUNT :
       FIELD_LOG(("Starting mount item.\n"));
-      UpdateStatus(sbIDevice::STATE_MOUNTING, NS_LITERAL_STRING("mount"), 
+      UpdateStatus(sbIDevice::STATE_MOUNTING, NS_LITERAL_STRING("mount"),
           NS_LITERAL_STRING("mount"), aItemNum, aItemCount, 0.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MOUNTING_PROGRESS,
@@ -330,7 +314,7 @@ sbIPDStatus::ItemStart(PRInt32     aItemNum,
     case OPERATION_TYPE_WRITE :
       FIELD_LOG(("Starting write track item %d %d.\n", aItemNum, aItemCount));
       /*XXXeps what to do with "Starting" state?*/
-      UpdateStatus(sbIDevice::STATE_COPYING, NS_LITERAL_STRING("write"), 
+      UpdateStatus(sbIDevice::STATE_COPYING, NS_LITERAL_STRING("write"),
           NS_LITERAL_STRING("InProgress"), aItemNum, aItemCount, 0.0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
@@ -499,7 +483,7 @@ nsresult sbIPDStatus::ChangeStatus(PRUint32 newState) {
   // Check first if we are updating the current or sub states
   if (newState != sbIDevice::STATE_IDLE) {
     // Keep the status from switching rapidly, keep a main status and let the
-    // extra stuff be sub status (like copy when syncing or updating while 
+    // extra stuff be sub status (like copy when syncing or updating while
     // copying)
     if (oldState == sbIDevice::STATE_SYNCING ||
         oldState == sbIDevice::STATE_COPYING ||
@@ -540,7 +524,7 @@ nsresult sbIPDStatus::UpdateStatus(PRUint32         forState,
 
   // If totalCount is zero that means we have no work item progress to report
   if (totalCount != 0) {
-    rv = mStatus->SetWorkItemProgress(currentIndex);
+    rv = mStatus->SetWorkItemProgress(currentIndex + 1);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mStatus->SetWorkItemProgressEndCount(totalCount);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -556,11 +540,11 @@ nsresult sbIPDStatus::UpdateStatus(PRUint32         forState,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mStatus->SetProgress(currentProgress);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
-void 
+void
 sbIPDStatus::Idle()
 {
   LOG("sbIPDStatus::Idle()\n");

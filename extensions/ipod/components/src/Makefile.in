@@ -70,6 +70,7 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/temporaryfileservice/public \
+                     $(DEPTH)/components/moz/threadservices/public \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/playlistplayback/public \
                      $(DEPTH)/extensions/ipod/components/public \

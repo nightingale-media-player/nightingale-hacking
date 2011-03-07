@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -171,6 +171,7 @@ public:
                       nsIPropertyBag *aProperties,
                       sbCDDevice **aOutCDDevice);
 
+  virtual PRBool IsRequestAborted();
 private:
   /**
    * Protects the mProperites member and updating it's contents
@@ -183,11 +184,6 @@ private:
    * to protected properties is done via a read lock.
    */
   PRRWLock* mConnectLock;
-
-  /**
-   * Abort request indicator
-   */
-  PRInt32 mAbortRequests;
 
   /**
    * Transcode manager used to rip the tracks
@@ -204,11 +200,6 @@ private:
    * ID of the controller that created us
    */
   nsID mControllerID;
-
-  /**
-   * Indicates whether we're connected or not
-   */
-  PRBool mConnected;
 
   nsCOMPtr<sbICDDevice> mCDDevice;
 
@@ -243,24 +234,9 @@ private:
   sbDeviceStatusHelper mStatus;
 
   /**
-   * The request handler thread
-   */
-  nsCOMPtr<nsIThread> mReqThread;
-
-  /**
-   * Used to signal an abort during transcoding
-   */
-  PRMonitor* mReqWaitMonitor;
-
-  /**
    * Holds the device library path
    */
   nsString mDeviceLibraryPath;
-
-  /**
-   * Indicates whether we're handling a request or not
-   */
-  PRBool mIsHandlingRequests;
 
   /**
    * The cached transcode profile
@@ -278,6 +254,11 @@ private:
   void InitRequestHandler();
 
   /**
+   * Performs CD disconnect
+   */
+  virtual nsresult DeviceSpecificDisconnect();
+
+  /**
    * Initializes the device properties
    */
   nsresult InitializeProperties();
@@ -291,27 +272,6 @@ private:
    * Creates the device ID for the device
    */
   nsresult CreateDeviceID(nsID* aDeviceID);
-
-  /**
-   * Initialize the request queue connection
-   */
-  nsresult ReqConnect();
-
-  /**
-   * Stops processing of requests
-   */
-  nsresult ReqProcessingStop();
-
-  /**
-   * Tears down the request queue
-   */
-  nsresult ReqDisconnect();
-
-  /**
-   * Processes a request. This is called when there are requests
-   * pending.
-   */
-  nsresult ProcessRequest();
 
   /**
    * Mount the media volume specified by aVolume.
@@ -334,7 +294,7 @@ private:
   /**
    * Called to process a newly added request
    */
-  nsresult ReqHandleRequestAdded();
+  virtual nsresult ProcessBatch(Batch & aBatch);
 
   /**
    * Handle the mount request specified by aRequest.
@@ -364,14 +324,6 @@ private:
    * Returns a list of property arrays for the tracks on a CD
    */
   nsresult GetMediaProperties(nsIArray ** aPropertyList);
-
-  /**
-   * Return true if the active request should abort; otherwise, return false.
-   *
-   * \return PR_TRUE              Active request should abort.
-   *         PR_FALSE             Active request should not abort.
-   */
-  PRBool ReqAbortActive();
 
   /**
    * Populate the device library with metadata from the CD lookup service.
@@ -461,7 +413,7 @@ private:
    * Processes a read request. Copying content from a CD to the device library
    * \param aRequest The request to be processed
    */
-  nsresult ReqHandleRead(TransferRequest * aRequest);
+  nsresult ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount);
 
   /**
    * Gets the bitrate property from the cached transcoding profile

@@ -163,6 +163,9 @@ public:
      */
     iterator insert(iterator aIter, sbRequestItem * aRequestItem)
     {
+      NS_ASSERTION(aRequestItem,
+                   "sbRequestThreadQueue::Batch::insert passed null");
+      NS_IF_ADDREF(aRequestItem);
       return mRequestItems.insert(aIter, aRequestItem);
     }
     /**
@@ -296,7 +299,7 @@ public:
    */
   bool IsRequestAbortActive() const
   {
-    nsAutoLock lock(mLock);
+    nsAutoMonitor monitor(mStopWaitMonitor);
     return mAbortRequests;
   }
 
@@ -446,6 +449,7 @@ private:
     NS_ASSERTION(mIsHandlingRequests,
                  "CompleteRequests called while no requests pending");
     mIsHandlingRequests = false;
+    nsAutoMonitor monitor(mStopWaitMonitor);
     mAbortRequests = false;
   }
 

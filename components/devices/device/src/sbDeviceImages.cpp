@@ -221,7 +221,7 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
 
   for (PRUint32 i = 0; i < fileCount; i++) {
     // Check for abort.
-    NS_ENSURE_FALSE(mBaseDevice->ReqAbortActive(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(mBaseDevice->IsRequestAborted(), NS_ERROR_ABORT);
 
     // Get the next file URI spec.
     nsAutoString fileURISpec;
@@ -532,7 +532,7 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
   PRBool isScanning = PR_TRUE;
   while (isScanning) {
     // Check for abort.
-    NS_ENSURE_FALSE(mBaseDevice->ReqAbortActive(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(mBaseDevice->IsRequestAborted(), NS_ERROR_ABORT);
 
     // Check if the file scan query is still scanning.
     rv = fileScanQuery->IsScanning(&isScanning);

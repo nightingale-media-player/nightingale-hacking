@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -53,6 +53,7 @@
 #include <sbStandardProperties.h>
 
 // Mozilla imports.
+#include <nsArrayUtils.h>
 #include <nsThreadUtils.h>
 #include <nsILocalFile.h>
 
@@ -62,32 +63,6 @@
 // iPod device request sbBaseDevice services.
 //
 //------------------------------------------------------------------------------
-
-/**
- * A request has been added, process the request (or schedule it to be
- * processed)
- */
-
-nsresult
-sbIPDDevice::ProcessRequest()
-{
-  // Operate under the connect lock.
-  sbAutoReadLock autoConnectLock(mConnectLock);
-
-  // if we're not connected then do nothing
-  if (!mConnected) {
-    return NS_OK;
-  }
-
-  // Function variables.
-  nsresult rv;
-
-  // Dispatch processing of the request added event.
-  rv = mReqThread->Dispatch(mReqAddedEvent, NS_DISPATCH_NORMAL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
 
 
 //------------------------------------------------------------------------------
@@ -104,36 +79,13 @@ sbIPDDevice::ProcessRequest()
  */
 
 nsresult
-sbIPDDevice::ReqHandleRequestAdded()
+sbIPDDevice::ProcessBatch(Batch & aBatch)
 {
-  // Check for abort.
-  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+  nsresult rv;
 
   // Operate under the connect lock.
   sbAutoReadLock autoConnectLock(mConnectLock);
   NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
-
-  // Function variables.
-  nsresult rv;
-
-  // Prevent re-entrancy.  This can happen if some API waits and runs events on
-  // the request thread.  Do nothing if already handling requests.  Otherwise,
-  // indicate that requests are being handled and set up to automatically set
-  // the handling requests flag to false on exit.  This check is only done on
-  // the request thread, so locking is not required.
-  if (mIsHandlingRequests)
-    return NS_OK;
-  mIsHandlingRequests = PR_TRUE;
-  sbIPDAutoFalse autoIsHandlingRequests(&mIsHandlingRequests);
-
-  // Start processing of the next request batch and set to automatically
-  // complete the current request on exit.
-  sbBaseDevice::Batch requestBatch;
-  rv = StartNextRequest(requestBatch);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (requestBatch.empty())
-    return NS_OK;
-  sbAutoDeviceCompleteCurrentRequest autoComplete(this);
 
   // Set up to automatically set the state to STATE_IDLE on exit.  Any device
   // operation must change the state to not be idle.  This ensures that the
@@ -147,145 +99,123 @@ sbIPDDevice::ReqHandleRequestAdded()
   {
     sbIPDAutoDBFlush autoDBFlush(this);
 
-    // If the batch isn't empty, process the batch
-    while (!requestBatch.empty()) {
-      bool ensuredSpaceForWrite = false;
 
-      // Check for abort.
-      if (ReqAbortActive()) {
-        rv = RemoveLibraryItems(requestBatch.begin(), requestBatch.end());
-        NS_ENSURE_SUCCESS(rv, rv);
-        return NS_ERROR_ABORT;
-      }
+    if (aBatch.empty()) {
+      return NS_OK;
+    }
 
-      // Process each request in the batch
-      Batch::iterator const end = requestBatch.end();
-      Batch::iterator iter = requestBatch.begin();
-      while (iter != end) {
+    PRUint32 batchType = aBatch.RequestType();
 
+    if (batchType == TransferRequest::REQUEST_WRITE) {
+
+      // Force update of storage statistics before checking for space.
+      StatsUpdate(PR_TRUE);
+
+      // Check for space for request.  Assume space is ensured on error
+      // and attempt the write.
+      rv = EnsureSpaceForWrite(aBatch);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    Batch batches[3];
+    SBWriteRequestSplitBatches(aBatch,
+                               batches[0],
+                               batches[1],
+                               batches[2]);
+
+    for (PRUint32 batchIndex = 0;
+         batchIndex < NS_ARRAY_LENGTH(batches);
+         ++batchIndex) {
+      Batch & batch = batches[batchIndex];
+      const Batch::const_iterator end = batch.end();
+      for (Batch::const_iterator iter = batch.begin();
+           iter != end;
+           ++iter) {
         // Check for abort.
-        if (ReqAbortActive()) {
-          rv = RemoveLibraryItems(iter, end);
-          NS_ENSURE_SUCCESS(rv, rv);
-
+        if (IsRequestAborted()) {
           return NS_ERROR_ABORT;
         }
 
-        TransferRequest * request = iter->get();
+        TransferRequest * request = static_cast<TransferRequest *>(*iter);
 
+
+        PRUint32 type = request->GetType();
+
+        FIELD_LOG(("Processing request 0x%08x\n", type));
+        switch(type)
         {
-          nsAutoMonitor autoRequestLock(mRequestLock);
-          FIELD_LOG(("Processing request 0x%08x\n", request->type));
-          switch(request->type)
-          {
-            case TransferRequest::REQUEST_MOUNT :
-              mIPDStatus->ChangeStatus(STATE_MOUNTING);
-              ReqHandleMount(request);
+          case TransferRequest::REQUEST_MOUNT :
+            mIPDStatus->ChangeStatus(STATE_MOUNTING);
+            ReqHandleMount(request);
+          break;
+
+          case TransferRequest::REQUEST_WRITE : {
+            // Handle request if space has been ensured for it.
+            mIPDStatus->ChangeStatus(STATE_COPYING);
+            ReqHandleWrite(request, batch.CountableItems());
+          }
+          break;
+
+          case TransferRequest::REQUEST_DELETE :
+            mIPDStatus->ChangeStatus(STATE_DELETING);
+            ReqHandleDelete(request, batch.CountableItems());
             break;
 
-            case TransferRequest::REQUEST_WRITE : {
-              if (!ensuredSpaceForWrite) {
-
-                // Force update of storage statistics before checking for space.
-                StatsUpdate(PR_TRUE);
-
-                // Check for space for request.  Assume space is ensured on error
-                // and attempt the write.
-                rv = EnsureSpaceForWrite(requestBatch);
-                NS_ENSURE_SUCCESS(rv, rv);
-
-                ensuredSpaceForWrite = true;
-
-                // Reset the iter and request in case the first item was removed
-                iter = requestBatch.begin();
-              }
-
-              // Handle request if space has been ensured for it.
-              if (iter != end) {
-                request = iter->get();
-                // Handle request if space has been ensured for it.
-                mIPDStatus->ChangeStatus(STATE_COPYING);
-                ReqHandleWrite(request);
-              }
-            }
+          case TransferRequest::REQUEST_WIPE :
+            mIPDStatus->ChangeStatus(STATE_DELETING);
+            ReqHandleWipe(request);
             break;
 
-            case TransferRequest::REQUEST_DELETE :
-              mIPDStatus->ChangeStatus(STATE_DELETING);
-              ReqHandleDelete(request);
-              break;
-
-            case TransferRequest::REQUEST_WIPE :
-              mIPDStatus->ChangeStatus(STATE_DELETING);
-              ReqHandleWipe(request);
-              break;
-
-            case TransferRequest::REQUEST_NEW_PLAYLIST :
-              mIPDStatus->ChangeStatus(STATE_BUSY);
-              ReqHandleNewPlaylist(request);
-              break;
-
-            case TransferRequest::REQUEST_UPDATE :
-              mIPDStatus->ChangeStatus(STATE_UPDATING);
-              ReqHandleUpdate(request);
-              break;
-
-            case TransferRequest::REQUEST_MOVE :
-              mIPDStatus->ChangeStatus(STATE_BUSY);
-              ReqHandleMovePlaylistTrack(request);
-              break;
-
-            case TransferRequest::REQUEST_SYNC :
-              mIPDStatus->ChangeStatus(STATE_SYNCING);
-              HandleSyncRequest(request);
-              break;
-
-            case sbIDevice::REQUEST_FACTORY_RESET :
-              mIPDStatus->ChangeStatus(STATE_BUSY);
-              ReqHandleFactoryReset(request);
-              break;
-
-            case REQUEST_WRITE_PREFS :
-              mIPDStatus->ChangeStatus(STATE_BUSY);
-              ReqHandleWritePrefs(request);
-              break;
-
-            case REQUEST_SET_PROPERTY :
-              mIPDStatus->ChangeStatus(STATE_BUSY);
-              ReqHandleSetProperty(request);
-              break;
-
-            case REQUEST_SET_PREF :
-              ReqHandleSetPref(request);
-              break;
-
-            default :
-              NS_WARNING("Invalid request type.");
-              break;
-          }
-          if (ReqAbortActive()) {
-            // If we're aborting iterators will be invalid, need to exit loop
-            // to get the next batch if any.
+          case TransferRequest::REQUEST_NEW_PLAYLIST :
+            mIPDStatus->ChangeStatus(STATE_BUSY);
+            ReqHandleNewPlaylist(request);
             break;
-          }
-          // Something may have advanced the iter so need to check for end
-          if (iter != end) {
-            requestBatch.erase(iter);
-            iter = requestBatch.begin();
-          }
+
+          case TransferRequest::REQUEST_UPDATE :
+            mIPDStatus->ChangeStatus(STATE_UPDATING);
+            ReqHandleUpdate(request);
+            break;
+
+          case TransferRequest::REQUEST_MOVE :
+            mIPDStatus->ChangeStatus(STATE_BUSY);
+            ReqHandleMovePlaylistTrack(request);
+            break;
+
+          case TransferRequest::REQUEST_SYNC :
+            mIPDStatus->ChangeStatus(STATE_SYNCING);
+            HandleSyncRequest(request);
+            break;
+
+          case sbIDevice::REQUEST_FACTORY_RESET :
+            mIPDStatus->ChangeStatus(STATE_BUSY);
+            ReqHandleFactoryReset(request);
+            break;
+
+          case REQUEST_WRITE_PREFS :
+            mIPDStatus->ChangeStatus(STATE_BUSY);
+            ReqHandleWritePrefs(request);
+            break;
+
+          case REQUEST_SET_PROPERTY :
+            mIPDStatus->ChangeStatus(STATE_BUSY);
+            ReqHandleSetProperty(request);
+            break;
+
+          case REQUEST_SET_PREF :
+            ReqHandleSetPref(static_cast<SetNamedValueRequest*>(request));
+            break;
+
+          default :
+            NS_WARNING("Invalid request type.");
+            break;
         }
+        if (IsRequestAborted()) {
+          // If we're aborting iterators will be invalid, need to exit loop
+          // to get the next batch if any.
+          break;
+        }
+        request->SetIsProcessed(true);
       }
-
-      // Complete the current request and forget auto-completion.
-      CompleteCurrentRequest();
-      autoComplete.forget();
-
-      // Start processing of the next request batch and set to automatically
-      // complete the current request on exit.
-      rv = StartNextRequest(requestBatch);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (!requestBatch.empty())
-        autoComplete.Set(this);
     }
   }
 
@@ -302,7 +232,7 @@ sbIPDDevice::ReqHandleRequestAdded()
  */
 
 void
-sbIPDDevice::ReqHandleMount(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleMount(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -310,9 +240,13 @@ sbIPDDevice::ReqHandleMount(TransferRequest* aRequest)
   // Function variables.
   nsresult rv;
 
+  const PRUint32 batchIndex = aRequest->GetBatchIndex() + 1;
+
   // Update status and set for auto-failure.
   mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_MOUNT,
-      aRequest->batchIndex, aRequest->batchCount);
+                             aRequest,
+                             batchIndex);
+
   sbAutoStatusOperationFailure autoStatus(mIPDStatus);
 
   // Force early updating of statistics to get some initial statistics for UI.
@@ -368,7 +302,7 @@ sbIPDDevice::ReqHandleMount(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleWrite(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleWrite(TransferRequest * aRequest, PRUint32 aBatchCount)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -377,7 +311,7 @@ sbIPDDevice::ReqHandleWrite(TransferRequest* aRequest)
   if (aRequest->IsPlaylist())
     ReqHandleWritePlaylistTrack(aRequest);
   else
-    ReqHandleWriteTrack(aRequest);
+    ReqHandleWriteTrack(aRequest, aBatchCount);
 }
 
 
@@ -390,7 +324,8 @@ sbIPDDevice::ReqHandleWrite(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleWriteTrack(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleWriteTrack(TransferRequest * aRequest,
+                                 PRUint32 aBatchCount)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -398,16 +333,15 @@ sbIPDDevice::ReqHandleWriteTrack(TransferRequest* aRequest)
   // Function variables.
   nsresult rv;
 
+  const PRUint32 batchIndex = aRequest->GetBatchIndex() + 1;
+
   // Update operation status and set for auto-completion.
   sbAutoStatusOperationComplete autoOperationStatus(mIPDStatus, NS_ERROR_FAILURE);
-  if (aRequest->batchIndex == 1) {
-    mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_WRITE,
-                               aRequest->batchIndex,
-                               aRequest->batchCount,
-                               aRequest->list,
-                               aRequest->item);
+  if (batchIndex == 1) {
+    mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_WRITE, aRequest,
+                               aBatchCount);
   }
-  if (aRequest->batchIndex == aRequest->batchCount) {
+  if (batchIndex == aBatchCount) {
     autoOperationStatus.Set(mIPDStatus, NS_OK);
   }
 
@@ -471,7 +405,7 @@ sbIPDDevice::ReqHandleWritePlaylistTrack(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleWipe(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleWipe(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -507,7 +441,8 @@ sbIPDDevice::ReqHandleWipe(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleDelete(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleDelete(TransferRequest* aRequest,
+                             PRUint32 aBatchCount)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -530,7 +465,7 @@ sbIPDDevice::ReqHandleDelete(TransferRequest* aRequest)
     if (aRequest->IsPlaylist())
       ReqHandleDeletePlaylistTrack(aRequest);
     else
-      ReqHandleDeleteTrack(aRequest);
+      ReqHandleDeleteTrack(aRequest, aBatchCount);
   }
 }
 
@@ -544,7 +479,8 @@ sbIPDDevice::ReqHandleDelete(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleDeleteTrack(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleDeleteTrack(TransferRequest * aRequest,
+                                  PRUint32 aBatchCount)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -552,16 +488,16 @@ sbIPDDevice::ReqHandleDeleteTrack(TransferRequest* aRequest)
   // Function variables.
   nsresult rv;
 
+  const PRUint32 batchIndex = aRequest->GetBatchIndex() + 1;
+
+
   // Update operation status and set for auto-completion.
   sbAutoStatusOperationComplete autoOperationStatus(mIPDStatus, NS_ERROR_FAILURE);
-  if (aRequest->batchIndex == 1) {
-    mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_DELETE,
-                               aRequest->batchIndex,
-                               aRequest->batchCount,
-                               aRequest->list,
-                               aRequest->item);
+  if (batchIndex == 1) {
+    mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_DELETE, aRequest,
+                               aBatchCount);
   }
-  if (aRequest->batchIndex == aRequest->batchCount) {
+  if (batchIndex == aBatchCount) {
     autoOperationStatus.Set(mIPDStatus, NS_OK);
   }
 
@@ -586,7 +522,7 @@ sbIPDDevice::ReqHandleDeleteTrack(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleDeletePlaylistTrack(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleDeletePlaylistTrack(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -612,7 +548,7 @@ sbIPDDevice::ReqHandleDeletePlaylistTrack(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleDeletePlaylist(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleDeletePlaylist(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -640,7 +576,7 @@ sbIPDDevice::ReqHandleDeletePlaylist(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleNewPlaylist(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleNewPlaylist(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -669,7 +605,7 @@ sbIPDDevice::ReqHandleNewPlaylist(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleUpdate(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleUpdate(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -712,7 +648,7 @@ sbIPDDevice::ReqHandleUpdate(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleMovePlaylistTrack(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleMovePlaylistTrack(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -722,8 +658,8 @@ sbIPDDevice::ReqHandleMovePlaylistTrack(TransferRequest* aRequest)
 
   // Log progress.
   FIELD_LOG(("Move playlist track from index %d to index %d.\n",
-             aRequest->index,
-             aRequest->otherIndex));
+      aRequest->index,
+      aRequest->otherIndex));
 
   // Validate request parameters.
   NS_ENSURE_TRUE(aRequest->list, /* void */);
@@ -745,7 +681,7 @@ sbIPDDevice::ReqHandleMovePlaylistTrack(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleFactoryReset(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleFactoryReset(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -796,7 +732,7 @@ sbIPDDevice::ReqHandleFactoryReset(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleWritePrefs(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleWritePrefs(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -854,7 +790,7 @@ sbIPDDevice::ReqHandleWritePrefs(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleSetProperty(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleSetProperty(TransferRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -862,8 +798,9 @@ sbIPDDevice::ReqHandleSetProperty(TransferRequest* aRequest)
   // Function variables.
   nsresult rv;
 
-  // Process the request.
   SetNamedValueRequest* request = static_cast<SetNamedValueRequest*>(aRequest);
+
+  // Process the request.
   if (request->name.EqualsLiteral("FriendlyName")) {
     // Get the friendly name.
     nsAutoString friendlyName;
@@ -893,7 +830,7 @@ sbIPDDevice::ReqHandleSetProperty(TransferRequest* aRequest)
  */
 
 void
-sbIPDDevice::ReqHandleSetPref(TransferRequest* aRequest)
+sbIPDDevice::ReqHandleSetPref(SetNamedValueRequest * aRequest)
 {
   // Validate arguments.
   NS_ASSERTION(aRequest, "aRequest is null");
@@ -902,11 +839,11 @@ sbIPDDevice::ReqHandleSetPref(TransferRequest* aRequest)
   nsresult rv;
 
   // Process the request.
-  SetNamedValueRequest* request = static_cast<SetNamedValueRequest*>(aRequest);
-  if (request->name.EqualsLiteral("SyncPartner")) {
+
+  if (aRequest->name.EqualsLiteral("SyncPartner")) {
     // Get the Songbird sync partner ID.
     nsAutoString sbSyncPartnerID;
-    rv = request->value->GetAsAString(sbSyncPartnerID);
+    rv = aRequest->value->GetAsAString(sbSyncPartnerID);
     NS_ENSURE_SUCCESS(rv, /* void */);
 
     // Get the iPod sync partner ID mapped to the Songbird sync partner ID.
@@ -942,140 +879,6 @@ sbIPDDevice::ReqHandleSetPref(TransferRequest* aRequest)
 //------------------------------------------------------------------------------
 
 /**
- * Initialize the iPod device request services.
- */
-
-nsresult
-sbIPDDevice::ReqInitialize()
-{
-  // Create the request lock.
-  mRequestLock = nsAutoMonitor::NewMonitor("sbIPDDevice::mRequestLock");
-  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
-}
-
-
-/**
- * Finalize the iPod device request services.
- */
-
-void
-sbIPDDevice::ReqFinalize()
-{
-  // Dispose of the request lock.
-  if (mRequestLock)
-    nsAutoMonitor::DestroyMonitor(mRequestLock);
-  mRequestLock = nsnull;
-}
-
-
-/**
- * Connect the iPod device request services.
- *
- * This function is called as part of the device connection process, so it does
- * not need to operate under the connect lock.  However, it should avoid
- * accessing "connect lock" fields that are not a part of the request services.
- */
-
-nsresult
-sbIPDDevice::ReqConnect()
-{
-  nsresult rv;
-
-  // Clear the stop request processing flag.
-  PR_AtomicSet(&mReqStopProcessing, 0);
-
-  // Create the request added event object.
-  rv = sbIPDReqAddedEvent::New(this, getter_AddRefs(mReqAddedEvent));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create the request processing thread.
-  rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Disconnect the iPod device request services.
- *
- * This function is called as part of the device connection process, so it does
- * not need to operate under the connect lock.  However, it should avoid
- * accessing "connect lock" fields that are not a part of the request services.
- */
-
-void
-sbIPDDevice::ReqDisconnect()
-{
-  // Clear all remaining requests.
-  ClearRequests();
-
-  // Remove object references.
-  mReqAddedEvent = nsnull;
-  mReqThread = nsnull;
-}
-
-
-/**
- * Start processing device requests.
- */
-
-nsresult
-sbIPDDevice::ReqProcessingStart()
-{
-  // Operate under the connect lock.
-  sbAutoReadLock autoConnectLock(mConnectLock);
-  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
-
-  // Process any queued requests.
-  ProcessRequest();
-
-  return NS_OK;
-}
-
-
-/**
- * Stop processing device requests.
- */
-
-nsresult
-sbIPDDevice::ReqProcessingStop()
-{
-  // Operate under the connect lock.
-  sbAutoReadLock autoConnectLock(mConnectLock);
-  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
-
-  // Set the stop processing requests flag.
-  PR_AtomicSet(&mReqStopProcessing, 1);
-
-  // Shutdown the request processing thread.
-  mReqThread->Shutdown();
-
-  return NS_OK;
-}
-
-
-/**
- * Return true if the active request should abort; otherwise, return false.
- *
- * \return PR_TRUE              Active request should abort.
- *         PR_FALSE             Active request should not abort.
- */
-
-PRBool
-sbIPDDevice::ReqAbortActive()
-{
-  // Abort if request processing has been stopped.
-  if (PR_AtomicAdd(&mReqStopProcessing, 0))
-    return PR_TRUE;
-
-  return IsRequestAbortedOrDeviceDisconnected();
-}
-
-
-/**
  * Enqueue a request of type specified by aType to set the named value specified
  * by aName to the value specified by aValue.
  *
@@ -1096,84 +899,16 @@ sbIPDDevice::ReqPushSetNamedValue(int              aType,
   nsresult rv;
 
   // Set up the set named value request.
-  nsRefPtr<SetNamedValueRequest> request = new SetNamedValueRequest();
+  SetNamedValueRequest * request = new SetNamedValueRequest(aType);
   NS_ENSURE_TRUE(request, NS_ERROR_OUT_OF_MEMORY);
-  request->type = aType;
   request->name = aName;
   request->value = aValue;
 
   // Enqueue the request.
   //XXXeps This can raise a potential deadlock assert when called from the
   //XXXeps request thread.  Not sure what to do about that.
-  rv = PushRequest(request);
+  rv = mRequestThreadQueue->PushRequest(request);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//
-// iPod device request added event services.
-//
-//   These services provide an nsIRunnable interface that may be used to
-// dispatch and process device request added events.
-//
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-//
-// iPod device request added event nsISupports services.
-//
-//------------------------------------------------------------------------------
-
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbIPDReqAddedEvent, nsIRunnable)
-
-
-//------------------------------------------------------------------------------
-//
-// iPod device request added event nsIRunnable services.
-//
-//------------------------------------------------------------------------------
-
-/**
- * Run the event.
- */
-
-NS_IMETHODIMP
-sbIPDReqAddedEvent::Run()
-{
-  // Dispatch to the device object to handle the event.
-  mDevice->ReqHandleRequestAdded();
-
-  return NS_OK;
-}
-
-
-/**
- * Create a new sbIPDReqAddedEvent object for the device specified by aDevice
- * and return it in aEvent.
- *
- * \param aDevice               Device for which to create event.
- * \param aEvent                Created event.
- */
-
-/* static */ nsresult
-sbIPDReqAddedEvent::New(sbIPDDevice*  aDevice,
-                        nsIRunnable** aEvent)
-{
-  // Create the event object.
-  sbIPDReqAddedEvent* event;
-  NS_NEWXPCOM(event, sbIPDReqAddedEvent);
-  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
-
-  // Set the event parameters.
-  event->mDevice = aDevice;
-
-  // Return results.
-  NS_ADDREF(*aEvent = event);
 
   return NS_OK;
 }

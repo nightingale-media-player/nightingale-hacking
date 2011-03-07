@@ -5,22 +5,22 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 
@@ -35,7 +35,7 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-/** 
+/**
  * \file  sbIPDStatus.h
  * \brief Songbird iPod Device Status Definitions.
  */
@@ -51,7 +51,7 @@
 
 // Songbird imports.
 #include <sbIDeviceStatus.h>
-#include <sbIDevice.h>
+#include <sbBaseDevice.h>
 
 // Mozilla imports.
 #include <nsAutoPtr.h>
@@ -67,11 +67,12 @@
 //
 //------------------------------------------------------------------------------
 
+// Forward declarations
+class sbIPDDevice;
+
 /**
  * This class communicates device status to the system.
  */
-
-class sbIPDDevice;
 
 class sbIPDStatus
 {
@@ -115,15 +116,9 @@ public:
   // Operation services.
   //
 
-  void OperationStart(PRUint32      aOperationType,
-                      PRInt32       aItemNum,
-                      PRInt32       aItemCount);
-
-  void OperationStart(PRUint32      aOperationType,
-                      PRInt32       aItemNum,
-                      PRInt32       aItemCount,
-                      sbIMediaList* aMediaList,
-                      sbIMediaItem* aMediaItem);
+  void OperationStart(PRUint32                        aOperationType,
+                      sbBaseDevice::TransferRequest * aRequest,
+                      PRUint32                        aBatchCount);
 
   void OperationComplete(nsresult aResult);
 
