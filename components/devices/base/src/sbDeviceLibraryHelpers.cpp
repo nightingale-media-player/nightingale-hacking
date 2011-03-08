@@ -379,15 +379,6 @@ sbLibraryUpdateListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
     return NS_OK;
   }
   nsresult rv;
-  nsCOMPtr<sbIMediaItem> targetListAsItem;
-  rv = GetSyncItemInLibrary(aMediaItem,
-                            mTargetLibrary,
-                            getter_AddRefs(targetListAsItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (targetListAsItem) {
-    rv = mTargetLibrary->Remove(targetListAsItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   // target list could be unavailable.
   if (list) {
@@ -520,8 +511,6 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
     }
   }
   else if (isHidden) {
-    rv = mTargetLibrary->Remove(aMediaItem);
-    NS_ENSURE_SUCCESS(rv, rv);
     if (list) {
       rv = StopListeningToPlaylist(list);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -619,7 +608,6 @@ sbPlaylistSyncListener::~sbPlaylistSyncListener()
 {
   mBatchHelperTable.Clear();
   mListRemovedArray.Clear();
-  mItemRemovedArray.Clear();
 }
 
 void sbPlaylistSyncListener::StopListeningToPlaylists() {
@@ -776,77 +764,6 @@ sbPlaylistSyncListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-/**
- * This helper function determines if an item exists in the list of media lists
- * excluding the the media list to be ignored
- * \param aLibrary The library to get to the corresponding playlists from
- * \param aMediaLists The list of playlists to check
- * \param aIgnoreThisMediaList The media list we want to skip, because it's the
- *                             media list we found the item in
- * \param aMediaItem The media item to look for. The item will be on found in
- *                   aLibrary.
- * \param aExistsInAnotherList Out parameter that receives true if the media
- *                             item exists in another playlist
- */
-static nsresult
-IsItemInAnotherPlaylist(sbILibrary * aLibrary,
-                        nsCOMArray<sbIMediaList> & aMediaLists,
-                        sbIMediaList * aIgnoreThisMediaList,
-                        sbIMediaItem * aMediaItem,
-                        bool & aExistsInAnotherList)
-{
-  nsresult rv;
-
-  NS_ENSURE_ARG_POINTER(aLibrary);
-  NS_ENSURE_ARG_POINTER(aIgnoreThisMediaList);
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-
-  // See if the media item is in another list
-  aExistsInAnotherList = false;
-  PRUint32 const length = aMediaLists.Count();
-  for (PRUint32 index = 0; index < length && !aExistsInAnotherList; ++index) {
-    // Get the media list
-    sbIMediaList * mediaList = aMediaLists.ObjectAt(index);
-
-    // Get the corresponding one in the provided library
-    nsCOMPtr<sbIMediaItem> mediaListAsItem;
-    rv = GetSyncItemInLibrary(mediaList,
-                              aLibrary,
-                              getter_AddRefs(mediaListAsItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // List not found in the target library
-    if (!mediaListAsItem)
-      continue;
-
-    // Get the media list interface for the media list now
-    nsCOMPtr<sbIMediaList> deviceMediaList =
-      do_QueryInterface(mediaListAsItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Skip the media list if this is the one we're clearing
-    PRBool same;
-    rv = aIgnoreThisMediaList->Equals(deviceMediaList, &same);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Unable to compare media lists");
-      continue;
-    }
-    if (same) {
-      continue;
-    }
-
-    // Does the item exist in this media list, if so set flag
-    PRBool contains;
-    rv = deviceMediaList->Contains(aMediaItem, &contains);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (contains) {
-      aExistsInAnotherList = true;
-    }
-  }
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
@@ -875,13 +792,6 @@ sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
     // Media list not found in the array. Append.
     if (index < 0) {
       success = mListRemovedArray.AppendObject(aMediaList);
-      NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
-    }
-
-    index = mItemRemovedArray.IndexOf(aMediaItem);
-    // Media item not found in the array. Append.
-    if (index < 0) {
-      success = mItemRemovedArray.AppendObject(aMediaItem);
       NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
     }
   }
@@ -945,140 +855,12 @@ sbPlaylistSyncListener::OnBeforeListCleared(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-/**
- * Enumerator used to remove items from a library that exist in a playlist but
- * not in any other sync'd playlist
- */
-class sbDeviceSyncPlaylistRemover : public sbIMediaListEnumerationListener
-{
-public:
-  NS_DECL_ISUPPORTS;
-
-  /**
-   * Initializes the enumerator with the device and playlist collection to read
-   */
-  sbDeviceSyncPlaylistRemover(sbILibrary * aLibrary,
-                              nsCOMArray<sbIMediaList> & aPlaylists) :
-                                  mLibrary(aLibrary),
-                                  mPlaylistList(aPlaylists)
-  {
-  }
-  /**
-   * \brief Called when enumeration is about to begin.
-   *
-   * \param aMediaList - The media list that is being enumerated.
-   *
-   * \return CONTINUE to continue enumeration, CANCEL to cancel enumeration.
-   *         JavaScript callers may omit the return statement entirely to
-   *         continue the enumeration.
-   */
-  /* unsigned short onEnumerationBegin (in sbIMediaList aMediaList); */
-  NS_SCRIPTABLE NS_IMETHOD OnEnumerationBegin(sbIMediaList *aMediaList,
-                                              PRUint16 *_retval) {
-    NS_ENSURE_STATE(mLibrary);
-    NS_ENSURE_ARG_POINTER(aMediaList);
-    NS_ENSURE_ARG_POINTER(_retval);
-    *_retval = CONTINUE;
-    return NS_OK;
-  }
-
-  /**
-   * \brief Called once for each item in the enumeration.
-   *
-   * \param aMediaList - The media list that is being enumerated.
-   * \param aMediaItem - The media item.
-   *
-   * \return CONTINUE to continue enumeration, CANCEL to cancel enumeration.
-   *         JavaScript callers may omit the return statement entirely to
-   *         continue the enumeration.
-   */
-  /* unsigned short onEnumeratedItem (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem); */
-  NS_SCRIPTABLE NS_IMETHOD OnEnumeratedItem(sbIMediaList *aMediaList,
-                                            sbIMediaItem *aMediaItem,
-                                            PRUint16 *_retval) {
-
-    NS_ENSURE_STATE(mLibrary);
-    NS_ENSURE_ARG_POINTER(aMediaList);
-    NS_ENSURE_ARG_POINTER(aMediaItem);
-    NS_ENSURE_ARG_POINTER(_retval);
-
-    nsresult rv;
-
-    // See if the media item is in another list
-    bool exists = false;
-    rv = IsItemInAnotherPlaylist(mLibrary,
-                                 mPlaylistList,
-                                 aMediaList,
-                                 aMediaItem,
-                                 exists);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // ok it doesn't exist in another list, so we can remove it
-    if (!exists) {
-      mLibrary->Remove(aMediaItem);
-    }
-
-    *_retval = CONTINUE;
-    return NS_OK;
-  }
-  /**
-   * \brief Called when enumeration has completed.
-   *
-   * \param aMediaList - The media list that is being enumerated.
-   * \param aStatusCode - A code to determine if the enumeration was successful.
-   */
-  /* void onEnumerationEnd (in sbIMediaList aMediaList, in nsresult aStatusCode); */
-  NS_SCRIPTABLE NS_IMETHOD OnEnumerationEnd(sbIMediaList *aMediaList,
-                                            nsresult aStatusCode) {
-    return NS_OK;
-  }
-private:
-  sbILibrary * mLibrary;
-  nsCOMArray<sbIMediaList> & mPlaylistList;
-};
-
-NS_IMPL_ISUPPORTS1(sbDeviceSyncPlaylistRemover,
-                   sbIMediaListEnumerationListener);
-
-
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnListCleared(sbIMediaList *aMediaList,
                                       PRBool aExcludeLists,
                                       PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
-  NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
-
-  // Get the media list that is on the device
-  nsresult rv;
-  nsCOMPtr<sbIMediaItem> targetListAsItem;
-  rv = GetSyncItemInLibrary(aMediaList,
-                            mTargetLibrary,
-                            getter_AddRefs(targetListAsItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (targetListAsItem) {
-    nsCOMPtr<sbIMediaList> targetList = do_QueryInterface(targetListAsItem,
-                                                          &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If we're sync'ing playlists we may need to remove the items
-    if (mSyncPlaylists) {
-      // Remove the items from the library, which in turn removes them from
-      // the playlist
-      nsCOMPtr<sbDeviceSyncPlaylistRemover> enumerator =
-        new sbDeviceSyncPlaylistRemover(mTargetLibrary, mMediaLists);
-      NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-
-      rv = targetList->EnumerateAllItems(enumerator,
-                                         sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // Remove playlist from the device directly. No bother to clear it.
-    rv = mTargetLibrary->Remove(targetListAsItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   if (_retval) {
     *_retval = PR_FALSE; /* don't stop */
@@ -1139,7 +921,6 @@ sbPlaylistSyncListener::OnBatchEnd(sbIMediaList *aMediaList)
 
   if (!mBatchHelperTable.Count()) {
     mListRemovedArray.Clear();
-    mItemRemovedArray.Clear();
   }
 
   return NS_OK;
@@ -1201,54 +982,6 @@ sbPlaylistSyncListener::RebuildPlaylistAfterItemRemoved(
   rv = deviceMediaList->RunInBatchMode(batchCallback, addItemsBatchParams);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If we're sync'ing playlists we may need to remove the items
-  if (mSyncPlaylists) {
-    nsCOMPtr<sbIMediaItem> deviceMediaItem;
-    PRUint32 itemLength = mItemRemovedArray.Count();
-    for (PRInt32 i = itemLength - 1; i >= 0; --i) {
-      rv = GetSyncItemInLibrary(mItemRemovedArray[i],
-                                mTargetLibrary,
-                                getter_AddRefs(deviceMediaItem));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool success = mItemRemovedArray.RemoveObjectAt(i);
-      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-      bool exists = false;
-
-      // If there is still one of this item in the list we'll need to keep it
-      PRBool contains;
-      rv = deviceMediaList->Contains(deviceMediaItem, &contains);
-      NS_ENSURE_SUCCESS(rv, rv);
-      exists = contains != PR_FALSE;
-
-      // If no one in the list, check other media lists
-      if (!exists) {
-        // Check to see if any contains this media item
-        rv = IsItemInAnotherPlaylist(mTargetLibrary,
-                                     mMediaLists,
-                                     deviceMediaList,
-                                     deviceMediaItem,
-                                     exists);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // If no list contains this media item, remove it from the device
-      if (!exists) {
-        mTargetLibrary->Remove(deviceMediaItem);
-      }
-    }
-  }
-
-  // Remove the media list if it should not be synced.
-  PRBool shouldSync;
-  rv = ShouldMediaListSync(mDevice, aMediaList, &shouldSync);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!shouldSync) {
-    rv = mTargetLibrary->Remove(targetListAsItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }
@@ -1327,38 +1060,10 @@ sbPlaylistSyncListener::RemoveItemNotInBatch(sbIMediaList *aMediaList,
       rv = deviceMediaList->IndexOf(deviceMediaItem, itemIndex + 1, &itemIndex);
       exists = NS_SUCCEEDED(rv);
     }
-
-    // If there was only one in the list, check other media lists
-    if (!exists) {
-      // Check to see if this is the only instance of this item
-      rv = IsItemInAnotherPlaylist(mTargetLibrary,
-                                   mMediaLists,
-                                   deviceMediaList,
-                                   deviceMediaItem,
-                                   exists);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // If this is the only instance of this media item remove it from the
-    // device
-    if (!exists) {
-      rv = mTargetLibrary->Remove(deviceMediaItem);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
   }
 
   rv = deviceMediaList->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Remove the media list if it should not be synced.
-  PRBool shouldSync;
-  rv = ShouldMediaListSync(mDevice, aMediaList, &shouldSync);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!shouldSync) {
-    rv = mTargetLibrary->Remove(targetListAsItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }
@@ -1476,11 +1181,6 @@ sbPlaylistSyncListener::OnRebuild(
       rv = mTargetLibrary->Add(mediaItem);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-  }
-  // Remove the item from device library if the list should not be synced.
-  else if (!shouldSync && targetListAsItem) {
-    rv = mTargetLibrary->Remove(targetListAsItem);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

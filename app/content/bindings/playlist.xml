@@ -790,12 +790,6 @@
           var removeStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "remove");
           var cancelStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
 
-          if (isLibrary &&
-              !selectedDevice &&
-              (deviceManager.marshalls.length > 0)) {
-            strMsg += "\n\n" + songbirdStrings.GetStringFromName("playlist.confirmremoveitem.devicewarning");
-          }
-
           var btnFlags =
             (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_0) +  // remove
             (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_1) +  // cancel

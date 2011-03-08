@@ -474,7 +474,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   }
 
   // update the library is read-only property
-  rv = UpdateIsReadOnly(syncSettings);
+  rv = UpdateIsReadOnly();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterDeviceLibrary();
@@ -729,7 +729,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners(
 }
 
 nsresult
-sbDeviceLibrary::UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings)
+sbDeviceLibrary::UpdateIsReadOnly()
 {
   nsresult rv;
 
@@ -757,23 +757,13 @@ sbDeviceLibrary::UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings)
     return NS_OK;
   }
 
-  PRUint32 syncMode;
-  rv = aSyncSettings->GetSyncMode(&syncMode);
+  // Only here for the case if upgrading the library might have been readonly
+  // during auto sync before and we'll want to remove that now.
+  // Mark library as read-write
+  nsString str;
+  str.SetIsVoid(PR_TRUE);
+  rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Update the library is read-only property
-  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL) {
-    // Mark library as read-write
-    nsString str;
-    str.SetIsVoid(PR_TRUE);
-    rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    // Mark library as read-only
-    rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
-                           NS_LITERAL_STRING("1"));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }
@@ -902,7 +892,7 @@ sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // update the library is read-only property
-  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  rv = UpdateIsReadOnly();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // update the main library listeners
@@ -1045,7 +1035,7 @@ sbDeviceLibrary::ApplySyncSettings()
   mTempSyncSettings->ResetChanged();
 
   // update the library is read-only property
-  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  rv = UpdateIsReadOnly();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // update the main library listeners
@@ -1277,7 +1267,7 @@ sbDeviceLibrary::Sync()
   }
 
   // update the library is read-only property
-  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  rv = UpdateIsReadOnly();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // update the main library listeners

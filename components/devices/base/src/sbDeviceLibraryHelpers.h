@@ -119,8 +119,6 @@ protected:
                    sbLibraryBatchHelper> mBatchHelperTable;
   // Array of media lists that the removed media items belong to
   nsCOMArray<sbIMediaList> mListRemovedArray;
-  // Array of media items removed
-  nsCOMArray<sbIMediaItem> mItemRemovedArray;
 
   /**
    * TODO: XXX hack to keep the playlists from going away and our listeners

@@ -270,7 +270,7 @@ private:
    * \brief Update the library is read-only property based upon the device
    *        management type preference.
    */
-  nsresult UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings);
+  nsresult UpdateIsReadOnly();
 
   /**
    * \brief Return true if the device is configured to auto sync and syncing
