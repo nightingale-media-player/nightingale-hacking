@@ -954,6 +954,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Import Type (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_IMPORTTYPE), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Download destination
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
                    NS_LITERAL_STRING("property.destination"),

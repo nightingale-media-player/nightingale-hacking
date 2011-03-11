@@ -117,6 +117,27 @@
 #define SB_PROPERTY_ISDRMPROTECTED            "http://songbirdnest.com/data/1.0#isDRMProtected"
 #define SB_PROPERTY_DONT_WRITE_METADATA       "http://songbirdnest.com/data/1.0#dontWriteMetadata"
 
+/** An optional import type applied to a media item according to rules defined
+ *  by <import> elements in device info XML files.  The import type can be any
+ *  string the <import> element defines, but the following types are
+ *  currently recognized and given special handling:
+ *
+ *      fm-recording
+ *        SB_PROPERTY_GENRE set to indicate an FM recording; file routed
+ *        to a subfolder for recordings when copied to main library.  See
+ *        songbird.properties device.sync.import_type.fm_recording and
+ *        mediamanager.recordings_dir
+ *
+ *      voice-recording
+ *        SB_PROPERTY_GENRE set to indicate a voice recording; file routed
+ *        to a subfolder for recordings when copied to main library.  See
+ *        songbird.properties device.sync.import_type.voice_recording and
+ *        mediamanager.recordings_dir
+ */
+#define SB_PROPERTY_IMPORTTYPE                "http://songbirdnest.com/data/1.0#importType"
+#define SB_VALUE_IMPORTTYPE_FM_RECORDING      "fm-recording"
+#define SB_VALUE_IMPORTTYPE_VOICE_RECORDING   "voice-recording"
+
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"
 #define SB_PROPERTY_LAST_SYNC_PLAYCOUNT       "http://songbirdnest.com/data/1.0#playCount_AtLastSync"
