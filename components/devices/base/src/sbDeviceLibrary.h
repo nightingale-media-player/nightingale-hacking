@@ -337,7 +337,6 @@ private:
 #define PREF_IMAGESYNC_ENABLED "imagesync.enabled"
 #define PREF_SYNC_PREFIX    "library."
 #define PREF_SYNC_BRANCH    ".sync."
-#define PREF_SYNC_MODE      "syncMode"
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
 #define PREF_SYNC_LISTS     "playlists"
 #define PREF_SYNC_ROOT      "root"

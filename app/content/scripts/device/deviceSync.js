@@ -187,23 +187,21 @@ var DeviceSyncWidget = {
         this._getElement("content_management_header_background");
     var syncGroupbox = this._getElement("content_management_groupbox");
 
-    // If the device is not in manual mode hide the manual mode message
-    var deviceManual = this._deviceSyncSettings.syncMode ==
-                            Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+    // TODO: XXX This code will need to be refactored in bug 23348.
+    manualMessage.removeAttribute("collapsed");
+    syncEnabledCheckbox.checked = false;
+    syncEnabledCheckbox.setAttribute("disabled", true);
+    syncPlaylistTree.setAttribute("disabled", true);
+    syncRadioGroup.setAttribute("disabled", true);
+    syncRadioGroup.selectedItem = null;
+    this._widget.setAttribute("disabled", true);
 
-    if (deviceManual) {
-      manualMessage.removeAttribute("collapsed");
-      syncEnabledCheckbox.checked = false;
-      syncEnabledCheckbox.setAttribute("disabled", true);
-      syncPlaylistTree.setAttribute("disabled", true);
-      syncRadioGroup.setAttribute("disabled", true);
-      syncRadioGroup.selectedItem = null;
-      this._widget.setAttribute("disabled", true);
-
-      // In manual mode, this._widget controls opacity.
-      headerBackground.removeAttribute("disabled");
-      syncGroupbox.removeAttribute("disabled");
-    }
+    // In manual mode, this._widget controls opacity.
+    headerBackground.removeAttribute("disabled");
+    syncGroupbox.removeAttribute("disabled");
+    /**
+     * TODO: XXX Will be removed or updated in bug 23348
+     *
     else {
       manualMessage.setAttribute("collapsed", true);
       syncEnabledCheckbox.removeAttribute("disabled");
@@ -240,7 +238,7 @@ var DeviceSyncWidget = {
           break;
       }
     }
-
+    */
     // If we are busy then disable the widget so the user can not make changes
     if (this._device.isBusy) {
       this._widget.setAttribute("disabled", true);

@@ -63,9 +63,11 @@ public:
   /**
    * Initializes the object with the device and batch to be analyzed
    * \param aDevice The device the batch belongs to
+   * \param aInSync Whether this is called as the result of a sync
    * \param aBatch The batch that we'er checking for available space
    */
   sbDeviceEnsureSpaceForWrite(sbBaseDevice * aDevice,
+                              bool aInSync,
                               Batch & aBatch);
   /**
    * Cleanup data
@@ -130,6 +132,11 @@ private:
    * Free space on the device
    */
   PRInt64 mFreeSpace;
+
+  /**
+   * True if this ensure space is being done within a sync
+   */
+  bool mInSync;
 
   /**
    * Builds a list of sbIMediaItem pointers mItemsToWrite

@@ -103,7 +103,6 @@ deviceControlWidget.prototype = {
   //   _deviceListenerAdded     True if a device listener has been added.
   //   _currentState            Current device operational state.
   //   _currentReadOnly         Current device read only state.
-  //   _currentSyncMode         Current device synchronization mode.
   //   _currentImageMgmtType    Current device image sync management type.
   //
 
@@ -115,7 +114,6 @@ deviceControlWidget.prototype = {
   _deviceListenerAdded: false,
   _currentState: Ci.sbIDevice.STATE_IDLE,
   _currentReadOnly: false,
-  _currentSyncMode: Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL,
   _currentImageMgmtType: Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,
 
 
@@ -658,11 +656,9 @@ deviceControlWidget.prototype = {
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
-    var syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
     var imagesMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE;
     if (this._deviceLibrary) {
       let tempSettings = this._deviceLibrary.tempSyncSettings;
-      syncMode = tempSettings.syncMode;
       imagesMgmtType =
         tempSettings.getMediaSettings(this._deviceLibrary.MEDIATYPE_IMAGE)
                     .mgmtType;
@@ -670,7 +666,6 @@ deviceControlWidget.prototype = {
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
-        (this._currentSyncMode == syncMode) &&
         (this._currentImageMgmtType == imagesMgmtType) &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
@@ -681,7 +676,6 @@ deviceControlWidget.prototype = {
     }
 
     // Update the current state.
-    this._currentSyncMode = syncMode;
     this._currentImageMgmtType = imagesMgmtType;
     this._currentState = state;
     this._currentReadOnly = readOnly;
@@ -766,8 +760,12 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
+/**
+ * Removed for bug sync management changes
+   TODO: XXX To be really removed in bug 23348            
     else if (this._deviceLibrary && !(this._deviceLibrary.isManualSyncMode) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
+*/             
     else if (this._deviceLibrary && this._canTriggerSync() &&
              this._getStateAttribute(attrVal, aAttrName, "can_trigger_sync")) {}
     else if (this._currentSupportsReformat &&
@@ -940,10 +938,6 @@ deviceControlWidget.prototype = {
     // Can not sync if there is no library.
     if (!this._deviceLibrary)
       return false;
-
-    // user can trigger sync if management is not manual.
-    if (!(this._deviceLibrary.isManualSyncMode))
-      return true;
 
     // Check photo sync settings since they are separate from the other types
     let syncSettings = this._deviceLibrary.tempSyncSettings;

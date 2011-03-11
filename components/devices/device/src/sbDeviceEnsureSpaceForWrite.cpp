@@ -87,11 +87,13 @@ struct EnsureSpaceForWriteRemovalHelper {
 
 sbDeviceEnsureSpaceForWrite::sbDeviceEnsureSpaceForWrite(
   sbBaseDevice * aDevice,
+  bool aInSync,
   Batch & aBatch) :
     mDevice(aDevice),
     mBatch(aBatch),
     mTotalLength(0),
-    mFreeSpace(0) {
+    mFreeSpace(0),
+    mInSync(aInSync) {
 }
 
 sbDeviceEnsureSpaceForWrite::~sbDeviceEnsureSpaceForWrite() {
@@ -288,9 +290,8 @@ sbDeviceEnsureSpaceForWrite::GetFreeSpace() {
  */
 nsresult
 sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
-  PRBool isManual;
-  nsresult rv = mOwnerLibrary->GetIsManualSyncMode(&isManual);
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsresult rv;
 
   // if not enough free space is available, ask user what to do
   if (mFreeSpace < mTotalLength) {
@@ -308,7 +309,7 @@ sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
       aWriteMode = ABORT;
     }
     else {
-      if (!isManual) {
+      if (mInSync) {
         aWriteMode = SHUFFLE;
       }
       else {

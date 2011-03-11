@@ -262,13 +262,6 @@ interface sbIDeviceLibrary : sbILibrary
   const unsigned long MEDIATYPE_COUNT                   = 0x03;
 
   /**
-   * \brief The flag on whether the device is in manual mode.
-   *
-   */
-
-  readonly attribute boolean isManualSyncMode;
-  
-  /**
    * Gets/Sets the current sync mode of the device. The object 
    * returned by the getter is a temporary transient object. Changes
    * are not made until you call setter.

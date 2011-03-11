@@ -96,7 +96,6 @@ sbDeviceLibrarySyncSettings::sbDeviceLibrarySyncSettings(
                                          nsAString const & aDeviceLibraryGuid) :
   mDeviceID(aDeviceID),
   mDeviceLibraryGuid(aDeviceLibraryGuid),
-  mSyncMode(sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL),
   mChanged(false),
   mNotifyDeviceLibrary(false),
   mLock(nsAutoLock::NewLock("sbDeviceLibrarySyncSettings"))
@@ -126,7 +125,6 @@ nsresult sbDeviceLibrarySyncSettings::Assign(
   mDeviceID = aSource->mDeviceID;
   mDeviceLibraryGuid = aSource->mDeviceLibraryGuid;
 
-  mSyncMode = aSource->mSyncMode;
   // Copy the media setting entries
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> mediaSettings;
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> newMediaSettings;
@@ -206,31 +204,6 @@ void sbDeviceLibrarySyncSettings::ResetChanged()
 {
   nsAutoLock lock(mLock);
   ResetChangedNoLock();
-}
-
-/* attribute unsigned long syncMode; */
-NS_IMETHODIMP
-sbDeviceLibrarySyncSettings::GetSyncMode(PRUint32 *aSyncMode)
-{
-  NS_ASSERTION(mLock, "sbDeviceLibrarySyncSettings not initialized");
-  NS_ENSURE_ARG_POINTER(aSyncMode);
-  nsAutoLock lock(mLock);
-
-  *aSyncMode = mSyncMode;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibrarySyncSettings::SetSyncMode(PRUint32 aSyncMode)
-{
-  NS_ASSERTION(mLock, "sbDeviceLibrarySyncSettings not initialized");
-
-  mSyncMode = aSyncMode;
-
-  Changed(PR_TRUE);
-
-  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -457,14 +430,14 @@ sbDeviceLibrarySyncSettings::GetMgmtTypePref(sbIDevice * aDevice,
   // check if a value exists
   PRUint16 dataType;
   rv = var->GetDataType(&dataType);
+  PRUint32 mgmtType;
   // If there is no value, set to manual
   if (dataType == nsIDataType::VTYPE_VOID ||
       dataType == nsIDataType::VTYPE_EMPTY)
   {
-    aMgmtTypes = sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL;
+    mgmtType = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE;
   } else {
     // has a value
-    PRUint32 mgmtType;
     rv = var->GetAsUint32(&mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -476,54 +449,10 @@ sbDeviceLibrarySyncSettings::GetMgmtTypePref(sbIDevice * aDevice,
             mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL ||
             mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
 
-    // Max the manual mode
-    aMgmtTypes = mgmtType;
   }
 
-  return NS_OK;
-}
-
-nsresult
-sbDeviceLibrarySyncSettings::ReadLegacySyncMode(sbIDevice * aDevice,
-                                                PRUint32 & aSyncMode)
-{
-  NS_ENSURE_ARG_POINTER(aDevice);
-
-  nsresult rv;
-  PRUint32 syncMode = sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO;
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    // Ignore management type for images, it is always semi-manual
-    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
-      continue;
-
-    nsString prefKey;
-    rv = GetMgmtTypePrefKey(i, prefKey);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIVariant> var;
-    rv = aDevice->GetPreference(prefKey, getter_AddRefs(var));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // check if a value exists
-    PRUint16 dataType;
-    rv = var->GetDataType(&dataType);
-    // If there is no value, set to manual
-    if (dataType == nsIDataType::VTYPE_VOID ||
-        dataType == nsIDataType::VTYPE_EMPTY) {
-      syncMode = sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL;
-      break;
-    }
-    else {
-      PRUint32 value;
-      var->GetAsUint32(&value);
-      // If the manual flag is set, then set to manual and exit
-      if (value & LEGACY_MGMT_TYPE_MANUAL) {
-        syncMode = sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL;
-        break;
-      }
-    }
-  }
-  aSyncMode = syncMode;
+  // Return the management type
+  aMgmtTypes = mgmtType;
 
   return NS_OK;
 }
@@ -597,40 +526,6 @@ sbDeviceLibrarySyncSettings::ReadAString(sbIDevice * aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-nsresult
-sbDeviceLibrarySyncSettings::ReadSyncMode(sbIDevice * aDevice,
-                                          PRUint32 & aSyncMode)
-{
-  nsresult rv;
-
-  nsString prefKey;
-  rv = GetSyncModePrefKey(prefKey);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 const NOT_FOUND = 0xFFFFFFFF;
-  PRUint32 mode;
-  rv = ReadPRUint32(aDevice, prefKey, mode, NOT_FOUND);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  MigrateLegacyMgmtValues(mode);
-
-  if (mode == NOT_FOUND)
-  {
-    rv = ReadLegacySyncMode(aDevice, aSyncMode);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    // Double check that it is a valid number
-    NS_ENSURE_ARG_RANGE(mode,
-                        sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL,
-                        sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO);
-
-    aSyncMode = mode;
-  }
-
-  return NS_OK;
-
 }
 
 nsresult
@@ -835,9 +730,6 @@ sbDeviceLibrarySyncSettings::Read(sbIDevice * aDevice,
 
   nsresult rv;
 
-  rv = ReadSyncMode(aDevice, mSyncMode);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> mediaSettings;
   for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
        mediaType < sbIDeviceLibrary::MEDIATYPE_COUNT;
@@ -866,13 +758,6 @@ sbDeviceLibrarySyncSettings::Write(sbIDevice * aDevice)
 
   nsresult rv;
 
-  nsString prefKey;
-  rv = GetSyncModePrefKey(prefKey);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = WritePref(aDevice, prefKey, mSyncMode);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> mediaSettings;
   for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
        mediaType < sbIDeviceLibrary::MEDIATYPE_COUNT;
@@ -885,20 +770,6 @@ sbDeviceLibrarySyncSettings::Write(sbIDevice * aDevice)
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
-  return NS_OK;
-}
-
-nsresult
-sbDeviceLibrarySyncSettings::GetSyncModePrefKey(nsAString& aPrefKey)
-{
-  NS_ENSURE_STATE(!mDeviceLibraryGuid.IsEmpty());
-
-
-  // Get the preference key
-  aPrefKey.Assign(NS_LITERAL_STRING(PREF_SYNC_PREFIX));
-  aPrefKey.Append(mDeviceLibraryGuid);
-  aPrefKey.AppendLiteral(PREF_SYNC_BRANCH PREF_SYNC_MODE);
-
   return NS_OK;
 }
 

@@ -78,7 +78,7 @@ sbDeviceLibraryMediaSyncSettings::sbDeviceLibraryMediaSyncSettings(
                                     sbDeviceLibrarySyncSettings * aSyncSettings,
                                     PRUint32 aMediaType,
                                     PRLock * aLock) :
-  mSyncMgmtType(sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL),
+  mSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE),
   mMediaType(aMediaType),
   mLock(aLock),
   mSyncSettings(aSyncSettings)

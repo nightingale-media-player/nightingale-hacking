@@ -38,6 +38,8 @@
       xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       xmlns:xbl="http://www.mozilla.org/xbl">
 
+<!-- TODO: XXX This code will be removed in bug 23348. -->
+
   <!-- *************************************************************************
    *****************************************************************************
    *
@@ -108,8 +110,13 @@
             this.updateButtons(aManual);
 
             if (aManual) {
+              /**
+               * syncMode no longer exists. 
+               * TODO: XXX This code will be refactored in bug 23348.
+               *
               this.devLib.tempSyncSettings.syncMode =
                 Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+              */
             }
             else {
               var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
@@ -134,8 +141,13 @@
 
               if (buttonPressed == 0) {
                 // Toggle to auto
+              /**
+               * syncMode no longer exists. 
+               * TODO: XXX This code will be refactored in bug 23348.
+               *
                 this.devLib.tempSyncSettings.syncMode =
                   Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
+               */
               }
             }
             this.update();
@@ -183,11 +195,15 @@
             syncButton.removeAttribute("disabled");
 
             // Get the device management state
+            /**
+             * TODO: XXX This code will be refactored in bug 23348.
+             
             if (this.devLib) {
               var isManual = (this.devLib.tempSyncSettings.syncMode ==
                               Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
               this.updateButtons(isManual);
             }
+            */
           } else {
             manualButton.setAttribute("disabled", "true");
             syncButton.setAttribute("disabled", "true");

@@ -218,26 +218,7 @@ function test_library(device) {
 function test_sync_settings(device) {
   log("Testing initial mode");
   let syncSettings = device.defaultLibrary.syncSettings;
-  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
-  device.defaultLibrary.syncSettings = syncSettings;
-  
-  log("Changing to SYNC_MODE_AUTO without applying");
-  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
-  syncSettings = device.defaultLibrary.syncSettings;
-  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
-  
-  log("Changing to SYNC_MODE_AUTO with applying");
-  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
-  device.defaultLibrary.syncSettings = syncSettings;
-  syncSettings = device.defaultLibrary.syncSettings;
-  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO);
-  
-  log("Changing to SYNC_MODE_MANUAL with applying");
-  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
-  device.defaultLibrary.syncSettings = syncSettings;
-  assertEqual(device.defaultLibrary.syncSettings.syncMode,
-              Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
-  
+
   log("Changing management type to all");
   syncSettings = device.defaultLibrary.tempSyncSettings;
   
@@ -247,7 +228,6 @@ function test_sync_settings(device) {
                                            Ci.sbIDeviceLibrary.MEDIATYPE_VIDEO);
   let imageSyncSettings = syncSettings.getMediaSettings(
                                            Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE);
-  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
   audioSyncSettings.mgmtType = 
                              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL;                             
   assertEqual(audioSyncSettings.mgmtType, 
@@ -263,9 +243,7 @@ function test_sync_settings(device) {
   log("Applying changes");
   device.defaultLibrary.applySyncSettings();
   syncSettings = device.defaultLibrary.syncSettings;
-  log("Checking syncMode");
-  assertEqual(syncSettings.syncMode, 
-              Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO);
+
   log("Checking audio management setting");              
   assertEqual(syncSettings.getMediaSettings(
                                   Ci.sbIDeviceLibrary.MEDIATYPE_AUDIO).mgmtType,

@@ -101,13 +101,9 @@ private:
                            PRUint32 aMediaType,
                            sbIDeviceLibraryMediaSyncSettings ** aMediaSettings);
 
-  nsresult GetSyncModePrefKey(nsAString& aPrefKey);
-
   nsresult GetMgmtTypePref(sbIDevice * aDevice,
                            PRUint32 aContentType,
                            PRUint32 & aMgmtTypes);
-
-  nsresult ReadLegacySyncMode(sbIDevice * aDevice, PRUint32 & aSyncMode);
 
   static nsresult ReadPRUint32(sbIDevice * aDevice,
                                nsAString const & aPrefKey,
@@ -123,8 +119,6 @@ private:
   nsresult WritePref(sbIDevice * aDevice,
                      nsAString const & aPrefKey,
                      T aValue);
-
-  nsresult ReadSyncMode(sbIDevice * aDevice, PRUint32 & aSyncMode);
 
   nsresult WriteMediaSyncSettings(
                          sbIDevice * aDevice,
@@ -149,7 +143,6 @@ private:
 
   nsID mDeviceID;
   nsString mDeviceLibraryGuid;
-  PRUint32 mSyncMode;
   bool mChanged;
   bool mNotifyDeviceLibrary;
   PRLock * mLock;

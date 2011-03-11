@@ -111,9 +111,14 @@ sbIPDDevice::ProcessBatch(Batch & aBatch)
       // Force update of storage statistics before checking for space.
       StatsUpdate(PR_TRUE);
 
+      PRUint32 deviceState;
+      rv = GetState(&deviceState);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       // Check for space for request.  Assume space is ensured on error
       // and attempt the write.
-      rv = EnsureSpaceForWrite(aBatch);
+      rv = EnsureSpaceForWrite(aBatch,
+                               deviceState == sbIDevice::STATE_SYNCING);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 

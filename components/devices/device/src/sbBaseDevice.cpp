@@ -2408,13 +2408,13 @@ T find_iterator(T start, T end, T target)
   return start;
 }
 
-nsresult sbBaseDevice::EnsureSpaceForWrite(Batch & aBatch)
+nsresult sbBaseDevice::EnsureSpaceForWrite(Batch & aBatch, bool aInSync)
 {
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite++\n"));
 
   nsresult rv;
 
-  sbDeviceEnsureSpaceForWrite esfw(this, aBatch);
+  sbDeviceEnsureSpaceForWrite esfw(this, aInSync, aBatch);
 
   rv = esfw.EnsureSpace();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -4166,10 +4166,6 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
       rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = syncSettings->SetSyncMode(
-             sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL);
-      NS_ENSURE_SUCCESS(rv, rv);
-
       rv = dstLib->SetSyncSettings(syncSettings);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -4490,10 +4486,6 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
 
   nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
   rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = syncSettings->SetSyncMode(
-         sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> audioMediaSyncSettings;

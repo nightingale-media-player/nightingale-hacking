@@ -51,6 +51,8 @@
  *   A single dialog box argument of type sbIDevice is passed in.
  *
  *************************************************************************** -->
+ 
+<!-- TODO: XXX This setup dialog code will be addressed in bug 23348. -->
 
 <!-- Device setup dialog box. -->
 <dialog
@@ -287,6 +289,8 @@
           this._device.properties.friendlyName = setupNameTextboxElem.value;
 
           // Set the sync preference.
+          /**
+           * TODO: XXX Will be removed or updated in bug 23348
           var deviceLibrary = this._device.defaultLibrary;
           if (deviceLibrary) {
             var syncMode = syncCheckboxElem.checked ?
@@ -298,6 +302,7 @@
             if (syncMode == Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO)
               deviceLibrary.sync();
           }
+          */
         }
 
         return true;

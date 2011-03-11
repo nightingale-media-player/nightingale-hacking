@@ -771,8 +771,9 @@ protected:
    *
    * \param aBatch The batch to ensure space for. This collection may be
    *               modified on return.
+   * \param aInSync Denotes whether this was called as part of a sync operation
    */
-  nsresult EnsureSpaceForWrite(Batch & aBatch);
+  nsresult EnsureSpaceForWrite(Batch & aBatch, bool aInSync);
 
   /**
    * Wait for the end of a request batch to be enqueued.

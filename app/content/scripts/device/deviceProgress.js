@@ -846,28 +846,22 @@ var DPW = {
         var imageSyncEnabled = this._device.getPreference("imagesync.enabled");
 
         // Set editable to true for device playlists in manual mode.
-        if (this._deviceLibrary.tempSyncSettings.syncMode ==
-            Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL) {
-          var DSP = Cc['@songbirdnest.com/servicepane/device;1']
-                      .getService(Ci.sbIDeviceServicePaneService);
-          var base = 'http://songbirdnest.com/rdf/library-servicepane#';
-          var deviceNode = DSP.getNodeForDevice(this._device);
-          for (let node = deviceNode.firstChild; node;
-               node = node.nextSibling) {
-            var listType = node.getAttributeNS(base, "ListType");
-            // Only update the playlist nodes.
-            if (listType != "library")
-              node.editable = true;
-          }
-
-          // Sync device libraries in manual mode only when image sync
-          // is enabled.
-          if (imageSyncEnabled)
-            this._device.syncLibraries();
-
-        } else {
-          this._device.syncLibraries();
+        var DSP = Cc['@songbirdnest.com/servicepane/device;1']
+                    .getService(Ci.sbIDeviceServicePaneService);
+        var base = 'http://songbirdnest.com/rdf/library-servicepane#';
+        var deviceNode = DSP.getNodeForDevice(this._device);
+        for (let node = deviceNode.firstChild; node;
+             node = node.nextSibling) {
+          var listType = node.getAttributeNS(base, "ListType");
+          // Only update the playlist nodes.
+          if (listType != "library")
+            node.editable = true;
         }
+    
+        // Sync device libraries in manual mode only when image sync
+        // is enabled.
+        if (imageSyncEnabled)
+          this._device.syncLibraries();
 
         // In the case where a user chooses to remove photos and
         // disable image sync, a one-off sync will be done. Post-sync,
