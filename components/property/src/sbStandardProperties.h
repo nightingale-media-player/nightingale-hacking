@@ -143,6 +143,14 @@
 #define SB_PROPERTY_LAST_SYNC_PLAYCOUNT       "http://songbirdnest.com/data/1.0#playCount_AtLastSync"
 #define SB_PROPERTY_LAST_SYNC_SKIPCOUNT       "http://songbirdnest.com/data/1.0#skipCount_AtLastSync"
 
+/**
+ * This boolean property indicates whether a media item or media list on a
+ * device originally came from the main library. If "true" then the item has
+ * origin GUIDs that correspond to an item that exists in the main library.
+ * Used by the UI for visual indicator on the media item or media list..
+ */
+#define SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY "http://songbirdnest.com/data/1.0#originIsInMainLibrary"
+
 // Smart media list specific properties
 #define SB_PROPERTY_SMARTMEDIALIST_STATE      "http://songbirdnest.com/data/1.0#smartMediaListState"
 

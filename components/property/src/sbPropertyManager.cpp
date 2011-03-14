@@ -853,6 +853,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_TRUE, PR_FALSE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Denotes the media item on the device is "new" wasn't copied from the main
+  // library
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+                       EmptyString(),
+                       stringBundle,
+                       PR_FALSE,   // User editable
+                       PR_FALSE,   // Remote readable
+                       PR_FALSE,   // Remote writable
+                       PR_FALSE);  // shouldSupress
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Bitrate
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
                       NS_LITERAL_STRING("property.bitrate"),
