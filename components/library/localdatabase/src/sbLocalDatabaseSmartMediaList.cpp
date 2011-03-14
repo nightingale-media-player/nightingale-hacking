@@ -45,6 +45,7 @@
 #include <sbStandardProperties.h>
 #include <sbILibraryManager.h>
 #include <sbDummyProperties.h>
+#include <sbStringUtils.h>
 #include <nsAutoPtr.h>
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
@@ -3008,6 +3009,14 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
                           state);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the 'last updated' property when the smart media list rules have been
+  // changed - this is more in line with the semantics than simply when the
+  // contents of the list have changed (due to it being recomputed, for example)
+  sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
+  rv = mItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED),
+                          now);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -3188,7 +3197,7 @@ sbLocalDatabaseSmartMediaList::SetName(const nsAString& aName)
   // inner list to the outer one.
   rv = mLocalDatabaseLibrary->NotifyListenersItemUpdated(this, properties);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 

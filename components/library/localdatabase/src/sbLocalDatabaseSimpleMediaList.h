@@ -91,6 +91,8 @@ public:
                                 nsAString& aStartingOrdinal);
 
 private:
+  nsresult UpdateLastModifiedTime();
+
   nsresult ExecuteAggregateQuery(const nsAString& aQuery, nsAString& aValue);
 
   nsresult UpdateOrdinalByIndex(PRUint32 aIndex, const nsAString& aOrdinal);
@@ -99,8 +101,6 @@ private:
                             PRUint32 aFromIndexArrayCount,
                             PRUint32 aToIndex,
                             const nsAString& aOrdinalRoot);
-
-  nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
 
   nsresult GetNextOrdinal(nsAString& aValue);
 

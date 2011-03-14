@@ -55,6 +55,7 @@
 #include <pratom.h>
 #include <sbLocalDatabaseMediaListView.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 #include <sbSQLBuilderCID.h>
 
 #define DEFAULT_SORT_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
@@ -496,6 +497,9 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   rv = mFriendList->GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mFriendList->UpdateLastModifiedTime();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Notify our listeners if we have any
   if (mFriendList->ListenerCount() > 0) {
     for (PRUint32 index = 0; index < itemCount; index++) {
@@ -626,6 +630,9 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
 
   // Invalidate the cached list. Removing definitely changes length.
   rv = mFriendList->GetArray()->Invalidate(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFriendList->UpdateLastModifiedTime();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners after removal if we have any
@@ -1093,6 +1100,9 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
   rv = GetArray()->Invalidate(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = UpdateLastModifiedTime();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaList> list =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1133,6 +1143,9 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
 
   // Invalidate the cached list. Moving items does not invalidate length.
   rv = GetArray()->Invalidate(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateLastModifiedTime();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1341,6 +1354,9 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
   rv = GetArray()->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = UpdateLastModifiedTime();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaList> mediaList =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1416,6 +1432,9 @@ sbLocalDatabaseSimpleMediaList::Clear()
 
   // Invalidate the cached list. Clearing definitely invalidates length.
   rv = GetArray()->Invalidate(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateLastModifiedTime();
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList,
@@ -1693,6 +1712,18 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersBatchEnd(sbIMediaList* aList)
 }
 
 nsresult
+sbLocalDatabaseSimpleMediaList::UpdateLastModifiedTime()
+{
+  nsresult rv;
+
+  sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
+  rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseSimpleMediaList::ExecuteAggregateQuery(const nsAString& aQuery,
                                                       nsAString& aValue)
 {
@@ -1879,31 +1910,8 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
 
   }
 
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
-{
-  nsresult rv;
-  PRInt32 dbOk;
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
+  rv = UpdateLastModifiedTime();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mDeleteFirstListItemQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindInt32Parameter(0, aMediaItemId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
-  // Reset list content type to trigger recalculation.
-  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
 
   return NS_OK;
 }
