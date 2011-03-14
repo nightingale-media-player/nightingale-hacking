@@ -142,6 +142,7 @@
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"
 #define SB_PROPERTY_LAST_SYNC_PLAYCOUNT       "http://songbirdnest.com/data/1.0#playCount_AtLastSync"
 #define SB_PROPERTY_LAST_SYNC_SKIPCOUNT       "http://songbirdnest.com/data/1.0#skipCount_AtLastSync"
+#define SB_PROPERTY_LAST_SYNC_TIME            "http://songbirdnest.com/data/1.0#lastSyncTime"
 
 /**
  * This boolean property indicates whether a media item or media list on a

@@ -294,6 +294,9 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_WRITE_FILE    = REQUEST_FLAG_WRITE + 11;
   const unsigned long REQUEST_DELETE_FILE   = REQUEST_FLAG_WRITE + 12;
 
+  /* Request indicating that a sync request has completed */
+  const unsigned long REQUEST_SYNC_COMPLETE = REQUEST_FLAG_WRITE + 13;
+
   /**
    * 
    */

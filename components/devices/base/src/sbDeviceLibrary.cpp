@@ -32,6 +32,7 @@
 #include <nsIFileURL.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsISupportsPrimitives.h>
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
 

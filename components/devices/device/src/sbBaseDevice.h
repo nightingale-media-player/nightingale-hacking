@@ -145,7 +145,8 @@ public:
       REQUEST_MOVE          = sbIDevice::REQUEST_MOVE,
       REQUEST_UPDATE        = sbIDevice::REQUEST_UPDATE,
       REQUEST_NEW_PLAYLIST  = sbIDevice::REQUEST_NEW_PLAYLIST,
-      REQUEST_FORMAT        = sbIDevice::REQUEST_FORMAT
+      REQUEST_FORMAT        = sbIDevice::REQUEST_FORMAT,
+      REQUEST_SYNC_COMPLETE = sbIDevice::REQUEST_SYNC_COMPLETE
     };
 
     enum {
@@ -1235,11 +1236,23 @@ protected:
   //----------------------------------------------------------------------------
 
   /**
+   * Send a sync-completed request to be handled by the device.
+   */
+  nsresult SendSyncCompleteRequest();
+
+  /**
    * Handle the sync request specified by aRequest.
    *
    * \param aRequest              Request data record.
    */
   nsresult HandleSyncRequest(TransferRequest* aRequest);
+
+  /**
+   * Handle the sync-completed request, updating the last-sync timestamp.
+   *
+   * \param aRequest              Request data record.
+   */
+  nsresult HandleSyncCompletedRequest(TransferRequest* aRequest);
 
   /**
    * Ensure enough space is available for the sync request specified by

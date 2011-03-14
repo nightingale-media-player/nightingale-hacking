@@ -1314,6 +1314,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Last sync time (internal use only)
+  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
+                        EmptyString(),
+                        sbIDatetimePropertyInfo::TIMETYPE_TIMESTAMP,
+                        stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Smart medialist state (internal use)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SMARTMEDIALIST_STATE),
                     EmptyString(),

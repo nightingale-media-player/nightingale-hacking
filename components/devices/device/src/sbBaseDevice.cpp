@@ -3994,6 +3994,38 @@ nsresult sbBaseDevice::GetLocalDeviceDir(nsIFile** aLocalDeviceDir)
 //------------------------------------------------------------------------------
 
 nsresult
+sbBaseDevice::SendSyncCompleteRequest()
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIWritablePropertyBag2> syncCompleteParams =
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupportsPRUint64> timestamp =
+    do_CreateInstance(NS_SUPPORTS_PRUINT64_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 now = PR_Now();
+  rv = timestamp->SetData(now);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = syncCompleteParams->SetPropertyAsInterface(NS_LITERAL_STRING("data"),
+                                                  timestamp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = syncCompleteParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
+                                                  NS_ISUPPORTS_CAST(sbIMediaList*, mDefaultLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SubmitRequest(sbIDevice::REQUEST_SYNC_COMPLETE,
+                     syncCompleteParams);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
 {
   // Validate arguments.
@@ -4055,6 +4087,9 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = SyncApplyChanges(dstLib, changeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = SendSyncCompleteRequest();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the sync types (audio/video/image) after queuing requests
   aRequest->itemType = mSyncType;
 
@@ -4102,6 +4137,36 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
                          NS_ISUPPORTS_CAST(sbIMediaList*, mDefaultLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::HandleSyncCompletedRequest(TransferRequest* aRequest)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+  nsresult rv;
+
+  if (IsRequestAborted()) {
+    return NS_ERROR_ABORT;
+  }
+
+  nsCOMPtr<nsISupportsPRUint64> timestamp =
+      do_QueryInterface(aRequest->data, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 ts = 0;
+  rv = timestamp->GetData(&ts);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This list is actually the device library.
+  nsCOMPtr<sbIMediaList> list = aRequest->list;
+  NS_ENSURE_TRUE(list, NS_ERROR_FAILURE);
+
+  sbAutoString timestampStr((PRUint64)(ts / PR_MSEC_PER_SEC));
+  rv = list->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
+                         timestampStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
