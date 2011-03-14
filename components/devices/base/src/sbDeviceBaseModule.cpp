@@ -40,6 +40,7 @@
 #include "sbDeviceCapabilities.h"
 #include "sbDeviceCapabilitiesUtils.h"
 #include "sbDeviceCapsCompatibility.h"
+#include "sbDeviceLibrarySyncDiff.h"
 #include "sbDeviceStatus.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbAudioFormatType);
@@ -47,6 +48,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbVideoFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilitiesUtils);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapsCompatibility);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceLibrarySyncDiff);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceStatus);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFormatTypeConstraint);
@@ -86,6 +88,13 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
     SONGBIRD_DEVICECAPSCOMPATIBILITY_CID,
     SONGBIRD_DEVICECAPSCOMPATIBILITY_CONTRACTID,
     sbDeviceCapsCompatibilityConstructor
+  },
+
+  {
+    SONGBIRD_DEVICELIBRARYSYNCDIFF_DESCRIPTION,
+    SONGBIRD_DEVICELIBRARYSYNCDIFF_CID,
+    SONGBIRD_DEVICELIBRARYSYNCDIFF_CONTRACTID,
+    sbDeviceLibrarySyncDiffConstructor
   },
 
   {

@@ -26,6 +26,7 @@ DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
+        @top_srcdir@/components/library/base/src/ \
         @top_srcdir@/components/moz/strings/src/
 
 include $(DEPTH)/build/autodefs.mk
@@ -41,12 +42,16 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceLibrary.cpp \
            sbDeviceLibraryHelpers.cpp \
            sbDeviceLibraryMediaSyncSettings.cpp \
+           sbDeviceLibrarySyncDiff.cpp \
            sbDeviceLibrarySyncSettings.cpp \
            sbDeviceProperties.cpp \
            sbDeviceCapabilities.cpp \
            sbDeviceStatus.cpp \
            sbDeviceCapabilitiesUtils.cpp \
            $(NULL)
+
+# From components/library/base/src/
+CPP_SRCS += sbLibraryChangeset.cpp
 
 # From /components/moz/strings/src/
 CPP_SRCS += sbTArrayStringEnumerator.cpp
