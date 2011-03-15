@@ -39,6 +39,7 @@
 
 // Mozilla includes
 #include <nsCRT.h>
+#include <nsDirectoryServiceDefs.h>
 #include <nsStringAPI.h>
 #include <nsIFile.h>
 #include <nsIFileURL.h>
@@ -48,6 +49,25 @@
 #include <nsUnicharUtils.h>
 
 #define PERMISSIONS_FILE  0644
+
+#ifndef MFM_MUSIC_FOLDER_KEY
+# if defined(XP_MACOSX)
+#   define MFM_MUSIC_FOLDER_KEY NS_OSX_MUSIC_DOCUMENTS_DIR
+# else
+#   define MFM_MUSIC_FOLDER_KEY "Music"
+# endif
+#endif // #ifndef MFM_MUSIC_FOLDER_KEY
+
+#ifndef MFM_VIDEO_FOLDER_KEY
+# if defined(XP_MACOSX)
+#   define MFM_VIDEO_FOLDER_KEY NS_OSX_MOVIE_DOCUMENTS_DIR
+# else
+#   define MFM_VIDEO_FOLDER_KEY "Video"
+# endif
+#endif // #ifndef MFM_MUSIC_FOLDER_KEY
+
+#define _MFM_SEPARATOR ":"
+
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediaFileManager, sbIMediaFileManager);
 
@@ -99,9 +119,7 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
 {
   TRACE(("%s", __FUNCTION__));
 
-  NS_NAMED_LITERAL_STRING(KEY_MEDIA_FOLDER, "media-folder");
   NS_NAMED_LITERAL_STRING(KEY_FILE_FORMAT, "file-format");
-  NS_NAMED_LITERAL_STRING(KEY_DIR_FORMAT, "dir-format");
 
   nsresult rv;
 
@@ -155,45 +173,15 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
   // separators) and save for later.
   nsString_Split(NS_ConvertUTF8toUTF16(fileFormatString),
                  NS_LITERAL_STRING(","),
-                 mTrackNameConfig);
+                 mTrackNameTemplate);
 
-  // Get the Folder Format
-  nsCString dirFormatString;
-  rv = properties->HasKey(KEY_DIR_FORMAT, &hasKey);
+  rv = InitFolderNameTemplates(properties);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (hasKey) {
-    rv = properties->GetPropertyAsACString(KEY_DIR_FORMAT, dirFormatString);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    rv = mPrefBranch->GetCharPref(PREF_MFM_DIRFORMAT,
-                                  getter_Copies(dirFormatString));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
-  // Split the string on , character (odd entries are properties, even ones are
-  // separators) and save for later.
-  nsString_Split(NS_ConvertUTF8toUTF16(dirFormatString),
-                 NS_LITERAL_STRING(","),
-                 mFolderNameConfig);
+  rv = InitMediaFoldersMap(properties);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mInitialized = PR_TRUE;
-
-  // Grab our Media Managed Folder
-  nsCOMPtr<nsIFile> mediaFolder;
-  rv = properties->HasKey(KEY_MEDIA_FOLDER, &hasKey);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (hasKey) {
-    rv = properties->GetPropertyAsInterface(KEY_MEDIA_FOLDER,
-                                            NS_GET_IID(nsIFile),
-                                            getter_AddRefs(mediaFolder));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  rv = CheckManagementFolder(mediaFolder);
-  if (NS_FAILED(rv)) {
-    // We don't want to throw an error since this could be because the drive
-    // was removed, we will handle that error on the first OrganizeItem call.
-    TRACE(("%s: Unable to get management folder", __FUNCTION__));
-  }
 
   return NS_OK;
 }
@@ -233,8 +221,8 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   // only copy to or move in that folder. We also need to make sure we have the
   // management folder, if not get it from the preferences.
 
-  // First see if we have the management folder, if not get it from preferences
-  rv = CheckManagementFolder(nsnull);
+  // First see if we have a management folder for this media item
+  rv = CheckManagementFolder(aMediaItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Now make sure that we're operating on a file
@@ -379,8 +367,8 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
 
   nsresult rv;
 
-  // First see if we have the management folder, if not get it from preferences
-  rv = CheckManagementFolder(nsnull);
+  // First see if we have a management folder for this media item
+  rv = CheckManagementFolder(aItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Next make sure that we're operating on a file
@@ -433,7 +421,10 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
   } else if (aManageType & sbIMediaFileManager::MANAGE_COPY) {
     // Since we are only copying and not organizing the folder path just get
     // the root of the managed folder.
-    rv = mMediaFolder->Clone(getter_AddRefs(newItemFile));
+    nsCOMPtr<nsIFile> mediaFolder;
+    rv = GetMediaFolder(aItem, getter_AddRefs(mediaFolder));
+    NS_ENSURE_SUCCESS(rv, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
+    rv = mediaFolder->Clone(getter_AddRefs(newItemFile));
     NS_ENSURE_SUCCESS(rv, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
   } else {
     // neither move nor copy is set, we need to abort
@@ -471,6 +462,342 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
 
   newItemFile.forget(_retval);
 
+  return NS_OK;
+}
+
+nsresult
+sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+
+  // There will be at most two media folders, one for audio and one
+  // for video:
+  mMediaFolders.Init(2);
+
+  PRBool ok = PR_FALSE;
+
+  // Check the property bag for a custom media folder.  A custom
+  // folder, if provided, will override the default folders:
+  if (aProperties) {
+    NS_NAMED_LITERAL_STRING(KEY_CUSTOM_MEDIA_FOLDER, "media-folder");
+    PRBool hasKey = PR_FALSE;
+    rv = aProperties->HasKey(KEY_CUSTOM_MEDIA_FOLDER, &hasKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasKey) {
+      nsCOMPtr<nsIFile> customFolder;
+      rv = aProperties->GetPropertyAsInterface(KEY_CUSTOM_MEDIA_FOLDER,
+                                               NS_GET_IID(nsIFile),
+                                               getter_AddRefs(customFolder));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Got a custom media folder.  Set it as the default and only folder
+      // for all content types and return.  The empty key designates the
+      // default folder to use if no other folder is defined for the desired
+      // content type:
+      ok = mMediaFolders.Put(EmptyString(), customFolder);
+      NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+      return NS_OK;
+    }
+  }
+
+  // No custom folder was provided.  Use the designated music and video
+  // folders for the current platform:
+  nsCOMPtr<nsIProperties> dirService =
+    do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> musicDir;
+  rv = dirService->Get(MFM_MUSIC_FOLDER_KEY,
+                       NS_GET_IID(nsIFile),
+                       getter_AddRefs(musicDir));
+  if (NS_SUCCEEDED(rv)) {
+    // Got a music folder for the current platform.  Set it as
+    // the media folder for audio content:
+    ok = mMediaFolders.Put(NS_LITERAL_STRING("audio"), musicDir);
+    NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+  }
+  else {
+    NS_WARNING("Could not get music folder");
+  }
+
+  nsCOMPtr<nsIFile> videoDir;
+  rv = dirService->Get(MFM_VIDEO_FOLDER_KEY,
+                       NS_GET_IID(nsIFile),
+                       getter_AddRefs(videoDir));
+  if (NS_SUCCEEDED(rv)) {
+    // Got a video folder for the current platform.  Set it as
+    // the media folder for video content:
+    ok = mMediaFolders.Put(NS_LITERAL_STRING("video"), videoDir);
+    NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+  }
+  else {
+    NS_WARNING("Could not get video folder");
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaFileManager::GetMediaFolder(sbIMediaItem * aMediaItem,
+                                   nsIFile **     aFolder)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aFolder);
+
+  nsresult rv;
+
+  // Try to get a media folder appropriate for the content
+  // type of the media item:
+  nsAutoString contentType;
+  rv = aMediaItem->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool defined = mMediaFolders.Get(contentType, aFolder);
+  if (!defined) {
+    // No content type-specific media folder.  Try the default
+    // folder for all content types:
+    defined = mMediaFolders.Get(EmptyString(), aFolder);
+    NS_ENSURE_TRUE(defined, NS_ERROR_NOT_AVAILABLE);
+  }
+
+  // Should have a folder now.  Return it:
+  NS_ENSURE_TRUE(*aFolder, NS_ERROR_NOT_AVAILABLE);
+  (*aFolder)->AddRef();
+
+  return NS_OK;
+}
+
+namespace
+{
+  // Context for locating which media folder, if any, a file is in
+  struct OnEachMediaFolder_t
+  {
+    nsIFile * mFile;
+    nsIFile ** mFolder;
+  };
+
+  // Check whether the folder designated by aData contains the file
+  // given in the userArg context:
+  PLDHashOperator
+  OnEachMediaFolder(nsStringHashKey::KeyType  aKey,
+                    nsIFile *                 aData,
+                    void*                     userArg)
+  {
+    TRACE(("%s", __FUNCTION__));
+
+    // Stop iterating if the context is invalid.  If any other
+    // argument is invalid, skip to the next iteration:
+    NS_ENSURE_TRUE(aData, PL_DHASH_NEXT);
+    NS_ENSURE_TRUE(userArg, PL_DHASH_STOP);
+
+    nsresult rv;
+
+    const OnEachMediaFolder_t * context =
+      static_cast<const OnEachMediaFolder_t *>(userArg);
+    NS_ENSURE_TRUE(context->mFile, PL_DHASH_STOP);
+    NS_ENSURE_TRUE(context->mFolder, PL_DHASH_STOP);
+    
+#if DEBUG
+    // For viewing in the debugger:
+    nsAutoString contentType;
+    contentType = aKey;
+    nsAutoString mediaFolder;
+    aData->GetPath(mediaFolder);
+    nsAutoString itemPath;
+    context->mFile->GetPath(itemPath);
+#endif
+
+    PRBool found = PR_FALSE;
+    rv = aData->Contains(context->mFile, PR_TRUE, &found);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+
+    // Keep iterating until a media folder containing the file
+    // is found:
+    if (!found) {
+      return PL_DHASH_NEXT;
+    }
+
+    // Found the containing folder.  Return it:
+    NS_ADDREF(*context->mFolder = aData);
+    return PL_DHASH_STOP;
+  }
+}
+
+nsresult
+sbMediaFileManager::GetMediaFolder(nsIFile *   aFile,
+                                   nsIFile **  aFolder)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  // Search the media folders for one containing the given file:
+  OnEachMediaFolder_t context;
+  context.mFile = aFile;
+  context.mFolder = aFolder;
+  mMediaFolders.EnumerateRead(OnEachMediaFolder, &context);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaFileManager::InitFolderNameTemplates(nsIPropertyBag2 * aProperties)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+
+  NameTemplate nameTemplate;
+  nsAutoString key;
+  PRBool ok = PR_FALSE;
+  
+  mFolderNameTemplates.Init();
+
+  // Check the property bag for a custom media subfolder path template.
+  // A custom template, if provided, will override the default templates:
+  if (aProperties) {
+    NS_NAMED_LITERAL_STRING(KEY_CUSTOM_DIR_TEMPLATE, "dir-format");
+    PRBool hasKey = PR_FALSE;
+    rv = aProperties->HasKey(KEY_CUSTOM_DIR_TEMPLATE, &hasKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasKey) {
+      nsCString templateAsString;
+      rv = aProperties->GetPropertyAsACString(KEY_CUSTOM_DIR_TEMPLATE,
+                                              templateAsString);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Got a custom template.  Split the string on the comma delimiter,
+      // set the result as the default and only template for all media
+      // files, and return:
+      nsString_Split(NS_ConvertUTF8toUTF16(templateAsString),
+                     NS_LITERAL_STRING(","),
+                     nameTemplate);
+      ok = mFolderNameTemplates.Put(EmptyString(), nameTemplate);
+      NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+      return NS_OK;
+    }
+  }
+
+  // No custom media subfolder path template was provided.  Set
+  // mFolderNameTemplates to built-in defaults.  mFolderNameTemplates
+  // maps specific values of specific properties to the template that
+  // should be used when that value describes a file.  For
+  // example, the key
+  //
+  //    http://songbirdnest.com/data/1.0#genre:Zydeco
+  //
+  // could specify the template to use for items with a genre of "Zydeco".
+  // Not all properties are considered, though, when searching for an
+  // appropriate subfolder template for a media item.  Indeed, only the
+  // properties actually used below,
+  //
+  //    SB_PROPERTY_IMPORTTYPE, and
+  //    SB_PROPERTY_CONTENTTYPE
+  //
+  // are considered, in that order (see GetFolderNameTemplate()).
+  //
+  // The empty key designates the default template to use if no other
+  // template is found.
+
+  // Default to an empty template, which will situate a media file
+  // at the root of its media folder:
+  nameTemplate.Clear();
+  ok = mFolderNameTemplates.Put(EmptyString(), nameTemplate);
+  NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+
+  // Audio files default to Artist/Album/
+  nameTemplate.Clear();
+  NS_ENSURE_TRUE(
+    nameTemplate.AppendElement(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME)),
+    NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(
+    nameTemplate.AppendElement(NS_LITERAL_STRING(FILE_PATH_SEPARATOR)),
+    NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(
+    nameTemplate.AppendElement(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME)),
+    NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(
+    nameTemplate.AppendElement(NS_LITERAL_STRING(FILE_PATH_SEPARATOR)),
+    NS_ERROR_OUT_OF_MEMORY);
+
+  key.AssignLiteral(SB_PROPERTY_CONTENTTYPE _MFM_SEPARATOR "audio");
+  ok = mFolderNameTemplates.Put(key, nameTemplate);
+  NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+
+  // Recordings get their own subfolder:
+  sbStringBundle strings;
+  nsAutoString recordingsFolder(strings.Get(STRING_MFM_RECORDINGS_FOLDER,
+                                            "Recordings"));
+  recordingsFolder.AppendLiteral(FILE_PATH_SEPARATOR);
+
+  nameTemplate.Clear();
+  NS_ENSURE_TRUE(
+    nameTemplate.AppendElement(EmptyString()),
+    NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(
+    nameTemplate.AppendElement(recordingsFolder),
+    NS_ERROR_OUT_OF_MEMORY);
+  
+  key.AssignLiteral(SB_PROPERTY_IMPORTTYPE
+                    _MFM_SEPARATOR
+                    SB_VALUE_IMPORTTYPE_FM_RECORDING);
+  ok = mFolderNameTemplates.Put(key, nameTemplate);
+  NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+
+  key.AssignLiteral(SB_PROPERTY_IMPORTTYPE
+                    _MFM_SEPARATOR
+                    SB_VALUE_IMPORTTYPE_VOICE_RECORDING);
+  ok = mFolderNameTemplates.Put(key, nameTemplate);
+  NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaFileManager::GetFolderNameTemplate(sbIMediaItem *  aMediaItem,
+                                          NameTemplate &  aNameTemplate)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  nsresult rv;
+
+  // Consider these properties in this order when searching for
+  // a folder name template for the given media item:
+  static const char * const ORGANIZING_PROPERTIES[] = {
+                              SB_PROPERTY_IMPORTTYPE,
+                              SB_PROPERTY_CONTENTTYPE,
+                              };
+  for (size_t i = 0; i < NS_ARRAY_LENGTH(ORGANIZING_PROPERTIES); i++) {
+    // Construct a key string from the property name and the media item's
+    // value for that property.  For example:
+    //
+    //    http://songbirdnest.com/data/1.0#contentType:audio
+
+    nsAutoString key;
+    nsAutoString suffix;
+    key.AssignLiteral(ORGANIZING_PROPERTIES[i]);
+    rv = aMediaItem->GetProperty(key, suffix);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    key.AppendLiteral(_MFM_SEPARATOR);
+    key.Append(suffix);
+
+    // Check for a folder template with this key:
+    if (mFolderNameTemplates.Get(key, &aNameTemplate)) {
+      // Got a specific template for this property value. Return:
+      return NS_OK;
+    }
+  }
+
+  // No folder name template specific to the media item's properties
+  // was found.  Check for a default template:
+  if (mFolderNameTemplates.Get(EmptyString(), &aNameTemplate)) {
+    return NS_OK;
+  }
+
+  // No default template either.  Return an empty template, which
+  // will situate the media file at the root of its media folder:
+  aNameTemplate.Clear();
   return NS_OK;
 }
 
@@ -524,7 +851,7 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
     fullExtension.Append(NS_ConvertUTF8toUTF16(extension));
   }
   // Format the file name
-  rv = GetFormattedFileFolder(mTrackNameConfig,
+  rv = GetFormattedFileFolder(mTrackNameTemplate,
                               aMediaItem,
                               PR_FALSE,
                               PR_FALSE,           // Trim the full filename
@@ -571,18 +898,24 @@ sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
 
-  // First see if we have the management folder, if not get it from preferences
-  rv = CheckManagementFolder(nsnull);
+  // First see if we have a management folder for this media item
+  rv = CheckManagementFolder(aMediaItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the root of managed directory
-  rv = mMediaFolder->GetPath(aPath);
+  nsCOMPtr<nsIFile> mediaFolder;
+  rv = GetMediaFolder(aMediaItem, getter_AddRefs(mediaFolder));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mediaFolder->GetPath(aPath);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = NormalizeDir(aPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Format the Folder
-  rv = GetFormattedFileFolder(mFolderNameConfig,
+  NameTemplate folderNameTemplate;
+  rv = GetFolderNameTemplate(aMediaItem, folderNameTemplate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = GetFormattedFileFolder(folderNameTemplate,
                               aMediaItem,
                               PR_TRUE,
                               PR_TRUE,          // Trim each folder
@@ -693,7 +1026,7 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
 /**
  * \brief Format a string for a File Name or Folder structure based on the
  *        format spec passed in.
- * \param aFormatSpec - Array of strings alternating between property and
+ * \param aNameTemplate - Array of strings alternating between property and
  *        separator. [property, separator, property...]
  * \param aAppendProperty - When we find a property with no value use "Unknown"
  *        and if this is TRUE append the name of the property so we get values
@@ -708,29 +1041,35 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
  *        This function will append to the aRetVal not replace.
  */
 nsresult
-sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
-                                           sbIMediaItem*       aMediaItem,
-                                           PRBool              aAppendProperty,
-                                           PRBool              aTrimEachProperty,
-                                           nsString            aFileExtension,
-                                           nsString&           aRetVal)
+sbMediaFileManager::GetFormattedFileFolder(
+                                      const NameTemplate &  aNameTemplate,
+                                      sbIMediaItem*         aMediaItem,
+                                      PRBool                aAppendProperty,
+                                      PRBool                aTrimEachProperty,
+                                      nsString              aFileExtension,
+                                      nsString&             aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
   nsresult rv;
 
-  for (PRUint32 i=0; i< aFormatSpec.Length(); i++) {
-    nsString const & configValue = aFormatSpec[i];
+  for (PRUint32 i=0; i< aNameTemplate.Length(); i++) {
+    nsString const & configValue = aNameTemplate[i];
+    // Any empty template term evaluates to an empty string
+    if (configValue.IsEmpty()) {
+      continue;
+    }
+
     if (i % 2 != 0) { // Use ! since we start at 0 not 1
       // Evens are the separators
       // We need to decode these before appending...
-      nsCAutoString unescapedConfigValue;
+      nsCAutoString unescapedValue;
       rv = mNetUtil->UnescapeString(NS_ConvertUTF16toUTF8(configValue),
                                     nsINetUtil::ESCAPE_ALL,
-                                    unescapedConfigValue);
+                                    unescapedValue);
       NS_ENSURE_SUCCESS(rv, rv);
-      aRetVal.AppendLiteral(unescapedConfigValue.get());
+      aRetVal.AppendLiteral(unescapedValue.get());
     } else {
       // Odds are the properties
       // Get the value of the property for the item
@@ -807,52 +1146,30 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
 
 /**
  * \brief Check the managed folder to see if it is available.
- * \param aMediaFolder - Optional folder to use instead of from preferences.
+ * \param aMediaItem - used to select which media folder to check
  */
 nsresult
-sbMediaFileManager::CheckManagementFolder(nsIFile* aMediaFolder)
+sbMediaFileManager::CheckManagementFolder(sbIMediaItem * aMediaItem)
 {
   TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
   nsresult rv;
-  PRBool exists;
 
-  // If we do not already have the media folder saved then get it from either
-  // the pass in parameter or the preferences.
-  if (!mMediaFolder) {
-    if (aMediaFolder) {
-      PRBool success;
-      rv = aMediaFolder->Exists(&success);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
-      rv = aMediaFolder->IsDirectory(&success);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
-      mMediaFolder = do_QueryInterface(aMediaFolder, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-    } else {
-      // Note: prefRoot->GetComplexValue does not work here even passing "folder"
-      // Get the pref branch
-      nsCOMPtr<nsIPrefService> prefRoot =
-        do_GetService("@mozilla.org/preferences-service;1", &rv);
-      NS_ENSURE_SUCCESS (rv, rv);
+  nsCOMPtr<nsIFile> mediaFolder;
+  rv = GetMediaFolder(aMediaItem, getter_AddRefs(mediaFolder));
+  NS_ENSURE_SUCCESS (rv, rv);
 
-      nsCOMPtr<nsIPrefBranch> rootPrefBranch =
-        do_QueryInterface(prefRoot, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = rootPrefBranch->GetComplexValue(PREF_MFM_LOCATION,
-                                           NS_GET_IID(nsILocalFile),
-                                           getter_AddRefs(mMediaFolder));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+  if (!mediaFolder) {
+    return NS_ERROR_FAILURE;
   }
 
   // Always check that the media folder exists since it could have been
-  // dissconnected or removed from the system.
-  if (mMediaFolder) {
-    rv = mMediaFolder->Exists(&exists);
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FILE_TARGET_DOES_NOT_EXIST);
-  }
+  // disconnected or removed from the system.
+  PRBool exists = PR_FALSE;
+  rv = mediaFolder->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(exists, NS_ERROR_FILE_TARGET_DOES_NOT_EXIST);
 
   return NS_OK;
 }
@@ -941,8 +1258,8 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
 
   nsresult rv;
 
-  // First see if we have the management folder, if not get it from preferences
-  rv = CheckManagementFolder(nsnull);
+  // First see if we have a management folder for this media item
+  rv = CheckManagementFolder(aMediaItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure the Src and Dest files are not equal
@@ -954,10 +1271,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   }
 
   // Make sure the new file is under the managed folder
-  PRBool isManaged = PR_FALSE;
-  rv = mMediaFolder->Contains(aDestFile, PR_TRUE, &isManaged);
+  nsCOMPtr<nsIFile> mediaFolder;
+  rv = GetMediaFolder(aDestFile, getter_AddRefs(mediaFolder));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isManaged) {
+  if (!mediaFolder) {
     // aRetVal is false
     return NS_ERROR_INVALID_ARG;
   }
@@ -1022,9 +1339,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the original was in the managed folder do a move instead of a copy/delete
-  rv = mMediaFolder->Contains(aSrcFile, PR_TRUE, &isManaged);
+  mediaFolder.forget();
+  rv = GetMediaFolder(aSrcFile, getter_AddRefs(mediaFolder));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isManaged) {
+  if (!mediaFolder) {
     // Copy since the original is not in the managed folder
     rv = aSrcFile->CopyTo(newParentDir, newFilename);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1094,15 +1412,11 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
   NS_ENSURE_ARG_POINTER(aDirectory);
   nsresult rv;
 
-  // First see if we have the management folder, if not get it from preferences
-  rv = CheckManagementFolder(nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Make sure this folder is under the managed folder
-  PRBool isManaged;
-  rv = mMediaFolder->Contains(aDirectory, PR_TRUE, &isManaged);
+  nsCOMPtr<nsIFile> mediaFolder;
+  rv = GetMediaFolder(aDirectory, getter_AddRefs(mediaFolder));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isManaged) {
+  if (!mediaFolder) {
     TRACE(("%s: Folder Not Managed", __FUNCTION__));
     return NS_OK;
   }
@@ -1156,15 +1470,11 @@ sbMediaFileManager::Delete(nsIFile *aItemFile,
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
 
-  // First see if we have the management folder, if not get it from preferences
-  rv = CheckManagementFolder(nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Make sure this file is under the managed folder
-  PRBool isManaged = PR_FALSE;
-  rv = mMediaFolder->Contains(aItemFile, PR_TRUE, &isManaged);
+  nsCOMPtr<nsIFile> mediaFolder;
+  rv = GetMediaFolder(aItemFile, getter_AddRefs(mediaFolder));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isManaged) {
+  if (!mediaFolder) {
     // aRetVal is false
     return NS_OK;
   }

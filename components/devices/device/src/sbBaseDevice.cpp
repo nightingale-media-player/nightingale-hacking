@@ -2202,84 +2202,6 @@ sbBaseDevice::CreateUniqueMediaFile(nsIURI  *aURI,
   return NS_OK;
 }
 
-/**
- * Returns the URI for the item based on the download folder
- */
-nsresult
-sbBaseDevice::RegenerateFromDownloadFolder(sbIMediaItem * aItem,
-                                           nsIURI ** aURI)
-{
-  nsresult rv;
-
-  static char const SB_DOWNLOAD_FOLDER_PREF[] =
-    "songbird.download.music.folder";
-  NS_NAMED_LITERAL_STRING(SB_DOWNLOAD_DEVICE_CATEGORY,
-                          "Songbird Download Device");
-
-  nsCOMPtr<nsIPrefBranch> folderPrefs =
-    do_ProxiedGetService("@mozilla.org/preferences-service;1",
-                         &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsISupportsString> supportsString;
-  // Get the download folder
-  rv = folderPrefs->GetComplexValue(SB_DOWNLOAD_FOLDER_PREF,
-                                    NS_GET_IID(nsISupportsString),
-                                    getter_AddRefs(supportsString));
-
-  nsCOMPtr<nsILocalFile> downloadFolderFile;
-
-  // If we didn't get it from the prefs ask the download device helper
-  if (NS_SUCCEEDED(rv) && supportsString) {
-    nsString folderPath;
-    rv = supportsString->GetData(folderPath);
-    NS_ENSURE_SUCCESS(rv, rv);
-    downloadFolderFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = downloadFolderFile->InitWithPath(folderPath);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    // use default value; if any of this fails, the function doesn't work at all
-    nsCOMPtr<sbIDownloadDeviceHelper> deviceHelper =
-      do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsIFile> downloadDir;
-    rv = deviceHelper->GetDefaultMusicFolder(getter_AddRefs(downloadDir));
-    NS_ENSURE_SUCCESS(rv, rv);
-    downloadFolderFile = do_QueryInterface(downloadDir, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<nsIURI> uri;
-  rv = sbLibraryUtils::GetFileContentURI(downloadFolderFile,
-                                         getter_AddRefs(uri));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Have to use nsIURL's SetFileName on filename in case it's escaped
-  nsCString filename;
-  rv = GenerateFilename(aItem, filename);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURL> downloadFolderURL =
-    do_QueryInterface(uri, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = downloadFolderURL->SetFileName(filename);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIFileURL> mediaFileURL =
-    do_QueryInterface(downloadFolderURL, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sbInvalidateFileURLCache(mediaFileURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = CallQueryInterface(mediaFileURL, aURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 nsresult
 sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
                                  nsIURI **_retval)
@@ -2289,26 +2211,12 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
 
   nsresult rv;
 
-  // This is disabled - but keeping the logic here because we'll be reinstating
-  // bits of this once 2-way-sync lands.
-  PRBool mediaManagementEnabled = PR_FALSE;
-
-  if (!mediaManagementEnabled) {
-    rv = RegenerateFromDownloadFolder(aItem, _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
-
-  // Note: Keeping the rest of this code here because we'll use it for
-  // import/2-way sync (at which point the above 'RegenerateFromDownloadFolder'
-  // will go away).
-
   nsCOMPtr<sbIMediaFileManager> fileMan =
     do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO:Ratatat: pass non-null properties here (or modify API?) to get files
-  // organised as we want them for import.
+  // Init with nsnull to get the default file management behavior for
+  // items in the main library:
   rv = fileMan->Init(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 

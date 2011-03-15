@@ -575,15 +575,6 @@ public:
                                  nsIURI  **aUniqueFileURI);
 
   /**
-   * Generates a URI for the item
-   * \param aItem The item we're generating a URI for
-   * \param aFilename The URI that was generated
-   */
-  nsresult
-  RegenerateFromDownloadFolder(sbIMediaItem * aItem,
-                               nsIURI ** aURI);
-
-  /**
    * Start processing device requests.
    */
   nsresult ReqProcessingStart();
