@@ -2380,6 +2380,9 @@ nsresult sbBaseDevice::Init()
     return rv;
   }
 
+  rv = GetMainLibrary(getter_AddRefs(mMainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Initialize the media folder URL table.
   NS_ENSURE_TRUE(mMediaFolderURLTable.Init(), NS_ERROR_OUT_OF_MEMORY);
 
@@ -5215,6 +5218,62 @@ sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
 
   // Media list should be synced.
   *aShouldSync = PR_TRUE;
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncMainLibraryFlag(sbIMediaItem * aMediaItem)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_STATE(mMainLibrary);
+
+  nsresult rv;
+
+  // Get the guid of the original item, if any, that aMediaItem was
+  // copied from.  The origin _library_ guid is ignored here to
+  // avoid an extra check.  This is more efficient on configurations
+  // where few items have been copied to the device from a library
+  // other than the main library:
+  nsAutoString originItemGuid;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                               originItemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the last saved value of SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY:
+  nsAutoString wasInMainLibrary;
+  rv = aMediaItem->GetProperty(
+    NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+    wasInMainLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Normalize the value to facilitate the comparison below:
+  if (wasInMainLibrary.IsEmpty())
+  {
+    wasInMainLibrary.AppendInt(0);
+  }
+
+  // Check whether the item is in the main library:
+  nsAutoString isInMainLibrary;
+  if (originItemGuid.IsEmpty()) {
+    isInMainLibrary.AppendInt(0);
+  }
+  else {
+    nsCOMPtr<sbIMediaItem> originItem;
+    // GetMediaItem() returns an error if the item is not present, but
+    // this behavior--and what error to expect--is undocumented.  Just
+    // ignore the result code and test the returned item instead.
+    mMainLibrary->GetMediaItem(originItemGuid, getter_AddRefs(originItem));
+    isInMainLibrary.AppendInt(originItem != NULL);
+  }
+
+  // Update SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if it changed:
+  if (isInMainLibrary != wasInMainLibrary) {
+    rv = aMediaItem->SetProperty(
+      NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+      isInMainLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

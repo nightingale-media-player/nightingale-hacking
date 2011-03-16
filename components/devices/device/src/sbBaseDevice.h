@@ -683,6 +683,7 @@ protected:
   PRUint32 mSyncState;            // State of how to handle sync requsts
 
   nsCOMPtr<sbIDeviceLibrary> mDefaultLibrary;
+  nsCOMPtr<sbILibrary> mMainLibrary;
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
@@ -1463,6 +1464,15 @@ protected:
   nsresult ShouldSyncMediaList(sbIMediaList* aMediaList,
                                PRBool*       aShouldSync);
 
+  /**
+   * Check whether a media item points to a currently existing main library
+   * item as its origin, and update SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY
+   * accordingly.  This function is intended for items in the device's
+   * library.
+   *
+   * \param aMediaItem          Media item to check.
+   */
+  nsresult SyncMainLibraryFlag(sbIMediaItem * aMediaItem);
 
   /**
    * Show a dialog box to ask the user if they would like the device ejected
