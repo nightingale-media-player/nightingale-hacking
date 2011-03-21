@@ -69,6 +69,7 @@
 #include <sbIDeviceCapabilities.h>
 #include <sbIDeviceInfoRegistrar.h>
 #include <sbIDeviceLibraryMediaSyncSettings.h>
+#include <sbIDeviceLibrarySyncDiff.h>
 #include <sbIDeviceLibrarySyncSettings.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceHelper.h>
@@ -102,6 +103,7 @@
 #include <sbITranscodingConfigurator.h>
 
 #include <sbArray.h>
+#include <sbArrayUtils.h>
 #include <sbDeviceLibrary.h>
 #include <sbDeviceStatus.h>
 #include <sbFileUtils.h>
@@ -373,7 +375,7 @@ sbBaseDevice::TransferRequest::~TransferRequest()
   NS_IF_RELEASE(transcodeProfile);
 }
 
-sbBaseDevice::sbBaseDevice() :
+sbBaseDevice::sbBaseDevice(bool aUseOriginForPlaylists) :
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
   mSyncState(sbBaseDevice::SYNC_STATE_NORMAL),
@@ -387,6 +389,7 @@ sbBaseDevice::sbBaseDevice() :
   mSyncType(0),
   mEnsureSpaceChecked(false),
   mConnected(PR_FALSE),
+  mUseOriginForPlaylists(aUseOriginForPlaylists),
   mVolumeLock(nsnull)
 {
 #ifdef PR_LOGGING
@@ -3967,18 +3970,18 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   }
 
   // Produce the sync change set.
-  nsCOMPtr<sbILibraryChangeset> changeset;
-  rv = SyncProduceChangeset(aRequest, getter_AddRefs(changeset));
+  nsCOMPtr<sbILibraryChangeset> exportChangeset;
+  nsCOMPtr<sbILibraryChangeset> importChangeset;
+  rv = SyncProduceChangeset(aRequest,
+                            getter_AddRefs(exportChangeset),
+                            getter_AddRefs(importChangeset));
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (IsRequestAborted()) {
     return NS_ERROR_ABORT;
   }
 
-  // Apply changes to the destination library.
-  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  // Setup the device state for sync'ing
   rv = SetState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3995,7 +3998,17 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Reset the sync type for the upcoming sync
   mSyncType = TransferRequest::REQUESTBATCH_UNKNOWN;
 
-  rv = SyncApplyChanges(dstLib, changeset);
+  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> mainLib;
+  rv = GetMainLibrary(getter_AddRefs(mainLib));
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get the main library");
+
+  rv = ExportToDevice(dstLib, exportChangeset);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ImportFromDevice(mainLib, dstLib, importChangeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SendSyncCompleteRequest();
@@ -4731,62 +4744,138 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   return NS_OK;
 }
 
+namespace {
+
+  nsresult GetMediaSettingsValues(sbIDeviceLibrarySyncSettings * aSyncSettings,
+                                  PRUint32 aMediaType,
+                                  PRUint32 * aMgmtType,
+                                  PRBool * aImport,
+                                  nsIMutableArray * aSelectedPlaylists)
+  {
+    NS_ENSURE_ARG_POINTER(aSyncSettings);
+    NS_ENSURE_ARG_POINTER(aMgmtType);
+    NS_ENSURE_ARG_POINTER(aImport);
+    NS_ENSURE_ARG_POINTER(aSelectedPlaylists);
+
+    nsresult rv;
+
+    nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> settings;
+    rv = aSyncSettings->GetMediaSettings(aMediaType,
+                                         getter_AddRefs(settings));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = settings->GetMgmtType(aMgmtType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (*aMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS) {
+      nsCOMPtr<nsIArray> playlists;
+      rv = settings->GetSelectedPlaylists(getter_AddRefs(playlists));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = sbAppendnsIArray(playlists,
+                            aSelectedPlaylists);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = settings->GetImport(aImport);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+}
+
 nsresult
 sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
-                                   sbILibraryChangeset** aChangeset)
+                                   sbILibraryChangeset** aExportChangeset,
+                                   sbILibraryChangeset** aImportChangeset)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aRequest);
-  NS_ENSURE_ARG_POINTER(aChangeset);
+  NS_ENSURE_ARG_POINTER(aExportChangeset);
+  NS_ENSURE_ARG_POINTER(aImportChangeset);
 
   // Function variables.
   nsresult rv;
 
   // Get the sync source and destination libraries.
-  nsCOMPtr<sbILibrary> srcLib = do_QueryInterface(aRequest->item, &rv);
+  nsCOMPtr<sbILibrary> mainLib = do_QueryInterface(aRequest->item, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set up to force a diff on all media lists so that all source and
-  // destination media lists can be compared with each other.
-  rv = SyncForceDiffMediaLists(dstLib);
+  nsCOMPtr<sbIDeviceLibrary> devLib = do_QueryInterface(aRequest->list, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
-  rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  rv = devLib->GetSyncSettings(getter_AddRefs(syncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the list of sync media lists.
-  nsCOMPtr<nsIArray> syncList;
-  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncList));
+  nsCOMPtr<nsIMutableArray> selectedPlaylists =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  PRUint32 audioMgmtType;
+  PRBool audioImport;
+  rv = GetMediaSettingsValues(syncSettings,
+                              sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                              &audioMgmtType,
+                              &audioImport,
+                              selectedPlaylists);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the diffing service.
-  nsCOMPtr<sbILibraryDiffingService>
-    diffService = do_GetService(SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID,
-                                &rv);
+  PRUint32 videoMgmtType;
+  PRBool videoImport;
+  rv = GetMediaSettingsValues(syncSettings,
+                              sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                              &videoMgmtType,
+                              &videoImport,
+                              selectedPlaylists);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Produce the sync changeset.
-  nsCOMPtr<sbILibraryChangeset> changeset;
-  rv = diffService->CreateMultiChangeset(syncList,
-                                         dstLib,
-                                         getter_AddRefs(changeset));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Figure out the sync media types we're interested in
+  PRUint32 syncMediaTypes = 0;
+  if (audioMgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
+    syncMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO;
+  }
+  if (videoMgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
+    syncMediaTypes |= sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
+  }
 
-  // Return results.
-  NS_ADDREF(*aChangeset = changeset);
+  PRUint32 syncFlag = sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_PLAYLISTS;
+  // If we're sync'ing everything or everything of one but not the other there
+  // is no need for playlists
+  if ((audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL &&
+         videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) ||
+      (audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL &&
+         videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) ||
+      (audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE &&
+         videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL)) {
+    selectedPlaylists = nsnull;
+    syncFlag = sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_ALL;
+  }
+
+  // If we're importing either audio, video, or both set the import flag
+  if (audioImport || videoImport) {
+    syncFlag |= sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT;
+  }
+
+  nsCOMPtr<sbIDeviceLibrarySyncDiff> syncDiff =
+    do_CreateInstance(SONGBIRD_DEVICELIBRARYSYNCDIFF_CONTRACTID, &rv);
+
+  rv = syncDiff->GenerateSyncLists(syncFlag,
+                                   UseOriginForPlaylists(),
+                                   syncMediaTypes,
+                                   mainLib,
+                                   devLib,
+                                   selectedPlaylists,
+                                   aExportChangeset,
+                                   aImportChangeset);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
-                               sbILibraryChangeset* aChangeset)
+sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
+                             sbILibraryChangeset* aChangeset)
 {
   // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aDstLibrary);
+  NS_ENSURE_ARG_POINTER(aDevLibrary);
   NS_ENSURE_ARG_POINTER(aChangeset);
 
   // Function variables.
@@ -4910,11 +4999,11 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   nsCOMPtr<nsISimpleEnumerator> addItemEnum;
   rv = addItemList->Enumerate(getter_AddRefs(addItemEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstLibrary->AddSome(addItemEnum);
+  rv = aDevLibrary->AddSome(addItemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (IsRequestAborted()) {
-    rv = sbDeviceUtils::DeleteByProperty(aDstLibrary,
+    rv = sbDeviceUtils::DeleteByProperty(aDevLibrary,
                                          NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                          NS_LITERAL_STRING("1"));
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove partial added items");
@@ -4927,7 +5016,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     if (IsRequestAborted()) {
       return NS_ERROR_ABORT;
     }
-    rv = SyncAddMediaList(aDstLibrary, addMediaListList[i]);
+    rv = SyncAddMediaList(aDevLibrary, addMediaListList[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -5123,42 +5212,6 @@ sbBaseDevice::SyncMergeSetToLatest(nsAString const & aNewValue,
   return NS_OK;
 }
 
-nsresult
-sbBaseDevice::SyncForceDiffMediaLists(sbIMediaList* aMediaList)
-{
-  TRACE(("%s", __FUNCTION__));
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aMediaList);
-
-  // Function variables.
-  nsresult rv;
-
-  // Get the list of media lists.  Do nothing if none available.
-  nsCOMPtr<nsIArray> mediaListList;
-  rv = aMediaList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                      NS_LITERAL_STRING("1"),
-                                      getter_AddRefs(mediaListList));
-  if (NS_FAILED(rv))
-    return NS_OK;
-
-  // Set the force diff property on each media list.
-  PRUint32 mediaListCount;
-  rv = mediaListList->GetLength(&mediaListCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-  for (PRUint32 i = 0; i < mediaListCount; i++) {
-    // Get the media list.
-    nsCOMPtr<sbIMediaList> mediaList = do_QueryElementAt(mediaListList, i, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Set the force diff property.
-    rv = mediaList->SetProperty
-                      (NS_LITERAL_STRING(DEVICE_PROPERTY_SYNC_FORCE_DIFF),
-                       NS_LITERAL_STRING("1"));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
 
 nsresult
 sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,

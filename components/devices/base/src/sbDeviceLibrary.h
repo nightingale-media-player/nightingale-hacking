@@ -338,6 +338,7 @@ private:
 #define PREF_SYNC_PREFIX    "library."
 #define PREF_SYNC_BRANCH    ".sync."
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
+#define PREF_SYNC_IMPORT    "import"
 #define PREF_SYNC_LISTS     "playlists"
 #define PREF_SYNC_ROOT      "root"
 #define PREF_SYNC_FOLDER    "syncFolder"

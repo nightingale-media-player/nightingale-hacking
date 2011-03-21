@@ -38,7 +38,7 @@ interface sbIDeviceLibraryPlaylistListener : nsISupports
   void onPlaylistRemoved(in sbIMediaList aPlaylist); 
 };
 
-[scriptable, uuid(99737096-40c0-4a4b-b78b-cadaac475e8e)]
+[scriptable, uuid(997fc0cd-a391-4b12-ac92-3f3a4fa80425)]
 interface sbIDeviceLibraryMediaSyncSettings : nsISupports
 {
   /** 
@@ -51,6 +51,11 @@ interface sbIDeviceLibraryMediaSyncSettings : nsISupports
   const unsigned long SYNC_MGMT_NONE                  = 0;
   const unsigned long SYNC_MGMT_ALL                   = 1;
   const unsigned long SYNC_MGMT_PLAYLISTS             = 2;
+  
+  /**
+   * Determines whether we should import media items from the device during sync
+   */
+  attribute boolean import;
   
   /**
    * Sets the management type for a given content type 

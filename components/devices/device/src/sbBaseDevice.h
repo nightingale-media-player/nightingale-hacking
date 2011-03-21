@@ -81,10 +81,6 @@ class sbITranscodeProfile;
 class sbITranscodeAlbumArt;
 class sbIMediaFormat;
 
-/* Property used to force a sync diff. */
-#define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
-          "http://songbirdnest.com/device/1.0#forceDiff"
-
 // Device property XML namespace.
 #define SB_DEVICE_PROPERTY_NS "http://songbirdnest.com/device/1.0"
 
@@ -250,7 +246,7 @@ public:
   NS_IMETHOD CancelRequests();
 public:
 
-  sbBaseDevice();
+  sbBaseDevice(bool aUseOriginForPlaylists = false);
   virtual ~sbBaseDevice();
 
   /**
@@ -722,7 +718,7 @@ protected:
   PRBool mConnected;
   nsCOMPtr<nsITimer> mDeferredSetupDeviceTimer;
   nsRefPtr<sbDeviceRequestThreadQueue> mRequestThreadQueue;
-
+  const bool mUseOriginForPlaylists;
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -1381,21 +1377,23 @@ protected:
    * return the change set in aChangeset.
    *
    * \param aRequest            Sync request data record.
-   * \param aChangeset          Sync request change set.
+   * \param aSyncChangeset      Sync request change set.
+   * \param aImportChangeset    Changes for the import operation
    */
   nsresult SyncProduceChangeset(TransferRequest*      aRequest,
-                                sbILibraryChangeset** aChangeset);
+                                sbILibraryChangeset** aSyncChangeset,
+                                sbILibraryChangeset** aImportChangeset);
 
   /**
-   * Apply the sync change set specified by aChangeset to the device library
-   * specified by aDstLibrary.
+   * Using the changeset export changes to media items from the main library
+   * to a device library
    *
    * \param aDstLibrary         Device library to which to apply sync change
    *                            set.
    * \param aChangeset          Set of sync changes.
    */
-  nsresult SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
-                            sbILibraryChangeset* aChangeset);
+  nsresult ExportToDevice(sbIDeviceLibrary*    aDstLibrary,
+                          sbILibraryChangeset* aChangeset);
 
   /**
    * Add the media list specified by aMediaList to the device library specified
@@ -1438,19 +1436,6 @@ protected:
   nsresult SyncMergeSetToLatest(nsAString const & aNewValue,
                                 nsAString const & aOldValue,
                                 nsAString & aMergedValue);
-
-  /**
-   * Set up all media lists within the media list specified by aMediaList to
-   * trigger a difference when syncing.  The media list aMediaList is not set up
-   * to force a difference.
-   *
-   * This function triggers a difference by setting a property that should not
-   * be set on any source media lists.
-   *
-   * \param aMediaList          Media list containing media lists to force
-   *                            differences.
-   */
-  nsresult SyncForceDiffMediaLists(sbIMediaList* aMediaList);
 
   /**
    * Determine whether the media list specified by aMediaList should be synced
@@ -1698,6 +1683,45 @@ protected:
                                               nsString*           aData,
                                               void*               aUserArg);
   nsresult  GetExcludedFolders(nsTArray<nsString> & aExcludedFolders);
+
+  /**
+   * Imports from the device library those media items and media lists marked
+   * as existing only on the device but not in the main library. Caller can
+   * provide a changeset or the import method will perform a diff and create
+   * it's own changeset if one is not provided.
+   *
+   * \param aImportToLibrary The library that we are importing to
+   * \param aImportFromDeviceLibrary The device library to import from
+   * \param aImportChanges Optional list of changes that identify items to be
+   *                       imported.
+   */
+  nsresult ImportFromDevice(sbILibrary * aImportToLibrary,
+                            sbIDeviceLibrary * aImportFromDeviceLibrary,
+                            sbILibraryChangeset * aImportChanges);
+
+  /**
+   * Imports the list of media lists that have changed
+   * \param aMediaListChangeList the change requests for media lists to import
+   */
+  nsresult ImportMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList);
+
+  /**
+   * Returns boolean flags for whether we should import audio and/or video
+   * \param aSettings A sync settings object
+   * \param aImportAudio Returns whether audio should be imported
+   * \param aImportVideo Returns whether video should be imported
+   */
+  static nsresult GetImportSettings(sbIDeviceLibrary * aDevLibrary,
+                                    PRBool * aImportAudio,
+                                    PRBool * aImportVideo);
+
+  /**
+   * Determines whether we should use origin guids for playlists
+   */
+  bool UseOriginForPlaylists() const
+  {
+    return mUseOriginForPlaylists;
+  }
 };
 
 

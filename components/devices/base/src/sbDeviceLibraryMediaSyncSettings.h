@@ -87,6 +87,7 @@ private:
   PlaylistSelection mPlaylistsSelection;
   nsString mSyncFolder;
   nsCOMPtr<nsIFile> mSyncFromFolder;
+  bool mImport;
   bool mChanged;
   PRLock * mLock;
   // Non-owning reference to our owner. We should never live past

@@ -80,6 +80,7 @@ sbDeviceLibraryMediaSyncSettings::sbDeviceLibraryMediaSyncSettings(
                                     PRLock * aLock) :
   mSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE),
   mMediaType(aMediaType),
+  mImport(true),
   mLock(aLock),
   mSyncSettings(aSyncSettings)
 {
@@ -105,6 +106,7 @@ sbDeviceLibraryMediaSyncSettings::Assign(
 
   mSyncMgmtType = aSettings->mSyncMgmtType;
   mMediaType = aSettings->mMediaType;
+  mImport = aSettings->mImport;
 
   rv = sbCopyHashtable<PlaylistHashtableTraits>(
                                                aSettings->mPlaylistsSelection,
@@ -142,6 +144,8 @@ sbDeviceLibraryMediaSyncSettings::CreateCopy(
                                               mPlaylistsSelection,
                                               newSettings->mPlaylistsSelection);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  newSettings->mImport = mImport;
 
   newSettings->mSyncFolder = mSyncFolder;
   if (mSyncFromFolder) {
@@ -182,6 +186,31 @@ sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
   {
     nsAutoLock lock(mLock);
     mSyncMgmtType = aSyncMgmtType;
+  }
+
+  // Release the lock before dispatching sync settings change event
+  Changed();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibraryMediaSyncSettings::GetImport(PRBool *aImport)
+{
+  NS_ENSURE_ARG_POINTER(aImport);
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  nsAutoLock lock(mLock);
+  *aImport = mImport ? PR_TRUE : PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibraryMediaSyncSettings::SetImport(PRBool aImport)
+{
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+
+  {
+    nsAutoLock lock(mLock);
+    mImport = aImport == PR_TRUE;
   }
 
   // Release the lock before dispatching sync settings change event

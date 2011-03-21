@@ -105,6 +105,18 @@ private:
                            PRUint32 aContentType,
                            PRUint32 & aMgmtTypes);
 
+  /**
+   * Returns the import flag for a given content type that was stored as a pref.
+   * This defaults to not importing if the pref does not exist.
+   * \param aDevice The device used to retrieve the preference from
+   * \param aMediaType The media type to look up the import flag.
+   *                   sbIDeviceLibrary::MEDIATYPE_*
+   * \param aImport The returned import flag
+   */
+  nsresult GetImportPref(sbIDevice * aDevice,
+                         PRUint32 aMediaType,
+                         PRBool & aImport);
+
   static nsresult ReadPRUint32(sbIDevice * aDevice,
                                nsAString const & aPrefKey,
                                PRUint32 & aInt,
@@ -132,6 +144,15 @@ private:
                         sbDeviceLibraryMediaSyncSettings ** aMediaSyncSettings);
 
   nsresult GetMgmtTypePrefKey(PRUint32 aContentType, nsAString& aPrefKey);
+
+  /**
+   * Returns the preference key for the import flag of media settings
+   * \param aMediaType The media type to get the key
+   *                   sbIDeviceLibrary::MEDIATYPE_*
+   * \param aPrefKey The returned preference key
+   */
+  nsresult GetImportPrefKey(PRUint32 aMediaType,
+                            nsAString& aPrefKey);
 
   nsresult GetSyncListsPrefKey(PRUint32 aContentType, nsAString& aPrefKey);
 

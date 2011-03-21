@@ -458,6 +458,44 @@ sbDeviceLibrarySyncSettings::GetMgmtTypePref(sbIDevice * aDevice,
 }
 
 nsresult
+sbDeviceLibrarySyncSettings::GetImportPref(sbIDevice * aDevice,
+                                           PRUint32 aContentType,
+                                           PRBool & aImport)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+
+  nsresult rv;
+
+  nsString prefKey;
+  rv = GetImportPrefKey(aContentType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> var;
+  rv = aDevice->GetPreference(prefKey, getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // check if a value exists
+  PRUint16 dataType;
+  rv = var->GetDataType(&dataType);
+  // If there is no value default to false
+  if (dataType == nsIDataType::VTYPE_VOID ||
+      dataType == nsIDataType::VTYPE_EMPTY)
+  {
+    aImport = PR_FALSE;
+  } else {
+    // has a value
+    rv = var->GetAsBool(&aImport);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbDeviceLibrarySyncSettings::ReadPRUint32(sbIDevice * aDevice,
                                           nsAString const & aPrefKey,
                                           PRUint32 & aInt,
@@ -545,6 +583,13 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
                                           aMediaType,
                                           mLock);
   NS_ENSURE_TRUE(settings, NS_ERROR_OUT_OF_MEMORY);
+
+  // Set the import flag
+  PRBool import;
+  rv = GetImportPref(aDevice, aMediaType, import);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = settings->SetImport(import);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsString prefKey;
   rv = GetMgmtTypePrefKey(aMediaType, prefKey);
@@ -668,6 +713,13 @@ sbDeviceLibrarySyncSettings::WriteMediaSyncSettings(
                  aMediaSyncSettings->mSyncMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetImportPrefKey(aMediaType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = WritePref(aDevice,
+                 prefKey,
+                 aMediaSyncSettings->mImport);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = GetSyncFromFolderPrefKey(aMediaType, prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -787,6 +839,26 @@ sbDeviceLibrarySyncSettings::GetMgmtTypePrefKey(PRUint32 aContentType,
   aPrefKey.Assign(NS_LITERAL_STRING(PREF_SYNC_PREFIX));
   aPrefKey.Append(mDeviceLibraryGuid);
   aPrefKey.AppendLiteral(PREF_SYNC_BRANCH PREF_SYNC_MGMTTYPE);
+
+  aPrefKey.AppendLiteral(gMediaType[aContentType]);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrarySyncSettings::GetImportPrefKey(PRUint32 aContentType,
+                                              nsAString& aPrefKey)
+{
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_STATE(!mDeviceLibraryGuid.IsEmpty());
+
+
+  // Get the preference key
+  aPrefKey.Assign(NS_LITERAL_STRING(PREF_SYNC_PREFIX));
+  aPrefKey.Append(mDeviceLibraryGuid);
+  aPrefKey.AppendLiteral(PREF_SYNC_BRANCH PREF_SYNC_IMPORT);
 
   aPrefKey.AppendLiteral(gMediaType[aContentType]);
 
