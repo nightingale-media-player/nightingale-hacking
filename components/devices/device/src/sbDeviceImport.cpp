@@ -40,7 +40,7 @@
 #include <sbILibraryChangeset.h>
 #include <sbIDeviceLibraryMediaSyncSettings.h>
 #include <sbIDeviceLibrarySyncDiff.h>
-#include <sbiDeviceLibrarySyncSettings.h>
+#include <sbIDeviceLibrarySyncSettings.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
