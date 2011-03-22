@@ -6036,6 +6036,14 @@ sbBaseDevice::UpdateStreamingItemSupported(Batch & aBatch)
        ++iter) {
     TransferRequest * const request = static_cast<TransferRequest*>(*iter);
 
+    // Skip everything but read and write requests
+    switch (request->GetType()) {
+      case sbBaseDevice::TransferRequest::REQUEST_WRITE:
+      case sbBaseDevice::TransferRequest::REQUEST_READ:
+        break;
+      default:
+        continue;
+    }
 
     nsCOMPtr<sbIMediaItem> mediaItem = request->item;
 
