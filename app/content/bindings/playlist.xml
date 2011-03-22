@@ -2405,171 +2405,97 @@
       </body>
     </method>
 
-    <method name="_addAllItems">
-      <parameter name="source"/>
-      <parameter name="item"/>
+    <!-- Given a view, row, and insert orientation, determine the row to
+         insert at in the underlying list.
+         May return -1 to indicate un-ordered insertion.
+      -->
+    <method name="_getRowToInsert">
+      <parameter name="view"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
+      <body>
+<![CDATA[
+  var list = view.mediaList;
+  var oldLength = list.length;
+
+  // For unorderable lists, empty lists, or where we don't have a destination
+  // row to begin with, return -1 for unordered insertion.
+  var isOrderable = list instanceof this._Ci.sbIOrderableMediaList;
+  if (!isOrderable || oldLength == 0 || row < 0)
+    return -1;
+
+  var sort = view.currentSort;
+  var isAscending = sort.getPropertyAt(0).value == "a";
+
+  // If this is a descending sort, we need to flip around the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
+  if (!isAscending) {
+    if (orientation ==
+        this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation ==
+             this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
+  }
+
+  // Get the row in the underlying list corresponding to this row in the
+  // current view.
+  row = view.getUnfilteredIndex(row);
+
+  // If we're dropping after the specified item, increment one. If the resulting
+  // index points past the end of the list, return -1.
+  if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER)
+    row++;
+
+  if (row >= oldLength)
+    return -1;
+
+  return row;
+]]>
+      </body>
+    </method>
+
+    <method name="_moveItemsInList">
+      <parameter name="indicesEnumerator"/>
       <parameter name="row"/>
       <parameter name="orientation"/>
       <body>
 <![CDATA[
   var ml = this.mediaListView.mediaList;
-  var oldLength = ml.length;
-
-  var sort = this.mediaListView.currentSort;
-  var isAscending = sort.getPropertyAt(0).value == "a";
-
-  // If this is a descending sort, we need to flip around the row and the
-  // orientation because the underlying media list we are modifying always has
-  // an ascending sort.
-  if (!isAscending) {
-    row = this.mediaListView.length - (row + 1);
-    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
-      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
-    }
-    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
-      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
-    }
-  }
-
-  // If this media lists supports ordering, insert the item where it was
-  // dropped
-  var doInsert = false;
   var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
-  if (isOrderable && oldLength > 0 && row >= 0 ) {
-    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
-      doInsert = true;
-    }
-    else {
-      if (row + 1 < oldLength) {
-        row++;
-        doInsert = true;
-      }
-    }
-  }
-
-  if (item.equals(ml)) {
+  if (!isOrderable) {
+    // Drag/dropping within a list that is not orderable has no effect.
     return;
   }
-  else {
-    item.setProperty(SBProperties.downloadStatusTarget,
-                     item.library.guid + "," + item.guid);
-    if (doInsert) {
-      ml.insertAllBefore(row, item);
-    }
-    else {
-      ml.addAll(item);
-    }
-
-    var added = ml.length - oldLength;
-    DNDUtils.reportAddedTracks(added,
-                               1 - added,
-                               0,
-                               this.mediaList.name);
-  }
-]]>
-      </body>
-    </method>
-
-    <method name="_addItemsAsync">
-      <parameter name="mediaList"/>
-      <parameter name="enumerator"/>
-      <parameter name="doInsert"/>
-      <parameter name="row"/>
-      <body>
-<![CDATA[
-  var self = this;
-  var asyncListener = {
-    onProgress: function(aItemsProcessed, aComplete) {
-      DNDUtils.reportAddedTracks(aItemsProcessed,
-                                 0, /* no duplicate reporting */
-                                 0, /* no unsupported reporting */
-                                 mediaList.name);
-    },
-    QueryInterface: XPCOMUtils.generateQI([self._Ci.sbIMediaListAsyncListener])
-  }
-
-  if (doInsert) {
-    mediaList.insertSomeBeforeAsync(row, enumerator, asyncListener);
-  }
-  else {
-    mediaList.addSomeAsync(enumerator, asyncListener);
-  }
-]]>
-      </body>
-    </method>
-
-    <method name="_addItems">
-      <parameter name="source"/>
-      <parameter name="enumerator"/>
-      <parameter name="indicesEnumerator"/>
-      <parameter name="count"/>
-      <parameter name="row"/>
-      <parameter name="orientation"/>
-      <body>
-<![CDATA[
-  var ml = this.mediaListView.mediaList;
-  var oldLength = ml.length;
 
   var sort = this.mediaListView.currentSort;
   var isAscending = sort.getPropertyAt(0).value == "a";
 
-  // If this is a descending sort, we need to flip around the row and the
-  // orientation because the underlying media list we are modifying always has
-  // an ascending sort.
-  if (!isAscending) {
-    row = this.mediaListView.length - (row + 1);
-    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
-      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
-    }
-    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
-      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
-    }
-  }
+  row = this._getRowToInsert(this.mediaListView, row, orientation);
 
-  // If this media lists supports ordering, insert the item where it was
-  // dropped
-  var doInsert = false;
-  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
-  if (isOrderable && oldLength > 0 && row >= 0 ) {
-    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
-      doInsert = true;
-    }
-    else {
-      if (row + 1 < oldLength) {
-        row++;
-        doInsert = true;
-      }
-    }
-  }
-
-  if (source.equals(ml)) {
-    // Find the indices of all the selected rows
-    var indices = [];
-    var viewLength = this.mediaListView.length;
-    while (indicesEnumerator.hasMoreElements()) {
-      var index = indicesEnumerator.getNext().index;
-      if (!isAscending) {
-        index = viewLength - (index + 1);
-      }
-      indices.push(index);
-    }
-
+  // Find the indices of all the selected rows
+  var indices = [];
+  var viewLength = this.mediaListView.length;
+  while (indicesEnumerator.hasMoreElements()) {
+    var index = indicesEnumerator.getNext().index;
     if (!isAscending) {
-      indices.reverse();
+      index = viewLength - (index + 1);
     }
+    indices.push(index);
+  }
 
-    if (doInsert) {
-      ml.moveSomeBefore(indices, indices.length, row);
-    }
-    else {
-      // Moving items within a list that is not orderable does nothing
-      if (isOrderable) {
-        ml.moveSomeLast(indices, indices.length);
-      }
-    }
+  if (!isAscending) {
+    indices.reverse();
+  }
+
+  if (row >= 0) {
+    ml.moveSomeBefore(indices, indices.length, row);
   }
   else {
-    this._addItemsAsync(ml, enumerator, doInsert, row);
+    ml.moveSomeLast(indices, indices.length);
   }
 ]]>
       </body>
@@ -2879,25 +2805,59 @@
   var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
                     .getService(this._Ci.sbIDndSourceTracker);
 
-  // handle mediaitem drops
-  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                                session);
+  // handle media list drops
+  var data = DNDUtils.getTransferDataForFlavour(
+          this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+          session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaListTransferContext);
-    this._addAllItems(context.source, context.list, row, orientation);
+    var listRow = this._getRowToInsert(this.mediaListView, row, orientation);
+    dump("Computed row "+listRow+"from view row "+row+", calling DropHandler\n");
+    InternalDropHandler.dropOnList(window,
+                                   session,
+                                   this.mediaListView.mediaList,
+                                   listRow,
+                                   null);
     return;
   }
 
-  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-                                            session);
+  data = DNDUtils.getTransferDataForFlavour(
+          this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+          session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
-    this._addItems(context.source, context.items, context.indexedItems, context.count, row, orientation);
+    if (context.source == this.mediaListView.mediaList) {
+      // This is a drop operation _within_ a playlist (i.e. moving items, not
+      // adding them). 
+      this._moveItemsInList(context.indexedItems, row, orientation);
+    }
+    else {
+      var listRow = this._getRowToInsert(this.mediaListView, row, orientation);
+      InternalDropHandler.dropOnList(window,
+                                     session,
+                                     this.mediaListView.mediaList,
+                                     listRow,
+                                     null);
+    }
     return;
   }
 
+  // Otherwise, we're having something else dropped on us: probably a file or
+  // files - treat this as coming from outside the app and use the
+  // ExternalDropHandler.
+  return this._externalDropOnTree(row, orientation, session);
+]]>
+        </body>
+      </method>
+
+      <method name="_externalDropOnTree">
+        <parameter name="row"/>
+        <parameter name="orientation"/>
+        <parameter name="session"/>
+        <body>
+<![CDATA[
   // figure out where the track insertion should occur
   var position = row;
   if (orientation != this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
@@ -2907,8 +2867,9 @@
     position = -1;
   }
 
-  // if we are using the reverse ordinal sort, we need to reverse the drop position
-  // and if we are sorted in any other way, we'll just drop at the end of the list
+  // if we are using the reverse ordinal sort, we need to reverse the drop
+  // position and if we are sorted in any other way, we'll just drop at the
+  // end of the list
 
   var sort = this.mediaListView.currentSort;
   if (sort && sort.length == 1) {

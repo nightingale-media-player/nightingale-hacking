@@ -595,12 +595,39 @@ var InternalDropHandler = {
         // uh oh - you can't drop a list onto itself
         return;
       }
-      
+
       // is this a device media list we're going to?
       var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                             .getService(Ci.sbIDeviceManager2);
       var selectedDevice = deviceManager.getDeviceForItem(aTargetList);
       
+
+      function onEnumerateComplete() {
+        // add the contents
+        if (aDropPosition != -1 &&
+            aTargetList instanceof Ci.sbIOrderableMediaList)
+        {
+          aTargetList.insertSomeBefore(aDropPosition,
+                                       ArrayConverter.enumerator(allItems.items));
+        } else {
+          aTargetList.addSome(ArrayConverter.enumerator(allItems.items));
+        }
+        if (aListener && list.length > 0) {
+          aListener.onFirstMediaItem(list.getItemByIndex(0));
+        }
+  
+        // lone> some of these values may not be accurate, this assumes that all 
+        // tracks have been copied, which is true if both the source and target 
+        // are playlists, but could be false if the target is a library. better 
+        // than nothing anyway.
+        InternalDropHandler._dropComplete(aListener,
+                                          aTargetList,
+                                          list.length,
+                                          0,
+                                          rejectedItems,
+                                          list.length,
+                                          0);
+      }
       // make an enumerator with all the items from the source playlist        
       var allItems = {
         items: [],
@@ -636,33 +663,6 @@ var InternalDropHandler = {
       };
 
       list.enumerateAllItems(allItems);
-
-      function onEnumerateComplete() {
-        // add the contents
-        if (aDropPosition != -1 &&
-            aTargetList instanceof Ci.sbIOrderableMediaList)
-        {
-          aTargetList.insertSomeBefore(aDropPosition,
-                                       ArrayConverter.enumerator(allItems.items));
-        } else {
-          aTargetList.addSome(ArrayConverter.enumerator(allItems.items));
-        }
-        if (aListener && list.length > 0) {
-          aListener.onFirstMediaItem(list.getItemByIndex(0));
-        }
-  
-        // lone> some of these values may not be accurate, this assumes that all 
-        // tracks have been copied, which is true if both the source and target 
-        // are playlists, but could be false if the target is a library. better 
-        // than nothing anyway.
-        InternalDropHandler._dropComplete(aListener,
-                                          aTargetList,
-                                          list.length,
-                                          0,
-                                          rejectedItems,
-                                          list.length,
-                                          0);
-      }
     }
   },
 
@@ -786,7 +786,7 @@ var InternalDropHandler = {
     }
       
     if (aDropPosition != -1 && aTargetList instanceof Ci.sbIOrderableMediaList) {
-      aTargetList.insertSomeBefore(unwrapper, aDropPosition);
+      aTargetList.insertSomeBefore(aDropPosition, unwrapper);
     } else {
       aTargetList.addSomeAsync(unwrapper , asyncListener);
     }
