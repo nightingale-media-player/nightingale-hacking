@@ -33,6 +33,8 @@
 #include <sbICascadeFilterSet.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
+#include <sbIDevice.h>
+#include <sbIDeviceManager.h>
 #include <sbIFilterableMediaListView.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
@@ -360,6 +362,184 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
   }
 
   NS_ADDREF(*_retval = mutableArray);
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbLocalDatabaseMediaListBase::GetOriginProperties(
+                              sbIMediaItem *             aSourceItem,
+                              sbIMutablePropertyArray *  aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aSourceItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsresult rv;
+
+  // Determine whether the target list belongs to a device:
+  nsCOMPtr<sbIDeviceManager2> deviceMgr =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> targetDev;
+  rv = deviceMgr->GetDeviceForItem(static_cast<sbIMediaList *>(this),
+                                   getter_AddRefs(targetDev));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetDeviceForItem() failed");
+
+  // Omit SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if the target
+  // list does not belong to a device:
+  PRBool omitMainLibFlag = (NS_SUCCEEDED(rv) && (targetDev == NULL));
+
+  // Get the origin library:
+  nsCOMPtr<sbILibrary> originLib;
+  rv = aSourceItem->GetLibrary(getter_AddRefs(originLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the main library:
+  nsCOMPtr<sbILibrary> mainLib;
+  rv = GetMainLibrary(getter_AddRefs(mainLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY and remove any existing
+  // origin guids if the origin library is the main library.  This will
+  // force the code below to regenerate the origin guids whenever an
+  // item is copied from the main library:
+  if (originLib == mainLib) {
+    // Remove SB_PROPERTY_ORIGINLIBRARYGUID: 
+    rv = RemoveProperty(aProperties,
+                        NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove SB_PROPERTY_ORIGINITEMGUID: 
+    rv = RemoveProperty(aProperties,
+                        NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Ensure there is no conflicting value for
+    // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY:
+    rv = RemoveProperty(
+            aProperties,
+            NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if the target is a
+    // device library:
+    if (!omitMainLibFlag) {
+      rv = aProperties->AppendProperty(
+        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+        NS_LITERAL_STRING("1"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    // The source library is not the main library.
+    // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY can be left as is, if
+    // present.  However, removing it if it is false will prevent
+    // creating the property unnecessarily in the new item.
+    // Failing to test and remove an existing value is not
+    // fatal here.  Treat errors as warnings:
+    if (!omitMainLibFlag) {
+      nsAutoString isInMainLibrary;
+      rv = aProperties->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+        isInMainLibrary);
+      if (NS_SUCCEEDED(rv)) {
+        omitMainLibFlag = (isInMainLibrary.IsEmpty() ||
+                           isInMainLibrary == NS_LITERAL_STRING("0"));
+      }
+      else {
+        NS_WARN_IF_FALSE(rv == NS_ERROR_NOT_AVAILABLE,
+                         "GetPropertyValue() failed");
+      }
+    }
+
+    if (omitMainLibFlag) {
+      rv = RemoveProperty(
+              aProperties,
+              NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "RemoveMainLibraryFlag() failed");
+    }
+  }
+
+  // Set SB_PROPERTY_ORIGINLIBRARYGUID if it is not already set:
+  nsAutoString originLibGuid;
+  rv = aProperties->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+    originLibGuid);
+  if (rv == NS_ERROR_NOT_AVAILABLE || originLibGuid.IsEmpty()) {
+    rv = originLib->GetGuid(originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aProperties->AppendProperty(
+      NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+      originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Set SB_PROPERTY_ORIGINITEMGUID if it is not already set:
+  nsAutoString originItemGuid;
+  rv = aProperties->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+    originItemGuid);
+  if (rv == NS_ERROR_NOT_AVAILABLE || originItemGuid.IsEmpty()) {
+    rv = aSourceItem->GetGuid(originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aProperties->AppendProperty(
+      NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+      originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbLocalDatabaseMediaListBase::RemoveProperty(
+                              sbIMutablePropertyArray * aPropertyArray,
+                              const nsAString &         aProperty)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyArray);
+
+  nsresult rv;
+
+  // Get the nsIMutableArray for access to RemoveElementAt():
+  nsCOMPtr<nsIMutableArray> mutableArray =
+    do_QueryInterface(aPropertyArray, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length;
+  rv = aPropertyArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Iterate over the array and remove any elements with the
+  // given property id:
+  PRUint32 i = 0;
+  while (i < length) {
+    nsCOMPtr<sbIProperty> prop;
+    rv = aPropertyArray->GetPropertyAt(i, getter_AddRefs(prop));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString id;
+    rv = prop->GetId(id);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If the property ID matches the given ID, remove it.  The index
+    // does not advance in this case, but the length decreases.
+    // Otherwise, advance to the next element:
+    if (id == aProperty) {
+      rv = mutableArray->RemoveElementAt(i);
+      NS_ENSURE_SUCCESS(rv, rv);
+      --length;
+    }
+    else {
+      i++;
+    }
+  }
+
   return NS_OK;
 }
 

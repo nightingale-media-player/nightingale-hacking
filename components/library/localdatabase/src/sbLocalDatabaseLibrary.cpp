@@ -1189,9 +1189,6 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   rv = aMediaItem->GetProperties(nsnull, getter_AddRefs(properties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-
   nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
     do_QueryInterface(properties, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1200,27 +1197,9 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If the item doesn't have a library property add it
-  nsString existingGuid, sourceGuid;
-  rv = properties->GetPropertyValue(PROP_LIBRARY, existingGuid);
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-
-    rv = oldLibrary->GetGuid(sourceGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // If it doesn't have a guid add one
-  rv = properties->GetPropertyValue(PROP_ITEM, existingGuid);
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    rv = aMediaItem->GetGuid(sourceGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // Track the origin of the copied item:
+  rv = GetOriginProperties(aMediaItem, mutableProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> newItem;
 
@@ -1423,33 +1402,9 @@ sbLocalDatabaseLibrary::GetSimpleMediaListCopyProperties
                             listName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set the simple media list origin library GUID
-  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-  nsAutoString originLibraryGUID;
-  rv = simpleProperties->GetPropertyValue(PROP_LIBRARY, originLibraryGUID);
-  if (NS_FAILED(rv) || originLibraryGUID.IsEmpty()) {
-    nsCOMPtr<sbILibrary> originLibrary;
-    rv = aMediaList->GetLibrary(getter_AddRefs(originLibrary));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = originLibrary->GetGuid(originLibraryGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = simpleProperties->AppendProperty(PROP_LIBRARY, originLibraryGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Set the simple media list origin item GUID
-  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-  nsAutoString originItemGUID;
-  rv = simpleProperties->GetPropertyValue(PROP_ITEM, originItemGUID);
-  if (NS_FAILED(rv) || originItemGUID.IsEmpty()) {
-    rv = aMediaList->GetGuid(originItemGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = simpleProperties->AppendProperty(PROP_ITEM, originItemGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // Track the origin of the copied item:
+  rv = GetOriginProperties(aMediaList, simpleProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Return results
   nsCOMPtr<sbIPropertyArray>

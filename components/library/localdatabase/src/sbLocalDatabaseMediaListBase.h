@@ -137,7 +137,21 @@ protected:
   nsresult GetFilteredPropertiesForNewItem(sbIPropertyArray* aProperties,
                                            sbIPropertyArray** _retval);
 
+  // Set SB_PROPERTY_ORIGINLIBRARYGUID and SB_PROPERTY_ORIGINITEMGUID, and
+  // set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY to true in the given
+  // property array if aSourceItem is in the main library.  Otherwise, set
+  // these properties only if they are not already set, and remove
+  // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if it is false.  aProperties
+  // should be properties for a new item that is being created by copying
+  // aSourceItem.
+  nsresult GetOriginProperties(sbIMediaItem *             aSourceItem,
+                               sbIMutablePropertyArray *  aProperties);
+
 private:
+
+  // Remove any values for the aProperty from aPropertyArray
+  static nsresult RemoveProperty(sbIMutablePropertyArray * aPropertyArray,
+                                 const nsAString &         aProperty);
 
   // This callback is meant to be used with an sbStringArrayHash.
   // aUserData should be a sbILocalDatabaseGUIDArray pointer.

@@ -372,31 +372,8 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
         NS_ENSURE_SUCCESS(rv, rv);
 
         // keep track of the library/item guid that we just copied from
-        NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-        NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-        nsString existingGuid, sourceGuid;
-
-        rv = filteredProperties->GetPropertyValue(PROP_LIBRARY, existingGuid);
-        if (rv == NS_ERROR_NOT_AVAILABLE) {
-          nsCOMPtr<sbILibrary> oldLibrary;
-          rv = item->GetLibrary(getter_AddRefs(oldLibrary));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = oldLibrary->GetGuid(sourceGuid);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-        rv = filteredProperties->GetPropertyValue(PROP_ITEM, existingGuid);
-        if (rv == NS_ERROR_NOT_AVAILABLE) {
-          rv = item->GetGuid(sourceGuid);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
+        rv = mFriendList->GetOriginProperties(item, mutableProperties);
+        NS_ENSURE_SUCCESS(rv, rv);
 
         rv = propertyArrayArray->AppendElement(filteredProperties, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
