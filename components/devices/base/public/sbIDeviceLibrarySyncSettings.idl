@@ -39,7 +39,7 @@ interface sbIDeviceLibrarySyncSettings : nsISupports
     * Returns an object to manage the synchronization settings for a given
     * media type. This object is a reference to the internal object of
     * the object held by the sbIDeviceSyncSettings object
-    * \param aMediaType the media type to get settings for
+    * \param aMediaType the media type to get settings, from sbIDeviceLibrary
     * \return the reference to the synchronization settings for the media
     *         type
     */

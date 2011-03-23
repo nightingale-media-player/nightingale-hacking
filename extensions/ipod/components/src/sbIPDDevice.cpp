@@ -1694,3 +1694,18 @@ sbIPDDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
 {
   return sbBaseDevice::SetCacheSyncRequests(aCacheSyncRequests);
 }
+
+NS_IMETHODIMP
+sbIPDDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
+                            sbILibraryChangeset* aExportChangeset)
+{
+  return sbBaseDevice::ExportToDevice(aDevLibrary, aExportChangeset);
+}
+
+NS_IMETHODIMP
+sbIPDDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
+                              sbILibraryChangeset * aImportChangeset)
+{
+  return sbBaseDevice::ImportFromDevice(aImportToLibrary, aImportChangeset);
+}
+

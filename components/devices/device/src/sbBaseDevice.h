@@ -244,6 +244,13 @@ public:
   NS_IMETHOD SubmitRequest(PRUint32 aRequest,
                            nsIPropertyBag2 *aRequestParameters);
   NS_IMETHOD CancelRequests();
+
+  NS_IMETHOD ImportFromDevice(sbILibrary * aImportToLibrary,
+                              sbILibraryChangeset * aImportChangeset);
+
+  NS_IMETHOD ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
+                            sbILibraryChangeset* aChangeset);
+
 public:
 
   sbBaseDevice(bool aUseOriginForPlaylists = false);
@@ -1381,19 +1388,8 @@ protected:
    * \param aImportChangeset    Changes for the import operation
    */
   nsresult SyncProduceChangeset(TransferRequest*      aRequest,
-                                sbILibraryChangeset** aSyncChangeset,
+                                sbILibraryChangeset** aExportChangeset,
                                 sbILibraryChangeset** aImportChangeset);
-
-  /**
-   * Using the changeset export changes to media items from the main library
-   * to a device library
-   *
-   * \param aDstLibrary         Device library to which to apply sync change
-   *                            set.
-   * \param aChangeset          Set of sync changes.
-   */
-  nsresult ExportToDevice(sbIDeviceLibrary*    aDstLibrary,
-                          sbILibraryChangeset* aChangeset);
 
   /**
    * Add the media list specified by aMediaList to the device library specified
@@ -1683,21 +1679,6 @@ protected:
                                               nsString*           aData,
                                               void*               aUserArg);
   nsresult  GetExcludedFolders(nsTArray<nsString> & aExcludedFolders);
-
-  /**
-   * Imports from the device library those media items and media lists marked
-   * as existing only on the device but not in the main library. Caller can
-   * provide a changeset or the import method will perform a diff and create
-   * it's own changeset if one is not provided.
-   *
-   * \param aImportToLibrary The library that we are importing to
-   * \param aImportFromDeviceLibrary The device library to import from
-   * \param aImportChanges Optional list of changes that identify items to be
-   *                       imported.
-   */
-  nsresult ImportFromDevice(sbILibrary * aImportToLibrary,
-                            sbIDeviceLibrary * aImportFromDeviceLibrary,
-                            sbILibraryChangeset * aImportChanges);
 
   /**
    * Imports the list of media lists that have changed

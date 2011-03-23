@@ -817,6 +817,20 @@ sbCDDevice::OpenInputStream(nsIURI*          aURI,
   return sbBaseDevice::OpenInputStream(aURI, retval);
 }
 
+NS_IMETHODIMP
+sbCDDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
+                           sbILibraryChangeset* aExportChangeset)
+{
+  return sbBaseDevice::ExportToDevice(aDevLibrary, aExportChangeset);
+}
+
+NS_IMETHODIMP
+sbCDDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
+                             sbILibraryChangeset * aImportChangeset)
+{
+  return sbBaseDevice::ImportFromDevice(aImportToLibrary, aImportChangeset);
+}
+
 nsresult
 sbCDDevice::Mount(sbBaseDeviceVolume* aVolume)
 {

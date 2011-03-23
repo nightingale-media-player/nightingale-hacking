@@ -870,3 +870,18 @@ sbMockDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
 {
   return sbBaseDevice::SetCacheSyncRequests(aCacheSyncRequests);
 }
+
+NS_IMETHODIMP
+sbMockDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
+                             sbILibraryChangeset* aExportChangeset)
+{
+  return sbBaseDevice::ExportToDevice(aDevLibrary, aExportChangeset);
+}
+
+NS_IMETHODIMP
+sbMockDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
+                               sbILibraryChangeset * aImportChangeset)
+{
+  return sbBaseDevice::ImportFromDevice(aImportToLibrary, aImportChangeset);
+}
+

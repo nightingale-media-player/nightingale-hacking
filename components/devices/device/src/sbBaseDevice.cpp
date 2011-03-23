@@ -3998,17 +3998,17 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Reset the sync type for the upcoming sync
   mSyncType = TransferRequest::REQUESTBATCH_UNKNOWN;
 
-  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
+  nsCOMPtr<sbIDeviceLibrary> devLib = do_QueryInterface(aRequest->list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ExportToDevice(devLib, exportChangeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibrary> mainLib;
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get the main library");
 
-  rv = ExportToDevice(dstLib, exportChangeset);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = ImportFromDevice(mainLib, dstLib, importChangeset);
+  rv = ImportFromDevice(mainLib, importChangeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SendSyncCompleteRequest();
@@ -4870,7 +4870,7 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
                              sbILibraryChangeset* aChangeset)
 {
@@ -4936,17 +4936,6 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
           nsCOMPtr<sbIMediaItem> mediaItem;
           rv = change->GetSourceItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
-
-          // if it's hidden, don't sync it
-          nsString hidden;
-          rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                      hidden);
-          if (rv != NS_ERROR_NOT_AVAILABLE) {
-            NS_ENSURE_SUCCESS(rv, rv);
-            if (hidden.Equals(NS_LITERAL_STRING("1"))) {
-              break;
-            }
-          }
 
           if (itemIsList) {
             nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem,
@@ -5076,8 +5065,9 @@ sbBaseDevice::SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList)
 {
   nsresult rv;
 
-  // Just replace the destination media lists with the source media lists.
-  // TODO: just apply changes between the source and destination lists.
+  // Just replace the destination media lists content with the sources
+  // TODO: See if just applying changes is more efficient than clearing and
+  // addAll
 
   // Sync each media list.
   PRInt32 count = aMediaListChangeList.Count();
@@ -5086,30 +5076,27 @@ sbBaseDevice::SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList)
     nsCOMPtr<sbILibraryChange> change = aMediaListChangeList[i];
 
     // Get the destination media list item and library.
-    nsCOMPtr<sbIMediaItem>     dstMediaListItem;
-    nsCOMPtr<sbILibrary>       dstLibrary;
-    nsCOMPtr<sbIDeviceLibrary> dstDeviceLibrary;
-    rv = change->GetDestinationItem(getter_AddRefs(dstMediaListItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = dstMediaListItem->GetLibrary(getter_AddRefs(dstLibrary));
-    NS_ENSURE_SUCCESS(rv, rv);
-    dstDeviceLibrary = do_QueryInterface(dstLibrary, &rv);
+    nsCOMPtr<sbIMediaItem>     sourceMediaListItem;
+    rv = change->GetSourceItem(getter_AddRefs(sourceMediaListItem));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Remove the destination media list item.
-    rv = dstLibrary->Remove(dstMediaListItem);
+    nsCOMPtr<sbIMediaList> sourceMediaList =
+        do_QueryInterface(sourceMediaListItem, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the source media list.
-    nsCOMPtr<sbIMediaItem> srcMediaListItem;
-    nsCOMPtr<sbIMediaList> srcMediaList;
-    rv = change->GetSourceItem(getter_AddRefs(srcMediaListItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-    srcMediaList = do_QueryInterface(srcMediaListItem, &rv);
+    // Get the destination media list item and library.
+    nsCOMPtr<sbIMediaItem> destMediaListItem;
+    rv = change->GetDestinationItem(getter_AddRefs(destMediaListItem));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Add the source media list to the destination library.
-    rv = SyncAddMediaList(dstDeviceLibrary, srcMediaList);
+    nsCOMPtr<sbIMediaList> destMediaList =
+        do_QueryInterface(destMediaListItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = destMediaList->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = destMediaList->AddAll(sourceMediaList);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

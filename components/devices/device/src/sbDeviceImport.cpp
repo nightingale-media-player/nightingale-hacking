@@ -44,13 +44,11 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
-nsresult sbBaseDevice::ImportFromDevice(
-                                    sbILibrary * aImportToLibrary,
-                                    sbIDeviceLibrary * aImportFromDeviceLibrary,
-                                    sbILibraryChangeset * aImportChangeset)
+NS_IMETHODIMP
+sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
+                               sbILibraryChangeset * aImportChangeset)
 {
   NS_ENSURE_ARG_POINTER(aImportToLibrary);
-  NS_ENSURE_ARG_POINTER(aImportFromDeviceLibrary);
   NS_ENSURE_ARG_POINTER(aImportChangeset);
 
   nsresult rv;

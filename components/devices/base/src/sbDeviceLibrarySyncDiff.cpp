@@ -735,8 +735,10 @@ SyncExportEnumListener::GetMatchingPlaylistByOriginGUID(
   rv = GetItemWithOriginGUID(aLibrary, listId, getter_AddRefs(matchingItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = CallQueryInterface(matchingItem.get(), aMatchingList);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (matchingItem) {
+    rv = CallQueryInterface(matchingItem.get(), aMatchingList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

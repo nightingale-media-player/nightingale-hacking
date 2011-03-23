@@ -39,6 +39,8 @@ interface sbIDeviceLibrary;
 interface sbIDeviceProperties;
 interface sbIDeviceParameters;
 interface sbIDeviceStatus;
+interface sbILibrary;
+interface sbILibraryChangeset;
 interface sbIMediaItem;
 
 %{C++
@@ -74,7 +76,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(54187640-1632-49de-9ed6-3130cf7c46c8)]
+[scriptable, uuid(fd0d4015-20e1-45b1-bd8a-a8f81d2bdfd2)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -363,5 +365,24 @@ interface sbIDevice : nsISupports
    *                            No file exists for URI.
    */
   nsIInputStream openInputStream(in nsIURI aURI);
+
+  /**
+   * Imports changes from the device as specified in aImportChangeset
+   * 
+   * \param aImportToLibrary The library to import the changes to
+   * \param aImportChangeset The changes that are to be imported
+   */
+  void importFromDevice(in sbILibrary aImportToLibrary,
+                        in sbILibraryChangeset aImportChangeset);
+                        
+  /**
+   * Exports the changes to a device as specified in aExportChangeset
+   * 
+   * \param aDevLibrary The device library of the device to export changes to
+   * \param aExportChangeset The changes to export
+   */
+  void exportToDevice(in sbIDeviceLibrary aDevLibrary,
+                      in sbILibraryChangeset aExportChangeset);
+
 };
 
