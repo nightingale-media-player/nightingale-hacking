@@ -172,9 +172,11 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
                               getter_AddRefs(appRegD));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString profile;
-  rv = appRegD->GetLeafName(profile);
+  nsString leafName;
+  rv = appRegD->GetLeafName(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ConvertUTF16toUTF8 profile(leafName);
 
 #ifdef XP_MACOSX
   // OS X is a little trickier since the agent needs to be started using
@@ -221,7 +223,7 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
     &agentFSRef,        // app FSRef
     nsnull,             // asyncLaunchRefCon
     nsnull,             // enviroment variables
-    argv,
+    argv,               // argv CFArrayRef
     nsnull,             // initial apple event
   };
 
@@ -229,33 +231,29 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   OSStatus err = LSOpenApplication(&appParams, &outPSN);
   NS_ENSURE_TRUE(err == noErr, NS_ERROR_FAILURE);
 
-  if (aShouldUnregister) {
-    CFRelease(argv);
-  }
+  CFRelease(argv);
 
 #elif XP_WIN
   // Windows is simple, simply append the name of the agent + '.exe'
   rv = agentFile->Append(NS_LITERAL_STRING("songbirditunesagent.exe"));
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIProcess> agentProcess = 
+
+  nsCOMPtr<nsIProcess> agentProcess =
     do_CreateInstance(NS_PROCESS_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = agentProcess->Init(agentFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCString args;
   if (aShouldUnregister) {
-    args.AppendLiteral("--unregister");
+    const char* args[] = { "--unregister" };
+    rv = agentProcess->Run(PR_TRUE, args, 1); // only block for '--unregister'
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    const char* args[] = { "--profile", profile.get() };
+    rv = agentProcess->Run(PR_FALSE, args, 2);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-  
-  const char *argStr = args.get();
-  rv = agentProcess->Run(aShouldUnregister,  // only block for '--unregister' 
-                         &argStr, 
-                         (aShouldUnregister ? 1 : 0));
-  NS_ENSURE_SUCCESS(rv, rv);
-
 #else
   LOG(("%s: ERROR: Tried to start the export agent on a non-supported OS",
         __FUNCTION__));
