@@ -231,44 +231,23 @@ NS_DECL_CLASSINFO(sbLibraryChange)
 NS_IMPL_THREADSAFE_CI(sbLibraryChange)
 
 sbLibraryChange::sbLibraryChange()
-: mOperationLock(nsnull)
+: mLock(nsnull)
 , mOperation(sbIChangeOperation::UNKNOWN)
-, mTimestampLock(nsnull)
 , mTimestamp(0)
-, mItemLock(nsnull)
-, mPropertiesLock(nsnull)
 {
 }
 
 sbLibraryChange::~sbLibraryChange()
 {
-  if(mOperationLock) {
-    nsAutoLock::DestroyLock(mOperationLock);
-  }
-  if(mTimestampLock) {
-    nsAutoLock::DestroyLock(mTimestampLock);
-  }
-  if(mItemLock) {
-    nsAutoLock::DestroyLock(mItemLock);
-  }
-  if(mPropertiesLock) {
-    nsAutoLock::DestroyLock(mPropertiesLock);
+  if(mLock) {
+    nsAutoLock::DestroyLock(mLock);
   }
 }
 
 nsresult sbLibraryChange::Init()
 {
-  mOperationLock = nsAutoLock::NewLock("sbLibraryChange::mOperationLock");
-  NS_ENSURE_TRUE(mOperationLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mTimestampLock = nsAutoLock::NewLock("sbLibraryChange::mOperationLock");
-  NS_ENSURE_TRUE(mTimestampLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mItemLock = nsAutoLock::NewLock("sbLibraryChange::mItemLock");
-  NS_ENSURE_TRUE(mItemLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mPropertiesLock = nsAutoLock::NewLock("sbLibraryChange::mPropertiesLock");
-  NS_ENSURE_TRUE(mPropertiesLock, NS_ERROR_OUT_OF_MEMORY);
+  mLock = nsAutoLock::NewLock("sbLibraryChange::mLock");
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -277,43 +256,27 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
                                          PRUint64 aTimestamp, 
                                          sbIMediaItem *aSourceItem,
                                          sbIMediaItem *aDestinationItem,
-                                         nsIArray *aProperties)
+                                         nsIArray *aProperties,
+                                         nsIArray *aListItems)
 {
   nsresult rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);
   
-  {
-    nsAutoLock lock(mOperationLock);
-    mOperation = aOperation;
-  }
-  
-  {
-    nsAutoLock lock(mTimestampLock);
-    mTimestamp = aTimestamp;
-  }
+  nsAutoLock lock(mLock);
 
-  if(aSourceItem) {
-    nsAutoLock lock(mItemLock);
-    mSourceItem = aSourceItem;
-  }
-
-  if(aDestinationItem) {
-    nsAutoLock lock(mItemLock);
-    mDestinationItem = aDestinationItem;
-  }
-
-  if(aProperties)
-  {
-    nsAutoLock lock(mPropertiesLock);
-    mProperties = aProperties;
-  }
+  mOperation = aOperation;
+  mTimestamp = aTimestamp;
+  mSourceItem = aSourceItem;
+  mDestinationItem = aDestinationItem;
+  mProperties = aProperties;
+  mListItems = aListItems;
   
   return NS_OK;
 }
 
 nsresult sbLibraryChange::SetOperation(PRUint32 aOperation)
 {
-  nsAutoLock lock(mOperationLock);
+  nsAutoLock lock(mLock);
   mOperation = aOperation;
 
   return NS_OK;
@@ -321,8 +284,16 @@ nsresult sbLibraryChange::SetOperation(PRUint32 aOperation)
 
 nsresult sbLibraryChange::SetTimestamp(PRUint64 aTimestamp)
 {
-  nsAutoLock lock(mTimestampLock);
+  nsAutoLock lock(mLock);
   mTimestamp = aTimestamp;
+
+  return NS_OK;
+}
+
+nsresult sbLibraryChange::SetListItems(nsIArray *aListItems)
+{
+  nsAutoLock lock(mLock);
+  mListItems = aListItems;
 
   return NS_OK;
 }
@@ -332,11 +303,9 @@ nsresult sbLibraryChange::SetItems(sbIMediaItem *aSourceItem,
 {
   NS_ENSURE_ARG_POINTER(aSourceItem);
 
-  {
-    nsAutoLock lock(mItemLock);
-    mSourceItem = aSourceItem;
-    mDestinationItem = aDestinationItem ? aDestinationItem : aSourceItem;
-  }
+  nsAutoLock lock(mLock);
+  mSourceItem = aSourceItem;
+  mDestinationItem = aDestinationItem ? aDestinationItem : aSourceItem;
 
   return NS_OK;
 }
@@ -345,7 +314,7 @@ nsresult sbLibraryChange::SetProperties(nsIArray *aProperties)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
 
-  nsAutoLock lock(mPropertiesLock);
+  nsAutoLock lock(mLock);
   mProperties = aProperties;
 
   return NS_OK;
@@ -356,7 +325,7 @@ NS_IMETHODIMP sbLibraryChange::GetOperation(PRUint32 *aOperation)
 {
   NS_ENSURE_ARG_POINTER(aOperation);
 
-  nsAutoLock lock(mOperationLock);
+  nsAutoLock lock(mLock);
   *aOperation = mOperation;
 
   return NS_OK;
@@ -367,7 +336,7 @@ NS_IMETHODIMP sbLibraryChange::GetTimestamp(PRUint64 *aTimestamp)
 {
   NS_ENSURE_ARG_POINTER(aTimestamp);
 
-  nsAutoLock lock(mTimestampLock);
+  nsAutoLock lock(mLock);
   *aTimestamp = mTimestamp;
 
   return NS_OK;
@@ -378,7 +347,7 @@ NS_IMETHODIMP sbLibraryChange::GetSourceItem(sbIMediaItem * *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   
-  nsAutoLock lock(mItemLock);
+  nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aItem = mSourceItem);
 
   return *aItem ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -389,7 +358,7 @@ NS_IMETHODIMP sbLibraryChange::GetDestinationItem(sbIMediaItem * *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  nsAutoLock lock(mItemLock);
+  nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aItem = mDestinationItem);
 
   return *aItem ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -401,6 +370,8 @@ NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
   NS_ENSURE_ARG_POINTER(aItemIsList);
   
   nsresult rv;
+
+  nsAutoLock lock(mLock);
   nsCOMPtr<sbIMediaList> mediaList;
   if (mSourceItem) {
     mediaList = do_QueryInterface(mSourceItem, &rv);
@@ -421,12 +392,30 @@ NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
   return NS_ERROR_UNEXPECTED;
 }
 
+/* readonly attribute nsIArray listItems; */
+NS_IMETHODIMP sbLibraryChange::GetListItems(nsIArray **aListItems)
+{
+  NS_ENSURE_ARG_POINTER(aListItems);
+
+  nsAutoLock lock(mLock);
+  PRBool isList;
+  nsresult rv = GetItemIsList(&isList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!isList)
+    return NS_ERROR_FAILURE;
+
+  NS_IF_ADDREF(*aListItems = mListItems);
+
+  return NS_OK;
+}
+
 /* readonly attribute nsIArray properties; */
 NS_IMETHODIMP sbLibraryChange::GetProperties(nsIArray * *aProperties)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
 
-  nsAutoLock lock(mPropertiesLock);
+  nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aProperties = mProperties);
 
   return *aProperties ? NS_OK : NS_ERROR_NOT_AVAILABLE;

@@ -145,6 +145,16 @@ interface sbILibraryChange : sbIChangeOperation
   readonly attribute boolean        itemIsList;
 
   /**
+   * If itemIsList is true, this will be an array of sbIMediaItem that should
+   * be the contents of the list (unless this is a DELETED change).
+   *
+   * Each item may either be an item already present in the destination library,
+   * or it may be an item present in the source library that is being added to
+   * the destination library by an earlier entry in the sbILibraryChangeset.
+   */
+  readonly attribute nsIArray       listItems;
+
+  /**
    * The item properties affected by the change.
    *
    * This is an array of sbIPropertyChange elements.

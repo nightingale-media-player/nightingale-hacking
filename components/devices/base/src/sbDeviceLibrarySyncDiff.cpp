@@ -586,7 +586,8 @@ SyncEnumListenerBase::AddChange(PRUint32 aChangeType,
                                      0,
                                      aSrcItem,
                                      aDstItem,
-                                     propertyChanges);
+                                     propertyChanges,
+                                     nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISupports> element =

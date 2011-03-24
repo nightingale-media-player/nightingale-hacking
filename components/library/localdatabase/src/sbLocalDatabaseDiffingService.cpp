@@ -830,7 +830,8 @@ sbLocalDatabaseDiffingService::CreateLibraryChangeFromItems(
                                      0,
                                      aSourceItem,
                                      aDestinationItem,
-                                     propertyChanges);
+                                     propertyChanges,
+                                     nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(libraryChange.get(), aLibraryChange);
@@ -898,7 +899,8 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
                                      0,
                                      aSourceItem,
                                      nsnull,
-                                     propertyChanges);
+                                     propertyChanges,
+                                     nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(libraryChange.get(), aLibraryChange);
@@ -947,7 +949,8 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
                                      0,
                                      aSourceItem,
                                      nsnull,
-                                     propertyChanges);
+                                     propertyChanges,
+                                     nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(libraryChange.get(), aLibraryChange);
@@ -968,6 +971,7 @@ sbLocalDatabaseDiffingService::CreateItemDeletedLibraryChange(sbIMediaItem *aDes
                                               0,
                                               nsnull,
                                               aDestinationItem,
+                                              nsnull,
                                               nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 

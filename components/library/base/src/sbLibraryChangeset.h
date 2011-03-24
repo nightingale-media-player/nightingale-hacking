@@ -114,7 +114,8 @@ public:
                           PRUint64 aTimestamp, 
                           sbIMediaItem *aSourceItem,
                           sbIMediaItem *aDestinationItem,
-                          nsIArray *aProperties);
+                          nsIArray *aProperties,
+                          nsIArray *aListItems);
 
   nsresult SetOperation(PRUint32 aOperation);
 
@@ -122,23 +123,22 @@ public:
   nsresult SetItems(sbIMediaItem *aSourceItem,
                     sbIMediaItem *aDestinationItem);
   nsresult SetProperties(nsIArray *aProperties);
+  nsresult SetListItems(nsIArray *aProperties);
 
 private:
   ~sbLibraryChange();
 
 protected:
-  PRLock*  mOperationLock;
+  PRLock*  mLock;
   PRUint32 mOperation;
 
-  PRLock*  mTimestampLock;
   PRUint64 mTimestamp;
 
-  PRLock*                 mItemLock;
   nsCOMPtr<sbIMediaItem>  mSourceItem;
   nsCOMPtr<sbIMediaItem>  mDestinationItem;
 
-  PRLock*             mPropertiesLock;
   nsCOMPtr<nsIArray>  mProperties;
+  nsCOMPtr<nsIArray>  mListItems;
 };
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbLibraryChange,
