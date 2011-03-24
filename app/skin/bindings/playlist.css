@@ -1,31 +1,31 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
 
-/** 
+/**
 *******************************************************************************
 THE PLAYLIST
 
@@ -33,7 +33,7 @@ Applies images and layout to playlist.xml and sbPlaylistPage.xul.
 Imported by bindings.css or directly into feathers.
 
 *******************************************************************************
-*/ 
+*/
 
 
 
@@ -79,7 +79,7 @@ sb-playlist > stack > vbox,
 }
 
 
-/** 
+/**
 *******************************************************************************
 Tree Progress Meter
 *******************************************************************************
@@ -190,7 +190,7 @@ Tree Progress Meter
 }
 
 
-/** 
+/**
 *******************************************************************************
 In-cell Buttons
 *******************************************************************************
@@ -249,7 +249,7 @@ In-cell Buttons
 }
 
 
-/** 
+/**
 *******************************************************************************
 In-cell Clickable Images
 *******************************************************************************
@@ -274,7 +274,7 @@ In-cell Clickable Images
 }
 
 
-/** 
+/**
 *******************************************************************************
 In-cell Download Buttons
 *******************************************************************************
@@ -315,7 +315,7 @@ In-cell Download Buttons
        padding:0 0 0 16px ! important;
 }
 
-/** 
+/**
 *******************************************************************************
 In-cell Origin Page Image (Source Column)
 *******************************************************************************
@@ -329,7 +329,7 @@ In-cell Origin Page Image (Source Column)
 {
 }
 
-/** 
+/**
 *******************************************************************************
 In-cell Artist detail image
 *******************************************************************************
@@ -343,7 +343,7 @@ In-cell Artist detail image
 {
 }
 
-/** 
+/**
 *******************************************************************************
 In-cell Album detail image
 *******************************************************************************
@@ -357,7 +357,24 @@ In-cell Album detail image
 {
 }
 
-/** 
+/**
+*******************************************************************************
+OriginNotInMainLibrary Indicator for Device Track
+*******************************************************************************
+*/
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, originNotInMainLibrary )
+{
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/playlist/originnotinmainlibrary.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, originNotInMainLibrary, selected )
+{
+  background-position: 0% -18px;
+}
+
+/**
 *******************************************************************************
 Playing track indicator
 *******************************************************************************
@@ -412,7 +429,7 @@ treecol[bind="http://songbirdnest.com/data/1.0#contentLength"] > label,
   padding-right:5px;
 }
 
-/** 
+/**
 *******************************************************************************
 Playlist Commands
 *******************************************************************************
@@ -431,7 +448,7 @@ Playlist Commands
   min-width: 160px !important;
 }
 
-/** 
+/**
 *******************************************************************************
 Drag and drop Icon
 *******************************************************************************

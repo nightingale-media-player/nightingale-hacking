@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -212,6 +212,9 @@ private:
   nsresult GetPlayingProperty(PRUint32 aIndex,
                               nsISupportsArray* properties);
 
+  nsresult GetOriginNotInMainLibraryProperty(PRUint32 aIndex,
+                                               nsISupportsArray* properties);
+
   nsresult GetItemDisabledStatus(PRUint32 aIndex,
                                  nsISupportsArray* properties);
 
@@ -228,6 +231,9 @@ private:
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
+
+  // Indicates if we are currently viewing content that is on a device
+  PRBool mViewingDeviceContent;
 
   // Type of media list this tree view is of
   MediaListType mListType;

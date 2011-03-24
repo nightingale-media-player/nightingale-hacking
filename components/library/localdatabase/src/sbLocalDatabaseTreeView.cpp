@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -46,6 +46,8 @@
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILibrary.h>
 #include <sbILibraryConstraints.h>
+#include <sbIDevice.h>
+#include <sbIDeviceManager.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreManager.h>
@@ -146,7 +148,7 @@ private:
 class sbAutoSuppressArrayInvalidation
 {
 public:
-  explicit 
+  explicit
   sbAutoSuppressArrayInvalidation(sbILocalDatabaseGUIDArray *aArray)
   : mArray(aArray) {
     mArray->SuppressInvalidation(PR_TRUE);
@@ -471,6 +473,22 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     // If this isn't a view of the queue, set mPlayQueueService to null so we
     // don't attempt to set play queue status properties
     mPlayQueueService = nsnull;
+  }
+
+  // Attempt to get a device for the list we are currently viewing
+  nsCOMPtr<sbIDeviceManager2> deviceManager =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> device;
+  rv = deviceManager->GetDeviceForItem(viewList, getter_AddRefs(device));
+  if (NS_FAILED(rv) || !device) {
+    // Couldn't find a device so must not be viewing device content
+    mViewingDeviceContent = PR_FALSE;
+  }
+  else {
+    // Found a device for this medialist, must be viewing device content
+    mViewingDeviceContent = PR_TRUE;
   }
 
   // Add observer for treeview invalidations
@@ -1484,16 +1502,58 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
   return NS_OK;
 }
 
+/* This property lets us know if device content is not represented in the main
+ * library.  If it's set for an item on a device, we display an icon
+ * to indicate that we think that content is only on the device */
 nsresult
-sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex, 
+sbLocalDatabaseTreeView::GetOriginNotInMainLibraryProperty
+                        (PRUint32 aIndex, nsISupportsArray* properties)
+{
+  NS_ASSERTION(properties, "properties is null");
+
+  nsresult rv;
+
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+
+  if (!mViewingDeviceContent) {
+    /* We only care about originNotInMainLibrary for things on a device.
+     * We aren't viewing a device now, so we can stop checking. */
+     return NS_OK;
+  }
+
+  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+  rv = GetBag(aIndex, getter_AddRefs(bag));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString originInMainLibrary;
+  rv = bag->GetProperty
+            (NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+             originInMainLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We indicate the tracks that are _not_ in the main library
+  if (!originInMainLibrary.EqualsLiteral("1")) {
+    rv = TokenizeProperties(NS_LITERAL_STRING("originNotInMainLibrary"), properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex,
                                                nsISupportsArray* properties)
 {
   NS_ASSERTION(properties, "properties is null");
-  
+
   // Ideally we could just use the row properties to indicate that a row is
   // 'unavailable', however if we do that then we can only use the
   // -moz-tree-row pseudoelement and change the background and border of a row,
-  // and not the text style. In order to select on -moz-tree-cell-text, all of 
+  // and not the text style. In order to select on -moz-tree-cell-text, all of
   // the cells must have the 'unavailable' css property. This method adds the
   // css property to the array if the item at the index has the 'unavailable'
   // library property.
@@ -1517,22 +1577,22 @@ sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex,
   nsCOMPtr<sbILibrary> library;
   rv = mediaList->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = library->GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIMediaItemController> mediaItemController;
   rv = mediaItem->GetItemController(getter_AddRefs(mediaItemController));
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!mediaItemController)
     return NS_OK;
-    
+
   PRBool itemDisabled;
   rv = mediaItemController->IsItemDisabled(mediaItem, &itemDisabled);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (itemDisabled) {
     rv = TokenizeProperties(NS_LITERAL_STRING("disabled"), properties);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1815,6 +1875,9 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   rv = GetPlayingProperty(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetOriginNotInMainLibraryProperty(index, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = GetItemDisabledStatus(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1907,6 +1970,9 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
   PRUint32 index = TreeToArray(row);
 
   rv = GetPlayingProperty(index, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetOriginNotInMainLibraryProperty(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetItemDisabledStatus(index, properties);
