@@ -375,7 +375,7 @@ sbBaseDevice::TransferRequest::~TransferRequest()
   NS_IF_RELEASE(transcodeProfile);
 }
 
-sbBaseDevice::sbBaseDevice(bool aUseOriginForPlaylists) :
+sbBaseDevice::sbBaseDevice() :
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
   mSyncState(sbBaseDevice::SYNC_STATE_NORMAL),
@@ -389,7 +389,6 @@ sbBaseDevice::sbBaseDevice(bool aUseOriginForPlaylists) :
   mSyncType(0),
   mEnsureSpaceChecked(false),
   mConnected(PR_FALSE),
-  mUseOriginForPlaylists(aUseOriginForPlaylists),
   mVolumeLock(nsnull)
 {
 #ifdef PR_LOGGING
@@ -4854,11 +4853,15 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
     syncFlag |= sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT;
   }
 
+  PRBool useOriginForPlaylists;
+  rv = GetUseOriginForPlaylists(&useOriginForPlaylists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIDeviceLibrarySyncDiff> syncDiff =
     do_CreateInstance(SONGBIRD_DEVICELIBRARYSYNCDIFF_CONTRACTID, &rv);
 
   rv = syncDiff->GenerateSyncLists(syncFlag,
-                                   UseOriginForPlaylists(),
+                                   useOriginForPlaylists,
                                    syncMediaTypes,
                                    mainLib,
                                    devLib,

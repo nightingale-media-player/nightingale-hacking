@@ -278,6 +278,13 @@ sbIPDDevice::DeviceSpecificDisconnect()
   return NS_OK;
 }
 
+NS_IMETHODIMP sbIPDDevice::GetUseOriginForPlaylists(PRBool *aUseOrigin)
+{
+  NS_ENSURE_ARG_POINTER(aUseOrigin);
+  *aUseOrigin = PR_FALSE;
+
+  return NS_OK;
+}
 
 /**
  * Get a preference stored on the device.

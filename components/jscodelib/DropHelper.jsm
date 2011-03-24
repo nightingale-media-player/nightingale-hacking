@@ -518,152 +518,217 @@ var InternalDropHandler = {
     // or AUDIO_PLAYBACK category
     return false;
   },
-  
+
+  _getTransferToDeviceChangeset: function(aSourceItems, aSourceList,
+                                          aDestLibrary) {
+    var differ = Cc["@songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1"]
+                   .createInstance(Ci.sbIDeviceLibrarySyncDiff);
+
+    var sourceLibrary;
+    if (aSourceItems)
+      sourceLibrary = aSourceItems.queryElementAt(0, Ci.sbIMediaItem).library;
+    else
+      sourceLibrary = aSourceList.library;
+
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var device = deviceManager.getDeviceForItem(aDestLibrary);
+
+    var ret = {};
+    differ.generateDropLists(device.useOriginForPlaylists,
+                             sourceLibrary,
+                             aDestLibrary,
+                             aSourceList,
+                             aSourceItems,
+                             ret);
+
+    return ret.value;
+  },
+
+  _notifyListeners: function(aListener, aTargetList, aNewList, aSourceItems,
+                             aSourceList) {
+    var sourceLength = 0;
+
+    if (aSourceList)
+      sourceLength = aSourceList.length;
+    else if (aSourceItems)
+      sourceLength = aSourceItems.length;
+
+    // Let our listeners know.
+    if (aListener) {
+      if (aNewList)
+        aListener.onCopyMediaList(aTargetList, aNewlist);
+
+      if (sourceLength) {
+        if (aSourceList)
+          aListener.onFirstMediaItem(aSourceList.getItemByIndex(0));
+        else if (aSourceItems)
+          aListener.onFirstMediaItem(aSourceItems[0]);
+      }
+    }
+
+    // These values are bogus, at least if the target is a library (and hence
+    // already-existing items won't be copied). Better than nothing?
+    this._dropComplete(aListener,
+                       aTargetList,
+                       sourceLength,
+                       0,
+                       0,
+                       sourceLength,
+                       0);
+  },
+
+  // aItem.library doesn't return the device library. Find the matching one
+  // from the device.
+  _getDeviceLibraryForItem: function(aDevice, aItem) {
+    var lib = aItem.library;
+
+    var libs = aDevice.content.libraries;
+    for (var i = 0; i < libs.length; i++) {
+      var deviceLib = libs.queryElementAt(i, Ci.sbIDeviceLibrary);
+      if (lib.equals(deviceLib))
+        return deviceLib;
+    }
+
+    return null;
+  },
+
+  // Transfer a dropped list to a device.
+  //
+  // aTargetList may be a device library or a device playlist.
+  _dropListOnDevice: function(aSourceList, aTargetList, aDropPosition,
+                              aListener) {
+    // Find out what changes need making.
+    var changeset = this._getTransferToDeviceChangeset(
+            null, aSourceList, aTargetList.library);
+
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var device = deviceManager.getDeviceForItem(aTargetList);
+    var deviceLibrary = this._getDeviceLibraryForItem(device, aTargetList);
+
+    // Apply the changes to get the actual media items onto the device, even
+    // if the device doesn't support playlists. This will add the items to the
+    // device library and schedule all the necessary file copies/etc.
+    device.exportToDevice(deviceLibrary, changeset);
+
+    var targetIsLibrary = (aTargetList instanceof Ci.sbILibrary);
+    if (targetIsLibrary && this._doesDeviceSupportPlaylist(destDevice)) {
+      // If it DOES support playlists (and we're adding to a library),
+      // we can also create a playlist in the device library.
+      var newlist = aTargetList.copyMediaList('simple', aSourceList, false);
+    }
+
+    this._notifyListeners(aListener, aTargetList, newlist,
+                          null, aSourceList);
+  },
+
+  // Transfer dropped items to a device.
+  //
+  // aTargetList may be a device library or a device playlist.
+  _dropItemsOnDevice: function(aSourceItems, aTargetList, aDropPosition,
+                               aListener) {
+    // Find out what changes need making.
+    var changeset = this._getTransferToDeviceChangeset(
+            aSourceItems, null, aTargetList.library);
+
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var device = deviceManager.getDeviceForItem(aTargetList);
+    var deviceLibrary = this._getDeviceLibraryForItem(device, aTargetList);
+
+    // Apply the changes to get the media items onto the device
+    // if the device doesn't support playlists. This will add the items to the
+    // device library and schedule all the necessary file copies/etc.
+    device.exportToDevice(deviceLibrary, changeset);
+
+    this._notifyListeners(aListener, aTargetList, null,
+                          aSourceItems, null);
+  },
+
+  // Transfer dropped items to something other than a device.
+  _dropItemsSimple: function(aItems, aTargetList, aDropPosition, aListener) {
+    if (aTargetList instanceof Ci.sbIOrderableMediaList &&
+        aDropPosition != -1)
+    {
+      aTargetList.insertSomeBefore(aDropPosition,
+                                   ArrayConverter.enumerator(aItems));
+    }
+    else {
+      aTargetList.addSome(ArrayConverter.enumerator(aItems));
+    }
+
+    this._notifyListeners(aListener, aTargetList, null, aItems, null);
+  },
+
+  // Drop from a list to another list, where the target list is not on a device.
+  _dropListSimple: function(aSourceList, aTargetList,
+                            aDropPosition, aListener) {
+    var newlist = null;
+
+    var targetIsLibrary = (aTargetList instanceof Ci.sbILibrary);
+    if (targetIsLibrary) {
+      newlist = aTargetList.copyMediaList('simple', aSourceList, false);
+    }
+    else {
+      if (aTargetList instanceof Ci.sbIOrderableMediaList &&
+          aDropPosition != -1)
+      {
+        aTargetList.insertAllBefore(aDropPosition, aSourceList);
+      }
+      else {
+        aTargetList.addAll(aSourceList);
+      }
+    }
+
+    this._notifyListeners(aListener, aTargetList, newlist, null, aSourceList);
+  },
+
   /**
    * Performs the actual drop of a media list into another media list
    * This is the media list variant of _dropItems(); please see that method for
    * documentation.
    */
-  _dropItemsList: function(aDragSession, aTargetList, aDropPosition, aListener) {
+  _dropItemsList: function(aDragSession, aTargetList,
+                           aDropPosition, aListener) {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
                                         TYPE_X_SB_TRANSFER_MEDIA_LIST, 
                                         Ci.sbIMediaListTransferContext);
-    var list = context.list;
-
-    // record metrics
-    var metrics_totype = aTargetList.library.getProperty(SBProperties.customType);
-    var metrics_fromtype = list.library.getProperty(SBProperties.customType);
-    this._metrics("app.servicepane.copy", 
-                  metrics_fromtype, 
-                  metrics_totype, 
-                  list.length);
-
-    // are we dropping on a library ?
-    var targetListIsLibrary = (aTargetList instanceof Ci.sbILibrary);
-    var rejectedItems = 0; // for devices we may have to reject some items
-
-    if (targetListIsLibrary) {
-      // want to copy the list and the contents
-      if (aTargetList == list.library) {
-        return;
-      }
-
-      // XXXAlfred: When the listener logic is updated properly in bug 21466,
-      //            we might want to remove the device specific check below.
-      var device;
-      // Get device from non-device library will cause NS_ERROR_NOT_IMPLEMENTED.
-      // Device library could also return NS_ERROR_UNEXPECTED on failure.
-      try {
-        device = aTargetList.device;
-      } catch (e) {
-        device = null;
-      }
-
-      // Check whether the device support playlist and the drag session is only
-      // for playlist.
-      if (device && !this._doesDeviceSupportPlaylist(device)) {
-        aTargetList.addAll(list);
-        if (aListener && list.length > 0)
-          aListener.onFirstMediaItem(list.getItemByIndex(0));
-      }
-      else {
-        // create a copy of the list
-        var newlist = aTargetList.copyMediaList('simple', list, false);
-      
-        if (aListener) {
-          aListener.onCopyMediaList(aTargetList, newlist);
-          if (newlist.length > 0)
-            aListener.onFirstMediaItem(newlist.getItemByIndex(0));
-        }
-      }
-
-      // lone> some of these values may not be accurate, this assumes that all 
-      // tracks have been copied, which is true if both the source and target 
-      // are playlists, but could be false if the target is a library. better 
-      // than nothing anyway.
-      this._dropComplete(aListener,
-                         aTargetList,
-                         list.length,
-                         0,
-                         rejectedItems,
-                         list.length,
-                         0);
-
-    } else {
-      if (context.list == aTargetList) {
-        // uh oh - you can't drop a list onto itself
-        return;
-      }
-
-      // is this a device media list we're going to?
-      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                            .getService(Ci.sbIDeviceManager2);
-      var selectedDevice = deviceManager.getDeviceForItem(aTargetList);
-      
-
-      function onEnumerateComplete() {
-        // add the contents
-        if (aDropPosition != -1 &&
-            aTargetList instanceof Ci.sbIOrderableMediaList)
-        {
-          aTargetList.insertSomeBefore(aDropPosition,
-                                       ArrayConverter.enumerator(allItems.items));
-        } else {
-          aTargetList.addSome(ArrayConverter.enumerator(allItems.items));
-        }
-        if (aListener && list.length > 0) {
-          aListener.onFirstMediaItem(list.getItemByIndex(0));
-        }
-  
-        // lone> some of these values may not be accurate, this assumes that all 
-        // tracks have been copied, which is true if both the source and target 
-        // are playlists, but could be false if the target is a library. better 
-        // than nothing anyway.
-        InternalDropHandler._dropComplete(aListener,
-                                          aTargetList,
-                                          list.length,
-                                          0,
-                                          rejectedItems,
-                                          list.length,
-                                          0);
-      }
-      // make an enumerator with all the items from the source playlist        
-      var allItems = {
-        items: [],
-        itemsPending: 0,
-        enumerationEnded: false,
-        onEnumerationBegin: function(aMediaList) {
-          this.items = [];
-        },
-        onEnumeratedItem: function(aMediaList, aMediaItem) {
-          if (selectedDevice) {
-            this.itemsPending++;
-            selectedDevice.supportsMediaItem(aMediaItem, this);
-          }
-          else {
-            this.items.push(aMediaItem);
-          }
-        },
-        onEnumerationEnd: function(aMediaList, aResultCode) {
-          this.enumerationEnded = true;
-          this._checkEnumerationComplete();
-        },
-        onSupportsMediaItem: function(aMediaItem, aIsSupported) {
-          if (!aIsSupported) {
-            rejectedItems++;
-          }
-          this.itemsPending--;
-          this._checkEnumerationComplete();
-        },
-        _checkEnumerationComplete : function() {
-          if (this.enumerationEnded && (this.itemsPending < 1))
-            onEnumerateComplete();
-        },
-      };
-
-      list.enumerateAllItems(allItems);
+    var sourceList = context.list;
+    if (sourceList == aTargetList) {
+      // uh oh - you can't drop a list onto itself
+      this._dropComplete(aListener, aTargetList, 0, context.count, 0, 0, 0);
+      return;
     }
+
+    // Check if our destination is on a device; some behaviour differs if it is.
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var destDevice = deviceManager.getDeviceForItem(aTargetList);
+    var sourceDevice = deviceManager.getDeviceForItem(sourceList);
+
+    if (destDevice) {
+      // We use heavily customised behaviour if the target is a device.
+      this._dropListOnDevice(sourceList, aTargetList,
+                             aDropPosition, aListener);
+    }
+    else {
+      // If the source is a device, or no devices are involved, we just need
+      // the simple behaviour.
+      this._dropListSimple(sourceList, aTargetList,
+                           aDropPosition, aListener);
+    }
+  },
+
+  // Get an nsIArray of sbIMediaItems from an nsISimpleEnumerator of same.
+  _itemsFromEnumerator: function(itemEnum) {
+    var items = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+
+    while (itemEnum.hasMoreElements())
+      items.appendElement(itemEnum.getNext(), false);
+
+    return items;
   },
 
   /**
@@ -671,143 +736,43 @@ var InternalDropHandler = {
    * This is the media items variant of _dropItems(); please see that method for
    * documentation.
    */
-  _dropItemsItems: function(aDragSession, aTargetList, aDropPosition, aListener) {
+  _dropItemsItems: function(aDragSession, aTargetList,
+                            aDropPosition, aListener) {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
                                         TYPE_X_SB_TRANSFER_MEDIA_ITEMS, 
                                         Ci.sbIMediaItemsTransferContext);
 
-    var items = context.items;
+    var itemEnumerator = context.items;
+
+    var items = this._itemsFromEnumerator(itemEnumerator);
     
-    // are we dropping on a library ?
+    // are we dropping on a library? Assume all source items are from the same
+    // library.
     if (aTargetList instanceof Ci.sbILibrary) {
-      if (items.hasMoreElements() && 
-          items.getNext().library == aTargetList) {
+      if (items.length > 0 &&
+              items.queryElementAt(0, Ci.sbIMediaItem).library == aTargetList)
+      {
         // can't add items to a library to which they already belong
         this._dropComplete(aListener, aTargetList, 0, context.count, 0, 0, 0);
         return;
       }
-      // we just ate an item; reset the enumerator
-      context.reset();
-      items = context.items;
     }
 
-    // record metrics
-    var metrics_totype = aTargetList.library.getProperty(SBProperties.customType);
-    var metrics_fromtype = context.source.library.getProperty(SBProperties.customType);
-    this._metrics("app.servicepane.copy", 
-                  metrics_fromtype, 
-                  metrics_totype, 
-                  context.count);
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var destDevice = deviceManager.getDeviceForItem(aTargetList);
 
-    // Create a media item duplicate enumerator filter to count the number of
-    // duplicate items and to remove them from the enumerator if the target is
-    // a library.
-    
-    // If the library is a device library, get the device object.
-    let target = null;
-    let device = false;
-    try {
-      var deviceLibrary =
-            aTargetList.library.QueryInterface(Ci.sbIDeviceLibrary);
-      device = deviceLibrary.device;
+    if (destDevice) {
+      // We use heavily customised behaviour if the target is a device.
+      this._dropItemsOnDevice(items, aTargetList,
+                              aDropPosition, aListener);
     }
-    catch (e) {
-      // Nothing to do here, target will be null
-    }
-    
-    let removeDuplicates = aTargetList instanceof Ci.sbILibrary;
-    let dupFilter = 
-      Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
-        .createInstance(Ci.sbIMediaListDuplicateFilter);
-    
-    dupFilter.initialize(items, 
-                         aTargetList.library, 
-                         removeDuplicates);
-
-    var totalUnsupported = 0;
-
-    // Create an enumerator that wraps the enumerator we were handed.
-    // We use this to set downloadStatusTarget and to notify the onFirstMediaItem
-    // listener, as well as counting the number of unsupported items
-    var unwrapperListener = {
-      first: true,
-      itemsPending: 0,
-      _hasMoreElements: true,
-
-      onHasMoreElements : function(aEnumerator, aHasMore) {
-        this._hasMoreElements = aHasMore;
-        this._checkEnumerationComplete();
-      },
-      onGetNext : function(aEnumerator, aItem) {
-        var item = aItem
-
-        if (this.first) {
-          this.first = false;
-          if (aListener)
-            aListener.onFirstMediaItem(item);
-        }
-
-        if (device) {
-          this.itemsPending++;
-          device.supportsMediaItem(item, this);
-        }
-      },
-      onSupportsMediaItem : function(aMediaItem, aIsSupported) {
-        if (!aIsSupported) {
-          totalUnsupported++;
-        }
-        this.itemsPending--;
-        this._checkEnumerationComplete();
-      },
-      _checkEnumerationComplete : function() {
-        if (!this._hasMoreElements && (this.itemsPending < 1))
-          onEnumerateComplete();
-      },
-      QueryInterface : XPCOMUtils.generateQI([Ci.nsISimpleEnumerator,
-                                              Ci.sbIDeviceSupportsItemCallback])
-    }
-
-    var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
-                    .createInstance(Ci.sbIMediaListEnumeratorWrapper);
-    unwrapper.initialize(dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
-                         unwrapperListener);
-    
-    var asyncListener = {
-      _dupFilter: dupFilter,
-      onProgress: function(aItemsProcessed, aComplete) {
-        DNDUtils.reportAddedTracks(aItemsProcessed, 
-                                   0, /* no duplicate reporting */
-                                   0, /* no unsupported reporting */
-                                   aTargetList.name, 
-                                   device ? true : false);
-      },
-      QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
-    }
-      
-    if (aDropPosition != -1 && aTargetList instanceof Ci.sbIOrderableMediaList) {
-      aTargetList.insertSomeBefore(aDropPosition, unwrapper);
-    } else {
-      aTargetList.addSomeAsync(unwrapper , asyncListener);
-    }
-
-    function onEnumerateComplete() {
-      var totalImported = dupFilter.totalItems - dupFilter.duplicateItems;
-      var totalDups = dupFilter.duplicateItems;
-      var totalInserted = dupFilter.totalItems;
-      if (removeDuplicates) {
-        totalInserted = totalImported;
-      }
-      totalImported -= totalUnsupported;
-      totalInserted -= totalUnsupported;
-  
-      InternalDropHandler._dropComplete(aListener,
-                                        aTargetList,
-                                        totalImported,
-                                        totalDups,
-                                        totalUnsupported,
-                                        totalInserted,
-                                        0);
+    else {
+      // If the source is a device, or no devices are involved, we just need
+      // the simple behaviour.
+      this._dropItemsSimple(items, aTargetList,
+                            aDropPosition, aListener);
     }
   },
 
@@ -844,13 +809,6 @@ var InternalDropHandler = {
                               otherDrops);
     }
   },
-  
-  _metrics: function(aCategory, aUniqueID, aExtraString, aIntValue) {
-    var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-                      .createInstance(Ci.sbIMetrics);
-    metrics.metricsAdd(aCategory, aUniqueID, aExtraString, aIntValue);
-  }
- 
 }
 
 /*

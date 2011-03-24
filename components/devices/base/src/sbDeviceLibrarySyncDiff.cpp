@@ -28,7 +28,9 @@
 #include <nsIMutableArray.h>
 
 #include <sbIMediaListView.h>
+#include <sbIDevice.h>
 #include <sbIDeviceLibrary.h>
+#include <sbIDeviceManager.h>
 #include <sbILibraryChangeset.h>
 #include <sbILibraryManager.h>
 
@@ -52,11 +54,13 @@ public:
 
   SyncEnumListenerBase() :
     mMediaTypes(0),
+    mIsDrop(PR_FALSE),
     mPlaylistMatchingUsesOriginGUID(PR_FALSE)
   {
   }
 
-  virtual nsresult Init(PRBool aPlaylistMatchingUsesOriginGUID,
+  virtual nsresult Init(PRBool aIsDrop,
+                        PRBool aPlaylistMatchingUsesOriginGUID,
                         sbILibrary *aMainLibrary,
                         sbILibrary *aDeviceLibrary);
 
@@ -101,7 +105,10 @@ protected:
   bool ListHasCorrectContentType(sbIMediaList *aList);
 
   PRUint32 mMediaTypes;
+  PRBool   mIsDrop;
   PRBool   mPlaylistMatchingUsesOriginGUID;
+
+  nsTHashtable<nsStringHashKey> mSeenMediaItems;
 
   nsCOMPtr<sbILibrary> mMainLibrary;
   nsCOMPtr<sbILibrary> mDeviceLibrary;
@@ -118,12 +125,14 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(SyncEnumListenerBase,
                               sbIMediaListEnumerationListener)
 
 nsresult
-SyncEnumListenerBase::Init(PRBool aPlaylistMatchingUsesOriginGUID,
+SyncEnumListenerBase::Init(PRBool aIsDrop,
+                           PRBool aPlaylistMatchingUsesOriginGUID,
                            sbILibrary *aMainLibrary,
                            sbILibrary *aDeviceLibrary)
 {
   nsresult rv;
 
+  mIsDrop = aIsDrop;
   mPlaylistMatchingUsesOriginGUID = aPlaylistMatchingUsesOriginGUID;
 
   mMainLibrary = aMainLibrary;
@@ -138,6 +147,8 @@ SyncEnumListenerBase::Init(PRBool aPlaylistMatchingUsesOriginGUID,
   mLibraryChanges = do_CreateInstance(
           "@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mSeenMediaItems.Init();
 
   return NS_OK;
 }
@@ -173,7 +184,18 @@ SyncEnumListenerBase::OnEnumeratedItem(sbIMediaList *aMediaList,
 
   nsresult rv;
 
-  // Process non-hidden items.
+  // First: is this something we've already added? Ignore if so.
+  nsString itemId;
+  rv = aMediaItem->GetGuid(itemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mSeenMediaItems.GetEntry(itemId)) {
+    return NS_OK;
+  }
+  nsStringHashKey *key = mSeenMediaItems.PutEntry(itemId);
+  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
+
+  // Also ignore hidden items.
   nsString hidden;
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                hidden);
@@ -640,9 +662,6 @@ public:
 
   SyncExportEnumListener() {}
 
-  virtual nsresult Init(PRBool aPlaylistMatchingUsesOriginGUID,
-                        sbILibrary *aMainLibrary,
-                        sbILibrary *aDeviceLibrary);
   virtual nsresult ProcessItem(sbIMediaList *aMediaList,
                                sbIMediaItem *aMediaItem);
 
@@ -659,26 +678,9 @@ protected:
 private:
   virtual ~SyncExportEnumListener() { }
 
-  nsTHashtable<nsStringHashKey> mSeenMediaItems;
-
 public:
   nsTArray<nsCOMPtr<sbIMediaList> > mMixedContentPlaylists;
 };
-
-nsresult
-SyncExportEnumListener::Init(PRBool aPlaylistMatchingUsesOriginGUID,
-                             sbILibrary *aMainLibrary,
-                             sbILibrary *aDeviceLibrary)
-{
-  nsresult rv = SyncEnumListenerBase::Init(aPlaylistMatchingUsesOriginGUID,
-                                           aMainLibrary,
-                                           aDeviceLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mSeenMediaItems.Init();
-
-  return NS_OK;
-}
 
 /* Look for an item in the device library with an origin item GUID matching
    aItemID */
@@ -749,17 +751,6 @@ SyncExportEnumListener::ProcessItem(sbIMediaList *aMediaList,
 {
   nsresult rv;
 
-  // First: is this something we've already added? Ignore if so.
-  nsString itemId;
-  rv = aMediaItem->GetGuid(itemId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mSeenMediaItems.GetEntry(itemId)) {
-    return NS_OK;
-  }
-  nsStringHashKey *key = mSeenMediaItems.PutEntry(itemId);
-  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
-
   nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
   if (NS_SUCCEEDED(rv)) {
     if (!ListHasCorrectContentType(itemAsList)) {
@@ -825,46 +816,71 @@ SyncExportEnumListener::ProcessItem(sbIMediaList *aMediaList,
     // Now we get to the core of the sync logic!
     // Does the device library have an item with origin GUID equal to this
     // item's guid?
+    nsString itemId;
+    rv = aMediaItem->GetGuid(itemId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<sbIMediaItem> destMediaItem;
     rv = GetItemWithOriginGUID(mDeviceLibrary,
                                itemId,
                                getter_AddRefs(destMediaItem));
+    PRBool hasOriginMatch = NS_SUCCEEDED(rv) && destMediaItem;
 
-    if (NS_SUCCEEDED(rv) && destMediaItem) {
-      PRInt64 itemLastModifiedTime;
-      PRInt64 lastSyncTime;
-      rv = aMediaItem->GetUpdated(&itemLastModifiedTime);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = GetTimeProperty(mDeviceLibrary,
-                           NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
-                           &lastSyncTime);
-
-      if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
-        // Ok. We want to overwrite the destination media item.
+    if (mIsDrop) {
+      // Drag-and drop case is simple: if we have a matching origin item,
+      // overwrite. Otherwise, add a new one.
+      if (hasOriginMatch) {
         rv = AddChange(sbIChangeOperation::MODIFIED,
                        aMediaItem,
                        destMediaItem);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-    }
-    else {
-      // We don't have a definite (OriginGUID based) match, how about an
-      // identity (hash) based match?
-      PRBool hasMatch;
-      rv = mDeviceLibrary->ContainsItemWithSameIdentity(aMediaItem, &hasMatch);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (!hasMatch) {
-        // Ok, no match - appears to be an all-new file. Copy it as a new item
-        // to the destination library.
+      else {
         rv = AddChange(sbIChangeOperation::ADDED,
                        aMediaItem,
                        NULL);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      // Otherwise: looks like it's probably a dupe, but we're not sure, so...
-      // do nothing!
+    }
+    else {
+      // Sync case
+      if (hasOriginMatch) {
+        PRInt64 itemLastModifiedTime;
+        PRInt64 lastSyncTime;
+        rv = aMediaItem->GetUpdated(&itemLastModifiedTime);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = GetTimeProperty(mDeviceLibrary,
+                             NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
+                             &lastSyncTime);
+
+        if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
+          // Ok. We want to overwrite the destination media item.
+          rv = AddChange(sbIChangeOperation::MODIFIED,
+                         aMediaItem,
+                         destMediaItem);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      else {
+        // We don't have a definite (OriginGUID based) match, how about an
+        // identity (hash) based match?
+        PRBool hasMatch;
+        rv = mDeviceLibrary->ContainsItemWithSameIdentity(aMediaItem,
+                                                          &hasMatch);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!hasMatch) {
+          // Ok, no match - appears to be an all-new file. Copy it as a new item
+          // to the destination library.
+          rv = AddChange(sbIChangeOperation::ADDED,
+                         aMediaItem,
+                         NULL);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        // Otherwise: looks like it's probably a dupe, but we're not sure, so...
+        // do nothing!
+      }
     }
   }
 
@@ -885,6 +901,8 @@ protected:
 
   nsresult IsFromMainLibrary(sbIMediaItem *aMediaItem,
                              PRBool       *aFromMainLibrary);
+  nsresult IsInMainLibrary(sbIMediaItem *aMediaItem,
+                           PRBool       *aFromMainLibrary);
 
   virtual nsresult GetMatchingPlaylistByOriginGUID(
         sbILibrary *aLibrary,
@@ -921,6 +939,27 @@ SyncImportEnumListener::IsFromMainLibrary(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aFromMainLibrary = originLibraryGUID.Equals(mainLibraryGUID);
+  return NS_OK;
+}
+
+nsresult
+SyncImportEnumListener::IsInMainLibrary(sbIMediaItem *aMediaItem,
+                                        PRBool       *aInMainLibrary)
+{
+  // Is the origin item actually IN the main library? This is assumed to only
+  // be called if we already know that the origin points at the main library.
+  nsresult rv;
+
+  nsString originItemGUID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                               originItemGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = mMainLibrary->GetMediaItem(originItemGUID, getter_AddRefs(item));
+
+  *aInMainLibrary = NS_SUCCEEDED(rv) && item;
+
   return NS_OK;
 }
 
@@ -1035,21 +1074,43 @@ SyncImportEnumListener::ProcessItem(sbIMediaList *aMediaList,
     PRBool isFromMainLibrary;
     rv = IsFromMainLibrary(aMediaItem, &isFromMainLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (!isFromMainLibrary) {
-      // Didn't come from Songbird (at least not from this profile on this
-      // machine). Is there something that _looks_ like the same item? If there
-      // is, we don't want to import it.
-      PRBool hasMatch;
-      rv = mMainLibrary->ContainsItemWithSameIdentity(aMediaItem, &hasMatch);
-      NS_ENSURE_SUCCESS(rv, rv);
 
-      if (!hasMatch) {
-        // It looks like an all-new item not present in the main library. Time
-        // to actually import it!
-        rv = AddChange(sbIChangeOperation::ADDED,
-                       aMediaItem,
-                       NULL);
+    if (mIsDrop) {
+      // Drag-and-drop case.
+      if (isFromMainLibrary) {
+        // Ok, it's from the main library. Is it still IN the main library?
+        PRBool isInMainLibrary;
+        rv = IsInMainLibrary(aMediaItem, &isInMainLibrary);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!isInMainLibrary) {
+          // It's no longer in the main library, but the user dragged it there,
+          // so take that to mean "re-add this"
+          rv = AddChange(sbIChangeOperation::ADDED,
+                         aMediaItem,
+                         NULL);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+    }
+    else {
+      // Sync case.
+      if (!isFromMainLibrary) {
+        // Didn't come from Songbird (at least not from this profile on this
+        // machine). Is there something that _looks_ like the same item? If
+        // there is, we don't want to import it.
+        PRBool hasMatch;
+        rv = mMainLibrary->ContainsItemWithSameIdentity(aMediaItem, &hasMatch);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!hasMatch) {
+          // It looks like an all-new item not present in the main library. Time
+          // to actually import it!
+          rv = AddChange(sbIChangeOperation::ADDED,
+                         aMediaItem,
+                         NULL);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
   }
@@ -1094,7 +1155,8 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   nsRefPtr<SyncExportEnumListener> exportListener =
       new SyncExportEnumListener();
   NS_ENSURE_TRUE(exportListener, NS_ERROR_OUT_OF_MEMORY);
-  rv = exportListener->Init(aPlaylistMatchingUsesOriginGUID,
+  rv = exportListener->Init(PR_FALSE,
+                            aPlaylistMatchingUsesOriginGUID,
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1165,7 +1227,8 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   nsRefPtr<SyncImportEnumListener> importListener =
       new SyncImportEnumListener();
   NS_ENSURE_TRUE(importListener, NS_ERROR_OUT_OF_MEMORY);
-  rv = importListener->Init(aPlaylistMatchingUsesOriginGUID,
+  rv = importListener->Init(PR_FALSE,
+                            aPlaylistMatchingUsesOriginGUID,
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1186,6 +1249,88 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
   NS_IF_ADDREF(*aExportChangeset = exportListener->mChangeset);
   NS_IF_ADDREF(*aImportChangeset = importListener->mChangeset);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrarySyncDiff::GenerateDropLists(
+        PRBool   aPlaylistMatchingUsesOriginGUID,
+        sbILibrary *aSourceLibrary,
+        sbILibrary *aDestLibrary,
+        sbIMediaList *aSourceList,
+        nsIArray *aSourceItems,
+        sbILibraryChangeset **aChangeset NS_OUTPARAM)
+{
+  NS_ENSURE_ARG_POINTER (aDestLibrary);
+  NS_ENSURE_ARG_POINTER (aChangeset);
+
+  if (!aSourceList)
+    NS_ENSURE_ARG_POINTER(aSourceItems);
+
+  nsresult rv;
+
+  // Figure out if we're going to a device or from one.
+  bool toDevice = false;
+  nsCOMPtr<sbIDeviceManager2> deviceManager = do_GetService(
+          "@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> device;
+  rv = deviceManager->GetDeviceForItem(aDestLibrary, getter_AddRefs(device));
+  if (NS_SUCCEEDED(rv) && device) {
+    toDevice = true;
+  }
+
+  const PRUint32 allMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO |
+                                 sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
+
+  nsRefPtr<SyncEnumListenerBase> listener;
+
+  if (toDevice) {
+    listener = new SyncExportEnumListener();
+    NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+  }
+  else {
+    listener = new SyncImportEnumListener();
+    NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  rv = listener->Init(PR_TRUE,
+                      aPlaylistMatchingUsesOriginGUID,
+                      aSourceLibrary,
+                      aDestLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+  listener->SetMediaTypes(allMediaTypes);
+
+  if (aSourceList) {
+    // Enumerate the list into our hashmap
+    aSourceList->EnumerateAllItems(listener,
+                                   sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // And add the list itself.
+    rv = listener->ProcessItem(aSourceLibrary, aSourceList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    PRUint32 itemsLen;
+    rv = aSourceItems->GetLength(&itemsLen);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < itemsLen; i++) {
+      nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(aSourceItems, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = listener->ProcessItem(aSourceLibrary, item);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = listener->Finish();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*aChangeset = listener->mChangeset);
 
   return NS_OK;
 }

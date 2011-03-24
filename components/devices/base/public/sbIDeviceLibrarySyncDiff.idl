@@ -26,6 +26,7 @@
 
 interface sbILibrary;
 interface sbILibraryChangeset;
+interface sbIMediaList;
 interface nsIArray;
  
 [scriptable, uuid(f26d3ef1-3d94-4c3e-a5b9-26a29cf92f03)]
@@ -92,6 +93,30 @@ interface sbIDeviceLibrarySyncDiff : nsISupports
                          in nsIArray   aSourceLists,
                          out sbILibraryChangeset aExportChangeset,
                          out sbILibraryChangeset aImportChangeset);
+
+  /**
+   * Generate change set to apply to or from a device library during
+   * drag-and-drop operation. 
+   *
+   * \param aPlaylistMatchingUsesOriginGUID
+   *                         Whether a matching playlist is found based on
+   *                         the originItemGUID property (if true), or a name
+   *                         match (if false)
+   * \param aSourceLibrary   The source library for the drop operation.
+   * \param aDestLibrary     The destination library for the drop operation.
+   * \param aSourceList      A source playlist being copied to the destination
+   *                         library. May be null if aSourceItems is not.
+   * \param aSourceItems     An array of sbIMediaItems for the drop operation.
+   *                         May be null if aSourceList is not.
+   * \param aChangeset       The changes to apply to the destination library
+   *                         as a result of this drop operation.
+   */
+  void generateDropLists(in boolean aPlaylistMatchingUsesOriginGUID,
+                         in sbILibrary aSourceLibrary,
+                         in sbILibrary aDestLibrary,
+                         in sbIMediaList aSourceList,
+                         in nsIArray     aSourceItems,
+                         out sbILibraryChangeset aChangeset);
 };
 
 %{C++

@@ -253,7 +253,7 @@ public:
 
 public:
 
-  sbBaseDevice(bool aUseOriginForPlaylists = false);
+  sbBaseDevice();
   virtual ~sbBaseDevice();
 
   /**
@@ -725,7 +725,6 @@ protected:
   PRBool mConnected;
   nsCOMPtr<nsITimer> mDeferredSetupDeviceTimer;
   nsRefPtr<sbDeviceRequestThreadQueue> mRequestThreadQueue;
-  const bool mUseOriginForPlaylists;
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -1695,14 +1694,6 @@ protected:
   static nsresult GetImportSettings(sbIDeviceLibrary * aDevLibrary,
                                     PRBool * aImportAudio,
                                     PRBool * aImportVideo);
-
-  /**
-   * Determines whether we should use origin guids for playlists
-   */
-  bool UseOriginForPlaylists() const
-  {
-    return mUseOriginForPlaylists;
-  }
 };
 
 
