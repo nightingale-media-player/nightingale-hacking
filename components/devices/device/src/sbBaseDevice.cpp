@@ -4838,15 +4838,11 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
     syncFlag |= sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT;
   }
 
-  PRBool useOriginForPlaylists;
-  rv = GetUseOriginForPlaylists(&useOriginForPlaylists);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceLibrarySyncDiff> syncDiff =
     do_CreateInstance(SONGBIRD_DEVICELIBRARYSYNCDIFF_CONTRACTID, &rv);
 
   rv = syncDiff->GenerateSyncLists(syncFlag,
-                                   useOriginForPlaylists,
                                    syncMediaTypes,
                                    mainLib,
                                    devLib,

@@ -125,15 +125,6 @@ NS_IMETHODIMP sbMockDevice::GetId(nsID * *aId)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbMockDevice::GetUseOriginForPlaylists(PRBool *aUseOrigin)
-{
-  NS_ENSURE_ARG_POINTER(aUseOrigin);
-  *aUseOrigin = PR_TRUE;
-
-  return NS_OK;
-}
-
 /* void connect (); */
 NS_IMETHODIMP sbMockDevice::Connect()
 {

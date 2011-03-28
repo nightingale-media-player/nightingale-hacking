@@ -99,14 +99,15 @@ var deviceItems = {};
 
 var deviceLists = {};
 [
-  ["list1", "A list"],
-  ["list2", "B list"],
-  ["list3", "C list"],
-  ["list4", "D list"],
-  ["list6", "F list"],
+  ["list1", "A list", "list1"],
+  ["list2", "B list", "list2"],
+  ["list3", "C list", "list3"],
+  ["list4", "D list", "list4"],
+  ["list6", "F list", null],
 ].forEach(function (data) {
   deviceLists[data[0]] = {
     name: data[1],
+    originPointsTo: mainLibLists[data[2]]
   };
 });
 
@@ -220,7 +221,12 @@ function populateLibraries(mainLib, deviceLib) {
   for (var listId in deviceLists) {
     var listData = deviceLists[listId];
 
-    var item = deviceLib.createMediaList("simple");
+    var properties = null;
+    if (listData.originPointsTo)
+        properties = SBProperties.createArray([
+            [SBProperties.originLibraryGuid, mainLib.guid],
+            [SBProperties.originItemGuid, listData.originPointsTo.item.guid]]);
+    var item = deviceLib.createMediaList("simple", properties);
     item.name = listData.name;
 
     listData.item = item;
@@ -268,7 +274,6 @@ function runTest () {
   var importChanges = {};
   sync.generateSyncLists(Ci.sbIDeviceLibrarySyncDiff.SYNC_FLAG_EXPORT_ALL |
                            Ci.sbIDeviceLibrarySyncDiff.SYNC_FLAG_IMPORT,
-                         false,
                          Ci.sbIDeviceLibrarySyncDiff.SYNC_TYPE_AUDIO,
                          mainLib,
                          deviceLib,

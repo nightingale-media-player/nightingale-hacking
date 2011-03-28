@@ -52,33 +52,68 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
+  enum mode {
+    ENUM_ALL,
+    ENUM_ITEMS,
+    ENUM_LISTS
+  };
+
+  enum ChangeType {
+    CHANGE_NONE,
+    CHANGE_ADD,
+    CHANGE_CLOBBER,
+    CHANGE_RETAIN
+  };
+
+
   SyncEnumListenerBase() :
     mMediaTypes(0),
     mIsDrop(PR_FALSE),
-    mPlaylistMatchingUsesOriginGUID(PR_FALSE)
+    mEnumMode(ENUM_ALL)
   {
   }
 
   virtual nsresult Init(PRBool aIsDrop,
-                        PRBool aPlaylistMatchingUsesOriginGUID,
                         sbILibrary *aMainLibrary,
                         sbILibrary *aDeviceLibrary);
 
+  // Process any item (list or non-list), and act on it appropriately.
   virtual nsresult ProcessItem(sbIMediaList *aMediaList,
                                sbIMediaItem *aMediaItem) = 0;
 
+  // Process a non-list item, determining what to do with it. Does not modify
+  // any state.
+  virtual nsresult SelectChangeForItem(sbIMediaItem *aMediaItem,
+                                       ChangeType *aChangeType,
+                                       sbIMediaItem **aDestMediaItem) = 0;
+
+  // Process a list item, determining what to do with it. Does not modify
+  // any state.
+  virtual nsresult SelectChangeForList(sbIMediaList *aMediaList,
+                                       ChangeType *aChangeType,
+                                       sbIMediaList **aDestMediaList) = 0;
+
+  nsresult AddChange(PRUint32 aChangeType,
+                     sbIMediaItem *aSrcItem,
+                     sbIMediaItem *aDstItem,
+                     nsIArray *aListItems = NULL);
+
+  nsresult AddListChange(PRUint32 aChangeType,
+                         sbIMediaList *aSrcList,
+                         sbIMediaList *aDstList);
+
   void SetMediaTypes(PRUint32 aMediaTypes) {
     mMediaTypes = aMediaTypes;
+  }
+
+  void SetEnumMode(enum mode aMode) {
+    mEnumMode = aMode;
   }
 
   nsresult Finish();
 
 protected:
   virtual ~SyncEnumListenerBase() {}
-
-  nsresult AddChange(PRUint32 aChangeType,
-                     sbIMediaItem *aSrcItem,
-                     sbIMediaItem *aDstItem);
 
   nsresult CreatePropertyChangesForItemAdded(sbIMediaItem *aSourceItem,
                                              nsIArray **aPropertyChanges);
@@ -91,11 +126,7 @@ protected:
                            nsString aPropertyName,
                            PRInt64 *_result);
 
-  nsresult GetMatchingPlaylist(sbILibrary      *aLibrary,
-                               sbIMediaList    *aList,
-                               sbIMediaList   **aMatchingList);
-
-  virtual nsresult GetMatchingPlaylistByOriginGUID(
+  virtual nsresult GetMatchingPlaylist(
         sbILibrary *aLibrary,
         sbIMediaList *aList,
         sbIMediaList **aMatchingList) = 0;
@@ -104,9 +135,9 @@ protected:
   bool ListIsMixed(sbIMediaList *aList);
   bool ListHasCorrectContentType(sbIMediaList *aList);
 
-  PRUint32 mMediaTypes;
-  PRBool   mIsDrop;
-  PRBool   mPlaylistMatchingUsesOriginGUID;
+  PRUint32  mMediaTypes;
+  PRBool    mIsDrop;
+  enum mode mEnumMode;
 
   nsTHashtable<nsStringHashKey> mSeenMediaItems;
 
@@ -124,16 +155,91 @@ public:
 NS_IMPL_THREADSAFE_ISUPPORTS1(SyncEnumListenerBase,
                               sbIMediaListEnumerationListener)
 
+class ListAddingEnumerationListener:
+    public sbIMediaListEnumerationListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  ListAddingEnumerationListener(SyncEnumListenerBase *aMainListener,
+                                nsIMutableArray *aListItems):
+      mMainListener(aMainListener),
+      mListItems(aListItems)
+  {
+  };
+
+  nsCOMPtr<SyncEnumListenerBase> mMainListener;
+  nsCOMPtr<nsIMutableArray> mListItems;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(ListAddingEnumerationListener,
+                              sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP
+ListAddingEnumerationListener::OnEnumerationBegin(sbIMediaList *aMediaList,
+                                                  PRUint16 *_retval)
+{
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+ListAddingEnumerationListener::OnEnumeratedItem(sbIMediaList *aMediaList,
+                                                sbIMediaItem *aMediaItem,
+                                                PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  SyncEnumListenerBase::ChangeType changeType;
+  nsCOMPtr<sbIMediaItem> destItem;
+  rv = mMainListener->SelectChangeForItem(aMediaItem,
+                                          &changeType, 
+                                          getter_AddRefs(destItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  switch(changeType) {
+    case SyncEnumListenerBase::CHANGE_ADD:
+    case SyncEnumListenerBase::CHANGE_CLOBBER:
+      // For both of these, use the source item
+      rv = mListItems->AppendElement(aMediaItem, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    case SyncEnumListenerBase::CHANGE_RETAIN:
+      // For this one, use the (existing) destination item
+      rv = mListItems->AppendElement(destItem, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    default:
+      // And this means it was an item we chose not to transfer at all.
+      break;
+  }
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+ListAddingEnumerationListener::OnEnumerationEnd(sbIMediaList *aMediaList,
+                                                nsresult aStatusCode)
+{
+  return NS_OK;
+}
+
 nsresult
 SyncEnumListenerBase::Init(PRBool aIsDrop,
-                           PRBool aPlaylistMatchingUsesOriginGUID,
                            sbILibrary *aMainLibrary,
                            sbILibrary *aDeviceLibrary)
 {
   nsresult rv;
 
   mIsDrop = aIsDrop;
-  mPlaylistMatchingUsesOriginGUID = aPlaylistMatchingUsesOriginGUID;
 
   mMainLibrary = aMainLibrary;
   mDeviceLibrary = aDeviceLibrary;
@@ -184,12 +290,23 @@ SyncEnumListenerBase::OnEnumeratedItem(sbIMediaList *aMediaList,
 
   nsresult rv;
 
+  nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
+  bool isList = NS_SUCCEEDED(rv);
+
+  if ((mEnumMode == ENUM_LISTS && !isList) ||
+      (mEnumMode == ENUM_ITEMS && isList))
+  {
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
+    return NS_OK;
+  }
+
   // First: is this something we've already added? Ignore if so.
   nsString itemId;
   rv = aMediaItem->GetGuid(itemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mSeenMediaItems.GetEntry(itemId)) {
+    *_retval = sbIMediaListEnumerationListener::CONTINUE;
     return NS_OK;
   }
   nsStringHashKey *key = mSeenMediaItems.PutEntry(itemId);
@@ -555,9 +672,48 @@ SyncEnumListenerBase::CreatePropertyChangesForItemAdded(
 }
 
 nsresult
+SyncEnumListenerBase::AddListChange(PRUint32 aChangeType,
+                                    sbIMediaList *aSrcList,
+                                    sbIMediaList *aDstList)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIMutableArray> listItems =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  // Now we want to enumerate aSrcList, and for each item, determine a
+  // corresponding item (or null). If we determine any item, add it to
+  // listItems.
+  nsRefPtr<ListAddingEnumerationListener> listener =
+      new ListAddingEnumerationListener(this, listItems);
+
+  aSrcList->EnumerateAllItems(listener,
+                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> srcItem = do_QueryInterface(aSrcList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> dstItem;
+  if (aDstList) {
+    dstItem = do_QueryInterface(aDstList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = AddChange(aChangeType,
+                 srcItem,
+                 dstItem,
+                 listItems);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 SyncEnumListenerBase::AddChange(PRUint32 aChangeType,
                                 sbIMediaItem *aSrcItem,
-                                sbIMediaItem *aDstItem)
+                                sbIMediaItem *aDstItem,
+                                nsIArray *aListItems)
 {
   nsresult rv;
 
@@ -587,7 +743,7 @@ SyncEnumListenerBase::AddChange(PRUint32 aChangeType,
                                      aSrcItem,
                                      aDstItem,
                                      propertyChanges,
-                                     nsnull);
+                                     aListItems);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISupports> element =
@@ -616,47 +772,6 @@ SyncEnumListenerBase::GetTimeProperty(sbIMediaItem *aMediaItem,
   return NS_OK;
 }
 
-nsresult
-SyncEnumListenerBase::GetMatchingPlaylist(sbILibrary      *aLibrary,
-                                          sbIMediaList    *aList,
-                                          sbIMediaList   **aMatchingList)
-{
-  // See if the list aList has a matching list in the library. The list is
-  // not from the library (e.g. main library list, device library)
-  nsresult rv;
-
-  if (mPlaylistMatchingUsesOriginGUID) {
-    rv = GetMatchingPlaylistByOriginGUID(aLibrary, aList, aMatchingList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    // We don't maintain this info for this device. For these device types
-    // (such as MSC), we check for a matching list name.
-    nsString listName;
-    rv = aList->GetName(listName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // The list name is internally stored as the MEDIALISTNAME property.
-    nsCOMPtr<nsIArray> items;
-    rv = aLibrary->GetItemsByProperty(
-            NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
-            listName,
-            getter_AddRefs(items));
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      *aMatchingList = NULL;
-      return NS_OK;
-    }
-
-    // If we get multiple matches, we just pick the first, arbitrarily.
-    nsCOMPtr<sbIMediaList> item = do_QueryElementAt(items, 0, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    item.forget(aMatchingList);
-  }
-
-  return NS_OK;
-}
-
 class SyncExportEnumListener : public SyncEnumListenerBase
 {
 public:
@@ -666,12 +781,19 @@ public:
   virtual nsresult ProcessItem(sbIMediaList *aMediaList,
                                sbIMediaItem *aMediaItem);
 
+  virtual nsresult SelectChangeForItem(sbIMediaItem *aMediaItem,
+                                       ChangeType *aChangeType,
+                                       sbIMediaItem **aDestMediaItem);
+  virtual nsresult SelectChangeForList(sbIMediaList *aMediaList,
+                                       ChangeType *aChangeType,
+                                       sbIMediaList **aDestMediaList);
+
 protected:
   nsresult GetItemWithOriginGUID(sbILibrary    *aDeviceLibrary,
                                  nsString       aItemID,
                                  sbIMediaItem **aMediaItem);
 
-  virtual nsresult GetMatchingPlaylistByOriginGUID(
+  virtual nsresult GetMatchingPlaylist(
         sbILibrary *aLibrary,
         sbIMediaList *aList,
         sbIMediaList **aMatchingList);
@@ -720,7 +842,7 @@ SyncExportEnumListener::GetItemWithOriginGUID(sbILibrary    *aDeviceLibrary,
 }
 
 nsresult
-SyncExportEnumListener::GetMatchingPlaylistByOriginGUID(
+SyncExportEnumListener::GetMatchingPlaylist(
         sbILibrary *aLibrary,
         sbIMediaList *aList,
         sbIMediaList **aMatchingList)
@@ -754,10 +876,6 @@ SyncExportEnumListener::ProcessItem(sbIMediaList *aMediaList,
 
   nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
   if (NS_SUCCEEDED(rv)) {
-    if (!ListHasCorrectContentType(itemAsList)) {
-      return NS_OK;
-    }
-
     if (ListIsMixed(itemAsList)) {
       // We have to do some absurd things with mixed-content playlists; keep
       // track of them.
@@ -766,17 +884,156 @@ SyncExportEnumListener::ProcessItem(sbIMediaList *aMediaList,
       NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    // We have a list. We only need to sync the list itself. If we're syncing
-    // all content we'll enumerate the items anyway. If we're syncing individual
-    // playlists, we'll explicitly enumerate each of those.
-    nsCOMPtr<sbIMediaList> matchingPlaylist;
-    rv = GetMatchingPlaylist(mDeviceLibrary,
-                             itemAsList,
-                             getter_AddRefs(matchingPlaylist));
+    ChangeType changeType = CHANGE_NONE;
+    nsCOMPtr<sbIMediaList> destList;
+    rv = SelectChangeForList(itemAsList, &changeType, getter_AddRefs(destList));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (matchingPlaylist) {
+    switch (changeType) {
+      case CHANGE_ADD:
+        rv = AddListChange(sbIChangeOperation::ADDED,
+                           itemAsList,
+                           NULL);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      case CHANGE_CLOBBER:
+        rv = AddListChange(sbIChangeOperation::MODIFIED,
+                           itemAsList,
+                           destList);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      default:
+        // Others we do nothing with
+        break;
+    }
+  }
+  else {
+    // Normal media item.
+    ChangeType changeType = CHANGE_NONE;
+    nsCOMPtr<sbIMediaItem> destItem;
+    rv = SelectChangeForItem(aMediaItem, &changeType, getter_AddRefs(destItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    switch (changeType) {
+      case CHANGE_ADD:
+        rv = AddChange(sbIChangeOperation::ADDED,
+                       aMediaItem,
+                       NULL);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      case CHANGE_CLOBBER:
+        rv = AddChange(sbIChangeOperation::MODIFIED,
+                       aMediaItem,
+                       destItem);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      default:
+        // Others we do nothing with
+        break;
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+SyncExportEnumListener::SelectChangeForList(sbIMediaList *aMediaList,
+                                            ChangeType *aChangeType,
+                                            sbIMediaList **aDestMediaList)
+{
+  nsresult rv;
+
+  if (!ListHasCorrectContentType(aMediaList)) {
+    *aChangeType = CHANGE_NONE;
+    return NS_OK;
+  }
+
+  // We have a list. We only need to sync the list itself. If we're syncing
+  // all content we'll enumerate the items anyway. If we're syncing individual
+  // playlists, we'll explicitly enumerate each of those.
+  nsCOMPtr<sbIMediaList> matchingPlaylist;
+  rv = GetMatchingPlaylist(mDeviceLibrary,
+                           aMediaList,
+                           getter_AddRefs(matchingPlaylist));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (matchingPlaylist) {
+    if (mIsDrop) {
+      *aChangeType = CHANGE_CLOBBER;
+    }
+    else {
       // Check sync time vs. last modified time.
+      PRInt64 itemLastModifiedTime;
+      PRInt64 lastSyncTime;
+      rv = aMediaList->GetUpdated(&itemLastModifiedTime);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = GetTimeProperty(mDeviceLibrary,
+                           NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
+                           &lastSyncTime);
+
+      if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
+        // Ok, we have a match - clobber the target item.
+        *aChangeType = CHANGE_CLOBBER;
+      }
+      else {
+        // Otherwise, the playlist hasn't been modified since the last sync, or
+        // we couldn't find the last sync time; don't do anything.
+        *aChangeType = CHANGE_RETAIN;
+      }
+    }
+    matchingPlaylist.forget(aDestMediaList);
+    return NS_OK;
+  }
+  else {
+    // No match found; add a new item.
+    *aChangeType = CHANGE_ADD;
+    return NS_OK;
+  }
+}
+
+
+nsresult
+SyncExportEnumListener::SelectChangeForItem(sbIMediaItem *aMediaItem,
+                                            ChangeType *aChangeType,
+                                            sbIMediaItem **aDestMediaItem)
+{
+  nsresult rv;
+
+  if (!HasCorrectContentType(aMediaItem)) {
+    *aChangeType = CHANGE_NONE;
+    return NS_OK;
+  }
+
+  // Now we get to the core of the sync logic!
+  // Does the device library have an item with origin GUID equal to this
+  // item's guid?
+  nsString itemId;
+  rv = aMediaItem->GetGuid(itemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> destMediaItem;
+  rv = GetItemWithOriginGUID(mDeviceLibrary,
+                             itemId,
+                             getter_AddRefs(destMediaItem));
+  PRBool hasOriginMatch = NS_SUCCEEDED(rv) && destMediaItem;
+
+  if (mIsDrop) {
+    // Drag-and drop case is simple: if we have a matching origin item,
+    // overwrite. Otherwise, add a new one.
+    if (hasOriginMatch) {
+      *aChangeType = CHANGE_CLOBBER;
+      destMediaItem.forget(aDestMediaItem);
+      return NS_OK;
+    }
+    else {
+      *aChangeType = CHANGE_ADD;
+      return NS_OK;
+    }
+  }
+  else {
+    // Sync case
+    if (hasOriginMatch) {
       PRInt64 itemLastModifiedTime;
       PRInt64 lastSyncTime;
       rv = aMediaItem->GetUpdated(&itemLastModifiedTime);
@@ -787,105 +1044,53 @@ SyncExportEnumListener::ProcessItem(sbIMediaList *aMediaList,
                            &lastSyncTime);
 
       if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
-        // Ok, we have a match - clobber the target item.
-        nsCOMPtr<sbIMediaItem> matchingItem = do_QueryInterface(
-                matchingPlaylist, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = AddChange(sbIChangeOperation::MODIFIED,
-                       aMediaItem,
-                       matchingItem);
-        NS_ENSURE_SUCCESS(rv, rv);
+        // Ok. We want to overwrite the destination media item.
+        *aChangeType = CHANGE_CLOBBER;
+        destMediaItem.forget(aDestMediaItem);
+
+        return NS_OK;
       }
-      // Otherwise, the playlist hasn't been modified since the last sync, or
-      // we couldn't find the last sync time; don't do anything.
+      else {
+        // No changes needed; we just point at the existing matched item.
+        *aChangeType = CHANGE_RETAIN;
+        destMediaItem.forget(aDestMediaItem);
+
+        return NS_OK;
+      }
     }
     else {
-      // No match found; add a new item.
-      rv = AddChange(sbIChangeOperation::ADDED,
-                     aMediaItem,
-                     NULL);
+      // We don't have a definite (OriginGUID based) match, how about an
+      // identity (hash) based match?
+      nsCOMPtr<nsIArray> matchedItems;
+      rv = mDeviceLibrary->GetItemsWithSameIdentity(
+              aMediaItem,
+              getter_AddRefs(matchedItems));
       NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else {
-    // Normal media item.
-    // Second: is it of the correct type?
-    if (!HasCorrectContentType(aMediaItem)) {
-      return NS_OK;
-    }
 
-    // Now we get to the core of the sync logic!
-    // Does the device library have an item with origin GUID equal to this
-    // item's guid?
-    nsString itemId;
-    rv = aMediaItem->GetGuid(itemId);
-    NS_ENSURE_SUCCESS(rv, rv);
+      PRUint32 matchedItemsLength;
+      rv = matchedItems->GetLength(&matchedItemsLength);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMediaItem> destMediaItem;
-    rv = GetItemWithOriginGUID(mDeviceLibrary,
-                               itemId,
-                               getter_AddRefs(destMediaItem));
-    PRBool hasOriginMatch = NS_SUCCEEDED(rv) && destMediaItem;
-
-    if (mIsDrop) {
-      // Drag-and drop case is simple: if we have a matching origin item,
-      // overwrite. Otherwise, add a new one.
-      if (hasOriginMatch) {
-        rv = AddChange(sbIChangeOperation::MODIFIED,
-                       aMediaItem,
-                       destMediaItem);
-        NS_ENSURE_SUCCESS(rv, rv);
+      if (matchedItemsLength == 0) {
+        // Ok, no match - appears to be an all-new file. Copy it as a new item
+        // to the destination library.
+        *aChangeType = CHANGE_ADD;
+        return NS_OK;
       }
       else {
-        rv = AddChange(sbIChangeOperation::ADDED,
-                       aMediaItem,
-                       NULL);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    else {
-      // Sync case
-      if (hasOriginMatch) {
-        PRInt64 itemLastModifiedTime;
-        PRInt64 lastSyncTime;
-        rv = aMediaItem->GetUpdated(&itemLastModifiedTime);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = GetTimeProperty(mDeviceLibrary,
-                             NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
-                             &lastSyncTime);
-
-        if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
-          // Ok. We want to overwrite the destination media item.
-          rv = AddChange(sbIChangeOperation::MODIFIED,
-                         aMediaItem,
-                         destMediaItem);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-      else {
-        // We don't have a definite (OriginGUID based) match, how about an
-        // identity (hash) based match?
-        PRBool hasMatch;
-        rv = mDeviceLibrary->ContainsItemWithSameIdentity(aMediaItem,
-                                                          &hasMatch);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (!hasMatch) {
-          // Ok, no match - appears to be an all-new file. Copy it as a new item
-          // to the destination library.
-          rv = AddChange(sbIChangeOperation::ADDED,
-                         aMediaItem,
-                         NULL);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
         // Otherwise: looks like it's probably a dupe, but we're not sure, so...
-        // do nothing!
+        // do nothing! Just point at the first thing we matched.
+        *aChangeType = CHANGE_RETAIN;
+
+        nsCOMPtr<sbIMediaItem> matchItem = do_QueryElementAt(
+                matchedItems, 0, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        matchItem.forget(aDestMediaItem);
+        return NS_OK;
       }
     }
   }
-
-  return NS_OK;
 }
 
 // Library enumeration listener to collect items to import from a device
@@ -897,19 +1102,82 @@ public:
 
   virtual nsresult ProcessItem(sbIMediaList *aMediaList,
                                sbIMediaItem *aMediaItem);
+  virtual nsresult SelectChangeForItem(sbIMediaItem *aMediaItem,
+                                       ChangeType *aChangeType,
+                                       sbIMediaItem **aDestMediaItem);
+  virtual nsresult SelectChangeForList(sbIMediaList *aMediaList,
+                                       ChangeType *aChangeType,
+                                       sbIMediaList **aDestMediaList);
+
 protected:
   virtual ~SyncImportEnumListener() { }
 
   nsresult IsFromMainLibrary(sbIMediaItem *aMediaItem,
                              PRBool       *aFromMainLibrary);
-  nsresult IsInMainLibrary(sbIMediaItem *aMediaItem,
-                           PRBool       *aFromMainLibrary);
+  nsresult GetItemInMainLibrary(sbIMediaItem *aMediaItem,
+                                sbIMediaItem **aMainLibraryItem);
+  nsresult GetSimplePlaylistWithSameName(sbILibrary *aLibrary,
+                                         sbIMediaList *aList,
+                                         sbIMediaList **aMatchingList);
 
-  virtual nsresult GetMatchingPlaylistByOriginGUID(
+  virtual nsresult GetMatchingPlaylist(
         sbILibrary *aLibrary,
         sbIMediaList *aList,
         sbIMediaList **aMatchingList);
 };
+
+nsresult
+SyncImportEnumListener::GetSimplePlaylistWithSameName(
+        sbILibrary *aLibrary,
+        sbIMediaList *aList,
+        sbIMediaList **aMatchingList)
+
+{
+  nsresult rv;
+
+  // Find a list with type 'simple' and a name matching aList's name from
+  // library 'aLibrary'. There might be multiple matches; in that case just
+  // return the first.
+  nsString listName;
+  rv = aList->GetName(listName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The list name is internally stored as the MEDIALISTNAME property.
+  nsCOMPtr<nsIArray> items;
+  rv = aLibrary->GetItemsByProperty(
+          NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+          listName,
+          getter_AddRefs(items));
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 itemsLength;
+  rv = items->GetLength(&itemsLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < itemsLength; i++) {
+    nsCOMPtr<sbIMediaList> list = do_QueryElementAt(items, 0, &rv);
+    if (NS_FAILED(rv))
+      continue;
+
+    nsString playlistType;
+    rv = list->GetType(playlistType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (playlistType.EqualsLiteral("simple")) {
+      // Found one; return it. We don't check to see if there might be multiple
+      // matches.
+      list.forget(aMatchingList);
+      return NS_OK;
+    }
+  }
+
+  // Not found
+  *aMatchingList = NULL;
+  return NS_OK;
+}
 
 nsresult
 SyncImportEnumListener::IsFromMainLibrary(sbIMediaItem *aMediaItem,
@@ -944,11 +1212,12 @@ SyncImportEnumListener::IsFromMainLibrary(sbIMediaItem *aMediaItem,
 }
 
 nsresult
-SyncImportEnumListener::IsInMainLibrary(sbIMediaItem *aMediaItem,
-                                        PRBool       *aInMainLibrary)
+SyncImportEnumListener::GetItemInMainLibrary(sbIMediaItem *aMediaItem,
+                                             sbIMediaItem **aMainLibraryItem)
 {
   // Is the origin item actually IN the main library? This is assumed to only
   // be called if we already know that the origin points at the main library.
+  // Returns the object if found.
   nsresult rv;
 
   nsString originItemGUID;
@@ -959,16 +1228,17 @@ SyncImportEnumListener::IsInMainLibrary(sbIMediaItem *aMediaItem,
   nsCOMPtr<sbIMediaItem> item;
   rv = mMainLibrary->GetMediaItem(originItemGUID, getter_AddRefs(item));
 
-  *aInMainLibrary = NS_SUCCEEDED(rv) && item;
+  if (NS_SUCCEEDED(rv) && item) {
+    item.forget(aMainLibraryItem);
+  }
 
   return NS_OK;
 }
 
 nsresult
-SyncImportEnumListener::GetMatchingPlaylistByOriginGUID(
-        sbILibrary *aLibrary,
-        sbIMediaList *aList,
-        sbIMediaList **aMatchingList)
+SyncImportEnumListener::GetMatchingPlaylist(sbILibrary *aLibrary,
+                                            sbIMediaList *aList,
+                                            sbIMediaList **aMatchingList)
 {
   nsresult rv;
 
@@ -1002,30 +1272,37 @@ SyncImportEnumListener::GetMatchingPlaylistByOriginGUID(
 }
 
 nsresult
-SyncImportEnumListener::ProcessItem(sbIMediaList *aMediaList,
-                                    sbIMediaItem *aMediaItem)
+SyncImportEnumListener::SelectChangeForList(sbIMediaList *aMediaList,
+                                            ChangeType *aChangeType,
+                                            sbIMediaList **aDestMediaList)
 {
   nsresult rv;
 
-  nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
-  if (NS_SUCCEEDED(rv)) {
-    if (!ListHasCorrectContentType(itemAsList)) {
-      return NS_OK;
-    }
+  if (!ListHasCorrectContentType(aMediaList)) {
+    *aChangeType = CHANGE_NONE;
+    return NS_OK;
+  }
 
-    nsCOMPtr<sbIMediaList> matchingPlaylist;
-    rv = GetMatchingPlaylist(mMainLibrary,
-                             itemAsList,
-                             getter_AddRefs(matchingPlaylist));
+  nsCOMPtr<sbIMediaList> matchingPlaylist;
+  rv = GetMatchingPlaylist(mMainLibrary,
+                           aMediaList,
+                           getter_AddRefs(matchingPlaylist));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (matchingPlaylist) {
+    nsString playlistType;
+    rv = matchingPlaylist->GetType(playlistType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (matchingPlaylist) {
-      nsString playlistType;
-      rv = matchingPlaylist->GetType(playlistType);
-      NS_ENSURE_SUCCESS(rv, rv);
+    // We only import changes for simple playlists.
+    if (playlistType.EqualsLiteral("simple")) {
+      if (mIsDrop) {
+        *aChangeType = CHANGE_CLOBBER;
+        matchingPlaylist.forget(aDestMediaList);
 
-      // We only import changes for simple playlists.
-      if (playlistType.EqualsLiteral("simple")) {
+        return NS_OK;
+      }
+      else {
         // Check timestamps...
         PRInt64 itemLastModifiedTime;
         PRInt64 lastSyncTime;
@@ -1044,75 +1321,209 @@ SyncImportEnumListener::ProcessItem(sbIMediaList *aMediaList,
           // unmodified (we don't know if it has been changed), so every sync
           // will result in these playlists being overwritten (and their
           // last-modified time updated)
-          nsCOMPtr<sbIMediaItem> matchingItem =
-              do_QueryInterface(matchingPlaylist, &rv);
-          NS_ENSURE_SUCCESS(rv, rv);
-          rv = AddChange(sbIChangeOperation::MODIFIED,
-                         aMediaItem,
-                         matchingItem);
-          NS_ENSURE_SUCCESS(rv, rv);
+          *aChangeType = CHANGE_CLOBBER;
+          matchingPlaylist.forget(aDestMediaList);
+
+          return NS_OK;
+        }
+        else {
+          *aChangeType = CHANGE_RETAIN;
+          matchingPlaylist.forget(aDestMediaList);
+
+          return NS_OK;
         }
       }
     }
     else {
-      // New playlist; add it to the main library
-      rv = AddChange(sbIChangeOperation::ADDED,
-                     aMediaItem,
-                     NULL);
+      // Matching list is a smart playlist; we only do anything with these
+      // for d&d.
+      if (mIsDrop) {
+        nsCOMPtr<sbIMediaList> matchingSimplePlaylist;
+        rv = GetSimplePlaylistWithSameName(
+                mMainLibrary,
+                aMediaList,
+                getter_AddRefs(matchingSimplePlaylist));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (matchingSimplePlaylist) {
+          *aChangeType = CHANGE_CLOBBER;
+          matchingSimplePlaylist.forget(aDestMediaList);
+
+          return NS_OK;
+        }
+        else {
+          *aChangeType = CHANGE_ADD;
+          return NS_OK;
+        }
+      }
+      else {
+        *aChangeType = CHANGE_RETAIN;
+        matchingPlaylist.forget(aDestMediaList);
+        return NS_OK;
+      }
+    }
+  }
+  else {
+    // New playlist; add it to the main library
+    *aChangeType = CHANGE_ADD;
+    return NS_OK;
+  }
+}
+
+nsresult
+SyncImportEnumListener::SelectChangeForItem(sbIMediaItem *aMediaItem,
+                                            ChangeType *aChangeType,
+                                            sbIMediaItem **aDestMediaItem)
+{
+  nsresult rv;
+
+  // Is it of the correct type?
+  if (!HasCorrectContentType(aMediaItem)) {
+    *aChangeType = CHANGE_NONE;
+    return NS_OK;
+  }
+
+  // If it came from the main library (according to origin item and library
+  // guids), we do not wish to re-import it (even if the linked item is no
+  // longer in the main library!).
+  PRBool isFromMainLibrary;
+  rv = IsFromMainLibrary(aMediaItem, &isFromMainLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mIsDrop) {
+    // Drag-and-drop case.
+    if (isFromMainLibrary) {
+      // Ok, it's from the main library. Is it still IN the main library?
+      nsCOMPtr<sbIMediaItem> mainLibItem;
+      rv = GetItemInMainLibrary(aMediaItem, getter_AddRefs(mainLibItem));
       NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!mainLibItem) {
+        // It's no longer in the main library, but the user dragged it there,
+        // so take that to mean "re-add this"
+        *aChangeType = CHANGE_ADD;
+        return NS_OK;
+      }
+      else {
+        *aChangeType = CHANGE_RETAIN;
+        mainLibItem.forget(aDestMediaItem);
+        return NS_OK;
+      }
+    }
+    else {
+      // Not from the main library; add it.
+      *aChangeType = CHANGE_ADD;
+      return NS_OK;
+    }
+  }
+  else {
+    // Sync case.
+    if (!isFromMainLibrary) {
+      // Didn't come from Songbird (at least not from this profile on this
+      // machine). Is there something that _looks_ like the same item? If
+      // there is, we don't want to import it.
+      nsCOMPtr<nsIArray> matchedItems;
+      rv = mMainLibrary->GetItemsWithSameIdentity(
+              aMediaItem,
+              getter_AddRefs(matchedItems));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 matchedItemsLength;
+      rv = matchedItems->GetLength(&matchedItemsLength);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (matchedItemsLength == 0) {
+        // It looks like an all-new item not present in the main library. Time
+        // to actually import it!
+        *aChangeType = CHANGE_ADD;
+        return NS_OK;
+      }
+      else {
+        // Point at the object we matched (might be several, that's ok...)
+        *aChangeType = CHANGE_RETAIN;
+
+        nsCOMPtr<sbIMediaItem> matchItem = do_QueryElementAt(
+                matchedItems, 0, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        matchItem.forget(aDestMediaItem);
+        return NS_OK;
+      }
+    }
+    else {
+      // It came from the main library. Do nothing (even if it's not IN the main
+      // library any more). However, point at the main library item, if present.
+      nsCOMPtr<sbIMediaItem> mainLibItem;
+      rv = GetItemInMainLibrary(aMediaItem, getter_AddRefs(mainLibItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (mainLibItem) {
+        *aChangeType = CHANGE_RETAIN;
+        mainLibItem.forget(aDestMediaItem);
+        return NS_OK;
+      }
+      else {
+        *aChangeType = CHANGE_NONE;
+        return NS_OK;
+      }
+    }
+  }
+}
+
+nsresult
+SyncImportEnumListener::ProcessItem(sbIMediaList *aMediaList,
+                                    sbIMediaItem *aMediaItem)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    ChangeType changeType = CHANGE_NONE;
+    nsCOMPtr<sbIMediaList> destList;
+    rv = SelectChangeForList(itemAsList, &changeType, getter_AddRefs(destList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    switch (changeType) {
+      case CHANGE_ADD:
+        rv = AddListChange(sbIChangeOperation::ADDED,
+                           itemAsList,
+                           NULL);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      case CHANGE_CLOBBER:
+        rv = AddListChange(sbIChangeOperation::MODIFIED,
+                           itemAsList,
+                           destList);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      default:
+        // Others we do nothing with
+        break;
     }
   }
   else {
     // Normal media item.
-    // Is it of the correct type?
-    if (!HasCorrectContentType(aMediaItem)) {
-      return NS_OK;
-    }
-
-    // If it came from the main library (according to origin item and library
-    // guids), we do not wish to re-import it (even if the linked item is no
-    // longer in the main library!).
-    PRBool isFromMainLibrary;
-    rv = IsFromMainLibrary(aMediaItem, &isFromMainLibrary);
+    ChangeType changeType = CHANGE_NONE;
+    nsCOMPtr<sbIMediaItem> destItem;
+    rv = SelectChangeForItem(aMediaItem, &changeType, getter_AddRefs(destItem));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (mIsDrop) {
-      // Drag-and-drop case.
-      if (isFromMainLibrary) {
-        // Ok, it's from the main library. Is it still IN the main library?
-        PRBool isInMainLibrary;
-        rv = IsInMainLibrary(aMediaItem, &isInMainLibrary);
+    switch (changeType) {
+      case CHANGE_ADD:
+        rv = AddChange(sbIChangeOperation::ADDED,
+                       aMediaItem,
+                       NULL);
         NS_ENSURE_SUCCESS(rv, rv);
-
-        if (!isInMainLibrary) {
-          // It's no longer in the main library, but the user dragged it there,
-          // so take that to mean "re-add this"
-          rv = AddChange(sbIChangeOperation::ADDED,
-                         aMediaItem,
-                         NULL);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-    }
-    else {
-      // Sync case.
-      if (!isFromMainLibrary) {
-        // Didn't come from Songbird (at least not from this profile on this
-        // machine). Is there something that _looks_ like the same item? If
-        // there is, we don't want to import it.
-        PRBool hasMatch;
-        rv = mMainLibrary->ContainsItemWithSameIdentity(aMediaItem, &hasMatch);
+        break;
+      case CHANGE_CLOBBER:
+        rv = AddChange(sbIChangeOperation::MODIFIED,
+                       aMediaItem,
+                       destItem);
         NS_ENSURE_SUCCESS(rv, rv);
-
-        if (!hasMatch) {
-          // It looks like an all-new item not present in the main library. Time
-          // to actually import it!
-          rv = AddChange(sbIChangeOperation::ADDED,
-                         aMediaItem,
-                         NULL);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
+        break;
+      default:
+        // Others we do nothing with
+        break;
     }
   }
 
@@ -1134,7 +1545,6 @@ sbDeviceLibrarySyncDiff::~sbDeviceLibrarySyncDiff()
 NS_IMETHODIMP
 sbDeviceLibrarySyncDiff::GenerateSyncLists(
         PRUint32 aMode,
-        PRBool   aPlaylistMatchingUsesOriginGUID,
         PRUint32 aMediaTypes,
         sbILibrary *aSourceLibrary,
         sbILibrary *aDestLibrary,
@@ -1157,7 +1567,6 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
       new SyncExportEnumListener();
   NS_ENSURE_TRUE(exportListener, NS_ERROR_OUT_OF_MEMORY);
   rv = exportListener->Init(PR_FALSE,
-                            aPlaylistMatchingUsesOriginGUID,
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1173,6 +1582,16 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
     // items that are in a mixed-content playlist, but not of the right type.
     exportListener->SetMediaTypes(aMediaTypes);
 
+    // Handle all non-list items.
+    exportListener->SetEnumMode(SyncEnumListenerBase::ENUM_ITEMS);
+    rv = aSourceLibrary->EnumerateAllItems(
+            exportListener,
+            sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Handle all lists - this might need to refer to items above, so we have
+    // to do it separately.
+    exportListener->SetEnumMode(SyncEnumListenerBase::ENUM_LISTS);
     rv = aSourceLibrary->EnumerateAllItems(
             exportListener,
             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
@@ -1211,14 +1630,34 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
       list = do_QueryElementAt(aSourceLists, i, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Enumerate the list into our hashmap
-      list->EnumerateAllItems(exportListener,
-                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+      SyncEnumListenerBase::ChangeType changeType;
+      nsCOMPtr<sbIMediaList> destList;
+      rv = exportListener->SelectChangeForList(list,
+                                               &changeType,
+                                               getter_AddRefs(destList));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // And add the list itself.
-      rv = exportListener->ProcessItem(aSourceLibrary, list);
-      NS_ENSURE_SUCCESS(rv, rv);
+      // If we're actually importing the playlist, enumerate everything in it.
+      if (changeType == SyncEnumListenerBase::CHANGE_ADD ||
+          changeType == SyncEnumListenerBase::CHANGE_CLOBBER) {
+        list->EnumerateAllItems(exportListener,
+                                sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // And add the list itself.
+        if (changeType == SyncEnumListenerBase::CHANGE_ADD) {
+          rv = exportListener->AddListChange(sbIChangeOperation::ADDED,
+                                             list,
+                                             NULL);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else {
+          rv = exportListener->AddListChange(sbIChangeOperation::MODIFIED,
+                                             list,
+                                             destList);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
     }
   }
 
@@ -1229,7 +1668,6 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
       new SyncImportEnumListener();
   NS_ENSURE_TRUE(importListener, NS_ERROR_OUT_OF_MEMORY);
   rv = importListener->Init(PR_FALSE,
-                            aPlaylistMatchingUsesOriginGUID,
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1237,12 +1675,18 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
   if (aMode & sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT) {
     // We always import everything (not just select playlists) if this is
-    // enabled.
+    // enabled. Items first, then lists (see above for why).
+    importListener->SetEnumMode(SyncEnumListenerBase::ENUM_ITEMS);
     rv = aDestLibrary->EnumerateAllItems(
             importListener,
             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    importListener->SetEnumMode(SyncEnumListenerBase::ENUM_LISTS);
+    rv = aDestLibrary->EnumerateAllItems(
+            importListener,
+            sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = importListener->Finish();
@@ -1256,11 +1700,11 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
 NS_IMETHODIMP
 sbDeviceLibrarySyncDiff::GenerateDropLists(
-        PRBool   aPlaylistMatchingUsesOriginGUID,
         sbILibrary *aSourceLibrary,
         sbILibrary *aDestLibrary,
         sbIMediaList *aSourceList,
         nsIArray *aSourceItems,
+        nsIArray **aDestItems NS_OUTPARAM,
         sbILibraryChangeset **aChangeset NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER (aDestLibrary);
@@ -1286,6 +1730,10 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
   const PRUint32 allMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO |
                                  sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
 
+  nsCOMPtr<nsIMutableArray> destItems = do_CreateInstance(
+            "@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsRefPtr<SyncEnumListenerBase> listener;
 
   if (toDevice) {
@@ -1298,14 +1746,16 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
   }
 
   rv = listener->Init(PR_TRUE,
-                      aPlaylistMatchingUsesOriginGUID,
                       aSourceLibrary,
                       aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
   listener->SetMediaTypes(allMediaTypes);
 
   if (aSourceList) {
-    // Enumerate the list into our hashmap
+    // Enumerate the list into our hashmap. We can do this before deciding
+    // what to do to the playlist itself because D&D of a playlist ALWAYS
+    // results in transfer of the list (the only difference is whether it's
+    // adding a new list or clobbering an existing one)
     aSourceList->EnumerateAllItems(listener,
                                    sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1325,6 +1775,30 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
 
       rv = listener->ProcessItem(aSourceLibrary, item);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      SyncEnumListenerBase::ChangeType changeType;
+      nsCOMPtr<sbIMediaItem> destItem;
+      rv = listener->SelectChangeForItem(item,
+                                         &changeType, 
+                                         getter_AddRefs(destItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      switch(changeType) {
+        case SyncEnumListenerBase::CHANGE_ADD:
+        case SyncEnumListenerBase::CHANGE_CLOBBER:
+          // For both of these, use the source item
+          rv = destItems->AppendElement(item, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+          break;
+        case SyncEnumListenerBase::CHANGE_RETAIN:
+          // For this one, use the (existing) destination item
+          rv = destItems->AppendElement(destItem, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+          break;
+        default:
+          // And this means it was an item we chose not to transfer at all.
+          break;
+      }
     }
   }
 
@@ -1332,6 +1806,7 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*aChangeset = listener->mChangeset);
+  NS_ADDREF(*aDestItems = destItems);
 
   return NS_OK;
 }

@@ -519,8 +519,8 @@ var InternalDropHandler = {
     return false;
   },
 
-  _getTransferToDeviceChangeset: function(aSourceItems, aSourceList,
-                                          aDestLibrary) {
+  _getTransferForDeviceChanges: function(aDevice, aSourceItems, aSourceList,
+                                         aDestLibrary) {
     var differ = Cc["@songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1"]
                    .createInstance(Ci.sbIDeviceLibrarySyncDiff);
 
@@ -530,19 +530,16 @@ var InternalDropHandler = {
     else
       sourceLibrary = aSourceList.library;
 
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-    var device = deviceManager.getDeviceForItem(aDestLibrary);
-
-    var ret = {};
-    differ.generateDropLists(device.useOriginForPlaylists,
-                             sourceLibrary,
+    var changeset = {};
+    var destItems = {};
+    differ.generateDropLists(sourceLibrary,
                              aDestLibrary,
                              aSourceList,
                              aSourceItems,
-                             ret);
+                             destItems,
+                             changeset);
 
-    return ret.value;
+    return {changeset: changeset.value, items: destItems.value};
   },
 
   _notifyListeners: function(aListener, aTargetList, aNewList, aSourceItems,
@@ -557,13 +554,14 @@ var InternalDropHandler = {
     // Let our listeners know.
     if (aListener) {
       if (aNewList)
-        aListener.onCopyMediaList(aTargetList, aNewlist);
+        aListener.onCopyMediaList(aTargetList, aNewList);
 
       if (sourceLength) {
         if (aSourceList)
           aListener.onFirstMediaItem(aSourceList.getItemByIndex(0));
         else if (aSourceItems)
-          aListener.onFirstMediaItem(aSourceItems[0]);
+          aListener.onFirstMediaItem(
+                  aSourceItems.queryElementAt(0, Ci.sbIMediaItem));
       }
     }
 
@@ -593,30 +591,92 @@ var InternalDropHandler = {
     return null;
   },
 
+  // Transfer a dropped list where the source is a device, and the destination
+  // is not.
+  _dropListFromDevice: function(aDevice, aSourceList, aTargetList,
+                                aDropPosition, aListener)
+  {
+    // Find out what changes need making.
+    var changes = this._getTransferForDeviceChanges(aDevice,
+            null, aSourceList, aTargetList.library);
+    var changeset = changes.changeset;
+
+    var targetLibrary = aTargetList.library;
+
+    aDevice.importFromDevice(targetLibrary, changeset);
+
+    // Get the list created, if any.
+    var newlist = null;
+    var changes = changeset.changes;
+    for (var i = 0; i < changes.length; i++) {
+      change = changes.queryElementAt(i, Ci.sbILibraryChange);
+      if (change.itemIsList) {
+        newlist = change.destinationItem;
+        break;
+      }
+    }
+
+    this._notifyListeners(aListener, aTargetList, newlist,
+                          null, aSourceList);
+  },
+
+  _dropItemsFromDevice: function(aDevice, aSourceItems, aTargetList,
+                                 aDropPosition, aListener)
+  {
+    // Find out what changes need making.
+    var changes = this._getTransferForDeviceChanges(aDevice,
+            aSourceItems, null, aTargetList.library);
+    var changeset = changes.changeset;
+
+    var targetLibrary = aTargetList.library;
+
+    aDevice.importFromDevice(targetLibrary, changeset);
+
+    if (aTargetList.library != aTargetList) {
+      // This was a drop on an existing playlist. Now the items need
+      // adding to the playlist - changes.items is an nsIArray containing these
+      if (aTargetList instanceof Ci.sbIOrderableMediaList &&
+          aDropPosition != -1) {
+        aTargetList.insertSomeBefore(aDropPosition,
+                                     ArrayConverter.enumerator(changes.items));
+      }
+      else {
+        aTargetList.addSome(ArrayConverter.enumerator(changes.items));
+      }
+    }
+
+    this._notifyListeners(aListener, aTargetList, null,
+                          aSourceItems, null);
+  },
+
+
   // Transfer a dropped list to a device.
   //
   // aTargetList may be a device library or a device playlist.
-  _dropListOnDevice: function(aSourceList, aTargetList, aDropPosition,
-                              aListener) {
+  _dropListOnDevice: function(aDevice, aSourceList, aTargetList,
+                              aDropPosition, aListener) {
     // Find out what changes need making.
-    var changeset = this._getTransferToDeviceChangeset(
+    var changes = this._getTransferForDeviceChanges(aDevice,
             null, aSourceList, aTargetList.library);
+    var changeset = changes.changeset;
 
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-    var device = deviceManager.getDeviceForItem(aTargetList);
-    var deviceLibrary = this._getDeviceLibraryForItem(device, aTargetList);
+    var deviceLibrary = this._getDeviceLibraryForItem(aDevice, aTargetList);
 
     // Apply the changes to get the actual media items onto the device, even
     // if the device doesn't support playlists. This will add the items to the
-    // device library and schedule all the necessary file copies/etc.
-    device.exportToDevice(deviceLibrary, changeset);
+    // device library and schedule all the necessary file copies/etc. This
+    // also creates the device-side list if appropriate.
+    aDevice.exportToDevice(deviceLibrary, changeset);
 
-    var targetIsLibrary = (aTargetList instanceof Ci.sbILibrary);
-    if (targetIsLibrary && this._doesDeviceSupportPlaylist(destDevice)) {
-      // If it DOES support playlists (and we're adding to a library),
-      // we can also create a playlist in the device library.
-      var newlist = aTargetList.copyMediaList('simple', aSourceList, false);
+    // Get the list created, if any.
+    var newlist = null;
+    var changes = changeset.changes;
+    for (var i = 0; i < changes.length; i++) {
+      change = changes.queryElementAt(i, Ci.sbILibraryChange);
+      if (change.itemIsList) {
+        newlist = change.destinationItem;
+        break;
+      }
     }
 
     this._notifyListeners(aListener, aTargetList, newlist,
@@ -626,21 +686,32 @@ var InternalDropHandler = {
   // Transfer dropped items to a device.
   //
   // aTargetList may be a device library or a device playlist.
-  _dropItemsOnDevice: function(aSourceItems, aTargetList, aDropPosition,
-                               aListener) {
+  _dropItemsOnDevice: function(aDevice, aSourceItems, aTargetList,
+                               aDropPosition, aListener) {
     // Find out what changes need making.
-    var changeset = this._getTransferToDeviceChangeset(
+    var changes = this._getTransferForDeviceChanges(aDevice,
             aSourceItems, null, aTargetList.library);
+    var changeset = changes.changeset;
 
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-    var device = deviceManager.getDeviceForItem(aTargetList);
-    var deviceLibrary = this._getDeviceLibraryForItem(device, aTargetList);
+    var deviceLibrary = this._getDeviceLibraryForItem(aDevice, aTargetList);
 
     // Apply the changes to get the media items onto the device
     // if the device doesn't support playlists. This will add the items to the
     // device library and schedule all the necessary file copies/etc.
-    device.exportToDevice(deviceLibrary, changeset);
+    aDevice.exportToDevice(deviceLibrary, changeset);
+
+    if (aTargetList.library != aTargetList) {
+      // This was a drop on an existing device playlist. Now the items need
+      // adding to the playlist - changes.items is an nsIArray containing these
+      if (aTargetList instanceof Ci.sbIOrderableMediaList &&
+          aDropPosition != -1) {
+        aTargetList.insertSomeBefore(aDropPosition,
+                                     ArrayConverter.enumerator(changes.items));
+      }
+      else {
+        aTargetList.addSome(ArrayConverter.enumerator(changes.items));
+      }
+    }
 
     this._notifyListeners(aListener, aTargetList, null,
                           aSourceItems, null);
@@ -649,8 +720,7 @@ var InternalDropHandler = {
   // Transfer dropped items to something other than a device.
   _dropItemsSimple: function(aItems, aTargetList, aDropPosition, aListener) {
     if (aTargetList instanceof Ci.sbIOrderableMediaList &&
-        aDropPosition != -1)
-    {
+        aDropPosition != -1) {
       aTargetList.insertSomeBefore(aDropPosition,
                                    ArrayConverter.enumerator(aItems));
     }
@@ -710,15 +780,58 @@ var InternalDropHandler = {
 
     if (destDevice) {
       // We use heavily customised behaviour if the target is a device.
-      this._dropListOnDevice(sourceList, aTargetList,
-                             aDropPosition, aListener);
+      if (aTargetList.library == aTargetList) {
+        // Drop onto a library
+        this._dropListOnDevice(destDevice, sourceList, aTargetList,
+                               aDropPosition, aListener);
+      }
+      else {
+        // Drop onto a playlist in a library. This should actually be
+        // treated as a drop of the ITEMS in the source list.
+        items = this._itemsFromList(sourceList);
+        this._dropItemsOnDevice(destDevice, items, aTargetList,
+                                aDropPosition, aListener);
+      }
+    }
+    else if (sourceDevice) {
+      // We use special D&D behaviour for dragging a list _from_ a device too.
+      if (aTargetList.library == aTargetList) {
+        // Drop onto a library
+        this._dropListFromDevice(sourceDevice, sourceList, aTargetList,
+                                 aDropPosition, aListener);
+      }
+      else {
+        // Drop onto a playlist in a library; treat as a drop of the items.
+        items = this._itemsFromList(sourceList);
+        this._dropItemsFromDevice(destDevice, items, aTargetList,
+                                  aDropPosition, aListener);
+      }
     }
     else {
-      // If the source is a device, or no devices are involved, we just need
-      // the simple behaviour.
+      // No devices are involved, we just need the simple behaviour.
       this._dropListSimple(sourceList, aTargetList,
                            aDropPosition, aListener);
     }
+  },
+
+  // Get an nsIArray of sbIMediaItems from a media list
+  _itemsFromList: function(list)
+  {
+    var items = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+    var listener = {
+      onEnumerationBegin : function(aMediaList) {
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumeratedItem : function(aMediaList, aMediaItem) {
+        items.appendElement(aMediaItem, false);
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumerationEnd : function(aMediaList, aStatusCode) {
+      }
+    };
+    list.enumerateAllItems(listener, Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+
+    return items;
   },
 
   // Get an nsIArray of sbIMediaItems from an nsISimpleEnumerator of same.
@@ -762,11 +875,19 @@ var InternalDropHandler = {
     var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
     var destDevice = deviceManager.getDeviceForItem(aTargetList);
+    var sourceDevice = null;
+    if (items.length > 0)
+      sourceDevice = deviceManager.getDeviceForItem(
+              items.queryElementAt(0, Ci.sbIMediaItem));
 
     if (destDevice) {
       // We use heavily customised behaviour if the target is a device.
-      this._dropItemsOnDevice(items, aTargetList,
+      this._dropItemsOnDevice(destDevice, items, aTargetList,
                               aDropPosition, aListener);
+    }
+    else if (sourceDevice) {
+      this._dropItemsFromDevice(sourceDevice, items, aTargetList,
+                                aDropPosition, aListener);
     }
     else {
       // If the source is a device, or no devices are involved, we just need

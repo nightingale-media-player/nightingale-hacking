@@ -101,11 +101,6 @@ interface sbIDevice : nsISupports
   readonly attribute nsIDPtr id;
 
   /**
-   * Whether we use origin-ID matching for determining playlist sync behaviour
-   */
-  readonly attribute boolean useOriginForPlaylists;
-
-  /**
    * Called when the device should initialize.
    */
   void connect();

@@ -281,15 +281,6 @@ sbCDDevice::New(const nsID & aControllerId,
 
 // sbIDevice implementation
 
-NS_IMETHODIMP
-sbCDDevice::GetUseOriginForPlaylists(PRBool *aUseOrigin)
-{
-  NS_ENSURE_ARG_POINTER(aUseOrigin);
-
-  *aUseOrigin = PR_TRUE;
-  return NS_OK;
-}
-
 /**
  * A human-readable name identifying the device. Optional.
  */

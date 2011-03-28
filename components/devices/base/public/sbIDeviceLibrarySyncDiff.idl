@@ -47,10 +47,6 @@ interface sbIDeviceLibrarySyncDiff : nsISupports
    *
    * \param aMode            The configured sync mode. Combination of
    *                         SYNC_FLAG_* constants.
-   * \param aPlaylistMatchingUsesOriginGUID
-   *                         Whether a matching playlist is found based on
-   *                         the originItemGUID property (if true), or a name
-   *                         match (if false)
    * \param aMediaTypes      The media types (bit mask) to generate sync lists
    *                         for. One or more of the SYNC_TYPE_* constants.
    * \param aSourceLibrary   The source library for the sync operation - usually
@@ -86,7 +82,6 @@ interface sbIDeviceLibrarySyncDiff : nsISupports
    *                         operation == MODIFIED, and isList false.
    */
   void generateSyncLists(in unsigned long aMode,
-                         in boolean aPlaylistMatchingUsesOriginGUID,
                          in unsigned long aMediaTypes,
                          in sbILibrary aSourceLibrary,
                          in sbILibrary aDestLibrary,
@@ -98,24 +93,24 @@ interface sbIDeviceLibrarySyncDiff : nsISupports
    * Generate change set to apply to or from a device library during
    * drag-and-drop operation. 
    *
-   * \param aPlaylistMatchingUsesOriginGUID
-   *                         Whether a matching playlist is found based on
-   *                         the originItemGUID property (if true), or a name
-   *                         match (if false)
    * \param aSourceLibrary   The source library for the drop operation.
    * \param aDestLibrary     The destination library for the drop operation.
    * \param aSourceList      A source playlist being copied to the destination
    *                         library. May be null if aSourceItems is not.
    * \param aSourceItems     An array of sbIMediaItems for the drop operation.
    *                         May be null if aSourceList is not.
+   * \param aDestItems       An array of sbIMediaItems that can be added to an
+   *                         sbIMediaList corresponding to this drop operation.
+   *                         Only populated when aSourceItems is passed (will be
+   *                         empty otherwise).
    * \param aChangeset       The changes to apply to the destination library
    *                         as a result of this drop operation.
    */
-  void generateDropLists(in boolean aPlaylistMatchingUsesOriginGUID,
-                         in sbILibrary aSourceLibrary,
+  void generateDropLists(in sbILibrary aSourceLibrary,
                          in sbILibrary aDestLibrary,
                          in sbIMediaList aSourceList,
                          in nsIArray     aSourceItems,
+                         out nsIArray    aDestItems,
                          out sbILibraryChangeset aChangeset);
 };
 
