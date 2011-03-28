@@ -261,57 +261,67 @@ addToLibraryHelper.prototype = {
     this.libraryManager = null;
   },
 
-  // handle click on a device command item
+  _getDeviceLibraryForLibrary: function(aDevice, aLibrary) {
+    var libs = aDevice.content.libraries;
+    for (var i = 0; i < libs.length; i++) {
+      var devLib = libs.queryElementAt(i, Ci.sbIDeviceLibrary);
+      if (devLib.equals(aLibrary))
+        return devLib;
+    }
+
+    return null;
+  },
+
+  _itemsFromEnumerator: function(aItemEnum) {
+    var items = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+
+    while (aItemEnum.hasMoreElements())
+      items.appendElement(aItemEnum.getNext(), false);
+
+    return items;
+  },
+
+  // handle click on a command item (device library or play queue, etc.)
   handleCommand: function addToLibraryHelper_handleCommand(id, context) {
     try {
       if ( id == ADDTOLIBRARY_COMMAND_ID) {
-        var library = this.libraryManager.mainLibrary;
-        if (library) {
-          var oldLength = library.length;
+        var destLibrary = this.libraryManager.mainLibrary;
+        if (destLibrary) {
           var selection = context.playlist.mediaListView
                                  .selection.selectedMediaItems;
-          // Create an enumerator that wraps the enumerator we were handed since
-          // the enumerator we get hands back sbIIndexedMediaItem, not just plain
-          // 'ol sbIMediaItems
-    
-          // Create a media item duplicate enumerator filter to count the number of
-          // duplicate items and to remove them from the enumerator if the target is
-          // a library.
-          let dupFilter = 
-            Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
-              .createInstance(Ci.sbIMediaListDuplicateFilter);
-          dupFilter.initialize(selection, 
-                               library, 
-                               true);
-              
-          // We also want to set the downloadStatusTarget property as we work.
-          var unwrapper = {
-            enumerator: dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
-    
-            hasMoreElements : function() {
-              return this.enumerator.hasMoreElements();
-            },
-            getNext : function() {
-              var item = this.enumerator.getNext();
-              item.setProperty(SBProperties.downloadStatusTarget,
-                               item.library.guid + "," + item.guid);
-              return item;
-            },
-            QueryInterface : function(iid) {
-              if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
-                  iid.equals(Components.interfaces.nsISupports))
-                return this;
-              throw Components.results.NS_NOINTERFACE;
-            }
+          var sourceLibrary = context.playlist.mediaListView.mediaList.library;
+
+          var device = this.deviceManager.getDeviceForItem(sourceLibrary);
+          if (device) {
+            var items = this._itemsFromEnumerator(selection);
+
+            var deviceLibrary = this._getDeviceLibraryForLibrary(
+                    device, sourceLibrary);
+
+            var differ =
+                Cc["@songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1"]
+                  .createInstance(Ci.sbIDeviceLibrarySyncDiff);
+            var changeset = {};
+            var destItems = {};
+
+            differ.generateDropLists(sourceLibrary,
+                                     destLibrary,
+                                     null,
+                                     items,
+                                     destItems,
+                                     changeset);
+
+            device.importFromDevice(deviceLibrary, changeset.value);
+ 
+            DNDUtils.reportAddedTracks(changeset.value.changes.length,
+                                       0,
+                                       0,
+                                       destLibrary.name);
+          } 
+          else {
+            destLibrary.addSome(selected);
           }
-          library.addSome(unwrapper);
         }
-        var added = library.length - oldLength;
-        DNDUtils.reportAddedTracks(
-                            dupFilter.mediaItemCount - dupFilter.duplicateCount,
-                            dupFilter.duplicateCount,
-                            0, 
-                            library.name);
         return true;
       }
     } catch (e) {

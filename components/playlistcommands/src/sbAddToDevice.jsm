@@ -515,6 +515,26 @@ addToDeviceHelper.prototype = {
     return false;
   },
 
+  _getDeviceLibraryForLibrary: function(aDevice, aLibrary) {
+    var libs = aDevice.content.libraries;
+    for (var i = 0; i < libs.length; i++) {
+      var devLib = libs.queryElementAt(i, Ci.sbIDeviceLibrary);
+      if (devLib.equals(aLibrary))
+        return devLib;
+    }
+
+    return null;
+  },
+
+  _itemsFromEnumerator: function(aItemEnum) {
+    var items = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+
+    while (aItemEnum.hasMoreElements())
+      items.appendElement(aItemEnum.getNext(), false);
+
+    return items;
+  },
+
   // perform the transfer of the selected items to the device library
   addToDevice: function addToDeviceHelper_addToDevice(
                           devicelibraryguid,
@@ -522,52 +542,35 @@ addToDeviceHelper.prototype = {
                           devicename) {
     var library = this.m_libraryManager.getLibrary(devicelibraryguid);
     if (library) {
-      var oldLength = library.length;
       var selection =
         sourceplaylist.mediaListView.selection.selectedMediaItems;
+      var items = this._itemsFromEnumerator(selection);
 
-      // Create an enumerator that wraps the enumerator we were handed since
-      // the enumerator we get hands back sbIIndexedMediaItem, not just plain
-      // 'ol sbIMediaItems
+      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      var device = deviceManager.getDeviceForItem(library);
+      var deviceLibrary = this._getDeviceLibraryForLibrary(device, library);
 
-      // Create a media item duplicate enumerator filter to count the number of
-      // duplicate items and to remove them from the enumerator if the target is
-      // a library.
-      let dupFilter =
-        Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
-        .createInstance(Ci.sbIMediaListDuplicateFilter);
-      dupFilter.initialize(selection,
-                           library,
-                           true);
- 
-      // Create a filtered item enumerator.
+      var differ =
+          Cc["@songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1"]
+            .createInstance(Ci.sbIDeviceLibrarySyncDiff);
+      var changeset = {};
+      var destItems = {};
 
-      // We also want to set the downloadStatusTarget property as we work.
-      var unwrapper = createUnwrapper(dupFilter);
+      differ.generateDropLists(sourceplaylist.library,
+                               library,
+                               null,
+                               items,
+                               destItems,
+                               changeset);
+                                               
+      device.exportToDevice(deviceLibrary, changeset.value);
 
-      var asyncListener = {
-       _dupFilter: dupFilter,
-       onProgress: function(aItemsProcessed, aComplete) {
-         if (aComplete) {
-           var added = this._dupFilter.totalItems - this._dupFilter.duplicateItems;
-           DNDUtils.reportAddedTracks(added,
-                                      this._dupFilter.duplicateItems,
-                                      0, /* no unsupported reporting */
-                                      devicename,
-                                      true);
-         }
-         else {
-           DNDUtils.reportAddedTracks(aItemsProcessed,
-                                      0, /* no dupe reporting until complete */
-                                      0, /* no unsupported reporting */
-                                      devicename,
-                                      true);
-         }
-       },
-       QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
-      }
-         
-      library.addSomeAsync(unwrapper, asyncListener);
+      DNDUtils.reportAddedTracks(changeset.value.changes.length,
+                                 0, /* no duplicate reporting */
+                                 0, /* no unsupported reporting */
+                                 devicename,
+                                 true);
     }
   },
 
