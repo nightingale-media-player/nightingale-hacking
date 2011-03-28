@@ -1677,6 +1677,13 @@ protected:
   nsresult ImportMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList);
 
   /**
+   * Imports the list of media lists that are new
+   * \param aMediaListChanges The list of changes for the new media lists
+   */
+  nsresult ImportNewMediaLists(sbILibrary * aImportToLibrary,
+                               nsIArray * aNewMediaListsChanges);
+
+  /**
    * Returns boolean flags for whether we should import audio and/or video
    * \param aSettings A sync settings object
    * \param aImportAudio Returns whether audio should be imported
@@ -1685,6 +1692,14 @@ protected:
   static nsresult GetImportSettings(sbIDeviceLibrary * aDevLibrary,
                                     PRBool * aImportAudio,
                                     PRBool * aImportVideo);
+
+  /**
+   * Copies media items to a media list for a media list change.
+   * \param aChange the change to get the items from
+   * \param aMediaList the list to copy to
+   */
+  nsresult CopyChangedMediaItemsToMediaList(sbILibraryChange * aChange,
+                                            sbIMediaList * aMediaList);
 };
 
 
