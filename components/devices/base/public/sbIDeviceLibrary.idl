@@ -42,7 +42,7 @@ interface sbIDeviceLibrarySyncSettings;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(fc28d01-a72d-4a09-67fe-d76aaefb03e3)]
+[scriptable, uuid(b97b4384-b3c6-4418-5fd5-7553859aad22)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
