@@ -194,7 +194,9 @@ var DeviceSyncWidget = {
     var syncEnabledCheckbox = this._getElement("sync_header_checkbox");
     var syncGroupbox = this._getElement("content_management_groupbox");
 
-    // XXX TODO(jhawk) need to set importEnabledCheckbox appropriately here
+    /* Make the importEnabledCheckbox reflect whether this mediatype is
+     * currently set to be imported or not */
+    importEnabledCheckbox.checked = this._mediaSyncSettings.import;
 
     switch (this._mediaSyncSettings.mgmtType) {
     case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE:
@@ -336,12 +338,7 @@ var DeviceSyncWidget = {
     var syncEnabledCheckbox = this._getElement("sync_header_checkbox");
 
     // Activate or deactivate imporpy from device depending on checkbox setting
-    if (importEnabledCheckbox.check) {
-      // XXX TODO(jhawk) import activation code goes here
-    }
-    else {
-      // XXX TODO(jhawk) import deactivation code goes here
-    }
+    this._mediaSyncSettings.import = importEnabledCheckbox.checked;
 
     // First check the managementMode, we need to check the main check box and
     // the radio group

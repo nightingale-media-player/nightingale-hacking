@@ -490,7 +490,7 @@ var DPW = {
       return;
     }
 
-    /* Check if any mediaType is set to sync.
+    /* Check if any mediaType is set to be imported or to sync to the device.
      * If at least one is, we do not disable the sync button. */
     var disableSyncButton = true;
     for (var currMediaType = Ci.sbIDeviceLibrary.MEDIATYPE_AUDIO;
@@ -498,13 +498,16 @@ var DPW = {
          currMediaType++) {
       var currMediaSettings = this._deviceSyncSettings
                                   .getMediaSettings(currMediaType);
-      if (currMediaSettings.mgmtType !=
-          Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE) {
+
+      /* Check if this mediatype is set to be imported or have content
+       * synced to it from the main library */
+      if (currMediaSettings.import ||
+          (currMediaSettings.mgmtType !=
+           Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE)) {
         disableSyncButton = false;
+        break;
       }
     }
-
-    //XXX TODO(jhawk) this should also check if imports are on and not disable if one is
 
     if (disableSyncButton) {
       this._syncButton.setAttribute("disabled", "true");
