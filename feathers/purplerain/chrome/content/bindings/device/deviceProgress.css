@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
-/** 
+/**
 *******************************************************************************
 DEVICE PROGRESS
 
@@ -63,75 +63,28 @@ Imported by bindings.css or directly into feathers.
   margin:0;
 }
 
-.device-syncmode-box {
-  -moz-box-align: center;
-}
-.device-syncmode-separator {
-  min-width: 1px !important;
-  max-width: 1px !important;
-  max-height: 21px;
-  min-height: 21px;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  background-image: url(chrome://songbird/skin/device/sync-toggle-separator.png);
-}
-.device-syncmode-manual-button {
-  margin-right: 0;
-  -moz-border-radius-topright: 0;
-  -moz-border-radius-bottomright: 0;
-}
-.device-syncmode-auto-button {
-  margin-left: 0;
-  border-left-width: 0;
-  -moz-border-radius-topleft: 0;
-  -moz-border-radius-bottomleft: 0;
-}
-
-.device-progress-button[sbid="sync_operation_button"],
-.device-syncmode-manual-button,
-.device-syncmode-auto-button {
+.device-progress-button[sbid="sync_operation_button"] {
   height: 19px;
   border: 1px solid rgb(32,31,39);
   border-bottom: 1px solid rgb(54,51,69);
   background-image: url(chrome://songbird/skin/device/sync-toggle-buttons.png);
   background-position:0px -19px;
 }
-.device-syncmode-manual-button {
-  border-right: none !important;
-}
-.device-syncmode-auto-button {
-  border-left: none !important;
-}
-.device-progress-button[sbid="sync_operation_button"]:hover,
-.device-syncmode-manual-button:hover,
-.device-syncmode-auto-button:hover {
+
+.device-progress-button[sbid="sync_operation_button"]:hover {
   background-position:0px -38px;
 }
-.device-progress-button[sbid="sync_operation_button"]:active,
-.device-syncmode-manual-button:active,
-.device-syncmode-auto-button:active {
+.device-progress-button[sbid="sync_operation_button"]:active {
   background-position:0px -57px;
 }
-.device-syncmode-manual-button[checked="true"]:hover,
-.device-syncmode-auto-button[checked="true"]:hover,
-.device-syncmode-manual-button[checked="true"],
-.device-syncmode-auto-button[checked="true"] {
-  -moz-user-focus: ignore;
-  background-position:0px 0px;
-}
-.device-progress-button[sbid="sync_operation_button"]:focus,
-.device-syncmode-manual-button:focus,
-.device-syncmode-auto-button:focus {
+
+.device-progress-button[sbid="sync_operation_button"]:focus {
   outline: none !important;
 }
 
 /* disabled state to override above rules */
 .device-progress-button[sbid="sync_operation_button"][disabled="true"],
-.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover,
-.device-syncmode-manual-button[disabled="true"],
-.device-syncmode-manual-button[disabled="true"]:hover,
-.device-syncmode-auto-button[disabled="true"],
-.device-syncmode-auto-button[disabled="true"]:hover {
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover {
   background-position:0px -19px;
 }
 

@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -42,7 +42,7 @@ interface sbIDeviceLibrarySyncSettings;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(4a242d99-8eef-4ed4-a661-29434e61e432)]
+[scriptable, uuid(fc28d01-a72d-4a09-67fe-d76aaefb03e3)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
@@ -215,20 +215,13 @@ interface sbIDeviceLibraryListener : nsISupports
    * \sa sbIMediaList::Clear
    */
   boolean onBeforeClear();
-
-  const unsigned long SYNC_SETTINGS_APPLIED = 0;
-  const unsigned long SYNC_SETTINGS_CHANGED = 1;
-  const unsigned long SYNC_SETTINGS_RESET   = 2;
-  
-  void onSyncSettings(in unsigned long aAction, 
-                      in sbIDeviceLibrarySyncSettings aSyncSettings);
 };
 
 /**
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(ec3c810f-5221-4a5c-82e5-dfe709c27ba9)]
+[scriptable, uuid(e40c58fa-5adf-434c-79a4-27c153101c9e)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -262,7 +255,7 @@ interface sbIDeviceLibrary : sbILibrary
   const unsigned long MEDIATYPE_COUNT                   = 0x03;
 
   /**
-   * Gets/Sets the current sync mode of the device. The object 
+   * Gets/Sets the current sync mode of the device. The object
    * returned by the getter is a temporary transient object. Changes
    * are not made until you call setter.
    */
@@ -274,29 +267,6 @@ interface sbIDeviceLibrary : sbILibrary
    * have syncSettings return a live object and make it read-only
    */
 
-  /**
-   * returns a reference to single temporary instance of the
-   * device's synchronization setting. Calling this multiple times
-   * will return a reference to the same object for this 
-   * device/library
-   */
-  readonly attribute sbIDeviceLibrarySyncSettings tempSyncSettings;
-
-  /**
-   * resets the temporary settings to the currently active settings.
-   */
-  void resetSyncSettings();
-
-  /**
-   * apply the temporary settings to the currently active settings.
-   */
-  void applySyncSettings();
-  
-  /**
-   * Returns true if the temp settings have been modified
-   */
-  readonly attribute boolean tempSyncSettingsChanged;
-   
   /**
    * \brief Return the list of folders with content type aContentType the
    *        user wants to sync from his disk to the device.
@@ -339,10 +309,4 @@ interface sbIDeviceLibrary : sbILibrary
    * \param sbIDeviceLibraryListener aListener listener to remove.
    */
   void removeDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
-  
-  /**
-   * A bit of a hack so we can notify UI bits that our temp sync settings have
-   * changed. This is really a private API and should not generally be used.
-   */
-  [noscript] void fireTempSyncSettingsEvent(in unsigned long aEvent); 
 };

@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -80,9 +80,6 @@ public :
   //
   NS_IMETHOD GetSyncSettings(sbIDeviceLibrarySyncSettings * *aSyncSettings);
   NS_IMETHOD SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings);
-  NS_IMETHOD GetTempSyncSettings(sbIDeviceLibrarySyncSettings * *aTempSyncSettings);
-  NS_IMETHOD ResetSyncSettings(void);
-  NS_IMETHOD ApplySyncSettings(void);
   NS_IMETHOD GetSyncFolderListByType(PRUint32 aContentType, nsIArray **_retval);
   NS_IMETHOD SetSyncFolderListByType(PRUint32 aContentType, nsIArray *aFolderList);
 

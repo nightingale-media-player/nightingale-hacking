@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -227,7 +227,7 @@
           if (this.devLib) {
             this.devLib.addDeviceLibraryListener(this);
             this._imageSettings =
-              this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+              this.devLib.syncSettings.getMediaSettings(this._mediaType);
           }
 
           // Read preferences and update UI
@@ -343,7 +343,7 @@
           if (!this._imageSettings) {
             this.devLib.addDeviceLibraryListener(this);
             this._imageSettings =
-              this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+              this.devLib.syncSettings.getMediaSettings(this._mediaType);
           }
 
           // Enable/disable radio buttons
@@ -546,6 +546,7 @@
             this._syncFoldersList = {};
           }
 
+          this._syncFolderListWrite();
           this._updateUI();
         }
         ]]></body>
@@ -898,34 +899,6 @@
       </method>
       <method name="onBeforeClear">
         <body>{ return true; }</body>
-      </method>
-
-      <method name="onSyncSettings">
-        <parameter name="aAction"/>
-        <parameter name="aSyncSettings"/>
-        <body><![CDATA[
-        {
-          switch (aAction) {
-            // Reset and apply could change the image settings. Re-read
-            // to get the updated settings.
-            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_RESET:
-              this._imageSettings =
-                this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
-              // Reset displayed preferences
-              this._syncPrefsRead();
-              this._updateUI();
-              break;
-            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED:
-              this._updateUI();
-              break;
-            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_APPLIED:
-              this._imageSettings =
-                this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
-              this._syncFolderListWrite();
-              break;
-          }
-        }
-        ]]></body>
       </method>
 
       <!--

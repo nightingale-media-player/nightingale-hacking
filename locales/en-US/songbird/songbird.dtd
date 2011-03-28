@@ -440,10 +440,6 @@
 <!ENTITY command.device.renamedevice.accesskey          "R">
 <!ENTITY command.device.devicesync                      "Sync">
 <!ENTITY command.device.devicesync.accesskey            "S">
-<!ENTITY command.device.syncmode.manual                 "Manual">
-<!ENTITY command.device.syncmode.manual.accesskey       "M">
-<!ENTITY command.device.syncmode.auto                   "Auto">
-<!ENTITY command.device.syncmode.auto.accesskey         "A">
 <!-- CD Device entities -->
 <!ENTITY command.device.rip                             "Rip CD">
 <!ENTITY command.device.rip.accesskey                   "R">
@@ -500,13 +496,12 @@
 <!ENTITY device.unsupported_media.dialog.enable "Tell me when incompatible files are detected">
 
 <!ENTITY device.sync.header.label "Sync Settings">
+<!ENTITY device.import.header.label "Import">
 <!ENTITY device.sync.auto_sync.label "Sync">
 <!ENTITY device.sync.sync_all.label "Sync all media and playlists">
 <!ENTITY device.sync.sync_selected.label "Sync selected playlists:">
-<!ENTITY device.sync.manual.label "Manually manage">
 <!ENTITY device.sync.playlist.title "Title">
 <!ENTITY device.sync.playlist.video.duration "Video Duration">
-<!ENTITY device.sync.manual_mode.descr "The device is currently set to Manual (drag and drop) mode. To enable the settings below, select &quot;Auto&quot; from the toggle button above.">
 <!ENTITY device.sync.images.from.label "Sync Photos From:">
 <!ENTITY device.sync.images.browse "Choose folder...">
 <!ENTITY device.sync.images.all.label "All photos">
@@ -568,8 +563,6 @@
 
 <!ENTITY device.dialog.setup.title "Device Setup">
 <!ENTITY device.dialog.setup.sync.volume.selector.description "Choose which storage media you would like &brandShortName; to manage:">
-<!ENTITY device.dialog.setup.sync.checkbox.label "Automatically sync music to this device">
-<!ENTITY device.dialog.setup.sync.checkbox.description "&brandShortName; will automatically sync media to this device each time you connect it or whenever there's a change to your library.">
 <!ENTITY device.dialog.setup.ignore.checkbox.label "Ignore this device">
 <!ENTITY device.dialog.setup.ignore.checkbox.description "Only select if you do not want &brandShortName; to manage this device">
 

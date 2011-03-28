@@ -704,19 +704,15 @@ sbDeviceLibrary::GetSyncSettings(sbIDeviceLibrarySyncSettings ** aSyncSettings)
   nsresult rv;
 
   nsAutoMonitor lock(mMonitor);
-  if (!mCurrentSyncSettings) {
-    mCurrentSyncSettings = CreateSyncSettings();
-    NS_ENSURE_TRUE(mCurrentSyncSettings, NS_ERROR_OUT_OF_MEMORY);
+  if (!mSyncSettings) {
+    mSyncSettings = CreateSyncSettings();
+    NS_ENSURE_TRUE(mSyncSettings, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = mCurrentSyncSettings->Read(mDevice, this);
+    rv = mSyncSettings->Read(mDevice, this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsRefPtr<sbDeviceLibrarySyncSettings> settings;
-  rv = mCurrentSyncSettings->CreateCopy(getter_AddRefs(settings));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = CallQueryInterface(settings.get(), aSyncSettings);
+  rv = CallQueryInterface(mSyncSettings.get(), aSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -804,12 +800,8 @@ sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // update the main library listeners
-  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
+  rv = UpdateMainLibraryListeners(mSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  SB_NOTIFY_LISTENERS(OnSyncSettings(
-                                sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,
-                                mCurrentSyncSettings));
 
   return NS_OK;
 }
@@ -832,144 +824,28 @@ sbDeviceLibrary::SetSyncSettingsNoLock(
 
   nsAutoLock lock(syncSettings->GetLock());
 
-  if (syncSettings->HasChangedNoLock()) {
-    if (mCurrentSyncSettings) {
-      rv = mCurrentSyncSettings->Assign(syncSettings);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      rv = syncSettings->CreateCopy(getter_AddRefs(mCurrentSyncSettings));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // if we're not being assigned the temp settings we need
-    // to update it. We'll cheat and just test the raw pointers
-    if (mTempSyncSettings && mTempSyncSettings != syncSettings) {
-      nsAutoLock lock(mTempSyncSettings->GetLock());
-      rv = mTempSyncSettings->Assign(syncSettings);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mTempSyncSettings->NotifyDeviceLibrary();
-      mTempSyncSettings->ResetChangedNoLock();
-    }
+  if (mSyncSettings) {
+    rv = mSyncSettings->Assign(syncSettings);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Create a copy of sync settings for Write. We don't want to hold the lock
-    // while writing as it can dispatch device EVENT_DEVICE_PREFS_CHANGED event.
-    nsRefPtr<sbDeviceLibrarySyncSettings> copiedSyncSettings;
-    rv = mCurrentSyncSettings->CreateCopy(getter_AddRefs(copiedSyncSettings));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Release the lock before dispatching sync settings change event
-    lock.unlock();
-    monitor.Exit();
-
-    rv = copiedSyncSettings->Write(mDevice);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibrary::GetTempSyncSettings(
-                               sbIDeviceLibrarySyncSettings **aTempSyncSettings)
-{
-  NS_ENSURE_ARG_POINTER(aTempSyncSettings);
-
-  nsresult rv;
-
-  nsAutoMonitor monitor(mMonitor);
-  if (!mTempSyncSettings) {
-    if (!mCurrentSyncSettings) {
-      mCurrentSyncSettings = CreateSyncSettings();
-      NS_ENSURE_TRUE(mCurrentSyncSettings, NS_ERROR_OUT_OF_MEMORY);
-    }
-    mCurrentSyncSettings->CreateCopy(getter_AddRefs(mTempSyncSettings));
-    mTempSyncSettings->NotifyDeviceLibrary();
-  }
-
-  rv = CallQueryInterface(mTempSyncSettings.get(), aTempSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/* void resetSyncSettings (); */
-NS_IMETHODIMP
-sbDeviceLibrary::ResetSyncSettings()
-{
-  {
-    nsAutoMonitor monitor(mMonitor);
-
-    // If temp settings were never retrieved, nothing to do.
-    if (!mTempSyncSettings) {
-      return NS_OK;
-    }
-
-    nsAutoLock lockCurrentSyncSettings(mCurrentSyncSettings->GetLock());
-    nsAutoLock lockTempSyncSettings(mTempSyncSettings->GetLock());
-
-    nsresult rv;
-
-    rv = mTempSyncSettings->Assign(mCurrentSyncSettings);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mTempSyncSettings->NotifyDeviceLibrary();
-    mTempSyncSettings->ResetChangedNoLock();
-  }
-
-  SB_NOTIFY_LISTENERS(OnSyncSettings(
-                                  sbIDeviceLibraryListener::SYNC_SETTINGS_RESET,
-                                  mTempSyncSettings));
-
-  return NS_OK;
-}
-
-/* void applySyncSettings (); */
-NS_IMETHODIMP
-sbDeviceLibrary::ApplySyncSettings()
-{
-  // If temp settings were never retrieved, nothing to do.
-  if (!mTempSyncSettings) {
-    return NS_OK;
-  }
-  nsresult rv;
-
-  rv = SetSyncSettingsNoLock(mTempSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mTempSyncSettings->NotifyDeviceLibrary();
-  mTempSyncSettings->ResetChanged();
-
-  // update the library is read-only property
-  rv = UpdateIsReadOnly();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // update the main library listeners
-  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  SB_NOTIFY_LISTENERS(OnSyncSettings(
-                                sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,
-                                mCurrentSyncSettings));
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibrary::GetTempSyncSettingsChanged(PRBool * aChanged)
-{
-  NS_ENSURE_ARG_POINTER(aChanged);
-
-  nsAutoMonitor monitor(mMonitor);
-
-  if (!mTempSyncSettings) {
-    *aChanged = PR_FALSE;
   }
   else {
-    *aChanged = mTempSyncSettings->HasChanged();
+    rv = syncSettings->CreateCopy(getter_AddRefs(mSyncSettings));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Create a copy of sync settings for Write. We don't want to hold the lock
+  // while writing as it can dispatch device EVENT_DEVICE_PREFS_CHANGED event.
+  nsRefPtr<sbDeviceLibrarySyncSettings> copiedSyncSettings;
+  rv = mSyncSettings->CreateCopy(getter_AddRefs(copiedSyncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Release the lock before dispatching sync settings change event
+  lock.unlock();
+  monitor.Exit();
+
+  rv = copiedSyncSettings->Write(mDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1597,12 +1473,4 @@ sbDeviceLibrary::Clear(void)
   } else {
     return NS_OK;
   }
-}
-
-NS_IMETHODIMP
-sbDeviceLibrary::FireTempSyncSettingsEvent(PRUint32 aEvent)
-{
-  SB_NOTIFY_LISTENERS(OnSyncSettings(aEvent, mCurrentSyncSettings));
-
-  return NS_OK;
 }

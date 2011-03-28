@@ -329,8 +329,7 @@ private:
   /**
    * \brief The sync mode has been changed or not.
    */
-  nsRefPtr<sbDeviceLibrarySyncSettings> mCurrentSyncSettings;
-  nsRefPtr<sbDeviceLibrarySyncSettings> mTempSyncSettings;
+  nsRefPtr<sbDeviceLibrarySyncSettings> mSyncSettings;
   PRMonitor* mMonitor;
 };
 

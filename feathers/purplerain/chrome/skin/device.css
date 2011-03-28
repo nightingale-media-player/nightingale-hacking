@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -21,7 +21,7 @@
  *
  *=END SONGBIRD GPL
  */
- 
+
 /******************************************************************************
 * DEVICE.CSS
 *******************************************************************************
@@ -203,27 +203,11 @@ sb-device-image-sync radiogroup {
 }
 
 /* progress */
-.device-syncmode-manual-button > .button-box > label,
-.device-syncmode-auto-button > .button-box > label {
-  color: rgb(154,153,160);
-}
-.device-syncmode-manual-button:active > .button-box > label,
-.device-syncmode-auto-button:active > .button-box > label {
-  color: rgb(161,158,171);
-}
-.device-syncmode-manual-button[checked="true"] > .button-box > label,
-.device-syncmode-auto-button[checked="true"] > .button-box > label,
-.device-progress-button[sbid="sync_operation_button"]:hover > .button-box > label,
-.device-syncmode-manual-button:hover > .button-box > label,
-.device-syncmode-auto-button:hover > .button-box > label {
+.device-progress-button[sbid="sync_operation_button"]:hover > .button-box > label {
   color: rgb(255,255,255);
 }
 .device-progress-button[sbid="sync_operation_button"][disabled="true"] > .button-box > label,
-.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover > .button-box > label,
-.device-syncmode-manual-button[disabled="true"] > .button-box > label,
-.device-syncmode-manual-button[disabled="true"]:hover > .button-box > label,
-.device-syncmode-auto-button[disabled="true"]:hover > .button-box > label,
-.device-syncmode-auto-button[disabled="true"] > .button-box > label {
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover > .button-box > label {
   color: rgb(154,153,160);
 }
 .dev-progress-text-label,
@@ -235,7 +219,7 @@ sb-device-image-sync radiogroup {
 }
 
 /* Sync */
-hbox[sbid="content_management_header_background"] {
+hbox.content_management_header_background {
   background-color: rgb(74,73,79);
 }
 label[sbid="sync_images_supported_formats"] {

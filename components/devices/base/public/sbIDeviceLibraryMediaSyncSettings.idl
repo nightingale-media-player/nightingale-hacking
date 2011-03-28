@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -21,7 +21,7 @@
  *
  *=END SONGBIRD GPL
  */
- 
+
 #include "nsISupports.idl"
 
 /**
@@ -30,49 +30,58 @@
 interface nsIArray;
 interface nsIFile;
 interface sbIMediaList;
- 
-[scriptable, uuid(0172e449-18d2-4930-aebf-1a87375b8515)] 
+
+[scriptable, uuid(0172e449-18d2-4930-aebf-1a87375b8515)]
 interface sbIDeviceLibraryPlaylistListener : nsISupports
 {
   void onPlaylistAdded(in sbIMediaList aPlaylist);
-  void onPlaylistRemoved(in sbIMediaList aPlaylist); 
+  void onPlaylistRemoved(in sbIMediaList aPlaylist);
 };
 
-[scriptable, uuid(997fc0cd-a391-4b12-ac92-3f3a4fa80425)]
+[scriptable, uuid(54d2751f-3c12-4d17-6846-cad55178e8b9)]
 interface sbIDeviceLibraryMediaSyncSettings : nsISupports
 {
-  /** 
+  /**
    * Sync management settings
    *   SYNC_MGMT_NONE -      No media items of this type are sync'd
    *   SYNC_MGMT_ALL -       Synchronize all media items of this type
-   *   SYNC_MGMT_PLAYLISTS - Synchronize only media belonging to selected 
+   *   SYNC_MGMT_PLAYLISTS - Synchronize only media belonging to selected
    *                         playlists
    */
   const unsigned long SYNC_MGMT_NONE                  = 0;
   const unsigned long SYNC_MGMT_ALL                   = 1;
   const unsigned long SYNC_MGMT_PLAYLISTS             = 2;
-  
+
   /**
    * Determines whether we should import media items from the device during sync
    */
   attribute boolean import;
-  
+
   /**
-   * Sets the management type for a given content type 
+   * Sets the management type for a given content type
    * SYNC_MGMT_NONE | SYNC_MGMT_ALL | SYNC_MGMT_PLAYLISTS
    */
   attribute unsigned long mgmtType;
-  
+
+  /**
+   * Maintains the last _active_ mgmt type which is one of SYNC_MGMT_ALL or
+   * SYNC_MGMT_PLAYLISTS.  This is necessary to repopulate the sync setting
+   * when SYNC_MGMT_NONE is turned off, for example when the sync-enabled
+   * checkbox is activated.  If mgmtType hasn't been altered yet, this defaults
+   * to SYNC_MGMT_ALL.
+   */
+  readonly attribute unsigned long lastActiveMgmtType;
+
   /**
    * Represents the playlists that are currently selected. The array returned
    * is a copy. Call the setter to change the selected playlists
    */
   attribute nsIArray selectedPlaylists;
-   
+
   /**
    * Adds a playlist to this media type's settings
    */
-  void setPlaylistSelected(in sbIMediaList aPlaylist, 
+  void setPlaylistSelected(in sbIMediaList aPlaylist,
                            in boolean aSelected);
 
   /**
@@ -96,20 +105,19 @@ interface sbIDeviceLibraryMediaSyncSettings : nsISupports
    * sync from
    */
   attribute nsIFile syncFromFolder;
-  
+
   /**
    * Returns playlists that can be selected for this MediaType
    */
   readonly attribute nsIArray syncPlaylists;
-  
+
   /**
    * Notifies when the list of playlists for this media type changes
    */
   void addPlaylistListener(in sbIDeviceLibraryPlaylistListener aListener);
-  
+
   /**
    * removes the listener
    */
   void removePlaylistListener(in sbIDeviceLibraryPlaylistListener aListener);
 };
- 

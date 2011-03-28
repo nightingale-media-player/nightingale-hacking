@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://www.songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -85,50 +85,6 @@ sbIPDLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbDeviceLibrary::SetSyncSettings(aSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbIPDLibrary::GetTempSyncSettings(sbIDeviceLibrarySyncSettings ** aTempSyncSettings)
-{
-  NS_ENSURE_ARG_POINTER(aTempSyncSettings);
-
-  nsresult rv;
-
-  rv = InitializePrefs();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sbDeviceLibrary::GetTempSyncSettings(aTempSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbIPDLibrary::ResetSyncSettings()
-{
-  nsresult rv;
-
-  rv = InitializePrefs();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sbDeviceLibrary::ResetSyncSettings();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbIPDLibrary::ApplySyncSettings()
-{
-  nsresult rv;
-
-  rv = InitializePrefs();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = sbDeviceLibrary::ApplySyncSettings();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -234,8 +234,6 @@ public:
   NS_IMETHOD Eject(void);
   NS_IMETHOD Format(void);
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
-  NS_IMETHOD GetCacheSyncRequests(PRBool *_retval);
-  NS_IMETHOD SetCacheSyncRequests(PRBool aChacheSyncRequests);
   NS_IMETHOD SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                sbIDeviceSupportsItemCallback* aCallback);
   NS_IMETHOD GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary);
@@ -677,13 +675,6 @@ protected:
   PRUint32 mPreviousState;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
-
-  enum {
-    SYNC_STATE_NORMAL         = 0,
-    SYNC_STATE_CACHE          = 1,
-    SYNC_STATE_PENDING        = 2
-  };
-  PRUint32 mSyncState;            // State of how to handle sync requsts
 
   nsCOMPtr<sbIDeviceLibrary> mDefaultLibrary;
   nsCOMPtr<sbILibrary> mMainLibrary;

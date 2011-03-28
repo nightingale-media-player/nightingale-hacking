@@ -64,7 +64,7 @@ interface sbIMediaItem;
  *
  * A callback interface for sbIDevice::supportsMediaItem
  */
-[scriptable, function, uuid(9491356e-9abb-498b-8540-483b83a22ed7)]
+[scriptable, function, uuid(cf163566-24b2-4ecd-4b9f-2a69725e22ad)]
 interface sbIDeviceSupportsItemCallback : nsISupports
 {
   void onSupportsMediaItem(in sbIMediaItem aMediaItem, in boolean aIsSupported);
@@ -94,7 +94,7 @@ interface sbIDevice : nsISupports
    * The id of the controller that created the device.
    */
   readonly attribute nsIDPtr controllerId;
-  
+
   /**
    * The id of the device
    */
@@ -166,12 +166,12 @@ interface sbIDevice : nsISupports
    * The parameters with which the device was created
    */
   readonly attribute nsIPropertyBag2 parameters;
- 
+
   /**
    * The device's properties.
    */
   readonly attribute sbIDeviceProperties properties;
- 
+
   /**
    * Whether the media item is transcoded to the device directly.
    */
@@ -183,7 +183,7 @@ interface sbIDevice : nsISupports
    * device is busy.
    */
   readonly attribute boolean isBusy;
- 
+
   /**
    * Whether it is safe to disconnect the device, generally this is when it
    * is not performing a critical operation like copying a file to/from the
@@ -192,7 +192,7 @@ interface sbIDevice : nsISupports
    * the application.
    */
   readonly attribute boolean canDisconnect;
- 
+
   /**
    * A more detailed state of the device, with information on what item/list it
    * is currently being worked on and includes possible substates for more
@@ -200,31 +200,12 @@ interface sbIDevice : nsISupports
    * @see sbIDeviceStatus
    */
   readonly attribute sbIDeviceStatus currentStatus;
-  
+
   /**
    * Does the implementation of this sbIDevice provide support for
    * reformatting the current device?
    */
   readonly attribute boolean supportsReformat;
-
-  /**
-   * Flag to hold sync requests until we are ready. This is used for when the
-   * user is editing the settings for a device, this way we do not start a sync
-   * in the middle of changes.
-   *
-   * Example:
-   *   (start code)
-   *   this._device.cacheSyncRequests = true;
-   *   // changes are made to settings
-   *   this._device.cacheSyncRequests = false;
-   *   (end)
-   *
-   * Note:
-   *   When cacheSyncRequests is toggled from true to false and there have been
-   *   sync requests we will start a sync.
-   *   By default this attribute is false.
-  */
-  attribute boolean cacheSyncRequests;
 
   /**
    * Whether the device is busy, idle, syncing, mounting, etc.
@@ -257,7 +238,7 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_COPY_PREPARING  = 17; // Preparing to copy
   const unsigned long STATE_SYNCING_TYPE    = 18; // Syncing types
   const unsigned long STATE_COPYING_MUSIC   = 19; // Copying music
-  const unsigned long STATE_COPYING_VIDEO   = 20; // Copying video 
+  const unsigned long STATE_COPYING_VIDEO   = 20; // Copying video
   const unsigned long STATE_IMAGESYNC_PREPARING  = 21; // Preparing to sync
   const unsigned long STATE_COPYING_IMAGE        = 22; // Copying image
 
@@ -270,13 +251,13 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
   const unsigned long REQUEST_FLAG_READ  = 0x20000000;
-  
+
   /* read requests */
   const unsigned long REQUEST_MOUNT        = REQUEST_FLAG_READ + 1;
   const unsigned long REQUEST_READ         = REQUEST_FLAG_READ + 2;
   const unsigned long REQUEST_EJECT        = REQUEST_FLAG_READ + 3;
   const unsigned long REQUEST_SUSPEND      = REQUEST_FLAG_READ + 4;
-  
+
   /* write requests */
   const unsigned long REQUEST_WRITE         = REQUEST_FLAG_WRITE + 1;
   const unsigned long REQUEST_DELETE        = REQUEST_FLAG_WRITE + 2;
@@ -290,7 +271,7 @@ interface sbIDevice : nsISupports
 
   /* reset the device to its factory state */
   const unsigned long REQUEST_FACTORY_RESET = REQUEST_FLAG_WRITE + 8;
-  
+
   /* format the device media */
   const unsigned long REQUEST_FORMAT        = REQUEST_FLAG_WRITE + 9;
 
@@ -305,14 +286,14 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_SYNC_COMPLETE = REQUEST_FLAG_WRITE + 13;
 
   /**
-   * 
+   *
    */
   void submitRequest(in unsigned long aRequest, in nsIPropertyBag2 aRequestParameters);
   /**
    * Cancel all current pending requests
    */
   void cancelRequests();
-  
+
   /**
    * Call sync() on all libraries attached to this device
    */
@@ -320,8 +301,8 @@ interface sbIDevice : nsISupports
 
   /**
    * Can this media item be stored on this device?
-   * 
-   * A supported file is either 
+   *
+   * A supported file is either
    *   a) natively supported, or
    *   b) transcodable into one,
    * and is either
@@ -373,16 +354,16 @@ interface sbIDevice : nsISupports
 
   /**
    * Imports changes from the device as specified in aImportChangeset
-   * 
+   *
    * \param aImportToLibrary The library to import the changes to
    * \param aImportChangeset The changes that are to be imported
    */
   void importFromDevice(in sbILibrary aImportToLibrary,
                         in sbILibraryChangeset aImportChangeset);
-                        
+
   /**
    * Exports the changes to a device as specified in aExportChangeset
-   * 
+   *
    * \param aDevLibrary The device library of the device to export changes to
    * \param aExportChangeset The changes to export
    */

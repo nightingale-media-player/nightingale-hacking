@@ -378,7 +378,6 @@ sbBaseDevice::TransferRequest::~TransferRequest()
 sbBaseDevice::sbBaseDevice() :
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
-  mSyncState(sbBaseDevice::SYNC_STATE_NORMAL),
   mInfoRegistrarType(sbIDeviceInfoRegistrar::NONE),
   mPreferenceLock(nsnull),
   mMusicLimitPercent(100),
@@ -3950,12 +3949,6 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = sbDeviceUtils::SetLinkedSyncPartner(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Check if we should cache this sync for later
-  if (mSyncState != sbBaseDevice::SYNC_STATE_NORMAL) {
-    mSyncState = sbBaseDevice::SYNC_STATE_PENDING;
-    return NS_OK;
-  }
-
   // Ensure enough space is available for operation.  Cancel operation if not.
   PRBool abort;
   rv = EnsureSpaceForSync(aRequest, &abort);
@@ -4147,16 +4140,8 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                                &abort);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Set sync mode to manual upon abort. Also clear the listeners and reset
-    // the read-only bit.
+    // User Aborted. Report that to the caller.
     if (abort) {
-      nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
-      rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = dstLib->SetSyncSettings(syncSettings);
-      NS_ENSURE_SUCCESS(rv, rv);
-
       *aAbort = PR_TRUE;
       return NS_OK;
     }
@@ -6469,40 +6454,6 @@ NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
       NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
       _retval);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/* attribute boolean cacheSyncRequests; */
-NS_IMETHODIMP
-sbBaseDevice::GetCacheSyncRequests(PRBool *_retval)
-{
-  TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = (mSyncState != sbBaseDevice::SYNC_STATE_NORMAL);
-  return NS_OK;
-}
-
-/* attribute boolean cacheSyncRequests; */
-NS_IMETHODIMP
-sbBaseDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
-{
-  TRACE(("%s", __FUNCTION__));
-
-  if (aCacheSyncRequests &&
-      mSyncState == sbBaseDevice::SYNC_STATE_NORMAL) {
-    mSyncState = sbBaseDevice::SYNC_STATE_CACHE;
-  }
-  else if (!aCacheSyncRequests &&
-           mSyncState == sbBaseDevice::SYNC_STATE_PENDING) {
-    mSyncState = sbBaseDevice::SYNC_STATE_NORMAL;
-    // Since we are turning off the CacheSyncRequests and a sync request came in
-    // we need to start a sync.
-    SyncLibraries();
-  }
-  else if (!aCacheSyncRequests) {
-    mSyncState = sbBaseDevice::SYNC_STATE_NORMAL;
-  }
 
   return NS_OK;
 }

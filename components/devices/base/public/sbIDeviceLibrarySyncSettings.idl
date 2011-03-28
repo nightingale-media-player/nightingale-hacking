@@ -21,10 +21,12 @@
  *
  *=END SONGBIRD GPL
  */
- 
+
 #include "nsISupports.idl"
 #include "sbIDeviceLibraryMediaSyncSettings.idl"
- 
+
+interface sbIDevice;
+
  /**
   * This interface serves as a holder of device sync management settings.
   * Changing values on this object or the objects it owns does not effect
@@ -32,7 +34,7 @@
   * syncSettings or call applySyncSettings in order for those changes to
   * be active.
   */
-[scriptable, uuid(c4f8aa38-b6c4-49eb-9962-f0ea15722b57)]
+[scriptable, uuid(cb2383c3-6369-4815-42e9-f66d04c48507)]
 interface sbIDeviceLibrarySyncSettings : nsISupports
 {
   /**
@@ -47,8 +49,13 @@ interface sbIDeviceLibrarySyncSettings : nsISupports
                                                    in unsigned long aMediaType);
   /**
    * returns a list of the playlists currently selected for all media types
-   */                                                 
-  readonly attribute nsIArray syncPlaylists; 
-};
+   */
+  readonly attribute nsIArray syncPlaylists;
 
-  
+  /**
+   * Writes this deviceLibrarySyncSetting and the deviceLibraryMediaSyncSettings
+   * to a device-specific pref so that the settings can be retrieved between
+   * sessions.
+   */
+  void write(in sbIDevice aDevice);
+};

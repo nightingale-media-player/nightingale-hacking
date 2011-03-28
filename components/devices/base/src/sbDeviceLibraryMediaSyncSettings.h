@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -68,14 +68,6 @@ private:
   void SetSyncSettings(sbDeviceLibrarySyncSettings * aSettings) {
     mSyncSettings = aSettings;
   }
-  void ResetChanged() {
-    mChanged = false;
-  }
-  bool HasChanged() const
-  {
-    return mChanged;
-  }
-  void Changed();
   nsresult GetMgmtTypeNoLock(PRUint32 * aSyncMgmtType);
   nsresult GetSyncPlaylistsNoLock(nsIArray ** aSyncPlaylists);
   nsresult GetSelectedPlaylistsNoLock(nsIArray ** aSelectedPlaylists);
@@ -83,12 +75,12 @@ private:
    * Management type, SYNC_MGMT_NONE, SYNC_MGMT_ALL, SYNC_MGMT_PLAYLISTS
    */
   PRUint32 mSyncMgmtType;
+  PRUint32 mLastActiveSyncMgmtType;
   PRUint32 mMediaType;
   PlaylistSelection mPlaylistsSelection;
   nsString mSyncFolder;
   nsCOMPtr<nsIFile> mSyncFromFolder;
   bool mImport;
-  bool mChanged;
   PRLock * mLock;
   // Non-owning reference to our owner. We should never live past
   sbDeviceLibrarySyncSettings * mSyncSettings;

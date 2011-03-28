@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -52,29 +52,7 @@ public:
   {
     return mLock;
   }
-  /**
-   * Returns true if the settings have changed
-   */
-  bool HasChanged() const;
-  bool HasChangedNoLock() const
-  {
-    return mChanged;
-  }
-  /**
-   * Resets the changed flag, this does not revert the settings themselvves
-   */
-  void ResetChanged();
-  void ResetChangedNoLock();
-  /**
-   * Marks the settings object as modified and notifies the device library
-   * if set to do so
-   */
-  void Changed(PRBool forceNotify = PR_FALSE);
 
-  void NotifyDeviceLibrary()
-  {
-    mNotifyDeviceLibrary = true;
-  }
   /**
    * Reads in the sync management settings and builds out the various objects
    * \param aDevice The device associated with the settings
@@ -84,11 +62,6 @@ public:
   nsresult Read(sbIDevice * aDevice,
                 sbIDeviceLibrary * aDeviceLibrary);
 
-  /**
-   * Writes the sync management settings and builds out the various objects
-   * \param aDevice The device associated with the settings
-   */
-  nsresult Write(sbIDevice * aDevice);
   static  sbDeviceLibrarySyncSettings * New(
                                           nsID const & aDeviceID,
                                           nsAString const & aDeviceLibraryGuid);
@@ -164,8 +137,6 @@ private:
 
   nsID mDeviceID;
   nsString mDeviceLibraryGuid;
-  bool mChanged;
-  bool mNotifyDeviceLibrary;
   PRLock * mLock;
 };
 

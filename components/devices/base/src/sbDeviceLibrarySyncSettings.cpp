@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -96,8 +96,6 @@ sbDeviceLibrarySyncSettings::sbDeviceLibrarySyncSettings(
                                          nsAString const & aDeviceLibraryGuid) :
   mDeviceID(aDeviceID),
   mDeviceLibraryGuid(aDeviceLibraryGuid),
-  mChanged(false),
-  mNotifyDeviceLibrary(false),
   mLock(nsAutoLock::NewLock("sbDeviceLibrarySyncSettings"))
 {
   mMediaSettings.SetLength(sbIDeviceLibrary::MEDIATYPE_COUNT);
@@ -142,26 +140,6 @@ nsresult sbDeviceLibrarySyncSettings::Assign(
   return NS_OK;
 }
 
-void sbDeviceLibrarySyncSettings::Changed(PRBool forceNotify)
-{
-  // If we're already have changed nothing to do.
-  if (mChanged && !forceNotify) {
-    return;
-  }
-  mChanged = true;
-  if (mNotifyDeviceLibrary) {
-    nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
-    nsresult rv = sbDeviceUtils::GetDeviceLibrary(mDeviceLibraryGuid,
-                                                  &mDeviceID,
-                                                  getter_AddRefs(deviceLibrary));
-    NS_ENSURE_SUCCESS(rv, /* void */);
-
-    rv = deviceLibrary->FireTempSyncSettingsEvent(
-                               sbIDeviceLibraryListener::SYNC_SETTINGS_CHANGED);
-    NS_ENSURE_SUCCESS(rv, /* void */);
-  }
-}
-
 nsresult sbDeviceLibrarySyncSettings::CreateCopy(
                                         sbDeviceLibrarySyncSettings ** aSettings)
 {
@@ -180,31 +158,6 @@ nsresult sbDeviceLibrarySyncSettings::CreateCopy(
   return NS_OK;
 }
 
-bool sbDeviceLibrarySyncSettings::HasChanged() const
-{
-  nsAutoLock lock(mLock);
-  return HasChangedNoLock();
-}
-
-void sbDeviceLibrarySyncSettings::ResetChangedNoLock()
-{
-  mChanged = false;
-  nsRefPtr<sbDeviceLibraryMediaSyncSettings> mediaSettings;
-  for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
-       mediaType < sbIDeviceLibrary::MEDIATYPE_COUNT;
-       ++mediaType) {
-    mediaSettings = mMediaSettings[mediaType];
-    if (mediaSettings) {
-      mediaSettings->ResetChanged();
-    }
-  }
-}
-
-void sbDeviceLibrarySyncSettings::ResetChanged()
-{
-  nsAutoLock lock(mLock);
-  ResetChangedNoLock();
-}
 
 NS_IMETHODIMP
 sbDeviceLibrarySyncSettings::GetMediaSettings(
@@ -629,7 +582,6 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
       PRBool added = settings->mPlaylistsSelection.Put(supports, PR_FALSE);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
-
     rv = GetSyncListsPrefKey(aMediaType, prefKey);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -803,7 +755,7 @@ sbDeviceLibrarySyncSettings::Read(sbIDevice * aDevice,
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbDeviceLibrarySyncSettings::Write(sbIDevice * aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);

@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -51,9 +51,6 @@
  *   A single dialog box argument of type sbIDevice is passed in.
  *
  *************************************************************************** -->
- 
-<!-- TODO: XXX This setup dialog code will be addressed in bug 23348. -->
-
 <!-- Device setup dialog box. -->
 <dialog
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -102,18 +99,11 @@
         <!-- Device volume selector. -->
         <sb-device-volume-selector id="device_setup_volume_selector"
                                    class="indent"/>
+        <separator id="selectorSeparator"/>
       </vbox>
-
-      <checkbox id="setup_sync_checkbox" checked="false"
-                label="&device.dialog.setup.sync.checkbox.label;"
-                oncommand="deviceSetupDialog.toggleSync();"/>
-      <description id="setup_sync_description" class="indent">
-        &device.dialog.setup.sync.checkbox.description;
-      </description>
     </vbox>
 
     <vbox id="ignoreContainer" hidden="true">
-      <separator id="ignoreSeparator"/>
       <checkbox id="setup_ignore_checkbox" checked="false"
                 label="&device.dialog.setup.ignore.checkbox.label;"
                 oncommand="deviceSetupDialog.toggleIgnore(event);"/>
@@ -260,8 +250,6 @@
       onAccept: function deviceSetupDialog_onAccept() {
         var ignoreCheckboxElem =
               document.getElementById("setup_ignore_checkbox");
-        var syncCheckboxElem =
-              document.getElementById("setup_sync_checkbox");
         var ignoreContainerElem = document.getElementById("ignoreContainer");
 
         if (!ignoreContainerElem.hidden && ignoreCheckboxElem.checked) {
@@ -287,49 +275,9 @@
           var setupNameTextboxElem =
                 document.getElementById("setup_name_textbox");
           this._device.properties.friendlyName = setupNameTextboxElem.value;
-
-          // Set the sync preference.
-          /**
-           * TODO: XXX Will be removed or updated in bug 23348
-          var deviceLibrary = this._device.defaultLibrary;
-          if (deviceLibrary) {
-            var syncMode = syncCheckboxElem.checked ?
-                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO :
-                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
-            var syncSettings = deviceLibrary.syncSettings;
-            syncSettings.syncMode = syncMode;
-            deviceLibrary.syncSettings = syncSettings;
-            if (syncMode == Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO)
-              deviceLibrary.sync();
-          }
-          */
         }
 
         return true;
-      },
-
-      /**
-       * Handle sync checkbox click event.
-       */
-
-      toggleSync: function deviceSetupDialog_toggleSync() {
-        var syncCheckboxElem = document.getElementById("setup_sync_checkbox");
-        var dialogElem = document.getElementById("device_setup_dialog");
-        var acceptButton = dialogElem.getButton("accept");
-
-        // Add the notification hat and update the button label
-        if (syncCheckboxElem.checked) {
-          acceptButton.label =
-            SBString("device.dialog.setup.button.sync.label");
-          this.showErrorNotification(
-                 SBString("device.dialog.setup.sync.message"),
-                 "PRIORITY_WARNING_HIGH");
-        }
-        else {
-          acceptButton.label =
-            SBString("device.dialog.setup.button.default.label");
-          this.removeErrorNotifications();
-        }
       },
 
       /**
@@ -340,7 +288,6 @@
         var ignoreCheckboxElem =
               document.getElementById("setup_ignore_checkbox");
         var nameTextboxElem = document.getElementById("setup_name_textbox");
-        var syncCheckboxElem = document.getElementById("setup_sync_checkbox");
         var syncContainerElem = document.getElementById("syncContainer");
         var dialogElem = document.getElementById("device_setup_dialog");
         var acceptButton = dialogElem.getButton("accept");
@@ -352,8 +299,6 @@
             SBString("device.dialog.setup.button.ignore.label");
           syncContainerElem.setAttribute("disabled", true);
           nameTextboxElem.setAttribute("disabled", true);
-          syncCheckboxElem.setAttribute("disabled", true);
-          syncCheckboxElem.checked = false;
 
           var key = "device.dialog.setup.ignoreDevice.message";
           if (getPlatformString() == "Darwin")
@@ -365,7 +310,6 @@
             SBString("device.dialog.setup.button.default.label");
           syncContainerElem.removeAttribute("disabled");
           nameTextboxElem.removeAttribute("disabled");
-          syncCheckboxElem.removeAttribute("disabled");
           this.removeErrorNotifications();
         }
 

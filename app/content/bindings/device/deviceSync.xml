@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -53,16 +53,23 @@
      <content>
 
       <xul:vbox class="device-tab-content">
-        <xul:groupbox sbid="manual-mode-descr">
-          <xul:description>&device.sync.manual_mode.descr;</xul:description>
-        </xul:groupbox>
 
         <xul:vbox sbid="content_selector">
-
           <xul:hbox align="center">
             <xul:stack flex="1">
-              <xul:hbox sbid="content_management_header_background"/>
-              <xul:checkbox sbid="content_management_checkbox"
+              <xul:hbox sbid="import_header_background"
+                        class="content_management_header_background"/>
+              <xul:checkbox sbid="import_header_checkbox"
+                            label="&device.import.header.label;"
+                            xbl:inherits="disabled"
+                            oncommand="_onUIPrefChange(true);"/>
+            </xul:stack>
+          </xul:hbox>
+          <xul:hbox align="center">
+            <xul:stack flex="1">
+              <xul:hbox sbid="sync_header_background"
+                        class="content_management_header_background"/>
+              <xul:checkbox sbid="sync_header_checkbox"
                             label="&device.sync.header.label;"
                             xbl:inherits="disabled"
                             oncommand="_onUIPrefChange(true);"/>

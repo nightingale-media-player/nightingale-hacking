@@ -689,24 +689,6 @@ sbCDDevice::GetSupportsReformat(PRBool *aSupportsReformat)
   return NS_OK;
 }
 
-/* attribute boolean cacheSyncRequests; */
-NS_IMETHODIMP
-sbCDDevice::GetCacheSyncRequests(PRBool *_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  // The CD Device does not sync
-  *_retval = PR_FALSE;
-  return NS_OK;
-}
-
-/* attribute boolean cacheSyncRequests; */
-NS_IMETHODIMP
-sbCDDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
-{
-  // The CD Device does not sync
-  return NS_OK;
-}
-
 /* readonly attribute unsigned long state; */
 NS_IMETHODIMP
 sbCDDevice::GetState(PRUint32 *aState)

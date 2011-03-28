@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -79,6 +79,7 @@ sbDeviceLibraryMediaSyncSettings::sbDeviceLibraryMediaSyncSettings(
                                     PRUint32 aMediaType,
                                     PRLock * aLock) :
   mSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE),
+  mLastActiveSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL),
   mMediaType(aMediaType),
   mImport(true),
   mLock(aLock),
@@ -116,16 +117,9 @@ sbDeviceLibraryMediaSyncSettings::Assign(
   rv = aSettings->mSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mChanged = false;
   mLock = aSettings->mLock;
 
   return NS_OK;
-}
-
-void sbDeviceLibraryMediaSyncSettings::Changed()
-{
-  mChanged = true;
-  mSyncSettings->Changed();
 }
 
 nsresult
@@ -178,6 +172,19 @@ sbDeviceLibraryMediaSyncSettings::GetMgmtType(PRUint32 *aSyncMgmtType)
   return NS_OK;
 }
 
+
+NS_IMETHODIMP
+sbDeviceLibraryMediaSyncSettings::GetLastActiveMgmtType
+                                  (PRUint32 *aLastActiveSyncMgmtType)
+{
+  NS_ENSURE_ARG_POINTER(aLastActiveSyncMgmtType);
+  // jhawk do I actually need to lock this?
+  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  nsAutoLock lock(mLock);
+  *aLastActiveSyncMgmtType = mLastActiveSyncMgmtType;
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
 {
@@ -185,11 +192,12 @@ sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
 
   {
     nsAutoLock lock(mLock);
+    if (mSyncMgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
+      mLastActiveSyncMgmtType = mSyncMgmtType;
+    }
     mSyncMgmtType = aSyncMgmtType;
   }
 
-  // Release the lock before dispatching sync settings change event
-  Changed();
   return NS_OK;
 }
 
@@ -213,8 +221,6 @@ sbDeviceLibraryMediaSyncSettings::SetImport(PRBool aImport)
     mImport = aImport == PR_TRUE;
   }
 
-  // Release the lock before dispatching sync settings change event
-  Changed();
   return NS_OK;
 }
 
@@ -279,8 +285,6 @@ sbDeviceLibraryMediaSyncSettings::SetSelectedPlaylists(
     }
   }
 
-  // Release the lock before dispatching sync settings change event
-  Changed();
   return NS_OK;
 }
 
@@ -296,8 +300,6 @@ sbDeviceLibraryMediaSyncSettings::SetPlaylistSelected(sbIMediaList *aPlaylist,
     mPlaylistsSelection.Put(supports, aSelected);
   }
 
-  // Release the lock before dispatching sync settings change event
-  Changed();
   return NS_OK;
 }
 
@@ -326,9 +328,6 @@ sbDeviceLibraryMediaSyncSettings::ClearSelectedPlaylists()
     mPlaylistsSelection.Enumerate(ResetSelection, nsnull);
   }
 
-  // Release the lock before dispatching sync settings change event
-  Changed();
-
   return NS_OK;
 }
 
@@ -352,9 +351,6 @@ sbDeviceLibraryMediaSyncSettings::SetSyncFolder(const nsAString & aSyncFolder)
     nsAutoLock lock(mLock);
     mSyncFolder = aSyncFolder;
   }
-
-  // Release the lock before dispatching sync settings change event
-  Changed();
 
   return NS_OK;
 }
@@ -405,9 +401,6 @@ sbDeviceLibraryMediaSyncSettings::SetSyncFromFolder(
     nsresult rv = aSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  // Release the lock before dispatching sync settings change event
-  Changed();
 
   return NS_OK;
 }

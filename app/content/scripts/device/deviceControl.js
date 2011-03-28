@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -658,9 +658,9 @@ deviceControlWidget.prototype = {
 
     var imagesMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE;
     if (this._deviceLibrary) {
-      let tempSettings = this._deviceLibrary.tempSyncSettings;
+      let currSettings = this._deviceLibrary.syncSettings;
       imagesMgmtType =
-        tempSettings.getMediaSettings(this._deviceLibrary.MEDIATYPE_IMAGE)
+        currSettings.getMediaSettings(this._deviceLibrary.MEDIATYPE_IMAGE)
                     .mgmtType;
     }
 
@@ -760,12 +760,6 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
-/**
- * Removed for bug sync management changes
-   TODO: XXX To be really removed in bug 23348            
-    else if (this._deviceLibrary && !(this._deviceLibrary.isManualSyncMode) &&
-             this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
-*/             
     else if (this._deviceLibrary && this._canTriggerSync() &&
              this._getStateAttribute(attrVal, aAttrName, "can_trigger_sync")) {}
     else if (this._currentSupportsReformat &&
@@ -940,7 +934,7 @@ deviceControlWidget.prototype = {
       return false;
 
     // Check photo sync settings since they are separate from the other types
-    let syncSettings = this._deviceLibrary.tempSyncSettings;
+    let syncSettings = this._deviceLibrary.syncSettings;
 
     // Can not sync if there are no settings.
     if (!syncSettings)
