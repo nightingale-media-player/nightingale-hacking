@@ -44,7 +44,40 @@
 #include <sbStringUtils.h>
 #include <sbDebugUtils.h>
 
+//    Sync2 core implementation.
+// 
+// The 'Sync2' behaviour is driven by changesets (sbILibraryChangeset) created
+// by the classes in this file. These describe the changes to be made to the
+// target library. The changeset interfaces are somewhat limited - we've only
+// added to the interface where needed to implement the current desired
+// behaviour, which is somewhat constrained by the existing UI - e.g. there is
+// no mechanism currently to select multiple playlists simultaneously, so drag
+// and drop of multiple playlists is not currently implemented here. This sort
+// of thing could be added fairly easily if desired.
+//
+// The changesets can be applied to devices via the sbIDevice.importFromDevice
+// and sbIDevice.exportToDevice methods. In certain cases callers may wish to
+// directly examine the contents of the changeset also.
+//
+// The public functions here are implemented in sbDeviceLibrarySyncDiff, the
+// implementation of sbIDeviceLibrarySyncDiff. This drives the collection of
+// objects to add/modify/etc. The bulk of the decision logic exists in the
+// enumeration listeners (SyncDiffExportListener or SyncDiffImportListener); see
+// those if you wish to change behaviour of what we do with a particular item.
+//
+// Comments here try to describe what behaviour we're implementing, but for
+// information about _why_ we've chosen the particular behaviour at hand, the
+// reader should instead see:
+//   http://wiki.songbirdnest.com/Releases/Ratatat/Device_Import_and_Sync
+// In particular, the four attached images on that page show the decision in
+// a relatively easily understood form.
+
+
 // Library enumeration listener base class to collect items to sync
+// This implements a variety of useful methods and basic functionality that is
+// common to both export and import, but delegates all the actual
+// decision-making about what to do for any given item to pure-virtual methods
+// implemented in subclasses for import/export.
 class SyncEnumListenerBase:
     public sbIMediaListEnumerationListener
 {
@@ -52,24 +85,28 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
-  enum mode {
-    ENUM_ALL,
-    ENUM_ITEMS,
-    ENUM_LISTS
+  // Mode for enumeration - handle all items, only non-list items, or only
+  // list items.
+  enum HandleMode {
+    HANDLE_ALL,
+    HANDLE_ITEMS,
+    HANDLE_LISTS
   };
 
+  // Type of change. This is used to indicate what action for sync behaviour
+  // is desired for a single item.
   enum ChangeType {
-    CHANGE_NONE,
-    CHANGE_ADD,
-    CHANGE_CLOBBER,
-    CHANGE_RETAIN
+    CHANGE_NONE,    // Item has been ignored.
+    CHANGE_ADD,     // Item should be added to the destination
+    CHANGE_CLOBBER, // Item should be used to replace the existing destination
+    CHANGE_RETAIN   // Existing destination item should be used
   };
 
 
   SyncEnumListenerBase() :
     mMediaTypes(0),
     mIsDrop(PR_FALSE),
-    mEnumMode(ENUM_ALL)
+    mHandleMode(HANDLE_ALL)
   {
   }
 
@@ -77,67 +114,100 @@ public:
                         sbILibrary *aMainLibrary,
                         sbILibrary *aDeviceLibrary);
 
-  // Process any item (list or non-list), and act on it appropriately.
+  // Process any item (list or non-list), and act on it appropriately. This
+  // will add any desired changes to the computed changeset object.
   virtual nsresult ProcessItem(sbIMediaList *aMediaList,
                                sbIMediaItem *aMediaItem) = 0;
 
   // Process a non-list item, determining what to do with it. Does not modify
-  // any state.
+  // any state. This allows a caller to determine the behaviour desired without
+  // necessarily adding that action to the changeset.
   virtual nsresult SelectChangeForItem(sbIMediaItem *aMediaItem,
                                        ChangeType *aChangeType,
                                        sbIMediaItem **aDestMediaItem) = 0;
 
   // Process a list item, determining what to do with it. Does not modify
-  // any state.
+  // any state. As above, allows a caller to determine desired behaviour.
   virtual nsresult SelectChangeForList(sbIMediaList *aMediaList,
                                        ChangeType *aChangeType,
                                        sbIMediaList **aDestMediaList) = 0;
 
+  // Add a change (sbILibraryChange) to the changeset we're computing.
+  // If aSrcItem is a list, aListItems should contain the items we're adding to
+  // the list. See the documentation for sbILibraryChange.listItems for details
+  // on the semantics of this.
   nsresult AddChange(PRUint32 aChangeType,
                      sbIMediaItem *aSrcItem,
                      sbIMediaItem *aDstItem,
                      nsIArray *aListItems = NULL);
 
+  // Add a list change. Computes the items that need to go into the destination
+  // list according to the semantics of sbILibraryChange.listItems.
   nsresult AddListChange(PRUint32 aChangeType,
                          sbIMediaList *aSrcList,
                          sbIMediaList *aDstList);
 
+  // Set the media types to process. aMediaType is a bitfield, so multiple
+  // types may be selected. Any item NOT of a type indicated by a call to this
+  // function will be ignored - that is, the SelectChangeFor*() functions will
+  // return CHANGE_NONE for all such items.
   void SetMediaTypes(PRUint32 aMediaTypes) {
     mMediaTypes = aMediaTypes;
   }
 
-  void SetEnumMode(enum mode aMode) {
-    mEnumMode = aMode;
+  // Set the mode for enumerating over the library - whether we're processing
+  // lists, non-lists, or both.
+  void SetHandleMode(HandleMode aMode) {
+    mHandleMode = aMode;
   }
 
+  // Call to finish processing. This will create the result mChangeset member.
+  // After calling this, no other functions should be called on this object
+  // (note that this constraint is not currently checked internally).
   nsresult Finish();
 
 protected:
   virtual ~SyncEnumListenerBase() {}
 
+  // Helper function to create array of sbIPropertyChange objects for an
+  // item being added to the destination.
   nsresult CreatePropertyChangesForItemAdded(sbIMediaItem *aSourceItem,
                                              nsIArray **aPropertyChanges);
+  // Helper function to create array of sbIPropertyChange objects for an
+  // item being modified.
   nsresult CreatePropertyChangesForItemModified(
                                 sbIMediaItem *aSourceItem,
                                 sbIMediaItem *aDestinationItem,
                                 nsIArray **aPropertyChanges);
 
+  // Get a property on a media item and convert to a 64 bit integer; this is
+  // useful for our time properties such as the last modified time
+  // (SB_PROPERTY_UPDATED).
   nsresult GetTimeProperty(sbIMediaItem *aMediaItem,
                            nsString aPropertyName,
                            PRInt64 *_result);
 
+  // Get a playlist from aLibrary that matches aList. Returns null in
+  // aMatchingList is not found. Matching is done based on GUID, but since
+  // origin GUIDs are one-way, we need to implement this differently for export
+  // and import.
   virtual nsresult GetMatchingPlaylist(
         sbILibrary *aLibrary,
         sbIMediaList *aList,
         sbIMediaList **aMatchingList) = 0;
 
+  // Returns true if the item aItem has a content type that we're currently
+  // processing.
   bool HasCorrectContentType(sbIMediaItem *aItem);
+  // Returns true is aList is a mixed-content (audio and video) playlist.
   bool ListIsMixed(sbIMediaList *aList);
+  // Returns true if we should process aList based on the current settings
+  // for content types to process.
   bool ListHasCorrectContentType(sbIMediaList *aList);
 
-  PRUint32  mMediaTypes;
-  PRBool    mIsDrop;
-  enum mode mEnumMode;
+  PRUint32   mMediaTypes;
+  PRBool     mIsDrop;
+  HandleMode mHandleMode;
 
   nsTHashtable<nsStringHashKey> mSeenMediaItems;
 
@@ -155,6 +225,9 @@ public:
 NS_IMPL_THREADSAFE_ISUPPORTS1(SyncEnumListenerBase,
                               sbIMediaListEnumerationListener)
 
+// Enumerator used to determine which items to add to a destination playlist
+// when adding or clobbering a list. This builds an array (in mListItems) that
+// matches the semantics of sbILibraryChange.listItems.
 class ListAddingEnumerationListener:
     public sbIMediaListEnumerationListener
 {
@@ -162,6 +235,10 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
+  // Create an enumeration listener. aMainListener is the import or export
+  // listener used to determine whether the source item, destination item,
+  // or neither is added to aListItems. The caller should then call
+  // sourceList.enumerateAllItems() with this listener.
   ListAddingEnumerationListener(SyncEnumListenerBase *aMainListener,
                                 nsIMutableArray *aListItems):
       mMainListener(aMainListener),
@@ -293,8 +370,9 @@ SyncEnumListenerBase::OnEnumeratedItem(sbIMediaList *aMediaList,
   nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
   bool isList = NS_SUCCEEDED(rv);
 
-  if ((mEnumMode == ENUM_LISTS && !isList) ||
-      (mEnumMode == ENUM_ITEMS && isList))
+  // Skip things that aren't what we're trying to handle currently.
+  if ((mHandleMode == HANDLE_LISTS && !isList) ||
+      (mHandleMode == HANDLE_ITEMS && isList))
   {
     *_retval = sbIMediaListEnumerationListener::CONTINUE;
     return NS_OK;
@@ -319,6 +397,8 @@ SyncEnumListenerBase::OnEnumeratedItem(sbIMediaList *aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!hidden.EqualsLiteral("1")) {
+    // Finally, we've decided we're actually going to process an item - so go
+    // ahead. This will add the appropriate change (if any) to the changeset.
     rv = ProcessItem(aMediaList, aMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -849,9 +929,6 @@ SyncExportEnumListener::GetMatchingPlaylist(
 {
   nsresult rv;
 
-  // This is for a device type (such as MTP) where we maintain more
-  // information about playlists, including origin item/library GUIDs. So,
-  // we can check using that.
   nsString listId;
   rv = aList->GetGuid(listId);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1563,6 +1640,9 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
   nsresult rv;
 
+  // We first determine which (if any) items we need to export, depending on
+  // settings.
+
   nsRefPtr<SyncExportEnumListener> exportListener =
       new SyncExportEnumListener();
   NS_ENSURE_TRUE(exportListener, NS_ERROR_OUT_OF_MEMORY);
@@ -1583,7 +1663,7 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
     exportListener->SetMediaTypes(aMediaTypes);
 
     // Handle all non-list items.
-    exportListener->SetEnumMode(SyncEnumListenerBase::ENUM_ITEMS);
+    exportListener->SetHandleMode(SyncEnumListenerBase::HANDLE_ITEMS);
     rv = aSourceLibrary->EnumerateAllItems(
             exportListener,
             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
@@ -1591,7 +1671,7 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
     // Handle all lists - this might need to refer to items above, so we have
     // to do it separately.
-    exportListener->SetEnumMode(SyncEnumListenerBase::ENUM_LISTS);
+    exportListener->SetHandleMode(SyncEnumListenerBase::HANDLE_LISTS);
     rv = aSourceLibrary->EnumerateAllItems(
             exportListener,
             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
@@ -1600,6 +1680,7 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
     // If we have any mixed-content playlists, but are not syncing all media
     // types, now do a 2nd pass over those, but with the media types set to all.
     if (aMediaTypes != mixedMediaTypes) {
+      exportListener->SetHandleMode(SyncEnumListenerBase::HANDLE_ITEMS);
       exportListener->SetMediaTypes(mixedMediaTypes);
       PRInt32 const mixedListCount =
           exportListener->mMixedContentPlaylists.Length();
@@ -1630,6 +1711,8 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
       list = do_QueryElementAt(aSourceLists, i, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      // We only want to enumerate the items in the list if we're going to
+      // export the list itself - so we need to determine that first.
       SyncEnumListenerBase::ChangeType changeType;
       nsCOMPtr<sbIMediaList> destList;
       rv = exportListener->SelectChangeForList(list,
@@ -1664,6 +1747,8 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   rv = exportListener->Finish();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // All done with export. Now import; this is a little simpler as we don't
+  // have as many configuration options available.
   nsRefPtr<SyncImportEnumListener> importListener =
       new SyncImportEnumListener();
   NS_ENSURE_TRUE(importListener, NS_ERROR_OUT_OF_MEMORY);
@@ -1675,14 +1760,16 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
   if (aMode & sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT) {
     // We always import everything (not just select playlists) if this is
-    // enabled. Items first, then lists (see above for why).
-    importListener->SetEnumMode(SyncEnumListenerBase::ENUM_ITEMS);
+    // enabled. As for export, this needs to handle the items before the lists,
+    // so that exporting a list can refer to the correct items contained within
+    // the list.
+    importListener->SetHandleMode(SyncEnumListenerBase::HANDLE_ITEMS);
     rv = aDestLibrary->EnumerateAllItems(
             importListener,
             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    importListener->SetEnumMode(SyncEnumListenerBase::ENUM_LISTS);
+    importListener->SetHandleMode(SyncEnumListenerBase::HANDLE_LISTS);
     rv = aDestLibrary->EnumerateAllItems(
             importListener,
             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
@@ -1715,7 +1802,10 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
 
   nsresult rv;
 
-  // Figure out if we're going to a device or from one.
+  // Figure out if we're going to a device or from one. We might think that
+  // checking sbILibrary.device for non-null would work - but what we actually
+  // get here is the internal library itself, not the device library that wraps
+  // that. Only the device library implements the 'device' attribute.
   bool toDevice = false;
   nsCOMPtr<sbIDeviceManager2> deviceManager = do_GetService(
           "@songbirdnest.com/Songbird/DeviceManager;2", &rv);
@@ -1727,6 +1817,7 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
     toDevice = true;
   }
 
+  // Drag and drop always works for both audio and video.
   const PRUint32 allMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO |
                                  sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
 
@@ -1736,6 +1827,10 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
 
   nsRefPtr<SyncEnumListenerBase> listener;
 
+  // Figure out whether this is to a device (even if it's from a device as well)
+  // or from a device to a non-device. The third possibility (no devices
+  // involved at all) is not checked for; the callers must ensure that either
+  // source or destination is a device.
   if (toDevice) {
     listener = new SyncExportEnumListener();
     NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
@@ -1765,6 +1860,9 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    // Transferring an array of items, not a media list.
+    // For this, we just individually check each item. Note that this handles
+    // only non-list items.
     PRUint32 itemsLen;
     rv = aSourceItems->GetLength(&itemsLen);
     NS_ENSURE_SUCCESS(rv, rv);
