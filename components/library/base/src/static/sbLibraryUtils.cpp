@@ -42,6 +42,8 @@
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
 
+#include <sbIDevice.h>
+#include <sbIDeviceManager.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseSmartMediaList.h>
 #include <sbIMediaList.h>
@@ -886,6 +888,35 @@ sbLibraryUtils::LinkCopy(sbIMediaItem * aOriginal, sbIMediaItem * aCopy)
   rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
                              playlistLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Determine whether the target item belongs to a device:
+  nsCOMPtr<sbIDeviceManager2> deviceMgr =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> targetDev;
+  rv = deviceMgr->GetDeviceForItem(aCopy, getter_AddRefs(targetDev));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetDeviceForItem() failed");
+
+  // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY on the target
+  // item if it belongs to a device and the original item is
+  // in the main library:
+  if (targetDev) {
+    // Get the main library:
+    nsCOMPtr<sbILibrary> mainLib;
+    rv = GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isMainLib;
+    rv = playlistLib->Equals(mainLib, &isMainLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isMainLib) {
+      rv = props->AppendProperty(
+        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+        NS_LITERAL_STRING("1"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   rv = aCopy->SetProperties(props);
   NS_ENSURE_SUCCESS(rv, rv);
