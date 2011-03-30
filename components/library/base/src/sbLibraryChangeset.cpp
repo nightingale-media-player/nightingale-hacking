@@ -368,10 +368,21 @@ NS_IMETHODIMP sbLibraryChange::GetDestinationItem(sbIMediaItem * *aItem)
 NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
 {
   NS_ENSURE_ARG_POINTER(aItemIsList);
+
+  nsAutoLock lock(mLock);
+
+  nsresult rv = GetItemIsListLocked(aItemIsList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbLibraryChange::GetItemIsListLocked(PRBool *aItemIsList)
+{
+  NS_ENSURE_ARG_POINTER(aItemIsList);
   
   nsresult rv;
 
-  nsAutoLock lock(mLock);
   nsCOMPtr<sbIMediaList> mediaList;
   if (mSourceItem) {
     mediaList = do_QueryInterface(mSourceItem, &rv);

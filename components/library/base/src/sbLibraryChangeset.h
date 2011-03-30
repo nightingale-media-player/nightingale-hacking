@@ -124,6 +124,7 @@ public:
                     sbIMediaItem *aDestinationItem);
   nsresult SetProperties(nsIArray *aProperties);
   nsresult SetListItems(nsIArray *aProperties);
+  nsresult GetItemIsListLocked(PRBool *aItemIsList);
 
 private:
   ~sbLibraryChange();
