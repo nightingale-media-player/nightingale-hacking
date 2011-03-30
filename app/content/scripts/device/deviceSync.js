@@ -112,7 +112,9 @@ var DeviceSyncWidget = {
     this._device = this._widget.device;
     this._deviceLibrary = this._widget.devLib;
 
-    // jhawk Weird, but happens.  Need to consider how and consequences
+    /* This initialize call can get made when a device is bound but the
+     * deviceLibrary hasn't been bound yet, so we need to prevent it from
+     * continuing and when the deviceLibrary is bound we'll get called again. */
     if (!this._deviceLibrary) {
       return;
     }
