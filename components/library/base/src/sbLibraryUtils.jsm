@@ -30,6 +30,7 @@ EXPORTED_SYMBOLS = ["LibraryUtils"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cr = Components.results;
 
 /**
  * \class LibraryUtils
@@ -257,6 +258,30 @@ var LibraryUtils = {
                                      Ci.sbIServicePaneService.URL_MATCH_PREFIX);
     if (!node) return false;
     return true;
+  },
+
+  /**
+   * \brief Find an item in the main library whose guid matches the
+   *        originItemGuid of the param aMediaItem and return it, or null if
+   *        not found.
+   * \param aMediaItem Retrieve an item from the mainLibrary whose guid
+   *                   matches the originItemGuid of this mediaitem
+   * \return The mediaitem from the mainLibrary whose guid matches the
+   *         originItemGuid of aMediaItem.  null if none was found.
+   */
+  getMainLibraryOriginItem: function(aMediaItem) {
+    var originGUID = aMediaItem.getProperty(SBProperties.originItemGuid);
+    if (!originGUID) {
+      return null;
+    }
+    try {
+      var foundItem = this.mainLibrary.getMediaItem(originGUID);
+      return foundItem;
+    }
+    catch (e) {
+      // item couldn't be found, return null
+      return null;
+    }
   }
 
 }

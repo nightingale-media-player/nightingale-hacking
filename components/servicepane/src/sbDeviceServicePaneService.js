@@ -45,6 +45,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 
 /**
@@ -121,11 +122,23 @@ function sbDeviceServicePane_servicePaneInit(sps) {
   // cache the device manager
   this._deviceMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                       .getService(Ci.sbIDeviceManager2);
+
+  this._mainLibraryListeners = [];
+  this._deviceLibraryAndListenerObjs = [];
 }
 
 sbDeviceServicePane.prototype.shutdown =
 function sbDeviceServicePane_shutdown() {
   // release object references
+  for (var i = 0; i < this._deviceLibraryAndListenerObjs.length; i++) {
+    var currObj = this._deviceLibraryAndListenerObjs[i];
+    currObj["library"].removeListener(currObj["listener"]);
+  }
+
+  for (var i = 0; i < this._mainLibraryListeners.length; i++) {
+    LibraryUtils.mainLibrary.removeListener(this._mainLibraryListeners[i]);
+  }
+
   this._servicePane.root.removeMutationListener(this);
   this._servicePane = null;
   if (this._deviceGroupNode)
@@ -250,7 +263,7 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice, aEjectable) {
 
   // Get the Node.
   var id = this._deviceURN2(aDevice);
-  
+
   var node = this._servicePane.getNode(id);
   if (!node) {
     // Create the node
@@ -304,6 +317,39 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
   this._libraryServicePane.createNodeForLibrary(aLibrary);
   this._moveLibraryNodes(aLibrary);
 
+  /* Add a listener to detect when a device library item's originItemGuid
+   * property is updated.
+   * We use this listener to detect when a medialist has it's originItemGuid
+   * changed which will occur when the medialist is imporpied into the main
+   * library and will likely mean we should remove its 'deviceonly' icon */
+  var deviceUpdateListener = new DeviceLibraryItemUpdateListener();
+  var listenToPropsArray =
+    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+      .createInstance(Ci.sbIMutablePropertyArray);
+  listenToPropsArray.appendProperty(SBProperties.originItemGuid, "");
+  aLibrary.addListener(deviceUpdateListener,
+                       false,
+                       Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED,
+                       listenToPropsArray);
+  var deviceLibListenerObj = {
+    library: aLibrary,
+    listener: deviceUpdateListener
+  };
+
+  this._deviceLibraryAndListenerObjs.push(deviceLibListenerObj);
+
+  /* Add a listener to the main library to detect when a medialist is removed.
+   * This listener, when a medialist is removed, checks if there is an item
+   * on the device whose originItemGuid pointed to the removed medialist and, if
+   * so, labels the device medialist with the 'deviceonly' icon. */
+  var mainLibraryRemovedListener = new MainLibraryItemRemovedListener(aLibrary);
+  LibraryUtils.mainLibrary.addListener
+                          (mainLibraryRemovedListener,
+                           false,
+                           Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
+                           null);
+  this._mainLibraryListeners.push(mainLibraryRemovedListener);
+
   return this._libraryServicePane.getNodeForLibraryResource(aLibrary);
 }
 
@@ -346,6 +392,22 @@ function sbDeviceServicePane_insertChildByName(aDevice, aChild) {
 
   // Insert before the node found, or insert at the end if lastNode is null.
   deviceNode.insertBefore(aChild, lastNode);
+
+  // If we are inserting a medialist node, check if it is deviceonly
+  if (aChild.className.match(/medialist/) != null) {
+
+    /* The node looks like a medialist.  We'll get it's resource, check that
+     * it's a medialist, and look for an item in the mainLibrary that has a
+     * guid matching it's originGUID.  If we can't find one, we'll label the
+     * node as representing a deviceonly medialist */
+    var resource = this._libraryServicePane.getLibraryResourceForNode(aChild);
+    if (resource instanceof Ci.sbIMediaList &&
+        !LibraryUtils.getMainLibraryOriginItem(resource)) {
+      var classes = aChild.className.split(/\s/);
+      classes.push("medialisttype-deviceonly");
+      aChild.className = classes.join(' ');
+    }
+  }
 }
 
 ////////////////////////////////////
@@ -389,6 +451,96 @@ function sbDeviceServicePane_nodeRemoved(aNode, aParent) {
   // Ensure that the parent device's node reflects any changes.
   this._updateParentDeviceNode();
 };
+
+////////////////////////////////////
+// DeviceLibraryItemUpdateListener //
+////////////////////////////////////
+/* This listener detects when the originItemGuid of an item in the mainlibrary
+ * is updated.  If the item is a medialist, we check if there is an item in the
+ * main library with a guid matching that originItemGuid.  If there is not, we
+ * label the medialist with a 'deviceonly' icon in the servicepane.
+ * We are unconcerned with mediaitems as they are labeled 'deviceonly'
+ * separately */
+function DeviceLibraryItemUpdateListener() {
+}
+
+DeviceLibraryItemUpdateListener.prototype = {
+  onItemUpdated: function DeviceLibraryItemUpdateListener_onItemUpdated
+                 (aMediaList, aMediaItem, aProperties) {
+
+    // only deal with medialists
+    if (!(aMediaItem instanceof Ci.sbIMediaList)) {
+      return true;
+    }
+    var libSPS = Cc["@songbirdnest.com/servicepane/library;1"]
+                   .getService(Ci.sbILibraryServicePaneService);
+    var node = libSPS.getNodeForLibraryResource(aMediaItem);
+    var classes = node.className.split(/\s/);
+
+    /* Check if there is an item in the main library with a guid corresponding
+     * to this medialist's originItemGuid. */
+    if (!LibraryUtils.getMainLibraryOriginItem(aMediaItem)) {
+      // no corresponding item in the main library, label as deviceonly
+      classes.push("medialisttype-deviceonly");
+    }
+    else {
+      /* Corresponding item in the main library, this is not deviceonly
+       * so remove the 'medialisttype-deviceonly' class if it exists */
+      classes = classes.filter(function(aClass) {
+        return aClass != "medialisttype-deviceonly";
+      });
+    }
+    node.className = classes.join(' ');
+  }
+}
+
+////////////////////////////////////
+// MainLibraryItemRemovedListener  //
+////////////////////////////////////
+/* This listener detects when a medialist is removed from the mainlibrary and
+ * checks if there is a medialist on this device whose originItemGuid pointed to
+ * the removed item's guid.  If there was, that device medialist should now be
+ * marked as deviceonly. */
+function MainLibraryItemRemovedListener(devLibrary) {
+  this.deviceLibrary = devLibrary;
+}
+
+MainLibraryItemRemovedListener.prototype = {
+  onAfterItemRemoved: function MainLibraryItemRemovedListener_onAfterItemRemoved
+                 (aMediaList, aMediaItem, aIndex) {
+
+    // only concerned with medialists that are removed
+    if (!(aMediaItem instanceof Ci.sbIMediaList)) {
+      return true;
+    }
+
+    /* Check for items on the device whose originItemGuid pointed to the removed
+     * medialist's guid */
+    var foundLists = this.deviceLibrary.getItemsByProperty
+                                       (SBProperties.originItemGuid,
+                                        aMediaItem.guid);
+    var libSPS = Cc["@songbirdnest.com/servicepane/library;1"]
+                   .getService(Ci.sbILibraryServicePaneService);
+
+    for (let i = 0; i < foundLists.length; i++) {
+
+      // We found an item of interest, check if its node was already 'deviceonly'
+      var foundList = foundLists.queryElementAt(i, Ci.sbIMediaItem);
+
+      var node = libSPS.getNodeForLibraryResource(foundList);
+
+      if (node && node.className.match(/medialisttype-deviceonly/) == null) {
+
+        /* The device medialist whose originItemGuid corresponded to the removed
+         * medialist's guid was not labeled 'deviceonly' and should be. */
+        var classes = node.className.split(/\s/);
+        classes.push("medialisttype-deviceonly");
+        node.className = classes.join(" ");
+        return true;
+      }
+    }
+  }
+}
 
 /////////////////////
 // Private Methods //
@@ -486,13 +638,13 @@ function sbDeviceServicePane__makeCSSProperty(aString) {
 sbDeviceServicePane.prototype._deviceURN2 =
 function sbDeviceServicePane__deviceURN2(aDevice) {
   var id = "" + aDevice.id;
-  
+
   if(id.charAt(0) == "{" &&
      id.charAt(-1) == "}") {
     id = id.substring(1, -1);
   }
-  
-  
+
+
   return URN_PREFIX_DEVICE + id;
 }
 

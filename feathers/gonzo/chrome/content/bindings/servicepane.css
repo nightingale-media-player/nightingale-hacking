@@ -98,6 +98,12 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
 }
 
+/* We check for the 'deviceonly' class last so that the deviceonly icon will
+ * take precedence over any others */
+sb-servicepane-node.medialisttype-deviceonly > vbox > hbox.servicepane-node-info > image.servicepane-node-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-playlistdeviceonly.png) ;
+}
+
 .servicepane-tree > treechildren::-moz-tree-image( podcast ),
 .locationbar-image[properties~="podcast"],
 .alltabs-item.menuitem-iconic[properties~="podcast"],
