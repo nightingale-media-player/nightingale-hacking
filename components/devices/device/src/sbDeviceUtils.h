@@ -487,6 +487,32 @@ public:
   static nsresult GetDeviceLibrary(nsAString const & aDevLibGuid,
                                    nsID const * aDeviceID,
                                    sbIDeviceLibrary ** aDeviceLibrary);
+
+  /**
+   * Sets the origin is in main library property if the origin item exists
+   * \param aMediaItem This is the main library item that is used to find the
+   *                   find the corresponding item in the given device library
+   * \param aDevLibrary The device library of the item
+   * \param aMark Specifies whether to set or clear the mark
+   */
+  static nsresult SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
+                                           sbILibrary * aDevLibrary,
+                                           PRBool aMark);
+
+/**
+ * Return in aSyncItem the target sync media item in the target sync library
+ * specified by aTargetLibrary corresponding to the source sync media item
+ * specified by aMediaItem.  If no matching target sync media item can be found,
+ * this function returns NS_OK and returns nsnull in aSyncItem.
+ *
+ * \param aMediaItem            Sync source media item.
+ * \param aTargetLibrary        Sync target library.
+ * \param aSyncItem             Sync target media item.
+ */
+static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
+                                     sbILibrary*    aTargetLibrary,
+                                     sbIMediaItem** aSyncItem);
+
 #ifdef PR_LOGGING
   /**
    * Outputs a the device's capabilites to a PR_Log.

@@ -2111,6 +2111,117 @@ nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDevLibGuid,
   return NS_OK;
 }
 
+nsresult sbDeviceUtils::GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
+                                             sbILibrary*    aTargetLibrary,
+                                             sbIMediaItem** aSyncItem)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aTargetLibrary);
+  NS_ENSURE_ARG_POINTER(aSyncItem);
+
+  // Function variables.
+  nsresult rv;
+
+  // Try getting the sync item directly in the target library.
+  rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, aTargetLibrary, aSyncItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (*aSyncItem)
+    return NS_OK;
+
+  // Get the source library.
+  nsCOMPtr<sbILibrary> sourceLibrary;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(sourceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Try getting the sync item using the outer GUID property.
+  nsAutoString outerGUID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID),
+                               outerGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!outerGUID.IsEmpty()) {
+    // Get the outer media item.
+    nsCOMPtr<sbIMediaItem> outerMediaItem;
+    rv = sourceLibrary->GetMediaItem(outerGUID, getter_AddRefs(outerMediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Try getting the sync item from the outer media item.
+    rv = sbLibraryUtils::GetItemInLibrary(outerMediaItem,
+                                          aTargetLibrary,
+                                          aSyncItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (*aSyncItem)
+      return NS_OK;
+  }
+
+  // Try getting the sync item using the storage GUID property.
+  nsAutoString storageGUID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
+                               storageGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!storageGUID.IsEmpty()) {
+    // Get the storage media item.
+    nsCOMPtr<sbIMediaItem> storageMediaItem;
+    rv = sourceLibrary->GetMediaItem(storageGUID,
+                                     getter_AddRefs(storageMediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Try getting the sync item from the storage media item.
+    rv = sbLibraryUtils::GetItemInLibrary(storageMediaItem,
+                                          aTargetLibrary,
+                                          aSyncItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (*aSyncItem)
+      return NS_OK;
+  }
+
+  // Could not find the sync item.
+  *aSyncItem = nsnull;
+
+  return NS_OK;
+}
+
+nsresult sbDeviceUtils::SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
+                                                 sbILibrary * aDevLibrary,
+                                                 PRBool aMark)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  nsresult rv;
+
+  NS_NAMED_LITERAL_STRING(SB_PROPERTY_TRUE, "1");
+  NS_NAMED_LITERAL_STRING(SB_PROPERTY_FALSE, "0");
+
+  nsCOMPtr<sbIMediaItem> itemInDeviceLibrary;
+  rv = sbDeviceUtils::GetSyncItemInLibrary(aMediaItem,
+                                           aDevLibrary,
+                                           getter_AddRefs(itemInDeviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (itemInDeviceLibrary) {
+    nsString inMainLibrary;
+    rv = itemInDeviceLibrary->GetProperty(
+                     NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+                     inMainLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Default to "false" if there is no property
+    if (NS_FAILED(rv) || inMainLibrary.IsVoid()) {
+      inMainLibrary = SB_PROPERTY_FALSE;
+    }
+    // If the flag is different than what we want change it
+    const PRBool isMarked =
+        !inMainLibrary.Equals(SB_PROPERTY_FALSE) ? PR_TRUE : PR_FALSE;
+    if (aMark != isMarked) {
+      rv = itemInDeviceLibrary->SetProperty(
+                     NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+                     aMark ? SB_PROPERTY_TRUE : SB_PROPERTY_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+
 sbDeviceListenerIgnore::sbDeviceListenerIgnore(sbBaseDevice * aDevice,
                        sbIMediaItem * aItem) :
                          mDevice(aDevice),
@@ -2151,6 +2262,7 @@ void sbDeviceListenerIgnore::SetIgnore(PRBool aIgnore) {
     mIgnoring = aIgnore;
   }
 }
+
 
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions

@@ -254,75 +254,6 @@ sbDeviceLibrary::Finalize()
   return NS_OK;
 }
 
-/**
- * Enumerator class used to attach listeners to playlists
- */
-class sbPlaylistAttachListenerEnumerator : public sbIMediaListEnumerationListener
-{
-public:
-  sbPlaylistAttachListenerEnumerator(sbLibraryUpdateListener* aListener)
-   : mListener(aListener)
-   {}
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
-private:
-  sbLibraryUpdateListener* mListener;
-};
-
-NS_IMPL_ISUPPORTS1(sbPlaylistAttachListenerEnumerator,
-                   sbIMediaListEnumerationListener)
-
-NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumerationBegin(sbIMediaList*,
-                                                                     PRUint16 *_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = sbIMediaListEnumerationListener::CONTINUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumeratedItem(sbIMediaList*,
-                                                                   sbIMediaItem* aItem,
-                                                                   PRUint16 *_retval)
-{
-  NS_ENSURE_ARG_POINTER(aItem);
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(mListener, NS_ERROR_NOT_INITIALIZED);
-
-  nsresult rv;
-
-  // check if the list has a custom type
-  nsString customType;
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
-                          customType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // do not listen to hidden list
-  nsString hidden;
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                          hidden);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if ((customType.IsEmpty() ||
-       customType.EqualsLiteral("simple") ||
-       customType.EqualsLiteral("smart")) &&
-      !hidden.EqualsLiteral("1")) {
-    nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mListener->ListenToPlaylist(list);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  *_retval = sbIMediaListEnumerationListener::CONTINUE;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumerationEnd(sbIMediaList*,
-                                                                   nsresult)
-{
-  return NS_OK;
-}
-
 nsresult
 sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                      nsIURI *aDeviceDatabaseURI)
@@ -425,14 +356,10 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = syncPlaylistList->GetLength(&playlistListCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Check to see if playlists are supported, and if not ignore
-  bool const ignorePlaylists = !sbDeviceUtils::ArePlaylistsSupported(mDevice);
   // hook up the listener now if we need to
   mMainLibraryListener =
     new sbLibraryUpdateListener(mDeviceLibrary,
                                 PR_TRUE,
-                                nsnull,
-                                ignorePlaylists,
                                 mDevice);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
 
