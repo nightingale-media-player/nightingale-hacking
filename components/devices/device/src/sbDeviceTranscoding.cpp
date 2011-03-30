@@ -260,7 +260,7 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
 
     // We only want non-playlist write requests
     if (request->GetType() != sbIDevice::REQUEST_WRITE ||
-        !request->IsPlaylist())
+        request->IsPlaylist())
       continue;
 
     // First, ensure that the item isn't DRM protected before looking for
