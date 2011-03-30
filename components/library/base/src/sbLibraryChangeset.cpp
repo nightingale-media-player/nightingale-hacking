@@ -410,7 +410,7 @@ NS_IMETHODIMP sbLibraryChange::GetListItems(nsIArray **aListItems)
 
   nsAutoLock lock(mLock);
   PRBool isList;
-  nsresult rv = GetItemIsList(&isList);
+  nsresult rv = GetItemIsListLocked(&isList);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!isList)
