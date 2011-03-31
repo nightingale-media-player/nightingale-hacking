@@ -125,17 +125,24 @@
  *      fm-recording
  *        SB_PROPERTY_GENRE set to indicate an FM recording; file routed
  *        to a subfolder for recordings when copied to main library.  See
- *        songbird.properties device.sync.import_type.fm_recording and
+ *        songbird.properties device.sync.import_type.fm-recording and
+ *        mediamanager.recordings_dir
+ *
+ *      video-recording
+ *        SB_PROPERTY_GENRE set to indicate a video recording; file routed
+ *        to a subfolder for recordings when copied to main library.  See
+ *        songbird.properties device.sync.import_type.video-recording and
  *        mediamanager.recordings_dir
  *
  *      voice-recording
  *        SB_PROPERTY_GENRE set to indicate a voice recording; file routed
  *        to a subfolder for recordings when copied to main library.  See
- *        songbird.properties device.sync.import_type.voice_recording and
+ *        songbird.properties device.sync.import_type.voice-recording and
  *        mediamanager.recordings_dir
  */
 #define SB_PROPERTY_IMPORTTYPE                "http://songbirdnest.com/data/1.0#importType"
 #define SB_VALUE_IMPORTTYPE_FM_RECORDING      "fm-recording"
+#define SB_VALUE_IMPORTTYPE_VIDEO_RECORDING   "video-recording"
 #define SB_VALUE_IMPORTTYPE_VOICE_RECORDING   "voice-recording"
 
 // Device library specific properties

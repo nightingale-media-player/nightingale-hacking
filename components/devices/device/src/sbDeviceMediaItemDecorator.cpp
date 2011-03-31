@@ -62,43 +62,25 @@ sbDeviceMediaItemDecorator::DecorateMediaItem(sbIDevice * aDevice,
   // Save the import type to the media item properties to track
   // how the file was classified at mount time and how it has
   // been and should be processed on import:
-  nsAutoString importType;
-  importType = aImportType;
+  nsAutoString importType(aImportType);
   rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_IMPORTTYPE),
                                importType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Localizable strings reside in the default bundle and use
-  // the device.sync. prefix:
-  sbStringBundle bundle;
-
   // Dispatch on import type and adjust the media item properties as
   // specified at
   // http://wiki.songbirdnest.com/Releases/Ratatat/Device_Import_and_Sync#Sync_Logic
-  if (importType == NS_LITERAL_STRING(SB_VALUE_IMPORTTYPE_FM_RECORDING)) {
-    // An FM recording.  Set the genre to identify it as such:
-    nsAutoString genre;
-    genre = bundle.Get("device.sync.import_type.fm_recording");
-    rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), genre);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Set the artist name to the device name:
-    nsAutoString deviceName;
-    rv = aDevice->GetName(deviceName);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                                 deviceName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /// @todo Include the file creation timestamp in the track name
-    ///       if possible.
-  }
-  else if (importType ==
-           NS_LITERAL_STRING(SB_VALUE_IMPORTTYPE_VOICE_RECORDING))
+  if (importType == NS_LITERAL_STRING(SB_VALUE_IMPORTTYPE_FM_RECORDING) ||
+      importType == NS_LITERAL_STRING(SB_VALUE_IMPORTTYPE_VIDEO_RECORDING) ||
+      importType == NS_LITERAL_STRING(SB_VALUE_IMPORTTYPE_VOICE_RECORDING))
   {
-    // A voice recording.  Set the genre to identify it as such:
-    nsAutoString genre;
-    genre = bundle.Get("device.sync.import_type.voice_recording");
+    // A recording.  Set the genre to identify it as such.  Localizable
+    // strings reside in the default bundle and use the device.sync. prefix:
+    sbStringBundle bundle;
+    nsAutoString genreKey(NS_LITERAL_STRING("device.sync.import_type."));
+    genreKey.Append(importType);
+    nsAutoString genre = bundle.Get(genreKey);
+
     rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), genre);
     NS_ENSURE_SUCCESS(rv, rv);
 
