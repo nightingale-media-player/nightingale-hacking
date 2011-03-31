@@ -487,8 +487,15 @@ NS_IMETHODIMP sbBaseDevice::Disconnect()
   }
 
   // Tell the thread to shutdown. The thread will then invoke the device
-  // specific disconnect logic on the main thread.
-  mRequestThreadQueue->Stop();
+  // specific disconnect logic on the main thread. If we disconnect more than
+  // once this will error, but that is OK, it's exepected to return an error
+  nsresult rv = mRequestThreadQueue->Stop();
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    NS_WARNING("Attempting to disconnect twice");
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -2259,8 +2266,8 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
 nsresult
 sbBaseDevice::ReqProcessingStart()
 {
-  // Process any queued requests.
-  nsresult rv = mRequestThreadQueue->Start();
+  // Start the thread for processing requests
+  nsresult rv = mRequestThreadQueue->Start(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2368,7 +2375,7 @@ nsresult sbBaseDevice::Init()
     return NS_DispatchToMainThread(event, NS_DISPATCH_SYNC);
   }
 
-  mRequestThreadQueue = sbDeviceRequestThreadQueue::New(this);
+  mRequestThreadQueue = sbDeviceRequestThreadQueue::New();
 
   // get a weak ref of the device manager
   nsCOMPtr<nsISupportsWeakReference> manager =

@@ -36,18 +36,29 @@
 // Songbird includes
 #include <sbPropertiesCID.h>
 
-sbDeviceRequestThreadQueue * sbDeviceRequestThreadQueue::New(
-                                                     sbBaseDevice * aBaseDevice)
+sbDeviceRequestThreadQueue * sbDeviceRequestThreadQueue::New()
 {
-  return new sbDeviceRequestThreadQueue(aBaseDevice);
+  sbDeviceRequestThreadQueue * newObject;
+  NS_NEWXPCOM(newObject, sbDeviceRequestThreadQueue);
+  return newObject;
 }
 
-sbDeviceRequestThreadQueue::sbDeviceRequestThreadQueue(
-  sbBaseDevice * aBaseDevice) :
-    mBaseDevice(aBaseDevice)
+nsresult sbDeviceRequestThreadQueue::Start(sbBaseDevice * aBaseDevice)
 {
-  NS_ASSERTION(aBaseDevice, "aBaseDevice cannot be null");
-  NS_ADDREF(static_cast<sbIDevice*>(mBaseDevice));
+  NS_ENSURE_ARG_POINTER(aBaseDevice);
+  sbIDevice * baseDevice = mBaseDevice;
+  NS_IF_RELEASE(baseDevice);
+  mBaseDevice = aBaseDevice;
+  NS_ADDREF(static_cast<sbIDevice *>(mBaseDevice));
+  nsresult rv = sbRequestThreadQueue::Start();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+sbDeviceRequestThreadQueue::sbDeviceRequestThreadQueue() :
+    mBaseDevice(nsnull)
+{
 }
 
 sbDeviceRequestThreadQueue::~sbDeviceRequestThreadQueue()

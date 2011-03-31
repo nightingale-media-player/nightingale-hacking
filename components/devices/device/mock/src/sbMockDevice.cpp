@@ -153,6 +153,7 @@ NS_IMETHODIMP sbMockDevice::Connect()
 
 NS_IMETHODIMP sbMockDevice::Disconnect()
 {
+  mBatch.clear();
   return sbBaseDevice::Disconnect();
 }
 
@@ -166,15 +167,44 @@ nsresult sbMockDevice::DeviceSpecificDisconnect()
   {
     nsAutoLock autoVolumeLock(mVolumeLock);
     volume = mDefaultVolume;
-  }
-  if (mContent) {
-    rv = mContent->Finalize();
-    NS_ENSURE_SUCCESS(rv, rv);
+    mDefaultVolume = nsnull;
   }
   if (volume)
     RemoveVolume(volume);
 
   mIsConnected = PR_FALSE;
+
+  // Finalize the device content and device libraries
+  if (mContent) {
+    // Get a copy of the list of device libraries
+    nsCOMArray<sbIDeviceLibrary> libraryListCopy;
+    PRInt32                      libraryListCopyCount;
+    nsCOMPtr<nsIArray>           libraryList;
+    PRUint32                     libraryCount;
+    rv = mContent->GetLibraries(getter_AddRefs(libraryList));
+    if (NS_SUCCEEDED(rv))
+      rv = libraryList->GetLength(&libraryCount);
+    if (NS_SUCCEEDED(rv)) {
+      for (PRUint32 i = 0; i < libraryCount; i++) {
+        nsCOMPtr<sbIDeviceLibrary>
+          library = do_QueryElementAt(libraryList, i, &rv);
+        if (NS_FAILED(rv))
+          continue;
+        libraryListCopy.AppendObject(library);
+      }
+    }
+    libraryListCopyCount = libraryListCopy.Count();
+
+    // Finalize each device library
+    for (PRInt32 i = 0; i < libraryListCopyCount; i++) {
+      RemoveLibrary(libraryListCopy[i]);
+      FinalizeDeviceLibrary(libraryListCopy[i]);
+    }
+
+    // Finalize the device content
+    mContent->Finalize();
+    mContent = nsnull;
+  }
 
   PRUint32 state = sbIDevice::STATE_IDLE;
 
@@ -683,7 +713,6 @@ NS_IMETHODIMP sbMockDevice::SubmitRequest(PRUint32 aRequestType,
 
 nsresult sbMockDevice::ProcessBatch(Batch & aBatch)
 {
-  mBatch.clear();
   std::insert_iterator<std::vector<nsRefPtr<sbRequestItem> > >
     insertIter(mBatch, mBatch.end());
   std::copy(aBatch.begin(), aBatch.end(), insertIter);
@@ -779,7 +808,7 @@ NS_IMETHODIMP sbMockDevice::PopRequest(nsIPropertyBag2 **_retval)
   if (mBatch.empty()) {
     return NS_ERROR_NOT_AVAILABLE;
   }
-  sbRequestItem * requestItem = *mBatch.begin();
+  nsRefPtr<sbRequestItem> requestItem = *mBatch.begin();
   mBatch.erase(mBatch.begin());
 
 
@@ -789,6 +818,8 @@ NS_IMETHODIMP sbMockDevice::PopRequest(nsIPropertyBag2 **_retval)
 
   const PRInt32 batchCount  = mBatch.size();
 
+  rv = bag->SetPropertyAsInt32(NS_LITERAL_STRING("requestType"),
+                               requestItem->GetType());
   rv = bag->SetPropertyAsInt32(NS_LITERAL_STRING("batchCount"), batchCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -805,7 +836,7 @@ NS_IMETHODIMP sbMockDevice::PopRequest(nsIPropertyBag2 **_retval)
 
   if (requestItem->GetType() >= sbRequestThreadQueue::USER_REQUEST_TYPES) {
     TransferRequest * transferRequest =
-        static_cast<TransferRequest *>(requestItem);
+        static_cast<TransferRequest *>(requestItem.get());
     SET_PROP(Interface, item);
     SET_PROP(Interface, list);
     SET_PROP(Interface, data);

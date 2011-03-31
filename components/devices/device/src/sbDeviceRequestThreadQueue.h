@@ -40,13 +40,14 @@ class sbBaseDevice;
 class sbDeviceRequestThreadQueue : public sbRequestThreadQueue
 {
 public:
-  static sbDeviceRequestThreadQueue * New(sbBaseDevice * aBaseDevice);
+  static sbDeviceRequestThreadQueue * New();
+  nsresult Start(sbBaseDevice * aBaseDevice);
 private:
   // There is a cycle between the device, thread queue processor and the actions
   // this will be broken on disconnect. We manually manage the ref count due
   // to the ambiguities of nsISupports..
   sbBaseDevice * mBaseDevice;
-  sbDeviceRequestThreadQueue(sbBaseDevice * aBaseDevice);
+  sbDeviceRequestThreadQueue();
   ~sbDeviceRequestThreadQueue();
   static PLDHashOperator RemoveLibraryEnumerator(
                                              nsISupports * aList,
