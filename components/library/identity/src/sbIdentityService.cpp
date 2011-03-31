@@ -49,7 +49,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbIdentityService,
                               sbIIdentityService)
 
 // the separator that will be used between parts of the metadata hash identity
-const char SEPARATOR = '|';
+static const char SEPARATOR[] = "|";
 
 /* the properties that will be used as part of the metadata hash identity
  * for audio files */
@@ -160,7 +160,7 @@ sbIdentityService::GetPropertyStringFor
       propString.Assign(propVal);
     }
     else {
-      propString.AppendLiteral(&SEPARATOR);
+      propString.AppendLiteral(SEPARATOR);
       propString.Append(propVal);
     }
   }
