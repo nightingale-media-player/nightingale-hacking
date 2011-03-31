@@ -90,7 +90,6 @@ function runTest () {
   // or has failed or is completed. It is at the failed or completed state that
   // the handler terminates the unit test.
   device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
-  var wasFired = false;
   var handler = function handler(event) { 
     if (event.type == Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED) {
     
@@ -102,12 +101,20 @@ function runTest () {
             testFinished();
             return;
           });
+          return;
         case TEST_FAILED:
           device.removeEventListener(handler);
           doTimeout(500, function() {
             fail(testFailMessage);
             return;
           });
+          return;
+        case TEST_RUNNING:
+          // Continue and perform remaining tests
+        break;
+        default:
+          fail("Unexpected testStatus value: " + testStatus);
+          return;
       }
         
       log("Device removed event fired");
