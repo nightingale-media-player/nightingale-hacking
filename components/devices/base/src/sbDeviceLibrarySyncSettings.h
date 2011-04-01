@@ -90,11 +90,6 @@ private:
                          PRUint32 aMediaType,
                          PRBool & aImport);
 
-  static nsresult ReadPRUint32(sbIDevice * aDevice,
-                               nsAString const & aPrefKey,
-                               PRUint32 & aInt,
-                               PRUint32 aDefault);
-
   static nsresult ReadAString(sbIDevice * aDevice,
                               nsAString const & aPrefKey,
                               nsAString & aString,

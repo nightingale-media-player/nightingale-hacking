@@ -81,7 +81,7 @@ sbDeviceLibraryMediaSyncSettings::sbDeviceLibraryMediaSyncSettings(
   mSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE),
   mLastActiveSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL),
   mMediaType(aMediaType),
-  mImport(true),
+  mImport(false),
   mLock(aLock),
   mSyncSettings(aSyncSettings)
 {

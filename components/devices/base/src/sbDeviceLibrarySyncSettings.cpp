@@ -448,36 +448,6 @@ sbDeviceLibrarySyncSettings::GetImportPref(sbIDevice * aDevice,
   return NS_OK;
 }
 
-nsresult
-sbDeviceLibrarySyncSettings::ReadPRUint32(sbIDevice * aDevice,
-                                          nsAString const & aPrefKey,
-                                          PRUint32 & aInt,
-                                          PRUint32 aDefault)
-{
-  NS_ENSURE_ARG_POINTER(aDevice);
-
-  nsresult rv;
-
-  nsCOMPtr<nsIVariant> var;
-  rv = aDevice->GetPreference(aPrefKey, getter_AddRefs(var));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // check if a value exists
-  PRUint16 dataType;
-  rv = var->GetDataType(&dataType);
-  // If there is no value, set to aDefault
-  if (dataType == nsIDataType::VTYPE_VOID ||
-      dataType == nsIDataType::VTYPE_EMPTY)
-  {
-    aInt = aDefault;
-  } else {
-    // has a value
-    rv = var->GetAsUint32(&aInt);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  return NS_OK;
-}
-
 template <class T>
 nsresult
 sbDeviceLibrarySyncSettings::WritePref(sbIDevice * aDevice,
@@ -546,16 +516,6 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
 
   nsString prefKey;
   rv = GetMgmtTypePrefKey(aMediaType, prefKey);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // enable audio syncing by default.
-  rv = ReadPRUint32(
-         aDevice,
-         prefKey,
-         settings->mSyncMgmtType,
-         aMediaType == sbIDeviceLibrary::MEDIATYPE_AUDIO
-           ? (PRUint32)sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL
-           : (PRUint32)sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> mediaLists;
