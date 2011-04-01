@@ -4020,6 +4020,7 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = GetCapabilities(getter_AddRefs(capabilities));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Check if the device supports images
   PRBool isSupported;
   rv = capabilities->SupportsContent(
                        sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY,
@@ -4027,21 +4028,22 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
                        &isSupported);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> var;
-  rv = GetPreference(NS_LITERAL_STRING(PREF_IMAGESYNC_ENABLED),
-                     getter_AddRefs(var));
+  // Check if our settings have imagesync enabled
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = devLib->GetSyncSettings(getter_AddRefs(syncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint16 dataType = 0;
-  rv = var->GetDataType(&dataType);
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> imageSyncSettings;
+  rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                                      getter_AddRefs(imageSyncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool imageSyncEnabled = PR_FALSE;
-  // The preference is only available after user changes the image sync settings
-  if (dataType == nsIDataType::VTYPE_BOOL) {
-    rv = var->GetAsBool(&imageSyncEnabled);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  PRUint32 imageMgmtType;
+  rv = imageSyncSettings->GetMgmtType(&imageMgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool imageSyncEnabled = (imageMgmtType !=
+                             sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE);
 
   // Do not proceed to image sync request submission if image is not supported
   // or not enabled at all.

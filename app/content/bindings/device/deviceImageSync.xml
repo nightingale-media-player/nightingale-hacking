@@ -182,13 +182,6 @@
             return;
           }
 
-          // We do not want to mess with photos initially if the sync check box
-          // is not selected.
-          let syncImagesCheckBox =
-            this._getElement("content_management_checkbox");
-          if (!syncImagesCheckBox.checked)
-            this.device.setPreference("imagesync.enabled", false);
-
           // The file extension list that device supports.
           let fileExtensions = capabilities.getSupportedFileExtensions(
                                               this.device,
@@ -229,6 +222,15 @@
             this._imageSettings =
               this.devLib.syncSettings.getMediaSettings(this._mediaType);
           }
+
+          /* Set the imagesync enabled checkbox to reflect whether
+           * imagesync is on */
+          let syncImagesCheckBox =
+            this._getElement("content_management_checkbox");
+
+          syncImagesCheckBox.checked =
+            (this._imageSettings &&
+             this._imageSettings.mgmtType != this._CIDM.SYNC_MGMT_NONE);
 
           // Read preferences and update UI
           this._syncPrefsRead();
@@ -559,62 +561,13 @@
         <parameter name="aEnable"/>
         <body><![CDATA[
         {
-          var shouldUpdatePrefs = true;
-
-          var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
-                           .createInstance(Ci.sbIPrompter);
-          var buttonFlags =
-            Ci.nsIPromptService.BUTTON_POS_1 *
-            Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
-            Ci.nsIPromptService.BUTTON_POS_0 *
-            Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
-
-          // Prompt the user if they are about to turn on photo syncing.
-          if (this._getElement("content_management_checkbox").checked) {
-            var buttonPressed = prompter.confirmEx(
-              null,
-              SBString("device.dialog.sync_images_confirmation.title"),
-              SBFormattedString("device.dialog.sync_images_confirmation.msg",
-                                [this.device.name]),
-              buttonFlags,
-              SBString("device.dialog.sync_images_confirmation.sync_button"),
-              SBString("device.dialog.sync_images_confirmation.no_button"),
-              null,
-              null,
-              {});
-
-            if (buttonPressed != 0) {
-              // The user did not choose to sync, clear the checkbox state.
-              this._getElement("content_management_checkbox").checked = false;
-              shouldUpdatePrefs = false;
-            }
-
-            // Set preference accordingly to ignore or trigger the image sync
-            this.device.setPreference("imagesync.enabled", buttonPressed == 0);
+          if (aEnable) {
+            this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_ALL;
           }
           else {
-            var buttonPressed = prompter.confirmEx(
-              null,
-              SBString("device.dialog.sync_images_confirmation.title"),
-              SBFormattedString("device.dialog.remove_images_confirmation.msg",
-                                [this.device.name]),
-              buttonFlags,
-              SBString("device.dialog.remove_images_confirmation.sync_button"),
-              SBString("device.dialog.remove_images_confirmation.no_button"),
-              null,
-              null,
-              {});
-
-            // Set preference accordingly to ignore or trigger the image sync
-            this.device.setPreference("imagesync.enabled", buttonPressed == 0);
+            this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_NONE;
           }
-
-          if (shouldUpdatePrefs) {
-            this._imageSettings.mgmtType =
-                                  (aEnable ? this._CIDM.SYNC_MGMT_ALL :
-                                             this._CIDM.SYNC_MGMT_NONE);
-            this._updateUI();
-          }
+          this._updateUI();
         }
         ]]></body>
       </method>

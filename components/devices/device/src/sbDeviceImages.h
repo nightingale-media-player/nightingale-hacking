@@ -44,14 +44,12 @@ public:
 
   // Compute the difference between the images present locally and
   // those provided in the device image array. You must provide a list
-  // of supported extensions. Upon return, the copy and delete arrays are
-  // filled with sbIDeviceImage items which the device implementation should
-  // act upon.
-  nsresult ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
-                                  nsIArray *aDeviceImageArray,
-                                  const nsTArray<nsString> &aFileExtensionList,
-                                  nsIArray **retCopyArray,
-                                  nsIArray **retDeleteArray);
+  // of supported extensions. The copy array will be filled with images
+  // which the device implementation should act upon.
+  nsresult ComputeImageSyncArray(sbIDeviceLibrary *aLibrary,
+                                 nsIArray *aDeviceImageArray,
+                                 const nsTArray<nsString> &aFileExtensionList,
+                                 nsIArray **retCopyArray);
 
   // This may be called by devices whose underlying storage lies on the
   // filesystem to build an array of sbIDeviceImage items. aScanPath is the

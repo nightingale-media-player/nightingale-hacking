@@ -79,19 +79,16 @@ sbDeviceImages::sbDeviceImages(sbBaseDevice * aBaseDevice) :
 
 // Compute the difference between the images present locally and
 // those provided in the device image array. You must provide a list
-// of supported extensions. Upon return, the copy and delete arrays are
-// filled with sbIDeviceImage items which the device implementation should
-// act upon.
+// of supported extensions. Upon return, the copy array is filled with
+// sbIDeviceImage items which the device implementation should act upon.
 nsresult
-sbDeviceImages::ComputeImageSyncArrays
+sbDeviceImages::ComputeImageSyncArray
                   (sbIDeviceLibrary *aLibrary,
                    nsIArray *aDeviceImageArray,
                    const nsTArray<nsString> &aFileExtensionList,
-                   nsIArray **retCopyArray,
-                   nsIArray **retDeleteArray)
+                   nsIArray **retCopyArray)
 {
   NS_ENSURE_ARG_POINTER(retCopyArray);
-  NS_ENSURE_ARG_POINTER(retDeleteArray);
   nsresult rv;
 
   nsCOMPtr<nsIFile> baseDir;
@@ -105,11 +102,6 @@ sbDeviceImages::ComputeImageSyncArrays
 
   // Create the array of files to copy
   nsCOMPtr<nsIMutableArray> syncCopyArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create the array of files to delete
-  nsCOMPtr<nsIMutableArray> syncDeleteArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -151,28 +143,11 @@ sbDeviceImages::ComputeImageSyncArrays
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // turn the local image array into a binary searchable array
-  rv = localImagesArray->GetLength(&len);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsTArray< sbIDeviceImage* > searchableLocalImageArray;
-  for (PRUint32 i=0; i<len; i++) {
-    nsCOMPtr<sbIDeviceImage> image =
-      do_QueryElementAt(localImagesArray, i, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    searchableLocalImageArray.AppendElement(image);
-  }
-  searchableLocalImageArray.Sort(comp);
-
   // add any local image missing from the device to the copy array
   DiffImages(syncCopyArray, searchableDeviceImageArray, localImagesArray);
-  // add any device image missing locally to the delete array
-  DiffImages(syncDeleteArray, searchableLocalImageArray, aDeviceImageArray);
 
-  // return sync arrays
+  // return sync array
   rv = CallQueryInterface(syncCopyArray, retCopyArray);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = CallQueryInterface(syncDeleteArray, retDeleteArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

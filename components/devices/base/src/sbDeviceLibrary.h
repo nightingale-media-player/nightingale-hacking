@@ -333,7 +333,6 @@ private:
   PRMonitor* mMonitor;
 };
 
-#define PREF_IMAGESYNC_ENABLED "imagesync.enabled"
 #define PREF_SYNC_PREFIX    "library."
 #define PREF_SYNC_BRANCH    ".sync."
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
