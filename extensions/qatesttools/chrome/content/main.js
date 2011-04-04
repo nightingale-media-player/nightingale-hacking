@@ -22,6 +22,60 @@
  *=END SONGBIRD GPL
  */
 
+
+// Make a namespace.
+if (typeof QATestTools == 'undefined') {
+  var QATestTools = {};
+}
+
+QATestTools.Controller =
+{
+  onLoad: function()
+  {
+    this.addPlaylistGetInfo();
+  },
+
+  addPlaylistGetInfo: function() {
+    var cmdHelper = Cc["@songbirdnest.com/Songbird/PlaylistCommandsHelper;1"]
+                      .getService(Ci.sbIPlaylistCommandsHelper);
+    this.getInfoCmd = cmdHelper.createCommandObjectForAction
+                               ("medialist-getinfo",
+                                "Get Playlist Info",
+                                "Get Playlist Info",
+                                this.displayPlaylistInfo);
+    cmdHelper.addCommandObjectForType(cmdHelper.TARGET_SERVICEPANE_MENU,
+                                      "simple",
+                                      this.getInfoCmd);
+    cmdHelper.addCommandObjectForType(cmdHelper.TARGET_SERVICEPANE_MENU,
+                                      "smart",
+                                      this.getInfoCmd);
+  },
+
+  displayPlaylistInfo: function(aContext, aSubMenuId, aCommandId, aHost) {
+    this._medialist = aContext.medialist;
+
+    WindowUtils.openModalDialog
+      (window,
+       "chrome://mockcdcontroller/content/playlistInfoDialog.xul",
+       "",
+       "",
+       [ this._medialist ],
+       null);
+  },
+
+  onUnload: function()
+  {
+    var cmdHelper = Cc["@songbirdnest.com/Songbird/PlaylistCommandsHelper;1"]
+                      .getService(Ci.sbIPlaylistCommandsHelper);
+    cmdHelper.removeCommandObjectForType(cmdHelper.TARGET_SERVICEPANE_MENU,
+                                         "simple",
+                                         this.getInfoCmd);
+    cmdHelper.removeCommandObjectForType(cmdHelper.TARGET_SERVICEPANE_MENU,
+                                         "smart",
+                                         this.getInfoCmd);
+  }
+}
+
 // Make a namespace.
 if (typeof MockCDController == 'undefined') {
   var MockCDController = {};
@@ -42,10 +96,10 @@ MockCDController.Controller =
       "command",
       function() { self.showCDControllerPane(); },
       false);
-      
-    var showCommandDevice = 
+
+    var showCommandDevice =
       document.getElementById("mockdevicecontroller-showcontroller-cmd");
-      
+
     showCommandDevice.addEventListener(
       "command",
       function() { self.showDeviceControllerPane(); },
@@ -58,10 +112,10 @@ MockCDController.Controller =
       "command",
       function() { self.showDeviceCapsDump(); },
       false);
-      
+
     var showFakePDS =
       document.getElementById("fakepds-cmd");
-      
+
     showFakePDS.addEventListener(
       "command",
       function() { self.showFakePDS(); },
@@ -80,7 +134,7 @@ MockCDController.Controller =
                       "cd-controller-pane",
                       "chrome,centerscreen,resizable=false");
   },
-  
+
   showDeviceControllerPane: function()
   {
     window.openDialog("chrome://mockcdcontroller/content/deviceControllerDialog.xul",
@@ -95,7 +149,7 @@ MockCDController.Controller =
       "device-caps-dump-dialog",
       "chrome,centerscreen,resizable=yes");
   },
-  
+
   showFakePDS: function() {
     window.openDialog(
       "chrome://mockcdcontroller/content/fakePDS.xul",
@@ -104,7 +158,11 @@ MockCDController.Controller =
   },
 };
 
-window.addEventListener(
-  "load",
-  function(e) { MockCDController.Controller.onLoad(e); },
-  false)
+window.addEventListener("load",
+                        function(e) { QATestTools.Controller.onLoad(e);
+                                      MockCDController.Controller.onLoad(e); },
+                        false);
+
+window.addEventListener("unload",
+                        function(e) { QATestTools.Controller.onUnload(e); },
+                        false);
