@@ -53,6 +53,8 @@
 #ifndef MFM_MUSIC_FOLDER_KEY
 # if defined(XP_MACOSX)
 #   define MFM_MUSIC_FOLDER_KEY NS_OSX_MUSIC_DOCUMENTS_DIR
+# elif defined (XP_UNIX)
+#   define MFM_MUSIC_FOLDER_KEY NS_UNIX_XDG_MUSIC_DIR
 # else
 #   define MFM_MUSIC_FOLDER_KEY "Music"
 # endif
@@ -61,10 +63,12 @@
 #ifndef MFM_VIDEO_FOLDER_KEY
 # if defined(XP_MACOSX)
 #   define MFM_VIDEO_FOLDER_KEY NS_OSX_MOVIE_DOCUMENTS_DIR
+# elif defined (XP_UNIX)
+#   define MFM_VIDEO_FOLDER_KEY NS_UNIX_XDG_VIDEOS_DIR
 # else
 #   define MFM_VIDEO_FOLDER_KEY "Video"
 # endif
-#endif // #ifndef MFM_MUSIC_FOLDER_KEY
+#endif // #ifndef MFM_VIDEO_FOLDER_KEY
 
 #define _MFM_SEPARATOR ":"
 
