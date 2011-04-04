@@ -43,9 +43,11 @@ function onComplete(job) {
     job.removeJobProgressListener(onComplete);
     
     // Manage the files
+    var properties = getMediaManagerProperties();
+
     var fileManager = Cc[SB_MEDIAFILEMANAGER]
                         .createInstance(Ci.sbIMediaFileManager);
-    fileManager.init();
+    fileManager.init(properties);
     // COPY/MOVE/RENAME
     for (var i = 0; i < gTestMediaItems.length; i++) {
       var isManaged = false;
@@ -85,9 +87,6 @@ function onComplete(job) {
 }
 
 function runTest () {
-  // Setup the preferences for the media manager
-  setupMediaManagerPreferences();
-
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
 
