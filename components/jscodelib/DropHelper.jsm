@@ -187,11 +187,11 @@ var DNDUtils = {
     if (aIsDevice) {
       if (aDups) {
         msg = SBFormattedString("device.tracksadded.with.dups", 
-          [aAdded, aDestName, aDups]);
+          [aDestName]);
       }
       else {
         msg = SBFormattedString("device.tracksadded", 
-          [aAdded, aDestName]);
+          [aDestName]);
       }
     }  
     else if (aDups && aUnsupported) {
@@ -221,7 +221,8 @@ var DNDUtils = {
                            aDuplicates,
                            aUnsupported,
                            aInsertedInMediaList,
-                           aOtherDropsHandled) {
+                           aOtherDropsHandled,
+                           aDevice) {
     // do not report anything if all we did was drop an XPI
     if ((aImportedInLibrary == 0) &&
         (aInsertedInMediaList == 0) &&
@@ -236,12 +237,14 @@ var DNDUtils = {
       DNDUtils.reportAddedTracks(aInsertedInMediaList, 
                                  0, 
                                  aUnsupported,
-                                 aTargetList.name);
+                                 aTargetList.name,
+                                 aDevice);
     } else {
       DNDUtils.reportAddedTracks(aImportedInLibrary, 
                                  aDuplicates, 
                                  aUnsupported, 
-                                 aTargetList.name);
+                                 aTargetList.name,
+                                 aDevice);
     }
   }
 }
@@ -543,7 +546,7 @@ var InternalDropHandler = {
   },
 
   _notifyListeners: function(aListener, aTargetList, aNewList, aSourceItems,
-                             aSourceList) {
+                             aSourceList, aIsDevice) {
     var sourceLength = 0;
 
     if (aSourceList)
@@ -573,7 +576,8 @@ var InternalDropHandler = {
                        0,
                        0,
                        sourceLength,
-                       0);
+                       0,
+                       aIsDevice);
   },
 
   // aItem.library doesn't return the device library. Find the matching one
@@ -617,7 +621,7 @@ var InternalDropHandler = {
     }
 
     this._notifyListeners(aListener, aTargetList, newlist,
-                          null, aSourceList);
+                          null, aSourceList, true);
   },
 
   _dropItemsFromDevice: function(aDevice, aSourceItems, aTargetList,
@@ -646,7 +650,7 @@ var InternalDropHandler = {
     }
 
     this._notifyListeners(aListener, aTargetList, null,
-                          aSourceItems, null);
+                          aSourceItems, null, true);
   },
 
 
@@ -680,7 +684,7 @@ var InternalDropHandler = {
     }
 
     this._notifyListeners(aListener, aTargetList, newlist,
-                          null, aSourceList);
+                          null, aSourceList, true);
   },
 
   // Transfer dropped items to a device.
@@ -714,10 +718,10 @@ var InternalDropHandler = {
     }
 
     this._notifyListeners(aListener, aTargetList, null,
-                          aSourceItems, null);
+                          aSourceItems, null, true);
   },
 
-  // Transfer dropped items to something other than a device.
+  // Transfer dropped items, where neither source or destination is on a device
   _dropItemsSimple: function(aItems, aTargetList, aDropPosition, aListener) {
     if (aTargetList instanceof Ci.sbIOrderableMediaList &&
         aDropPosition != -1) {
@@ -728,10 +732,10 @@ var InternalDropHandler = {
       aTargetList.addSome(ArrayConverter.enumerator(aItems));
     }
 
-    this._notifyListeners(aListener, aTargetList, null, aItems, null);
+    this._notifyListeners(aListener, aTargetList, null, aItems, null, false);
   },
 
-  // Drop from a list to another list, where the target list is not on a device.
+  // Drop from a list to another list, where neither list is on a device.
   _dropListSimple: function(aSourceList, aTargetList,
                             aDropPosition, aListener) {
     var newlist = null;
@@ -751,7 +755,8 @@ var InternalDropHandler = {
       }
     }
 
-    this._notifyListeners(aListener, aTargetList, newlist, null, aSourceList);
+    this._notifyListeners(aListener, aTargetList, newlist, null, aSourceList,
+                          false);
   },
 
   /**
@@ -768,7 +773,8 @@ var InternalDropHandler = {
     var sourceList = context.list;
     if (sourceList == aTargetList) {
       // uh oh - you can't drop a list onto itself
-      this._dropComplete(aListener, aTargetList, 0, context.count, 0, 0, 0);
+      this._dropComplete(aListener, aTargetList, 0, context.count, 0, 0, 0,
+                         false);
       return;
     }
 
@@ -867,7 +873,8 @@ var InternalDropHandler = {
               items.queryElementAt(0, Ci.sbIMediaItem).library == aTargetList)
       {
         // can't add items to a library to which they already belong
-        this._dropComplete(aListener, aTargetList, 0, context.count, 0, 0, 0);
+        this._dropComplete(aListener, aTargetList, 0, context.count, 0, 0, 0,
+                           false);
         return;
       }
     }
@@ -905,7 +912,8 @@ var InternalDropHandler = {
                           totalDups, 
                           totalUnsupported,
                           totalInserted,
-                          otherDrops) {
+                          otherDrops,
+                          isDevice) {
     // notify the listener that we're done
     if (listener) {
       if (listener.onDropComplete(targetList,
@@ -919,7 +927,8 @@ var InternalDropHandler = {
                                 totalDups,
                                 totalUnsupported, 
                                 totalInserted,
-                                otherDrops);
+                                otherDrops,
+                                isDevice);
       }
     } else {
       DNDUtils.standardReport(targetList,
@@ -927,7 +936,8 @@ var InternalDropHandler = {
                               totalDups, 
                               totalUnsupported,
                               totalInserted,
-                              otherDrops);
+                              otherDrops,
+                              isDevice);
     }
   },
 }

@@ -316,7 +316,8 @@ addToLibraryHelper.prototype = {
             DNDUtils.reportAddedTracks(changeset.value.changes.length,
                                        0,
                                        0,
-                                       destLibrary.name);
+                                       destLibrary.name,
+                                       true);
           } 
           else {
             destLibrary.addSome(selected);
