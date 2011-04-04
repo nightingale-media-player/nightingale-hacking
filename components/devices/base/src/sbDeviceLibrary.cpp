@@ -348,14 +348,6 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = deviceEventTarget->AddEventListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIArray> syncPlaylistList;
-  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncPlaylistList));
-  NS_ENSURE_SUCCESS(rv,rv);
-
-  PRUint32 playlistListCount;
-  rv = syncPlaylistList->GetLength(&playlistListCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // hook up the listener now if we need to
   mMainLibraryListener =
     new sbLibraryUpdateListener(mDeviceLibrary,
