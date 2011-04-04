@@ -408,7 +408,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   //List Type
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_LISTTYPE), EmptyString(),
-                      stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                      stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                       0, PR_FALSE, PR_TRUE, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
