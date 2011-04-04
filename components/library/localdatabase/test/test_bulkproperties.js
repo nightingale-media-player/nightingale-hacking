@@ -42,6 +42,11 @@ function runTest () {
 
   var uri = "http://floo.com/";
   var item = library.createMediaItem(newURI(uri));
+  // Set the track name so that the identity hash gets set; otherwise changes
+  // later will make it come into existence and thus get our number of added
+  // properties wrong.
+  item.setProperty(SB_NS + "trackName", "Test item");
+
   var props = item.getProperties(null);
 
   var originalPropCount = props.length;
