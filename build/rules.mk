@@ -482,7 +482,10 @@ ALL_TRASH += $(MIDL_GENERATED_FILES) \
              $(if $(MIDL_SRCS), dlldata.c) \
              $(NULL)
 
-dlldata.c %.h %.tlb %_i.c %_p.c %_s.c %_c.c: %.midl
+%.h %.tlb %_i.c %_p.c %_s.c %_c.c: %.midl
+	$(MIDL) $(OUR_MIDL_FLAGS) $^
+		
+dlldata.c: %.midl
 	$(MIDL) $(OUR_MIDL_FLAGS) $^
 
 export:: $(MIDL_GENERATED_FILES)
