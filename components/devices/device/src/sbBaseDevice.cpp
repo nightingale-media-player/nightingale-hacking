@@ -720,6 +720,9 @@ public:
   void forget()
   {
     mDevice = nsnull;
+    // We're forgetting so we need prevent the base class from dispatching an
+    // error
+    sbDeviceStatusAutoOperationComplete::SetResult(NS_OK);
   }
   void SetResult(nsresult aResult)
   {
