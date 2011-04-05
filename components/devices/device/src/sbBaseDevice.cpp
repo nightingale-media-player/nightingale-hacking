@@ -4821,38 +4821,25 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Figure out the sync media types we're interested in
-  PRUint32 syncMediaTypes = 0;
-  if (audioMgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
-    syncMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO;
+  PRUint32 exportAllMediaTypes = 0;
+  if (audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
+    exportAllMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO;
   }
-  if (videoMgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
-    syncMediaTypes |= sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
-  }
-
-  PRUint32 syncFlag = sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_PLAYLISTS;
-  // If we're sync'ing everything or everything of one but not the other there
-  // is no need for playlists
-  if ((audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL &&
-         videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) ||
-      (audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL &&
-         videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) ||
-      (audioMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE &&
-         videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL)) {
-    selectedPlaylists = nsnull;
-    syncFlag = sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_ALL;
+  if (videoMgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
+    exportAllMediaTypes |= sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
   }
 
-  // If we're importing either audio, video, or both set the import flag
-  if (audioImport || videoImport) {
-    syncFlag |= sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT;
-  }
-
+  PRUint32 importAllMediaTypes = 0;
+  if (audioImport)
+    importAllMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO;
+  if (videoImport)
+    importAllMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
 
   nsCOMPtr<sbIDeviceLibrarySyncDiff> syncDiff =
     do_CreateInstance(SONGBIRD_DEVICELIBRARYSYNCDIFF_CONTRACTID, &rv);
 
-  rv = syncDiff->GenerateSyncLists(syncFlag,
-                                   syncMediaTypes,
+  rv = syncDiff->GenerateSyncLists(exportAllMediaTypes,
+                                   importAllMediaTypes,
                                    mainLib,
                                    devLib,
                                    selectedPlaylists,

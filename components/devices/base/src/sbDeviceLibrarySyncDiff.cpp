@@ -1621,8 +1621,8 @@ sbDeviceLibrarySyncDiff::~sbDeviceLibrarySyncDiff()
 
 NS_IMETHODIMP
 sbDeviceLibrarySyncDiff::GenerateSyncLists(
-        PRUint32 aMode,
-        PRUint32 aMediaTypes,
+        PRUint32 aMediaTypesToExportAll,
+        PRUint32 aMediaTypesToImportAll,
         sbILibrary *aSourceLibrary,
         sbILibrary *aDestLibrary,
         nsIArray *aSourceLists,
@@ -1633,10 +1633,6 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   NS_ENSURE_ARG_POINTER(aDestLibrary);
   NS_ENSURE_ARG_POINTER(aExportChangeset);
   NS_ENSURE_ARG_POINTER(aImportChangeset);
-
-  if (aMode & sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_PLAYLISTS) {
-    NS_ENSURE_ARG_POINTER(aSourceLists);
-  }
 
   nsresult rv;
 
@@ -1654,13 +1650,13 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   const PRUint32 mixedMediaTypes = sbIDeviceLibrarySyncDiff::SYNC_TYPE_AUDIO |
                                    sbIDeviceLibrarySyncDiff::SYNC_TYPE_VIDEO;
 
-  if (aMode & sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_ALL) {
+  if (aMediaTypesToExportAll) {
     // Enumerate all items to find the ones we need to sync (based on media
     // type, and what's already on the device). This includes playlists.
     // This will find all the playlists (including mixed-content ones!), as well
     // as media items, that match the desired media type. However, it won't find
     // items that are in a mixed-content playlist, but not of the right type.
-    exportListener->SetMediaTypes(aMediaTypes);
+    exportListener->SetMediaTypes(aMediaTypesToExportAll);
 
     // Handle all non-list items.
     exportListener->SetHandleMode(SyncEnumListenerBase::HANDLE_ITEMS);
@@ -1679,7 +1675,7 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
 
     // If we have any mixed-content playlists, but are not syncing all media
     // types, now do a 2nd pass over those, but with the media types set to all.
-    if (aMediaTypes != mixedMediaTypes) {
+    if (aMediaTypesToExportAll != mixedMediaTypes) {
       exportListener->SetHandleMode(SyncEnumListenerBase::HANDLE_ITEMS);
       exportListener->SetMediaTypes(mixedMediaTypes);
       PRInt32 const mixedListCount =
@@ -1692,7 +1688,8 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
       }
     }
   }
-  else if (aMode & sbIDeviceLibrarySyncDiff::SYNC_FLAG_EXPORT_PLAYLISTS) {
+
+  if (aSourceLists) {
     // We're not syncing everything, just some specific playlists.
     // Items found in multiple playlists (or multiple times in a single
     // playlist) are dealt with internally.
@@ -1756,13 +1753,13 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
-  importListener->SetMediaTypes(aMediaTypes);
 
-  if (aMode & sbIDeviceLibrarySyncDiff::SYNC_FLAG_IMPORT) {
+  if (aMediaTypesToImportAll) {
     // We always import everything (not just select playlists) if this is
     // enabled. As for export, this needs to handle the items before the lists,
     // so that exporting a list can refer to the correct items contained within
     // the list.
+    importListener->SetMediaTypes(aMediaTypesToImportAll);
     importListener->SetHandleMode(SyncEnumListenerBase::HANDLE_ITEMS);
     rv = aDestLibrary->EnumerateAllItems(
             importListener,

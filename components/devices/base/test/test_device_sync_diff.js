@@ -272,8 +272,7 @@ function runTest () {
 
   var exportChanges = {};
   var importChanges = {};
-  sync.generateSyncLists(Ci.sbIDeviceLibrarySyncDiff.SYNC_FLAG_EXPORT_ALL |
-                           Ci.sbIDeviceLibrarySyncDiff.SYNC_FLAG_IMPORT,
+  sync.generateSyncLists(Ci.sbIDeviceLibrarySyncDiff.SYNC_TYPE_AUDIO,
                          Ci.sbIDeviceLibrarySyncDiff.SYNC_TYPE_AUDIO,
                          mainLib,
                          deviceLib,
