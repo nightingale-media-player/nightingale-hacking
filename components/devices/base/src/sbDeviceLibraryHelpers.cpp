@@ -137,12 +137,131 @@ sbLibraryUpdateListener::OnItemMoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
+namespace
+{
+  /**
+   * This is used to reset the origin is in main library property in a library
+   * the sbIMediaListBatchCallback is used to perform the batch operation,
+   * while the sbIMediaListEnumerationListener is used to set the property for
+   * each item in the library
+   */
+  class EnumerateForOriginIsInMainLibrary :
+    public sbIMediaListEnumerationListener,
+    public sbIMediaListBatchCallback
+  {
+  public:
+    NS_DECL_ISUPPORTS;
+
+    /**
+     * Set the library and whether to ignore playlists
+     */
+    void Initialize(sbILibrary * aLibrary,
+                    bool aIgnorePlaylists)
+    {
+      mTargetLibrary = aLibrary;
+      mIgnorePlaylists = aIgnorePlaylists;
+    }
+
+    // sbIMediaListEnumerationListener interface implementation
+    /**
+     * \brief Called when enumeration is about to begin.
+     *
+     * \param aMediaList - The media list that is being enumerated.
+     *
+     * \return CONTINUE to continue enumeration, CANCEL to cancel enumeration.
+     *         JavaScript callers may omit the return statement entirely to
+     *         continue the enumeration.
+     */
+    /* unsigned short onEnumerationBegin (in sbIMediaList aMediaList); */
+    NS_SCRIPTABLE NS_IMETHOD OnEnumerationBegin(sbIMediaList *,
+                                                PRUint16 *_retval)
+    {
+      NS_ENSURE_STATE(mTargetLibrary);
+      if (_retval) {
+        *_retval = CONTINUE;
+      }
+      return NS_OK;
+    }
+
+    /**
+     * \brief Called once for each item in the enumeration.
+     *
+     * \param aMediaList - The media list that is being enumerated.
+     * \param aMediaItem - The media item.
+     *
+     * \return CONTINUE to continue enumeration, CANCEL to cancel enumeration.
+     *         JavaScript callers may omit the return statement entirely to
+     *         continue the enumeration.
+     */
+
+    NS_SCRIPTABLE NS_IMETHOD OnEnumeratedItem(sbIMediaList *aMediaList,
+                                              sbIMediaItem *aMediaItem,
+                                              PRUint16 *_retval)
+    {
+      nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+      if (!list || !mIgnorePlaylists)
+      {
+        NS_NAMED_LITERAL_STRING(SB_PROPERTY_FALSE, "0");
+
+        nsresult rv;
+
+        rv = aMediaItem->SetProperty(
+                       NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+                       SB_PROPERTY_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      *_retval = CONTINUE;
+      return NS_OK;
+    }
+
+    /**
+     * \brief Called when enumeration has completed.
+     *
+     * \param aMediaList - The media list that is being enumerated.
+     * \param aStatusCode - A code to determine if the enumeration was successful.
+     */
+    NS_SCRIPTABLE NS_IMETHOD OnEnumerationEnd(sbIMediaList *,
+                                              nsresult aStatusCode)
+    {
+      return NS_OK;
+    }
+
+    // sbIMediaListBatchCallback interface
+
+    /**
+     * This updates the origin is in main library property in batch mode using
+     * it's own object for the enumeration.
+     */
+    NS_SCRIPTABLE NS_IMETHOD RunBatched(nsISupports *)
+    {
+      nsresult rv;
+
+      NS_ENSURE_STATE(mTargetLibrary);
+
+      rv = mTargetLibrary->EnumerateAllItems(
+                                         this,
+                                         sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+  private:
+    nsCOMPtr<sbILibrary> mTargetLibrary;
+    bool mIgnorePlaylists;
+  };
+
+  NS_IMPL_ISUPPORTS1(EnumerateForOriginIsInMainLibrary,
+                     sbIMediaListEnumerationListener);
+
+}
+
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnListCleared(sbIMediaList *aMediaList,
                                        PRBool aExcludeLists,
                                        PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
+  // Make sure we're dealing with the library
   if (_retval) {
     *_retval = PR_TRUE; /* stop */
   }
@@ -154,7 +273,22 @@ sbLibraryUpdateListener::OnBeforeListCleared(sbIMediaList *aMediaList,
                                              PRBool aExcludeLists,
                                              PRBool *_retval)
 {
-  NS_NOTREACHED("Why are we here?");
+
+  // We clear the origin is in main library property for all device library
+  // items. This is a bit of a short cut which is fine for the current
+  // behavior. This will need to be changed, if we ever would import to
+  // a non-main library.
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(aMediaList);
+  if (library) {
+    EnumerateForOriginIsInMainLibrary * enumerator;
+    NS_NEWXPCOM(enumerator, EnumerateForOriginIsInMainLibrary);
+    NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+    enumerator->Initialize(mTargetLibrary,
+                           mIgnorePlaylists);
+    nsresult rv = mTargetLibrary->RunInBatchMode(enumerator, nsnull);
+    NS_RELEASE(enumerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   if (_retval) {
     *_retval = PR_TRUE; /* stop */
   }

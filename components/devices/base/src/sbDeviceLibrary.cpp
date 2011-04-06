@@ -548,6 +548,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners(
   rv = mainLib->AddListener(mMainLibraryListener,
                             PR_FALSE,
                             sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                            sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED |
                             sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
                             sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
                             mMainLibraryListenerFilter);
