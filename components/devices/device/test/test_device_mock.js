@@ -295,15 +295,14 @@ function test_request(device, continueAction) {
         request = null; /* unleak */
         continueAction();
         return;
-      }
-      
-      // Limit retries to 6 seconds
-      if (++retryCount > 60) {
-        fail("Failed in waiting for request");
-      }
-      // No request, continue to wait
-      doTimeout(100, requestCheck);
+      }      
     }
+    // Limit retries to 6 seconds
+    if (++retryCount > 60) {
+      fail("Failed in waiting for request");
+    }
+    // No request, continue to wait
+    doTimeout(100, requestCheck);
     return;
   }
   doTimeout(100, requestCheck);
