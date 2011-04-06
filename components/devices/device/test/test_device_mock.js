@@ -239,6 +239,7 @@ function test_prefs(device) {
 }
 
 function test_event(device) {
+  log("test_event");
   /* test as a event target */
   // I didn't bother with CI on the mock device
   device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
@@ -255,6 +256,7 @@ function test_event(device) {
 }
 
 function test_request(device, continueAction) {
+  log("test_request");
   /* test as sbIMockDevice (request push/pop) */
   device.QueryInterface(Ci.sbIMockDevice);
   
