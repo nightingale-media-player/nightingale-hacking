@@ -125,6 +125,7 @@ menupopup,
 popup {
   background-color:rgb(94,91,109);
   border: 1px solid rgb(28,27,38);
+  -moz-background-clip: padding;
 }
 menuitem > label {
   color: rgb(255,255,255);

@@ -63,7 +63,6 @@
           <xul:label value="&device.settings.music.transcoding.format.label;"/>
           <xul:hbox align="center">
             <xul:menulist sbid="encoding-format-menu"
-                          sizetopopup="always"
                           oncommand="onProfileUpdated(event);">
               <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
             </xul:menulist>
@@ -73,7 +72,6 @@
           <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
           <xul:hbox align="center">
             <xul:menulist sbid="transcoding-bitrate-kbps"
-                          sizetopopup="always"
                           oncommand="onBitrateUpdated(event);"
                           increment="16">
               <xul:menupopup sbid="transcoding-bitrate-list" />
