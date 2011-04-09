@@ -132,21 +132,15 @@ var URLUtils = {
    */
 
   produceQuery: function URLUtils_produceQuery(aParams) {
-    // Add each field in the query params to the URL query.
-    var urlQuery = "";
-    for (paramName in aParams) {
-      // Add a separator before all but the first field.
-      if (urlQuery.length > 0)
-        urlQuery += "&";
+    if (typeof aParams !== 'object') { return null; }
 
-      // Add the parameter to the URL query.
-      var paramValue = aParams[paramName];
-      urlQuery += encodeURIComponent(paramName) +
-                  "=" +
-                  encodeURIComponent(paramValue);
+    var stack = [];
+    for (var param in aParams) {
+      stack.push(encodeURIComponent(param) + "=" +
+                 encodeURIComponent(aParams[param]));
     }
 
-    return urlQuery;
+    return stack.join("&");
   },
 
 
