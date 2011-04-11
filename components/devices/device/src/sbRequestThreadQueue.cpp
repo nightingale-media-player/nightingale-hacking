@@ -679,6 +679,10 @@ sbRTQAddedEvent::Run()
     // Need to dispatch the thread stop event and then return
     if (batchRequestType == sbRequestThreadQueue::REQUEST_THREAD_STOP) {
       NS_DispatchToMainThread(mRTQ->mShutdownAction);
+
+      // Now that we've dispatched it, null it out - the runnable holds a ref to
+      // the RTQ. 
+      mRTQ->mShutdownAction = NULL;
       return NS_OK;
     }
 
