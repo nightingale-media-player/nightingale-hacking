@@ -27,6 +27,7 @@
 #include "sbiTunesImporterStatus.h"
 
 #include <nsIProxyObjectManager.h>
+#include <nsIObserverService.h>
 
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
@@ -145,6 +146,19 @@ nsresult sbiTunesImporterStatus::Update() {
     }
     if (mDone) {
       rv = mJobProgress->SetStatus(sbIJobProgress::STATUS_SUCCEEDED);
+
+      // Also send an observer notification with the job progress object in
+      // case anyone is interested.
+      nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
+              NS_OBSERVERSERVICE_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsISupports> job = NS_ISUPPORTS_CAST(sbIJobProgress*, mJobProgress);
+      rv = obsSvc->NotifyObservers(job,
+                                   SB_LIBRARY_IMPORT_ITUNES_COMPLETE,
+                                   nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
     }
     mLastProgress = mProgress;
     mLastStatusText = mStatusText;

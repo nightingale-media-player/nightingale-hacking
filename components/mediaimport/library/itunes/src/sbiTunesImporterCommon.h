@@ -33,6 +33,9 @@
 #include <sbILibrary.h>
 #include <sbIDataRemote.h>
 
+/* Observer service topic sent when an import operation completes. */
+#define SB_LIBRARY_IMPORT_ITUNES_COMPLETE "sb-library-import-itunes-complete"
+
 // Common Mozilla contract ID's
 #define NS_LOCALFILE_CONTRACTID "@mozilla.org/file/local;1"
 
