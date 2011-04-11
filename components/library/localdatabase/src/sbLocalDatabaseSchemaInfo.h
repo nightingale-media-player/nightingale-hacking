@@ -108,9 +108,15 @@ static sbStaticProperty sStaticProperties[] = {
     SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 9,
   },
+  {
+    SB_PROPERTY_METADATA_HASH_IDENTITY,
+    "metadata_hash_identity",
+    SB_COLUMN_TYPE_TEXT,
+    PR_UINT32_MAX - 10,
+  },
 };
 
-static const PRUint32 sStaticPropertyCount = 10;
+static const PRUint32 sStaticPropertyCount = 11;
 
 static inline PRBool
 SB_IsTopLevelProperty(PRUint32 aPropertyDBID)

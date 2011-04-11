@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -32,6 +32,9 @@
 #define SB_PROPERTY_CONTENTTYPE               "http://songbirdnest.com/data/1.0#contentType"
 #define SB_PROPERTY_CONTENTLENGTH             "http://songbirdnest.com/data/1.0#contentLength"
 #define SB_PROPERTY_HASH                      "http://songbirdnest.com/data/1.0#hash"
+
+// Stores a mediaitem's identity as calculated by hashing various metadata
+#define SB_PROPERTY_METADATA_HASH_IDENTITY    "http://songbirdnest.com/data/1.0#metadataHashIdentity"
 #define SB_PROPERTY_TRACKNAME                 "http://songbirdnest.com/data/1.0#trackName"
 #define SB_PROPERTY_ALBUMNAME                 "http://songbirdnest.com/data/1.0#albumName"
 #define SB_PROPERTY_ARTISTNAME                "http://songbirdnest.com/data/1.0#artistName"

@@ -60,10 +60,6 @@ public:
 private:
   virtual ~sbIdentityService();
 
-  // internal method to generate an md5 hash of the param aString
-  nsresult HashString(const nsAString  &aString,
-                      nsAString        &_retval);
-
   /**
    * Returns a | separated string for a set of properties
    *

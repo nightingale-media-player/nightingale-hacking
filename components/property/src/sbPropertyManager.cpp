@@ -507,6 +507,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Metadata Hash Identity (empty string if can't determine or cannot generate).
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_METADATA_HASH_IDENTITY),
+                    NS_LITERAL_STRING("property.metadata_hash_identity"),
+                    stringBundle,
+                    PR_FALSE,
+                    PR_FALSE,
+                    PR_FALSE,
+                    sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
+                    PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Track name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                     NS_LITERAL_STRING("property.track_name"),

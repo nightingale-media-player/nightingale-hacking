@@ -48,6 +48,18 @@
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbIdentityService,
                               sbIIdentityService)
 
+ /* The following consts are used to retrieve metadata properties
+  * and concatenate them into a string that will be hashed to form the
+  * metadata_hash_identity for each mediaitem.
+  *
+  * Any changes to any of these consts, including the order in the arrays,
+  * will require a migration to ensure stored identities of existing mediaitems
+  * are coherent with new identity calculations.
+  *
+  * The initial migration to this effect is
+  * sbMigrate19to110pre0.addMetadataHashIdentity.js
+  */
+
 // the separator that will be used between parts of the metadata hash identity
 static const char SEPARATOR[] = "|";
 
@@ -85,7 +97,8 @@ sbIdentityService::sbIdentityService()
 }
 
 //-----------------------------------------------------------------------------
-nsresult
+/*  sbIdentityService.idl, hashString */
+NS_IMETHODIMP
 sbIdentityService::HashString(const nsAString  &aString,
                               nsAString        &_retval)
 {
@@ -310,7 +323,9 @@ sbIdentityService::SaveIdentityToMediaItem
   #endif
 
   // save aIdentity to the propertybag for the param aMediaitem
-  rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HASH), aIdentity);
+  rv = aMediaItem->SetProperty
+                  (NS_LITERAL_STRING(SB_PROPERTY_METADATA_HASH_IDENTITY),
+                   aIdentity);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -341,7 +356,8 @@ sbIdentityService::SaveIdentityToBag
   #endif
 
   // save the identity in the propertybag
-  rv = aPropertyBag->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HASH),
+  rv = aPropertyBag->SetProperty
+                     (NS_LITERAL_STRING(SB_PROPERTY_METADATA_HASH_IDENTITY),
                                         aIdentity);
   NS_ENSURE_SUCCESS(rv, rv);
 

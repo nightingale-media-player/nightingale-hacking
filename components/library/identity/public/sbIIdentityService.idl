@@ -35,6 +35,23 @@ interface sbILocalDatabaseResourcePropertyBag;
 interface sbIIdentityService : nsISupports
 {
   /**
+   * \brief HashString
+   *          Hashes the param string using the same method as used when
+   *          generating metadata hash identities.
+   *          The methods described below calculate an identity by passing
+   *          this function a metadata property string of the form:
+   *            contentType|trackName|artistName|albumName|genre  for audio and
+   *            contentType|trackName|artistName|albumName|genre  for video
+   *          to this method and this format should also be used for any other
+   *          identity calculations.
+   *
+   * \param aString   The string that will be hashed
+   *
+   * \return          The hash of the param aString
+  */
+  AString hashString(in AString aString);
+
+  /**
    * \brief CalculateIdentityForMediaItem
    *          Generates an identifier for the param aMediaItem
    *          and that identifier is returned. If media item's content type is 

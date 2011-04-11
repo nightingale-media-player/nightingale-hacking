@@ -24,7 +24,8 @@ create table media_items (
   content_hash text,
   hidden integer not null check(hidden in (0, 1)),
   media_list_type_id integer,
-  is_list integer not null check(is_list in (0, 1)) default 0
+  is_list integer not null check(is_list in (0, 1)) default 0,
+  metadata_hash_identity text
 );
 create index idx_media_items_hidden on media_items (hidden);
 create index idx_media_items_created on media_items (created);
@@ -33,6 +34,7 @@ create index idx_media_items_media_list_type_id on media_items (media_list_type_
 create index idx_media_items_is_list on media_items (is_list);
 create index idx_media_items_hidden_media_list_type_id on media_items (hidden, media_list_type_id);
 create index idx_media_items_content_mime_type on media_items(content_mime_type);
+create index idx_media_items_metadata_hash_identity on media_items(metadata_hash_identity);
 
 create table library_media_item (
   guid text unique not null, /* implicit index creation */
@@ -44,7 +46,8 @@ create table library_media_item (
   content_hash text,
   hidden integer not null check(hidden in (0, 1)),
   media_list_type_id integer,
-  is_list integer not null check(is_list in (0, 1)) default 0
+  is_list integer not null check(is_list in (0, 1)) default 0,
+  metadata_hash_identity text
 );
 
 create table media_list_types (
@@ -125,7 +128,7 @@ insert into media_list_types (type, factory_contractid) values ('simple', '@song
 /*  XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update         */
 /*  sbLocalDatabaseMigrationHelper._latestSchemaVersion.                      */
 /**************************************************************************** */
-insert into library_metadata (name, value) values ('version', '28');
+insert into library_metadata (name, value) values ('version', '29');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */
