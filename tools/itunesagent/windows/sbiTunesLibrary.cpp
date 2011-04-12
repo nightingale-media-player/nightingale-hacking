@@ -120,29 +120,15 @@ sbError sbiTunesLibrary::Initialize() {
         return sbError("Failed to initialize the library playlist object");
       }
     }
-    // Get the sources for iTunes
-    sbIDispatchPtr sources;
-    hr = miTunesApp.GetProperty(L"Sources", &sources);
-    if (COMBusyError(hr)) {
-      continue;
-    }
-    else if (FAILED(hr) || !sources.get()) {
-      return sbError("Failed to get the source collection");
-    }
     // Get the main library source
     if (!mLibrarySource.get()) {
-      sbIDispatchPtr::VarArgs args(1);
-      args.Append(L"Library");
-      VARIANTARG result;
-      VariantInit(&result);
-      hr = sources.Invoke(L"ItemByName", args, result, DISPATCH_PROPERTYGET);  
+      hr = miTunesApp.GetProperty(L"LibrarySource", &mLibrarySource);
       if (COMBusyError(hr)) {
         continue;
       }
-      else if (FAILED(hr) || !IsIDispatch(result)) {
+      else if (FAILED(hr) || !mLibrarySource.get()) {
         return sbError("Failed to initialize the library source object");
       }
-      mLibrarySource = result.pdispVal;
     }
     if (!mSongbirdPlaylist.get()) {
       // If we haven't gotten the Songbird playlist source then go get it
