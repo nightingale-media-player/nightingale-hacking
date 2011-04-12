@@ -727,14 +727,14 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
   query->PrepareQuery(NS_LITERAL_STRING("\
     SELECT guid \
     FROM media_items \
-    WHERE content_hash = ? and guid != ?"),
+    WHERE metadata_hash_identity = ? and guid != ?"),
     getter_AddRefs(mGetGUIDForIdentity));
   NS_ENSURE_SUCCESS(rv, rv);
 
   query->PrepareQuery(NS_LITERAL_STRING("\
     SELECT count(media_item_id) \
     FROM media_items \
-    WHERE content_hash = ? and guid != ?"),
+    WHERE metadata_hash_identity = ? and guid != ?"),
     getter_AddRefs(mGetCountForIdentity));
   NS_ENSURE_SUCCESS(rv, rv);
 

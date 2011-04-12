@@ -105,7 +105,8 @@ function runTest () {
     showName: 'showName',
     episodeNumber: 'episodeNumber',
     seasonNumber: 'seasonNumber',
-    playlistURL: 'playlist_url'
+    playlistURL: 'playlist_url',
+    metadataHashIdentity: 'metadata_hash_identity'
   };
 
   // list of properties with localization keys, but not in SBProperties.jsm

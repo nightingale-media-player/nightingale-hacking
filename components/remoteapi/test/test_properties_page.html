@@ -151,6 +151,7 @@ function runTest(tester) {
       "originPageTitle",
       "originLibraryGuid",
       "originItemGuid",
+      "metadataHashIdentity",
       "lastPlayTime",
       "lastSkipTime",
       "originURL",
@@ -299,7 +300,7 @@ function runTest(tester) {
           // behavior.
           // We should be able to read
           // the contentURL for list and item provided they aren't file: and
-          // currently the list is songbird-medialist:// and the file is 
+          // currently the list is songbird-medialist:// and the file is
           // created above as http: If library becomes a songbird-library::
           // url this test will break and need fixing.
           try {
