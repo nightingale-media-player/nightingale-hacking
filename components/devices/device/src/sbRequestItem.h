@@ -151,7 +151,7 @@ protected:
    */
   sbRequestItem();
 
-  ~sbRequestItem();
+  virtual ~sbRequestItem();
   // Protected interface to be used by the request queue and derived classes
 
   /**
