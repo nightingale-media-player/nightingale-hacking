@@ -425,6 +425,8 @@ nsresult sbRequestThreadQueue::PushRequestInternal(sbRequestItem * aRequestItem)
     return NS_OK;
   }
 
+  aRequestItem->mBatchId = mCurrentBatchId;
+
   NS_ADDREF(aRequestItem);
   mRequestQueue.push_back(aRequestItem);
 
