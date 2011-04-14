@@ -872,7 +872,8 @@
                                     document.location.href,
                                     this._nodeData.id,
                                     "collapsedChildren");
-        this._nodeData.isOpen = (collapsed == "false");
+        this._nodeData.isOpen = (collapsed == "false" ||
+                                 collapsed == null);
 
         // First time we are attached to this node, set node visibility
         this.visible = this._nodeData.isOpen;
