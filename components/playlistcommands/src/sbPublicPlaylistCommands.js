@@ -90,6 +90,8 @@ PublicPlaylistCommands.prototype = {
   classID:          Components.ID("{1126ee77-2d85-4f79-a07a-b014da404e53}"),
   contractID:       "@songbirdnest.com/Songbird/PublicPlaylistCommands;1",
 
+  m_mgr                           : null,
+
   m_defaultCommands               : null,
   m_webPlaylistCommands           : null,
   m_webMediaHistoryToolbarCommands: null,
@@ -98,7 +100,6 @@ PublicPlaylistCommands.prototype = {
   m_downloadToolbarCommands       : null,
   m_downloadCommandsServicePane   : null,
   m_serviceTreeDefaultCommands    : null,
-  m_mgr                           : null,
   m_deviceLibraryCommands         : null,
   m_cdDeviceLibraryCommands       : null,
   m_playQueueCommands             : null,
@@ -145,6 +146,8 @@ PublicPlaylistCommands.prototype = {
   m_cmd_playqueue_ClearHistory    : null,
   m_cmd_playqueue_ClearAll        : null,
 
+  m_downloadListGuid              : null,
+
   // ==========================================================================
   // INIT
   // ==========================================================================
@@ -172,9 +175,16 @@ PublicPlaylistCommands.prototype = {
         Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
                   .getService(Components.interfaces.sbIDownloadDeviceHelper);
       var downloadMediaList = ddh.getDownloadMediaList();
-      var downloadListGUID = "";
+
+      // We save this rather than getting it again because we need to remove
+      // by the same id. If we re-fetch it, we might get a different GUID -
+      // not in the actual app, because the download media list doesn't just
+      // go away, but in unit tests that clear the library.
       if (downloadMediaList)
-        downloadListGUID = downloadMediaList.guid;
+        this.m_downloadListGuid = downloadMediaList.guid;
+      else
+        this.m_downloadListGuid = "";
+
 
       // --------------------------------------------------------------------------
 
@@ -1140,7 +1150,7 @@ PublicPlaylistCommands.prototype = {
 
       // Register these commands to the download playlist
 
-      this.m_mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "", this.m_downloadCommands);
+      this.m_mgr.registerPlaylistCommandsMediaItem(this.m_downloadListGuid, "", this.m_downloadCommands);
 
       // --------------------------------------------------------------------------
       // Construct and publish the device library commands
@@ -1301,7 +1311,7 @@ PublicPlaylistCommands.prototype = {
       // Register these commands to the download playlist
 
       this.m_mgr.registerPlaylistCommandsMediaItem
-                                                (downloadListGUID,
+                                                (this.m_downloadListGuid,
                                                  "",
                                                  this.m_downloadToolbarCommands);
 
@@ -1322,7 +1332,7 @@ PublicPlaylistCommands.prototype = {
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
 
-      this.m_mgr.registerPlaylistCommandsMediaList(downloadListGUID, "", this.m_downloadCommandsServicePane);
+      this.m_mgr.registerPlaylistCommandsMediaList(this.m_downloadListGuid, "", this.m_downloadCommandsServicePane);
 
       // --------------------------------------------------------------------------
       // Construct and publish the service tree playlist commands
@@ -1387,14 +1397,6 @@ PublicPlaylistCommands.prototype = {
     var prefs = Cc["@mozilla.org/preferences-service;1"]
                   .getService(Ci.nsIPrefBranch2);
 
-    var ddh =
-      Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                .getService(Components.interfaces.sbIDownloadDeviceHelper);
-    var downloadMediaList = ddh.getDownloadMediaList();
-    var downloadListGUID = "";
-    if (downloadMediaList)
-      downloadListGUID = downloadMediaList.guid;
-
     // Un-publish atomic commands
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PLAY, this.m_cmd_Play);
@@ -1441,17 +1443,17 @@ PublicPlaylistCommands.prototype = {
 
     // Un-register download playlist commands
 
-    this.m_mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID,
+    this.m_mgr.unregisterPlaylistCommandsMediaItem(this.m_downloadListGuid,
                                                    "",
                                                    this.m_downloadCommands);
 
     this.m_mgr.unregisterPlaylistCommandsMediaItem
-                                              (downloadListGUID,
+                                              (this.m_downloadListGuid,
                                                "",
                                                this.m_downloadToolbarCommands);
 
     this.m_mgr.unregisterPlaylistCommandsMediaList
-                                              (downloadListGUID,
+                                              (this.m_downloadListGuid,
                                                "",
                                                this.m_downloadCommandsServicePane);
 
@@ -1551,6 +1553,9 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_playqueue_ClearHistory.shutdown();
     this.m_playQueueCommands.shutdown();
     this.m_playQueueLibraryCommands.shutdown();
+    this.m_cmd_LookupCDInfo.shutdown();
+    this.m_cmd_CheckAll.shutdown();
+    this.m_cmd_UncheckAll.shutdown();
 
     g_dataRemoteService = null;
 
