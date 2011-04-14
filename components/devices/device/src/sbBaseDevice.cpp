@@ -4635,7 +4635,6 @@ sbBaseDevice::SyncGetSyncItemSizes(sbIDeviceLibrary * aDestLibrary,
   aTotalSyncSize = 0;
 
   // Fill in the sync item size table and calculate the total sync size.
-  PRInt64 totalSyncSize = 0;
   nsCOMPtr<nsIArray> changes;
   rv = aChangeset->GetChanges(getter_AddRefs(changes));
   NS_ENSURE_SUCCESS(rv, rv);
