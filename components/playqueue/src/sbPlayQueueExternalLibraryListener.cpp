@@ -120,7 +120,7 @@ sbPlayQueueExternalLibraryListener::sbPlayQueueExternalLibraryListener()
 
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  mUpdateLock = PR_NewLock();
+  mUpdateLock = nsAutoLock::NewLock("sbPlayQueueExternalLibraryListener::mUpdateLock");
   NS_ASSERTION(mUpdateLock, "failed to create lock!");
 }
 
@@ -129,7 +129,7 @@ sbPlayQueueExternalLibraryListener::~sbPlayQueueExternalLibraryListener()
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   if (mUpdateLock) {
-    PR_DestroyLock(mUpdateLock);
+    nsAutoLock::DestroyLock(mUpdateLock);
   }
 }
 
