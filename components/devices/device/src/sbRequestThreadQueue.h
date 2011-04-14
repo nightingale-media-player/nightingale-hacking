@@ -55,6 +55,12 @@
  * via the pure virtual method ProcessBatch. Derived classes implement this to
  * do work specific to their needs. Start is called to start the request thread
  * and Stop is used to stop the request thread.
+ *
+ * sbRequestItem is owned by sbRequestThreadQueue when pushed onto the queue.
+ * A reference is added. When PopBatch is called, ownership is transferred to
+ * the Batch object passed in. The sbRequestItem object holds a reference and
+ * releases it when the Batch is destroyed or the item is erased via erase or
+ * clear methods. Batch's destructor calls clear.
  */
 class sbRequestThreadQueue
 {

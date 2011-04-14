@@ -1246,11 +1246,13 @@ protected:
    * chooses to do so, create the list and configure to sync to it.  If the user
    * chooses to abort, return true in aAbort.
    *
-   * \param aRequest            Sync request.
+   * \param aChangeset          The change set to check for space
+   * \param aCapacityExceeded   Returns whether the capacity was exceeded
    * \param aAbort              Abort sync if true.
    */
-  nsresult EnsureSpaceForSync(TransferRequest* aRequest,
-                              PRBool*          aAbort);
+  nsresult EnsureSpaceForSync(sbILibraryChangeset* aChangeset,
+                              PRBool*              aCapacityExceeded,
+                              PRBool*              aAbort);
 
   /**
    * Create a random subset of sync items from the list specified by
@@ -1261,8 +1263,6 @@ protected:
    *
    * \param aSrcLib             Source library from which to sync.
    * \param aDstLib             Destination library to which to sync.
-   * \param aSyncItemList       Full list of sync items.
-   * \param aSyncItemSizeMap    Size of sync items.
    * \param aAvailableSpace     Space available for sync.
    * \return NS_OK if successful.
    *         NS_ERROR_ABORT if user aborts syncing.
@@ -1271,8 +1271,6 @@ protected:
   nsresult SyncCreateAndSyncToList
              (sbILibrary*                                   aSrcLib,
               sbIDeviceLibrary*                             aDstLib,
-              nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-              nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
               PRInt64                                       aAvailableSpace);
 
   /**
@@ -1304,59 +1302,32 @@ protected:
                            sbIMediaList*     aMediaList);
 
   /**
+   * Returns the size for a given change. If it's a modification it will return
+   * the difference between the original and the new version
+   *
+   * \param aDestLibrary The destination library for the change
+   * \param aChange The change item to use
+   */
+  PRInt64 GetChangeSize(sbIDeviceLibrary * aDestLibrary,
+                        sbILibraryChange * aChange);
+  /**
    * Return in aSyncItemList and aSyncItemSizeMap the set of items to sync and
    * their sizes, as configured for the destination sync library specified by
    * aDstLib.  The sync source library is specified by aSrcLib.  The total size
    * of all sync items is specified by aTotalSyncSize.
    *
-   * \param aSrcLib             Sync source library.
    * \param aDstLib             Sync destination library.
-   * \param aSyncItemList       List of items from which to sync.
-   * \param aSyncItemSizeMap    Size of sync items.
+   * \param aChangeset          List of items from which to sync.
+   * \param aAvailableSpace     The available space on the device in bytes
+   * \param aLastChangeThatFit  Index of the last item that fits in available
+   *                            space
    * \param aTotalSyncSize      Total size of all sync items.
    */
-  nsresult SyncGetSyncItemSizes
-             (sbILibrary*                                   aSrcLib,
-              sbIDeviceLibrary*                             aDstLib,
-              nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-              nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-              PRInt64*                                      aTotalSyncSize);
-
-  /**
-   * Add to aSyncItemList and aSyncItemSizeMap the set of items and their sizes
-   * from the sync media list specified by aSyncML for syncing to the library
-   * specified by aDstLib.  Add the total size of the items to aTotalSyncSize.
-   *
-   * \param aSyncML             Sync media list.
-   * \param aDstLib             Sync destination library.
-   * \param aSyncItemList       List of items from which to sync.
-   * \param aSyncItemSizeMap    Size of sync items.
-   * \param aTotalSyncSize      Total size of all sync items.
-   */
-  nsresult SyncGetSyncItemSizes
-             (sbIMediaList*                                 aSyncML,
-              sbIDeviceLibrary*                             aDstLib,
-              nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-              nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-              PRInt64*                                      aTotalSyncSize);
-
-  /**
-   * Add to aSyncItemList and aSyncItemSizeMap the item and the size specified
-   * by aSyncMI for syncing to the library specified by aDstLib. Add the size of
-   * the item to aTotalSyncSize.
-   *
-   * \param aSyncMI             Sync media item.
-   * \param aDstLib             Sync destination library.
-   * \param aSyncItemList       List of items from which to sync.
-   * \param aSyncItemSizeMap    Size of sync items.
-   * \param aTotalSyncSize      Total size of all sync items.
-   */
-   nsresult SyncGetSyncItemSizes
-             (sbIMediaItem*                                 aSyncMI,
-              sbIDeviceLibrary*                             aDstLib,
-              nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-              nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-              PRInt64*                                      aTotalSyncSize);
+  nsresult SyncGetSyncItemSizes(sbIDeviceLibrary * aDestLibrary,
+                                sbILibraryChangeset* aChangeset,
+                                PRInt64 aAvailableSpace,
+                                PRUint32& aLastChangeThatFit,
+                                PRInt64& aTotalSyncSize);
 
   /**
    * Return in aAvailableSpace the space available for syncing to the library

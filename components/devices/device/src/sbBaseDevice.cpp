@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <set>
-#include <vector>
 
 #include <prtime.h>
 
@@ -3959,18 +3958,6 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = sbDeviceUtils::SetLinkedSyncPartner(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Ensure enough space is available for operation.  Cancel operation if not.
-  PRBool abort;
-  rv = EnsureSpaceForSync(aRequest, &abort);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (abort) {
-    return NS_OK;
-  }
-
-  if (IsRequestAborted()) {
-    return NS_ERROR_ABORT;
-  }
-
   // Produce the sync change set.
   nsCOMPtr<sbILibraryChangeset> exportChangeset;
   nsCOMPtr<sbILibraryChangeset> importChangeset;
@@ -3983,6 +3970,33 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
     return NS_ERROR_ABORT;
   }
 
+  // Ensure enough space is available for operation.  Cancel operation if not.
+  PRBool capacityExceeded;
+  PRBool abort;
+  rv = EnsureSpaceForSync(exportChangeset, &capacityExceeded, &abort);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (abort) {
+    return NS_OK;
+  }
+
+  if (IsRequestAborted()) {
+    return NS_ERROR_ABORT;
+  }
+
+  // We need to perform another sync if the capacity was exceeded because the
+  // overcapacity logic will create a playlist and change the sync settings to
+  // use the newly created playlist.
+  if (capacityExceeded) {
+    // Produce the sync change set.
+    rv = SyncProduceChangeset(aRequest,
+                              getter_AddRefs(exportChangeset),
+                              getter_AddRefs(importChangeset));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (IsRequestAborted()) {
+      return NS_ERROR_ABORT;
+    }
+  }
   // Setup the device state for sync'ing
   rv = SetState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -4100,42 +4114,67 @@ sbBaseDevice::HandleSyncCompletedRequest(TransferRequest* aRequest)
   return NS_OK;
 }
 
+namespace
+{
+  nsresult GetSourceLibraryForChangeset(sbILibraryChangeset * aChangeset,
+                                        sbILibrary ** aLibrary)
+  {
+    NS_ASSERTION(aChangeset, "aChangeset must not be null");
+    NS_ASSERTION(aLibrary, "aLibrary must not be null");
+
+    nsresult rv;
+
+    nsCOMPtr<nsIArray> changes;
+    rv = aChangeset->GetChanges(getter_AddRefs(changes));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length;
+    rv = changes->GetLength(&length);
+    NS_ENSURE_TRUE(NS_SUCCEEDED(rv) && length > 0, NS_ERROR_NOT_AVAILABLE);
+
+    nsCOMPtr<sbILibraryChange> change = do_QueryElementAt(changes, 0, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> item;
+    rv = change->GetSourceItem(getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = item->GetLibrary(aLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+}
 nsresult
-sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
+sbBaseDevice::EnsureSpaceForSync(sbILibraryChangeset* aChangeset,
+                                 PRBool*          aCapacityExceeded,
                                  PRBool*          aAbort)
 {
   // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aChangeset);
+  NS_ENSURE_ARG_POINTER(aCapacityExceeded);
   NS_ENSURE_ARG_POINTER(aAbort);
 
   // Function variables.
-  PRBool   success;
   nsresult rv;
 
-  // Get the sync source and destination libraries.
-  nsCOMPtr<sbILibrary> srcLib = do_QueryInterface(aRequest->item, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Allocate a list of sync items and a hash table of their sizes.
-  nsCOMArray<sbIMediaItem>                     syncItemList;
-  nsDataHashtable<nsISupportsHashKey, PRInt64> syncItemSizeMap;
-  success = syncItemSizeMap.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  // Get the sync item sizes and total size.
-  PRInt64 totalSyncSize;
-  rv = SyncGetSyncItemSizes(srcLib,
-                            dstLib,
-                            syncItemList,
-                            syncItemSizeMap,
-                            &totalSyncSize);
+  nsCOMPtr<sbIDeviceLibrary> defaultLibrary;
+  rv = GetDefaultLibrary(getter_AddRefs(defaultLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the space available for syncing.
   PRInt64 availableSpace;
-  rv = SyncGetSyncAvailableSpace(dstLib, &availableSpace);
+  rv = SyncGetSyncAvailableSpace(defaultLibrary, &availableSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the sync item sizes and total size.
+  PRInt64 totalSyncSize;
+  PRUint32 lastItemThatFits;
+  rv = SyncGetSyncItemSizes(defaultLibrary,
+                            aChangeset,
+                            availableSpace,
+                            lastItemThatFits,
+                            totalSyncSize);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If not enough space is available, ask the user what action to take.  If the
@@ -4143,10 +4182,11 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
   // that will fit in the available space.  Otherwise, set the management type
   // to manual and return with abort.
   if (availableSpace < totalSyncSize && !mEnsureSpaceChecked) {
+    *aCapacityExceeded = PR_TRUE;
     // Ask the user what action to take.
     PRBool abort;
     rv = sbDeviceUtils::QueryUserSpaceExceeded(this,
-                                               dstLib,
+                                               defaultLibrary,
                                                totalSyncSize,
                                                availableSpace,
                                                &abort);
@@ -4162,17 +4202,23 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
     // syncing operation.
     mEnsureSpaceChecked = true;
 
+    nsCOMPtr<sbILibrary> sourceLibrary;
+    rv = GetSourceLibraryForChangeset(aChangeset,
+                                      getter_AddRefs(sourceLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Create a sync media list and sync to it.
-    rv = SyncCreateAndSyncToList(srcLib,
-                                 dstLib,
-                                 syncItemList,
-                                 syncItemSizeMap,
+    rv = SyncCreateAndSyncToList(sourceLibrary,
+                                 defaultLibrary,
                                  availableSpace);
     if (rv == NS_ERROR_ABORT) {
       *aAbort = PR_TRUE;
       return NS_OK;
     }
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    *aCapacityExceeded = PR_TRUE;
   }
 
   // Don't abort.
@@ -4185,8 +4231,6 @@ nsresult
 sbBaseDevice::SyncCreateAndSyncToList
   (sbILibrary*                                   aSrcLib,
    sbIDeviceLibrary*                             aDstLib,
-   nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-   nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
    PRInt64                                       aAvailableSpace)
 {
   // Validate arguments.
@@ -4521,163 +4565,113 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   return NS_OK;
 }
 
-nsresult
-sbBaseDevice::SyncGetSyncItemSizes
-  (sbILibrary*                                   aSrcLib,
-   sbIDeviceLibrary*                             aDstLib,
-   nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-   nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-   PRInt64*                                      aTotalSyncSize)
+PRInt64 sbBaseDevice::GetChangeSize(sbIDeviceLibrary * aDestLibrary,
+                                    sbILibraryChange * aChange)
 {
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aSrcLib);
-  NS_ENSURE_ARG_POINTER(aDstLib);
-  NS_ENSURE_ARG_POINTER(aTotalSyncSize);
+  NS_ASSERTION(aChange, "aChange must not be null");
 
-  // Function variables.
   nsresult rv;
 
-  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
-  rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  nsCOMPtr<sbIMediaItem> source;
+  rv = aChange->GetSourceItem(getter_AddRefs(source));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the list of sync media lists.
-  nsCOMPtr<nsIArray> syncList;
-  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Fill in the sync item size table and calculate the total sync size.
-  PRInt64 totalSyncSize = 0;
-  PRUint32 syncListLength;
-  rv = syncList->GetLength(&syncListLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-  for (PRUint32 i = 0; i < syncListLength; i++) {
-    // Check for abort.
-    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
-
-    // Get the next sync media item.
-    nsCOMPtr<sbIMediaItem> syncMI = do_QueryElementAt(syncList, i, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the sync media list.
-    nsCOMPtr<sbIMediaList> syncML = do_QueryInterface(syncMI, &rv);
-
-    // Not media list.
-    if (NS_FAILED(rv)) {
-      // Get the size of the sync media item.
-      rv = SyncGetSyncItemSizes(syncMI,
-                                aDstLib,
-                                aSyncItemList,
-                                aSyncItemSizeMap,
-                                &totalSyncSize);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      // Get the sizes of the sync media items.
-      rv = SyncGetSyncItemSizes(syncML,
-                                aDstLib,
-                                aSyncItemList,
-                                aSyncItemSizeMap,
-                                &totalSyncSize);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  // Return results.
-  *aTotalSyncSize = totalSyncSize;
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::SyncGetSyncItemSizes
-  (sbIMediaList*                                 aSyncML,
-   sbIDeviceLibrary*                             aDstLib,
-   nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-   nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-   PRInt64*                                      aTotalSyncSize)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aSyncML);
-  NS_ENSURE_ARG_POINTER(aTotalSyncSize);
-
-  // Function variables.
-  nsresult rv;
-
-  // Accumulate the sizes of all sync items.  Use GetItemByIndex like the
-  // diffing service does.
-  PRInt64  totalSyncSize = *aTotalSyncSize;
-  PRUint32 itemCount;
-  rv = aSyncML->GetLength(&itemCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-  for (PRUint32 i = 0; i < itemCount; i++) {
-    // Check for abort.
-    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
-
-    // Get the sync item.
-    nsCOMPtr<sbIMediaItem> mediaItem;
-    rv = aSyncML->GetItemByIndex(i, getter_AddRefs(mediaItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Ignore media lists.
-    nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
-    if (NS_SUCCEEDED(rv))
-      continue;
-
-    rv = SyncGetSyncItemSizes(mediaItem,
-                              aDstLib,
-                              aSyncItemList,
-                              aSyncItemSizeMap,
-                              &totalSyncSize);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Return results.
-  *aTotalSyncSize = totalSyncSize;
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::SyncGetSyncItemSizes
-  (sbIMediaItem*                                 aSyncMI,
-   sbIDeviceLibrary*                             aDstLib,
-   nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-   nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-   PRInt64*                                      aTotalSyncSize)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aSyncMI);
-  NS_ENSURE_ARG_POINTER(aTotalSyncSize);
-
-  // Function variables.
-  PRBool   success;
-  nsresult rv;
-
-  // Accumulate the sizes of the sync item.
-  PRInt64  totalSyncSize = *aTotalSyncSize;
-
-  // Do nothing more if item is already in list.
-  if (aSyncItemSizeMap.Get(aSyncMI, nsnull))
-    return NS_OK;
 
   // Get the item write length adding in the per track overhead.  Assume a
   // length of 0 on error.
   PRUint64 writeLength;
-  rv = sbDeviceUtils::GetDeviceWriteLength(aDstLib, aSyncMI, &writeLength);
+  rv = sbDeviceUtils::GetDeviceWriteLength(aDestLibrary,
+                                           source,
+                                           &writeLength);
   if (NS_FAILED(rv))
     writeLength = 0;
   writeLength += mPerTrackOverhead;
 
-  // Add item.
-  success = aSyncItemList.AppendObject(aSyncMI);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  success = aSyncItemSizeMap.Put(aSyncMI, writeLength);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  totalSyncSize += writeLength;
+  PRUint32 operation;
+  rv = aChange->GetOperation(&operation);
+  NS_ENSURE_SUCCESS(rv, 0);
 
-  // Return results.
-  *aTotalSyncSize = totalSyncSize;
+  switch (operation) {
+    case sbILibraryChange::ADDED: {
+      return writeLength;
+    }
+    case sbILibraryChange::MODIFIED: {
+      nsCOMPtr<sbIMediaItem> destinationItem;
+      rv = aChange->GetDestinationItem(getter_AddRefs(destinationItem));
+      NS_ENSURE_SUCCESS(rv, 0);
+
+      PRInt64 destinationLength;
+      rv = destinationItem->GetContentLength(&destinationLength);
+      NS_ENSURE_SUCCESS(rv, writeLength);
+
+      return writeLength - destinationLength;
+    }
+    case sbILibraryChange::DELETED: {
+      // This won't occur with the current sync behavior
+      NS_WARNING("sbILibraryChange::DELETED not supported");
+      break;
+    }
+    default: {
+      NS_WARNING("Unexpected change operation");
+      break;
+    }
+  }
+  // Ideally we'll never get here unless we get an operation we can't handle
+  return 0;
+}
+
+nsresult
+sbBaseDevice::SyncGetSyncItemSizes(sbIDeviceLibrary * aDestLibrary,
+                                   sbILibraryChangeset* aChangeset,
+                                   PRInt64 aAvailableSpace,
+                                   PRUint32& aLastChangeThatFit,
+                                   PRInt64& aTotalSyncSize)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aChangeset);
+
+  // Function variables.
+  nsresult rv;
+
+  aTotalSyncSize = 0;
+
+  // Fill in the sync item size table and calculate the total sync size.
+  PRInt64 totalSyncSize = 0;
+  nsCOMPtr<nsIArray> changes;
+  rv = aChangeset->GetChanges(getter_AddRefs(changes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length;
+  rv = changes->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < length; ++i) {
+    // Check for abort.
+    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
+
+    // Get the next sync media item.
+    nsCOMPtr<sbILibraryChange> change = do_QueryElementAt(changes, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Don't count lists
+    // TODO: There probably is some size associated with storing a list at
+    // sometime we might want to investigate that add some best estimate.
+    PRBool isList;
+    rv = change->GetItemIsList(&isList);
+    NS_ENSURE_SUCCESS(rv, 0);
+    if (isList) {
+      continue;
+    }
+    // If we've seen this item before don't count it.
+    nsCOMPtr<sbIMediaItem> mediaItem;
+    rv = change->GetSourceItem(getter_AddRefs(mediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsISupports> supports = do_QueryInterface(mediaItem);
+    aTotalSyncSize += GetChangeSize(aDestLibrary, change);
+    if (aTotalSyncSize <= aAvailableSpace) {
+      aLastChangeThatFit = i;
+    }
+  }
+
 
   return NS_OK;
 }
@@ -4729,7 +4723,7 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
 
   // Apply limit to the total space available for music.
   PRInt64 musicAvailableSpace;
-  rv = GetMusicAvailableSpace(aLibrary, &musicAvailableSpace);
+  rv = GetMusicFreeSpace(aLibrary, &musicAvailableSpace);
   NS_ENSURE_SUCCESS(rv, rv);
   if (availableSpace >= musicAvailableSpace)
     availableSpace = musicAvailableSpace;
