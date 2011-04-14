@@ -78,7 +78,12 @@ public:
    * Registers the processor's profile
    */
   virtual void RegisterProfile(std::string const & aProfileName) = 0;
-  
+
+  /**
+   * Sets the iTunes playlist folder name
+   */
+  virtual void RegisterFolderName() = 0;
+
   /**
    * Returns true if there are any tasks file ready to process
    */
@@ -268,6 +273,7 @@ protected:
   sbLogState    mLogState;
   std::ofstream mLogStream;
   unsigned int  mBatchSize;
+  std::string   mFolderName;
 private:
   std::ifstream  mInputStream;
   TrackList      mTrackBatch;

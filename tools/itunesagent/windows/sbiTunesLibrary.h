@@ -65,7 +65,7 @@ public:
   /**
    * Initializes commonly used iTunes COM objects
    */
-  sbError Initialize();
+  sbError Initialize(std::string const & aFolderName);
   /**
    * Get the persistent ID of the library
    */
@@ -100,6 +100,7 @@ private:
   sbIDispatchPtr mSongbirdPlaylist;
   sbIDispatchPtr mSongbirdPlaylistSource;
   sbIDispatchPtr miTunesApp;
+  std::wstring miTunesFolderName;
   std::string mLibraryPersistentId;
 };
 

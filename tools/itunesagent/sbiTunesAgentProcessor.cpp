@@ -45,7 +45,8 @@ char const * const SCHEMA_VERSION = "schema-version";
 
 sbiTunesAgentProcessor::sbiTunesAgentProcessor()
   : mLogState((sbLogState)AGENT_LOGGING),
-    mBatchSize(sbiTunesAgentProcessor::BATCH_SIZE)
+    mBatchSize(sbiTunesAgentProcessor::BATCH_SIZE),
+    mFolderName("Songbird")
 {
 }
 

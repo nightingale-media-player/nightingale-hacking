@@ -35,13 +35,14 @@
 HRESULT const SB_ITUNES_ERROR_BUSY = 0x8001010a;
 
 wchar_t const SB_ITUNES_MAIN_LIBRARY_SOURCE_NAME[] = SONGBIRD_MAIN_LIBRARY_NAME;
-wchar_t const SB_ITUNES_PLAYLIST_NAME[] = L"Songbird";
 
 wchar_t const ITUNES_APP_PROGID[] = L"iTunes.Application";
 
 SB_AUTO_NULL_CLASS(sbVariantArg, VARIANTARG*, VariantClear(mValue));
 
-sbiTunesLibrary::sbiTunesLibrary() {
+sbiTunesLibrary::sbiTunesLibrary()
+  : miTunesFolderName(L"Songbird")
+{
 }
 
 sbiTunesLibrary::~sbiTunesLibrary() {
@@ -93,7 +94,7 @@ void WaitForCompletion(IDispatch * aStatus) {
   }
 }
 
-sbError sbiTunesLibrary::Initialize() {
+sbError sbiTunesLibrary::Initialize(std::string const & aFolderName) {
   CLSID iTunesClassID;
   HRESULT hr = CLSIDFromProgID(ITUNES_APP_PROGID,
                                &iTunesClassID);
@@ -108,6 +109,23 @@ sbError sbiTunesLibrary::Initialize() {
   if (FAILED(hr) || !miTunesApp.get()) {
     return sbError("Failed to initialize the iTunesApp object");
   }
+
+  // Convert the folder name string to a wide-character string
+  if (!aFolderName.empty())
+  {
+    const char * folderName = aFolderName.c_str();
+    wchar_t wfolderName[MAX_PATH];
+    int size = MultiByteToWideChar(CP_ACP,
+                                   0,
+                                   folderName,
+                                   -1,
+                                   wfolderName,
+                                   MAX_PATH);
+    if (size) {
+      miTunesFolderName = wfolderName;
+    }
+  }
+
   // Often the iTunes app is busy and we have to retry
   for (;;) {
     // Get the library playlist
@@ -144,7 +162,7 @@ sbError sbiTunesLibrary::Initialize() {
       // Find the songbird playlist and source
       sbIDispatchPtr playlist;
       sbIDispatchPtr::VarArgs args(1);
-      args.Append(SB_ITUNES_PLAYLIST_NAME);
+      args.Append(miTunesFolderName);
       VARIANTARG result;
       VariantInit(&result);
       hr = playlists.Invoke(L"ItemByName", args, result, DISPATCH_PROPERTYGET);
@@ -154,7 +172,7 @@ sbError sbiTunesLibrary::Initialize() {
       // Did we get a playlist back, if not create one
       else if (FAILED(hr) || !IsIDispatch(result)) {
         sbIDispatchPtr::VarArgs args(1);
-        args.Append(SB_ITUNES_PLAYLIST_NAME);
+        args.Append(miTunesFolderName);
         VariantClear(&result);
         hr = miTunesApp.Invoke(L"CreateFolder", args, result);
         if (COMBusyError(hr)) {
@@ -392,7 +410,7 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
           std::wstring parentListName;
           hr = parentPlaylist.GetProperty(L"Name", parentListName);
           if (SUCCEEDED(hr) &&
-              parentListName.compare(SB_ITUNES_PLAYLIST_NAME) == 0)
+              parentListName.compare(miTunesFolderName) == 0)
           {
             found = true;
             userPlaylist = curPlaylist;

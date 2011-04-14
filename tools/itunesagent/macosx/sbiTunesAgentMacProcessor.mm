@@ -29,6 +29,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import "SBNSString+Utils.h"
 #import "SBNSWorkspace+Utils.h"
+#include <iostream>
 #include <sys/param.h>
 #include <sstream>
 #include "LoginItemsAE.h"
@@ -230,7 +231,7 @@ sbError
 sbiTunesAgentMacProcessor::ProcessTaskFile()
 {
   // Setup the library manager now.
-  sbError error = mLibraryMgr->Init();
+  sbError error = mLibraryMgr->Init(mFolderName);
   SB_ENSURE_SUCCESS(error, error);
 
   return sbiTunesAgentProcessor::ProcessTaskFile();
@@ -242,6 +243,67 @@ sbiTunesAgentMacProcessor::ProcessTaskFile()
 void
 sbiTunesAgentMacProcessor::RegisterProfile(std::string const & aProfileName) {
   gSongbirdProfileName = [NSString stringWithUTF8String:aProfileName.c_str()];
+}
+
+void
+sbiTunesAgentMacProcessor::RegisterFolderName() {
+  // Retrieve and open distribution.ini
+  std::string distiniPath = GetDistributionIniPath();
+  if (distiniPath.empty()) {
+    return;
+  }
+
+  std::ifstream distini;
+  distini.open(distiniPath.c_str());
+
+  if (!distini) {
+    return;
+  }
+
+  bool inITSection = false;
+  std::string preference = "songbird.itunes.export.folder";
+  std::string line, value;
+
+  while (distini) {
+    getline(distini, line);
+
+    if (line[0] == '#' || line[0] == ';') { // comment
+      continue;
+    }
+
+    if (line[0] == '[') { // section header
+      std::string currSection = line.substr(1);
+
+      size_t rbpos = currSection.rfind(']');
+      if (rbpos != std::string::npos) {
+        currSection = currSection.substr(0, rbpos);
+        inITSection = currSection.find("iTunes") != std::string::npos;
+      } else {
+        inITSection = false;
+      }
+
+      continue;
+    }
+
+    if (!inITSection) {
+      continue;
+    }
+
+    // Parse the key/value pairs contained in the [iTunes] section.
+    size_t offset = line.find(preference);
+    if (offset != std::string::npos) {
+      size_t eqoffset = line.find('=', offset);
+      value = line.substr(eqoffset + 1);
+      break;
+    }
+  }
+
+  distini.close();
+
+  if (!value.empty()) {
+    std::string folderName(value);
+    mFolderName = folderName;
+  }
 }
 
 bool
@@ -322,6 +384,9 @@ sbiTunesAgentMacProcessor::RegisterForStartOnLogin()
   // Always clean previous entries first.
   sbError error = UnregisterForStartOnLogin();
   SB_ENSURE_SUCCESS(error, error);
+
+  // Register and set the iTunes playlist folder name
+  RegisterFolderName();
 
   NSURL *agentURL = GetSongbirdAgentURL();
   if (!agentURL) {
@@ -598,3 +663,29 @@ sbiTunesAgentMacProcessor::ShutdownDone()
   // No cleanup needed just yet.
 }
 
+std::string
+sbiTunesAgentMacProcessor::GetDistributionIniPath() {
+  NSMutableString *fullPath = [[[NSMutableString alloc] init] autorelease];
+
+  ProcessSerialNumber psn = { 0, kCurrentProcess };
+  FSRef fsref;
+  OSStatus err = GetProcessBundleLocation(&psn, &fsref);
+  if (err != noErr) {
+    return nil;
+  }
+
+  CFURLRef furlref;
+  furlref = CFURLCreateFromFSRef(kCFAllocatorDefault,
+                                &fsref);
+
+  CFURLRef urlref;
+  urlref = CFURLCreateCopyDeletingLastPathComponent(kCFAllocatorDefault, furlref);
+  CFRelease(furlref);
+
+  [fullPath appendFormat:@"%@/%@",
+    [(NSURL *)urlref path],
+    @"distribution/distribution.ini"];
+  CFRelease(urlref);
+
+  return [fullPath UTF8String];
+}

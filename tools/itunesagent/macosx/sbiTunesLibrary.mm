@@ -61,6 +61,8 @@ const static NSString *gCreateClassElementFormat =
 const static NSString *gSetPropertyArgFormat =
   @"data:@, '----':obj { form:prop, want:type(prop), seld:type(%@), from:@ }";
 
+// iTunes playlist folder name
+static std::string gFolderName("Songbird");
 
 //------------------------------------------------------------------------------
 // iTunes agent error handling 
@@ -582,9 +584,11 @@ sbiTunesLibraryManager::~sbiTunesLibraryManager()
 }
 
 sbError
-sbiTunesLibraryManager::Init()
+sbiTunesLibraryManager::Init(std::string const & aFolderName)
 {
   sbError error;
+
+  gFolderName = aFolderName;
 
   // First things first, load the main library playlist.
   error = LoadMainLibraryPlaylist();
@@ -613,7 +617,7 @@ sbiTunesLibraryManager::ReloadManager()
   mMainLibraryPlaylistPtr.reset();
   mSongbirdFolderPlaylistPtr.reset();
 
-  return Init();
+  return Init(gFolderName);
 }
 
 sbError
@@ -680,7 +684,7 @@ sbiTunesLibraryManager::LoadSongbirdPlaylistFolder()
         error = curPlaylistPtr->GetPlaylistName(curPlaylistName);
         SB_ENSURE_SUCCESS(error, error);
 
-        if (curPlaylistName.compare("Songbird") == 0) {
+        if (curPlaylistName.compare(gFolderName) == 0) {
           mSongbirdFolderPlaylistPtr = curPlaylistPtr;
           break;
         }
@@ -705,7 +709,7 @@ sbiTunesLibraryManager::LoadSongbirdPlaylistFolder()
       error = songbirdFolderPtr->Init(&createEvent);
       SB_ENSURE_SUCCESS(error, error);
 
-      std::string playlistName("Songbird");
+      std::string playlistName(gFolderName);
       error = songbirdFolderPtr->SetPlaylistName(playlistName);
       SB_ENSURE_SUCCESS(error, error);
 
@@ -753,7 +757,7 @@ sbiTunesLibraryManager::BuildSongbirdPlaylistFolderCache()
             // Get the name of the parent playlist
             std::string parentListName;
             error = curPlaylistParent->GetPlaylistName(parentListName);
-            if (error == sbNoError && parentListName.compare("Songbird") == 0) {
+            if (error == sbNoError && parentListName.compare(gFolderName) == 0) {
               // This is a Songbird playlist object, push it into the 
               // cached playlists vector.
               mCachedSongbirdPlaylists.push_back(curPlaylist.release());

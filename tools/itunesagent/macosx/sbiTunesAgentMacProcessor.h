@@ -43,6 +43,7 @@ public:
 
   // sbiTunesAgentProcessor
   virtual void RegisterProfile(std::string const & aProfileName);
+  virtual void RegisterFolderName();
   virtual bool TaskFileExists();
   virtual void RemoveTaskFile();
   virtual sbError WaitForiTunes();
@@ -75,6 +76,9 @@ private:
   std::string            mCurrentTaskFile;
   sbiTunesLibraryManager *mLibraryMgr;
   std::ofstream          mOutputStream;
+
+  // Retrieves the path to the distribution.ini file.
+  std::string GetDistributionIniPath();
 };
 
 #endif  // sbiTunesAgentMacProcessor_h_

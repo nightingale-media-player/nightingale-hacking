@@ -283,7 +283,7 @@ sbError sbiTunesAgentWindowsProcessor::Initialize() {
   if (!mAutoCOMInit.Succeeded()) {
     return sbError("COM Failed to initialize");
   }
-  return miTunesLibrary.Initialize();
+  return miTunesLibrary.Initialize(mFolderName);
 }
 
 void sbiTunesAgentWindowsProcessor::Log(std::string const & aMsg) {
@@ -326,6 +326,8 @@ bool sbiTunesAgentWindowsProcessor::ShutdownCallback(bool) {
  */
 sbError 
 sbiTunesAgentWindowsProcessor::RegisterForStartOnLogin() {
+  RegisterFolderName();
+
   HKEY runKey;
   LONG result = RegOpenKeyExW(HKEY_CURRENT_USER, 
                               WINDOWS_RUN_KEY,
@@ -337,7 +339,7 @@ sbiTunesAgentWindowsProcessor::RegisterForStartOnLogin() {
   }
   wchar_t exePath[MAX_PATH + 1];
   GetModuleFileNameW(0, exePath, MAX_PATH + 1);
-  
+
   sbError error;
   DWORD const bytes = (wcslen(exePath) + 1) * 
                   sizeof(wchar_t);
@@ -379,6 +381,34 @@ void
 sbiTunesAgentWindowsProcessor::RegisterProfile(std::string const & aProfileName)
 {
   gSongbirdProfileName = ConvertUTF8ToUTF16(aProfileName);
+}
+
+/**
+ * Registers the iTunes playlist folder name
+ */
+void
+sbiTunesAgentWindowsProcessor::RegisterFolderName()
+{
+  char distiniFile[MAX_PATH];
+
+  size_t bufferSize;
+  bufferSize = GetCurrentDirectoryA(0, NULL);
+  GetCurrentDirectoryA(bufferSize, distiniFile);
+
+  const char * subPath = "\\distribution\\distribution.ini";
+  strcat(distiniFile, subPath);
+  char prefValue[MAX_PATH];
+
+  if (GetPrivateProfileStringA("iTunes",
+                               "songbird.itunes.export.folder",
+                               NULL,
+                               prefValue,
+                               MAX_PATH,
+                               distiniFile))
+  {
+    std::string folderName(prefValue);
+    mFolderName = folderName;
+  }
 }
 
 bool sbiTunesAgentWindowsProcessor::TaskFileExists() {

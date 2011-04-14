@@ -96,7 +96,7 @@ public:
   // \brief Initialize the iTunes library class. This method should be called
   //        before attempting to call any other method on this class.
   //
-  sbError Init();
+  sbError Init(std::string const & aFolderName);
 
   //
   // \brief If iTunes is shutdown after the manager has been initialized, the

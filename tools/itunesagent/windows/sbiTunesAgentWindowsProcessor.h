@@ -67,7 +67,12 @@ public:
    * Registers the processor's profile
    */
   virtual void RegisterProfile(std::string const & aProfileName);
-  
+
+  /**
+   * Registers the iTunes playlist folder name
+   */
+  virtual void RegisterFolderName();
+
   /**
    * Returns true if there are any tasks file ready to process
    */
