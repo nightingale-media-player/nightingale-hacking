@@ -67,7 +67,6 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_PLAYLISTCOMMANDSHELPER_CID,
     SONGBIRD_PLAYLISTCOMMANDSHELPER_CONTRACTID,
     sbPlaylistCommandsHelperConstructor,
-    sbPlaylistCommandsHelper::RegisterSelf
   },
 };
 
