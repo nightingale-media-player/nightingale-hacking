@@ -219,6 +219,12 @@ sb-device-image-sync radiogroup {
 }
 
 /* Sync */
+vbox.device-tab-content {
+  margin-top: 25px;
+}
+hbox[sbid="sync_header"] {
+  margin-top: 5px;
+}
 hbox.content_management_header_background {
   background-color: rgb(74,73,79);
 }

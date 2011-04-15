@@ -55,7 +55,7 @@
       <xul:vbox class="device-tab-content">
 
         <xul:vbox sbid="content_selector">
-          <xul:hbox align="center">
+          <xul:hbox align="center" sbid="import_header">
             <xul:stack flex="1">
               <xul:hbox sbid="import_header_background"
                         class="content_management_header_background"/>
@@ -65,7 +65,7 @@
                             oncommand="_onUIPrefChange(true);"/>
             </xul:stack>
           </xul:hbox>
-          <xul:hbox align="center">
+          <xul:hbox align="center" sbid="sync_header">
             <xul:stack flex="1">
               <xul:hbox sbid="sync_header_background"
                         class="content_management_header_background"/>
