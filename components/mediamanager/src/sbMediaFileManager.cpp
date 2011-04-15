@@ -475,21 +475,21 @@ sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
   TRACE(("%s", __FUNCTION__));
   nsresult rv;
 
-  // There will be at most two media folders, one for audio and one
-  // for video:
-  mMediaFolders.Init(2);
+  // There will be at most three media folders, one for audio, one
+  // for video, and one to rule them all:
+  mMediaFolders.Init(3);
 
   PRBool ok = PR_FALSE;
 
   // Check the property bag for a custom media folder.  A custom
   // folder, if provided, will override the default folders:
+  nsCOMPtr<nsIFile> customFolder;
   if (aProperties) {
     NS_NAMED_LITERAL_STRING(KEY_CUSTOM_MEDIA_FOLDER, "media-folder");
     PRBool hasKey = PR_FALSE;
     rv = aProperties->HasKey(KEY_CUSTOM_MEDIA_FOLDER, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasKey) {
-      nsCOMPtr<nsIFile> customFolder;
       rv = aProperties->GetPropertyAsInterface(KEY_CUSTOM_MEDIA_FOLDER,
                                                NS_GET_IID(nsIFile),
                                                getter_AddRefs(customFolder));
@@ -501,23 +501,40 @@ sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
       // content type:
       ok = mMediaFolders.Put(EmptyString(), customFolder);
       NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
-      return NS_OK;
     }
   }
 
-  // No custom folder was provided.  Use the designated music and video
-  // folders for the current platform:
   nsCOMPtr<nsIProperties> dirService =
     do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIFile> musicDir;
-  rv = dirService->Get(MFM_MUSIC_FOLDER_KEY,
-                       NS_GET_IID(nsIFile),
-                       getter_AddRefs(musicDir));
-  if (NS_SUCCEEDED(rv)) {
-    // Got a music folder for the current platform.  Set it as
-    // the media folder for audio content:
+  // Use a custom music folder, if provided, or any generic custom folder
+  // that may have been provided above.  Otherwise, use the designated
+  // music folder for the current platform:
+  nsCOMPtr<nsIFile> musicDir = customFolder;
+  if (aProperties) {
+    NS_NAMED_LITERAL_STRING(KEY_CUSTOM_MUSIC_FOLDER, "media-folder:audio");
+    PRBool hasKey = PR_FALSE;
+    rv = aProperties->HasKey(KEY_CUSTOM_MUSIC_FOLDER, &hasKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasKey) {
+      aProperties->GetPropertyAsInterface(KEY_CUSTOM_MUSIC_FOLDER,
+                                          NS_GET_IID(nsIFile),
+                                          getter_AddRefs(musicDir));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Resort to the platform music folder only if no custom folder
+  // was supplied:
+  if (!musicDir) {
+    dirService->Get(MFM_MUSIC_FOLDER_KEY,
+                    NS_GET_IID(nsIFile),
+                    getter_AddRefs(musicDir));
+  }
+
+  if (musicDir) {
+    // Got a music folder.  Set it as the media folder for audio content:
     ok = mMediaFolders.Put(NS_LITERAL_STRING("audio"), musicDir);
     NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
   }
@@ -525,13 +542,33 @@ sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
     NS_WARNING("Could not get music folder");
   }
 
-  nsCOMPtr<nsIFile> videoDir;
-  rv = dirService->Get(MFM_VIDEO_FOLDER_KEY,
-                       NS_GET_IID(nsIFile),
-                       getter_AddRefs(videoDir));
-  if (NS_SUCCEEDED(rv)) {
-    // Got a video folder for the current platform.  Set it as
-    // the media folder for video content:
+  // Use a custom video folder, if provided, or any generic custom folder
+  // that may have been provided above.  Otherwise, use the designated
+  // video folder for the current platform:
+  nsCOMPtr<nsIFile> videoDir = customFolder;
+  if (aProperties) {
+    NS_NAMED_LITERAL_STRING(KEY_CUSTOM_VIDEO_FOLDER, "media-folder:video");
+    PRBool hasKey = PR_FALSE;
+    rv = aProperties->HasKey(KEY_CUSTOM_VIDEO_FOLDER, &hasKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasKey) {
+      aProperties->GetPropertyAsInterface(KEY_CUSTOM_VIDEO_FOLDER,
+                                          NS_GET_IID(nsIFile),
+                                          getter_AddRefs(videoDir));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Resort to the platform video folder only if no custom folder
+  // was supplied:
+  if (!videoDir) {
+    dirService->Get(MFM_VIDEO_FOLDER_KEY,
+                    NS_GET_IID(nsIFile),
+                    getter_AddRefs(videoDir));
+  }
+
+  if (videoDir) {
+    // Got a video folder.  Set it as the media folder for video content:
     ok = mMediaFolders.Put(NS_LITERAL_STRING("video"), videoDir);
     NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
   }

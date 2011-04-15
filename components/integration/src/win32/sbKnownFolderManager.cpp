@@ -57,14 +57,17 @@ sbKnownFolderManager::~sbKnownFolderManager()
 nsresult
 sbKnownFolderManager::Init()
 {
-  NS_ENSURE_TRUE(mCOMInit.Initialize(COINIT_MULTITHREADED), NS_ERROR_FAILURE);
+  // Warn, don't fail, on RPC_E_CHANGED_MODE
+  HRESULT hr = mCOMInit.Initialize(COINIT_MULTITHREADED);
+  NS_ENSURE_TRUE(SUCCEEDED(hr) || hr == RPC_E_CHANGED_MODE, NS_ERROR_FAILURE);
+  NS_WARN_IF_FALSE(SUCCEEDED(hr), "RPC_E_CHANGED_MODE on COM initialization");
 
   nsRefPtr<IKnownFolderManager> knownFolderManager;
-  HRESULT hr = ::CoCreateInstance(CLSID_KnownFolderManager, 
-                                  NULL, 
-                                  CLSCTX_INPROC_SERVER, 
-                                  IID_IKnownFolderManager, 
-                                  getter_AddRefs(knownFolderManager));
+  hr = ::CoCreateInstance(CLSID_KnownFolderManager, 
+                          NULL,
+                          CLSCTX_INPROC_SERVER,
+                          IID_IKnownFolderManager,
+                          getter_AddRefs(knownFolderManager));
   SB_WIN_ENSURE_SUCCESS(hr, NS_OK);
 
   knownFolderManager.swap(mKnownFolderManager);

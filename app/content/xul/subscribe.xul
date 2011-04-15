@@ -204,7 +204,7 @@ function doLoad()
     if (!path) {
       path = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"].
              getService(Ci.sbIDownloadDeviceHelper).
-             getDefaultMusicFolder().path;
+             getDefaultDownloadFolder("audio").path;
     }
     destURLTextbox.value = path;
   }

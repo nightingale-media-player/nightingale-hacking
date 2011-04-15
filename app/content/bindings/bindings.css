@@ -668,6 +668,11 @@ sb-filefield {
   -moz-binding: url("chrome://songbird/content/bindings/fileField.xml#sb-filefield") !important;
 }
 
+/* Save folder preference groupbox */
+sb-savefolder-box {
+  -moz-binding: url("chrome://songbird/content/bindings/saveFolderBox.xml#sb-savefolder-box") !important;
+}
+
 /* Login bindings */
 sb-login-panel {
   -moz-binding: url("chrome://songbird/content/bindings/loginPanel.xml#sb-login-panel") !important;

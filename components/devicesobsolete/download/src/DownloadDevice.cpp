@@ -2249,6 +2249,7 @@ nsresult sbDownloadDevice::SetTransferDestination(
                                 pDownloadHelper;
     nsCString                   dstSpec;
     nsresult                    propertyResult;
+    nsAutoString                contentType;
     nsresult                    result = NS_OK;
 
     /* Do nothing if destination is already set. */
@@ -2269,7 +2270,11 @@ nsresult sbDownloadDevice::SetTransferDestination(
     }
 
     if (NS_SUCCEEDED(result))
-        result = pDownloadHelper->GetDownloadFolder(getter_AddRefs(pDstFile));
+        result = pMediaItem->GetContentType (contentType);
+
+    if (NS_SUCCEEDED(result))
+        result = pDownloadHelper->GetDownloadFolder(contentType,
+                                                    getter_AddRefs(pDstFile));
 
     /* Create a unique local destination file object.    */
     /* note that we only record the directory, we do not */

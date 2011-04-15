@@ -66,7 +66,7 @@ interface sbIDownloadDevice : sbIDeviceBase
   void clearCompletedItems();
 };
 
-[scriptable, uuid(28ebcce9-7ce4-4e92-8c23-c0a23d3a3bd4)]
+[scriptable, uuid(765c110d-ffd0-4bca-a145-192b677254e6)]
 interface sbIDownloadDeviceHelper : nsISupports
 {
   /**
@@ -74,8 +74,8 @@ interface sbIDownloadDeviceHelper : nsISupports
    * bug.
    */
   sbIMediaList getDownloadMediaList();
-  nsIFile getDownloadFolder();
-  nsIFile getDefaultMusicFolder();
+  nsIFile getDownloadFolder(in AString aContentType);
+  nsIFile getDefaultDownloadFolder(in AString aContentType);
 
   void downloadItem(in sbIMediaItem aMediaItem);
 

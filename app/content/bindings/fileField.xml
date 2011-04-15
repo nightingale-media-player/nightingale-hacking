@@ -56,8 +56,7 @@
           }
           else {
             this.removeAttribute("image");
-            var bundle = document.getAnonymousElementByAttribute(this, "anonid", "bundle");
-            this.label = bundle.getString("downloadHelperNoneSelected");
+            this.label = "";
           }            
           return val;
         ]]>
@@ -92,10 +91,10 @@
             }
           }
 
-          var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                              .getService(Components.interfaces.nsIIOService);
-          var url = ios.newFileURI(aFile).QueryInterface(Components.interfaces.nsIURL);
-          return url.fileName;
+          const SEPARATOR = (aFile.path[0] == "/" ? "/" : "\\");
+          const LEAFNAME_REGEXP = RegExp("[^\\" + SEPARATOR + "]*$");
+          var leafname = aFile.path.match(LEAFNAME_REGEXP)[0];
+          return leafname;
         ]]>
         </body>
       </method>
