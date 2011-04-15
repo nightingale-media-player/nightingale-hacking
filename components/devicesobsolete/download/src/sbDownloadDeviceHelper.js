@@ -327,10 +327,21 @@ function sbDownloadDeviceHelper_getDownloadFolder(aContentType)
                       getService(Ci.fuelIApplication);
   const prefs = Application.prefs;
 
-  var downloadFolder;
+  var downloadPath;
   if (prefs.has(PREF_DOWNLOAD_FOLDER[aContentType])) {
-    var downloadPath = prefs.get(PREF_DOWNLOAD_FOLDER[aContentType]).value;
+    downloadPath = prefs.get(PREF_DOWNLOAD_FOLDER[aContentType]).value;
+  }
+
+  var downloadFolder;
+  if (downloadPath) {
     downloadFolder = makeFile(downloadPath);
+  }
+  else {
+    // The pref was empty. Use (and write) the default.
+    downloadFolder = this.getDefaultDownloadFolder(aContentType);
+    if (downloadFolder) {
+      prefs.setValue(PREF_DOWNLOAD_FOLDER[aContentType], downloadFolder.path);
+    }
   }
 
   const alwaysPrompt = prefs.getValue(PREF_DOWNLOAD_ALWAYSPROMPT[aContentType], false);
