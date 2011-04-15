@@ -545,6 +545,10 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
   nsString propertyId;
   nsString propertyValue;
   nsString propertyDestinationValue;
