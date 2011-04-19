@@ -648,7 +648,17 @@ addToPlaylistHelper.prototype = {
 
   refreshCommands: function() {
     if (this.m_commands) {
-      if (this.m_commands.m_Context && this.m_commands.m_Context.m_Playlist) {
+      /* We need to ensure that the context and playlist have been initialized
+       * and are ready to display commands before calling refreshCommands.
+       *
+       * It is possible for an event handler to fire before the binding
+       * is created or after it is dqestroyed, so it is possible for this to
+       * be triggered before m_Playlist is fully instantiated or after pieces
+       * of it have gone away.  Thus, we need to also check that refreshCommands
+       * is present to ensure the playlist binding is in a good state. */
+      if (this.m_commands.m_Context &&
+          this.m_commands.m_Context.m_Playlist &&
+          this.m_commands.m_Context.m_Playlist.refreshCommands) {
         this.makeListOfPlaylists();
         this.m_commands.m_Context.m_Playlist.refreshCommands();
       }
