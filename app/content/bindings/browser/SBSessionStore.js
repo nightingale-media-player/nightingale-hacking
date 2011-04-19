@@ -322,11 +322,8 @@ var SBSessionStore = {
                 LOG(<>not a media-esque tab ({firstrunURL} vs {url}: {(firstrunURL == url)})</>);
                 // this is the first tab, but this is unsuitable for the media tab
                 location = "_top";
-                // load the library page to fill up the media tab
-                libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                           .getService(Ci.sbILibraryManager);
-                mainLib = libMgr.mainLibrary;
-                newTab = aTabBrowser.loadMediaList(mainLib);
+                // Load the default page
+                newTab = this.loadDefault(aTabBrowser);
               }
             } else {
               // no media tab, but this is the first tab
@@ -352,11 +349,8 @@ var SBSessionStore = {
                 // It's a valid device, so go ahead and open up the chrome page
                 newTab = aTabBrowser.loadURI(url, null, null, null, location);
               } catch (e) {
-                // This is an invalid device, just load the main library view.
-                var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                               .getService(Ci.sbILibraryManager);
-                var mainLib = libMgr.mainLibrary;
-                aTabBrowser.loadMediaList(mainLib);
+                // This is an invalid device -- load the default
+                newTab = this.loadDefault(aTabBrowser);
               }
             }
           } else {
@@ -383,10 +377,7 @@ var SBSessionStore = {
     //   (isInvalidChromeURL says true)
     // - or no saved tabs, not first run, and tab state pref is missing/corrupt.
     if (isFirstTab) {
-      var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                     .getService(Ci.sbILibraryManager);
-      var mainLib = libMgr.mainLibrary;
-      aTabBrowser.loadMediaList(mainLib);
+      this.loadDefault(aTabBrowser);
     }
 
     // Select the selected tab from the previous session (or the first one if
@@ -404,6 +395,16 @@ var SBSessionStore = {
     var selectEvent = document.createEvent("Events");
     selectEvent.initEvent("select", true, true);
     aTabBrowser.tabStrip.dispatchEvent(selectEvent);
+  },
+
+  loadDefault: function(aTabBrowser) {
+    var mainLib = LibraryUtils.mainLibrary;
+    var view = LibraryUtils.createStandardMediaListView(mainLib);
+    var constraints = [[["http://songbirdnest.com/data/1.0#isList",["0"]]],
+                       [["http://songbirdnest.com/data/1.0#hidden",["0"]]],
+                       [["http://songbirdnest.com/data/1.0#contentType",["audio"]]]]
+    view.filterConstraint = LibraryUtils.createConstraint(constraints);
+    return aTabBrowser.loadMediaList(mainLib, null, "_media", view, null, false);
   },
 
   tabStateRestored: false
