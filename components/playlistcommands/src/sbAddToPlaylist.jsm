@@ -496,7 +496,7 @@ addToPlaylistHelper.prototype = {
         if (downloadMediaList)
           this._downloadListGUID = downloadMediaList.guid;
 
-        this._libraryServicePane = 
+        this._libraryServicePane =
           Components.classes['@songbirdnest.com/servicepane/library;1']
           .getService(Components.interfaces.sbILibraryServicePaneService);
       },
@@ -524,13 +524,13 @@ addToPlaylistHelper.prototype = {
         if (item.guid == this._downloadListGUID) {
           return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
         }
-        
+
         // XXXlone also prevent playlists that do not have a corresponding node in
         // the service pane from appearing (or those whose node, or parent nodes are
-        // hidden). This filters out remote playlists, as well as 'utility' extension 
-        // playlists. This should be a fairly good test for discriminating which 
-        // playlists are useful as sento targets, since it mirror the user's ability 
-        // to drag and drop to them. Eventually this should be fixed by testing the 
+        // hidden). This filters out remote playlists, as well as 'utility' extension
+        // playlists. This should be a fairly good test for discriminating which
+        // playlists are useful as sento targets, since it mirror the user's ability
+        // to drag and drop to them. Eventually this should be fixed by testing the
         // policy on the playlist once we close bug 4017.
         function isHidden(node) {
           while (node) {
@@ -626,17 +626,17 @@ addToPlaylistHelper.prototype = {
       // the enumerator we get hands back sbIIndexedMediaItem, not just plain
       // 'ol sbIMediaItems
       var unwrapper = createUnwrapper(selection);
-            
+
       var asyncListener = {
         onProgress: function(aItemsProcessed, aComplete) {
-          DNDUtils.reportAddedTracks(aItemsProcessed, 
+          DNDUtils.reportAddedTracks(aItemsProcessed,
                                      0, /* no duplicate reporting */
                                      0, /* no unsupported reporting */
                                      medialist.name);
         },
         QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
       }
-      
+
       medialist.addSomeAsync(unwrapper, asyncListener);
     }
   },

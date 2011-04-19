@@ -61,7 +61,7 @@ function createUnwrapper(aSelection) {
   var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
                     .createInstance(Ci.sbIMediaListEnumeratorWrapper);
   unwrapper.initialize(aSelection);
-  
+
   return unwrapper;
 }
 
@@ -563,7 +563,7 @@ addToDeviceHelper.prototype = {
                                items,
                                destItems,
                                changeset);
-                                               
+
       device.exportToDevice(deviceLibrary, changeset.value);
 
       DNDUtils.reportAddedTracks(changeset.value.changes.length,
@@ -601,7 +601,7 @@ addToDeviceHelper.prototype = {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   },
- 
+
   // trap event for device library added/removed, and refresh the commands
   // we trap the library add/remove (instead of the plain device add/remove)
   // since we check the library count in makeListOfDevices(), so we need to
