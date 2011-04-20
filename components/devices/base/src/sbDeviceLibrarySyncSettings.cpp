@@ -402,9 +402,10 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
   rv = settings->SetImport(import);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString prefKey;
-  rv = GetMgmtTypePrefKey(aMediaType, prefKey);
+  PRUint32 mgmtType;
+  rv = GetMgmtTypePref(aDevice, aMediaType, mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
+  settings->SetMgmtType(mgmtType);
 
   nsCOMPtr<nsIArray> mediaLists;
   rv = settings->GetSyncPlaylistsNoLock(getter_AddRefs(mediaLists));
