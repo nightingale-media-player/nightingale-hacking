@@ -52,6 +52,7 @@ XPIDL_EXTRA_FLAGS = \
 
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
+           sbLocalDatabaseGUIDArrayLengthCache.cpp \
            sbLocalDatabaseAsyncGUIDArray.cpp \
            sbLocalDatabaseDynamicMediaList.cpp \
            sbLocalDatabaseDynamicMediaListFactory.cpp \

@@ -61,6 +61,7 @@ class sbAutoBatchHelper;
 class sbIBatchCreateMediaItemsListener;
 class sbILibraryFactory;
 class sbILocalDatabasePropertyCache;
+class sbILocalDatabaseGUIDArrayLengthCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
 class sbLocalDatabaseMediaListView;
@@ -256,6 +257,8 @@ public:
   nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems,
                                 sbIMediaListAsyncListener *aListener);
 
+  nsresult GetLengthCache(sbILocalDatabaseGUIDArrayLengthCache **aLengthCache);
+
 private:
   nsresult CreateQueries();
 
@@ -405,6 +408,8 @@ private:
   nsCOMPtr<sbIDatabasePreparedStatement> mGetGUIDForIdentity;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
+
+  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> mLengthCache;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
   sbMediaItemInfoTable mMediaItemTable;

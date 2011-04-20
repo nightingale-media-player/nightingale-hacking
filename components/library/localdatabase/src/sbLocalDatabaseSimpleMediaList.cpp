@@ -710,6 +710,13 @@ sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = GetArray()->SetPropertyCache(propertyCache);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> lengthCache;
+  rv = mLibrary->GetLengthCache(getter_AddRefs(lengthCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetArray()->SetLengthCache(lengthCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 

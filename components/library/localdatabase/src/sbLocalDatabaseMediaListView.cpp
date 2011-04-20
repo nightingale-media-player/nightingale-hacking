@@ -287,7 +287,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mArray = do_CreateInstance(SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString databaseGuid;
   rv = mLibrary->GetDatabaseGuid(databaseGuid);
@@ -326,6 +325,13 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     rv = mArray->SetBaseConstraintValue(mMediaListId);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> lengthCache;
+  rv = mLibrary->GetLengthCache(getter_AddRefs(lengthCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->SetLengthCache(lengthCache);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);

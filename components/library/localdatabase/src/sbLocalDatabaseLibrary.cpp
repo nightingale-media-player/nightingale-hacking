@@ -615,6 +615,9 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   mPropertyCache = propCache;
 
+  mLengthCache = new sbLocalDatabaseGUIDArrayLengthCache();
+  NS_ENSURE_TRUE (mLengthCache, NS_ERROR_OUT_OF_MEMORY);
+
   SetArray(new sbLocalDatabaseGUIDArray());
   NS_ENSURE_TRUE(GetArray(), NS_ERROR_OUT_OF_MEMORY);
 
@@ -636,6 +639,9 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetArray()->SetPropertyCache(mPropertyCache);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetArray()->SetLengthCache(mLengthCache);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -1950,6 +1956,16 @@ sbLocalDatabaseLibrary::Shutdown()
   mGetTypeForGUID = nsnull;
   mStatisticsSumPreparedStatement = nsnull;
 
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseLibrary::GetLengthCache(sbILocalDatabaseGUIDArrayLengthCache** aLengthCache)
+{
+  NS_ENSURE_ARG_POINTER(aLengthCache);
+  NS_ENSURE_TRUE(mLengthCache, NS_ERROR_NOT_INITIALIZED);
+
+  NS_ADDREF(*aLengthCache = mLengthCache);
   return NS_OK;
 }
 

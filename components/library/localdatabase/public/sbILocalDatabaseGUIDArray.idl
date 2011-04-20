@@ -58,10 +58,26 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
 };
 
 /**
+ * \interface sbILocalDatabaseGUIDArrayLengthCache
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(80d33aac-dbb1-44eb-bda8-22c764ab16df)]
+interface sbILocalDatabaseGUIDArrayLengthCache : nsISupports
+{
+  void addCachedLength(in AString aKey, in unsigned long aLength);
+  void removeCachedLength(in AString aKey);
+  unsigned long getCachedLength(in AString aKey);
+
+  void addCachedNonNullLength(in AString aKey, in unsigned long aLength);
+  void removeCachedNonNullLength(in AString aKey);
+  unsigned long getCachedNonNullLength(in AString aKey);
+};
+
+/**
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(c340dbf2-4d67-4749-998f-5298205d4399)]
+[scriptable, uuid(e1b502cc-3e00-4873-bb9b-722cd8a13e99)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -92,6 +108,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   attribute sbILocalDatabaseGUIDArrayListener listener;
 
   attribute sbILocalDatabasePropertyCache propertyCache;
+
+  attribute sbILocalDatabaseGUIDArrayLengthCache lengthCache;
   
   void addSort(in AString aProperty,
                in boolean aAscending);

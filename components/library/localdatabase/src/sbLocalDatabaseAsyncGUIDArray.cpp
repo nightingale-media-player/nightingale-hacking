@@ -25,6 +25,7 @@
 */
 
 #include "sbLocalDatabaseAsyncGUIDArray.h"
+#include "sbLocalDatabaseGUIDArray.h"
 
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
@@ -37,8 +38,6 @@
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbProxiedComponentManager.h>
-
-#include "sbLocalDatabaseGUIDArray.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -487,6 +486,24 @@ sbLocalDatabaseAsyncGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* a
   nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetPropertyCache(aPropertyCache);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::SetLengthCache(
+        sbILocalDatabaseGUIDArrayLengthCache *aLengthCache)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->SetLengthCache(aLengthCache);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetLengthCache(
+        sbILocalDatabaseGUIDArrayLengthCache **aLengthCache)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetLengthCache(aLengthCache);
 }
 
 NS_IMETHODIMP
