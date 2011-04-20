@@ -408,6 +408,7 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
   settings->SetMgmtType(mgmtType);
 
   nsCOMPtr<nsIArray> mediaLists;
+  nsString prefKey;
   rv = settings->GetSyncPlaylistsNoLock(getter_AddRefs(mediaLists));
   // Some media types won't have playlists
   if (rv != NS_ERROR_NOT_AVAILABLE) {
