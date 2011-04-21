@@ -387,7 +387,7 @@ nsresult sbRequestThreadQueue::FindDuplicateRequest(sbRequestItem * aItem,
   nsresult rv;
 
   aIsDuplicate = false;
-  // System request are never dupes
+  // System requests are never dupes
   if (aItem->GetType() < sbRequestThreadQueue::USER_REQUEST_TYPES) {
     return NS_OK;
   }
