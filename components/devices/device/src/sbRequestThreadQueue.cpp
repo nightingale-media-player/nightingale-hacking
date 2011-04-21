@@ -387,12 +387,20 @@ nsresult sbRequestThreadQueue::FindDuplicateRequest(sbRequestItem * aItem,
   nsresult rv;
 
   aIsDuplicate = false;
+  // System request are never dupes
+  if (aItem->GetType() < sbRequestThreadQueue::USER_REQUEST_TYPES) {
+    return NS_OK;
+  }
   const RequestQueue::const_reverse_iterator rend = mRequestQueue.rend();
   for (RequestQueue::const_reverse_iterator riter = mRequestQueue.rbegin();
        riter != rend && !aIsDuplicate;
        ++riter) {
 
     sbRequestItem * request = *riter;
+    // System requests are never dupes, continue looking
+    if (request->GetType() < sbRequestThreadQueue::USER_REQUEST_TYPES) {
+      continue;
+    }
     // We only need to check within the current batch. Duplicate checking is
     // an optimization and we're trying to consolidate multiple requests that
     // come in quickly as a result of a single operation.
