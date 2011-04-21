@@ -200,6 +200,7 @@ function runTest () {
 }
 
 function test_prefs(device) {
+  log("test_prefs");
   assertTrue(typeof(device.getPreference("hello")) == "undefined");
   
   device.setPreference("world", 3);
