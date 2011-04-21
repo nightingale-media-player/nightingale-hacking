@@ -230,7 +230,12 @@
         // Get all medialists in each library
         while (libs.hasMoreElements()) {
           var lib = libs.getNext();
-          var lists = lib.getItemsByProperty(SBProperties.isList, "1");
+          try {
+            var lists = lib.getItemsByProperty(SBProperties.isList, "1");
+          } catch (e) {
+            // this library has no mediaLists, just continue
+            continue;
+          }
           for (var i = 0; i < lists.length; i++) {
             var list = lists.queryElementAt(i, Ci.sbIMediaList);
 
