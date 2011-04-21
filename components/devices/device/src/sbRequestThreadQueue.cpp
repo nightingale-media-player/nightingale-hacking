@@ -228,6 +228,7 @@ sbRequestThreadQueue::~sbRequestThreadQueue()
 
 nsresult sbRequestThreadQueue::BatchBegin()
 {
+  TRACE_FUNCTION("");
 
   NS_ENSURE_STATE(mLock);
   nsAutoLock lock(mLock);
@@ -239,6 +240,7 @@ nsresult sbRequestThreadQueue::BatchBegin()
 
 nsresult sbRequestThreadQueue::BatchEnd()
 {
+  TRACE_FUNCTION("");
   NS_ENSURE_STATE(mLock);
   nsAutoLock lock(mLock);
   NS_ASSERTION(mBatchDepth > 0,
@@ -282,6 +284,7 @@ sbRunnableMethod(sbRequestThreadQueue & aObject,
 
 nsresult sbRequestThreadQueue::Start()
 {
+  TRACE_FUNCTION("");
   // Ensure we've allocated our lock and monitor
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
   NS_ENSURE_TRUE(mStopWaitMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -323,6 +326,7 @@ nsresult sbRequestThreadQueue::Start()
 
 nsresult sbRequestThreadQueue::Stop()
 {
+  TRACE_FUNCTION("");
   NS_ENSURE_STATE(mLock);
   nsresult rv;
 
@@ -361,6 +365,8 @@ nsresult sbRequestThreadQueue::Stop()
 
 nsresult sbRequestThreadQueue::ThreadShutdownAction(int)
 {
+  TRACE_FUNCTION("");
+
   NS_ENSURE_TRUE(NS_IsMainThread(), NS_ERROR_FAILURE);
 
   OnThreadStop();
@@ -443,6 +449,7 @@ nsresult sbRequestThreadQueue::PushRequestInternal(sbRequestItem * aRequestItem)
 
 nsresult sbRequestThreadQueue::PushRequest(sbRequestItem * aRequestItem)
 {
+  TRACE_FUNCTION("RequestType=%ui", aRequestItem->mType);
   NS_ENSURE_ARG_POINTER(aRequestItem);
 
   NS_ENSURE_STATE(mLock);
@@ -475,6 +482,7 @@ nsresult sbRequestThreadQueue::PushRequest(sbRequestItem * aRequestItem)
 
 nsresult sbRequestThreadQueue::PopBatch(Batch & aBatch)
 {
+  TRACE_FUNCTION("");
   NS_ENSURE_STATE(mLock);
 
   nsAutoLock lock(mLock);
@@ -543,6 +551,8 @@ nsresult sbRequestThreadQueue::ClearRequestsNoLock(Batch & aBatch)
 
 nsresult sbRequestThreadQueue::ClearRequests()
 {
+  TRACE_FUNCTION("");
+
   nsresult rv;
 
   NS_ENSURE_STATE(mLock);
@@ -567,6 +577,8 @@ nsresult sbRequestThreadQueue::ClearRequests()
 
 nsresult sbRequestThreadQueue::CancelRequests()
 {
+  TRACE_FUNCTION("");
+
   NS_ENSURE_STATE(mStopWaitMonitor);
 
   nsresult rv;
@@ -597,6 +609,8 @@ nsresult sbRequestThreadQueue::CancelRequests()
 
 bool sbRequestThreadQueue::CheckAndResetRequestAbort()
 {
+  TRACE_FUNCTION("");
+
   NS_ASSERTION(mLock, "mLock null");
 
   // Notify interested parties that we are aborting. This would be anyone that

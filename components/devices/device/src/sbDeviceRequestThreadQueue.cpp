@@ -34,6 +34,7 @@
 #include <nsArrayUtils.h>
 
 // Songbird includes
+#include <sbDebugUtils.h>
 #include <sbPropertiesCID.h>
 
 sbDeviceRequestThreadQueue * sbDeviceRequestThreadQueue::New()
@@ -45,6 +46,8 @@ sbDeviceRequestThreadQueue * sbDeviceRequestThreadQueue::New()
 
 nsresult sbDeviceRequestThreadQueue::Start(sbBaseDevice * aBaseDevice)
 {
+  TRACE_FUNCTION("");
+
   NS_ENSURE_ARG_POINTER(aBaseDevice);
   sbIDevice * baseDevice = mBaseDevice;
   NS_IF_RELEASE(baseDevice);
@@ -59,10 +62,12 @@ nsresult sbDeviceRequestThreadQueue::Start(sbBaseDevice * aBaseDevice)
 sbDeviceRequestThreadQueue::sbDeviceRequestThreadQueue() :
     mBaseDevice(nsnull)
 {
+  SB_PRLOG_SETUP(sbDeviceRequestThreadQueue);
 }
 
 sbDeviceRequestThreadQueue::~sbDeviceRequestThreadQueue()
 {
+  TRACE_FUNCTION("");
   sbIDevice * device = mBaseDevice;
   mBaseDevice = nsnull;
   NS_IF_RELEASE(device);
@@ -376,6 +381,8 @@ sbDeviceRequestThreadQueue::IsDuplicateRequest(sbRequestItem * aQueueRequest,
 
 nsresult sbDeviceRequestThreadQueue::CleanupBatch(Batch & aBatch)
 {
+  TRACE_FUNCTION("");
+
   nsresult rv;
   nsInterfaceHashtable<nsISupportsHashKey, nsIMutableArray> groupedItems;
   groupedItems.Init();
@@ -429,6 +436,8 @@ nsresult sbDeviceRequestThreadQueue::CleanupBatch(Batch & aBatch)
 
 nsresult sbDeviceRequestThreadQueue::OnThreadStop()
 {
+  TRACE_FUNCTION("");
+
   nsresult rv;
 
   if (mBaseDevice) {
@@ -475,6 +484,8 @@ sbDeviceRequestThreadQueue::RemoveLibraryEnumerator(
 nsresult
 sbDeviceRequestThreadQueue::ProcessBatch(Batch & aBatch)
 {
+  TRACE_FUNCTION("");
+
   NS_ENSURE_STATE(mBaseDevice);
 
   nsresult rv;
