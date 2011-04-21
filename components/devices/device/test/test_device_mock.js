@@ -183,8 +183,13 @@ function runTest () {
         log(testFailMessage);
         testStatus = TEST_FAILED;
         // stop a circular reference
-        if (device.connected)
+        if (device.connected) {
            device.disconnect();
+        }
+        else {
+          fail();
+          return;
+        }
       }    
     }
   }
