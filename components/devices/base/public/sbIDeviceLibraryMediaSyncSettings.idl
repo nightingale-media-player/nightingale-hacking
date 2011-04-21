@@ -47,6 +47,9 @@ interface sbIDeviceLibraryMediaSyncSettings : nsISupports
    *   SYNC_MGMT_ALL -       Synchronize all media items of this type
    *   SYNC_MGMT_PLAYLISTS - Synchronize only media belonging to selected
    *                         playlists
+   *
+   * Note: These values begin at 10 to avoid collisions with legacy values
+   *       between 0 and 5.
    */
   const unsigned long SYNC_MGMT_NONE                  = 10;
   const unsigned long SYNC_MGMT_ALL                   = 11;

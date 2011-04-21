@@ -62,12 +62,21 @@ static void
 MigrateLegacyMgmtValues(PRUint32 & aValue)
 {
   // Legacy values from the old sync settings system
+  PRUint32 const LEGACY_SYNC_NONE = 0x0;
   PRUint32 const LEGACY_SYNC_ALL = 0x2;
   PRUint32 const LEGACY_MANUAL_SYNC_ALL = 0x3;
   PRUint32 const LEGACY_SYNC_PLAYLISTS = 0x4;
   PRUint32 const LEGACY_MANUAL_SYNC_PLAYLISTS = 0x5;
 
   switch (aValue) {
+    case sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE:
+    case sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL:
+    case sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS:
+      // aValue is already an acceptable value, no need to migrate
+      break;
+    case LEGACY_SYNC_NONE:
+      aValue = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE;
+      break;
     case LEGACY_SYNC_ALL:
     case LEGACY_MANUAL_SYNC_ALL:
       aValue = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL;
@@ -75,6 +84,10 @@ MigrateLegacyMgmtValues(PRUint32 & aValue)
     case LEGACY_SYNC_PLAYLISTS:
     case LEGACY_MANUAL_SYNC_PLAYLISTS:
       aValue = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS;
+      break;
+    default:
+      // unexpected aValue, default to SYNC_MGMT_NONE
+      aValue = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE;
       break;
   }
 }
