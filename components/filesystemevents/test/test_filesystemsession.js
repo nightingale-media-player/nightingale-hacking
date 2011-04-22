@@ -48,6 +48,7 @@ function runTest()
                    .getService(Ci.nsIProperties)
                    .get("ProfD", Ci.nsIFile);
 
+  watchDir.normalize();
   watchDir.append("watch_dir");
   if (!watchDir.exists() || !watchDir.isDirectory()) {
     watchDir.create(Ci.nsIFile.DIRECTORY_TYPE, 0777);

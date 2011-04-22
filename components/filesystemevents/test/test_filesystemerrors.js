@@ -42,6 +42,7 @@ function runTest()
                    .getService(Ci.nsIProperties)
                    .get("ProfD", Ci.nsIFile);
 
+  watchDir.normalize();
   watchDir.append("invalid_watch_dir");
   if (watchDir.exists()) {
     // Ensure that the folder does not exist for this test.
