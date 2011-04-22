@@ -378,6 +378,7 @@ nsresult sbRequestThreadQueue::ThreadShutdownAction(int)
 
 nsresult sbRequestThreadQueue::ProcessRequest()
 {
+  NS_ENSURE_STATE(mReqAddedEvent);
   // Dispatch processing of the request added event.
   nsresult rv = mThread->Dispatch(mReqAddedEvent, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -702,6 +703,7 @@ sbRTQAddedEvent::Run()
 
     // Need to dispatch the thread stop event and then return
     if (batchRequestType == sbRequestThreadQueue::REQUEST_THREAD_STOP) {
+      NS_ENSURE_STATE(mRTQ->mShutdownAction);
       NS_DispatchToMainThread(mRTQ->mShutdownAction);
 
       // Now that we've dispatched it, null it out - the runnable holds a ref to
