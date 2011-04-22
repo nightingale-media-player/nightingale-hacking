@@ -742,6 +742,17 @@ sbMediaFileManager::InitFolderNameTemplates(nsIPropertyBag2 * aProperties)
   // Default to an empty template, which will situate a media file
   // at the root of its media folder:
   nameTemplate.Clear();
+
+  // We add an empty string here. An empty string is considered equivalent to
+  // no entry at all - so this makes this equivalent to an actually empty
+  // template. However, due to a bug in how we link things on OSX (see the patch
+  // we have to nsTArray.cpp in our tree), destroying an empty nsTArray does
+  // not work correctly (malloc assertions, etc.). This hack lets us get around
+  // that with minimal additional pain. It's still pretty stupid; it'd be much
+  // better to fix the linking - unfortunately my knowledge of Mach-O etc. is
+  // a little too limited for that.
+  nameTemplate.AppendElement(NS_LITERAL_STRING(""));
+
   ok = mFolderNameTemplates.Put(EmptyString(), nameTemplate);
   NS_ENSURE_TRUE(ok, NS_ERROR_OUT_OF_MEMORY);
 
