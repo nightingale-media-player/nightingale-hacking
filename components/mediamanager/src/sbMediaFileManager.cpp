@@ -1391,7 +1391,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the original was in the managed folder do a move instead of a copy/delete
-  mediaFolder.forget();
+  mediaFolder = nsnull;
   rv = GetMediaFolder(aSrcFile, getter_AddRefs(mediaFolder));
   NS_ENSURE_SUCCESS(rv, rv);
   if (!mediaFolder) {
