@@ -192,6 +192,9 @@ public:
 
     /**
      * Returns PR_TRUE if the request is for a playlist and PR_FALSE otherwise
+     * The playlist test is determined by checking "list". If list is not set
+     * then this is not a playlist request. If list is set AND list is not a
+     * sbILibrary then this is a playlist request.
      */
     PRBool IsPlaylist() const;
 
