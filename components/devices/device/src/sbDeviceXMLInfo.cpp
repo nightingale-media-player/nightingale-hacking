@@ -462,18 +462,40 @@ sbDeviceXMLInfo::GetExcludedFolders(nsAString & aExcludedFolders)
 
   // Get all excluded folders.
   PRUint32 nodeCount = excludeNodeList.Length();
+  const char * delimiter = "";
   for (PRUint32 i = 0; i < nodeCount; i++) {
     // Get the next exclude folder element.
     nsCOMPtr<nsIDOMElement> excludeElement;
     excludeElement = do_QueryInterface(excludeNodeList[i], &rv);
     if (NS_SUCCEEDED(rv)) {
-      nsString excludeURL;
-      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("url"), excludeURL);
+      nsString excludeStr;
+
+      // The url attribute, if present, will contain a literal path.
+      // Remove any leading slash to distinguish literal paths from
+      // patterns
+      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("url"), excludeStr);
       NS_ENSURE_SUCCESS(rv, rv);
-      if (!aExcludedFolders.IsEmpty()) {
-        aExcludedFolders.AppendLiteral(",");
+      if (excludeStr.Length() > 0 && excludeStr[0] == L'/') {
+        excludeStr.Cut(0, 1);
       }
-      aExcludedFolders.Append(excludeURL);
+      if (!excludeStr.IsEmpty()) {
+        aExcludedFolders.AppendLiteral(delimiter);
+        aExcludedFolders.Append(excludeStr);
+        delimiter = ",";
+      }
+
+      // The match attribute, if present, will contain a folder name pattern.
+      // Add a leading and trailing slash to distinguish patterns from literal
+      // paths.  The pattern itself may not contain any slashes
+      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("match"), excludeStr);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (!excludeStr.IsEmpty() && excludeStr.Find("/") == -1) {
+        aExcludedFolders.AppendLiteral(delimiter);
+        aExcludedFolders.AppendLiteral("/");
+        aExcludedFolders.Append(excludeStr);
+        aExcludedFolders.AppendLiteral("/");
+        delimiter = ",";
+      }
     }
   }
   return NS_OK;
