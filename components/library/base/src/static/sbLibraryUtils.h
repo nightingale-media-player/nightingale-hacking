@@ -251,7 +251,10 @@ public:
                     /* in  */ nsAString const & aListName,
                     /* out */ nsAString & aName);
   /**
-   * \brief Links a copy to its original
+   * \brief Links a copy to its original. It will take into account the
+   * libraries the items belong to. It will only link from main library to
+   * non-main library. And if necessary if the copy is in the main library 
+   * it will link the original to the copy
    * \param aOriginal The original to link aCopy to
    * \param aCopy The copy to be linked
    */
@@ -271,6 +274,27 @@ nsresult GetMainLibrary(sbILibrary ** aMainLibrary) {
 
   nsCOMPtr<sbILibrary> mainLibrary;
   return libManager->GetMainLibrary(aMainLibrary);
+}
+
+/**
+ * Tests whether the library passed is the main library
+ */
+inline
+PRBool sbIsMainLibrary(sbILibrary * aLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibrary> mainLibrary;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRBool isEqual;
+  rv = mainLibrary->Equals(aLibrary, &isEqual);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  return isEqual;
 }
 
 /**

@@ -246,7 +246,7 @@ sbBaseDevice::ImportNewMediaLists(sbILibrary * aImportToLibrary,
     rv = sbLibraryUtils::LinkCopy(newMediaList, devMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = CopyChangedMediaItemsToMediaList(change, devMediaList);
+    rv = CopyChangedMediaItemsToMediaList(change, newMediaList);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

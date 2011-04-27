@@ -863,30 +863,60 @@ sbLibraryUtils::LinkCopy(sbIMediaItem * aOriginal, sbIMediaItem * aCopy)
 
   nsresult rv;
 
+  nsCOMPtr<sbILibrary> originalLibrary;
+  rv = aOriginal->GetLibrary(getter_AddRefs(originalLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> newLibrary;
+  rv = aCopy->GetLibrary(getter_AddRefs(newLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  const PRBool originalIsMain = sbIsMainLibrary(originalLibrary);
+  const PRBool copyIsMain = sbIsMainLibrary(newLibrary);
+
+  // If we're copying from the main library or between two non-main libraries
+  // set the link up normally. DL is device library or other non-main library.
+  // ML to ML  = No Link
+  // ML to DL = Normal Link
+  // DL to ML = Reverse Link
+  // DL TO DL = No Link (Even if different libraries). origin guid from source
+  //            will be copied to the copy.
+  if (!originalIsMain && copyIsMain) {
+    // Copying from a non-main library to main library create a reverse link
+    // swap the original and copy
+    sbIMediaItem * temp = aCopy;
+    aCopy = aOriginal;
+    aOriginal = temp;
+  }
+  else if ((!originalIsMain && !copyIsMain) ||
+           (originalIsMain && copyIsMain)) {
+    return NS_OK;
+  }
+
   nsCOMPtr<sbIMutablePropertyArray> props =
     do_CreateInstance(
                "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1",
                &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString playlistGuid;
-  rv = aOriginal->GetGuid(playlistGuid);
+  nsString originalGuid;
+  rv = aOriginal->GetGuid(originalGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                             playlistGuid);
+                             originalGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> playlistLib;
-  rv = aOriginal->GetLibrary(getter_AddRefs(playlistLib));
+  nsCOMPtr<sbILibrary> originalLib;
+  rv = aOriginal->GetLibrary(getter_AddRefs(originalLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString playlistLibGuid;
-  rv = playlistLib->GetGuid(playlistLibGuid);
+  nsString originalLibGuid;
+  rv = originalLib->GetGuid(originalLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-                             playlistLibGuid);
+                             originalLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Determine whether the target item belongs to a device:
@@ -908,7 +938,7 @@ sbLibraryUtils::LinkCopy(sbIMediaItem * aOriginal, sbIMediaItem * aCopy)
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool isMainLib;
-    rv = playlistLib->Equals(mainLib, &isMainLib);
+    rv = originalLib->Equals(mainLib, &isMainLib);
     NS_ENSURE_SUCCESS(rv, rv);
     if (isMainLib) {
       rv = props->AppendProperty(

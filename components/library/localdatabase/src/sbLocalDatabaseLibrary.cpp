@@ -1322,6 +1322,10 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
                          getter_AddRefs(newItem));
     mPreventAddedNotification = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = sbLibraryUtils::LinkCopy(aMediaItem, newItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     if (isCopyingFromDevice) {
       SubmitCopyRequest(aMediaItem, newItem);
     }

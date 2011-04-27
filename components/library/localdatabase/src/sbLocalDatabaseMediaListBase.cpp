@@ -324,6 +324,10 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbILibrary> library;
+  rv = GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRBool hasContentType = PR_FALSE;
   PRUint32 length;
   rv = aProperties->GetLength(&length);
@@ -338,7 +342,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // We never want these properties to be copied to a new item
+    // We never want these properties to be copied to a new item.
     if (mFilteredProperties.GetEntry(id)) {
       continue;
     }
@@ -460,40 +464,50 @@ sbLocalDatabaseMediaListBase::GetOriginProperties(
     }
   }
 
-  // Set SB_PROPERTY_ORIGINLIBRARYGUID if it is not already set:
-  nsAutoString originLibGuid;
-  rv = aProperties->GetPropertyValue(
-    NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-    originLibGuid);
-  if (rv == NS_ERROR_NOT_AVAILABLE || originLibGuid.IsEmpty()) {
-    rv = originLib->GetGuid(originLibGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = aProperties->AppendProperty(
+  nsCOMPtr<sbILibrary> thisLibrary;
+  rv = GetLibrary(getter_AddRefs(thisLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool copyingToMainLibrary;
+  rv = thisLibrary->Equals(mainLib, &copyingToMainLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we're not copying to the main library set the origin guids
+  if (!copyingToMainLibrary) {
+    // Set SB_PROPERTY_ORIGINLIBRARYGUID if it is not already set:
+    nsAutoString originLibGuid;
+    rv = aProperties->GetPropertyValue(
       NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
       originLibGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+    if (rv == NS_ERROR_NOT_AVAILABLE || originLibGuid.IsEmpty()) {
+      rv = originLib->GetGuid(originLibGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = aProperties->AppendProperty(
+        NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+        originLibGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
-  // Set SB_PROPERTY_ORIGINITEMGUID if it is not already set:
-  nsAutoString originItemGuid;
-  rv = aProperties->GetPropertyValue(
-    NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-    originItemGuid);
-  if (rv == NS_ERROR_NOT_AVAILABLE || originItemGuid.IsEmpty()) {
-    rv = aSourceItem->GetGuid(originItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = aProperties->AppendProperty(
+    // Set SB_PROPERTY_ORIGINITEMGUID if it is not already set:
+    nsAutoString originItemGuid;
+    rv = aProperties->GetPropertyValue(
       NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
       originItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (rv == NS_ERROR_NOT_AVAILABLE || originItemGuid.IsEmpty()) {
+      rv = aSourceItem->GetGuid(originItemGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = aProperties->AppendProperty(
+        NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+        originItemGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
-  else {
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   return NS_OK;
 }
 

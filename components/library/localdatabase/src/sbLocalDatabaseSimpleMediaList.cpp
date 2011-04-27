@@ -220,6 +220,8 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
   rv = itemLibrary->Equals(mListLibrary, &sameLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  const PRBool itemIsInMainLibrary = sbIsMainLibrary(itemLibrary);
+
   nsString listLibGuid;
   rv = mListLibrary->GetGuid(listLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -232,18 +234,18 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
     // library before it can be used.
 
     // but first check if we have an existing item that is close enough
+    // Use the origin guids if present, but not if the item is in the main
+    // library, as they may point back to an item that no longer exists.
     nsString originLibGuid, originItemGuid;
     rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (originLibGuid.IsEmpty()) {
+    if (originLibGuid.IsEmpty() || itemIsInMainLibrary) {
       rv = itemLibrary->GetGuid(originLibGuid);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    // check if we have an item that originated from the same item
     rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (originItemGuid.IsEmpty()) {
+    if (originItemGuid.IsEmpty() || itemIsInMainLibrary) {
       rv = aMediaItem->GetGuid(originItemGuid);
       NS_ENSURE_SUCCESS(rv, rv);
     }
