@@ -32,16 +32,16 @@
 
       Used to handle external drops (ie, standard file drag and drop from the
       operating system).
-      
+
     - InternalDropHandler
 
       Used to handle internal drops (ie, mediaitems, medialists)
-      
+
     - DNDUtils
 
       Contains methods that are used by both of the helpers, and that are useful for
       drag and drop operations in general.
-  
+
 */
 
 EXPORTED_SYMBOLS = [ "DNDUtils",
@@ -54,7 +54,7 @@ const Cr = Components.results;
 const Ce = Components.Exception;
 const Cu = Components.utils;
 
-const URI_GENERIC_ICON_XPINSTALL = 
+const URI_GENERIC_ICON_XPINSTALL =
   "chrome://songbird/skin/base-elements/icon-generic-addon.png";
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -71,10 +71,10 @@ const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
 /*
 
   DNDUtils
-  
+
   This helper contains a number of methods that may be used when implementing
   a drag and drop handler.
-  
+
 */
 
 var DNDUtils = {
@@ -88,7 +88,7 @@ var DNDUtils = {
     }
     return false;
   },
-  
+
   // adds the flavors in the array to the given flavourset
   addFlavours: function(aFlavourSet, aFlavourArray) {
     for (var i=0; i<aFlavourArray.length; i++) {
@@ -124,17 +124,17 @@ var DNDUtils = {
 
     return r;
   },
-  
+
   // similar to getTransferDataForFlavour but adds extraction of the internal
   // drag data from the dndSourceTracker, and queries an interface from the
   // result
   getInternalTransferDataForFlavour: function(aSession, aFlavour, aInterface) {
     var data = this.getTransferDataForFlavour(aFlavour, aSession);
-    if (data) 
+    if (data)
       return this.getInternalTransferData(data, aInterface);
     return null;
   },
-  
+
   // similar to getTransferData but adds extraction of the internal drag data
   // from the dndSourceTracker, and queries an interface from the result
   getInternalTransferData: function(aData, aInterface) {
@@ -149,25 +149,25 @@ var DNDUtils = {
   // returns an array with the data for any flavour listed in the given array
   getTransferData: function(aSession, aFlavourArray) {
     // I know this is confusing but because numDropItems is a Number it causes
-    // the Array constructor to pre-allocate N slots which should speed up 
+    // the Array constructor to pre-allocate N slots which should speed up
     // pushing elements into it.
     var data = new Array(aSession.numDropItems);
     for (var i=0;i<aFlavourArray.length;i++) {
-      if (this.getTransferDataForFlavour(aFlavourArray[i], aSession, data)) 
+      if (this.getTransferDataForFlavour(aFlavourArray[i], aSession, data))
         break;
     }
     return data;
   },
-  
+
   // reports a custom temporary message to the status bar
   customReport: function(aMessage) {
-    var SB_NewDataRemote = 
+    var SB_NewDataRemote =
       Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
                              "sbIDataRemote",
                              "init");
-    var statusOverrideText = 
+    var statusOverrideText =
       SB_NewDataRemote( "faceplate.status.override.text", null );
-    var statusOverrideType = 
+    var statusOverrideType =
       SB_NewDataRemote( "faceplate.status.override.type", null );
 
     statusOverrideText.stringValue = "";
@@ -175,25 +175,25 @@ var DNDUtils = {
     statusOverrideType.stringValue = "report";
   },
 
-  // temporarily writes "X tracks added to <name>, Y tracks already present" 
+  // temporarily writes "X tracks added to <name>, Y tracks already present"
   // in the status bar. if 0 is specified for aDups, the second part of the
   // message is skipped.
   reportAddedTracks: function(aAdded, aDups, aUnsupported, aDestName, aIsDevice) {
     var msg = "";
-    
+
     var single = SBString("library.singletrack");
     var plural = SBString("library.pluraltracks");
-  
+
     if (aIsDevice) {
       if (aDups) {
-        msg = SBFormattedString("device.tracksadded.with.dups", 
+        msg = SBFormattedString("device.tracksadded.with.dups",
           [aDestName]);
       }
       else {
-        msg = SBFormattedString("device.tracksadded", 
+        msg = SBFormattedString("device.tracksadded",
           [aDestName]);
       }
-    }  
+    }
     else if (aDups && aUnsupported) {
       msg = SBFormattedString("library.tracksadded.with.dups.and.unsupported",
         [aAdded, aDestName, aDups, aUnsupported]);
@@ -213,7 +213,7 @@ var DNDUtils = {
 
     this.customReport(msg);
   },
-  
+
   // reports stats on the statusbar using standard rules for what to show and
   // in which circumstances
   standardReport: function(aTargetList,
@@ -227,22 +227,22 @@ var DNDUtils = {
     if ((aImportedInLibrary == 0) &&
         (aInsertedInMediaList == 0) &&
         (aDuplicates == 0) &&
-        (aUnsupported == 0) && 
-        (aOtherDropsHandled != 0)) 
+        (aUnsupported == 0) &&
+        (aOtherDropsHandled != 0))
       return;
-    
+
     // report different things depending on whether we dropped
     // on a library, or just a list
     if (aTargetList != aTargetList.library) {
-      DNDUtils.reportAddedTracks(aInsertedInMediaList, 
-                                 0, 
+      DNDUtils.reportAddedTracks(aInsertedInMediaList,
+                                 0,
                                  aUnsupported,
                                  aTargetList.name,
                                  aDevice);
     } else {
-      DNDUtils.reportAddedTracks(aImportedInLibrary, 
-                                 aDuplicates, 
-                                 aUnsupported, 
+      DNDUtils.reportAddedTracks(aImportedInLibrary,
+                                 aDuplicates,
+                                 aUnsupported,
                                  aTargetList.name,
                                  aDevice);
     }
@@ -273,7 +273,7 @@ DNDUtils.MediaListViewSelectionTransferContext.prototype = {
                                 .selection
                                 .selectedIndexedMediaItems);
       this.items = enumerator;
-      
+
       // and here's the wrapped form for those cases where you want it
       this.indexedItems = this._mediaListView.selection.selectedIndexedMediaItems;
     },
@@ -284,7 +284,7 @@ DNDUtils.MediaListViewSelectionTransferContext.prototype = {
       throw Components.results.NS_NOINTERFACE;
     }
   };
-  
+
 /* EntireMediaListViewTransferContext
  *
  * Create a drag and drop context containing all the items in the view
@@ -355,8 +355,8 @@ DNDUtils.MediaListTransferContext.prototype = {
 /*
 
   InternalDropHandler
-  
-  
+
+
 This helper is used to let you handle internal drops (mediaitems and medialists)
 and inject the items into a medialist, potentially at a specific position.
 
@@ -379,11 +379,11 @@ a minimal implementation:
                              aDuplicates,
                              aUnsupported,
                              aInsertedInMediaList,
-                             aOtherDropsHandled) { 
+                             aOtherDropsHandled) {
       // returning true causes the standard drop report to be printed
       // on the status bar, it is equivalent to calling standardReport
       // using the parameters received on this callback
-      return true; 
+      return true;
     },
     // called when the first item is handled (eg, to implement playback)
     onFirstMediaItem: function(aTargetList, aFirstMediaItem) { }
@@ -394,9 +394,9 @@ a minimal implementation:
 To handle a drop with a specific mediaList target and drop insertion point, use
 the following code:
 
-  InternalDropHandler.dropOnList(window, 
-                                 dragSession, 
-                                 targetMediaList, 
+  InternalDropHandler.dropOnList(window,
+                                 dragSession,
+                                 targetMediaList,
                                  targetMediaListPosition,
                                  dropHandlerListener);
 
@@ -404,15 +404,15 @@ In order to target the drop at the end of the targeted mediaList, you
 should give a value of -1 for targetMediaListPosition.
 
 The other public methods in this helper can be used to simplify the rest of your
-drag and drop handler as well. For instance, an nsDragAndDrop observer's 
+drag and drop handler as well. For instance, an nsDragAndDrop observer's
 getSupportedFlavours() method may be implemented simply as:
 
     var flavours = new FlavourSet();
     InternalDropHandler.addFlavours(flavours);
     return flavours;
 
-Also, getTransferData, getInternalTransferDataForFlavour, and 
-getTransferDataForFlavour may be used to inspect the content of the dragSession 
+Also, getTransferData, getInternalTransferDataForFlavour, and
+getTransferDataForFlavour may be used to inspect the content of the dragSession
 before deciding what to do with it.
 
 */
@@ -426,12 +426,12 @@ var InternalDropHandler = {
   supportedFlavours: [ TYPE_X_SB_TRANSFER_MEDIA_ITEM,
                        TYPE_X_SB_TRANSFER_MEDIA_LIST,
                        TYPE_X_SB_TRANSFER_MEDIA_ITEMS ],
-  
+
   // returns true if the drag session contains supported internal flavors
   isSupported: function(aDragSession) {
     return DNDUtils.isSupported(aDragSession, this.supportedFlavours);
   },
-  
+
   // performs a default drop of the drag session. media items go to the
   // main library.
   drop: function(aWindow, aDragSession, aListener) {
@@ -444,21 +444,21 @@ var InternalDropHandler = {
   // perform a drop onto a medialist. media items are inserted at the specified
   // position in the list if that list is orderable. otherwise, or if the
   // position is invalid, the items are added to the target list.
-  dropOnList: function(aWindow, 
-                       aDragSession, 
-                       aTargetList, 
-                       aDropPosition, 
+  dropOnList: function(aWindow,
+                       aDragSession,
+                       aTargetList,
+                       aDropPosition,
                        aListener) {
     if (!aTargetList) {
       throw new Error("No target medialist specified for dropOnList");
     }
-    this._dropItems(aDragSession, 
-                    aTargetList, 
-                    aDropPosition, 
+    this._dropItems(aDragSession,
+                    aTargetList,
+                    aDropPosition,
                     aListener);
   },
 
-  // call this to automatically add the supported internal flavors 
+  // call this to automatically add the supported internal flavors
   // to a flavourSet object
   addFlavours: function(aFlavourSet) {
     DNDUtils.addFlavours(aFlavourSet, this.supportedFlavours);
@@ -468,7 +468,7 @@ var InternalDropHandler = {
   getTransferData: function(aSession) {
     return DNDUtils.getTransferData(aSession, this.supportedFlavours);
   },
-  
+
   // simply forward the call. here in this object for completeness
   // see DNDUtils.getTransferDataForFlavour for more info
   getTransferDataForFlavour: function(aFlavour, aSession, aArray) {
@@ -478,7 +478,7 @@ var InternalDropHandler = {
   // --------------------------------------------------------------------------
   // methods below this point are pretend-private
   // --------------------------------------------------------------------------
-  
+
   /**
    * Performs the actual drop of items into a media list
    * \param aDragSession The nsIDragSession associated with the drop
@@ -768,7 +768,7 @@ var InternalDropHandler = {
                            aDropPosition, aListener) {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
-                                        TYPE_X_SB_TRANSFER_MEDIA_LIST, 
+                                        TYPE_X_SB_TRANSFER_MEDIA_LIST,
                                         Ci.sbIMediaListTransferContext);
     var sourceList = context.list;
     if (sourceList == aTargetList) {
@@ -859,13 +859,13 @@ var InternalDropHandler = {
                             aDropPosition, aListener) {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
-                                        TYPE_X_SB_TRANSFER_MEDIA_ITEMS, 
+                                        TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
                                         Ci.sbIMediaItemsTransferContext);
 
     var itemEnumerator = context.items;
 
     var items = this._itemsFromEnumerator(itemEnumerator);
-    
+
     // are we dropping on a library? Assume all source items are from the same
     // library.
     if (aTargetList instanceof Ci.sbILibrary) {
@@ -907,9 +907,9 @@ var InternalDropHandler = {
   // called when the whole drop handling operation has completed, used
   // to notify the original caller and free up any resources we can
   _dropComplete: function(listener,
-                          targetList, 
-                          totalImported, 
-                          totalDups, 
+                          targetList,
+                          totalImported,
+                          totalDups,
                           totalUnsupported,
                           totalInserted,
                           otherDrops,
@@ -919,13 +919,13 @@ var InternalDropHandler = {
       if (listener.onDropComplete(targetList,
                                   totalImported,
                                   totalDups,
-                                  totalUnsupported, 
+                                  totalUnsupported,
                                   totalInserted,
                                   otherDrops)) {
         DNDUtils.standardReport(targetList,
                                 totalImported,
                                 totalDups,
-                                totalUnsupported, 
+                                totalUnsupported,
                                 totalInserted,
                                 otherDrops,
                                 isDevice);
@@ -933,7 +933,7 @@ var InternalDropHandler = {
     } else {
       DNDUtils.standardReport(targetList,
                               totalImported,
-                              totalDups, 
+                              totalDups,
                               totalUnsupported,
                               totalInserted,
                               otherDrops,
@@ -972,11 +972,11 @@ a minimal implementation:
                              aImportedInLibrary,
                              aDuplicates,
                              aInsertedInMediaList,
-                             aOtherDropsHandled) { 
+                             aOtherDropsHandled) {
       // returning true causes the standard drop report to be printed
       // on the status bar, it is equivalent to calling standardReport
       // using the parameters received on this callback
-      return true; 
+      return true;
     },
     // called when the first item is handled (eg, to implement playback)
     onFirstMediaItem: function(aTargetList, aFirstMediaItem) { }
@@ -985,32 +985,32 @@ a minimal implementation:
 To handle a drop with a specific mediaList target and drop insertion point, use
 the following code:
 
-  ExternalDropHandler.dropOnList(window, 
-                                 dragSession, 
-                                 targetMediaList, 
+  ExternalDropHandler.dropOnList(window,
+                                 dragSession,
+                                 targetMediaList,
                                  targetMediaListPosition,
                                  dropHandlerListener);
 
 In order to target the drop at the end of the targeted mediaList, you
 should give a value of -1 for targetMediaListPosition.
 
-Two similar methods (dropUrls and dropUrlsOnList) exist that let you simulate a 
-drop by giving a list of URLs, and triggering the same handling as the one that 
+Two similar methods (dropUrls and dropUrlsOnList) exist that let you simulate a
+drop by giving a list of URLs, and triggering the same handling as the one that
 would happen had these URLs been part of a dragsession drop.
 
 The other public methods in this helper can be used to simplify the rest of your
-drag and drop handler as well. For instance, an nsDragAndDrop observer's 
+drag and drop handler as well. For instance, an nsDragAndDrop observer's
 getSupportedFlavours() method may be implemented simply as:
 
     var flavours = new FlavourSet();
     ExternalDropHandler.addFlavours(flavours);
     return flavours;
 
-Also, getTransferData and DNDUtils.getTransferDataForFlavour may be used to 
+Also, getTransferData and DNDUtils.getTransferDataForFlavour may be used to
 inspect the content of the dragSession before deciding what to do with it.
 
-Finally, the standardReport and reportAddedTracks methods are used to send a 
-temporary message on the status bar, to report the result of a drag and drop 
+Finally, the standardReport and reportAddedTracks methods are used to send a
+temporary message on the status bar, to report the result of a drag and drop
 session. standardReport will format the text using the specific rules for what
 to show and in which circumstances, and reportAddedTracks will report exactly
 what you tell it to.
@@ -1024,7 +1024,7 @@ must implement the following two functions :
 SBOpenModalDialog(aChromeUrl, aTargetId, aWindowFeatures, aWindowArguments);
 installXPI(aXpiUrl);
 
-These two methods are respectively implemented in windowUtils.js and 
+These two methods are respectively implemented in windowUtils.js and
 playerOpen.js, importing these scripts in your window ensures that the
 requirements are met.
 
@@ -1035,14 +1035,14 @@ var ExternalDropHandler = {
   supportedFlavours: [ "application/x-moz-file",
                        "text/x-moz-url",
                        "text/unicode"],
-  
+
   // returns true if the drag session contains supported external flavors
   isSupported: function(aDragSession) {
     return DNDUtils.isSupported(aDragSession, this.supportedFlavours);
   },
-  
+
   // performs a default drop of the drag session. media items go to the
-  // main library. 
+  // main library.
   drop: function(aWindow, aDragSession, aListener) {
     var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Ci.sbILibraryManager)
@@ -1051,7 +1051,7 @@ var ExternalDropHandler = {
   },
 
   // performs a default drop of a list of urls. media items go to the
-  // main library. 
+  // main library.
   dropUrls: function(aWindow, aUrlArray, aListener) {
     var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                           .getService(Ci.sbILibraryManager)
@@ -1062,42 +1062,42 @@ var ExternalDropHandler = {
   // perform a drop onto a medialist. media items are inserted at the specified
   // position in the list if that list is orderable. otherwise, or if the
   // position is invalid, the items are added to the target list.
-  dropOnList: function(aWindow, 
-                       aDragSession, 
-                       aTargetList, 
-                       aDropPosition, 
+  dropOnList: function(aWindow,
+                       aDragSession,
+                       aTargetList,
+                       aDropPosition,
                        aListener) {
     if (!aTargetList) {
       throw new Error("No target medialist specified for dropOnList");
     }
     this._dropFiles(aWindow,
-                    aDragSession, 
+                    aDragSession,
                     null,
-                    aTargetList, 
-                    aDropPosition, 
+                    aTargetList,
+                    aDropPosition,
                     aListener);
   },
 
-  // perform a drop of a list of urls onto a medialist. media items are inserted at 
+  // perform a drop of a list of urls onto a medialist. media items are inserted at
   // the specified position in the list if that list is orderable. otherwise, or if the
   // position is invalid, the items are added to the target list.
-  dropUrlsOnList: function(aWindow, 
-                           aUrlArray, 
-                           aTargetList, 
-                           aDropPosition, 
+  dropUrlsOnList: function(aWindow,
+                           aUrlArray,
+                           aTargetList,
+                           aDropPosition,
                            aListener) {
     if (!aTargetList) {
       throw new Error("No target medialist specified for dropOnList");
     }
     this._dropFiles(aWindow,
-                    null, 
+                    null,
                     aUrlArray,
-                    aTargetList, 
-                    aDropPosition, 
+                    aTargetList,
+                    aDropPosition,
                     aListener);
   },
 
-  // call this to automatically add the supported external flavors 
+  // call this to automatically add the supported external flavors
   // to a flavourSet object
   addFlavours: function(aFlavourSet) {
     DNDUtils.addFlavours(aFlavourSet, this.supportedFlavours);
@@ -1117,23 +1117,23 @@ var ExternalDropHandler = {
   // --------------------------------------------------------------------------
   // methods below this point are pretend-private
   // --------------------------------------------------------------------------
-  
+
   _listener            : null,  // listener object, for notifications
 
-  // initiate the handling of all dropped files: this handling is sliced up 
-  // into a number of 'frames', each frame importing one item, or queuing up 
-  // one directory for later import. at the end of each frame, the 
-  // _nextImportDropFrame method is called to schedule the next frame using a 
-  // short timer, so as to give the UI time to catch up, and we keep doing that 
-  // until everything in the file queue has been processed. when that's done, 
-  // we then look for queued directory scans, which we give to the directory 
-  // import service. after the directories have been processed, we notify the 
+  // initiate the handling of all dropped files: this handling is sliced up
+  // into a number of 'frames', each frame importing one item, or queuing up
+  // one directory for later import. at the end of each frame, the
+  // _nextImportDropFrame method is called to schedule the next frame using a
+  // short timer, so as to give the UI time to catch up, and we keep doing that
+  // until everything in the file queue has been processed. when that's done,
+  // we then look for queued directory scans, which we give to the directory
+  // import service. after the directories have been processed, we notify the
   // listener that processing has ended. Note that the function can take either
   // a drag session of an array of URLs. If both are provided, only the session
   // will be handled (ie, the method is not meant to be called with both a session
   // and a urlarray).
   _dropFiles: function(window, session, urlarray, targetlist, position, listener) {
-  
+
     // check that we are indeed processing an external drop
     if (session && !this.isSupported(session)) {
       return;
@@ -1141,13 +1141,13 @@ var ExternalDropHandler = {
 
     // if we are on win32, we will need to make local filenames lowercase
     var lcase = (this._getPlatformString() == "Windows_NT");
-    
+
     // get drop data in any of the supported formats
     var dropdata = session ? this.getTransferData(session) : urlarray;
-    
+
     // reset first media item, so we know to record it again
     this._firstMediaItem = null;
-    
+
     // remember listener
     this._listener = listener;
 
@@ -1160,11 +1160,11 @@ var ExternalDropHandler = {
 
     var ioService = Cc["@mozilla.org/network/io-service;1"]
                         .getService(Ci.nsIIOService);
-    
+
     // process all entries in the drop
     for (var dropentry in dropdata) {
       var dropitem = dropdata[dropentry];
-    
+
       var item, flavour;
       if (session) {
         item = dropitem[0];
@@ -1175,7 +1175,7 @@ var ExternalDropHandler = {
       }
       var islocal = true;
       var rawData;
-      
+
       var prettyName;
 
       if (flavour == "application/x-moz-file") {
@@ -1219,14 +1219,14 @@ var ExternalDropHandler = {
         prettyName = rawData.substr(separator+1);
         rawData = rawData.substr(0,separator);
       }
-      
+
       // make filename lowercase if necessary (win32)
       if (lcase && islocal) {
         rawData = rawData.toLowerCase();
       }
 
       // record this file for later processing
-      uriList.appendElement(ioService.newURI(rawData, null, null), false); 
+      uriList.appendElement(ioService.newURI(rawData, null, null), false);
     }
 
     // Timeout the XPI install
@@ -1254,36 +1254,36 @@ var ExternalDropHandler = {
     if (this._listener) {
       if (this._listener.onDropComplete(aTargetMediaList,
                                         aTotalImportCount,
-                                        aTotalDupeCount, 
+                                        aTotalDupeCount,
                                         aTotalInserted,
                                         aTotalUnsupported,
                                         aOtherDrops)) {
         DNDUtils.standardReport(aTargetMediaList,
                                 aTotalImportCount,
-                                aTotalDupeCount, 
-                                aTotalUnsupported, 
+                                aTotalDupeCount,
+                                aTotalUnsupported,
                                 aTotalInserted,
                                 aOtherDrops);
       }
-    } 
+    }
     else {
       DNDUtils.standardReport(aTargetMediaList,
                               aTotalImportCount,
                               aTotalInserted, // usually dupes
-                              aTotalUnsupported, 
+                              aTotalUnsupported,
                               aTotalInserted,
                               aOtherDrops);
     }
   },
-  
-  
+
+
   onFirstMediaItem: function(aTargetMediaList, aTargetMediaItem)
   {
     if (this._listener) {
       this._listener.onFirstMediaItem(aTargetMediaList, aTargetMediaItem);
     }
   },
-    
+
   // returns the platform string
   _getPlatformString: function() {
     try {
@@ -1305,7 +1305,7 @@ var ExternalDropHandler = {
       return "";
     }
   }
- 
+
 }
 
 
