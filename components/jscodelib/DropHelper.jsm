@@ -181,36 +181,28 @@ var DNDUtils = {
   reportAddedTracks: function(aAdded, aDups, aUnsupported, aDestName, aIsDevice) {
     var msg = "";
 
-    var single = SBString("library.singletrack");
-    var plural = SBString("library.pluraltracks");
-
-    if (aIsDevice) {
-      if (aDups) {
-        msg = SBFormattedString("device.tracksadded.with.dups",
-          [aDestName]);
+    /* We only report D&D status for non-device-related transfers
+     * Please see bug 23763 if status bar reporting for D&D onto a device is
+     * being implemented for notes from sneumann.
+     */
+    if (!aIsDevice) {
+      if (aDups && aUnsupported) {
+        msg = SBFormattedString("library.tracksadded.with.dups.and.unsupported",
+          [aAdded, aDestName, aDups, aUnsupported]);
+      }
+      else if (aDups) {
+        msg = SBFormattedString("library.tracksadded.with.dups",
+          [aAdded, aDestName, aDups]);
+      }
+      else if (aUnsupported) {
+        msg = SBFormattedString("library.tracksadded.with.unsupported",
+          [aAdded, aDestName, aUnsupported]);
       }
       else {
-        msg = SBFormattedString("device.tracksadded",
-          [aDestName]);
+        msg = SBFormattedString("library.tracksadded",
+          [aAdded, aDestName]);
       }
     }
-    else if (aDups && aUnsupported) {
-      msg = SBFormattedString("library.tracksadded.with.dups.and.unsupported",
-        [aAdded, aDestName, aDups, aUnsupported]);
-    }
-    else if (aDups) {
-      msg = SBFormattedString("library.tracksadded.with.dups",
-        [aAdded, aDestName, aDups]);
-    }
-    else if (aUnsupported) {
-      msg = SBFormattedString("library.tracksadded.with.unsupported",
-        [aAdded, aDestName, aUnsupported]);
-    }
-    else {
-      msg = SBFormattedString("library.tracksadded",
-        [aAdded, aDestName]);
-    }
-
     this.customReport(msg);
   },
 
