@@ -614,6 +614,7 @@
               this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_PLAYLISTS;
             }
           }
+          this._syncFolderListWrite();
         }
         ]]></body>
       </method>
