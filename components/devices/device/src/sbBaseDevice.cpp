@@ -335,6 +335,28 @@ sbBaseDevice::TransferRequest::New(PRUint32 aType,
     request->index = aIndex;
     request->otherIndex = aOtherIndex;
     request->data = aData;
+
+    nsresult rv;
+    nsCOMPtr<sbIMediaItem> localItem = do_QueryInterface(aItem, &rv);
+
+    if (NS_SUCCEEDED(rv) && aType != TransferRequest::REQUEST_UPDATE) {
+      nsString contentType;
+      localItem->GetContentType(contentType);
+
+      if (contentType.EqualsLiteral("audio")) {
+        request->itemType = TransferRequest::REQUESTBATCH_AUDIO;
+      }
+      else if (contentType.EqualsLiteral("video")) {
+        request->itemType = TransferRequest::REQUESTBATCH_VIDEO;
+      }
+      else if (contentType.EqualsLiteral("image")) {
+        request->itemType = TransferRequest::REQUESTBATCH_IMAGE;
+      }
+      else {
+        request->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
+      }
+    }
+
     // Delete, write, and read requests that aren't playlists are countable
     switch (aType) {
       case sbIDevice::REQUEST_DELETE:
@@ -562,24 +584,6 @@ nsresult sbBaseDevice::PushRequest(const PRUint32 aType,
                                                        aData);
   NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
 
-  // If we have an item get its content type and set the request data's
-  // itemType
-  if (req->item) {
-    nsString contentType;
-    rv = req->item->GetContentType(contentType);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (contentType.Equals(NS_LITERAL_STRING("audio"))) {
-      req->itemType = TransferRequest::REQUESTBATCH_AUDIO;
-      mSyncType |= TransferRequest::REQUESTBATCH_AUDIO;
-    }
-    else if (contentType.Equals(NS_LITERAL_STRING("video"))) {
-      req->itemType = TransferRequest::REQUESTBATCH_VIDEO;
-      mSyncType |= TransferRequest::REQUESTBATCH_VIDEO;
-    }
-    else {
-      req->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
-    }
-  }
   rv = mRequestThreadQueue->PushRequest(req);
   NS_ENSURE_SUCCESS(rv, rv);
 

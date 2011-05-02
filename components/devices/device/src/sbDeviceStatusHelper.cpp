@@ -400,7 +400,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MOUNTING_END,
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
@@ -412,7 +413,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_END,
                   sbNewVariant(mMediaItem));
@@ -424,7 +426,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       break;
 
     case OPERATION_TYPE_READ :
@@ -433,7 +436,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_END,
                   sbNewVariant(mMediaItem));
@@ -445,7 +449,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
                   sbNewVariant(mMediaItem));
@@ -457,7 +462,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_FORMATTING_END,
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
@@ -469,7 +475,8 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                    stateMessage,
                    0,
                    0,
-                   1.0);
+                   1.0,
+                   mItemType);
       break;
 
     default :
