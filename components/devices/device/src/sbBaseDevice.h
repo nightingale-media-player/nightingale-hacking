@@ -1366,38 +1366,6 @@ protected:
                             sbIMediaList*     aMediaList);
 
   /**
-   * Synchronize all the media lists in the list of media list changes specified
-   * by aMediaListChangeList.
-   *
-   * \param aMediaListChangeList  List of media list changes.
-   */
-  nsresult SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList);
-
-  /**
-   * Update the properties of a media item as specified by the sync change
-   * specified by aChange.
-   *
-   * \param aChange               Changes to make to media item.
-   */
-  nsresult SyncUpdateProperties(sbILibraryChange* aChange);
-
-  /**
-   * Merges the property value based on what property we're dealing with
-   */
-  nsresult SyncMergeProperty(sbIMediaItem * aItem,
-                             nsAString const & aPropertyId,
-                             nsAString const & aNewValue,
-                             nsAString const & aOldValue);
-
-  /**
-   * Returns the latest of the date/time. The dates are in milliseconds since
-   * the JS Data's epoch date.
-   */
-  nsresult SyncMergeSetToLatest(nsAString const & aNewValue,
-                                nsAString const & aOldValue,
-                                nsAString & aMergedValue);
-
-  /**
    * Determine whether the media list specified by aMediaList should be synced
    * to the device.  Return true in aShouldSync if media list should be synced.
    * The download media list and hidden media lists are examples of media lists

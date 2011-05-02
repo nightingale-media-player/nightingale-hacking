@@ -4855,13 +4855,13 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
   NS_ENSURE_ARG_POINTER(aChangeset);
 
   // Function variables.
-  PRBool   success;
   nsresult rv;
 
   // Create some change list arrays.
   nsCOMPtr<nsIMutableArray> addMediaLists =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  nsCOMArray<sbILibraryChange> mediaListChangeList;
+  nsCOMPtr<nsIMutableArray> removeItemList =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   nsCOMPtr<nsIMutableArray>  addItemList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -4928,28 +4928,27 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
 
       case sbIChangeOperation::MODIFIED:
         {
-          // Get the source item that changed.
-          nsCOMPtr<sbIMediaItem> mediaItem;
-          rv = change->GetSourceItem(getter_AddRefs(mediaItem));
+          nsCOMPtr<sbIMediaItem> destItem;
+          rv = change->GetDestinationItem(getter_AddRefs(destItem));
           NS_ENSURE_SUCCESS(rv, rv);
 
-          // if it's hidden, don't sync it
-          nsString hidden;
-          rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                      hidden);
-          if (rv != NS_ERROR_NOT_AVAILABLE) {
+          rv = removeItemList->AppendElement(destItem, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          nsCOMPtr<sbIMediaList> destItemAsList = do_QueryInterface(destItem);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (destItemAsList) {
+            rv = addMediaLists->AppendElement(change, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
-          // If the change is to a media list, add it to the media list change
-          // list.
-          if (itemIsList) {
-            success = mediaListChangeList.AppendObject(change);
-            NS_ENSURE_SUCCESS(success, NS_ERROR_FAILURE);
+          else {
+            nsCOMPtr<sbIMediaItem> srcItem;
+            rv = change->GetSourceItem(getter_AddRefs(srcItem));
+            NS_ENSURE_SUCCESS(rv, rv);
+            rv = addItemList->AppendElement(srcItem, PR_FALSE);
+            NS_ENSURE_SUCCESS(rv, rv);
           }
-
-          // Update the item properties.
-          rv = SyncUpdateProperties(change);
-          NS_ENSURE_SUCCESS(rv, rv);
         } break;
 
       default:
@@ -4961,11 +4960,17 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
     return NS_ERROR_ABORT;
   }
 
-  // Add items.
-  nsCOMPtr<nsISimpleEnumerator> addItemEnum;
-  rv = addItemList->Enumerate(getter_AddRefs(addItemEnum));
+  nsCOMPtr<nsISimpleEnumerator> itemEnum;
+  // Remove modified items so they can be readded
+  rv = removeItemList->Enumerate(getter_AddRefs(itemEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDevLibrary->AddSome(addItemEnum);
+  rv = aDevLibrary->RemoveSome(itemEnum);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add items.
+  rv = addItemList->Enumerate(getter_AddRefs(itemEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aDevLibrary->AddSome(itemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (IsRequestAborted()) {
@@ -5015,10 +5020,6 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Sync the media lists.
-  rv = SyncMediaLists(mediaListChangeList);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -5044,138 +5045,6 @@ sbBaseDevice::SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
 
   return NS_OK;
 }
-
-nsresult
-sbBaseDevice::SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList)
-{
-  nsresult rv;
-
-  // Just replace the destination media lists content with the sources
-  // TODO: See if just applying changes is more efficient than clearing and
-  // addAll
-
-  // Sync each media list.
-  PRInt32 count = aMediaListChangeList.Count();
-  for (PRInt32 i = 0; i < count; i++) {
-    // Get the media list change.
-    nsCOMPtr<sbILibraryChange> change = aMediaListChangeList[i];
-
-    // Get the destination media list item and library.
-    nsCOMPtr<sbIMediaItem> destMediaListItem;
-    rv = change->GetDestinationItem(getter_AddRefs(destMediaListItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> destMediaList =
-        do_QueryInterface(destMediaListItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = destMediaList->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = CopyChangedMediaItemsToMediaList(change,
-                                          destMediaList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::SyncUpdateProperties(sbILibraryChange* aChange)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aChange);
-
-  // Function variables.
-  nsresult rv;
-
-  // Get the item to update.
-  nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = aChange->GetDestinationItem(getter_AddRefs(mediaItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the list of properties to update.
-  nsCOMPtr<nsIArray> propertyList;
-  PRUint32           propertyCount;
-  rv = aChange->GetProperties(getter_AddRefs(propertyList));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = propertyList->GetLength(&propertyCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Update properties.
-  for (PRUint32 i = 0; i < propertyCount; i++) {
-    // Get the next property to update.
-    nsCOMPtr<sbIPropertyChange>
-      property = do_QueryElementAt(propertyList, i, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the property info.
-    nsAutoString propertyID;
-    nsAutoString propertyValue;
-    nsAutoString oldPropertyValue;
-    rv = property->GetId(propertyID);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = property->GetNewValue(propertyValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = property->GetOldValue(oldPropertyValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Don't sync properties set by the device or transcoding.
-    if (propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL)) ||
-        propertyID.Equals
-                     (NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID)) ||
-        propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_PLAYCOUNT)) ||
-        propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_SKIPCOUNT)) ||
-        propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_BITRATE))) {
-      continue;
-    }
-
-    // Merge the property, ignoring errors.
-    SyncMergeProperty(mediaItem, propertyID, propertyValue, oldPropertyValue);
-  }
-
-  return NS_OK;
-}
-
-/**
- * Merges the property value based on what property we're dealing with
- */
-nsresult
-sbBaseDevice::SyncMergeProperty(sbIMediaItem * aItem,
-                                nsAString const & aPropertyId,
-                                nsAString const & aNewValue,
-                                nsAString const & aOldValue) {
-  nsresult rv = NS_OK;
-
-  nsString mergedValue = nsString(aNewValue);
-  if (aPropertyId.Equals(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME))) {
-    rv = SyncMergeSetToLatest(aNewValue, aOldValue, mergedValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  return aItem->SetProperty(aPropertyId, mergedValue);
-}
-
-/**
- * Returns the latest of the date/time. The dates are in milliseconds since
- * the JS Data's epoch date.
- */
-nsresult
-sbBaseDevice::SyncMergeSetToLatest(nsAString const & aNewValue,
-                                   nsAString const & aOldValue,
-                                   nsAString & aMergedValue) {
-  nsresult rv;
-  PRInt64 newDate;
-  newDate = nsString_ToInt64(aNewValue, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt64 oldDate;
-  oldDate = nsString_ToInt64(aOldValue, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  aMergedValue = newDate > oldDate ? aNewValue : aOldValue;
-  return NS_OK;
-}
-
 
 nsresult
 sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,

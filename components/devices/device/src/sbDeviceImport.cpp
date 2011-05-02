@@ -71,9 +71,8 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   nsCOMPtr<nsIMutableArray> mediaListsToAdd =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  nsCOMArray<sbILibraryChange> mediaItemsToUpdate;
-  nsCOMArray<sbILibraryChange> mediaListsToUpdate;
-
+  nsCOMPtr<nsIMutableArray> mediaItemsToRemove =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   // Determine if playlists are supported
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
 
@@ -119,21 +118,30 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
       }
       break;
       case sbIChangeOperation::MODIFIED: {
-        nsCOMPtr<sbIMediaItem> sourceItem;
-        rv = change->GetSourceItem(getter_AddRefs(sourceItem));
+        nsCOMPtr<sbIMediaItem> destItem;
+        rv = change->GetDestinationItem(getter_AddRefs(destItem));
+        NS_ENSURE_SUCCESS(rv, rv);
 
-        PRBool isList;
-        change->GetItemIsList(&isList);
-        if (isList) {
+        nsCOMPtr<sbIMediaList> destItemAsList =
+          do_QueryInterface(destItem);
+
+        if (destItemAsList) {
           // If the change is to a media list, add it to the media list change
           // list.
-          PRBool success = mediaListsToUpdate.AppendObject(change);
+          PRBool success = mediaListsToAdd->AppendElement(change, PR_FALSE);
           NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
 
         }
-        // Update the item properties.
-        rv = SyncUpdateProperties(change);
-        NS_ENSURE_SUCCESS(rv, rv);
+        else {
+          rv = mediaItemsToRemove->AppendElement(destItem, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          nsCOMPtr<sbIMediaItem> sourceItem;
+          rv = change->GetSourceItem(getter_AddRefs(sourceItem));
+
+          rv = mediaItemsToAdd->AppendElement(sourceItem, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
       break;
       default: {
@@ -143,8 +151,15 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
     }
   }
 
-  // Add media lists.
+  // Remove items that need to be removed
   nsCOMPtr<nsISimpleEnumerator> enumerator;
+  rv = mediaItemsToRemove->Enumerate(getter_AddRefs(enumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aImportToLibrary->RemoveSome(enumerator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add media lists.
   rv = mediaItemsToAdd->Enumerate(getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -153,10 +168,6 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
 
   // Add items.
   rv = ImportNewMediaLists(aImportToLibrary, mediaListsToAdd);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Sync the media lists.
-  rv = ImportMediaLists(mediaListsToUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
