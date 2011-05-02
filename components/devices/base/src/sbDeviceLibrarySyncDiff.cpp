@@ -1835,16 +1835,20 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
   if (toDevice) {
     listener = new SyncExportEnumListener();
     NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+    rv = listener->Init(PR_TRUE,
+                        aSourceLibrary,
+                        aDestLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     listener = new SyncImportEnumListener();
     NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+    rv = listener->Init(PR_TRUE,
+                        aDestLibrary,
+                        aSourceLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = listener->Init(PR_TRUE,
-                      aSourceLibrary,
-                      aDestLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
   listener->SetMediaTypes(allMediaTypes);
 
   if (aSourceList) {
