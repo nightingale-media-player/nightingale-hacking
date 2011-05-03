@@ -690,14 +690,6 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
     }
   }
 
-  PRUint32 propertyChangesCount = 0;
-  rv = propertyChanges->GetLength(&propertyChangesCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (propertyChangesCount == 0) {
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-
   return CallQueryInterface(propertyChanges.get(), aPropertyChanges);
 }
 
