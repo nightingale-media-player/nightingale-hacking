@@ -605,7 +605,7 @@ var InternalDropHandler = {
     var newlist = null;
     var changes = changeset.changes;
     for (var i = 0; i < changes.length; i++) {
-      change = changes.queryElementAt(i, Ci.sbILibraryChange);
+      var change = changes.queryElementAt(i, Ci.sbILibraryChange);
       if (change.itemIsList) {
         newlist = change.destinationItem;
         break;
@@ -668,7 +668,7 @@ var InternalDropHandler = {
     var newlist = null;
     var changes = changeset.changes;
     for (var i = 0; i < changes.length; i++) {
-      change = changes.queryElementAt(i, Ci.sbILibraryChange);
+      var change = changes.queryElementAt(i, Ci.sbILibraryChange);
       if (change.itemIsList) {
         newlist = change.destinationItem;
         break;
