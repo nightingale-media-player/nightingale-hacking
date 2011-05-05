@@ -1339,6 +1339,11 @@ SyncImportEnumListener::GetMatchingPlaylist(sbILibrary *aLibrary,
 
   nsCOMPtr<sbIMediaItem> matchingItem;
   rv = aLibrary->GetMediaItem(originItemGUID, getter_AddRefs(matchingItem));
+  // Possible we might not find the original item return null then
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    *aMatchingList = nsnull;
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(matchingItem.get(), aMatchingList);
