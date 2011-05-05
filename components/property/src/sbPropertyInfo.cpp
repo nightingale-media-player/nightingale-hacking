@@ -563,7 +563,9 @@ NS_IMETHODIMP sbPropertyInfo::GetOperator(const nsAString & aOperator,
 
 NS_IMETHODIMP sbPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
@@ -573,12 +575,14 @@ NS_IMETHODIMP sbPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _re
 
 NS_IMETHODIMP sbPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  _retval = aValue;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  _retval = aValue;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)

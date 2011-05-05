@@ -87,7 +87,7 @@ function runTest () {
   // Setup our globals
   gIdentityService = Cc["@songbirdnest.com/Songbird/IdentityService;1"]
                        .getService(Ci.sbIIdentityService);
-  gTestLibrary = createLibrary("test-identity");
+  gTestLibrary = createLibrary("test-identity", null, false);
 
   /* Create audio and video mediaItems for our test data and attach those
    * mediaitems to our test data objects */
@@ -115,6 +115,7 @@ function runTest () {
   testHashString();
   testCalculateIdentity();
   testSaveAndGetItemWithSameIdentity();
+  gTestLibrary.clear();
   log("OK");
 }
 
@@ -224,7 +225,7 @@ function testCalculateIdentity() {
 
 function  testSaveAndGetItemWithSameIdentity() {
   log("Testing sbIIdentityService saving and retrieving items by identity...");
-  var secondaryLibrary = createLibrary("test-identity-secondary");
+  var secondaryLibrary = createLibrary("test-identity-secondary", null , false);
 
   /* First we'll try to get an item with the same identity as each of our test
    * data items.  We'll try to get them from the secondary library, which
@@ -289,6 +290,25 @@ function  testSaveAndGetItemWithSameIdentity() {
         found = gTestLibrary.containsItemWithSameIdentity(secondaryItem);
         assertTrue(found);
 
+        // Ensure that we can find items in a library with an identity string
+        var hashPropID = SBProperties.metadataHashIdentity;
+        var testIdentity = testMediaItem.getProperty(hashPropID);
+        var foundItems = null;
+        try {
+          foundItems = gTestLibrary.getItemsByProperty(hashPropID,
+                                                       testIdentity);
+        }
+        catch (e) {
+          if (e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+            // We didn't find anything. Ignore the exception and let the test
+            // fail with the next assertion so we get a more informative failure
+            // message.
+          }
+        }
+
+        assertTrue(foundItems.length == 1,
+            'could not find item using identity and getItemsByProperty()');
+
         /* We verified that we found items with the same identity, make sure
          * we retrieve the items that we expect */
         var foundItems = secondaryLibrary.getItemsWithSameIdentity(testMediaItem);
@@ -308,4 +328,5 @@ function  testSaveAndGetItemWithSameIdentity() {
     });
   }
 
+  secondaryLibrary.clear();
 }

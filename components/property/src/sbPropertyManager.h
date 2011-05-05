@@ -96,6 +96,22 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
+  // Register a property for the sbIPropertyInfo interface. Use this
+  // registration for:
+  //   1. Text properties in the top-level media items table
+  //   2. Any text-based property where the collation transforms provided
+  //      by sbITextPropertyInfo are not desired.
+  nsresult RegisterBlob(const nsAString& aPropertyID,
+                        const nsAString& aDisplayKey,
+                        nsIStringBundle* aStringBundle,
+                        PRBool aUserViewable,
+                        PRBool aUserEditable,
+                        PRBool aUsedInIdentity,
+                        PRUint32 aNullSort,
+                        PRBool aHasNullSort,
+                        PRBool aRemoteReadable,
+                        PRBool aRemoteWritable);
+
   nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,

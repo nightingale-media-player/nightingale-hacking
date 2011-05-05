@@ -389,7 +389,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Guid (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GUID), EmptyString(),
+  rv = RegisterBlob(NS_LITERAL_STRING(SB_PROPERTY_GUID), EmptyString(),
                     stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -497,7 +497,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Hash (empty string if can't determine or cannot generate).
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_HASH),
+  rv = RegisterBlob(NS_LITERAL_STRING(SB_PROPERTY_HASH),
                     NS_LITERAL_STRING("property.content_hash"),
                     stringBundle,
                     PR_FALSE,
@@ -508,7 +508,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Hash Identity (empty string if can't determine or cannot generate).
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_METADATA_HASH_IDENTITY),
+  rv = RegisterBlob(NS_LITERAL_STRING(SB_PROPERTY_METADATA_HASH_IDENTITY),
                     NS_LITERAL_STRING("property.metadata_hash_identity"),
                     stringBundle,
                     PR_FALSE,
@@ -1476,6 +1476,68 @@ sbPropertyManager::RegisterFilterListPickerProperties()
                               nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterBlob(const nsAString& aPropertyID,
+                                const nsAString& aDisplayKey,
+                                nsIStringBundle* aStringBundle,
+                                PRBool aUserViewable,
+                                PRBool aUserEditable,
+                                PRBool aUsedInIdentity,
+                                PRUint32 aNullSort,
+                                PRBool aHasNullSort,
+                                PRBool aRemoteReadable,
+                                PRBool aRemoteWritable)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
+  nsRefPtr<sbPropertyInfo> blobProperty(new sbPropertyInfo());
+  NS_ENSURE_TRUE(blobProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = blobProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = blobProperty->SetId(aPropertyID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = blobProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = blobProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (aHasNullSort) {
+    rv = blobProperty->SetNullSort(aNullSort);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = blobProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = blobProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = blobProperty->SetUsedInIdentity(aUsedInIdentity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIPropertyInfo*, blobProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

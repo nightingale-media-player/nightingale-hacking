@@ -47,6 +47,11 @@ struct sbStaticProperty {
 const PRUint32 SB_COLUMN_TYPE_TEXT    = 0;
 const PRUint32 SB_COLUMN_TYPE_INTEGER = 1;
 
+// Top-level media item properties should not be registered using
+// sbITextPropertyInfo, as the media_items table does not contain
+// obj_searchable and obj_sortable columns with the transformed
+// strings expected when searching for and sorting on entries in
+// the resource_properties table.
 static sbStaticProperty sStaticProperties[] = {
   {
     SB_PROPERTY_GUID,
