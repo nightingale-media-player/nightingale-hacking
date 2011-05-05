@@ -78,7 +78,6 @@ class sbIMediaListEnumerationListener;
 
 class sbLocalDatabaseMediaListBase : public sbLocalDatabaseMediaItem,
                                      public sbLocalDatabaseMediaListListener,
-                                     public sbILocalDatabaseGUIDArrayListener,
                                      public sbIMediaList
 {
   friend class sbAutoBatchHelper;
@@ -93,7 +92,6 @@ public:
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaItem::)
   NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)
 
-  NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALIST
 
   sbLocalDatabaseMediaListBase();
@@ -168,17 +166,13 @@ private:
   /**
    * Enumerates by properties using the previous filter that was set
    */
-  nsresult EnumerateItemsByPropertyInternal(sbIMediaListEnumerationListener* aEnumerationListener);
   nsresult EnumerateItemsByPropertiesInternal(sbStringArrayHash* aPropertiesHash,
                                               sbIMediaListEnumerationListener* aEnumerationListener);
 
   // Called for the enumeration methods.
   nsresult EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
                                   sbIMediaListEnumerationListener* aListener);
-  /**
-   * Clears the partial cached array and clears the last values
-   */
-  void ClearCachedPartialArray();
+
 protected:
   void SetArray(sbILocalDatabaseGUIDArray * aArray);
   // A monitor for changes to the media list.
@@ -188,22 +182,17 @@ protected:
   PRUint16 mListContentType;
 
   PRBool mLockedEnumerationActive;
-  PRBool mPreviousListener;
   
   // The mFilteredProperties hash table caches the property ids
   // that we always want to filter out of the property arrays that
   // are used to create media items or set multiple properties
   // on a library resource.
   nsTHashtable<nsStringHashKey> mFilteredProperties;
-  
-  // Used to track values passed in so we can optimize filtering of the arrays
-  nsString mLastID;
-  nsString mLastValue;
+
 private:
   // The mFullArray is a cached version of the full contents of the media
   // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mCachedPartialArray;
 };
 
 /**
