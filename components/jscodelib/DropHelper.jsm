@@ -601,14 +601,18 @@ var InternalDropHandler = {
 
     aDevice.importFromDevice(targetLibrary, changeset);
 
-    // Get the list created, if any.
+    // Get the list that was created, if any.
     var newlist = null;
     var changes = changeset.changes;
     for (var i = 0; i < changes.length; i++) {
       var change = changes.queryElementAt(i, Ci.sbILibraryChange);
       if (change.itemIsList) {
-        newlist = change.destinationItem;
-        break;
+        if (change.operation == Ci.sbIChangeOperation.ADD) {
+          var originGUID = 
+            change.sourceItem.getProperty(SBProperties.originItemGuid);
+          newlist = targetLibrary.getItemByGuid(originGUID);
+          break;
+        }
       }
     }
 
@@ -664,14 +668,21 @@ var InternalDropHandler = {
     // also creates the device-side list if appropriate.
     aDevice.exportToDevice(deviceLibrary, changeset);
 
-    // Get the list created, if any.
+    // Get the list that was created, if any.
     var newlist = null;
     var changes = changeset.changes;
     for (var i = 0; i < changes.length; i++) {
       var change = changes.queryElementAt(i, Ci.sbILibraryChange);
       if (change.itemIsList) {
-        newlist = change.destinationItem;
-        break;
+        if (change.operation == Ci.sbIChangeOperation.ADD) {
+          var foundLists = 
+            this.deviceLibrary.getItemsByProperty(SBProperties.originItemGuid,
+                                                  change.sourceItem.guid);
+          if (foundLists.length > 0) {
+            newlist = foundLists[0];
+          } 
+          break;
+        }
       }
     }
 
