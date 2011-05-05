@@ -1254,7 +1254,12 @@ sbLocalDatabasePropertyCache::Write()
                              InvalidateGUIDArrays);
     NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
-    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+    // We must dispatch async since the guid array may have acquired the
+    // mCacheMonitor. Synchronous dispatch can cause deadlocks. This is only
+    // a band-aid and not a proper fix. See bug 23777 for more information.
+    // TODO: XXX Fix this so either we don't need to dispatch or don't hold
+    // the lock while dispatching.
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
