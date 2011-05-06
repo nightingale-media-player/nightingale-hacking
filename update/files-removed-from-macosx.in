@@ -251,6 +251,7 @@
 ./Contents/Resources/gst-plugins/libgstflxdec.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/gst-plugins/libgstmozillasrc.so
+./Contents/Resources/gstreamer/encode-profiles/avi-mpeg2sp-mp3.xml
 ./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/install.rdf
 ./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js
 ./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/

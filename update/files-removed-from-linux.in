@@ -43,6 +43,7 @@
 ./gst-plugins/libgstflxdec.so
 ./gst-plugins/libgstdebug.so
 ./gst-plugins/libgstmozillasrc.so
+./gstreamer/encode-profiles/avi-mpeg2sp-mp3.xml
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/install.rdf
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/
