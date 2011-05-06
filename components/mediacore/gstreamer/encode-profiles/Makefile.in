@@ -33,7 +33,7 @@ GST_ENCODING_PROFILES = $(srcdir)/flac.xml \
                         $(srcdir)/mp3.xml \
                         $(srcdir)/vorbis.xml \
                         $(srcdir)/wmav2.xml \
-                        $(srcdir)/avi-mpeg2sp-mp3.xml \
+                        $(srcdir)/avi-mpeg4sp-mp3.xml \
                         $(srcdir)/mp4-mjpeg-adpcm.xml \
                         $(srcdir)/ogg-theora-vorbis.xml \
                         $(srcdir)/asf-wmv-wma.xml \
