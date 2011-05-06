@@ -472,11 +472,11 @@ function sbDownloadDeviceHelper__setDownloadDestinationIfNotSet(
         let path = destFile.path;
         
         /// @todo Video items tend to have meaningless file names, because
-        ///       they lack a title property.  For now, strip off the leaf
+        ///       they lack a trackName property.  For now, strip off the leaf
         ///       name of unbetitled items, and
         //        sbDownloadSession::CompleteTransfer() will construct a
         //        file name from the source URL:
-        if (!item.getProperty(SBProperties.title)) {
+        if (!item.getProperty(SBProperties.trackName)) {
           // Leave a trailing delimiter so the path parses as a directory:
           path = path.replace(/[^/\\]*$/, "");
         }
