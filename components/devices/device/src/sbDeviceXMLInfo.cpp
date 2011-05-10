@@ -561,7 +561,7 @@ nsresult
 sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
 {
   NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
-  *aOutSupportsReformat = PR_TRUE;
+  *aOutSupportsReformat = PR_FALSE;
 
   // Check if a device info element is available.
   NS_ENSURE_TRUE(mDeviceInfoElement, NS_ERROR_NOT_AVAILABLE);
@@ -587,9 +587,9 @@ sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
                                              supportsFormatValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (supportsFormatValue.Equals(NS_LITERAL_STRING("false"),
+    if (supportsFormatValue.Equals(NS_LITERAL_STRING("true"),
                                    CaseInsensitiveCompare)) {
-      *aOutSupportsReformat = PR_FALSE;
+      *aOutSupportsReformat = PR_TRUE;
     }
   }
 
