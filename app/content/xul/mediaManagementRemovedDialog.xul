@@ -46,7 +46,10 @@
  type="songbird"
 >
   <description>
-    &mediamanagement.removed.dialog.text;
+    &mediamanagement.removed.dialog.text.line1;
+  </description>
+  <description>
+    &mediamanagement.removed.dialog.text.line2;
     <label class="text-link" href="&mediamanagement.removed.dialog.url;" value="&mediamanagement.removed.dialog.linktext;"/>
   </description>
 
