@@ -107,7 +107,7 @@ interface sbIPropertyChange : sbIChangeOperation
 interface sbILibraryChange : sbIChangeOperation
 {
   /**
-   * Timestamp for the change. 
+   * Timestamp for the change.
    *
    * This is a UNIX style timestamp.
    */
@@ -117,7 +117,7 @@ interface sbILibraryChange : sbIChangeOperation
    * The source item that triggered the change.
    *
    * In the case where the sourceItem was added;
-   * the destinationItem will be the same as the 
+   * the destinationItem will be the same as the
    * sourceItem.
    */
   readonly attribute sbIMediaItem   sourceItem;
@@ -125,7 +125,7 @@ interface sbILibraryChange : sbIChangeOperation
   /**
    * The destination item that should recieve the change.
    *
-   * The destination item may be the same as the 
+   * The destination item may be the same as the
    * source item.
    *
    * In the case where the sourceItem was added;
@@ -133,11 +133,11 @@ interface sbILibraryChange : sbIChangeOperation
    * sourceItem.
    */
   readonly attribute sbIMediaItem destinationItem;
-  
+
   /**
    * Indicates if the item changed is a list.
    *
-   * If this attribute is true, the item will 
+   * If this attribute is true, the item will
    * implement sbIMediaList.
    *
    * \sa sbIMediaList
@@ -166,7 +166,7 @@ interface sbILibraryChange : sbIChangeOperation
 };
 
 
-/** 
+/**
  * \interface sbILibraryChangeset
  * \sa sbILibraryChange sbIPropertyChange sbIChangeOperation
  */
@@ -175,24 +175,24 @@ interface sbILibraryChangeset : nsISupports
 {
   /**
    * Source Libraries or MediaLists.
-   * 
+   *
    * This is an array of sbIMediaList elements.
    */
   readonly attribute nsIArray      sourceLists;
-  
+
   /**
-   * Destination Library or MediaList. 
+   * Destination Library or MediaList.
    *
-   * This may be the same as the source library or media list when using 
+   * This may be the same as the source library or media list when using
    * sbILibraryLoggingService.
-   * 
-   * When using sbILibraryDiffingService, this will be the destination 
+   *
+   * When using sbILibraryDiffingService, this will be the destination
    * library or media listfor the changeset.
    */
   readonly attribute sbIMediaList      destinationList;
 
   /**
-   * Ordered array of changes. 
+   * Ordered array of changes.
    *
    * This is an array of sbILibraryChange elements.
    *

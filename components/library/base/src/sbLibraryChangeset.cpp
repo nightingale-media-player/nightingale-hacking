@@ -1,30 +1,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
-/** 
+/**
  * \file  sbLibraryChangeset.cpp
  * \brief sbLibraryChangeset Implementation.
  */
@@ -47,7 +47,7 @@ NS_IMPL_THREADSAFE_RELEASE(sbPropertyChange)
 
 NS_INTERFACE_MAP_BEGIN(sbPropertyChange)
   NS_IMPL_QUERY_CLASSINFO(sbPropertyChange)
-  //XXXAus: static_cast does not work in this case, 
+  //XXXAus: static_cast does not work in this case,
   //reinterpret_cast to nsISupports is necessary
   if ( aIID.Equals(NS_GET_IID(sbPropertyChange)) )
     foundInterface = reinterpret_cast<nsISupports*>(this);
@@ -109,7 +109,7 @@ nsresult sbPropertyChange::Init()
 
 nsresult sbPropertyChange::InitWithValues(PRUint32 aOperation,
                                           const nsAString &aID,
-                                          const nsAString &aOldValue, 
+                                          const nsAString &aOldValue,
                                           const nsAString &aNewValue)
 {
   nsresult rv = Init();
@@ -170,10 +170,10 @@ nsresult sbPropertyChange::SetNewValue(const nsAString &aNewValue)
 NS_IMETHODIMP sbPropertyChange::GetOperation(PRUint32 *aOperation)
 {
   NS_ENSURE_ARG_POINTER(aOperation);
-  
+
   nsAutoLock lock(mOperationLock);
   *aOperation = mOperation;
-  
+
   return NS_OK;
 }
 
@@ -200,7 +200,7 @@ NS_IMETHODIMP sbPropertyChange::GetNewValue(nsAString & aNewValue)
 {
   nsAutoLock lock(mNewValueLock);
   aNewValue.Assign(mNewValue);
-  
+
   return NS_OK;
 }
 
@@ -214,7 +214,7 @@ NS_IMPL_THREADSAFE_RELEASE(sbLibraryChange)
 
 NS_INTERFACE_MAP_BEGIN(sbLibraryChange)
   NS_IMPL_QUERY_CLASSINFO(sbLibraryChange)
-  //XXXAus: static_cast does not work in this case, 
+  //XXXAus: static_cast does not work in this case,
   //reinterpret_cast to nsISupports is necessary
   if ( aIID.Equals(NS_GET_IID(sbLibraryChange)) )
     foundInterface = reinterpret_cast<nsISupports*>(this);
@@ -253,7 +253,7 @@ nsresult sbLibraryChange::Init()
 }
 
 nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
-                                         PRUint64 aTimestamp, 
+                                         PRUint64 aTimestamp,
                                          sbIMediaItem *aSourceItem,
                                          sbIMediaItem *aDestinationItem,
                                          nsIArray *aProperties,
@@ -261,7 +261,7 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
 {
   nsresult rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsAutoLock lock(mLock);
 
   mOperation = aOperation;
@@ -270,7 +270,7 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
   mDestinationItem = aDestinationItem;
   mProperties = aProperties;
   mListItems = aListItems;
-  
+
   return NS_OK;
 }
 
@@ -346,7 +346,7 @@ NS_IMETHODIMP sbLibraryChange::GetTimestamp(PRUint64 *aTimestamp)
 NS_IMETHODIMP sbLibraryChange::GetSourceItem(sbIMediaItem * *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
-  
+
   nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aItem = mSourceItem);
 
@@ -380,7 +380,7 @@ NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
 nsresult sbLibraryChange::GetItemIsListLocked(PRBool *aItemIsList)
 {
   NS_ENSURE_ARG_POINTER(aItemIsList);
-  
+
   nsresult rv;
 
   nsCOMPtr<sbIMediaList> mediaList;
@@ -390,7 +390,7 @@ nsresult sbLibraryChange::GetItemIsListLocked(PRBool *aItemIsList)
     // no source, use dest
     mediaList = do_QueryInterface(mDestinationItem, &rv);
   }
-  
+
   if(rv == NS_ERROR_NO_INTERFACE) {
     *aItemIsList = PR_FALSE;
     return NS_OK;
@@ -442,7 +442,7 @@ NS_IMPL_THREADSAFE_RELEASE(sbLibraryChangeset)
 
 NS_INTERFACE_MAP_BEGIN(sbLibraryChangeset)
   NS_IMPL_QUERY_CLASSINFO(sbLibraryChangeset)
-  //XXXAus: static_cast does not work in this case, 
+  //XXXAus: static_cast does not work in this case,
   //reinterpret_cast to nsISupports is necessary
   if ( aIID.Equals(NS_GET_IID(sbLibraryChangeset)) )
     foundInterface = reinterpret_cast<nsISupports*>(this);
@@ -477,7 +477,7 @@ sbLibraryChangeset::~sbLibraryChangeset()
   }
 }
 
-nsresult sbLibraryChangeset::Init() 
+nsresult sbLibraryChangeset::Init()
 {
   mSourceListsLock = nsAutoLock::NewLock("sbLibraryChangeset::mSourceListsLock");
   NS_ENSURE_TRUE(mSourceListsLock, NS_ERROR_OUT_OF_MEMORY);
@@ -511,12 +511,12 @@ nsresult sbLibraryChangeset::InitWithValues(nsIArray *aSourceLists,
     nsAutoLock lock(mDestinationListLock);
     mDestinationList = aDestinationList;
   }
-  
+
   {
     nsAutoLock lock(mChangesLock);
     mChanges = aChanges;
   }
-  
+
   return NS_OK;
 }
 
