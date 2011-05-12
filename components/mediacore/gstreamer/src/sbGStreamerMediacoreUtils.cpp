@@ -771,6 +771,7 @@ static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
   { "audio/aac",         "audio/mpeg", SB_GST_CAPS_MAP_AUDIO },
 
   { "video/x-ms-wmv",    "video/x-wmv", SB_GST_CAPS_MAP_VIDEO },
+  { "video/h264",        "video/x-h264", SB_GST_CAPS_MAP_VIDEO },
 
   // The remaining ones have NONE type; they should ONLY be used for mapping
   // a GST type to a mime type, not the other way around. It's ok for duplicate

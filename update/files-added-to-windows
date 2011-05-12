@@ -25,6 +25,7 @@
 .\gstreamer\encode-profiles\wmav2.xml
 .\gstreamer\encode-profiles\vorbis.xml
 .\gstreamer\encode-profiles\ogg-theora-vorbis.xml
+.\gstreamer\encode-profiles\mp4-h264-aac.xml
 .\gstreamer\encode-profiles\mp4-mjpeg-adpcm.xml
 .\gstreamer\encode-profiles\mp3.xml
 .\gstreamer\encode-profiles\flac.xml
