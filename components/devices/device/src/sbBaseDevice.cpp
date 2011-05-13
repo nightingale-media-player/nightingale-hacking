@@ -1420,6 +1420,10 @@ sbBaseDevice::InitializeDeviceLibraryPreferences(sbDeviceLibrary* aDevLib)
   rv = GetLibraryPreferenceBase(aDevLib, libraryPreferenceBase);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Check if the library organize enabled preference has been set.
+  nsAutoString organizeEnabledPref = libraryPreferenceBase;
+  organizeEnabledPref.Append(NS_LITERAL_STRING(PREF_ORGANIZE_ENABLED));
+
   /**
    * In deprecating custom directory structures for devices, set default library
    * organize preferences.
