@@ -311,7 +311,7 @@ addToLibraryHelper.prototype = {
                                      destItems,
                                      changeset);
 
-            device.importFromDevice(deviceLibrary, changeset.value);
+            device.importFromDevice(destLibrary, changeset.value);
  
             DNDUtils.reportAddedTracks(changeset.value.changes.length,
                                        0,
