@@ -187,10 +187,6 @@ var DeviceMediaManagementServices = {
     }
 
     this._updateNotchDisabledState();
-
-    var mgmtDirFormat = this._getElement("mgmt_dir_format");
-    var mgmtToggle = this._getElement("mgmt_enable");
-    mgmtDirFormat.disableAll = !mgmtToggle.checked || isBusy;
   },
 
   onUIPrefChange: function DeviceMediaManagementServices_onUIPrefChange() {

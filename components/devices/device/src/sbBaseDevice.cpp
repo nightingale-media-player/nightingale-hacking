@@ -1420,27 +1420,21 @@ sbBaseDevice::InitializeDeviceLibraryPreferences(sbDeviceLibrary* aDevLib)
   rv = GetLibraryPreferenceBase(aDevLib, libraryPreferenceBase);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Check if the library organize enabled preference has been set.
-  PRBool       organizeEnabledSet;
-  nsAutoString organizeEnabledPref = libraryPreferenceBase;
-  organizeEnabledPref.Append(NS_LITERAL_STRING(PREF_ORGANIZE_ENABLED));
-  rv = HasPreference(organizeEnabledPref, &organizeEnabledSet);
+  /**
+   * In deprecating custom directory structures for devices, set default library
+   * organize preferences.
+   */
+  // Set the default organize directory format.
+  nsAutoString organizeDirFormatPref = libraryPreferenceBase;
+  organizeDirFormatPref.Append(NS_LITERAL_STRING(PREF_ORGANIZE_DIR_FORMAT));
+  rv = SetPreference(organizeDirFormatPref,
+                     sbNewVariant(PREF_ORGANIZE_DIR_FORMAT_DEFAULT));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set default library organize preferences if they haven't been set yet.
-  if (!organizeEnabledSet) {
-    // Set the default organize directory format.
-    nsAutoString organizeDirFormatPref = libraryPreferenceBase;
-    organizeDirFormatPref.Append(NS_LITERAL_STRING(PREF_ORGANIZE_DIR_FORMAT));
-    rv = SetPreference(organizeDirFormatPref,
-                       sbNewVariant(PREF_ORGANIZE_DIR_FORMAT_DEFAULT));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Enable library organization by default.
-    rv = SetPreference(organizeEnabledPref,
-                       sbNewVariant(PR_TRUE, nsIDataType::VTYPE_BOOL));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // Enable library organization by default.
+  rv = SetPreference(organizeEnabledPref,
+                     sbNewVariant(PR_TRUE, nsIDataType::VTYPE_BOOL));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

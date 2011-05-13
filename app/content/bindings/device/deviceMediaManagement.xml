@@ -136,20 +136,6 @@
 
             <xul:spacer height="10" flex="1"/>
           </xul:vbox>
-          <xul:vbox>
-            <xul:checkbox sbid="mgmt_enable"
-                          xbl:inherits="disabled"
-                          oncommand="onMgmtEnableChange();"
-                          label="&device.settings.disk.management.label;"/>
-            <xul:hbox class="indent">
-              <xul:sb-properties-formatter sbid="mgmt_dir_format"
-                  maxProperties="3" trailingSeparator="true"
-                  propertyCategory="songbird-media-manager-directory-name-properties">
-                <xul:label value="&device.settings.disk.management.filename;"/>
-              </xul:sb-properties-formatter>
-              <xul:spacer flex="1"/>
-            </xul:hbox>
-          </xul:vbox>
         </xul:groupbox>
       </xul:vbox>
     </content>
@@ -174,23 +160,6 @@
       <property name="_devicePrefRoot" readonly="true">
         <getter>
           return "library." + this.devLibGUID;
-        </getter>
-      </property>
-      <property name="_formatDirPrefName" readonly="true">
-        <getter>
-          return "songbird.device." +
-                 this.deviceID +
-                 ".preferences.library." +
-                 this.devLibGUID +
-                 ".media_management.library.format.dir";
-        </getter>
-      </property>
-
-      <property name="_formatter" readonly="true">
-        <getter>
-          return document.getAnonymousElementByAttribute(this,
-                                                         "sbid",
-                                                         "mgmt_dir_format");
         </getter>
       </property>
 
@@ -322,15 +291,6 @@
 
       <method name="save">
         <body> <![CDATA[
-          this.device.setPreference(this._devicePrefRoot +
-                                      ".media_management.library.format.dir",
-                                    this._formatter.value);
-          var enabledCheckbox =
-            document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable");
-          this.device.setPreference(this._devicePrefRoot +
-                                      ".media_management.library.enabled",
-                                    enabledCheckbox.checked);
-
           // Save the device's storage settings
           this._saveStorageScaleSetting();
 
@@ -340,27 +300,6 @@
 
       <method name="reset">
         <body> <![CDATA[
-          var enabledPrefName = this._prefRoot + ".media_management.library.enabled";
-          document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable")
-                  .checked =
-                    Application.prefs.getValue(enabledPrefName, false);
-          var defaultValue =
-            Application.prefs.getValue("songbird.media_management.library.format.dir",
-                                       "");
-          // need to wait for the element to be constructed :|
-          var formatDirPrefName =
-            this._prefRoot + ".media_management.library.format.dir";
-          setTimeout(function(self){
-            self._formatter.value = Application.prefs.getValue(formatDirPrefName,
-                                                               defaultValue);
-            var mgmtEnableCheckbox =
-                  document.getAnonymousElementByAttribute(self,
-                                                          "sbid",
-                                                          "mgmt_enable");
-            self._formatter.disableAll = !mgmtEnableCheckbox.checked ||
-                                         (self.device && self.device.isBusy);
-          }, 0, this);
-
           // Set the scale to the device's current value.
           var self = this;
           setTimeout(function() { self._resetStorageScale(); }, 100);
@@ -400,16 +339,6 @@
             SBFormattedString("device.settings.limit_disk_space",
                               [this._scale.getAttribute("value"),
                                capacity]);
-        ]]></body>
-      </method>
-
-      <method name="onMgmtEnableChange">
-        <body><![CDATA[
-          var mgmtEnableCheckbox =
-                document.getAnonymousElementByAttribute(this,
-                                                        "sbid",
-                                                        "mgmt_enable");
-          this._formatter.disableAll = !mgmtEnableCheckbox.checked;
         ]]></body>
       </method>
 
