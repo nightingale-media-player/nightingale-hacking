@@ -45,7 +45,9 @@
    *
    * First run import media widget.
    *
-   *   This widget provides a first run import media UI.
+   *   This widget provides a first run import media UI.  It extends
+   *   sb-wizard-page directly - rather than being enclosed in one - so
+   *   it can easily use the sb-wizard-page.visited property.
    *
    * Methods:
    *
@@ -55,7 +57,8 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-first-run-import-media">
+  <binding id="sb-first-run-import-media"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
 
     <!-- ***********************************************************************
      *
@@ -166,7 +169,10 @@
        -->
 
       <method name="saveSettings"><body><![CDATA[
-        this._widgetSvc.saveSettings();
+        // This page may be skipped.  Only save if it was visited:
+        if (this.visited) {
+          this._widgetSvc.saveSettings();
+        }
       ]]></body></method>
 
 

@@ -201,7 +201,7 @@
                                                   "anonid",
                                                   "itunes_import_checkbox");
         if (checkbox.checked &&
-            !this.adavancing &&
+            !this.advancing &&
             this.next == "first_run_import_media_page")
         {
           // guard against unwanted recursion
@@ -211,6 +211,7 @@
           this.advancing = false;
           return false;
         }
+        return true;
       ]]></handler>
     </handlers>
 

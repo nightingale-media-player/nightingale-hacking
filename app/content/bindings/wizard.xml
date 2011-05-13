@@ -265,8 +265,16 @@
        *   _widgetSvc           Songbird wizard page widget services object.
        -->
 
+      <field name="_visited"/>
       <field name="_widgetSvc"/>
 
+
+      <property name="visited" onget="return this._visited;">
+        <setter>
+          this._visited = val;
+          return this.visited;
+        </setter>
+      </property>
 
       <!-- *********************************************************************
        *
@@ -332,10 +340,16 @@
     
     <handlers>
      
+      <handler event="pageadvanced">
+        this.visited = true;
+        return true;
+      </handler>
+      
       <!--
        * Deal with the optional prev= attribute
        -->
       <handler event="pagerewound">
+        this.visited = false;
         if (this.hasAttribute("prev")) {
           document.documentElement.goTo(this.getAttribute("prev"));
           return false;

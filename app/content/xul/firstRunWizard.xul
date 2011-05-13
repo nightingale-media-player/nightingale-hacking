@@ -153,16 +153,19 @@
               class="first-run-wizard-page"
               firstrunwizardpage="true"/>
 
-  <!-- Import media page. -->
+  <!-- Import media page.
+   *   The binding for this page, sb-first-run-import-media, extends
+   *   sb-wizard-page directly.  It is therefore bound directly to this
+   *   <wizardpage> by id, rather than to an <sb-first-run-import-media>
+   *   child.
+   -->
   <wizardpage id="first_run_import_media_page"
               pageid="first_run_import_media_page"
               next="first_run_add_ons_page"
               label="&first_run.title;"
-              onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-import-media id="first_run_import_media"
-                               class="first-run-wizard-page"
-                               firstrunwizardpage="true"/>
-  </wizardpage>
+              onpageshow="firstRunWizard.doPageShow();"
+              class="first-run-wizard-page"
+              firstrunwizardpage="true"/>
 
   <!-- Add-ons page. -->
   <wizardpage id="first_run_add_ons_page"
