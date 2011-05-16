@@ -192,7 +192,7 @@ public:
     {
       const const_iterator end = mRequestItems.end();
       const_iterator iter = mRequestItems.begin();
-      while (aIndex-- > 0 && iter != end) ;
+      while (aIndex-- > 0 && iter != end) ++iter;
       if (iter == end) {
         return nsnull;
       }
