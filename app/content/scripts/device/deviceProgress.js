@@ -197,7 +197,7 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true,
+      updateIdle: true,
       operationCanceled: true
     },
 
@@ -455,7 +455,8 @@ var DPW = {
     // Show cancel button while busy and finish button while idle.
     var cancelButtonHidden;
     var finishButtonHidden;
-    if (deviceState == Ci.sbIDevice.STATE_IDLE) {
+    if (deviceState == Ci.sbIDevice.STATE_IDLE ||
+        deviceState == Ci.sbIDevice.STATE_CANCEL) {
       cancelButtonHidden = true;
       finishButtonHidden = false;
     } else {
@@ -829,9 +830,6 @@ var DPW = {
       case "finish" :
         this._finish();
         break;
-      // TODO(jhawk) case "settings-apply" used to make all playlists editable,
-      //             make sure that still happens
-
 
       default :
         break;

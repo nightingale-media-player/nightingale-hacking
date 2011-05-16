@@ -1221,6 +1221,7 @@ NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
   nsAutoLock lock(mStateLock);
   switch (mState) {
     case STATE_IDLE:
+    case STATE_CANCEL:
     case STATE_DOWNLOAD_PAUSED:
     case STATE_UPLOAD_PAUSED:
       *aIsBusy = PR_FALSE;
@@ -1241,6 +1242,7 @@ NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
   nsAutoLock lock(mStateLock);
   switch(mState) {
     case STATE_IDLE:
+    case STATE_CANCEL:
     case STATE_MOUNTING:
     case STATE_DISCONNECTED:
     case STATE_DOWNLOAD_PAUSED:
@@ -2302,6 +2304,7 @@ sbBaseDevice::ClearRequests()
 NS_IMETHODIMP
 sbBaseDevice::CancelRequests()
 {
+  SetState(STATE_CANCEL);
   mRequestThreadQueue->CancelRequests();
   return NS_OK;
 }
@@ -2328,13 +2331,14 @@ T find_iterator(T start, T end, T target)
   return start;
 }
 
-nsresult sbBaseDevice::EnsureSpaceForWrite(Batch & aBatch, bool aInSync)
+nsresult sbBaseDevice::EnsureSpaceForWrite(sbILibraryChangeset* aChangeset,
+                                           sbIDeviceLibrary* aDevLibrary)
 {
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite++\n"));
 
   nsresult rv;
 
-  sbDeviceEnsureSpaceForWrite esfw(this, aInSync, aBatch);
+  sbDeviceEnsureSpaceForWrite esfw(this, aDevLibrary, aChangeset);
 
   rv = esfw.EnsureSpace();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3972,33 +3976,6 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
     return NS_ERROR_ABORT;
   }
 
-  // Ensure enough space is available for operation.  Cancel operation if not.
-  PRBool capacityExceeded;
-  PRBool abort;
-  rv = EnsureSpaceForSync(exportChangeset, &capacityExceeded, &abort);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (abort) {
-    return NS_OK;
-  }
-
-  if (IsRequestAborted()) {
-    return NS_ERROR_ABORT;
-  }
-
-  // We need to perform another sync if the capacity was exceeded because the
-  // overcapacity logic will create a playlist and change the sync settings to
-  // use the newly created playlist.
-  if (capacityExceeded) {
-    // Produce the sync change set.
-    rv = SyncProduceChangeset(aRequest,
-                              getter_AddRefs(exportChangeset),
-                              getter_AddRefs(importChangeset));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (IsRequestAborted()) {
-      return NS_ERROR_ABORT;
-    }
-  }
   // Setup the device state for sync'ing
   rv = SetState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -4146,87 +4123,6 @@ namespace
 
     return NS_OK;
   }
-}
-nsresult
-sbBaseDevice::EnsureSpaceForSync(sbILibraryChangeset* aChangeset,
-                                 PRBool*          aCapacityExceeded,
-                                 PRBool*          aAbort)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aChangeset);
-  NS_ENSURE_ARG_POINTER(aCapacityExceeded);
-  NS_ENSURE_ARG_POINTER(aAbort);
-
-  // Function variables.
-  nsresult rv;
-
-  nsCOMPtr<sbIDeviceLibrary> defaultLibrary;
-  rv = GetDefaultLibrary(getter_AddRefs(defaultLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the space available for syncing.
-  PRInt64 availableSpace;
-  rv = SyncGetSyncAvailableSpace(defaultLibrary, &availableSpace);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the sync item sizes and total size.
-  PRInt64 totalSyncSize;
-  PRUint32 lastItemThatFits;
-  rv = SyncGetSyncItemSizes(defaultLibrary,
-                            aChangeset,
-                            availableSpace,
-                            lastItemThatFits,
-                            totalSyncSize);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // If not enough space is available, ask the user what action to take.  If the
-  // user does not abort the operation, create and sync to a sync media list
-  // that will fit in the available space.  Otherwise, set the management type
-  // to manual and return with abort.
-  if (availableSpace < totalSyncSize && !mEnsureSpaceChecked) {
-    *aCapacityExceeded = PR_TRUE;
-    // Ask the user what action to take.
-    PRBool abort;
-    rv = sbDeviceUtils::QueryUserSpaceExceeded(this,
-                                               defaultLibrary,
-                                               totalSyncSize,
-                                               availableSpace,
-                                               &abort);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // User Aborted. Report that to the caller.
-    if (abort) {
-      *aAbort = PR_TRUE;
-      return NS_OK;
-    }
-
-    // Save the flag so that we won't ask user multiple times in one
-    // syncing operation.
-    mEnsureSpaceChecked = true;
-
-    nsCOMPtr<sbILibrary> sourceLibrary;
-    rv = GetSourceLibraryForChangeset(aChangeset,
-                                      getter_AddRefs(sourceLibrary));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Create a sync media list and sync to it.
-    rv = SyncCreateAndSyncToList(sourceLibrary,
-                                 defaultLibrary,
-                                 availableSpace);
-    if (rv == NS_ERROR_ABORT) {
-      *aAbort = PR_TRUE;
-      return NS_OK;
-    }
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    *aCapacityExceeded = PR_TRUE;
-  }
-
-  // Don't abort.
-  *aAbort = PR_FALSE;
-
-  return NS_OK;
 }
 
 nsresult
@@ -4858,6 +4754,22 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
 
   // Function variables.
   nsresult rv;
+
+  rv = EnsureSpaceForWrite(aChangeset, aDevLibrary);
+  if (NS_FAILED(rv)) {
+
+    // User cancelled the sync, set the state as such
+    rv = SetState(STATE_CANCEL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceStatus> status;
+    rv = GetCurrentStatus(getter_AddRefs(status));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = status->SetCurrentState(STATE_CANCEL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
 
   // Create some change list arrays.
   nsCOMPtr<nsIMutableArray> addMediaLists =

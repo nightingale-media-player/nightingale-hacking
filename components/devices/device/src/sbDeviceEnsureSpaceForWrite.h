@@ -32,98 +32,49 @@
 #include "sbBaseDevice.h"
 
 /**
- * This is a helper class that looks at the batch and determines how many
- * items will fit in the free space of the device. The batch passed to the
- * constructor is modified, with items that fail to fit being removed.
+ * This is a helper class that looks at the changeset and determines how many
+ * items will fit in the free space of the device. The changeset passed to the
+ * constructor is modified, removing changes that dont fit.
  */
 class sbDeviceEnsureSpaceForWrite
 {
 public:
-  // Typedefs for types from sbBaseDevice
-  typedef sbBaseDevice::TransferRequest TransferRequest;
-  typedef sbBaseDevice::Batch Batch;
-  /**
-   * Holds the length and indexes back to the batch for the item
-   */
-  struct BatchLink {
-    BatchLink() : mLength(0) {}
-    BatchLink(PRInt32 aOrder,
-              PRInt64 aLength,
-              PRUint32 aIndex) : mOrder(aOrder), mLength(aLength) {
-      mBatchIndexes.push_back(aIndex);
-    }
-    PRInt32 mOrder;
-    PRInt64 mLength;
-    typedef std::vector<PRUint32> BatchIndexes;
-    BatchIndexes mBatchIndexes;
-  };
-
-  typedef std::map<sbIMediaItem*, BatchLink> ItemsToWrite;
 
   /**
-   * Initializes the object with the device and batch to be analyzed
-   * \param aDevice The device the batch belongs to
-   * \param aInSync Whether this is called as the result of a sync
-   * \param aBatch The batch that we'er checking for available space
+   * Initializes the object with the device and changeset to be analyzed
+   * \param aDevice     The device the changeset belongs to
+   * \param aDevLibrary The device's library
+   * \param aChangeset  The changeset that we're checking for available space
    */
   sbDeviceEnsureSpaceForWrite(sbBaseDevice * aDevice,
-                              bool aInSync,
-                              Batch & aBatch);
+                              sbIDeviceLibrary * aDevLibrary,
+                              sbILibraryChangeset * aChangeset);
   /**
    * Cleanup data
    */
   ~sbDeviceEnsureSpaceForWrite();
 
   /**
-   * Ensures there's enough space for items in the batch and removes any items
+   * Ensures there's enough space for items in the changeset and removes any items
    * that don't fit.
    */
   nsresult EnsureSpace();
 private:
-  /**
-   * Our write mode
-   */
-  enum WriteMode {
-    NOP,
-    SHUFFLE,
-    MANUAL,
-    ABORT
-  };
-
-  struct RemoveItemInfo
-  {
-    RemoveItemInfo(sbIMediaItem * aItem, sbIMediaList * aList) : mItem(aItem),
-                                                                 mList(aList) {}
-    nsRefPtr<sbIMediaItem> mItem;
-    nsRefPtr<sbIMediaList> mList;
-  };
-
-  /**
-   * Simple list of non-owning media item pointers
-   */
-  typedef std::vector<sbIMediaItem*> ItemList;
-
-  /**
-   * Collection items to be removed and their list
-   */
-  typedef std::list<RemoveItemInfo> RemoveItems;
 
   /**
    * non-owning reference back to our device
    */
   sbBaseDevice * mDevice;
+
   /**
-   * Collection of media item pointers
+   * The device library
    */
-  ItemsToWrite mItemsToWrite;
+  nsCOMPtr<sbIDeviceLibrary> mDevLibrary;
+
   /**
-   * The batch we're operating on
+   * The changeset we're operating on
    */
-  Batch & mBatch;
-  /**
-   * The owning library of the items
-   */
-  nsCOMPtr<sbIDeviceLibrary> mOwnerLibrary;
+  nsCOMPtr<sbILibraryChangeset> mChangeset;
   /**
    * Total length in bytes of the items
    */
@@ -134,48 +85,14 @@ private:
   PRInt64 mFreeSpace;
 
   /**
-   * True if this ensure space is being done within a sync
-   */
-  bool mInSync;
-
-  /**
-   * Builds a list of sbIMediaItem pointers mItemsToWrite
-   */
-  nsresult BuildItemsToWrite();
-
-  /**
-   * Adds an item to mItemsToWrite
-   */
-  nsresult AddItemToWrite(TransferRequest * aRequest,
-                          PRUint32 aIndex,
-                          PRUint32 & aOrder);
-
-  /**
-   * Creates an item list
-   */
-  void CreateItemList(ItemList & aItems);
-
-  /**
    * Gets the free space for the device
    */
   nsresult GetFreeSpace();
 
   /**
-   * Determines the write mode for our device
-   */
-  nsresult GetWriteMode(WriteMode & aWriteMode);
-
-  /**
-   * Removes the extra items from the batch
+   * Removes the extra items from the changeset
    */
   nsresult RemoveExtraItems();
-
-  /**
-   * Removes the items picked to be removed from the device library
-   */
-  nsresult RemoveItemsFromLibrary(RemoveItems::iterator iter,
-                                  RemoveItems::iterator end);
 };
 
 #endif /* SBDEVICEENSURESPACEFORWRITE_H_ */
-

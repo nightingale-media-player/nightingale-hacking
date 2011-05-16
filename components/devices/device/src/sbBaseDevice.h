@@ -103,9 +103,9 @@ public:
   // Friend declarations for classes used to divide up device work
   friend class sbDeviceTranscoding;
   friend class sbDeviceImages;
-  friend class sbBatchCleanup;
   friend class sbBaseDeviceVolume;
   friend class sbDeviceRequestThreadQueue;
+  friend class sbDevieEnsureSpaceForWrite;
 
   typedef sbRequestThreadQueue::Batch Batch;
 
@@ -749,20 +749,22 @@ protected:
   static const PRUint32 DEFER_DEVICE_SETUP_DELAY = 2000;
 
   /**
-   * Make sure that there is enough free space for the batch. If there is not
-   * enough space for all the items in the batch and the user does not abort
-   * the operation, items in the batch will be removed.
+   * Make sure that there is enough free space for the changeset. If there is
+   * not enough space for all the changes and the user does not abort
+   * the operation, items in the changeset will be removed.
    *
-   * What items get removed depends on the current sync mode. If we're in
-   * manual sync then the last items not fitting will be removed. If we're are
-   * in an automatic sync mode then a random subset of items will be removed
-   * from the batch.
+   * We preference different types of change operations differently.
+   * Most commonly the changeset will be composed of ADD and MODIFIED changes,
+   * and we preference non-ADD changes over ADDs so that we will perform
+   * all modifications before considering ADDs.
    *
-   * \param aBatch The batch to ensure space for. This collection may be
-   *               modified on return.
-   * \param aInSync Denotes whether this was called as part of a sync operation
+   * \param aChangeset The changest to ensure space for. The changes within
+   *                   the changeset may be modified on return.
+   * \param aDevLibrary The device library representing the device for whom the
+   *                    changeset was generated.
    */
-  nsresult EnsureSpaceForWrite(Batch & aBatch, bool aInSync);
+  nsresult EnsureSpaceForWrite(sbILibraryChangeset* aChangeset,
+                               sbIDeviceLibrary* aDevLibrary);
 
   /**
    * Wait for the end of a request batch to be enqueued.

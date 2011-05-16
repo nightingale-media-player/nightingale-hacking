@@ -114,12 +114,6 @@ sbIPDDevice::ProcessBatch(Batch & aBatch)
       PRUint32 deviceState;
       rv = GetState(&deviceState);
       NS_ENSURE_SUCCESS(rv, rv);
-
-      // Check for space for request.  Assume space is ensured on error
-      // and attempt the write.
-      rv = EnsureSpaceForWrite(aBatch,
-                               deviceState == sbIDevice::STATE_SYNCING);
-      NS_ENSURE_SUCCESS(rv, rv);
     }
 
     Batch batches[3];
