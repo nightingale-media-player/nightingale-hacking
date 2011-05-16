@@ -324,9 +324,6 @@ SyncEnumListenerBase::Init(PRBool aIsDrop,
   NS_NEWXPCOM(mChangeset, sbLibraryChangeset);
   NS_ENSURE_TRUE(mChangeset, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = mChangeset->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   mLibraryChanges = do_CreateInstance(
           "@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);

@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file  sbLibraryChangeset.cpp
@@ -35,7 +33,7 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
-#include <nsAutoLock.h>
+#include <nsIMutableArray.h>
 #include <nsMemory.h>
 
 //-----------------------------------------------------------------------------
@@ -65,46 +63,13 @@ NS_DECL_CLASSINFO(sbPropertyChange)
 NS_IMPL_THREADSAFE_CI(sbPropertyChange)
 
 sbPropertyChange::sbPropertyChange()
-: mOperationLock(nsnull)
-, mOperation(sbIChangeOperation::UNKNOWN)
-, mIDLock(nsnull)
-, mOldValueLock(nsnull)
-, mNewValueLock(nsnull)
+: mOperation(sbIChangeOperation::UNKNOWN)
 {
 
 }
 
 sbPropertyChange::~sbPropertyChange()
 {
-  if(mOperationLock) {
-    nsAutoLock::DestroyLock(mOperationLock);
-  }
-  if(mIDLock) {
-    nsAutoLock::DestroyLock(mIDLock);
-  }
-  if(mOldValueLock) {
-    nsAutoLock::DestroyLock(mOldValueLock);
-  }
-  if(mNewValueLock) {
-    nsAutoLock::DestroyLock(mNewValueLock);
-  }
-}
-
-nsresult sbPropertyChange::Init()
-{
-  mOperationLock = nsAutoLock::NewLock("sbPropertyChange::mOperationLock");
-  NS_ENSURE_TRUE(mOperationLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mIDLock = nsAutoLock::NewLock("sbPropertyChange::mIDLock");
-  NS_ENSURE_TRUE(mIDLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mOldValueLock = nsAutoLock::NewLock("sbPropertyChange::mOldValueLock");
-  NS_ENSURE_TRUE(mOldValueLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mNewValueLock = nsAutoLock::NewLock("sbPropertyChange::mNewValueLock");
-  NS_ENSURE_TRUE(mNewValueLock, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
 }
 
 nsresult sbPropertyChange::InitWithValues(PRUint32 aOperation,
@@ -112,56 +77,34 @@ nsresult sbPropertyChange::InitWithValues(PRUint32 aOperation,
                                           const nsAString &aOldValue,
                                           const nsAString &aNewValue)
 {
-  nsresult rv = Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  {
-    nsAutoLock lock(mOperationLock);
-    mOperation = aOperation;
-  }
-
-  {
-    nsAutoLock lock(mIDLock);
-    mID = aID;
-  }
-
-  {
-    nsAutoLock lock(mOldValueLock);
-    mOldValue = aOldValue;
-  }
-
-  {
-    nsAutoLock lock(mNewValueLock);
-    mNewValue = aNewValue;
-  }
+  mOperation = aOperation;
+  mID = aID;
+  mOldValue = aOldValue;
+  mNewValue = aNewValue;
 
   return NS_OK;
 }
 
 nsresult sbPropertyChange::SetOperation(PRUint32 aOperation)
 {
-  nsAutoLock lock(mOperationLock);
   mOperation = aOperation;
   return NS_OK;
 }
 
 nsresult sbPropertyChange::SetID(const nsAString &aID)
 {
-  nsAutoLock lock(mIDLock);
   mID = aID;
   return NS_OK;
 }
 
 nsresult sbPropertyChange::SetOldValue(const nsAString &aOldValue)
 {
-  nsAutoLock lock(mOldValueLock);
   mOldValue = aOldValue;
   return NS_OK;
 }
 
 nsresult sbPropertyChange::SetNewValue(const nsAString &aNewValue)
 {
-  nsAutoLock lock(mNewValueLock);
   mNewValue = aNewValue;
   return NS_OK;
 }
@@ -170,8 +113,6 @@ nsresult sbPropertyChange::SetNewValue(const nsAString &aNewValue)
 NS_IMETHODIMP sbPropertyChange::GetOperation(PRUint32 *aOperation)
 {
   NS_ENSURE_ARG_POINTER(aOperation);
-
-  nsAutoLock lock(mOperationLock);
   *aOperation = mOperation;
 
   return NS_OK;
@@ -180,7 +121,6 @@ NS_IMETHODIMP sbPropertyChange::GetOperation(PRUint32 *aOperation)
 /* readonly attribute AString id; */
 NS_IMETHODIMP sbPropertyChange::GetId(nsAString & aId)
 {
-  nsAutoLock lock(mIDLock);
   aId.Assign(mID);
 
   return NS_OK;
@@ -189,7 +129,6 @@ NS_IMETHODIMP sbPropertyChange::GetId(nsAString & aId)
 /* readonly attribute AString oldValue; */
 NS_IMETHODIMP sbPropertyChange::GetOldValue(nsAString & aOldValue)
 {
-  nsAutoLock lock(mOldValueLock);
   aOldValue.Assign(mOldValue);
 
   return NS_OK;
@@ -198,9 +137,7 @@ NS_IMETHODIMP sbPropertyChange::GetOldValue(nsAString & aOldValue)
 /* readonly attribute AString newValue; */
 NS_IMETHODIMP sbPropertyChange::GetNewValue(nsAString & aNewValue)
 {
-  nsAutoLock lock(mNewValueLock);
   aNewValue.Assign(mNewValue);
-
   return NS_OK;
 }
 
@@ -231,26 +168,15 @@ NS_DECL_CLASSINFO(sbLibraryChange)
 NS_IMPL_THREADSAFE_CI(sbLibraryChange)
 
 sbLibraryChange::sbLibraryChange()
-: mLock(nsnull)
-, mOperation(sbIChangeOperation::UNKNOWN)
+: mOperation(sbIChangeOperation::UNKNOWN)
 , mTimestamp(0)
 {
 }
 
 sbLibraryChange::~sbLibraryChange()
 {
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
 }
 
-nsresult sbLibraryChange::Init()
-{
-  mLock = nsAutoLock::NewLock("sbLibraryChange::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
-}
 
 nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
                                          PRUint64 aTimestamp,
@@ -259,24 +185,17 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
                                          nsIArray *aProperties,
                                          nsIArray *aListItems)
 {
-  nsresult rv = Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoLock lock(mLock);
-
   mOperation = aOperation;
   mTimestamp = aTimestamp;
   mSourceItem = aSourceItem;
   mDestinationItem = aDestinationItem;
   mProperties = aProperties;
   mListItems = aListItems;
-
   return NS_OK;
 }
 
 nsresult sbLibraryChange::SetOperation(PRUint32 aOperation)
 {
-  nsAutoLock lock(mLock);
   mOperation = aOperation;
 
   return NS_OK;
@@ -284,7 +203,6 @@ nsresult sbLibraryChange::SetOperation(PRUint32 aOperation)
 
 nsresult sbLibraryChange::SetTimestamp(PRUint64 aTimestamp)
 {
-  nsAutoLock lock(mLock);
   mTimestamp = aTimestamp;
 
   return NS_OK;
@@ -292,7 +210,6 @@ nsresult sbLibraryChange::SetTimestamp(PRUint64 aTimestamp)
 
 nsresult sbLibraryChange::SetListItems(nsIArray *aListItems)
 {
-  nsAutoLock lock(mLock);
   mListItems = aListItems;
 
   return NS_OK;
@@ -303,7 +220,6 @@ nsresult sbLibraryChange::SetItems(sbIMediaItem *aSourceItem,
 {
   NS_ENSURE_ARG_POINTER(aSourceItem);
 
-  nsAutoLock lock(mLock);
   mSourceItem = aSourceItem;
   mDestinationItem = aDestinationItem ? aDestinationItem : aSourceItem;
 
@@ -314,7 +230,6 @@ nsresult sbLibraryChange::SetProperties(nsIArray *aProperties)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
 
-  nsAutoLock lock(mLock);
   mProperties = aProperties;
 
   return NS_OK;
@@ -325,7 +240,6 @@ NS_IMETHODIMP sbLibraryChange::GetOperation(PRUint32 *aOperation)
 {
   NS_ENSURE_ARG_POINTER(aOperation);
 
-  nsAutoLock lock(mLock);
   *aOperation = mOperation;
 
   return NS_OK;
@@ -336,7 +250,6 @@ NS_IMETHODIMP sbLibraryChange::GetTimestamp(PRUint64 *aTimestamp)
 {
   NS_ENSURE_ARG_POINTER(aTimestamp);
 
-  nsAutoLock lock(mLock);
   *aTimestamp = mTimestamp;
 
   return NS_OK;
@@ -346,8 +259,6 @@ NS_IMETHODIMP sbLibraryChange::GetTimestamp(PRUint64 *aTimestamp)
 NS_IMETHODIMP sbLibraryChange::GetSourceItem(sbIMediaItem * *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
-
-  nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aItem = mSourceItem);
 
   return *aItem ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -358,7 +269,6 @@ NS_IMETHODIMP sbLibraryChange::GetDestinationItem(sbIMediaItem * *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aItem = mDestinationItem);
 
   return *aItem ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -366,18 +276,6 @@ NS_IMETHODIMP sbLibraryChange::GetDestinationItem(sbIMediaItem * *aItem)
 
 /* readonly attribute boolean itemIsList; */
 NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
-{
-  NS_ENSURE_ARG_POINTER(aItemIsList);
-
-  nsAutoLock lock(mLock);
-
-  nsresult rv = GetItemIsListLocked(aItemIsList);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult sbLibraryChange::GetItemIsListLocked(PRBool *aItemIsList)
 {
   NS_ENSURE_ARG_POINTER(aItemIsList);
 
@@ -408,9 +306,8 @@ NS_IMETHODIMP sbLibraryChange::GetListItems(nsIArray **aListItems)
 {
   NS_ENSURE_ARG_POINTER(aListItems);
 
-  nsAutoLock lock(mLock);
   PRBool isList;
-  nsresult rv = GetItemIsListLocked(&isList);
+  nsresult rv = GetItemIsList(&isList);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!isList)
@@ -426,7 +323,6 @@ NS_IMETHODIMP sbLibraryChange::GetProperties(nsIArray * *aProperties)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
 
-  nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aProperties = mProperties);
 
   return *aProperties ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -458,37 +354,11 @@ NS_DECL_CLASSINFO(sbLibraryChangeset)
 NS_IMPL_THREADSAFE_CI(sbLibraryChangeset)
 
 sbLibraryChangeset::sbLibraryChangeset()
-: mSourceListsLock(nsnull)
-, mDestinationListLock(nsnull)
-, mChangesLock(nsnull)
 {
 }
 
 sbLibraryChangeset::~sbLibraryChangeset()
 {
-  if(mSourceListsLock) {
-    nsAutoLock::DestroyLock(mSourceListsLock);
-  }
-  if(mDestinationListLock) {
-    nsAutoLock::DestroyLock(mDestinationListLock);
-  }
-  if(mChangesLock) {
-    nsAutoLock::DestroyLock(mChangesLock);
-  }
-}
-
-nsresult sbLibraryChangeset::Init()
-{
-  mSourceListsLock = nsAutoLock::NewLock("sbLibraryChangeset::mSourceListsLock");
-  NS_ENSURE_TRUE(mSourceListsLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mDestinationListLock = nsAutoLock::NewLock("sbLibraryChangeset::mDestinationListLock");
-  NS_ENSURE_TRUE(mDestinationListLock, NS_ERROR_OUT_OF_MEMORY);
-
-  mChangesLock = nsAutoLock::NewLock("sbLibraryChangeset::mChangesLock");
-  NS_ENSURE_TRUE(mChangesLock, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
 }
 
 nsresult sbLibraryChangeset::InitWithValues(nsIArray *aSourceLists,
@@ -499,23 +369,10 @@ nsresult sbLibraryChangeset::InitWithValues(nsIArray *aSourceLists,
   NS_ENSURE_ARG_POINTER(aDestinationList);
   NS_ENSURE_ARG_POINTER(aChanges);
 
-  nsresult rv = Init();
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  {
-    nsAutoLock lock(mSourceListsLock);
-    mSourceLists = aSourceLists;
-  }
-
-  {
-    nsAutoLock lock(mDestinationListLock);
-    mDestinationList = aDestinationList;
-  }
-
-  {
-    nsAutoLock lock(mChangesLock);
-    mChanges = aChanges;
-  }
+  mSourceLists = aSourceLists;
+  mDestinationList = aDestinationList;
+  mChanges = aChanges;
 
   return NS_OK;
 }
@@ -524,7 +381,6 @@ nsresult sbLibraryChangeset::SetSourceLists(nsIArray *aSourceLists)
 {
   NS_ENSURE_ARG_POINTER(aSourceLists);
 
-  nsAutoLock lock(mSourceListsLock);
   mSourceLists = aSourceLists;
 
   return NS_OK;
@@ -534,17 +390,15 @@ nsresult sbLibraryChangeset::SetDestinationList(sbIMediaList *aDestinationList)
 {
   NS_ENSURE_ARG_POINTER(aDestinationList);
 
-  nsAutoLock lock(mDestinationListLock);
   mDestinationList = aDestinationList;
 
   return NS_OK;
 }
 
-nsresult sbLibraryChangeset::SetChanges(nsIArray *aChanges)
+NS_IMETHODIMP sbLibraryChangeset::SetChanges(nsIArray *aChanges)
 {
   NS_ENSURE_ARG_POINTER(aChanges);
 
-  nsAutoLock lock(mChangesLock);
   mChanges = aChanges;
 
   return NS_OK;
@@ -555,7 +409,6 @@ NS_IMETHODIMP sbLibraryChangeset::GetSourceLists(nsIArray * *aSourceLists)
 {
   NS_ENSURE_ARG_POINTER(aSourceLists);
 
-  nsAutoLock lock(mSourceListsLock);
   NS_IF_ADDREF(*aSourceLists = mSourceLists);
 
   return *aSourceLists ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -566,7 +419,6 @@ NS_IMETHODIMP sbLibraryChangeset::GetDestinationList(sbIMediaList * *aDestinatio
 {
   NS_ENSURE_ARG_POINTER(aDestinationList);
 
-  nsAutoLock lock(mDestinationListLock);
   NS_IF_ADDREF(*aDestinationList = mDestinationList);
 
   return *aDestinationList ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -577,7 +429,6 @@ NS_IMETHODIMP sbLibraryChangeset::GetChanges(nsIArray * *aChanges)
 {
   NS_ENSURE_ARG_POINTER(aChanges);
 
-  nsAutoLock lock(mChangesLock);
   NS_IF_ADDREF(*aChanges = mChanges);
 
   return *aChanges ? NS_OK : NS_ERROR_NOT_AVAILABLE;

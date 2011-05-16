@@ -199,5 +199,5 @@ interface sbILibraryChangeset : nsISupports
    * Applying these changes out of order to the destination will have
    * adverse effects.
    */
-  readonly attribute nsIArray        changes;
+  attribute nsIArray        changes;
 };
