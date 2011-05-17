@@ -353,9 +353,11 @@ sbLocalDatabaseMediaListBase::GetOriginProperties(
                                    getter_AddRefs(targetDev));
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetDeviceForItem() failed");
 
-  // Omit SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if the target
-  // list does not belong to a device:
-  PRBool omitMainLibFlag = (NS_SUCCEEDED(rv) && (targetDev == NULL));
+  // We only set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY where it is maintained
+  // and currently there are only main library listeners in place to update the
+  // property in device libraries, so set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY
+  // only if the the target list belongs to a device.
+  PRBool targetIsDevice = (NS_SUCCEEDED(rv) && (targetDev != NULL));
 
   // Get the origin library:
   nsCOMPtr<sbILibrary> originLib;
@@ -367,64 +369,52 @@ sbLocalDatabaseMediaListBase::GetOriginProperties(
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Ensure there is no conflicting value for
+  // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY:
+  rv = RemoveProperty(
+          aProperties,
+          NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY and remove any existing
   // origin guids if the origin library is the main library.  This will
   // force the code below to regenerate the origin guids whenever an
   // item is copied from the main library:
   if (originLib == mainLib) {
-    // Remove SB_PROPERTY_ORIGINLIBRARYGUID: 
+    // Remove SB_PROPERTY_ORIGINLIBRARYGUID:
     rv = RemoveProperty(aProperties,
                         NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Remove SB_PROPERTY_ORIGINITEMGUID: 
+    // Remove SB_PROPERTY_ORIGINITEMGUID:
     rv = RemoveProperty(aProperties,
                         NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Ensure there is no conflicting value for
-    // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY:
-    rv = RemoveProperty(
-            aProperties,
-            NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if the target is a
     // device library:
-    if (!omitMainLibFlag) {
+    if (targetIsDevice) {
       rv = aProperties->AppendProperty(
         NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
         NS_LITERAL_STRING("1"));
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
-  else {
-    // The source library is not the main library.
-    // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY can be left as is, if
-    // present.  However, removing it if it is false will prevent
-    // creating the property unnecessarily in the new item.
-    // Failing to test and remove an existing value is not
-    // fatal here.  Treat errors as warnings:
-    if (!omitMainLibFlag) {
-      nsAutoString isInMainLibrary;
-      rv = aProperties->GetPropertyValue(
+  else if (targetIsDevice) {
+    // The source library is not the main library, but our target is a device.
+    // We need to verify SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY by checking if
+    // an item with a guid matching this item's originItemGuid is in the main
+    // library.
+    rv = sbLibraryUtils::FindOriginalsByID(aSourceItem,
+                                           mainLib,
+                                           nsnull);
+    if (NS_SUCCEEDED(rv)) {
+      // We found the original item in the main library, set the
+      // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY flag to true
+      rv = aProperties->AppendProperty(
         NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-        isInMainLibrary);
-      if (NS_SUCCEEDED(rv)) {
-        omitMainLibFlag = (isInMainLibrary.IsEmpty() ||
-                           isInMainLibrary == NS_LITERAL_STRING("0"));
-      }
-      else {
-        NS_WARN_IF_FALSE(rv == NS_ERROR_NOT_AVAILABLE,
-                         "GetPropertyValue() failed");
-      }
-    }
-
-    if (omitMainLibFlag) {
-      rv = RemoveProperty(
-              aProperties,
-              NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "RemoveMainLibraryFlag() failed");
+        NS_LITERAL_STRING("1"));
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
