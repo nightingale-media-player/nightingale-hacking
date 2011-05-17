@@ -196,7 +196,7 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
   // Seed our random number generator
   time_t t;
   time(&t);
-  srand(t);
+  srand((unsigned int) t);
 
   // Now we consider our ADDED changes in random order
   PRUint32 addChangesLength;
