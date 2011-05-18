@@ -417,6 +417,9 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   rv = AddBaseTable();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = AddFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Left join the properties table to the base table includig a null
   // constraint on the obj_sortable column
   nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
@@ -455,9 +458,6 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mBuilder->AddCriterion(criterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AddFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddMultiSorts();
