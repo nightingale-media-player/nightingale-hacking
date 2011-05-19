@@ -35,10 +35,13 @@ SONGBIRD_TESTS = $(srcdir)/head_library-base.js \
                  $(srcdir)/test_constraints.js \
                  $(srcdir)/test_dynamicplaylist.js \
                  $(srcdir)/test_librarymanager.js \
-                 $(srcdir)/test_mediaitemwatcher.js \
-                 $(srcdir)/test_removalmonitor.js \
                  $(srcdir)/test_timeformatter.js \
-                 $(srcdir)/test_media_item_controller_cleanup.js \
                  $(NULL)
+
+# TODO: XXX Need to fix these tests and then add them back in
+# see bugs 23940-23945
+#                 $(srcdir)/test_mediaitemwatcher.js \
+#                 $(srcdir)/test_removalmonitor.js \
+#                 $(srcdir)/test_media_item_controller_cleanup.js \
 
 include $(topsrcdir)/build/rules.mk

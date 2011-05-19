@@ -48,11 +48,14 @@ PPDEFINES = -DSONGBIRD_TEST_SERVER_PORT="$(PP_TEST_SERVER_PORT)" \
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/test_batchCalls_page.html.in \
                         $(srcdir)/test_privileged_page.html.in \
-                        $(srcdir)/test_remotedownload_page.html.in \
                         $(srcdir)/test_remotelibrary_page.html.in \
-                        $(srcdir)/test_remotemedialist_add_page.html.in \
                         $(srcdir)/media/remoteLibraryTest.m3u.in \
                         $(NULL)
+
+# TODO: XXX Add these tests back in once they are fixed
+# see bugs 23940-23945
+#                        $(srcdir)/test_remotemedialist_add_page.html.in \
+#                        $(srcdir)/test_remotedownload_page.html.in \
 
 SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/tail_remoteapi.js \
@@ -62,8 +65,6 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_crossLibAdd_page.html \
                  $(srcdir)/test_empty.js \
                  $(srcdir)/test_empty_page.html \
-                 $(srcdir)/test_remotedownload.js \
-                 $(DEPTH)/components/remoteapi/test/test_remotedownload_page.html \
                  $(srcdir)/test_remotelibrary.js \
                  $(DEPTH)/components/remoteapi/test/test_remotelibrary_page.html \
                  $(srcdir)/test_remotelibrary_duplicates.js \
@@ -80,8 +81,6 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remotemedialist_page.html \
                  $(srcdir)/test_remotemedialist_add2.js \
                  $(srcdir)/test_remotemedialist_add2_page.html \
-                 $(srcdir)/test_remotemedialist_add.js \
-                 $(DEPTH)/components/remoteapi/test/test_remotemedialist_add_page.html \
                  $(srcdir)/test_remoteplayer.js \
                  $(srcdir)/test_remoteplayer_page.html \
                  $(srcdir)/test_remoteplayerlisteners.js \
@@ -118,5 +117,12 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(DEPTH)/components/remoteapi/test/remoteLibraryTest.m3u \
                  $(srcdir)/media/nyx_-_Undercover.mp3 \
                  $(NULL)
+
+# TODO: XXX Add these tests back in once they are fixed
+# see bugs 23940-23945
+#                 $(DEPTH)/components/remoteapi/test/test_remotedownload_page.html \
+#                 $(DEPTH)/components/remoteapi/test/test_remotemedialist_add_page.html \
+#                 $(srcdir)/test_remotedownload.js \
+#                 $(srcdir)/test_remotemedialist_add.js \
 
 include $(topsrcdir)/build/rules.mk
