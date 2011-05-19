@@ -495,7 +495,7 @@ sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
 
     const PRUint32 * const found = FindPropID(aDirtyPropIDs,
                                               aCount,
-                                              propertyDBID);
+                                              sortSpec.propertyId);
     if (found != dirtyPropIDsEnd) {
       // Return right away, no use in continuing if we're invalid.
       return Invalidate(PR_TRUE);
