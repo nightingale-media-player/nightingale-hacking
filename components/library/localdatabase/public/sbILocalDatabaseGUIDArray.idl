@@ -40,7 +40,7 @@ interface sbIPropertyArray;
  * \interface sbILocalDatabaseGUIDArrayListener
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(7357f378-4568-4365-997d-ec76ca17f635)]
+[scriptable, uuid(60cc270d-58f9-4cc5-a68c-d16a0139a027)]
 interface sbILocalDatabaseGUIDArrayListener : nsISupports
 {
   /**
@@ -209,4 +209,14 @@ interface sbILocalDatabaseGUIDArray : nsISupports
    * \note Don't call this method!
    */
   void suppressInvalidation(in boolean aSuppress);
+  
+  /**
+   * \brief Checks to see if the guid array needs to be invalidated
+   *        and invalidates if needed.
+   * \param aDirtyPropertyIDs The list of dirty property ids. This array must
+   *                          best sorted from least to greatest property ID
+   *                          so that it can be binary searched.
+   */
+  void mayInvalidate([array, size_is(aCount)] in unsigned long aDirtyPropertyIDs,
+                     in unsigned long aCount);
 };

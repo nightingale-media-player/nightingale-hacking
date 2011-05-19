@@ -47,11 +47,13 @@
 #include <sbIMediaListListener.h>
 #include <nsITimer.h>
 
+#include <sbWeakReference.h>
+
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbFixedInterfaceCache.h"
 #include "sbLocalDatabaseSQL.h"
 
-#include <set>
+#include <map>
 
 struct PRLock;
 struct PRMonitor;
@@ -181,10 +183,11 @@ private:
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
-  // Depedent GUID Array set and protecting monitor
+  // Depedent GUID Array map and protecting monitor
   PRMonitor* mDependentGUIDArrayMonitor;
-  typedef std::set<sbLocalDatabaseGUIDArray *> guidarrayptr_set_t;
-  guidarrayptr_set_t mDependentGUIDArraySet;
+  typedef std::map<nsISupports *,
+                   nsCOMPtr<nsIWeakReference> > DependentGUIDArrays_t;
+  DependentGUIDArrays_t mDependentGUIDArrays;
   
   // Used to protect the cache and all of the resource property bags
   PRMonitor* mMonitor;

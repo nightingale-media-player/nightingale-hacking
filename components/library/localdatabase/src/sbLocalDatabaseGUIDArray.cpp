@@ -30,6 +30,8 @@
 #include "sbLocalDatabaseSchemaInfo.h"
 #include "sbLocalDatabaseLibrary.h"
 
+#include <algorithm>
+
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
@@ -77,7 +79,9 @@ static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
 #define TRACE(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
 #define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabaseGUIDArray,
+                              sbILocalDatabaseGUIDArray,
+                              nsISupportsWeakReference)
 
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mNeedNewKey(PR_FALSE),
@@ -125,10 +129,6 @@ sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
 
   if (mPropIdsLock) {
     nsAutoLock::DestroyLock(mPropIdsLock);
-  }
-
-  if(mPropertyCache) {
-    mPropertyCache->RemoveDependentGUIDArray(this);
   }
 }
 
@@ -426,21 +426,37 @@ nsresult sbLocalDatabaseGUIDArray::ClearSecondarySorts() {
   return NS_OK;
 }
 
-nsresult
-sbLocalDatabaseGUIDArray::MayInvalidate(const std::set<PRUint32> &aDirtyPropIds)
+namespace
+{
+  /**
+   * Used to search the property ID array using a binary search algorithm
+   */
+  const PRUint32 * FindPropID(const PRUint32 * aPropIDs,
+                              PRUint32 aCount,
+                              PRUint32 aPropID)
+  {
+    const PRUint32 * result = std::lower_bound(aPropIDs, aPropIDs + aCount, aPropID);
+    if (result != aPropIDs + aCount && *result == aPropID) {
+      return result;
+    }
+    return aPropIDs + aCount;
+  }
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
+                                        PRUint32 aCount)
 {
   PRUint32 propertyDBID = 0;
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  std::set<PRUint32>::const_iterator itCur = aDirtyPropIds.begin();
-  std::set<PRUint32>::const_iterator itEnd = aDirtyPropIds.end();
 
   // First we check to see if we need to remove cached lengths.
   if (mLengthCache) {
     nsAutoLock mon(mPropIdsLock);
-    for (; itCur != itEnd; ++itCur) {
+    for (PRUint32 index = 0; index < aCount; ++index) {
       std::set<PRUint32>::iterator itEntry =
-          mPropIdsUsedInCacheKey.find(*itCur);
+          mPropIdsUsedInCacheKey.find(aDirtyPropIDs[index]);
       if(itEntry != mPropIdsUsedInCacheKey.end()) {
         mLengthCache->RemoveCachedLength(mCachedLengthKey);
         mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
@@ -448,6 +464,9 @@ sbLocalDatabaseGUIDArray::MayInvalidate(const std::set<PRUint32> &aDirtyPropIds)
       }
     }
   }
+
+  // Calc the end of the collection for iterator purposes
+  const PRUint32 * const dirtyPropIDsEnd = aDirtyPropIDs + aCount;
 
   // Go through the filters and see if we should invalidate
   PRUint32 filterCount = mFilters.Length();
@@ -459,7 +478,11 @@ sbLocalDatabaseGUIDArray::MayInvalidate(const std::set<PRUint32> &aDirtyPropIds)
       continue;
     }
 
-    if(aDirtyPropIds.find(propertyDBID) != aDirtyPropIds.end()) {
+    const PRUint32 * const found = FindPropID(aDirtyPropIDs,
+                                              aCount,
+                                              propertyDBID);
+
+    if (found != dirtyPropIDsEnd) {
       // Return right away, no use in continuing if we're invalid.
       return Invalidate(PR_TRUE);
     }
@@ -470,7 +493,10 @@ sbLocalDatabaseGUIDArray::MayInvalidate(const std::set<PRUint32> &aDirtyPropIds)
   for (PRUint32 index = 0; index < sortCount; index++) {
     const SortSpec& sortSpec = mSorts.ElementAt(index);
 
-    if(aDirtyPropIds.find(sortSpec.propertyId) != aDirtyPropIds.end()) {
+    const PRUint32 * const found = FindPropID(aDirtyPropIDs,
+                                              aCount,
+                                              propertyDBID);
+    if (found != dirtyPropIDsEnd) {
       // Return right away, no use in continuing if we're invalid.
       return Invalidate(PR_TRUE);
     }
@@ -840,10 +866,12 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = CloneInto(newArray);
+  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray(newArray);
+  nsresult rv = CloneInto(guidArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = newArray);
+  guidArray.forget(_retval);
+
   return NS_OK;
 }
 

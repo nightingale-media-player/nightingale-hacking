@@ -1423,7 +1423,11 @@ sbLocalDatabasePropertyCache::AddDependentGUIDArray(
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
 
   nsAutoMonitor mon(mDependentGUIDArrayMonitor);
-  mDependentGUIDArraySet.insert(aGUIDArray);
+  nsCOMPtr<nsISupports> supports =
+    do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
+  nsCOMPtr<nsIWeakReference> weakRef =
+    do_QueryInterface(static_cast<sbSupportsWeakReference*>(aGUIDArray));
+  mDependentGUIDArrays[supports.get()] = weakRef;
 
   return;
 }
@@ -1435,9 +1439,11 @@ sbLocalDatabasePropertyCache::RemoveDependentGUIDArray(
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
   nsAutoMonitor mon(mDependentGUIDArrayMonitor);
 
-  guidarrayptr_set_t::iterator it = mDependentGUIDArraySet.find(aGUIDArray);
-  if(it != mDependentGUIDArraySet.end()) {
-    mDependentGUIDArraySet.erase(it);
+  nsCOMPtr<nsISupports> supports =
+    do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
+  DependentGUIDArrays_t::iterator it = mDependentGUIDArrays.find(supports);
+  if(it != mDependentGUIDArrays.end()) {
+    mDependentGUIDArrays.erase(it);
   }
 
   return;
@@ -1627,35 +1633,51 @@ nsresult
 sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
 {
   // Invalidate dependent guid arrays.
-  nsCOMArray<sbLocalDatabaseGUIDArray> arrays;
+  nsCOMArray<sbILocalDatabaseGUIDArray> arrays;
 
   {
     nsAutoMonitor mon(mDependentGUIDArrayMonitor);
-    guidarrayptr_set_t::const_iterator cit = mDependentGUIDArraySet.begin();
-    guidarrayptr_set_t::const_iterator end = mDependentGUIDArraySet.end();
-    for(; cit != end; ++cit) {
-      NS_ENSURE_TRUE(arrays.AppendObject(*cit), NS_ERROR_OUT_OF_MEMORY);
+    DependentGUIDArrays_t::iterator cit = mDependentGUIDArrays.begin();
+    DependentGUIDArrays_t::iterator end = mDependentGUIDArrays.end();
+    while (cit != end) {
+      nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray =
+         do_QueryReferent(cit->second);
+      // If we have a valid object then add it, else we'll remove it from our
+      // list
+      if (guidArray) {
+        NS_ENSURE_TRUE(arrays.AppendObject(guidArray.get()), NS_ERROR_OUT_OF_MEMORY);
+        ++cit;
+      }
+      else {
+        DependentGUIDArrays_t::iterator deleteIter = cit;
+        ++cit;
+        mDependentGUIDArrays.erase(deleteIter);
+      }
     }
   }
   
-  std::set<PRUint32> dirtyPropIds;
-  
+  std::vector<PRUint32>  dirtyPropIDs;
+
   // Copy the data into a temporary set to avoid invalidating the guid arrays
   // with the property cache lock held.
   {
     nsAutoMonitor mon(mMonitor);
-    dirtyPropIds = mDirtyForInvalidation;
+    std::insert_iterator<std::vector<PRUint32> > insertIter(dirtyPropIDs,
+                                                            dirtyPropIDs.end());
+    std::copy(mDirtyForInvalidation.begin(),
+              mDirtyForInvalidation.end(),
+              insertIter);
     mDirtyForInvalidation.clear();
   }
 
   PRInt32 const count = arrays.Count();
   for (PRInt32 index = 0; index < count; ++index) {
     nsresult SB_UNUSED_IN_RELEASE(rv) = 
-      arrays[index]->MayInvalidate(dirtyPropIds);
+      arrays[index]->MayInvalidate(&dirtyPropIDs[0],
+                                   dirtyPropIDs.size());
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
       "Failed to invalidate GUID array, GUIDs may be stale.");
   }
-
   return NS_OK;
 }
 

@@ -507,6 +507,15 @@ sbLocalDatabaseAsyncGUIDArray::GetLengthCache(
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
+                                        PRUint32 aCount)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->MayInvalidate(aDirtyPropIDs, aCount);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::AddSort(const nsAString& aProperty,
                                        PRBool aAscending)
 {

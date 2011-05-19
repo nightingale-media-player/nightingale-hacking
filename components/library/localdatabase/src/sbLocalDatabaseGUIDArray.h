@@ -42,6 +42,7 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 #include <sbHashKeys.h>
+#include <sbWeakReference.h>
 
 #include <set>
 #include <map>
@@ -52,15 +53,14 @@ class sbILibrary;
 class sbIPropertyManager;
 class sbLocalDatabaseResourcePropertyBag;
 
-class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray
+class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray,
+                                 public sbSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASEGUIDARRAY
 
   sbLocalDatabaseGUIDArray();
-
-  nsresult MayInvalidate(const std::set<PRUint32> &aDirtyPropIds);
 
   struct FilterSpec {
     nsString property;
