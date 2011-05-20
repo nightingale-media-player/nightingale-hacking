@@ -4083,6 +4083,12 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     rv = query->Execute(&dbSuccess);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
+
+    sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
+    nsCOMPtr<sbIMediaList> list =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, simple), &rv);
+    rv = list->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
