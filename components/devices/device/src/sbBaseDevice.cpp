@@ -4823,19 +4823,26 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
 
       case sbIChangeOperation::ADDED:
         {
-          // Get the source item to add.
-          nsCOMPtr<sbIMediaItem> mediaItem;
-          rv = change->GetSourceItem(getter_AddRefs(mediaItem));
+          nsCOMPtr<sbIMediaItem> srcItem;
+          rv = change->GetSourceItem(getter_AddRefs(srcItem));
           NS_ENSURE_SUCCESS(rv, rv);
 
           if (itemIsList) {
-            nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem,
+            nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(srcItem,
                                                                  &rv);
             NS_ENSURE_SUCCESS(rv, rv);
-            rv = addMediaLists->AppendElement(change, PR_FALSE);
+
+            // Do not add empty media lists.
+            PRBool isEmpty;
+            rv = mediaList->GetIsEmpty(&isEmpty);
             NS_ENSURE_SUCCESS(rv, rv);
+
+            if (!isEmpty) {
+              rv = addMediaLists->AppendElement(change, PR_FALSE);
+              NS_ENSURE_SUCCESS(rv, rv);
+            }
           } else {
-            rv = addItemList->AppendElement(mediaItem, PR_FALSE);
+            rv = addItemList->AppendElement(srcItem, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
         } break;
@@ -4849,6 +4856,24 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
           rv = removeItemList->AppendElement(destItem, PR_FALSE);
           NS_ENSURE_SUCCESS(rv, rv);
 
+          nsCOMPtr<sbIMediaItem> srcItem;
+          rv = change->GetSourceItem(getter_AddRefs(srcItem));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (itemIsList) {
+            nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(srcItem, &rv);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            PRBool isEmpty;
+            rv = mediaList->GetIsEmpty(&isEmpty);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            // Do not add empty media lists.
+            if (isEmpty) {
+              break;
+            }
+          }
+
           nsCOMPtr<sbIMediaList> destItemAsList = do_QueryInterface(destItem);
           NS_ENSURE_SUCCESS(rv, rv);
 
@@ -4857,9 +4882,6 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
             NS_ENSURE_SUCCESS(rv, rv);
           }
           else {
-            nsCOMPtr<sbIMediaItem> srcItem;
-            rv = change->GetSourceItem(getter_AddRefs(srcItem));
-            NS_ENSURE_SUCCESS(rv, rv);
             rv = addItemList->AppendElement(srcItem, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
