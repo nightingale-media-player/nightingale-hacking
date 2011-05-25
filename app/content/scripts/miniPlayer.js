@@ -54,7 +54,6 @@ var gMiniplayer = {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
 
     window.focus();
-    window.dockDistance = 10;
 
     // Note, most listeners are hardcoded in miniplayer.xul
 
@@ -73,33 +72,44 @@ var gMiniplayer = {
     var windowElement = document.getElementsByTagName("window")[0];
     windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
 
-    windowPlacementSanityChecks();
     initializeDocumentPlatformAttribute();
-    
-    // so, right now the height is correct but something somewhere after this
-    // is going to go and screw it right up. we don't know why, or how, but on
-    // windows it ends up being 100px instead of 23px and this setTimeout
-    // makes it okay again.
-    setTimeout( function() {
-      if (parseInt(windowElement.height)) {
-        window.resizeTo(windowElement.width, windowElement.height);
-      }
-    }, 0); // bump to back of current queue
 
     // Add resizer listeners
     this._miniPlayerMinWidth = parseInt(getComputedStyle(
                                         document.documentElement, "").minWidth);
+    this._miniPlayerMinHeight = parseInt(getComputedStyle(
+                                         document.documentElement, "").minHeight);
+
+    // Set to initialized to properly resize on load.
+    this._initialized = false;
     var resizer = document.getElementById("miniplayer_resizer_right");
     resizer.addEventListener("mousemove", gMiniplayer.resizeHandler, false);
+
   },
 
   resizeHandler: function miniPlayer_resizeHandler(e) {
+    var windowElement = document.getElementsByTagName("window")[0],
+        width = windowElement.boxObject.width;
+
+    // Opening a window with hidechrome=true does not initially size the window
+    // properly. The result is residual whitespace in place of chrome, titlebar.
+    // For reference, see https://bugzilla.mozilla.org/show_bug.cgi?id=392509.
+    // In order to circumvent the issue, when opened, the window resize handler
+    // will be triggered, sizing the window to its respective width and minimum
+    // height.
+    if (!this._initialized) {
+      this._initialized = true;
+      window.resizeTo(width,
+                      gMiniplayer._miniPlayerMinHeight);
+    }
+
     if (e.type == "mousemove") {
       if (!gMiniplayer._mouseDown || (gMiniplayer._mouseDown == false) ||
           e.clientX < gMiniplayer._miniPlayerMinWidth)
       {
         if (e.clientX < gMiniplayer._miniPlayerMinWidth)
-          window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+          window.resizeTo(gMiniplayer._miniPlayerMinWidth,
+                          gMiniplayer._miniPlayerMinHeight);
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -110,11 +120,10 @@ var gMiniplayer = {
       e.stopPropagation();
       return;
     }
-    var windowElement = document.getElementsByTagName("window")[0];
-    var width = windowElement.boxObject.width;
     if (width < gMiniplayer._miniPlayerMinWidth) {
       setTimeout(function() {
-        window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+        window.resizeTo(gMiniplayer._miniPlayerMinWidth,
+                        gMiniplayer._miniPlayerMinHeight);
       }, 0);
     }
 
@@ -146,13 +155,15 @@ var gMiniplayer = {
     var resizerBoundaryPassed = (e.type == "mousemove" && e.clientX > 308);
     if (width < 308 && !resizerBoundaryPassed) {
       setTimeout(function() {
-        window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+        window.resizeTo(gMiniplayer._miniPlayerMinWidth,
+                        gMiniplayer._miniPlayerMinHeight);
       }, 0);
     } else {
       gMiniplayer._cancelResize = true;
       if (width < gMiniplayer._miniPlayerMinWidth && resizerBoundaryPassed) {
         setTimeout(function() {
-          window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+          window.resizeTo(gMiniplayer._miniPlayerMinWidth,
+                          gMiniplayer._miniPlayerMinHeight);
         }, 0);
       }
     }

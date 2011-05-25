@@ -56,7 +56,6 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
-  onload="windowPlacementSanityChecks();"
   onclose="quitApp();"
   persist="screenX screenY width height sizemode"
 >

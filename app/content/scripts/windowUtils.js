@@ -456,11 +456,6 @@ function delayedActivate()
  */
 function windowPlacementSanityChecks()
 {
-  // we had to put this into a setTimeout because at onload some of the needed variables are not yet initialized
-  setTimeout(deferredWindowPlacementSanityChecks, 500);
-}
-function deferredWindowPlacementSanityChecks() {
-
   /**
    * \brief Get a style property from an element in the window in the current context.
    * \param el The element.
@@ -487,42 +482,40 @@ function deferredWindowPlacementSanityChecks() {
   var y, oldy = y = parseInt(document.documentElement.boxObject.screenY, 10);
   
   /*
-   * actual: the current dimensions as found via the box object
    * xul:    the property as set on XUL, or via persist=
    * css:    the property as computed by CSS
    * min:    the property minimum as computed by CSS.  Has a fallback minimum.
    * max:    the property maximum as computed by CSS.
    */
   var width = {
-    actual: parseInt(document.documentElement.boxObject.width, 10),
     xul: parseInt(document.documentElement.getAttribute("width"), 10),
     css: getStyle(document.documentElement, "width"),
     min: Math.max(getStyle(document.documentElement, "min-width"), 16),
     max: getStyle(document.documentElement, "max-width", Number.POSITIVE_INFINITY)
   };
   var height = {
-    actual: parseInt(document.documentElement.boxObject.height, 10),
     xul: parseInt(document.documentElement.getAttribute("height"), 10),
     css: getStyle(document.documentElement, "height"),
     min: Math.max(getStyle(document.documentElement, "min-height"), 16),
     max: getStyle(document.documentElement, "max-height", Number.POSITIVE_INFINITY)
   };
   
-  /// correct width
-  var newWidth = width.actual;
+  // correct width
+  var newWidth = width.xul || 0;
   if (!width.xul) { // if we have a xul/persist do not override from CSS
     // first try the css
     if (width.css) {
       newWidth = width.css;
     }
   }
+
   // correct for maximum and minimum sizes (including not larger than the screen)
   newWidth = Math.min(newWidth, width.max);
   newWidth = Math.min(newWidth, screen.availWidth);
   newWidth = Math.max(newWidth, width.min);
 
-  /// correct height
-  var newHeight = height.actual;
+  // correct height
+  var newHeight = height.xul || 0;
   if (!height.xul) { // if we have a xul/persist do not override from CSS
     // first try the css
     if (height.css) {
@@ -535,10 +528,10 @@ function deferredWindowPlacementSanityChecks() {
   newHeight = Math.max(newHeight, height.min);
 
   // resize the window if necessary
-  if (newHeight != height.actual || newWidth != width.actual) {
+  if (newHeight != height.xul || newWidth != width.xul) {
     window.resizeTo(newWidth, newHeight);
   }
-  
+
   // check if we need to move the window, and
   // move fully offscreen windows back onto the center of the screen
   var screenRect = getCurMaxScreenRect();

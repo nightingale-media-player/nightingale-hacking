@@ -75,7 +75,6 @@ function SBInitialize()
 {
   try
   {
-    windowPlacementSanityChecks();
     initializeDocumentPlatformAttribute();
 
     // Delay setting the min max callback to enable the reflow of the mainwin to
