@@ -77,6 +77,12 @@ private:
   virtual nsresult ProcessBatch(Batch & aBatch);
 
   /**
+   * Clear this devices cancel state, if necessary, and proxy to the base
+   * implementation which resets mAbortRequests and mIsHandlingRequests
+   */
+  virtual void CompleteRequests();
+
+  /**
    * Called to cleanup requests that haven't been processed. Default behavior
    * is to do nothing
    */

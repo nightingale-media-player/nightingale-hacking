@@ -379,6 +379,20 @@ sbDeviceRequestThreadQueue::IsDuplicateRequest(sbRequestItem * aQueueRequest,
   return NS_OK;
 }
 
+void sbDeviceRequestThreadQueue::CompleteRequests() {
+
+  {
+    nsAutoLock lock(mLock);
+
+    if (mAbortRequests) {
+      nsresult rv = mBaseDevice->SetState(sbIDevice::STATE_IDLE);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                       "Failed to clear cancel state of aborted device");
+    }
+  }
+  sbRequestThreadQueue::CompleteRequests();
+}
+
 nsresult sbDeviceRequestThreadQueue::CleanupBatch(Batch & aBatch)
 {
   TRACE_FUNCTION("");

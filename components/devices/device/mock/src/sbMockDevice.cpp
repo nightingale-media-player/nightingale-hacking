@@ -771,6 +771,11 @@ NS_IMETHODIMP sbMockDevice::GetState(PRUint32 *aState)
   return sbBaseDevice::GetState(aState);
 }
 
+NS_IMETHODIMP sbMockDevice::SetState(PRUint32 aState)
+{
+  return sbBaseDevice::SetState(aState);
+}
+
 NS_IMETHODIMP sbMockDevice::GetPreviousState(PRUint32 *aState)
 {
   return sbBaseDevice::GetPreviousState(aState);

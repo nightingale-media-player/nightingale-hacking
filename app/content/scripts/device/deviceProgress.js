@@ -197,7 +197,7 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateIdle: true,
+      updateBusy: true,
       operationCanceled: true
     },
 
@@ -455,8 +455,12 @@ var DPW = {
     // Show cancel button while busy and finish button while idle.
     var cancelButtonHidden;
     var finishButtonHidden;
-    if (deviceState == Ci.sbIDevice.STATE_IDLE ||
-        deviceState == Ci.sbIDevice.STATE_CANCEL) {
+    if (deviceState == Ci.sbIDevice.STATE_CANCEL) {
+      // There's no way to escape close the cancel state
+      cancelButtonHidden = true;
+      finishButtonHidden = true;
+    }
+    else if (deviceState == Ci.sbIDevice.STATE_IDLE) {
       cancelButtonHidden = true;
       finishButtonHidden = false;
     } else {
@@ -799,6 +803,7 @@ var DPW = {
     this._progressTextLabel.value = SBString(localeKey, "");
     if (curItemIndex > 0 && curItemIndex <= totalItems &&
         operation != Ci.sbIDevice.STATE_MOUNTING &&
+        operation != Ci.sbIDevice.STATE_CANCEL &&
         substate != Ci.sbIDevice.STATE_SYNCING &&
         substate != Ci.sbIDevice.STATE_COPY_PREPARING &&
         substate != Ci.sbIDevice.STATE_UPDATING &&

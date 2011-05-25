@@ -688,6 +688,12 @@ sbCDDevice::GetState(PRUint32 *aState)
 }
 
 NS_IMETHODIMP
+sbCDDevice::SetState(PRUint32 aState)
+{
+  return sbBaseDevice::SetState(aState);
+}
+
+NS_IMETHODIMP
 sbCDDevice::GetPreviousState(PRUint32 *aPreviousState)
 {
   return sbBaseDevice::GetPreviousState(aPreviousState);

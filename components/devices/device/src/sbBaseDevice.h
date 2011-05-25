@@ -228,6 +228,7 @@ public:
   NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
   NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
+  NS_IMETHOD SetState(PRUint32 aState);
   NS_IMETHOD GetPreviousState(PRUint32 *aState);
   NS_IMETHOD SyncLibraries(void);
   /**
@@ -339,12 +340,6 @@ public:
    * Process this batch of requests
    */
   virtual nsresult ProcessBatch(Batch & aBatch) = 0;
-
-  /**
-   * Set the device state
-   * @param aState new device state
-   */
-  nsresult SetState(PRUint32 aState);
 
   /**
    * Set the device's previous state

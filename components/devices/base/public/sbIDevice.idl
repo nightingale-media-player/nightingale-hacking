@@ -204,11 +204,17 @@ interface sbIDevice : nsISupports
 
   /**
    * Whether the device is busy, idle, syncing, mounting, etc.
+   *
+   * The state attribute is RW so that the sbDeviceRequestThreadQueue
+   * can manage the device's state appropriately should a request be cancelled.
+   * Careful consideration should be made before writing to the device's state
+   * in other areas.
+   *
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_*
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_*
    * @see STATE_*
    */
-  readonly attribute unsigned long state;
+  attribute unsigned long state;
   readonly attribute unsigned long previousState;
 
   const unsigned long STATE_IDLE            = 0;  // Not doing anything

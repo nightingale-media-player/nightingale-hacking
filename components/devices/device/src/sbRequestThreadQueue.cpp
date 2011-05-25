@@ -200,10 +200,10 @@ sbRequestThreadQueue::sbRequestThreadQueue() :
   mLock(nsnull),
   mBatchDepth(0),
   mStopWaitMonitor(nsnull),
-  mThreadStarted(false),
-  mStopProcessing(false),
   mAbortRequests(false),
   mIsHandlingRequests(false),
+  mThreadStarted(false),
+  mStopProcessing(false),
   mCurrentBatchId(1)
 {
   SB_PRLOG_SETUP(sbRequestThreadQueue);
@@ -707,7 +707,7 @@ sbRTQAddedEvent::Run()
       NS_DispatchToMainThread(mRTQ->mShutdownAction);
 
       // Now that we've dispatched it, null it out - the runnable holds a ref to
-      // the RTQ. 
+      // the RTQ.
       mRTQ->mShutdownAction = NULL;
       return NS_OK;
     }

@@ -1278,7 +1278,7 @@ nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
   return NS_OK;
 }
 
-/* readonly attribute unsigned long state; */
+/* attribute unsigned long state; */
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
@@ -1288,7 +1288,8 @@ NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
   return NS_OK;
 }
 
-nsresult sbBaseDevice::SetState(PRUint32 aState)
+/* attribute unsigned long state; */
+NS_IMETHODIMP sbBaseDevice::SetState(PRUint32 aState)
 {
 
   nsresult rv;
@@ -2304,8 +2305,31 @@ sbBaseDevice::ClearRequests()
 NS_IMETHODIMP
 sbBaseDevice::CancelRequests()
 {
-  SetState(STATE_CANCEL);
-  mRequestThreadQueue->CancelRequests();
+  nsresult rv;
+
+  // User cancelled the sync, check if the request thread was running and, if
+  // so, set the state to CANCEL.  If we weren't running, just go to IDLE.
+  if (mRequestThreadQueue->IsHandlingRequests()) {
+    rv = SetState(STATE_CANCEL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceStatus> status;
+    rv = GetCurrentStatus(getter_AddRefs(status));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = status->SetCurrentState(STATE_CANCEL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = SetState(STATE_IDLE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // We run CancelRequests even if the RTQ is not currently handling requests
+  // to ensure that any latent requests in the queue are cleared.
+  rv = mRequestThreadQueue->CancelRequests();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

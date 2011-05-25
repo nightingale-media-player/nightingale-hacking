@@ -718,6 +718,13 @@ sbIPDDevice::GetState(PRUint32* aState)
 }
 
 NS_IMETHODIMP
+sbIPDDevice::SetState(PRUint32 aState)
+{
+  LOG("Enter: sbIPDDevice::SetState\n");
+  return sbBaseDevice::SetState(aState);
+}
+
+NS_IMETHODIMP
 sbIPDDevice::GetPreviousState(PRUint32* aState)
 {
   return sbBaseDevice::GetPreviousState(aState);

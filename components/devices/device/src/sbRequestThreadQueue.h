@@ -300,6 +300,16 @@ public:
   bool CheckAndResetRequestAbort();
 
   /**
+   * This returns whether the RequestThreadQueue is running currently.
+   */
+  bool IsHandlingRequests() const {
+    NS_ENSURE_TRUE(mLock, false);
+    nsAutoLock lock(mLock);
+
+    return mIsHandlingRequests;
+  }
+
+  /**
    * This simply returns whether an abort has been signaled. Ideally use
    * checkAndResetRequestAbort unless there is a specific reason not to.
    */
@@ -321,13 +331,7 @@ public:
     return mStopWaitMonitor;
   }
 
-private:
-  /**
-   * This protects the state of the sbRequestThreadProc. This lock needs
-   * to be acquired before changing any data member
-   */
-  PRLock * mLock;
-
+protected:
   /**
    * Thread usage summary:
    * The state of this object is protected by the the mLock lock.
@@ -357,6 +361,68 @@ private:
    * mStopWaitMonitor - Used from any thread, created and destroyed from ST
    * mThread - ST Create, MT calls shutdown
    */
+
+  /**
+   * This protects the state of the sbRequestThreadProc. This lock needs
+   * to be acquired before changing any data member
+   */
+  PRLock * mLock;
+
+  /**
+   * Tracks batch depth for begin and end calls
+   */
+  PRInt32 mBatchDepth;
+
+  /**
+   * Monitor to use to signal process stopping to external sources.
+   */
+  PRMonitor* mStopWaitMonitor;
+
+protected:
+  /**
+   * Flag that signals we're aborting all requests. Any new requests
+   * are ignored while this flag is active.
+   */
+  bool mAbortRequests;
+
+  /**
+   * Flag that indicates we're currently handling a request
+   */
+  bool mIsHandlingRequests;
+
+  /**
+   * Performs simple cleanup of the requests queue without locking and returns
+   * the cleared requests as an array. It is the caller's responsibility to
+   * lock mLock
+   * \param aRequests the requests that were cleared
+   */
+  nsresult ClearRequestsNoLock(Batch & aRequests);
+
+  /**
+   * Signals completion of the current batch of requests
+   */
+  virtual void CompleteRequests()
+  {
+    nsAutoLock lock(mLock);
+    NS_ASSERTION(mIsHandlingRequests,
+                 "CompleteRequests called while no requests pending");
+    mIsHandlingRequests = false;
+    nsAutoMonitor monitor(mStopWaitMonitor);
+    mAbortRequests = false;
+  }
+
+private:
+  /**
+   * Used by Start and Stop to ensure callers don't call Start multiple times
+   * or erroneously call Stop when not started or stop multiple times.
+   */
+  bool mThreadStarted;
+
+  /**
+   * Flag that signals we're stopping request processing
+   */
+  bool mStopProcessing;
+
   /**
    * The request queue type
    */
@@ -370,11 +436,6 @@ private:
   RequestQueue mRequestQueue;
 
   /**
-   * Tracks batch depth for begin and end calls
-   */
-  PRInt32 mBatchDepth;
-
-  /**
    * The thread for processing requests
    */
   nsCOMPtr<nsIThread> mThread;
@@ -383,33 +444,6 @@ private:
    * Event used to dispatch notification of pending events
    */
   nsCOMPtr<nsIRunnable> mReqAddedEvent;
-
-  /**
-   * Monitor to use to signal process stopping to external sources.
-   */
-  PRMonitor* mStopWaitMonitor;
-
-  /**
-   * Used by Start and Stop to ensure callers don't call Start multiple times
-   * or erroneously call Stop when not started or stop multiple times.
-   */
-  bool mThreadStarted;
-
-  /**
-   * Flag that signals we're stopping request processing
-   */
-  bool mStopProcessing;
-
-  /**
-   * Flag that signals we're aborting all requests. Any new requests
-   * are ignored while this flag is active.
-   */
-  bool mAbortRequests;
-
-  /**
-   * Flag that indicates we're currently handling a request
-   */
-  bool mIsHandlingRequests;
 
   /**
    * The current batch ID
@@ -447,19 +481,6 @@ private:
   nsAutoRefCnt mRefCnt;
 
   /**
-   * Signals completion of the current batch of requests
-   */
-  void CompleteRequests()
-  {
-    nsAutoLock lock(mLock);
-    NS_ASSERTION(mIsHandlingRequests,
-                 "CompleteRequests called while no requests pending");
-    mIsHandlingRequests = false;
-    nsAutoMonitor monitor(mStopWaitMonitor);
-    mAbortRequests = false;
-  }
-
-  /**
    * Singles the processing of a batch of requests. Returns true if we're
    * already handling requests.
    */
@@ -470,14 +491,6 @@ private:
     mIsHandlingRequests = true;
     return isHandlingRequests;
   }
-
-  /**
-   * Performs simple cleanup of the requests queue without locking and returns
-   * the cleared requests as an array. It is the caller's responsibility to
-   * lock mLock
-   * \param aRequests the requests that were cleared
-   */
-  nsresult ClearRequestsNoLock(Batch & aRequests);
 
   nsresult PushRequestInternal(sbRequestItem * aRequestItem);
 
