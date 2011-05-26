@@ -447,8 +447,11 @@ nsresult sbDeviceRequestThreadQueue::CleanupBatch(Batch & aBatch)
       break;
     }
   }
-  sbBaseDevice::AutoListenerIgnore ignore(mBaseDevice);
-  groupedItems.Enumerate(RemoveLibraryEnumerator, mBaseDevice);
+  // If there are no items, don't bother do anything.
+  if (groupedItems.Count() > 0 && mBaseDevice->mLibraryListener) {
+    sbBaseDevice::AutoListenerIgnore ignore(mBaseDevice);
+    groupedItems.Enumerate(RemoveLibraryEnumerator, mBaseDevice);
+  }
 
   return NS_OK;
 }
@@ -491,6 +494,9 @@ sbDeviceRequestThreadQueue::RemoveLibraryEnumerator(
   sbBaseDevice * const device =
     static_cast<sbBaseDevice*>(aUserArg);
 
+  NS_ASSERTION(device->mLibraryListener,
+               "sbDeviceRequestThreadQueue::RemoveLibraryEnumerator called "
+               "with a device that does not have mLibraryListener set");
   sbBaseDevice::AutoListenerIgnore ignore(device);
 
   nsCOMPtr<nsISimpleEnumerator> enumerator;

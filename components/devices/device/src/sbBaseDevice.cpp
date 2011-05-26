@@ -1456,9 +1456,11 @@ void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
                           (sbBaseDevice::EnumerateFinalizeMediaListListeners,
                            &enumerateInfo);
   }
-  // Finalize the device library.
-  aDevLib->RemoveDeviceLibraryListener(mLibraryListener);
-  aDevLib->Finalize();
+  if (mLibraryListener) {
+    // Finalize the device library.
+    aDevLib->RemoveDeviceLibraryListener(mLibraryListener);
+    aDevLib->Finalize();
+  }
 }
 
 nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
@@ -1858,6 +1860,7 @@ sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
 nsresult
 sbBaseDevice::SetIgnoreLibraryListener(PRBool aIgnoreListener)
 {
+  NS_ENSURE_STATE(mLibraryListener);
   return mLibraryListener->SetIgnoreListener(aIgnoreListener);
 }
 
@@ -1877,10 +1880,12 @@ sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden)
 }
 
 nsresult sbBaseDevice::IgnoreMediaItem(sbIMediaItem * aItem) {
+  NS_ENSURE_STATE(mLibraryListener);
   return mLibraryListener->IgnoreMediaItem(aItem);
 }
 
 nsresult sbBaseDevice::UnignoreMediaItem(sbIMediaItem * aItem) {
+  NS_ENSURE_STATE(mLibraryListener);
   return mLibraryListener->UnignoreMediaItem(aItem);
 }
 
@@ -6488,6 +6493,8 @@ sbBaseDevice::RemoveLibraryEnumerator(nsISupports * aList,
 
   sbBaseDevice * const device =
     static_cast<sbBaseDevice*>(aUserArg);
+
+  NS_ENSURE_TRUE(device->mLibraryListener, PL_DHASH_STOP);
 
   AutoListenerIgnore ignore(device);
 
