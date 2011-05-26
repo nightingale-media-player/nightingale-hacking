@@ -454,6 +454,11 @@ sbBaseDevice::sbBaseDevice() :
   // the typical case is 1 library per device
   success = mOrganizeLibraryPrefs.Init(1);
   NS_ASSERTION(success, "Failed to initialize organize prefs hashtable");
+
+  success = mMediaListListeners.Init();
+  NS_ASSERTION(success, "Failed to initialize list listener hashtable");
+
+
 }
 
 /* virtual */
@@ -1357,13 +1362,6 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
 {
   NS_ENSURE_ARG_POINTER(aDevLib);
 
-  if (!mMediaListListeners.IsInitialized()) {
-    // we expect to be unintialized, but just in case...
-    if (!mMediaListListeners.Init()) {
-      return NS_ERROR_FAILURE;
-    }
-  }
-
   nsresult rv = aDevLib->Initialize(aId);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1448,14 +1446,16 @@ sbBaseDevice::InitializeDeviceLibraryPreferences(sbDeviceLibrary* aDevLib)
 
 void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
 {
-  // Finalize and clear the media list listeners.
-  EnumerateFinalizeMediaListListenersInfo enumerateInfo;
-  enumerateInfo.device = this;
-  enumerateInfo.library = aDevLib;
-  mMediaListListeners.Enumerate
-                        (sbBaseDevice::EnumerateFinalizeMediaListListeners,
-                         &enumerateInfo);
-
+  // Initializes might have failed and we might get finalized
+  if (mMediaListListeners.IsInitialized()) {
+    // Finalize and clear the media list listeners.
+    EnumerateFinalizeMediaListListenersInfo enumerateInfo;
+    enumerateInfo.device = this;
+    enumerateInfo.library = aDevLib;
+    mMediaListListeners.Enumerate
+                          (sbBaseDevice::EnumerateFinalizeMediaListListeners,
+                           &enumerateInfo);
+  }
   // Finalize the device library.
   aDevLib->RemoveDeviceLibraryListener(mLibraryListener);
   aDevLib->Finalize();
@@ -1750,9 +1750,6 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
 {
   NS_ENSURE_ARG_POINTER(aList);
 
-  NS_ASSERTION(mMediaListListeners.IsInitialized(),
-               "sbBaseDevice::ListenToList called before listener hash is initialized!");
-
   nsresult rv;
 
   #if DEBUG
@@ -1766,6 +1763,8 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
   // and not some derived interface
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aList, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(mMediaListListeners.IsInitialized(), NS_ERROR_UNEXPECTED);
 
   // check for an existing listener
   if (mMediaListListeners.Get(list, nsnull)) {
@@ -1844,6 +1843,8 @@ PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKe
 nsresult
 sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
 {
+  NS_ENSURE_TRUE(mMediaListListeners.IsInitialized(), NS_ERROR_UNEXPECTED);
+
   if (aIgnoreListener)
     PR_AtomicIncrement(&mIgnoreMediaListCount);
   else
