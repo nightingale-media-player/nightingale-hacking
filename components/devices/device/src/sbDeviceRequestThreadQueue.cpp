@@ -36,6 +36,10 @@
 // Songbird includes
 #include <sbDebugUtils.h>
 #include <sbPropertiesCID.h>
+#include <sbVariantUtils.h>
+
+// Songbird interfaces
+#include <sbIDeviceEvent.h>
 
 sbDeviceRequestThreadQueue * sbDeviceRequestThreadQueue::New()
 {
@@ -458,6 +462,12 @@ nsresult sbDeviceRequestThreadQueue::OnThreadStop()
   if (mBaseDevice) {
     rv = mBaseDevice->DeviceSpecificDisconnect();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Now notify everyone else that we have been removed.
+    mBaseDevice->CreateAndDispatchDeviceManagerEvent(
+      sbIDeviceEvent::EVENT_DEVICE_REMOVED,
+      sbNewVariant(static_cast<sbIDevice*>(mBaseDevice)));
+
     sbIDevice * device = mBaseDevice;
     mBaseDevice = nsnull;
     NS_IF_RELEASE(device);

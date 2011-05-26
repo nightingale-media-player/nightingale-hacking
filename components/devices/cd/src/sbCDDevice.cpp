@@ -498,11 +498,6 @@ sbCDDevice::DeviceSpecificDisconnect()
   // Disconnect the device capabilities.
   mCapabilities = nsnull;
 
-  // Send device removed notification.
-  CreateAndDispatchDeviceManagerEvent
-    (sbIDeviceEvent::EVENT_DEVICE_REMOVED,
-     sbNewVariant(static_cast<sbIDevice*>(this)));
-
   // Log progress.
   LOG("Exit sbCDDevice::Disconnect\n");
 
