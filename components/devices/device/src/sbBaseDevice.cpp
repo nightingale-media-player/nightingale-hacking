@@ -2260,11 +2260,11 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
   rv = sbNewFileURI(mediaPath, getter_AddRefs(mediaURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIURL> mediaURL;
-  mediaURL = do_QueryInterface(mediaURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = CallQueryInterface(mediaURL, _retval);
+  // Make sure the uri we'll return is unique, and if not make it so by adding
+  // the appropriate ' (X)' suffix.
+  rv = CreateUniqueMediaFile(mediaURI,
+                             nsnull, // don't return an nsIFile
+                             _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
