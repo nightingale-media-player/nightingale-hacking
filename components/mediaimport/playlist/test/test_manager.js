@@ -49,7 +49,7 @@ function runTest () {
   // Test extensions
   var extCount = {};
   var exts = manager.supportedFileExtensions(extCount);
-  expected = ["pls", "m3u", "html", "htm", "php", "php3", "", "atom", "rss", "asx"];
+  expected = ["pls", "m3u", "m3u8", "html", "htm", "php", "php3", "", "atom", "rss", "asx"];
   assertEqual(extCount.value, expected.length);
   for (var i = 0; i < extCount.value; i++) {
     expected = removeFromArray(expected, exts[i]);

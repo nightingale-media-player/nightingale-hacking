@@ -132,7 +132,7 @@ function(aMIMECount)
 sbM3UPlaylistHandler.prototype.supportedFileExtensions =
 function(aExtCount)
 {
-  var exts = ["m3u"];
+  var exts = ["m3u", "m3u8"];
   aExtCount.value = exts.length;
   return exts;
 }

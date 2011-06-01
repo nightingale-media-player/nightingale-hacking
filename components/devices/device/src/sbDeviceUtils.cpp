@@ -971,7 +971,8 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "pict", "image/pict",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
 
   /* playlists */
-  { "m3u",  "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
+  { "m3u",  "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN },
+  { "m3u8", "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
 };
 
 PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =

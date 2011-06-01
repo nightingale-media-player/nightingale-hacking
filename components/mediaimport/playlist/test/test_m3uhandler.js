@@ -60,6 +60,11 @@ function runTest () {
         originalURI: null,
         file: "win_utf8.m3u",
         result: "win_utf8_result.xml"
+      },
+      {
+        originalURI: null,
+        file: "win_utf8.m3u8",
+        result: "win_utf8_result.xml"
       }
     ];
   } else {
@@ -87,6 +92,11 @@ function runTest () {
       {
         originalURI: null,
         file: "maclin_utf8.m3u",
+        result: "maclin_utf8_result.xml"
+      },
+      {
+        originalURI: null,
+        file: "maclin_utf8.m3u8",
         result: "maclin_utf8_result.xml"
       },
       {

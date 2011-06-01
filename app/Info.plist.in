@@ -137,6 +137,7 @@
       <key>CFBundleTypeExtensions</key>
       <array>
         <string>m3u</string>
+        <string>m3u8</string>
       </array>
       <key>CFBundleTypeIconFile</key>
       <string>m3u.icns</string>

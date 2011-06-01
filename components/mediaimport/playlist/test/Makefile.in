@@ -58,6 +58,7 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/maclin_unf_nfc_result.xml \
                  $(srcdir)/files/maclin_unf_nfd_result.xml \
                  $(srcdir)/files/maclin_utf8.m3u \
+                 $(srcdir)/files/maclin_utf8.m3u8 \
                  $(srcdir)/files/maclin_utf8.pls \
                  $(srcdir)/files/maclin_utf8_result.xml \
                  $(srcdir)/files/win_parse.m3u \
@@ -68,6 +69,7 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/win_relative_local.m3u \
                  $(srcdir)/files/win_relative_local_result.xml \
                  $(srcdir)/files/win_utf8.m3u \
+                 $(srcdir)/files/win_utf8.m3u8 \
                  $(srcdir)/files/win_utf8.pls \
                  $(srcdir)/files/win_utf8_result.xml \
                  $(srcdir)/files/twit.rss \
