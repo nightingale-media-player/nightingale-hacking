@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 
-<!-- 
+<!--
  *******************************************************************************
- * Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+ * Copyright (c) 2008-2011, Pioneers of the Inevitable, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation 
- * 	  and/or other materials provided with the distribution.
- * 	* Neither the name of Pioneers of the Inevitable, Songbird, nor the names
- * 	  of its contributors may be used to endorse or promote products derived
- * 	  from this software without specific prior written permission.
- * 
+ *
+ *   * Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   * Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+ *     of its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -53,32 +53,36 @@
     <em:id>shoutcast-radio@songbirdnest.com</em:id>
     <em:name>SHOUTcast Radio</em:name>
     <em:description>Directory of SHOUTcast Internet radio streams</em:description>
-	<em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
-	<em:contributor>Goofy (fr-FR localisation)</em:contributor>
-	<em:contributor>Nukeador (es-ES localisation)</em:contributor>
-	<em:contributor>mar (ja-JP localisation)</em:contributor>
-	<em:contributor>Lukas_Skywalker (de-DE localisation)</em:contributor>
-	<em:contributor>Fux (de-DE localisation)</em:contributor>
-	<em:contributor>inorbez (eu-ES localisation)</em:contributor>
-	<em:contributor>Waclaw Jacek (pl-PL localisation)</em:contributor>
-	<em:contributor>Joergen (da-DK localisation)</em:contributor>
-	<em:contributor>muratbiskin (tr-TR localisation)</em:contributor>
-	<em:contributor>3kornepenal (sr-RS localisation)</em:contributor>
-	<em:contributor>josesun (zh-TW localisation)</em:contributor>
-	<em:contributor>Joergen (da-DK localisation)</em:contributor>
-	<em:contributor>pokorny (kw-GB localisation)</em:contributor>
-	<em:contributor>Brogh (kw-GB localisation)</em:contributor>
-	<em:contributor>petruc (pt-BR localisation)</em:contributor>
-	<em:contributor>Quicksilver tears (ru-RU localisation)</em:contributor>
-	<em:contributor>Funkin2x (es-CL localisation)</em:contributor>
-	<em:contributor>KongShaoLong (pt-PT localisation)</em:contributor>
-	<em:contributor>Sappa (uk-UA localisation)</em:contributor>
-	<em:contributor>Martino T (it-IT localisation)</em:contributor>
-	<em:contributor>miles (sl-SI localisation)</em:contributor>
+    <em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
+    <em:contributor>Goofy (fr localisation)</em:contributor>
+    <em:contributor>GeekShadow (fr localisation)</em:contributor>
+    <em:contributor>Nukeador (es-ES localisation)</em:contributor>
+    <em:contributor>mar (ja localisation)</em:contributor>
+    <em:contributor>Lukas_Skywalker (de localisation)</em:contributor>
+    <em:contributor>rsjtdrjgfuzkfg (de localisation)</em:contributor>
+    <em:contributor>inorbez (eu-ES localisation)</em:contributor>
+    <em:contributor>Waclaw Jacek (pl-PL localisation)</em:contributor>
+    <em:contributor>Joergen (da localisation)</em:contributor>
+    <em:contributor>muratbiskin (tr localisation)</em:contributor>
+    <em:contributor>3kornepenal (sr localisation)</em:contributor>
+    <em:contributor>josesun (zh-TW localisation)</em:contributor>
+    <em:contributor>pokorny (kw-GB localisation)</em:contributor>
+    <em:contributor>Brogh (kw-GB localisation)</em:contributor>
+    <em:contributor>petruc (pt-BR localisation)</em:contributor>
+    <em:contributor>humbertosartini (pt-BR localisation)</em:contributor>
+    <em:contributor>Quicksilver tears (ru-RU localisation)</em:contributor>
+    <em:contributor>Funkin2x (es-CL localisation)</em:contributor>
+    <em:contributor>DakSrbija (sr localisation)</em:contributor>
+    <em:contributor>KongShaoLong (pt-PT localisation)</em:contributor>
+    <em:contributor>Sappa (uk-UA localisation)</em:contributor>
+    <em:contributor>Martino T (it localisation)</em:contributor>
+    <em:contributor>miles (sl-SI localisation)</em:contributor>
+    <em:contributor>Glodenox (nl localisation)</em:contributor>
+    <em:contributor>Lakrits (sv-SE localisation)</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:iconURL>chrome://shoutcast-radio/skin/shoutcast_icon-32x32.png</em:iconURL>
-	<em:optionsURL>chrome://shoutcast-radio/content/optionsWindow.xul</em:optionsURL>
-	<em:homepageURL>http://shoutcast.com</em:homepageURL>
+    <em:optionsURL>chrome://shoutcast-radio/content/optionsWindow.xul</em:optionsURL>
+    <em:homepageURL>http://shoutcast.com</em:homepageURL>
 
     <em:type>2</em:type>
   </Description>

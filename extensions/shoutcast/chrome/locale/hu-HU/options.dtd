@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Szűrő">
+<!ENTITY prefwindow.title "SHOUTcast Radio beállítások">
+<!ENTITY bit-rate.limit.label "SHOUTcast minimális bitsebessége">
+<!ENTITY listeners.limit.label "SHOUTcast legalább ennyi hallgatóval">
+<!ENTITY listeners.limit.label.2 "hallgatók">
+<!ENTITY bit-rate.label "bitsebesség (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Hallgatók száma">
+<!ENTITY listeners.accesskey "H">
+<!ENTITY prefs.track.guessing.title "Előadó/Cím feldolgozása">
+<!ENTITY prefs.track.guessing.label "Előadó és cím feldolgozásának engedélyezése">
+<!ENTITY prefs.track.guessing.help "Néhány SHOUTcast  'Előadó - Cím Title' formában küld adatot. Ha engedélyezi ezt a lehetőséget, a SHOUTcast kiterjesztés megpróbálja ezt feldolgozni és értesítést küld a változásokról, így más kiterjesztések is értesítést kaphatnak.">
+<!ENTITY prefs.customGenres "Egyéni műfajok">
+<!ENTITY prefs.customGenres.emptytext "Írja be a műfajokat vesszővel elválasztva">
+<!ENTITY custom-genres.help.label "Ha olyan egyéni műfajt akar megadni, ami szeretné, hogy megjelenjen a SHOUTcast listájában, akkor adja meg itt vesszővel elválasztva">
+<!ENTITY prefs.tosBegin "Hozzákapcsol SHOUTcast lista használata">
+<!ENTITY prefs.tosLinkText "Felhasználási feltételek">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Telepítés:">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast eszköztár">
+<!ENTITY prefs.toolbarEnd "kiterjesztés böngészőhöz a SHOUTcast egyszerű eléréséhez.">

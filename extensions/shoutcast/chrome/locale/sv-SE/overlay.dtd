@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Filter">
+<!ENTITY shoutcast-radio.genre "Genre">
+<!ENTITY shoutcast-radio.clear "Rensa">
+<!ENTITY shoutcast-radio.add-station "Lägg till station">
+<!ENTITY shoutcast-radio.enter-name "Ange namnet du vill ge stationen">
+<!ENTITY shoutcast-radio.station-name "Stationens namn">
+<!ENTITY shoutcast-radio.enter-url "Ange URL:en till SHOUTcast-stationen">
+<!ENTITY shoutcast-radio.enter-genre "Välj en genre för stationen">

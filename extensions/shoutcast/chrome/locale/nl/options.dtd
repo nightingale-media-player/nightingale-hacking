@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Stream filters">
+<!ENTITY prefwindow.title "SHOUTcast Radio voorkeuren">
+<!ENTITY bit-rate.limit.label "Toon enkel SHOUTcast streams met een bitsnelheid van minstens">
+<!ENTITY listeners.limit.label "Toon enkel SHOUTcast streams met ten minste">
+<!ENTITY listeners.limit.label.2 "luisteraars">
+<!ENTITY bit-rate.label "Bitsnelheid (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Aantal luisteraars">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "Artiest/Titel ontleding">
+<!ENTITY prefs.track.guessing.label "Zet artiest/titel ontleding aan">
+<!ENTITY prefs.track.guessing.help "Sommige SHOUTcast streams voorzien tekst in de vorm van &apos;Artiest - Titel van nummer&apos;. Als u deze optie aanzet zal de SHOUTcast add-on deze proberen te ontleden en de verandering van nummer doorzenden zodat andere add-ons hiervan op de hoogte kunnen gehouden worden.">
+<!ENTITY prefs.customGenres "Andere genres">
+<!ENTITY prefs.customGenres.emptytext "Vul hier uw lijst van andere genres in, gescheiden door komma's">
+<!ENTITY custom-genres.help.label "Als u wilt dan andere genres worden weergegeven in de SHOUTcast lijst, vul hier een lijst van genres in met elk genre gescheiden door komma's">
+<!ENTITY prefs.tosBegin "Het gebruik van de SHOUTcast lijst is gebonden aan hun">
+<!ENTITY prefs.tosLinkText "Gebruiksvoorwaarden">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Installeer de">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast werkbalk">
+<!ENTITY prefs.toolbarEnd "browser add-on voor snelle toegang tot SHOUTcast vanuit je browser.">
