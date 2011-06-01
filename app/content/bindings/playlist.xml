@@ -2635,31 +2635,110 @@
         <parameter name="event"/>
         <body>
         <![CDATA[
-          // Special flag we use to disable dropping items to a playlist, this
-          // allows the playlist to still be editable but stop drag and drop.
-          if (this._disableDrop) {
+
+          // This method determines whether or not a drop should be permitted.
+          // canDrop() (no underscore) provides extra logic to determine
+          // whether or not drops should be permitted at specified insertion
+          // points before/after individual rows.
+
+          var list = this.mediaList,
+              session = null,
+              source = null,
+              dragService,
+              dnd;
+
+          // First, make sure the target playlist is willing to accept a drop.
+          if (this._disableDrop ||
+              !list.userEditable ||
+              !list.userEditableContent)
+          {
             return false;
           }
 
-          let dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+          // Get the current drag session. We retain the session as an internal
+          // property because the drag service does not retain the session on
+          // Linux, and the session is needed during drop handling.
+          dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
                                 .getService(this._Ci.nsIDragService);
-          let session = dragService.getCurrentSession();
+          session = dragService.getCurrentSession();
 
-          // XXX Alfred: same hack as we did for bug 4760 to do special
-          // handling for the download playlist.
-          var list = this.mediaList;
-          var customType = list.getProperty(SBProperties.customType);
-          if (customType == "download") {
+          if (session && session instanceof this._Ci.nsIDragSession) {
+            this._dragSession = session;
+          }
+
+          // There is no intersection between supported External flavors and
+          // supported Internal flavors. There are no additional checks for
+          // External drops, so we can return true here if the External
+          // handler supports the drop.
+          if (ExternalDropHandler.isSupported(session)) {
+            return true;
+          }
+
+          // Everything from this point on deals with internal drops, so bail
+          // here if the session is not supported by the internal handler.
+          if (!InternalDropHandler.isSupported(session)) {
+            return false;
+          }
+
+          // Special handling for the download playlist. A hack that has lived
+          // ever since bug 4760.
+          if ("download" == list.getProperty(SBProperties.customType)) {
             return this._canDownloadDrop(session);
           }
 
-          // this is a playlist for a readonly library, can't drop
-          if (!list.userEditable || !list.userEditableContent) {
+          dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                        .getService(this._Ci.sbIDndSourceTracker);
+
+          // Get the drop source.
+          [{
+             flavour: this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+             implements: this._Ci.sbIMediaListTransferContext
+          }, {
+             flavour: this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+             implements: this._Ci.sbIMediaItemsTransferContext
+          }].forEach(function (transfer) {
+            var data, context;
+            if (!source) {
+              data = DNDUtils.getTransferDataForFlavour(transfer.flavour,
+                                                        session);
+              if (data) {
+                context = dnd.getSourceSupports(data);
+                if (context instanceof transfer.implements) {
+                  source = context.source;
+                }
+              }
+            }
+          });
+
+          // We accept the drop if we have a source and either:
+          // - The source is not the target and the target accepts the source.
+          // - The source is the target, the target is not a library, and the
+          //   target is ordinally sorted (i.e. a re-order is allowed).
+
+          if (!source) {
             return false;
           }
-          return (InternalDropHandler.isSupported(session) ||
-                  ExternalDropHandler.isSupported(session));
+
+          if (source.equals(list)) {
+            return (!(list instanceof this._Ci.sbILibrary) &&
+                    this.isOrdinalSort());
+          } else {
+            return this.acceptDropSource(source);
+          }
+
         ]]>
+        </body>
+      </method>
+
+      <method name="acceptDropSource">
+        <parameter name = "aMediaList"/>
+        <body>
+          <![CDATA[
+            // The base playlist binding accepts drops from any source list.
+            // Override this method in a child binding if particular sources
+            // need to be disallowed.
+            return true;
+          ]]>
         </body>
       </method>
 
@@ -3034,94 +3113,21 @@
         <parameter name="aOrientation"/>
         <body>
 <![CDATA[
-  // Our tree observer callback does not get the drag session as a parameter,
-  // that is fine on windows, but on linux, the dragservice does not hold on
-  // to the session after the drop completes, so we cannot ask it for the
-  // session that just got dropped. Because of this, we need to remember the
-  // session during the drag over event, and reuse it later in the drop event.
-  // Note that canDrop is also called before calling the drop event, so in that
-  // case on linux, getCurrentSession will fail, we need to test if we got
-  // something and only record it if we did.
 
-  // Special flag we use to disable dropping items to a playlist, this allows
-  // the playlist to still be editable but stop drag and drop.
-  if (this._disableDrop) {
-    return false;
-  }
+  // This method determines whether or not a drop should be accepted at a
+  // particular insertion point before/after rows in the playlist tree. It also
+  // controls the painting of the inter-row drop indicator (the indicator is
+  // painted if this method returns true).
+  //
+  // Note that drops will still succeed if _canDrop returns false and this
+  // method returns true. Thus, we need to check _canDrop before applying
+  // additional logic to determine drop acceptance at particular insertion
+  // points. We don't actually care about the index or orientation here; we
+  // only need to check that the list is ordinally sorted. Drops at specific
+  // insertion points only make sense in the context of an ordinally sorted
+  // playlist.
 
-  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                        .getService(this._Ci.nsIDragService);
-  var session = dragService.getCurrentSession();
-  if (session != null)
-    this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
-
-  // XXX Alfred: same hack as we did for bug 4760 to do special handling
-  // for the download playlist.
-  var customType = this.mediaList.getProperty(SBProperties.customType);
-  if (customType == "download") {
-    return this._canDownloadDrop(this._dragSession);
-  }
-
-  // this is a playlist for a readonly library, can't drop
-  if (!this.mediaList.userEditable ||
-      !this.mediaList.userEditableContent) {
-    return false;
-  }
-
-  // look for the source of the dnd, if it is ourselves, we need to test whether
-  // we are a sorted playlist, or a library (cannot reorder tracks in a library),
-  // in which case we disallow dropping, because it does not make sense.
-
-  var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-                    .getService(this._Ci.sbIDndSourceTracker);
-
-  var context;
-
-  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                                this._dragSession);
-  if (data) {
-    context = dnd.getSourceSupports(data)
-                .QueryInterface(this._Ci.sbIMediaListTransferContext);
-  }
-  else {
-    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-                                              this._dragSession);
-    if (data) {
-      context = dnd.getSourceSupports(data)
-                   .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
-    } else {
-      // the dnd does not contain songbird mediaitems, it cannot have
-      // been made by ourselves, only accept the drop if it is a supported
-      // flavour
-      if (!ExternalDropHandler.isSupported(this._dragSession))
-        return false;
-
-      // we want to accept the drop, but ideally, we would test this.isOrdinalSort()
-      // and make it so the drop target cue is not shown. Unfortunately, returning
-      // false here, with an external drag and drop session, will prevent us from
-      // dropping entirely :/
-      return true;
-    }
-  }
-
-  if (context.source != this.mediaList) {
-    // the drop source is not ourselves, always accept the drop
-    return true;
-  }
-
-  // the source is ourselves, so this is a track reordering operation, only
-  // allow it if we are not sorted
-
-  // is this a library ? libraries cannot have their tracks reordered
-  if (this.mediaList == this.library)
-    return false;
-
-  // if we are sorted on anything else than the ordinal property, refuse reordering
-  if (!this.isOrdinalSort())
-    return false;
-
-  // looks like it is safe to perform a track reordering, so go for it!
-  return true;
+  return this._canDrop() && this.isOrdinalSort();
 ]]>
         </body>
       </method>

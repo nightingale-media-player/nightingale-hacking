@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -262,9 +262,13 @@ var playQueue = {
                         .getService(Ci.nsIDragService);
     var session = dragService.getCurrentSession();
 
-    this._playlist._dropOnTree(this._playlist.mediaListView.length,
-                               Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
-                               session);
+    // The play queue does not accept all drops, so ensure the drop is permitted
+    // before executing the drop.
+    if (this._playlist._canDrop()) {
+      this._playlist._dropOnTree(this._playlist.mediaListView.length,
+                                 Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
+                                 session);
+    }
 
     // Stop propagation so the default drag and drop handler doesn't try to
     // handle a drop that we already handled with _dropOnTree

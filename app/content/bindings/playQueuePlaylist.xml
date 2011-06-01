@@ -46,8 +46,9 @@
         <![CDATA[
           this._destroyed = false;
           var self = this;
-          this._playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
-                                     .getService(Ci.sbIPlayQueueService);
+          this._playQueueService =
+              this._Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                      .getService(this._Ci.sbIPlayQueueService);
 
           this._playQueueServiceListener = {
             onIndexUpdated: function(aToIndex) {},
@@ -70,6 +71,23 @@
         this._destroyed = true;
       </destructor>
 
+      <method name="acceptDropSource">
+        <parameter name = "aMediaList"/>
+        <body>
+          <![CDATA[
+            // The play queue does not accept drops from devices. Our device
+            // sync logic depends on funneling device transfers through the
+            // main library, so product decided to disable direct transfers
+            // from devices to the play queue.
+            var deviceManager =
+                this._Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                        .getService(this._Ci.sbIDeviceManager2);
+            var sourceDevice = deviceManager.getDeviceForItem(aMediaList);
+
+            return sourceDevice ? false : true;
+          ]]>
+        </body>
+      </method>
 
       <!--
         Invalidate the row that contains the play queue's current track. This

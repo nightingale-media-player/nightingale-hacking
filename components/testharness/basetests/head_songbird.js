@@ -551,3 +551,96 @@ function newFileURI(file)
 
   return null;
 }
+
+/**
+ * Helper object to wrap test cases with setup (pre) and cleanup (post)
+ * functions. Also provides object stubbing utilities.
+ *
+ * Example:
+ *
+ *   var testConfig  = {
+ *     desc: "a rockin' test",
+ *     pre: function(playlist) {
+ *       this.stub(playlist, 'getNextSong', function () {
+ *         return null;
+ *       });
+ *     },
+ *     exec: function(playlist) {
+ *       assertEqual(this.expected, playlist._canDrop(), this.desc);
+ *     },
+ *     post: function (playlist) {
+ *       doSomePostProcessing();
+ *     },
+ *     expected: false
+ *   };
+ *
+ *   var playlist = makeMeAPlaylist();
+ *   // here, playlist.getNextSong() has it's original behavior
+ *   var testCase = new TestCase(testConfig);
+ *   // Prior to execution of the test case, playlist.getNextSong() will
+ *   // be modified to invoke the stubbed function
+ *   testCase.run([playlist]);
+ *   // here, playlist.getNextSong() has it's original behavior again
+ */
+function TestCase(config) {
+
+  for (var option in config) {
+    this[option] = config[option];
+  }
+
+  this._stubs = [];
+}
+
+TestCase.prototype = {
+
+  run: function TestCase_run(args) {
+
+    if (this.pre && typeof this.pre === 'function')
+      this.pre.apply(this, args);
+
+    this.exec.apply(this, args);
+
+    if (this.post && typeof this.post === 'function')
+      this.post.apply(this, args);
+
+    // Always call unstub so test case instances don't have to worry about it
+    // in their post functions. This is a no-op if there are no stubs.
+    this.unstub();
+
+  },
+
+  stub: function TestCase_stub(receiver, property, stub) {
+
+    this._stubs.push({
+      receiver: receiver,
+      property: property,
+      stash: receiver[property]
+    });
+
+    if (!(property in receiver)) {
+      // The test should fail if the caller tries to stub a property that
+      // doesn't exist on the receiver object. A stub indicates that the caller
+      // expects that property to exist, so failing here alerts us that
+      // something we expect to be there is no longer there.
+      throw new Error("Attempted to stub property: " + property +
+                      "on an object that doesn't contain that property from " +
+                      " test case: " + this.desc);
+    }
+
+    receiver[property] = stub;
+  },
+
+  unstub: function TestCase_unstub() {
+    var stubs = this._stubs,
+        len = stubs.length;
+
+    if (len > 0) {
+      for (let i = 0; i < len; i++) {
+        let stub = stubs[i];
+        stub.receiver[stub.property] = stub.stash;
+      }
+      this._stubs = [];
+    }
+  }
+
+}
