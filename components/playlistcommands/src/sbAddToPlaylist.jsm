@@ -656,10 +656,10 @@ addToPlaylistHelper.prototype = {
        * be triggered before m_Playlist is fully instantiated or after pieces
        * of it have gone away.  Thus, we need to also check that refreshCommands
        * is present to ensure the playlist binding is in a good state. */
+      this.makeListOfPlaylists();
       if (this.m_commands.m_Context &&
           this.m_commands.m_Context.m_Playlist &&
           this.m_commands.m_Context.m_Playlist.refreshCommands) {
-        this.makeListOfPlaylists();
         this.m_commands.m_Context.m_Playlist.refreshCommands();
       }
     }
