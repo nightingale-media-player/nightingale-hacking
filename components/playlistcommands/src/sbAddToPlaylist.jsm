@@ -647,19 +647,35 @@ addToPlaylistHelper.prototype = {
   _makingList    : false,
 
   refreshCommands: function() {
-    if (this.m_commands) {
-      /* We need to ensure that the context and playlist have been initialized
-       * and are ready to display commands before calling refreshCommands.
-       *
-       * It is possible for an event handler to fire before the binding
-       * is created or after it is dqestroyed, so it is possible for this to
-       * be triggered before m_Playlist is fully instantiated or after pieces
-       * of it have gone away.  Thus, we need to also check that refreshCommands
-       * is present to ensure the playlist binding is in a good state. */
+
+    // Bug fixers beware! This code gets called very frequently and can have
+    // difficult-to-debug side effects. Proceed with caution.
+
+    var self = this;
+    function ensureRefreshExists() {
+      // Explicitly return true or false. Otherwise, JS will complain to the
+      // error console if any of the checks finds an undefined property.
+      return (self.m_commands &&
+              self.m_commands.m_Context &&
+              self.m_commands.m_Context.m_Playlist &&
+              self.m_commands.m_Context.m_Playlist.refreshCommands) ?
+              true : false;
+    }
+
+    /* We need to ensure that the context and playlist have been initialized
+     * and are ready to display commands before calling refreshCommands.
+     *
+     * It is possible for an event handler to fire before the binding
+     * is created or after it is destroyed, so it is possible for this to
+     * be triggered before m_Playlist is fully instantiated or after pieces
+     * of it have gone away.  Thus, we need to also check that refreshCommands
+     * is present to ensure the playlist binding is in a good state. */
+
+    if (ensureRefreshExists()) {
       this.makeListOfPlaylists();
-      if (this.m_commands.m_Context &&
-          this.m_commands.m_Context.m_Playlist &&
-          this.m_commands.m_Context.m_Playlist.refreshCommands) {
+      // Check again, as the playlist binding can be destroyed during the
+      // previous function call.
+      if (ensureRefreshExists()) {
         this.m_commands.m_Context.m_Playlist.refreshCommands();
       }
     }
