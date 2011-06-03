@@ -152,7 +152,7 @@ window.mediaPage = {
    * Called when something is dragged over the tabbrowser tab for this window
    */
   canDrop: function(aEvent, aSession) {
-    return this._playlist.nsDragAndDropObserver.canDrop(aEvent, aSession);
+    return this._playlist._canDrop(aEvent);
   },
     
   
@@ -161,7 +161,7 @@ window.mediaPage = {
    */
   onDrop: function(aEvent, aSession) {
     return this._playlist.
-        _dropOnTree(this._playlist.mediaListView.length,
+        _dropOnTree(-1,
                     Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
                     aSession);
   },
