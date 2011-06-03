@@ -89,6 +89,51 @@
         </body>
       </method>
 
+      <method name="_dropOnTree">
+        <parameter name="aIndex"/>
+        <parameter name = "aOrientation"/>
+        <parameter name = "aSession"/>
+        <body>
+          <![CDATA[
+
+            // If possible, take advantage of an asynchronous queueing method.
+            // We currently only have async methods for enumerators of items.
+            // If we can't support the drop with an async method, pass the call
+            // up to the parent playlist binding for synchronous addition.
+
+            var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                              .getService(this._Ci.sbIDndSourceTracker);
+            var data = DNDUtils.getTransferDataForFlavour(
+                         this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                         this._dragSession);
+            if (data) {
+              var context = dnd.getSourceSupports(data);
+              if (context instanceof this._Ci.sbIMediaItemsTransferContext) {
+                var row = this._getRowToInsert(this.mediaListView,
+                                               aIndex,
+                                               aOrientation);
+                if (row < 0 || row >= this.mediaList.length) {
+                  this._playQueueService.queueSomeLast(context.items);
+                } else {
+                  this._playQueueService.queueSomeBefore(row, context.items);
+                }
+                return;
+              }
+            }
+
+            // We don't have an async method to handle the drop, so call up to
+            // the parent binding (playlist.xml). We can't do this directly in
+            // XBL (see https://bugzilla.mozilla.org/show_bug.cgi?id=373652),
+            // but we can get to it through the prototype chain.
+            this.__proto__
+                .__proto__
+                ._dropOnTree
+                .call(this, aIndex, aOrientation, aSession);
+
+          ]]>
+        </body>
+      </method>
+
       <!--
         Invalidate the row that contains the play queue's current track. This
         causes the row to be repainted.
