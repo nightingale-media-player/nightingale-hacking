@@ -70,8 +70,7 @@ NS_INTERFACE_MAP_END
 #endif
 
 sbMockDevice::sbMockDevice()
- : mIsConnected(PR_FALSE),
-   mStatusHelper(this)
+ : mIsConnected(PR_FALSE)
 {
   Init();
 }
@@ -130,10 +129,6 @@ NS_IMETHODIMP sbMockDevice::Connect()
 {
   NS_ENSURE_STATE(!mIsConnected);
   nsresult rv;
-
-  // Initialize the device status helper object.
-  rv = mStatusHelper.Initialize();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Invoke the super-class.
   rv = sbBaseDevice::Connect();
@@ -875,7 +870,7 @@ NS_IMETHODIMP sbMockDevice::OpenInputStream(nsIURI*          aURI,
 NS_IMETHODIMP sbMockDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 {
   NS_ENSURE_ARG(aCurrentStatus);
-  return mStatusHelper.GetCurrentStatus(aCurrentStatus);
+  return mStatus->GetCurrentStatus(aCurrentStatus);
 }
 
 

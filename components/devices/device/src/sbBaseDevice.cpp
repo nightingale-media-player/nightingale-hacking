@@ -411,6 +411,9 @@ sbBaseDevice::sbBaseDevice() :
   mConnected(PR_FALSE),
   mVolumeLock(nsnull)
 {
+  mStatus = new sbDeviceStatusHelper(this);
+  NS_ENSURE_TRUE(mStatus, /* void */ );
+
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
     gBaseDeviceLog = PR_NewLogModule( "sbBaseDevice" );
@@ -1335,6 +1338,11 @@ NS_IMETHODIMP sbBaseDevice::SetState(PRUint32 aState)
   }
 
   return NS_OK;
+}
+
+nsresult sbBaseDevice::ChangeState(PRUint32 aState)
+{
+  return mStatus->ChangeState(aState);
 }
 
 nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
@@ -2402,6 +2410,8 @@ private:
 
 nsresult sbBaseDevice::Init()
 {
+  // make sure we were able to make mStatus during construction
+  NS_ENSURE_TRUE(mStatus, NS_ERROR_OUT_OF_MEMORY);
   nsresult rv;
 
   NS_ASSERTION(NS_IsMainThread(),
@@ -2438,6 +2448,9 @@ nsresult sbBaseDevice::Init()
 
   // Perform derived class intialization
   rv = InitDevice();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mStatus->Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Perform initial properties update.

@@ -29,7 +29,6 @@
 #include <sbBaseDevice.h>
 #include <sbICDDevice.h>
 #include <sbDeviceCapabilities.h>
-#include <sbDeviceStatusHelper.h>
 #include <sbIDeviceProperties.h>
 #include <sbITranscodeManager.h>
 #include <sbIMetadataLookupManager.h>
@@ -100,7 +99,6 @@ class nsIPropertyBag;
 //
 // Request Thread
 //
-//   mStatus
 //   mTranscodeManager
 //
 // Properties lock
@@ -227,11 +225,6 @@ private:
    * The device content object
    */
   nsCOMPtr<sbIDeviceContent> mDeviceContent;
-
-  /**
-   * The device status helper
-   */
-  sbDeviceStatusHelper mStatus;
 
   /**
    * Holds the device library path

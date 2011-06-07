@@ -49,6 +49,7 @@
 #include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
 #include <sbDeviceUtils.h>
+#include <sbDeviceStatusHelper.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
@@ -84,7 +85,6 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
   : mConnectLock(nsnull)
   , mControllerID(aControllerId)
   , mCreationProperties(aProperties)
-  , mStatus(this)
   , mPrefAutoEject(PR_FALSE)
   , mPrefNotifySound(PR_FALSE)
 {
@@ -196,9 +196,6 @@ sbCDDevice::InitDevice()
 
   // Create the device ID.  This depends on mCDDevice being initialised first.
   rv = CreateDeviceID(&mDeviceID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mStatus.Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the device state.
@@ -474,7 +471,7 @@ sbCDDevice::DeviceSpecificDisconnect()
   }
 
   // Indicate that the device is disconnected.
-  mStatus.ChangeState(STATE_DISCONNECTED);
+  mStatus->ChangeState(STATE_DISCONNECTED);
 
   // Unmount and remove the default volume.
   nsRefPtr<sbBaseDeviceVolume> volume;
@@ -663,7 +660,7 @@ NS_IMETHODIMP
 sbCDDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 {
   NS_ENSURE_ARG_POINTER(aCurrentStatus);
-  return mStatus.GetCurrentStatus(aCurrentStatus);
+  return mStatus->GetCurrentStatus(aCurrentStatus);
 }
 
 /* readonly attribute boolean supportsReformat; */

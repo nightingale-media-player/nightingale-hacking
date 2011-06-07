@@ -654,6 +654,19 @@ protected:
    */
   virtual nsresult InitDevice() { return NS_OK; }
 
+  /**
+   * Changes the state of the underlying deviceStatusHelper.  This means that
+   * the devices status and substate are set as well as a call to SetState
+   * for setting to certain states.
+   *
+   * The relation and individual uses of ChangeState and SetState are not
+   * very well defined.  Please take great care before using this method.
+   * If you can use SetState you probably should, but there may be some
+   * instances when you have to use ChangeState.
+   *
+   */
+  virtual nsresult ChangeState(PRUint32 aState);
+
 private:
   /**
    * Derived devices must implement this to perform any disconnect logic
@@ -673,6 +686,7 @@ protected:
   PRUint32 mPreviousState;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
+  nsAutoPtr<sbDeviceStatusHelper> mStatus;
 
   nsCOMPtr<sbIDeviceLibrary> mDefaultLibrary;
   nsCOMPtr<sbILibrary> mMainLibrary;
