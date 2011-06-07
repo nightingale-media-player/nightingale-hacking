@@ -41,6 +41,9 @@
  */
 -->
 
+<!-- Window has attributes for default dimensions that will apply only to first       -->
+<!-- run. Otherwise, the window should load and size to values as calculated by       -->
+<!-- windowPlacementSanityChecks().                                                   -->
 <window
   id="mainplayer"
   title="&window.dev.title;"
@@ -55,6 +58,9 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+
+  height="728"
+  width="1000"
 
   onclose="quitApp();"
   persist="screenX screenY width height sizemode"

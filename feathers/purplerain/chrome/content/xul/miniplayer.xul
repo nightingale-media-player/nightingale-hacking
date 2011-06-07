@@ -45,6 +45,9 @@
 <!-- Include this to import the standard overlays for a window that does not contain a gBrowser element -->
 <?xul-overlay href="chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul"?>
 
+<!-- Window has attributes for default dimensions that will apply only to first       -->
+<!-- run. Otherwise, the window should load and size to values as calculated by       -->
+<!-- windowPlacementSanityChecks().                                                   -->
 <window 
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -62,6 +65,9 @@
   ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
   ondblclick="gMiniplayer.onDblClick(event);"
   onresize="gMiniplayer.resizeHandler(event);"
+
+  height="42"
+  width="480"
 
   persist="screenX screenY width"
 >

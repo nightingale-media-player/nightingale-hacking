@@ -3,7 +3,6 @@
 
 #miniplayer {
   min-width:240px !important;
-  width:480px !important;
   overflow:hidden !important;
   max-height: 42px;
   max-width: 1280px;

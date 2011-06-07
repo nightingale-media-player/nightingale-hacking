@@ -483,31 +483,22 @@ function windowPlacementSanityChecks()
   
   /*
    * xul:    the property as set on XUL, or via persist=
-   * css:    the property as computed by CSS
    * min:    the property minimum as computed by CSS.  Has a fallback minimum.
    * max:    the property maximum as computed by CSS.
    */
   var width = {
     xul: parseInt(document.documentElement.getAttribute("width"), 10),
-    css: getStyle(document.documentElement, "width"),
     min: Math.max(getStyle(document.documentElement, "min-width"), 16),
     max: getStyle(document.documentElement, "max-width", Number.POSITIVE_INFINITY)
   };
   var height = {
     xul: parseInt(document.documentElement.getAttribute("height"), 10),
-    css: getStyle(document.documentElement, "height"),
     min: Math.max(getStyle(document.documentElement, "min-height"), 16),
     max: getStyle(document.documentElement, "max-height", Number.POSITIVE_INFINITY)
   };
   
   // correct width
   var newWidth = width.xul || 0;
-  if (!width.xul) { // if we have a xul/persist do not override from CSS
-    // first try the css
-    if (width.css) {
-      newWidth = width.css;
-    }
-  }
 
   // correct for maximum and minimum sizes (including not larger than the screen)
   newWidth = Math.min(newWidth, width.max);
@@ -516,12 +507,7 @@ function windowPlacementSanityChecks()
 
   // correct height
   var newHeight = height.xul || 0;
-  if (!height.xul) { // if we have a xul/persist do not override from CSS
-    // first try the css
-    if (height.css) {
-      newHeight = height.css;
-    }
-  }
+
   // correct for maximum and minimum sizes (including not larger than the screen)
   newHeight = Math.min(newHeight, height.max);
   newHeight = Math.min(newHeight, screen.availHeight);
