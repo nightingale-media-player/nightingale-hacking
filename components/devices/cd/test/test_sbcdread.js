@@ -47,7 +47,7 @@ function runTest()
   function onDeviceEvent(aEvent) {
     switch (aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_READY:
-        if (sbDevice.currentStatus.currentState !=
+        if (sbDevice.state !=
             Ci.sbIDevice.STATE_DISCONNECTED) {
           sbDevice.disconnect();
         }
