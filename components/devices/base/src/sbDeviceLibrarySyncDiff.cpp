@@ -85,6 +85,12 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
+  enum DropAction
+  {
+    NOT_DROP,
+    DROP_TRACKS,
+    DROP_LIST
+  };
   // Mode for enumeration - handle all items, only non-list items, or only
   // list items.
   enum HandleMode {
@@ -105,12 +111,12 @@ public:
 
   SyncEnumListenerBase() :
     mMediaTypes(0),
-    mIsDrop(PR_FALSE),
+    mDropAction(NOT_DROP),
     mHandleMode(HANDLE_ALL)
   {
   }
 
-  virtual nsresult Init(PRBool aIsDrop,
+  virtual nsresult Init(DropAction aDropAction,
                         sbILibrary *aMainLibrary,
                         sbILibrary *aDeviceLibrary);
 
@@ -205,8 +211,12 @@ protected:
   // for content types to process.
   bool ListHasCorrectContentType(sbIMediaList *aList);
 
+  bool IsDrop() const
+  {
+    return mDropAction != NOT_DROP;
+  }
   PRUint32   mMediaTypes;
-  PRBool     mIsDrop;
+  DropAction mDropAction;
   HandleMode mHandleMode;
 
   nsTHashtable<nsStringHashKey> mSeenMediaItems;
@@ -310,13 +320,13 @@ ListAddingEnumerationListener::OnEnumerationEnd(sbIMediaList *aMediaList,
 }
 
 nsresult
-SyncEnumListenerBase::Init(PRBool aIsDrop,
+SyncEnumListenerBase::Init(DropAction aDropAction,
                            sbILibrary *aMainLibrary,
                            sbILibrary *aDeviceLibrary)
 {
   nsresult rv;
 
-  mIsDrop = aIsDrop;
+  mDropAction = aDropAction;
 
   mMainLibrary = aMainLibrary;
   mDeviceLibrary = aDeviceLibrary;
@@ -536,6 +546,11 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
+  // Content URL for source and destination will never bee the same
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
   // Sadly we can't use content length because on a device the length may be
   // different
   successHashkey =
@@ -544,6 +559,23 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
 
   successHashkey =
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
+  // Playlist URL will never be the same for ML and DL
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_PLAYLISTURL));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
+  // The availability property is just so we don't display items on the
+  // the device that haven't been copied so we can ignore this
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
+  // Column spec property may be different or absent between ML and DL and should
+  // be ignored
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_COLUMNSPEC));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
   nsString propertyId;
@@ -570,6 +602,11 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
                                                  propertyDestinationValue);
     // Property has been added.
     if(rv == NS_ERROR_NOT_AVAILABLE) {
+      // content type defaults to audio if not present
+      if (propertyId.Equals(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE)) &&
+          propertyValue.Equals(NS_LITERAL_STRING("audio"))) {
+        continue;
+      }
       nsRefPtr<sbPropertyChange> propertyChange;
       NS_NEWXPCOM(propertyChange, sbPropertyChange);
       NS_ENSURE_TRUE(propertyChange, NS_ERROR_OUT_OF_MEMORY);
@@ -596,19 +633,8 @@ SyncEnumListenerBase::CreatePropertyChangesForItemModified(
       successHashkey = sourcePropertyNamesFoundInDestination.PutEntry(propertyId);
       NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
-      if (propertyId.EqualsLiteral(SB_PROPERTY_CONTENTURL)) {
-        nsString originURL;
-        rv = destinationProperties->GetPropertyValue(
-                                       NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                       originURL);
-        if (NS_SUCCEEDED(rv) && !originURL.IsEmpty()) {
-          if (propertyValue.Equals(originURL)) {
-            continue;
-          }
-        }
-      }
       // Check if the duration is the same in seconds, that's good enough
-      else if (propertyId.EqualsLiteral(SB_PROPERTY_DURATION)) {
+      if (propertyId.EqualsLiteral(SB_PROPERTY_DURATION)) {
         PRUint64 const sourceDuration = nsString_ToUint64(propertyValue, &rv);
         if (NS_SUCCEEDED(rv)) {
           PRUint64 const destDuration =
@@ -1028,38 +1054,33 @@ SyncExportEnumListener::SelectChangeForList(sbIMediaList *aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (matchingPlaylist) {
-    if (mIsDrop) {
+    // Check sync time vs. last modified time.
+    PRInt64 itemLastModifiedTime;
+    PRInt64 lastSyncTime;
+    rv = aMediaList->GetUpdated(&itemLastModifiedTime);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = GetTimeProperty(mDeviceLibrary,
+                         NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
+                         &lastSyncTime);
+
+    if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
+      // Ok, we have a match - clobber the target item.
       *aChangeType = CHANGE_CLOBBER;
     }
     else {
-      // Check sync time vs. last modified time.
-      PRInt64 itemLastModifiedTime;
-      PRInt64 lastSyncTime;
-      rv = aMediaList->GetUpdated(&itemLastModifiedTime);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = GetTimeProperty(mDeviceLibrary,
-                           NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
-                           &lastSyncTime);
-
-      if (NS_SUCCEEDED(rv) && itemLastModifiedTime > lastSyncTime) {
-        // Ok, we have a match - clobber the target item.
-        *aChangeType = CHANGE_CLOBBER;
-      }
-      else {
-        // Otherwise, the playlist hasn't been modified since the last sync, or
-        // we couldn't find the last sync time; don't do anything.
-        *aChangeType = CHANGE_RETAIN;
-      }
+      // Otherwise, the playlist hasn't been modified since the last sync, or
+      // we couldn't find the last sync time; don't do anything.
+      *aChangeType = CHANGE_RETAIN;
     }
+
     matchingPlaylist.forget(aDestMediaList);
-    return NS_OK;
   }
   else {
     // No match found; add a new item.
     *aChangeType = CHANGE_ADD;
-    return NS_OK;
   }
+  return NS_OK;
 }
 
 
@@ -1088,7 +1109,7 @@ SyncExportEnumListener::SelectChangeForItem(sbIMediaItem *aMediaItem,
                              getter_AddRefs(destMediaItem));
   PRBool hasOriginMatch = NS_SUCCEEDED(rv) && destMediaItem;
 
-  if (mIsDrop) {
+  if (mDropAction == DROP_TRACKS) {
     // Drag-and drop case is simple: if we have a matching origin item,
     // overwrite. Otherwise, add a new one.
     if (hasOriginMatch) {
@@ -1371,7 +1392,7 @@ SyncImportEnumListener::SelectChangeForList(sbIMediaList *aMediaList,
 
     // We only import changes for simple playlists.
     if (playlistType.EqualsLiteral("simple")) {
-      if (mIsDrop) {
+      if (IsDrop()) {
         *aChangeType = CHANGE_CLOBBER;
         matchingPlaylist.forget(aDestMediaList);
 
@@ -1412,7 +1433,7 @@ SyncImportEnumListener::SelectChangeForList(sbIMediaList *aMediaList,
     else {
       // Matching list is a smart playlist; we only do anything with these
       // for d&d.
-      if (mIsDrop) {
+      if (IsDrop()) {
         nsCOMPtr<sbIMediaList> matchingSimplePlaylist;
         rv = GetSimplePlaylistWithSameName(
                 mMainLibrary,
@@ -1465,7 +1486,7 @@ SyncImportEnumListener::SelectChangeForItem(sbIMediaItem *aMediaItem,
   rv = IsFromMainLibrary(aMediaItem, &isFromMainLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mIsDrop) {
+  if (IsDrop()) {
     // Drag-and-drop case.
     if (isFromMainLibrary) {
       // Ok, it's from the main library. Is it still IN the main library?
@@ -1616,7 +1637,6 @@ sbDeviceLibrarySyncDiff::~sbDeviceLibrarySyncDiff()
 {
 }
 
-
 NS_IMETHODIMP
 sbDeviceLibrarySyncDiff::GenerateSyncLists(
         PRUint32 aMediaTypesToExportAll,
@@ -1640,7 +1660,7 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   nsRefPtr<SyncExportEnumListener> exportListener =
       new SyncExportEnumListener();
   NS_ENSURE_TRUE(exportListener, NS_ERROR_OUT_OF_MEMORY);
-  rv = exportListener->Init(PR_FALSE,
+  rv = exportListener->Init(SyncEnumListenerBase::NOT_DROP,
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1747,7 +1767,7 @@ sbDeviceLibrarySyncDiff::GenerateSyncLists(
   nsRefPtr<SyncImportEnumListener> importListener =
       new SyncImportEnumListener();
   NS_ENSURE_TRUE(importListener, NS_ERROR_OUT_OF_MEMORY);
-  rv = importListener->Init(PR_FALSE,
+  rv = importListener->Init(SyncEnumListenerBase::NOT_DROP,
                             aSourceLibrary,
                             aDestLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1822,6 +1842,11 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
 
   nsRefPtr<SyncEnumListenerBase> listener;
 
+  // Determine if we're droping tracks or a list
+  const SyncEnumListenerBase::DropAction dropAction =
+    aSourceList ? SyncEnumListenerBase::DROP_LIST :
+                  SyncEnumListenerBase::DROP_TRACKS;
+
   // Figure out whether this is to a device (even if it's from a device as well)
   // or from a device to a non-device. The third possibility (no devices
   // involved at all) is not checked for; the callers must ensure that either
@@ -1829,7 +1854,7 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
   if (toDevice) {
     listener = new SyncExportEnumListener();
     NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
-    rv = listener->Init(PR_TRUE,
+    rv = listener->Init(dropAction,
                         aSourceLibrary,
                         aDestLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1837,7 +1862,7 @@ sbDeviceLibrarySyncDiff::GenerateDropLists(
   else {
     listener = new SyncImportEnumListener();
     NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
-    rv = listener->Init(PR_TRUE,
+    rv = listener->Init(dropAction,
                         aDestLibrary,
                         aSourceLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
