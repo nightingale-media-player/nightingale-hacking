@@ -411,7 +411,6 @@ protected:
     mAbortRequests = false;
   }
 
-private:
   /**
    * Used by Start and Stop to ensure callers don't call Start multiple times
    * or erroneously call Stop when not started or stop multiple times.
@@ -422,7 +421,8 @@ private:
    * Flag that signals we're stopping request processing
    */
   bool mStopProcessing;
-
+  
+private:
   /**
    * The request queue type
    */
