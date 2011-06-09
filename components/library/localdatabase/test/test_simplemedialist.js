@@ -26,6 +26,8 @@
  * \brief Test file
  */
 
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+
 function countItems(enumerator) {
   var count = 0;
   while (enumerator.hasMoreElements()) {
@@ -457,5 +459,21 @@ function runTest () {
   a = [item2.guid, item2.guid, item2.guid, item2.guid, item2.guid, item2.guid];
   assertList(list, a);
 
+  // Test adding foreign and already existing items to the list
+  localLibrary = createLibrary("test_simplemedialist_local");
+  let localLibraryLength = localLibrary.length;
+  foreignLibrary = createLibrary("test_simplemedialist_foreign");
+  
+  let items = [
+    foreignLibrary.createMediaItem(newURI("file:///foo1")),
+    foreignLibrary.createMediaItem(newURI("file:///foo2")),
+    localLibrary.createMediaItem(newURI("file:///foo3")) 
+  ];
+  localLibrary.add(items[1]);
+  list = localLibrary.createMediaList("simple");
+  list.addSome(ArrayConverter.enumerator(items));
+  
+  // new items should be 4, 3 new items and the playlist
+  assertEqual(localLibrary.length - localLibraryLength, 4);
 }
 
