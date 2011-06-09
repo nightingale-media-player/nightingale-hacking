@@ -389,12 +389,11 @@ void sbDeviceRequestThreadQueue::CompleteRequests() {
 
   {
     nsAutoLock lock(mLock);
-    nsresult rv;
     if (mThreadStarted && !mStopProcessing) {
-      rv = mBaseDevice->ChangeState(sbIDevice::STATE_IDLE);
-    }
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Failed to clear cancel state of aborted device");
+      nsresult rv = mBaseDevice->ChangeState(sbIDevice::STATE_IDLE);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Failed to clear cancel state of aborted device");
+      }
     }
   }
 }
