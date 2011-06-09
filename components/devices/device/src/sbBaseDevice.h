@@ -686,7 +686,7 @@ protected:
   PRUint32 mPreviousState;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
-  nsAutoPtr<sbDeviceStatusHelper> mDevStatusHelper;
+  nsAutoPtr<sbDeviceStatusHelper> mStatus;
 
   nsCOMPtr<sbIDeviceLibrary> mDefaultLibrary;
   nsCOMPtr<sbILibrary> mMainLibrary;
