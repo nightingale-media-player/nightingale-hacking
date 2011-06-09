@@ -780,6 +780,8 @@ var DPW = {
         localeKey = "device.status.progress_header_syncing";
         subLocaleKey = "device.status.progress_footer_syncing_finishing";
       }
+    } else if (operation == Ci.sbIDevice.STATE_CANCEL) {
+      localeKey = "device.status.progress_header_cancelling";
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
