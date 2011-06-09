@@ -51,6 +51,7 @@ protected:
   nsCOMPtr<sbDeviceContent> mContent;
   nsCOMPtr<sbIDeviceProperties> mProperties;
   std::vector<nsRefPtr<sbRequestItem> > mBatch;
+  sbDeviceStatusHelper mStatusHelper;
 
 private:
   virtual ~sbMockDevice();

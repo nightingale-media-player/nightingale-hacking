@@ -46,7 +46,6 @@
 #include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStatusPropertyValue.h>
-#include <sbDeviceStatusHelper.h>
 #include <sbTranscodeProgressListener.h>
 #include <sbVariantUtils.h>
 #include <sbStandardProperties.h>
@@ -165,7 +164,7 @@ sbCDDevice::ProcessBatch(Batch & aBatch)
   // operation must change the state to not be idle.  This ensures that the
   // device is not prematurely removed (e.g., ejected) while the device content
   // is being accessed.
-  sbDeviceStatusAutoState autoState(mStatus, STATE_IDLE);
+  sbDeviceStatusAutoState autoState(&mStatus, STATE_IDLE);
 
   // Snapshot the preferences to be used by the operations in this batch
   sbPrefBranch prefBranch(PREF_CDDEVICE_RIPBRANCH, &rv);
@@ -204,13 +203,13 @@ sbCDDevice::ProcessBatch(Batch & aBatch)
     switch (type)
     {
       case TransferRequest::REQUEST_MOUNT :
-        mStatus->ChangeState(STATE_MOUNTING);
+        mStatus.ChangeState(STATE_MOUNTING);
         rv = ReqHandleMount(requestItem);
         NS_ENSURE_SUCCESS(rv, rv);
       break;
 
       case TransferRequest::REQUEST_READ :
-        mStatus->ChangeState(STATE_TRANSCODE);
+        mStatus.ChangeState(STATE_TRANSCODE);
 
         rv = ReqHandleRead(requestItem, aBatch.CountableItems());
         if (rv != NS_ERROR_ABORT) {
@@ -287,7 +286,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
   // Update status and set for auto-failure.
   sbDeviceStatusAutoOperationComplete autoStatus(
-                                    mStatus,
+                                    &mStatus,
                                     sbDeviceStatusHelper::OPERATION_TYPE_MOUNT,
                                     request,
                                     0);
@@ -591,7 +590,7 @@ sbCDDevice::ProxyCDLookup() {
   nsresult rv;
 
   // Update the status
-  rv = mStatus->ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
+  rv = mStatus.ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Dispatch the event to notify listeners that we're about to start
@@ -738,7 +737,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
 {
   nsresult rv;
 
-  rv = mStatus->ChangeState(STATE_IDLE);
+  rv = mStatus.ChangeState(STATE_IDLE);
 
   PRUint16 numResults = 0;
   nsCOMPtr<nsISimpleEnumerator> metadataResultsEnum;
@@ -993,7 +992,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   nsresult rv;
 
   sbDeviceStatusAutoOperationComplete autoComplete
-                                     (mStatus,
+                                     (&mStatus,
                                       sbDeviceStatusHelper::OPERATION_TYPE_READ,
                                       aRequest,
                                       aBatchCount);
@@ -1185,7 +1184,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   // Create our listener for transcode progress.
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(this,
-                                     mStatus,
+                                     &mStatus,
                                      aRequest->item,
                                      stopWaitMonitor,
                                      statusProperty,

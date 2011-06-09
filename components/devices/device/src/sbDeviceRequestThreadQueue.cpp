@@ -385,16 +385,17 @@ sbDeviceRequestThreadQueue::IsDuplicateRequest(sbRequestItem * aQueueRequest,
 
 void sbDeviceRequestThreadQueue::CompleteRequests() {
 
-  sbRequestThreadQueue::CompleteRequests();
-
   {
     nsAutoLock lock(mLock);
 
-    nsresult rv = mBaseDevice->ChangeState(sbIDevice::STATE_IDLE);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Failed to clear cancel state of aborted device");
+    if (mAbortRequests) {
+      nsresult rv = mBaseDevice->SetState(sbIDevice::STATE_IDLE);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Failed to clear cancel state of aborted device");
+      }
     }
   }
+  sbRequestThreadQueue::CompleteRequests();
 }
 
 nsresult sbDeviceRequestThreadQueue::CleanupBatch(Batch & aBatch)
@@ -443,7 +444,7 @@ nsresult sbDeviceRequestThreadQueue::CleanupBatch(Batch & aBatch)
           NS_ENSURE_SUCCESS(rv, rv);
         }
       }
-      continue;
+      break;
     }
   }
   // If there are no items, don't bother do anything.
