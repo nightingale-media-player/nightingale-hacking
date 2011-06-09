@@ -186,7 +186,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* 
   NS_ASSERTION(aMediaList != mFriendList,
                "Can't enumerate our friend media list!");
 
-  PRBool success = mItemsToCreate.Init();
+  PRBool success = mItemsInForeignLib.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mFriendList->GetLibrary(getter_AddRefs(mListLibrary));
@@ -226,10 +226,12 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
   rv = mListLibrary->GetGuid(listLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIMediaItem> foundItem;
+
   PRBool success;
   NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
   NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-  if (!sameLibrary && !mItemsToCreate.Get(aMediaItem, nsnull)) {
+  if (!sameLibrary && !mItemsInForeignLib.Get(aMediaItem, nsnull)) {
     // This item comes from another library so we'll need to add it to our
     // library before it can be used.
 
@@ -250,7 +252,6 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    nsCOMPtr<sbIMediaItem> foundItem;
     // if the origin library is this library, just look for the item
     if (listLibGuid.Equals(originLibGuid)) {
       // the origin item was from this library
@@ -281,13 +282,16 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
 
       foundItem = guidCheckHelper->GetItem(); /* null if not found */
     }
-
-    success = mItemsToCreate.Put(aMediaItem, foundItem);
+    // At this point we've either found a corresponding media item or not in
+    // which case we'll map to null
+    success = mItemsInForeignLib.Put(aMediaItem, foundItem);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
 
-  // Remember this media item.
-  success = mItemList.AppendObject(aMediaItem);
+  // Capture all the media items we see in the order found so we can
+  // properly add them in the correct order. We need to use the found item if
+  // there is one since that's the one we'll want to add.
+  success = mItemList.AppendObject(foundItem ? foundItem.get() : aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
@@ -316,48 +320,59 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
 
   nsresult rv;
 
-  PRUint32 itemsToCreateCount = mItemsToCreate.Count();
+  PRUint32 itemsToCreateCount = mItemsInForeignLib.Count();
   if (itemsToCreateCount) {
 
-    nsCOMPtr<nsIMutableArray> oldItems =
+    // This will be the collection of items that will need to be created
+    nsCOMPtr<nsIMutableArray> itemsToCreate =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIMutableArray> oldURIs =
+    // This will be the collection of URI's for the itemsToCreate above
+    nsCOMPtr<nsIMutableArray> itemsToCreateURIs =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Build a list of the items to create.
+    // This traverses mItemList looking for items that need to be created
+    // meaning there is a corresponding entry in mItemsInForeignLib but the
+    // value is null.
     PRUint32 numItems = mItemList.Count();
     for (PRUint32 i = 0; i < numItems; i++) {
+      sbIMediaItem * const item = mItemList[i];
+
       nsCOMPtr<sbIMediaItem> existing;
-      mItemsToCreate.Get(mItemList[i], getter_AddRefs(existing));
-      if (!existing) {
+      // See if this item needs to be created. It will need to be created if
+      // it's in the mItemsInForeignLib hash AND the value is null. A Null
+      // value means the item is from a different library and no copy exists
+      // of it in the media list's library
+      const PRBool found = mItemsInForeignLib.Get(item,
+                                                  getter_AddRefs(existing));
+      if (found && !existing) {
         nsCOMPtr<nsIURI> uri;
-        rv = mItemList[i]->GetContentSrc(getter_AddRefs(uri));
+        rv = item->GetContentSrc(getter_AddRefs(uri));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = oldItems->AppendElement(mItemList[i], PR_FALSE);
+        rv = itemsToCreate->AppendElement(item, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = oldURIs->AppendElement(uri, PR_FALSE);
+        rv = itemsToCreateURIs->AppendElement(uri, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
 
-    nsCOMPtr<nsIMutableArray> propertyArrayArray =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     PRUint32 oldItemCount;
-    rv = oldItems->GetLength(&oldItemCount);
+    rv = itemsToCreate->GetLength(&oldItemCount);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Skip the following if there are no items to add
     if (oldItemCount) {
 
+      nsCOMPtr<nsIMutableArray> propertyArrayArray =
+        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       for (PRUint32 i = 0; i < oldItemCount; i++) {
-        nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(oldItems, i, &rv);
+        nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(itemsToCreate, i, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsCOMPtr<sbIPropertyArray> properties;
@@ -381,8 +396,10 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
+      // Creating the items, we shouldn't have to look for dupes since
+      // that's been done previously.
       nsCOMPtr<nsIArray> newItems;
-      rv = mListLibrary->BatchCreateMediaItems(oldURIs,
+      rv = mListLibrary->BatchCreateMediaItems(itemsToCreateURIs,
                                                propertyArrayArray,
                                                PR_TRUE,
                                                getter_AddRefs(newItems));
@@ -397,17 +414,18 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
                    "BatchCreateMediaItems didn't make the right number of items!");
 #endif
 
+      // For each new item that was created, update the mItemsInForeignLib
       for (PRUint32 index = 0; index < newItemCount; index++) {
-        nsCOMPtr<sbIMediaItem> oldItem = do_QueryElementAt(oldItems, index, &rv);
+        nsCOMPtr<sbIMediaItem> oldItem = do_QueryElementAt(itemsToCreate, index, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsCOMPtr<sbIMediaItem> newItem = do_QueryElementAt(newItems, index, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        NS_ASSERTION(mItemsToCreate.Get(oldItem, nsnull),
+        NS_ASSERTION(mItemsInForeignLib.Get(oldItem, nsnull),
                      "The old item should be in the hashtable!");
 
-        PRBool success = mItemsToCreate.Put(oldItem, newItem);
+        PRBool success = mItemsInForeignLib.Put(oldItem, newItem);
         NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
       }
     }
@@ -422,20 +440,28 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
 
   nsString ordinal = mStartingOrdinal;
 
+  // For each item, new or existing, go through and add the item to the media
+  // list
   for (PRUint32 index = 0; index < itemCount; index++) {
 
     nsCOMPtr<sbIMediaItem> mediaItem = mItemList[index];
 
-    if (mItemsToCreate.Get(mediaItem, nsnull)) {
-      nsCOMPtr<sbIMediaItem> newMediaItem;
-      PRBool success = mItemsToCreate.Get(mediaItem, getter_AddRefs(newMediaItem));
-      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
+    // Use the "value" in mItemsInForeignLib since that is either the item found
+    // in the media list's library or the one previously created in that
+    // library. If there is no entry in mItemsInForeignLib then we can just use
+    // the straight media item that was given
+    nsCOMPtr<sbIMediaItem> newMediaItem;
+    PRBool success = mItemsInForeignLib.Get(mediaItem,
+                                              getter_AddRefs(newMediaItem));
+    if (success) {
       //Call the copy listener for this media list at this time.
       //XXXAus: This could benefit from batching in the future.
       rv = mFriendList->NotifyCopyListener(mediaItem, newMediaItem);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to notify copy listener!");
 
+      // We'll replace the passed in media item with either the one found or
+      // the one that was created. This is so the notification logic later
+      // can just use the mItemList for notification.
       success = mItemList.ReplaceObjectAt(newMediaItem, index);
       NS_ENSURE_SUCCESS(rv, rv);
 

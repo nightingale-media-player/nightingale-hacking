@@ -148,6 +148,13 @@ private:
   nsTHashtable<nsStringHashKey> mShouldNotifyAfterRemove;
 };
 
+/**
+ * This enumerator is used to add items to a media list. For each item it
+ * determines if the item exists in the media list's library, a copy already
+ * exists, or a new item must be created. After the enumeration is complete
+ * it then creates any items that need to be created and updates the database
+ * so the media list now contains the list of items enumerated.
+ */
 class sbSimpleMediaListInsertingEnumerationListener : public sbIMediaListEnumerationListener
 {
 public:
@@ -173,8 +180,19 @@ private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   PRUint32 mStartingIndex;
   nsString mStartingOrdinal;
+  /**
+   * This is list of media items we'll be adding to media list in the order
+   * desired. There may be duplicates, some of these items may exist in a
+   * different database than the media list they're being added to.
+   */
   nsCOMArray<sbIMediaItem> mItemList;
-  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreate;
+  /**
+   * This holds items that do not exist in the library that the media list
+   * belongs to. Some of these items may have corresponding items in the
+   * media list's library and so may not need to be created. For those items
+   * the hash entry will be the matching media item.
+   */
+  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsInForeignLib;
   nsCOMPtr<sbILibrary> mListLibrary;
 };
 
