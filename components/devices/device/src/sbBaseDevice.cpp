@@ -109,6 +109,7 @@
 #include <sbJobUtils.h>
 #include <sbLibraryUtils.h>
 #include <sbLocalDatabaseCID.h>
+#include <sbMediaListEnumArrayHelper.h>
 #include <sbMemoryUtils.h>
 #include <sbPrefBranch.h>
 #include <sbPropertiesCID.h>
@@ -4787,6 +4788,112 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::AddMediaLists(sbILibrary * aLibrary,
+                            nsIArray * aMediaLists)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aMediaLists);
+
+  nsresult rv;
+
+  // Add media lists.
+  PRUint32 count;
+  rv = aMediaLists->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < count; i++) {
+    if (IsRequestAborted()) {
+      return NS_ERROR_ABORT;
+    }
+    nsCOMPtr<sbILibraryChange> change =
+        do_QueryElementAt(aMediaLists, i, &rv);
+
+    nsCOMPtr<sbIMediaItem> libMediaItem;
+    rv = change->GetSourceItem(getter_AddRefs(libMediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> libMediaList = do_QueryInterface(libMediaItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> newMediaList;
+    rv = aLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
+                                   nsnull,
+                                   getter_AddRefs(newMediaList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString name;
+    rv = libMediaList->GetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = newMediaList->SetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // LinkCopy will do the right thing even if the newMediaList
+    // is in the main library.
+    rv = sbLibraryUtils::LinkCopy(libMediaItem, newMediaList);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = CopyChangedMediaItemsToMediaList(change, newMediaList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateMediaLists(nsIArray * aMediaLists)
+{
+  NS_ENSURE_ARG_POINTER(aMediaLists);
+
+  nsresult rv;
+
+  PRUint32 count;
+  rv = aMediaLists->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < count; i++) {
+    if (IsRequestAborted()) {
+      return NS_ERROR_ABORT;
+    }
+
+    nsCOMPtr<sbILibraryChange> change =
+        do_QueryElementAt(aMediaLists, i, &rv);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Unable to retrieve update change from array");
+      continue;
+    }
+    nsCOMPtr<sbIMediaItem> destItem;
+    rv = change->GetDestinationItem(getter_AddRefs(destItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> destList = do_QueryInterface(destItem , &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = destList->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaItem> sourceItem;
+    rv = change->GetSourceItem(getter_AddRefs(sourceItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> sourceList = do_QueryInterface(sourceItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString name;
+    rv = sourceList->GetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = destList->SetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = CopyChangedMediaItemsToMediaList(change,
+                                          destList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
                              sbILibraryChangeset* aChangeset)
@@ -4817,10 +4924,15 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
   // Create some change list arrays.
   nsCOMPtr<nsIMutableArray> addMediaLists =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIMutableArray> removeItemList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIMutableArray>  addItemList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIMutableArray> updateMediaLists =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
@@ -4896,9 +5008,6 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
           rv = change->GetDestinationItem(getter_AddRefs(destItem));
           NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = removeItemList->AppendElement(destItem, PR_FALSE);
-          NS_ENSURE_SUCCESS(rv, rv);
-
           nsCOMPtr<sbIMediaItem> srcItem;
           rv = change->GetSourceItem(getter_AddRefs(srcItem));
           NS_ENSURE_SUCCESS(rv, rv);
@@ -4921,10 +5030,13 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
           NS_ENSURE_SUCCESS(rv, rv);
 
           if (destItemAsList) {
-            rv = addMediaLists->AppendElement(change, PR_FALSE);
+            rv = updateMediaLists->AppendElement(change, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
           else {
+            rv = removeItemList->AppendElement(destItem, PR_FALSE);
+            NS_ENSURE_SUCCESS(rv, rv);
+
             rv = addItemList->AppendElement(srcItem, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
@@ -4960,129 +5072,11 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
     return NS_ERROR_ABORT;
   }
 
-  // Add media lists.
-  PRUint32 count;
-  rv = addMediaLists->GetLength(&count);
+  rv = AddMediaLists(aDevLibrary, addMediaLists);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 i = 0; i < count; i++) {
-    if (IsRequestAborted()) {
-      return NS_ERROR_ABORT;
-    }
-    nsCOMPtr<sbILibraryChange> change =
-        do_QueryElementAt(addMediaLists, i, &rv);
-
-    nsCOMPtr<sbIMediaItem> libMediaItem;
-    rv = change->GetSourceItem(getter_AddRefs(libMediaItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> libMediaList = do_QueryInterface(libMediaItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> newMediaList;
-    rv = aDevLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                      nsnull,
-                                      getter_AddRefs(newMediaList));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString name;
-    rv = libMediaList->GetName(name);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = newMediaList->SetName(name);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = sbLibraryUtils::LinkCopy(libMediaItem, newMediaList);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = CopyChangedMediaItemsToMediaList(change, newMediaList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
-                               sbIMediaList*     aMediaList)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aDstLibrary);
-  NS_ENSURE_ARG_POINTER(aMediaList);
-
-  // Function variables.
-  nsresult rv;
-
-  // Don't sync media list if it shouldn't be synced.
-  PRBool shouldSync = PR_FALSE;
-  rv = ShouldSyncMediaList(aMediaList, &shouldSync);
+  rv = UpdateMediaLists(updateMediaLists);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!shouldSync)
-    return NS_OK;
-
-
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
-                                  PRBool*       aShouldSync)
-{
-  TRACE(("%s", __FUNCTION__));
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aMediaList);
-  NS_ENSURE_ARG_POINTER(aShouldSync);
-
-  // Function variables.
-  nsresult rv;
-
-  // Default to should not sync.
-  *aShouldSync = PR_FALSE;
-
-  // Don't sync download media lists.
-  nsAutoString customType;
-  rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
-                               customType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (customType.EqualsLiteral("download"))
-    return NS_OK;
-
-  // Don't sync hidden lists.
-  nsAutoString hidden;
-  rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), hidden);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (hidden.EqualsLiteral("1"))
-    return NS_OK;
-
-  // Don't sync empty lists.
-  PRBool isEmpty;
-  rv = aMediaList->GetIsEmpty(&isEmpty);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isEmpty)
-    return NS_OK;
-
-  // Don't sync list that device doesn't support.
-  PRUint16 listContentType;
-  rv = sbLibraryUtils::GetMediaListContentType(aMediaList, &listContentType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!sbDeviceUtils::IsMediaListContentTypeSupported(this,
-                                                      listContentType)) {
-    return NS_OK;
-  }
-
-  // Don't sync media lists that are storage for other media lists (e.g., simple
-  // media lists for smart media lists).
-  nsAutoString outerGUID;
-  rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID),
-                               outerGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!outerGUID.IsEmpty())
-    return NS_OK;
-
-  // Media list should be synced.
-  *aShouldSync = PR_TRUE;
 
   return NS_OK;
 }
@@ -6546,12 +6540,30 @@ sbBaseDevice::CopyChangedMediaItemsToMediaList(sbILibraryChange * aChange,
 
   nsresult rv;
 
-  nsCOMPtr<nsIArray> mediaItems;
-  rv = aChange->GetListItems(getter_AddRefs(mediaItems));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIArray> items;
+  rv = aChange->GetListItems(getter_AddRefs(items));
+  // If the change doesn't have list items then we use the source's items
+  if (NS_FAILED(rv)) {
+    nsCOMPtr<sbIMediaItem> srcItem;
+    rv = aChange->GetSourceItem(getter_AddRefs(srcItem));
+    NS_ENSURE_SUCCESS(rv, rv);
 
+    nsCOMPtr<sbIMediaList> srcList = do_QueryInterface(srcItem, &rv);
+
+    nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
+      sbMediaListEnumArrayHelper::New();
+    NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = srcList->EnumerateAllItems(
+        enumHelper,
+        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = enumHelper->GetMediaItemsArray(getter_AddRefs(items));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   nsCOMPtr<nsISimpleEnumerator> enumerator;
-  rv = mediaItems->Enumerate(getter_AddRefs(enumerator));
+  rv = items->Enumerate(getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aMediaList->AddSome(enumerator);

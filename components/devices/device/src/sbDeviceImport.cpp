@@ -69,11 +69,18 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
   // Accumulators so we can batch the operations
   nsCOMPtr<nsIMutableArray> mediaItemsToAdd =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIMutableArray> mediaListsToAdd =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIMutableArray> mediaItemsToRemove =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   // Determine if playlists are supported
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIMutableArray> mediaListsToUpdate =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
 
 
@@ -128,7 +135,7 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
         if (destItemAsList) {
           // If the change is to a media list, add it to the media list change
           // list.
-          PRBool success = mediaListsToAdd->AppendElement(change, PR_FALSE);
+          PRBool success = mediaListsToUpdate->AppendElement(change, PR_FALSE);
           NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
 
         }
@@ -166,100 +173,11 @@ sbBaseDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
   rv = aImportToLibrary->AddSome(enumerator);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add items.
-  rv = ImportNewMediaLists(aImportToLibrary, mediaListsToAdd);
+  rv = AddMediaLists(aImportToLibrary, mediaListsToAdd);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::ImportMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList)
-{
-  nsresult rv;
-
-  // Just replace the destination media lists content with the sources
-  // TODO: See if just applying changes is more efficient than clearing and
-  // addAll
-
-  // Sync each media list.
-  PRInt32 count = aMediaListChangeList.Count();
-  for (PRInt32 i = 0; i < count; i++) {
-    // Get the media list change.
-    nsCOMPtr<sbILibraryChange> change = aMediaListChangeList[i];
-
-    // Get the destination media list item and library.
-    nsCOMPtr<sbIMediaItem>     devMediaListItem;
-    rv = change->GetSourceItem(getter_AddRefs(devMediaListItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> devMediaList =
-        do_QueryInterface(devMediaListItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the destination media list item and library.
-    nsCOMPtr<sbIMediaItem> mainMediaListItem;
-    rv = change->GetDestinationItem(getter_AddRefs(mainMediaListItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> mainMediaList =
-        do_QueryInterface(mainMediaListItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mainMediaList->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = CopyChangedMediaItemsToMediaList(change, mainMediaList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::ImportNewMediaLists(sbILibrary * aImportToLibrary,
-                                  nsIArray * aNewMediaListsChanges)
-{
-  NS_ENSURE_ARG_POINTER(aNewMediaListsChanges);
-
-  nsresult rv;
-
-  PRUint32 length;
-  rv = aNewMediaListsChanges->GetLength(&length);
-  for (PRUint32 index = 0; index < length; ++index) {
-    nsCOMPtr<sbILibraryChange> change =
-        do_QueryElementAt(aNewMediaListsChanges, index, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-#ifdef DEBUG
-    PRBool isList;
-    rv = change->GetItemIsList(&isList);
-    NS_ASSERTION(NS_SUCCEEDED(rv) && isList,
-                 "Non-list change passed to ImportNewMediaLists");
-#endif
-
-    nsCOMPtr<sbIMediaItem> devMediaItem;
-    rv = change->GetSourceItem(getter_AddRefs(devMediaItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> devMediaList = do_QueryInterface(devMediaItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIPropertyArray> properties;
-    rv = devMediaList->GetProperties(nsnull, getter_AddRefs(properties));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaList> newMediaList;
-    rv = aImportToLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                           properties,
-                                           getter_AddRefs(newMediaList));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = sbLibraryUtils::LinkCopy(newMediaList, devMediaItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = CopyChangedMediaItemsToMediaList(change, newMediaList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = UpdateMediaLists(mediaListsToUpdate);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

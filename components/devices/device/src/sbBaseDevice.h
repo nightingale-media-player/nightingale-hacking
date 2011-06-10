@@ -1367,28 +1367,6 @@ protected:
                                 sbILibraryChangeset** aImportChangeset);
 
   /**
-   * Add the media list specified by aMediaList to the device library specified
-   * by aDstLibrary.
-   *
-   * \param aDstLibrary         Device library to which to add media list.
-   * \param aMediaList          Media list to add.
-   */
-  nsresult SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
-                            sbIMediaList*     aMediaList);
-
-  /**
-   * Determine whether the media list specified by aMediaList should be synced
-   * to the device.  Return true in aShouldSync if media list should be synced.
-   * The download media list and hidden media lists are examples of media lists
-   * that should not be synced.
-   *
-   * \param aMediaList          Media list to check.
-   * \param aShouldSync         Returned true if media list should be synced.
-   */
-  nsresult ShouldSyncMediaList(sbIMediaList* aMediaList,
-                               PRBool*       aShouldSync);
-
-  /**
    * Check whether a media item points to a currently existing main library
    * item as its origin, and update SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY
    * accordingly.  This function is intended for items in the device's
@@ -1624,17 +1602,18 @@ protected:
   nsresult  GetExcludedFolders(nsTArray<nsString> & aExcludedFolders);
 
   /**
-   * Imports the list of media lists that have changed
-   * \param aMediaListChangeList the change requests for media lists to import
+   * This updates a collection of media lists.
+   * \param aMediaLists The list of media lists to be updated
    */
-  nsresult ImportMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList);
+  nsresult UpdateMediaLists(nsIArray * aMediaLists);
 
   /**
-   * Imports the list of media lists that are new
-   * \param aMediaListChanges The list of changes for the new media lists
+   * This adds teh media lists to the given library
+   * \param aLibrary The library the media lists are to be added
+   * \param aMediaLists The list of media lists to be added
    */
-  nsresult ImportNewMediaLists(sbILibrary * aImportToLibrary,
-                               nsIArray * aNewMediaListsChanges);
+  nsresult AddMediaLists(sbILibrary * aLibrary,
+                         nsIArray * aMediaLists);
 
   /**
    * Returns boolean flags for whether we should import audio and/or video
