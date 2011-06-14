@@ -62,8 +62,8 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbPlaylistCommandsBuilder.js \
                       $(srcdir)/sbAddToPlaylist.jsm \
                       $(srcdir)/kPlaylistCommands.jsm \
                       $(NULL)
-                     
-IS_COMPONENT = 1 
+
+IS_COMPONENT = 1
 
 # TODO: Post 0.5 we need to remove js modules from the line above
 SONGBIRD_JSMODULES =  $(srcdir)/sbAddToPlaylist.jsm \
