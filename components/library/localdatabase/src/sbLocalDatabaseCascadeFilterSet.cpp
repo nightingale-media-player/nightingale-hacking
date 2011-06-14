@@ -79,7 +79,7 @@ static PRLogModuleInfo* sFilterSetLog = nsnull;
 class sbSuppressArrayInvalidation
 {
 public:
-  explicit 
+  explicit
   sbSuppressArrayInvalidation(sbILocalDatabaseGUIDArray *aArray)
   : mArray(aArray) {
     mArray->SuppressInvalidation(PR_TRUE);
@@ -517,10 +517,10 @@ sbLocalDatabaseCascadeFilterSet::Get(PRUint16 aIndex,
     supportsStr = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     supportsStr->SetData(fs.values[i]);
-	  
+
     outArr->AppendElement(supportsStr, PR_FALSE);
   }
-  
+
   NS_ADDREF(*_retval = outArr);
   return NS_OK;
 }
@@ -1046,7 +1046,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureFilterArray(sbFilterSpec* aSpec,
   // bit by bit as needed.  Unfortunately in complex filtering/searching
   // cases the cost of the length query can be about the same as the
   // cost of just fetching all the rows.  Since there aren't likely to be
-  // that many rows for a distinct filter, we tell the guidarray to 
+  // that many rows for a distinct filter, we tell the guidarray to
   // fetch everything at once and avoid the length query entirely.
   rv = aSpec->array->SetFetchSize(PR_UINT32_MAX);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1161,7 +1161,7 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
                            valuesEnum,
                            PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-   
+
     valuesEnum = new sbTArrayStringEnumerator(&values);
     NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
 
