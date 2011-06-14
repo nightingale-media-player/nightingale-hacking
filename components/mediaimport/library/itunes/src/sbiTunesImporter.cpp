@@ -1149,57 +1149,56 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
     NS_ENSURE_SUCCESS(rv, rv);
     action = NS_LossyConvertUTF16toASCII(userAction);
   }
+
   if (action.Equals("replace")) {
     mFoundChanges = PR_TRUE;
-    if (mediaList) {
-      nsString guid;
-      rv = mediaList->GetGuid(guid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = mLibrary->Remove(mediaList);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      // Playlist is dead so no more references
-      mediaList = nsnull;
-      
-      // Remove the old entry
-      rv = miTunesDBServices.RemoveSBIDEntry(guid);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    if (aTrackIdsCount > 0) {
-      
-      // Setup the properties. We need to do properties so that when
-      // export sees this it knows it's an iTunes playlist
-      nsCOMPtr<sbIMutablePropertyArray> properties =
-        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
-                                      playlistName);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
-                                      playlistiTunesID);
-      NS_ENSURE_SUCCESS(rv, rv);
-     
-      rv = mLibrary->CreateMediaList(NS_LITERAL_STRING("simple"), 
-                                     properties, 
-                                     getter_AddRefs(mediaList));
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      // Now add the Songbird and iTunes ID's to the map table
+    if (aTrackIdsCount > 0) {
       nsString guid;
-      rv = mediaList->GetGuid(guid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = miTunesDBServices.MapID(miTunesLibID, playlistiTunesID, guid);
-      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (mediaList) {
+        // Clear the medialist in preparation for processing playlist items as
+        // ordered and listed in iTunes.
+        rv = mediaList->Clear();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Unconditionally set the imported playlist's name.
+        rv = mediaList->SetName(playlistName);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        // Setup the properties. We need to do properties so that when
+        // export sees this it knows it's an iTunes playlist
+        nsCOMPtr<sbIMutablePropertyArray> properties =
+          do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                        playlistName);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                                        playlistiTunesID);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
+                                       properties,
+                                       getter_AddRefs(mediaList));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mediaList->GetGuid(guid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Now add the Songbird and iTunes IDs to the map table
+        rv = miTunesDBServices.MapID(miTunesLibID, playlistiTunesID, guid);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
 
       rv = ProcessPlaylistItems(mediaList,
                                 aTrackIds,
                                 aTrackIdsCount);
       NS_ENSURE_SUCCESS(rv, rv);
-    
+
       StorePlaylistSignature(mediaList);
     }
   }
