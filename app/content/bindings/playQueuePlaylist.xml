@@ -44,7 +44,7 @@
 
       <constructor>
         <![CDATA[
-          this._destroyed = false;
+          this._queueListDestroyed = false;
           var self = this;
           this._playQueueService =
               this._Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
@@ -66,9 +66,11 @@
       </constructor>
 
       <destructor>
-        if (this._destroyed) return;
+        if (this._queueListDestroyed) return;
         this._playQueueService.removeListener(this._playQueueServiceListener);
-        this._destroyed = true;
+        this._playQueueServiceListener = null;
+        this._playQueueService = null;
+        this._queueListDestroyed = true;
       </destructor>
 
       <method name="acceptDropSource">

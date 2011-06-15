@@ -300,6 +300,8 @@ sbPlayQueueService::Finalize()
     }
   }
 
+  mListeners.Clear();
+
   mInitialized = PR_FALSE;
 }
 
