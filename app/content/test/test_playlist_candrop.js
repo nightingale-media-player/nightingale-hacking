@@ -487,6 +487,9 @@ const K_DROPONPLAYQUEUE_TESTS = [
   },
   post: function() {
     this.devMgr.unregisterDevice(this.dev);
+    this.dev.disconnect();
+    this.dev = null;
+    this.devMgr = null;
   },
   expected: false
 },
