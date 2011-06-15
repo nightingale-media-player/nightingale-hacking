@@ -1254,6 +1254,18 @@ var ExternalDropHandler = {
                              aTotalInserted,
                              aOtherDrops)
   {
+    var device,
+        isDevice;
+
+    // Get the device reference from the target library.
+    try {
+      device = aTargetMediaList.library.device;
+    } catch (e) {
+      device = null;
+    }
+
+    isDevice = (device !== null);
+
     if (this._listener) {
       if (this._listener.onDropComplete(aTargetMediaList,
                                         aTotalImportCount,
@@ -1266,7 +1278,8 @@ var ExternalDropHandler = {
                                 aTotalDupeCount,
                                 aTotalUnsupported,
                                 aTotalInserted,
-                                aOtherDrops);
+                                aOtherDrops,
+                                isDevice);
       }
     }
     else {
@@ -1275,7 +1288,8 @@ var ExternalDropHandler = {
                               aTotalInserted, // usually dupes
                               aTotalUnsupported,
                               aTotalInserted,
-                              aOtherDrops);
+                              aOtherDrops,
+                              isDevice);
     }
   },
 
