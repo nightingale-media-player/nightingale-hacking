@@ -479,12 +479,13 @@ sbDynamicPlaylistService.prototype.onLibraryUnregistered =
 function sbDynamicPlaylistService_onLibraryUnregistered(aLibrary)
 {
   TRACE("sbDynamicPlaylistService::onLibraryUnregistered");
-
   // Remove all the lists that are in this library
-  this._removeListsFromLibrary(aLibrary);
+  if (aLibrary instanceof Ci.sbILibrary) {
+    this._removeListsFromLibrary(aLibrary);
 
-  // Remove our listener from this library
-  aLibrary.removeListener(this);
+    // Remove our listener from this library
+    aLibrary.removeListener(this);
+  }
 }
 
 // sbIMediaListListener

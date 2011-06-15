@@ -304,8 +304,10 @@ var SBPlaylistCommand_AddToDevice =
   },
 
   initCommands: function(aHost) {
-    this.m_addToDevice = new addToDeviceHelper();
-    this.m_addToDevice.init(this);
+    if (!this.m_addToDevice) {
+      this.m_addToDevice = new addToDeviceHelper();
+      this.m_addToDevice.init(this);
+    }
   },
 
   shutdownCommands: function() {

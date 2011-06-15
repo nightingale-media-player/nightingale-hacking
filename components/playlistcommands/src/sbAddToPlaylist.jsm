@@ -289,8 +289,10 @@ var SBPlaylistCommand_AddToPlaylist =
   },
 
   initCommands: function(aHost) {
-    this.m_addToPlaylist = new addToPlaylistHelper();
-    this.m_addToPlaylist.init(this);
+    if (!this.m_addToPlaylist) {
+      this.m_addToPlaylist = new addToPlaylistHelper();
+      this.m_addToPlaylist.init(this);
+    }
   },
 
   shutdownCommands: function() {

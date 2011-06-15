@@ -198,8 +198,10 @@ var SBPlaylistCommand_AddToLibrary =
   },
 
   initCommands: function(aHost) {
-    this.addToLibrary = new addToLibraryHelper();
-    this.addToLibrary.init(this);
+    if (!this.addToLibrary) {
+      this.addToLibrary = new addToLibraryHelper();
+      this.addToLibrary.init(this);
+    }
   },
 
   shutdownCommands: function() {

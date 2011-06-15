@@ -1514,7 +1514,13 @@ PublicPlaylistCommands.prototype = {
                                           this.m_serviceTreeDefaultCommands);
 
     // Shutdown all command objects, this ensures that no external reference
-    // remains in their internal arrays
+    // remains in their internal arrays. The AddTo helpers may or may not be
+    // active depending on which set of playlist commands is actually used,
+    // but their shutdownCommands methods are no-ops if the commands do not
+    // exist.
+    SBPlaylistCommand_AddToPlaylist.shutdownCommands();
+    SBPlaylistCommand_AddToDevice.shutdownCommands();
+    SBPlaylistCommand_AddToLibrary.shutdownCommands();
     this.m_cmd_Play.shutdown();
     this.m_cmd_Pause.shutdown();
     this.m_cmd_Remove.shutdown();
