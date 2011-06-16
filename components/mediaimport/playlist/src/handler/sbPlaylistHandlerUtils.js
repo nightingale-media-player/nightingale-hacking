@@ -312,7 +312,11 @@ function SB_ResolveURI(aStringURL, aBaseURI)
   // Ok, it is not a local file.  Try creating a new URI with the base URI
   try {
     var uri = ios.newURI(aStringURL, null, aBaseURI);
-    return uri;
+    if ( uri instanceof Ci.nsIFileURL && !uri.file.exists() ) {
+      return null;
+    } else {
+      return uri;
+    }
   }
   catch(e) {
     // fall through
