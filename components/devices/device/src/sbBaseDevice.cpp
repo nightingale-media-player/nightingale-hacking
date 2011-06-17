@@ -2921,7 +2921,9 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
   nsAutoPtr<sbDeviceXMLInfo> deviceXMLInfo(new sbDeviceXMLInfo(this));
   PRBool                     present;
   NS_ENSURE_TRUE(deviceXMLInfo, NS_ERROR_OUT_OF_MEMORY);
-  rv = deviceXMLInfo->Read(aDeviceSettingsDocument, present);
+  rv = deviceXMLInfo->Read(aDeviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceXMLInfo->GetDeviceInfoPresent(&present);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!present)
     return NS_OK;

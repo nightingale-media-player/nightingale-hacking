@@ -71,6 +71,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
+#include <nsVersionComparator.h>
 
 
 //------------------------------------------------------------------------------
@@ -103,8 +104,7 @@ nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
   // Iterate over the strings and convert each one to a URI to
   // load device XML info from:
   const PRUint32 COUNT = uris.Length();
-  PRBool found = PR_FALSE;
-  for (PRUint32 i = 0; i < COUNT && !found; i++) {
+  for (PRUint32 i = 0; i < COUNT; i++) {
     const nsCString & uriStr = uris[i];
 
     // Skip empty strings:
@@ -118,9 +118,7 @@ nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Scan the specified file or directory:
-    rv = Read(uri,
-              NS_ConvertUTF8toUTF16(nsDependentCString(aExtensionsList)),
-              found);
+    rv = Read(uri, NS_ConvertUTF8toUTF16(nsDependentCString(aExtensionsList)));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -133,8 +131,7 @@ nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
 //
 
 nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
-                               const nsAString &  aExtensionsList,
-                               PRBool &           aFound)
+                               const nsAString &  aExtensionsList)
 {
   NS_ENSURE_ARG_POINTER(aDeviceXMLInfoURI);
 
@@ -148,7 +145,7 @@ nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
     rv = fileUrl->GetFile(getter_AddRefs(file));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = Read(file, aExtensionsList, aFound);
+    rv = Read(file, aExtensionsList);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
@@ -159,7 +156,7 @@ nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Parse the stream and close it:
-  rv = Read(inputStream, aFound);
+  rv = Read(inputStream);
   inputStream->Close();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -173,8 +170,7 @@ nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
 //
 
 nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
-                               const nsAString &  aExtensionsList,
-                               PRBool &           aFound)
+                               const nsAString &  aExtensionsList)
 {
   NS_ENSURE_ARG_POINTER(aDeviceXMLInfoFile);
 
@@ -192,7 +188,6 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
     nsString acceptExts(aExtensionsList);
     acceptExts.Trim(" ");
     if (acceptExts.IsEmpty()) {
-      aFound = PR_FALSE;
       return NS_OK;
     }
 
@@ -215,9 +210,7 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
 
     // Enumerate files and filter by extension:
     PRBool more = PR_FALSE;
-    while(NS_SUCCEEDED(rv = scanner->HasMoreElements(&more)) &&
-          more &&
-          !aFound)
+    while(NS_SUCCEEDED(rv = scanner->HasMoreElements(&more)) && more)
     {
       // Get the next file:
       nsCOMPtr<nsIFile> child;
@@ -236,7 +229,7 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
       // Read the file if its extension is on the accept list.
       // Warn about errors, but keep looping:
       if (acceptExts.Find(extension) != -1) {
-        rv = Read(child, aExtensionsList, aFound);
+        rv = Read(child, aExtensionsList);
         NS_WARN_IF_FALSE(
           NS_SUCCEEDED(rv),
           "Could not read device XML info from file in search directory");
@@ -252,7 +245,7 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Parse the stream and close it:
-  rv = Read(inputStream, aFound);
+  rv = Read(inputStream);
   inputStream->Close();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -264,8 +257,7 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
 // Read
 //
 
-nsresult sbDeviceXMLInfo::Read(nsIInputStream* aDeviceXMLInfoStream,
-                               PRBool &        aFound)
+nsresult sbDeviceXMLInfo::Read(nsIInputStream* aDeviceXMLInfoStream)
 {
   NS_ENSURE_ARG_POINTER(aDeviceXMLInfoStream);
 
@@ -286,7 +278,7 @@ nsresult sbDeviceXMLInfo::Read(nsIInputStream* aDeviceXMLInfoStream,
                                getter_AddRefs(document));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = Read(document, aFound);
+  rv = Read(document);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -297,8 +289,7 @@ nsresult sbDeviceXMLInfo::Read(nsIInputStream* aDeviceXMLInfoStream,
 // Read
 //
 
-nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument,
-                               PRBool &        aFound)
+nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDeviceXMLInfoDocument);
@@ -324,13 +315,27 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument,
     rv = nodeList->Item(i, getter_AddRefs(node));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Use device info node if it matches target device.
+    // Use device info node if it matches target device and is
+    // newer than any previous match
+    nsString foundVersion;
     nsCOMPtr<nsIDOMNode> deviceNode;
     rv = DeviceMatchesDeviceInfoNode(node,
-                                     &aFound,
+                                     foundVersion,
                                      getter_AddRefs(deviceNode));
     NS_ENSURE_SUCCESS(rv, rv);
-    if (aFound) {
+    if (foundVersion.IsEmpty()) {
+      // Not a match
+      continue;
+    }
+
+    if (mDeviceInfoVersion.IsEmpty() ||
+        NS_CompareVersions(
+          NS_LossyConvertUTF16toASCII(foundVersion).get(),
+          NS_LossyConvertUTF16toASCII(mDeviceInfoVersion).get()) > 0)
+    {
+      // Found version is greater than current version, if any.  Keep this
+      // node and replace any previously found node
+      mDeviceInfoVersion.Assign(foundVersion);
       mDeviceInfoElement = do_QueryInterface(node, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       if (deviceNode) {
@@ -340,7 +345,6 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument,
       else {
         mDeviceElement = nsnull;
       }
-      break;
     }
   }
 
@@ -983,12 +987,11 @@ sbDeviceXMLInfo::~sbDeviceXMLInfo()
 
 nsresult
 sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
-                                             PRBool*      aDeviceMatches,
+                                             nsAString &  aFoundVersion,
                                              nsIDOMNode** aDeviceNode)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDeviceInfoNode);
-  NS_ENSURE_ARG_POINTER(aDeviceMatches);
 
   // Function variables.
   PRUint32 nodeCount;
@@ -1013,7 +1016,8 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
   rv = devicesNodeList->GetLength(&nodeCount);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!nodeCount) {
-    *aDeviceMatches = PR_TRUE;
+    rv = GetDeviceInfoVersion(deviceInfoElement, aFoundVersion);
+    NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
   rv = devicesNodeList->Item(0, getter_AddRefs(devicesNode));
@@ -1021,7 +1025,8 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
 
   // If no device was specified, the device doesn't match.
   if (!mDevice) {
-    *aDeviceMatches = PR_FALSE;
+    // Return an empty version string to indicate no match
+    aFoundVersion.Truncate();
     return NS_OK;
   }
 
@@ -1038,7 +1043,8 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
   rv = devicesNode->GetChildNodes(getter_AddRefs(childNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
   if (!childNodeList) {
-    *aDeviceMatches = PR_FALSE;
+    // Return an empty version string to indicate no match
+    aFoundVersion.Truncate();
     return NS_OK;
   }
 
@@ -1064,19 +1070,62 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
     rv = DeviceMatchesDeviceNode(childNode, properties, &matches);
     NS_ENSURE_SUCCESS(rv, rv);
     if (matches) {
-      *aDeviceMatches = PR_TRUE;
+      rv = GetDeviceInfoVersion(deviceInfoElement, aFoundVersion);
+      NS_ENSURE_SUCCESS(rv, rv);
       if (aDeviceNode)
         childNode.forget(aDeviceNode);
       return NS_OK;
     }
   }
 
-  // No match found.
-  *aDeviceMatches = PR_FALSE;
+  // No match found.  Return an empty version string
+  aFoundVersion.Truncate();
 
   return NS_OK;
 }
 
+//-------------------------------------
+//
+// GetDeviceInfoVersion
+//
+
+nsresult sbDeviceXMLInfo::GetDeviceInfoVersion(
+                            nsIDOMElement * aDeviceInfoElement,
+                            nsAString &     aVersion)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceInfoElement);
+
+  nsresult rv;
+
+  NS_NAMED_LITERAL_STRING(VERSION_ATTR, "version");
+
+  // The version attr is optional.  Ignore errors and check
+  // for empty string instead
+  aVersion.Truncate();
+  aDeviceInfoElement->GetAttribute(VERSION_ATTR, aVersion);
+  if (!aVersion.IsEmpty())
+  {
+    return NS_OK;
+  }
+
+  // No version attr on the <deviceinfo> element.  Try its parent
+  nsCOMPtr<nsIDOMNode> parentNode;
+  rv = aDeviceInfoElement->GetParentNode(getter_AddRefs(parentNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIDOMElement> parent =
+    do_QueryInterface(parentNode, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  parent->GetAttribute(VERSION_ATTR, aVersion);
+  if (!aVersion.IsEmpty())
+  {
+    return NS_OK;
+  }
+
+  // No version attr defined.  Default to "0"
+  aVersion.AssignLiteral("0");
+  return NS_OK;
+}
 
 //-------------------------------------
 //

@@ -156,8 +156,8 @@ public :
 
   /**
    * Search one or more XML files specified by the space-delimited list
-   * of URI strings and load the the first device info element that matches
-   * this device.
+   * of URI strings and load the newest device info element--according
+   * to its version attribute--that matches this device.
    *
    * \param aDeviceXMLInfoSpecList  A space-delimited list of URI strings
    *                                pointing to device XML info files or
@@ -176,8 +176,8 @@ public :
   /**
    * Search the specified XML file or, if the URI points to a directory,
    * all files in that directory recursively that have one of the specified
-   * file name extensions and load the the first device info element that
-   * matches this device.
+   * file name extensions and load the newest device info element--according
+   * to its version attribute--that matches this device.
    *
    * \param aDeviceXMLInfoURI       A URI pointing either to a device XML
    *                                info file or to a directory to be
@@ -186,19 +186,15 @@ public :
    * \param aExtensionsList         A space-delimited list of file extensions
    *                                (without dots) to scan for when searching
    *                                a directory for device XML info files
-   *
-   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
-   *                                element was found
    */
   nsresult Read(nsIURI *           aDeviceXMLInfoURI,
-                const nsAString &  aExtensionsList,
-                PRBool &           aFound);
+                const nsAString &  aExtensionsList);
 
   /**
    * Search the specified XML file or, if the nsIFile is a directory,
    * all files in that directory recursively that have one of the specified
-   * file name extensions and load the the first device info element that
-   * matches this device.
+   * file name extensions and load the newest device info element--according
+   * to its version attribute--that matches this device.
    *
    * \param aDeviceXMLInfoFile      Either a device XML info file or a
    *                                directory to be searched recursively
@@ -207,37 +203,25 @@ public :
    * \param aExtensionsList         A space-delimited list of file extensions
    *                                (without dots) to scan for when searching
    *                                a directory for device XML info files
-   *
-   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
-   *                                element was found
    */
   nsresult Read(nsIFile *          aDeviceXMLInfoFile,
-                const nsAString &  aExtensionsList,
-                PRBool &           aFound);
+                const nsAString &  aExtensionsList);
 
   /**
    * Read the device info from the XML stream specified by
    * aDeviceXMLInfoStream.
    *
    * \param aDeviceXMLInfoStream    Device XML info stream.
-   *
-   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
-   *                                element was found
    */
-  nsresult Read(nsIInputStream *    aDeviceXMLInfoStream,
-                PRBool &            aFound);
+  nsresult Read(nsIInputStream *    aDeviceXMLInfoStream);
 
   /**
    * Read the device info from the XML document specified
    * aDeviceXMLInfoDocument.
    *
    * \param aDeviceXMLInfoDocument  Device XML info document.
-   *
-   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
-   *                                element was found
    */
-  nsresult Read(nsIDOMDocument* aDeviceXMLInfoDocument,
-                PRBool &        aFound);
+  nsresult Read(nsIDOMDocument* aDeviceXMLInfoDocument);
 
   /**
    * If device info is present, return true in aDeviceInfoPresent; otherwise,
@@ -385,6 +369,7 @@ private :
   //
 
   sbIDevice*                    mDevice;
+  nsString                      mDeviceInfoVersion;
   nsCOMPtr<nsIDOMElement>       mDeviceInfoElement;
   nsCOMPtr<nsIDOMElement>       mDeviceElement;
 
@@ -396,16 +381,32 @@ private :
    * device node in aDeviceNode if aDeviceNode is not null.
    *
    * \param aDeviceInfoNode     Device info node to check.
-   * \param aDeviceMatches      Returned true if device matches.
+   * \param aFoundVersion       Returns the version of the device info node
+   *                            if the device matches, or an empty string
+   *                            otherwise.  The version is the value of the
+   *                            version attribute of the <deviceinfo> element,
+   *                            if defined, or of its parent element, if
+   *                            defined, or "0" otherwise.
    * \param aDeviceNode         Optional returned matching device node.
    */
   nsresult DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
-                                       PRBool*      aDeviceMatches,
-                                       nsIDOMNode** aDeviceNode = nsnull);
+                                       nsAString &  aFoundVersion,
+                                       nsIDOMNode** aDeviceNode);
+
+  /**
+   * Return the version of a <deviceinfo> element
+   *
+   * \param aDeviceInfoElement  A <deviceinfo> element
+   * \param aVersion            Returns the value of the version attribute
+   *                            of aDeviceInfoElement, if defined, or of its
+   *                            parent element, if defined, or "0" otherwise.
+   */
+  nsresult GetDeviceInfoVersion(nsIDOMElement * aDeviceInfoElement,
+                                nsAString &     aVersion);
 
   /**
    * Check if the device with the properties specified by aDeviceProperties
-   * matches the device node specified by aDeviceNode.  If it matchces, return
+   * matches the device node specified by aDeviceNode.  If it matches, return
    * true in aDeviceMatches; otherwise, return false.
    *
    * \param aDeviceNode         Device DOM node to check.
