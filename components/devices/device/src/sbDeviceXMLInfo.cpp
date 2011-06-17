@@ -47,15 +47,19 @@
 #include "sbDeviceXMLInfo.h"
 
 // Songbird imports.
+#include <sbFileUtils.h>
 #include <sbIDeviceProperties.h>
+#include <sbIDirectoryEnumerator.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStringUtils.h>
+#include <sbURIUtils.h>
 #include <sbVariantUtils.h>
 #include <sbVariantUtilsLib.h>
 
 // Mozilla imports.
 #include <nsIDOMNamedNodeMap.h>
 #include <nsIDOMNodeList.h>
+#include <nsIDOMParser.h>
 #include <nsIMutableArray.h>
 #include <nsIPropertyBag2.h>
 #include <nsIScriptSecurityManager.h>
@@ -63,6 +67,7 @@
 #include <nsIWritablePropertyBag.h>
 #include <nsIXMLHttpRequest.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
@@ -79,44 +84,83 @@
 // Read
 //
 
-nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpec)
+nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
+                               const char* aExtensionsList)
 {
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoSpec);
-
-  // Function variables.
   nsresult rv;
 
-  // Create an XMLHttpRequest object.
-  nsCOMPtr<nsIXMLHttpRequest>
-    xmlHttpRequest = do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIScriptSecurityManager> ssm =
-    do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIPrincipal> principal;
-  rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = xmlHttpRequest->Init(principal, nsnull, nsnull, nsnull);
+  // aDeviceXMLInfoSpecList is a space-delimited list of URI strings.
+  // Split it out into an array:
+  nsTArray<nsCString> uris;
+  nsCString_Split(nsDependentCString(aDeviceXMLInfoSpecList),
+                  NS_LITERAL_CSTRING(" "),
+                  uris);
+
+  if (!aExtensionsList) {
+    aExtensionsList = "";
+  }
+
+  // Iterate over the strings and convert each one to a URI to
+  // load device XML info from:
+  const PRUint32 COUNT = uris.Length();
+  PRBool found = PR_FALSE;
+  for (PRUint32 i = 0; i < COUNT && !found; i++) {
+    const nsCString & uriStr = uris[i];
+
+    // Skip empty strings:
+    if (uriStr.IsEmpty()) {
+      continue;
+    }
+
+    // Create an nsIURI:
+    nsCOMPtr<nsIURI> uri;
+    rv = SB_NewURI(getter_AddRefs(uri), uriStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Scan the specified file or directory:
+    rv = Read(uri,
+              NS_ConvertUTF8toUTF16(nsDependentCString(aExtensionsList)),
+              found);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// Read
+//
+
+nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
+                               const nsAString &  aExtensionsList,
+                               PRBool &           aFound)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoURI);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // If the URI is a file URL, pass it to the nsIFile variant of
+  // this function, which has logic to scan directories:
+  nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(aDeviceXMLInfoURI);
+  if (fileUrl) {
+    nsCOMPtr<nsIFile> file;
+    rv = fileUrl->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = Read(file, aExtensionsList, aFound);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  // Open a stream to parse:
+  nsCOMPtr<nsIInputStream> inputStream;
+  rv = NS_OpenURI(getter_AddRefs(inputStream), aDeviceXMLInfoURI);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Read the device info file.
-  rv = xmlHttpRequest->OpenRequest(NS_LITERAL_CSTRING("GET"),
-                                   nsDependentCString(aDeviceXMLInfoSpec),
-                                   PR_FALSE,                  // async
-                                   SBVoidString(),            // user
-                                   SBVoidString());           // password
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = xmlHttpRequest->Send(nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the device info document.
-  nsCOMPtr<nsIDOMDocument> deviceInfoDocument;
-  rv = xmlHttpRequest->GetResponseXML(getter_AddRefs(deviceInfoDocument));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Read the device info.
-  rv = Read(deviceInfoDocument);
+  // Parse the stream and close it:
+  rv = Read(inputStream, aFound);
+  inputStream->Close();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -128,7 +172,133 @@ nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpec)
 // Read
 //
 
-nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
+nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
+                               const nsAString &  aExtensionsList,
+                               PRBool &           aFound)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoFile);
+
+  nsresult rv;
+
+  // If aDeviceXMLInfoFile is a directory, scan it recursively for
+  // device XML info files:
+  PRBool isDir = PR_FALSE;
+  rv = aDeviceXMLInfoFile->IsDirectory(&isDir);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (isDir) {
+    // aExtensionsList is a space-delimited list of extensions
+    // (e.g., "ex1 ex2 ex3").  Trim any surrounding spaces and
+    // don't scan the directory if the result is empty:
+    nsString acceptExts(aExtensionsList);
+    acceptExts.Trim(" ");
+    if (acceptExts.IsEmpty()) {
+      aFound = PR_FALSE;
+      return NS_OK;
+    }
+
+    // Normalize the extensions list for the comparison logic below.
+    // That is, lower case with spaces before the first extension and
+    // after the last:
+    ToLowerCase(acceptExts);
+    acceptExts.Insert(' ', 0);
+    acceptExts.Append(' ');
+
+    // Prepare to recursively enumerate all files in the directory:
+    nsCOMPtr<sbIDirectoryEnumerator> scanner =
+      do_CreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = scanner->SetFilesOnly(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = scanner->Enumerate(aDeviceXMLInfoFile);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Enumerate files and filter by extension:
+    PRBool more = PR_FALSE;
+    while(NS_SUCCEEDED(rv = scanner->HasMoreElements(&more)) &&
+          more &&
+          !aFound)
+    {
+      // Get the next file:
+      nsCOMPtr<nsIFile> child;
+      rv = scanner->GetNext(getter_AddRefs(child));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Get its extension and normalize it for comparison:
+      nsString extension;
+      rv = child->GetLeafName(extension);
+      NS_ENSURE_SUCCESS(rv, rv);
+      extension.Cut(0, extension.RFindChar('.') + 1);
+      ToLowerCase(extension);
+      extension.Insert(' ', 0);
+      extension.Append(' ');
+
+      // Read the file if its extension is on the accept list.
+      // Warn about errors, but keep looping:
+      if (acceptExts.Find(extension) != -1) {
+        rv = Read(child, aExtensionsList, aFound);
+        NS_WARN_IF_FALSE(
+          NS_SUCCEEDED(rv),
+          "Could not read device XML info from file in search directory");
+      }
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  // Open a stream to parse:
+  nsCOMPtr<nsIInputStream> inputStream;
+  rv = sbOpenInputStream(aDeviceXMLInfoFile, getter_AddRefs(inputStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Parse the stream and close it:
+  rv = Read(inputStream, aFound);
+  inputStream->Close();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// Read
+//
+
+nsresult sbDeviceXMLInfo::Read(nsIInputStream* aDeviceXMLInfoStream,
+                               PRBool &        aFound)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoStream);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIDOMParser> parser = 
+    do_CreateInstance(NS_DOMPARSER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 streamSize = 0;
+  rv = aDeviceXMLInfoStream->Available(&streamSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMDocument> document;
+  rv = parser->ParseFromStream(aDeviceXMLInfoStream, 
+                               nsnull, 
+                               streamSize, 
+                               "text/xml",
+                               getter_AddRefs(document));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = Read(document, aFound);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// Read
+//
+
+nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument,
+                               PRBool &        aFound)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDeviceXMLInfoDocument);
@@ -155,13 +325,12 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Use device info node if it matches target device.
-    PRBool               deviceMatches;
     nsCOMPtr<nsIDOMNode> deviceNode;
     rv = DeviceMatchesDeviceInfoNode(node,
-                                     &deviceMatches,
+                                     &aFound,
                                      getter_AddRefs(deviceNode));
     NS_ENSURE_SUCCESS(rv, rv);
-    if (deviceMatches) {
+    if (aFound) {
       mDeviceInfoElement = do_QueryInterface(node, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       if (deviceNode) {

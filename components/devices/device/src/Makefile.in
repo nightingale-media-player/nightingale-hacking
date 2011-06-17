@@ -76,6 +76,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/mediamanager/public \
+                     $(DEPTH)/components/moz/fileutils/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(DEPTH)/components/moz/temporaryfileservice/public \

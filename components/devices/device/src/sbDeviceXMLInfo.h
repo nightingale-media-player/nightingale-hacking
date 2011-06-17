@@ -155,20 +155,89 @@ public :
   //
 
   /**
-   * Read the device info from the XML file with the URI spec specified by
-   * aDeviceXMLInfoSpec.
+   * Search one or more XML files specified by the space-delimited list
+   * of URI strings and load the the first device info element that matches
+   * this device.
    *
-   * \param aDeviceXMLInfoSpec  Device XML info file spec.
+   * \param aDeviceXMLInfoSpecList  A space-delimited list of URI strings
+   *                                pointing to device XML info files or
+   *                                directories containing such files to be
+   *                                searched recursively
+   *
+   * \param aExtensionsList         A space-delimited list of file extensions
+   *                                (without dots) to scan for when searching
+   *                                a directory for device XML info files.
+   *                                If nsnull, then directories are not
+   *                                searched
    */
-  nsresult Read(const char* aDeviceXMLInfoSpec);
+  nsresult Read(const char* aDeviceXMLInfoSpecList,
+                const char* aExtensionsList = nsnull);
+
+  /**
+   * Search the specified XML file or, if the URI points to a directory,
+   * all files in that directory recursively that have one of the specified
+   * file name extensions and load the the first device info element that
+   * matches this device.
+   *
+   * \param aDeviceXMLInfoURI       A URI pointing either to a device XML
+   *                                info file or to a directory to be
+   *                                searched recursively for such files
+   *
+   * \param aExtensionsList         A space-delimited list of file extensions
+   *                                (without dots) to scan for when searching
+   *                                a directory for device XML info files
+   *
+   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
+   *                                element was found
+   */
+  nsresult Read(nsIURI *           aDeviceXMLInfoURI,
+                const nsAString &  aExtensionsList,
+                PRBool &           aFound);
+
+  /**
+   * Search the specified XML file or, if the nsIFile is a directory,
+   * all files in that directory recursively that have one of the specified
+   * file name extensions and load the the first device info element that
+   * matches this device.
+   *
+   * \param aDeviceXMLInfoFile      Either a device XML info file or a
+   *                                directory to be searched recursively
+   *                                for such files
+   *
+   * \param aExtensionsList         A space-delimited list of file extensions
+   *                                (without dots) to scan for when searching
+   *                                a directory for device XML info files
+   *
+   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
+   *                                element was found
+   */
+  nsresult Read(nsIFile *          aDeviceXMLInfoFile,
+                const nsAString &  aExtensionsList,
+                PRBool &           aFound);
+
+  /**
+   * Read the device info from the XML stream specified by
+   * aDeviceXMLInfoStream.
+   *
+   * \param aDeviceXMLInfoStream    Device XML info stream.
+   *
+   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
+   *                                element was found
+   */
+  nsresult Read(nsIInputStream *    aDeviceXMLInfoStream,
+                PRBool &            aFound);
 
   /**
    * Read the device info from the XML document specified
    * aDeviceXMLInfoDocument.
    *
    * \param aDeviceXMLInfoDocument  Device XML info document.
+   *
+   * \param aFound                  Returns PR_TRUE if a matching <deviceinfo>
+   *                                element was found
    */
-  nsresult Read(nsIDOMDocument* aDeviceXMLInfoDocument);
+  nsresult Read(nsIDOMDocument* aDeviceXMLInfoDocument,
+                PRBool &        aFound);
 
   /**
    * If device info is present, return true in aDeviceInfoPresent; otherwise,

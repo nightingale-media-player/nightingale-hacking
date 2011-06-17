@@ -396,7 +396,10 @@ sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
   nsAutoPtr<sbDeviceXMLInfo> xmlInfo(new sbDeviceXMLInfo(aDevice));
   NS_ENSURE_TRUE(xmlInfo, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = xmlInfo->Read(xmlInfoSpec.BeginReading());
+  nsCString xmlInfoExtensions;
+  rv = GetDeviceXMLInfoExtensions(xmlInfoExtensions);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlInfo->Read(xmlInfoSpec.get(), xmlInfoExtensions.get());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if the device XML info is present.
@@ -473,7 +476,11 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
   // Read the device XML info.
   mDeviceXMLInfo = new sbDeviceXMLInfo(aDevice);
   NS_ENSURE_TRUE(mDeviceXMLInfo, NS_ERROR_OUT_OF_MEMORY);
-  rv = mDeviceXMLInfo->Read(aDeviceXMLInfoSpec.BeginReading());
+  nsCString xmlInfoExtensions;
+  rv = GetDeviceXMLInfoExtensions(xmlInfoExtensions);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDeviceXMLInfo->Read(aDeviceXMLInfoSpec.BeginReading(),
+                            xmlInfoExtensions.get());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if device XML info is present.
@@ -488,6 +495,14 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoSpec
                                     (nsACString& aDeviceXMLInfoSpec)
 {
   aDeviceXMLInfoSpec.Truncate();
+  return NS_OK;
+}
+
+nsresult
+sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoExtensions
+                                    (nsACString& aDeviceXMLInfoExtensions)
+{
+  aDeviceXMLInfoExtensions.Truncate();
   return NS_OK;
 }
 

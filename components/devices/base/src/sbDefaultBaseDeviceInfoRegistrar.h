@@ -91,6 +91,18 @@ protected:
   virtual nsresult GetDeviceXMLInfoSpec(nsACString& aDeviceXMLInfoSpec);
 
   /**
+   * Return in aDeviceXMLInfoExtensions a space-delimited list of file
+   * extensions (without dots) to scan for when searching a directory
+   * for device XML info files.  Directories are not scanned if this
+   * string is empty
+   *
+   * \param aDeviceXMLInfoExtensions  Returns a space-delimited list of
+   *                                  extensions
+   */
+  virtual nsresult GetDeviceXMLInfoExtensions(
+                     nsACString& aDeviceXMLInfoExtensions);
+
+  /**
    * Return in aDeviceXMLInfoSpec the URI spec for the default device XML info
    * document.  If no matching device info is found in the main device XML info
    * document, the device info in the default document is used.  Typically, the
