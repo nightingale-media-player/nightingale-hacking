@@ -557,10 +557,9 @@ var DeviceSyncWidget = {
 
   onItemUpdated: function DeviceSyncWidget_onItemUpdated(aMediaList,
                                                          aMediaItem,
-                                                         aIndex,
                                                          aProperties) {
     // Handle playlist changes.
-    if (aMediaItem.getProperty(SBProperties.isList))
+    if (aMediaItem instanceof Ci.sbIMediaList)
       this.update();
 
     return false;
