@@ -83,7 +83,7 @@ struct PRMonitor;
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem); \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList); \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems); \
-  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener); \
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync); \
   NS_IMETHOD Clear(void);
 
 #define SB_FORWARD_SAFE_SBIMEDIALIST(_to) \

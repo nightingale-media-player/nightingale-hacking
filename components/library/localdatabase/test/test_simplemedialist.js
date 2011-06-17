@@ -211,7 +211,9 @@ function runTest () {
         this._complete = true;
         testFinished();
       }
-    }
+    },
+    onItemAdded: function(aMediaItem) {},
+    onComplete: function() {}
   };
   
   simpleEnumerator.reset();
@@ -228,7 +230,7 @@ function runTest () {
     
     var tempEnumerator = tempArray.enumerate();
     log("Testing addSomeAsync");
-    list.addSomeAsync(tempEnumerator, asyncListener);
+    list.addMediaItems(tempEnumerator, asyncListener, true);
     testPending();
   }
   

@@ -187,23 +187,34 @@ public:
   NS_DECL_ISUPPORTS
 
   explicit sbLocalDatabaseLibraryAsyncRunner(
-    sbLocalDatabaseLibrary* aLocalDatabaseLibrary,
-    nsISimpleEnumerator* aMediaItems,
-    sbIMediaListAsyncListener* aListener)
-    : mLocalDatabaseLibrary(aLocalDatabaseLibrary)
-    , mListener(aListener)
-    , mMediaItems(aMediaItems) {}
-
+      sbLocalDatabaseLibrary* aLocalDatabaseLibrary,
+      nsISimpleEnumerator* aMediaItems,
+      sbIAddMediaItemsListener* aListener)
+      : mLocalDatabaseLibrary(aLocalDatabaseLibrary)
+      , mAddItemsListener(aListener)
+      , mMediaItems(aMediaItems) {}
   NS_IMETHOD Run() {
-    nsresult rv =
-      mLocalDatabaseLibrary->AddSomeAsyncInternal(mMediaItems, mListener);
+    nsresult rv;
+    // Call may not have provided a listener so just do the work
+    rv = mLocalDatabaseLibrary->AddMediaItems(mMediaItems,
+                                              mAddItemsListener,
+                                              PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
 
 private:
   nsRefPtr<sbLocalDatabaseLibrary>      mLocalDatabaseLibrary;
-  nsCOMPtr<sbIMediaListAsyncListener>   mListener;
+
+  /**
+   * This is the listener for the addMediaItems method and may be null if the
+   * caller doesn't care about notifications
+   */
+  nsCOMPtr<sbIAddMediaItemsListener>    mAddItemsListener;
+
+  /**
+   * This is the enumerator for the list of items to add
+   */
   nsCOMPtr<nsISimpleEnumerator>         mMediaItems;
 };
 
@@ -251,6 +262,16 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
                                                 getter_AddRefs(newMediaItem));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Notify our add listener if any
+    if (mListener) {
+      rv = mListener->OnItemAdded(newMediaItem);
+      // Listener told us to stop so let's abort
+      if (rv == NS_ERROR_ABORT) {
+        *_retval = sbIMediaListEnumerationListener::CANCEL;
+        return NS_OK;
+      }
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     // Remember this media item for later so we can notify with it
     PRBool success = mNotificationList.AppendObject(newMediaItem);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -280,6 +301,11 @@ sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList
     // Inserting items will definitely invalidate length values in the
     // underlying GUID array.
     rv = mFriendLibrary->GetArray()->Invalidate(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  // If we have an add listener we need to notify we're done
+  if (mListener) {
+    rv = mListener->OnComplete();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -4259,95 +4285,93 @@ sbLocalDatabaseLibrary::AddAll(sbIMediaList* aMediaList)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
+{
+  return AddMediaItems(aMediaItems, nsnull, PR_FALSE);
+}
 /**
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
+sbLocalDatabaseLibrary::AddMediaItems(
+                                    nsISimpleEnumerator* aMediaItems,
+                                    sbIAddMediaItemsListener * aListener,
+                                    PRBool aAsync)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  sbLibraryInsertingEnumerationListener listener(this);
+  if (aAsync) {
+    nsCOMPtr<nsIThread> target;
+    nsresult rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint16 stepResult;
-  nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(stepResult == sbIMediaListEnumerationListener::CONTINUE,
-                 NS_ERROR_ABORT);
+    nsCOMPtr<sbIAddMediaItemsListener> proxiedListener;
+    if (aListener) {
+      rv = do_GetProxyForObject(target,
+                                NS_GET_IID(sbIAddMediaItemsListener),
+                                aListener,
+                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                getter_AddRefs(proxiedListener));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    nsRefPtr<sbLocalDatabaseLibraryAsyncRunner> runner =
+      new sbLocalDatabaseLibraryAsyncRunner(this, aMediaItems, proxiedListener);
+    NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
 
-  sbAutoBatchHelper batchHelper(*this);
+    nsCOMPtr<nsIThreadPool> threadPoolService =
+      do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasMore;
-  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
-    nsCOMPtr<nsISupports> supports;
-    rv = aMediaItems->GetNext(getter_AddRefs(supports));
-    SB_CONTINUE_IF_FAILED(rv);
-
-    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
-    SB_CONTINUE_IF_FAILED(rv);
+    rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    sbLibraryInsertingEnumerationListener listener(this, aListener);
 
     PRUint16 stepResult;
-    rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
-    if (NS_FAILED(rv) ||
-        stepResult == sbIMediaListEnumerationListener::CANCEL) {
-      break;
+    nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(stepResult == sbIMediaListEnumerationListener::CONTINUE,
+                   NS_ERROR_ABORT);
+
+    sbAutoBatchHelper batchHelper(*this);
+
+    PRBool hasMore;
+    while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
+      nsCOMPtr<nsISupports> supports;
+      rv = aMediaItems->GetNext(getter_AddRefs(supports));
+      SB_CONTINUE_IF_FAILED(rv);
+
+      nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+      SB_CONTINUE_IF_FAILED(rv);
+
+      PRUint16 stepResult;
+      rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
+      if (NS_FAILED(rv) ||
+          stepResult == sbIMediaListEnumerationListener::CANCEL) {
+        break;
+      }
     }
+
+    rv = listener.OnEnumerationEnd(nsnull, NS_OK);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/**
- * See sbIMediaList
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
-                                     sbIMediaListAsyncListener* aListener)
-{
-  NS_ENSURE_ARG_POINTER(aMediaItems);
-  NS_ENSURE_ARG_POINTER(aListener);
-
-  nsCOMPtr<nsIThread> target;
-  nsresult rv = NS_GetMainThread(getter_AddRefs(target));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaListAsyncListener> proxiedListener;
-  rv = do_GetProxyForObject(target,
-                            NS_GET_IID(sbIMediaListAsyncListener),
-                            aListener,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(proxiedListener));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsRefPtr<sbLocalDatabaseLibraryAsyncRunner> runner =
-    new sbLocalDatabaseLibraryAsyncRunner(this, aMediaItems, proxiedListener);
-  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
-
-  nsCOMPtr<nsIThreadPool> threadPoolService =
-    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
 nsresult
 sbLocalDatabaseLibrary::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
-                                             sbIMediaListAsyncListener* aListener)
+                                             sbIAddMediaItemsListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_ARG_POINTER(aListener);
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  sbLibraryInsertingEnumerationListener listener(this);
+  sbLibraryInsertingEnumerationListener listener(this, aListener);
 
   PRUint16 stepResult;
   nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);

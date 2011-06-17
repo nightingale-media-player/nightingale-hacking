@@ -75,7 +75,7 @@ public:
   NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
-  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener);
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
@@ -86,7 +86,7 @@ public:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
 
   nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems,
-                                sbIMediaListAsyncListener *aListener,
+                                nsISupports *aListener,
                                 PRUint32 aStartingIndex,
                                 nsAString& aStartingOrdinal);
 
@@ -163,12 +163,16 @@ public:
 
   sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList,
                                                 PRUint32 aStartingIndex,
-                                                const nsAString& aStartingOrdinal)
+                                                const nsAString& aStartingOrdinal,
+                                                nsISupports * aListener = nsnull)
   : mFriendList(aList),
     mStartingIndex(aStartingIndex),
     mStartingOrdinal(aStartingOrdinal)
   {
-    NS_ASSERTION(mFriendList, "Null pointer!");
+    if (aListener) {
+      mAsyncListener = do_QueryInterface(aListener);
+      mAddListener = do_QueryInterface(aListener);
+    }
   }
 
 private:
@@ -192,8 +196,17 @@ private:
    * media list's library and so may not need to be created. For those items
    * the hash entry will be the matching media item.
    */
-  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsInForeignLib;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreateOrAdd;
   nsCOMPtr<sbILibrary> mListLibrary;
+  nsCOMPtr<sbIAddMediaItemsListener> mAddListener;
+  nsCOMPtr<sbIMediaListAsyncListener> mAsyncListener;
+
+  /**
+   * This function takes a list of existing items and updates the foreign
+   * item list with the newly created item
+   */
+  nsresult UpdateItemsInForeignLib(nsIArray * aExistingItems,
+                                   nsIArray * aNewItems);
 };
 
 class sbSimpleMediaListRemovingEnumerationListener : public sbIMediaListEnumerationListener

@@ -113,7 +113,7 @@ public:
   NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);
-  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator* aMediaItems, sbIMediaListAsyncListener* aListener);
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator* aMediaItems, sbIAddMediaItemsListener* aListener, PRBool aAsync);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString &aPropertyID,
                                           nsIStringEnumerator **_retval);

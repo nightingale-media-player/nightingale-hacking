@@ -289,11 +289,12 @@ private:
   nsRefPtr<sbPlayQueueAsyncListener> mAsyncListener;
 };
 
-class sbPlayQueueAsyncListener : public sbIMediaListAsyncListener
+class sbPlayQueueAsyncListener : public sbIAddMediaItemsListener,
+                                 public sbIMediaListAsyncListener
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIMEDIALISTASYNCLISTENER
+  NS_DECL_SBIADDMEDIAITEMSLISTENER
 
   sbPlayQueueAsyncListener(sbPlayQueueService *aService);
   virtual ~sbPlayQueueAsyncListener();

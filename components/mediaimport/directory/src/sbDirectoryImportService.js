@@ -35,6 +35,13 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/DebugUtils.jsm");
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbDirectoryImportJob:5
+ */
+const LOG = DebugUtils.generateLogFunction("sbDirectoryImportJob");
 
 // used to identify directory import profiling runs
 var gCounter = 0;
@@ -69,10 +76,7 @@ function DirectoryImportJob(aInputArray,
   
   // Initially cancelable
   this._canCancel = true;
-  
-  // initialize with an empty array
-  this._itemURIStrings = [];
-  
+    
   this._libraryUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                          .getService(Ci.sbILibraryUtils);
 
@@ -122,8 +126,10 @@ DirectoryImportJob.prototype = {
   _importService            : null,
   
   // JS Array of URI strings for all found media items
-  _itemURIStrings           : null,
+  _itemURIStrings           : [],
   
+  // Optional JS array of items found to already exist in the main library
+  _itemsInMainLib           : [],
   // Rather than create all the items in one pass, then scan them all,
   // we want to create, read, repeat with small batches.  This avoids
   // wasting/fragmenting memory when importing 10,000+ tracks.
@@ -446,7 +452,85 @@ DirectoryImportJob.prototype = {
     // Set total number of items to process
     this._total = this._itemURIStrings.length;
   },
-  
+
+  /**
+   * This filters out items that are either duplicates or already exits in the
+   * main library. The existing items in the main library are put in
+   * aItemsInMainLib array. The remaining items are returned as an array.
+   * The duplicate check only involves the origin URL as the 
+   * batchCreateMediaItemsAsync will perform that check.
+   * 
+   * \param aURIs the list of URI's to filter
+   * \param aItemsInMainLib
+   */ 
+  _filterItems: function(aURIs, aItemsInMainLib) {
+    // If we're copying to another library we need to look in the main library
+    // for items that might have the origin URL the same as our URL's.
+    var targetLib = this.targetMediaList.library;
+    var mainLib = LibraryUtils.mainLibrary;
+    var isMainLib = this.targetMediaList.library.equals(mainLib);
+
+    /**
+     * This function is used by the JS Array filter method to filter
+     * out duplicates. When a matching item is found the main library
+     * the item is added to the aItemsInMainLib array and removed
+     * from the array filterDupes is operating on. When the item
+     * is found in the target library it is just removed from the array
+     * and the dupe count incremented
+     */
+    function filterDupes(uri)
+    {
+      var uriObj = uri.QueryInterface(Ci.nsISupportsString);
+      var uriSpec = uriObj.data;
+
+      LOG("Searching for URI: " + uriSpec);
+
+      // If we're importing to a non-main library the see if it exists in
+      // the main library
+      if (!isMainLib) {
+        var items = [];
+        try {
+          // If we find it in the main library then save the item off and
+          // filter it out of the array
+          items = ArrayConverter.JSArray(
+                             mainLib.getItemsByProperty(SBProperties.contentURL,
+                             uriSpec));
+        }
+        catch (e) {
+          LOG("Exception: " + e);
+          // Exception expected if nothing is found. Just continue
+        }
+        if (items.length > 0) {
+          LOG("  Found in main library");
+          aItemsInMainLib.push(items[0].QueryInterface(Ci.sbIMediaItem));
+          return false;
+        }
+
+      }
+      var items = [];
+      try
+      {
+        // If we find the item by origin URL in the target library then
+        // bump the dupe count and filter it out of the array
+        items = ArrayConverter.JSArray(
+                            targetLib.getItemsByProperty(SBProperties.originURL,
+                            uriSpec));
+      }
+      catch (e) {
+        LOG("Exception: " + e);
+      }
+      if (items.length > 0) {
+        LOG("  Found in target library");
+        ++this.totalDuplicates;
+        return false;
+      }
+      LOG("  Item needs to be created");
+      // Item wasn't found so leave it in the array
+      return true;
+    }
+
+    return aURIs.filter(filterDupes);
+  },
   /** 
    * Begin creating sbIMediaItems for a batch of found media URIs.
    * Does BATCHCREATE_SIZE at a time, looping back after 
@@ -460,24 +544,41 @@ DirectoryImportJob.prototype = {
       this.complete();
       return;
     }
-    if (this._nextURIIndex >= this._itemURIStrings.length) {
+    
+    var targetLib = this.targetMediaList.library;
+
+    if (this._nextURIIndex >= this._itemURIStrings.length && 
+        this._itemsInMainLib.length === 0) {
+      LOG("Finish creating and adding all items");
       this.complete();
       return;
     }
-    
+    // For the items we found in the main library add them to the target library
+    else if (this._itemsInMainLib.length) {
+      LOG("Finish creating all items, now adding items");
+      // Setup listener object so we can mark the items as 
+      var self = this;
+      var addSomeListener = {
+        onProgress: function(aItemsProcessed, aCompleted) {},
+        onItemAdded: function(aMediaItem) {
+          aMediaItem.setProperty(SBProperties.originIsInMainLibrary, "1");
+        },
+        onComplete: function() {
+          LOG("Adding items completed");
+          self._itemsInMainLib = [];
+          self.complete();
+        }
+      }
+      // Now process items we found in the main library
+      targetLib.addMediaItems(ArrayConverter.enumerator(this._itemsInMainLib),
+                              addSomeListener,
+                              true);
+      return;
+    }
     // Update status
-    this._statusText = SBString("media_scan.adding");    
+    this._statusText = SBString("media_scan.adding");
     this.notifyJobProgressListeners();
     
-    // Bug 10228 - this needs to be replaced with an sbIJobProgress interface
-    var thisJob = this;
-    var batchCreateListener = {
-      onProgress: function(aIndex) {},
-      onComplete: function(aMediaItems, aResult) {
-        thisJob._onItemCreation(aMediaItems, aResult);
-      }
-    };
-
     // Process the URIs a slice at a time, since creating all 
     // of them at once may require a very large amount of memory.
     this._currentBatchSize = Math.min(this.BATCHCREATE_SIZE,
@@ -485,10 +586,31 @@ DirectoryImportJob.prototype = {
     var endIndex = this._nextURIIndex + this._currentBatchSize;
     var uris = this._itemURIStrings.slice(this._nextURIIndex, endIndex);
     this._nextURIIndex = endIndex;
-    
-    // BatchCreateMediaItems needs to return an sbIJobProgress
-    this.targetMediaList.library.batchCreateMediaItemsAsync(
-        batchCreateListener, ArrayConverter.nsIArray(uris), null, false);
+
+    LOG("Creating media items");
+
+    this._itemsInMainLib = [];
+    LOG("Total items=" + uris.length);
+    uris = this._filterItems(uris, this._itemsInMainLib);
+
+    LOG("Items in main library=" + this._itemsInMainLib.length);
+    LOG("Items needing to be created=" + uris.length);
+    // Bug 10228 - this needs to be replaced with an sbIJobProgress interface
+    var thisJob = this;
+    var batchCreateListener = {
+      onProgress: function(aIndex) {},
+      onComplete: function(aMediaItems, aResult) {
+        LOG("Finished creating batch of items");
+        thisJob._onItemCreation(aMediaItems, aResult);
+      }
+    };
+
+    // Create items that weren't in the main library or already in the target
+    // library
+    targetLib.batchCreateMediaItemsAsync(batchCreateListener, 
+                                         ArrayConverter.nsIArray(uris), 
+                                         null, 
+                                         false);
   },
   
   /** 

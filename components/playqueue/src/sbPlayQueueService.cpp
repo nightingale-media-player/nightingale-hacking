@@ -93,7 +93,8 @@
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbPlayQueueAsyncListener,
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbPlayQueueAsyncListener,
+                              sbIAddMediaItemsListener,
                               sbIMediaListAsyncListener);
 
 sbPlayQueueAsyncListener::sbPlayQueueAsyncListener(sbPlayQueueService *aService)
@@ -177,6 +178,18 @@ sbPlayQueueAsyncListener::OnProgress(PRUint32 aItemsProcessed, PRBool aComplete)
     mService->SetIgnoreListListener(PR_FALSE);
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlayQueueAsyncListener::OnItemAdded(sbIMediaItem * aMediaItem)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlayQueueAsyncListener::OnComplete()
+{
   return NS_OK;
 }
 
@@ -539,7 +552,7 @@ sbPlayQueueService::QueueSomeNext(nsISimpleEnumerator* aMediaItems)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (insertBeforeIndex >= length) {
-    rv = mMediaList->AddSomeAsync(aMediaItems, mAsyncListener);
+    rv = mMediaList->AddMediaItems(aMediaItems, mAsyncListener, true);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
     nsCOMPtr<sbIOrderableMediaList> orderedList =
@@ -573,7 +586,7 @@ sbPlayQueueService::QueueSomeLast(nsISimpleEnumerator* aMediaItems)
   rv = NotifyQueueOperationStarted();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mMediaList->AddSomeAsync(aMediaItems, mAsyncListener);
+  rv = mMediaList->AddMediaItems(aMediaItems, mAsyncListener, true);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

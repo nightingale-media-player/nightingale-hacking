@@ -781,13 +781,25 @@ sbRemoteMediaListBase::AddAll(sbIMediaList *aMediaList)
 NS_IMETHODIMP
 sbRemoteMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 {
+  return AddMediaItems(aMediaItems, nsnull, PR_FALSE);
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
+                                     sbIAddMediaItemsListener * aListener,
+                                     PRBool aAsync)
+{
   NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  // We don't do async, though we might be able to. Since it wasn't implemented
+  // before in AddSomeAsync, I elected not allow it for now.
+  NS_ENSURE_FALSE(aAsync, NS_ERROR_NOT_IMPLEMENTED);
 
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
     new sbUnwrappingSimpleEnumerator(aMediaItems));
   NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = mMediaList->AddSome(wrapper);
+  nsresult rv = mMediaList->AddMediaItems(wrapper, aListener, aAsync);
   if (NS_SUCCEEDED(rv)) {
     mRemotePlayer->GetNotificationManager()
       ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
@@ -795,13 +807,6 @@ sbRemoteMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteMediaListBase::AddSomeAsync(nsISimpleEnumerator* aMediaItems, 
-                                    sbIMediaListAsyncListener* aListener)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP

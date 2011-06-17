@@ -636,10 +636,12 @@ addToPlaylistHelper.prototype = {
                                      0, /* no unsupported reporting */
                                      medialist.name);
         },
+        onItemAdded: function(aMediaItem) {},
+        onComplete: function() {},
         QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
       }
 
-      medialist.addSomeAsync(unwrapper, asyncListener);
+      medialist.addMediaItems(unwrapper, asyncListener, true);
     }
   },
 

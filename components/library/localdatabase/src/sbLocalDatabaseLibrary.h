@@ -87,7 +87,9 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD AddItem(sbIMediaItem* aMediaItem, sbIMediaItem ** aNewMediaItem);      \
   NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                      \
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                             \
-  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator* aMediaItems, sbIMediaListAsyncListener* aListener);\
+  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems,                        \
+                           sbIAddMediaItemsListener *aListener,                     \
+                           PRBool aAsync);                                          \
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                      \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                        \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                          \
@@ -255,7 +257,7 @@ public:
    * Internal methods for async operations on sbIMediaList
    */
   nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems,
-                                sbIMediaListAsyncListener *aListener);
+                                sbIAddMediaItemsListener *aListener);
 
   nsresult GetLengthCache(sbILocalDatabaseGUIDArrayLengthCache **aLengthCache);
 
@@ -456,10 +458,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
-  sbLibraryInsertingEnumerationListener(sbLocalDatabaseLibrary* aLibrary)
+  sbLibraryInsertingEnumerationListener(
+                                  sbLocalDatabaseLibrary* aLibrary,
+                                  sbIAddMediaItemsListener * aListener = nsnull)
   : mFriendLibrary(aLibrary),
     mShouldInvalidate(PR_FALSE),
-    mLength(0)
+    mLength(0),
+    mListener(aListener)
   {
     NS_ASSERTION(mFriendLibrary, "Null pointer!");
   }
@@ -476,6 +481,8 @@ private:
   sbMediaItemArray mOriginalItemList;
 
   PRUint32 mLength;
+
+  nsCOMPtr<sbIAddMediaItemsListener> mListener;
 };
 
 /**

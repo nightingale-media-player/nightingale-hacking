@@ -1287,8 +1287,9 @@ sbLocalDatabaseMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
-                                           sbIMediaListAsyncListener *aListener)
+sbLocalDatabaseMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
+                                            sbIAddMediaItemsListener * aListener,
+                                            PRBool aAsync)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;

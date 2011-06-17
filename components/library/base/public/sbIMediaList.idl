@@ -49,7 +49,8 @@ interface sbIPropertyArray;
 /**
  * \interface sbIMediaListAsyncListener
  * \brief Interface for use with async methods on sbIMediaList.
- * \see addSomeAsync
+ *        NOTE: this interface is now deprecated
+ * \see sbAddMediaItemsListener
  */
 [scriptable, function, uuid(7062f4ae-2d8f-4984-9052-047c45ef057e)]
 interface sbIMediaListAsyncListener : nsISupports
@@ -64,6 +65,33 @@ interface sbIMediaListAsyncListener : nsISupports
    */
   void onProgress(in unsigned long aItemsProcessed,
                   in boolean aComplete);
+};
+/**
+ * This interface is a listener for the addMediaItems method
+ */
+ 
+[scriptable, uuid(bb58effd-9cfc-4a2c-b65c-6d9a257e4972)]
+interface sbIAddMediaItemsListener : nsISupports
+{
+  /**
+   * Called intermittently (every SB_ASYNC_NOTIFICATION_ITEMS items, as 
+   * specified in sbLocalDatabaseMediaListBase.h
+   *
+   * \param aItemsProcessed the current numbers of items processed
+   * \param aComplete whether the operation is complete
+   */
+  void onProgress(in unsigned long aItemsProcessed,
+                  in boolean aComplete);
+
+  /**
+   * Called for each item added to the list
+   */
+  void onItemAdded(in sbIMediaItem aNewItem);
+
+  /**
+   * Called after the last item is added
+   */
+  void onComplete();
 };
 
 /**
@@ -959,20 +987,23 @@ interface sbIMediaList : sbIMediaItem
 
   /**
    * \brief Adds media items suppled by the provided enumerator
-   * \param aMediaItems An enumerator returning sbIMediaItem objects
+   *        NOTE: This method is now deprecated
+   * \see addMediaItems
    */
-  void addSome(in nsISimpleEnumerator aMediaItems);
-
+   void addSome(in nsISimpleEnumerator aMediaItems);
+   
   /**
-   * \brief Adds media items supplied by the provided enumerator asynchronously
+   * \brief Adds media items suppled by the provided enumerator
    * \param aMediaItems An enumerator returning sbIMediaItem objects
    * \param aListener A listener that will get called with progress information
-   * \note This method is optional and is not always implemented.
+   * \param aAsync Whether the work is to be done asynchronously
+   * \note The Async option is not always implemented (e.g. remote API)
    * \throws NS_ERROR_NOT_IMPLEMENTED if not implemented by the underlying object.
    * \note aListener will always be called on the main thread.
    */
-  void addSomeAsync(in nsISimpleEnumerator aMediaItems,
-                    in sbIMediaListAsyncListener aListener);
+  void addMediaItems(in nsISimpleEnumerator aMediaItems,
+                     in sbIAddMediaItemsListener aListener,
+                     in boolean aAsync);
 
   /**
    * \brief Remove the first occurrence of the given media item from the list
