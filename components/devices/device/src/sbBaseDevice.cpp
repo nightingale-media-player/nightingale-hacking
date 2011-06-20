@@ -5034,11 +5034,36 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
             NS_ENSURE_SUCCESS(rv, rv);
           }
           else {
-            rv = removeItemList->AppendElement(destItem, PR_FALSE);
+            // Update mediaitem property changes
+            nsCOMPtr<nsIArray> properties;
+
+            rv = change->GetProperties(getter_AddRefs(properties));
             NS_ENSURE_SUCCESS(rv, rv);
 
-            rv = addItemList->AppendElement(srcItem, PR_FALSE);
+            nsCOMPtr<nsISimpleEnumerator> propEnum;
+            rv = properties->Enumerate(getter_AddRefs(propEnum));
             NS_ENSURE_SUCCESS(rv, rv);
+
+            PRBool hasMoreElements;
+            while (NS_SUCCEEDED(propEnum->HasMoreElements(&hasMoreElements)) &&
+                   hasMoreElements) {
+              nsCOMPtr<sbIPropertyChange> propertyChange;
+
+              rv = propEnum->GetNext(getter_AddRefs(propertyChange));
+              NS_ENSURE_SUCCESS(rv, rv);
+
+              nsString propertyId;
+              nsString propertyValue;
+
+              rv = propertyChange->GetId(propertyId);
+              NS_ENSURE_SUCCESS(rv, rv);
+
+              rv = propertyChange->GetNewValue(propertyValue);
+              NS_ENSURE_SUCCESS(rv, rv);
+
+              rv = destItem->SetProperty(propertyId, propertyValue);
+              NS_ENSURE_SUCCESS(rv, rv);
+            }
           }
         } break;
 
@@ -5052,7 +5077,6 @@ sbBaseDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
   }
 
   nsCOMPtr<nsISimpleEnumerator> itemEnum;
-  // Remove modified items so they can be readded
   rv = removeItemList->Enumerate(getter_AddRefs(itemEnum));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = aDevLibrary->RemoveSome(itemEnum);
