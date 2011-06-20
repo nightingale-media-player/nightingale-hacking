@@ -77,6 +77,9 @@ function DirectoryImportJob(aInputArray,
   // Initially cancelable
   this._canCancel = true;
     
+  // initialize with an empty array
+  this._itemURIStrings = [];
+
   this._libraryUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                          .getService(Ci.sbILibraryUtils);
 
@@ -601,7 +604,7 @@ DirectoryImportJob.prototype = {
       onProgress: function(aIndex) {},
       onComplete: function(aMediaItems, aResult) {
         LOG("Finished creating batch of items");
-        thisJob._onItemCreation(aMediaItems, aResult);
+        thisJob._onItemCreation(aMediaItems, aResult, uris.length);
       }
     };
 
@@ -618,10 +621,14 @@ DirectoryImportJob.prototype = {
    * BatchCreateMediaItemsAsync needs to be updated to actually send progress.
    * At the moment it only notifies when the process is over.
    */
-  _onItemCreation: function DirectoryImportJob__onItemCreation(aMediaItems, aResult) {
+  _onItemCreation: function DirectoryImportJob__onItemCreation(aMediaItems, 
+                                                               aResult, 
+                                                               itemsToCreateCount) {
     // Get the completed item array.  Don't use the given item array on error.
     // Use an empty one instead.
+    LOG("batchCreateMediaItemsAsync created " + aMediaItems.length)
     if (Components.isSuccessCode(aResult)) {
+      this.totalDuplicates += (itemsToCreateCount - aMediaItems.length);
       this._currentMediaItems = aMediaItems;
     } else {
       Cu.reportError("DirectoryImportJob__onItemCreation: aResult == " + aResult);
@@ -630,7 +637,6 @@ DirectoryImportJob.prototype = {
     }
     
     this.totalAddedToLibrary += this._currentMediaItems.length;
-    this.totalDuplicates += this._currentBatchSize - this._currentMediaItems.length;
     if (this._currentMediaItems.length > 0) {
       
       // Make sure we have metadata for all the added items
