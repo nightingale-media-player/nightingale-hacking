@@ -52,11 +52,6 @@ function runTest () {
         result: "absolute_remote_result.xml"
       },
       {
-        originalURI: "file:///c:/Documents%20and%20Settings/steve/Desktop/blah.mp3",
-        file: "win_relative_local.pls",
-        result: "win_relative_local_result.xml"
-      },
-      {
         originalURI: null,
         file: "win_utf8.pls",
         result: "win_utf8_result.xml"
@@ -78,11 +73,6 @@ function runTest () {
         originalURI: "http://www.foo.com/mp3",
         file: "absolute_remote.pls",
         result: "absolute_remote_result.xml"
-      },
-      {
-        originalURI: "file:///home/steve/blah.pls",
-        file: "maclin_relative_local.pls",
-        result: "maclin_relative_local_result.xml"
       },
       {
         originalURI: null,
@@ -120,6 +110,42 @@ function runTest () {
     handler.read(file, library, false);
     assertMediaList(library, getFile(t.result));
   }
+
+  // test local playlists (should only import files that exist on disk)
+  library.clear();
+  var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/PLS;1"]
+                  .createInstance(Ci.sbIPlaylistReader);
+
+  var fileName = "";
+  if (platform == "Windows_NT") {
+    fileName = "win_relative_local.pls";
+  } else {
+    fileName = "maclin_relative_local.pls";
+  }
+  log("testing file " + fileName);
+  var file = getFile(fileName);
+  handler.originalURI = newFileURI(file);
+  handler.read(file, library, false);
+
+  var mp3dir = getFile("mp3");
+  var file1 = mp3dir.clone();
+  file1.append("file1.mp3");
+  var file2 = mp3dir.clone();
+  file2.append("file2.mp3");
+  var musicdir = getFile("music");
+  var file3 = musicdir.clone();
+  file3.append("file3.mp3");
+  var files = [file1, file2, file3];
+  
+  var prop = "http://songbirdnest.com/data/1.0#contentURL";
+  for (var i in files) {
+    var result = newFileURI(files[i]).spec;
+    var item = getFirstItemByProperty(library, prop, result);
+    if (!item) {
+      fail("item with property '" + prop + "' equal to '" + result + "' not found");
+    }
+  }
+  assertEqual(library.length, 3);
 
   // Test duplicates
   library.clear();

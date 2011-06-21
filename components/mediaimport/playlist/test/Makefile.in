@@ -52,7 +52,6 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/maclin_parsepls_result.xml \
                  $(srcdir)/files/maclin_relative_local.m3u \
                  $(srcdir)/files/maclin_relative_local.pls \
-                 $(srcdir)/files/maclin_relative_local_result.xml \
                  $(srcdir)/files/maclin_unf.m3u \
                  $(srcdir)/files/maclin_unf.pls \
                  $(srcdir)/files/maclin_unf_nfc_result.xml \
@@ -67,7 +66,6 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/win_parsepls_result.xml \
                  $(srcdir)/files/win_relative_local.pls \
                  $(srcdir)/files/win_relative_local.m3u \
-                 $(srcdir)/files/win_relative_local_result.xml \
                  $(srcdir)/files/win_utf8.m3u \
                  $(srcdir)/files/win_utf8.m3u8 \
                  $(srcdir)/files/win_utf8.pls \
@@ -80,5 +78,15 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/kqedradio_result.xml \
                  $(NULL)
 
+PLAYLISTREADER_TESTDIR = $(SONGBIRD_TESTSDIR)/playlistreader
+
+PLAYLISTREADER_TEST_FILE_ROOT = $(srcdir)/files
+
+PLAYLISTREADER_TEST_FILES := $(shell cd $(PLAYLISTREADER_TEST_FILE_ROOT) && \
+ $(FIND) . -type f \
+ -name '*.mp3')
+
 include $(topsrcdir)/build/rules.mk
 
+export::
+	cd $(PLAYLISTREADER_TEST_FILE_ROOT) && $(CP) -P -f -p --parents $(PLAYLISTREADER_TEST_FILES) $(PLAYLISTREADER_TESTDIR)
