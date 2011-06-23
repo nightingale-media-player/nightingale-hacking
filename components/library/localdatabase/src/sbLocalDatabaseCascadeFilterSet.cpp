@@ -343,6 +343,8 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
   nsresult rv;
 
   sbFilterSpec& fs = mFilters[aIndex];
+  PRBool isSearch = fs.isSearch;
+
   if (fs.arrayListener)
     fs.array->RemoveAsyncListener(fs.arrayListener);
 
@@ -359,6 +361,21 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
 
   rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Tell the view to update its configuration.  It will first apply its
+  // filters and then ask us for ours
+  if (mMediaListView) {
+    rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // And notify the view's listeners
+    if (isSearch) {
+      mMediaListView->NotifyListenersSearchChanged();
+    }
+    else {
+      mMediaListView->NotifyListenersFilterChanged();
+    }
+  }
 
   return NS_OK;
 }
