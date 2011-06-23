@@ -850,9 +850,7 @@
 <!ENTITY playqueue.instructions "Drag and drop tracks or playlists here to create an on-the-fly listening queue">
 <!ENTITY playqueue.inprogress "Adding tracks">
 
-<!ENTITY mediamanagement.removed.dialog.title "Media Management has been removed">
-<!ENTITY mediamanagement.removed.dialog.text.line1 "Media management has been disabled in Songbird as of version 1.10." >
-<!ENTITY mediamanagement.removed.dialog.text.line2 "More details can be found " >
-<!ENTITY mediamanagement.removed.dialog.url "http://blog.songbirdnest.com/FIXME-before-release/" >
-<!ENTITY mediamanagement.removed.dialog.linktext "on our blog" >
+<!ENTITY mediamanagement.removed.dialog.title "Media Management Notice">
+<!ENTITY mediamanagement.removed.dialog.text.line1 "Media Management has been removed from Songbird as of version 1.10." >
+<!ENTITY mediamanagement.removed.dialog.text.line2 "This change is part of an effort to simplify our product and provide an easier-to-use experience." >
 
