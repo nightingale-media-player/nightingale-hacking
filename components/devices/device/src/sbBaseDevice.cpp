@@ -4816,17 +4816,24 @@ sbBaseDevice::AddMediaLists(sbILibrary * aLibrary,
     nsCOMPtr<sbIMediaList> libMediaList = do_QueryInterface(libMediaItem, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Build a property array with the name of the list
+    nsString listName;
+    rv = libMediaList->GetName(listName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMutablePropertyArray> properties =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                    listName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+
     nsCOMPtr<sbIMediaList> newMediaList;
     rv = aLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                   nsnull,
+                                   properties,
                                    getter_AddRefs(newMediaList));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString name;
-    rv = libMediaList->GetName(name);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = newMediaList->SetName(name);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // LinkCopy will do the right thing even if the newMediaList
