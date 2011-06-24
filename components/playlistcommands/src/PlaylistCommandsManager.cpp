@@ -308,7 +308,7 @@ LibraryPlaylistCommandsListener::HandleSavedLibraryCommands
   NS_ENSURE_ARG_POINTER(aRegistrationMap);
   nsresult rv;
 
-  nsString libGuid(libGuid);
+  nsString libGuid(aLibraryGUID);
 
   // Search the saved commands for any registered to our library
   libraryGuidToCommandsMap_t::iterator searchCmdsIter =
