@@ -416,6 +416,14 @@ sbLocalDatabaseMediaListBase::GetOriginProperties(
         NS_LITERAL_STRING("1"));
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    else {
+      // We could not find the original item in the main library, set the
+      // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY flag to false
+      rv = aProperties->AppendProperty(
+        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
+        NS_LITERAL_STRING("0"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   nsCOMPtr<sbILibrary> thisLibrary;

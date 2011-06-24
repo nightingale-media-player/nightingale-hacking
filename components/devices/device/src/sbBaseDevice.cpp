@@ -5131,17 +5131,15 @@ sbBaseDevice::SyncMainLibraryFlag(sbIMediaItem * aMediaItem)
                                originItemGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the last saved value of SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY:
+  // Get the last saved value of SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY.
+  // wasInMainLibrary will be an empty string if there is no last saved value,
+  // which will force SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY to be set
+  // to isInMainLibrary at the end of this function.
   nsAutoString wasInMainLibrary;
   rv = aMediaItem->GetProperty(
     NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
     wasInMainLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
-  // Normalize the value to facilitate the comparison below:
-  if (wasInMainLibrary.IsEmpty())
-  {
-    wasInMainLibrary.AppendInt(0);
-  }
 
   // Check whether the item is in the main library:
   nsAutoString isInMainLibrary;
