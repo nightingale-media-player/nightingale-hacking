@@ -56,6 +56,10 @@
   { 0x91, 0x30, 0xec, 0xab, 0xe6, 0x6a, 0x71, 0xe2 }      \
 }
 // CLASSES ====================================================================
+
+// Forward declare
+class LibraryPlaylistCommandsListener;
+
 class CPlaylistCommandsManager : public sbIPlaylistCommandsManager
 {
 friend class LibraryPlaylistCommandsListener;
