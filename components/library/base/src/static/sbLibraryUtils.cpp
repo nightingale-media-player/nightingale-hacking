@@ -519,11 +519,17 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
   nsresult rv;
   nsCOMPtr<nsIURI> uri = aURI;
 
+  // Applies only to Windows and Mac
+  PRBool compatible = PR_TRUE;
+#if XP_UNIX && !XP_MACOSX
+  compatible = PR_FALSE;
+#endif
+
   PRBool isFileScheme;
   rv = uri->SchemeIs("file", &isFileScheme);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (isFileScheme) {
+  if (isFileScheme && compatible) {
     nsCOMPtr<nsIIOService> ioService;
     if (aIOService) {
       ioService = aIOService;
