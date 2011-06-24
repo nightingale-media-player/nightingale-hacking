@@ -34,6 +34,8 @@
 #include <nsISupportsUtils.h>
 #include <nsIStringBundle.h>
 #include <nsStringGlue.h>
+#include <sbILibrary.h>
+#include "sbIMediaListListener.h"
 #include "sbIPlaylistCommands.h"
 #include "sbIPlaylistCommandsBuilder.h"
 #include <nsCOMPtr.h>
@@ -56,6 +58,7 @@
 // CLASSES ====================================================================
 class CPlaylistCommandsManager : public sbIPlaylistCommandsManager
 {
+friend class LibraryPlaylistCommandsListener;
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPLAYLISTCOMMANDSMANAGER
@@ -63,7 +66,7 @@ public:
   CPlaylistCommandsManager();
   virtual ~CPlaylistCommandsManager();
 
-private:
+protected:
   /* the key string will be a medialist's guid or medialist listType
    * (e.g. "simple") depending on which the caller of register wants to
    * register the sbIPlaylistCommandsBuilder for */
@@ -72,30 +75,14 @@ private:
   commandobjmap_t m_PlaylistCommandObjMap;
   std::map<nsString, nsCOMPtr<sbIPlaylistCommands> > m_publishedCommands;
 
-  typedef std::map<nsString, nsCOMArray<sbIPlaylistCommandsListener> > listenermap_t;
-  listenermap_t m_ListenerMap;
+  typedef std::map<nsString, nsCOMArray<sbIPlaylistCommands> >
+    libraryGuidToCommandsMap_t;
+  libraryGuidToCommandsMap_t m_LibraryGuidToServicePaneCommandsMap;
+  libraryGuidToCommandsMap_t m_LibraryGuidToMenuOrToolbarCommandsMap;
 
- /* Find a root playlist command in the param map registered for the param
-  * aSearchString.  If no root playlist command is already registered, one
-  * is created and registered for aSearchString.  The root command, found or
-  * newly created, is then returned.
-  *
-  *@param map The commandobjmap_t to look for the root command registered for
-  *           aSearchString within.  If a command is not found, a new command
-  *           is created and added to this map as the value and aSearchString
-  *           as key.
-  *@param aSearchString The string, probably a medialist type or guid, for
-  *                     which the root sbIPlaylistCommands object is desired.
-  *@return The root sbIPlaylistCommands object registered in the param map
-  *        to the key aSearchString.  If one was not present before this
-  *        function was called, this function creates a new root comand, adds
-  *        it to the map for the key aSearchString and returns the added command
-  *        object
-  */
-  nsresult FindOrCreateRootCommand(commandobjmap_t            *map,
-                                   const nsAString            &aSearchString,
-                                   sbIPlaylistCommandsBuilder **_retval);
-
+  typedef std::map<nsString, nsCOMPtr<LibraryPlaylistCommandsListener> >
+      libraryGuidToLibraryListenerMap_t;
+  libraryGuidToLibraryListenerMap_t m_LibraryGuidToLibraryListenerMap;
  /* Register a playlist command for a medialist guid and/or a medialist listType
   * (e.g. "simple" or "smart"). An sbIPlaylistCommands object must be initialized
   * with a unique id before it can be registered.  This function will error if
@@ -143,6 +130,31 @@ private:
                                            const nsAString     &aPlaylistType,
                                            sbIPlaylistCommands *aCommandObj);
 
+private:
+  typedef std::map<nsString, nsCOMArray<sbIPlaylistCommandsListener> > listenermap_t;
+  listenermap_t m_ListenerMap;
+
+ /* Find a root playlist command in the param map registered for the param
+  * aSearchString.  If no root playlist command is already registered, one
+  * is created and registered for aSearchString.  The root command, found or
+  * newly created, is then returned.
+  *
+  *@param map The commandobjmap_t to look for the root command registered for
+  *           aSearchString within.  If a command is not found, a new command
+  *           is created and added to this map as the value and aSearchString
+  *           as key.
+  *@param aSearchString The string, probably a medialist type or guid, for
+  *                     which the root sbIPlaylistCommands object is desired.
+  *@return The root sbIPlaylistCommands object registered in the param map
+  *        to the key aSearchString.  If one was not present before this
+  *        function was called, this function creates a new root comand, adds
+  *        it to the map for the key aSearchString and returns the added command
+  *        object
+  */
+  nsresult FindOrCreateRootCommand(commandobjmap_t            *map,
+                                   const nsAString            &aSearchString,
+                                   sbIPlaylistCommandsBuilder **_retval);
+
  /* Get the root sbIPlaylistCommands object for a medialist guid or type
   * (e.g. "simple" or "smart").  If null or an empty string is passed as the
   * param guid or type, that param will be ignored.  If both type and guid
@@ -188,6 +200,15 @@ private:
                                const nsAString &aContextType,
                                nsISimpleEnumerator **_retval);
 
+ /* Retrieves all medialists in aLibrary including the medialist represented
+  * by aLibrary itself.
+  *
+  *@param aLibrary The library for which all medialists should be retrieved
+  *@return         All medialists in aLibrary including itself as a sbIMediaList
+  */
+  nsresult GetAllMediaListsForLibrary(sbILibrary *aLibrary,
+                                      nsIArray   **_retval);
+
  /* Finds all root sbIPlaylistCommands objects for the param medialist guid
   * and/or type and removes the param listener from those root commands.
   *
@@ -201,7 +222,6 @@ private:
   *                     command objects should have the param aListener removed.
   *@param aListener The listener to be removed
   */
-
   nsresult RemoveListenerFromRootCommands(const nsString     &aContextGUID,
                                           const nsString     &aPlaylistType,
                                           sbIPlaylistCommandsListener *aListener);
@@ -217,6 +237,42 @@ private:
                                         sbIPlaylistCommandsListener *aListener);
 
 };
+
+class LibraryPlaylistCommandsListener : public sbIMediaListListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTLISTENER
+
+  LibraryPlaylistCommandsListener(CPlaylistCommandsManager* aCmdMgr);
+  virtual ~LibraryPlaylistCommandsListener();
+
+private:
+  typedef CPlaylistCommandsManager::commandobjmap_t commandobjmap_t;
+  typedef CPlaylistCommandsManager::libraryGuidToCommandsMap_t libraryGuidToCommandsMap_t;
+
+  CPlaylistCommandsManager* m_CmdMgr;
+
+  nsresult HandleSavedLibraryCommands
+           (PRBool                     aIsRegistering,
+            libraryGuidToCommandsMap_t *aSavedCommandsMap,
+            commandobjmap_t            *aRegistrationMap,
+            const nsAString            &aLibraryGUID,
+            const nsAString            &aListGUID);
+
+  nsresult RegisterSavedLibraryCommands
+           (libraryGuidToCommandsMap_t *aSavedCommandsMap,
+            commandobjmap_t            *aRegistrationMap,
+            const nsAString            &aLibraryGUID,
+            const nsAString            &aListGUID);
+
+  nsresult UnregisterSavedLibraryCommands
+           (libraryGuidToCommandsMap_t *aSavedCommandsMap,
+            commandobjmap_t            *aRegistrationMap,
+            const nsAString            &aLibraryGUID,
+            const nsAString            &aListGUID);
+};
+
 
 #endif // __PLAYLISTCOMMANDS_MANAGER_H__
 

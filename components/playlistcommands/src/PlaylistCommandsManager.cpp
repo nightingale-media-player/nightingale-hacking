@@ -44,14 +44,19 @@
 #include "nsComponentManagerUtils.h"
 #include "nsServiceManagerUtils.h"
 #include "nsCOMArray.h"
+#include "nsIMutableArray.h"
 #include "nsEnumeratorUtils.h"
+#include "nsArrayUtils.h"
 #include "nsArrayEnumerator.h"
 
 #include "nsCRTGlue.h"
 #include <nsStringGlue.h>
 
 #include <sbStringUtils.h>
+#include <sbStandardProperties.h>
 #include <sbIMediaList.h>
+#include <sbILibrary.h>
+#include <sbILibraryManager.h>
 
 #define MODULE_SHORTCIRCUIT 0
 
@@ -268,6 +273,451 @@ CPlaylistCommandsManager::GetPlaylistCommands(commandobjmap_t *map,
   }
 
   *_retval = nsnull;
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMPL_THREADSAFE_ISUPPORTS1(LibraryPlaylistCommandsListener,
+                              sbIMediaListListener)
+
+LibraryPlaylistCommandsListener::LibraryPlaylistCommandsListener
+                                 (CPlaylistCommandsManager* aCmdMgr)
+{
+  m_CmdMgr = aCmdMgr;
+}
+
+LibraryPlaylistCommandsListener::~LibraryPlaylistCommandsListener()
+{
+}
+
+/* A utility method to retrieve the saved commands in aSavedCommandsMap
+ * and add or remove them to the appropriate location for the medialist
+ * described by aListGuid.
+ * The location for registration/unregistration is determined by the
+ * commandobjmap_t passed in as aRegistrationMap and whether registration or
+ * unregistration is performed is determined by aIsRegistering */
+nsresult
+LibraryPlaylistCommandsListener::HandleSavedLibraryCommands
+                                (PRBool                     aIsRegistering,
+                                 libraryGuidToCommandsMap_t *aSavedCommandsMap,
+                                 commandobjmap_t            *aRegistrationMap,
+                                 const nsAString            &aLibraryGUID,
+                                 const nsAString            &aListGUID)
+{
+  NS_ENSURE_ARG_POINTER(aSavedCommandsMap);
+  NS_ENSURE_ARG_POINTER(aRegistrationMap);
+  nsresult rv;
+
+  nsString libGuid(libGuid);
+
+  // Search the saved commands for any registered to our library
+  libraryGuidToCommandsMap_t::iterator searchCmdsIter =
+    aSavedCommandsMap->find(libGuid);
+
+  /* If we find some registered commands, we'll need to handle them*/
+  if (searchCmdsIter != aSavedCommandsMap->end()) {
+
+    // Get the commands registered for this library
+    nsCOMArray<sbIPlaylistCommands> *registeredCommands =
+      &searchCmdsIter->second;
+
+    // Add or remove all of the commands from the list
+    PRUint32 length = registeredCommands->Count();
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIPlaylistCommands> command = (*registeredCommands)[i];
+
+      if (aIsRegistering) {
+        rv = m_CmdMgr->RegisterPlaylistCommands
+                       (aRegistrationMap,
+                        aListGUID,
+                        SBVoidString(),
+                        command);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        rv = m_CmdMgr->UnregisterPlaylistCommands
+                       (aRegistrationMap,
+                        aListGUID,
+                        SBVoidString(),
+                        command);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+LibraryPlaylistCommandsListener::RegisterSavedLibraryCommands
+                                (libraryGuidToCommandsMap_t *aSavedCommandsMap,
+                                 commandobjmap_t            *aRegistrationMap,
+                                 const nsAString            &aLibraryGUID,
+                                 const nsAString            &aListGUID)
+{
+  NS_ENSURE_ARG_POINTER(aSavedCommandsMap);
+  NS_ENSURE_ARG_POINTER(aRegistrationMap);
+
+  return HandleSavedLibraryCommands(PR_TRUE,
+                                    aSavedCommandsMap,
+                                    aRegistrationMap,
+                                    aLibraryGUID,
+                                    aListGUID);
+}
+
+nsresult
+LibraryPlaylistCommandsListener::UnregisterSavedLibraryCommands
+                                (libraryGuidToCommandsMap_t *aSavedCommandsMap,
+                                 commandobjmap_t            *aRegistrationMap,
+                                 const nsAString            &aLibraryGUID,
+                                 const nsAString            &aListGUID)
+{
+  NS_ENSURE_ARG_POINTER(aSavedCommandsMap);
+  NS_ENSURE_ARG_POINTER(aRegistrationMap);
+
+  return HandleSavedLibraryCommands(PR_FALSE,
+                                    aSavedCommandsMap,
+                                    aRegistrationMap,
+                                    aLibraryGUID,
+                                    aListGUID);
+}
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnItemAdded(sbIMediaList *aMediaList,
+                                             sbIMediaItem *aMediaItem,
+                                             PRUint32 aIndex,
+                                             PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  // Check if the added item is a list
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem, &rv);
+  if (NS_FAILED(rv) || !list) {
+    // we are only concerned with added lists so stop for anything else
+    return NS_OK;
+  }
+
+  nsString listGuid;
+  rv = aMediaItem->GetGuid(listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the added item's library and library guid
+  nsCOMPtr<sbILibrary> library;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString libGuid;
+  rv = library->GetGuid(libGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Register any saved service pane commands that would apply to this new list
+  rv = RegisterSavedLibraryCommands
+       (&m_CmdMgr->m_LibraryGuidToServicePaneCommandsMap,
+        &m_CmdMgr->m_ServicePaneCommandObjMap,
+        libGuid,
+        listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Register any saved mediaitem context menu or toolbar commands that
+  // would apply to this new list
+  rv = RegisterSavedLibraryCommands
+       (&m_CmdMgr->m_LibraryGuidToMenuOrToolbarCommandsMap,
+        &m_CmdMgr->m_PlaylistCommandObjMap,
+        libGuid,
+        listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                                     sbIMediaItem *aMediaItem,
+                                                     PRUint32 aIndex,
+                                                     PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  nsresult rv;
+
+  // Check if the item being removed is a list
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem, &rv);
+  if (NS_FAILED(rv) || !list) {
+    // we are only concerned with medialists, this isn't one so we're done
+      return NS_OK;
+  }
+
+  nsString listGuid;
+  rv = aMediaItem->GetGuid(listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the removed item's library and library guid
+  nsCOMPtr<sbILibrary> library;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString libGuid;
+  rv = library->GetGuid(libGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Unregister any saved service pane commands that applied to the list being
+  // deleted
+  rv = UnregisterSavedLibraryCommands
+       (&m_CmdMgr->m_LibraryGuidToServicePaneCommandsMap,
+        &m_CmdMgr->m_ServicePaneCommandObjMap,
+        libGuid,
+        listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Unregister any saved mediaitem context menu or toolbar commands that
+  // applied to the list being deleted
+  rv = UnregisterSavedLibraryCommands
+       (&m_CmdMgr->m_LibraryGuidToMenuOrToolbarCommandsMap,
+        &m_CmdMgr->m_PlaylistCommandObjMap,
+        libGuid,
+        listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// Listener methods that we don't need
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                                    sbIMediaItem *aMediaItem,
+                                                    PRUint32 aIndex,
+                                                    PRBool *_retval)
+{ return NS_OK; }
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnItemUpdated(sbIMediaList *aMediaList,
+                                               sbIMediaItem *aMediaItem,
+                                               sbIPropertyArray *aProperties,
+                                               PRBool *aRetVal)
+{ return NS_OK; }
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnItemMoved(sbIMediaList *aMediaList,
+                                             PRUint32 aFromIndex,
+                                             PRUint32 aToIndex,
+                                             PRBool *aRetVal)
+{ return NS_OK; }
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                     PRBool aExcludeLists,
+                                                     PRBool *aRetVal)
+{ return NS_OK; }
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnListCleared(sbIMediaList *aMediaList,
+                                               PRBool aExcludeLists,
+                                               PRBool *aRetVal)
+{ return NS_OK; }
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnBatchBegin(sbIMediaList *aMediaList)
+{ return NS_OK; }
+
+NS_IMETHODIMP
+LibraryPlaylistCommandsListener::OnBatchEnd(sbIMediaList *aMediaList)
+{ return NS_OK; }
+
+//-----------------------------------------------------------------------------
+nsresult
+CPlaylistCommandsManager::GetAllMediaListsForLibrary
+                         (sbILibrary *aLibrary,
+                          nsIArray   **_retval)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+
+  // Get the lists in the library
+  nsCOMPtr<nsIArray> mediaLists;
+  rv = aLibrary->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                    NS_LITERAL_STRING("1"),
+                                    getter_AddRefs(mediaLists));
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // This library doesn't have any medialists
+    mediaLists =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the library itself as another list
+  nsCOMPtr<sbIMediaList> libAsList( do_QueryInterface(aLibrary, &rv) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> mutMediaLists( do_QueryInterface(mediaLists, &rv) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mutMediaLists->AppendElement(libAsList, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = mutMediaLists);
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::RegisterPlaylistCommandsForLibrary
+                          (PRBool              aTargetServicePane,
+                           sbILibrary          *aLibrary,
+                           sbIPlaylistCommands *aCommandObj)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aCommandObj);
+  nsresult rv;
+
+  // Get all the medialists for that library, including the library itself
+  nsCOMPtr<nsIArray> mediaLists;
+  rv = GetAllMediaListsForLibrary(aLibrary,
+                                  getter_AddRefs(mediaLists));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Determine which map to register the new command in
+  commandobjmap_t* targetMap = (aTargetServicePane ?
+                                &m_ServicePaneCommandObjMap :
+                                &m_PlaylistCommandObjMap);
+
+  // Register aCommandObj to the appropriate map for each of the mediaLists
+  PRUint32 length;
+  rv = mediaLists->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIMediaList> currList = do_QueryElementAt(mediaLists, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString guid;
+    rv = currList->GetGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = RegisterPlaylistCommands(targetMap,
+                                  guid,
+                                  SBVoidString(),
+                                  aCommandObj);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  /* Save a reference to aCommandObj so that we can retrieve it when a new
+   * mediaList is added to the library we are registering this command to */
+  // Save the command in a map depending on where it is registered
+  libraryGuidToCommandsMap_t *libraryToPlaylistCommandsMap =
+    (aTargetServicePane ? &m_LibraryGuidToServicePaneCommandsMap :
+                          &m_LibraryGuidToMenuOrToolbarCommandsMap);
+
+  nsString libGuid;
+  rv = aLibrary->GetGuid(libGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* See if we already have any commands registered in this location for this
+   * library */
+  libraryGuidToCommandsMap_t::iterator registeredCommandsIter =
+    libraryToPlaylistCommandsMap->find(libGuid);
+
+  if (registeredCommandsIter == libraryToPlaylistCommandsMap->end()) {
+    // There are no commands in this location registered to this library yet.
+    // Save the command object to a new nsCOMArray in the saved command map.
+    (*libraryToPlaylistCommandsMap)[libGuid].AppendObject(aCommandObj);
+
+    /* Add a listener to the library so that we can detect if a new medialist
+     * is added or if one is removed */
+    nsCOMPtr<LibraryPlaylistCommandsListener> listener =
+      new LibraryPlaylistCommandsListener(this);
+    NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = aLibrary->AddListener(listener,
+                               PR_FALSE,
+                               sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                               sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED,
+                               nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // And save a reference to this listener in case we need to unregister
+    m_LibraryGuidToLibraryListenerMap[libGuid] = listener;
+  }
+  else {
+    // There are other commands registered to this library already.
+    // Retrieve the array of registered commands and add aCommandObj.
+    nsCOMArray<sbIPlaylistCommands> *registeredCommands = &registeredCommandsIter->second;
+    registeredCommands->AppendObject(aCommandObj);
+  }
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::UnregisterPlaylistCommandsForLibrary
+                          (PRBool              aTargetServicePane,
+                           sbILibrary          *aLibrary,
+                           sbIPlaylistCommands *aCommandObj)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aCommandObj);
+  nsresult rv;
+
+  // Get all medialists in that library, including the library itself
+  nsCOMPtr<nsIArray> mediaLists;
+  rv = GetAllMediaListsForLibrary(aLibrary,
+                                  getter_AddRefs(mediaLists));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Determine which map to unregister the new command from
+  commandobjmap_t* targetMap = (aTargetServicePane ?
+                                &m_ServicePaneCommandObjMap :
+                                &m_PlaylistCommandObjMap);
+
+  // For each medialist in the library, unregister aCommandObj from it
+  PRUint32 length;
+  rv = mediaLists->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  bool unregisterFailure = false;
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIMediaList> currList = do_QueryElementAt(mediaLists, i, &rv);
+    if (NS_FAILED(rv)) {
+      unregisterFailure = true;
+      continue;
+    }
+
+    nsString guid;
+    rv = currList->GetGuid(guid);
+    if (NS_FAILED(rv)) {
+      unregisterFailure = true;
+      continue
+    }
+
+    rv = UnregisterPlaylistCommands(targetMap,
+                                    guid,
+                                    SBVoidString(),
+                                    aCommandObj);
+    if (NS_FAILED(rv)) {
+      unregisterFailure = true;
+    }
+  }
+
+  nsString libGuid;
+  rv = aLibrary->GetGuid(libGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Finally remove the listener from the library
+  rv = aLibrary->RemoveListener(m_LibraryGuidToLibraryListenerMap[libGuid]);
+  if (NS_FAILED(rv)) {
+    unregisterFailure = true;
+  }
+
+  if (unregisterFailure) {
+    NS_ERROR("Error while unregistering playlist commands from a library");
+  }
+
   return NS_OK;
 }
 

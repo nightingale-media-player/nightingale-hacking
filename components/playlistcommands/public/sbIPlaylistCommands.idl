@@ -32,6 +32,7 @@ interface sbIPlaylistCommandsListener;
 interface sbIPlaylistCommandsBuilderPCCallback;
 interface sbIMediaItem;
 interface sbIMediaList;
+interface sbILibrary;
 interface nsISimpleEnumerator;
 
 /** \addtogroup playlistcommands Playlist Commands
@@ -566,6 +567,48 @@ interface sbIPlaylistCommandsListener : nsISupports
 [scriptable, uuid(385a86c4-1dd2-11b2-a945-f6f41c562fe9)]
 interface sbIPlaylistCommandsManager : nsISupports
 {
+ /**
+  * \brief Register sbIPlaylistCommands objects to be shown for aLibrary
+  * and all mediaLists in that library. A listener will be created to
+  * detect if a medialist is added or removed from the specified library
+  * and aCommandObj will be automatically registered or unregistered
+  * from that list.
+  *
+  * \param aTargetServicePane  True if aCommandObj should appear in the
+  *                            servicepane context menu.  False if it should
+  *                            appear elsewhere. (The mediaitem context menu
+  *                            or toolbar currently)
+  * \param aLibrary      The library for which aCommandObj should be registered
+  * \param aCommandObj   The command object instance to be registered
+  * \sa sbIPlaylistCommands, unregisterPlaylistCommands, playlist.xml
+  * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
+  */
+  void registerPlaylistCommandsForLibrary(in PRBool          aTargetServicePane,
+                                          in sbiLibrary      aLibrary,
+                                          in sbIPlaylistCommands aCommandObj);
+
+ /**
+  * \brief Unregister an sbIPlaylistCommands object from aLibrary.
+  *        This will only successfully unregister commands that were
+  *        registered by registerPlaylistCommandsForLibrary. The command
+  *        will be removed from the list that represents the library
+  *        and from all medialists in that library.
+  *
+  * \param aTargetServicePane  True if aCommandObj appears in the servicepane
+  *                            context menu.  False if it appears elsewhere.
+  *                            (The mediaitem context menu or toolbar currently.
+  *                            The desired location is specified through
+  *                            aCommandObj's visibility callback)
+  * \param aLibrary     The library for which aCommandObj should be unregistered
+  * \param aCommandObj  The command object instance to be unregistered
+  * \sa sbIPlaylistCommands, unregisterPlaylistCommands, playlist.xml
+  * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
+  * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
+  */
+  void unregisterPlaylistCommandsForLibrary(in PRBool        aTargetServicePane,
+                                            in sbiLibrary      aLibrary,
+                                            in sbIPlaylistCommands aCommandObj);
  /**
   * \brief Register sbIPlaylistCommands objects to be shown for specific playlists in
   * order to let the user perform actions on a playlist's items.
