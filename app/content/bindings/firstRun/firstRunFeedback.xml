@@ -160,6 +160,7 @@
             // Produce the subscription URL query string.
             Cu.import("resource://app/jsmodules/URLUtils.jsm");
             var reqParams = { id:     "c8c47a06ad",
+                              u:      "cefe6462a1503cd64ee85ea7a",
                               MERGE0: eMail };
             var reqBody = URLUtils.produceQuery(reqParams);
 
