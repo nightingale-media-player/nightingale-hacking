@@ -692,7 +692,7 @@ CPlaylistCommandsManager::UnregisterPlaylistCommandsForLibrary
     rv = currList->GetGuid(guid);
     if (NS_FAILED(rv)) {
       unregisterFailure = true;
-      continue
+      continue;
     }
 
     rv = UnregisterPlaylistCommands(targetMap,
