@@ -455,6 +455,22 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
 
   nsresult rv;
 
+  // We don't want to send updates for column spec only changes. The device
+  // doesn't care about it, it just creates needless thrashing of the device
+  // playlists.
+  // TODO: XXX See Bug 24191 to see what's to come and feel free to comment.
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list) {
+    nsString name;
+    rv = aProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_COLUMNSPEC),
+                                     name);
+    PRUint32 length;
+    rv = aProperties->GetLength(&length);
+    // If the column spec property is the only thing changing, ignore the update
+    if (NS_SUCCEEDED(rv) && length == 1) {
+      return NS_OK;
+    }
+  }
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_UPDATE,
                             aMediaItem,
                             aMediaList,
