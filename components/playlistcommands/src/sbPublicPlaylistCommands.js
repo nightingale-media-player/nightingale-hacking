@@ -1177,9 +1177,10 @@ PublicPlaylistCommands.prototype = {
       this.m_deviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_remove",
                                                     this.m_cmd_Remove);
+
       this.m_deviceLibraryCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
-      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY_CONTEXTMENU,
                          this.m_deviceLibraryCommands);
 
       // --------------------------------------------------------------------------
@@ -1436,7 +1437,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,this.m_deviceLibraryCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY_CONTEXTMENU, this.m_deviceLibraryCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY, this.m_cdDeviceLibraryCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PLAYQUEUE, this.m_playQueueCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY, this.m_playQueueLibraryCommands);
