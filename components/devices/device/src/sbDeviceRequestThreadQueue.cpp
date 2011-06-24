@@ -343,10 +343,11 @@ sbDeviceRequestThreadQueue::IsDuplicateRequest(sbRequestItem * aQueueRequest,
       // Add the duplicate in the queue properties.
       nsCOMPtr<sbIPropertyArray> propertyList;
       propertyList = do_QueryInterface(queueRequest->data, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = mergedPropertyList->AppendProperties(propertyList, PR_TRUE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
+      // This may be a request that doesn't contain a property array
+      if (NS_SUCCEEDED(rv)) {
+        rv = mergedPropertyList->AppendProperties(propertyList, PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
       // Add the new request properties.
       propertyList = do_QueryInterface(request->data, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
