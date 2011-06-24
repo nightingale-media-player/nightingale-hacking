@@ -516,32 +516,67 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  nsresult rv;
   nsCOMPtr<nsIURI> uri = aURI;
 
-  // On Windows, convert "file:" URI's to lower-case.
-#ifdef XP_WIN
-  nsresult rv;
   PRBool isFileScheme;
   rv = uri->SchemeIs("file", &isFileScheme);
   NS_ENSURE_SUCCESS(rv, rv);
+
   if (isFileScheme) {
-    // Get the URI spec.
+    nsCOMPtr<nsIIOService> ioService;
+    if (aIOService) {
+      ioService = aIOService;
+    } else {
+      ioService = GetIOService(rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     nsCAutoString spec;
+
+  #ifdef XP_WIN
+    // On Windows, convert "file:" URI's to lower-case.
     rv = uri->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Convert the URI spec to lower case.
     ToLowerCase(spec);
-
-    // Regenerate the URI.
-    nsCOMPtr<nsIIOService> ioService = aIOService ? aIOService :
-                                                    GetIOService(rv);
+  #elif XP_MACOSX
+    /**
+     * For Mac OS X, normalize the UTF-8 spec to be canonically decomposed
+     * (NFD). Supplementary notes:
+     * - [origin] Mac OS X NFD <-> NFC conversion
+     *   => https://bugzilla.mozilla.org/show_bug.cgi?id=227547
+     * - Note that with XULRunner 2.0, Mac OS X filesystem code was migrated
+     *   to be shared with UNIX filesystem code. That said, in the case of
+     *   a XULRunner update, this should still work.
+     *   => https://bugzilla.mozilla.org/show_bug.cgi?id=571193
+     * - Apple Developer documentation on file encodings:
+     *   => http://developer.apple.com/library/mac/#documentation \
+     *      /MacOSX/Conceptual/BPInternational/Articles/FileEncodings.html
+     */
+    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(uri, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFile> file;
+    rv = fileURL->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIProtocolHandler> protocolHandler;
+    rv = ioService->GetProtocolHandler("file",
+                                       getter_AddRefs(protocolHandler));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFileProtocolHandler> fileProtocolHandler =
+      do_QueryInterface(protocolHandler, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fileProtocolHandler->GetURLSpecFromActualFile(file, spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+  #endif
 
     rv = ioService->NewURI(spec, nsnull, nsnull, getter_AddRefs(uri));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-#endif // XP_WIN
 
   // Return results.
   NS_ADDREF(*_retval = uri);
@@ -586,8 +621,15 @@ nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
   rv = sbNewFileURI(aFile, getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Convert URI to a content URI.
-  return GetContentURI(uri, _retval);
+  #ifdef XP_WIN
+    // Convert URI to a lowercase content URI.
+    rv = GetContentURI(uri, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  #else
+    NS_ADDREF(*_retval = uri);
+  #endif
+
+  return NS_OK;
 }
 
 /**
