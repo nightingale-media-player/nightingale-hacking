@@ -719,6 +719,59 @@ PublicPlaylistCommands.prototype = {
                                                       plCmd_IsAnyTrackSelected);
 
       // --------------------------------------------------------------------------
+      // The 'Show Device Only' and 'Show All On Device' actions for MSC & MTP
+      // --------------------------------------------------------------------------
+      // A command object for devices to hold commands that show in the toolbar
+      this.m_cmd_DeviceToolbarCmds =
+        new PlaylistCommandsBuilder("device_cmds_toolbar");
+
+      // A command to show items only on the device
+      this.m_cmd_ShowOnlyOnDevice =
+        new PlaylistCommandsBuilder("device_cmd_showdeviceonly");
+
+      this.m_cmd_ShowOnlyOnDevice.appendAction
+                               (null,
+                                "device_cmd_showdeviceonly",
+                                "&device.command.show_only_on_device",
+                                "",
+                                plCmd_ShowOnlyOnDevice_TriggerCallback);
+
+      // Show the 'device only' command only when we aren't already filtering
+      this.m_cmd_ShowOnlyOnDevice
+          .setVisibleCallback(plCmd_ShowOnlyOnDevice_VisibleCallback);
+
+      this.m_cmd_DeviceToolbarCmds.appendPlaylistCommands
+                                  (null,
+                                   "device_cmdobj_showdeviceonly",
+                                   this.m_cmd_ShowOnlyOnDevice);
+
+      // A command to shall all items on the device
+      this.m_cmd_ShowAllOnDevice =
+        new PlaylistCommandsBuilder("device_cmd_showallondevice");
+
+      this.m_cmd_ShowAllOnDevice.appendAction
+                                (null,
+                                 "device_cmd_showallondevice",
+                                 "&device.command.show_all_on_device",
+                                 "",
+                                 plCmd_ShowAllOnDevice_TriggerCallback);
+
+
+      this.m_cmd_DeviceToolbarCmds.appendPlaylistCommands
+                                  (null,
+                                   "device_cmdobj_showallondevice",
+                                   this.m_cmd_ShowAllOnDevice);
+
+      // Show the 'show all' command when we are filtering for device only
+      this.m_cmd_ShowAllOnDevice
+          .setVisibleCallback(plCmd_ShowAllOnDevice_VisibleCallback);
+
+      // Publish this command so that it can be registered to the device
+      // library when a device is mounted.
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY_TOOLBAR,
+                         this.m_cmd_DeviceToolbarCmds);
+
+      // --------------------------------------------------------------------------
       // The Lookup CD Info action
       // --------------------------------------------------------------------------
 
@@ -1177,9 +1230,10 @@ PublicPlaylistCommands.prototype = {
       this.m_deviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_remove",
                                                     this.m_cmd_Remove);
+
       this.m_deviceLibraryCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
-      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY_CONTEXTMENU,
                          this.m_deviceLibraryCommands);
 
       // --------------------------------------------------------------------------
@@ -1436,7 +1490,8 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
-    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,this.m_deviceLibraryCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY_CONTEXTMENU, this.m_deviceLibraryCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY_TOOLBAR, this.m_cmd_DeviceToolbarCmds);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY, this.m_cdDeviceLibraryCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PLAYQUEUE, this.m_playQueueCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY, this.m_playQueueLibraryCommands);
@@ -1553,6 +1608,7 @@ PublicPlaylistCommands.prototype = {
     this.m_downloadCommandsServicePane.shutdown();
     this.m_serviceTreeDefaultCommands.shutdown();
     this.m_deviceLibraryCommands.shutdown();
+    this.m_cmd_ShowOnlyOnDevice.shutdown();
     this.m_cdDeviceLibraryCommands.shutdown();
     this.m_cmd_playqueue_SaveToPlaylist.shutdown();
     this.m_cmd_playqueue_ClearAll.shutdown();
@@ -1989,6 +2045,42 @@ function plCmd_LookupCDInfo_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   var bag = Cc["@mozilla.org/hash-property-bag;1"]
               .createInstance(Ci.nsIPropertyBag2);
   device.submitRequest(Ci.sbICDDeviceEvent.REQUEST_CDLOOKUP, bag);
+}
+
+// The 'Show new items only' command for device trigger callback
+function plCmd_ShowOnlyOnDevice_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // Get the current view and append a filter so we only get items that do
+  // not have a known origin in the main library
+  var playlist = unwrap(aContext.playlist);
+  var view = playlist.mediaListView;
+  var propIndex = view.cascadeFilterSet
+                      .appendFilter(SBProperties.originIsInMainLibrary);
+
+  // Constrain the filter to allow only items with '0' as
+  // originIsInMainLibrary to be displayed.
+  var constraints = [0];
+  view.cascadeFilterSet.set(propIndex, constraints, constraints.length);
+
+  // As we are now displaying only items on the device, refresh commands
+  // so that 'Show new items' becomes 'Show all items'.
+  playlist.refreshCommands();
+}
+
+// The 'Show all items' command for device trigger callback
+function plCmd_ShowAllOnDevice_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // Get the current view and remove the originIsInMainLibrary filter
+  var playlist = unwrap(aContext.playlist);
+  var filterSet = playlist.mediaListView.cascadeFilterSet;
+  for (var i = 0; i < filterSet.length; i++) {
+    if (filterSet.getProperty(i) == SBProperties.originIsInMainLibrary) {
+      filterSet.remove(i);
+      break;
+    }
+  }
+
+  // As we are now displaying all items on the device, refresh commands
+  // so that 'Show all items' becomes 'Show new items'.
+  playlist.refreshCommands();
 }
 
 // Given a playlist binding, grab all the items with the shouldRip property
@@ -2509,6 +2601,30 @@ function plCmd_HideForToolbarCheck(aContext, aHost) {
 
 function plCmd_ShowForToolbarCheck(aContext, aHost) {
   return (aHost == "toolbar");
+}
+
+// Return true if we are currently showing only device only tracks
+// (i.e. if there is a filter in place for originIsInMainLibrary)
+function isShowingDeviceOnly(playlist) {
+  var filterSet = playlist.mediaListView.cascadeFilterSet;
+  for (var i = 0; i < filterSet.length; i++) {
+    if (filterSet.getProperty(i) === SBProperties.originIsInMainLibrary) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// 'Show new items only' device playlist command visibility callback
+function plCmd_ShowOnlyOnDevice_VisibleCallback(aContext, aHost) {
+  var playlist = unwrap(aContext.playlist);
+  return (aHost == "toolbar" && !isShowingDeviceOnly(playlist));
+}
+
+// 'Show all items' device playlist command visibility callback
+function plCmd_ShowAllOnDevice_VisibleCallback(aContext, aHost) {
+  var playlist = unwrap(aContext.playlist);
+  return (aHost == "toolbar" && isShowingDeviceOnly(playlist));
 }
 
 function plCmd_DownloadInit(aContext, aHost) {
