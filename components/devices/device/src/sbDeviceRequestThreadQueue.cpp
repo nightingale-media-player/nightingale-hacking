@@ -361,11 +361,12 @@ sbDeviceRequestThreadQueue::IsDuplicateRequest(sbRequestItem * aQueueRequest,
      // update request. Currently all devices recreate playlists on any
      // modification.
     else if (request->IsPlaylist()) {
-      PRUint32 queueType = aRequest->GetType();
+      PRUint32 queueType = aQueueRequest->GetType();
 
        // If the previous request was a write or move then change it to an update
       switch (queueType) {
         case sbBaseDevice::TransferRequest::REQUEST_WRITE:
+        case sbBaseDevice::TransferRequest::REQUEST_DELETE:
         case sbBaseDevice::TransferRequest::REQUEST_MOVE: {
           aQueueRequest->SetType(sbBaseDevice::TransferRequest::REQUEST_UPDATE);
 
@@ -374,6 +375,10 @@ sbDeviceRequestThreadQueue::IsDuplicateRequest(sbRequestItem * aQueueRequest,
           queueRequest->list->GetLibrary(getter_AddRefs(library));
           queueRequest->list = library;
         }
+        break;
+        case sbBaseDevice::TransferRequest::REQUEST_NEW_PLAYLIST:
+          // Just ignore the update request if we have a new playlist already
+          // in the queue
         break;
       }
     }
