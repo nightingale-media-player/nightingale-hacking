@@ -4,6 +4,7 @@
 # messy, but makes it so we don't have to write 2 cases in the parser code;
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
+
 SB_APPNAME=Songbird
 SB_BUILD_ID=20110629013030
 BuildNumber=2101
