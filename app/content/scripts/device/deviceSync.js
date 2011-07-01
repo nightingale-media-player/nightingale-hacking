@@ -189,44 +189,6 @@ var DeviceSyncWidget = {
     }
     this._widget.removeAttribute("hidden");
 
-    /* Get the management type pref UI elements. */
-    var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
-    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
-    var importEnabledCheckbox = this._getElement("import_header_checkbox");
-    var syncEnabledCheckbox = this._getElement("sync_header_checkbox");
-    var syncGroupbox = this._getElement("content_management_groupbox");
-
-    /* Make the importEnabledCheckbox reflect whether this mediatype is
-     * currently set to be imported or not */
-    importEnabledCheckbox.checked = this._mediaSyncSettings.import;
-
-    switch (this._mediaSyncSettings.mgmtType) {
-    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE:
-      syncEnabledCheckbox.checked = false;
-      syncPlaylistTree.setAttribute("disabled", true);
-      syncRadioGroup.setAttribute("disabled", true);
-      syncGroupbox.setAttribute("disabled", true);
-      syncRadioGroup.selectedItem = null;
-      break;
-
-    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL:
-      syncEnabledCheckbox.checked = true;
-      syncPlaylistTree.setAttribute("disabled", true);
-      syncRadioGroup.removeAttribute("disabled");
-      syncGroupbox.removeAttribute("disabled");
-      syncRadioGroup.selectedItem = this._getElement
-                                        ("content_auto_sync_all_radio");
-      break;
-
-    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_PLAYLISTS:
-      syncEnabledCheckbox.checked = true;
-      syncPlaylistTree.removeAttribute("disabled");
-      syncRadioGroup.removeAttribute("disabled");
-      syncGroupbox.removeAttribute("disabled");
-      syncRadioGroup.selectedItem = this._getElement
-                                        ("content_auto_sync_selected_radio");
-      break;
-    }
 
     // If we are busy then disable the widget so the user can not make changes
     if (this._device.isBusy) {
@@ -242,11 +204,11 @@ var DeviceSyncWidget = {
     syncPlaylistListVideoHeader.hidden = (this._mediaType != "video");
 
     // Set up the playlists
-    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_children");
+    var syncPlaylistChildren = this._getElement("content_auto_sync_playlist_children");
 
     /* Clear the sync playlist tree. */
-    while (syncPlaylistTree.firstChild)
-        syncPlaylistTree.removeChild(syncPlaylistTree.firstChild);
+    while (syncPlaylistChildren.firstChild)
+        syncPlaylistChildren.removeChild(syncPlaylistChildren.firstChild);
 
     // Get an nsIArray of available playlists for this media type
     var syncPlayLists = this._mediaSyncSettings.syncPlaylists;
@@ -312,8 +274,48 @@ var DeviceSyncWidget = {
       treeItem.appendChild(treeRow);
 
       /* Add the row to the tree. */
-      syncPlaylistTree.appendChild(treeItem);
+      syncPlaylistChildren.appendChild(treeItem);
     }
+
+    /* Get the management type pref UI elements. */
+    var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
+    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
+    var importEnabledCheckbox = this._getElement("import_header_checkbox");
+    var syncEnabledCheckbox = this._getElement("sync_header_checkbox");
+    var syncGroupbox = this._getElement("content_management_groupbox");
+
+    /* Make the importEnabledCheckbox reflect whether this mediatype is
+     * currently set to be imported or not */
+    importEnabledCheckbox.checked = this._mediaSyncSettings.import;
+
+    switch (this._mediaSyncSettings.mgmtType) {
+    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE:
+      syncEnabledCheckbox.checked = false;
+      syncPlaylistTree.setAttribute("disabled", true);
+      syncRadioGroup.setAttribute("disabled", true);
+      syncGroupbox.setAttribute("disabled", true);
+      syncRadioGroup.selectedItem = null;
+      break;
+
+    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL:
+      syncEnabledCheckbox.checked = true;
+      syncPlaylistTree.setAttribute("disabled", true);
+      syncRadioGroup.removeAttribute("disabled");
+      syncGroupbox.removeAttribute("disabled");
+      syncRadioGroup.selectedItem = this._getElement
+                                        ("content_auto_sync_all_radio");
+      break;
+
+    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_PLAYLISTS:
+      syncEnabledCheckbox.checked = true;
+      syncPlaylistTree.removeAttribute("disabled");
+      syncRadioGroup.removeAttribute("disabled");
+      syncGroupbox.removeAttribute("disabled");
+      syncRadioGroup.selectedItem = this._getElement
+                                        ("content_auto_sync_selected_radio");
+      break;
+    }
+
   },
 
 
