@@ -30,7 +30,8 @@ pref("extensions.mashTape.rss.providers", "{ad43af30-7a1c-11dd-ad8b-0800200c9a66
 
 // Flickr, SmugMug
 pref("extensions.mashTape.photo.enabled", true);
-pref("extensions.mashTape.photo.speed", 50);
+// Set the Speed to 50% (10 is fastest, 200 is slowest)
+pref("extensions.mashTape.photo.speed", 95);
 pref("extensions.mashTape.photo.keywords", "");
 pref("extensions.mashTape.photo.providers", "{a86cc290-6990-11dd-ad8b-0800200c9a66}");
 

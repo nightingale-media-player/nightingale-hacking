@@ -75,6 +75,26 @@ function _mashTape_setupPhotoStream(imageItems, paneWidth, paneHeight) {
 					"</span>" + ")").inject(info);
 		}
 	});
+
+ 
+/**
+ * updatePhotoStreamSpeed
+ * If the preference for the photo speed changes we update the interval here
+ * so that while the slidshow is playing we can automatically adjust to the
+ * changes.
+ */
+function mashTape_updatePhotoStreamSpeed() {
+	if (!nS5) return;
+
+	var speed =
+		Application.prefs.getValue("extensions.mashTape.photo.speed", 50);
+	speed = speed * 40;
+  
+	nS5.interval = speed;
+	if (nS5.isPlaying) {
+		nS5.playpause(nS5.interval, 'next');
+		nS5.playpause(nS5.interval, 'next');
+	}
 }
 
 function mashTape_triggerPhotoStream(imageItems, paneWidth) {

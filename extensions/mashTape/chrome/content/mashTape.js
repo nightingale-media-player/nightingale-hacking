@@ -2181,6 +2181,8 @@ mashTape.prefObserver = {
         var which = subject.getCharPref(data);
         gMetrics.metricsInc("mashtape", "defaultpane", which);
         mashTape.selectPane();
+      } else if (data == "photo.speed") {
+        mashTape.photoFrame.contentWindow.mashTape_updatePhotoStreamSpeed();
       }
     }
   }
