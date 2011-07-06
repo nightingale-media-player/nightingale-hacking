@@ -136,6 +136,7 @@ nsresult sbWinGetDeviceInstanceID(DEVINST    aDevInst,
                                   nsAString& aDeviceInstanceID);
 
 nsresult sbWinDeviceEject(DEVINST aDevInst);
+nsresult sbWinDeviceEject(nsAString const & aMountPath);
 
 nsresult sbWinDeviceIsDescendantOf(DEVINST aDevInst,
                                    DEVINST aDescendantDevInst,

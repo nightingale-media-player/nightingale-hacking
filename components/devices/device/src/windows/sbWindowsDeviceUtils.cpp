@@ -49,6 +49,7 @@
 
 // Windows imports.
 #include <dbt.h>
+#include <winioctl.h>
 
 
 //------------------------------------------------------------------------------
@@ -780,17 +781,6 @@ sbWinDeviceEject(DEVINST aDevInst)
   PNP_VETO_TYPE vetoType;
   PRBool        ejected = PR_FALSE;
   for (int i = 0; i < 3; i++) {
-    // Try ejecting using CM_Query_And_Remove_SubTree.
-    cfgRet = CM_Query_And_Remove_SubTreeW(aDevInst,
-                                          &vetoType,
-                                          vetoName,
-                                          MAX_PATH,
-                                          0);
-    if (cfgRet == CR_SUCCESS) {
-      ejected = PR_TRUE;
-      break;
-    }
-
     // Try ejecting using CM_Request_Device_Eject.
     cfgRet = CM_Request_Device_EjectW(aDevInst,
                                       &vetoType,
@@ -801,6 +791,23 @@ sbWinDeviceEject(DEVINST aDevInst)
       ejected = PR_TRUE;
       break;
     }
+    // Wait for 1/10 second to give the device time to handle the eject.
+    // This probably isn't needed, but all the examples I saw that used
+    // the functions always put in a delay between calls at least for retries
+    Sleep(100);
+    // Try ejecting using CM_Query_And_Remove_SubTree.
+    cfgRet = CM_Query_And_Remove_SubTreeW(aDevInst,
+                                          &vetoType,
+                                          vetoName,
+                                          MAX_PATH,
+                                          CM_REMOVE_NO_RESTART);
+    if (cfgRet == CR_SUCCESS) {
+      ejected = PR_TRUE;
+      break;
+    }
+    // Wait 1/2 before retrying so we don't just slam the device with a bunch
+    // of eject/remove requests and fail out.
+    Sleep(500);
   }
 
   // Try one last time and let the PnP manager notify the user of failure.
@@ -812,6 +819,113 @@ sbWinDeviceEject(DEVINST aDevInst)
   return NS_OK;
 }
 
+/**
+ * Ejects the USB drive using the supplied drive (X:) via the DeviceIoControl
+ * functions. I used MSDN KB165721 to create this code.
+ */
+nsresult
+sbWinDeviceEject(nsAString const & aMountPath)
+{
+
+  DWORD    byteCount;
+  BOOL     success;
+
+  nsString volumePath(NS_LITERAL_STRING("\\\\.\\"));
+  volumePath.Append(aMountPath);
+  volumePath.Trim("\\", PR_FALSE, PR_TRUE);
+
+  // Create a disk interface device file.
+  sbAutoHANDLE diskHandle = CreateFileW(volumePath.BeginReading(),
+                                        GENERIC_READ | GENERIC_WRITE,
+                                        FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                        NULL,
+                                        OPEN_EXISTING,
+                                        0,
+                                        NULL);
+  NS_ENSURE_TRUE(diskHandle.get() != INVALID_HANDLE_VALUE, NS_ERROR_FAILURE);
+
+  const PRUint32 LOCK_RETRY = 3;
+  const PRUint32 LOCK_RETRY_WAIT= 500; // Wait between retry in milliseconds
+
+  for (PRUint32 retry = 0; retry < LOCK_RETRY; ++retry) {
+    success = DeviceIoControl(diskHandle,
+                              FSCTL_LOCK_VOLUME,
+                              NULL, 0,
+                              NULL, 0,
+                              &byteCount,
+                              NULL);
+    if (success) {
+      break;
+    }
+#ifdef DEBUG
+    // If this was the last retry then report the error
+    if (!success && retry == LOCK_RETRY - 1) {
+      const DWORD error = GetLastError();
+      printf("FSTL_LOCK_VOLUME failed on %s with code %u\n",
+             NS_LossyConvertUTF16toASCII(volumePath).get(),
+             error);
+    }
+#endif
+    Sleep(LOCK_RETRY_WAIT);
+  }
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  success = DeviceIoControl(diskHandle,
+                            FSCTL_DISMOUNT_VOLUME,
+                            NULL, 0,
+                            NULL, 0,
+                            &byteCount,
+                            NULL);
+  if (!success) {
+#ifdef DEBUG
+    const DWORD error = GetLastError();
+    printf("FSCTL_DISMOUNT_VOLUME failed on %s with code %u\n",
+           NS_LossyConvertUTF16toASCII(volumePath).get(),
+           error);
+#endif
+  }
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  PREVENT_MEDIA_REMOVAL preventMediaRemoval;
+
+  preventMediaRemoval.PreventMediaRemoval = FALSE;
+
+  success = DeviceIoControl(diskHandle,
+                            IOCTL_STORAGE_MEDIA_REMOVAL,
+                            &preventMediaRemoval, sizeof(preventMediaRemoval),
+                            NULL, 0,
+                            &byteCount,
+                            NULL);
+  if (!success) {
+#ifdef DEBUG
+    const DWORD error = GetLastError();
+    printf("IOCTL_STORAGE_MEDIA_REMOVAL failed on %s with code %u\n",
+           NS_LossyConvertUTF16toASCII(volumePath).get(),
+           error);
+#endif
+  }
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  success = DeviceIoControl(diskHandle,
+                            IOCTL_STORAGE_EJECT_MEDIA,
+                            NULL,
+                            0,
+                            NULL,
+                            0,
+                            &byteCount,
+                            NULL);
+  if (!success) {
+#ifdef DEBUG
+    const DWORD error = GetLastError();
+    printf("IOCTL_STORAGE_EJECT_MEDIA failed on %s with code %u\n",
+           NS_LossyConvertUTF16toASCII(volumePath).get(),
+           error);
+#endif
+    return NS_ERROR_FAILURE;
+  }
+
+  return NS_OK;
+}
 
 /**
  * Determine whether the device specified by aDescendantDevInst is a descendant
