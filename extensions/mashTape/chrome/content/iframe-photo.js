@@ -75,7 +75,7 @@ function _mashTape_setupPhotoStream(imageItems, paneWidth, paneHeight) {
 					"</span>" + ")").inject(info);
 		}
 	});
-
+}
  
 /**
  * updatePhotoStreamSpeed
