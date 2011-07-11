@@ -188,6 +188,22 @@ interface sbIDeviceFirmwareHandler : nsISupports
                     in unsigned long aDeviceProductID);
 
   /**
+   * \brief Notify the handler to expect a device to connect in recovery mode
+   * \param aDeviceVendorID - The device vendor ID of the device that will
+   *                          reconnect in recovery mode, or 0 for the
+   *                          currently bound device.
+   * \param aDeviceProductID - The device product ID of the device that will
+   *                           reconnect in recovery mode, or 0 for the
+   *                           currently bound device.
+   * \note No events need to be sent for this method. It should be a
+   *       synchronous operation. But, do try and be as quick about it
+   *       as possible.
+   */
+  void initiateRecoveryModeSwitch(
+                                 [optional] in unsigned long aDeviceVendorID,
+                                 [optional] in unsigned long aDeviceProductID);
+
+  /**
    * \brief Bind the handler to a device
    * \param aDevice - The device you wish to bind to
    * \param [optional] aListener - Optional event listener 

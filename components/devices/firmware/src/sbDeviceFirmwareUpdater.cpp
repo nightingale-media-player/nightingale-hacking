@@ -1075,7 +1075,6 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
-  NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
   firmwarehandlers_t firmwareHandlers;

@@ -175,6 +175,11 @@ public:
                                PRUint32 aDeviceProductID,
                                PRBool *_retval);
   // override me, see cpp file for implementation notes
+  virtual nsresult OnBeginRecoveryModeSwitch(PRUint32 aDeviceVendorID,
+                                             PRUint32 aDeviceProductID);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnEndRecoveryModeSwitch();
+  // override me, see cpp file for implementation notes
   virtual nsresult OnRebind(sbIDevice *aDevice,
                             sbIDeviceEventListener *aListener,
                             PRBool *_retval);

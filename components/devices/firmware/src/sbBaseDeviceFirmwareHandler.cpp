@@ -602,6 +602,37 @@ sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnBeginRecoveryModeSwitch(
+                             PRUint32 aDeviceVendorID,
+                             PRUint32 aDeviceProductID)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  /**
+   * This is called when the application expects a device with the
+   * specified NORMAL MODE baseband IDs to connect in recovery mode.
+   * The handler should expect a device with ANY corresponding recovery
+   * mode IDs to connect.  If aDeviceVendorID is zero, then expect the
+   * currently bound device to reconnect in recovery mode.
+   */
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnEndRecoveryModeSwitch()
+{
+  TRACE(("[%s]", __FUNCTION__));
+  /**
+   * The application calls this function when it determines that the
+   * handler should not expect a recovery mode connection.  Reverse
+   * the effects, if any, of OnBeginRecoveryModeSwitch().
+   *
+   * Calls to OnBeginRecoveryModeSwitch() and OnEndRecoveryModeSwitch()
+   * are not necessarily balanced.
+   */
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
                                       sbIDeviceEventListener *aListener,
                                       PRBool *_retval)
@@ -1139,7 +1170,6 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoMonitor mon(mMonitor);
@@ -1148,6 +1178,25 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
                             aDeviceVendorID, 
                             aDeviceProductID, 
                             _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::InitiateRecoveryModeSwitch(
+                             PRUint32 aDeviceVendorID,
+                             PRUint32 aDeviceProductID)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  nsAutoMonitor mon(mMonitor);
+
+  rv = OnBeginRecoveryModeSwitch(aDeviceVendorID,
+                                 aDeviceProductID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1168,6 +1217,9 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
 
   mDevice = aDevice;
   mListener = aListener;
+
+  nsresult rv = OnEndRecoveryModeSwitch();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

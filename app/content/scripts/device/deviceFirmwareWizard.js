@@ -169,7 +169,16 @@ var deviceFirmwareWizard = {
         deviceManager.addEventListener(this);
 
         // Handle default device
+        let handler = null;        
         if(this._isDefaultDevice) {
+          // Get a firmware handler for the selected device and hint it to
+          // expect a recovery mode connection
+          handler = this._deviceFirmwareUpdater.getHandler(
+                                                  null,
+                                                  this._defaultDeviceVID,
+                                                  this._defaultDevicePID);
+          handler.initiateRecoveryModeSwitch(this._defaultDeviceVID,
+                                             this._defaultDevicePID);
           let recoveryInstructions = 
             SBFormattedString("device.firmware.wizard.recovery_mode.instructions", 
                               [this._defaultDeviceName, 
@@ -192,7 +201,6 @@ var deviceFirmwareWizard = {
         }
         
         // Not default device, proceed as normal.
-        let handler = null;        
         try {
           handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
         }
@@ -209,6 +217,9 @@ var deviceFirmwareWizard = {
                 if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
                    aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
                   let handler = self._deviceFirmwareUpdater.getActiveHandler(this.device);
+
+                  // Hint the handler to expect a recovery mode connection
+                  handler.initiateRecoveryModeSwitch();
 
                   let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
                   label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
@@ -247,6 +258,9 @@ var deviceFirmwareWizard = {
 
         this._deviceFirmwareUpdater.requireRecovery(this._device);
         
+        // Hint the handler to expect a recovery mode connection
+        handler.initiateRecoveryModeSwitch();
+
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
         label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
                                         [this._deviceProperties.modelNumber]);
@@ -624,12 +638,12 @@ var deviceFirmwareWizard = {
         setTimeout(function() {
             self._wizardElem.goTo("device_needs_recovery_mode_page");
           }, 0);
-      }
+    }
     }
     else {
-      setTimeout(function() {
-          self._wizardElem.goTo("device_firmware_wizard_check_page");
-        }, 0);
+    setTimeout(function() {
+        self._wizardElem.goTo("device_firmware_wizard_check_page");
+      }, 0);
     }
   },
 
