@@ -24,14 +24,15 @@
 
 #include "sbSongkickDBService.h"
 
-#include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 
-#include <nsAutoPtr.h>
+#include <nsAutoLock.h>
+#include <nsICategoryManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsIIOService.h>
 #include <nsIMutableArray.h>
+#include <nsIObserverService.h>
 #include <nsIProperties.h>
 #include <nsIRunnable.h>
 #include <nsIThread.h>
@@ -44,7 +45,52 @@
 
 #include <list>
 
-//------------------------------------------------------------------------------
+
+//==============================================================================
+// String escaping utility functions
+//==============================================================================
+
+nsString c2h( char dec )
+{
+  char dig1 = (dec&0xF0)>>4;
+  char dig2 = (dec&0x0F);
+  if ( 0<= dig1 && dig1<= 9) dig1+=48;    //0,48inascii
+  if (10<= dig1 && dig1<=15) dig1+=97-10; //a,97inascii
+  if ( 0<= dig2 && dig2<= 9) dig2+=48;
+  if (10<= dig2 && dig2<=15) dig2+=97-10;
+
+  nsString r;
+  r.Append(dig1);
+  r.Append(dig2);
+  return r;
+}
+
+//based on javascript encodeURIComponent()
+nsString encodeURIComponent(const nsString &c)
+{
+  nsString escaped;
+  int max = c.Length();
+  for (int i=0; i<max; i++) {
+    if ((48 <= c[i] && c[i] <= 57) ||//0-9
+        (65 <= c[i] && c[i] <= 90) ||//abc...xyz
+        (97 <= c[i] && c[i] <= 122) || //ABC...XYZ
+        (c[i]=='~' || c[i]=='!' || c[i]=='*' || c[i]=='(' || c[i]==')' || c[i]=='\'')
+       )
+    {
+      escaped.Append(c[i]);
+    }
+    else {
+      escaped.AppendLiteral("%");
+      escaped.Append( c2h(c[i]) );//converts char 255 to string "ff"
+    }
+  }
+  return escaped;
+}
+
+
+//==============================================================================
+// sbSongkickResultEnumerator
+//==============================================================================
 
 class sbSongkickResultEnumerator : public nsISimpleEnumerator
 {
@@ -81,51 +127,6 @@ sbSongkickResultEnumerator::~sbSongkickResultEnumerator()
 {
 }
 
-nsString c2h( PRUnichar dec )
-{
-    unsigned char dig1 = (dec&0xF0)>>4;
-    unsigned char dig2 = (dec&0x0F);
-    
-    nsString r;
-    if (dig1 < 10) {
-        r.Append(PRUnichar('0' + dig1));
-    }
-    else {
-        r.Append(PRUnichar('a' + dig1 - 10));
-    }
-    if (dig2 < 10) {
-        r.Append(PRUnichar('0' + dig2));
-    }
-    else {
-        r.Append(PRUnichar('a' + dig2 - 10));
-    }
-    return r;
-}
-
-//based on javascript encodeURIComponent()
-nsString encodeURIComponent(const nsString &c)
-{
-    nsString escaped;
-    int max = c.Length();
-    for(int i=0; i<max; i++)
-    {
-        if ( (48 <= c[i] && c[i] <= 57) ||//0-9
-             (65 <= c[i] && c[i] <= 90) ||//abc...xyz
-             (97 <= c[i] && c[i] <= 122) || //ABC...XYZ
-             (c[i]=='~' || c[i]=='!' || c[i]=='*' || c[i]=='(' || c[i]==')' || c[i]=='\'')
-        )
-        {
-            escaped.Append(c[i]);
-        }
-        else
-        {
-            escaped.AppendLiteral("%");
-            escaped.Append( c2h(c[i]) );//converts char 255 to string "ff"
-        }
-    }
-    return escaped;
-}
-
 nsresult
 sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
                                  sbIDatabaseQuery *aQuery)
@@ -141,7 +142,8 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
 
   for (PRUint32 i = 0; i < rowCount; i++) {
     nsString id;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("id"), id);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("id"), id);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // If this record has already been recorded, just continue.
     PRBool hasRecord = PR_FALSE;
@@ -151,37 +153,47 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
     }
     
     nsString artistName;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), artistName);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), artistName);
+    NS_ENSURE_SUCCESS(rv, rv);
     artistName = encodeURIComponent(artistName);
 
     nsString artistURL;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("artistURL"), artistURL);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("artistURL"), artistURL);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsString ts;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("timestamp"), ts);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("timestamp"), ts);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsString venue;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("venue"), venue);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("venue"), venue);
+    NS_ENSURE_SUCCESS(rv, rv);
     venue = encodeURIComponent(venue);
 
     nsString city;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("city"), city);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("city"), city);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsString title;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("title"), title);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("title"), title);
+    NS_ENSURE_SUCCESS(rv, rv);
     title = encodeURIComponent(title);
 
     nsString url;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("concertURL"), url);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("concertURL"), url);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsString lib;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("libraryArtist"), lib);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("libraryArtist"), lib);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsString venueURL;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("venueURL"), venueURL);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("venueURL"), venueURL);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsString tickets;
-    aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("tickets"), tickets);
+    rv = aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("tickets"), tickets);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // Now lookup the playing at artists.
     rv = aQuery->ResetQuery();
@@ -302,7 +314,273 @@ sbSongkickResultEnumerator::GetNext(nsISupports **aOutNext)
   return NS_OK;
 }
 
-//------------------------------------------------------------------------------
+
+//==============================================================================
+// sbSongkickDBInfo
+//==============================================================================
+
+class sbSongkickDBInfo : public nsIRunnable
+{
+  friend class sbSongkickDBService;
+
+public:
+  sbSongkickDBInfo();
+  virtual ~sbSongkickDBInfo();
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIRUNNABLE
+
+  nsresult Init(sbSongkickDBService *aDBService);
+
+protected:
+  nsresult LoadGotLocationInfo();
+  nsresult LoadLocationCountryInfo();
+  nsresult LoadLocationStateInfo();
+  nsresult LoadLocationCityInfo();
+
+  // Shared members:
+  PRBool                        mGotLocationInfo;
+  nsCOMPtr<nsIMutableArray>     mCountriesProps;
+  nsCOMPtr<nsIMutableArray>     mStateProps;
+  nsCOMPtr<nsIMutableArray>     mCityProps;
+
+private:
+  nsCOMPtr<sbIDatabaseQuery>    mDBQuery;
+  nsRefPtr<sbSongkickDBService> mDBService;
+};
+
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbSongkickDBInfo, nsIRunnable)
+
+sbSongkickDBInfo::sbSongkickDBInfo()
+  : mGotLocationInfo(PR_FALSE)
+{
+}
+
+sbSongkickDBInfo::~sbSongkickDBInfo()
+{
+}
+
+nsresult
+sbSongkickDBInfo::Init(sbSongkickDBService *aService)
+{
+  NS_ENSURE_ARG_POINTER(aService);
+  mDBService = aService;
+
+  nsresult rv;
+  mCountriesProps =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mStateProps =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCityProps =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickDBInfo::Run()
+{
+  NS_ENSURE_TRUE(mDBService, NS_ERROR_UNEXPECTED);
+
+  nsresult rv;
+  rv = mDBService->GetDatabaseQuery(getter_AddRefs(mDBQuery));
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // set an active flag...?
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = LoadGotLocationInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = LoadLocationCountryInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = LoadLocationStateInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = LoadLocationCityInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbSongkickDBInfo::LoadGotLocationInfo()
+{
+  nsresult rv;
+  rv = mDBQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString stmt;
+  stmt.AssignLiteral("select count(*) from cities");
+
+  rv = mDBQuery->AddQuery(stmt);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 queryResult;
+  rv = mDBQuery->Execute(&queryResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(queryResult == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> results;
+  rv = mDBQuery->GetResultObject(getter_AddRefs(results));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString rowCountStr;
+  rv = results->GetRowCell(0, 0, rowCountStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = rowCountStr.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mGotLocationInfo = rowCount > 0;
+
+  return NS_OK;
+}
+
+nsresult
+sbSongkickDBInfo::LoadLocationCountryInfo()
+{
+  nsresult rv;
+  rv = mDBQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->AddQuery(NS_LITERAL_STRING("select * from countries"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 queryResult;
+  rv = mDBQuery->Execute(&queryResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(queryResult == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> results;
+  rv = mDBQuery->GetResultObject(getter_AddRefs(results));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = results->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsString id, name,;
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("id"), id);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbSongkickProperty> curProp = new sbSongkickProperty();
+    NS_ENSURE_TRUE(curProp, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = curProp->Init(name, id, EmptyString());
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mCountriesProps->AppendElement(curProp, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbSongkickDBInfo::LoadLocationStateInfo()
+{
+  nsresult rv;
+  rv = mDBQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->AddQuery(NS_LITERAL_STRING("select * from states"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 queryResult;
+  rv = mDBQuery->Execute(&queryResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(queryResult == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> results;
+  rv = mDBQuery->GetResultObject(getter_AddRefs(results));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = results->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsString id, name, country;
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("id"), id);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), name);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("country"), country);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbSongkickProperty> curProp = new sbSongkickProperty();
+    NS_ENSURE_TRUE(curProp, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = curProp->Init(name, id, country);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mStateProps->AppendElement(curProp, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbSongkickDBInfo::LoadLocationCityInfo()
+{
+  nsresult rv;
+  rv = mDBQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDBQuery->AddQuery(NS_LITERAL_STRING("select * from cities"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 queryResult;
+  rv = mDBQuery->Execute(&queryResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(queryResult == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> results;
+  rv = mDBQuery->GetResultObject(getter_AddRefs(results));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = results->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsString id, name, state;
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("id"), id);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), name);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("state"), state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbSongkickProperty> curProp = new sbSongkickProperty();
+    NS_ENSURE_TRUE(curProp, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = curProp->Init(name, id, state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mCityProps->AppendElement(curProp, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+//==============================================================================
+// sbSongkickQuery
+//==============================================================================
 
 class sbSongkickQuery : public nsIRunnable
 {
@@ -314,6 +592,7 @@ public:
   NS_DECL_NSIRUNNABLE
 
   nsresult Init(const nsAString & aQueryStmt,
+                sbSongkickDBService *aDBService,
                 sbISongkickEnumeratorCallback *aCallback);
 
   void RunEnumCallbackStart();
@@ -323,6 +602,7 @@ private:
   nsCOMPtr<sbISongkickEnumeratorCallback> mCallback;
   nsCOMPtr<nsIThread>                     mCallingThread;
   nsRefPtr<sbSongkickResultEnumerator>    mResultsEnum;
+  nsRefPtr<sbSongkickDBService>           mDBService;
   nsString                                mQueryStmt;
 };
 
@@ -340,6 +620,8 @@ sbSongkickQuery::~sbSongkickQuery()
 NS_IMETHODIMP
 sbSongkickQuery::Run()
 {
+  NS_ENSURE_TRUE(mDBService, NS_ERROR_UNEXPECTED);
+
   // First, notify the enum callback of enumeration start.
   nsresult rv;
   nsCOMPtr<nsIRunnable> runnable =
@@ -348,40 +630,22 @@ sbSongkickQuery::Run()
   rv = mCallingThread->Dispatch(runnable, NS_DISPATCH_SYNC);
 
   // Setup the database query.
-  nsCOMPtr<nsIIOService> ioService =
-    do_GetService("@mozilla.org/network/io-service;1", &rv);
+  nsCOMPtr<sbIDatabaseQuery> db;
+  rv = mDBService->GetDatabaseQuery(getter_AddRefs(db));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIProperties> dirService =
-    do_GetService("@mozilla.org/file/directory_service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIFile> profileFile;
-  rv = dirService->Get("ProfD",
-                       NS_GET_IID(nsIFile),
-                       getter_AddRefs(profileFile));
-
-  nsCOMPtr<nsIURI> dbLocationURI;
-  rv = NS_NewFileURI(getter_AddRefs(dbLocationURI),
-                     profileFile,
-                     ioService);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDatabaseQuery> db =
-    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = db->SetDatabaseLocation(dbLocationURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = db->SetDatabaseGUID(NS_LITERAL_STRING("concerts"));
-  NS_ENSURE_SUCCESS(rv, rv);
   rv = db->AddQuery(mQueryStmt);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Phew, finally send of the query.
-  PRInt32 queryResult;
-  rv = db->Execute(&queryResult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(queryResult == 0, NS_ERROR_FAILURE);
+  {
+    // Try and save deadlocking the database...
+    nsAutoLock lock(mDBService->mQueryRunningLock);
+    
+    // Phew, finally send of the query.
+    PRInt32 queryResult;
+    rv = db->Execute(&queryResult);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(queryResult == 0, NS_ERROR_FAILURE);
+  }
 
   // Convert any results into the appropriate type.
   nsCOMPtr<sbIDatabaseResult> results;
@@ -390,12 +654,8 @@ sbSongkickQuery::Run()
 
   // Create another db query for lookup up playing at data while enumerating
   // through the current results.
-  nsCOMPtr<sbIDatabaseQuery> artistDB =
-    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = artistDB->SetDatabaseLocation(dbLocationURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = artistDB->SetDatabaseGUID(NS_LITERAL_STRING("concerts"));
+  nsCOMPtr<sbIDatabaseQuery> artistDB;
+  rv = mDBService->GetDatabaseQuery(getter_AddRefs(artistDB));
   NS_ENSURE_SUCCESS(rv, rv);
 
   mResultsEnum = new sbSongkickResultEnumerator();
@@ -415,11 +675,14 @@ sbSongkickQuery::Run()
 
 nsresult
 sbSongkickQuery::Init(const nsAString & aQueryStmt,
+                      sbSongkickDBService *aDBService,
                       sbISongkickEnumeratorCallback *aCallback)
 {
   NS_ENSURE_ARG_POINTER(aCallback);
-
+  NS_ENSURE_ARG_POINTER(aDBService);
+ 
   mQueryStmt = aQueryStmt;
+  mDBService = aDBService;
   mCallback = aCallback;
 
   // Grap a reference to the calling thread.
@@ -454,7 +717,9 @@ sbSongkickQuery::RunEnumCallbackEnd()
   mCallback->OnEnumerationEnd(outEnum);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
+// sbSongkickCountQuery
+//==============================================================================
 
 class sbSongkickCountQuery : public nsIRunnable
 {
@@ -466,6 +731,7 @@ public:
   NS_DECL_NSIRUNNABLE
 
   nsresult Init(const nsAString & aQueryStmt,
+                sbSongkickDBService *aDBService,
                 sbISongkickConcertCountCallback *aCallback);
 
   void RunEnumCountCallback();
@@ -473,6 +739,7 @@ public:
 private:
   nsCOMPtr<sbISongkickConcertCountCallback> mCallback;
   nsCOMPtr<nsIThread>                       mCallingThread;
+  nsRefPtr<sbSongkickDBService>             mDBService;
   nsString                                  mQueryStmt;
   PRUint32                                  mCount;
 };
@@ -491,18 +758,19 @@ sbSongkickCountQuery::~sbSongkickCountQuery()
 
 nsresult
 sbSongkickCountQuery::Init(const nsAString & aQueryStmt,
+                           sbSongkickDBService *aDBService,
                            sbISongkickConcertCountCallback *aCallback)
 {
   NS_ENSURE_ARG_POINTER(aCallback);
+  NS_ENSURE_ARG_POINTER(aDBService);
+
+  mDBService = aDBService;
   mCallback = aCallback;
   mQueryStmt = aQueryStmt;
 
-  // Grap a reference to the calling thread.
+  // Grab a reference to the calling thread.
   nsresult rv;
-  nsCOMPtr<nsIThreadManager> threadMgr =
-    do_GetService("@mozilla.org/thread-manager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = threadMgr->GetCurrentThread(getter_AddRefs(mCallingThread));
+  rv = NS_GetCurrentThread(getter_AddRefs(mCallingThread));
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
@@ -514,32 +782,10 @@ sbSongkickCountQuery::Run()
   nsresult rv;
 
   // Setup the database query.
-  nsCOMPtr<nsIIOService> ioService =
-    do_GetService("@mozilla.org/network/io-service;1", &rv);
+  nsCOMPtr<sbIDatabaseQuery> db;
+  rv = mDBService->GetDatabaseQuery(getter_AddRefs(db));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIProperties> dirService =
-    do_GetService("@mozilla.org/file/directory_service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIFile> profileFile;
-  rv = dirService->Get("ProfD",
-                       NS_GET_IID(nsIFile),
-                       getter_AddRefs(profileFile));
-
-  nsCOMPtr<nsIURI> dbLocationURI;
-  rv = NS_NewFileURI(getter_AddRefs(dbLocationURI),
-                     profileFile,
-                     ioService);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDatabaseQuery> db =
-    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = db->SetDatabaseLocation(dbLocationURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = db->SetDatabaseGUID(NS_LITERAL_STRING("concerts"));
-  NS_ENSURE_SUCCESS(rv, rv);
   rv = db->AddQuery(mQueryStmt);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -577,16 +823,266 @@ sbSongkickCountQuery::RunEnumCountCallback()
   mCallback->OnConcertCountEnd(mCount);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
+// sbSongkickDBService
+//==============================================================================
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbSongkickDBService, sbPISongkickDBService)
 
 sbSongkickDBService::sbSongkickDBService()
+  : mQueryRunningLock(
+      nsAutoLock::NewLock("sbSongkickDBService::mQueryRunningLock"))
 {
+  NS_ASSERTION(mQueryRunningLock, "Failed to create mQueryRunningLock");
 }
 
 sbSongkickDBService::~sbSongkickDBService()
 {
+  if (mQueryRunningLock) {
+    nsAutoLock::DestroyLock(mQueryRunningLock);
+  }
+}
+
+nsresult
+sbSongkickDBService::Init()
+{
+  // Preload some data on a background thread.
+  nsresult rv;
+  mDBInfo = new sbSongkickDBInfo();
+  rv = mDBInfo->Init(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this,
+                                    "final-ui-startup",
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbSongkickDBService::LookupDBInfo()
+{
+  NS_ENSURE_TRUE(mDBInfo, NS_ERROR_UNEXPECTED);
+
+  // Start data lookup.
+  nsresult rv;
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = threadPoolService->Dispatch(mDBInfo, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbSongkickDBService::GetDatabaseQuery(sbIDatabaseQuery **aOutDBQuery)
+{
+  NS_ENSURE_ARG_POINTER(aOutDBQuery);
+
+  // Setup the database query.
+  nsresult rv;
+  nsCOMPtr<nsIIOService> ioService =
+    do_GetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIProperties> dirService =
+    do_GetService("@mozilla.org/file/directory_service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> profileFile;
+  rv = dirService->Get("ProfD",
+                       NS_GET_IID(nsIFile),
+                       getter_AddRefs(profileFile));
+
+  // Ensure that the database has been created first.
+  nsCOMPtr<nsIFile> dbFile;
+  rv = profileFile->Clone(getter_AddRefs(dbFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbFile->Append(NS_LITERAL_STRING("concerts.db"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool exists = PR_FALSE;
+  rv = dbFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!exists) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<nsIURI> dbLocationURI;
+  rv = NS_NewFileURI(getter_AddRefs(dbLocationURI),
+                     profileFile,
+                     ioService);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> db =
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = db->SetDatabaseLocation(dbLocationURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = db->SetDatabaseGUID(NS_LITERAL_STRING("concerts"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  db.forget(aOutDBQuery);
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// XPCOM Startup Registration
+
+/* static */ NS_METHOD
+sbSongkickDBService::RegisterSelf(nsIComponentManager *aCompMgr,
+                                  nsIFile *aPath,
+                                  const char *aLoaderStr,
+                                  const char *aType,
+                                  const nsModuleComponentInfo *aInfo)
+{
+  NS_ENSURE_ARG_POINTER(aCompMgr);
+  NS_ENSURE_ARG_POINTER(aPath);
+  NS_ENSURE_ARG_POINTER(aLoaderStr);
+  NS_ENSURE_ARG_POINTER(aType);
+  NS_ENSURE_ARG_POINTER(aInfo);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsICategoryManager> catMgr =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = catMgr->AddCategoryEntry("app-startup",
+                                SONGBIRD_SONGKICKDBSERVICE_CLASSNAME,
+                                "service,"
+                                SONGBIRD_SONGKICKDBSERVICE_CONTRACTID,
+                                PR_TRUE, PR_TRUE, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// sbPISongkickDBService
+
+NS_IMETHODIMP
+sbSongkickDBService::GetHasLocationInfo(PRBool *aOutHasLocationInfo)
+{
+  NS_ENSURE_ARG_POINTER(aOutHasLocationInfo);
+  NS_ENSURE_TRUE(mDBInfo, NS_ERROR_UNEXPECTED);
+
+  *aOutHasLocationInfo = mDBInfo->mGotLocationInfo;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickDBService::GetLocationCountries(nsIArray **aOutArray)
+{
+  NS_ENSURE_ARG_POINTER(aOutArray);
+  NS_ENSURE_TRUE(mDBInfo, NS_ERROR_NOT_AVAILABLE);
+
+  NS_IF_ADDREF(*aOutArray = mDBInfo->mCountriesProps);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickDBService::ReloadLocationInfo(void)
+{
+  NS_ENSURE_TRUE(mDBInfo, NS_ERROR_UNEXPECTED);
+  nsresult rv;
+  
+  rv = LookupDBInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickDBService::GetLocationStates(const nsAString & aCountry,
+                                       nsIArray **aOutArray)
+{
+  NS_ENSURE_ARG_POINTER(aOutArray);
+
+  // The state information is stored without a filter. Create an array
+  // that has a subset of the state information based on the country.
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> statesArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  nsCOMPtr<nsISimpleEnumerator> statesEnum;
+  rv = mDBInfo->mStateProps->Enumerate(getter_AddRefs(statesEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore = PR_FALSE;
+  while (NS_SUCCEEDED(statesEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> curItem;
+    rv = statesEnum->GetNext(getter_AddRefs(curItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISongkickProperty> curProp =
+      do_QueryInterface(curItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString curCountry;
+    rv = curProp->GetKey(curCountry);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (curCountry.Equals(aCountry)) {
+      rv = statesArray->AppendElement(curProp, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = CallQueryInterface(statesArray, aOutArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickDBService::GetLocationCities(const nsAString & aState,
+                                       nsIArray **aOutArray)
+{
+  NS_ENSURE_ARG_POINTER(aOutArray);
+
+  // The state information is stored without a filter. Create an array
+  // that has a subset of the state information based on the country.
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> citiesArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  nsCOMPtr<nsISimpleEnumerator> cityEnum;
+  rv = mDBInfo->mCityProps->Enumerate(getter_AddRefs(cityEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore = PR_FALSE;
+  while (NS_SUCCEEDED(cityEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> curItem;
+    rv = cityEnum->GetNext(getter_AddRefs(curItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbISongkickProperty> curProp =
+      do_QueryInterface(curItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString curState;
+    rv = curProp->GetKey(curState);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (curState.Equals(aState)) {
+      rv = citiesArray->AppendElement(curProp, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = CallQueryInterface(citiesArray, aOutArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -609,7 +1105,7 @@ sbSongkickDBService::StartAristConcertLookup(
   NS_ENSURE_TRUE(skQuery, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
-  rv = skQuery->Init(stmt, aCallback);
+  rv = skQuery->Init(stmt, this, aCallback);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThreadPool> threadPoolService =
@@ -656,7 +1152,7 @@ sbSongkickDBService::StartConcertLookup(
   NS_ENSURE_TRUE(skQuery, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
-  rv = skQuery->Init(stmt, aCallback);
+  rv = skQuery->Init(stmt, this, aCallback);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThreadPool> threadPoolService =
@@ -706,7 +1202,7 @@ sbSongkickDBService::StartConcertCountLookup(
   nsRefPtr<sbSongkickCountQuery> skQuery = new sbSongkickCountQuery();
   NS_ENSURE_TRUE(skQuery, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = skQuery->Init(stmt, aCallback);
+  rv = skQuery->Init(stmt, this, aCallback);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThreadPool> threadPoolService =
@@ -720,6 +1216,35 @@ sbSongkickDBService::StartConcertCountLookup(
 }
 
 //------------------------------------------------------------------------------
+// nsIObserver
+
+NS_IMETHODIMP
+sbSongkickDBService::Observe(nsISupports *aSubject,
+                             const char *aTopic,
+                             const PRUnichar *aData)
+{
+  NS_ENSURE_ARG_POINTER(aTopic);
+
+  if (strcmp(aTopic, "final-ui-startup") == 0) {
+    nsresult rv;
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = observerService->RemoveObserver(this, aTopic);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = LookupDBInfo();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+
+//==============================================================================
+// sbSongkickConcertInfo
+//==============================================================================
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbSongkickConcertInfo, sbISongkickConcertInfo)
 
@@ -845,7 +1370,9 @@ sbSongkickConcertInfo::GetLibartist(nsAString & aLibartist)
   return NS_OK;
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
+// sbSongkickArtistConcertInfo
+//==============================================================================
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbSongkickArtistConcertInfo,
                               sbISongkickArtistConcertInfo)
@@ -878,6 +1405,52 @@ NS_IMETHODIMP
 sbSongkickArtistConcertInfo::GetArtisturl(nsAString & aArtisturl)
 {
   aArtisturl = mArtistURL;
+  return NS_OK;
+}
+
+//==============================================================================
+// sbSongkickProperty
+//==============================================================================
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbSongkickProperty, sbISongkickProperty)
+
+sbSongkickProperty::sbSongkickProperty()
+{
+}
+
+sbSongkickProperty::~sbSongkickProperty()
+{
+}
+
+nsresult
+sbSongkickProperty::Init(const nsAString & aName,
+                         const nsAString & aID,
+                         const nsAString & aKey)
+{
+  mName = aName;
+  mID = aID;
+  mKey = aKey;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickProperty::GetName(nsAString & aName)
+{
+  aName = mName;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickProperty::GetId(nsAString & aID)
+{
+  aID = mID;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSongkickProperty::GetKey(nsAString & aKey)
+{
+  aKey = mKey;
   return NS_OK;
 }
 

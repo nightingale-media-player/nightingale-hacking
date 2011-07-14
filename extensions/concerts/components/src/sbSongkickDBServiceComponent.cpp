@@ -26,7 +26,7 @@
 #include "sbSongkickDBService.h"
 
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbSongkickDBService)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSongkickDBService, Init)
 
 static nsModuleComponentInfo sbSongkickComponent[] =
 {
@@ -34,7 +34,8 @@ static nsModuleComponentInfo sbSongkickComponent[] =
     SONGBIRD_SONGKICKDBSERVICE_CLASSNAME,
     SONGBIRD_SONGKICKDBSERVICE_CID,
     SONGBIRD_SONGKICKDBSERVICE_CONTRACTID,
-    sbSongkickDBServiceConstructor
+    sbSongkickDBServiceConstructor,
+    sbSongkickDBService::RegisterSelf
   }
 };
 

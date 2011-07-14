@@ -9,52 +9,54 @@ interface nsISimpleEnumerator;
 [scriptable, uuid(225CFD2A-19E6-4C58-9D3A-F64BDA16D0B0)]
 interface sbISongkick : nsISupports
 {
-	attribute boolean concertRefreshRunning;
-	attribute boolean drawingLock;
+  attribute boolean concertRefreshRunning;
+  attribute boolean drawingLock;
 
-	readonly attribute string onTourImgProperty;
-	readonly attribute string onTourUrlProperty;
-	readonly attribute string progressString;
-	readonly attribute long progressPercentage;
+  readonly attribute string onTourImgProperty;
+  readonly attribute string onTourUrlProperty;
+  readonly attribute string progressString;
+  readonly attribute long progressPercentage;
 
-	void startRefreshThread();
-	boolean refreshConcerts(in boolean async, in long cityID);
-	void processConcerts(in boolean async, in long cityID, in string xmlData);
+  void startRefreshThread();
+  boolean refreshConcerts(in boolean async, in long cityID);
+  void processConcerts(in boolean async, in long cityID, in string xmlData);
 
-	void refreshLocations();
-	void processLocations(in string xmlData);
-	boolean gotLocationInfo();
+  void refreshLocations();
+  void processLocations(in string xmlData);
+  boolean gotLocationInfo();
 
-	string getArtistOnTourUrl(in string artistName);
+  string getArtistOnTourUrl(in string artistName);
 
-	// Callback registration and unregistration
-	boolean hasDisplayCallback();
-	boolean registerDisplayCallback(in sbISongkickDisplayCallback callback);
-	void unregisterDisplayCallback();
-	boolean registerSPSUpdater(in sbISongkickDisplayCallback callback);
-	void unregisterSPSUpdater();
+  // Callback registration and unregistration
+  boolean hasDisplayCallback();
+  boolean registerDisplayCallback(in sbISongkickDisplayCallback callback);
+  void unregisterDisplayCallback();
+  boolean registerSPSUpdater(in sbISongkickDisplayCallback callback);
+  void unregisterSPSUpdater();
 
-	// These are JSON encoding of the actual objects and should be JSON
-	// decoded before using
-	AUTF8String getLocationCountries();
-	AUTF8String getLocationStates(in long countryID);
-	AUTF8String getLocationCities(in long stateID);
+  // These are JSON encoding of the actual objects and should be JSON
+  // decoded before using
+  AUTF8String getLocationCountries();
+  AUTF8String getLocationStates(in long countryID);
+  AUTF8String getLocationCities(in long stateID);
 
-	AUTF8String getCityString(in long cityID);
-	AUTF8String getLocationString(in long countryID, in long stateID,
-					in long cityID);
+  AUTF8String getCityString(in long cityID);
+  AUTF8String getLocationString(in long countryID,
+                                in long stateID,
+                                in long cityID);
 
-	long getConcertCount(in boolean filterLibraryArtists,
-                             in sbISongkickConcertCountCallback aCallback);
-	boolean getTourStatus(in string artistName);
-	string providerURL();
+  long getConcertCount(in boolean filterLibraryArtists,
+                       in sbISongkickConcertCountCallback aCallback);
+  boolean getTourStatus(in string artistName);
+  string providerURL(); 
 
-	nsISimpleEnumerator concertEnumerator(in string sort,
-					in boolean filterLibraryArtists,
-                                        in sbISongkickEnumeratorCallback aCallback);
-	nsISimpleEnumerator artistConcertEnumerator(
-					in boolean filterLibraryArtists,
-					in sbISongkickEnumeratorCallback aCallback);
+  nsISimpleEnumerator concertEnumerator(in string sort,
+                                        in boolean filterLibraryArtists,
+                                        in sbISongkickEnumeratorCallback   aCallback);
+
+  nsISimpleEnumerator artistConcertEnumerator(
+          in boolean filterLibraryArtists,
+          in sbISongkickEnumeratorCallback aCallback);
 };
 
 [scriptable, uuid(0EDDBF3C-518F-4805-B180-E451B222B23D)]
@@ -73,7 +75,7 @@ interface sbISongkickConcertCountCallback : nsISupports
 [scriptable, function, uuid(c1b63620-4d41-11dd-ae16-0800200c9a66)]
 interface sbISongkickDisplayCallback : nsISupports
 {
-	void uiCallback();
+  void uiCallback();
 };
 
 [scriptable, uuid(181E17DC-9BDB-43A7-BB9D-0AD12D9DE8F1)]
@@ -100,13 +102,33 @@ interface sbISongkickArtistConcertInfo : nsISupports
   readonly attribute AString artisturl;
 };
 
+[scriptable, uuid(CDA19347-CE2A-4D7B-B4F5-74812015CDE8)]
+interface sbISongkickProperty: nsISupports
+{
+  readonly attribute AString name;
+  readonly attribute AString id;
+  readonly attribute AString key;
+};
+
 
 /*******************************************************************************
  * Semi-private service
  ******************************************************************************/
-[scriptable, uuid(EAEB5147-2D4E-4979-A105-51923D2464AD)]
+[scriptable, uuid(2E47F4F4-B057-4EB5-AB7D-72D9F37B9DFD)]
 interface sbPISongkickDBService : nsISupports
 {
+  readonly attribute boolean hasLocationInfo;
+
+  readonly attribute nsIArray locationCountries;
+
+  // This will allow us to reload the Database location info (when we refresh
+  // from the server).
+  void reloadLocationInfo();
+
+  nsIArray getLocationStates(in AString aCountry);
+
+  nsIArray getLocationCities(in AString aState);
+
   void startAristConcertLookup(in boolean aFilter,
                                in sbISongkickEnumeratorCallback aCallback);
 

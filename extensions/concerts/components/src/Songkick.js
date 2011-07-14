@@ -877,53 +877,40 @@ Songkick.prototype = {
    * database.
    *********************************************************************/
   getLocationCountries : function() {
-    this._db.resetQuery();
-    this._db.addQuery("select * from countries");
-    var ret = this._db.execute();
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    var locationCountries = dbService.locationCountries;
+
     var countries = new Array();
-    if (ret == 0) {
-      var result = this._db.getResultObject();
-      for (let i=0; i<result.getRowCount(); i++) {
-        var id = result.getRowCellByColumn(i, "id");
-        var name = result.getRowCellByColumn(i, "name");
-        countries.push({"id": id, "name": name});
-      }
+    for (var i = 0; i < locationCountries.length; i++) {
+      var curProp = locationCountries.queryElementAt(i, Ci.sbISongkickProperty);
+      countries.push({"id" : curProp.id, "name": curProp.name});
     }
+
     return this.json.encode(countries);
   },
   getLocationStates : function(country) {
-    this._db.resetQuery();
-    this._db.addQuery("select * from states where country=" + country);
-    var ret = this._db.execute();
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    var statesArray = dbService.getLocationStates(country);
+
     var states = new Array();
-    if (ret == 0) {
-      var result = this._db.getResultObject();
-      for (let i=0; i<result.getRowCount(); i++) {
-        var id = result.getRowCellByColumn(i, "id");
-        var name = result.getRowCellByColumn(i, "name");
-        states.push({"id": id, "name": name});
-      }
+    for (var i = 0; i < statesArray.length; i++) {
+      var curProp = statesArray.queryElementAt(i, Ci.sbISongkickProperty);
+      states.push({"id": curProp.id, "name": curProp.name});
     }
     return this.json.encode(states);
   },
   getLocationCities : function(state) {
-    this._db.resetQuery();
-    this._db.addQuery("select * from cities where state=" + state);
-    var ret = this._db.execute();
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    var cityArray = dbService.getLocationCities(state);
+
     var cities = new Array();
-    if (ret == 0) {
-      var result = this._db.getResultObject();
-      for (let i=0; i<result.getRowCount(); i++) {
-        var id = result.getRowCellByColumn(i, "id");
-        var name = escape(result.getRowCellByColumn(i, "name"));
-        // bug 19997
-        // database value is stored incorrectly, so compensate for it by
-        // escaping the string to URI safe values, and then running
-        // decodeURIComponent to get it back into UTF8
-        name = decodeURIComponent(unescape(name));
-        cities.push({"id": id, "name": name});
-      }
-    }
+    for (var i = 0; i < cityArray.length; i++) {
+      var curProp = cityArray.queryElementAt(i, Ci.sbISongkickProperty);
+      cities.push({"id": curProp.id, "name": curProp.name});
+    } 
     return this.json.encode(cities);
   },
 
@@ -951,28 +938,52 @@ Songkick.prototype = {
    * Returns the full location name, e.g. "City, State Country"
    *********************************************************************/
   getLocationString : function(country, state, city) {
-    this._db.resetQuery();
-    var query = "select cities.name,states.name,countries.name " +
-                "from cities join states on cities.state=states.id " +
-                "join countries on states.country=countries.id " +
-                "where cities.id=" + city;
-    this._db.addQuery(query);
-    var ret = this._db.execute();
-    if (ret != 0)
-      return ("Error!" + ret);
-    var result = this._db.getResultObject();
-    if (result.getRowCount() > 0) {
-      var cityName = result.getRowCell(0,0);
-      var stateName = result.getRowCell(0,1);
-      var countryName = result.getRowCell(0,2);
-      if (stateName == "") {
-        return (cityName + ", " + countryName);
-      } else {
-        return (cityName + ", " + stateName + " " + countryName);
+    // Find the names in the fectched data in the dbservice.
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+
+    var countryArray = dbService.locationCountries;
+    var statesArray = dbService.getLocationStates(country);
+    var cityArray = dbService.getLocationCities(state);
+
+    var countryName = "";
+    var stateName = "";
+    var cityName = "";
+
+    // First, find the matching country.
+    for (var i = 0; i < countryArray.length; i++) {
+      var curProp = countryArray.queryElementAt(i, Ci.sbISongkickProperty);
+      if (curProp.id == country) {
+        countryName = curProp.name;
+        break;
       }
-    } else {
-      return ("Error! Rowcount:" + result.getRowCount());
     }
+
+    // Next find the matching state.
+    for (var i = 0; i < statesArray.length; i++) {
+      var curProp = statesArray.queryElementAt(i, Ci.sbISongkickProperty);
+      if (curProp.id == state) {
+        stateName = curProp.name;
+        break;
+      }
+    }
+
+    // Next find the matching city.
+    for (var i = 0; i < cityArray.length; i++) {
+      var curProp = cityArray.queryElementAt(i, Ci.sbISongkickProperty);
+      if (curProp.id == city) {
+        cityName = curProp.name;
+        break;
+      }
+    }
+
+    // bug 19997
+    // database value is stored incorrectly, so compensate for it by
+    // escaping the string to URI safe values, and then running
+    // decodeURIComponent to get it back into UTF8
+    cityName = decodeURIComponent(unescape(cityName));    
+
+    return (cityName + ", " + stateName + ", " + countryName);
   },
 
   /*********************************************************************
@@ -1232,24 +1243,22 @@ Songkick.prototype = {
       }
     }
     var ret = this._db.execute();
+
+    debugLog("processLocation", "Refreshing DBInfo status.\n");
+    // Since we have updated the location info we need to ask the DBService to
+    // reload so that it is up to date.
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    dbService.reloadLocationInfo();
+    
     this.locationRefreshRunning = false;
     debugLog("processLocations", "Location data processed.");
   },
 
   gotLocationInfo : function() {
-    this._db.resetQuery();
-    this._db.addQuery("select count(*) from cities");
-    try {
-      this._db.execute();
-    } catch (e) {
-      dump("FAIL\n");
-      return (-1);
-    }
-    var result = this._db.getResultObject();
-    var count = result.getRowCell(0,0);
-    if (count <= 0)
-      debugLog("gotLocationInfo", count + "No location info yet");
-    return (count > 0);
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    return dbService.hasLocationInfo;
   },
 
   progress : function(str, pct) {

@@ -35,7 +35,8 @@ var Concerts = {
   newMediaCore: true,
   mediaCore: null,
 
-  QueryInterface : XPCOMUtils.generateQI([Ci.sbISongkickConcertCountCallback]),
+  QueryInterface : XPCOMUtils.generateQI([Ci.sbISongkickConcertCountCallback,
+                                          Ci.nsIObserver]),
 
   onLoad: function() {
     // Initialization code
@@ -56,8 +57,15 @@ var Concerts = {
     this.skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
       .getService(Ci.sbISongkick);
   
-    // Wait until the On Tour properties are registered
-    this._blockAndFinishLoad();
+    Cc["@mozilla.org/observer-service;1"]
+      .getService(Ci.nsIObserverService)
+      .addObserver(this, "final-ui-startup", false);
+      
+    var self = this;
+    setTimeout(function() {
+      // Wait until the On Tour properties are registered
+      self._blockAndFinishLoad();
+    }, 1000);
   },
 
   _blockAndFinishLoad: function _blockAndFinishLoad() {
@@ -282,6 +290,11 @@ var Concerts = {
         this._onTourIcon.style.visibility = "visible";
       else
         this._onTourIcon.style.visibility = "collapse";
+    }
+    else if (aTopic == "final-ui-startup") {
+      Cc["@mozilla.org/observer-service;1"]
+        .getService(Ci.nsIObserverService)
+        .removeObserver(this, "final-ui-startup");
     }
   },
 

@@ -33,17 +33,28 @@ var ConcertOptions = {
 
     if (!this.skSvc.gotLocationInfo()) {
       this.skSvc.refreshLocations();
-      ConcertTicketing.showTimeoutError();
-      return;
-    }
-    // Loop until the location refresh is done running
-    /*
-    while (this.skSvc.locationRefreshRunning) {
-      Cc["@mozilla.org/thread-manager;1"].getService()
-          .currentThread.processNextEvent(false);
-    }
-    */
 
+      var self = this;
+      var interval = setInterval(function () {
+        if (!this.skSvc.locationRefreshRunning) {
+          // Clear the interval so we are not called anymore.
+          clearInterval(interval);
+
+          // Check again to see if we have the location info, if not show the error.
+          if ( !this.skSvc.gotLocationInfo() ) {
+            ConcertTicketing.showTimeoutError();
+          }
+          else {
+            self._populateInformation();
+          }
+        }
+      }, 100); // Checking every 100ms
+    }
+
+    this._populateInformation();
+  },
+
+  _populateInformation: function() {
     // Populate the countries dropdown and pre-select our saved pref
     this._populateCountries(this.pCountry);
 

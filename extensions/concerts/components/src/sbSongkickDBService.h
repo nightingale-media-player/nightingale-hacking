@@ -27,15 +27,26 @@
 
 #include <Songkick.h>
 
+#include <sbIDatabaseQuery.h>
+
+#include <nsAutoPtr.h>
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
+#include <nsIComponentManager.h>
+#include <nsIGenericFactory.h>
+#include <nsIFile.h>
+#include <nsIObserver.h>
+#include <prlock.h>
 
 class sbSongkickQuery;
 class sbSongkickResultEnumerator;
+class sbSongkickDBInfo;
 
+//------------------------------------------------------------------------------
 
-class sbSongkickDBService : public sbPISongkickDBService
+class sbSongkickDBService : public sbPISongkickDBService,
+                            public nsIObserver
 {
 public:
   sbSongkickDBService();
@@ -43,6 +54,27 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBPISONGKICKDBSERVICE
+  NS_DECL_NSIOBSERVER
+
+  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
+                                nsIFile* aPath,
+                                const char* aLoaderStr,
+                                const char* aType,
+                                const nsModuleComponentInfo *aInfo);
+
+  nsresult Init();
+
+  nsresult GetDatabaseQuery(sbIDatabaseQuery **aOutDBQuery);
+
+  // Shared resource, any query that starts to run will use this lock to
+  // prevent the database from getting locked up.
+  PRLock *mQueryRunningLock;
+
+protected:
+  nsresult LookupDBInfo();
+
+private:
+  nsRefPtr<sbSongkickDBInfo> mDBInfo;
 };
 
 #define SONGBIRD_SONGKICKDBSERVICE_CONTRACTID                  \
@@ -111,6 +143,27 @@ public:
 private:
   nsString mArtistName;
   nsString mArtistURL;
+};
+
+//------------------------------------------------------------------------------
+
+class sbSongkickProperty : public sbISongkickProperty
+{
+public:
+  sbSongkickProperty();
+  virtual ~sbSongkickProperty();
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBISONGKICKPROPERTY
+
+  nsresult Init(const nsAString & aName,
+                const nsAString & aID,
+                const nsAString & aKey);
+
+private:
+  nsString mID;
+  nsString mName;
+  nsString mKey;
 };
 
 #endif  // sbSongkickDBService_h_
