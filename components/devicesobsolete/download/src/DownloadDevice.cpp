@@ -3389,6 +3389,21 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
     nsCOMPtr<sbIMediaList>      pDstMediaList;
     nsresult                    result = NS_OK;
     PRBool                      bIsDirectory;
+    PRBool                      bChangedDstFile = PR_FALSE;
+
+    // Get the the file name, if any, supplied in the MIME header:
+    nsCString mimeFilename;
+    nsCOMPtr<nsIHttpChannel> httpChannel =
+      do_QueryInterface(aRequest, &result);
+    if (NS_SUCCEEDED(result)) {
+      nsCAutoString contentDisposition;
+      result = httpChannel->GetResponseHeader(
+                              NS_LITERAL_CSTRING("content-disposition"),
+                              contentDisposition);
+      if (NS_SUCCEEDED(result)) {
+        mimeFilename = GetContentDispositionFilename(contentDisposition);
+      }
+    }
 
     /* Check if the destination is a directory.  If the destination */
     /* does not exist, assume it's a file about to be created.      */
@@ -3402,30 +3417,13 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
 
     if (bIsDirectory)
     {
-        // check content disposition headers first. If there aren't any, we'll fall back
-        // to the final destination url filename.
+        // the destination is a directory; make a complete filename.
+        // Try the MIME file name first. If there isn't any, we'll fall back
+        // to the source url filename.
 
-        nsCString escFileName;
-        PRBool noContentDispositionHeaders = PR_TRUE;
-        nsCOMPtr<nsIHttpChannel> httpChannel = do_QueryInterface(aRequest, &result);
-
-        if (NS_SUCCEEDED(result)) {
-          nsCAutoString contentDisposition;
-          result = httpChannel->GetResponseHeader(NS_LITERAL_CSTRING("content-disposition"),
-                                                  contentDisposition);
-
-          if (NS_SUCCEEDED(result) &&
-              contentDisposition.Length()) {
-            escFileName = GetContentDispositionFilename(contentDisposition);
-            if(!escFileName.IsEmpty())
-              noContentDispositionHeaders = PR_FALSE;
-          }
-        }
-
-        if (noContentDispositionHeaders) {
-          // the destination file is a directory; make a complete filename
-          // based on the actual source URL now that we know the actual
-          // channel used
+        nsCString escFileName(mimeFilename);
+        if (escFileName.IsEmpty()) {
+          // make a filename based on the source URL
           nsCOMPtr<nsIURI> pFinalSrcURI;
 
           nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &result);
@@ -3476,6 +3474,26 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         result = sbDownloadDevice::MakeFileUnique(mpDstFile);
         NS_ENSURE_SUCCESS(result, result);
 
+        bChangedDstFile = PR_TRUE;
+    }
+
+    // If the file name has no extension, use the one, if any, supplied
+    // in the MIME header:
+    result = mpDstFile->GetLeafName(fileName);
+    NS_ENSURE_SUCCESS(result, result);
+    if (fileName.RFindChar('.') == -1) {
+      PRInt32 extension = mimeFilename.RFindChar('.');
+      if (extension != -1) {
+        fileName.Append(
+          NS_ConvertUTF8toUTF16(Substring(mimeFilename, extension)));
+        result = mpDstFile->SetLeafName(fileName);
+        NS_ENSURE_SUCCESS(result, result);
+
+        bChangedDstFile = PR_TRUE;
+      }
+    }
+
+    if (bChangedDstFile) {
         /* Get the destination URI spec. */
         nsCOMPtr<nsIURI> pDstURI;
         result = mpLibraryUtils->GetFileContentURI(mpDstFile,
@@ -3512,7 +3530,6 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
       result = pDstMediaList->Add(mpMediaItem);
 
     /* Move the temporary download file to the final location. */
-    result = mpDstFile->GetLeafName(fileName);
     if (NS_SUCCEEDED(result))
         result = mpDstFile->GetParent(getter_AddRefs(pFileDir));
     if (NS_SUCCEEDED(result)) {
