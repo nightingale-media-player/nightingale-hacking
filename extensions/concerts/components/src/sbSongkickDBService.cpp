@@ -50,7 +50,7 @@
 // String escaping utility functions
 //==============================================================================
 
-nsString c2h( char dec )
+nsString c2h( PRUnichar dec )
 {
   char dig1 = (dec&0xF0)>>4;
   char dig2 = (dec&0x0F);
@@ -469,7 +469,7 @@ sbSongkickDBInfo::LoadLocationCountryInfo()
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < rowCount; i++) {
-    nsString id, name,;
+    nsString id, name;
     rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("id"), id);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = results->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), name);
