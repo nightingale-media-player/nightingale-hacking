@@ -521,6 +521,13 @@ static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
   LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
                         PRLogModuleInfo *aLogModule);
 #endif
+
+  /**
+   * Returns true if we should log the device info for devices. This is
+   * controlled by the songbird.device.log_device_info preference.
+   * \return true if logging should be performed false if not
+   */
+  static bool ShouldLogDeviceInfo();
 };
 
 /**

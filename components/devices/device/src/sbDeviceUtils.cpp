@@ -66,6 +66,7 @@
 #include <sbIPrompter.h>
 #include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
+#include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
@@ -2780,3 +2781,16 @@ LogRange(sbIDevCapRange *aRange,
 }
 
 #endif
+
+bool sbDeviceUtils::ShouldLogDeviceInfo()
+{
+  const char * const DEVICE_PREF_BRANCH = "songbird.device.";
+  const char * const LOG_DEVICE_INFO_PREF = "log_device_info";
+
+  nsresult rv;
+  sbPrefBranch prefBranch(DEVICE_PREF_BRANCH, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return prefBranch.GetBoolPref(LOG_DEVICE_INFO_PREF, PR_FALSE) != PR_FALSE;
+}
+
