@@ -244,9 +244,8 @@ var LibraryUtils = {
     }
 
     const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
-    var firstRunURL = Cc["@mozilla.org/preferences-service;1"].
-                        getService(Ci.nsIPrefBranch).
-                        getCharPref(PREF_FIRSTRUN_URL);
+    const Application = Cc["@mozilla.org/fuel/application;1"].getService();
+    var firstRunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
     if (url == firstRunURL) {
       // first run url, sure this can be a media tab
       return true;
