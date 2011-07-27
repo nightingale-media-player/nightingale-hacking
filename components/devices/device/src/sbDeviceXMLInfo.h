@@ -352,6 +352,10 @@ public :
    */
   virtual ~sbDeviceXMLInfo();
 
+  /**
+   * Returns the device identifier for logging
+   */
+  static nsCString GetDeviceIdentifier(sbIDevice * aDevice);
 
   //----------------------------------------------------------------------------
   //
@@ -372,6 +376,7 @@ private :
   nsString                      mDeviceInfoVersion;
   nsCOMPtr<nsIDOMElement>       mDeviceInfoElement;
   nsCOMPtr<nsIDOMElement>       mDeviceElement;
+  bool                          mLogDeviceInfo;
 
 
   /**
@@ -462,6 +467,19 @@ private :
    */
   nsresult IsDeviceNodeDescendant(nsIDOMNode* aNode,
                                   PRBool*     aIsDeviceNodeDescendant);
+
+  /**
+   * Logging function for device info. Controlled by mLogDeviceInfo. Inline to
+   * avoid unnecessary function calls. Takes a variable number of arguments.
+   * \param aFmt a standard C printf style format string
+   */
+  inline
+  void Log(const char * aFmt, ...);
+
+  /**
+   * Logging function that does the actual work, called by Log
+   */
+  void LogArgs(const char * aFmt, va_list aArgs);
 };
 
 

@@ -46,7 +46,11 @@
 // Self imports.
 #include "sbDeviceXMLInfo.h"
 
+// Local imports
+#include "sbDeviceUtils.h"
+
 // Songbird imports.
+#include <sbErrorConsole.h>
 #include <sbFileUtils.h>
 #include <sbIDeviceProperties.h>
 #include <sbIDirectoryEnumerator.h>
@@ -72,7 +76,6 @@
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
 #include <nsVersionComparator.h>
-
 
 //------------------------------------------------------------------------------
 //
@@ -135,7 +138,11 @@ nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
 {
   NS_ENSURE_ARG_POINTER(aDeviceXMLInfoURI);
 
-  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsresult rv;
+
+  nsCString spec;
+  rv = aDeviceXMLInfoURI->GetSpec(spec);
+  Log("Reading %s", spec.BeginReading());
 
   // If the URI is a file URL, pass it to the nsIFile variant of
   // this function, which has logic to scan directories:
@@ -176,12 +183,23 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
 
   nsresult rv;
 
+  Log("Extension List %s",
+      NS_LossyConvertUTF16toASCII(aExtensionsList).BeginReading());
+
+  nsString path;
+  rv = aDeviceXMLInfoFile->GetPath(path);
+  if (NS_FAILED(rv)) {
+    path = NS_LITERAL_STRING("Unknown path");
+  }
+
   // If aDeviceXMLInfoFile is a directory, scan it recursively for
   // device XML info files:
   PRBool isDir = PR_FALSE;
   rv = aDeviceXMLInfoFile->IsDirectory(&isDir);
   NS_ENSURE_SUCCESS(rv, rv);
   if (isDir) {
+    Log("Searching directory %s",
+        NS_LossyConvertUTF16toASCII(path).BeginReading());
     // aExtensionsList is a space-delimited list of extensions
     // (e.g., "ex1 ex2 ex3").  Trim any surrounding spaces and
     // don't scan the directory if the result is empty:
@@ -244,6 +262,8 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
   rv = sbOpenInputStream(aDeviceXMLInfoFile, getter_AddRefs(inputStream));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  Log("Parsing file %s",
+      NS_LossyConvertUTF16toASCII(path).BeginReading());
   // Parse the stream and close it:
   rv = Read(inputStream);
   inputStream->Close();
@@ -959,7 +979,8 @@ sbDeviceXMLInfo::GetDeviceIcon(nsAString& aDeviceIconURL)
 //
 
 sbDeviceXMLInfo::sbDeviceXMLInfo(sbIDevice* aDevice) :
-  mDevice(aDevice)
+  mDevice(aDevice),
+  mLogDeviceInfo(sbDeviceUtils::ShouldLogDeviceInfo())
 {
 }
 
@@ -1339,3 +1360,24 @@ sbDeviceXMLInfo::IsDeviceNodeDescendant(nsIDOMNode* aNode,
   return NS_OK;
 }
 
+
+void sbDeviceXMLInfo::Log(const char * aFmt, ...)
+{
+  if (mLogDeviceInfo) {
+    va_list args;
+    va_start(args, aFmt);
+    LogArgs(aFmt, args);
+    va_end(args);
+  }
+}
+
+void sbDeviceXMLInfo::LogArgs(const char * aFmt,
+                              va_list aArgs)
+{
+  char *msg = PR_vsmprintf(aFmt, aArgs);
+  sbErrorConsole::Message(
+                     "sbDeviceXMLInfo %s:\n%s",
+                     sbDeviceUtils::GetDeviceIdentifier(mDevice).BeginReading(),
+                     msg);
+  PR_smprintf_free(msg);
+}

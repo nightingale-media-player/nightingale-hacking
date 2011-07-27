@@ -97,6 +97,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(topsrcdir)/components/moz/uri/src \
                      $(topsrcdir)/components/moz/variant/src/static \
                      $(topsrcdir)/components/moz/xpcom/src \
+                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/watchfolder/utils \
                      $(MOZSDK_INCLUDE_DIR)/caps \

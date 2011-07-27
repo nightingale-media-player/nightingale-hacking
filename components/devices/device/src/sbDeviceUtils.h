@@ -528,6 +528,8 @@ static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
    * \return true if logging should be performed false if not
    */
   static bool ShouldLogDeviceInfo();
+
+  static nsCString GetDeviceIdentifier(sbIDevice * aDevice);
 };
 
 /**

@@ -80,6 +80,7 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(topsrcdir)/components/devices/marshall/src \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
@@ -115,6 +116,7 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  components/devices/device/src/sbDeviceCore \
  components/devices/marshall/src/sbDeviceMarshall \
  components/library/base/src/static/sbLibraryUtils \
+ components/moz/errorconsole/src/sbErrorConsole \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
  components/moz/variant/src/static/sbMozVariantUtils \

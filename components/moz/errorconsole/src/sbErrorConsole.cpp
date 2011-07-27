@@ -34,6 +34,36 @@
 #include <nsIConsoleService.h>
 #include <nsIScriptError.h>
 
+class sbConsoleMessage : public nsIConsoleMessage {
+public:
+  sbConsoleMessage()
+  {
+  }
+  sbConsoleMessage(const nsAString & aMessage)
+  {
+    mMessage.Assign(aMessage);
+  }
+
+  void SetMessage(const nsAString & aMessage)
+  {
+    mMessage = aMessage;
+  }
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSICONSOLEMESSAGE
+
+private:
+  ~sbConsoleMessage() {}
+   nsString mMessage;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbConsoleMessage, nsIConsoleMessage)
+
+NS_IMETHODIMP
+sbConsoleMessage::GetMessageMoz(PRUnichar **result) {
+    *result = ToNewUnicode(mMessage);
+
+    return NS_OK;
+}
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbErrorConsole)
 
@@ -51,6 +81,7 @@ void sbErrorConsole::Error(char const * aCategory,
                       aLine);
   }
 }
+
 void sbErrorConsole::Warning(char const * aCategory,
                              nsAString const & aMessage,
                              nsAString const & aSource,
@@ -63,6 +94,23 @@ void sbErrorConsole::Warning(char const * aCategory,
                       aMessage,
                       aSource,
                       aLine);
+  }
+}
+
+void sbErrorConsole::Message(char const * aFmt, ...)
+{
+  nsRefPtr<sbErrorConsole> errorConsole = new sbErrorConsole();
+  if (errorConsole) {
+    va_list args;
+    va_start(args, aFmt);
+    char *msg = PR_vsmprintf(aFmt, args);
+    errorConsole->Log(nsCString(),
+                      0,
+                      NS_ConvertUTF8toUTF16(msg),
+                      nsString(),
+                      0);
+    PR_smprintf_free(msg);
+    va_end(args);
   }
 }
 
@@ -105,22 +153,28 @@ nsresult sbErrorConsole::LogThread(ErrorParams aParameters)
     do_GetService("@mozilla.org/consoleservice;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  nsCOMPtr<nsIScriptError> scriptError =
-      do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
-  if (!scriptError) {
-    return NS_ERROR_FAILURE;
+  nsCOMPtr<nsIConsoleMessage> consoleMessage;
+  if (aParameters.mFlags != 0) {
+    nsCOMPtr<nsIScriptError> scriptError =
+        do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
+    if (!scriptError) {
+      return NS_ERROR_FAILURE;
+    }
+
+    rv = scriptError->Init(aParameters.mMessage.get(),
+                           aParameters.mSource.get(),
+                           nsString().get(), // no source line
+                           aParameters.mLine,
+                           0, // No column number
+                           aParameters.mFlags,
+                           aParameters.mCategory.BeginReading());
+    NS_ENSURE_SUCCESS(rv,rv);
+    consoleMessage = scriptError;
   }
-
-  rv = scriptError->Init(aParameters.mMessage.get(),
-                         aParameters.mSource.get(),
-                         nsString().get(), // no source line
-                         aParameters.mLine,
-                         0, // No column number
-                         aParameters.mFlags,
-                         aParameters.mCategory.BeginReading());
-  NS_ENSURE_SUCCESS(rv,rv);
-
-  rv = consoleService->LogMessage(scriptError);
+  else {
+    consoleMessage = new sbConsoleMessage(aParameters.mMessage);
+  }
+  rv = consoleService->LogMessage(consoleMessage);
   NS_ENSURE_SUCCESS(rv,rv);
 
   return NS_OK;

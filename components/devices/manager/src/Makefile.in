@@ -73,6 +73,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(topsrcdir)/components/library/base/src/static \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/localdatabase/src \
+                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/xpcom/src \
@@ -90,6 +91,7 @@ COMPONENTS_OBJDIR = $(SONGBIRD_OBJDIR)/components
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/devices/device/src/sbDeviceCore \
  components/library/base/src/static/sbLibraryUtils \
+ components/moz/errorconsole/src/sbErrorConsole \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
  components/watchfolder/utils/sbWatchFolderUtils \

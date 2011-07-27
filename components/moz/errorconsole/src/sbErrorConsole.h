@@ -76,6 +76,7 @@ public:
                       nsAString const & aMessage,
                       nsAString const & aSource = nsString(),
                       PRUint32 aLine = 0);
+  static void Message(char const * aFmt, ...);
 private:
   nsresult Log(nsACString const & aCategory,
                PRUint32 aFlags,

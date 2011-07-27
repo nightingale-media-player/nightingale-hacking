@@ -2794,3 +2794,34 @@ bool sbDeviceUtils::ShouldLogDeviceInfo()
   return prefBranch.GetBoolPref(LOG_DEVICE_INFO_PREF, PR_FALSE) != PR_FALSE;
 }
 
+nsCString sbDeviceUtils::GetDeviceIdentifier(sbIDevice * aDevice)
+{
+  nsresult rv;
+
+  if (!aDevice) {
+    return NS_LITERAL_CSTRING("Device Unknown");
+  }
+  nsCString result;
+
+  nsString deviceIdentifier;
+  rv = aDevice->GetName(deviceIdentifier);
+  if (NS_FAILED(rv)) {
+    deviceIdentifier.Truncate();
+  }
+  // Convert to ascii since this is going to be output to an ascii device
+  result = NS_LossyConvertUTF16toASCII(deviceIdentifier);
+  nsID *deviceID;
+  rv = aDevice->GetId(&deviceID);
+  sbAutoNSMemPtr autoDeviceID(deviceID);
+  NS_ENSURE_SUCCESS(rv, result);
+
+  char volumeGUID[NSID_LENGTH];
+  deviceID->ToProvidedString(volumeGUID);
+
+  if (!result.IsEmpty()) {
+    result.Append(NS_LITERAL_CSTRING("-"));
+  }
+  result.Append(volumeGUID);
+
+  return result;
+}
