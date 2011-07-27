@@ -26,9 +26,13 @@
 
 #include "sbErrorConsole.h"
 
+// Standard includes
+#include <stdarg.h>
+
 // Mozilla includes
 #include <nsServiceManagerUtils.h>
 #include <nsStringAPI.h>
+#include <prprf.h>
 
 // Mozilla interfaces
 #include <nsIConsoleService.h>

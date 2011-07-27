@@ -76,6 +76,7 @@
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
 #include <nsVersionComparator.h>
+#include <prprf.h>
 
 //------------------------------------------------------------------------------
 //

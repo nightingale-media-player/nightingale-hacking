@@ -46,6 +46,9 @@
 //
 //------------------------------------------------------------------------------
 
+// Standard Includes
+#include <stdarg.h>
+
 // Songbird imports.
 #include <sbIDevice.h>
 
