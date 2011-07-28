@@ -109,7 +109,7 @@ void sbErrorConsole::Message(char const * aFmt, ...)
     va_start(args, aFmt);
     char *msg = PR_vsmprintf(aFmt, args);
     errorConsole->Log(nsCString(),
-                      0,
+                      infoMessageFlag,
                       NS_ConvertUTF8toUTF16(msg),
                       nsString(),
                       0);
@@ -158,7 +158,7 @@ nsresult sbErrorConsole::LogThread(ErrorParams aParameters)
   NS_ENSURE_SUCCESS (rv, rv);
 
   nsCOMPtr<nsIConsoleMessage> consoleMessage;
-  if (aParameters.mFlags != 0) {
+  if (aParameters.mFlags != infoMessageFlag) {
     nsCOMPtr<nsIScriptError> scriptError =
         do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
     if (!scriptError) {

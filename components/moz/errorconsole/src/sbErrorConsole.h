@@ -78,6 +78,7 @@ public:
                       PRUint32 aLine = 0);
   static void Message(char const * aFmt, ...);
 private:
+  enum { infoMessageFlag = ~0UL };
   nsresult Log(nsACString const & aCategory,
                PRUint32 aFlags,
                nsAString const & aMessage,
