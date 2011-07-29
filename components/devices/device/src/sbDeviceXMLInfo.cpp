@@ -64,6 +64,7 @@
 #include <nsIDOMNamedNodeMap.h>
 #include <nsIDOMNodeList.h>
 #include <nsIDOMParser.h>
+#include <nsIDOMSerializer.h>
 #include <nsIMutableArray.h>
 #include <nsIPropertyBag2.h>
 #include <nsIScriptSecurityManager.h>
@@ -92,7 +93,11 @@
 nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
                                const char* aExtensionsList)
 {
+  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoSpecList);
+
   nsresult rv;
+
+  Log("URI list:\n%s", aDeviceXMLInfoSpecList);
 
   // aDeviceXMLInfoSpecList is a space-delimited list of URI strings.
   // Split it out into an array:
@@ -119,10 +124,12 @@ nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
     // Create an nsIURI:
     nsCOMPtr<nsIURI> uri;
     rv = SB_NewURI(getter_AddRefs(uri), uriStr);
+    LogIfFailed(rv, "Invalid URI\n%s", uriStr.get());
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Scan the specified file or directory:
     rv = Read(uri, NS_ConvertUTF8toUTF16(nsDependentCString(aExtensionsList)));
+    LogIfFailed(rv, "while reading device info from\n%s", uriStr.get());
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -184,9 +191,6 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
 
   nsresult rv;
 
-  Log("Extension List %s",
-      NS_LossyConvertUTF16toASCII(aExtensionsList).BeginReading());
-
   nsString path;
   rv = aDeviceXMLInfoFile->GetPath(path);
   if (NS_FAILED(rv)) {
@@ -206,6 +210,8 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
     // don't scan the directory if the result is empty:
     nsString acceptExts(aExtensionsList);
     acceptExts.Trim(" ");
+    Log("Extension List: %s",
+        NS_LossyConvertUTF16toASCII(acceptExts).BeginReading());
     if (acceptExts.IsEmpty()) {
       return NS_OK;
     }
@@ -356,6 +362,47 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
     {
       // Found version is greater than current version, if any.  Keep this
       // node and replace any previously found node
+
+      // Log the found device info if logging enabled
+      if (mLogDeviceInfo) {
+        nsCOMPtr<nsIDOMSerializer> serializer =
+            do_CreateInstance("@mozilla.org/xmlextras/xmlserializer;1");
+
+        // Translate the found deviceinfo element to XML
+        nsString fullXml(L"<ERROR PRINTING deviceinfo NODE>");
+        if (serializer) {
+          serializer->SerializeToString(node, fullXml);
+        }
+
+        // Translate the device element matching this device to XML, if any
+        nsString deviceXml(L"<ERROR PRINTING device NODE>");
+        if (deviceNode && serializer) {
+          serializer->SerializeToString(deviceNode, deviceXml);
+        }
+
+        nsCAutoString curVersUtf8 = NS_ConvertUTF16toUTF8(mDeviceInfoVersion);
+        nsCAutoString foundVersUtf8 = NS_ConvertUTF16toUTF8(foundVersion);
+
+        // Log the device info and version.  The first line has two
+        // alternate forms, depending on whether the existing device
+        // info is being replaced:
+        //
+        //  FOUND    deviceinfo version                        <found version>:
+        // - OR -
+        //  REPLACED deviceinfo version <current version> with <found version>:
+
+        Log("%s deviceinfo version %s%s%s:\n%s%s%s",
+            mDeviceInfoElement ?      "REPLACED"       :   "FOUND",
+            curVersUtf8.get(),    //  current version  OR  blank
+            mDeviceInfoElement ?      " with "         :   "",
+            foundVersUtf8.get(),  //  found version    OR  found version
+
+            NS_ConvertUTF16toUTF8(fullXml).get(),
+
+            deviceNode ? "\n\nMATCHING device element:\n" : "",
+            deviceNode ? NS_ConvertUTF16toUTF8(deviceXml).get() : "");
+      }
+
       mDeviceInfoVersion.Assign(foundVersion);
       mDeviceInfoElement = do_QueryInterface(node, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1371,6 +1418,40 @@ void sbDeviceXMLInfo::Log(const char * aFmt, ...)
     va_end(args);
   }
 }
+
+void sbDeviceXMLInfo::LogIfFailed(nsresult aRV, const char * aPrintf, ...)
+{
+  // Do nothing if no failure
+  if (NS_SUCCEEDED(aRV)) {
+    return;
+  }
+
+  // Check logging pref:
+  if (!mLogDeviceInfo) {
+    return;
+  }
+
+  // Resolve the args to a string
+  va_list etc;
+  va_start(etc, aPrintf);
+  char *why =
+    PR_vsmprintf(aPrintf ? aPrintf : "while loading device info", etc);
+  va_end(etc);
+
+  // Compose the error message
+  nsString msg(L"sbDeviceXMLInfo ");
+  msg.AppendLiteral(
+    sbDeviceUtils::GetDeviceIdentifier(mDevice).BeginReading());
+  msg.AppendLiteral(":\nERROR [0x");
+  msg.AppendInt(aRV, 16);
+  msg.AppendLiteral("]\n");
+  msg.Append(NS_ConvertUTF8toUTF16(why));
+  PR_smprintf_free(why);
+
+  // Log the error message
+  sbErrorConsole::Error("sbDeviceXMLInfo", msg);
+}
+
 
 void sbDeviceXMLInfo::LogArgs(const char * aFmt,
                               va_list aArgs)

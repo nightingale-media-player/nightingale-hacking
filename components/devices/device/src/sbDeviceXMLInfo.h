@@ -480,6 +480,11 @@ private :
   void Log(const char * aFmt, ...);
 
   /**
+   * Log the printf-style message if aRV indicates a failure
+   */
+  void LogIfFailed(nsresult aRV, const char * aPrintf, ...);
+
+  /**
    * Logging function that does the actual work, called by Log
    */
   void LogArgs(const char * aFmt, va_list aArgs);
