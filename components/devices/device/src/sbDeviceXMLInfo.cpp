@@ -369,13 +369,13 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
             do_CreateInstance("@mozilla.org/xmlextras/xmlserializer;1");
 
         // Translate the found deviceinfo element to XML
-        nsString fullXml(L"<ERROR PRINTING deviceinfo NODE>");
+        nsString fullXml(NS_LITERAL_STRING("<ERROR PRINTING deviceinfo NODE>"));
         if (serializer) {
           serializer->SerializeToString(node, fullXml);
         }
 
         // Translate the device element matching this device to XML, if any
-        nsString deviceXml(L"<ERROR PRINTING device NODE>");
+        nsString deviceXml(NS_LITERAL_STRING("<ERROR PRINTING device NODE>"));
         if (deviceNode && serializer) {
           serializer->SerializeToString(deviceNode, deviceXml);
         }
@@ -1439,7 +1439,7 @@ void sbDeviceXMLInfo::LogIfFailed(nsresult aRV, const char * aPrintf, ...)
   va_end(etc);
 
   // Compose the error message
-  nsString msg(L"sbDeviceXMLInfo ");
+  nsString msg(NS_LITERAL_STRING("sbDeviceXMLInfo "));
   msg.AppendLiteral(
     sbDeviceUtils::GetDeviceIdentifier(mDevice).BeginReading());
   msg.AppendLiteral(":\nERROR [0x");
