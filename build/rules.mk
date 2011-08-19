@@ -29,6 +29,7 @@
 # This file takes care of lots of messy rules. Each one is explained below.
 ###############################################################################
 
+
 #------------------------------------------------------------------------------
 # Only include this file once
 ifndef RULES_MK_INCLUDED
@@ -317,21 +318,19 @@ libs_tier_%:
 	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
-#Be sure to escape the spaces when modifying else this will break
-deps_defines=-DMOZ_APP_NAME=firefox\ \
-             -DMOZ_UPDATER=1\ \
-             -DMOZ_PHOENIX=1\ \
-             -DMOZ_ENABLE_LIBXUL=1\ \
-             -DMOZ_STATIC_BUILD_UNSUPPORTED=1\ \
-             -DMOZ_PLACES=1\ \
-             -DMOZ_MORKREADER=1\ \
-             -DMOZ_SAFE_BROWSING=1\ \
-             -DMOZ_APP_VERSION=$FIREFOX_VERSION\ \
-             -DMOZ_NO_XPCOM_OBSOLETE=1\ \
-             -DMOZ_BRANDING_DIRECTORY=browser/branding/unofficial\ \
-             -DMOZ_OFFICIAL_BRANDING_DIRECTORY=other-licenses/branding/firefox\
-             $(NULL)
-  
+deps_defines= \
+   -DMOZ_APP_NAME=firefox\ \
+   -DMOZ_UPDATER=1\
+   -DMOZ_PHOENIX=1\
+   -DMOZ_ENABLE_LIBXUL=1\
+   -DMOZ_STATIC_BUILD_UNSUPPORTED=1\
+   -DMOZ_PLACES=1\ -DMOZ_MORKREADER=1\
+   -DMOZ_SAFE_BROWSING=1\
+   -DMOZ_APP_VERSION=$FIREFOX_VERSION\
+   -DMOZ_NO_XPCOM_OBSOLETE=1\
+   -DMOZ_BRANDING_DIRECTORY=browser/branding/unofficial\
+   -DMOZ_OFFICIAL_BRANDING_DIRECTORY=other-licenses/branding/firefox
+
 # This dependency listing is technically incorrect, in that it states that
 # _all_ the tiers are dependent on the makefiles of _all_ the tiers, not just
 # the tier you're actually building. We did this to avoid spawning a (99% of
@@ -342,7 +341,7 @@ $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(ti
 	@echo "BUILDING $(patsubst tier_%,%,$@) TIER; directories: $($@_dirs)"
 	$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e export_$@
 	$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e libs_$@
-
+	
 ##
 ## SUBDIRS handling for libs and export targets
 ##
