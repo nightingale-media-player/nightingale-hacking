@@ -132,6 +132,7 @@ protected:
   PRBool m_bCancel;
 };
 
+class sbIDirectoryEnumerator;
 
 /**
  * \class sbFileScan
@@ -164,9 +165,9 @@ protected:
 
   // Typedefs
   typedef std::deque<sbIFileScanQuery *>      queryqueue_t;
-  typedef std::deque<nsISimpleEnumerator *>   dirstack_t;
+  typedef std::deque<sbIDirectoryEnumerator *>   dirstack_t;
   typedef std::deque<nsCOMPtr<nsIFile> >      fileentrystack_t;
-  typedef std::deque<nsCOMPtr<nsISupports> >  entrystack_t;
+  typedef std::deque<nsCOMPtr<nsIFile> >  entrystack_t;
 
   nsresult Shutdown();
 

@@ -37,6 +37,7 @@ CPP_SRCS = sbFileScan.cpp \
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/mediaimport/filescan/public \
+                     $(DEPTH)/components/moz/fileutils/public \
                      $(topsrcdir)/components/include \
                      $(MOZSDK_INCLUDE_DIR)/rdf \
                      $(MOZSDK_INCLUDE_DIR)/necko \

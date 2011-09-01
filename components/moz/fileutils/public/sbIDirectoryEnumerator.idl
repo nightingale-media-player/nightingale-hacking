@@ -41,6 +41,7 @@
  */
 
 interface nsIFile;
+interface nsISimpleEnumerator;
 
 [scriptable, uuid(508bc51e-001f-4f3e-b036-d7dbff91e8dd)]
 interface sbIDirectoryEnumerator : nsISupports
@@ -103,6 +104,30 @@ interface sbIDirectoryEnumerator : nsISupports
 %{C++
 #define SB_DIRECTORYENUMERATOR_CONTRACTID \
           "@songbirdnest.com/Songbird/DirectoryEnumerator;1"
+          
+#include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
+
+  inline nsresult sbGetDirectoryEntries(
+                                       nsIFile * aFile,
+                                       sbIDirectoryEnumerator ** aDirEntryEnumerator)
+  {
+    nsresult rv;
+    nsCOMPtr<sbIDirectoryEnumerator> dirEntries = 
+      do_CreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    rv = dirEntries->SetFilesOnly(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = dirEntries->SetMaxDepth(1);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = dirEntries->Enumerate(aFile);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    dirEntries.forget(aDirEntryEnumerator);
+    
+    return NS_OK;
+  }
 %}C++
 
 

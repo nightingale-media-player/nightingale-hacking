@@ -50,8 +50,12 @@
 
 // Mozilla imports.
 #include <nsAutoLock.h>
+#include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
-
+#include <nsILocalFile.h>
+#include <prerr.h>
+#include <prerror.h>
 
 //------------------------------------------------------------------------------
 //
@@ -67,6 +71,125 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDirectoryEnumerator, sbIDirectoryEnumerator)
 // Songbird directory enumerator sbIDirectoryEnumerator implementation.
 //
 //------------------------------------------------------------------------------
+
+/**
+ * Enumerates a given directory specified by an nsIFile object.
+ * This is a class to get around bug 24478 in the least invasive manner.
+ * At some point this needs to be cleaned up. Latest version of XULRunner this
+ * shouldn't be an issue. If we need a proper fix before then using the
+ * NSPR routines directly should be fine.
+ */
+class sbDirectoryEnumeratorHelper : public nsISimpleEnumerator
+{
+public:
+  /**
+   * Initializes simple data members
+   */
+  sbDirectoryEnumeratorHelper();
+
+  /**
+   * Closes the directory if opened
+   */
+  virtual ~sbDirectoryEnumeratorHelper();
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISIMPLEENUMERATOR
+
+  /**
+   * Initializes the directory pointer
+   * \param aDirectory the directory to enumerate
+   */
+  nsresult Init(nsIFile * aDirectory);
+private:
+  PRDir * mDir;
+  nsCOMPtr<nsIFile> mDirectory;
+  PRDirEntry * mEntry;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDirectoryEnumeratorHelper, nsISimpleEnumerator)
+
+sbDirectoryEnumeratorHelper::sbDirectoryEnumeratorHelper() :
+  mDir(nsnull),
+  mEntry(nsnull)
+{
+}
+
+sbDirectoryEnumeratorHelper::~sbDirectoryEnumeratorHelper()
+{
+  if (mDir) {
+    PR_CloseDir(mDir);
+  }
+}
+nsresult sbDirectoryEnumeratorHelper::Init(nsIFile * aDirectory)
+{
+  NS_ENSURE_ARG_POINTER(aDirectory);
+
+  nsresult rv;
+
+  mDirectory = aDirectory;
+
+  nsString path;
+  rv = aDirectory->GetPath(path);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mDir = PR_OpenDir(NS_ConvertUTF16toUTF8(path).BeginReading());
+  NS_ENSURE_TRUE(mDir, NS_ERROR_FILE_NOT_FOUND);
+
+  // Preload the first entry, so HasMoreElements knows there is an entry
+  // waiting or not.
+  mEntry = PR_ReadDir(mDir, PR_SKIP_BOTH);
+  if (!mEntry) {
+    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
+                   NS_ERROR_UNEXPECTED);
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDirectoryEnumeratorHelper::HasMoreElements(PRBool *_retval NS_OUTPARAM)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = mEntry ? PR_TRUE : PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDirectoryEnumeratorHelper::GetNext(nsISupports ** aEntry NS_OUTPARAM)
+{
+  NS_ENSURE_ARG_POINTER(aEntry);
+
+  if (!mEntry) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsresult rv;
+
+  nsCOMPtr<nsILocalFile> file =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+
+  nsString path;
+  rv = mDirectory->GetPath(path);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = file->InitWithPath(path);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = file->AppendNative(nsCString(mEntry->name));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aEntry = file.get();
+  file.forget();
+
+  // Prefetch the next entry if any, skipping . and ..
+  mEntry = PR_ReadDir(mDir, PR_SKIP_BOTH);
+  if (!mEntry) {
+    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
+                   NS_ERROR_UNEXPECTED);
+  }
+
+  return NS_OK;
+}
 
 /**
  * \brief Enumerate the directory specified by aDirectory.
@@ -100,17 +223,17 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
 
   // Get the entries in the directory.  If file not found is returned, the
   // directory is empty.
-  nsCOMPtr<nsISimpleEnumerator> entriesEnum;
-  rv = aDirectory->GetDirectoryEntries(getter_AddRefs(entriesEnum));
-  if (rv == NS_ERROR_FILE_NOT_FOUND)
-    entriesEnum = nsnull;
-  else
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsRefPtr<sbDirectoryEnumeratorHelper> dirEnumerator =
+    new sbDirectoryEnumeratorHelper();
+  NS_ENSURE_TRUE(dirEnumerator, NS_ERROR_OUT_OF_MEMORY);
+  rv = dirEnumerator->Init(aDirectory);
 
   // Initialize the entries enumeration stack.
   mEntriesEnumStack.Clear();
-  if (entriesEnum) {
-    success = mEntriesEnumStack.AppendObject(entriesEnum);
+
+  if (rv != NS_ERROR_FILE_NOT_FOUND) {
+    NS_ENSURE_SUCCESS(rv, rv);
+    success = mEntriesEnumStack.AppendObject(dirEnumerator);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -401,11 +524,18 @@ sbDirectoryEnumerator::ScanForNextFile()
     if (isDirectory && !((mMaxDepth > 0) && (depth >= mMaxDepth))) {
       // Get the directory entries.  If file not found is returned, the
       // directory is empty.
-      rv = file->GetDirectoryEntries(getter_AddRefs(entriesEnum));
-      if (rv != NS_ERROR_FILE_NOT_FOUND)
+      nsRefPtr<sbDirectoryEnumeratorHelper> dirEnumeratorAdapter =
+        new sbDirectoryEnumeratorHelper();
+      NS_ENSURE_TRUE(dirEnumeratorAdapter, NS_ERROR_OUT_OF_MEMORY);
+      rv = dirEnumeratorAdapter->Init(file);
+      nsCOMPtr<nsISimpleEnumerator> dirEntryEnumerator;
+      if (rv != NS_ERROR_FILE_NOT_FOUND) {
         NS_ENSURE_SUCCESS(rv, rv);
-      if (NS_SUCCEEDED(rv)) {
-        success = mEntriesEnumStack.AppendObject(entriesEnum);
+        dirEntryEnumerator = do_QueryInterface(dirEnumeratorAdapter, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      if (dirEntryEnumerator) {
+        success = mEntriesEnumStack.AppendObject(dirEntryEnumerator);
         NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
       }
     }
@@ -413,5 +543,3 @@ sbDirectoryEnumerator::ScanForNextFile()
 
   return NS_OK;
 }
-
-

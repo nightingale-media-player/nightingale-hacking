@@ -296,7 +296,7 @@ interface sbIFileScanQuery : nsISupports
  *
  * \sa sbIFileScanCallback, sbIFileScanQuery
  */
-[scriptable, uuid(9d87834c-cab9-488c-b152-416cfa8305c3)]
+[scriptable, uuid(27431e35-b060-486e-ba58-76c5ae7f8c24)]
 interface sbIFileScan : nsISupports
 { 
   /**
@@ -307,17 +307,6 @@ interface sbIFileScan : nsISupports
    */
   void submitQuery(in sbIFileScanQuery pQuery);
   
-  /**
-   * \brief Execute a scan directly to a sbIFileScanCallback instance
-   *
-   * \param strDirectory The directory to scan
-   * \param bRecurse Whether or not to recurse
-   * \param pCallback The callback used to process the scan
-   * \sa submitQuery
-   */
-  PRInt32 scanDirectory(in AString strDirectory, 
-    in PRBool bRecurse, 
-    in sbIFileScanCallback pCallback);
   /**
    * Cleans up after ourselves. If you're using sbIFileScan in GC environment
    * please explicitly cleanup

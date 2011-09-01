@@ -49,6 +49,7 @@
 #include <nsIThreadPool.h>
 #include <nsNetUtil.h>
 #include <sbILibraryUtils.h>
+#include <sbIDirectoryEnumerator.h>
 #include <sbLockUtils.h>
 #include <sbDebugUtils.h>
 
@@ -700,146 +701,6 @@ NS_IMETHODIMP sbFileScan::Finalize()
 }
 
 //-----------------------------------------------------------------------------
-/* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
-NS_IMETHODIMP
-sbFileScan::ScanDirectory(const nsAString &strDirectory,
-                          PRBool bRecurse,
-                          sbIFileScanCallback *pCallback,
-                          PRInt32 *_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  dirstack_t dirStack;
-  fileentrystack_t fileEntryStack;
-
-  *_retval = 0;
-
-  nsresult rv;
-  nsCOMPtr<nsILocalFile> pFile =
-    do_CreateInstance("@mozilla.org/file/local;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibraryUtils> pLibraryUtils =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = pFile->InitWithPath(strDirectory);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool bFlag;
-  rv = pFile->IsDirectory(&bFlag);
-
-  if(pCallback)
-    pCallback->OnFileScanStart();
-
-  if(NS_SUCCEEDED(rv) && bFlag)
-  {
-    nsISimpleEnumerator* pDirEntries;
-    rv = pFile->GetDirectoryEntries(&pDirEntries);
-
-    if(NS_SUCCEEDED(rv))
-    {
-      PRBool bHasMore;
-
-      for(;;)
-      {
-        // Must null-check pDirEntries here because we're inside a loop
-        if(pDirEntries &&
-           NS_SUCCEEDED(pDirEntries->HasMoreElements(&bHasMore)) && bHasMore)
-        {
-
-          nsCOMPtr<nsISupports> pDirEntry;
-          rv = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
-
-          if(NS_SUCCEEDED(rv))
-          {
-            nsCOMPtr<nsIFile> pEntry = do_QueryInterface(pDirEntry, &rv);
-
-            if(NS_SUCCEEDED(rv))
-            {
-              PRBool bIsFile, bIsDirectory, bIsHidden;
-
-              // Don't scan hidden things.
-              // Otherwise we wind up in places that can crash the app?
-              if (NS_SUCCEEDED(pEntry->IsHidden(&bIsHidden)) && bIsHidden)
-              {
-                if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
-                {
-                  // Get a library content URI for the file.
-                  NS_ENSURE_SUCCESS(rv, rv);
-                  nsCOMPtr<nsIURI> pURI;
-                  rv = pLibraryUtils->GetFileContentURI(pEntry,
-                                                        getter_AddRefs(pURI));
-
-                  if (NS_SUCCEEDED(rv))
-                  {
-                    nsCAutoString u8spec;
-                    rv = pURI->GetSpec(u8spec);
-                    if (NS_SUCCEEDED(rv))
-                    {
-                      LOG("sbFileScan::ScanDirectory (idl) found spec: %s\n", u8spec.get());
-                      *_retval += 1;
-
-                      if(pCallback)
-                        pCallback->OnFileScanFile(NS_ConvertUTF8toUTF16(u8spec),
-                                                   *_retval);
-                    }
-                  }
-                }
-                else if(bRecurse &&
-                        NS_SUCCEEDED(pEntry->IsDirectory(&bIsDirectory)) &&
-                        bIsDirectory)
-                {
-                  dirStack.push_back(pDirEntries);
-                  fileEntryStack.push_back(pEntry);
-
-                  rv = pEntry->GetDirectoryEntries(&pDirEntries);
-                  if (NS_FAILED(rv))
-                    pDirEntries = nsnull;
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-          NS_IF_RELEASE(pDirEntries);
-          if(dirStack.size())
-          {
-            pDirEntries = dirStack.back();
-            dirStack.pop_back();
-          }
-          else
-          {
-            if(pCallback)
-            {
-              pCallback->OnFileScanEnd();
-            }
-
-            return NS_OK;
-          }
-        }
-      }
-    }
-  }
-  else
-  {
-    if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) &&
-       bFlag &&
-       pCallback)
-    {
-      *_retval = 1;
-      pCallback->OnFileScanFile(strDirectory, *_retval);
-    }
-  }
-
-  if(pCallback)
-    pCallback->OnFileScanEnd();
-
-  return NS_OK;
-} //ScanDirectory
-
-//-----------------------------------------------------------------------------
 nsresult
 sbFileScan::StartProcessScanQueriesProcessor()
 {
@@ -923,7 +784,6 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   PRInt32 nFoundCount = 0;
 
-  nsresult ret = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsILocalFile> pFile = do_CreateInstance("@mozilla.org/file/local;1");
   nsCOMPtr<sbILibraryUtils> pLibraryUtils =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
@@ -944,8 +804,8 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   PRBool bWantLibraryContentURIs = PR_TRUE;
   pQuery->GetWantLibraryContentURIs(&bWantLibraryContentURIs);
 
-  ret = pFile->InitWithPath(strTheDirectory);
-  if(NS_FAILED(ret)) return ret;
+  rv = pFile->InitWithPath(strTheDirectory);
+  if(NS_FAILED(rv)) return rv;
 
   PRBool bFlag = PR_FALSE;
   pFile->IsDirectory(&bFlag);
@@ -957,129 +817,128 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   if(bFlag)
   {
-    nsISimpleEnumerator *pDirEntries = nsnull;
-    pFile->GetDirectoryEntries(&pDirEntries);
+    sbIDirectoryEnumerator * pDirEntries;
+    sbGetDirectoryEntries(pFile, &pDirEntries);
 
-    if(pDirEntries)
+    PRBool keepRunning = !m_ThreadShouldShutdown;
+
+    while(keepRunning)
     {
-      PRBool keepRunning = !m_ThreadShouldShutdown;
+      // Allow us to get the hell out of here.
+      PRBool cancel = PR_FALSE;
+      pQuery->IsCancelled(&cancel);
 
-      while(keepRunning)
+      if (cancel) {
+        break;
+      }
+
+      PRBool bHasMore = PR_FALSE;
+      rv = pDirEntries->HasMoreElements(&bHasMore);
+      nsCOMPtr<nsIFile> pEntry;
+      if(NS_SUCCEEDED(rv) && bHasMore) {
+        rv = pDirEntries->GetNext(getter_AddRefs(pEntry));
+      }
+
+      if(NS_SUCCEEDED(rv) && pEntry)
       {
-        // Allow us to get the hell out of here.
-        PRBool cancel = PR_FALSE;
-        pQuery->IsCancelled(&cancel);
+        PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
+        pEntry->IsFile(&bIsFile);
+        pEntry->IsDirectory(&bIsDirectory);
+        pEntry->IsHidden(&bIsHidden);
 
-        if (cancel) {
-          break;
-        }
-
-        PRBool bHasMore = PR_FALSE;
-        ret = pDirEntries->HasMoreElements(&bHasMore);
-
-        nsCOMPtr<nsISupports> pDirEntry;
-        if(NS_SUCCEEDED(rv) && bHasMore) {
-          ret = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
-        }
-
-        if(NS_SUCCEEDED(rv) && pDirEntry)
+        if(!bIsHidden || bSearchHidden)
         {
-          nsIID nsIFileIID = NS_IFILE_IID;
-          nsCOMPtr<nsIFile> pEntry;
-          pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
-
-          if(pEntry)
+          if(bIsFile)
           {
-            PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
-            pEntry->IsFile(&bIsFile);
-            pEntry->IsDirectory(&bIsDirectory);
-            pEntry->IsHidden(&bIsHidden);
+            // Get a library content URI for the file.
+            nsCOMPtr<nsIURI> pURI;
+            if (bWantLibraryContentURIs) {
+              rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                    getter_AddRefs(pURI));
+            } else {
+              rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
+            }
 
-            if(!bIsHidden || bSearchHidden)
-            {
-              if(bIsFile)
+            // Get the file URI spec.
+            nsCAutoString spec;
+            if (NS_SUCCEEDED(rv)) {
+              rv = pURI->GetSpec(spec);
+              LOG("sbFileScan::ScanDirectory (C++) found spec: %s\n",
+                   spec.get());
+            }
+
+            // Add the file path to the query.
+            if (NS_SUCCEEDED(rv)) {
+              nsString strPath = NS_ConvertUTF8toUTF16(spec);
+              pQuery->AddFilePath(strPath);
+              nFoundCount += 1;
+
+              if(pCallback)
               {
-                // Get a library content URI for the file.
-                nsCOMPtr<nsIURI> pURI;
-                if (bWantLibraryContentURIs) {
-                  rv = pLibraryUtils->GetFileContentURI(pEntry,
-                                                        getter_AddRefs(pURI));
-                } else {
-                  rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
-                }
-
-                // Get the file URI spec.
-                nsCAutoString spec;
-                if (NS_SUCCEEDED(rv)) {
-                  rv = pURI->GetSpec(spec);
-                  LOG("sbFileScan::ScanDirectory (C++) found spec: %s\n",
-                       spec.get());
-                }
-
-                // Add the file path to the query.
-                if (NS_SUCCEEDED(rv)) {
-                  nsString strPath = NS_ConvertUTF8toUTF16(spec);
-                  pQuery->AddFilePath(strPath);
-                  nFoundCount += 1;
-
-                  if(pCallback)
-                  {
-                    pCallback->OnFileScanFile(strPath, nFoundCount);
-                  }
-                }
-              }
-              else if(bIsDirectory && bRecurse)
-              {
-                nsISimpleEnumerator *pMoreEntries = nsnull;
-                pEntry->GetDirectoryEntries(&pMoreEntries);
-
-                if(pMoreEntries)
-                {
-                  dirStack.push_back(pDirEntries);
-                  fileEntryStack.push_back(pEntry);
-                  entryStack.push_back(pDirEntry);
-
-                  pDirEntries = pMoreEntries;
-                }
+                pCallback->OnFileScanFile(strPath, nFoundCount);
               }
             }
           }
+          else if(bIsDirectory && bRecurse)
+          {
+            sbIDirectoryEnumerator * pMoreEntries;
+            rv = CallCreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID,
+                                    &pMoreEntries);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = pMoreEntries->SetFilesOnly(PR_FALSE);
+            NS_ENSURE_SUCCESS(rv, rv);
+            rv = pMoreEntries->SetMaxDepth(1);
+            NS_ENSURE_SUCCESS(rv, rv);
+            rv = pMoreEntries->Enumerate(pEntry);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            if(pMoreEntries)
+            {
+              dirStack.push_back(pDirEntries);
+              fileEntryStack.push_back(pEntry);
+              entryStack.push_back(pEntry);
+
+              pDirEntries = pMoreEntries;
+            }
+          }
+        }
+      }
+      else
+      {
+        if(dirStack.size())
+        {
+          NS_IF_RELEASE(pDirEntries);
+
+          pDirEntries = dirStack.back();
+
+          dirStack.pop_back();
+          fileEntryStack.pop_back();
+          entryStack.pop_back();
         }
         else
         {
-          if(dirStack.size())
+          if(pCallback)
           {
-            NS_IF_RELEASE(pDirEntries);
-
-            pDirEntries = dirStack.back();
-
-            dirStack.pop_back();
-            fileEntryStack.pop_back();
-            entryStack.pop_back();
+            pCallback->OnFileScanEnd();
           }
-          else
-          {
-            if(pCallback)
-            {
-              pCallback->OnFileScanEnd();
-            }
 
-            NS_IF_RELEASE(pCallback);
-            NS_IF_RELEASE(pDirEntries);
+          NS_IF_RELEASE(pCallback);
+          NS_IF_RELEASE(pDirEntries);
 
-            return NS_OK;
-          }
+          return NS_OK;
         }
-
-        // Yield.
-        PR_Sleep(PR_MillisecondsToInterval(0));
-
-        // Check thread shutdown flag since it's possible for our thread
-        // to be in shutdown without the query being cancelled.
-        keepRunning = !m_ThreadShouldShutdown;
       }
-      NS_IF_RELEASE(pDirEntries);
+
+      // Yield.
+      PR_Sleep(PR_MillisecondsToInterval(0));
+
+      // Check thread shutdown flag since it's possible for our thread
+      // to be in shutdown without the query being cancelled.
+      keepRunning = !m_ThreadShouldShutdown;
     }
+    NS_IF_RELEASE(pDirEntries);
+
   }
   else if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && bFlag)
   {
