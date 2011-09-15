@@ -37,6 +37,12 @@ else
    SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
 endif
 
+ifeq (linux,$(SB_PLATFORM)) 
+	ifndef TAGLIB_LIBS
+	 SONGBIRD_XULRUNNER += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag.so*
+	endif
+endif
+
 ifeq (windows,$(SB_PLATFORM))
    # Kinda hacky (mostly because there *could* be other useful things on win32
    # in the runtime dir, OTHER than the MSVCRTs... there *aren't*, but there 
@@ -527,7 +533,7 @@ SONGBIRD_XR_EXTENSIONS = $(foreach e, \
 
 ## See comment above about, re: the specifics of this export::'s logic.
 export::
-	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
+	#$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
 	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
 ifneq (,$(XULRUNNER_EXTENSION_DIRS))
 	ifneq (1,$(SONGBIRD_OFFICIAL))

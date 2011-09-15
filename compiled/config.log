@@ -55,23 +55,23 @@ PATH: /usr/lib/ccache/bin
 ## Core tests. ##
 ## ----------- ##
 
-configure:2402: checking build system type
-configure:2416: result: x86_64-unknown-linux-gnu
-configure:2436: checking host system type
-configure:2449: result: x86_64-unknown-linux-gnu
-configure:2469: checking target system type
-configure:2482: result: x86_64-unknown-linux-gnu
-configure:5124: checking for gcc
-configure:5151: result: gcc
-configure:5380: checking for C compiler version
-configure:5389: gcc --version >&5
+configure:2406: checking build system type
+configure:2420: result: x86_64-unknown-linux-gnu
+configure:2440: checking host system type
+configure:2453: result: x86_64-unknown-linux-gnu
+configure:2473: checking target system type
+configure:2486: result: x86_64-unknown-linux-gnu
+configure:5128: checking for gcc
+configure:5155: result: gcc
+configure:5384: checking for C compiler version
+configure:5393: gcc --version >&5
 gcc (GCC) 4.6.1 20110819 (prerelease)
 Copyright (C) 2011 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-configure:5400: $? = 0
-configure:5389: gcc -v >&5
+configure:5404: $? = 0
+configure:5393: gcc -v >&5
 Using built-in specs.
 COLLECT_GCC=gcc
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.6.1/lto-wrapper
@@ -79,20 +79,20 @@ Target: x86_64-unknown-linux-gnu
 Configured with: /build/src/gcc-4.6-20110819/configure --prefix=/usr --libdir=/usr/lib --libexecdir=/usr/lib --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.archlinux.org/ --enable-languages=c,c++,ada,fortran,go,lto,objc,obj-c++ --enable-shared --enable-threads=posix --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-clocale=gnu --enable-gnu-unique-object --enable-linker-build-id --with-ppl --enable-cloog-backend=isl --enable-lto --enable-gold --enable-ld=default --enable-plugin --with-plugin-ld=ld.gold --enable-multilib --disable-libssp --disable-libstdcxx-pch --enable-checking=release
 Thread model: posix
 gcc version 4.6.1 20110819 (prerelease) (GCC) 
-configure:5400: $? = 0
-configure:5389: gcc -V >&5
+configure:5404: $? = 0
+configure:5393: gcc -V >&5
 gcc: error: unrecognized option '-V'
 gcc: fatal error: no input files
 compilation terminated.
-configure:5400: $? = 1
-configure:5389: gcc -qversion >&5
+configure:5404: $? = 1
+configure:5393: gcc -qversion >&5
 gcc: error: unrecognized option '-qversion'
 gcc: fatal error: no input files
 compilation terminated.
-configure:5400: $? = 1
-configure:5404: checking whether we are using the GNU C compiler
-configure:5423: gcc -c   conftest.c >&5
-configure:5423: $? = 0
+configure:5404: $? = 1
+configure:5408: checking whether we are using the GNU C compiler
+configure:5427: gcc -c   conftest.c >&5
+configure:5427: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -114,10 +114,10 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5432: result: no
-configure:5441: checking whether gcc accepts -g
-configure:5461: gcc -c -g  conftest.c >&5
-configure:5461: $? = 0
+configure:5436: result: no
+configure:5445: checking whether gcc accepts -g
+configure:5465: gcc -c -g  conftest.c >&5
+configure:5465: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -136,8 +136,8 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5476: gcc -c   conftest.c >&5
-configure:5476: $? = 0
+configure:5480: gcc -c   conftest.c >&5
+configure:5480: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -156,8 +156,8 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5492: gcc -c -g  conftest.c >&5
-configure:5492: $? = 0
+configure:5496: gcc -c -g  conftest.c >&5
+configure:5496: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -176,10 +176,10 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5502: result: no
-configure:5519: checking for gcc option to accept ISO C89
-configure:5583: gcc  -c   conftest.c >&5
-configure:5583: $? = 0
+configure:5506: result: no
+configure:5523: checking for gcc option to accept ISO C89
+configure:5587: gcc  -c   conftest.c >&5
+configure:5587: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -240,9 +240,9 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5583: gcc -qlanglvl=extc89 -c   conftest.c >&5
+configure:5587: gcc -qlanglvl=extc89 -c   conftest.c >&5
 gcc: error: unrecognized option '-qlanglvl=extc89'
-configure:5583: $? = 1
+configure:5587: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -303,9 +303,9 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5583: gcc -qlanglvl=ansi -c   conftest.c >&5
+configure:5587: gcc -qlanglvl=ansi -c   conftest.c >&5
 gcc: error: unrecognized option '-qlanglvl=ansi'
-configure:5583: $? = 1
+configure:5587: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -366,9 +366,9 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5583: gcc -std -c   conftest.c >&5
+configure:5587: gcc -std -c   conftest.c >&5
 cc1: error: unrecognized command line option '-std'
-configure:5583: $? = 1
+configure:5587: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -429,9 +429,9 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5583: gcc -Ae -c   conftest.c >&5
+configure:5587: gcc -Ae -c   conftest.c >&5
 <command-line>:0:1: error: missing '(' after predicate
-configure:5583: $? = 1
+configure:5587: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -492,9 +492,9 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5583: gcc -Aa -D_HPUX_SOURCE -c   conftest.c >&5
+configure:5587: gcc -Aa -D_HPUX_SOURCE -c   conftest.c >&5
 <command-line>:0:1: error: missing '(' after predicate
-configure:5583: $? = 1
+configure:5587: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -555,9 +555,9 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5583: gcc -Xc -D__EXTENSIONS__ -c   conftest.c >&5
+configure:5587: gcc -Xc -D__EXTENSIONS__ -c   conftest.c >&5
 gcc: error: unrecognized option '-Xc'
-configure:5583: $? = 1
+configure:5587: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -618,19 +618,19 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5599: result: unsupported
-configure:5674: checking for g++
-configure:5690: found /usr/bin/g++
-configure:5701: result: g++
-configure:5728: checking for C++ compiler version
-configure:5737: g++ --version >&5
+configure:5603: result: unsupported
+configure:5678: checking for g++
+configure:5694: found /usr/bin/g++
+configure:5705: result: g++
+configure:5732: checking for C++ compiler version
+configure:5741: g++ --version >&5
 g++ (GCC) 4.6.1 20110819 (prerelease)
 Copyright (C) 2011 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-configure:5748: $? = 0
-configure:5737: g++ -v >&5
+configure:5752: $? = 0
+configure:5741: g++ -v >&5
 Using built-in specs.
 COLLECT_GCC=g++
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.6.1/lto-wrapper
@@ -638,20 +638,20 @@ Target: x86_64-unknown-linux-gnu
 Configured with: /build/src/gcc-4.6-20110819/configure --prefix=/usr --libdir=/usr/lib --libexecdir=/usr/lib --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.archlinux.org/ --enable-languages=c,c++,ada,fortran,go,lto,objc,obj-c++ --enable-shared --enable-threads=posix --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-clocale=gnu --enable-gnu-unique-object --enable-linker-build-id --with-ppl --enable-cloog-backend=isl --enable-lto --enable-gold --enable-ld=default --enable-plugin --with-plugin-ld=ld.gold --enable-multilib --disable-libssp --disable-libstdcxx-pch --enable-checking=release
 Thread model: posix
 gcc version 4.6.1 20110819 (prerelease) (GCC) 
-configure:5748: $? = 0
-configure:5737: g++ -V >&5
+configure:5752: $? = 0
+configure:5741: g++ -V >&5
 g++: error: unrecognized option '-V'
 g++: fatal error: no input files
 compilation terminated.
-configure:5748: $? = 1
-configure:5737: g++ -qversion >&5
+configure:5752: $? = 1
+configure:5741: g++ -qversion >&5
 g++: error: unrecognized option '-qversion'
 g++: fatal error: no input files
 compilation terminated.
-configure:5748: $? = 1
-configure:5752: checking whether we are using the GNU C++ compiler
-configure:5771: g++ -c   conftest.cpp >&5
-configure:5771: $? = 0
+configure:5752: $? = 1
+configure:5756: checking whether we are using the GNU C++ compiler
+configure:5775: g++ -c   conftest.cpp >&5
+configure:5775: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -673,10 +673,10 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5780: result: no
-configure:5789: checking whether g++ accepts -g
-configure:5809: g++ -c -g  conftest.cpp >&5
-configure:5809: $? = 0
+configure:5784: result: no
+configure:5793: checking whether g++ accepts -g
+configure:5813: g++ -c -g  conftest.cpp >&5
+configure:5813: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -695,8 +695,8 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5824: g++ -c   conftest.cpp >&5
-configure:5824: $? = 0
+configure:5828: g++ -c   conftest.cpp >&5
+configure:5828: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -715,8 +715,8 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5840: g++ -c -g  conftest.cpp >&5
-configure:5840: $? = 0
+configure:5844: g++ -c -g  conftest.cpp >&5
+configure:5844: $? = 0
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -735,113 +735,113 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:5850: result: no
-configure:5886: checking for gawk
-configure:5902: found /usr/bin/gawk
-configure:5913: result: gawk
-configure:5928: checking for chmod
-configure:5944: found /bin/chmod
-configure:5955: result: chmod
-configure:5969: checking for gnucp
-configure:5999: result: no
-configure:5969: checking for gcp
-configure:5999: result: no
-configure:5969: checking for cp
-configure:5985: found /bin/cp
-configure:5996: result: cp
-configure:6013: checking for gdiff
-configure:6043: result: no
-configure:6013: checking for diff
-configure:6029: found /usr/bin/diff
-configure:6040: result: diff
-configure:6057: checking for doxygen
-configure:6087: result: no
-configure:6101: checking for ggrep
-configure:6131: result: no
-configure:6101: checking for grep
-configure:6117: found /bin/grep
-configure:6128: result: grep
-configure:6142: checking for gzip
-configure:6158: found /bin/gzip
-configure:6169: result: gzip
-configure:6180: checking for gunzip
-configure:6196: found /bin/gunzip
-configure:6207: result: gunzip
-configure:6218: checking for find
-configure:6234: found /usr/bin/find
-configure:6245: result: find
-configure:6259: checking for install
-configure:6275: found /bin/install
-configure:6286: result: install
-configure:6301: checking for ln
-configure:6317: found /bin/ln
-configure:6328: result: ln
-configure:6342: checking for packagemaker
-configure:6375: result: no
-configure:6389: checking for gmd5sum
-configure:6419: result: no
-configure:6389: checking for md5sum
-configure:6405: found /usr/bin/md5sum
-configure:6416: result: md5sum
-configure:6431: checking for mkdir
-configure:6447: found /bin/mkdir
-configure:6458: result: mkdir
-configure:6470: checking for mv
-configure:6486: found /bin/mv
-configure:6497: result: mv
-configure:6509: checking for perl
-configure:6525: found /usr/bin/perl
-configure:6536: result: perl
-configure:6548: checking for python
-configure:6575: result: python2
-configure:6587: checking for rm
-configure:6603: found /bin/rm
-configure:6614: result: rm
-configure:6628: checking for gsed
-configure:6658: result: no
-configure:6628: checking for sed
-configure:6644: found /bin/sed
-configure:6655: result: sed
-configure:6672: checking for gsha1sum
-configure:6702: result: no
-configure:6672: checking for sha1sum
-configure:6688: found /usr/bin/sha1sum
-configure:6699: result: sha1sum
-configure:6716: checking for sort
-configure:6732: found /usr/bin/sort
-configure:6743: result: sort
-configure:6760: checking for gtar
-configure:6790: result: no
-configure:6760: checking for tar
-configure:6776: found /bin/tar
-configure:6787: result: tar
-configure:6803: checking for touch
-configure:6819: found /bin/touch
-configure:6830: result: touch
-configure:6845: checking for unzip
-configure:6861: found /usr/bin/unzip
-configure:6872: result: unzip
-configure:6884: checking for zip
-configure:6900: found /usr/bin/zip
-configure:6911: result: zip
-configure:7782: checking for g++
-configure:7798: found /usr/bin/g++
-configure:7809: result: g++
-configure:7820: checking for ar
-configure:7836: found /usr/bin/ar
-configure:7847: result: ar
-configure:7858: checking for ranlib
-configure:7874: found /usr/bin/ranlib
-configure:7885: result: ranlib
-configure:7901: checking for strip
-configure:7917: found /usr/bin/strip
-configure:7928: result: strip
-configure:8237: checking for library containing pthread_create
-configure:8268: gcc -o conftest    conftest.c  >&5
-/tmp/ccRXlOFu.o: In function `main':
+configure:5854: result: no
+configure:5890: checking for gawk
+configure:5906: found /usr/bin/gawk
+configure:5917: result: gawk
+configure:5932: checking for chmod
+configure:5948: found /bin/chmod
+configure:5959: result: chmod
+configure:5973: checking for gnucp
+configure:6003: result: no
+configure:5973: checking for gcp
+configure:6003: result: no
+configure:5973: checking for cp
+configure:5989: found /bin/cp
+configure:6000: result: cp
+configure:6017: checking for gdiff
+configure:6047: result: no
+configure:6017: checking for diff
+configure:6033: found /usr/bin/diff
+configure:6044: result: diff
+configure:6061: checking for doxygen
+configure:6091: result: no
+configure:6105: checking for ggrep
+configure:6135: result: no
+configure:6105: checking for grep
+configure:6121: found /bin/grep
+configure:6132: result: grep
+configure:6146: checking for gzip
+configure:6162: found /bin/gzip
+configure:6173: result: gzip
+configure:6184: checking for gunzip
+configure:6200: found /bin/gunzip
+configure:6211: result: gunzip
+configure:6222: checking for find
+configure:6238: found /usr/bin/find
+configure:6249: result: find
+configure:6263: checking for install
+configure:6279: found /bin/install
+configure:6290: result: install
+configure:6305: checking for ln
+configure:6321: found /bin/ln
+configure:6332: result: ln
+configure:6346: checking for packagemaker
+configure:6379: result: no
+configure:6393: checking for gmd5sum
+configure:6423: result: no
+configure:6393: checking for md5sum
+configure:6409: found /usr/bin/md5sum
+configure:6420: result: md5sum
+configure:6435: checking for mkdir
+configure:6451: found /bin/mkdir
+configure:6462: result: mkdir
+configure:6474: checking for mv
+configure:6490: found /bin/mv
+configure:6501: result: mv
+configure:6513: checking for perl
+configure:6529: found /usr/bin/perl
+configure:6540: result: perl
+configure:6552: checking for python
+configure:6579: result: python2
+configure:6591: checking for rm
+configure:6607: found /bin/rm
+configure:6618: result: rm
+configure:6632: checking for gsed
+configure:6662: result: no
+configure:6632: checking for sed
+configure:6648: found /bin/sed
+configure:6659: result: sed
+configure:6676: checking for gsha1sum
+configure:6706: result: no
+configure:6676: checking for sha1sum
+configure:6692: found /usr/bin/sha1sum
+configure:6703: result: sha1sum
+configure:6720: checking for sort
+configure:6736: found /usr/bin/sort
+configure:6747: result: sort
+configure:6764: checking for gtar
+configure:6794: result: no
+configure:6764: checking for tar
+configure:6780: found /bin/tar
+configure:6791: result: tar
+configure:6807: checking for touch
+configure:6823: found /bin/touch
+configure:6834: result: touch
+configure:6849: checking for unzip
+configure:6865: found /usr/bin/unzip
+configure:6876: result: unzip
+configure:6888: checking for zip
+configure:6904: found /usr/bin/zip
+configure:6915: result: zip
+configure:7786: checking for g++
+configure:7802: found /usr/bin/g++
+configure:7813: result: g++
+configure:7824: checking for ar
+configure:7840: found /usr/bin/ar
+configure:7851: result: ar
+configure:7862: checking for ranlib
+configure:7878: found /usr/bin/ranlib
+configure:7889: result: ranlib
+configure:7905: checking for strip
+configure:7921: found /usr/bin/strip
+configure:7932: result: strip
+configure:8241: checking for library containing pthread_create
+configure:8272: gcc -o conftest    conftest.c  >&5
+/tmp/cc58IClX.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pthread_create'
 collect2: ld returned 1 exit status
-configure:8268: $? = 1
+configure:8272: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -869,39 +869,51 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:8268: gcc -o conftest    conftest.c -lpthread   >&5
-configure:8268: $? = 0
-configure:8285: result: -lpthread
-configure:8303: checking for pkg-config
-configure:8321: found /usr/bin/pkg-config
-configure:8334: result: /usr/bin/pkg-config
-configure:8352: checking for gtk+-2.0
-configure:8356: result: yes
-configure:8360: checking GTK_CFLAGS
-configure:8363: result: -pthread -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng14  
-configure:8366: checking GTK_LIBS
-configure:8371: result:   -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0  
-configure:8454: checking for glib-2.0
-configure:8458: result: yes
-configure:8462: checking GLIB_CFLAGS
-configure:8465: result: -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
-configure:8468: checking GLIB_LIBS
-configure:8473: result:   -lglib-2.0  
-configure:8558: checking for dbus-glib-1
-configure:8562: result: yes
-configure:8566: checking DBUS_CFLAGS
-configure:8569: result: -pthread -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
-configure:8572: checking DBUS_LIBS
-configure:8577: result:   -ldbus-glib-1 -ldbus-1 -lpthread -lgobject-2.0 -lgthread-2.0 -lrt -lglib-2.0  
-configure:9492: checking for /media/disk/Linux/makepkg/songbird/dependencies/linux-x86_64/private/fluendo-mp3/libgstflump3dec.so
-configure:9506: result: no
-configure:9511: WARNING: Linux MP3 decoder not present so build will not play mp3.
-configure:9523: checking for PR_Cleanup in -lnspr4
-configure:9548: gcc -o conftest  -c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread -gstabs+ -Os -include "mozilla-config.h"   -Wl,-z,defs -Wl,-rpath-link,$(topsrcdir)/compiled/dist/xulrunner conftest.c -lnspr4   >&5
+configure:8272: gcc -o conftest    conftest.c -lpthread   >&5
+configure:8272: $? = 0
+configure:8289: result: -lpthread
+configure:8307: checking for pkg-config
+configure:8325: found /usr/bin/pkg-config
+configure:8338: result: /usr/bin/pkg-config
+configure:8356: checking for nspr
+configure:8360: result: yes
+configure:8364: checking NSPR_CFLAGS
+configure:8367: result: -I/usr/include/nspr  
+configure:8370: checking NSPR_LIBS
+configure:8375: result:   -lplds4 -lplc4 -lnspr4 -lpthread -ldl  
+configure:8458: checking for gtk+-2.0
+configure:8462: result: yes
+configure:8466: checking GTK_CFLAGS
+configure:8469: result: -pthread -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng14  
+configure:8472: checking GTK_LIBS
+configure:8477: result:   -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lgio-2.0 -lpangoft2-1.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0  
+configure:8560: checking for glib-2.0
+configure:8564: result: yes
+configure:8568: checking GLIB_CFLAGS
+configure:8571: result: -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
+configure:8574: checking GLIB_LIBS
+configure:8579: result:   -lglib-2.0  
+configure:8664: checking for dbus-glib-1
+configure:8668: result: yes
+configure:8672: checking DBUS_CFLAGS
+configure:8675: result: -pthread -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
+configure:8678: checking DBUS_LIBS
+configure:8683: result:   -ldbus-glib-1 -ldbus-1 -lpthread -lgobject-2.0 -lgthread-2.0 -lrt -lglib-2.0  
+configure:9635: checking for taglib >= 1.5
+configure:9639: result: yes
+configure:9643: checking TAGLIB_CFLAGS
+configure:9646: result: -I/usr/include/taglib  
+configure:9649: checking TAGLIB_LIBS
+configure:9654: result:   -ltag  
+configure:9710: checking for /media/disk/Linux/makepkg/songbird/dependencies/linux-x86_64/private/fluendo-mp3/libgstflump3dec.so
+configure:9724: result: no
+configure:9729: WARNING: Linux MP3 decoder not present so build will not play mp3.
+configure:9741: checking for PR_Cleanup in -lnspr4
+configure:9766: gcc -o conftest  -c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread -gstabs+ -Os -include "mozilla-config.h"   -Wl,-z,defs -Wl,-rpath-link,$(topsrcdir)/compiled/dist/xulrunner conftest.c -lnspr4   >&5
 cc1: warning: command line option '-fno-rtti' is valid for C++/ObjC++ but not for C [enabled by default]
 cc1: fatal error: "mozilla-config.h": No such file or directory
 compilation terminated.
-configure:9548: $? = 1
+configure:9766: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -929,13 +941,13 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:9557: result: no
-configure:9568: checking for _XRE_Main in -lxul
-configure:9593: gcc -o conftest  -c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread -gstabs+ -Os -include "mozilla-config.h"   -Wl,-z,defs -Wl,-rpath-link,$(topsrcdir)/compiled/dist/xulrunner conftest.c -lxul   >&5
+configure:9775: result: no
+configure:9786: checking for _XRE_Main in -lxul
+configure:9811: gcc -o conftest  -c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread -gstabs+ -Os -include "mozilla-config.h"   -Wl,-z,defs -Wl,-rpath-link,$(topsrcdir)/compiled/dist/xulrunner conftest.c -lxul   >&5
 cc1: warning: command line option '-fno-rtti' is valid for C++/ObjC++ but not for C [enabled by default]
 cc1: fatal error: "mozilla-config.h": No such file or directory
 compilation terminated.
-configure:9593: $? = 1
+configure:9811: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -963,8 +975,8 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:9602: result: no
-configure:9781: creating ./config.status
+configure:9820: result: no
+configure:9999: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -981,492 +993,492 @@ generated by GNU Autoconf 2.68.  Invocation command line was
 
 on mattop
 
-config.status:880: creating app/Makefile
-config.status:880: creating app/content/Makefile
-config.status:880: creating app/content/test/Makefile
-config.status:880: creating app/content/scripts/Makefile
-config.status:880: creating app/content/xul/Makefile
-config.status:880: creating app/content/mediapages/Makefile
-config.status:880: creating app/content/html/Makefile
-config.status:880: creating app/content/bindings/Makefile
-config.status:880: creating app/preferences/Makefile
-config.status:880: creating app/skin/Makefile
-config.status:880: creating app/skin/mozapps/Makefile
-config.status:880: creating app/skin/branding/Makefile
-config.status:880: creating app/skin/global/Makefile
-config.status:880: creating app/skin/bindings/Makefile
-config.status:880: creating app/skin/dialogs/Makefile
-config.status:880: creating app/branding/Makefile
-config.status:880: creating app/profile/Makefile
-config.status:880: creating branding/Makefile
-config.status:880: creating bindings/Makefile
-config.status:880: creating bindings/public/Makefile
-config.status:880: creating components/dbengine/Makefile
-config.status:880: creating components/dbengine/test/Makefile
-config.status:880: creating components/dbengine/public/Makefile
-config.status:880: creating components/dbengine/src/Makefile
-config.status:880: creating components/contenthandling/Makefile
-config.status:880: creating components/contenthandling/media/Makefile
-config.status:880: creating components/library/Makefile
-config.status:880: creating components/library/download/Makefile
-config.status:880: creating components/library/download/test/Makefile
-config.status:880: creating components/library/download/public/Makefile
-config.status:880: creating components/library/download/src/Makefile
-config.status:880: creating components/library/base/Makefile
-config.status:880: creating components/library/base/test/Makefile
-config.status:880: creating components/library/base/public/Makefile
-config.status:880: creating components/library/base/src/Makefile
-config.status:880: creating components/library/base/src/static/Makefile
-config.status:880: creating components/library/identity/Makefile
-config.status:880: creating components/library/identity/test/Makefile
-config.status:880: creating components/library/identity/public/Makefile
-config.status:880: creating components/library/identity/src/Makefile
-config.status:880: creating components/library/localdatabase/Makefile
-config.status:880: creating components/library/localdatabase/test/Makefile
-config.status:880: creating components/library/localdatabase/public/Makefile
-config.status:880: creating components/library/localdatabase/content/Makefile
-config.status:880: creating components/library/localdatabase/perf/Makefile
-config.status:880: creating components/library/localdatabase/src/Makefile
-config.status:880: creating components/library/localdatabase/src/migrationhandlers/Makefile
-config.status:880: creating components/faceplate/Makefile
-config.status:880: creating components/faceplate/test/Makefile
-config.status:880: creating components/faceplate/public/Makefile
-config.status:880: creating components/faceplate/src/Makefile
-config.status:880: creating components/networkproxy/Makefile
-config.status:880: creating components/networkproxy/public/Makefile
-config.status:880: creating components/networkproxy/src/Makefile
-config.status:880: creating components/remoteapi/Makefile
-config.status:880: creating components/remoteapi/test/Makefile
-config.status:880: creating components/remoteapi/public/Makefile
-config.status:880: creating components/remoteapi/src/Makefile
-config.status:880: creating components/playqueue/Makefile
-config.status:880: creating components/playqueue/test/Makefile
-config.status:880: creating components/playqueue/public/Makefile
-config.status:880: creating components/playqueue/src/Makefile
-config.status:880: creating components/mediamanager/Makefile
-config.status:880: creating components/mediamanager/test/Makefile
-config.status:880: creating components/mediamanager/public/Makefile
-config.status:880: creating components/mediamanager/src/Makefile
-config.status:880: creating components/feathers/Makefile
-config.status:880: creating components/feathers/test/Makefile
-config.status:880: creating components/feathers/public/Makefile
-config.status:880: creating components/feathers/src/Makefile
-config.status:880: creating components/controller/Makefile
-config.status:880: creating components/controller/public/Makefile
-config.status:880: creating components/controller/src/Makefile
-config.status:880: creating components/appstartup/Makefile
-config.status:880: creating components/appstartup/src/Makefile
-config.status:880: creating components/servicepane/Makefile
-config.status:880: creating components/servicepane/test/Makefile
-config.status:880: creating components/servicepane/public/Makefile
-config.status:880: creating components/servicepane/src/Makefile
-config.status:880: creating components/job/Makefile
-config.status:880: creating components/job/public/Makefile
-config.status:880: creating components/job/src/Makefile
-config.status:880: creating components/devices/Makefile
-config.status:880: creating components/devices/controller/Makefile
-config.status:880: creating components/devices/controller/public/Makefile
-config.status:880: creating components/devices/controller/src/Makefile
-config.status:880: creating components/devices/base/Makefile
-config.status:880: creating components/devices/base/test/Makefile
-config.status:880: creating components/devices/base/public/Makefile
-config.status:880: creating components/devices/base/src/Makefile
-config.status:880: creating components/devices/content/Makefile
-config.status:880: creating components/devices/firmware/Makefile
-config.status:880: creating components/devices/firmware/test/Makefile
-config.status:880: creating components/devices/firmware/test/testfiles/Makefile
-config.status:880: creating components/devices/firmware/src/Makefile
-config.status:880: creating components/devices/firmware/mock/Makefile
-config.status:880: creating components/devices/firmware/mock/public/Makefile
-config.status:880: creating components/devices/firmware/mock/src/Makefile
-config.status:880: creating components/devices/manager/Makefile
-config.status:880: creating components/devices/manager/test/Makefile
-config.status:880: creating components/devices/manager/public/Makefile
-config.status:880: creating components/devices/manager/src/Makefile
-config.status:880: creating components/devices/cd/Makefile
-config.status:880: creating components/devices/cd/test/Makefile
-config.status:880: creating components/devices/cd/public/Makefile
-config.status:880: creating components/devices/cd/src/Makefile
-config.status:880: creating components/devices/cd/mock/Makefile
-config.status:880: creating components/devices/cd/mock/public/Makefile
-config.status:880: creating components/devices/cd/mock/src/Makefile
-config.status:880: creating components/devices/marshall/Makefile
-config.status:880: creating components/devices/marshall/public/Makefile
-config.status:880: creating components/devices/marshall/src/Makefile
-config.status:880: creating components/devices/device/Makefile
-config.status:880: creating components/devices/device/test/Makefile
-config.status:880: creating components/devices/device/public/Makefile
-config.status:880: creating components/devices/device/src/Makefile
-config.status:880: creating components/devices/device/mock/Makefile
-config.status:880: creating components/devices/device/mock/public/Makefile
-config.status:880: creating components/devices/device/mock/src/Makefile
-config.status:880: creating components/protocol/Makefile
-config.status:880: creating components/mediacore/Makefile
-config.status:880: creating components/mediacore/metadata/Makefile
-config.status:880: creating components/mediacore/metadata/handler/Makefile
-config.status:880: creating components/mediacore/metadata/handler/taglib/Makefile
-config.status:880: creating components/mediacore/metadata/handler/taglib/public/Makefile
-config.status:880: creating components/mediacore/metadata/handler/taglib/src/Makefile
-config.status:880: creating components/mediacore/metadata/handler/wma/Makefile
-config.status:880: creating components/mediacore/metadata/handler/wma/public/Makefile
-config.status:880: creating components/mediacore/metadata/handler/wma/src/Makefile
-config.status:880: creating components/mediacore/metadata/manager/Makefile
-config.status:880: creating components/mediacore/metadata/manager/test/Makefile
-config.status:880: creating components/mediacore/metadata/manager/test/errorcases/Makefile
-config.status:880: creating components/mediacore/metadata/manager/test/files/Makefile
-config.status:880: creating components/mediacore/metadata/manager/public/Makefile
-config.status:880: creating components/mediacore/metadata/manager/src/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/testprovider/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/testprovider/src/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/manager/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/manager/test/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/manager/public/Makefile
-config.status:880: creating components/mediacore/metadata/lookup/manager/src/Makefile
-config.status:880: creating components/mediacore/base/Makefile
-config.status:880: creating components/mediacore/base/test/Makefile
-config.status:880: creating components/mediacore/base/public/Makefile
-config.status:880: creating components/mediacore/base/src/Makefile
-config.status:880: creating components/mediacore/playback/Makefile
-config.status:880: creating components/mediacore/playback/history/Makefile
-config.status:880: creating components/mediacore/playback/history/test/Makefile
-config.status:880: creating components/mediacore/playback/history/public/Makefile
-config.status:880: creating components/mediacore/playback/history/content/Makefile
-config.status:880: creating components/mediacore/playback/history/src/Makefile
-config.status:880: creating components/mediacore/transcode/Makefile
-config.status:880: creating components/mediacore/transcode/test/Makefile
-config.status:880: creating components/mediacore/transcode/test/files/Makefile
-config.status:880: creating components/mediacore/transcode/public/Makefile
-config.status:880: creating components/mediacore/transcode/src/Makefile
-config.status:880: creating components/mediacore/gstreamer/Makefile
-config.status:880: creating components/mediacore/gstreamer/test/Makefile
-config.status:880: creating components/mediacore/gstreamer/public/Makefile
-config.status:880: creating components/mediacore/gstreamer/content/Makefile
-config.status:880: creating components/mediacore/gstreamer/stub/Makefile
-config.status:880: creating components/mediacore/gstreamer/encode-profiles/Makefile
-config.status:880: creating components/mediacore/gstreamer/src/Makefile
-config.status:880: creating components/mediacore/gstreamer/src/metadata/Makefile
-config.status:880: creating components/mediacore/manager/Makefile
-config.status:880: creating components/mediacore/manager/test/Makefile
-config.status:880: creating components/mediacore/manager/public/Makefile
-config.status:880: creating components/mediacore/manager/src/Makefile
-config.status:880: creating components/playlistcommands/Makefile
-config.status:880: creating components/playlistcommands/test/Makefile
-config.status:880: creating components/playlistcommands/public/Makefile
-config.status:880: creating components/playlistcommands/src/Makefile
-config.status:880: creating components/sqlbuilder/Makefile
-config.status:880: creating components/sqlbuilder/test/Makefile
-config.status:880: creating components/sqlbuilder/public/Makefile
-config.status:880: creating components/sqlbuilder/src/Makefile
-config.status:880: creating components/intl/Makefile
-config.status:880: creating components/intl/test/Makefile
-config.status:880: creating components/intl/public/Makefile
-config.status:880: creating components/intl/src/Makefile
-config.status:880: creating components/intl/src/content/Makefile
-config.status:880: creating components/addonmetadata/Makefile
-config.status:880: creating components/addonmetadata/test/Makefile
-config.status:880: creating components/addonmetadata/src/Makefile
-config.status:880: creating components/jscodelib/Makefile
-config.status:880: creating components/jscodelib/test/Makefile
-config.status:880: creating components/metrics/Makefile
-config.status:880: creating components/metrics/public/Makefile
-config.status:880: creating components/metrics/src/Makefile
-config.status:880: creating components/search/Makefile
-config.status:880: creating components/search/public/Makefile
-config.status:880: creating components/search/src/Makefile
-config.status:880: creating components/filesystemevents/Makefile
-config.status:880: creating components/filesystemevents/test/Makefile
-config.status:880: creating components/filesystemevents/win32/Makefile
-config.status:880: creating components/filesystemevents/base/Makefile
-config.status:880: creating components/filesystemevents/base/public/Makefile
-config.status:880: creating components/filesystemevents/base/src/Makefile
-config.status:880: creating components/filesystemevents/linux/Makefile
-config.status:880: creating components/filesystemevents/macosx/Makefile
-config.status:880: creating components/mediaexport/Makefile
-config.status:880: creating components/mediaexport/test/Makefile
-config.status:880: creating components/mediaexport/playlist/Makefile
-config.status:880: creating components/mediaexport/playlist/test/Makefile
-config.status:880: creating components/mediaexport/playlist/public/Makefile
-config.status:880: creating components/mediaexport/playlist/src/Makefile
-config.status:880: creating components/mediaexport/playlist/src/handler/Makefile
-config.status:880: creating components/mediaexport/playlist/src/manager/Makefile
-config.status:880: creating components/mediaexport/public/Makefile
-config.status:880: creating components/mediaexport/agent/Makefile
-config.status:880: creating components/mediaexport/agent/src/Makefile
-config.status:880: creating components/mediaexport/src/Makefile
-config.status:880: creating components/mediaimport/Makefile
-config.status:880: creating components/mediaimport/library/Makefile
-config.status:880: creating components/mediaimport/library/itunes/Makefile
-config.status:880: creating components/mediaimport/library/itunes/test/Makefile
-config.status:880: creating components/mediaimport/library/itunes/public/Makefile
-config.status:880: creating components/mediaimport/library/itunes/src/Makefile
-config.status:880: creating components/mediaimport/library/base/Makefile
-config.status:880: creating components/mediaimport/library/base/public/Makefile
-config.status:880: creating components/mediaimport/library/base/src/Makefile
-config.status:880: creating components/mediaimport/playlist/Makefile
-config.status:880: creating components/mediaimport/playlist/test/Makefile
-config.status:880: creating components/mediaimport/playlist/public/Makefile
-config.status:880: creating components/mediaimport/playlist/src/Makefile
-config.status:880: creating components/mediaimport/playlist/src/handler/Makefile
-config.status:880: creating components/mediaimport/playlist/src/manager/Makefile
-config.status:880: creating components/mediaimport/uri/Makefile
-config.status:880: creating components/mediaimport/uri/public/Makefile
-config.status:880: creating components/mediaimport/uri/src/Makefile
-config.status:880: creating components/mediaimport/directory/Makefile
-config.status:880: creating components/mediaimport/directory/test/Makefile
-config.status:880: creating components/mediaimport/directory/public/Makefile
-config.status:880: creating components/mediaimport/directory/src/Makefile
-config.status:880: creating components/mediaimport/filescan/Makefile
-config.status:880: creating components/mediaimport/filescan/public/Makefile
-config.status:880: creating components/mediaimport/filescan/src/Makefile
-config.status:880: creating components/mediapages/Makefile
-config.status:880: creating components/mediapages/test/Makefile
-config.status:880: creating components/mediapages/test/test-extension/Makefile
-config.status:880: creating components/mediapages/test/test-extension/chrome/Makefile
-config.status:880: creating components/mediapages/public/Makefile
-config.status:880: creating components/mediapages/src/Makefile
-config.status:880: creating components/integration/Makefile
-config.status:880: creating components/integration/public/Makefile
-config.status:880: creating components/integration/src/Makefile
-config.status:880: creating components/integration/src/win32/Makefile
-config.status:880: creating components/integration/src/linux/Makefile
-config.status:880: creating components/integration/src/macosx/Makefile
-config.status:880: creating components/update/Makefile
-config.status:880: creating components/update/public/Makefile
-config.status:880: creating components/update/src/Makefile
-config.status:880: creating components/devicesobsolete/Makefile
-config.status:880: creating components/devicesobsolete/download/Makefile
-config.status:880: creating components/devicesobsolete/download/public/Makefile
-config.status:880: creating components/devicesobsolete/download/src/Makefile
-config.status:880: creating components/devicesobsolete/base/Makefile
-config.status:880: creating components/devicesobsolete/base/public/Makefile
-config.status:880: creating components/devicesobsolete/base/src/Makefile
-config.status:880: creating components/devicesobsolete/manager/Makefile
-config.status:880: creating components/devicesobsolete/manager/public/Makefile
-config.status:880: creating components/devicesobsolete/manager/src/Makefile
-config.status:880: creating components/albumart/Makefile
-config.status:880: creating components/albumart/public/Makefile
-config.status:880: creating components/albumart/src/Makefile
-config.status:880: creating components/dataremote/Makefile
-config.status:880: creating components/dataremote/test/Makefile
-config.status:880: creating components/dataremote/public/Makefile
-config.status:880: creating components/dataremote/src/Makefile
-config.status:880: creating components/displaypanes/Makefile
-config.status:880: creating components/displaypanes/test/Makefile
-config.status:880: creating components/displaypanes/test/test-extension/Makefile
-config.status:880: creating components/displaypanes/test/test-extension/chrome/Makefile
-config.status:880: creating components/displaypanes/public/Makefile
-config.status:880: creating components/displaypanes/src/Makefile
-config.status:880: creating components/testharness/Makefile
-config.status:880: creating components/testharness/public/Makefile
-config.status:880: creating components/testharness/basetests/Makefile
-config.status:880: creating components/testharness/src/Makefile
-config.status:880: creating components/moz/Makefile
-config.status:880: creating components/moz/xpcom/Makefile
-config.status:880: creating components/moz/xpcom/public/Makefile
-config.status:880: creating components/moz/xpcom/src/Makefile
-config.status:880: creating components/moz/image/Makefile
-config.status:880: creating components/moz/image/public/Makefile
-config.status:880: creating components/moz/image/src/Makefile
-config.status:880: creating components/moz/temporaryfileservice/Makefile
-config.status:880: creating components/moz/temporaryfileservice/test/Makefile
-config.status:880: creating components/moz/temporaryfileservice/public/Makefile
-config.status:880: creating components/moz/temporaryfileservice/src/Makefile
-config.status:880: creating components/moz/fileutils/Makefile
-config.status:880: creating components/moz/fileutils/test/Makefile
-config.status:880: creating components/moz/fileutils/public/Makefile
-config.status:880: creating components/moz/fileutils/src/Makefile
-config.status:880: creating components/moz/variant/Makefile
-config.status:880: creating components/moz/variant/src/Makefile
-config.status:880: creating components/moz/variant/src/static/Makefile
-config.status:880: creating components/moz/process/Makefile
-config.status:880: creating components/moz/process/src/Makefile
-config.status:880: creating components/moz/process/src/windows/Makefile
-config.status:880: creating components/moz/windowwatcher/Makefile
-config.status:880: creating components/moz/windowwatcher/public/Makefile
-config.status:880: creating components/moz/windowwatcher/src/Makefile
-config.status:880: creating components/moz/prompter/Makefile
-config.status:880: creating components/moz/prompter/public/Makefile
-config.status:880: creating components/moz/prompter/src/Makefile
-config.status:880: creating components/moz/threadpoolservice/Makefile
-config.status:880: creating components/moz/threadpoolservice/src/Makefile
-config.status:880: creating components/moz/clipboard/Makefile
-config.status:880: creating components/moz/clipboard/test/Makefile
-config.status:880: creating components/moz/clipboard/test/files/Makefile
-config.status:880: creating components/moz/clipboard/public/Makefile
-config.status:880: creating components/moz/clipboard/src/Makefile
-config.status:880: creating components/moz/threads/Makefile
-config.status:880: creating components/moz/threads/src/Makefile
-config.status:880: creating components/moz/urlformatter/Makefile
-config.status:880: creating components/moz/urlformatter/test/Makefile
-config.status:880: creating components/moz/urlformatter/public/Makefile
-config.status:880: creating components/moz/urlformatter/src/Makefile
-config.status:880: creating components/moz/errorconsole/Makefile
-config.status:880: creating components/moz/errorconsole/src/Makefile
-config.status:880: creating components/moz/system/Makefile
-config.status:880: creating components/moz/system/windows/Makefile
-config.status:880: creating components/moz/system/windows/formatter/Makefile
-config.status:880: creating components/moz/system/windows/formatter/public/Makefile
-config.status:880: creating components/moz/system/windows/formatter/src/Makefile
-config.status:880: creating components/moz/system/windows/public/Makefile
-config.status:880: creating components/moz/system/windows/src/Makefile
-config.status:880: creating components/moz/dirprovider/Makefile
-config.status:880: creating components/moz/dirprovider/test/Makefile
-config.status:880: creating components/moz/dirprovider/src/Makefile
-config.status:880: creating components/moz/shutdownservice/Makefile
-config.status:880: creating components/moz/shutdownservice/test/Makefile
-config.status:880: creating components/moz/shutdownservice/src/Makefile
-config.status:880: creating components/moz/streams/Makefile
-config.status:880: creating components/moz/streams/src/Makefile
-config.status:880: creating components/moz/strings/Makefile
-config.status:880: creating components/moz/strings/components/Makefile
-config.status:880: creating components/moz/strings/components/public/Makefile
-config.status:880: creating components/moz/strings/components/src/Makefile
-config.status:880: creating components/moz/strings/src/Makefile
-config.status:880: creating components/moz/distribution/Makefile
-config.status:880: creating components/moz/filedownloader/Makefile
-config.status:880: creating components/moz/filedownloader/test/Makefile
-config.status:880: creating components/moz/filedownloader/public/Makefile
-config.status:880: creating components/moz/filedownloader/src/Makefile
-config.status:880: creating components/parsererror/Makefile
-config.status:880: creating components/parsererror/src/Makefile
-config.status:880: creating components/bundle/Makefile
-config.status:880: creating components/bundle/public/Makefile
-config.status:880: creating components/bundle/src/Makefile
-config.status:880: creating components/draganddrop/Makefile
-config.status:880: creating components/draganddrop/public/Makefile
-config.status:880: creating components/draganddrop/src/Makefile
-config.status:880: creating components/commandline/Makefile
-config.status:880: creating components/commandline/public/Makefile
-config.status:880: creating components/commandline/src/Makefile
-config.status:880: creating components/property/Makefile
-config.status:880: creating components/property/test/Makefile
-config.status:880: creating components/property/public/Makefile
-config.status:880: creating components/property/src/Makefile
-config.status:880: creating components/watchfolder/Makefile
-config.status:880: creating components/watchfolder/test/Makefile
-config.status:880: creating components/watchfolder/public/Makefile
-config.status:880: creating components/watchfolder/utils/Makefile
-config.status:880: creating components/watchfolder/src/Makefile
-config.status:880: creating components/webservices/Makefile
-config.status:880: creating components/webservices/lastfm/Makefile
-config.status:880: creating components/webservices/lastfm/public/Makefile
-config.status:880: creating components/webservices/lastfm/src/Makefile
-config.status:880: creating documentation/Makefile
-config.status:880: creating extensions/Makefile
-config.status:880: creating extensions/AlbumArt/Makefile
-config.status:880: creating extensions/extensionschecker/Makefile
-config.status:880: creating extensions/extensionschecker/chrome/Makefile
-config.status:880: creating extensions/albumartlastfm/Makefile
-config.status:880: creating extensions/albumartlastfm/chrome/Makefile
-config.status:880: creating extensions/albumartlastfm/defaults/Makefile
-config.status:880: creating extensions/albumartlastfm/defaults/preferences/Makefile
-config.status:880: creating extensions/albumartlastfm/components/Makefile
-config.status:880: creating extensions/albumartlastfm/components/src/Makefile
-config.status:880: creating extensions/xpcom_helloworld/Makefile
-config.status:880: creating extensions/xpcom_helloworld/chrome/Makefile
-config.status:880: creating extensions/xpcom_helloworld/components/Makefile
-config.status:880: creating extensions/xpcom_helloworld/components/helloworld/Makefile
-config.status:880: creating extensions/xpcom_helloworld/components/helloworld/test/Makefile
-config.status:880: creating extensions/xpcom_helloworld/components/helloworld/public/Makefile
-config.status:880: creating extensions/xpcom_helloworld/components/helloworld/src/Makefile
-config.status:880: creating extensions/7digital/Makefile
-config.status:880: creating extensions/7digital/chrome/Makefile
-config.status:880: creating extensions/7digital/defaults/Makefile
-config.status:880: creating extensions/7digital/defaults/preferences/Makefile
-config.status:880: creating extensions/7digital/components/Makefile
-config.status:880: creating extensions/qatesttools/Makefile
-config.status:880: creating extensions/qatesttools/chrome/Makefile
-config.status:880: creating extensions/qatesttools/public/Makefile
-config.status:880: creating extensions/qatesttools/components/Makefile
-config.status:880: creating extensions/lastfm/Makefile
-config.status:880: creating extensions/lastfm/chrome/Makefile
-config.status:880: creating extensions/lastfm/public/Makefile
-config.status:880: creating extensions/lastfm/defaults/Makefile
-config.status:880: creating extensions/lastfm/defaults/preferences/Makefile
-config.status:880: creating extensions/lastfm/components/Makefile
-config.status:880: creating extensions/mashTape/Makefile
-config.status:880: creating extensions/mashTape/chrome/Makefile
-config.status:880: creating extensions/mashTape/defaults/Makefile
-config.status:880: creating extensions/mashTape/defaults/preferences/Makefile
-config.status:880: creating extensions/mashTape/components/Makefile
-config.status:880: creating extensions/mashTape/components/public/Makefile
-config.status:880: creating extensions/mashTape/components/src/Makefile
-config.status:880: creating extensions/mashTape/modules/Makefile
-config.status:880: creating extensions/systray/Makefile
-config.status:880: creating extensions/systray/chrome/Makefile
-config.status:880: creating extensions/systray/components/Makefile
-config.status:880: creating extensions/systray/components/public/Makefile
-config.status:880: creating extensions/systray/components/src/Makefile
-config.status:880: creating extensions/concerts/Makefile
-config.status:880: creating extensions/concerts/chrome/Makefile
-config.status:880: creating extensions/concerts/defaults/Makefile
-config.status:880: creating extensions/concerts/defaults/preferences/Makefile
-config.status:880: creating extensions/concerts/components/Makefile
-config.status:880: creating extensions/concerts/components/public/Makefile
-config.status:880: creating extensions/concerts/components/src/Makefile
-config.status:880: creating extensions/ipod/Makefile
-config.status:880: creating extensions/ipod/components/public/Makefile
-config.status:880: creating extensions/ipod/components/src/Makefile
-config.status:880: creating extensions/ipod/components/ComponentLoader/Makefile
-config.status:880: creating extensions/partner-branding-sample/Makefile
-config.status:880: creating extensions/partner-branding-sample/chrome/Makefile
-config.status:880: creating extensions/partner-branding-sample/components/Makefile
-config.status:880: creating extensions/partner-branding-sample/distribution/Makefile
-config.status:880: creating extensions/newreleases/Makefile
-config.status:880: creating extensions/newreleases/chrome/Makefile
-config.status:880: creating extensions/newreleases/defaults/Makefile
-config.status:880: creating extensions/newreleases/defaults/preferences/Makefile
-config.status:880: creating extensions/newreleases/components/Makefile
-config.status:880: creating extensions/shoutcast/Makefile
-config.status:880: creating extensions/shoutcast/chrome/Makefile
-config.status:880: creating extensions/shoutcast/defaults/Makefile
-config.status:880: creating extensions/shoutcast/defaults/preferences/Makefile
-config.status:880: creating extensions/shoutcast/modules/Makefile
-config.status:880: creating feathers/Makefile
-config.status:880: creating feathers/gonzo/Makefile
-config.status:880: creating feathers/gonzo/chrome/content/bindings/Makefile
-config.status:880: creating feathers/purplerain/Makefile
-config.status:880: creating feathers/purplerain/chrome/Makefile
-config.status:880: creating feathers/purplerain/chrome/content/bindings/Makefile
-config.status:880: creating installer/Makefile
-config.status:880: creating installer/linux/Makefile
-config.status:880: creating installer/windows/Makefile
-config.status:880: creating installer/windows/partner/Makefile
-config.status:880: creating installer/macosx/Makefile
-config.status:880: creating installer/solaris/Makefile
-config.status:880: creating locales/Makefile
-config.status:880: creating locales/en-US/Makefile
-config.status:880: creating locales/branding/Makefile
-config.status:880: creating tools/Makefile
-config.status:880: creating tools/win32/Makefile
-config.status:880: creating tools/win32/autoplay/Makefile
-config.status:880: creating tools/lib/Makefile
-config.status:880: creating tools/lib/windows/Makefile
-config.status:880: creating tools/lib/windows/static/Makefile
-config.status:880: creating tools/disthelper/Makefile
-config.status:880: creating tools/disthelper/tests/Makefile
-config.status:880: creating tools/cdriphelper/Makefile
-config.status:880: creating tools/itunesagent/Makefile
-config.status:880: creating update/Makefile
-config.status:880: creating update/test/Makefile
-config.status:880: creating Makefile
-config.status:880: creating build/autodefs.mk
-config.status:880: creating build/Makefile
-config.status:880: creating dependencies/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/components/preferences/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/fuel/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/fuel/public/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/fuel/src/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/locales/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/themes/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/themes/pinstripe/browser/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/themes/winstripe/browser/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/components/search/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/components/sidebar/src/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/components/Makefile
-config.status:880: creating dependencies/vendor/mozbrowser/base/Makefile
+config.status:884: creating app/Makefile
+config.status:884: creating app/content/Makefile
+config.status:884: creating app/content/test/Makefile
+config.status:884: creating app/content/scripts/Makefile
+config.status:884: creating app/content/xul/Makefile
+config.status:884: creating app/content/mediapages/Makefile
+config.status:884: creating app/content/html/Makefile
+config.status:884: creating app/content/bindings/Makefile
+config.status:884: creating app/preferences/Makefile
+config.status:884: creating app/skin/Makefile
+config.status:884: creating app/skin/mozapps/Makefile
+config.status:884: creating app/skin/branding/Makefile
+config.status:884: creating app/skin/global/Makefile
+config.status:884: creating app/skin/bindings/Makefile
+config.status:884: creating app/skin/dialogs/Makefile
+config.status:884: creating app/branding/Makefile
+config.status:884: creating app/profile/Makefile
+config.status:884: creating branding/Makefile
+config.status:884: creating bindings/Makefile
+config.status:884: creating bindings/public/Makefile
+config.status:884: creating components/dbengine/Makefile
+config.status:884: creating components/dbengine/test/Makefile
+config.status:884: creating components/dbengine/public/Makefile
+config.status:884: creating components/dbengine/src/Makefile
+config.status:884: creating components/contenthandling/Makefile
+config.status:884: creating components/contenthandling/media/Makefile
+config.status:884: creating components/library/Makefile
+config.status:884: creating components/library/download/Makefile
+config.status:884: creating components/library/download/test/Makefile
+config.status:884: creating components/library/download/public/Makefile
+config.status:884: creating components/library/download/src/Makefile
+config.status:884: creating components/library/base/Makefile
+config.status:884: creating components/library/base/test/Makefile
+config.status:884: creating components/library/base/public/Makefile
+config.status:884: creating components/library/base/src/Makefile
+config.status:884: creating components/library/base/src/static/Makefile
+config.status:884: creating components/library/identity/Makefile
+config.status:884: creating components/library/identity/test/Makefile
+config.status:884: creating components/library/identity/public/Makefile
+config.status:884: creating components/library/identity/src/Makefile
+config.status:884: creating components/library/localdatabase/Makefile
+config.status:884: creating components/library/localdatabase/test/Makefile
+config.status:884: creating components/library/localdatabase/public/Makefile
+config.status:884: creating components/library/localdatabase/content/Makefile
+config.status:884: creating components/library/localdatabase/perf/Makefile
+config.status:884: creating components/library/localdatabase/src/Makefile
+config.status:884: creating components/library/localdatabase/src/migrationhandlers/Makefile
+config.status:884: creating components/faceplate/Makefile
+config.status:884: creating components/faceplate/test/Makefile
+config.status:884: creating components/faceplate/public/Makefile
+config.status:884: creating components/faceplate/src/Makefile
+config.status:884: creating components/networkproxy/Makefile
+config.status:884: creating components/networkproxy/public/Makefile
+config.status:884: creating components/networkproxy/src/Makefile
+config.status:884: creating components/remoteapi/Makefile
+config.status:884: creating components/remoteapi/test/Makefile
+config.status:884: creating components/remoteapi/public/Makefile
+config.status:884: creating components/remoteapi/src/Makefile
+config.status:884: creating components/playqueue/Makefile
+config.status:884: creating components/playqueue/test/Makefile
+config.status:884: creating components/playqueue/public/Makefile
+config.status:884: creating components/playqueue/src/Makefile
+config.status:884: creating components/mediamanager/Makefile
+config.status:884: creating components/mediamanager/test/Makefile
+config.status:884: creating components/mediamanager/public/Makefile
+config.status:884: creating components/mediamanager/src/Makefile
+config.status:884: creating components/feathers/Makefile
+config.status:884: creating components/feathers/test/Makefile
+config.status:884: creating components/feathers/public/Makefile
+config.status:884: creating components/feathers/src/Makefile
+config.status:884: creating components/controller/Makefile
+config.status:884: creating components/controller/public/Makefile
+config.status:884: creating components/controller/src/Makefile
+config.status:884: creating components/appstartup/Makefile
+config.status:884: creating components/appstartup/src/Makefile
+config.status:884: creating components/servicepane/Makefile
+config.status:884: creating components/servicepane/test/Makefile
+config.status:884: creating components/servicepane/public/Makefile
+config.status:884: creating components/servicepane/src/Makefile
+config.status:884: creating components/job/Makefile
+config.status:884: creating components/job/public/Makefile
+config.status:884: creating components/job/src/Makefile
+config.status:884: creating components/devices/Makefile
+config.status:884: creating components/devices/controller/Makefile
+config.status:884: creating components/devices/controller/public/Makefile
+config.status:884: creating components/devices/controller/src/Makefile
+config.status:884: creating components/devices/base/Makefile
+config.status:884: creating components/devices/base/test/Makefile
+config.status:884: creating components/devices/base/public/Makefile
+config.status:884: creating components/devices/base/src/Makefile
+config.status:884: creating components/devices/content/Makefile
+config.status:884: creating components/devices/firmware/Makefile
+config.status:884: creating components/devices/firmware/test/Makefile
+config.status:884: creating components/devices/firmware/test/testfiles/Makefile
+config.status:884: creating components/devices/firmware/src/Makefile
+config.status:884: creating components/devices/firmware/mock/Makefile
+config.status:884: creating components/devices/firmware/mock/public/Makefile
+config.status:884: creating components/devices/firmware/mock/src/Makefile
+config.status:884: creating components/devices/manager/Makefile
+config.status:884: creating components/devices/manager/test/Makefile
+config.status:884: creating components/devices/manager/public/Makefile
+config.status:884: creating components/devices/manager/src/Makefile
+config.status:884: creating components/devices/cd/Makefile
+config.status:884: creating components/devices/cd/test/Makefile
+config.status:884: creating components/devices/cd/public/Makefile
+config.status:884: creating components/devices/cd/src/Makefile
+config.status:884: creating components/devices/cd/mock/Makefile
+config.status:884: creating components/devices/cd/mock/public/Makefile
+config.status:884: creating components/devices/cd/mock/src/Makefile
+config.status:884: creating components/devices/marshall/Makefile
+config.status:884: creating components/devices/marshall/public/Makefile
+config.status:884: creating components/devices/marshall/src/Makefile
+config.status:884: creating components/devices/device/Makefile
+config.status:884: creating components/devices/device/test/Makefile
+config.status:884: creating components/devices/device/public/Makefile
+config.status:884: creating components/devices/device/src/Makefile
+config.status:884: creating components/devices/device/mock/Makefile
+config.status:884: creating components/devices/device/mock/public/Makefile
+config.status:884: creating components/devices/device/mock/src/Makefile
+config.status:884: creating components/protocol/Makefile
+config.status:884: creating components/mediacore/Makefile
+config.status:884: creating components/mediacore/metadata/Makefile
+config.status:884: creating components/mediacore/metadata/handler/Makefile
+config.status:884: creating components/mediacore/metadata/handler/taglib/Makefile
+config.status:884: creating components/mediacore/metadata/handler/taglib/public/Makefile
+config.status:884: creating components/mediacore/metadata/handler/taglib/src/Makefile
+config.status:884: creating components/mediacore/metadata/handler/wma/Makefile
+config.status:884: creating components/mediacore/metadata/handler/wma/public/Makefile
+config.status:884: creating components/mediacore/metadata/handler/wma/src/Makefile
+config.status:884: creating components/mediacore/metadata/manager/Makefile
+config.status:884: creating components/mediacore/metadata/manager/test/Makefile
+config.status:884: creating components/mediacore/metadata/manager/test/errorcases/Makefile
+config.status:884: creating components/mediacore/metadata/manager/test/files/Makefile
+config.status:884: creating components/mediacore/metadata/manager/public/Makefile
+config.status:884: creating components/mediacore/metadata/manager/src/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/testprovider/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/testprovider/src/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/manager/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/manager/test/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/manager/public/Makefile
+config.status:884: creating components/mediacore/metadata/lookup/manager/src/Makefile
+config.status:884: creating components/mediacore/base/Makefile
+config.status:884: creating components/mediacore/base/test/Makefile
+config.status:884: creating components/mediacore/base/public/Makefile
+config.status:884: creating components/mediacore/base/src/Makefile
+config.status:884: creating components/mediacore/playback/Makefile
+config.status:884: creating components/mediacore/playback/history/Makefile
+config.status:884: creating components/mediacore/playback/history/test/Makefile
+config.status:884: creating components/mediacore/playback/history/public/Makefile
+config.status:884: creating components/mediacore/playback/history/content/Makefile
+config.status:884: creating components/mediacore/playback/history/src/Makefile
+config.status:884: creating components/mediacore/transcode/Makefile
+config.status:884: creating components/mediacore/transcode/test/Makefile
+config.status:884: creating components/mediacore/transcode/test/files/Makefile
+config.status:884: creating components/mediacore/transcode/public/Makefile
+config.status:884: creating components/mediacore/transcode/src/Makefile
+config.status:884: creating components/mediacore/gstreamer/Makefile
+config.status:884: creating components/mediacore/gstreamer/test/Makefile
+config.status:884: creating components/mediacore/gstreamer/public/Makefile
+config.status:884: creating components/mediacore/gstreamer/content/Makefile
+config.status:884: creating components/mediacore/gstreamer/stub/Makefile
+config.status:884: creating components/mediacore/gstreamer/encode-profiles/Makefile
+config.status:884: creating components/mediacore/gstreamer/src/Makefile
+config.status:884: creating components/mediacore/gstreamer/src/metadata/Makefile
+config.status:884: creating components/mediacore/manager/Makefile
+config.status:884: creating components/mediacore/manager/test/Makefile
+config.status:884: creating components/mediacore/manager/public/Makefile
+config.status:884: creating components/mediacore/manager/src/Makefile
+config.status:884: creating components/playlistcommands/Makefile
+config.status:884: creating components/playlistcommands/test/Makefile
+config.status:884: creating components/playlistcommands/public/Makefile
+config.status:884: creating components/playlistcommands/src/Makefile
+config.status:884: creating components/sqlbuilder/Makefile
+config.status:884: creating components/sqlbuilder/test/Makefile
+config.status:884: creating components/sqlbuilder/public/Makefile
+config.status:884: creating components/sqlbuilder/src/Makefile
+config.status:884: creating components/intl/Makefile
+config.status:884: creating components/intl/test/Makefile
+config.status:884: creating components/intl/public/Makefile
+config.status:884: creating components/intl/src/Makefile
+config.status:884: creating components/intl/src/content/Makefile
+config.status:884: creating components/addonmetadata/Makefile
+config.status:884: creating components/addonmetadata/test/Makefile
+config.status:884: creating components/addonmetadata/src/Makefile
+config.status:884: creating components/jscodelib/Makefile
+config.status:884: creating components/jscodelib/test/Makefile
+config.status:884: creating components/metrics/Makefile
+config.status:884: creating components/metrics/public/Makefile
+config.status:884: creating components/metrics/src/Makefile
+config.status:884: creating components/search/Makefile
+config.status:884: creating components/search/public/Makefile
+config.status:884: creating components/search/src/Makefile
+config.status:884: creating components/filesystemevents/Makefile
+config.status:884: creating components/filesystemevents/test/Makefile
+config.status:884: creating components/filesystemevents/win32/Makefile
+config.status:884: creating components/filesystemevents/base/Makefile
+config.status:884: creating components/filesystemevents/base/public/Makefile
+config.status:884: creating components/filesystemevents/base/src/Makefile
+config.status:884: creating components/filesystemevents/linux/Makefile
+config.status:884: creating components/filesystemevents/macosx/Makefile
+config.status:884: creating components/mediaexport/Makefile
+config.status:884: creating components/mediaexport/test/Makefile
+config.status:884: creating components/mediaexport/playlist/Makefile
+config.status:884: creating components/mediaexport/playlist/test/Makefile
+config.status:884: creating components/mediaexport/playlist/public/Makefile
+config.status:884: creating components/mediaexport/playlist/src/Makefile
+config.status:884: creating components/mediaexport/playlist/src/handler/Makefile
+config.status:884: creating components/mediaexport/playlist/src/manager/Makefile
+config.status:884: creating components/mediaexport/public/Makefile
+config.status:884: creating components/mediaexport/agent/Makefile
+config.status:884: creating components/mediaexport/agent/src/Makefile
+config.status:884: creating components/mediaexport/src/Makefile
+config.status:884: creating components/mediaimport/Makefile
+config.status:884: creating components/mediaimport/library/Makefile
+config.status:884: creating components/mediaimport/library/itunes/Makefile
+config.status:884: creating components/mediaimport/library/itunes/test/Makefile
+config.status:884: creating components/mediaimport/library/itunes/public/Makefile
+config.status:884: creating components/mediaimport/library/itunes/src/Makefile
+config.status:884: creating components/mediaimport/library/base/Makefile
+config.status:884: creating components/mediaimport/library/base/public/Makefile
+config.status:884: creating components/mediaimport/library/base/src/Makefile
+config.status:884: creating components/mediaimport/playlist/Makefile
+config.status:884: creating components/mediaimport/playlist/test/Makefile
+config.status:884: creating components/mediaimport/playlist/public/Makefile
+config.status:884: creating components/mediaimport/playlist/src/Makefile
+config.status:884: creating components/mediaimport/playlist/src/handler/Makefile
+config.status:884: creating components/mediaimport/playlist/src/manager/Makefile
+config.status:884: creating components/mediaimport/uri/Makefile
+config.status:884: creating components/mediaimport/uri/public/Makefile
+config.status:884: creating components/mediaimport/uri/src/Makefile
+config.status:884: creating components/mediaimport/directory/Makefile
+config.status:884: creating components/mediaimport/directory/test/Makefile
+config.status:884: creating components/mediaimport/directory/public/Makefile
+config.status:884: creating components/mediaimport/directory/src/Makefile
+config.status:884: creating components/mediaimport/filescan/Makefile
+config.status:884: creating components/mediaimport/filescan/public/Makefile
+config.status:884: creating components/mediaimport/filescan/src/Makefile
+config.status:884: creating components/mediapages/Makefile
+config.status:884: creating components/mediapages/test/Makefile
+config.status:884: creating components/mediapages/test/test-extension/Makefile
+config.status:884: creating components/mediapages/test/test-extension/chrome/Makefile
+config.status:884: creating components/mediapages/public/Makefile
+config.status:884: creating components/mediapages/src/Makefile
+config.status:884: creating components/integration/Makefile
+config.status:884: creating components/integration/public/Makefile
+config.status:884: creating components/integration/src/Makefile
+config.status:884: creating components/integration/src/win32/Makefile
+config.status:884: creating components/integration/src/linux/Makefile
+config.status:884: creating components/integration/src/macosx/Makefile
+config.status:884: creating components/update/Makefile
+config.status:884: creating components/update/public/Makefile
+config.status:884: creating components/update/src/Makefile
+config.status:884: creating components/devicesobsolete/Makefile
+config.status:884: creating components/devicesobsolete/download/Makefile
+config.status:884: creating components/devicesobsolete/download/public/Makefile
+config.status:884: creating components/devicesobsolete/download/src/Makefile
+config.status:884: creating components/devicesobsolete/base/Makefile
+config.status:884: creating components/devicesobsolete/base/public/Makefile
+config.status:884: creating components/devicesobsolete/base/src/Makefile
+config.status:884: creating components/devicesobsolete/manager/Makefile
+config.status:884: creating components/devicesobsolete/manager/public/Makefile
+config.status:884: creating components/devicesobsolete/manager/src/Makefile
+config.status:884: creating components/albumart/Makefile
+config.status:884: creating components/albumart/public/Makefile
+config.status:884: creating components/albumart/src/Makefile
+config.status:884: creating components/dataremote/Makefile
+config.status:884: creating components/dataremote/test/Makefile
+config.status:884: creating components/dataremote/public/Makefile
+config.status:884: creating components/dataremote/src/Makefile
+config.status:884: creating components/displaypanes/Makefile
+config.status:884: creating components/displaypanes/test/Makefile
+config.status:884: creating components/displaypanes/test/test-extension/Makefile
+config.status:884: creating components/displaypanes/test/test-extension/chrome/Makefile
+config.status:884: creating components/displaypanes/public/Makefile
+config.status:884: creating components/displaypanes/src/Makefile
+config.status:884: creating components/testharness/Makefile
+config.status:884: creating components/testharness/public/Makefile
+config.status:884: creating components/testharness/basetests/Makefile
+config.status:884: creating components/testharness/src/Makefile
+config.status:884: creating components/moz/Makefile
+config.status:884: creating components/moz/xpcom/Makefile
+config.status:884: creating components/moz/xpcom/public/Makefile
+config.status:884: creating components/moz/xpcom/src/Makefile
+config.status:884: creating components/moz/image/Makefile
+config.status:884: creating components/moz/image/public/Makefile
+config.status:884: creating components/moz/image/src/Makefile
+config.status:884: creating components/moz/temporaryfileservice/Makefile
+config.status:884: creating components/moz/temporaryfileservice/test/Makefile
+config.status:884: creating components/moz/temporaryfileservice/public/Makefile
+config.status:884: creating components/moz/temporaryfileservice/src/Makefile
+config.status:884: creating components/moz/fileutils/Makefile
+config.status:884: creating components/moz/fileutils/test/Makefile
+config.status:884: creating components/moz/fileutils/public/Makefile
+config.status:884: creating components/moz/fileutils/src/Makefile
+config.status:884: creating components/moz/variant/Makefile
+config.status:884: creating components/moz/variant/src/Makefile
+config.status:884: creating components/moz/variant/src/static/Makefile
+config.status:884: creating components/moz/process/Makefile
+config.status:884: creating components/moz/process/src/Makefile
+config.status:884: creating components/moz/process/src/windows/Makefile
+config.status:884: creating components/moz/windowwatcher/Makefile
+config.status:884: creating components/moz/windowwatcher/public/Makefile
+config.status:884: creating components/moz/windowwatcher/src/Makefile
+config.status:884: creating components/moz/prompter/Makefile
+config.status:884: creating components/moz/prompter/public/Makefile
+config.status:884: creating components/moz/prompter/src/Makefile
+config.status:884: creating components/moz/threadpoolservice/Makefile
+config.status:884: creating components/moz/threadpoolservice/src/Makefile
+config.status:884: creating components/moz/clipboard/Makefile
+config.status:884: creating components/moz/clipboard/test/Makefile
+config.status:884: creating components/moz/clipboard/test/files/Makefile
+config.status:884: creating components/moz/clipboard/public/Makefile
+config.status:884: creating components/moz/clipboard/src/Makefile
+config.status:884: creating components/moz/threads/Makefile
+config.status:884: creating components/moz/threads/src/Makefile
+config.status:884: creating components/moz/urlformatter/Makefile
+config.status:884: creating components/moz/urlformatter/test/Makefile
+config.status:884: creating components/moz/urlformatter/public/Makefile
+config.status:884: creating components/moz/urlformatter/src/Makefile
+config.status:884: creating components/moz/errorconsole/Makefile
+config.status:884: creating components/moz/errorconsole/src/Makefile
+config.status:884: creating components/moz/system/Makefile
+config.status:884: creating components/moz/system/windows/Makefile
+config.status:884: creating components/moz/system/windows/formatter/Makefile
+config.status:884: creating components/moz/system/windows/formatter/public/Makefile
+config.status:884: creating components/moz/system/windows/formatter/src/Makefile
+config.status:884: creating components/moz/system/windows/public/Makefile
+config.status:884: creating components/moz/system/windows/src/Makefile
+config.status:884: creating components/moz/dirprovider/Makefile
+config.status:884: creating components/moz/dirprovider/test/Makefile
+config.status:884: creating components/moz/dirprovider/src/Makefile
+config.status:884: creating components/moz/shutdownservice/Makefile
+config.status:884: creating components/moz/shutdownservice/test/Makefile
+config.status:884: creating components/moz/shutdownservice/src/Makefile
+config.status:884: creating components/moz/streams/Makefile
+config.status:884: creating components/moz/streams/src/Makefile
+config.status:884: creating components/moz/strings/Makefile
+config.status:884: creating components/moz/strings/components/Makefile
+config.status:884: creating components/moz/strings/components/public/Makefile
+config.status:884: creating components/moz/strings/components/src/Makefile
+config.status:884: creating components/moz/strings/src/Makefile
+config.status:884: creating components/moz/distribution/Makefile
+config.status:884: creating components/moz/filedownloader/Makefile
+config.status:884: creating components/moz/filedownloader/test/Makefile
+config.status:884: creating components/moz/filedownloader/public/Makefile
+config.status:884: creating components/moz/filedownloader/src/Makefile
+config.status:884: creating components/parsererror/Makefile
+config.status:884: creating components/parsererror/src/Makefile
+config.status:884: creating components/bundle/Makefile
+config.status:884: creating components/bundle/public/Makefile
+config.status:884: creating components/bundle/src/Makefile
+config.status:884: creating components/draganddrop/Makefile
+config.status:884: creating components/draganddrop/public/Makefile
+config.status:884: creating components/draganddrop/src/Makefile
+config.status:884: creating components/commandline/Makefile
+config.status:884: creating components/commandline/public/Makefile
+config.status:884: creating components/commandline/src/Makefile
+config.status:884: creating components/property/Makefile
+config.status:884: creating components/property/test/Makefile
+config.status:884: creating components/property/public/Makefile
+config.status:884: creating components/property/src/Makefile
+config.status:884: creating components/watchfolder/Makefile
+config.status:884: creating components/watchfolder/test/Makefile
+config.status:884: creating components/watchfolder/public/Makefile
+config.status:884: creating components/watchfolder/utils/Makefile
+config.status:884: creating components/watchfolder/src/Makefile
+config.status:884: creating components/webservices/Makefile
+config.status:884: creating components/webservices/lastfm/Makefile
+config.status:884: creating components/webservices/lastfm/public/Makefile
+config.status:884: creating components/webservices/lastfm/src/Makefile
+config.status:884: creating documentation/Makefile
+config.status:884: creating extensions/Makefile
+config.status:884: creating extensions/AlbumArt/Makefile
+config.status:884: creating extensions/extensionschecker/Makefile
+config.status:884: creating extensions/extensionschecker/chrome/Makefile
+config.status:884: creating extensions/albumartlastfm/Makefile
+config.status:884: creating extensions/albumartlastfm/chrome/Makefile
+config.status:884: creating extensions/albumartlastfm/defaults/Makefile
+config.status:884: creating extensions/albumartlastfm/defaults/preferences/Makefile
+config.status:884: creating extensions/albumartlastfm/components/Makefile
+config.status:884: creating extensions/albumartlastfm/components/src/Makefile
+config.status:884: creating extensions/xpcom_helloworld/Makefile
+config.status:884: creating extensions/xpcom_helloworld/chrome/Makefile
+config.status:884: creating extensions/xpcom_helloworld/components/Makefile
+config.status:884: creating extensions/xpcom_helloworld/components/helloworld/Makefile
+config.status:884: creating extensions/xpcom_helloworld/components/helloworld/test/Makefile
+config.status:884: creating extensions/xpcom_helloworld/components/helloworld/public/Makefile
+config.status:884: creating extensions/xpcom_helloworld/components/helloworld/src/Makefile
+config.status:884: creating extensions/7digital/Makefile
+config.status:884: creating extensions/7digital/chrome/Makefile
+config.status:884: creating extensions/7digital/defaults/Makefile
+config.status:884: creating extensions/7digital/defaults/preferences/Makefile
+config.status:884: creating extensions/7digital/components/Makefile
+config.status:884: creating extensions/qatesttools/Makefile
+config.status:884: creating extensions/qatesttools/chrome/Makefile
+config.status:884: creating extensions/qatesttools/public/Makefile
+config.status:884: creating extensions/qatesttools/components/Makefile
+config.status:884: creating extensions/lastfm/Makefile
+config.status:884: creating extensions/lastfm/chrome/Makefile
+config.status:884: creating extensions/lastfm/public/Makefile
+config.status:884: creating extensions/lastfm/defaults/Makefile
+config.status:884: creating extensions/lastfm/defaults/preferences/Makefile
+config.status:884: creating extensions/lastfm/components/Makefile
+config.status:884: creating extensions/mashTape/Makefile
+config.status:884: creating extensions/mashTape/chrome/Makefile
+config.status:884: creating extensions/mashTape/defaults/Makefile
+config.status:884: creating extensions/mashTape/defaults/preferences/Makefile
+config.status:884: creating extensions/mashTape/components/Makefile
+config.status:884: creating extensions/mashTape/components/public/Makefile
+config.status:884: creating extensions/mashTape/components/src/Makefile
+config.status:884: creating extensions/mashTape/modules/Makefile
+config.status:884: creating extensions/systray/Makefile
+config.status:884: creating extensions/systray/chrome/Makefile
+config.status:884: creating extensions/systray/components/Makefile
+config.status:884: creating extensions/systray/components/public/Makefile
+config.status:884: creating extensions/systray/components/src/Makefile
+config.status:884: creating extensions/concerts/Makefile
+config.status:884: creating extensions/concerts/chrome/Makefile
+config.status:884: creating extensions/concerts/defaults/Makefile
+config.status:884: creating extensions/concerts/defaults/preferences/Makefile
+config.status:884: creating extensions/concerts/components/Makefile
+config.status:884: creating extensions/concerts/components/public/Makefile
+config.status:884: creating extensions/concerts/components/src/Makefile
+config.status:884: creating extensions/ipod/Makefile
+config.status:884: creating extensions/ipod/components/public/Makefile
+config.status:884: creating extensions/ipod/components/src/Makefile
+config.status:884: creating extensions/ipod/components/ComponentLoader/Makefile
+config.status:884: creating extensions/partner-branding-sample/Makefile
+config.status:884: creating extensions/partner-branding-sample/chrome/Makefile
+config.status:884: creating extensions/partner-branding-sample/components/Makefile
+config.status:884: creating extensions/partner-branding-sample/distribution/Makefile
+config.status:884: creating extensions/newreleases/Makefile
+config.status:884: creating extensions/newreleases/chrome/Makefile
+config.status:884: creating extensions/newreleases/defaults/Makefile
+config.status:884: creating extensions/newreleases/defaults/preferences/Makefile
+config.status:884: creating extensions/newreleases/components/Makefile
+config.status:884: creating extensions/shoutcast/Makefile
+config.status:884: creating extensions/shoutcast/chrome/Makefile
+config.status:884: creating extensions/shoutcast/defaults/Makefile
+config.status:884: creating extensions/shoutcast/defaults/preferences/Makefile
+config.status:884: creating extensions/shoutcast/modules/Makefile
+config.status:884: creating feathers/Makefile
+config.status:884: creating feathers/gonzo/Makefile
+config.status:884: creating feathers/gonzo/chrome/content/bindings/Makefile
+config.status:884: creating feathers/purplerain/Makefile
+config.status:884: creating feathers/purplerain/chrome/Makefile
+config.status:884: creating feathers/purplerain/chrome/content/bindings/Makefile
+config.status:884: creating installer/Makefile
+config.status:884: creating installer/linux/Makefile
+config.status:884: creating installer/windows/Makefile
+config.status:884: creating installer/windows/partner/Makefile
+config.status:884: creating installer/macosx/Makefile
+config.status:884: creating installer/solaris/Makefile
+config.status:884: creating locales/Makefile
+config.status:884: creating locales/en-US/Makefile
+config.status:884: creating locales/branding/Makefile
+config.status:884: creating tools/Makefile
+config.status:884: creating tools/win32/Makefile
+config.status:884: creating tools/win32/autoplay/Makefile
+config.status:884: creating tools/lib/Makefile
+config.status:884: creating tools/lib/windows/Makefile
+config.status:884: creating tools/lib/windows/static/Makefile
+config.status:884: creating tools/disthelper/Makefile
+config.status:884: creating tools/disthelper/tests/Makefile
+config.status:884: creating tools/cdriphelper/Makefile
+config.status:884: creating tools/itunesagent/Makefile
+config.status:884: creating update/Makefile
+config.status:884: creating update/test/Makefile
+config.status:884: creating Makefile
+config.status:884: creating build/autodefs.mk
+config.status:884: creating build/Makefile
+config.status:884: creating dependencies/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/components/preferences/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/fuel/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/fuel/public/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/fuel/src/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/locales/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/themes/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/themes/pinstripe/browser/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/themes/winstripe/browser/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/components/search/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/components/sidebar/src/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/components/Makefile
+config.status:884: creating dependencies/vendor/mozbrowser/base/Makefile
 
 ## ---------------- ##
 ## Cache variables. ##
@@ -1637,6 +1649,8 @@ MIDL=''
 MKDIR='mkdir'
 MSMANIFEST_TOOL=''
 MV='mv'
+NSPR_CFLAGS='-I/usr/include/nspr  '
+NSPR_LIBS='  -lplds4 -lplc4 -lnspr4 -lpthread -ldl  '
 OBJDIRNAME='compiled'
 OBJEXT=''
 OBJ_SUFFIX='.o'
@@ -1662,7 +1676,7 @@ SB_CONFIGURATION='release'
 SB_DEPENDENCIES_DIR='dependencies/linux-x86_64'
 SB_ENABLE_BREAKPAD=''
 SB_ENABLE_LIBRARY_PERF=''
-SB_ENABLE_STATIC='1'
+SB_ENABLE_STATIC=''
 SB_ENABLE_TESTS=''
 SB_ENABLE_TEST_HARNESS=''
 SB_EXTENSIONS='default'
@@ -1688,6 +1702,8 @@ SONGBIRD_OFFICIAL=''
 SORT='sort'
 STRIP='strip'
 STRIP_FLAGS='-v'
+TAGLIB_CFLAGS='-I/usr/include/taglib  '
+TAGLIB_LIBS='  -ltag  '
 TAR='tar'
 TOUCH='touch'
 UNZIP='unzip'

@@ -533,7 +533,7 @@ SONGBIRD_XR_EXTENSIONS = $(foreach e, \
 
 ## See comment above about, re: the specifics of this export::'s logic.
 export::
-	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
+	#$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
 	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
 ifneq (,$(XULRUNNER_EXTENSION_DIRS))
 	ifneq (1,$(SONGBIRD_OFFICIAL))

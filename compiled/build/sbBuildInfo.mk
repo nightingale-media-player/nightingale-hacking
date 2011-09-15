@@ -5,14 +5,14 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Songbird
-SB_BUILD_ID=20110915031924
+SB_BUILD_ID=20110915050656
 BuildNumber=2130
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.11.0a
 SB_MILESTONE_WINDOWS=1.10.90.1
 SB_BRANCHNAME=trunk
 SB_PROFILE_VERSION=2
-SB_MOZILLA_VERSION=
+SB_MOZILLA_VERSION=6.0.1
 
 # These are here to centralize our handling of these versions, since we
 # use them; we make a slight distinction between JS-only and binary extensions

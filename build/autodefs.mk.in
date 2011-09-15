@@ -107,7 +107,7 @@ HAVE_FLUENDO_MP3 = @HAVE_FLUENDO_MP3@
 #
 
 DEPS_DIR = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
-XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-1.9.2/@SB_CONFIGURATION@
+XULRUNNER_DIR = /usr/lib/xulrunner-6.0.1
 SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 
 #
@@ -118,12 +118,12 @@ SB_MACOSX_SDK_10_4 = @SB_MACOSX_SDK_10_4@
 SB_MACOSX_SDK_10_5 = @SB_MACOSX_SDK_10_5@
 SB_MACOSX_SDK = @SB_MACOSX_SDK_DEFAULT@
 
-MOZSDK_DIR = $(DEPS_DIR)/mozilla-1.9.2/@SB_CONFIGURATION@
+MOZSDK_DIR = /usr/lib/xulrunner-devel-6.0.1
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
 MOZSDK_LIB_DIR = $(MOZSDK_DIR)/lib
 MOZSDK_BIN_DIR = $(MOZSDK_DIR)/bin
 MOZSDK_IDL_DIR = $(MOZSDK_DIR)/idl
-MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
+MOZSDK_SCRIPTS_DIR = /media/disk/Linux/makepkg/songbird/dependencies/linux-i686/mozilla-1.9.2/release/scripts
 
 # Boo for hardcoding this; this appears in songbird.mk as well; so make
 # changes there, too.
@@ -158,7 +158,7 @@ SONGBIRD_PROFILEDIR = $(SONGBIRD_DISTDIR)/defaults/profile
 SONGBIRD_SCRIPTSDIR = $(SONGBIRD_DISTDIR)/scripts
 SONGBIRD_SEARCHPLUGINSDIR = $(SONGBIRD_DISTDIR)/searchplugins
 SONGBIRD_TESTSDIR = $(SONGBIRD_DISTDIR)/testharness
-SONGBIRD_XULRUNNERDIR = $(topsrcdir)/@OBJDIRNAME@/@DISTDIRNAME@@MACOSX_FRAMEWORKS@@XULRUNNERDIR@
+SONGBIRD_XULRUNNERDIR = /usr/lib/xulrunner-6.0.1
 
 # Directories assumed to exist when building any part of the application
 APP_DIST_DIRS = $(SONGBIRD_CHROMEDIR) \
@@ -245,7 +245,7 @@ UNZIP = @UNZIP@
 ZIP = @ZIP@
 
 XPIDL = $(MOZSDK_DIR)/bin/xpidl
-XPTLINK = $(MOZSDK_DIR)/bin/xpt_link
+XPTLINK = $(MOZSDK_DIR)/sdk/bin/xpt.py link
 MAR = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 

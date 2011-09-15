@@ -106,67 +106,7 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
-# Dependency detection/checkout/updating stuff
-
-define resolve_dep_co_svnurl
-$(if $($(1)_DEP_SVNURL), \
-     $($(1)_DEP_SVNURL), \
-     $(shell $(SVN) info --xml $(TOPSRCDIR) | \
-             $(PERL) -nle '/^<url>/ or next; \
-                           $$_ =~ s@</?url>\s*@@g; \
-                           $$_ =~ s@(.*)/client/(.*)@\1/$($(1)_DEP_REPO)/\2/$($(1)_DEP_REPODIR)@; \
-                           print; \
-                          ' \
-      ) \
- )
-endef
-
-SB_DEP_PKGS ?= MOZBROWSER MOZJSHTTPD MOZEXTHELPER
-
-MOZBROWSER_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
-MOZBROWSER_DEP_UPDATE ?= $(SVN) up $(MOZBROWSER_DEP_DIR)
-MOZBROWSER_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZBROWSER) $(MOZBROWSER_DEP_DIR)
-MOZBROWSER_DEP_REPO ?= vendor
-MOZBROWSER_DEP_REPODIR ?= xulrunner-1.9.2/mozilla/browser
-
-MOZJSHTTPD_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozjshttpd
-MOZJSHTTPD_DEP_UPDATE ?= $(SVN) up $(MOZJSHTTPD_DEP_DIR)
-MOZJSHTTPD_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZJSHTTPD) $(MOZJSHTTPD_DEP_DIR)
-MOZJSHTTPD_DEP_REPO ?= vendor
-MOZJSHTTPD_DEP_REPODIR ?= xulrunner-1.9.2/mozilla/netwerk/test/httpserver
-
-MOZEXTHELPER_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozexthelper
-MOZEXTHELPER_DEP_UPDATE ?= $(SVN) up $(MOZEXTHELPER_DEP_DIR)
-MOZEXTHELPER_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZEXTHELPER) $(MOZEXTHELPER_DEP_DIR)
-MOZEXTHELPER_DEP_REPO ?= vendor
-MOZEXTHELPER_DEP_REPODIR ?= xulrunner-1.9.2/mozilla/toolkit/components/exthelper
-
-ifndef SB_DISABLE_PKG_AUTODEPS
-   SB_DEP_PKG_LIST = $(foreach p,\
-                       $(SB_DEP_PKGS),\
-                       $(if $(wildcard $($(p)_DEP_DIR)),\
-                       $(p)_dep_update,\
-                       $(p)_dep_checkout))
-
-   $(foreach p,\
-    $(SB_DEP_PKGS),\
-    $(if $($(1)_DEP_SVNURL),\
-    $(info Using user-defined SVN url for $1 dependency operations)))
-   
-   $(foreach p,\
-    $(SB_DEP_PKGS),\
-    $(if $(call resolve_dep_co_svnurl,$p),\
-    ,\
-    $(error Subversion URL resolution for dependency package $p failed)))
-endif
-
 all: songbird_output build
-
-%_dep_update:
-	$($*_DEP_UPDATE)
-
-%_dep_checkout:
-	$($*_DEP_CHECKOUT)
 
 run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 	cd $(OBJDIR) && \

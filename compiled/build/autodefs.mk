@@ -74,7 +74,7 @@ SB_UPDATE_CHANNEL = default
 SB_ENABLE_TESTS = 
 SB_ENABLE_TEST_HARNESS = 
 SB_ENABLE_BREAKPAD = 
-SB_ENABLE_STATIC = 1
+SB_ENABLE_STATIC = 
 SB_SEARCHPLUGINS = default
 SB_BIRD_EXTENSIONS = default
 SB_EXTENSIONS = default
@@ -107,7 +107,7 @@ HAVE_FLUENDO_MP3 =
 #
 
 DEPS_DIR = $(topsrcdir)/dependencies/linux-x86_64
-XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-1.9.2/release
+XULRUNNER_DIR = /usr/lib/xulrunner-6.0.1
 SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 
 #
@@ -118,12 +118,12 @@ SB_MACOSX_SDK_10_4 =
 SB_MACOSX_SDK_10_5 = 
 SB_MACOSX_SDK = 
 
-MOZSDK_DIR = $(DEPS_DIR)/mozilla-1.9.2/release
+MOZSDK_DIR = /usr/lib/xulrunner-devel-6.0.1
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
 MOZSDK_LIB_DIR = $(MOZSDK_DIR)/lib
 MOZSDK_BIN_DIR = $(MOZSDK_DIR)/bin
 MOZSDK_IDL_DIR = $(MOZSDK_DIR)/idl
-MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
+MOZSDK_SCRIPTS_DIR = /media/disk/Linux/makepkg/songbird/dependencies/linux-i686/mozilla-1.9.2/release/scripts
 
 # Boo for hardcoding this; this appears in songbird.mk as well; so make
 # changes there, too.
@@ -158,7 +158,7 @@ SONGBIRD_PROFILEDIR = $(SONGBIRD_DISTDIR)/defaults/profile
 SONGBIRD_SCRIPTSDIR = $(SONGBIRD_DISTDIR)/scripts
 SONGBIRD_SEARCHPLUGINSDIR = $(SONGBIRD_DISTDIR)/searchplugins
 SONGBIRD_TESTSDIR = $(SONGBIRD_DISTDIR)/testharness
-SONGBIRD_XULRUNNERDIR = $(topsrcdir)/compiled/dist/xulrunner
+SONGBIRD_XULRUNNERDIR = /usr/lib/xulrunner-6.0.1
 
 # Directories assumed to exist when building any part of the application
 APP_DIST_DIRS = $(SONGBIRD_CHROMEDIR) \
@@ -245,7 +245,7 @@ UNZIP = unzip
 ZIP = zip
 
 XPIDL = $(MOZSDK_DIR)/bin/xpidl
-XPTLINK = $(MOZSDK_DIR)/bin/xpt_link
+XPTLINK = $(MOZSDK_DIR)/sdk/bin/xpt.py link
 MAR = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 
@@ -299,8 +299,15 @@ GLIB_LIBS =   -lglib-2.0
 
 DBUS_CFLAGS = -pthread -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include  
 DBUS_LIBS =   -ldbus-glib-1 -ldbus-1 -lpthread -lgobject-2.0 -lgthread-2.0 -lrt -lglib-2.0  
-HAL_CFLAGS = @HAL_CFLAGS@
-HAL_LIBS = @HAL_LIBS@
+
+# hal is deprecated
+#HAL_CFLAGS = @HAL_CFLAGS@
+#HAL_LIBS = @HAL_LIBS@
+
+NSPR_CFLAGS = -I/usr/include/nspr  
+NSPR_LIBS =   -lplds4 -lplc4 -lnspr4 -lpthread -ldl  
+TAGLIB_CFLAGS = -I/usr/include/taglib  
+TAGLIB_LIBS =   -ltag  
 
 # Version numbers for various packages
 GST_VERSION = 0.10
