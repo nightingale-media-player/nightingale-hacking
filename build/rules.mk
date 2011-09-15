@@ -537,10 +537,15 @@ endif
 #
 
 CPP_DEFAULT_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-                       $(MOZSDK_INCLUDE_DIR)/nspr \
                        $(MOZSDK_INCLUDE_DIR)/xpcom \
                        $(MOZSDK_INCLUDE_DIR)/string \
                        $(NULL)
+                       
+ifeq (,$(NSPR_CFLAGS))
+   CPP_DEFAULT_INCLUDES += $(MOZSDK_INCLUDE_DIR)/nspr
+else
+   CPP_RAW_INCLUDES += $(NSPR_CFLAGS)
+endif
 
 ifdef CPP_FLAGS
    OUR_CPP_FLAGS = $(CPP_FLAGS)
@@ -568,8 +573,8 @@ ifdef CPP_INCLUDES
    OUR_CPP_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(CPP_INCLUDES)))
 else
    OUR_CPP_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(CPP_EXTRA_INCLUDES) $(CPP_DEFAULT_INCLUDES)))
-   OUR_CPP_INCLUDES += $(CPP_RAW_INCLUDES)
 endif
+OUR_CPP_INCLUDES += $(CPP_RAW_INCLUDES)
 
 %$(OBJ_SUFFIX): %.cpp
 	$(CXX) $(COMPILER_OUTPUT_FLAG) $(OUR_CPP_FLAGS) $(OUR_CPP_DEFS) $(OUR_CPP_INCLUDES) $<

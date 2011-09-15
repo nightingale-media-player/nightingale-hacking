@@ -91,8 +91,12 @@ ifeq (solaris,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
 endif
 
+ifeq (,$(TAGLIB_CFLAGS))
 CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
                       $(NULL)
+else
+CPP_EXTRA_INCLUDES += $(TAGLIB_CFLAGS)
+endif
         
 IS_COMPONENT = 1                     
 

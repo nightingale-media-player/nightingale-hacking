@@ -927,6 +927,10 @@ case "$SB_PLATFORM" in
     AC_SEARCH_LIBS([pthread_create], [pthread])
     AC_SUBST(PTHREAD_LIBS, $LIBS)
     LIBS=$_SAVE_LIBS
+    
+    PKG_CHECK_MODULES(NSPR, nspr)
+    AC_SUBST(NSPR_CFLAGS)
+    AC_SUBST(NSPR_LIBS)
 
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GTK_CFLAGS)
@@ -1249,6 +1253,20 @@ if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
   AC_SUBST(GSTREAMER_LIBS)
 
 fi
+
+# Check for libtag
+#
+PKG_CHECK_MODULES(TAGLIB, taglib >= 1.5)
+if ! test -f `pkg-config --variable=prefix taglib`/include/taglib/mp4file.h ; then
+  # Songbird ships a taglib claiming to be 1.5 but it's from SVN with a lot of
+  # improvements since plain 1.5
+  TAGLIB_CFLAGS=
+  TAGLIB_LIBS=
+fi
+AC_SUBST(TAGLIB_CFLAGS)
+AC_SUBST(TAGLIB_LIBS)
+
+#
 
 #
 # Check for --with-searchplugins
