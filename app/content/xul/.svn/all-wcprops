@@ -1,0 +1,311 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/client/!svn/ver/21754/trunk/app/content/xul
+END
+smartPlaylist.xul
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/17880/trunk/app/content/xul/smartPlaylist.xul
+END
+layoutBaseOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/19951/trunk/app/content/xul/layoutBaseOverlay.xul
+END
+playQueue.xul
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20134/trunk/app/content/xul/playQueue.xul
+END
+statusBarOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/7832/trunk/app/content/xul/statusBarOverlay.xul
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/14087/trunk/app/content/xul/Makefile.in
+END
+browserCompatibilityStub.xul
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/12275/trunk/app/content/xul/browserCompatibilityStub.xul
+END
+parserErrorDetails.xul
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/9833/trunk/app/content/xul/parserErrorDetails.xul
+END
+actionSetsOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/7832/trunk/app/content/xul/actionSetsOverlay.xul
+END
+defaultDisplayPane.xul
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/16997/trunk/app/content/xul/defaultDisplayPane.xul
+END
+mediaimportWarningDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/17271/trunk/app/content/xul/mediaimportWarningDialog.xul
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/18063/trunk/app/content/xul/jar.mn.in
+END
+openURL.xul
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/7658/trunk/app/content/xul/openURL.xul
+END
+recommendedAddOnsWizard.xul
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/10996/trunk/app/content/xul/recommendedAddOnsWizard.xul
+END
+messageBox.xul
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/7658/trunk/app/content/xul/messageBox.xul
+END
+dirtyPlaylistDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/9965/trunk/app/content/xul/dirtyPlaylistDialog.xul
+END
+unknownContentTypeOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/7658/trunk/app/content/xul/unknownContentTypeOverlay.xul
+END
+jobProgress.xul
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/14539/trunk/app/content/xul/jobProgress.xul
+END
+trackEditorVideo.xul
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/17970/trunk/app/content/xul/trackEditorVideo.xul
+END
+feedbackDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/9245/trunk/app/content/xul/feedbackDialog.xul
+END
+popupOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/7832/trunk/app/content/xul/popupOverlay.xul
+END
+feedOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/18253/trunk/app/content/xul/feedOverlay.xul
+END
+controlToolbarOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7832/trunk/app/content/xul/controlToolbarOverlay.xul
+END
+parserError.xul
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/12457/trunk/app/content/xul/parserError.xul
+END
+miniScriptsOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7832/trunk/app/content/xul/miniScriptsOverlay.xul
+END
+menuOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/7832/trunk/app/content/xul/menuOverlay.xul
+END
+layoutWithoutBrowserOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7832/trunk/app/content/xul/layoutWithoutBrowserOverlay.xul
+END
+profileSelectionOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/12716/trunk/app/content/xul/profileSelectionOverlay.xul
+END
+browserToolbarOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7832/trunk/app/content/xul/browserToolbarOverlay.xul
+END
+extensionManagerOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20032/trunk/app/content/xul/extensionManagerOverlay.xul
+END
+contentAreaContextOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/19103/trunk/app/content/xul/contentAreaContextOverlay.xul
+END
+about.xul
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/18816/trunk/app/content/xul/about.xul
+END
+trackEditor.xul
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/19120/trunk/app/content/xul/trackEditor.xul
+END
+mediaPageOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/11491/trunk/app/content/xul/mediaPageOverlay.xul
+END
+mediaManagementRemovedDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/21581/trunk/app/content/xul/mediaManagementRemovedDialog.xul
+END
+layoutWithBrowserOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/18257/trunk/app/content/xul/layoutWithBrowserOverlay.xul
+END
+subscribe.xul
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20928/trunk/app/content/xul/subscribe.xul
+END
+videoWindowControls.xul
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/20022/trunk/app/content/xul/videoWindowControls.xul
+END
+addTag.xul
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/7658/trunk/app/content/xul/addTag.xul
+END
+updateOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/6995/trunk/app/content/xul/updateOverlay.xul
+END
+setupProgress.xul
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/8101/trunk/app/content/xul/setupProgress.xul
+END
+linuxMenuOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/8933/trunk/app/content/xul/linuxMenuOverlay.xul
+END
+macMenuOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/11372/trunk/app/content/xul/macMenuOverlay.xul
+END
+unitTestShutdownWin.xul
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/9043/trunk/app/content/xul/unitTestShutdownWin.xul
+END
+macCmdLineFwd.xul
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/4320/trunk/app/content/xul/macCmdLineFwd.xul
+END
+firstRunWizard.xul
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/21754/trunk/app/content/xul/firstRunWizard.xul
+END
+restartBox.xul
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/11906/trunk/app/content/xul/restartBox.xul
+END
+mainScriptsOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7832/trunk/app/content/xul/mainScriptsOverlay.xul
+END
+videoWindow.xul
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/19013/trunk/app/content/xul/videoWindow.xul
+END
+importLibrary.xul
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/20511/trunk/app/content/xul/importLibrary.xul
+END
+balloonTip.xul
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/8241/trunk/app/content/xul/balloonTip.xul
+END
+waitForCompletion.xul
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/8917/trunk/app/content/xul/waitForCompletion.xul
+END

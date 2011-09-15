@@ -1,0 +1,116 @@
+/******* GENERAL *******/
+html, body {
+	background-color:#1D1D20;
+	margin: 0; padding: 0;
+	text-align:center;
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:11px;
+	overflow:hidden;
+}
+
+
+/****** MAIN LAYOUT ******/
+#header {
+	width:100%;
+	height:0px;
+}
+
+#left {
+	width:250px;
+	float:left;
+	margin:0;
+	text-align:justify;
+	font-family:Tahoma;
+	font-size:12px;
+	overflow-y:hidden;
+	overflow-x:hidden;
+	background-color:white;
+}
+
+.inner{
+	margin-top:12px;
+	padding: 0px; margin:0;
+	height:100%;
+	overflow:auto;
+	font-size:11px;
+}
+
+.inner ul {
+	list-style:none;
+	padding:0px;
+}
+
+.inner ul li {
+	padding:1px 5px;
+}
+
+.inner ul li .relation {
+	font-size:10px;
+	text-indent:10px;
+	font-style:italic;
+	margin:5px 0;
+}
+
+/******* ACCORDION ******/
+.small-title {
+	background-color:#555;
+	margin:0;
+	color:white;
+	padding:5px;
+	font-weight:bold;
+	border-bottom:4px solid  #2A2A2F;
+}
+
+#left .left-item {
+	background-color:#7389AE;
+	color:white;
+	padding:5px;
+	border-bottom:4px solid  #2A2A2F;
+	font-weight:bold;
+}
+
+#left .contained-item {
+	width:230px;
+	background-color:white;
+	color:#555;
+	padding:10px;
+	overflow-y:auto;
+	background-image:url(../img/text-bg.gif);
+	background-position:top;
+	background-repeat:repeat-x;
+}
+
+/***** FORM SETTINGS *****/
+
+#settings-form {
+	text-align:right;
+	padding:7px;
+	background-color:#2A2A2F;
+	border:1px solid #2D2D32;
+	margin-top:6px;
+	padding-top:18px;
+	color:white;
+	height:85%;
+}
+
+#settings-form table tr td {
+	padding:2px;
+}
+
+#settings-form input, #settings-form select {
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:9px;
+	color:#444;
+	width:80px;
+	border:1px solid #ccc;
+}
+
+/***** SELECTED PATH *****/
+.path{
+	padding:10px;
+	color:white;
+	font-size:13px;
+	background-color:#2A2A2F;
+	text-align:center;
+	margin-bottom:13px;
+}

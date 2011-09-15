@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/client/!svn/ver/19161/trunk/locales/branding
+END
+brand.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/19161/trunk/locales/branding/brand.dtd
+END
+brand.properties
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/14457/trunk/locales/branding/brand.properties
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/7658/trunk/locales/branding/Makefile.in
+END

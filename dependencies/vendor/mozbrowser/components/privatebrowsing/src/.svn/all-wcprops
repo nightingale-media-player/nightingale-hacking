@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/src/Makefile.in
+END
+nsPrivateBrowsingService.js
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/src/nsPrivateBrowsingService.js
+END
+nsPrivateBrowsingServiceWrapper.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/src/nsPrivateBrowsingServiceWrapper.cpp
+END
+nsPrivateBrowsingServiceWrapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/src/nsPrivateBrowsingServiceWrapper.h
+END

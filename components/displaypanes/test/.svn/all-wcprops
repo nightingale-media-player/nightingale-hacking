@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/19261/trunk/components/displaypanes/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/14134/trunk/components/displaypanes/test/Makefile.in
+END
+test_displaypanes.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19261/trunk/components/displaypanes/test/test_displaypanes.js
+END

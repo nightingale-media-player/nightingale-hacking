@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/client/!svn/ver/15706/trunk/components/bundle
+END
+bundle.vcbuild
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/2484/trunk/components/bundle/bundle.vcbuild
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/13373/trunk/components/bundle/Makefile.in
+END

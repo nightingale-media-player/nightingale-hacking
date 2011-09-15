@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Last.fm-n saioa hasi...">
+<!ENTITY lastfm.menu.logout "Last.fm-n saiotik irten...">
+<!ENTITY lastfm.menu.enable "Pistei buruzko informazioa bidaltzea gaitu">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "Saioa hasi">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "Last.fm-n izena eman">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "Saioa hasten">
+<!ENTITY lastfm.cancel.button "Utzi">
+<!ENTITY lastfm.profile.caption "Perfila">
+<!ENTITY lastfm.profile.scrobble "Nire pistei buruzko informazioa lortu">
+<!ENTITY lastfm.profile.logout "Saiotik irten">
+<!ENTITY lastfm.radio "Last.fm Radio">
+<!ENTITY lastfm.radio.login.help "In order to listen to Last.fm Radio, you need to be logged into Last.fm and be a Last.fm subscriber.  If you don&apos;t already have a Last.fm account, you can register for one.">
+<!ENTITY lastfm.radio.start "Not sure where to start?  Try a search, or check out what others are listening to.">
+<!ENTITY lastfm.radio.start.top.artists "Top Artists on Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Top Tags on Last.fm">
+<!ENTITY lastfm.radio.register "Register">
+<!ENTITY lastfm.radio.subscriber.button "Subscribe">
+<!ENTITY lastfm.radio.subscriber.help "In order to listen to Last.fm Radio, you must be a subscriber.">
+<!ENTITY lastfm.radio.search "Search">
+<!ENTITY lastfm.radio.library "Library">
+<!ENTITY lastfm.radio.loved "Loved Tracks">
+<!ENTITY lastfm.radio.neighbourhood "Neighborhood">
+<!ENTITY lastfm.radio.recommended "Recommendations">
+<!ENTITY lastfm.radio.user_stations "User Stations">
+<!ENTITY lastfm.radio.recent_stations "Recent Stations">
+<!ENTITY lastfm.radio.from.lastfm "From Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Recommended Artists">
+<!ENTITY lastfm.radio.top_artists "Your Top Artists">
+<!ENTITY lastfm.radio.top_tags "Your Top Tags">
+<!ENTITY lastfm.radio.friends "Your Friends">
+<!ENTITY lastfm.radio.neighbours "Neighbors">
+<!ENTITY lastfm.radio.from.songbird "From Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Your Most Played Artists">
+<!ENTITY lastfm.radio.highest_rated_artists "Your Highest Rated Artists">
+<!ENTITY lastfm.radio.popular_genres "Your Popular Genres">
+<!ENTITY lastfm.radio.play "Play">
+<!ENTITY lastfm.tags.enter_new "Enter new tags (comma-separated)">
+<!ENTITY lastfm.tags.add_fail "Failed to add tags!">
+<!ENTITY lastfm.tags.user "Your Tags:">
+<!ENTITY lastfm.tags.global "Last.fm Global Tags:">

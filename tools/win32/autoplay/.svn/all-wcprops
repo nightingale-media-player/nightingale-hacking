@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/client/!svn/ver/17995/trunk/tools/win32/autoplay
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/17962/trunk/tools/win32/autoplay/Makefile.in
+END
+sbAutoPlayUtil.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/17995/trunk/tools/win32/autoplay/sbAutoPlayUtil.cpp
+END

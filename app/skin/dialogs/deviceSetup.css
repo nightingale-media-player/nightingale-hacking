@@ -1,0 +1,105 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+/**
+*******************************************************************************
+DEVICE SET UP
+
+Additional styles imported directly by the device setup dialog.
+
+*******************************************************************************
+*/
+
+#device_setup_dialog {
+  width: 505px;
+}
+
+#device_setup_dialog > sb-sys-outer-frame > .dialog-content-box {
+  overflow: visible;
+}
+
+.dialog-content-box {
+  padding: 0 !important;
+}
+
+#setupContainer {
+  margin: 15px 22px 10px 16px;
+}
+
+#setup_name_header,
+#setup_sync_checkbox,
+#setup_ignore_checkbox {
+  margin-left: 0px;
+}
+
+#nameContainer {
+  margin-bottom: 9px;
+  -moz-box-align: center;
+}
+
+#setup_name_textbox {
+  width: 270px;
+}
+
+#selectorContainer {
+  margin-top: 2px;
+  margin-bottom: 16px;
+  -moz-box-align: start;
+}
+
+#setup_sync_volume_selector_description {
+  margin-left: 0px;
+}
+
+#device_setup_volume_selector {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: 164px;
+}
+
+#setup_sync_description {
+  font-size: smaller;
+}
+
+#ignoreContainer {
+  margin-top: 19px;
+}
+
+#ignoreSeparator {
+  opacity: 0.4;
+}
+
+#setup_ignore_checkbox {
+  margin-top: 7px;
+}
+
+#setup_ignore_checkbox[checked="true"] + #setup_ignore_description {
+  font-size: smaller;
+  color: rgb(255, 58, 109);
+}
+
+#setup_ignore_description {
+  font-size: smaller;
+}
+

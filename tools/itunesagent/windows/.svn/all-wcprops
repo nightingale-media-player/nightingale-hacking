@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/20911/trunk/tools/itunesagent/windows
+END
+sbiTunesAgentAppWatcher.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/13559/trunk/tools/itunesagent/windows/sbiTunesAgentAppWatcher.h
+END
+sbiTunesLibrary.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20911/trunk/tools/itunesagent/windows/sbiTunesLibrary.cpp
+END
+winmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/13548/trunk/tools/itunesagent/windows/winmain.cpp
+END
+sbIDispatchPtr.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/14658/trunk/tools/itunesagent/windows/sbIDispatchPtr.cpp
+END
+sbCallback.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/13559/trunk/tools/itunesagent/windows/sbCallback.h
+END
+sbiTunesAgentWindowsProcessor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/20911/trunk/tools/itunesagent/windows/sbiTunesAgentWindowsProcessor.cpp
+END
+sbiTunesLibrary.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20911/trunk/tools/itunesagent/windows/sbiTunesLibrary.h
+END
+sbIDispatchPtr.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/14658/trunk/tools/itunesagent/windows/sbIDispatchPtr.h
+END
+sbiTunesAgentAppWatcher.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/13559/trunk/tools/itunesagent/windows/sbiTunesAgentAppWatcher.cpp
+END
+sbiTunesAgentWindowsProcessor.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20911/trunk/tools/itunesagent/windows/sbiTunesAgentWindowsProcessor.h
+END

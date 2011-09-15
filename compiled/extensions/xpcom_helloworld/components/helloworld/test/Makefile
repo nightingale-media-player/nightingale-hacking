@@ -1,0 +1,47 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+DEPTH = ../../../../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/extensions/xpcom_helloworld/components/helloworld/test
+VPATH = /media/disk/Linux/makepkg/songbird/extensions/xpcom_helloworld/components/helloworld/test
+
+include $(DEPTH)/build/autodefs.mk
+
+IS_EXTENSION = 1
+
+# Only install the unit test when in debug mode.
+# This is to keep the build farm happy, as the add-on
+# is only installed in debug builds.
+ifdef DEBUG
+   # you can run this test with Songbird -test xpcom_helloworld
+   SONGBIRD_TEST_COMPONENT = xpcom_helloworld
+
+   # the tests are in test_helloworld.js
+   SONGBIRD_TESTS = $(srcdir)/test_helloworld.js \
+                    $(NULL)
+endif
+
+include $(topsrcdir)/build/rules.mk
+

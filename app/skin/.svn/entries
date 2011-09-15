@@ -1,0 +1,77 @@
+10
+
+dir
+22041
+http://publicsvn.songbirdnest.com/client/trunk/app/skin
+http://publicsvn.songbirdnest.com/client
+
+
+
+2011-05-13T22:42:04.921327Z
+21174
+jwatts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+global
+dir
+
+dialogs
+dir
+
+Makefile.in
+file
+
+
+
+
+2011-09-15T07:24:24.000000Z
+71d01793c2fd617dca34eb00da387a16
+2009-09-28T22:39:32.117419Z
+15049
+stevel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+992
+
+branding
+dir
+
+mozapps
+dir
+
+bindings
+dir
+

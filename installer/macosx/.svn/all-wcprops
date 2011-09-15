@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/client/!svn/ver/19378/trunk/installer/macosx
+END
+MacSongbirdDiskImage.icns
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/16997/trunk/installer/macosx/MacSongbirdDiskImage.icns
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/19371/trunk/installer/macosx/Makefile.in
+END
+pkg-postinstall.sh
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/19378/trunk/installer/macosx/pkg-postinstall.sh
+END
+background.tiff
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/16997/trunk/installer/macosx/background.tiff
+END
+pkg-dmg
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/2701/trunk/installer/macosx/pkg-dmg
+END
+MacPublicSVNInstall.icns
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/11510/trunk/installer/macosx/MacPublicSVNInstall.icns
+END
+make-diskimage
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/2717/trunk/installer/macosx/make-diskimage
+END
+songbird.dsstore
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/11553/trunk/installer/macosx/songbird.dsstore
+END
+MacSongbirdInstall.icns
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/11510/trunk/installer/macosx/MacSongbirdInstall.icns
+END
+index.xml.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/18462/trunk/installer/macosx/index.xml.in
+END
+01songbird.xml.in
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/19371/trunk/installer/macosx/01songbird.xml.in
+END

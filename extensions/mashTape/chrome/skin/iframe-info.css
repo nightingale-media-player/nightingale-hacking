@@ -1,0 +1,136 @@
+/* Artist info providers */
+div#artist-photo {
+	float: left;
+	width: 150px;
+	max-width: 150px;
+}
+div#artist-photo img {
+	max-width: 150px;
+  border: 1px solid rgb(54,52,63);
+}
+div#content {
+	margin-left: 150px;
+	padding-left: 1em;
+}
+.header-container {
+  margin-bottom: 8px;
+}
+div#content h4 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+	padding-bottom: 0;
+}
+div#content > div {
+  margin-bottom: 15px;
+}
+div#content img.favicon {
+	float: left;
+	width: 16px;
+	height: 16px;
+  margin-right: 8px;
+}
+
+/* Artist info bio text */
+div#bio-text {
+	overflow: hidden;
+}
+div#bio-text p {
+	margin-top: 0em;
+}
+
+div#bio-toggle {
+	padding-right: 10px;
+	text-align: right;
+}
+
+/* Inline lists used for Artist Info discography & members */
+ul.flat,
+ul.flat li {
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+ul.flat li:after {
+	content: ", ";
+}
+ul.flat li.last:after {
+	content: "";
+}
+
+/* Table style used for discography */
+
+table.discography {
+	border-collapse: collapse;
+	border-spacing: 0;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+table.discography td.year {
+	vertical-align: top;
+	border-right: 1px solid #aaa;
+	padding-right: 3px;
+}
+table.discography td.albums {
+	padding-left: 3px;
+	vertical-align: middle;
+}
+table.discography td.albums img.artwork {
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	padding-left: 3px;
+}
+
+div#discography-text {
+	overflow: hidden;
+}
+
+div.discography-album {
+	float: left;
+	max-width: 150px;
+	width: 150px;
+	padding: 2px;
+	margin-right: 2em;
+	line-height: .8em;
+}
+div.discography-album img.album-art {
+	float: left;
+	padding-right: 0.5em;
+}
+div.discography-album span {
+	font-size: 80%;
+}
+div.discography-album span.release-date {
+	font-size: 70%;
+}
+
+div#discography:after {
+	height:0;
+	clear: both;
+	display:block;
+	visibility:hidden;
+	content:".";
+}
+
+div#discography-toggle {
+	padding-right: 10px;
+	text-align: right;
+}
+
+/* Table style used for Artist Info Related Links */
+table.table-links {
+	border-collapse: collapse;
+	border-spacing: 0;
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+table.table-links td {
+	margin: 0;
+	padding: 0;
+}
+table.table-links td.url {
+	padding-left: 2em;
+}
+

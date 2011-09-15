@@ -1,0 +1,93 @@
+#filter substitution
+; komode: le=unix language=nsis codepage=utf8 tab=8 notabs indent=3
+;
+;=BEGIN SONGBIRD GPL
+; 
+; This file is part of the Songbird web player.
+;
+; Copyright(c) 2005-2008 POTI, Inc.
+; http://songbirdnest.com
+; 
+; This file may be licensed under the terms of of the
+; GNU General Public License Version 2 (the "GPL").
+; 
+; Software distributed under the License is distributed 
+; on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+; express or implied. See the GPL for the specific language 
+; governing rights and limitations.
+;
+; You should have received a copy of the GPL along with this 
+; program. If not, go to http://www.gnu.org/licenses/gpl.html
+; or write to the Free Software Foundation, Inc., 
+; 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+; 
+;=END SONGBIRD GPL
+;
+
+;
+; We centralize the list of files for the installer and uninstaller so it's
+; easier to make sure when files get *added* to the installer, they also get
+; added to the uninstaller ('cause the lists are in the same file!)
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; List of files to be installed
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!macro InstallFiles
+   SetOutPath $INSTDIR
+   SetShellVarContext all
+
+#includesubst @CUR_OBJDIR@/nsis-install-manifest.txt
+
+   SetOutPath $INSTDIR
+   WriteUninstaller ${FileUninstallEXE}
+!macroend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; List of files to be uninstalled
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!macro un.UninstallFiles
+
+#includesubst @CUR_OBJDIR@/nsis-uninstall-manifest.txt
+
+   ; These files are created by the application
+   Delete $INSTDIR\*.chk
+ 
+   ; Mozilla updates can leave this folder behind when updates fail.
+   RMDir /r $INSTDIR\updates
+
+   ; Mozilla updates can leave some of these files over when updates fail.
+   Delete $INSTDIR\removed-files
+   Delete $INSTDIR\active-update.xml
+   Delete $INSTDIR\updates.xml
+
+   ; Log file updater.exe redirects if the PostUpdateWin helper is called
+   Delete $INSTDIR\uninstall.update
+   
+   ; Remove uninstaller
+   Delete $INSTDIR\${FileUninstallEXE}
+
+   ; Remove the distribution directory; we unconditionally run this removal,
+   ; since a) that's what we originally did, but also we now run disthelper
+   ; even in non-dist cases (songbird.ini), and since it's just a no-op if
+   ; the directory isn't there, "It's just easier that way."
+   ; This dir doesn't make it into the auto-generated file manifest because
+   ; it's not technically an "app" directory; so, it's not created, and doesn't
+   ; exist when we run the manifest generation tool.
+   RMDir /r $INSTDIR\distribution
+ 
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; I commented this out, because I don't think we *truly* want to do this. 
+   ;; But we might have to later.
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;SetShellVarContext current
+   ;RMDir /r "$APPDATA\Songbird"
+   ;RMDir /r "$LOCALAPPDATA\Songbird"
+   ;SetShellVarContext all
+ 
+   Call un.DeleteUpdateAddedFiles
+  
+   ; Do not attempt to remove this directory recursively; see bug 6367
+   RMDir $INSTDIR
+!macroend

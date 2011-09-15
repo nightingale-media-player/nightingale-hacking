@@ -1,0 +1,363 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+          
+  <binding id="sb-playlist-menuitems">
+    
+    <implementation>
+      <constructor>
+        <![CDATA[
+          if (typeof(SBProperties) == "undefined") {
+            Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+            if (!SBProperties)
+              throw new Error("Import of sbProperties module failed");
+          }
+        
+          this.libraryManager =
+            Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                      .getService(Components.interfaces.sbILibraryManager);
+
+          this.libraryListener = {
+            cb: this,
+            timeout: null,
+            _deferredUpdate: function() {
+              this._clearTimeout();
+              this.timeout = setTimeout(function(obj) { obj._onDeferredUpdate(); }, 10, this);
+            },
+            _clearTimeout: function() {
+              if (this.timeout) {
+                clearTimeout(this.timeout);
+                this.timeout = null;
+              }
+            },
+            _onDeferredUpdate: function() {
+              this.cb.rebuildItems();
+            },
+            onItemAdded: function(aMediaList, aMediaItem, aIndex) { this._deferredUpdate(); return true; },
+            onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { return true; },
+            onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { this._deferredUpdate(); return true; },
+            onItemUpdated: function(aMediaList, aMediaItem, aProperties) { this._deferredUpdate(); return true; },
+            onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
+            onBeforeListCleared: function(aMediaList, aExcludeLists) { return true; },
+            onListCleared: function(aMediaList, aExcludeLists) { this._deferredUpdate(); return true; },
+            onBatchBegin: function(aMediaList) {},
+            onBatchEnd: function(aMediaList) { this._deferredUpdate(); },
+            QueryInterface: function(iid) {
+              if (iid.equals(Components.interfaces.sbIMediaListListener) || 
+                  iid.equals(Components.interfaces.nsISupports))
+                return this;
+              throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+          };
+
+          this.managerListener = {
+            cb: this,
+            onLibraryRegistered: function(aLibrary) {
+              cb.addLibraryListener(aLibrary);
+              this.cb.rebuildItems();
+            },
+            onLibraryUnregistered: function(aLibrary) {
+              cb.removeLibraryListener(aLibrary);
+              this.cb.rebuildItems();
+            },
+            QueryInterface: function(iid) {
+              if (iid.equals(Components.interfaces.sbILibraryManagerListener) || 
+                  iid.equals(Components.interfaces.nsISupports))
+                return this;
+              throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+          };
+        
+          var libs = this.libraryManager.getLibraries();
+          while (libs.hasMoreElements()) {
+            this.addLibraryListener(libs.getNext());
+          }
+          
+          this.libraryManager.addListener(this.managerListener);
+          this.rebuildItems();
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          var libs = this.libraryManager.getLibraries();
+          while (libs.hasMoreElements()) {
+            this.removeLibraryListener(libs.getNext());
+          }
+          
+          this.libraryManager.removeListener(this.managerListener);
+        ]]>
+      </destructor>
+
+      <field name="items">this._items;</field>
+
+      <property name="library">
+        <getter>
+          return this.getAttribute("library");
+        </getter>
+        <setter>
+          this.setAttribute("library", val);
+          this.rebuildItems();
+          return val;
+        </setter>
+      </property>
+
+      <property name="exclude">
+        <getter>
+          return this.getAttribute("exclude");
+        </getter>
+        <setter>
+          this.setAttribute("exclude", val);
+          this.rebuildItems();
+          return val;
+        </setter>
+      </property>
+
+      <method name="addLibraryListener">
+        <parameter name="aLibrary"/>
+        <body>
+          <![CDATA[
+              var list = aLibrary.QueryInterface(Ci.sbIMediaList);
+              list.addListener(this.libraryListener, 
+                               false, 
+                               Ci.sbIMediaList.LISTENER_FLAGS_ALL,
+                               null);
+          ]]>
+        </body>
+      </method>
+
+      <method name="removeLibraryListener">
+        <parameter name="aLibrary"/>
+        <body>
+          <![CDATA[
+              var list = aLibrary.QueryInterface(Ci.sbIMediaList);
+              list.removeListener(this.libraryListener);
+          ]]>
+        </body>
+      </method>
+
+      <method name="rebuildItems">
+        <body>
+          <![CDATA[
+            var items = this.parentNode.getElementsByAttribute("sbtype", "playlist-menuitem");
+            while (items.length > 0) {
+              this.parentNode.removeChild(items[items.length-1]);
+            }
+            this._items = [];
+            
+            var stringBundleService =
+                Components.classes["@mozilla.org/intl/stringbundle;1"]
+                          .getService(Components.interfaces.nsIStringBundleService);
+            var prefBranch = Components.classes["@mozilla.org/preferences-service;1"]
+                          .getService(Components.interfaces.nsIPrefBranch2);
+
+            var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                                .getService(Components.interfaces.sbIDownloadDeviceHelper);
+            var downloadMediaList = ddh.getDownloadMediaList();
+            var downloadListGUID = null;
+            if (downloadMediaList)
+              downloadListGUID = downloadMediaList.guid;
+
+            var webListGUID =
+              prefBranch.getComplexValue("songbird.library.web",
+                                    Components.interfaces.nsISupportsString);
+
+            var mainLibraryGuid = this.libraryManager.mainLibrary.guid;
+            
+            var skippedtypes = {};
+            for each (var i in this.getAttribute("excludetype").split(",")) {
+              skippedtypes[i] = true;
+            }
+            var storage = this.getAttribute("storage") == "true";
+            var nolibraries = this.getAttribute("nolibraries") == "true";
+            var libs = this.getAttribute("library").split(",");
+            var libraries = null;
+            // make table, translate special keywords into guids
+            for (var i in libs) {
+              switch (libs[i]) {
+                case "main":
+                  libs[i] = mainLibraryGuid;
+                  break;
+                case "web": 
+                  libs[i] = webListGUID;
+                  break;
+                case "":
+                  continue;
+              }
+              if (!libraries)
+                libraries = {};
+              libraries[libs[i]] = true;
+            }
+            var exclude = this.getAttribute("exclude").split(",");
+            var enumListener = {
+              sbs: stringBundleService,
+              downloadguid: downloadListGUID,
+              items: [],
+              onEnumerationBegin: function(aMediaList) { },
+              onEnumerationEnd: function(aMediaList) { },
+              onEnumeratedItem: function(aMediaList, aMediaItem) {
+                var listguid = aMediaItem.guid;
+                if (nolibraries && aMediaItem.library == aMediaItem) 
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                if (aMediaItem instanceof Components.interfaces.sbIMediaList) {
+                  if (aMediaItem.type in skippedtypes)
+                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                } 
+                // skip the download playlist
+                if (listguid == this.downloadguid) {
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                }
+                if (exclude.indexOf(listguid) >= 0) 
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                var type = aMediaItem.type;
+                var smart = (aMediaItem instanceof Components.interfaces.sbILocalDatabaseSmartMediaList);
+                var storageGuid = aMediaItem.getProperty(SBProperties.storageGUID);
+                if (storageGuid) {
+                  aMediaList = aMediaList.library.getMediaItem(storageGuid);
+                  listguid = storageGuid;
+                  if (exclude.indexOf(listguid) >= 0) 
+                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                }
+                var libraryguid = aMediaList.library.guid;
+                aMediaItem.QueryInterface(Components.interfaces.sbIMediaList);
+                var item = document.createElement("menuitem");
+                var name = aMediaItem.name;
+                var customType = aMediaItem.getProperty(SBProperties.customType);
+                item.setAttribute("label", name);
+                item.setAttribute("sbtype", "playlist-menuitem");
+                item.setAttribute("value", listguid);
+                item.setAttribute("guid", listguid);
+                item.setAttribute("library", libraryguid);
+                item.setAttribute("listtype", type);
+                var props = "medialist";
+                if (aMediaItem.library == aMediaItem)
+                  props += " library";
+                props += " medialisttype-" + type;
+                props += " " + type;
+                if (customType)
+                  props += " " + customType;
+                item.setAttribute("properties", props);
+                item.setAttribute("class", "menuitem-iconic");
+                
+                this.items.push(item);
+                return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+              },
+              QueryInterface: function(iid) {
+                if (iid.equals(Components.interfaces.sbIMediaListEnumerationListener) || 
+                    iid.equals(Components.interfaces.nsISupports))
+                  return this;
+                throw Components.results.NS_ERROR_NO_INTERFACE;
+              }
+            };
+
+            var libs = this.libraryManager.getLibraries();
+            var pa = Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                     .createInstance(Components.interfaces.sbIMutablePropertyArray);
+            pa.appendProperty(SBProperties.isList, "1");
+            pa.appendProperty(SBProperties.hidden, "0");
+            while (libs.hasMoreElements()) {
+              var library = libs.getNext();
+              if (!libraries ||
+                  libraries[library.guid]) {
+                enumListener.onEnumeratedItem(library, library);
+                library.
+                  enumerateItemsByProperties(
+                    pa, 
+                    enumListener, 
+                    Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+              }
+            }
+            var sortItems = function(a, b) {
+              // Give the highest priority to the main library items
+              var liba = a.getAttribute("library");
+              var libb = b.getAttribute("library");
+              if (liba == mainLibraryGuid && libb != mainLibraryGuid) return -1;
+              if (libb == mainLibraryGuid && liba != mainLibraryGuid) return 1;
+              
+              // Make the main library view the top item
+              var guida = a.getAttribute("guid");
+              var guidb = b.getAttribute("guid");
+              if (guida == mainLibraryGuid && guidb != mainLibraryGuid) return -1;
+              if (guidb == mainLibraryGuid && guida != mainLibraryGuid) return 1;
+
+              // Give the lowest priority to the web history library
+              if (liba == webListGUID && libb != webListGUID) return 1;
+              if (libb == webListGUID && liba != webListGUID) return -1;
+
+              // Group playlist types together
+              var typea = a.getAttribute("listtype");
+              var typeb = b.getAttribute("listtype");
+              if (typea < typeb) return 1;
+              if (typeb < typea) return -1;
+
+              // Finally, default sort is a string sort              
+              var la = a.getAttribute("label");
+              var lb = b.getAttribute("label");
+              if (la < lb) return -1;
+              if (lb < la) return 1;
+              return 0;
+            }
+            enumListener.items.sort(sortItems);
+            
+            if (enumListener.items.length > 0 &&
+                this.getAttribute("separator") == "before") {
+              var separator = document.createElement("menuseparator");
+              separator.setAttribute("sbtype", "playlist-menuitem");
+              this.parentNode.appendChild(separator);
+            }
+            
+            for (var i in enumListener.items) {
+              var item = enumListener.items[i];
+              this.parentNode.appendChild(item);
+            }
+
+            if (enumListener.items.length > 0 &&
+                this.getAttribute("separator") == "after") {
+              var separator = document.createElement("menuseparator");
+              separator.setAttribute("sbtype", "playlist-menuitem");
+              this.parentNode.appendChild(separator);
+            }
+
+            this._items = enumListener.items;
+            var e = document.createEvent("Events");
+            e.initEvent("playlist-menuitems-changed", false, true);
+            this.dispatchEvent(e);
+          ]]>
+        </body>
+      </method>
+      
+      
+    </implementation>
+  
+  </binding>
+  
+</bindings>

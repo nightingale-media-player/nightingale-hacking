@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/client/!svn/ver/15727/trunk/tools/cdriphelper
+END
+reghandlers.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/15258/trunk/tools/cdriphelper/reghandlers.cpp
+END
+error.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/15258/trunk/tools/cdriphelper/error.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/15727/trunk/tools/cdriphelper/Makefile.in
+END
+winmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/15424/trunk/tools/cdriphelper/winmain.cpp
+END
+reghandlers.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/15258/trunk/tools/cdriphelper/reghandlers.h
+END
+cdriphelper.exe.manifest
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/15227/trunk/tools/cdriphelper/cdriphelper.exe.manifest
+END
+stringconvert.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/14928/trunk/tools/cdriphelper/stringconvert.cpp
+END
+regparsetest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/14957/trunk/tools/cdriphelper/regparsetest.cpp
+END
+regparse.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/14957/trunk/tools/cdriphelper/regparse.cpp
+END
+stringconvert.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/14928/trunk/tools/cdriphelper/stringconvert.h
+END
+regparse.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/15224/trunk/tools/cdriphelper/regparse.h
+END
+debug.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/14928/trunk/tools/cdriphelper/debug.cpp
+END
+toolslib.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/15170/trunk/tools/cdriphelper/toolslib.cpp
+END
+debug.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/14957/trunk/tools/cdriphelper/debug.h
+END
+toolslib.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/15170/trunk/tools/cdriphelper/toolslib.h
+END

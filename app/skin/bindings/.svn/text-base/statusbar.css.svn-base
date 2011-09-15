@@ -1,0 +1,115 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+THE STATUS PANE
+
+Applies some basic layout styles to the main window status bar.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+statusbar#status-bar
+{
+  padding-top:3px;
+  padding-right:0;
+  overflow: hidden;
+}
+
+#statusbar-display
+{
+  overflow: hidden;
+}
+
+window[platform="Darwin"] statusbar#status-bar
+{
+  padding-right:16px;
+}
+
+sb-status-progressmeter
+{
+   border: none;
+   width: 100px;
+   min-width: 100px;
+   max-width: 100px;
+}
+sb-player-scanning-label
+{
+  padding-left:10px;
+}
+.sb-status-bar-text,
+.statusbarpanel-text
+{
+  margin: 0;
+}
+
+statusbarpanel
+{
+  height:16px;
+  padding:0 0 0 5px;
+  margin:0 0 0 5px;
+}
+statusbarpanel:first-child
+{
+  padding:0;
+  margin:0;
+}
+
+sb-status-progressmeter
+{
+  height:12px;
+}
+
+/*
+  hiding the resizer statusbar panel (instead of removing the item) because 
+  someone might want to overlay based on it
+
+  resizer icon for Mac OS is handled elsewhere
+*/
+statusbarpanel.statusbar-resizerpanel
+{
+  display: none;
+}
+
+description.sb-status-bar-status-label,
+description.sb-status-bar-status-label[type="normal"]
+{
+  font-weight: normal;
+}
+
+description.sb-status-bar-status-label[type="playable"]
+{
+  font-weight: bold;
+}
+
+description.sb-status-bar-status-label[type="report"]
+{
+  font-weight: bold;
+}

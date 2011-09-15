@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<item-tests>
+  <item-test property="#contentURL" value="file:///h:/media/music/little%20sister_special%20sound%20album/01%20-%20%e7%99%bd%e3%81%84%e5%ad%a3%e7%af%80%ef%bc%88remix%20ver.%ef%bc%89.mp3">
+    <assert-property-value name="#contentURL" value="file:///h:/media/music/little%20sister_special%20sound%20album/01%20-%20%e7%99%bd%e3%81%84%e5%ad%a3%e7%af%80%ef%bc%88remix%20ver.%ef%bc%89.mp3"/>
+  </item-test>
+  <item-test property="#contentURL" value="file:///h:/media/music/little%20sister_special%20sound%20album/02%20-%20%e9%a2%a8%e3%81%ab%e4%b9%97%e3%81%a3%e3%81%a6.mp3">
+    <assert-property-value name="#contentURL" value="file:///h:/media/music/little%20sister_special%20sound%20album/02%20-%20%e9%a2%a8%e3%81%ab%e4%b9%97%e3%81%a3%e3%81%a6.mp3"/>
+  </item-test>
+  <item-test property="#contentURL" value="file:///h:/media/music/little%20sister_special%20sound%20album/06%20-%20%e3%81%af%e3%81%98%e3%81%be%e3%82%8a%e3%81%ae%e3%81%95%e3%82%88%e3%81%aa%e3%82%89.mp3">
+    <assert-property-value name="#contentURL" value="file:///h:/media/music/little%20sister_special%20sound%20album/06%20-%20%e3%81%af%e3%81%98%e3%81%be%e3%82%8a%e3%81%ae%e3%81%95%e3%82%88%e3%81%aa%e3%82%89.mp3"/>
+  </item-test>
+</item-tests>

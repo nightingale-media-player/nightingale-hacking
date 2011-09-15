@@ -1,0 +1,57 @@
+extensions.mashTape@songbirdnest.com.description=お気に入りのオールドスクールなミックステープのように、ライブラリを楽しくするいろんな Web ソースをミックスしてマッシュアップします。快適なゴムです。
+#
+
+extensions.mashTape.artistinfo=アーティスト情報
+extensions.mashTape.review=レビュー
+extensions.mashTape.rss=ニュース
+extensions.mashTape.photo=写真
+extensions.mashTape.flash=動画
+extensions.mashTape.msg.readmore=もっと読む
+extensions.mashTape.msg.readless=読まない
+extensions.mashTape.msg.viewmore=もっと見る
+extensions.mashTape.msg.viewless=見ない
+extensions.mashTape.msg.readorig=記事の原本を見る
+extensions.mashTape.msg.by=by
+extensions.mashTape.msg.provider_tooltip=%S でもっと見ます
+extensions.mashTape.msg.review_tooltip=%S でレビューを見ます
+extensions.mashTape.msg.rss_tooltip=%S で記事の原本を見ます
+extensions.mashTape.msg.flash_tooltip=%S でオリジナルの動画を観ます
+extensions.mashTape.msg.review=あなたのレビューを作成
+#
+
+extensions.mashTape.date.sec=%1$S秒前
+extensions.mashTape.date.secs=%1$S秒前
+extensions.mashTape.date.min=%1$S分前
+extensions.mashTape.date.mins=%1$S分前
+extensions.mashTape.date.hour=%1$S時間前
+extensions.mashTape.date.hours=%1$S時間前
+extensions.mashTape.date.day=%1$S日前
+extensions.mashTape.date.days=%1$S日前
+extensions.mashTape.date.week=%1$S週間前
+extensions.mashTape.date.weeks=%1$S週間前
+extensions.mashTape.date.month=%1$Sか月前
+extensions.mashTape.date.months=%1$Sか月前
+extensions.mashTape.date.year=%1$S年前
+extensions.mashTape.date.years=%1$S年前
+extensions.mashTape.date.decade=%1$S0年前
+extensions.mashTape.date.decades=%1$S0年前
+#
+
+extensions.mashTape.info.bio=アーティスト略歴
+extensions.mashTape.info.discography=ディスコグラフィー
+extensions.mashTape.info.members=メンバー
+extensions.mashTape.info.tags=タグ
+extensions.mashTape.info.links=リンク
+extensions.mashTape.info.create=ここをクリックしてアーティスト略歴を編集する
+extensions.mashTape.info.no_bio=%S に関するアーティスト略歴は見つかりませんでした。
+extensions.mashTape.info.amazon=Amazon でアルバムを見る
+extensions.mashTape.info.lastfm=Last.fm でアルバムを見る
+#
+
+extensions.mashTape.review.artist=アーティストレビュー
+extensions.mashTape.review.album=アルバムレビュー
+extensions.mashTape.review.track=曲レビュー
+#
+
+extensions.mashTape.rss.video=動画つきの記事
+extensions.mashTape.rss.photo=写真付きの記事

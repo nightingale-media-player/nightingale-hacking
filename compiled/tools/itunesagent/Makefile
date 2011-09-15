@@ -1,0 +1,145 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+DEPTH = ../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/tools/itunesagent
+VPATH = /media/disk/Linux/makepkg/songbird/tools/itunesagent \
+        /media/disk/Linux/makepkg/songbird/tools/itunesagent/$(SB_PLATFORM)
+
+include $(DEPTH)/build/autodefs.mk
+
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+   $(error The Songbird iTunes agent can only be built on Win32 and Mac)
+endif
+
+# The agent launching code relies on a specific name.
+# See bug 16930.
+DISABLE_IMPLICIT_NAMING = 1
+
+SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
+
+CPP_SRCS = main.cpp \
+           sbError.cpp \
+           sbiTunesAgentProcessor.cpp \
+           $(NULL)
+
+# we force include mozilla-config.h/xpcom-config.h; otherwise this is not necessary
+CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(topsrcdir)/components/include \
+               $(srcdir) \
+               $(NULL)
+
+CPP_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) \
+                  -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION) \
+                  $(NULL)
+
+SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                              $(NULL)
+
+ifeq (windows,$(SB_PLATFORM))
+   SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
+                                  version \
+                                  psapi \
+                                  $(NULL)
+
+   CPP_INCLUDES += $(srcdir)/windows \
+                   $(DEPS_DIR)/private \
+                   $(NULL)
+                                               
+   CPP_SRCS += sbIDispatchPtr.cpp \
+               sbiTunesAgentAppWatcher.cpp \
+               sbiTunesAgentWindowsProcessor.cpp \
+               sbiTunesLibrary.cpp \
+               winmain.cpp \
+               $(NULL)
+
+   FINAL_TARGET = $(SONGBIRD_DISTDIR)
+endif
+
+ifeq (macosx,$(SB_PLATFORM)) # {
+   CMM_INCLUDES += $(srcdir) \
+                   $(srcdir)/macosx \
+                   $(MOZSDK_INCLUDE_DIR) \
+                   $(MOZSDK_INCLUDE_DIR)/nspr \
+                   $(MOZSDK_INCLUDE_DIR)/xpcom \
+                   $(topsrcdir)/components/include \
+                   $(NULL)
+
+   CMM_SRCS += sbiTunesAgentMacProcessor.mm \
+               sbiTunesLibrary.mm \
+               SBNSString+Utils.mm \
+               SBNSWorkspace+Utils.mm \
+               $(NULL)
+
+   CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) \
+                     -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION) \
+                     -DSB_SIMPLE_PROGRAM=$(SIMPLE_PROGRAM) \
+                     -DSB_APP_BUNDLE_BASENAME=$(SB_APP_BUNDLE_BASENAME) \
+                     $(NULL)
+
+   C_INCLUDES = $(srcdir) \
+                $(MOZSDK_INCLUDE_DIR) \
+                $(NULL)
+
+   C_SRCS = LoginItemsAE.c \
+            $(NULL)
+
+
+   # On OSX, this warning is not useful, and triggers on any use of a number of
+   # system functions (unavoidably). Turn it off.
+   C_EXTRA_FLAGS += -Wno-conversion
+
+   SIMPLE_PROGRAM_FLAGS += -mmacosx-version-min=10.4 \
+                           -framework CoreServices \
+                           -framework CoreFoundation \
+                           -framework Cocoa \
+                           -framework Carbon \
+                           -Wl,-syslibroot,$(SB_MACOSX_SDK_10_4)
+
+   MAC_APP_DIR = $(SONGBIRD_DISTDIR)/$(SIMPLE_PROGRAM).app
+
+   SONGBIRD_PP_DIR = $(CURDIR)
+   SONGBIRD_PP_RESOURCES = $(srcdir)/$(SB_PLATFORM)/Info.plist.in
+   PPDEFINES += $(SB_BRANDING_DEFINES) 
+   FINAL_TARGET = $(MAC_APP_DIR)/Contents/MacOS/
+endif # }
+
+include $(topsrcdir)/build/rules.mk
+
+# Ordering matters here; we need the pre-processed Info.plist to happen in the
+# rules.mk export:: before our local export:: runs
+export::
+ifeq (macosx,$(SB_PLATFORM))
+	# We do a cp followed by a find so we don't have to use rsync, which
+	# would require a bunch of other infra work
+	$(MKDIR) $(MAC_APP_DIR)/Contents/MacOS/
+	$(CP) -R $(srcdir)/$(SB_PLATFORM)/appskeleton/* $(MAC_APP_DIR)
+	$(FIND) $(MAC_APP_DIR) -depth -type d -name '.svn' -exec $(RM) -r {} \;
+	$(INSTALL_FILE) $(CURDIR)/Info.plist $(MAC_APP_DIR)/Contents/
+	$(INSTALL_FILE) $(topsrcdir)/app/branding/songbird.icns $(MAC_APP_DIR)/Contents/Resources
+endif
+

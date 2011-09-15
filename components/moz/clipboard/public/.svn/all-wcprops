@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/14483/trunk/components/moz/clipboard/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/14483/trunk/components/moz/clipboard/public/Makefile.in
+END
+sbIClipboardHelper.idl
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/9974/trunk/components/moz/clipboard/public/sbIClipboardHelper.idl
+END

@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content
+END
+bookmarksPanel.xul
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/bookmarksPanel.xul
+END
+placesOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/placesOverlay.xul
+END
+places.js
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/places.js
+END
+bookmarksPanel.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/bookmarksPanel.js
+END
+editBookmarkOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/editBookmarkOverlay.xul
+END
+moveBookmarks.xul
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/moveBookmarks.xul
+END
+organizer.css
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/organizer.css
+END
+editBookmarkOverlay.js
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/editBookmarkOverlay.js
+END
+bookmarkProperties.xul
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/bookmarkProperties.xul
+END
+moveBookmarks.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/moveBookmarks.js
+END
+bookmarkProperties.js
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/bookmarkProperties.js
+END
+tree.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/tree.xml
+END
+controller.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/controller.js
+END
+places.css
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/places.css
+END
+toolbar.xml
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/toolbar.xml
+END
+menu.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/menu.xml
+END
+advancedSearch.inc
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/advancedSearch.inc
+END
+history-panel.xul
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/history-panel.xul
+END
+sidebarUtils.js
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/sidebarUtils.js
+END
+treeView.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/treeView.js
+END
+places.xml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/places.xml
+END
+history-panel.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/history-panel.js
+END
+utils.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/utils.js
+END
+places.xul
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/content/places.xul
+END

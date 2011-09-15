@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Inloggen in Last.fm...">
+<!ENTITY lastfm.menu.logout "Uitloggen uit Last.fm...">
+<!ENTITY lastfm.menu.enable "Scrobblen inschakelen">
+<!ENTITY lastfm.login.caption.label "Log in">
+<!ENTITY lastfm.username.label "Gebruikersnaam:">
+<!ENTITY lastfm.password.label "Wachtwoord:">
+<!ENTITY lastfm.auto.login.label "Automatisch inloggen bij starten">
+<!ENTITY lastfm.login.button "Inloggen">
+<!ENTITY lastfm.newaccount.caption "Nieuw account aanmaken">
+<!ENTITY lastfm.signup.label "Een account aanmaken op Last.fm">
+<!ENTITY lastfm.signup.button.label "Nieuw account aanmaken">
+<!ENTITY lastfm.loggingin.label "Aan het inloggen...">
+<!ENTITY lastfm.cancel.button "Annuleren">
+<!ENTITY lastfm.profile.caption "Profiel">
+<!ENTITY lastfm.profile.scrobble "Mijn liedjes scrobblen">
+<!ENTITY lastfm.profile.logout "Uitloggen">
+<!ENTITY lastfm.radio "Last.fm Radio">
+<!ENTITY lastfm.radio.login.help "Om naar de Last.fm Radio te luisteren moet u ingelogd zijn in Last.fm. Als u nog geen Last.fm-account hebt, kunt u zich registreren.">
+<!ENTITY lastfm.radio.start "Niet zeker waar te starten? Probeer te zoeken, of kijk naar wat anderen luisteren.">
+<!ENTITY lastfm.radio.start.top.artists "Top artiesten op Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Top tags op Last.fm">
+<!ENTITY lastfm.radio.register "Registreren">
+<!ENTITY lastfm.radio.subscriber.button "Inschrijven">
+<!ENTITY lastfm.radio.subscriber.help "Om naar de Last.fm-radio te kunnen luisteren moet u ingeschreven zijn.">
+<!ENTITY lastfm.radio.search "Zoeken">
+<!ENTITY lastfm.radio.library "Bibliotheek">
+<!ENTITY lastfm.radio.loved "Favoriete liedjes">
+<!ENTITY lastfm.radio.neighbourhood "Mijn buurt">
+<!ENTITY lastfm.radio.recommended "Aanbevelingen">
+<!ENTITY lastfm.radio.user_stations "Gebruikersstations">
+<!ENTITY lastfm.radio.recent_stations "Recent beluisterde stations">
+<!ENTITY lastfm.radio.from.lastfm "Van Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Aanbevolen artiesten">
+<!ENTITY lastfm.radio.top_artists "Uw top artiesten">
+<!ENTITY lastfm.radio.top_tags "Uw top tags">
+<!ENTITY lastfm.radio.friends "Uw vrienden">
+<!ENTITY lastfm.radio.neighbours "Muzikale buren">
+<!ENTITY lastfm.radio.from.songbird "Van Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Uw meest afgespeelde artiesten">
+<!ENTITY lastfm.radio.highest_rated_artists "Uw hoogst gewaardeerde artiesten">
+<!ENTITY lastfm.radio.popular_genres "Uw populaire genres">
+<!ENTITY lastfm.radio.play "Afspelen">
+<!ENTITY lastfm.tags.enter_new "Geef nieuwe tags op (gescheiden door komma's)">
+<!ENTITY lastfm.tags.add_fail "Kon de tags niet toevoegen!">
+<!ENTITY lastfm.tags.user "Uw tags:">
+<!ENTITY lastfm.tags.global "Globale Last.fm-tags:">

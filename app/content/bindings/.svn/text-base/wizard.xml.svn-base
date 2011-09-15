@@ -1,0 +1,425 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE bindings [
+  <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+  %globalDTD;
+  <!ENTITY % wizardDTD SYSTEM "chrome://global/locale/wizard.dtd">
+  %wizardDTD;
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  %brandDTD;
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %songbirdDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Songbird wizard dialog.
+   *
+   *   Customized Songbird wizard dialog widget.
+   *   This Songbird wizard provides support for showing pages after the wizard
+   * has finished.  These may be used to show download or installation status
+   * after the wizard settings have been committed.  If the wizard is finished,
+   * the postFinish property will be true.
+   *
+   * Properties:
+   *
+   *   postFinish               True if showing a wizard page after the wizard
+   *                            finish.
+   *
+   *XXXeps Should use sb-sys-outer-frame and sb-sys-wizard-titlebar but don't
+   *XXXeps have time to do the wizard specific work this late into Fugazi.
+   *XXXeps wizards have a header instead of a titlebar and the wizard header
+   *XXXeps has a few differences that should be accounted for.
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="wizard"
+           extends="chrome://global/content/bindings/wizard.xml#wizard">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Wizard header. -->
+      <xul:sb-draggable>
+        <xul:hbox class="wizard-header"
+                  chromedir="&locale.dir;"
+                  anonid="Header"/>
+      </xul:sb-draggable>
+
+      <!-- Wizard pages. -->
+      <xul:deck class="wizard-page-box" flex="1" anonid="Deck">
+        <children includes="wizardpage"/>
+      </xul:deck>
+      <children/>
+
+      <!-- Wizard buttons. -->
+      <xul:hbox class="wizard-buttons"
+                anonid="Buttons"
+                xbl:inherits="pagestep,firstpage,lastpage"/>
+
+    </content>
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget properties.
+       -->
+
+      <!-- postFinish -->
+      <field name="_postFinish">false</field>
+      <property name="postFinish" readonly="true">
+        <getter>
+          return this._postFinish;
+        </getter>
+      </property>
+
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Songbird wizard widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal methods.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new sbWizardSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+
+        // Handle showChrome=true
+        var plucked = Application.prefs.getValue("songbird.accessibility.enabled", false);
+        if (plucked) {
+          document.documentElement.removeAttribute("hidechrome");
+          var header = document.getAnonymousElementByAttribute(this, "anonid", "Header");
+          if (header) {
+            header.hidden = true;
+          }
+        }
+
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the Songbird wizard page widget services.
+        if (typeof(sbWizardSvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                     ("chrome://songbird/content/scripts/wizardService.js",
+                      null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- wizard -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Songbird wizard page.
+   *
+   *   Customized Songbird wizard page widget.
+   *   The Songbird wizard page allows wizard button display to be controlled by
+   * the various hide and show button attributes (e.g., "hideback").
+   *   Along with the Songbird wizard widget, the Songbird wizard page provides
+   * support for post-finish pages.  These may be used for post-finish
+   * downloading and installation.  The last regular wizard page (i.e., one with
+   * no "next" attribute) may navigate to a post-finish page by specifying a
+   * page ID in the postfinish attribute.
+   *
+   * Attributes:
+   *
+   *   hideback                 If true, hide the back button.
+   *   showback                 If true, show the back button.
+   *   hidecancel               If true, hide the cancel button.
+   *   showcancel               If true, show the cancel button.
+   *   hidenext                 If true, hide the next button.
+   *   shownext                 If true, show the next button.
+   *   hidefinish               If true, hide the finish button.
+   *   showfinish               If true, show the finish button.
+   *   showextra1               If true, show the extra1 button.
+   *   showextra2               If true, show the extra2 button.
+   *   postfinish               ID of page to show after wizard is finished.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-wizard-page"
+           extends="chrome://global/content/bindings/wizard.xml#wizardpage">
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Wizard page contents. -->
+      <children/>
+
+      <!-- Element containing button related attributes -->
+      <!-- for use with DOM attribute changed events.   -->
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Songbird wizard page widget services object.
+       -->
+
+      <field name="_visited"/>
+      <field name="_widgetSvc"/>
+
+
+      <property name="visited" onget="return this._visited;">
+        <setter>
+          this._visited = val;
+          return this.visited;
+        </setter>
+      </property>
+
+      <!-- *********************************************************************
+       *
+       * Internal methods.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new sbWizardPageSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the Songbird wizard page widget services.
+        if (typeof(sbWizardPageSvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                     ("chrome://songbird/content/scripts/wizardService.js",
+                      null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+    
+    <handlers>
+     
+      <handler event="pageadvanced">
+        this.visited = true;
+        return true;
+      </handler>
+      
+      <!--
+       * Deal with the optional prev= attribute
+       -->
+      <handler event="pagerewound">
+        this.visited = false;
+        if (this.hasAttribute("prev")) {
+          document.documentElement.goTo(this.getAttribute("prev"));
+          return false;
+        }
+        return true;
+      </handler>
+    </handlers>
+
+  </binding> <!-- sb-wizard-page" -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Songbird wizard buttons.
+   *
+   *   This binding is used to override the OS dependent wizard buttons to
+   * provide a single Songbird wizard button set for all OS'es.  This binding
+   * is derived from the Mac OS/X wizard buttons binding.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-wizard-buttons"
+           extends="chrome://global/content/bindings/wizard.xml#wizard-buttons">
+    <content>
+      <xul:vbox flex="1">
+        <xul:hbox class="wizard-buttons-btm">
+          <xul:button class="wizard-button"
+                      dlgtype="extra1"
+                      hidden="true"/>
+          <xul:button class="wizard-button" 
+                      dlgtype="extra2" 
+                      hidden="true"/>
+          <xul:button label="&wizard.button.cancel.label;"
+                      class="wizard-button"
+                      dlgtype="cancel"/>
+          <xul:spacer flex="1"/>
+          <xul:button label="&wizard.button.back.label;"
+                      accesskey="&wizard.button.back.accesskey;"
+                      class="wizard-button wizard-nav-button"
+                      dlgtype="back"/>
+          <xul:hbox class="wizard-label-box" align="center">
+            <xul:label class="wizard-page-label" xbl:inherits="value=pagestep"/>
+          </xul:hbox>
+          <xul:button label="&wizard.button.next.label;"
+                      accesskey="&wizard.button.next.accesskey;"
+                      class="wizard-button wizard-nav-button"
+                      dlgtype="next"
+                      default="true"
+                      xbl:inherits="hidden=lastpage"/>
+          <xul:button label="&wizard.button.finish.label;"
+                      class="wizard-button"
+                      dlgtype="finish"
+                      default="true"
+                      xbl:inherits="hidden=hidefinishbutton"/>
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <method name="onPageChange">
+        <body><![CDATA[
+          this.setAttribute("hidefinishbutton",
+                            !(this.getAttribute("lastpage") == "true"));
+        ]]></body>
+      </method>
+    </implementation>
+
+  </binding> <!-- sb-wizard-buttons -->
+
+</bindings>
+

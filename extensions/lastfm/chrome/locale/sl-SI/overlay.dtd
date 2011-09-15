@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Prijavi se v Last.fm ...">
+<!ENTITY lastfm.menu.logout "Odjavi se iz Last.fm">
+<!ENTITY lastfm.menu.enable "Omogoči skroblanje">
+<!ENTITY lastfm.login.caption.label "Prijavi">
+<!ENTITY lastfm.username.label "Up. ime:">
+<!ENTITY lastfm.password.label "Geslo:">
+<!ENTITY lastfm.auto.login.label "Samoprijava ob zagonu">
+<!ENTITY lastfm.login.button "Prijavi se">
+<!ENTITY lastfm.newaccount.caption "Ustvari nov račun">
+<!ENTITY lastfm.signup.label "Registriraj se v Last.fm">
+<!ENTITY lastfm.signup.button.label "Ustvari nov račun">
+<!ENTITY lastfm.loggingin.label "Prijavljanje ...">
+<!ENTITY lastfm.cancel.button "Prekliči">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Skroblaj moje posnetke">
+<!ENTITY lastfm.profile.logout "Odjavi">
+<!ENTITY lastfm.radio "Radio Last.fm">
+<!ENTITY lastfm.radio.login.help "Če želite poslušati radio Last.fm, morate biti prijavljeni v Last.fm. Če še nimate računa Last.fm, se lahko registrirate.">
+<!ENTITY lastfm.radio.start "Ne veste, kje začeti? Poskusite z iskanjem ali pa poglejte, kaj poslušajo drugi.">
+<!ENTITY lastfm.radio.start.top.artists "Naj-izvajalci na Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Naj-značke na Last.fm">
+<!ENTITY lastfm.radio.register "Registriraj">
+<!ENTITY lastfm.radio.subscriber.button "Naroči se">
+<!ENTITY lastfm.radio.subscriber.help "Če želite poslušati radio Last.fm, morate biti naročnik.">
+<!ENTITY lastfm.radio.search "Išči">
+<!ENTITY lastfm.radio.library "Knjižnica">
+<!ENTITY lastfm.radio.loved "Priljubljeni posnetki">
+<!ENTITY lastfm.radio.neighbourhood "Okolica">
+<!ENTITY lastfm.radio.recommended "Priporočila">
+<!ENTITY lastfm.radio.user_stations "Postaje uporabnika">
+<!ENTITY lastfm.radio.recent_stations "Nedavne postaje">
+<!ENTITY lastfm.radio.from.lastfm "Z Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Priporočeni izvajalci">
+<!ENTITY lastfm.radio.top_artists "Vaši naj-izvajalci">
+<!ENTITY lastfm.radio.top_tags "Vaše naj-značke">
+<!ENTITY lastfm.radio.friends "Vaši prijatelji">
+<!ENTITY lastfm.radio.neighbours "Sosedje">
+<!ENTITY lastfm.radio.from.songbird "S Songbirda">
+<!ENTITY lastfm.radio.most_played_artists "Vaši največkrat predvajani izvajalci">
+<!ENTITY lastfm.radio.highest_rated_artists "Vaši najvišje ocenjeni izvajalci">
+<!ENTITY lastfm.radio.popular_genres "Vaše priljubljene zvrsti">
+<!ENTITY lastfm.radio.play "Predvajaj">
+<!ENTITY lastfm.tags.enter_new "Vnesite nove značke (ločene z vejicami)">
+<!ENTITY lastfm.tags.add_fail "Dodajanje značk ni uspelo!">
+<!ENTITY lastfm.tags.user "Vaše značke:">
+<!ENTITY lastfm.tags.global "Splošne značke Last.fm:">

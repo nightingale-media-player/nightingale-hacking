@@ -1,0 +1,25 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Library</ShortName><!-- Change name to "Library" not "Songbird" -->
+<Description>Library Search</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">chrome://songbird/skin/nav-bar/nav-search-icon.png</Image>
+<!-- HACK: 
+     
+     gSearchHandler intercepts searches for this engine and sends queries
+     directly to the appropriate playlist.
+         
+     Be aware that this is a temporary solution, and was necessary in order extend 
+     the Firefox search system to meet Songbird's needs. 
+     This is guaranteed to change at some point in the future. 
+     
+     Note that engines with songbird:internal are hidden on startup, and need to 
+     be programmatically shown.     
+     
+     See searchHandler.js and sbSearch.xml for more information.
+  -->
+<Url type="text/html" method="GET" template="http://songbirdnest.com/"/>
+<!-- Engines tagged with songbird:internal are not sent to the web browser. -->
+<Tags>songbird:internal</Tags>
+<!-- This alias allows gSearchHandler to indentify the Songbird engine -->
+<Alias>songbird-internal-search</Alias>
+</SearchPlugin>

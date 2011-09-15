@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta
+END
+test_ctype_override.txt
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_ctype_override.txt
+END
+caret_test.txt^^headers^
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/caret_test.txt%5E%5Eheaders%5E
+END
+test_status_override_nodesc.txt^headers^
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_status_override_nodesc.txt%5Eheaders%5E
+END
+test_status_override.html
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_status_override.html
+END
+test_both.html^headers^
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_both.html%5Eheaders%5E
+END
+caret_test.txt^^
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/caret_test.txt%5E%5E
+END
+test_ctype_override.txt^headers^
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_ctype_override.txt%5Eheaders%5E
+END
+test_status_override_nodesc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_status_override_nodesc.txt
+END
+test_status_override.html^headers^
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_status_override.html%5Eheaders%5E
+END
+test_both.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/cern_meta/test_both.html
+END

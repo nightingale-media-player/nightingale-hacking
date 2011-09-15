@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://shoutcast-radio/skin/overlay.css"
+		type="text/css"?>
+
+<!DOCTYPE prefwindow SYSTEM "chrome://shoutcast-radio/locale/options.dtd">
+
+<overlay id="radio_preferences_overlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefwindow id="BrowserPreferences">
+	<prefpane id="radioPrefsPane" label="&prefpane.label;"
+		onpaneload="radioPrefs.updateStates()"
+		image="chrome://shoutcast-radio/skin/shoutcast_icon-32x32.png">
+
+		<preferences>
+			<preference id="prefLimitBitRate"
+				type="bool"
+				name="extensions.shoutcast-radio.limit-bit-rate" />
+			<preference id="prefLimitListeners"
+				type="bool"
+				name="extensions.shoutcast-radio.limit-listeners" />
+			<preference id="prefBitRate"
+				type="int"
+				name="extensions.shoutcast-radio.min-bit-rate" />
+			<preference id="prefListeners"
+				type="int"
+				name="extensions.shoutcast-radio.min-listeners" />
+			<preference id="prefCustomGenres"
+				type="string"
+				name="extensions.shoutcast-radio.custom-genres" />
+			<preference id="prefTitleParsing"
+				type="bool"
+				name="extensions.shoutcast-radio.title-parsing" />
+		</preferences>
+
+		<script type="application/x-javascript" 
+			src="chrome://shoutcast-radio/content/radioPrefs.js"/>
+
+		<vbox class="bottomBox">
+			<groupbox id="radioGroup" flex="1">
+				<caption label="&prefs.caption;" />
+
+				<vbox flex="1">
+					<command id="updateStates"
+						oncommand="radioPrefs.updateStates();" />
+					<hbox align="center">
+						<checkbox id="checkBitRatePref"
+							command="updateStates"
+							preference="prefLimitBitRate" />
+						<label value="&bit-rate.limit.label;"/>
+						<menulist preference="prefBitRate" id="bitRateMenu"
+							style="min-width:7.5em;">
+							<menupopup flex="1">
+								<menuitem label="256 kbps" value="256"/>
+								<menuitem label="192 kbps" value="192"/>
+								<menuitem label="128 kbps" value="128"/>
+								<menuitem label="96 kbps" value="96"/>
+								<menuitem label="64 kbps" value="64"/>
+								<menuitem label="56 kbps" value="56"/>
+								<menuitem label="32 kbps" value="32"/>
+							</menupopup>
+						</menulist>
+					</hbox>
+					<hbox align="center">
+						<checkbox id="checkListenersPref"
+							command="updateStates"
+							preference="prefLimitListeners" />
+						<label value="&listeners.limit.label;"/>
+						<textbox id="textListenersPref" 
+							preference="prefListeners" maxlength="5" size="5"/>
+						<label value="&listeners.limit.label.2;"/>
+					</hbox>
+				</vbox>
+			</groupbox>
+
+			<groupbox id="radioGenresGroup" flex="1">
+				<caption label="&prefs.customGenres;" />
+				<vbox flex="1">
+					<description>&custom-genres.help.label;</description>
+					<textbox id="custom-genres-textbox"
+						emptytext="&prefs.customGenres.emptytext;"
+						preference="prefCustomGenres" />
+				</vbox>
+			</groupbox>
+
+			<groupbox id="radioTitleParsingGroup" flex="1">
+				<caption label="&prefs.track.guessing.title;" />
+				<vbox flex="1">
+					<description>&prefs.track.guessing.help;</description>
+					<hbox align="center">
+						<checkbox id="checkParsingPref"
+							preference="prefTitleParsing" />
+						<label value="&prefs.track.guessing.label;" />
+					</hbox>
+				</vbox>
+			</groupbox>
+
+			<groupbox id="radioTosGroup" flex="1">
+				<caption label="SHOUTcast" />
+				<vbox>
+					<hbox flex="1">
+						<label>&prefs.tosBegin;</label>
+						<label class="text-link"
+							href="http://www.shoutcast.com/disclaimer.phtml"
+							value="&prefs.tosLinkText;"/>
+						<label>&prefs.tosEnd;</label>
+					</hbox>
+					<hbox flex="1">
+						<label>&prefs.toolbarBegin;</label>
+						<label class="text-link"
+							href="http://toolbar.aol.com/shoutcastradio/download.html"
+							value="&prefs.toolbarLinkText;"/>
+						<label>&prefs.toolbarEnd;</label>
+					</hbox>
+				</vbox>
+			</groupbox>
+		</vbox>
+		
+	</prefpane>
+</prefwindow>
+</overlay>

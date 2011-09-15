@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/VPatch
+END
+patch.pat
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/VPatch/patch.pat
+END
+example.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/VPatch/example.nsi
+END
+newfile.txt
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/VPatch/newfile.txt
+END
+oldfile.txt
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/VPatch/oldfile.txt
+END

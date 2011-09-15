@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+  type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://concerts/skin/overlay.css"
+    type="text/css"?>
+
+<!DOCTYPE page [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  %brandDTD;
+  <!ENTITY % concertOptionsDTD SYSTEM "chrome://concerts/locale/options.dtd">
+  %concertOptionsDTD;
+  <!ENTITY % concertsDTD SYSTEM "chrome://concerts/locale/overlay.dtd">
+  %concertsDTD;
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %songbirdDTD;
+]>
+
+<page id="concert-window"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      onload="ConcertTicketing.init()"
+      onunload="ConcertTicketing.unload()">
+
+  <stringbundleset id="stringbundleset"> 
+    <stringbundle id="concerts-strings"
+                  src="chrome://concerts/locale/overlay.properties"/>
+  </stringbundleset>
+
+  <script type="application/x-javascript" src="options.js" />
+  <script type="application/x-javascript" src="browse.js" />
+
+  <deck id="concerts-deck" flex="1" style="height: 100%;">
+    <!-- the browsing/listing page, the contents of the iframe are all
+         built dynamically in browse.js -->
+    <vbox id="concerts-list-page">
+      <iframe id="concert-listings" flex="1"
+              src="chrome://concerts/content/iframe-skeleton.html" />
+    </vbox>
+
+    <!-- first-run & edit-location page -->
+    <hbox id="concerts-firstrun-page">
+      <vbox flex="1">
+        <hbox class="powered-by" pack="start" align="baseline">
+          <image src="chrome://concerts/skin/Concerts.png" />
+          <spacer flex="1" />
+          <image src="chrome://concerts/content/songkick-logo-concerts-home.png"
+                 class="powered-by-image"
+                 onclick="ConcertTicketing.openProviderPage()" />
+        </hbox>
+
+        <vbox class="descriptive-text">
+          <label id="location" class="prefs-header" value="&prefs.location;" />
+          <description class="descr-text">&prefs.location.descr;</description>
+        </vbox>
+        <vbox class="concerts-location-box" flex="1">
+          <grid class="location" style="padding-bottom: 1em;" flex="0">
+            <columns>
+              <column flex="0" />
+              <column flex="0" />
+              <column flex="0" />
+              <column flex="1" />
+            </columns>
+
+            <command id="changeCountry"
+                     oncommand="ConcertOptions.changeCountry(this);" />
+            <command id="changeState"
+                     oncommand="ConcertOptions.changeState(this);" />
+            <command id="changeCity"
+                     oncommand="ConcertOptions.changeCity(this);" />
+                   
+            <command id="cancel" oncommand="ConcertOptions.cancel();" />
+            <command id="save" oncommand="ConcertOptions.save();" />
+            
+            <rows>
+              <row>
+                <label class="pref-label" value="&prefs.country;"/>
+                <label class="pref-label" value="&prefs.state;" />
+                <label class="pref-label" value="&prefs.city;" />
+              </row>
+              <row>
+                <menulist id="menulist-country" flex="0"
+                          command="changeCountry" />
+                <menulist id="menulist-state" flex="0"
+                          command="changeState" />
+                <menulist id="menulist-city" flex="0"
+                          command="changeCity" />
+                <hbox id="command-buttons">
+                  <button id="pref-cancel-button" flex="0"
+                          label="&window.cancel;" command="cancel" />
+                  <button id="pref-save-button" flex="0"
+                          label="&prefs.findShows;" command="save" />
+                </hbox>
+              </row>
+            </rows>
+          </grid>
+
+          <hbox id="library-ontour-box">
+            <hbox pack="start" class="library-ontour-image-box">
+              <image src="library-ontour.png" />
+            </hbox>
+            <vbox pack="start" flex="1">
+              <label id="pref-library" class="prefs-header"
+                     value="&prefs.library;" />
+              <description
+                id="library-text">&prefs.library.text;</description>
+              <checkbox id="checkbox-library-integration"
+                        checked="true"
+                        label="&prefs.library.checklabel;"/>
+            </vbox>
+          </hbox>
+          
+        </vbox> <!-- /#concerts-location-box -->
+      </vbox>
+    </hbox>
+
+    <hbox id="concerts-loading-page" pack="center" flex="1">
+      <vbox pack="center">
+        <label value="&concerts.loading;" />
+        <progressmeter id="loading-progress" mode="determined" />
+        <label value="" id="loading-label" />
+        <hbox pack="start">
+          <image src="chrome://concerts/content/songkick-logo-in-progress.png"
+            onclick="ConcertTicketing.openProviderPage()"
+            class="clickable"
+            style="margin-left:5px;margin-top:5px;" />
+        </hbox>
+      </vbox>
+    </hbox>
+    <hbox id="concerts-no-results-page" flex="1">
+      <deck id="no-results-deck" flex="1">
+        <hbox pack="center" flex="1">
+          <spacer flex="1" />
+          <vbox pack="center" flex="1"
+            style="max-width:85%;width:85%;">
+            <label id="noresults-city-1" />
+            <label id="noresults-city-2" />
+            <label id="noresults-city-3"
+              style="margin-bottom: 0px;"/>
+            <hbox align="center">
+              <label id="noresults-city-4"
+                style="margin-top:0px;" />
+              <image id="noresults-concert-icon" />
+              <label value="Concerts (19)"/>
+            </hbox>
+            <label id="noresults-city-5" />
+            <hbox pack="start">
+              <button class="noresults-button"
+                onclick="ConcertTicketing.editLocation()"
+                label="&concerts.changelocation;" />
+              <button class="noresults-button"
+                onclick="ConcertTicketing.changeFilter(false)"
+                id="noresults-seeallconcerts-city"/>
+            </hbox>
+          </vbox>
+          <spacer flex="1" />
+        </hbox>
+        <stack class="fail-noresults" flex="1">
+          <image src="chrome://concerts/content/cat_stuck.jpg" />
+          <vbox>
+            <label id="epic-fail"
+              value="&concerts.easteregg.fail;"/>
+            <label id="epic-city"
+              value="&concerts.easteregg.fail.2;"/>
+            <hbox pack="start">
+              <button class="noresults-button"
+                onclick="ConcertTicketing.editLocation()"
+                label="&concerts.changelocation;" />
+              <button class="noresults-button"
+                onclick="ConcertTicketing.changeFilter(false)"
+                id="noresults-seeallconcerts-city-e"/>
+            </hbox>
+          </vbox>
+        </stack>
+      </deck>
+    </hbox>
+    <hbox id="concerts-timeout-error-page" flex="1">
+      <spacer flex="1" />
+      <vbox id="timeout-vbox" flex="1" pack="center">
+        <description>&concerts.timeout.error;</description>
+        <label class="text-link" value="&concerts.timeoutreport.error;"
+          href="http://getsatisfaction.com/songbird" />
+      </vbox>
+      <spacer flex="1" />
+    </hbox>
+  </deck>
+</page>

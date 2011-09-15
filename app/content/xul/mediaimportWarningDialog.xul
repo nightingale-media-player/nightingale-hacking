@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/mediaimportWarningDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<!DOCTYPE overlay [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
+  %brandDTD;
+  %songbirdDTD;
+  %textcontextDTD;
+]>
+
+<!--
+//******************************************************************************
+//
+// @file mediaimportWarningDialog.xul
+//
+//******************************************************************************
+-->
+
+<dialog xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="media_import_warning_dialog"
+        hidechrome="true"
+        flex="1"
+        buttons="accept"
+        title="&mediaimporter.filtered_extensions.title;"
+        onunload="dialogController.onUnload();"
+        onload="dialogController.onLoad();">
+
+  <script type="application/x-javascript" 
+          src="chrome://global/content/globalOverlay.js"/>
+
+  <commandset id="selectEditMenuItems">
+    <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
+    <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
+  </commandset>
+
+  <popupset id="contentAreaContextSet">
+    <popup id="contentAreaContextMenu"
+           onpopupshowing="goUpdateCommand('cmd_copy')">
+      <menuitem id="context-copyselected"
+                label="&copySelectionCmd.label;"
+                accesskey="&copySelectionCmd.accesskey;"
+                command="cmd_copy"
+                disabled="true"/>
+      <menuitem id="context-selectall"
+                label="&selectAllCmd.label;"
+                accesskey="&selectAllCmd.accesskey;"
+                command="cmd_selectAll"/>
+    </popup>
+  </popupset>
+
+
+  <!-- Information container box.  Use "infoContainer" -->
+  <!-- id to get commonDialog.css styling.             -->
+  <vbox id="infoContainer">
+
+    <!-- Dialog box description.  Enclose in "info.body" -->
+    <!-- vbox to get commonDialog.css styling.           -->
+    <vbox id="info.body">
+      <description id="dialog_msg" />
+    </vbox>
+
+    <label id="dialog_box_label" />
+
+    <hbox id="dialog_box">
+      <vbox id="dialog_desc_box" flex="1">
+        <description class="dialog_list_desc"
+                     context="contentAreaContextMenu"
+                     id="dialog_list_desc" />
+      </vbox>
+    </hbox>
+
+    <spacer height="10" />
+
+    <vbox id="info.body">
+      <description>&mediaimporter.filtered_extensions.bottomdesc;</description>
+      <label class="text-link" id="codec_wiki_url_label" />
+    </vbox>
+    <spacer height="16" />
+    
+    <!-- Dialog enable checkbox. -->
+    <checkbox id="dialog_enable"
+              checked="true"
+              label="&mediaimporter.filtered_extensions.dontshowme;" />
+
+  </vbox>
+  
+  <!-- Dialog Controller -->
+  <script><![CDATA[
+
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+      
+    Cu.import("resource://app/jsmodules/StringUtils.jsm", this);
+ 
+    var dialogController = {
+      onLoad: function() {
+        var dialogBlock =
+          window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
+
+        // Add all the items from the array as entries into the hidden
+        // description field.
+        var listItems = dialogBlock.objects;
+        var desc = document.getElementById("dialog_list_desc");
+        for (var i = 0; i < listItems.length; i++) {
+          var curStr;
+          try {
+            var item = listItems.queryElementAt(i, Ci.nsISupportsString);
+            curStr = item.data;
+          }
+          catch (e) {
+            Cu.reportError("Could not convert item to nsISupportsString!");
+          }
+
+          desc.textContent += curStr + "\n";
+        }
+
+        document.getElementById("dialog_box").setAttribute("open", "true");
+
+        // Set the main description of the dialog
+        var mainDesc = document.getElementById("dialog_msg");
+        mainDesc.appendChild(document.createTextNode(
+          SBFormattedString("mediaimporter.filteredtext.desc",
+                            [listItems.length])));
+
+        // Set the URL of the codec URL
+        var label = document.getElementById("codec_wiki_url_label");
+        var url = Application.prefs.getValue("songbird.url.codec_not_found",
+            "http://wiki.songbirdnest.com/Docs/Video_Codec_Support");
+        label.setAttribute("value", url);
+        label.setAttribute("onclick", "openLink('" + url + "');");
+      },
+
+      onUnload: function() {
+        // If the "don't show again" checkbox is checked, set the pref to
+        // not show this dialog again.
+        if (document.getElementById("dialog_enable").checked) {
+          const prefs = Cc["@mozilla.org/fuel/application;1"]
+                          .getService(Ci.fuelIApplication)
+                          .prefs;
+          prefs.setValue("songbird.mediaimport.warn_filtered_exts", false);
+        }
+      },
+    };
+
+    function openLink(url) {
+      /*
+      // The following will open in the user's external browser
+      var externalLoader =
+          Cc["@mozilla.org/uriloader/external-protocol-service;1"]
+            .getService(Ci.nsIExternalProtocolService);
+      var nsURI = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService)
+                    .newURI(url, null, null);
+      externalLoader.loadURI(nsURI, null);
+      */
+
+      // Open it in the Songbird browser
+      Cc["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Ci.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").gBrowser.loadOneTab(url);
+    }
+  
+  ]]></script>
+
+</dialog>

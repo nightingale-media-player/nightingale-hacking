@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/client/!svn/ver/18706/trunk/tools/disthelper/tests
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/18706/trunk/tools/disthelper/tests/Makefile.in
+END
+environmenttest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/18396/trunk/tools/disthelper/tests/environmenttest.cpp
+END
+exectest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/18706/trunk/tools/disthelper/tests/exectest.cpp
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/18706/trunk/tools/disthelper/tests/main.cpp
+END
+version.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/18147/trunk/tools/disthelper/tests/version.cpp
+END
+debugtest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/18147/trunk/tools/disthelper/tests/debugtest.cpp
+END
+parser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/18147/trunk/tools/disthelper/tests/parser.cpp
+END
+test_disthelper.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/18170/trunk/tools/disthelper/tests/test_disthelper.js
+END

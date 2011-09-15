@@ -1,0 +1,103 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+
+[scriptable, uuid(e88ad08d-eeea-4550-afa5-0f847fdc4dbd)]
+interface sbIMediacoreEqualizerBand : nsISupports
+{
+  /**
+   * \brief The index of the band in the EQ (eg. band 0).
+   */
+  attribute unsigned long index;
+  /**
+   * \brief Frequency in Hz.
+   */
+  attribute unsigned long frequency;
+  /**
+   * \brief Gain in dB. Valid range is from -1 to 1.
+   */ 
+  attribute double gain;
+
+  /**
+   * \brief Initialize the equalizer band object.
+   * \param aIndex - The index of the band (eg. band 1).
+   * \param aFrequency - The frequency band, in Hz.
+   * \param aGain - The gain value from -1 to 1.
+   */
+  void init(in unsigned long aIndex, in unsigned long aFrequency, in double aGain);
+
+  /**
+   * \brief Get all the values in the equalizer band object.
+   */
+  void getValues(out unsigned long aIndex, out unsigned long aFrequency, out double aGain);
+
+  /**
+   * \brief Set all the values in the equalizer band object.
+   */
+  void setValues(in unsigned long aIndex, in unsigned long aFrequency, in double aGain);
+};
+
+[scriptable, uuid(4bb5b39b-6ae2-45e8-a7e8-b46daf22d9fb)]
+interface sbIMediacoreMultibandEqualizer : nsISupports
+{
+  /**
+   * \brief Whether the EQ is enabled or not.
+   */
+  attribute boolean eqEnabled;
+  /**
+   * \brief Enumerator containing all available bands.
+   * \note Enumerator contains sbIMediacoreEqualizerBand objects.
+   */
+  attribute nsISimpleEnumerator bands;
+  /**
+   * \brief The number of bands available.
+   */
+  readonly attribute unsigned long bandCount;
+  /**
+   * \brief Get a band.
+   */
+  sbIMediacoreEqualizerBand getBand(in unsigned long aBandIndex);
+  /**
+   * \brief Set a band.
+   */
+  void setBand(in sbIMediacoreEqualizerBand aBand);
+};
+
+%{C++
+
+#define SB_MEDIACORE_EQUALIZER_BAND_DESCRIPTION    \
+  "Songbird Mediacore Equalizer Band"
+#define SB_MEDIACORE_EQUALIZER_BAND_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/equalizerband;1"
+#define SB_MEDIACORE_EQUALIZER_BAND_CLASSNAME      \
+  "sbMediacoreEqualizerBand"
+#define SB_MEDIACORE_EQUALIZER_BAND_CID               \
+  {0x2133a879, 0x337b, 0x4f64, {0x92, 0x4a, 0x2a, 0xd8, 0x51, 0x30, 0xae, 0x6c}}
+  
+%};

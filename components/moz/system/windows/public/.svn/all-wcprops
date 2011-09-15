@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/17650/trunk/components/moz/system/windows/public
+END
+sbIWindowsAutoPlayService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/17650/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14483/trunk/components/moz/system/windows/public/Makefile.in
+END

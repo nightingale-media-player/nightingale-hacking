@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20522/trunk/components/moz/system/windows/formatter/src
+END
+sbWindowsFormatterServer.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/14623/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatterServer.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/20433/trunk/components/moz/system/windows/formatter/src/Makefile.in
+END
+sbWindowsFormatterClassFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/14698/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatterClassFactory.cpp
+END
+sbWindowsFormatter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/20522/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatter.cpp
+END
+sbWindowsFormatter.rc
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/14623/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatter.rc
+END
+sbWindowsFormatterClassFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/client/!svn/ver/14623/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatterClassFactory.h
+END
+sbWindowsFormatterServer.def
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/14623/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatterServer.def
+END
+sbWindowsFormatter.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/20522/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatter.h
+END
+sbWindowsFormatterServer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/14698/trunk/components/moz/system/windows/formatter/src/sbWindowsFormatterServer.cpp
+END

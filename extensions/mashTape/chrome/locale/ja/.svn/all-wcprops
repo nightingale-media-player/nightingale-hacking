@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/20105/trunk/extensions/mashTape/chrome/locale/ja
+END
+options.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/16997/trunk/extensions/mashTape/chrome/locale/ja/options.dtd
+END
+overlay.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/16997/trunk/extensions/mashTape/chrome/locale/ja/overlay.dtd
+END
+mashtape.properties
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/20105/trunk/extensions/mashTape/chrome/locale/ja/mashtape.properties
+END

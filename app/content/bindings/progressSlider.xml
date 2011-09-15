@@ -1,0 +1,346 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="progress-slider">
+    <content>
+    <xul:box sbid="sb-progress-slider" xbl:inherits="orient,class" flex="1">
+      <xul:button collapsed="true" type="checkbox" sbid="sb-progress-slider-min"
+                  class="sb-progress-slider" xbl:inherits="disabled,class"
+                  oncommand="return document.getBindingParent(this).snapToMin();"/>
+      <xul:stack xbl:inherits="class" flex="1">
+        <xul:progressmeter sbid="sb-progress-slider-progress"
+                           class="sb-progress-slider"
+                           xbl:inherits="orient,class,dir" flex="1"/>
+        <xul:slider sbid="sb-progress-slider-slider" class="sb-progress-slider"
+                    xbl:inherits="disabled,orient,maxpos,class,dir"
+                    pageincrement="0" flex="1"
+                    onmousedown="slidermousedown(event)"
+                    onmouseup="slidermouseup(event)"
+                    onmousemove="slidermousemove(event)" mousethrough="never"> 
+          <xul:thumb sbid="sb-progress-slider-thumb" class="sb-progress-slider"
+                     xbl:inherits="class"/>  
+        </xul:slider>
+      </xul:stack>
+      <xul:button collapsed="true" type="checkbox" sbid="sb-progress-slider-max"
+                  class="sb-progress-slider" xbl:inherits="disabled,class"
+                  oncommand="return document.getBindingParent(this).snapToMax();"/>
+      <children/>
+    </xul:box>
+    </content>
+
+   <implementation>
+
+    <constructor>
+    <![CDATA[
+      if (this.hasAttribute("minbutton"))
+        this.minbutton.collapsed = false;
+      if (this.hasAttribute("maxbutton"))
+        this.maxbutton.collapsed = false;
+      this.progress.max = this._SCALE_MAX;
+    ]]>
+    </constructor>
+
+    <field name="_tracking">this._TRACKING_NONE</field>
+    <field name="box">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider');</field>
+    <field name="slider">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-slider');</field>
+    <field name="thumb">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-thumb');</field>
+    <field name="progress">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-progress');</field>
+    <field name="minbutton">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-min');</field>
+    <field name="maxbutton">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-max');</field>
+    <field name="lastValue">this.value</field>
+    <field name="_SCALE_MAX" readonly="true">10000</field>
+    <field name="_TRACKING_NONE" readonly="true">0</field>
+    <field name="_TRACKING_SLIDER" readonly="true">1</field>
+    <field name="_TRACKING_THUMB" readonly="true">2</field>
+
+    <property name="disabled">
+      <getter>
+        return !!this.getAttribute("disabled");
+      </getter>
+      <setter>
+        if (val) {
+          this.setAttribute("disabled", true);
+        }
+        else {
+          this.removeAttribute("disabled");
+        }
+        return val;
+      </setter>
+    </property>
+
+    <property name="value">
+      <getter>
+        return this.slider.getAttribute('curpos');
+      </getter>
+      <setter>
+        // update the button states
+        this.minbutton.checked = (val == 0);
+        this.maxbutton.checked = (val == this.maxpos);
+        this.progress_value = val;
+        return this.slider.setAttribute('curpos', val);
+      </setter>
+    </property>
+
+    <property name="progress_value">
+      <getter>
+        return ( this.progress.getAttribute('value') * this.maxpos ) / this._SCALE_MAX;
+      </getter>
+      <setter>
+      <![CDATA[
+        // We do not want to do this for the vertical progress sliders as it will make
+        // them jump due to using the max range value of 10000. See Bug 21029 Comment #2
+        if (this.progress.getAttribute("orient") == "vertical")
+          return;
+
+        // Align the slider with the thumb center. Value ranges from zero to
+        // one, but the slider range is both scaled and slightly compressed due
+        // to the thumb width. This is only needed for horizontal sliders.
+        var sliderWidth = this.slider.boxObject.width;
+        var thumbWidth = this.thumb.boxObject.width;
+        // range in pixels of valid slider positions
+        var sliderRange = sliderWidth - thumbWidth;
+        var sliderValue = val / this.maxpos;
+        // slider offset in pixels
+        var sliderOffset = sliderRange * sliderValue + thumbWidth/2;
+        // scaled slider value
+        var sliderProgress = this.maxpos * sliderOffset / sliderWidth;
+        this.progress.setAttribute('value', sliderProgress);
+      ]]>
+      </setter>
+    </property>
+
+    <property name="maxpos">
+      <getter>
+        return this.slider.getAttribute('maxpos');
+      </getter>
+      <setter>
+        this.slider.setAttribute('maxpos', val);
+        this.progress_value = this.value;
+        // hide the slider if the length of track is zero (stream)
+        if (val == 0) {
+          this.slider.setAttribute('hidden', true);
+        }
+        else {
+          this.slider.setAttribute('hidden', false);
+        }
+        return this.maxpos;
+      </setter>
+    </property>
+
+    <property name="data_tracking" readonly="true">
+      <getter>
+        return this.getAttribute('data_tracking');
+      </getter>
+    </property>
+
+    <property name="is_tracking_data">
+      <getter>
+        var data_str = this.getAttribute('data_tracking');
+        if ( data_str.length )
+        {
+          return SBDataGetBoolValue( data_str );
+        }
+        return "";
+      </getter>
+      <setter>
+        var data_str = this.getAttribute('data_tracking');
+        if ( data_str.length )
+        {
+          return SBDataSetBoolValue( data_str, val );
+        }
+        return "";
+      </setter>
+    </property>
+
+    <method name="sendChangeEvent">
+      <body>
+        var e = document.createEvent("Events");
+        e.initEvent("progressSliderChange", false, true);
+        this.dispatchEvent(e);
+      </body>
+    </method>
+
+    <method name="sendReleaseEvent">
+      <body>
+        var e = document.createEvent("Events");
+        e.initEvent("progressSliderRelease", false, true);
+        this.dispatchEvent(e);
+      </body>
+    </method>
+
+    <method name="mouseonthumb">
+      <parameter name="x"/>
+      <parameter name="y"/>
+      <body>
+        <![CDATA[
+          if (x >= this.thumb.boxObject.x && x <= this.thumb.boxObject.x + this.thumb.boxObject.width &&
+              y >= this.thumb.boxObject.y && y <= this.thumb.boxObject.y + this.thumb.boxObject.height) {
+            return true;
+          }
+          return false;
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermousedown">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this.disabled) {
+            return;
+          }
+          if (event.button == this._TRACKING_NONE ) 
+          {
+            if (this.mouseonthumb(event.screenX, event.screenY)) 
+            { 
+              this._tracking = this._TRACKING_THUMB; 
+            } 
+            else 
+            {
+              this._tracking = this._TRACKING_SLIDER;
+              this.handlemouse(event);
+            }
+            if ( this._tracking != this._TRACKING_NONE )
+            {
+              // Report if requested
+              this.is_tracking_data = true;
+            }
+            this.sendChangeEvent();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermouseup">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this._tracking == this._TRACKING_NONE) 
+            return;
+          
+          this._tracking = this._TRACKING_NONE;
+          this.is_tracking_data = false;
+          this.sendReleaseEvent();
+          if (this.value != 0 && this.value != this.maxpos)
+            this.lastValue = this.value;
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermousemove">
+      <parameter name="event"/>
+      <body>
+          if (this.disabled) {
+            return;
+          }
+          if (this._tracking == this._TRACKING_THUMB) {
+            this.progress_value = this.value;
+          } else if (this._tracking == this._TRACKING_NONE) {
+            return;
+          } else {
+            this.handlemouse(event);
+          }
+          // update the button states
+          this.minbutton.checked = (this.value == 0);
+          this.maxbutton.checked = (this.value == this.maxpos);
+          this.sendChangeEvent();
+      </body>
+    </method>
+
+    <method name="handlemouse">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var m = this.maxpos;
+          var x = event.screenX - this.slider.boxObject.screenX; 
+          var y = event.screenY - this.slider.boxObject.screenY;
+          
+          var v = 0;
+          if (this.getAttribute("orient") == "vertical") {
+            v = (y - this.thumb.boxObject.height/2) /
+                (this.slider.boxObject.height - this.thumb.boxObject.height) * m;
+          }
+          else {
+            v = (x - this.thumb.boxObject.width/2) / 
+                (this.slider.boxObject.width - this.thumb.boxObject.width) * m;
+          }
+          
+          if (v < 0) v = 0; else if (v > m) v = m;
+          if (this.getAttribute("dir") == "reverse") v = m - v;
+          this.slider.setAttribute('curpos', ''+v);
+          this.progress_value = v;
+        ]]>
+      </body>
+    </method>
+    
+    <method name="snapToValue">
+      <parameter name="val"/>
+      <body>
+        <![CDATA[
+          if (val == this.value) {
+            val = this.lastValue;
+          }
+          this.value = val;
+          
+          // send the event to any listeners
+          this.is_tracking_data = true;
+          this.sendChangeEvent();
+          this.is_tracking_data = false;
+          this.sendReleaseEvent();
+        ]]>
+      </body>
+    </method>
+    <method name="snapToMin">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          return this.snapToValue(0);
+        ]]>
+      </body>
+    </method>
+    <method name="snapToMax">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          return this.snapToValue(this.maxpos);
+        ]]>
+      </body>
+    </method>
+
+   </implementation>
+ 
+  </binding>
+
+</bindings>

@@ -1,0 +1,49 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+/**
+ * \file sbIDatabasePreparedStatement.idl
+ * \brief A prepared database statement, compiled at first execution.
+ * 
+ * This object allows you to avoid the overhead of building and recompiling
+ * database query strings when issuing many identical database requests.
+ * 
+ * \sa sbIDatabaseQuery.idl
+ */
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIDatabasePreparedStatement
+ * \brief A prepared database statement.
+ *
+ * \sa sbIDatabasePreparedStatement
+ */
+[scriptable, uuid(71917e73-47eb-4c96-9a31-a421c5ff0e83)]
+interface sbIDatabasePreparedStatement : nsISupports
+{
+  /* \brief The Query String for the prepared statement.
+   */
+  readonly attribute AString queryString;
+};

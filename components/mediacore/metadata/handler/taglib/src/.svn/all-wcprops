@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20408/trunk/components/mediacore/metadata/handler/taglib/src
+END
+TaglibChannelFileIOManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/client/!svn/ver/10642/trunk/components/mediacore/metadata/handler/taglib/src/TaglibChannelFileIOManager.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/20408/trunk/components/mediacore/metadata/handler/taglib/src/Makefile.in
+END
+MetadataHandlerTaglib.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/20408/trunk/components/mediacore/metadata/handler/taglib/src/MetadataHandlerTaglib.cpp
+END
+TaglibChannelFileIO.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/20408/trunk/components/mediacore/metadata/handler/taglib/src/TaglibChannelFileIO.cpp
+END
+TaglibChannelFileIOManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/10642/trunk/components/mediacore/metadata/handler/taglib/src/TaglibChannelFileIOManager.h
+END
+MetadataHandlerTaglibComponent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/client/!svn/ver/8265/trunk/components/mediacore/metadata/handler/taglib/src/MetadataHandlerTaglibComponent.cpp
+END
+SeekableChannel.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/20408/trunk/components/mediacore/metadata/handler/taglib/src/SeekableChannel.cpp
+END
+MetadataHandlerTaglib.h
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/16938/trunk/components/mediacore/metadata/handler/taglib/src/MetadataHandlerTaglib.h
+END
+TaglibChannelFileIO.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/14045/trunk/components/mediacore/metadata/handler/taglib/src/TaglibChannelFileIO.h
+END
+SeekableChannel.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/7658/trunk/components/mediacore/metadata/handler/taglib/src/SeekableChannel.h
+END

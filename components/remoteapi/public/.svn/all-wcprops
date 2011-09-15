@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/18658/trunk/components/remoteapi/public
+END
+sbISecurityAggregator.idl
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbISecurityAggregator.idl
+END
+sbIRemoteWebPlaylist.idl
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/10940/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl
+END
+sbISecurityMixin.idl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbISecurityMixin.idl
+END
+sbIWrappedMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbIWrappedMediaList.h
+END
+sbIRemoteCommands.idl
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbIRemoteCommands.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/18577/trunk/components/remoteapi/public/Makefile.in
+END
+sbIRemoteLibrary.idl
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/11182/trunk/components/remoteapi/public/sbIRemoteLibrary.idl
+END
+sbIRemoteSecurityEvent.idl
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/7709/trunk/components/remoteapi/public/sbIRemoteSecurityEvent.idl
+END
+sbIRemoteMediaList.idl
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/10033/trunk/components/remoteapi/public/sbIRemoteMediaList.idl
+END
+sbIScriptableFilterResult.idl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbIScriptableFilterResult.idl
+END
+sbIWrappedMediaItem.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbIWrappedMediaItem.h
+END
+sbIRemotePlayerFactory.idl
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbIRemotePlayerFactory.idl
+END
+sbIRemoteObserver.idl
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/18577/trunk/components/remoteapi/public/sbIRemoteObserver.idl
+END
+sbIRemoteAPIService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/7658/trunk/components/remoteapi/public/sbIRemoteAPIService.idl
+END
+sbIRemotePlayer.idl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/18658/trunk/components/remoteapi/public/sbIRemotePlayer.idl
+END

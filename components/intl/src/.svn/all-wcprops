@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/client/!svn/ver/20438/trunk/components/intl/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/20438/trunk/components/intl/src/Makefile.in
+END
+sbIntlModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/13199/trunk/components/intl/src/sbIntlModule.cpp
+END
+sbStringTransformDecl.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/12430/trunk/components/intl/src/sbStringTransformDecl.h
+END
+sbArticlesData.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/15618/trunk/components/intl/src/sbArticlesData.cpp
+END
+sbStringTransform.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/13199/trunk/components/intl/src/sbStringTransform.cpp
+END
+sbLeadingNumbers.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/12861/trunk/components/intl/src/sbLeadingNumbers.h
+END
+sbArticlesData.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/13199/trunk/components/intl/src/sbArticlesData.h
+END
+sbStringTransform.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/13199/trunk/components/intl/src/sbStringTransform.h
+END

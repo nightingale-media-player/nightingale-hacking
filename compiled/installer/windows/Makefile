@@ -1,0 +1,104 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+DEPTH = ../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/installer/windows
+VPATH = /media/disk/Linux/makepkg/songbird/installer/windows
+
+include $(DEPTH)/build/autodefs.mk
+
+ifdef SONGBIRD_OFFICIAL
+   SONGBIRD_DIST += $(srcdir)/songbird.ico \
+                    $(srcdir)/songbird_installer.ico \
+                    $(srcdir)/songbird_uninstaller.ico \
+                    $(srcdir)/songbird_vista.ico \
+                    $(NULL)
+   export ICON_FILE = songbird.ico
+else
+   SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
+                    $(NULL)
+   export ICON_FILE = songbird_nightly.ico
+endif
+
+SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
+                        $(NULL)
+
+# Win32 only supports a single installer suffix, so the pluralized suffixes
+# is misleading, but also fine 
+FULL_INSTALLER_NAME = $(SB_INSTALLER_NAME).$(SB_INSTALLER_SUFFIXES)
+
+PPDEFINES += $(SB_BRANDING_DEFINES) \
+             -DSB_INSTALLER_NAME="$(FULL_INSTALLER_NAME)" \
+             -DCUR_OBJDIR="$(CURDIR)" \
+             $(NULL)
+
+GENERATE_NSIS_MANIFEST = $(topsrcdir)/tools/scripts/generate-nsis-manifest.py
+
+GARBAGE += $(CURDIR)/nsis-install-manifest.txt \
+           $(CURDIR)/nsis-uninstall-manifest.txt \
+           $(NULL)
+
+include $(topsrcdir)/build/rules.mk
+
+# We copy the added-files list here because win32 is the only platform right
+# now that needs it; see bug 13809
+#
+# Also, we call the preprocessor by hand down here, which is kinda janky, but
+# we have to do it manually because pre-processed targets are handled at export
+# time, but file-autotargets are handled at libs time; if we preprocess
+# filelist.nsi at export time, we're still laying down and modifying things
+# in the libs target afterward, so we'll miss files. So, the only way to 
+# deal with this is to call the preprocessor in the libs target ourselves.
+# Boo.
+#
+
+#
+# Packaging the installer will also rebase the dlls. The base address used is 
+# meant to leave enough room for the bootstrapping exes to load.
+#
+# We exclude 'extensions' because they are never part of a release mode 
+# installer _but_ we still want developers to be able to generate 
+# installers without errors.
+#
+# 'drivers' is excluded because it contains signed dlls which cannot be rebased
+# (which causes errors, which makes the build fail)
+#
+# 'msvc*' is excluded because it's pointless to rebase the Microsoft CRT and 
+# C++RT when we are not using mozcrt.
+#
+
+libs::
+	cd $(SONGBIRD_DISTDIR) && \
+	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
+	    sort -o rebase.txt && \
+	  $(REBASE) -v -b 62000000 @rebase.txt && \
+	  $(RM) rebase.txt
+	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
+	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/README.txt
+	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
+	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
+	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-filelist.nsi.in > $(CURDIR)/sb-filelist.nsi
+	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
+	$(MV) $(SONGBIRD_DISTDIR)/$(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(FULL_INSTALLER_NAME)

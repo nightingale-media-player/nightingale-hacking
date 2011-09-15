@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/20434/trunk/components/filesystemevents/base/src
+END
+sbFileSystemTree.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/13104/trunk/components/filesystemevents/base/src/sbFileSystemTree.h
+END
+sbFileSystemChange.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/12590/trunk/components/filesystemevents/base/src/sbFileSystemChange.cpp
+END
+sbFileSystemNode.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/12765/trunk/components/filesystemevents/base/src/sbFileSystemNode.cpp
+END
+sbFileSystemTreeState.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/12672/trunk/components/filesystemevents/base/src/sbFileSystemTreeState.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20434/trunk/components/filesystemevents/base/src/Makefile.in
+END
+sbBaseFileSystemWatcher.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/20434/trunk/components/filesystemevents/base/src/sbBaseFileSystemWatcher.cpp
+END
+sbFileSystemChange.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/12589/trunk/components/filesystemevents/base/src/sbFileSystemChange.h
+END
+sbFileSystemNode.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/13426/trunk/components/filesystemevents/base/src/sbFileSystemNode.h
+END
+sbFileSystemTreeListener.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/14667/trunk/components/filesystemevents/base/src/sbFileSystemTreeListener.h
+END
+sbBaseFileSystemWatcher.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/12838/trunk/components/filesystemevents/base/src/sbBaseFileSystemWatcher.h
+END
+sbFileSystemTree.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20214/trunk/components/filesystemevents/base/src/sbFileSystemTree.cpp
+END
+sbFileSystemTreeState.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/14499/trunk/components/filesystemevents/base/src/sbFileSystemTreeState.cpp
+END

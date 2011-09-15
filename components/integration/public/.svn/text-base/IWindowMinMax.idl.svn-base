@@ -1,0 +1,121 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+#include "nsISupports.idl"
+
+/**       
+ * \file IWindowMinMax.idl
+ * \brief WindowMinMax service interface file
+ * This file contains the interfaces to the windowminmax service, used to limit the resizing
+ * of a window to specific minimum and maximum dimensions.
+ */
+
+/**
+ * \interface sbIWindowMinMaxCallback IWindowMinMax.h
+ * \brief WindowMinMax callback interface
+ * This interface describes a callback for the WindowMinMax service, used to query the 
+ * application for minimum and maximum dimensions. The callback is also used to trap 
+ * the closing of the window.
+ * \sa sbIWindowMinMaxCallback
+ */
+[scriptable, uuid(10EB215D-D70A-4eee-B5CE-39990B16706C)]
+interface sbIWindowMinMaxCallback : nsISupports
+{
+  /**
+   * \brief Get minimum window width
+   * This method is called by the WindowMinMax hook to query the application for
+   * a minimum window width.
+   * \return The minimum width of the window
+   * \sa getMinHeight, getMaxWidth, getMaxHeight, sbIWindowMinMax
+   */
+  PRInt32 GetMinWidth( );
+
+  /**
+   * \brief Get minimum window height
+   * This method is called by the WindowMinMax hook to query the application for
+   * a minimum window height.
+   * \return The minimum height of the window
+   * \sa getMinWidth, getMaxWidth, getMaxHeight, sbIWindowMinMax
+   */
+  PRInt32 GetMinHeight( );
+
+  /**
+   * \brief Get maximum window width
+   * This method is called by the WindowMinMax hook to query the application for
+   * a maximum window width.
+   * \return The maximum width of the window
+   * \sa getMinWidth, getMinHeight, getMaxHeight, sbIWindowMinMax
+   */
+  PRInt32 GetMaxWidth( );
+
+  /**
+   * \brief Get maximum window height
+   * This method is called by the WindowMinMax hook to query the application for
+   * a maximum window height.
+   * \return The maximum height of the window
+   * \sa getMinWidth, getMinHeight, getMaxWidth, sbIWindowMinMax
+   */
+  PRInt32 GetMaxHeight( );
+
+  /**
+   * \brief Window closing callback
+   * This method is called by the WindowMinMax hook to notify the callback object
+   * that the window being monitored is now closing.
+   * \sa sbIWindowMinMax
+   */
+  void OnWindowClose( );
+};
+
+/**
+ * \interface sbIWindowMinMax IWindowMinMax.h
+ * \brief WindowMinMax service interface
+ * This is an interface to the WindowMinMax service, used to set and reset callbacks for 
+ * querying the application for minimum and maximum dimensions.
+ * \sa sbIWindowMinMaxCallback
+ */
+[scriptable, uuid(5F4ABE1E-76D2-43b5-8D5E-E6E272A49C50)]
+interface sbIWindowMinMax : nsISupports
+{
+  /**
+   * \brief Set window minmax callback
+   * This method assigns a WindowMinMaxCallback object to the specified window. When the user
+   * resizes this window, the callback object is queried for minimum and maximum window
+   * dimensions.
+   * \param window The document associated with the window whose dimensions should be limited.
+   * \param cb The callback object used to query for minimum and maximum dimensions
+   * \sa resetCallback, sbIWindowMinMaxCallback
+   */
+  void setCallback( in nsISupports window, in sbIWindowMinMaxCallback cb );
+
+  /**
+   * \brief Remove window minmax callback
+   * This method removes the WindowMinMaxCallback object from the specified window. 
+   * \param window The document associated with the window which had previously been assigned 
+   * a WindowMinMax callback object.
+   * \sa setCallback, sbIWindowMinMaxCallback
+   */
+  void resetCallback( in nsISupports window );
+};
+

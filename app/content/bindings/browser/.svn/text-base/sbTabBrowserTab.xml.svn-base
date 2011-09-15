@@ -1,0 +1,1168 @@
+<?xml version="1.0"?>
+<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
+[
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%songbirdDTD;
+]
+>
+<!--
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+-->
+
+<bindings
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <!--
+    - NOTE:
+    -   In Songbird, there can be a "fake" tab that lives inside the <tabs>
+    - element but outside the normal scrollbox.  This is used to be able to
+    - have a static tab that is always visible, even when there are too many
+    - tabs and the user scrolls all the way to the right (left in RTL).  It
+    - passes all events back to the real leftmost tab when visible, and the real
+    - tab is simply hidden from view (collapsed).
+    -
+    - The fake tab can only be min-width, because the real tab gets uncollapsed
+    - and the fake tab hidden when the scrollbox does not need to scroll.  See
+    - the underflow and overflow handlers in sbTabBrowserTabStrip.xml.
+    -->
+
+  <!-- these are from globalBindings.xml -->
+  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab">
+    <content closetabtext="&tabs.closeTab;" mousethrough="never">
+      <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
+      <xul:hbox flex="1" class="tab-image-middle" align="center" xbl:inherits="selected">
+        <xul:stack class="tab-icon">
+          <xul:image xbl:inherits="validate,src=image" class="tab-icon-image"/>
+          <xul:image class="tab-extra-status"/>
+        </xul:stack>
+        <xul:label flex="1" xbl:inherits="value=label,crop,accesskey" crop="right" class="tab-text"/>
+      </xul:hbox>
+      <xul:toolbarbutton anonid="close-button" class="tab-close-button" tabindex="-1"/>
+      <xul:hbox class="tab-image-right" xbl:inherits="selected"/>
+    </content>
+    <implementation implements="nsIWebProgressListener,sbITabBrowserTab">
+      <constructor><![CDATA[
+        // right after all the constructors run...
+        var self = this;
+        window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
+        this._scrapers = [];
+          
+        this._metrics =
+          Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Components.interfaces.sbIMetrics);
+        
+        // Watch for page unloading so that we can store
+        // the MediaListView state in the history
+        this._onBrowserUnloadListener = function(e) {
+          if (!self.linkedBrowser) {
+            // this tab has no browser - e.g. the fake media tab
+            return;
+          }
+          if (e.target.wrappedJSObject && 
+            e.target.wrappedJSObject == self.linkedBrowser.contentDocument) 
+          {
+            self.onBrowserUnload(e);
+          }
+        }
+        window.addEventListener("unload", 
+              this._onBrowserUnloadListener, true);
+        
+        // Watch the inner medialist in case the tab needs to be closed                         
+        this._mediaListRemovalMonitor = new LibraryUtils.RemovalMonitor(this);
+        
+        this._mFindbarIsSuppressed = false;
+      ]]></constructor>
+     <destructor><![CDATA[
+        this.destroy();
+     ]]></destructor>
+
+      <!-- Shut down everything in the tab.  
+           Called from onTabClose and the destructor. 
+           Used to ensure that the tab can be garbage collected. -->
+      <field name="_destroyed">false</field>     
+      <method name="destroy">
+        <body>
+              <![CDATA[
+          if (this._destroyed) {
+            return;  // Nothing to do.
+          }
+          try {
+              
+            // Stop async scanner and hide outerplaylist
+            this.clearOuterPlaylist();
+
+            // When we drop the tab, release all of the associated views stored in the map.
+            if(this.linkedBrowser) {
+              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                        .getService(Components.interfaces.sbIMediaListViewMap)
+                        .releaseViews(this.linkedBrowser);
+            }
+
+            if (this._playlist) {
+              this._playlist.destroy();
+              this._playlist.parentNode.removeChild(this._playlist);
+              this._playlist = null;
+            }
+            if (this._splitter) {
+              this._splitter.destroy();
+              this._splitter.parentNode.removeChild(this._splitter);
+              this._splitter = null;
+            }
+
+            this._metrics = null;
+            
+            if (this._mediaListRemovalMonitor) {
+              this._mediaListRemovalMonitor.setMediaList(null);
+              this._mediaListRemovalMonitor = null;
+            }
+            
+            this._viewForPage = null;
+            
+            if(this.linkedBrowser) {
+              // Remove the browser DOM loaded event listener.
+              this.linkedBrowser.removeEventListener("DOMContentLoaded",
+                                                     this.browserDOMLoadedEventListener,
+                                                     true);
+            }
+            
+            // Clear the progress filter.
+            if (this._progressFilter) {
+              this._progressFilter.removeProgressListener(this);
+              this.linkedBrowser.removeProgressListener(this._progressFilter);
+            }
+            
+            window.removeEventListener("unload", 
+                  this._onBrowserUnloadListener, true);
+            
+            if (this._mediaListRemovalMonitor) {
+              this._mediaListRemovalMonitor.setMediaList(null);
+              this._mediaListRemovalMonitor = null;
+            }
+          } catch (e) {
+            Components.utils.reportError(e);
+          }
+          this._destroyed = true;
+        ]]></body>
+      </method>
+
+      <!-- "linkedBrowser" is a browser, but if we have it as a field it breaks
+           tab drag-and-drop because that gets reinitialized -->
+      <field name="_progressFilter">null</field>
+      
+      <!-- LibraryUtils.RemovalMonitor -->
+      <field name="_mediaListRemovalMonitor">null</field>
+
+      <field name="_metrics">null</field>
+
+      <method name="createOuterPlaylist">
+        <body><![CDATA[
+          /* from mainplayer.xul:
+            <sb-smart-splitter id="playlist-web-splitter" hidden="true" state="open" resizebefore="closest" resizeafter="closest" target="after" collapse="after">
+              <grippy/>
+            </sb-smart-splitter>
+
+
+            <vbox id="playlist_web_vbox" height="200" hidden="true" minheight="0" _resize_height="200">
+              <sb-playlist
+                id="playlist_web"
+                height="105"
+                flex="1"
+                hidden="true"
+                enableColumnDrag="true"
+                persist="columnSpec"
+                editable="true"
+                minheight="0"
+                columnSpec="http://songbirdnest.com/data/1.0#ordinal 20 a " +
+                           "http://songbirdnest.com/data/1.0#trackName 395 " +
+                           "http://songbirdnest.com/data/1.0#duration 50 " +
+                           "http://songbirdnest.com/data/1.0#artistName 222 " +
+                           "http://songbirdnest.com/data/1.0#albumName 222 " +
+                           "http://songbirdnest.com/data/1.0#genre 70");
+                _resize_height="105"
+              />
+            </vbox>
+          */
+          
+          if (!("linkedBrowser" in this) || !(this.linkedBrowser)) {
+            // no linked browser (e.g. fake media tab)
+            return;
+          }
+          
+          if (this._playlist) {
+            // this tab had been re-created for some reason - quite possibly,
+            // somebody dragged it and XBL is being stupid.
+            return;
+          }
+          
+          // get the notification box around the browser
+          var nbox = this.linkedBrowser.parentNode;
+
+
+          // make the splitter
+          this._splitter = document.createElement('sb-smart-splitter');
+          this._splitter.setAttribute('class', 'playlist-web-splitter');
+          this._splitter.setAttribute('stateid', 'playlist_web_splitter');
+          this._splitter.setAttribute('hidden', 'true');
+          this._splitter.setAttribute('state', 'open');
+          this._splitter.setAttribute('resizebefore', 'closest');
+          this._splitter.setAttribute('resizeafter', 'closest');
+          this._splitter.setAttribute('target', 'after');
+          this._splitter.setAttribute('collapse', 'after');
+          this._splitter.appendChild(document.createElement('grippy'));
+
+
+          // SCARY HACK!  See Bug 3504.
+          //
+          // For whatever reason, hiding and then showing an
+          // element in this context causes it to reappear
+          // above its previous sibling.
+          //
+          // The Dom stays the same, but visually the
+          // element moves.
+          //
+          // Fortunately adding a hidden box prevents this
+          // behaviour.
+          //
+          // Awesome.
+
+          var hack = document.createElement('vbox');
+          hack.setAttribute('hidden', 'true');
+          nbox.appendChild(hack);
+
+          nbox.appendChild(this._splitter);
+
+          hack = document.createElement('vbox');
+          hack.setAttribute('hidden', 'true');
+          nbox.appendChild(hack);
+
+          // make the playlist
+          this._playlist = document.createElement('sb-playlist');
+          this._playlist.setAttribute('class', 'playlist_web');
+          this._playlist.setAttribute('height', '200');
+          this._playlist.setAttribute('hidden', 'true');
+          this._playlist.setAttribute('enableColumnDrag', 'true');
+          this._playlist.setAttribute('editable', 'true');
+          this._playlist.setAttribute('minheight', '0');
+          this._playlist.setAttribute('hidefilters', 'true');
+          this._playlist.setAttribute('columnSpec',
+              SBProperties.ordinal + ' 28 a ' +
+              SBProperties.trackName + ' 280 ' +
+              SBProperties.duration + ' 38 ' +
+              SBProperties.artistName + ' 169 ' +
+              SBProperties.albumName + ' 159 ' +
+              SBProperties.downloadButton + ' 83');
+          this._playlist.setAttribute('useColumnSpecPreference', 
+                                      'songbird.webplaylist.columnspec');
+
+          // Start the first scan as soon as the browser DOM has loaded
+          var self = this;
+          this.browserDOMLoadedEventListener = function(event) {
+            if (self.linkedBrowser.contentDocument == event.target) {
+              self.setUpMediaPage();
+            }
+            // NB: This happens when document is loaded for all documents and
+            //     subdocuments, such as frames and iframes, visible or not.
+            self.scanWebPage(event.originalTarget);
+          }
+          this.linkedBrowser.addEventListener("DOMContentLoaded",
+                                              this.browserDOMLoadedEventListener, true);
+
+          // wire up the browser progress filter
+          if (!this._progressFilter) {
+            this._progressFilter =
+              Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
+                        .createInstance(Components.interfaces.nsIWebProgress);
+            this._progressFilter.addProgressListener(this, /* ignored */ null);
+            this.linkedBrowser.addProgressListener(this._progressFilter,
+              Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+          }
+
+          nbox.appendChild(this._playlist);
+
+          this.outerPlaylistShowing = false;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->
+      <property name="outerPlaylist" readonly="true">
+        <getter><![CDATA[
+          return this._playlist;
+        ]]></getter>
+      </property>
+      
+      <!-- sbITabBrowserTab 
+           TODO: Redundant, but needed for the remote API.  
+           Remote API can't get the outerplaylist attribute
+           for some stupid XPConnect reason.  Ask redfive.
+        -->
+      <method name="getPlaylist">
+        <body><![CDATA[
+          return this._playlist;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->
+      <method name="hideOuterPlaylist">
+        <body><![CDATA[
+          this.outerPlaylistShowing = false;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->
+      <method name="showOuterPlaylist">
+        <body><![CDATA[
+          this.outerPlaylistShowing = true;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->
+      <method name="getOuterPlaylistShowing">
+        <body><![CDATA[
+          return this.outerPlaylistShowing;
+        ]]></body>
+      </method>
+
+      <property name="outerPlaylistShowing">
+        <getter><![CDATA[
+          if (!this._playlist) return false;
+          return (!this._playlist.hasAttribute("hidden") ||
+                  this._playlist.getAttribute("hidden") == 'false');
+        ]]></getter>
+        <setter><![CDATA[
+          if (!this._playlist) return;
+          this._playlist.setAttribute("hidden", !val);
+          this._splitter.setAttribute("hidden", !val);
+
+          if (this == this.parentNode.selectedItem) {
+            // if in the foreground then we should set the state of the
+            // subscribe button based on the visibility of the playlist
+            SBDataSetBoolValue('browser.cansubscription', val);
+          }
+        ]]></setter>
+      </property>
+
+      <!-- sbITabBrowserTab -->
+      <property name="mediaPage" readonly="true">
+        <getter><![CDATA[
+
+          if (!this.linkedBrowser || !this.linkedBrowser.currentURI) {
+            // guard against null currentURI that can be caused by about:blank
+            return null;
+          }
+
+          if (!this.linkedBrowser.currentURI.schemeIs('chrome')) {
+            // only chrome urls can supply a media page (for now)
+            return null;
+          }
+
+          // Get the document from the current browser tab
+          var pageWindow = this.linkedBrowser.contentWindow;
+          if (pageWindow == null) {
+            return null;
+          } 
+          else {
+            pageWindow = pageWindow.wrappedJSObject;          
+          }
+          if (!("mediaPage" in pageWindow)) {
+            return null;
+          } 
+          
+          return pageWindow.mediaPage;
+        ]]></getter>
+      </property>
+
+      <!-- sbITabBrowserTab -->
+      <property name="mediaListView" readonly="true">
+        <getter><![CDATA[
+          if (this.mediaPage && this.mediaPage.mediaListView) {
+            return this.mediaPage.mediaListView;
+          } 
+          if (this._viewForPage) {
+            return this._viewForPage;
+          } 
+          if (this.outerPlaylist && this.outerPlaylist.mediaListView) {
+            return this.outerPlaylist.mediaListView;
+          } 
+          return null;
+        ]]></getter>
+      </property>
+
+      <!-- sbITabBrowserTab -->
+      <field name="_shouldScan">true</field>
+
+      <!-- sbITabBrowserTab -->
+      <method name="enableScan">
+        <body><![CDATA[
+          this._shouldScan = true;
+        ]]></body>
+      </method>
+
+      <!-- sbITabBrowserTab -->
+      <method name="disableScan">
+        <body><![CDATA[
+          this._shouldScan = false;
+        ]]></body>
+      </method>
+
+      <field name="scanProgress">-1</field>
+
+      <!-- sbITabBrowserTab -->
+      <method name="clearOuterPlaylist">
+        <body><![CDATA[
+          // cancel and discard all scapers
+          this._scrapers.forEach(function (aScraper) {aScraper.cancel();});
+          this._scrapers = [];
+          // hide the outer playlist
+          this.outerPlaylistShowing = false;
+          this.scanProgress = -1;
+          if (this.outerPlaylist) {
+            this.outerPlaylist.mediaListView = null;
+          }
+        ]]></body>
+      </method>
+      
+      <!-- The service pane node corresponding to this tab, 
+           if one exists. -->
+      <method name="_findServicePaneNode">
+        <body><![CDATA[
+
+          // Since this is a chrome URL the service pane
+          // may have extra information about the location
+          var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
+                                      .getService(Components.interfaces.sbIServicePaneService);
+          var servicePaneNode = servicePane.getNodeForURL(this.linkedBrowser.currentURI.spec); 
+
+          // If we couldnt find a node for the URL, try
+          // looking it up by media list
+          if (!servicePaneNode && this.mediaListView) {
+            var libraryServicePane = 
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+              .getService(Components.interfaces.sbILibraryServicePaneService);
+            servicePaneNode = libraryServicePane.getNodeFromMediaListView(this.mediaListView);
+          }
+
+          return servicePaneNode;
+        ]]></body>
+      </method>
+
+      <method name="applyPropertiesFromServicePaneNode">
+        <body><![CDATA[
+            // Extra tags to be applied to the tab.
+            // Used for CSS styling.
+            var properties = "";
+
+            var servicePaneNode = this.servicePaneNode;
+            
+            // The look of the tab may be controlled by
+            // the service pane info
+            if (servicePaneNode) {
+              if (servicePaneNode.image) {
+                this.setIcon(servicePaneNode.image);
+              } 
+              if (servicePaneNode.className) {
+                properties = servicePaneNode.className;
+              }
+              // if the service pane node has an actual name, not a
+              // stringbundle reference then set that name as the tab label
+              if (servicePaneNode.name && 
+                  servicePaneNode.name.charAt(0) != '&') {
+                this.label = servicePaneNode.name;
+              }
+            }
+
+            // Reflect the service pane properties for this URL (if any) onto the 
+            // tab so that it can by styled with CSS.
+            this.setAttribute("properties", properties);
+
+            if (this.selected) {
+              var event = document.createEvent('Events');
+              event.initEvent('TabPropertyChange', true, false);
+              this.dispatchEvent(event);
+            }
+
+          ]]></body>
+      </method>
+      
+      <!-- override base tab binding to allow setting icons from the service pane-->
+      <method name="updateIcon">
+        <body>
+          <![CDATA[
+            var image = null;
+            var servicePaneNode = this._findServicePaneNode();
+            var browser = this.mTabBrowser.getBrowserForTab(this);
+            
+            if (browser && browser.mIconURL) {
+              image = browser.mIconURL;
+            } else if (servicePaneNode && servicePaneNode.image) {
+              image = servicePaneNode.image;
+            }
+            if (!this.hasAttribute("busy") && image)
+              this.setAttribute("image", image);
+            else
+              this.removeAttribute("image");
+          ]]>
+        </body>
+      </method>
+
+      <method name="scanWebPage">
+        <parameter name="aDocument"/>
+        <body><![CDATA[
+          if (!SBDataGetBoolValue('webplaylist.enabled') ||
+              !this._shouldScan) {
+            // !_shouldScan indicates that the webpage API has set a media list.
+            // (see sbTabBrowserTab::disableScan)
+            return;
+          }
+          var scheme = this.linkedBrowser.currentURI.scheme;
+          if (!(scheme == "http" || scheme == "https" || scheme == "file")) {
+            this.outerPlaylistShowing = false;
+            return;
+          }
+          
+          // Use any view that was explicitly specified.  Since this consumes
+          // the view, it is no longer a new load.
+          var view = this._viewForPage;
+          this._isNewViewForPage = false;            
+
+          // whether we had an explicitly specified view
+          var hasExplicitView = !!(view);
+
+          // Try getting a view from the history.
+          if (!view) {
+            // Now all I have to do is find something resembling a usefully
+            // unique key.
+            var browser = this.linkedBrowser;
+            var history = browser.webNavigation.sessionHistory;
+            var entry = history.getEntryAtIndex( history.index, false );
+
+            // See if we're supposed to be restoring a view or making a new one
+            var viewMap = Components
+              .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+              .getService(Components.interfaces.sbIMediaListViewMap);
+            view = viewMap.getView(browser, entry);
+          }
+
+          if ((!view) && (aDocument != this.linkedBrowser.contentDocument)) {
+            // this isn't the top level document; grab the existing view
+            view = this.mediaListView;
+          }
+
+          if (!view) {
+            var mediaList =
+              this._getWebMediaListForURL(this.linkedBrowser.currentURI.spec,
+                                          this.linkedBrowser.contentTitle);
+            view = mediaList.createView();
+          }
+
+          // Otherwise, don't show the web playlist until we see some tracks.
+          this.outerPlaylistShowing = false;
+
+          // Bind the Web Playlist UI element to the subscribed playlist
+          //SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
+
+          var mgr =
+            Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                      .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
+          var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST);
+
+          this.outerPlaylist.outerWindow = window;
+          this.outerPlaylist.bind(view, cmds,
+                                  SBDataGetIntValue("browser.playlist.height"),
+                                  SBDataGetBoolValue("browser.playlist.collapsed"));
+
+          // If something has already been scanned into the view, show it.
+          if (view.length)
+              this.outerPlaylistShowing = true;
+
+          // If something is selected in the view, ensure it's visible.
+          if (view.selection.currentIndex >= 0) {
+            var tree = this.outerPlaylist.tree;
+            tree.treeBoxObject.ensureRowIsVisible(view.selection.currentIndex);
+          }
+
+          // create a new scraper.
+          let scraper = new WebScraper(view.mediaList);
+          this._scrapers.push(scraper);
+            
+          var self = this;
+          scraper.job.addJobProgressListener( {
+            QueryInterface: XPCOMUtils.generateQI([Ci.sbIJobProgressListener]),
+            onJobProgress:  function(job) {
+              if (view.mediaList.length > 0) {
+                self.outerPlaylistShowing = true;
+              }
+              self.scanProgress = job.progress/job.total;
+
+              var event = document.createEvent("Events");
+              event.initEvent("ScanProgressChange", true, false);
+              self.dispatchEvent(event);
+            }
+          });
+
+          // scrape the document.
+          scraper.start(aDocument);
+          
+        ]]></body>
+      </method>
+
+      <!-- Holds an sbIMediaListView that is to be handed to the
+           window if it turns out to be a Media Page.  
+           Set when loadURI is passed a view, and cleared when
+           loading a non media page. -->
+      <field name="_viewForPage">null</field>
+      
+      <!-- Indicates that _viewForPage has been newly set
+           by browser.loadURI, and is to be loaded for the 
+           first time in setUpMediaPage.  Used to determine
+           when _viewForPage should be cleared. -->
+      <field name="_isNewViewForPage">false</field>
+      
+      <!-- A media list view index that the mediapage should 
+           highlight on load.   
+           Set by gBrowser.showIndexInView and consumed
+           by tab.setUpMediaPage. -->
+      <field name="_highlightViewIndexOnLoad">null</field>
+      
+      <!-- Used to save the URL that is loading so that we can properly match
+           the web progress messages -->
+      <field name="_loadingURL">""</field>
+      
+      <method name="setUpMediaPage">
+        <body><![CDATA[
+        if (!this.mediaPage) {
+          return;
+        }
+        
+        try {          
+          
+          var page = this.mediaPage;
+          var view;
+          
+          // If nothing in the history, were we explicitly passed a view?
+          if (this._viewForPage) {
+            view = this._viewForPage;  
+            
+            // We've consumed the view, so it is no longer a new load
+            this._isNewViewForPage = false;            
+          }
+          
+          if (view) {
+            page.mediaListView = view;
+
+            // Monitor the media list that the page is displaying.
+            // If it dies, we need to close the tab.
+            this._mediaListRemovalMonitor.setMediaList(view.mediaList);
+          
+          } else {
+          
+            // We did not get a view.  This may be an error, or may be 
+            // because the medialist has been removed.
+            Components.utils.reportError("sbTabBrowser.setUpMediaPage did not find a view!");
+            this.backWithDefault();           
+          }
+        }
+        catch (e) {
+          Components.utils.reportError(e);
+        }
+        ]]></body>
+      </method>
+      
+
+      <!-- Called before the medialist in the browser is removed -->
+      <method name="onBeforeMediaListRemoved">
+        <body><![CDATA[
+          // Determine which media list we should go to post-delete
+          // We need to do this pre-delete in order to properly determine
+          // the servicepane node for this list
+        try {
+          let librarySPS =
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+              .getService(Components.interfaces.sbILibraryServicePaneService);
+
+          let node = this._findServicePaneNode();
+          let otherNode = node.nextSibling;
+          while (otherNode && otherNode.hidden)
+            otherNode = otherNode.nextSibling;
+          if (!otherNode) {
+            // then we hit the end of the list w/o finding any visible node
+            otherNode = node.previousSibling;
+            while (otherNode && otherNode.hidden)
+              otherNode = otherNode.previousSibling;
+          }
+
+          if (otherNode)
+            this._resourceToLoad = librarySPS.getLibraryResourceForNode(otherNode);
+          else
+            this._resourceToLoad = null;
+        } catch (e) {
+          dump("Exception: " + e + "\n");
+        }
+        ]]></body>
+      </method>
+
+      <!-- Called if the medialist in the browser
+           is removed from the system -->
+      <method name="onMediaListRemoved">
+        <body><![CDATA[
+          this._viewForPage = null;
+
+          // Go back in history, removed per bug 21069
+          // this.backWithDefault();
+
+          // Load the resource determined in the above listener
+          const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+          if (this._resourceToLoad) {
+            let mediaList = this._resourceToLoad;
+            let view = LibraryUtils.createStandardMediaListView(mediaList);
+            gBrowser.loadMediaList(mediaList, null, this, view);
+          } else {
+            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this,
+                         LibraryUtils.createConstrainedMediaListView(
+                              LibraryUtils.mainLibrary,
+                              [SBProperties.contentType, "audio"]));
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getWebMediaListForURL">
+        <parameter name="aURL"/>
+        <parameter name="aTitle"/>
+        <body><![CDATA[
+          var listener = {
+            foundList: null,
+            onEnumerationBegin: function onEnumerationBegin(list) {
+            },
+            onEnumeratedItem: function onEnumeratedItem(list, item) {
+              if (!(item instanceof Components.interfaces.sbIMediaList)) {
+                throw new Error("Given an item, not a list!");
+              }
+              this.foundList = item;
+              return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+            },
+            onEnumerationEnd: function onEnumerationEnd(list) {
+            }
+          };
+
+          var propArray =
+            Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                      .createInstance(Components.interfaces.sbIMutablePropertyArray);
+          propArray.appendProperty(SBProperties.originPage, aURL);
+          propArray.appendProperty(SBProperties.isList, "1");
+
+          var webLibrary = LibraryUtils.webLibrary;
+          webLibrary.enumerateItemsByProperties(propArray, listener );
+
+          if (listener.foundList) {
+            return listener.foundList;
+          }
+
+          var propArray = [
+              [SBProperties.originPage, aURL],
+              [SBProperties.originPageTitle, aTitle]
+            ];
+
+          // Make a new list and set the originPage property.
+          var newList = webLibrary.createMediaList("simple", SBProperties.createArray(propArray));
+
+          // XXXben Do this for now because the new AddToPlaylist code sweeps
+          //        all non-hidden media lists from *all* libraries.
+          newList.setProperty(SBProperties.hidden, "1");
+
+          return newList;
+        ]]></body>
+      </method>
+
+      <!-- nsIWebProgressListener implementation -->
+      <method name="onLocationChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aLocation" />
+        <body><![CDATA[
+          // if this location change isn't on the top-level window, ignore it
+          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent) {
+            return;
+          }
+
+          // the service pane updates are allowed to happen even if the location
+          // didn't really change (due to media list views with different
+          // constraints looking like they are the same url)
+          this.servicePaneNode = this._findServicePaneNode();
+          this.applyPropertiesFromServicePaneNode();
+
+          // Do nothing if location has not really changed (e.g., only the "#"
+          // ref changed) and the window is not being reloaded.
+          var selectedBrowser = getBrowser().selectedBrowser;
+          var oldURI = selectedBrowser.lastURI;
+          var newURI = aLocation;
+          if (oldURI && newURI) {
+            // Strip the "#" reference from the URI spec.
+            var oldSpec = oldURI.spec;
+            var oldIndexOfHash = oldSpec.indexOf("#");
+            if (oldIndexOfHash != -1)
+              oldSpec = oldSpec.substr(0, oldIndexOfHash);
+            var newSpec = newURI.spec;
+            var newIndexOfHash = newSpec.indexOf("#");
+            if (newIndexOfHash != -1)
+              newSpec = newSpec.substr(0, newSpec.indexOf("#"));
+
+            // Do nothing if location has not changed.
+            if (oldSpec == newSpec)
+              return;
+          }
+
+          // Update last URI to the current one.
+          selectedBrowser.lastURI = aLocation;
+
+          // clear the search engines that have been discovered
+          this.linkedBrowser.engines = null;
+
+          // Remove live HTML tooltips
+          if (document.tooltipNode) {
+            // Optimise for the common case
+            if (aWebProgress.DOMWindow == content) {
+              document.getElementById("aHTMLTooltip").hidePopup();
+              document.tooltipNode = null;
+            }
+            else {
+              for (var tooltipWindow =
+                      document.tooltipNode.ownerDocument.defaultView;
+                    tooltipWindow != tooltipWindow.parent;
+                    tooltipWindow = tooltipWindow.parent) {
+                if (tooltipWindow == aWebProgress.DOMWindow) {
+                  document.getElementById("aHTMLTooltip").hidePopup();
+                  document.tooltipNode = null;
+                  break;
+                }
+              }
+            }
+          }
+
+          // Remove all the notifications, except for those which want to
+          // persist across the first location change.
+          var nBox = gBrowser.getNotificationBox(selectedBrowser);
+          for (var n = nBox.allNotifications.length - 1; n >= 0; n--) {
+            var notify = nBox.allNotifications[n];
+            if (notify.ignoreFirstLocationChange)
+              notify.ignoreFirstLocationChange = false;
+            else if (!notify.ignoreLocationChangeTimeout ||
+              (Date.now() / 1000) > notify.ignoreLocationChangeTimeout)
+              nBox.removeNotification(notify);
+          }
+
+          // Stop monitoring the current media list, since it no longer matters
+          this._mediaListRemovalMonitor.setMediaList(null);
+
+          // set the loadingURI so we know in onStateChange when to  cause a
+          // scan of the web page to populate the web playlist. Do it
+          // here and not in onStateChange because the STATE_START message has
+          // the wrong document URI when using the back button (and probably
+          // when going from site to site).
+
+          this._loadingURL = aLocation.spec;
+          this.clearOuterPlaylist();
+          this._shouldScan = true;
+          
+          
+          if (!this._isNewViewForPage) {
+
+            // Look for an existing view for this page using the browser history
+            var viewMap =
+              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                        .getService(Components.interfaces.sbIMediaListViewMap);
+
+            var browser = this.linkedBrowser;
+            var history = browser.webNavigation.sessionHistory;
+            if (history.count > 0) {
+              var entry = history.getEntryAtIndex( history.index, false );            
+              this._viewForPage = viewMap.getView( browser, entry );
+            }
+          }
+        ]]></body>
+      </method>
+
+      <method name="onProgressChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aCurSelfProgress" />
+        <parameter name="aMaxSelfProgress" />
+        <parameter name="aCurTotalProgress" />
+        <parameter name="aMaxTotalProgress" />
+        <body><![CDATA[ ]]></body>
+      </method>
+
+      <method name="onSecurityChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <body><![CDATA[ ]]></body>
+      </method>
+
+      <method name="onStateChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aStatus" />
+        <body><![CDATA[
+          const nsIWebProgressListener = 
+            Components.interfaces.nsIWebProgressListener;
+
+          // if this state change isn't on the top-level window, ignore it
+          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
+              !(aState & nsIWebProgressListener.STATE_IS_WINDOW)) {
+            return;
+          }
+
+          if (aState & nsIWebProgressListener.STATE_STOP) {
+            if (!(this.linkedBrowser.contentDocument &&
+                  this.linkedBrowser.contentDocument.documentURI == this._loadingURL)) {
+              return;
+            }
+            this._loadingURL = "";
+
+            if (this.mediaPage) {
+
+              // If we have to highlight something, now is
+              // probably a good time
+              if (this._highlightViewIndexOnLoad !== null && 
+                  this.mediaPage.mediaListView) 
+              {
+                var index = this._highlightViewIndexOnLoad;
+                var page = this.mediaPage;
+                this._highlightViewIndexOnLoad = null;
+                
+                // XXX Whhhhhy do I have to use a timeout? 
+                // The playlist sets the selection correctly, but then 
+                // immediately clears it.
+                setTimeout(function() { page.highlightItem(index); }, 500);
+              }
+
+            } else {
+              this._metrics.metricsInc("app.browser", "pageViews", "");
+              // start slow-loading pages after 500ms.
+              // this works because of the dupechecker, which prevents problems
+              // from arising due to rescanning the same document when it finishes
+              // loading.
+              var self = this;
+              setTimeout(function() {
+                self.scanWebPage(self.linkedBrowser.contentDocument);
+              }, 500);
+            }
+          }
+        ]]></body>
+      </method>
+
+      <method name="onStatusChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aMessage" />
+        <body><![CDATA[ ]]></body>
+      </method>
+
+      <!-- Called when the page in the linked browser is unloaded -->
+      <method name="onBrowserUnload">
+        <parameter name="evt"/>
+        <body>
+        <![CDATA[
+          // For now only save view history for chrome media pages
+          if (!this.linkedBrowser.currentURI.schemeIs("chrome") ||
+              !this.mediaPage) {
+            return;
+          }
+
+          var browser = this.linkedBrowser;
+          var history = browser.webNavigation.sessionHistory;
+          var entry = history.getEntryAtIndex( history.index, false );
+
+          // TODO why dont we care about saving view history for web pages?
+          var viewMap =
+            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                      .getService(Components.interfaces.sbIMediaListViewMap);
+          viewMap.setView(browser, entry, this.mediaPage.mediaListView);
+        ]]>
+        </body>
+      </method>
+
+      <!-- tab dnd helpers -->
+      <method name="canDrop">
+        <parameter name="event"></parameter>
+        <parameter name="session"></parameter>
+        <body><![CDATA[
+          var canDrop = false;
+          var mediaPage = this.mediaPage;
+          if (mediaPage) {
+            canDrop = mediaPage.canDrop(event, session);
+          }
+          return canDrop;
+        ]]></body>
+      </method>
+      <property name="_dragTimeout" readonly="true">
+        <getter><![CDATA[
+          // default to a constant value, but can be overridden via the parent
+          if (this.hasAttribute("dragoverdelay"))
+            return parseInt(this.getAttribute("dragoverdelay"), 10);
+          if (this.parentNode.hasAttribute("dragoverdelay"))
+            return parseInt(this.parentNode.getAttribute("dragoverdelay"), 10);
+          return 350;
+        ]]></getter>
+      </property>
+      <field name="_dragTimer">null</field>
+
+      <method name="backWithDefault">
+        <body>
+          <![CDATA[
+            var browser = this.linkedBrowser;
+            var history = browser.webNavigation.sessionHistory;
+
+            // Try going back in the history
+            if (this.linkedBrowser.canGoBack) {
+              this.linkedBrowser.goBack();
+              this.servicePaneNode = this._findServicePaneNode();
+              this.applyPropertiesFromServicePaneNode();
+              return;
+            }
+
+            // Going back failed.  Just go to the library.
+            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this,
+                         LibraryUtils.createConstrainedMediaListView(
+                              LibraryUtils.mainLibrary,
+                              [SBProperties.contentType, "audio"]));
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="TabClose"><![CDATA[
+        this.destroy();
+
+        // save the tab state soon
+        setTimeout("window.gBrowser._sessionStore.saveTabState(window.gBrowser);", 100);
+      ]]></handler>
+
+      <handler event="DOMAttrModified" phase="target"><![CDATA[
+        if (!("linkedTab" in this) || !(this.linkedTab))
+          return;
+        const K_ATTRS_IGNORE = [
+          "collapsed", "width", "minwidth", "maxwidth", "flex"
+          ];
+        if (K_ATTRS_IGNORE.indexOf(event.attrName) != -1) {
+          return; // skip this attribute
+        }
+        // copy everything else over
+        if (event.attrChange == event.REMOVAL) {
+          this.linkedTab.removeAttribute(event.attrName);
+        } else {
+          this.linkedTab.setAttribute(event.attrName, event.newValue);
+        }
+      ]]></handler>
+      
+      <handler event="mousedown" button="0" phase="capturing"><![CDATA[
+        if (!("targetTab" in this) || !(this.targetTab)) {
+          return true;
+        }
+        var newEvent = document.createEvent("MouseEvent");
+        newEvent.initMouseEvent(event.type,
+                                event.bubbles,
+                                event.cancelable,
+                                event.view,
+                                event.detail,
+                                event.screenX,
+                                event.screenY,
+                                event.clientX,
+                                event.clientY,
+                                event.ctrlKey,
+                                event.altKey,
+                                event.shiftKey,
+                                event.metaKey,
+                                event.button,
+                                event.relatedTarget);
+        event.cancelBubble = true;
+        event.preventDefault();
+        return this.targetTab.dispatchEvent(newEvent);
+      ]]></handler>
+
+      <handler event="dragenter"><![CDATA[
+        var dragService = Components.classes["@mozilla.org/widget/dragservice;1"]
+           .getService(Components.interfaces.nsIDragService);
+        var session = dragService.getCurrentSession();
+
+        session.canDrop = this.canDrop(event, session);
+
+        if (session.canDrop && !this._dragTimer && this._dragTimeout) {
+          (function(tab) {
+            tab._dragTimer = setTimeout(function() {
+              tab._dragTimer = null;
+
+              // set up an interval callback to check if the drag has completed
+              // and restore the original tab when it's done
+              if (!gBrowser._springLoadedTab) {
+                gBrowser._springLoadedTab = {
+                  tab: gBrowser.mTabContainer.selectedItem,
+                  interval: setInterval(function() {
+                    if (!dragService.getCurrentSession()) {
+                      // the drag is over, clear the timer, clear the state
+                      // restore the tab
+                      gBrowser.mTabContainer.selectedItem =
+                          gBrowser._springLoadedTab.tab;
+                      clearInterval(gBrowser._springLoadedTab.interval);
+                      gBrowser._springLoadedTab = null;
+                    }
+                  }, 500)
+                }
+              }
+
+              gBrowser.mTabContainer.selectedItem = tab;
+            }, tab._dragTimeout);
+          })(this);
+        }
+
+      ]]></handler>
+      <handler event="dragleave"><![CDATA[
+        if (this._dragTimer) {
+          clearTimeout(this._dragTimer);
+          this._dragTimer = null;
+        }
+      ]]></handler>
+      <handler event="dragdrop"><![CDATA[
+        var dragService = Components.classes["@mozilla.org/widget/dragservice;1"]
+           .getService(Components.interfaces.nsIDragService);
+        var session = dragService.getCurrentSession();
+
+        if (this.canDrop(event, session)) {
+          var mediaPage = this.mediaPage;
+          if (mediaPage) {
+            mediaPage.onDrop(event, session);
+          }
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
+
+</bindings>

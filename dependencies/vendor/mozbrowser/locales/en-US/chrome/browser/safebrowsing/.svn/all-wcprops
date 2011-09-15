@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/chrome/browser/safebrowsing
+END
+phishing-afterload-warning-message.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/chrome/browser/safebrowsing/phishing-afterload-warning-message.dtd
+END
+report-phishing.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/chrome/browser/safebrowsing/report-phishing.dtd
+END

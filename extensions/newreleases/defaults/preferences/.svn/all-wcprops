@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/18148/trunk/extensions/newreleases/defaults/preferences
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/18148/trunk/extensions/newreleases/defaults/preferences/Makefile.in
+END
+prefs.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/18148/trunk/extensions/newreleases/defaults/preferences/prefs.js
+END

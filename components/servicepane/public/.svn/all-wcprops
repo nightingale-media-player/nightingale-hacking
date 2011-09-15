@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20072/trunk/components/servicepane/public
+END
+sbILibraryServicePaneService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/19098/trunk/components/servicepane/public/sbILibraryServicePaneService.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/18253/trunk/components/servicepane/public/Makefile.in
+END
+sbIDeviceServicePaneService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/18506/trunk/components/servicepane/public/sbIDeviceServicePaneService.idl
+END
+sbIServicePaneService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/20072/trunk/components/servicepane/public/sbIServicePaneService.idl
+END

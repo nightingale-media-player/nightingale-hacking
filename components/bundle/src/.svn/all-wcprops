@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/client/!svn/ver/15706/trunk/components/bundle/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/7658/trunk/components/bundle/src/Makefile.in
+END
+sbBundle.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/15706/trunk/components/bundle/src/sbBundle.js
+END

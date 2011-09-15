@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+
+<overlay id="AlbumArtworkOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+ <script type="application/x-javascript"
+         src="chrome://songbird/content/scripts/preferences/albumArtwork.js"/>
+
+  <prefpane id="paneAlbumArtwork" onpaneload="Fetchers.doPaneLoad();">
+
+    <preferences id="albumartPreferences">
+      <preference id="songbird.metadata.artwork.enableWriting"
+        name="songbird.metadata.artwork.enableWriting"
+        type="bool"
+        instantApply="true"/>
+      <preference id="songbird.albumart.file.base_names"
+        name="songbird.albumart.file.base_names"
+        type="string"
+        instantApply="true"/>
+      <preference id="songbird.albumart.file.extensions"
+        name="songbird.albumart.file.extensions"
+        type="string"
+        instantApply="true"/>
+      <preference id="songbird.albumart.autofetch.disabled"
+        name="songbird.albumart.autofetch.disabled"
+        type="bool"
+        inverted="true"
+        instantApply="true" />
+    </preferences>
+
+    <groupbox flex="1">
+      <caption label="&albumartpreferences.prefpane.label;"/>
+      <grid>
+        <columns>
+          <column />
+          <column flex="1" />
+        </columns>
+
+        <rows>
+          <row>
+            <label value="&albumartpreferences.prefpane.search_file_names.label;"/>
+            <textbox id="file-names-textbox"
+                     emptytext="&albumartpreferences.prefpane.search_file_names.empty;"
+                     preference="songbird.albumart.file.base_names"
+                     tooltip="&albumartpreferences.prefpane.search_file_ext.empty;"/>
+          </row>
+          <row>
+            <label value="&albumartpreferences.prefpane.search_file_ext.label;"/>
+            <textbox id="file-ext-textbox"
+                     emptytext="&albumartpreferences.prefpane.search_file_ext.empty;"
+                     preference="songbird.albumart.file.extensions"
+                     tooltip="&albumartpreferences.prefpane.search_file_ext.empty;"/>
+          </row>
+        </rows>
+      </grid>
+      <checkbox label="&albumartpreferences.prefpane.enablewrite.label;"
+                preference="songbird.metadata.artwork.enableWriting"
+                tooltip="&albumartpreferences.prefpane.enablewrite.tooltip;"/>
+
+      <checkbox label="&albumartpreferences.prefpane.autofetch.label;"
+                preference="songbird.albumart.autofetch.disabled"
+                tooltip="&albumartpreferences.prefpane.autofetch.tooltip;"/>
+    </groupbox>
+
+    <groupbox flex="1">
+      <caption label="&albumartpreferences.prefpane.priorities.label;"/>
+      <hbox flex="1">
+          <listbox flex="1"
+                   selType="single"
+                   id="fetcherListBox"
+                   tooltip="&albumartpreferences.prefpane.fetcherlist.tooltip;"/>
+
+          <vbox>
+              <button label="&albumartpreferences.prefpane.priorities.up;"
+                      onclick="Fetchers.moveFetcher(-1);"/>
+              <button label="&albumartpreferences.prefpane.priorities.down;"
+                      onclick="Fetchers.moveFetcher(1);"/>
+              <spacer flex="1"/>
+              <button label="&albumartpreferences.prefpane.priorities.reset;"
+                      onclick="Fetchers.resetFetcherPreferences();"/>
+          </vbox>
+      </hbox>
+    </groupbox>
+
+  </prefpane>
+
+</overlay>

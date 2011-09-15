@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "No s'ha pogut trobar informació sobre l'artista de la pista actual">
+<!ENTITY mashTape.msg.no_review_found "No s'han pogut trobar articles sobre la pista actual">
+<!ENTITY mashTape.msg.no_rss_found "No s'han pogut trobar notícies sobre la pista actual">
+<!ENTITY mashTape.msg.no_photo_found "No s'han pogut trobar fotos sobre la pista actual">
+<!ENTITY mashTape.msg.no_flash_found "No s'han pogut trobar vídeos sobre la pista actual">

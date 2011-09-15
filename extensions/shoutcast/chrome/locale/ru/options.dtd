@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Фильтры для радиостанций">
+<!ENTITY prefwindow.title "Настройки радиостанций SHOUTcast">
+<!ENTITY bit-rate.limit.label "Показывать радиостанции с битрейтом не менее">
+<!ENTITY listeners.limit.label "Показывать радиостанции, у которых слушателей не менее">
+<!ENTITY listeners.limit.label.2 ".">
+<!ENTITY bit-rate.label "Битрейт (кбпс)">
+<!ENTITY bit-rate.accesskey "Б">
+<!ENTITY listeners.label "Число слушателей">
+<!ENTITY listeners.accesskey "ч">
+<!ENTITY prefs.track.guessing.title "Анализ имени артиста/названия">
+<!ENTITY prefs.track.guessing.label "Использовать анализ имени артиста и названия песни">
+<!ENTITY prefs.track.guessing.help "Некоторые радиостанции передают текст в форме &apos;Артист - Название трека&apos;. Если вы включите эту опцию, дополнение SHOUTcast будет пытаться анализировать это и отправлять уведомления о смене трека, чтобы другие дополнения могли узнавать об этом во время потокового вещания.">
+<!ENTITY prefs.customGenres "Жанры, определённые пользователем">
+<!ENTITY prefs.customGenres.emptytext "Введите сюда через запятую список жанров">
+<!ENTITY custom-genres.help.label "Если вы хотите добавить какие-то свои жанры в директорию SHOUTcast, то перечислите их через запятую в строке далее:">
+<!ENTITY prefs.tosBegin "Право пользования директорией SHOUTcast описано в Условиях использования">
+<!ENTITY prefs.tosLinkText "Просмотреть Условия использования">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Установите дополнение">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast Toolbar">
+<!ENTITY prefs.toolbarEnd "для быстрого доступа к SHOUTcast из вашего браузера">

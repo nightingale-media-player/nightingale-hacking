@@ -1,0 +1,71 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Interface description for the album art fetcher interface.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIAlbumArtScannerListener
+ * \brief Interface for an album art scanner listener.
+ *     This is used for callbacks for progress of the scanning.
+ */
+
+interface sbIMediaList;
+
+/**
+ * \interface sbIAlbumArtScanner
+ * \brief Interface for an album art scanner.  Instantiate as a component
+ *        instance. It also implements the sbIJobProgress so the progress
+ *        can be monitored externally.
+ * \sa sbIAlbumArtScannerListener
+ * \sa sbIJobProgress
+ * \sa sbIJobCancelable
+ */
+
+[scriptable, uuid(f191a970-2e62-4b51-b495-1875ef7991ef)]
+interface sbIAlbumArtScanner : nsISupports
+{
+  /**
+   * \brief If true, update any artwork already present in media items.
+   */
+  attribute boolean updateArtwork;
+
+  /* \brief Try to fetch album art for items in the given Media List.
+   * \param aMediaList the list we should scan, null will default to the main
+   *        library.
+   */
+  void scanListForArtwork(in sbIMediaList aMediaList);
+
+};

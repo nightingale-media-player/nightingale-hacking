@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/18647/trunk/components/mediacore/transcode/public
+END
+sbITranscodeAlbumArt.idl
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/14739/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl
+END
+sbITranscodeError.idl
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/17580/trunk/components/mediacore/transcode/public/sbITranscodeError.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/17580/trunk/components/mediacore/transcode/public/Makefile.in
+END
+sbITranscodeJob.idl
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/14027/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl
+END
+sbITranscodeManager.idl
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/18400/trunk/components/mediacore/transcode/public/sbITranscodeManager.idl
+END
+sbITranscodingConfigurator.idl
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/18545/trunk/components/mediacore/transcode/public/sbITranscodingConfigurator.idl
+END
+sbITranscodeProfile.idl
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/18647/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl
+END
+sbITranscodeVideoJob.idl
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/18482/trunk/components/mediacore/transcode/public/sbITranscodeVideoJob.idl
+END

@@ -1,0 +1,86 @@
+10
+
+dir
+22041
+http://publicsvn.songbirdnest.com/client/trunk/tools
+http://publicsvn.songbirdnest.com/client
+
+
+
+2011-04-25T19:16:07.635910Z
+20979
+kurt
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+cdriphelper
+dir
+
+win32
+dir
+
+Makefile.in
+file
+
+
+
+
+2011-09-15T07:26:05.000000Z
+9e711f804d03c8c5c8c18540645f8c7e
+2010-03-26T23:27:23.429682Z
+18044
+mook
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1527
+
+disthelper
+dir
+
+itunesagent
+dir
+
+lib
+dir
+
+tracemalloc
+dir
+
+scripts
+dir
+
+common
+dir
+

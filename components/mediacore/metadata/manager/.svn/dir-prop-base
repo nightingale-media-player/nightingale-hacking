@@ -1,0 +1,11 @@
+K 10
+svn:ignore
+V 13
+*\obj
+*.user
+
+K 15
+tsvn:logminsize
+V 1
+1
+END

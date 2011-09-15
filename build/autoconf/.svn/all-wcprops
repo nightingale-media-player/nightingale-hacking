@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/client/!svn/ver/7658/trunk/build/autoconf
+END
+pkg.m4
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/client/!svn/ver/2484/trunk/build/autoconf/pkg.m4
+END
+songbirdconfig2client-mk
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/7658/trunk/build/autoconf/songbirdconfig2client-mk
+END
+uniq.pl
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/client/!svn/ver/7623/trunk/build/autoconf/uniq.pl
+END
+config.guess
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/2484/trunk/build/autoconf/config.guess
+END
+songbirdconfig-find
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/7658/trunk/build/autoconf/songbirdconfig-find
+END
+config.sub
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/2484/trunk/build/autoconf/config.sub
+END
+install-sh
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/2484/trunk/build/autoconf/install-sh
+END

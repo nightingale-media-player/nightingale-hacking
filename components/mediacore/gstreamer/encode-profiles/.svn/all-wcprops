@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/21141/trunk/components/mediacore/gstreamer/encode-profiles
+END
+asf-wmv-wma.xml
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/18695/trunk/components/mediacore/gstreamer/encode-profiles/asf-wmv-wma.xml
+END
+mp4-mjpeg-adpcm.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/19892/trunk/components/mediacore/gstreamer/encode-profiles/mp4-mjpeg-adpcm.xml
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/21141/trunk/components/mediacore/gstreamer/encode-profiles/Makefile.in
+END
+mp4-h264-aac.xml
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/21141/trunk/components/mediacore/gstreamer/encode-profiles/mp4-h264-aac.xml
+END
+aac.xml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/18683/trunk/components/mediacore/gstreamer/encode-profiles/aac.xml
+END
+vorbis.xml
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18400/trunk/components/mediacore/gstreamer/encode-profiles/vorbis.xml
+END
+flac.xml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/18400/trunk/components/mediacore/gstreamer/encode-profiles/flac.xml
+END
+avi-mpeg4sp-mp3.xml
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/21091/trunk/components/mediacore/gstreamer/encode-profiles/avi-mpeg4sp-mp3.xml
+END
+aac-3gp.xml
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/18684/trunk/components/mediacore/gstreamer/encode-profiles/aac-3gp.xml
+END
+readme.txt
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/17532/trunk/components/mediacore/gstreamer/encode-profiles/readme.txt
+END
+wmav2.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/18400/trunk/components/mediacore/gstreamer/encode-profiles/wmav2.xml
+END
+ogg-theora-vorbis.xml
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/18695/trunk/components/mediacore/gstreamer/encode-profiles/ogg-theora-vorbis.xml
+END
+mp3.xml
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/18683/trunk/components/mediacore/gstreamer/encode-profiles/mp3.xml
+END

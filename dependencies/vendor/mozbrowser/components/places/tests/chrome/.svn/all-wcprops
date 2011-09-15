@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome
+END
+test_bug427633_no_newfolder_if_noip.xul
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome/test_bug427633_no_newfolder_if_noip.xul
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome/Makefile.in
+END
+test_bug510634.xul
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome/test_bug510634.xul
+END
+test_bug485100-change-case-loses-tag.xul
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome/test_bug485100-change-case-loses-tag.xul
+END
+test_treeview_date.xul
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome/test_treeview_date.xul
+END
+test_multiple_left_pane.xul
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/chrome/test_multiple_left_pane.xul
+END

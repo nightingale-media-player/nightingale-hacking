@@ -1,0 +1,203 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20408/trunk/components/mediacore/base/src
+END
+sbBaseMediacoreMultibandEqualizer.h
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/13623/trunk/components/mediacore/base/src/sbBaseMediacoreMultibandEqualizer.h
+END
+sbBaseMediacoreFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/11778/trunk/components/mediacore/base/src/sbBaseMediacoreFactory.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/20408/trunk/components/mediacore/base/src/Makefile.in
+END
+sbBaseMediacoreVolumeControl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/12965/trunk/components/mediacore/base/src/sbBaseMediacoreVolumeControl.cpp
+END
+sbVideoBox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/15700/trunk/components/mediacore/base/src/sbVideoBox.cpp
+END
+sbMediacoreVotingChain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/10800/trunk/components/mediacore/base/src/sbMediacoreVotingChain.cpp
+END
+sbMediacoreFactoryWrapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/19011/trunk/components/mediacore/base/src/sbMediacoreFactoryWrapper.h
+END
+sbBaseMediacore.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/11778/trunk/components/mediacore/base/src/sbBaseMediacore.h
+END
+sbBaseMediacoreEventTarget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/20214/trunk/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp
+END
+sbMediacoreWrapper.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/19432/trunk/components/mediacore/base/src/sbMediacoreWrapper.h
+END
+sbMediacoreEvent.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/10893/trunk/components/mediacore/base/src/sbMediacoreEvent.h
+END
+sbMediacoreEqualizerBand.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/13620/trunk/components/mediacore/base/src/sbMediacoreEqualizerBand.cpp
+END
+sbBaseMediacorePlaybackControl.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/17219/trunk/components/mediacore/base/src/sbBaseMediacorePlaybackControl.h
+END
+sbOSDControlService.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/20022/trunk/components/mediacore/base/src/sbOSDControlService.js
+END
+sbMediacoreError.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/10766/trunk/components/mediacore/base/src/sbMediacoreError.cpp
+END
+sbBaseMediacoreMultibandEqualizer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/15613/trunk/components/mediacore/base/src/sbBaseMediacoreMultibandEqualizer.cpp
+END
+sbMediacoreCapabilities.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/10760/trunk/components/mediacore/base/src/sbMediacoreCapabilities.h
+END
+sbMediaInspector.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/16746/trunk/components/mediacore/base/src/sbMediaInspector.h
+END
+sbBaseMediacoreFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/11778/trunk/components/mediacore/base/src/sbBaseMediacoreFactory.h
+END
+sbBaseMediacoreVolumeControl.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/12965/trunk/components/mediacore/base/src/sbBaseMediacoreVolumeControl.h
+END
+sbMediacoreFactoryWrapper.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19030/trunk/components/mediacore/base/src/sbMediacoreFactoryWrapper.cpp
+END
+sbBaseMediacore.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/12965/trunk/components/mediacore/base/src/sbBaseMediacore.cpp
+END
+sbVideoBox.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/19011/trunk/components/mediacore/base/src/sbVideoBox.h
+END
+sbMediacoreVotingChain.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/10798/trunk/components/mediacore/base/src/sbMediacoreVotingChain.h
+END
+sbBaseMediacoreModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/19030/trunk/components/mediacore/base/src/sbBaseMediacoreModule.cpp
+END
+sbMediacoreWrapper.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/20408/trunk/components/mediacore/base/src/sbMediacoreWrapper.cpp
+END
+sbMediacoreEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/13620/trunk/components/mediacore/base/src/sbMediacoreEvent.cpp
+END
+sbBaseMediacorePlaybackControl.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/17219/trunk/components/mediacore/base/src/sbBaseMediacorePlaybackControl.cpp
+END
+sbBaseMediacoreEventTarget.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/11445/trunk/components/mediacore/base/src/sbBaseMediacoreEventTarget.h
+END
+sbMediacoreCapabilities.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10766/trunk/components/mediacore/base/src/sbMediacoreCapabilities.cpp
+END
+sbMediacoreEqualizerBand.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/13620/trunk/components/mediacore/base/src/sbMediacoreEqualizerBand.h
+END
+sbMediaInspector.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/16931/trunk/components/mediacore/base/src/sbMediaInspector.cpp
+END
+sbMediacoreError.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/13570/trunk/components/mediacore/base/src/sbMediacoreError.h
+END

@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles
+END
+support.html
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/support.html
+END
+firmware.xml.in
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/firmware.xml.in
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/Makefile.in
+END
+1_0_0_1.bin
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/1_0_0_1.bin
+END
+reset.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/reset.html
+END
+register.html
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/register.html
+END
+release_notes.html
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/17840/trunk/components/devices/firmware/test/testfiles/release_notes.html
+END

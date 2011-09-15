@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://concerts/skin/sps.css" type="text/css"?>
+<overlay id="concerts-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="concerts-strings"
+      src="chrome://concerts/locale/overlay.properties"/>
+    </stringbundleset>
+
+  <script type="text/javascript" src="main.js"/>
+
+</overlay>

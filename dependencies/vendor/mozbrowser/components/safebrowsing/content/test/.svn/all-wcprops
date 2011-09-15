@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/content/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/content/test/Makefile.in
+END
+browser_bug415846.js
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/content/test/browser_bug415846.js
+END
+browser_bug400731.js
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/content/test/browser_bug400731.js
+END

@@ -1,0 +1,182 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIFileDownloader
+ *
+ *   This interface provides support for downloading files.
+ *
+ * "@songbirdnest.com/Songbird/FileDownloader;1"
+ * Use create instance with this component.
+ */
+
+interface nsIFile;
+interface nsIRequest;
+interface nsIURI;
+interface sbIFileDownloaderListener;
+interface sbITemporaryFileFactory;
+
+[scriptable, uuid(7a497d5c-1dd2-11b2-8c68-a37686c9bb01)]
+interface sbIFileDownloader : nsISupports
+{
+  /**
+   * \brief Number of bytes in file being downloaded.
+   */
+
+  readonly attribute unsigned long long bytesToDownload;
+
+
+  /**
+   * \brief Number of bytes in file that have been downloaded.
+   */
+
+  readonly attribute unsigned long long bytesDownloaded;
+
+
+  /**
+   * \brief Percentage (0-100) of bytes of file that have been downloaded.
+   */
+
+  readonly attribute unsigned long percentComplete;
+
+
+  /**
+   * \brief True if file download has completed, whether successful or not.
+   */
+
+  readonly attribute boolean complete;
+
+
+  /**
+   * \brief True if file downloaded successfully.  Will be false if download is
+   *        cancelled.
+   */
+
+  readonly attribute boolean succeeded;
+
+
+  /**
+   * \brief Listener for download events.
+   */
+
+  attribute sbIFileDownloaderListener listener;
+
+
+  /**
+   * \brief URI of source of file.
+   */
+
+  attribute nsIURI sourceURI;
+
+
+  /**
+   * \brief URI spec of source of file.
+   */
+
+  attribute AString sourceURISpec;
+
+
+  /**
+   * \brief Destination file.  If not set when download is started, a temporary
+   *        file will be created and set in destinationFile.
+   */
+
+  attribute nsIFile destinationFile;
+
+
+  /**
+   * \brief Destination file extension.  If a temporary file is created, set its
+   *        file extension to destinationFileExtension.
+   */
+
+  attribute AString destinationFileExtension;
+
+  /**
+   * \brief Temporary file factory to use for any temporary files.
+   */
+
+  attribute sbITemporaryFileFactory temporaryFileFactory;
+
+
+  /**
+   * \brief Start file download from source URI to destination file.  If source
+   *        URI is not specified, use source URI spec.  If destination file is
+   *        not specified, create a temporary one.
+   */
+
+  void start();
+
+
+  /**
+   * \brief Cancel file download.
+   */
+
+  void cancel();
+
+  /**
+   * \brief The request object used during the file download.
+   * \note The object is only available after calling start and becomes invalid
+   *       when calling cancel.
+   */
+  readonly attribute nsIRequest request;
+};
+
+
+/**
+ * \interface sbIFileDownloaderListener
+ *
+ *   This interface is used to receive file download events.
+ */
+
+[scriptable, uuid(3267334a-a1ef-4bf3-b6e5-8c8ae5f19f44)]
+interface sbIFileDownloaderListener : nsISupports
+{
+  /**
+   * \brief Called when progress is made on file download.
+   */
+
+  void onProgress();
+
+
+  /**
+   * \brief Called when download has completed.
+   */
+
+  void onComplete();
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_FILEDOWNLOADER_CONTRACTID \
+          "@songbirdnest.com/Songbird/FileDownloader;1"
+%}C++
+

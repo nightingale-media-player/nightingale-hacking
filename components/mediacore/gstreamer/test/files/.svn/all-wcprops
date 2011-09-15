@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/19302/trunk/components/mediacore/gstreamer/test/files
+END
+video.ogg
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/19302/trunk/components/mediacore/gstreamer/test/files/video.ogg
+END
+surround51.ogg
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19302/trunk/components/mediacore/gstreamer/test/files/surround51.ogg
+END
+simple.ogg
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/19302/trunk/components/mediacore/gstreamer/test/files/simple.ogg
+END
+corrupt-in-middle.ogg
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/19302/trunk/components/mediacore/gstreamer/test/files/corrupt-in-middle.ogg
+END

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/14483/trunk/components/contenthandling/media
+END
+sbMediaContentListener.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/12594/trunk/components/contenthandling/media/sbMediaContentListener.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/14483/trunk/components/contenthandling/media/Makefile.in
+END
+sbMediaSniffer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/12594/trunk/components/contenthandling/media/sbMediaSniffer.cpp
+END
+sbMediaSniffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/12594/trunk/components/contenthandling/media/sbMediaSniffer.h
+END
+sbMediaSnifferModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/7658/trunk/components/contenthandling/media/sbMediaSnifferModule.cpp
+END

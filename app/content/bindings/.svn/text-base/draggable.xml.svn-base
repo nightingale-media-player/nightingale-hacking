@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+  <binding id="draggable">
+    <!-- Apparently, the only way to stop dragging a titlebar is hide it. -->
+    <content>
+      <xul:stack mousethrough="always" flex="1">
+        <xul:titlebar sbid="draggable-titlebar" flex="1" 
+          xbl:inherits="context,ondblclick"
+          onmousedown="onMouseDown();"
+          onmouseup="onMouseUp();"
+          onmousemove="onMouseMove();"
+          ondblclick="onDblClick(event);"/>
+        <xul:vbox>
+          <children />
+        </xul:vbox>
+      </xul:stack>
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        // Dont trap mouseclicks
+        this.setAttribute('mousethrough', 'always');
+
+        this._mMouseDidDrag = false;
+        
+        // Pay attention to if the window changes size
+        var self = this;
+        this._windowresize = function(evt) {
+          self.onWindowResize(evt);
+        };
+        window.addEventListener("resize", this._windowresize, true);        
+      ]]>
+      </constructor>
+      <destructor><![CDATA[
+        // Remove the crappycrap
+        window.removeEventListener("resize", this._windowresize, true);
+        this._windowresize = null;
+      ]]>
+      </destructor>
+      <method name="setDraggable">
+        <parameter name="isEnabled" />
+        <body>
+          <![CDATA[
+            var titlebar = document.getAnonymousElementByAttribute(this, 
+                              'sbid', 'draggable-titlebar');
+            
+            var hiddenState = "";
+            if (isEnabled) {
+              this._mIsEnabled = true;
+              titlebar.removeAttribute("hidden");
+            }
+            else {
+              this._mIsEnabled = false;
+              titlebar.setAttribute("hidden", "true");
+            }
+          ]]>
+        </body>
+      </method>
+      <method name="onWindowResize">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            if (this._mIsEnabled) {
+              // If the size changed, check the sizemode a second later
+              // (the sizemode attrib changes >500ms after the size)
+              var titlebar = document.getAnonymousElementByAttribute(this, 
+                                'sbid', 'draggable-titlebar');
+              // Immediately disable dragging, re-enable after the timer comes up                  
+              titlebar.setAttribute("hidden", "true");
+              setTimeout( function () {
+                var mode = document.documentElement.getAttribute( "sizemode" );
+                if ( mode == "maximized" ) {
+                  // Hide the titlebar (prevent drag) if we are now maximized
+                  titlebar.setAttribute("hidden", "true");
+                }
+                else {
+                  // Show the titlebar (allow drag) if we are not maximized
+                  titlebar.removeAttribute("hidden");
+                }
+              }, 1000 );
+            }
+          ]]>
+        </body>
+      </method>
+      <method name="onMouseDown">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            if (this._mIsEnabled) {
+              this._mMouseIsDown = true;
+            }
+            var titlebar = document.getAnonymousElementByAttribute(this, 
+                              'sbid', 'draggable-titlebar');
+            titlebar.setAttribute("ismousedown", true);
+          ]]>
+        </body>
+      </method>
+      <method name="onMouseUp">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            if (this._mIsEnabled) {
+              this._mMouseIsDown = false;
+              if (this._mMouseDidDrag) {
+                var event = document.createEvent("HTMLEvents");
+                event.initEvent("ondragexit", false, false);
+                document.dispatchEvent(event);
+              }
+            }
+            var titlebar = document.getAnonymousElementByAttribute(this, 
+                              'sbid', 'draggable-titlebar');
+            titlebar.setAttribute("ismousedown", false);
+          ]]>
+        </body>
+      </method>
+      <method name="onMouseMove">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            if (this._mIsEnabled) {
+              if (this._mMouseIsDown) {
+                this._mMouseDidDrag = true;
+              }
+            }
+          ]]>
+        </body>
+      </method>
+      <method name="onDblClick">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            if (evt.button != 0) return;
+            var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                          .getService(Components.interfaces.nsIPropertyBag2);
+            if ( sysInfo.getProperty("name") == "Darwin" )
+              // Minimize on Mac
+              onMinimize();
+            else
+              // Maximize elsewhere
+              onMaximize(window.windowState != Components.interfaces.nsIDOMChromeWindow.STATE_MAXIMIZED);
+          ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>

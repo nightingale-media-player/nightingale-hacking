@@ -1,0 +1,133 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseSimpleMediaList.idl
+ * \brief Definition of the sbILocalDatabaseSimpleMediaList interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbILocalDatabaseLibrary;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIPropertyArray;
+
+/**
+ * \interface sbILocalDatabaseMediaListCopyListener
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(deee7fde-ddd4-4a23-9d13-ded73807b060)]
+interface sbILocalDatabaseMediaListCopyListener : nsISupports
+{
+  void onItemCopied(in sbIMediaItem aSourceItem, 
+                    in sbIMediaItem aDestItem);
+};
+
+/**
+ * \interface sbILocalDatabaseSimpleMediaList
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ *
+ * Methods and attributes that are specific to the simple media list are
+ * implemented here.
+ *
+ * \sa sbIMediaList
+ */
+[scriptable, uuid(8243de6d-1c42-4b7b-8f05-ae291c9e9bf3)]
+interface sbILocalDatabaseSimpleMediaList : nsISupports
+{
+  attribute sbILocalDatabaseMediaListCopyListener copyListener;
+
+  /**
+   * \brief Get the index of an item in this list by its ordinal.
+   * \param aOrdinal The ordinal to look up the index by
+   * \return The index of the item with the given ordinal
+   */
+  unsigned long getIndexByOrdinal(in AString aOrdinal);
+
+  /**
+   * \brief Tell the list that its underlying datasource has changed.
+   * \param aInvalidateLength - Also invalidates the cached length of the 
+   *                            array. If you don't know what this means 
+   *                            set it to true :)
+   */
+  void invalidate(in boolean aInvalidateLength);
+
+  /**
+   * \brief Notify this simple media list's listeners that an item has been
+   *        updated
+   */
+  void notifyListenersItemUpdated(in sbIMediaItem aItem,
+                                  in unsigned long aIndex,
+                                  in sbIPropertyArray aProperties);
+
+  /**
+   * \brief Notify this simple media list's listeners that an item is about to
+   *        be removed
+   */
+  void notifyListenersBeforeItemRemoved(in sbIMediaList aList,
+                                        in sbIMediaItem aItem,
+                                        in unsigned long aIndex);
+
+  /**
+   * \brief Notify this simple media list's listeners that an item has been
+   *        removed
+   */
+  void notifyListenersAfterItemRemoved(in sbIMediaList aList,
+                                       in sbIMediaItem aItem,
+                                       in unsigned long aIndex);
+
+  /**
+   * \brief Notify the simple media list's listeners that it has about to be
+   *        cleared
+   */
+  void notifyListenersBeforeListCleared(in sbIMediaList aList,
+                                        in boolean      aExcludeLists);
+
+  /**
+   * \brief Notify the simple media list's listeners that it has been cleared
+   */
+  void notifyListenersListCleared(in sbIMediaList aList,
+                                  in boolean      aExcludeLists);
+
+  /**
+   * \brief Notify the simple media list's listeners that a batch has begun
+   */
+  void notifyListenersBatchBegin(in sbIMediaList aList);
+
+  /**
+   * \brief Notify the simple media list's listeners that a batch has ended
+   */
+  void notifyListenersBatchEnd(in sbIMediaList aList);
+
+  /**
+   * \brief Notify the simple media list that its content was changed via an
+   * operation that bypassed listeners (ie, direct write to db)
+   */
+  void notifyContentChanged();
+};
+

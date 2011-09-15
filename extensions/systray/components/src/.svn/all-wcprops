@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/20453/trunk/extensions/systray/components/src
+END
+nsSystemTrayIconBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayIconBase.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20453/trunk/extensions/systray/components/src/Makefile.in
+END
+nsIImageToBitmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/18793/trunk/extensions/systray/components/src/nsIImageToBitmap.h
+END
+nsSystemTrayIconGTK.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18969/trunk/extensions/systray/components/src/nsSystemTrayIconGTK.cpp
+END
+nsSystemTrayService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayService.cpp
+END
+nsSystemTrayIconGTK.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayIconGTK.h
+END
+nsSystemTrayService.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayService.h
+END
+nsWindowUtilGTK.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsWindowUtilGTK.cpp
+END
+nsSystemTrayIconWin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayIconWin.cpp
+END
+nsSystemTrayServiceGTK.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayServiceGTK.cpp
+END
+nsWindowUtilGTK.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsWindowUtilGTK.h
+END
+nsSystemTrayIconWin.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayIconWin.h
+END
+nsSystemTrayServiceGTK.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayServiceGTK.h
+END
+nsImageToBitmap.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/18793/trunk/extensions/systray/components/src/nsImageToBitmap.cpp
+END
+nsWindowUtilWin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsWindowUtilWin.cpp
+END
+nsSystemTrayServiceWin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/18793/trunk/extensions/systray/components/src/nsSystemTrayServiceWin.cpp
+END
+trayModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/trayModule.cpp
+END
+nsImageToBitmap.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/18793/trunk/extensions/systray/components/src/nsImageToBitmap.h
+END
+nsSystemTrayServiceWin.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsSystemTrayServiceWin.h
+END
+nsSystemTrayIconBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/18793/trunk/extensions/systray/components/src/nsSystemTrayIconBase.cpp
+END
+nsWindowUtilWin.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/10830/trunk/extensions/systray/components/src/nsWindowUtilWin.h
+END

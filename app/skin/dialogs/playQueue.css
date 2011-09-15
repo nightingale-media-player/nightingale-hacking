@@ -1,0 +1,91 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+/**
+********************************************************************************
+
+PLAY QUEUE DISPLAY PANE
+
+Additional style imported directly by the play queue display pane.
+See chrome://songbird/content/xul/playQueue.xul
+
+********************************************************************************
+*/
+
+#playqueue-header-box {
+  min-height: 27px;
+  background-image: url("chrome://songbird/skin/playqueue/bg-playqueue-header.png");
+}
+
+#playqueue-header-label {
+  font-weight: bold;
+  margin-left: 6px;
+  opacity: 0.75;
+}
+
+#playqueue-message-layer-outer-box,
+#playqueue-in-progress-layer-outer-box {
+  padding: 10px;
+  background-color: transparent;
+}
+
+.playqueue-instructions {
+  padding: 10px;
+  text-align: center;
+  -moz-border-radius: 6px;
+}
+
+.playqueue-inprogress-image {
+  list-style-image: url('chrome://songbird/skin/playqueue/icon-loading-white.png');
+}
+
+.sb-commands-toolbar {
+  overflow: hidden;
+}
+
+toolbarbutton {
+  height: 16px;
+  min-width: 45px !important;
+  max-width: 80px;
+}
+
+toolbarbutton[id="playqueue_cmd_clearall"] {
+  -moz-border-radius-topright: 0px;
+  -moz-border-radius-bottomright: 0px;
+  margin-left: -0.5px;
+}
+
+
+toolbarbutton[type="menu"] {
+  min-width: 11px !important;
+  max-width: 11px;
+  margin-left: -4px;
+  -moz-border-radius-topleft: 0px;
+  -moz-border-radius-bottomleft: 0px;
+}
+
+toolbarbutton[type="menu"] .toolbarbutton-icon {
+  margin-right: -2px;
+}
+

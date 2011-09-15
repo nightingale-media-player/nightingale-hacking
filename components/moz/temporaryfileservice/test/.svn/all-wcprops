@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/17621/trunk/components/moz/temporaryfileservice/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/17603/trunk/components/moz/temporaryfileservice/test/Makefile.in
+END
+test_temporary_file_factory.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/17621/trunk/components/moz/temporaryfileservice/test/test_temporary_file_factory.js
+END
+test_temporary_file_service.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/17621/trunk/components/moz/temporaryfileservice/test/test_temporary_file_service.js
+END

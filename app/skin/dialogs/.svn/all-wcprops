@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/client/!svn/ver/21174/trunk/app/skin/dialogs
+END
+deviceErrorDialog.css
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/18728/trunk/app/skin/dialogs/deviceErrorDialog.css
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/14087/trunk/app/skin/dialogs/Makefile.in
+END
+recommendedAddOnsWizard.css
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/10914/trunk/app/skin/dialogs/recommendedAddOnsWizard.css
+END
+firstRunWizard.css
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/21174/trunk/app/skin/dialogs/firstRunWizard.css
+END
+multiCDLookupResultsDialog.css
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/14995/trunk/app/skin/dialogs/multiCDLookupResultsDialog.css
+END
+importLibrary.css
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/9822/trunk/app/skin/dialogs/importLibrary.css
+END
+jobProgress.css
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/16997/trunk/app/skin/dialogs/jobProgress.css
+END
+preferences.css
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/20515/trunk/app/skin/dialogs/preferences.css
+END
+podcastCreationDialog.css
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/14514/trunk/app/skin/dialogs/podcastCreationDialog.css
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/6329/trunk/app/skin/dialogs/jar.mn.in
+END
+videoWinControls.css
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/18355/trunk/app/skin/dialogs/videoWinControls.css
+END
+smartPlaylist.css
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/16997/trunk/app/skin/dialogs/smartPlaylist.css
+END
+addons.css
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/7658/trunk/app/skin/dialogs/addons.css
+END
+playQueue.css
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/20490/trunk/app/skin/dialogs/playQueue.css
+END
+trackEditor.css
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/16997/trunk/app/skin/dialogs/trackEditor.css
+END
+deviceFirmwareWizard.css
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/14765/trunk/app/skin/dialogs/deviceFirmwareWizard.css
+END
+mediaimportWarningDialog.css
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/17271/trunk/app/skin/dialogs/mediaimportWarningDialog.css
+END
+deviceSetup.css
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/18431/trunk/app/skin/dialogs/deviceSetup.css
+END
+subscribe.css
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/7658/trunk/app/skin/dialogs/subscribe.css
+END
+mediacoreErrorDialog.css
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/14847/trunk/app/skin/dialogs/mediacoreErrorDialog.css
+END
+feedback.css
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/9245/trunk/app/skin/dialogs/feedback.css
+END
+videoWin.css
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/19236/trunk/app/skin/dialogs/videoWin.css
+END
+setupprogress.css
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/7658/trunk/app/skin/dialogs/setupprogress.css
+END
+watchFolders.css
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/7658/trunk/app/skin/dialogs/watchFolders.css
+END
+balloon.css
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/7658/trunk/app/skin/dialogs/balloon.css
+END

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+  type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://shoutcast-radio/skin/overlay.css"
+    type="text/css"?>
+
+<!DOCTYPE page SYSTEM "chrome://shoutcast-radio/locale/overlay.dtd">
+
+<?xul-overlay href="chrome://songbird/content/xul/mediaPageOverlay.xul"?>
+
+<page id="shoutcast-window"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  onload="setTimeout(function() { RadioDirectory.init();
+    }, 100);"
+  onunload="RadioDirectory.unload()">
+
+  <stringbundleset id="stringbundleset"> 
+    <stringbundle id="shoutcast-radio-strings"
+      src="chrome://shoutcast-radio/locale/overlay.properties"/>
+  </stringbundleset>  
+
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/songbirdInterfaces.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/windowUtils.js"/>
+    <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/browserUtilities.js"/>
+  
+  <script type="application/javascript" src="radioProperties.js"/>
+  <script type="application/javascript" src="shoutcast.js"/>
+  <script type="application/javascript" src="directory.js"/>
+
+  <hbox align="center" id="shoutcast-box">
+    <vbox flex="1" id="search-box" class="generic-bar">
+      <hbox>
+        <label class="text-link"
+  onclick="Components.classes['@mozilla.org/appshell/window-mediator;1']
+  .getService(Components.interfaces.nsIWindowMediator)
+  .getMostRecentWindow('Songbird:Main').gBrowser
+  .loadOneTab('http://shoutcast.com');"><image
+  src="chrome://shoutcast-radio/skin/shoutcast_wordmark.png" /></label>
+      </hbox>
+      <hbox class="header-actions">
+        <label>&shoutcast-radio.genre;</label>
+        <menulist oncommand="RadioDirectory.changeGenre(this)"
+          id="shoutcast-genre-menulist">
+        </menulist>
+        <spacer flex="0" style="width:1em;" />
+        <label control="filter">&shoutcast-radio.filter;</label>
+        <textbox id="filter" flex="1"
+          oninput="RadioDirectory.inputFilter(event)" />
+        <button id="clearFilter" label="&shoutcast-radio.clear;"
+          oncommand="RadioDirectory.clearFilter()"
+          disabled="true"/>
+        <button id="addStation" 
+          image="chrome://shoutcast-radio/skin/heart-header.png"
+          oncommand="RadioDirectory.addStation()" />
+        <!-- <spacer flex="2" /> -->
+      </hbox>
+    </vbox>
+  </hbox>
+
+  <deck id="loading-deck" flex="1" selectedIndex="0">
+    <vbox pack="center" flex="1">
+      <hbox pack="center">
+        <image src="chrome://songbird/skin/base-elements/icon-loading-medium.gif" />
+      </hbox>
+    </vbox>
+    <sb-playlist flex="1"
+      id="shoutcast-directory"
+      enableColumnDrag="true"
+      persist="column-list column-widths"
+      hidecolumnpicker="true"
+      editable="false" />
+  </deck>
+</page>

@@ -1,0 +1,546 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device tools panel widget.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-tools"
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox class="device-tab-content">
+
+        <!-- Product Registration -->
+        <xul:groupbox tool="register" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.product_registration.title;"/>
+          <xul:description>
+            &device.tools.product_registration.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.product_registration.label;"
+                        oncommand="registerDevice();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+        <!-- Update Firmware -->
+        <xul:groupbox sbid="sb-device-tools-update-box"
+                      tool="update" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.update_firmware.title;"/>
+          <xul:hbox>
+            <xul:label value="&device.tools.update_firmware.current_firmware.title;"/>
+            <xul:label sbid="sb-device-tools-cur-firmware-ver"/>
+          </xul:hbox>
+
+          <xul:vbox>
+            <xul:description>
+              &device.tools.update_firmware.description;
+            </xul:description>
+            <xul:hbox>
+              <xul:spacer flex="1"/>
+              <xul:button sbid="sb-device-tools-update-firmware-button"
+                          label="&device.tools.update_firmware.label;"
+                          oncommand="updateFirmware();"/>
+            </xul:hbox>
+          </xul:vbox>
+        </xul:groupbox>
+
+        <!-- Format Device -->
+        <xul:groupbox sbid="sb-device-tools-format-box"
+                      tool="format" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption sbid="sb-device-tools-format-caption" />
+          <xul:description sbid="sb-device-tools-format-description" />
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button sbid="sb-device-tools-format-button"
+                        label="&device.tools.format_volume.button.label;"
+                        oncommand="formatDevice();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+        <!-- Restore Device -->
+        <xul:groupbox sbid="sb-device-tools-restore-box"
+                      tool="restore" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.restore_device.title;" />
+          <xul:description xmlns="http://www.w3.org/1999/xhtml">
+            &device.tools.restore_device.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button sbid="sb-device-tools-restore-button"
+                        label="&device.tools.restore_device.label;"
+                        oncommand="repairDevice();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+        <!-- Support -->
+        <xul:groupbox tool="support" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.support.title;"/>
+          <xul:description>
+            &device.tools.support.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.support.label;"
+                        oncommand="support();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+
+        <!-- Reset Warnings -->
+        <xul:groupbox tool="resetwarnings" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.reset_warnings.title;"/>
+          <xul:description>
+            &device.tools.reset_warnings.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.reset_warnings.label;"
+                        oncommand="resetWarnings();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+      </xul:vbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+      <constructor><![CDATA[
+        Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+        Cu.import("resource://app/jsmodules/SBUtils.jsm");
+        Cu.import("resource://app/jsmodules/WindowUtils.jsm");
+
+        var toolsAttribute = this.getAttribute("tools");
+        var toolsList = toolsAttribute.split(",");
+
+        for(let i = 0; i < toolsList.length; ++i) {
+          let box = this._getToolBox(toolsList[i]);
+          if(box) {
+            box.hidden = false;
+          }
+        }
+
+        this.device = null;
+        this._firmwareHandler = null;
+        this._busyCheckTimer = null;
+        this._currentFirmwareVersion = null;
+        this._registerURI = null;
+        this._customerSupportLocation = null;
+      ]]>
+      </constructor>
+
+      <destructor><![CDATA[
+        this._finalize();
+
+        this.device = null;
+
+        if(this._busyCheckTimer) {
+          clearInterval(this._busyCheckTimer);
+        }
+        this._busyCheckTimer = null;
+      ]]>
+      </destructor>
+
+      <method name="_finalize">
+        <body><![CDATA[
+          if(this._firmwareHandler)
+            this._firmwareHandler.unbind();
+
+          this._firmwareHandler = null;
+          this._currentFirmwareVersion = null;
+          this._registerURI = null;
+          this._customerSupportLocation = null;
+
+          if(this.device && this.deviceChangeEvent) {
+            this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                       .removeEventListener(this.deviceChangeEvent);
+          }
+          this.deviceChangeEvent = null;
+        ]]></body>
+      </method>
+
+      <method name="registerDevice">
+        <body><![CDATA[
+          if (this._registerURI != null) {
+            this._openURL(this._registerURI);
+          }
+        ]]></body>
+      </method>
+
+      <method name="updateFirmware">
+        <body><![CDATA[
+          WindowUtils.openModalDialog
+            (window,
+             "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+             "device_firmware_dialog",
+             "",
+             [ "mode=update", "defaultDevice=false", this.device ],
+             null);
+         ]]></body>
+      </method>
+
+      <method name="formatDevice">
+        <body><![CDATA[
+          var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                           .getService(Ci.sbIPrompter);
+
+          // Get the device name and encode it for XML twice.  It will be
+          // decoded once by SBFormattedString and once again by the prompt
+          // dialog.
+          var deviceName = DOMUtils.encodeTextForXML(this.device.name);
+          deviceName = DOMUtils.encodeTextForXML(deviceName);
+
+          // Prompt the user, using HTML for the prompt message.
+          var title = SBString("device.dialog.format.title");
+          var msg = SBFormattedString("device.dialog.format.message",
+                                      [deviceName]);
+          prompter.renderHTML = true;
+          var confirmed = prompter.confirm(window, title, msg);
+
+          if (confirmed) {
+           this.device.format();
+          }
+        ]]></body>
+      </method>
+
+      <method name="repairDevice">
+        <body><![CDATA[
+          if (!this._firmwareHandler) {
+            var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                             .getService(Ci.sbIPrompter);
+
+            // Get the device name and encode it for XML twice.  It will be
+            // decoded once by SBFormattedString and once again by the prompt
+            // dialog.
+            var deviceName = DOMUtils.encodeTextForXML(this.device.name);
+            deviceName = DOMUtils.encodeTextForXML(deviceName);
+
+            // Prompt the user, using HTML for the prompt message.
+            var title = SBString("device.dialog.factoryrestore.title");
+            var msg = SBFormattedString("device.dialog.factoryrestore.message",
+                                        [deviceName]);
+            prompter.renderHTML = true;
+            var confirmed = prompter.confirm(window, title, msg);
+
+            if (confirmed) {
+              var bag = Cc["@mozilla.org/hash-property-bag;1"]
+                          .createInstance(Ci.nsIPropertyBag2);
+              this.device.submitRequest(
+                  Ci.sbIDevice.REQUEST_FACTORY_RESET, bag);
+            }
+          } else {
+            WindowUtils.openModalDialog
+              (window,
+               "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+               "device_firmware_dialog",
+               "",
+               [ "mode=repair", "defaultDevice=false", this.device ],
+               null);
+          }
+        ]]></body>
+      </method>
+
+      <method name="support">
+        <body><![CDATA[
+          if (this._customerSupportLocation != null) {
+            this._openURL(this._customerSupportLocation);
+          }
+        ]]></body>
+      </method>
+
+      <method name="resetWarnings">
+        <body><![CDATA[
+          this.device.resetWarningDialogs();
+        ]]></body>
+      </method>
+
+      <method name="_update">
+        <body>
+        <![CDATA[
+        if(!this._currentFirmwareVersion) {
+          this._currentFirmwareVersion =
+            this._getElement("sb-device-tools-cur-firmware-ver");
+        }
+
+        var firmwareVersion = null;
+        var deviceFirmwareUpdater =
+          Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+            .getService(Ci.sbIDeviceFirmwareUpdater);
+
+        // If we have a firmware handler for the device, use it to read
+        // the device firmware version instead of using the one provided
+        // by the device properties.
+        if(deviceFirmwareUpdater.hasHandler(this.device, 0, 0)) {
+          var handler = deviceFirmwareUpdater.getHandler(this.device, 0, 0);
+
+          var self = this;
+          var deviceListener = {
+            onDeviceEvent: function(aEvent) {
+              if (aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
+                  aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
+                let curFirmHandler = self._firmwareHandler;
+
+                try {
+                  self._registerURI = curFirmHandler.registerLocation;
+                  self._customerSupportLocation = curFirmHandler.customerSupportLocation;
+                }
+                catch(e) {
+                  Cu.reportError(e);
+                }
+
+                self._propertyLookup();
+              }
+            }
+          };
+
+          try {
+            handler.bind(this.device, deviceListener);
+            this._firmwareHandler = handler;
+            this._firmwareHandler.refreshInfo();
+          }
+          catch(err) {
+            Cu.reportError(err);
+            this._firmwareHandler.unbind();
+            this._firmwareHandler = null;
+          }
+
+          try {
+            firmwareVersion = handler.currentFirmwareReadableVersion;
+          }
+          catch(err) {
+            Cu.reportError(err);
+          }
+        }
+
+        if(firmwareVersion == null) {
+          try {
+            firmwareVersion = this.device.properties.firmwareVersion;
+          }
+          catch(err) { Cu.reportError(err); }
+        }
+
+        if (firmwareVersion == null) {
+          firmwareVersion = SBString("device.info.unknown");
+        }
+
+        this._currentFirmwareVersion.value = firmwareVersion;
+
+        if (!this.device.supportsReformat || !this.devLib) {
+          this._getToolBox("format").collapsed = true;
+        }
+        else {
+          this._getToolBox("format").removeAttribute("collapsed");
+          var self = this;
+          this.deviceChangeEvent = function(aEvent) {
+            if (aEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED) {
+              try {
+                self._updateBusyState();
+              } catch (e) {}
+            }
+          }
+
+          // Update the format tool caption.
+          var formatCaptionElem = this._getElement
+                                         ("sb-device-tools-format-caption");
+          formatCaptionElem.label = SBFormattedString
+                                      ("device.tools.format.title",
+                                       [ this.devLib.name ]);
+
+          // Update the format tool description.
+          var formatDescriptionElem =
+                this._getElement("sb-device-tools-format-description");
+          var descriptionText =
+                SBFormattedString("device.tools.format.description",
+                                  [ this.devLib.name ]);
+          SBUtils.setDescriptionText(formatDescriptionElem, descriptionText);
+
+          // Listen for device events.
+          this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                     .addEventListener(this.deviceChangeEvent);
+        }
+
+        this._startBusyCheck();
+        ]]></body>
+      </method>
+
+      <method name="_updateBusyState">
+        <body><![CDATA[
+          var formatBox = this._getElement("sb-device-tools-format-box");
+          var updateBox = this._getElement("sb-device-tools-update-box");
+          var restoreBox = this._getElement("sb-device-tools-restore-box");
+          var formatButton =
+            this._getElement("sb-device-tools-format-button");
+          var updateButton =
+            this._getElement("sb-device-tools-update-firmware-button");
+          var restoreButton =
+            this._getElement("sb-device-tools-restore-button");
+          if (this.device && this.device.isBusy) {
+            formatBox.setAttribute('disabled', 'true');
+            updateBox.setAttribute('disabled', 'true');
+            restoreBox.setAttribute('disabled', 'true');
+            formatButton.setAttribute('disabled', 'true');
+            updateButton.setAttribute('disabled', 'true');
+            restoreButton.setAttribute('disabled', 'true');
+          }
+          else {
+            formatBox.removeAttribute('disabled');
+            updateBox.removeAttribute('disabled');
+            restoreBox.removeAttribute('disabled');
+            formatButton.removeAttribute('disabled');
+            updateButton.removeAttribute('disabled');
+            restoreButton.removeAttribute('disabled');
+          }
+        ]]></body>
+      </method>
+
+      <method name="_startBusyCheck">
+        <body><![CDATA[
+          if(!this._busyCheckTimer) {
+            var self = this;
+            this._busyCheckTimer = setInterval(function() { self._updateBusyState(); }, 1000);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_propertyLookup">
+        <body><![CDATA[
+          if(!this._firmwareHandler) {
+            // no handler
+            for each (let id in ["support", "update", "register", "restore"]) {
+              this._getToolBox(id).collapsed = true;
+            }
+          }
+          else {
+            // Now hide irrelevant tool boxes, and check for an update
+            try {
+              var firmHandler = this._firmwareHandler;
+              if (firmHandler && firmHandler.registerLocation == null) {
+                this._getToolBox("register").collapsed = true;
+              }
+              if (!firmHandler || !firmHandler.canUpdate(this.device, 0, 0)) {
+                this._getToolBox("update").collapsed = true;
+                this._getToolBox("format").collapsed = true;
+                this._getToolBox("restore").collapsed = true;
+              }
+              if (firmHandler && firmHandler.customerSupportLocation == null) {
+                this._getToolBox("support").collapsed = true;
+              }
+              if (!firmHandler.defaultFirmwareUpdate) {
+                this._getToolBox("restore").collapsed = true;
+              }
+            } catch (e) {
+              Cu.reportError(e);
+            }
+          }
+
+          if (this._getToolBox("register").collapsed &&
+              this._getToolBox("update").collapsed &&
+              this._getToolBox("format").collapsed &&
+              this._getToolBox("restore").collapsed &&
+              this._getToolBox("support").collapsed)
+          {
+            // All toolboxes are hidden, we should just disable the Tools tab
+            this.setAttribute("disabledTab", "true");
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getToolBox">
+        <parameter name="aID"/>
+        <body>
+          return document.getAnonymousElementByAttribute(this, "tool", aID);
+        </body>
+      </method>
+
+      <method name="_openURL">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var browser = null;
+          if (typeof SBGetBrowser == 'function') {
+            browser = SBGetBrowser();
+          }
+
+          if (browser) {
+            browser.loadURI(aURL.spec, null, null, null);
+          }
+          else {
+            SBBrowserOpenURLInNewWindow(aURL.spec);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getElement">
+        <parameter name="aID"/>
+        <body>
+          return document.getAnonymousElementByAttribute(this, "sbid", aID);
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="deviceBound"
+               action="try { this._finalize(); this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
+
+      <handler event="devLibBound"
+               action="try { this._finalize(); this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
+    </handlers>
+  </binding>
+
+</bindings>

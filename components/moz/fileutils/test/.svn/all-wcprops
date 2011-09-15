@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/16638/trunk/components/moz/fileutils/test
+END
+test_directory_enumerator.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/13957/trunk/components/moz/fileutils/test/test_directory_enumerator.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/16638/trunk/components/moz/fileutils/test/Makefile.in
+END
+test_file_utils.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/16638/trunk/components/moz/fileutils/test/test_file_utils.js
+END

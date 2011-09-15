@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "Impossibile trovare l'artista per il brano in esecuzione">
+<!ENTITY mashTape.msg.no_review_found "Impossibile trovare recensioni per il brano in esecuzione">
+<!ENTITY mashTape.msg.no_rss_found "Impossibile trovare notizie per il brano in esecuzione">
+<!ENTITY mashTape.msg.no_photo_found "Impossibile trovare foto per il brano in esecuzione">
+<!ENTITY mashTape.msg.no_flash_found "Impossibile trovare video per il brano in esecuzione">

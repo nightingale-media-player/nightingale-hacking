@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/installer
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/installer/Makefile.in
+END
+package-manifest.in
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/installer/package-manifest.in
+END
+removed-files.in
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/installer/removed-files.in
+END

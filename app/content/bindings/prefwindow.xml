@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 : -->
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE bindings [
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd" >
+%songbirdDTD;
+<!ENTITY % preferencesDTD SYSTEM "chrome://global/locale/preferences.dtd" >
+%preferencesDTD;
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--
+    - PrefWindow binding with alternative element layout
+    - Looks more like Firebird 0.6 style (the prefpane chooser on the left)
+    -->
+  <binding id="prefwindow"
+           extends="chrome://global/content/bindings/preferences.xml#prefwindow">
+    <content dlgbuttons="accept,cancel" persist="lastSelected screenX screenY"
+             minwidth="600" minheight="500"
+             closebuttonlabel="&preferencesCloseButton.label;"
+             closebuttonaccesskey="&preferencesCloseButton.accesskey;"
+             role="dialog"
+             title="&preferencesDefaultTitleWin.title;">
+
+      <xul:vbox flex="1" class="prefWindowContainer">
+        <xul:hbox flex="1" class="paneDeckContainer">
+          <xul:radiogroup anonid="selector" orient="horizontal" class="paneSelector chromeclass-toolbar"
+                          role="listbox"/> <!-- Expose to accessibility APIs as a listbox -->
+          <xul:deck anonid="paneDeck" flex="1">
+            <children includes="prefpane"/>
+          </xul:deck>
+        </xul:hbox>
+  
+        <xul:hbox anonid="dlg-buttons" class="prefWindow-dlgbuttons"
+                  pack="end">
+          <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
+          <xul:spacer anonid="spacer" flex="1"/>
+          <xul:button dlgtype="accept" class="dialog-button" icon="accept"/>
+          <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
+          <xul:button dlgtype="cancel" class="dialog-button" icon="cancel"/>
+          <xul:button dlgtype="help" class="dialog-button" hidden="true" icon="help"/>
+          <xul:button dlgtype="disclosure" class="dialog-button" hidden="true"/>
+        </xul:hbox>
+      </xul:vbox>
+    
+      <xul:hbox>
+        <children/>
+      </xul:hbox>
+    </content>
+    
+    <!-- fixes for things that assumed a particular layout -->
+    <implementation>
+      <constructor>
+        var docElem = document.documentElement;
+        this._selector.parentNode.showPane =
+          function(){ return docElem.showPane.apply(docElem, arguments); }
+      </constructor>
+    </implementation>
+  </binding>
+  
+  <!--
+    - Binding to make the deck resize to the selected panel for 
+    - http://bugzilla.songbirdnest.com/show_bug.cgi?id=21401
+    -->
+  <binding id="sb-deck"
+           extends="chrome://global/content/bindings/general.xml#deck">
+    
+    <!-- handle the deck's select event -->
+    <handlers>
+      <handler event="select" action="onSelect()"/>
+    </handlers>
+    
+    <implementation>
+    
+      <!-- hide unselected panes on construction -->
+      <constructor>
+        this.onSelect();
+      </constructor>
+      
+      <!-- hide unselected panes on construction -->
+      <method name="onSelect">
+        <body>
+        <![CDATA[
+          // Show the selected panel, hide others.
+          for (var i = 0; i < this.childNodes.length; i++) {
+            if (this.childNodes[i] == this.selectedPanel) {
+              this.childNodes[i].removeAttribute("collapsed");
+            } else {
+              this.childNodes[i].setAttribute("collapsed", "true");
+            }
+          }
+        ]]>
+        </body>
+      </method>
+      
+    </implementation>
+      
+  </binding>
+
+</bindings>

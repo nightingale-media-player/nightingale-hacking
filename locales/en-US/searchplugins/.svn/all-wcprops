@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/19555/trunk/locales/en-US/searchplugins
+END
+yahoo-lyrics.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/4475/trunk/locales/en-US/searchplugins/yahoo-lyrics.xml
+END
+songbird-internal-search.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19555/trunk/locales/en-US/searchplugins/songbird-internal-search.xml
+END
+partner-internal-search.xml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/16997/trunk/locales/en-US/searchplugins/partner-internal-search.xml
+END
+elbows.xml
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/6856/trunk/locales/en-US/searchplugins/elbows.xml
+END
+google-lyrics.xml
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/4343/trunk/locales/en-US/searchplugins/google-lyrics.xml
+END

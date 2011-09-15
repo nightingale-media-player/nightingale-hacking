@@ -1,0 +1,187 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsIGenericFactory.h"
+
+#include "sbBooleanPropertyInfo.h"
+#include "sbDatetimePropertyInfo.h"
+#include "sbDurationPropertyInfo.h"
+#include "sbDownloadButtonPropertyBuilder.h"
+#include "sbImagePropertyBuilder.h"
+#include "sbImageLabelLinkPropertyBuilder.h"
+#include "sbImageLabelLinkPropertyInfo.h"
+#include "sbNumberPropertyInfo.h"
+#include "sbPropertyArray.h"
+#include "sbPropertyFactory.h"
+#include "sbPropertyManager.h"
+#include "sbOriginPageImagePropertyBuilder.h"
+#include "sbRatingPropertyBuilder.h"
+#include "sbSimpleButtonPropertyBuilder.h"
+#include "sbStatusPropertyBuilder.h"
+#include "sbStoragePropertyUnitConverter.h"
+#include "sbTextPropertyInfo.h"
+#include "sbURIPropertyInfo.h"
+
+#include "sbPropertiesCID.h"
+
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyArray, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyFactory);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
+
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyOperator);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDatetimePropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDurationPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbNumberPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTextPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbURIPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImageLabelLinkPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbBooleanPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDownloadButtonPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStatusPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSimpleButtonPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImagePropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImageLabelLinkPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRatingPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbOriginPageImagePropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbStoragePropertyUnitConverter);
+
+static const nsModuleComponentInfo components[] =
+{
+  {
+    SB_MUTABLEPROPERTYARRAY_DESCRIPTION,
+    SB_MUTABLEPROPERTYARRAY_CID,
+    SB_MUTABLEPROPERTYARRAY_CONTRACTID,
+    sbPropertyArrayConstructor
+  },
+  {
+    SB_PROPERTYFACTORY_DESCRIPTION,
+    SB_PROPERTYFACTORY_CID,
+    SB_PROPERTYFACTORY_CONTRACTID,
+    sbPropertyFactoryConstructor
+  },
+  {
+    SB_PROPERTYMANAGER_DESCRIPTION,
+    SB_PROPERTYMANAGER_CID,
+    SB_PROPERTYMANAGER_CONTRACTID,
+    sbPropertyManagerConstructor
+  },
+  {
+    SB_PROPERTYOPERATOR_DESCRIPTION,
+    SB_PROPERTYOPERATOR_CID,
+    SB_PROPERTYOPERATOR_CONTRACTID,
+    sbPropertyOperatorConstructor
+  },
+  {
+    SB_DATETIMEPROPERTYINFO_DESCRIPTION,
+    SB_DATETIMEPROPERTYINFO_CID,
+    SB_DATETIMEPROPERTYINFO_CONTRACTID,
+    sbDatetimePropertyInfoConstructor
+  },
+  {
+    SB_DURATIONPROPERTYINFO_DESCRIPTION,
+    SB_DURATIONPROPERTYINFO_CID,
+    SB_DURATIONPROPERTYINFO_CONTRACTID,
+    sbDurationPropertyInfoConstructor
+  },
+  {
+    SB_NUMBERPROPERTYINFO_DESCRIPTION,
+    SB_NUMBERPROPERTYINFO_CID,
+    SB_NUMBERPROPERTYINFO_CONTRACTID,
+    sbNumberPropertyInfoConstructor
+  },
+  {
+    SB_TEXTPROPERTYINFO_DESCRIPTION,
+    SB_TEXTPROPERTYINFO_CID,
+    SB_TEXTPROPERTYINFO_CONTRACTID,
+    sbTextPropertyInfoConstructor
+  },
+  {
+    SB_URIPROPERTYINFO_DESCRIPTION,
+    SB_URIPROPERTYINFO_CID,
+    SB_URIPROPERTYINFO_CONTRACTID,
+    sbURIPropertyInfoConstructor
+  },
+  {
+    SB_BOOLEANPROPERTYINFO_DESCRIPTION,
+    SB_BOOLEANPROPERTYINFO_CID,
+    SB_BOOLEANPROPERTYINFO_CONTRACTID,
+    sbBooleanPropertyInfoConstructor
+  },
+  {
+    SB_DOWNLOADBUTTONPROPERTYBUILDER_DESCRIPTION,
+    SB_DOWNLOADBUTTONPROPERTYBUILDER_CID,
+    SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID,
+    sbDownloadButtonPropertyBuilderConstructor
+  },
+  {
+    SB_STATUSPROPERTYBUILDER_DESCRIPTION,
+    SB_STATUSPROPERTYBUILDER_CID,
+    SB_STATUSPROPERTYBUILDER_CONTRACTID,
+    sbStatusPropertyBuilderConstructor
+  },
+  {
+    SB_SIMPLEBUTTONPROPERTYBUILDER_DESCRIPTION,
+    SB_SIMPLEBUTTONPROPERTYBUILDER_CID,
+    SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID,
+    sbSimpleButtonPropertyBuilderConstructor
+  },
+  {
+    SB_SBIMAGELABELLINKPROPERTYINFO_DESCRIPTION,
+    SB_SBIMAGELABELLINKPROPERTYINFO_CID,
+    SB_SBIMAGELABELLINKPROPERTYINFO_CONTRACTID,
+    sbImageLabelLinkPropertyInfoConstructor
+  },
+  {
+    SB_IMAGEPROPERTYBUILDER_DESCRIPTION,
+    SB_IMAGEPROPERTYBUILDER_CID,
+    SB_IMAGEPROPERTYBUILDER_CONTRACTID,
+    sbImagePropertyBuilderConstructor
+  },
+  {
+    SB_SBIMAGELABELLINKPROPERTYBUILDER_DESCRIPTION,
+    SB_SBIMAGELABELLINKPROPERTYBUILDER_CID,
+    SB_SBIMAGELABELLINKPROPERTYBUILDER_CONTRACTID,
+    sbImageLabelLinkPropertyBuilderConstructor
+  },
+  {
+    SB_RATINGPROPERTYBUILDER_DESCRIPTION,
+    SB_RATINGPROPERTYBUILDER_CID,
+    SB_RATINGPROPERTYBUILDER_CONTRACTID,
+    sbRatingPropertyBuilderConstructor
+  },
+  {
+    SB_ORIGINPAGEIMAGEPROPERTYBUILDER_DESCRIPTION,
+    SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CID,
+    SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CONTRACTID,
+    sbOriginPageImagePropertyBuilderConstructor
+  },
+  {
+    SB_STORAGEPROPERTYUNITCONVERTER_DESCRIPTION,
+    SB_STORAGEPROPERTYUNITCONVERTER_CID,
+    SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID,
+    sbStoragePropertyUnitConverterConstructor
+  }
+};
+
+NS_IMPL_NSGETMODULE(SongbirdPropertiesModule, components)

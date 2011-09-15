@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/12869/trunk/components/watchfolder/test/files/moverename/dir1/dir2
+END
+movedFile1.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/12869/trunk/components/watchfolder/test/files/moverename/dir1/dir2/movedFile1.mp3
+END
+movedFile2.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/12869/trunk/components/watchfolder/test/files/moverename/dir1/dir2/movedFile2.mp3
+END
+randomfile.txt
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/12869/trunk/components/watchfolder/test/files/moverename/dir1/dir2/randomfile.txt
+END

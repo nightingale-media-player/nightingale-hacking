@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Songbird target application. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <!-- Register a pane to be displayed below the service sidebar.
+         See http://songbirdnest.com/add-on-api/articles/display-panes -->
+    <songbird:displayPane>
+      <Description>
+        <songbird:contentTitle>Mock CD Test</songbird:contentTitle>
+        <songbird:contentUrl>chrome://mockcdcontroller/content/pane.xul</songbird:contentUrl>
+        <songbird:contentIcon>chrome://albumart/skin/icon-albumart.png</songbird:contentIcon>
+        <songbird:defaultWidth>200</songbird:defaultWidth>
+        <songbird:defaultHeight>175</songbird:defaultHeight>
+        <songbird:suggestedContentGroups>contentpane</songbird:suggestedContentGroups>
+        <songbird:showOnInstall>false</songbird:showOnInstall>
+      </Description>
+    </songbird:displayPane>
+
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:name>QA Test Tools</em:name>
+    <em:description>QA test tools.</em:description>
+    <em:creator>@SB_VENDOR@</em:creator>
+    <em:contributor>r3dv3lv3t (Original Author)</em:contributor>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:type>2</em:type>
+
+  </Description>
+</RDF>
+

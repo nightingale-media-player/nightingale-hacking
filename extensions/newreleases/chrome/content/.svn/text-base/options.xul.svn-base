@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/*
+ *
+ *=BEGIN SONGBIRD LICENSE
+ *
+ * Copyright(c) 2009-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact POTI, Inc. at customer@songbirdnest.com.
+ *
+ *=END SONGBIRD LICENSE
+ *
+ */
+-->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://newreleases/skin/options.css" type="text/css"?>
+<!DOCTYPE prefwindow [
+	<!ENTITY % newReleasesDTD SYSTEM "chrome://newreleases/locale/options.dtd">
+	%newReleasesDTD;
+	<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+	%songbirdDTD;
+]>
+
+<!-- This is probably horribly out of date since migrating from Concerts -->
+<prefwindow id="newReleasesPreferences"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	title="&prefwindow.title;"
+	onload="NewReleaseOptions.init();">
+<prefpane id="mainpane">
+
+	<script type="text/javascript" src="chrome://newreleases/content/options.js"/>
+	<preferences>
+		<preference id="country" type="string"
+			name="extensions.newreleases.country" />
+	</preferences>
+
+	<label class="prefs-header" value="&prefs.caption;" />
+	<grid class="location" style="padding-bottom: 1em;">
+		<columns>
+			<column flex="1" />
+			<column flex="1" />
+			<column flex="1" />
+		</columns>
+
+		<command id="changeCountry"
+					oncommand="NewReleaseOptions.changeCountry(this);" />
+		<rows>
+			<row>
+				<label class="location-header" value="&prefs.country;" />
+			</row>
+			<row>
+				<menulist id="menulist-country" command="changeCountry"
+					style="width:6em;">
+				</menulist>
+			</row>
+		</rows>
+	</grid>
+
+	<html:hr />
+
+	<hbox pack="end" style="padding-top: 1em;">
+		<command id="save" oncommand="NewReleaseOptions.save();" />
+		<command id="cancel" oncommand="NewReleaseOptions.cancel();" />
+		<button label="&window.cancel;" command="cancel"/>
+		<button label="&window.ok;" command="save"/>
+	</hbox>
+</prefpane>
+</prefwindow>

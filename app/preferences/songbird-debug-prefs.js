@@ -1,0 +1,8 @@
+/* debugging prefs */
+pref("browser.dom.window.dump.enabled", true);
+pref("javascript.options.showInConsole", true);
+pref("javascript.options.strict", true);
+pref("nglayout.debug.disable_xul_fastload", true);
+pref("extensions.logging.enabled", true);
+pref("songbird.first_run.allow_skip", true);
+pref("feedback.disabled", true);

@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "フィルタ">
+<!ENTITY shoutcast-radio.genre "ジャンル">
+<!ENTITY shoutcast-radio.clear "すべて表示">
+<!ENTITY shoutcast-radio.add-station "ステーションを追加">
+<!ENTITY shoutcast-radio.enter-name "ステーション名を入力してください">
+<!ENTITY shoutcast-radio.station-name "ステーション名">
+<!ENTITY shoutcast-radio.enter-url "SHOUTcast ステーションの URL を入力してください">
+<!ENTITY shoutcast-radio.enter-genre "ステーションのジャンルを選択してください">

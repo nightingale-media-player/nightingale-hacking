@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 : -->
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE bindings [
+<!ENTITY % mozillaDTD SYSTEM "chrome://browser/locale/preferences/main.dtd">
+%mozillaDTD;
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd" >
+%songbirdDTD;
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--
+    - Binding for a groupbox that offers radio buttons to choose between
+    - a user-specified folder or an alternate "ask" option.  A "browse"
+    - button allows the user to select a folder from a folder picker
+    - dialog.  Properties expose the current radio button selection, the
+    - chosen folder, and the labels for the various elements.  Ideal for
+    - capturing and displaying a save location pref.
+    -->
+  <binding id="sb-savefolder-box">
+    
+    <content nobrowse="true"
+             browseLabel="&chooseFolderWin.label;"
+             folderLabel="&saveTo.label;"
+             askLabel="&alwaysAsk.label;">
+      <xul:groupbox flex="1">
+        <xul:caption sbid="caption"/>
+        <xul:radiogroup oncommand="_onCommand()">
+          <xul:hbox>
+            <xul:radio sbid="radioSaveTo" xbl:inherits="label=folderLabel" selected="false"/>
+            <xul:sb-filefield sbid="sb-filefield" flex="1" xbl:inherits="disabled=nobrowse"/>
+            <xul:button oncommand="_onBrowse()"
+                        xbl:inherits="disabled=nobrowse, label=browseLabel"
+                        />
+          </xul:hbox>
+          <xul:radio sbid="radioAlwaysAsk" xbl:inherits="label=askLabel" selected="true"/>
+        </xul:radiogroup>
+      </xul:groupbox>
+    </content>
+    
+    <implementation>
+
+      <field name="_caption" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "caption")
+      </field>
+      <field name="_filefield" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-filefield")
+      </field>
+      <field name="_radioAlwaysAsk" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "radioAlwaysAsk")
+      </field>
+      <field name="_browseWindowTitle">"&saveTo.label;"</field>
+      
+      <!--
+      - The main label for the whole groupbox
+      -->
+      <property name="title"  onget="return this._caption.label">
+        <setter>
+        <![CDATA[
+          this._caption.label = val; 
+          return this.title;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - The chosen folder.  The user can click the browse button to
+      - change this value.
+      -->
+      <property name="folder"  onget="return this._filefield.file">
+        <setter>
+        <![CDATA[
+          this._filefield.file = val; 
+          return this.folder;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - The label for the folder radio button
+      -->
+      <property name="folderLabel" onget="return this.getAttribute('folderLabel')">
+        <setter>
+        <![CDATA[
+          this.setAttribute('folderLabel', val);
+          return this.folderLabel;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - The label for the folder browse button
+      -->
+      <property name="browseLabel" onget="return this.getAttribute('browseLabel')">
+        <setter>
+        <![CDATA[
+          this.setAttribute('browseLabel', val);
+          return this.browseLabel;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - The prompt string for the folder picker window that appears when
+      - the user clicks the browse button
+      -->
+      <property name="browseWindowTitle" onget="return this._browseWindowTitle">
+        <setter>
+        <![CDATA[
+          this._browseWindowTitle = val;
+          return this.browseWindowTitle;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - True when the "ask me" radio button is selected, false when the
+      - "use this folder" radio button is selected.  The folder browse
+      - button is disabled when this is true.
+      -->
+      <property name="ask"  onget="return this._radioAlwaysAsk.selected">
+        <setter>
+        <![CDATA[
+          this._radioAlwaysAsk.radioGroup.selectedIndex = val ? 1 : 0;
+          this._update();
+          return this.ask;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - The label for the "ask me" radio button
+      -->
+      <property name="askLabel" onget="return this.getAttribute('askLabel')">
+        <setter>
+        <![CDATA[
+          this.setAttribute('askLabel', val);
+          return this.askLabel;
+        ]]>
+        </setter>
+      </property>
+      
+      <!--
+      - Enable/disable controls according to the currently
+      - selected radio button
+      -->
+      <method name="_update">
+        <body>
+        <![CDATA[
+          this.setAttribute("nobrowse", this.ask);
+        ]]>
+        </body>
+      </method>
+
+      <!--
+      - Present a folder picker when the browse button is clicked
+      - and update the folder property accordingly
+      -->
+      <method name="_onBrowse">
+        <body>
+        <![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+          var folderPicker = Cc["@mozilla.org/filepicker;1"].
+                             createInstance(Ci.nsIFilePicker);
+          folderPicker.init(window, this.browseWindowTitle, Ci.nsIFilePicker.modeGetFolder);
+          folderPicker.displayDirectory = this.folder;
+
+          if (folderPicker.show() == Ci.nsIFilePicker.returnOK) {
+            this.folder = folderPicker.file;
+          }
+          
+          return this.folder;
+        ]]>
+        </body>
+      </method>
+
+      <!--
+      - Respond to any control clicks
+      -->
+      <method name="_onCommand">
+        <body>
+        <![CDATA[
+          this._update();
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+      
+  </binding>
+
+</bindings>

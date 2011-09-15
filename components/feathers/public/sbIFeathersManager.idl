@@ -1,0 +1,339 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIFeathersManager.idl
+ * \brief Interfaces for the Feathers Manager, which coordinates the loading 
+ *        of feathers (combination of skin and XUL window layout)
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface sbILayoutDescription;
+interface sbISkinDescription;
+
+interface sbIFeathersManagerListener;
+
+
+/**
+* \interface sbIFeathersManager
+* \brief Controls the appearance of the application
+*
+* Acts as a registry for installed skins and alternate XUL windows,
+* and provides a mechanism for switching between them.
+*
+* \sa sbISkinDescription, sbILayoutDescription, sbIFeathersChangeListener
+*/
+[scriptable, uuid(61c28aec-66a6-49f2-85df-9629c7e3d84f)]
+interface sbIFeathersManager : nsISupports
+{
+  /**
+   * \brief URL for the active layout
+   */
+  readonly attribute AString currentLayoutURL;
+  
+  /**
+   * \brief Skin internalName string for the active skin
+   */
+  readonly attribute AString currentSkinName;
+
+  /**
+   * \brief URL for the previously active or default layout
+   */
+  readonly attribute AString previousLayoutURL;
+  
+  /**
+   * \brief Skin internalName string for the previously active or default skin
+   */
+  readonly attribute AString previousSkinName;
+
+  /**
+   * \brief Enumerator for all registered sbISkinDescription objects
+   */
+  nsISimpleEnumerator getSkinDescriptions();
+
+
+  /**
+   * \brief Number of registered skins
+   */
+  readonly attribute unsigned long skinCount;
+
+
+  /**
+   * \brief Enumerator for all registered sbILayoutDescription objects
+   */
+  nsISimpleEnumerator getLayoutDescriptions();
+
+
+  /**
+   * \brief Number of registered XUL windows
+   */
+  readonly attribute unsigned long layoutCount;
+
+
+
+  /**
+   * \brief Make the given skin available for use
+   *   
+   * Register the the given skin description.
+   * Note that any existing registration with the same
+   * skin provider name will be overwritten.
+   *
+   * \param aSkin Skin description
+   */
+  void registerSkin(in sbISkinDescription aSkin);
+  
+  /**
+   * \brief Disable the given skin
+   * \param aSkin Skin description
+   */
+  void unregisterSkin(in sbISkinDescription aSkin);
+
+  /**
+   * \brief Gets the full skin description associated with a skin identifier
+   *
+   * \param aInternalName Skin identifier (provider)
+   * \return Skin description
+   */
+  sbISkinDescription getSkinDescription(in AString aInternalName);
+
+
+
+  /**
+   * \brief Make the given XUL window available for use
+   *
+   * Register the the given layout description.
+   * Note that any existing registration with the same
+   * URL will be overwritten.
+   *
+   * \param aLayout Window description
+   */
+  void registerLayout(in sbILayoutDescription aLayout);
+
+  /**
+   * \brief Disable the given window
+   * \param aLayout Window description
+   */    
+  void unregisterLayout(in sbILayoutDescription aLayout);
+
+  /**
+   * \brief Gets the full layout description associated with a layout URL
+   *
+   * \param aLayoutURL Unique identifier
+   * \return Layout description
+   */
+  sbILayoutDescription getLayoutDescription(in AString aLayoutURL);
+
+
+
+  /**
+   * \brief Assert compatibility of a skin-layout pair
+   *
+   * Indicate that layoutURL and internalName can be active at the same time, 
+   * and whether the window chrome (titlebar, borders) should be shown.
+   *
+   * Note that the given skin and xul window IDs do not need to be registered with the
+   * feathers manager. 
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \param aShowChrome Whether or not the OS titlebar should be used 
+   *        when the skin-window pair is active
+   */
+  void assertCompatibility(in AString aLayoutURL,
+                           in AString aInternalName,
+                           in boolean aShowChrome,
+                           in boolean onTop);
+ 
+
+  
+  /**
+   * \brief Unassert compatibility of a skin-layout pair
+   *
+   * Indicate that layoutURL and internalName cannot be active at the same time.
+   *
+   * TODO: Throw an exception if the mapping is currently in use?
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   */
+  void unassertCompatibility(in AString aLayoutURL,
+                             in AString aInternalName);
+ 
+  
+  
+  /**
+   * \brief Designate a default layout for a skin. 
+   *
+   * NOTE: The default layout can be set in the RDF install of a feather
+   *       by specifiying a |<songbird:isDefault>true</songbird:isDefault>|
+   *       tag in the skin description.
+   *
+   *       If no default layout has been specified, than the layoutURL that
+   *       is first listed in the install RDF will be specified as the default.
+   *
+   * \param aLayoutURL URL for a XUL winodw
+   * \param aInternalName Identifier for a skin.
+   */
+  void setDefaultLayout(in AString aLayoutURL, in AString aInternalName);
+  
+  
+  
+  /**
+   * \brief Get the default layout (as a URL) for a given skin name.
+   *
+   * NOTE: The default layout can be set in the RDF install of a feather
+   *       by specifiying a |<songbird:isDefault>true</songbird:isDefault>|
+   *       tag in the skin description.
+   *
+   *       If no default layout has been specified, than the layoutURL that
+   *       is first listed in the install RDF will be specified as the default.
+   *
+   * \param aInternalName The identifier for a skin.
+   * \return The URL for the default XUL window.
+   */
+  AString getDefaultLayout(in AString aInternalName);
+  
+
+  
+  /**
+   * \brief Should window chrome be used with the given window-skin pair
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \return True if the given pair should be displayed with native chrome (titlebar, etc.)
+   */
+  boolean isChromeEnabled(in AString aLayoutURL,
+                          in AString aInternalName);
+
+
+
+  /**
+   * \brief Should the window be kept on top
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \return True if the given pair should be kept on top
+   */
+  boolean isOnTop(in AString aLayoutURL,
+                  in AString aInternalName);
+
+
+  /**
+   * \brief Should the window be kept on top
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \param aOnTop Should the window be kept on top
+   */
+  void setOnTop(in AString aLayoutURL,
+                in AString aInternalName,
+                in boolean aOnTop);
+
+
+  /**
+   * \brief Can the window be kept on top
+   *
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \return True if the given pair can be kept on top
+   */
+  boolean canOnTop(in AString aLayoutURL,
+                   in AString aInternalName);
+
+
+
+  /**
+   * \brief Get an enumerator for all registered skins compatible with 
+   *        the given layoutID
+   * 
+   * \param aLayoutURL URL for a xul window
+   * \return Enumerator for a list of sbISkinDescription objects
+   */
+  nsISimpleEnumerator getSkinsForLayout(in AString aLayoutURL);
+
+
+  /**
+   * \brief Get an enumerator for all registered layouts compatible with 
+   *        the given skin
+   * 
+   * \param aInternalName Identifier for a skin
+   * \return Enumerator for a list of sbILayoutDescription objects
+   */
+  nsISimpleEnumerator getLayoutsForSkin(in AString aInternalName);
+
+
+  /**
+   * \brief Switch to the given window-skin pair
+   *
+   * Attempts to reopen all Songbird windows using the given
+   * layout and skin.
+   *
+   * Note: triggers the onSelectRequest callback
+   * 
+   * \param aLayoutURL URL for a xul window
+   * \param aInternalName Identifier for a skin
+   * \sa sbIFeathersChangeListener
+   * \throws NS_ERROR_FAILURE if the given feathers are invalid or incompatible
+   */
+  void switchFeathers(in AString aLayoutURL, 
+                      in AString aInternalName);
+                      
+
+  /**
+   * \brief Switch to the next layout for the current loaded feather.
+   */
+  void switchToNextLayout();
+
+  /**
+   * \brief Launch the player window for the current feathers
+   *
+   * Attempts to open the XUL player window layout for the
+   * current feathers.  If the current layout or skin
+   * is invalid, the default feathers will be loaded instead.
+   */
+  void openPlayerWindow();
+
+
+  /**
+   * \brief Register to receive modification callbacks
+   * 
+   * \param aListener Callback interface
+   */
+  void addListener(in sbIFeathersManagerListener aListener);
+
+  /**
+   * \brief Unregister modification callbacks
+   * 
+   * \param aListener Callback interface
+   */
+  void removeListener(in sbIFeathersManagerListener aListener);
+};
+
+
+
+

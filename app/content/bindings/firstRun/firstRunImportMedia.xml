@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * First run import media widget.
+   *
+   *   This widget provides a first run import media UI.  It extends
+   *   sb-wizard-page directly - rather than being enclosed in one - so
+   *   it can easily use the sb-wizard-page.visited property.
+   *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-first-run-import-media"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <xbl:content
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+      <vbox anonid="container_box" class="sb-first-run-import-media-box">
+
+        <!-- Header. -->
+        <label class="sb-first-run-header"
+               value="&first_run.import_media.header.label;"/>
+        <description>&first_run.import_media.description;</description>
+
+        <!-- Radio group. -->
+        <radiogroup anonid="import_radiogroup"
+                    oncommand="_doCommand(event);">
+
+          <!-- Scan directories radio button. -->
+          <radio anonid="scan_directories_radio"
+                 value="scan_directories"
+                 label="&first_run.import_media.radio.scan_directories.label;"/>
+          <description
+            class="indent sb-first-run-import-media-sub-radio can-disable"
+            parentradio="scan_directories_radio">
+            &first_run.import_media.scan_directories.description;
+          </description>
+          <hbox class="indent">
+            <textbox anonid="scan_directory_textbox"
+                     class="sb-first-run-import-media-scan-directory-textbox"
+                     parentradio="scan_directories_radio"/>
+            <button label="&window.browse;"
+                    parentradio="scan_directories_radio"
+                    action="browse_scan_directory"/>
+          </hbox>
+          <checkbox
+            anonid="scan_directories_watch_checkbox"
+            class="indent sb-first-run-import-media-sub-radio"
+            label="&first_run.import_media.scan_directories.watch.label;"
+            parentradio="scan_directories_radio"
+            checked="true"/>
+
+          <!-- Don't import radio button. -->
+          <radio anonid="dont_import_radio"
+                 value="dont_import"
+                 label="&first_run.import_media.radio.dont_import.label;"/>
+
+        </radiogroup>
+
+      </vbox>
+
+    </xbl:content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           First-run import media widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new firstRunImportMediaSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Save the user settings in the first-run-wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        // This page may be skipped.  Only save if it was visited:
+        if (this.visited) {
+          this._widgetSvc.saveSettings();
+        }
+      ]]></body></method>
+
+
+      <!--
+       * Handle the command event specified by aEvent.
+       *
+       * \param aEvent          Command event.
+       -->
+
+      <method name="_doCommand">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this._widgetSvc.doCommand(aEvent);
+        ]]></body>
+      </method>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the device control services.
+        if (typeof(firstRunImportMediaSvc) == "undefined") {
+          var jsLoader;
+
+          // Get the Javascript sub-script loader services.
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
+                                   "firstRun/firstRunImportMedia.js",
+                                 null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- sb-first-run-import-media -->
+
+</bindings>
+

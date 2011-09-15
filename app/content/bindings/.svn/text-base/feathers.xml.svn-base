@@ -1,0 +1,546 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!--
+    A binding that adds feathers-related menu elements that allows selection of feathers
+    skin and layout
+  -->
+  <binding
+    id="feathers-menuitems" 
+    extends="chrome://songbird/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
+  >
+    <content/>
+    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
+      <constructor>
+      <![CDATA[
+        this._feathersManager = 
+          Components.classes["@songbirdnest.com/songbird/feathersmanager;1"]
+                    .getService(Components.interfaces.sbIFeathersManager);
+          
+        this._nativeWinManager = 
+          Components.classes["@songbirdnest.com/integration/native-window-manager;1"]
+                    .getService(Components.interfaces.sbINativeWindowManager);
+          
+        this._currentLayout = null;
+        this._currentSkin = null;
+        
+        // NOTE: this would be much nicer in the base class but their constructor fires first!
+        // We need to explicitly call onPopupShowing() here since the first
+        // time this constructor is called it is after the popupshowing event
+        // has fired.
+        this.onPopupShowing();
+      ]]>
+      </constructor>
+
+      <destructor>
+      <![CDATA[
+        this._feathersManager = null;
+        this._nativeWinManager = null;
+        this._currentLayout = null;
+        this._currentSkin = null;
+      ]]>
+      </destructor>
+
+      <!--
+        Called when a child menuitem is selected.  Attempts 
+        to switch feathers based on the properties of the
+        menuitem.
+      -->
+      <method name="onCommand">
+        <parameter name="item"/>
+        <body>
+        <![CDATA[
+          switch (item.getAttribute("name")) {
+            case "feathers.getmore":
+              var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
+                                        .getService(Components.interfaces.nsIURLFormatter);
+              var getMoreURL = formatter.formatURLPref("extensions.getMoreThemesURL");
+              if (typeof gBrowser != 'undefined') {
+                gBrowser.loadURI(getMoreURL, null, null, null, "_blank");
+              } else {
+                SBBrowserOpenURLInNewWindow(getMoreURL);
+              }
+              return true;
+              break;
+
+            case "feathers.item":
+              var skinName = item.getAttribute("skinName");              
+              var layoutURL = item.getAttribute("layoutURL");
+
+              // Only get the default layout if we are switching to a different skin.
+              if (skinName != this._currentSkin) {
+                layoutURL = this._feathersManager.getDefaultLayout(skinName);
+              }
+
+              // Make sure something changed before we reload the GUI.
+              if (layoutURL != this._currentLayout || skinName != this._currentSkin) {
+                this._feathersManager.switchFeathers(layoutURL, skinName);
+              }
+
+              return true;
+              break;
+
+            default:
+              return false;
+              break;
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <!--  NOTE: this function uses _addToMenu directly instead of returning an array of content -->
+      <!--        either method is fine, and here this one probably makes more sense  -->
+      <method name="generateMenuItems">
+        <body>
+        <![CDATA[
+          /*
+           Create the feather related portion of the view menu. This involves
+           building a 2-nd tier level menu with the list of all the feathers
+           installed and an associatd list of the available views for the 
+           current selected feather. The output of this method will create
+           a menu that looks like this:
+
+           ------------------------------- 
+           | Feathers                 >  | -----------------------------
+           |-----------------------------| |   Dove                    |
+           | X Full Media Web Player     | |   Killer Eagle            |
+           |   Min Media Player          | | X Rubber Ducky (default)  |
+           |   ...                       | |---------------------------|
+           |-----------------------------| | Get More Feathers...      |
+             (if supports "ontop" mode:)   -----------------------------
+           |-----------------------------|
+           | X Always On Top             |
+           |-----------------------------|
+                                           
+           */
+          
+          this._currentLayout = this._feathersManager.currentLayoutURL; 
+          this._currentSkin = this._feathersManager.currentSkinName;
+
+          // Add the "Feathers" menu
+          var allFeathersLabel = "feathers.allfeathers";
+          try {
+            allFeathersLabel =
+              this._stringBundle.GetStringFromName(allFeathersLabel);
+          }
+          catch (e) { 
+          }
+
+          var allFeathers = document.createElement("menu");
+          allFeathers.setAttribute("label", allFeathersLabel);
+          
+          var allFeathersPopup = document.createElement("menupopup");
+          allFeathers.appendChild(allFeathersPopup);
+           
+          this._addToMenu(allFeathers);
+          this._addToMenu(document.createElement("menuseparator"));
+          this.appendCurrentFeatherLayoutsSection();
+          
+          // Check to see if "ontop" is supported with the current window manager
+          // and the current layout:
+          if (this._nativeWinManager && this._nativeWinManager.supportsOnTop && 
+              this._feathersManager.canOnTop(this._currentLayout, this._currentSkin))
+          {
+            var isOnTop = this._feathersManager.isOnTop(this._currentLayout,
+                                                        this._currentSkin);
+
+            var ontopLabel = SBString("feathers.alwaysontop", "Always On Top");      
+            var onTopMenuItem = document.createElement("menuitem");
+            onTopMenuItem.setAttribute("label", ontopLabel);
+            onTopMenuItem.setAttribute("type", "checkbox");                   
+            if (isOnTop)                           
+              onTopMenuItem.setAttribute("checked", "true");
+            this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(onTopMenuItem);
+            
+            // Popup menuitem closure:   
+            var self = this;
+            this._onTopEventHandlerClosure = function(event) {
+              self._alwaysOnTopEventHandler(event);
+            };
+            
+            onTopMenuItem.addEventListener("command", this._onTopEventHandlerClosure, false);
+          }
+
+          var skins = this._enumToArray(this._feathersManager.getSkinDescriptions(), 
+                                        Components.interfaces.sbISkinDescription);              
+          for (var i = 0; i < skins.length; i++) {
+            var skin = skins[i];
+            
+            var layouts = this._enumToArray(
+              this._feathersManager.getLayoutsForSkin(skin.internalName), 
+              Components.interfaces.sbILayoutDescription
+            );
+            
+            // Skip skins with a blank name
+            if (!skin.name)
+              continue;
+
+            // Skip skins with no compatible layouts
+            if (layouts.length == 0) 
+              continue;
+            
+            // Build a menuitem for this skin, use the first layout.
+            var skinMenuItem = this._makeSkinMenuItem(skin, layouts[0]);
+            allFeathersPopup.appendChild(skinMenuItem);
+          }
+          this._appendGetMoreFeathers(allFeathersPopup);
+          
+          // Disable the Feathers menu when a Video Window is active
+          // as switching feathers will always close all windows.
+          if (SBDataGetBoolValue("faceplate.playingvideo")) {
+            allFeathers.setAttribute("disabled", true);
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <method name="_alwaysOnTopEventHandler">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+            var shouldBeOnTop = event.target.getAttribute("checked") == "true";
+            this._nativeWinManager.setOnTop(window, shouldBeOnTop);
+            this._feathersManager.setOnTop(this._currentLayout, 
+                                           this._currentSkin,
+                                           shouldBeOnTop);
+          ]]>
+        </body>
+      </method>
+
+      <!-- Return a menu with menupopup for the given layout -->
+      <method name="_makeSkinMenuItem">
+        <parameter name="skin"/>
+        <parameter name="layout"/>
+        <body>
+        <![CDATA[
+          var item = document.createElement("menuitem");
+          var defaultSkinPref = "songbird.feathers.default_skin_internalname";
+          if (Application.prefs.getValue(defaultSkinPref, "") ==
+              skin.internalName)
+          {
+            item.setAttribute("label",
+                              SBFormattedString("feathers.defaultfeather",
+                                                [ skin.name ]));
+          }
+          else
+          {
+            item.setAttribute("label", skin.name);
+          }
+          item.setAttribute("internalName", skin.internalName);
+          
+          if (this._currentSkin == skin.internalName)
+            item.setAttribute("checked", "true"); 
+                      
+          item.setAttribute("name", "feathers.item");
+          item.setAttribute("skinName", skin.internalName);
+          item.setAttribute("layoutURL", layout.url);
+          item.setAttribute("type", "radio");
+          
+          return item;
+        ]]>
+        </body>
+      </method>
+
+      <!-- Return a menuitem element for the given skin-layout pair -->
+      <method name="_makeLayoutMenuItem">
+        <parameter name="skin"/>
+        <parameter name="layout"/>
+        <body>
+        <![CDATA[
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", layout.name);
+          item.setAttribute("name", "feathers.item");
+          item.setAttribute("skinName", skin.internalName);
+          item.setAttribute("layoutURL", layout.url);
+          item.setAttribute("type", "radio");
+          if (this._currentLayout == layout.url 
+              && this._currentSkin == skin.internalName) 
+          {
+            item.setAttribute("checked", "true");
+          }
+          return item;
+        ]]>
+        </body>
+      </method>
+
+      <!-- Append a section with the layouts available for the current skin -->
+      <method name="appendCurrentFeatherLayoutsSection">
+        <body>
+        <![CDATA[
+          // Get the current skin
+          var skin = this._feathersManager.getSkinDescription(
+                              this._feathersManager.currentSkinName);
+          
+          var layouts = this._enumToArray(
+            this._feathersManager.getLayoutsForSkin(skin.internalName), 
+            Components.interfaces.sbILayoutDescription
+          );
+
+          // Attach a menuitem for each compatible layout
+          for (var j = 0; j < layouts.length; j++) {
+            var item = this._makeLayoutMenuItem(skin, layouts[j]);
+            item.setAttribute("class", "feathers-menu-selected-skin");
+
+            this._addToMenu(item);
+          }
+        ]]>
+        </body>
+      </method>
+
+      
+      <!-- Adds a "Get More" menu item that links to the addons site -->
+      <method name="_appendGetMoreFeathers">
+        <parameter name="menupopup"/>
+        <body>
+        <![CDATA[
+          menupopup.appendChild(document.createElement("menuseparator"));
+          var item = document.createElement("menuitem");
+
+          var getMoreText;
+          try {
+            getMoreText = this._stringBundle.GetStringFromName("feathers.getmore");
+          } catch (e) { 
+            getMoreText="Error";
+            dump("\n\n\nfeathers.xml:  Error getting menu text from songbird.properties" +
+                 " bundle\n"+ e + "\n"); 
+          }
+          
+          item.setAttribute("label", getMoreText);
+          item.setAttribute("name", "feathers.getmore");
+          menupopup.appendChild(item);
+        ]]>
+        </body>
+      </method>
+      
+
+      <!-- Helper to convert an nsISimpleEnumerator into a js array -->
+      <method name="_enumToArray">
+        <parameter name="enumerator"/>
+        <parameter name="iface"/>
+        <body>
+        <![CDATA[
+          var results = [];
+          while (enumerator.hasMoreElements()) {
+            results.push(enumerator.getNext().QueryInterface(iface));
+          }
+          return results;
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+
+  <!--
+   Clickhold button that embeds the sb-feathers-menuitems menu. 
+   When clicked will cycle through layouts available for the
+   current skin
+  -->
+  <binding id="feathers-togglebutton">
+    <content>
+      <xul:hbox id="sb-feathers-toggle-button">
+        <xul:button anonid="clickhold"
+                    type="sb-clickhold"
+                    xbl:inherits="position"
+                    class="sb-feathers-toggle-button sb-player-button">
+           <xul:menupopup anonid="popup"
+                          orient="vertical"
+                          xbl:inherits="popupanchor,popupalign">
+             <!--sb-feathers-menuitems/-->
+           </xul:menupopup>
+        </xul:button>
+      </xul:hbox>
+    </content>
+    <implementation type="application/x-javascript">
+      <constructor>
+      <![CDATA[
+        this._feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+                                   .getService(Components.interfaces.sbIFeathersManager);
+
+        // XXXpvh jan2008:
+        // This is a workaround for the menu displaying horizontally when the 
+        // <sb-feathers-menuitems/> above is uncommented. The error message is:
+        // Warning: XUL box for box element contained an inline 
+        // sb-feathers-menuitems child, forcing all its children to be wrapped 
+        // in a block.
+        // Source File: chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul
+        // Line: 0
+        var popup = document.getAnonymousElementByAttribute(this, 'anonid', "popup")
+        popup.appendChild(document.createElement("sb-feathers-menuitems"));
+                                   
+        this._applyClickholdTooltip();
+      ]]>
+      </constructor>
+
+      <destructor>
+      <![CDATA[
+        this._feathersManager = null;
+      ]]>
+      </destructor>
+      
+      
+      <!--
+        Called when the clickhold button is clicked.  
+      -->
+      <method name="switchToNextLayout">
+        <body>
+        <![CDATA[
+          // Attempt to switch to the next layout available
+          // for the current skin
+          try {
+            var skinName = this._feathersManager.currentSkinName;
+            var layoutURL = this._feathersManager.currentLayoutURL;
+            var nextLayout = this._getNextLayout();
+            
+            // If it is actually going to do anything, switch to the
+            // next layout
+            if (nextLayout.url != layoutURL) {
+              this._feathersManager.switchFeathers(nextLayout.url, skinName);
+            } else {
+              var clickhold = document.getAnonymousElementByAttribute(this,
+                                                     'anonid', 'clickhold');
+              clickhold.showPopup();
+            }
+          } catch (e) {
+            dump("feathers.xml#feathers-togglebutton: Unable to switch to the " +
+                 "next layout for the current skin.\n\n" +
+                 " Error: " + e.toString() + "\n");  
+          }
+        ]]>
+        </body>
+      </method>
+      
+
+      <!--
+        Determine the next available layout for the current skin 
+      -->
+      <method name="_getNextLayout">
+        <body>
+        <![CDATA[
+          var skinName = this._feathersManager.currentSkinName;
+          var layoutURL = this._feathersManager.currentLayoutURL;
+            
+          // Find the layout that comes after the current layout
+          var layouts = this._enumToArray(this._feathersManager.getLayoutsForSkin(skinName), 
+                                             Components.interfaces.sbILayoutDescription);
+          var nextLayout;                           
+          for (var i = 0; i < layouts.length; i++) {
+            if (layouts[i].url == layoutURL) {
+              if (i >= layouts.length - 1) {
+                nextLayout = layouts[0];
+              } else {
+                nextLayout = layouts[i+1];
+              }
+            }
+          }
+            
+          return nextLayout;
+        ]]>
+        </body>
+      </method>
+      
+      <!--
+        Creates a tooltip for the clickhold button.
+      -->
+      <method name="_applyClickholdTooltip">
+        <body>
+        <![CDATA[
+          // Get the songbird string bundle. 
+          var stringBundleService =
+              Components.classes["@mozilla.org/intl/stringbundle;1"]
+                        .getService(Components.interfaces.nsIStringBundleService);
+          var stringBundle = stringBundleService.createBundle( 
+               "chrome://songbird/locale/songbird.properties" );
+           
+          // Try to create the tooltip
+          var tooltip;
+          try {
+            tooltip = stringBundle.GetStringFromName("feathers.switchfeathers");
+          } catch (e) { 
+            tooltip="[Localization Error] Switch Feathers";
+            dump("\n\n\nfeathers.xml:  Error getting clickhold tooltip from " +
+                 "songbird.properties bundle\n"+ e + "\n"); 
+          }
+
+          // Get the clickhold
+          var clickhold = document.getAnonymousElementByAttribute(this,
+                                                     'anonid', 'clickhold');
+
+
+          // Now add to the tooltip the feathers that will be selected
+          // when the button is pressed.
+
+          // Requesting the next layout will trigger the FeathersManager's
+          // lazily metadata loading.
+          // We do not want to block the UI from appearing, so we delay the final
+          // tooltip creation step until after the binding is constructed.
+          var finishClickholdTooltip = function finishClickholdTooltip(widget) {
+            var layout = widget._getNextLayout();
+            if (layout.url != widget._feathersManager.currentLayoutURL) {
+              tooltip += " - " + layout.name;
+            }
+            clickhold.setAttribute("tooltiptext", tooltip);
+          };
+          setTimeout(finishClickholdTooltip, 1000, this);
+        ]]>
+        </body>
+      </method>
+
+
+      <!-- Helper to convert an nsISimpleEnumerator into a js array -->
+      <method name="_enumToArray">
+        <parameter name="enumerator"/>
+        <parameter name="iface"/>
+        <body>
+        <![CDATA[
+          var results = [];
+          while (enumerator.hasMoreElements()) {
+            results.push(enumerator.getNext().QueryInterface(iface));
+          }
+          return results;
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+    <handlers>
+      <handler event="command">
+      <![CDATA[
+          this.switchToNextLayout();
+      ]]>
+      </handler>
+    </handlers>
+  </binding>
+  
+</bindings>
+

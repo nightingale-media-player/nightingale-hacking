@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14743/trunk/components/mediacore/metadata/handler/wma/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/14743/trunk/components/mediacore/metadata/handler/wma/public/Makefile.in
+END
+sbIMetadataHandlerWMA.idl
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/14743/trunk/components/mediacore/metadata/handler/wma/public/sbIMetadataHandlerWMA.idl
+END

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Parser
+END
+Native.pm
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Parser/Native.pm
+END
+ParsedTopic.pm
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Parser/ParsedTopic.pm
+END

@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Войти на Last.fm...">
+<!ENTITY lastfm.menu.logout "Выйти с Last.fm">
+<!ENTITY lastfm.menu.enable "Включить скробблинг">
+<!ENTITY lastfm.login.caption.label "Войти">
+<!ENTITY lastfm.username.label "Имя пользователя:">
+<!ENTITY lastfm.password.label "Пароль:">
+<!ENTITY lastfm.auto.login.label "Автоматически присоединяться при запуске">
+<!ENTITY lastfm.login.button "Вход">
+<!ENTITY lastfm.newaccount.caption "Создать новую учётную запись">
+<!ENTITY lastfm.signup.label "Регистрация на Last.fm">
+<!ENTITY lastfm.signup.button.label "Создать новую учётную запись">
+<!ENTITY lastfm.loggingin.label "Вход...">
+<!ENTITY lastfm.cancel.button "Отмена">
+<!ENTITY lastfm.profile.caption "Профиль">
+<!ENTITY lastfm.profile.scrobble "Скробблить мои треки">
+<!ENTITY lastfm.profile.logout "Выход">
+<!ENTITY lastfm.radio "Радио Last.fm">
+<!ENTITY lastfm.radio.login.help "Чтобы слушать радио Last.fm, вы должны быть авторизованы на сайте. Если у вас нет учётной записи на Last.fm, вы можете её зарегистрировать.">
+<!ENTITY lastfm.radio.start "Не знаете с чего начать? Попробуйте что-нибудь найти или посмотрите, что слушают другие.">
+<!ENTITY lastfm.radio.start.top.artists "Популярные исполнители на Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Популярные теги на Last.fm">
+<!ENTITY lastfm.radio.register "Регистрация">
+<!ENTITY lastfm.radio.subscriber.button "Подписка">
+<!ENTITY lastfm.radio.subscriber.help "Чтобы слушать радио на Last.fm, вы должны быть подписчиком.">
+<!ENTITY lastfm.radio.search "Поиск">
+<!ENTITY lastfm.radio.library "Библиотека">
+<!ENTITY lastfm.radio.loved "Любимые треки">
+<!ENTITY lastfm.radio.neighbourhood "Соседи">
+<!ENTITY lastfm.radio.recommended "Рекомендации">
+<!ENTITY lastfm.radio.user_stations "Станции пользователя">
+<!ENTITY lastfm.radio.recent_stations "Недавние радиостанции">
+<!ENTITY lastfm.radio.from.lastfm "С Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Рекомендованные исполнители">
+<!ENTITY lastfm.radio.top_artists "Ваши популярные исполнители">
+<!ENTITY lastfm.radio.top_tags "Ваши популярные теги">
+<!ENTITY lastfm.radio.friends "Ваши друзья">
+<!ENTITY lastfm.radio.neighbours "Сосед">
+<!ENTITY lastfm.radio.from.songbird "Из Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Ваши наиболее проигрываемые исполнители">
+<!ENTITY lastfm.radio.highest_rated_artists "Ваши наиболее высоко оценённые исполнители">
+<!ENTITY lastfm.radio.popular_genres "Ваши популярные жанры">
+<!ENTITY lastfm.radio.play "Воспроизвести">
+<!ENTITY lastfm.tags.enter_new "Введите новые теги (через запятую)">
+<!ENTITY lastfm.tags.add_fail "Ошибка при добавлении тегов!">
+<!ENTITY lastfm.tags.user "Ваши теги:">
+<!ENTITY lastfm.tags.global "Глобальные теги Last.fm:">

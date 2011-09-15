@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/name-scheme
+END
+bar.html^^
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/name-scheme/bar.html%5E%5E
+END
+normal-file.txt
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/name-scheme/normal-file.txt
+END
+foo.html^
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/name-scheme/foo.html%5E
+END
+bar.html^^headers^
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/data/name-scheme/bar.html%5E%5Eheaders%5E
+END

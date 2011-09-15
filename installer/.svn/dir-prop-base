@@ -1,0 +1,10 @@
+K 10
+svn:ignore
+V 10
+Thumbs.db
+
+K 15
+tsvn:logminsize
+V 1
+1
+END

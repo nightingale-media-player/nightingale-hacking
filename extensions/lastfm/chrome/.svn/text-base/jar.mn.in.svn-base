@@ -1,0 +1,37 @@
+lastfm.jar:
+% content sb-lastfm  %content/
+#% locale  sb-lastfm  bn-IN  %locale/bn-IN/
+% locale  sb-lastfm  ca-AD  %locale/ca-AD/
+% locale  sb-lastfm  cs-CZ  %locale/cs-CZ/
+#% locale  sb-lastfm  da-DK  %locale/da-DK/
+% locale  sb-lastfm  de-DE  %locale/de-DE/
+% locale  sb-lastfm  en-US  %locale/en-US/
+% locale  sb-lastfm  en-GB  %locale/en-GB/
+% locale  sb-lastfm  es-ES  %locale/es-ES/
+#% locale  sb-lastfm  eu-ES  %locale/eu-ES/
+% locale  sb-lastfm  fa-IR  %locale/fa-IR/
+#% locale  sb-lastfm  fi-FI  %locale/fi-FI/
+% locale  sb-lastfm  fr-FR  %locale/fr-FR/
+#% locale  sb-lastfm  he-IL  %locale/he-IL/
+% locale  sb-lastfm  hu-HU  %locale/hu-HU/
+% locale  sb-lastfm  ja %locale/ja/
+#% locale  sb-lastfm  kw-GB  %locale/kw-GB/
+% locale  sb-lastfm  nl-NL  %locale/nl-NL/
+% locale  sb-lastfm  pl-PL  %locale/pl-PL/
+% locale  sb-lastfm  pt-BR  %locale/pt-BR/
+% locale  sb-lastfm  pt-PT  %locale/pt-PT/
+#% locale  sb-lastfm  ro  %locale/ro/
+% locale  sb-lastfm  ru-RU  %locale/ru-RU/
+% locale  sb-lastfm  sl-SI  %locale/sl-SI/
+% locale  sb-lastfm  sr-RS  %locale/sr-RS/
+#% locale  sb-lastfm  sv-SE  %locale/sv-SE/
+#% locale  sb-lastfm  tr-TR  %locale/tr-TR/
+#% locale  sb-lastfm  uk-UA  %locale/uk-UA/
+% locale  sb-lastfm  zh-CN  %locale/zh-CN/
+% locale  sb-lastfm  zh-TW  %locale/zh-TW/
+% skin    sb-lastfm  classic/1.0 %skin/
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://sb-lastfm/content/browser-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://sb-lastfm/content/mini-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://sb-lastfm/content/faceplate-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://sb-lastfm/content/faceplate-overlay.xul
+@include_all_to

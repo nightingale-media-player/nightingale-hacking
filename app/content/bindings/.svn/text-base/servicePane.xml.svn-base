@@ -1,0 +1,2281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--
+    - \brief ServicePaneNodeBadge is a single badge attached to a
+    - ServicePaneNode.  It contains a text label, image, and an associated
+    - action.  If the image is null, then the text label will be used.
+    - When the badge is clicked, a notification will be sent out on service
+    - pane node with badge ID as event type.
+    -->
+  <binding id="servicepane-node-badge">
+    <content mousethrough="never">
+      <xul:hbox class="servicepane-node-badge">
+        <xul:label sbid="servicepane-node-badge-label"
+                   class="servicepane-node-badge-label"/>
+        <xul:image sbid="servicepane-node-badge-image"
+                   class="servicepane-node-badge-image"
+                   hidden="true"/>
+      </xul:hbox>
+    </content>
+
+    <implementation>
+      <constructor>
+      <![CDATA[
+          if (this.hasAttribute("badgeImage")) {
+            this.badgeImage = this.getAttribute("badgeImage");
+          }
+          if (this.hasAttribute("badgeLabel")) {
+            this.badgeLabel = this.getAttribute("badgeLabel");
+          }
+      ]]>
+      </constructor>
+
+      <!--
+        - \brief Gets an element in this binding that has the sbid matching the
+        -   anonID parameter.
+        - \param anonID Anonymous id of the element requested (matches sbid)
+        - \return element if found, or null if not
+        -->
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Updates the badge depending on the values of the elements. If
+        - the image has no src then we show the label and hide the image, if the
+        - image has a src then we hide the label and show the image.
+        -->
+      <method name="_update">
+        <body><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          let textNode = this._getElement("servicepane-node-badge-label");
+          if (this.hasAttribute("badgeImage")) {
+            imageNode.removeAttribute("hidden");
+            textNode.setAttribute("hidden", true);
+          }
+          else {
+            imageNode.setAttribute("hidden", true);
+            textNode.removeAttribute("hidden");
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief property for the image of this badge.
+        -->
+      <property name="badgeImage">
+        <getter><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          return this.getAttribute("badgeImage");
+        ]]></getter>
+        <setter><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          let textNode = this._getElement("servicepane-node-badge-label");
+          this.setAttribute("badgeImage", val);
+          imageNode.style.listStyleImage = "url('" + val + "')";
+          this._update();
+          return val;
+        ]]></setter>
+      </property>
+
+      <!--
+        - \brief property for the text of this badge
+        -->
+      <property name="badgeLabel">
+        <getter><![CDATA[
+          let textNode = this._getElement("servicepane-node-badge-label");
+          return imageNode.value;
+        ]]></getter>
+        <setter><![CDATA[
+          let textNode = this._getElement("servicepane-node-badge-label");
+          this.removeAttribute("badgeImage");
+          textNode.value = val;
+          this._update();
+          return val;
+        ]]></setter>
+      </property>
+
+    </implementation>
+
+    <handlers>
+      <handler event="click">
+      <![CDATA[
+        if (event.button == 0 &&
+            this.nodeData &&
+            this.hasAttribute("badgeID"))
+        {
+          try {
+            this.nodeData.dispatchEvent(this.getAttribute("badgeID"));
+          } catch (e) {
+            Cu.reportError(e);
+          }
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      ]]>
+      </handler>
+    </handlers>
+
+
+  </binding>
+
+   <!--
+    - \brief ServicePaneNode is a single entry attached to a ServicePaneGroup.
+    - it contains an icon, label and an arbitrary # of ServicePaneNodeBadges.
+    - When the user clicks the node the url attached to this node will launch
+    - in the browser if any.  If the node is already selected and the user
+    - clicks it, the node should be renamed.
+    -->
+  <binding id="servicepane-node">
+    <content mousethrough="never">
+      <xul:vbox class="servicepane-node" flex="1">
+
+        <xul:hbox class="servicepane-node-info" mousethrough="always">
+          <xul:image class="servicepane-node-container-arrow"
+                     flex="0"
+                     mousethrough="never"
+                     onclick="toggleContainer(event)" />
+          <xul:image class="servicepane-node-image"
+                     xbl:inherits="src=image" flex="0" />
+          <xul:stack sbid="servcepane-node-stack" flex="1">
+            <xul:hbox flex="1">
+              <xul:label class="servicepane-node-label"
+                         crop="end"
+                         flex="1"
+                         mousethrough="never"
+                         xbl:inherits="value=label"/>
+              <xul:spacer flex="1" />
+              <xul:hbox class="servicepane-node-badges"
+                        sbid="servicepane-node-badges" flex="1" />
+            </xul:hbox>
+
+            <!-- that onblur event is a little confusing.  the event bubbles up
+                 so that it fires for both the HTML input element & the XUL
+                 element.  we check the original target to make sure it's the
+                 right element (e.g. where textboxBlur() is defined -->
+            <xul:textbox class="servicepane-node-textbox"
+                         sbid="servicepane-node-textbox"
+                         xbl:inherits="value=label"
+                         flex="1"
+                         onkeypress="textboxKeypress(event)"
+                         onblur="if (event.originalTarget != this) textboxBlur(event)"
+                         hidden="true" />
+          </xul:stack>
+        </xul:hbox>
+
+        <xul:vbox sbid="servicepane-node-children"
+                  class="servicepane-node-children"
+                  mousethrough="never"
+                  xbl:inherits="hidden=closed">
+          <children />
+        </xul:vbox>
+
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          // TODO: Check for a better way to load. (stevo)
+          // This is here because we can not call nodeData until the binding has
+          // been applied.
+          Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+          Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
+
+          // If this element has a node id then load up the data from the node
+          // we are always expected to be in the service pane under a group at
+          // this point so we call up the DOM of nodes.
+          try {
+            // Run the setter to initialize the node
+            this.nodeData = this.nodeData;
+
+            this._textbox = this._getElement("servicepane-node-textbox");
+            this._textbox.realParent = this;
+            this.mService =
+              Components.classes['@songbirdnest.com/servicepane/service;1']
+              .getService(Components.interfaces.sbIServicePaneService);
+            this.mDragService = 
+              Components.classes['@mozilla.org/widget/dragservice;1']
+              .getService(Components.interfaces.nsIDragService);
+          } catch (e) {
+            Cu.reportError(e);
+          }
+        ]]>
+      </constructor>
+
+      <!--
+        - \brief Hold the actual node data for this node so we can reference it
+        -   whenever we need
+        -->
+      <field name="_nodeData">null</field>
+
+      <!--
+        - \brief Get the servicepane element itself
+        -->
+      <property name="_servicePane">
+        <getter><![CDATA[
+          let parent = this.parentNode;
+          while (parent && parent.tagName != "sb-servicepane")
+            parent = parent.parentNode;
+          return parent;
+        ]]></getter>
+      </property>
+
+      <!--
+        - \brief Gets an element in this binding that has the sbid matching the
+        -   anonID parameter.
+        - \param anonID Anonymous id of the element requested (matches sbid)
+        - \return element if found, or null if not
+        -->
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief sbIServicePaneNode data associated with this node
+        -->
+      <property name="nodeData">
+        <getter><![CDATA[
+          return this._nodeData;
+        ]]></getter>
+        <setter><![CDATA[
+          // val should be a sbIServicePaneNode object
+          this._nodeData = val;
+          if (this._nodeData) {
+            Cu.import("resource://app/jsmodules/ServicePaneHelper.jsm", this);
+
+            // Set up the elements
+            this.setAttribute("id", this._nodeData.id);
+            this.setAttribute("image", this._nodeData.image);
+            this.setAttribute("label", this._nodeData.displayName);
+            if (!this._nodeData.isOpen) {
+              this.setAttribute("closed", "true");
+            } else {
+              this.removeAttribute("closed");
+            }
+
+            // Hide the node if it should be hidden
+            if (this._nodeData.hidden) {
+              this.setAttribute("hidden", true);
+            } else {
+              this.removeAttribute("hidden");
+            }
+
+            this.className = this._nodeData.className;
+
+            // If the node has visible children mark it as a container
+            for (let child = this._nodeData.firstChild;
+                 child;
+                 child = child.nextSibling) {
+              if (!child.hidden) {
+                this.className += " container";
+                break;
+              }
+            }
+
+            // Determine how much to indent this node
+            let indent = -1;
+            let parent = this.nodeData.parentNode;
+            while (parent) {
+              indent++;
+              parent = parent.parentNode;
+            }
+            this.setAttribute("indent", indent);
+
+            // If it's ejectable let's add the right badge
+            let badge = this.ServicePaneHelper.getBadge(this._nodeData,
+                                                        "eject");
+            if (this._nodeData.getAttribute("ejectable") == "true") {
+              badge.image = "chrome://songbird/skin/service-pane/eject.png";
+              badge.visible = true;
+            } else {
+              badge.remove();
+            }
+          } else {
+            // No node data, clear all attributes and hide the node
+            this.removeAttribute("id");
+            this.removeAttribute("image");
+            this.removeAttribute("label");
+            this.setAttribute("hidden", "true");
+            this.removeAttribute("closed");
+            this.className = "";
+            this.removeAttribute("indent");
+          }
+
+          // Update the badges we show
+          this._updateBadges();
+
+          return this._nodeData;
+        ]]></setter>
+      </property>
+
+      <!--
+        - \brief Get the parent service pane group element
+        -->
+      <property name="_servicePaneGroup">
+        <getter>
+        <![CDATA[
+          let parent = this.parentNode;
+          while (parent && parent.tagName != "sb-servicepane-group")
+            parent = parent.parentNode;
+          return parent;
+        ]]>
+        </getter>
+      </property>
+
+      <!-- 
+         - \brief The browser we are linked to if any.
+        -->
+      <field name="_browser">null</field>
+      <property name="browser">
+        <getter><![CDATA[
+          if (!this._browser) {
+            this._browser = document.getElementById(this.getAttribute('browser'));
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
+
+      <!--
+        - \brief If this is a container, toggle the open/closed state.
+        -->
+      <method name="toggleContainer">
+        <parameter name="event"/>
+        <body><![CDATA[
+          // First see if we've actually got children, if not - then bail
+          if (!this.firstChild)
+            return;
+
+          this.nodeData.isOpen = !this.nodeData.isOpen;
+          event.stopPropagation();
+          event.preventDefault();
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Load the URL associated with this node in the browser if
+        - available.
+        -->
+      <method name="loadNodeURL">
+        <parameter name="event"/>
+        <parameter name="arguments"/>
+        <body><![CDATA[
+          if (!this.browser)
+            return; // Nothing to do if we don't have a browser.
+
+          // Node already active, nothing to do.
+          if (this._servicePane.activeNode == this.nodeData)
+            return;
+
+          // Style the node as active (which means first removing any
+          // styles from any currently active node
+          this._servicePane.makeNodeActive(this.nodeData);
+
+          // If this node has a URL, just load it in the browser
+          if (this._nodeData.url) {
+            var target = null;
+            if (LibraryUtils.isMediaTabURL(this._nodeData.url, this.browser)) {
+              target = "_media";
+              this.browser.selectedTab = this.browser.mediaTab;
+            } else if (event.button == 1) {
+              // Middle click.
+              target = "_blank";
+            }
+            var url = this._nodeData.url;
+            if (arguments)
+              url = URLUtils.addQuery(url, arguments);
+            this.browser.loadURI(url, null, null, event, target);
+
+          // If no URL, apply special handling
+          } else {
+            // If there is a media list for this node, hand it off to the
+            // browser to display somehow.
+            // I'm told that this hack is fine, as it will one day be replaced
+            // with the playlist commands system.
+            var libraryServicePane =
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+              .getService(Components.interfaces.sbILibraryServicePaneService);
+            var mediaList = libraryServicePane.getLibraryResourceForNode(this._nodeData);
+            if (mediaList) {
+              const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+              var view = LibraryUtils.createStandardMediaListView(mediaList);
+              if (this._nodeData.hasAttributeNS(NS_SP,
+                                                "mediaListViewConstraints")) {
+                // set up the constraints
+                var builder = Components.classes["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                                        .createInstance(Components.interfaces.sbILibraryConstraintBuilder);
+                try {
+                  builder.parseFromString(
+                    this._nodeData.getAttributeNS(NS_SP,
+                                                  "mediaListViewConstraints"));
+                  view.filterConstraint = builder.get();
+                } catch (e) {
+                  // boo, the constraints are bad, use standard instead
+                  view.filterConstraint = LibraryUtils.standardFilterConstraint;
+                }
+              }
+              var tab = this.browser.loadMediaList(mediaList,
+                                                   event,
+                                                   "_media",
+                                                   view);
+              this.browser.selectedTab = tab;
+
+              // Record list type metrics for some reason.
+              // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+              // changed to loadNode from click as there are ways other than clicking
+              // to get here.
+              try {
+                var listType = mediaList.getProperty(SBProperties.customType);
+                var libType = mediaList.library.getProperty(SBProperties.customType);
+                metrics_inc("app.servicepane.loadnode.medialist", libType + "." + listType, null);
+              } catch(e) { Components.utils.reportError(e); }
+
+            } else {
+              // we have no handler for this service pane node load
+              // dispatch an event people can listen for and don't report
+              let event = document.createEvent("XULCommandEvent");
+              event.QueryInterface(Components.interfaces.nsIDOMXULCommandEvent);
+              event.initCommandEvent("servicepane-loadnode",
+                                     event.bubble,
+                                     false,
+                                     event.view,
+                                     event.detail,
+                                     event.ctrlKey,
+                                     event.altKey,
+                                     event.shiftKey,
+                                     event.metaKey,
+                                     event);
+              this.dispatchEvent(event);
+
+              var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
+              var eventType = this._nodeData.getAttributeNS(SP_NS, "eventType");
+              if (eventType) {
+                let event = document.createEvent("UIEvent");
+                event.initUIEvent(eventType, true, true, window, 0);
+                window.dispatchEvent(event);
+              }
+            }
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Updates displayed badges
+        -->
+      <method name="_updateBadges">
+        <body><![CDATA[
+          let badgeContainer = this._getElement("servicepane-node-badges");
+
+          // Remove all existing badges first
+          while (badgeContainer.lastChild)
+            badgeContainer.removeChild(badgeContainer.lastChild);
+
+          if (this._nodeData) {
+            // Now add new badges
+            let badges = this.ServicePaneHelper.getAllBadges(this._nodeData);
+            for (let badge in badges) {
+              let badgeNode = document.createElementNS(this.namespaceURI,
+                                                "sb-servicepane-node-badge");
+              badgeNode.nodeData = this._nodeData;
+              badgeNode.setAttribute("badgeID", badge.id);
+              if (badge.label)
+                badgeNode.setAttribute("badgeLabel", badge.label);
+              if (badge.image)
+                badgeNode.setAttribute("badgeImage", badge.image);
+              badgeContainer.appendChild(badgeNode);
+            }
+          }
+        ]]></body>
+      </method>
+
+      <method name="setAsDropTarget">
+        <parameter name="isdroptarget"/>
+        <body><![CDATA[
+          var nodeToUpdate;
+          // If we're a library node, and our parent node is a device node,
+          // then apply the styles to the device node
+          if (this.nodeData.className &&
+              this.nodeData.className.match(/\blibrary\b/) &&
+              this.nodeData.parentNode.className &&
+              this.nodeData.parentNode.className.match(/\bdevice\b/))
+          {
+            // We're a device library
+            nodeToUpdate = this.nodeData.parentNode;
+          } else {
+            nodeToUpdate = this.nodeData;
+          }
+          
+          var domNode = this._servicePane.getDOMNode(nodeToUpdate);
+
+          if (isdroptarget) {
+            if (domNode.className.search(/\bdroptarget\b/) == -1) {
+              domNode.className += " droptarget";
+            }
+          } else {
+            domNode.className =
+                        domNode.className.replace(/\bdroptarget\b/g,'');
+          }
+        ]]></body>
+      </method>
+
+      <method name="textboxBlur">
+        <parameter name="event"/>
+        <body><![CDATA[
+          if (this._textbox.getAttribute("hidden"))
+            return;
+          this._textbox.setAttribute("hidden", true);
+          this._servicePane.mService.onRename(this.nodeData,
+                                              this._textbox.value);
+          this.setAttribute("label", this.nodeData.name);
+          event.stopPropagation();
+          event.preventDefault();
+        ]]></body>
+      </method>
+
+      <method name="textboxKeypress">
+        <parameter name="event"/>
+        <body><![CDATA[
+          switch (event.keyCode) {
+            case 27: // escape
+              // reset changes & exit editing mode
+              this._textbox.value = this.getAttribute("label");
+              this._textbox.setAttribute("hidden", true);
+              this._servicePane.mService.onRename(this.nodeData, null);
+              this._servicePane._editingNode = null;
+
+              // ensure the service pane has focus
+              this._servicePane.focus();
+
+              break;
+            case 13: // enter
+              // save changes & exit editing mode
+              this._textbox.setAttribute("hidden", true);
+              this._servicePane.mService.onRename(this.nodeData,
+                                                  this._textbox.value);
+              this.setAttribute("label", this.nodeData.name);
+              this._servicePane._editingNode = null;
+              this.loadNodeURL(event);
+              
+              // ensure the service pane has focus
+              this._servicePane.focus();
+              
+              break;
+          }
+        ]]></body>
+      </method>
+
+      <!-- drag-and-drop helpers -->
+      <method name="_onDragGesture">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          if (this.mService.onDragGesture(this.nodeData, event.dataTransfer)) {
+            // Set the drag source to this sb-servicepane-node
+            // so the feedback image looks nice.
+            let dragElement = document.getElementById(this._nodeData.id);
+            event.dataTransfer.addElement(dragElement);
+
+            var group = this._servicePaneGroup;
+            group._dndReordering = true; 
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!-- begin nsDragAndDropObserver -->
+      <method name="getSupportedFlavours">
+        <body>
+        <![CDATA[
+          var flavourSet;
+          flavourSet = new FlavourSet();
+          InternalDropHandler.addFlavours(flavourSet);
+          ExternalDropHandler.addFlavours(flavourSet);
+          return flavourSet;
+        ]]>
+        </body>
+      </method>
+
+      <method name="_getDropOrientations">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          var orientations = [0];
+          var tophalf = false;
+          if (this._servicePaneGroup._dndReordering) {
+            var y = event.screenY - this.boxObject.screenY;
+            var third = this.boxObject.height/3;
+            if (y < this.boxObject.height/2)
+              tophalf = true;
+            if (y < third) 
+              orientations = [-1, 0, 1]; // before, inside, after
+            else if (y > third*2) 
+              orientations = [1, 0, -1]; // after, inside, before
+            else
+              orientations = [0, (tophalf ? -1 : 1), (tophalf ? 1 : -1)]; // inside, closest, farthest
+          }
+          return orientations;
+          ]]>
+        </body>
+      </method>
+      <method name="canDrop">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          var orientations = this._getDropOrientations(event);
+          var can = false;
+          for (var i in orientations) {
+            can = this.mService.canDrop(this.nodeData,
+                                        this.mDragService.getCurrentSession(),
+                                        orientations[i], 
+                                        window);
+            if (can) {
+              this.mDropOrientation = orientations[i];
+              break;
+            }
+          }
+          if (!can) {
+            this.mDropOrientation = 0;
+          } else {
+            this._setDropOrientationClass();
+          }
+          return can;
+        ]]></body>
+      </method>
+
+      <method name="_removeDropOrientationClass">
+        <body>
+          <![CDATA[
+          this.className = this.className.replace(/\b(dndAcceptIn|dndAcceptBefore|dndAcceptAfter)\b/g, '');
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_setDropOrientationClass">
+        <body>
+          <![CDATA[
+          var className = this.className;
+          className = className.replace(/\b(dndAcceptIn|dndAcceptBefore|dndAcceptAfter)\b/g, '');
+          if (this._servicePaneGroup._dndReordering) {
+            switch (this.mDropOrientation) {
+              case 0:
+                className += " dndAcceptIn";
+                break;
+              case -1:
+                className += " dndAcceptBefore";
+                break;
+              case 1:
+                className += " dndAcceptAfter";
+                break;
+            }
+          }
+          if (this.className != className)
+            this.className = className;
+          ]]>
+        </body>
+      </method>
+
+
+      <method name="onDragOver">
+        <parameter name="event"/>
+        <body>
+        <![CDATA[
+          if (this.mDragService.getCurrentSession().sourceNode != event.target &&
+              this.canDrop(event) ) {
+            event.preventDefault(); // accept the drop
+            if (!this._servicePaneGroup._dndReordering)
+              this.setAsDropTarget(true);
+          } 
+        ]]>
+        </body>
+      </method>
+
+      <method name="onDragExit">
+        <parameter name="event"/>
+        <parameter name="session"/>
+        <body>
+        <![CDATA[
+          this.setAsDropTarget(false);
+          this._removeDropOrientationClass();
+        ]]></body>
+      </method>
+
+      <method name="onDrop">
+        <parameter name="event"/>
+        <parameter name="session"/>
+        <body>
+          <![CDATA[
+          this.mService.onDrop(this.nodeData,
+                               this.mDragService.getCurrentSession(),
+                               this.mDropOrientation,
+                               window);
+          this.setAsDropTarget(false);
+
+          /* Auto-collapse if we auto-expanded */
+          if (this._servicePaneGroup._collapseOnDragExit)
+          {
+            this._servicePaneGroup.visible = false;
+            this._servicePaneGroup._collapseOnDragExit = null;
+            this._servicePaneGroup.servicePane._collapsedGroup = null;
+          }
+        ]]></body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="click">
+      <![CDATA[
+        if (event.button == 0) {
+          this._servicePane._leaveKeyboardFocus();
+          // if we're the active node, & the user clicked on the label
+          // then rename
+          if (this._servicePane.activeNode == this.nodeData &&
+              this.nodeData.editable &&
+              event.originalTarget.tagName == "xul:label") {
+            this._servicePane.startEditingNode(this.nodeData);
+          } // otherwise load 
+          else {
+            this.loadNodeURL(event);
+          }
+
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      ]]>
+      </handler>
+
+      <handler event="contextmenu">
+      <![CDATA[
+        this._servicePane._leaveKeyboardFocus();
+        this._servicePane.openContextMenu(event, this.nodeData);
+      ]]>
+      </handler>
+
+      <!-- drag and drop handling -->
+      <handler event="draggesture"><![CDATA[
+        // don't allow drag gestures with the popup menu open.
+        if (this.mPopup && 
+            this.mPopup.state != "closed") {
+          return;
+        }
+        this._onDragGesture(event);
+      ]]></handler>
+
+      <handler event="dragover"><![CDATA[
+        this.onDragOver(event);
+        this._servicePane.needScroll(event);
+        event.stopPropagation();
+      ]]></handler>
+
+      <handler event="dragdrop">
+        this.onDrop(event, null);
+        event.stopPropagation();
+      </handler>
+
+      <handler event="dragexit">
+        this.onDragExit(event, null);
+        event.stopPropagation();
+      </handler>
+
+      <handler event="dragend">
+      <![CDATA[
+        this._removeDropOrientationClass();
+        this._servicePaneGroup._dndReordering = false;
+      ]]>
+      </handler>
+
+    </handlers>
+
+  </binding>
+
+  <binding id="servicepane-group">
+    <content mousethrough="never" persist="collapsedChildren">
+      <xul:vbox sbid="group" class="servicepane-group">
+        <xul:hbox sbid="hbox-header" class="servicepane-group-header">
+          <xul:hbox class="servicepane-group-header-wrapper"
+                    flex="1"
+                    onclick="toggleVisibility(event)">
+                    <!-- Reverted back to previous behaviour per
+                         bug 21108
+                    onmouseover="checkCollapsible(event)"
+                    onmouseout="uncheckCollapsible(event)">
+                    -->
+            <xul:description class="servicepane-group-label"
+                       xbl:inherits="xbl:text=label"/>
+            <xul:spacer flex="1" />
+          </xul:hbox>
+          <xul:toolbarbutton sbid="servicepane-group-header-button"
+                             type="sb-clickhold"
+                             oncommand="_onHeaderButton(event);">
+            <xul:menupopup sbid="servicepane-group-header-menupopup"
+                           popupanchor="bottomleft"
+                           popupalign="topleft"
+                           onpopupshowing="_fillMenu(event);"/>
+          </xul:toolbarbutton>
+        </xul:hbox>
+        <xul:vbox class="servicepane-group-overflow-container">
+          <xul:vbox class="servicepane-group-nodes"
+                    sbid="groupNodes" flex="1">
+            <children /> <!-- servicepane-nodes -->
+          </xul:vbox>
+        </xul:vbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        Cu.import("resource://app/jsmodules/LocalStore.jsm", this);
+
+        // Set the collapsed state for a service pane group.
+        var collapsed = this.LocalStore.getPersistedAttribute(
+                                    document.location.href,
+                                    this._nodeData.id,
+                                    "collapsedChildren");
+        this._nodeData.isOpen = (collapsed == "false" ||
+                                 collapsed == null);
+
+        // First time we are attached to this node, set node visibility
+        this.visible = this._nodeData.isOpen;
+              
+        // Run the setter to initialize the node
+        this.nodeData = this.nodeData;
+      ]]></constructor>
+
+      <!-- 
+         - \brief Value of the .visible property.
+        -->
+      <field name="_visible">null</field>
+
+      <!-- 
+         - \brief Container box of the child nodes.
+        -->
+      <field name="_groupNodes">this._getElement("groupNodes")</field>
+
+      <field name="_dndReordering">false</field>
+      <field name="_autoCloseOnLeaveKeyboardFocus">false</field>
+      <field name="_servicepane">this.parentNode</field>
+      <field name="_nodeData">null</field>
+
+      <property name="servicePane" onget="return this.parentNode;"/>
+
+      <property name="nodeData">
+        <getter><![CDATA[
+          return this._nodeData;
+        ]]></getter>
+        <setter><![CDATA[
+          // val should be a sbIServicePaneNode object
+          this._nodeData = val;
+
+          // _nodeData is set in the createGroup method of the servicepane
+          // binding. 
+          if (this._nodeData) {
+            this.setAttribute("id", this._nodeData.id);
+            this.setAttribute("label", this._nodeData.displayName);
+
+            this.visible = this._nodeData.isOpen;
+
+            if (this._nodeData.hidden) {
+              this.setAttribute("hidden", true);
+            } else {
+              this.removeAttribute("hidden");
+            }
+          } else {
+            // No node data, clear all attributes and hide the node
+            this.removeAttribute("label");
+            this.removeAttribute("id");
+            this.setAttribute("hidden", "true");
+            this.removeAttribute("collapsedChildren");
+          }
+
+          return this._nodeData;
+        ]]></setter>
+      </property>
+
+      <method name="newPlaylist">
+        <parameter name="e" />
+        <body><![CDATA[
+          if (e.button != 0)
+            return;
+
+          this.image.removeAttribute("altKey");
+          if ((this._isMac && e.altKey) || (!this._isMac && e.shiftKey)) {
+            SBNewSmartPlaylist();
+          } else {
+            SBNewPlaylist(null, false);
+          }
+        ]]></body>
+      </method>
+
+      <property name="actuallyVisible">
+        <getter><![CDATA[
+          return (!this._groupNodes.style.marginTop ||
+                  this._groupNodes.style.marginTop == "0px");
+        ]]></getter>
+      </property>
+
+      <property name="visible">
+        <getter><![CDATA[
+          return this._visible;
+        ]]></getter>
+        <setter><![CDATA[
+          if (this._visible == val)
+            return;
+          this._visible = val;
+          let height = this._groupNodes.boxObject.height;
+          if (this._visible) {
+            this.animateTo(this._groupNodes, 0, 0, height, 5, true);
+          } else {
+            this.animateTo(this._groupNodes, height, height, 0, 5, false);
+          }
+        ]]></setter>
+      </property>
+
+      <method name="animateTo">
+        <parameter name="element" />
+        <parameter name="orig" />
+        <parameter name="from" />
+        <parameter name="to" />
+        <parameter name="interval" />
+        <parameter name="dir" />
+        <body><![CDATA[
+          var self = this;
+          try {
+            if (dir) {
+              if (from < to) {
+                let diff = to - from;
+                interval = diff/2;
+                let newdim = from + interval;
+                if (newdim >= to || interval < 5)
+                  newdim = to;
+
+                let marginTop = to - newdim; 
+                element.style.marginTop = "-" + marginTop + "px";
+                setTimeout(function() {
+                    self.animateTo(element, orig, newdim, to, interval, dir);
+                    }, 40);
+              } else {
+                element.style.marginTop = "-" + orig + "px";
+                self.setAttribute("collapsedChildren", "false");
+
+                var evt = document.createEvent("UIEvents");
+                evt.initEvent("expand-servicepane-group", true, true);
+                self.dispatchEvent(evt);
+              }
+            } else {
+              if (from > to) {
+                let diff = from - to;
+                interval = diff/2;
+                let newdim = from - interval;
+                if (newdim <= to || interval < 3)
+                  newdim = to;
+
+                let marginTop = orig - newdim;
+                element.style.marginTop = "-" + marginTop + "px";
+                setTimeout(function() {
+                    self.animateTo(element, orig, newdim, to, interval, dir);
+                    }, 40);
+              } else {
+                element.style.marginTop = "-" + orig + "px";
+                self.setAttribute("collapsedChildren", "true");
+
+                var evt = document.createEvent("UIEvents");
+                evt.initEvent("collapse-servicepane-group", true, true);
+                self.dispatchEvent(evt);
+              }
+            }
+          } catch (e) {
+            Cu.reportError(e);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
+      <method name="getRelationshipToActiveNode">
+        <body><![CDATA[
+          let activeNode = this._servicepane.activeNode;
+          let activeDomNode = this._servicepane.getDOMNode(activeNode);
+          let relationship = this.compareDocumentPosition(activeDomNode);
+          return relationship;
+        ]]></body>
+      </method>
+
+      <method name="toggleVisibility">
+        <parameter name="event" />
+        <body><![CDATA[
+          /* Commented out per bug 21108
+          // Don't allow collapsing of the group if our currently active node
+          // is in it
+          let relationship = this.getRelationshipToActiveNode();
+          if (relationship & this.DOCUMENT_POSITION_CONTAINED_BY)
+            return;
+            */
+
+          this.nodeData.isOpen = !this.nodeData.isOpen;
+        ]]></body>
+      </method>
+
+      <method name="checkCollapsible">
+        <parameter name="event" />
+        <body><![CDATA[
+          // Don't visually indicate collapsible if we contain the active node
+          let relationship = this.getRelationshipToActiveNode();
+          if (relationship & this.DOCUMENT_POSITION_CONTAINED_BY)
+            return;
+
+          this.className += " collapsible";
+        ]]></body>
+      </method>
+
+      <method name="uncheckCollapsible">
+        <parameter name="event" />
+        <body><![CDATA[
+          this.className = this.className.replace(/\bcollapsible\b/g, '');
+        ]]></body>
+      </method>
+
+      <method name="_fillMenu">
+        <parameter name="event" />
+        <body><![CDATA[
+          let popup = this._getElement("servicepane-group-header-menupopup");
+          while (popup.firstChild) {
+            popup.removeChild(popup.firstChild);
+          }
+          this._servicepane.mService.fillContextMenu(this.nodeData, popup, window);
+        ]]></body>
+      </method>
+
+      <method name="_onHeaderButton">
+        <parameter name="event" />
+        <body><![CDATA[
+          // we should only handle when the user clicks on the header button
+          // and exclude clicks on the popup menu.  Note that we need to check
+          // for the target's parent as well, since the clickhold button is
+          // implemented as a nested button.
+          let button = this._getElement("servicepane-group-header-button");
+          if (event.originalTarget != button &&
+              event.originalTarget.parentNode != button)
+          {
+            // this is not the clickhold button; most likely, this is the event
+            // from the menupopup bubbling up. we don't want to do anything
+            // there.
+            return;
+          }
+          // build the menu and assume the first choice
+          let popup = this._getElement("servicepane-group-header-menupopup");
+          this._fillMenu(event);
+          popup.firstChild.doCommand();
+        ]]></body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="dragover"><![CDATA[
+        // If there is an existing expanded group that isn't us, then
+        // collapse it
+        if (this._servicepane._collapsedGroup &&
+            this._servicepane._collapsedGroup != this)
+        {
+          this._servicepane._collapsedGroup._collapseOnDragExit = null;
+          this._servicepane._collapsedGroup.visible = false;
+          this._servicepane._collapsedGroup = null;
+        }
+
+        // If we have an existing timer running for a group that isn't us,
+        // clear it
+        if (this._servicepane._timer &&
+            this._servicepane._timerGroup &&
+            this._servicepane._timerGroup != this)
+        {
+          this._servicepane.log("Existing timer found, clearing");
+          clearTimeout(this._servicepane._timer);
+          this._servicepane._timer = null;
+        }
+
+        if (!this.visible && !this._expandTimerRunning) {
+          this._servicepane.log("Collapsed group found: " + this.id +
+                                ", setting expand timer for 1s");
+          var self = this;
+          // Flag a timer as running
+          this._expandTimerRunning = true;
+          this._servicepane._timerGroup = this;
+          this._servicepane._timer = setTimeout(function() {
+              // Make the group visible
+              self._servicepane.log("Expanding group: " + self.id);
+              self.visible = true;
+              self._collapseOnDragExit = true;
+              self._servicepane._collapsedGroup = self;
+              self._expandTimerRunning = null;
+              self._servicepane._timerGroup = null;
+              self._servicepane._timer = null;
+            }, 750);
+          event.stopPropagation();
+        }
+      ]]></handler>
+
+      <handler event="dragexit"><![CDATA[
+        if (!event.relatedTarget)
+          return;
+        let relation = this.compareDocumentPosition(event.relatedTarget);
+        if (this._expandTimerRunning &&
+            !((relation & this.DOCUMENT_POSITION_CONTAINS) ||
+              (relation & this.DOCUMENT_POSITION_CONTAINED_BY)))
+        {
+          // We've exited the group, so cancel any existing timer
+          this._servicepane.log("Exited group: " + this.id + ", clearing timer");
+          clearTimeout(this._servicepane._timer);
+          this._expandTimerRunning = null;
+          this._servicepane.timer = null;
+          this._servicepane._timerGroup = null;
+        }
+
+        /* Auto-collapse if we auto-expanded */
+        if (this._collapseOnDragExit &&
+            !((relation & this.DOCUMENT_POSITION_CONTAINS) ||
+              (relation & this.DOCUMENT_POSITION_CONTAINED_BY)))
+        {
+          this.visible = false;
+          this._collapseOnDragExit = null;
+          this._servicepane._collapsedGroup = null;
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
+
+  <binding id="servicepane">
+    <content mousethrough="never" wheelvolume="false">
+      <xul:vbox id="sb_servicepane" class="servicepane-outer-box" flex="1">
+        <xul:scrollbox id="sb_servicepane_box"
+                  orient="vertical"
+                  sbid="innerbox"
+                  class="servicepane-inner-box"
+                  flex="1">
+          <children /> <!-- servicepane-group elements -->
+        </xul:scrollbox>
+        <xul:sb-displaypane-splitter
+                collapse="after"
+                orient="vertical"
+                resizeafter="closest"
+                id="displaypane_servicepane_bottom_splitter"
+                menuid="displaypane_servicepane_bottom_menu" />
+        <xul:sb-displaypane id="displaypane_servicepane_bottom"
+                            label="&displaypane.name.servicepane;"
+                            splitter="displaypane_servicepane_bottom_splitter"
+                            contentgroup="servicepane"/>
+      </xul:vbox>
+      <!-- menupopup needs to be outside the vbox otherwise it
+           gets height adjusted to 0 when the splitter is
+           adjusted -->
+      <xul:menupopup id="displaypane_servicepane_bottom_menu"
+                     class="menulist-menupopup">
+        <xul:sb-displaypane-content-menuitems
+                     paneid="displaypane_servicepane_bottom" />
+      </xul:menupopup>
+
+      <!-- context menu popup -->
+      <xul:popupset>
+        <xul:popup sbid="popup"
+                   onpopupshown="onPopupShown(event);"
+                   onpopuphidden="onPopupHidden(event);" />
+      </xul:popupset>
+    </content>
+
+    <implementation>
+      <constructor>
+      <![CDATA[
+        window.gServicePane = this;
+
+        Components.utils.import("resource://app/jsmodules/DOMUtils.jsm", this);
+
+        // Setup logging
+        Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
+        this.log = DebugUtils.generateLogFunction("ServicePane", 4);
+        this.noisyLog = DebugUtils.generateLogFunction("ServicePane", 5);
+
+        this.mService =
+          Components.classes['@songbirdnest.com/servicepane/service;1']
+          .getService(Components.interfaces.sbIServicePaneService);
+
+        this.loadServicePane();
+
+        // save the popup node
+        this.mPopup = document.getAnonymousElementByAttribute(this,
+                                                              'sbid',
+                                                              'popup');
+        this.mInnerBox = document.getAnonymousElementByAttribute(this,
+                                                                 'sbid',
+                                                                 'innerbox');
+        /* Add a listener to the root node so we know to update when the
+           hierarchy of nodes changes */
+        this._mutationListener.element = this;
+        this.mService.root.addMutationListener(this._mutationListener);
+
+        /* Add a listener to the tabbrowser so we highlight the proper
+           nodes on location changes */
+        if (this.browser) {
+          let sp = this;
+          this._onBrowserTabChangeListener = function(e) {
+            sp.onBrowserTabChange(e);
+          }
+          this.browser.addEventListener("TabContentChange",
+                                        this._onBrowserTabChangeListener,
+                                        false);
+        }
+      ]]>
+      </constructor>
+
+      <destructor>
+      <![CDATA[
+        if (this.browser) {
+          this.browser.removeEventListener("TabContentChange",
+                                           this._onBrowserTabChangeListener,
+                                           false);
+        }
+        this.mService.root.removeMutationListener(this._mutationListener);
+      ]]>
+      </destructor>
+
+      <!-- sbIServicePaneMutationListener & sbIServicePaneListener -->
+      <field name="_mutationListener">
+      <![CDATA[
+        ({
+          element: null,
+          // Old interface, deprecated
+          hiddenAttributeChanged: function(node, oldVal, newVal) {
+          },
+
+          // Old interface, deprecated
+          isOpenAttributeChanged: function(node, oldVal, newVal) {
+          },
+
+          _knownAttributes: {
+            __proto__: null,
+            id: true,
+            hidden: true,
+            name: true,
+            image: true,
+            class: true,
+            isOpen: true,
+            ejectable: true,
+            badges: true
+          },
+
+          _updateContainerFlag: function(node, domNode) {
+            if (!node || !domNode || domNode == this.element)
+              return;
+
+            let hasVisibleChildren = false;
+            for (let child = node.firstChild; child; child = child.nextSibling)
+              if (!child.hidden)
+                hasVisibleChildren = true;
+  
+            if (hasVisibleChildren)
+              this.element.DOMUtils.setClass(domNode, "container");
+            else
+              this.element.DOMUtils.clearClass(domNode, "container");
+          },
+
+          attrModified: function(node, attrName, namespace, oldVal, newVal) {
+            if (namespace != null || oldVal == newVal)
+              return;
+
+            // attempt to find the DOM node in the SP, bail if no node is found
+            // or binding didn't apply to it yet
+            let domNode = this.element.getDOMNode(node);
+            if (!domNode || !("_getElement" in domNode))
+              return;
+
+            // If hidden attribute changes - update container status of parent
+            if (attrName == "hidden")
+              this._updateContainerFlag(node.parentNode, domNode.parentNode);
+
+            // Act on changes of known attributes or badge-related attributes
+            if (attrName in this._knownAttributes || /^badge_/.test(attrName)) {
+              // Delay execution to prevent multiple updates in a row for the
+              // same node
+              if (domNode._updateTimeout)
+                window.clearTimeout(domNode._updateTimeout);
+
+              domNode._updateTimeout = window.setTimeout(function() {
+                delete domNode._updateTimeout;
+
+                // This will reinitialize the DOM node
+                domNode.nodeData = domNode.nodeData;
+              }, 0);
+            } else {
+              /* Can be useful, but noisy */
+              this.element.noisyLog("Unhandled node attribute change: " +
+                               attrName + " from '" + oldVal + "' => '" +
+                               newVal + "'");
+            }
+          },
+
+          nodeInserted: function(node, parent, insertBefore) {
+            let domNode;
+            let parentNode;
+            if (!parent || parent == this.element.mService.root) {
+              // It's a new top level servicepane-group
+              this.element.log("New top level group: " + node.id);
+
+              domNode = this.element.createGroup(node);
+              parentNode = this.element;
+            } else {
+              // It's a regular node
+              this.element.log("New node: " + node.id + " (child of " + parent.id + ")");
+              domNode = this.element.createNode(node);
+              parentNode = this.element.getDOMNode(parent);
+              if (!parentNode) {
+                this.element.log("\tNo parent node found, skipping..");
+                return;
+              }
+            }
+
+            // Find the insertion point
+            let insertBeforeNode = null;
+            if (insertBefore)
+              insertBeforeNode = this.element.getDOMNode(insertBefore);
+
+            // Insert new node
+            if (insertBeforeNode && insertBeforeNode.parentNode == parentNode) {
+              parentNode.insertBefore(domNode, insertBeforeNode);
+            } else {
+              parentNode.appendChild(domNode);
+            }
+            
+            // Update container flag on parent node if visible node is added
+            if (!node.hidden)
+              this._updateContainerFlag(parent, parentNode);
+
+            // Hacky workaround for bug 21128, comment #2
+            if (parentNode == this.element) {
+              let hackNode = document.createTextNode("");
+              this.element.insertBefore(hackNode, domNode.nextSibling);
+            }
+
+            // The new node may already have children associated with it, so
+            // let's go look for those & add them to the hierarchy
+            let childNode = node.firstChild;
+            while (childNode) {
+              this.element.log("\tChild node found: " + childNode.id);
+              this.nodeInserted(childNode, node, null);
+              childNode = childNode.nextSibling;
+            }
+          },
+
+          nodeRemoved: function(node, parent) {
+            this.element.log("\tAttempting to remove node : " + node.id +
+                             " from " + parent.id);
+
+            try {
+              // find the DOM node representing this servicepane node
+              let domNode = this.element.getDOMNode(node);
+
+              // was this node active?
+              let active = null;
+              if (domNode)
+                active = domNode.className.match(/\bactive\b/);
+              else
+                this.element.log("\tUnable to find a DOM node for " + node.id);
+
+              // was this node the focus for keyboard operations ?
+              if (this.element._keyboardFocusNode == node) {
+                this.element._keyboardFocusNode = null;
+              }
+
+              // remove the actual node
+              if (domNode && domNode.parentNode) {
+                let parentNode = domNode.parentNode;
+                this.element.log("\tDOM nodes map to removing " + domNode.id +
+                                 " from " + parentNode.id);
+                parentNode.removeChild(domNode);
+
+                // Is the parent still a container?
+                if (!node.hidden)
+                  this._updateContainerFlag(parent, parentNode);
+              }
+            } catch (e) {
+              Cu.reportError(e);
+            }
+            // XXXtodo
+            // if the node was active, then the browser will have gone back
+            // in history and loaded the previously loaded page.  check the
+            // servicepane to see if we have a node that matches the page,
+            // and if so - visually highlight/select it
+          }
+        })
+      ]]>
+      </field>
+
+      <!-- The active node, or null if none -->
+      <field name="_activeNode">null</field>
+
+      <!-- The highlighted node, or null if none -->
+      <field name="_highlightedNode">null</field>
+
+      <!-- The node we're currently editing -->
+      <field name="_editingNode">null</field>
+
+      <!-- The node with the current keyboard focus -->
+      <field name="_keyboardFocusNode">null</field>
+
+      <!--
+        TODO: Change the use of these functions so we can remove the
+        mTreePane dependency (not to be confused with the T-PAIN dependency).
+        mTreePane is used for the following:
+        isMediaTabURL(url) - SBSessionStore.js#298
+        loadNode(node, null) - mainPlayerWindow.js#445, deviceSupport.js#477
+      -->
+      <field name="mTreePane">null</field>
+
+      <!-- Splitter between the service pane and the content on the main view
+           in the Purple Rain/Gonzo feathers. -->
+      <field name="mSplitter">
+        document.getElementById('servicepane_splitter');
+      </field>
+
+      <!--
+        - \brief Create a group that may hold nodes
+        -->
+      <method name="createGroup">
+        <parameter name="nodeData"/>
+        <body><![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var newGroup = document.createElementNS(XULNS, "sb-servicepane-group");
+
+          // Setting private property because binding didn't apply yet, public
+          // nodeData property isn't available
+          newGroup._nodeData = nodeData;
+          return newGroup;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Create a node that belongs to another node or group
+        -->
+      <method name="createNode">
+        <parameter name="nodeData"/>
+        <parameter name="parentNode"/>
+        <body>
+            <![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var newNode = document.createElementNS(XULNS,"sb-servicepane-node");
+
+          // Setting private property because binding didn't apply yet, public
+          // nodeData property isn't available
+          newNode._nodeData = nodeData;
+          if (this.hasAttribute("browser")) {
+            newNode.setAttribute("browser", this.getAttribute("browser"));
+          }
+
+          // If the servicepane-group holding this node is collapsed, then
+          // add a load listener to make sure we adjust the margins for the
+          // group once we're added
+          newNode.addEventListener("load", function(e) {
+              newNode.removeEventListener("load", arguments.callee, false);
+              
+              // find the parent servicepane-group
+              let parentGroup = newNode._servicePaneGroup;
+
+              // no need to do anything if it's already visible
+              if (parentGroup.visible)
+                return;
+
+              // adjust the margin to include our newly added group
+              let height = parentGroup._groupNodes.boxObject.height;
+              parentGroup._groupNodes.style.marginTop = "-" + height + "px";
+            }, false);
+           
+          if (parentNode)
+            parentNode.appendChild(newNode);
+
+          return newNode;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Inital load of the service pane, this will create the groups
+        - and fill them with nodes as defined.
+        -->
+      <method name="loadServicePane">
+        <body><![CDATA[
+          if (!this.mService) {
+            this.mService =
+              Components.classes['@songbirdnest.com/servicepane/service;1']
+              .getService(Components.interfaces.sbIServicePaneService);
+            this.mService.init();
+          }
+
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+          /* These should already be in sorted order */
+          this.log("********** SERVICEPANE ROOT **********");
+          var groupEntry = this.mService.root.firstChild;
+          while (groupEntry) {
+            this.log("|- " + groupEntry.id);
+            // Create the group and set the state
+            var newgroup = this.createGroup(groupEntry);
+
+            // Helper function to add nodes (called recursively)
+            function addNode(nodeEntry, parent)
+            {
+              this.log("\t|- " + nodeEntry.id);
+              let newnode = this.createNode(nodeEntry, parent);
+              for (let child = nodeEntry.firstChild; child; child = child.nextSibling)
+                addNode.call(this, child, newnode);
+            }
+
+            // Create the nodes in this group
+            for (let child = groupEntry.firstChild; child; child = child.nextSibling)
+              addNode.call(this, child, newgroup);
+
+            this.appendChild(newgroup);
+            
+            // hacky workaround for bug 21128, comment #2
+            let hackNode = document.createTextNode("");
+            this.appendChild(hackNode);
+
+            groupEntry = groupEntry.nextSibling;
+          }
+        ]]></body>
+      </method>
+
+      <method name="getDOMNode">
+        <parameter name="nodeData"/>
+        <body><![CDATA[
+          let filter = {
+            acceptNode: function(node)
+            {
+              // Compare to private property so that nodes can be found even if
+              // their binding hasn't been applied yet (e.g., node is hidden).
+              // See "http://bugzilla.songbirdnest.com/show_bug.cgi?id=22059".
+              if (node._nodeData == nodeData)
+                return NodeFilter.FILTER_ACCEPT;
+              else
+                return NodeFilter.FILTER_REJECT;
+            }
+          };
+          let iterator = document.createNodeIterator(this,
+              NodeFilter.SHOW_ELEMENT, filter, false);
+          return iterator.nextNode();
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the active node if any.
+        - \return sbIServicePaneNode of the active node, or null if none
+        -->
+      <property name="activeNode">
+        <getter><![CDATA[
+          return this._activeNode;
+        ]]></getter>
+      </property>
+
+      <property name="highlightedNode">
+        <getter><![CDATA[
+          return this._highlightedNode;
+        ]]></getter>
+      </property>
+
+      <method name="getKeyboardFocusNode">
+        <parameter name="nodefault"/>
+        <body><![CDATA[
+          if (this._keyboardFocusNode)
+            return this._keyboardFocusNode;
+          if (!nodefault)
+            return this.activeNode;
+          return null;
+        ]]></body>
+      </method>
+
+      <!-- to trigger selection highlighting -->
+      <method name="_makeSelectedNodeActive">
+        <body>
+          <![CDATA[
+          try {
+            // Is there a servicepane node for the current tab?
+            let node = this._browser.selectedTab.servicePaneNode;
+
+            // if we didn't find a node, try looking it up by URL
+            if (!node) {
+              let uri = this._browser.selectedTab.linkedBrowser.currentURI;
+              if (uri)
+                node = this.mService.getNodeForURL(uri.spec);
+            }
+
+            // if we still didn't find a node, try looking it up by medialist
+            if (!node && this._browser.selectedTab.mediaListView) {
+              let librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+                                 .getService(Ci.sbILibraryServicePaneService);
+              node = librarySPS.getNodeFromMediaListView(
+                                 this._browser.selectedTab.mediaListView);
+            }
+
+            // Do not switch active node if it's hidden
+            if (node && !node.hidden) {
+              this.makeNodeActive(node);
+            }
+          } catch (e) {
+            Components.utils.reportError(e);
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!--
+        - \brief Deselect any currently selected node(s) and select the
+        - passed in node
+        -->
+      <method name="makeNodeActive">
+        <parameter name="newNode"/>
+        <body><![CDATA[
+          if (!newNode)
+            return;
+
+          // Remove the 'active' CSS class from the currently active node
+          let activeNode = this.activeNode;
+
+          if (activeNode == newNode)
+            return;
+
+          if (this._editingNode) {
+            // don't save any changes
+            this._editingNode._textbox.setAttribute("hidden", true);
+            this._editingNode._textbox.value =
+                 this._editingNode.getAttribute("label");
+            this.mService.onRename(this._editingNode.nodeData, null);
+            this._editingNode = null;
+          }
+
+          if (activeNode) {
+            activeNode.className =
+                      activeNode.className.replace(/\bactive\b/g, '');
+          }
+
+          // Add the 'active' class to the new node
+          newNode.className += " active";
+          this._activeNode = newNode;
+
+          // Auto expand the parent group of this node
+          let parentNode = newNode.parentNode;
+          while (parentNode && (parentNode.parentNode != this.mService.root))
+            parentNode = parentNode.parentNode;
+          if (parentNode) {
+            let parentDomNode = this.getDOMNode(parentNode);
+            parentDomNode.visible = true;
+          }
+
+          return newNode;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Dehighlight any currently highlighted node(s) and
+        - highlight the passed in node
+        -->
+      <method name="makeNodeHighlighted">
+        <parameter name="newNode"/>
+        <body><![CDATA[
+          // Remove the 'highlight' CSS from the currently highlighted node
+          let highlightedNode = this.highlightedNode;
+
+          if (highlightedNode == newNode)
+            return;
+
+          if (highlightedNode) {
+            let domNode = this.getDOMNode(highlightedNode);
+            if (domNode)
+              domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
+          }
+
+          // Add the 'highlighted' class to the new node
+          newNode.className += " highlighted";
+          this._highlightedNode = newNode.nodeData;
+          return newNode;
+        ]]></body>
+      </method>
+      
+      <!--
+        - \brief Highlight a node as being active
+        -->
+      <method name="highlightNode">
+        <parameter name="aNode"/>
+        <body><![CDATA[
+          this.makeNodeActive(aNode);
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Start editing a nodes name, this may not be enabled if the
+        -        node is read only.
+        - \return true if editing started, false if not able to edit.
+        -->
+      <method name="startEditingNode">
+        <parameter name="aNode"/>
+        <body><![CDATA[
+          if (!aNode || !aNode.editable)
+            return false;
+
+          try {
+            // are we editing any other nodes currently?
+            if (this._editingNode) {
+              // don't save any changes
+              this._editingNode._textbox.setAttribute("hidden", true);
+              this._editingNode._textbox.value =
+                   this._editingNode.getAttribute("label");
+              this.mService.onRename(this._editingNode.nodeData, null);
+              this._editingNode = null;
+            }
+
+            // notify servicepane service that we're about to rename the node
+            this.mService.onBeforeRename(aNode);
+
+            // get the DOM node for the node we're about to edit
+            this._editingNode = this.getDOMNode(aNode);
+
+            // ensure this node is visible.  we do this by having the scrollbox
+            // scroll to make the element visible.  but if the group is
+            // collapsed, this won't work, so we need to do it once the
+            // group is visible, and no sooner
+            let scrollbox =
+                this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
+            let groupNode = aNode.parentNode;
+            while (groupNode.parentNode != this.mService.root)
+              groupNode = groupNode.parentNode;
+            let groupDomNode = this.getDOMNode(groupNode);
+            // if the group is already open, then just make sure our editing
+            // node is visible
+            if (groupDomNode.actuallyVisible)
+              scrollbox.ensureElementIsVisible(this._editingNode);
+            else {
+              let editingNode = this._editingNode;
+              groupDomNode.addEventListener("expand-servicepane-group",
+                function(e) {
+                  // remove listener
+                  groupDomNode.removeEventListener("expand-servicepane-group",
+                                                   arguments.callee,
+                                                   false);
+                  scrollbox.ensureElementIsVisible(editingNode);
+                }, false);
+            }
+
+            // start editing this node
+            this._editingNode._textbox.removeAttribute("hidden");
+            this._editingNode._textbox.value =
+                 this._editingNode.getAttribute("label");
+            this._editingNode._textbox.select();
+            return true;
+          } catch (e) {
+            Cu.reportError(e);
+            this._editingNode = null;
+            return false;
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the name of a node that has a particular URL.
+        - \param aURL URL to search for in the nodes.
+        - \return name of the node, or aURL if no node found.
+        -->
+      <method name="getURLName">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.name : aURL;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the image of a node that has a particular URL.
+        - \param aURL URL to search for in the nodes.
+        - \return image of the node, or null if no node found.
+        -->
+      <method name="getURLImage">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.image : null;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the properties of a node that has a particular URL.
+        - \param aURL URL to search for in the nodes.
+        - \return properties of the node, or "" if no node found.
+        -->
+      <method name="getURLProperties">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.properties : "";
+        ]]></body>
+      </method>
+
+      <!-- Called when the content of the current browser tab is changed.
+           This occurs when the user swiches tabs, or loads an new page 
+           in the existing tab.  Note that on page load this method is called
+           both at load start and at load complete. -->
+      <method name="onBrowserTabChange">
+        <body><![CDATA[
+          this._makeSelectedNodeActive();
+        ]]></body>
+      </method>
+
+      <!-- Popup menu methods -->
+      <method name="onPopupShown">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          let visibleChildren = false;
+          for (var i=0;i<this.mPopup.childNodes.length;i++) {
+            let thisChild = this.mPopup.childNodes[i];
+            if (thisChild.hidden)
+              continue;
+            visibleChildren = true;
+            break;
+          }
+          if (!visibleChildren)
+            this.mPopup.hidePopup();
+          ]]>
+        </body>
+      </method>
+
+      <method name="onPopupHidden">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          //this.mPopup.hidePopup();
+          // Remove the 'highlight' CSS from the currently highlighted node
+          let highlightedNode = this.highlightedNode;
+          if (highlightedNode) {
+            let domNode = this.getDOMNode(highlightedNode);
+            domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
+          }
+
+          this._highlightedNode = null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="openContextMenu">
+        <parameter name="event" />
+        <parameter name="node" />
+        <body>
+          <![CDATA[
+          // clear the popup menu
+          while (this.mPopup.lastChild) {
+            DOMUtils.destroyNode(this.mPopup.lastChild);
+            this.mPopup.removeChild(this.mPopup.lastChild);
+          }
+          
+          // if we got passed a DOM node, then fill the context menu with
+          // the context menu options defined by the service handling the
+          // node.  otherwise, fill the popup with the contents of the
+          // "new stuff" menu
+          var x, y;
+          if (node) {
+            let domNode = this.getDOMNode(node);
+            this.makeNodeHighlighted(domNode);
+            this.mService.fillContextMenu(node, this.mPopup, window);
+            x = (event ? (event.screenX + 5) : domNode.boxObject.screenX);
+            y = (event ? (event.screenY + 5) : (domNode.boxObject.screenY + 
+                                                domNode.boxObject.height));
+          } else {
+            this.mService.fillNewItemMenu(null, this.mPopup, window);
+            x = (event ? (event.screenX + 5) : this.boxObject.screenX + 5);
+            y = (event ? (event.screenY + 5) : this.boxObject.screenY + 5);
+          }
+
+          // show the popup menu
+          document.popupNode = null;
+          this.mPopup.showPopup(document.documentElement, x, y,
+                                'context', null, null, null);
+
+          // XXXstevel: should we select/highlight the node?
+          if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+          }
+          ]]>
+        </body>
+      </method>
+
+      <!--
+        - \brief State of the service pane, open or closed.
+        -->
+      <property name="open">
+        <getter>
+        <![CDATA[
+          var elId = this.mSplitter.getAttribute("collapseelement");
+          return !document.getElementById(elId).collapsed;
+        ]]>
+        </getter>
+        <setter>
+        <![CDATA[
+          var elId = this.mSplitter.getAttribute("collapseelement");
+          var el = document.getElementById(elId);
+          el.collapsed = !val;
+
+          SBDataSetBoolValue('splitter.servicepane_splitter.collapsed',
+                             el.collapsed);
+          // If we are opening the service pane, make sure we highlight the
+          // appropriate node.
+          if(val) {
+            // Is there a servicepane node for the current tab?
+            //var node = this.mTreePane.browser.selectedTab.servicePaneNode;
+            //if (node) {
+            //  this.mTreePane.highlightNode(node);
+            //}
+          }
+          ]]>
+        </setter>
+      </property>
+
+      <field name="_browser">null</field>
+      <property name="browser">
+        <getter><![CDATA[
+          if (!this._browser) {
+            this._browser = document.getElementById(this.getAttribute('browser'));
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
+      
+      <method name="needScroll">
+        <parameter name="event" />
+        <body><![CDATA[
+          let scrollbox =
+              this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
+          
+          // If we're near the bottom or top of the servicepane, then scroll as
+          // needed
+          if (event.screenY <= this.boxObject.screenY + 20)
+          {
+            scrollbox.scrollBy(0, -10);
+          } else if (event.screenY >=
+                    (this.boxObject.screenY+this.mInnerBox.boxObject.height-20))
+          {
+            scrollbox.scrollBy(0, 10);
+          }
+          event.stopPropagation();
+        ]]></body>
+      </method>
+
+      <method name="ensureNodeIsVisible">
+        <parameter name="node" />
+        <body><![CDATA[
+          let scrollbox =
+              this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
+          scrollbox.ensureElementIsVisible(this.getDOMNode(node));
+        ]]></body>
+      </method>
+      
+      <method name="_leaveKeyboardFocus">
+        <body><![CDATA[ 
+          if (this._keyboardFocusNode) {
+            var node = this._keyboardFocusNode;
+            var domnode = this.getDOMNode(node);
+            if (domnode) {
+              var group = domnode._servicePaneGroup;
+              if (group && 
+                  group._autoCloseOnLeaveKeyboardFocus) {
+                // if this group was open by navigating to it with the kbd,
+                // make it so leaving it with the keyboard won't close it
+                // anymore now that we've loaded the url
+                group._autoCloseOnLeaveKeyboardFocus = false;
+              }
+            }
+            this.setKeyboardFocusNode(null);
+          }
+        ]]></body>
+      </method>
+
+      <method name="setKeyboardFocusNode">
+        <parameter name="node"/>
+        <body>
+        <![CDATA[
+          if (this._keyboardFocusNode) {
+            var domnode = this.getDOMNode(this._keyboardFocusNode);
+            domnode.className = 
+              domnode.className.replace(/\bkeyboardfocus\b/g,'');
+            this._keyboardFocusNode = null;
+          }
+          if (node) {
+            var domnode = this.getDOMNode(node);
+            if (domnode.className.search(/\bkeyboardfocus\b/) == -1) {
+              domnode.className += " keyboardfocus";
+            }
+            this._keyboardFocusNode = node;
+            this.ensureNodeIsVisible(node);
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <method name="_expandKeyboardFocusNode">
+        <parameter name="event" />
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node && !node.isOpen) {
+            var domnode = this.getDOMNode(node);
+            if (domnode) 
+              domnode.toggleContainer(event);
+          }
+        ]]></body>
+      </method>
+      <method name="_collapseKeyboardFocusNode">
+        <parameter name="event" />
+        <body><![CDATA[
+          var node = this.getKeyboardFocusNode();
+          if (node && node.isOpen) {
+            var domnode = this.getDOMNode(node);
+            if (domnode) 
+              domnode.toggleContainer(event);
+          }
+        ]]></body>
+      </method>
+      <method name="_editKeyboardFocusNode">
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node && node.editable)
+            this.startEditingNode(node);
+        ]]></body>
+      </method>
+      <method name="_openKeyboardFocusNode">
+        <parameter name="event"/>
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node) {
+            var domnode = this.getDOMNode(node);
+            if (domnode) {
+              this._leaveKeyboardFocus();
+              domnode.loadNodeURL(event)
+            }
+          }
+        ]]></body>
+      </method>
+      <method name="_contextMenuKeyboardFocusNode">
+        <parameter name="event"/>
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node) {
+            this.openContextMenu(null, node);
+          }
+        ]]></body>
+      </method>
+      <method name="_keyboardFocusUp">
+        <body><![CDATA[ 
+          var node = this._getKeyboardFocusSibling(-1);
+          if (node) {
+            if (node == -1) {
+              setTimeout(function(o) { o._keyboardFocusUp(); }, 0, this);
+              return;
+            }
+            this.setKeyboardFocusNode(node);
+          }
+        ]]></body>
+      </method>
+      <method name="_keyboardFocusDown">
+        <body><![CDATA[ 
+          var node = this._getKeyboardFocusSibling(1);
+          if (node) {
+            if (node == -1) {
+              setTimeout(function(o) { o._keyboardFocusDown(); }, 0, this);
+              return;
+            }
+            this.setKeyboardFocusNode(node);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getKeyboardFocusSibling">
+        <parameter name="direction"/>
+        <body><![CDATA[ 
+          var oldgroup = null;
+          var pos = -1;
+          var kfnode = this.getKeyboardFocusNode();
+          if (kfnode) {
+            var kfdomnode = this.getDOMNode(kfnode);
+            oldgroup = kfdomnode._servicePaneGroup;
+            var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+            var domnodes = this.getElementsByTagNameNS(XULNS,"sb-servicepane-node");
+            for (var i in domnodes) {
+              if (domnodes[i] == kfdomnode) {
+                pos = parseInt(i);
+                break;
+              }
+            }
+          }
+          while (1) {
+            pos += direction;
+            if (pos < 0 || pos >= domnodes.length)
+              break;
+            var domnode = domnodes[pos];
+            // discard non-element domnodes
+            if (domnode.nodeType != Node.ELEMENT_NODE)
+              continue;
+            var node = domnode.nodeData;
+            if (node) {
+              // discard hidden nodes
+              if (node.hidden)
+                continue;
+              var group = domnode._servicePaneGroup;
+              if (group) {
+                // if the parent group is collapsed, open it and delay selection
+                // of the sibling.
+                if (!group.visible) {
+                  group.visible = true;
+                  group._autoCloseOnLeaveKeyboardFocus = true;
+                  return -1;
+                }
+              }
+              // discard nodes in collapsed containers
+              if (domnode.boxObject.height == 0)
+                continue;
+            }
+            if (oldgroup &&
+                group != oldgroup) {
+              if (oldgroup._autoCloseOnLeaveKeyboardFocus &&
+                  oldgroup.visible)
+                oldgroup.visible = false;
+            }
+            return node;
+          }
+        ]]></body>
+      </method>
+      
+      <method name="activateAndLoadNode">
+        <parameter name="node"/>
+        <parameter name="event"/>
+        <parameter name="arguments"/>
+        <body>
+        <![CDATA[
+          if (!node)
+            return;
+          var domnode = this.getDOMNode(node);
+          if (domnode)
+            domnode.loadNodeURL(event, arguments);
+        ]]></body>
+      </method>
+
+    </implementation>
+    
+    <handlers>
+      <handler event="dragover"><![CDATA[
+        this.needScroll(event);
+      ]]></handler>
+
+      <handler event="dragdrop"><![CDATA[
+        event.stopPropagation();
+      ]]></handler>
+
+      <handler event="dragexit"><![CDATA[
+        // If we've exited the servicepane, then relatedTarget is null so
+        // clear any timers we've got running
+        if (this._timer && !event.relatedTarget) {
+          this.log("Exited servicepane, canceling auto-expand timer");
+          clearTimeout(this._timer);
+          this._timer = null;
+          if (this._timerGroup) {
+            this._timerGroup._expandTimerRunning = null;
+            this._timerGroup = null;
+          }
+        }
+
+        if (this._collapsedGroup && !event.relatedTarget) {
+          this._collapsedGroup._collapseOnDragExit = null;
+          this._collapsedGroup.visible = false;
+          this._collapsedGroup = null;
+        }
+      ]]></handler>
+      
+      <handler event="keydown"><![CDATA[
+        if (this._editingNode) 
+          return;
+        const ke = Components.interfaces.nsIDOMKeyEvent;
+        switch (event.keyCode) {
+          case ke.DOM_VK_RIGHT:
+            this._expandKeyboardFocusNode(event);
+            break;
+          case ke.DOM_VK_LEFT:
+            this._collapseKeyboardFocusNode(event);
+            break;
+          case ke.DOM_VK_UP:
+            this._keyboardFocusUp();
+            break;
+          case ke.DOM_VK_DOWN:
+            this._keyboardFocusDown();
+            break;
+          case ke.DOM_VK_RETURN:
+            this._openKeyboardFocusNode(event);
+            break;
+          case ke.DOM_VK_F2:
+            this._editKeyboardFocusNode();
+            break;
+          case ke.DOM_VK_ESCAPE:
+            this._leaveKeyboardFocus();
+            break;
+          case ke.DOM_VK_CONTEXT_MENU:
+            this._contextMenuKeyboardFocusNode();
+            break;
+          // node deletion is handled by the command handler
+          default:
+            return;
+        }
+        event.stopPropagation();
+        event.preventDefault();
+      ]]></handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

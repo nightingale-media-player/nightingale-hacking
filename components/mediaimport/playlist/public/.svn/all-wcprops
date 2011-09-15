@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/18663/trunk/components/mediaimport/playlist/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/15557/trunk/components/mediaimport/playlist/public/Makefile.in
+END
+sbIPlaylistReader.idl
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/18663/trunk/components/mediaimport/playlist/public/sbIPlaylistReader.idl
+END

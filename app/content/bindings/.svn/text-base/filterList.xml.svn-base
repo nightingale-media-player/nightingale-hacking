@@ -1,0 +1,737 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="filterlist">
+    <content>
+      <xul:stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        <!-- this box contains the nodes for the drag icon.
+             ideally, these nodes would be created at run-time.
+             unfortunately, it is very difficult to hide a node from view
+             without making it ineligible for dragSessionWithImage.
+             to get rid of this, figure out how to fix that call. -->
+        <box top="0" left="0">
+          <stack sbid="dragIcon">
+            <image sbid="dragImage"
+                   class="sb-playlist-drag-image"
+                   top="0"
+                   left="0"/>
+            <description sbid="dragBadge"
+                         class="sb-playlist-drag-badge"
+                         top="0"
+                         left="0"/>
+          </stack>
+        </box>
+        <xul:tree
+          id="sb-filterlist-tree"
+          class="sb-filterlist-tree"
+          sbid="filter_tree"
+          flex="1"
+          onselect="_onFilterListSelect(event);"
+          ondraggesture="_onFilterListDragGesture(event);"
+          ondragover="_onFilterListDragOver(event)"
+          ondrop="_onFilterListDrop(event);"
+          enableColumnDrag="false"
+          xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
+        >
+          <xul:treecols sbid="treeColumns"
+                        type="sb-contextpicker"
+                        xbl:inherits="class,filter-category-value"/>
+          <xul:treechildren ondblclick="_onFilterListDblClick(event);" />
+        </xul:tree>
+      </xul:stack>
+    </content>
+
+    <implementation type="application/x-javascript"
+                    name="songbird_filterlist"
+                    implements="sbICascadeFilterSetListener">
+
+      <constructor>
+<![CDATA[
+  // Add the controller to respond to the edit menu
+  this.tree.controllers.appendController(this._commandController);
+]]>
+      </constructor>
+
+      <destructor>
+<![CDATA[
+  if (this._isBound) {
+    this.cfs.removeListener(this);
+
+    // Force the tree to forget about the view.  This is required in the case
+    // where we are going to immediately load a new tree using the same view.
+    // When this happens nsTreeBodyFrame will get a Destroy() call *after*
+    // the new tree is loaded, causing the view to be reset.
+    // See Bug 8001 for details.
+    this.tree.view = null;
+    this.tree = null;
+  }
+]]>
+      </destructor>
+
+      <field name="tree">document.getAnonymousElementByAttribute(this, 'sbid', 'filter_tree');</field>
+
+      <!-- The filter set this filter is part of -->
+      <field name="cfs">null</field>
+
+      <!-- The index of the filter within the set -->
+      <field name="index">null</field>
+
+      <!-- Property and property info this filter list is filtering -->
+      <field name="_property">null</field>
+      <field name="_propertyInfo">null</field>
+
+      <!-- If this filterlist is bound to anything -->
+      <field name="_isBound">false</field>
+
+      <!-- Tab delimited list of the last selection, null means all -->
+      <field name="_lastSelection">null</field>
+
+      <field name="_XUL_NS" readonly="true">
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      </field>
+      <field name="_Cc"     readonly="true">Components.classes</field>
+      <field name="_Ci"     readonly="true">Components.interfaces</field>
+      <field name="_Cr"     readonly="true">Components.results</field>
+
+      <field name="_commandController" readonly="true"><![CDATA[
+        ({
+          _self: this,
+          doCommand: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_copy":
+                var numValues = this._self.cfs.getValueCount(this._self.index, true);
+                var val = "";
+
+                // if there is selection, set val to the csv string of properties
+                var sel = this._self.tree.view.selection;
+                if ( sel.count > 0 ) {
+                  var rangeCount = sel.getRangeCount();
+                  for (var i = 0; i < rangeCount; i++) {
+                    var min = {};
+                    var max = {};
+                    sel.getRangeAt(i, min, max);
+
+                    // If the "all" row is selected, do everything
+                    if (min.value == 0) {
+                      // reset
+                      val = "";
+
+                      // Add all the values
+                      for (var k = 0; k < numValues ; k++) {
+                        val += this._self.cfs.getValueAt(this._self.index, k) + "\n";
+                      }
+
+                      // end the loop to copy to clipboard;
+                      break;
+                    }
+
+                    // loop over each range and add the values to val
+                    for (var j = min.value; j <= max.value; j++) {
+                      // The actual number of rows in the view can lag behind the number of
+                      // rows in the tree, so make sure we don't select those
+                      if (j - 1 < numValues) {
+                        var stuff = this._self.cfs.getValueAt(this._self.index, j - 1);
+                        val += this._self.cfs.getValueAt(this._self.index, j - 1) + "\n";
+                      }
+                    }
+                  }
+                }
+                Cc["@mozilla.org/widget/clipboardhelper;1"]
+                  .getService(Ci.nsIClipboardHelper)
+                  .copyString(val);
+                break;
+              case "cmd_selectAll":
+                this._self.tree.view.selection.selectAll();
+                break;
+            }
+          },
+          supportsCommand: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_copy":
+              case "cmd_selectAll":
+                return true;
+            }
+            return false;
+          },
+          isCommandEnabled: function(aCommand) {
+            if ( aCommand == 'cmd_selectAll' ) {
+              return true;
+            } else if ( aCommand == 'cmd_copy' ) {
+              if ( this._self.tree.view.selection.count > 0 ) {
+                return true;
+              }
+            }
+            return false;
+          },
+          onEvent: function(aEventName) {}
+        })
+      ]]></field>
+
+      <method name="bind">
+        <parameter name="mediaListView"/>
+        <parameter name="index"/>
+        <body>
+<![CDATA[
+  if (this._isBound) {
+    throw new Error("already bound");
+  }
+  this.setAttribute("sbtype", "filterlist");
+  this.mediaListView = mediaListView;
+  this.cfs = mediaListView.cascadeFilterSet;
+  this.index = index;
+  this._property = this.cfs.getProperty(index);
+  this.tree.view = this.cfs.getTreeView(index);
+
+  // Install our special keyNavigate function. The signature must match the
+  // keyNavigate method in tree.xml.
+  this.tree._keyNavigate = this._treeKeyNavigate;
+
+  // Get the property info for the property
+  var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(this._Ci.sbIPropertyManager);
+  this._propertyInfo = pm.getPropertyInfo(this._property);
+
+  // Add the column for the property to the tree
+  var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+
+  while (treeColumns.lastChild)
+    treeColumns.removeChild(treeColumns.lastChild);
+
+  var treecol = document.createElementNS(this._XUL_NS, "treecol");
+  treecol.setAttribute("bind", this._property);
+  treecol.setAttribute("flex", "1");
+  treecol.setAttribute("sortDirection", "ascending");
+  treeColumns.appendChild(treecol);
+  this.treecol = treecol;
+
+  this._updateColumnLabel(this.index);
+
+  // If this filter has a search-term set, then pre-select it in the widget
+  var filterValues = this.cfs.get(index).enumerate();
+  var hasSelection = false;
+  while (filterValues.hasMoreElements()) {
+    var filterValue = filterValues.getNext()
+                                  .QueryInterface(this._Ci.nsISupportsString);
+    // Now loop through our tree view and select this value
+    for (var j = 0; j < this.tree.view.rowCount; j++) {
+      var col = this.tree.columns.getColumnAt(0);
+      if (this.tree.view.getCellText(j, col) == filterValue) {
+        if (hasSelection) {
+          this.tree.view.selection.toggleSelect(j);
+        } else {
+          this.tree.view.selection.select(j);
+          hasSelection = true;
+          break;
+        }
+      }
+    }
+  }
+
+
+  // Remove our selection if we are updated
+  this.cfs.addListener(this);
+  this._isBound = true;
+]]>
+        </body>
+      </method>
+
+      <method name="changeProperty">
+        <parameter name="property"/>
+        <body>
+          <![CDATA[
+            // if nothing changed, do not actually do anything
+            if (this._property == property)
+              return;
+
+            this._property = property;
+
+            this.cfs.changeFilter(this.index, property);
+            this.tree.view = this.cfs.getTreeView(this.index);
+
+            // Get the property info for the property
+            var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                            .getService(this._Ci.sbIPropertyManager);
+            this._propertyInfo = pm.getPropertyInfo(this._property);
+
+            // get columns parent
+            var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
+
+            // Remove old column
+            while (treeColumns.lastChild)
+              treeColumns.removeChild(treeColumns.lastChild);
+
+            // Add new column
+            var treecol = document.createElementNS(this._XUL_NS, "treecol");
+            treecol.setAttribute("bind", this._property);
+            treecol.setAttribute("sortDirection", "ascending");
+            treecol.setAttribute("sortActive", "true");
+            treecol.setAttribute("flex", "1");
+            treeColumns.appendChild(treecol);
+            this.treecol = treecol;
+
+            this._updateColumnLabel(this.index);
+            this._saveCascadeFilterState();
+          ]]>
+        </body>
+      </method>
+
+      <method name="_saveCascadeFilterState">
+        <body>
+          <![CDATA[
+            var array = [];
+            for ( var i = 0, end = this.cfs.length; i < end; i++ ) {
+              var property = this.cfs.getProperty(i);
+              if ( property.length > 0 )
+                array.push( property );
+            }
+            var serialize = array.join(";");
+            SBDataSetStringValue( "library.filterset", serialize );
+          ]]>
+        </body>
+      </method>
+
+      <method name="_updateColumnLabel">
+        <body>
+          <![CDATA[
+            var n = this.cfs.getValueCount(this.index, false);
+            var itemsstr;
+            switch (n) {
+              case 0:
+                itemsstr = this._getString("library.noitem", "no items");
+                break;
+              case 1:
+                itemsstr = n + " " + this._getString("library.oneitem", "item");
+                break;
+              default:
+                itemsstr = n + " " + this._getString("library.manyitems", "items");
+                break;
+            }
+            this.treecol.setAttribute("label", this._propertyInfo.displayName + " (" + itemsstr + ")");
+          ]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListSelect">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // Note that we check the new list of selected values against _lastSelection
+  // to prevent reapplying the same filter
+
+  var ldbtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+  if (ldbtv.selectionIsAll) {
+    if (this._lastSelection == null) {
+      return;
+    }
+    this._lastSelection = null;
+    this.cfs.set(this.index, [], 0);
+    return;
+  }
+
+  var values = [];
+  var enumerator = ldbtv.getSelectedValues();
+  while (enumerator.hasMore()) {
+    values.push(enumerator.getNext());
+  }
+
+  var thisSelection = values.join("\t");
+  if (thisSelection == this._lastSelection) {
+    return;
+  }
+
+  this._lastSelection = thisSelection;
+  this.cfs.set(this.index, values, values.length);
+]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListDblClick">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+           var mm =
+             Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Components.interfaces.sbIMediacoreManager);
+
+           var view = mm.sequencer.view;
+
+           if (view != null && view.tree != null) {
+             view.treeView.selection.currentIndex = 0;
+           }
+
+           // Send a play event and hope someone cares
+           var playEvent = document.createEvent("Events");
+           playEvent.initEvent("Play", true, true);
+           this.dispatchEvent(playEvent);
+          ]]>
+        </body>
+      </method>
+
+      <method name="onChange">
+        <body>
+<![CDATA[
+  // do nothing
+]]>
+        </body>
+      </method>
+
+      <method name="onValuesChanged">
+        <parameter name="aIndex"/>
+        <body>
+<![CDATA[
+  if (aIndex == this.index) {
+    this._updateColumnLabel();
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_getString">
+        <parameter name="name"/>
+        <parameter name="defaultValue"/>
+        <body>
+<![CDATA[
+  if (!this._stringbundle) {
+    var src = "chrome://songbird/locale/songbird.properties";
+    var stringBundleService = this._Cc["@mozilla.org/intl/stringbundle;1"]
+                                  .getService(this._Ci.nsIStringBundleService);
+    this._stringbundle = stringBundleService.createBundle(src);
+  }
+
+  try {
+    return this._stringbundle.GetStringFromName(name);
+  }
+  catch(e) {
+    return defaultValue;
+  }
+]]>
+        </body>
+      </method>
+            <!-- Items are dragged from the list -->
+      <method name="_onFilterListDragGesture">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+    // We only want to consider drag sessions initiated on the tree children.
+    if (event.target.localName != "treechildren"
+        || this.mediaListView.length == 0) {
+      return;
+    }
+
+    var transArray = this._setEventDataTransfer(event.dataTransfer);
+    var icon = this._prepareDragIcon();
+    event.dataTransfer.setDragImage(icon, 0, 0);
+]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListDragOver">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // prevent dropping anything into the filter lists to work around crash
+  // (bug 13808)
+  event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListDrop">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // prevent dropping anything into the filter lists to work around crash
+  // (bug 13808)
+  event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+<!-- _setEventDataTransfer
+     set the event data transfer based on the current state of the filter
+     widget which represents what should be dragged right now.
+  -->
+      <method name="_setEventDataTransfer">
+        <parameter name="aDataTransfer"/>
+        <body>
+<![CDATA[
+  // Create the Transfer Array
+  var dnd = Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+              .getService(Ci.sbIDndSourceTracker);
+  dnd.reset();
+
+  var view = this.mediaListView;
+  // create the data
+  var context = new DNDUtils.EntireMediaListViewTransferContext(view);
+  // make it a source
+  var handle = dnd.registerSource(context);
+  aDataTransfer.setData("application/x-sb-transfer-media-items", handle);
+]]>
+        </body>
+      </method>
+
+      <method name="_prepareDragIcon">
+        <body>
+<![CDATA[
+  // Prepare the badged drag icon for the drag session.
+
+  // A few notes for the next poor bastard to stumble into this code.
+  // First, the node you return has to be part of a document tree, or it will
+  // crash mozilla. (mozbug: 439565) Second, the node has to be visible, or it
+  // won't render. That means the browser has to have had time to load images,
+  // so you need a place to stash the node. I've hidden mine behind the tree
+  // widgets, but it's an awful hack. Awful, awful, awful.
+  // Oh, and you also can't(?) start a drag session in a callback?
+
+  var numRows = this.mediaListView.length;
+
+  var icon = document.getAnonymousElementByAttribute(this, "sbid", "dragIcon");
+  icon.setAttribute("items", numRows);
+  var badge = document.getAnonymousElementByAttribute(this, "sbid", "dragBadge");
+  badge.setAttribute("value", numRows);
+
+  return icon;
+]]>
+        </body>
+      </method>
+
+      <method name="_treeKeyNavigate">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          // Watch out, 'this' here refers to the tree (_incrementalString and
+          // _lastKeyTime are members of the tree).
+          const MAX_KEY_DELAY = 500;
+
+          var key = String.fromCharCode(event.charCode).toLowerCase();
+          if (event.timeStamp - this._lastKeyTime > MAX_KEY_DELAY) {
+            this._incrementalString = key;
+          }
+          else {
+            this._incrementalString += key;
+          }
+          this._lastKeyTime = event.timeStamp;
+
+          var incrementalString = this._incrementalString;
+
+          // Grab our special interface for the lookup.
+          var view =
+            this.view.QueryInterface(Components.interfaces.sbIMediaListViewTreeView);
+
+          var currentIndex = this.currentIndex;
+          var start = 1;
+
+          if (incrementalString.length > 1) {
+            start = 0;
+
+            if (currentIndex < 0) {
+              currentIndex = 0;
+            }
+          }
+
+          var index =
+            view.getNextRowIndexForKeyNavigation(incrementalString,
+                                                 currentIndex + start);
+
+          if (index == -1) {
+            index = view.getNextRowIndexForKeyNavigation(incrementalString, 0);
+          }
+
+          return index;
+
+        ]]>
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="keypress" phase="capturing">
+        <![CDATA[
+        // This code originally comes from tree.xml from Mozilla.
+        // It had to be modified to allow handling of spaces while
+        // attempting to navigate within the filterlist. This makes
+        // this code incompatible with the original.
+
+        if (event.originalTarget != this.tree)
+          return;
+
+        if (this.tree._editingColumn)
+          return;
+
+        if (event.charCode == ' '.charCodeAt(0)) {
+         var c = this.currentIndex;
+         if (!this.tree.view.selection.isSelected(c) ||
+             (!this.tree.view.selection.single && this.tree._isAccelPressed(event))) {
+           this.tree.view.selection.toggleSelect(c);
+         }
+        }
+
+        if (!this.tree.disableKeyNavigation && event.charCode > 0 &&
+            !event.altKey && !this.tree._isAccelPressed(event) &&
+            !event.metaKey && !event.ctrlKey) {
+          var l = this.tree._keyNavigate(event);
+          if (l >= 0) {
+            this.tree.view.selection.timedSelect(l, this._selectDelay);
+            this.tree.treeBoxObject.ensureRowIsVisible(l);
+          }
+          event.stopPropagation();
+        }
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
+  <binding id="columnpicker" display="xul:button"
+           extends="chrome://global/content/bindings/tree.xml#tree-base">
+    <content>
+      <xul:image class="tree-columnpicker-icon"/>
+      <xul:menupopup anonid="popup">
+      </xul:menupopup>
+    </content>
+    <implementation>
+      <method name="buildPopup">
+        <parameter name="aPopup"/>
+        <body>
+          <![CDATA[
+            const Cc = Components.classes;
+            const Ci = Components.interfaces;
+
+            Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+
+            while (aPopup.childNodes.length)
+              aPopup.removeChild(aPopup.firstChild);
+
+            var refChild = aPopup.firstChild;
+
+            // look for the filterlist that owns us
+            var node = this;
+            while (node && node.getAttribute("sbtype") != "filterlist")
+              node = node.parentNode;
+            var filterlist = node;
+
+            // Get the property info for the property
+            var pm = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                       .getService(Ci.sbIPropertyManager);
+
+            var props = [];
+
+            if (this.parentNode.hasAttribute("filter-properties")) {
+              // there's an attribute of properties to use set, use that
+              // as an override
+              let propNames = this.parentNode.getAttribute("filter-properties").split(/\s+/);
+              for (let propertyId in Iterator(propNames)) {
+                props.push(pm.getPropertyInfo(propertyId));
+              }
+            }
+            else {
+              // look up via the category manager
+              let cm = Cc["@mozilla.org/categorymanager;1"]
+                         .getService(Ci.nsICategoryManager);
+              let propCategory = "filter-list-picker-properties";
+              if (this.parentNode.hasAttribute("filter-category")) {
+                propCategory = this.parentNode.getAttribute("filter-category");
+              }
+
+              let categoryValue = "1";
+              if (this.parentNode.hasAttribute("filter-category-value")) {
+                categoryValue = this.parentNode.getAttribute("filter-category-value");
+              }
+
+              let propEnumerator = cm.enumerateCategory(propCategory);
+              for (let propertyId in this.ArrayConverter.JSEnum(propEnumerator)) {
+                propertyId.QueryInterface(Ci.nsISupportsCString);
+                let types = cm.getCategoryEntry(propCategory, propertyId.data);
+                if (types == "1" || categoryValue == "1" ||
+                    types.split(/\s+/).indexOf(categoryValue) != -1)
+                {
+                  props.push(pm.getPropertyInfo(propertyId));
+                }
+              }
+            }
+
+            props.sort(function(a, b) {
+              if (a.displayName < b.displayName) {
+                return -1;
+              }
+              else if (a.displayName > b.displayName) {
+                return 1;
+              }
+              else {
+                return 0;
+              }
+            });
+
+            for (var i = 0; i < props.length; i++) {
+              var propertyInfo = props[i];
+
+              if (propertyInfo.userViewable) {
+                var popupChild = document.createElement("menuitem");
+
+                popupChild.setAttribute("type", "checkbox");
+                popupChild.setAttribute("label", propertyInfo.displayName);
+                popupChild.setAttribute("property", propertyInfo.id);
+                popupChild.setAttribute("type", "radio");
+
+                if (propertyInfo.id == filterlist._property)
+                    popupChild.setAttribute("checked", "true");
+
+                aPopup.insertBefore(popupChild, refChild);
+              }
+            }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="command">
+        <![CDATA[
+          if (event.originalTarget == this) {
+            var popup = document.getAnonymousElementByAttribute(this, "anonid", "popup");
+            this.buildPopup(popup);
+            popup.showPopup(this, -1, -1, "popup", "bottomright", "topright");
+          }
+          else {
+            // look for the filterlist that owns us
+            var node = this;
+            while (node && node.getAttribute("sbtype") != "filterlist")
+              node = node.parentNode;
+            var filterlist = node;
+
+            filterlist.changeProperty(event.originalTarget.getAttribute("property"));
+          }
+        ]]>
+      </handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

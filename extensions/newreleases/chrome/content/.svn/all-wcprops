@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/19577/trunk/extensions/newreleases/chrome/content
+END
+about.xul
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/18148/trunk/extensions/newreleases/chrome/content/about.xul
+END
+options.xul
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/18148/trunk/extensions/newreleases/chrome/content/options.xul
+END
+main.js.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19577/trunk/extensions/newreleases/chrome/content/main.js.in
+END
+options.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/18148/trunk/extensions/newreleases/chrome/content/options.js
+END
+browse.xul
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19576/trunk/extensions/newreleases/chrome/content/browse.xul
+END
+iframe-skeleton.html
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/18148/trunk/extensions/newreleases/chrome/content/iframe-skeleton.html
+END
+browse.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/19576/trunk/extensions/newreleases/chrome/content/browse.js
+END
+scripts-overlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18148/trunk/extensions/newreleases/chrome/content/scripts-overlay.xul
+END

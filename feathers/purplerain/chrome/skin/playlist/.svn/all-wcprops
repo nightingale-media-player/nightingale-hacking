@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/20798/trunk/feathers/purplerain/chrome/skin/playlist
+END
+bg-progress-not-started.png
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-progress-not-started.png
+END
+bg-download.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-download.png
+END
+bg-playqueue-history-even-row.png
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/19774/trunk/feathers/purplerain/chrome/skin/playlist/bg-playqueue-history-even-row.png
+END
+button-checkbox.png
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/button-checkbox.png
+END
+bg-playqueue-current-row-selected-focused.png
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/client/!svn/ver/19691/trunk/feathers/purplerain/chrome/skin/playlist/bg-playqueue-current-row-selected-focused.png
+END
+button-left.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/button-left.png
+END
+bg-command-bar.png
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-command-bar.png
+END
+ratings.png
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/ratings.png
+END
+icon-dragging.png
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/icon-dragging.png
+END
+bg-playqueue-history-odd-row.png
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/client/!svn/ver/19774/trunk/feathers/purplerain/chrome/skin/playlist/bg-playqueue-history-odd-row.png
+END
+button-download-left.png
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/button-download-left.png
+END
+bg-progress-paused.png
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-progress-paused.png
+END
+bg-playqueue-current-row-focused.png
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/19691/trunk/feathers/purplerain/chrome/skin/playlist/bg-playqueue-current-row-focused.png
+END
+bg-selected-row-unfocused.png
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-selected-row-unfocused.png
+END
+icon-originnotinmainlibrary.png
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/20798/trunk/feathers/purplerain/chrome/skin/playlist/icon-originnotinmainlibrary.png
+END
+bg-download-failed.png
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-download-failed.png
+END
+bg-download-done.png
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-download-done.png
+END
+ratings-readonly.png
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/ratings-readonly.png
+END
+bg-selected-row.png
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-selected-row.png
+END
+bg-playqueue-current-row.png
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/19691/trunk/feathers/purplerain/chrome/skin/playlist/bg-playqueue-current-row.png
+END
+button-right.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/button-right.png
+END
+icon-playing.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/icon-playing.png
+END
+bg-progress.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/bg-progress.png
+END
+button-left-error.png
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/skin/playlist/button-left-error.png
+END

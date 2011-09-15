@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "Localització">
+<!ENTITY prefs.location.descr "Trieu la ciutat més propera per a veure els concerts de la zona">
+<!ENTITY prefs.library "Biblioteca">
+<!ENTITY prefs.library.text "El Songbird pot afegir una columna a la vostra biblioteca que indiqui quan un artista toca a prop de la vostra ciutat.">
+<!ENTITY prefs.library.checklabel "Afegeix la columna De gira a la meva biblioteca">
+<!ENTITY prefs.country "País">
+<!ENTITY prefs.country.us "Estats Units">
+<!ENTITY prefs.country.uk "Regne Unit">
+<!ENTITY prefs.state "Estat">
+<!ENTITY prefs.city "Ciutat">
+<!ENTITY prefs.radius "Radi">
+<!ENTITY prefs.findShows "Cerca concerts">
+<!ENTITY concerts.poweredby "La llista de concerts la proveeix">

@@ -1,0 +1,137 @@
+#
+#=BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END SONGBIRD GPL
+#
+
+DEPTH = ..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/installer
+VPATH = /media/disk/Linux/makepkg/songbird/installer
+include $(DEPTH)/build/autodefs.mk
+
+# These are a list of executables we don't ship in the (released)
+# installer, relative to the dist dir; for the XR executables, Firefox doesn't
+# ship (most of) them either.
+
+SB_INSTALLER_NO_PKG_FILES = xulrunner/js$(BIN_SUFFIX) \
+                            xulrunner/mangle$(BIN_SUFFIX) \
+                            xulrunner/redit$(BIN_SUFFIX) \
+                            xulrunner/regxpcom$(BIN_SUFFIX) \
+                            xulrunner/xpcshell$(BIN_SUFFIX) \
+                            xulrunner/xpidl$(BIN_SUFFIX) \
+                            xulrunner/xpt_dump$(BIN_SUFFIX) \
+                            xulrunner/xpt_link$(BIN_SUFFIX) \
+                            xulrunner/nsinstall$(BIN_SUFFIX) \
+                            xulrunner/nspr-config \
+                            xulrunner/shlibsign$(BIN_SUFFIX) \
+                            xulrunner/ssltunnel$(BIN_SUFFIX) \
+                            xulrunner/run-mozilla.sh \
+                            $(NULL)
+
+SUBDIRS = $(SB_PLATFORM) 
+
+ifdef SONGBIRD_OFFICIAL
+   INSTALLER_README = README_OFFICIAL.txt
+else
+   INSTALLER_README = README_NIGHTLY.txt
+endif
+
+SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
+                        $(topsrcdir)/installer/common/$(INSTALLER_README).in \
+                        $(NULL)
+
+PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
+
+# On mac, our pkg "target" is packaged in a dmg, so for our purposes here,
+# the final installer packag for the "pkg" target is actually a pkg.dmg file
+INSTALLER_PACKAGES = $(patsubst %.pkg,%.pkg.dmg, \
+                             $(foreach s, \
+                              $(SB_INSTALLER_SUFFIXES), \
+                              $(SB_INSTALLER_NAME).$s))
+
+GARBAGE += $(foreach p, $(INSTALLER_PACKAGES), $(SB_INSTALLER_FINAL_DIR)/$p) \
+           $(NULL)
+
+# On Mac, the xulrunner dir is not the same place in the tree; unfortunately,
+# to make it more cross-platform, we specify a path that is relative to the
+# defined SONGBIRD_DISTDIR, instead of using the various already-defined
+# XULRUNNER_DIR variables
+ifeq (macosx,$(SB_PLATFORM))
+   SB_INSTALLER_NO_PKG_FILES_FULLPATH = $(addprefix $(SONGBIRD_DISTDIR)/, $(subst xulrunner/,../Frameworks/XUL.framework/, $(SB_INSTALLER_NO_PKG_FILES)))
+else
+   SB_INSTALLER_NO_PKG_FILES_FULLPATH = $(addprefix $(SONGBIRD_DISTDIR)/, $(SB_INSTALLER_NO_PKG_FILES))
+endif
+
+include $(topsrcdir)/build/rules.mk
+
+# We go through the $(notdir) jankiness because if we full-path the .xpt 
+# files, we're liable to run into commandline path limits on Win32.
+#
+# The := assignment of the _XPTS variables is _very_ important; it ensures that 
+# we'll evaluate the $(wildcard)'s _ONCE_, and thus won't delete the 
+# (new, amalgamated) xpt files we just created, right after we created them.
+
+SONGBIRD_XPTS := $(notdir $(wildcard $(SONGBIRD_COMPONENTSDIR)/*.xpt))
+
+# There are two cases here: the first build, and then any subsequent builds,
+# where we already have a linked songbird.xpt, but the sub-xpts may have
+# changed, so we need to delete our songbird.xpt, re-collect all of the .xpts
+# in the tree, and rebuild the songbird.xpt (which we do by calling ourselves
+# with the target, which the if-test will fall to the other branch now...
+
+link_installer_xpts:
+ifeq (songbird.xpt,$(strip $(SONGBIRD_XPTS)))
+	$(RM) $(SONGBIRD_COMPONENTSDIR)/songbird.xpt
+	$(MAKE) -C $(SONGBIRD_OBJDIR) collect_xpts
+	$(MAKE) -C $(CURDIR) link_installer_xpts
+else
+	cd $(SONGBIRD_COMPONENTSDIR) && $(XPTLINK) songbird.xpt $(SONGBIRD_XPTS)
+	cd $(SONGBIRD_COMPONENTSDIR) && $(RM) $(SONGBIRD_XPTS)
+endif
+
+# preedTODO: the easiest way to re-express this dependency is to do it as
+# part of the export step for the installer; it seems to work, but even still,
+# that's kinda janky.
+export:: $(if $(DEBUG),$(NULL),link_installer_xpts)
+	$(MAKE) -C $(DEPTH) stripsymbols
+	$(INSTALL_FILE) $(topsrcdir)/TRADEMARK.txt $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(SB_LICENSE_FILE) $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
+ifeq (macosx,$(SB_PLATFORM))
+	# On mac, the README needs to go here, as well.
+	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_OBJDIR)/dist/README.txt
+endif
+ifneq (,$(SONGBIRD_OFFICIAL))
+	$(RM) $(SB_INSTALLER_NO_PKG_FILES_FULLPATH)
+endif
+	$(MKDIR) $(SB_INSTALLER_FINAL_DIR)
+
+# We do the cd here so the path in the .md5 file is standardized with a "./"
+libs::
+	@$(EXIT_ON_ERROR) \
+   cd $(SB_INSTALLER_FINAL_DIR) && \
+   for f in $(INSTALLER_PACKAGES); do \
+      echo Checksumming installer package $$f; \
+      $(MD5SUM) ./$$f > $$f.md5; \
+   done
+
+.PHONY: link_installer_xpts

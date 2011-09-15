@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/20433/trunk/components/moz/dirprovider/src
+END
+winGetFolder.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/15582/trunk/components/moz/dirprovider/src/winGetFolder.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/20433/trunk/components/moz/dirprovider/src/Makefile.in
+END
+sbDirectoryProvider.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/18183/trunk/components/moz/dirprovider/src/sbDirectoryProvider.cpp
+END
+sbDirectoryProvider.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/15582/trunk/components/moz/dirprovider/src/sbDirectoryProvider.h
+END
+sbDirectoryProviderModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/15582/trunk/components/moz/dirprovider/src/sbDirectoryProviderModule.cpp
+END

@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtros de streams">
+<!ENTITY prefwindow.title "SHOUTcast Radio - Preferências">
+<!ENTITY bit-rate.limit.label "Listar somente estações com taxa de bits de pelo menos">
+<!ENTITY listeners.limit.label "Listar somente estações com pelo menos">
+<!ENTITY listeners.limit.label.2 "ouvintes no momento">
+<!ENTITY bit-rate.label "Taxa de bits (kbps)">
+<!ENTITY bit-rate.accesskey "b">
+<!ENTITY listeners.label "Número de ouvintes">
+<!ENTITY listeners.accesskey "o">
+<!ENTITY prefs.track.guessing.title "Análise Artista/Título">
+<!ENTITY prefs.track.guessing.label "Tentar identificar faixa e artista">
+<!ENTITY prefs.track.guessing.help "Algumas estações informam a faixa em execução enviando texto sob a forma 'Artista - Nome da música'. Ativando essa opção a extensão SHOUTcast tentará identificar o nome do artista e o da faixa separados por hífen, permitindo assim que outras extensões do SongBird sejam notificadas da mudança de faixa durante um stream.">
+<!ENTITY prefs.customGenres "Gêneros personalizados">
+<!ENTITY prefs.customGenres.emptytext "Insira vírgula para separar as lista por gênero">
+<!ENTITY custom-genres.help.label "Se você tem um gênero customizado e desejar que seja mostrado no diretório SHOUTcast, insira aqui uma lista separada com vírgula">
+<!ENTITY prefs.tosBegin "O uso do diretório de streams SHOUTcast está sujeito a seus termos de uso.">
+<!ENTITY prefs.tosLinkText "Ver termos de uso">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Instalar o">
+<!ENTITY prefs.toolbarLinkText "Barra de Ferramentas SHOUTcast">
+<!ENTITY prefs.toolbarEnd "browser add-on para o acesso fácil ao SHOUTcast a partir seu navegador.">

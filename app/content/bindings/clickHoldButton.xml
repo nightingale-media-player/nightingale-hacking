@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!--
+  /**
+   * A normal button, except that clicking and holding triggers a popup menu.
+   */
+  -->
+  <binding id="clickhold-button">
+
+    <content>
+        <xul:button sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />
+        <children includes="menupopup"/>
+        <children/>
+    </content>
+
+    <implementation type="application/x-javascript">
+
+      <constructor>
+        <![CDATA[
+        this.popupTimeout = null;
+        this.button = document.getAnonymousElementByAttribute(this, 'sbid', 'button');
+        
+        var popupid;
+        if (popupid = this.getAttribute("popup")) {
+           this.popup = document.getElementById(popupid);
+        }
+        if (!this.popup) {
+           this.popup  = this.getElementsByTagNameNS(
+               "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+               "menupopup")[0];
+        }
+
+        this.popupShowing = false;
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+        // Ah what the hell, why not
+        clearTimeout(this.popupTimeout);
+        ]]>
+      </destructor>
+
+      <method name="showPopup">
+        <body>
+          <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
+          if (this.popup && !this.popupShowing) 
+          {
+           var anchor = this.popup.getAttribute("popupanchor");
+           var align = this.popup.getAttribute("popupalign");
+           
+           this.popup.showPopup(this, -1, -1, 'popup', anchor, align);
+          }
+          ]]>
+        </body>
+      </method>
+      <method name="hidePopup">
+        <body>
+          <![CDATA[
+          if (this.popup && this.popupShowing) {
+            this.popup.hidePopup();
+          }
+          ]]>
+        </body>
+      </method>
+
+      <method name="delayPopup">
+        <parameter name="delay"/>
+        <body>
+          <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
+          this.popupTimeout = setTimeout(function clickHold_delayShowPopup(obj) {
+              // when opening popups via the click-hold behaviour, close the
+              // popup on left mouse up (but don't do this for popups triggered
+              // by right mouse clicks)
+              window.addEventListener("mouseup", function(event) {
+                  if (event.button == 0) {
+                    window.removeEventListener(event.type,
+                                               arguments.callee,
+                                               true);
+                    obj.hidePopup();
+                  }
+                }, true);
+              obj.showPopup();
+            }, delay, this);
+          ]]>
+        </body>
+      </method>
+
+      <property name="delayDuration">
+        <!--
+          - The number of milliseconds to wait before popping up the menu; by
+          - default, this is 300 milliseconds, but can be overridden
+          -->
+        <getter>
+          let delay = parseInt(this.getAttribute("delayDuration"), 10);
+          return (isNaN(delay) ? 300 : delay);
+        </getter>
+        <setter>
+          this.setAttribute("delayDuration", val);
+        </setter>
+      </property>
+
+    </implementation>
+
+
+    <handlers>
+      <handler event="popupshown">
+        <![CDATA[
+        // Note that if the menuitems were built by a binding then they will show up
+        // as the originalTarget, not the target of the event.
+        var target = (event.originalTarget) ? event.originalTarget : event.target;
+
+        // If this popupshown event comes from a sub-popupmenu
+        // then ignore it.
+        if (target != this.popup) {
+          return;
+        }
+
+        // If the menupopup does not contain any items, then we should not show it.
+        // we cannot cancel the menu earlier (for instance, in delayPopup, or showPopup) 
+        // because some menus only add their menuitems in onpopupshowing.
+        const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        if (target.getElementsByTagNameNS(XUL_NS, "menuitem").length == 0) {
+          this.popup.hidePopup();
+        }
+
+        // While the popup is showing we want to disable the tooltiptext
+        // on the clickhold button.  If we don't then the tooltip will
+        // appear beside each menu item.
+        var tooltip = this.getAttribute("tooltiptext");
+        if (tooltip != "") {
+          this.originalTooltip = tooltip;
+          this.setAttribute("tooltiptext", "");
+        }
+
+        this.popupShowing = true;
+         ]]>
+      </handler>
+      <handler event="popuphiding">
+        <![CDATA[
+
+        // Note that if the menuitems were built by a binding then they will show up
+        // as the originalTarget, not the target of the event.
+        var target = (event.originalTarget) ? event.originalTarget : event.target;
+
+        // If this popuphiding event comes from a sub-popupmenu
+        // then ignore it.
+        if (target != this.popup) {
+          return;
+        }
+
+        // When the menupopup hides we need to restore the tooltip
+        if (this.originalTooltip) {
+          this.setAttribute("tooltiptext", this.originalTooltip);
+        }
+
+        this.popupShowing = false;
+         ]]>
+      </handler>
+
+      <handler event="mousedown">
+        <![CDATA[
+        clearTimeout(this.popupTimeout);
+        if (event.button == 0)
+          this.delayPopup(this.delayDuration);
+        ]]>
+      </handler>
+      <handler event="mouseup">
+        <![CDATA[
+        clearTimeout(this.popupTimeout);
+        ]]>
+      </handler>
+      <handler event="contextmenu">
+       <![CDATA[
+         if (this.popup) {
+           this.showPopup();
+           event.stopPropagation();
+         }
+       ]]>
+      </handler>
+      <handler event="mouseout">
+        <![CDATA[
+        clearTimeout(this.popupTimeout);
+        ]]>
+      </handler>
+
+      <handler event="command" phase="capturing">
+        <![CDATA[
+        // Suppress button command if the popup was just triggered.
+        // Note that event.originalTarget is needed since event.target will
+        // always be this XBL widget for any anon content.
+        if (event.originalTarget == this.button && this.popupShowing) {
+          event.stopPropagation();
+        }
+        ]]>
+      </handler>
+
+    </handlers>
+  </binding>
+  <binding id="clickhold-toolbarbutton"
+           extends="#clickhold-button">
+    <content>
+      <xul:toolbarbutton sbid="button"
+                         class="clickhold-button"
+                         xbl:inherits="label,flex,disabled,tooltiptext" />
+      <children includes="menupopup"/>
+      <children/>
+    </content>
+  </binding>
+</bindings>
+
+

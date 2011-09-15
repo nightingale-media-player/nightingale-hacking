@@ -1,0 +1,99 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+//
+// \brief Listener interface for objects that want to listen to file system
+//        events. Pass in an instance of this interface when creating a 
+//        |sbIFileSystemWatcher| instance.
+//
+[scriptable, uuid(44cec493-c59e-45ca-bc9f-b053e17a519f)]
+interface sbIFileSystemListener : nsISupports
+{
+  //
+  // \brief Watcher Error Types
+  //
+  // ROOT_PATH_MISSING - The root watch path is missing
+  //   NOTE: This event is posted when the root watch path is missing. Posting
+  //         can happen before startup or after. Once the watcher notices
+  //         that the root watch path is missing, it will automatically stop
+  //         watching and notify via |onWatcherStopped()|.
+  //
+  // INVALID_DIRECTORY - A directory was encountered that could not be watched.
+  //   NOTE: This event is posted when the native file-system event hooks
+  //         cannot add a hook for a specified directory. Check the
+  //         |aDescription| field to find what the invalid directory is.
+  //
+  // SESSION_LOAD_ERROR - The watcher could not load a saved session.
+  //   NOTE: If a listener receives this callback, the watcher should be
+  //         re-initialized via |init()| in order to receive callbacks 
+  //         about changes to the watched path.
+  //
+  const unsigned long ROOT_PATH_MISSING  = 0;
+  const unsigned long INVALID_DIRECTORY  = 1;
+  const unsigned long SESSION_LOAD_ERROR = 2;
+
+  //
+  // \brief Callback when the |sbIFileSystemWatcher| has initialized and has
+  //        started listening to events.
+  //
+  void onWatcherStarted();
+
+  //
+  // \brief Callback when the |sbIFileSystemWatcher| has stopped listening
+  //        to file system events.
+  //
+  void onWatcherStopped();
+
+  //
+  // \brief Callback when the watcher has encountered an error.
+  // \param aErrorType The error type the watcher encountered.
+  //                   SEE: The constants defined above.
+  // \param aDescription Additional information about the received error.
+  //
+  void onWatcherError(in unsigned long aErrorType,
+                      in AString aDescription);
+
+  //
+  // \brief Callback when something has change in the filesystem.
+  // \param aFilePath The event path of the file change.
+  //
+  void onFileSystemChanged(in AString aFilePath);
+  
+  //
+  // \brief Callback when something was removed in the filesystem.
+  // \param aFilePath The event path of the file removal.
+  //
+  void onFileSystemRemoved(in AString aFilePath);
+  
+  //
+  // \brief Callback when something was added in the filesystem.
+  // \param aFilePath The event path of the file addition.
+  //
+  void onFileSystemAdded(in AString aFilePath);
+};
+

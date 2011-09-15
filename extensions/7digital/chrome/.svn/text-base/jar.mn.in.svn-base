@@ -1,0 +1,34 @@
+#filter substitution
+7digital.jar:
+% content 7digital  %content/
+% locale  7digital  ar     %locale/ar/
+% locale  7digital  cs     %locale/cs/
+% locale  7digital  da     %locale/da/
+% locale  7digital  de     %locale/de/
+% locale  7digital  de-DE  %locale/de-DE/
+% locale  7digital  el     %locale/el/
+% locale  7digital  en-US  %locale/en-US/
+% locale  7digital  es-ES  %locale/es-ES/
+% locale  7digital  fi     %locale/fi/
+% locale  7digital  fr     %locale/fr/
+% locale  7digital  he     %locale/he/
+% locale  7digital  hu     %locale/hu/
+% locale  7digital  it     %locale/it/
+% locale  7digital  ja     %locale/ja/
+% locale  7digital  ko     %locale/ko/
+% locale  7digital  lt-LT  %locale/lt-LT/
+% locale  7digital  nl     %locale/nl/
+% locale  7digital  nn-NO  %locale/nn-NO/
+% locale  7digital  pl     %locale/pl/
+% locale  7digital  pt-BR  %locale/pt-BR/
+% locale  7digital  pt-PT  %locale/pt-PT/
+% locale  7digital  ru     %locale/ru/
+% locale  7digital  sk     %locale/sk/
+% locale  7digital  sr-RS  %locale/sr-RS/
+% locale  7digital  sv-SE  %locale/sv-SE/
+% locale  7digital  th     %locale/th/
+% locale  7digital  tr     %locale/tr/
+% locale  7digital  zh-CN  %locale/zh-CN/
+% locale  7digital  zh-TW  %locale/zh-TW/
+% skin    7digital  classic/1.0 %skin/
+@include_all_to 

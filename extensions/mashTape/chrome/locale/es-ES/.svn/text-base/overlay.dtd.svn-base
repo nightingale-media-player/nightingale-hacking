@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "No se ha encontrado el artista de la canción en reproducción">
+<!ENTITY mashTape.msg.no_review_found "No se han encontrado valoraciones de la canción en reproducción">
+<!ENTITY mashTape.msg.no_rss_found "No se han encontrado noticias relacionadas con la canción en reproducción">
+<!ENTITY mashTape.msg.no_photo_found "No hay fotos relacionadas con la canción en reproducción">
+<!ENTITY mashTape.msg.no_flash_found "No se han encontrado videos relacionados con la canción en reproducción">

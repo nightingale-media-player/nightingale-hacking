@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/8868/trunk/components/library/localdatabase/content/migration
+END
+0_to_2.sql
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/8868/trunk/components/library/localdatabase/content/migration/0_to_2.sql
+END

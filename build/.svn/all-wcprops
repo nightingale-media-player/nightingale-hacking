@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/client/!svn/ver/21967/trunk/build
+END
+rules.mk
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/client/!svn/ver/21904/trunk/build/rules.mk
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/client/!svn/ver/19676/trunk/build/Makefile.in
+END
+autodefs.mk.in
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/client/!svn/ver/20122/trunk/build/autodefs.mk.in
+END
+file-autotargets.mk
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/14604/trunk/build/file-autotargets.mk
+END
+config.mk
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/client/!svn/ver/14112/trunk/build/config.mk
+END
+sbBuildInfo.mk.in
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/21967/trunk/build/sbBuildInfo.mk.in
+END
+tiers.mk
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/client/!svn/ver/20081/trunk/build/tiers.mk
+END
+make-buildinfo.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/13128/trunk/build/make-buildinfo.py
+END

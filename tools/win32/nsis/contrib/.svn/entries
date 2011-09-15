@@ -1,0 +1,46 @@
+10
+
+dir
+22041
+http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/contrib
+http://publicsvn.songbirdnest.com/client
+
+
+
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+graphics
+dir
+
+uis
+dir
+
+modern ui
+dir
+
+ShellLink
+dir
+
+language files
+dir
+
+zip2exe
+dir
+

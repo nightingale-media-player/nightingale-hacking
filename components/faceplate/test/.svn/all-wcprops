@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/7658/trunk/components/faceplate/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/7658/trunk/components/faceplate/test/Makefile.in
+END
+test_faceplateManager.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7658/trunk/components/faceplate/test/test_faceplateManager.js
+END

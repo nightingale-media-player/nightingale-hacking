@@ -1,0 +1,36 @@
+#!/bin/sh
+
+notice() {
+  echo $* 1>&2
+}
+
+rootdir="/var/www/sites/developer.songbirdnest.com/nightly/"
+deps_snapshotsdir=${rootdir}dependency_snapshots
+snapshotsdir=${rootdir}snapshots
+currenttimestamp=`date +%s`
+timediff=0
+maxtimediff=604800
+
+notice "Purging ${deps_snapshotsdir}."
+for file in ${deps_snapshotsdir}/*
+do
+  currentfiletime=`stat -c "%Y" $file`
+  timediff=`expr $currenttimestamp - $currentfiletime`
+  notice "Calculated time delta for file ${file} is ${timediff}"
+  if (( $timediff >= $maxtimediff )); then
+    notice "Deleting ${file}, because it's more than 7 days old."
+    rm -f $file
+  fi
+done
+
+notice "Purging ${snapshotsdir}."
+for file in ${snapshotsdir}/*
+do
+  currentfiletime=`stat -c "%Y" $file`
+  timediff=`expr $currenttimestamp - $currentfiletime`
+  notice "Calculated time delta for file ${file} is ${timediff}"
+  if (( $timediff >= $maxtimediff )); then
+    notice "Deleting ${file}, because it's more than 7 days old."
+    rm -f $file
+  fi
+done

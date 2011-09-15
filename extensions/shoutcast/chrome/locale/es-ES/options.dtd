@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtros del origen de datos">
+<!ENTITY prefwindow.title "Preferencias de la radio SHOUTcast">
+<!ENTITY bit-rate.limit.label "Mostrar solo orígenes de datos SHOUTcast con una tasa de transferencia del al menos">
+<!ENTITY listeners.limit.label "Mostrar solo orígenes SHOUTcast con al menos">
+<!ENTITY listeners.limit.label.2 "personas escuchando">
+<!ENTITY bit-rate.label "Tasa de transferencia (kbps)">
+<!ENTITY bit-rate.accesskey "T">
+<!ENTITY listeners.label "Número de oyentes">
+<!ENTITY listeners.accesskey "O">
+<!ENTITY prefs.track.guessing.title "Análisis del artista/título">
+<!ENTITY prefs.track.guessing.label "Activar el análisis del título y artista">
+<!ENTITY prefs.track.guessing.help "Algunas fuentes de SHOUTcast envían un texto con el formato &quot;Artista - Título de la pista&quot;. Si activa esta opción, la extensión SHOUTcast intentará analizar esto y enviará eventos de cambio de pista, de esta forma se informará a otros complementos de cambios en la pista de la fuente de datos.">
+<!ENTITY prefs.customGenres "Géneros personalizados">
+<!ENTITY prefs.customGenres.emptytext "Introduzca una lista de géneros separados por comas">
+<!ENTITY custom-genres.help.label "Si tiene una lista de géneros que quiera mostrar en el directorio SHOUTcast, introduzca una lista separada por comas de géneros aquí">
+<!ENTITY prefs.tosBegin "El uso del directorio SHOUTcast está sujeto a sus términos de uso">
+<!ENTITY prefs.tosLinkText "Ver los términos de uso">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Instalar la">
+<!ENTITY prefs.toolbarLinkText "barra de herramientas SHOUTcast">
+<!ENTITY prefs.toolbarEnd "un complemento para acceder fácilmente a SHOUTcast desde el navegador.">

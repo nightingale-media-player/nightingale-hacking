@@ -1,0 +1,150 @@
+/*
+Copyright (c) 2010, Pioneers of the Inevitable, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  * Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+    of its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/* the next scrobbling line */
+#lastfmNextTrack, #lastfmNextTime {
+  font-style: italic;
+}
+
+/* the faceplate */
+#lastfmFaceplate {
+  margin: 0px 2px 0px 2px !important;
+  padding: 0px 2px 0px 4px !important;
+  max-height: 18px !important;
+  
+  background-image:url('bg-faceplate-buttons.png');
+  background-repeat:no-repeat;
+  background-position:left center;
+}
+
+#lastfmFaceplateLove {
+  list-style-image: url('button-love.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+  width: 16px;
+  height: 16px;
+}
+#lastfmFaceplateLove:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#lastfmFaceplateLove:active {
+}
+#lastfmFaceplate[loveban=love] #lastfmFaceplateLove {
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+#lastfmFaceplate[loveban=love] #lastfmFaceplateLove:hover {
+  -moz-image-region: rect(16px, 32px, 32px, 16px);
+}
+
+#lastfmFaceplateBan {
+  list-style-image: url('button-ban.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+  width: 16px;
+  height: 16px;
+}
+#lastfmFaceplateBan:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#lastfmFaceplateBan:active {
+}
+#lastfmFaceplate[loveban=ban] #lastfmFaceplateBan {
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+#lastfmFaceplate[loveban=ban] #lastfmFaceplateBan:hover {
+  -moz-image-region: rect(16px, 32px, 32px, 16px);
+}
+
+#lastfmFaceplateTag {
+  list-style-image: url('button-tag.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+  width: 16px;
+  height: 16px;
+}
+#lastfmFaceplateTag:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#lastfmFaceplateTag:active {
+}
+
+/* TAG PANEL */
+popup#lastfmTagPanel {
+  -moz-border-radius: 5px;
+  opacity: 0.8;
+  background-color: rgb(43,41,54);
+}
+
+#lastfmTagPanel #background {
+	-moz-border-radius: 5px;
+	background-color: black;
+	opacity: 1.0;
+	width: 100%;
+}
+#lastfmTagPanel #tag-vbox {
+	padding: 4px;
+	opacity: 1.0;
+}
+
+#lastfmTagPanel label {
+	color: #eee;
+}
+
+#lastfmTagPanel #new-tags {
+	width: 20em;
+}
+
+#lastfmTagPanel #existing-tags {
+	margin-left: 4px;
+}
+
+#lastfmTagPanel image.tag-remove {
+	list-style-image: url('button-delete-tag.png');
+	-moz-image-region: rect(12px, 12px, 24px, 0px);
+	width: 12px;
+	height: 12px;
+	opacity: 1.0;
+	cursor: pointer !important;
+}
+#lastfmTagPanel image.tag-remove:hover {
+	-moz-image-region: rect(24px, 12px, 36px, 0px);
+	cursor: pointer;
+}
+#lastfmTagPanel image.tag-add {
+	list-style-image: url('button-add-tag.png');
+	-moz-image-region: rect(12px, 12px, 24px, 0px);
+	width: 12px;
+	height: 12px;
+	opacity: 1.0;
+	cursor: pointer !important;
+}
+#lastfmTagPanel image.tag-add:hover {
+	-moz-image-region: rect(24px, 12px, 36px, 0px);
+	cursor: pointer;
+}
+
+#lastfmTagPanel label.tag-link {
+	cursor: pointer;
+}

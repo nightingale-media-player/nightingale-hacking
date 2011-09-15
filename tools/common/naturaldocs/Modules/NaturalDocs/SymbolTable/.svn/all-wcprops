@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable
+END
+ReferenceTarget.pm
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable/ReferenceTarget.pm
+END
+Symbol.pm
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable/Symbol.pm
+END
+Reference.pm
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable/Reference.pm
+END
+SymbolDefinition.pm
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable/SymbolDefinition.pm
+END
+File.pm
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable/File.pm
+END
+IndexElement.pm
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable/IndexElement.pm
+END

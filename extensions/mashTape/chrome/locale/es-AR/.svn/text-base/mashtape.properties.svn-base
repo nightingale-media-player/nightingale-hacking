@@ -1,0 +1,29 @@
+extensions.mashTape@songbirdnest.com.description=Como en tus viejos cassetes, mezcla y une a varios sitios web con informacion a tu gusto. Hecho para la satisfaccion.
+#
+
+extensions.mashTape.artistinfo=Informacion de Artista
+extensions.mashTape.review=Comentarios
+extensions.mashTape.rss=Noticias
+extensions.mashTape.photo=Fotos
+extensions.mashTape.flash=Videos
+extensions.mashTape.msg.readmore=Leer Mas
+extensions.mashTape.msg.readless=Leer Menos
+extensions.mashTape.msg.viewmore=Ver Mas
+extensions.mashTape.msg.viewless=Ver Menos
+extensions.mashTape.msg.readorig=Ver Articulo Original
+extensions.mashTape.msg.by=por
+extensions.mashTape.msg.provider_tooltip=Ver mas de %S
+extensions.mashTape.msg.review_tooltip=Ver comentarios de %S
+extensions.mashTape.msg.rss_tooltip=Ver articulo original de %S
+extensions.mashTape.msg.flash_tooltip=Ver video original de %S
+extensions.mashTape.msg.review=Crear tu propio comentario
+#
+
+extensions.mashTape.date.sec=hace %1$S segundo
+extensions.mashTape.date.secs=hace %1$S segundos
+#
+
+#
+
+#
+

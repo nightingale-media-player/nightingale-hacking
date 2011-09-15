@@ -1,0 +1,224 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+
+
+/**
+*******************************************************************************
+DEVICE INFO
+
+See app/content/bindings/device/deviceInfo.xml
+
+Style rules pertaining to the device information widget.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+.device-name-label {
+  font-size:150%;
+  font-weight:bold;
+}
+.device-tab-header-label {
+  font-size:120%;
+}
+.device-specs-grid-label {
+  font-size:100%;
+  max-width:200px;
+}
+
+#info_box {
+  padding: 25px 0px 10px 0px;
+  margin: 0px;
+}
+
+#overall_device_info_box {
+  padding: 0px 25px 17px 25px;
+  margin: 0px;
+}
+
+#overall_device_info_box .device-name-label,
+#overall_device_info_box .device-specs-grid-label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+
+.device-image {
+  min-height:64px;
+  min-width:64px;
+  list-style-image:url("chrome://songbird/skin/device/icon-generic-device.png");
+  background-color:transparent;
+  padding:0px !important;
+}
+
+.device-image-ro
+{
+  height: 16px;
+  width: 16px;
+  background-image: url("chrome://songbird/skin/device/read-only.png");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+
+.eject-button {
+  list-style-image:url("chrome://songbird/skin/device/button-eject.png");
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+.more-info-button {
+  list-style-image:url("chrome://songbird/skin/device/button-info.png");
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+.eject-button .button-box,
+.more-info-button .button-box {
+  padding:2px;
+}
+.eject-button > .button-box > label,
+.more-info-button > .button-box > label {
+  display:none !important;
+}
+.eject-info-buttons > groupbox {
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  background-color: transparent !important;
+}
+.eject-info-buttons > groupbox > .groupbox-body {
+  padding: 0px !important;
+}
+
+sb-device-battery {
+  margin:0 4px;
+}
+.device-battery-box {
+  width:25px;
+  height:12px;
+  padding:0 3px 0 1px;
+  background-image:url("chrome://songbird/skin/device/battery-empty.png");
+  background-repeat:no-repeat;
+  background-position:left top;
+}
+.device-battery-left,
+.device-battery-right {
+  visibility:collapse;
+}
+.device-battery-left,
+.device-battery-right,
+.device-battery-status,
+.device-battery-empty {
+  height:12px;
+}
+.device-battery-status {
+  background-image:url("chrome://songbird/skin/device/battery-draining.png");
+  background-repeat:no-repeat;
+  background-position:-1px top;
+}
+.device-battery-status[status="charged"] {
+  background-image:url("chrome://songbird/skin/device/battery-charged.png");
+}
+.device-battery-status[status="charging"] {
+  background-image:url("chrome://songbird/skin/device/battery-charging.png");
+}
+.device-battery-empty {
+}
+
+
+
+.device_management_tabs {
+  background-image:none;
+}
+#overall_device_info_box {
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  /* padding:10px 8px 0px 8px; */
+}
+tabbox.device_management_box > tabpanels > tabpanel {
+  overflow-y: auto;
+}
+
+
+#device_info_dialog groupbox {
+  display: none !important;
+}
+
+
+#info_progress_box {
+  padding:10px 8px 0px 8px;
+}
+
+
+
+.device-tab-content {
+  min-width:420px;
+  max-width:420px;
+  padding-top:4px;
+}
+
+.device-no-storage-vbox {
+  -moz-box-align: center;
+  background-color: transparent;
+  background-image: url(chrome://songbird/skin/base-elements/bg-tabpanel.png);
+  background-position: left top;
+  background-repeat: repeat-x;
+  border: 1px solid rgb(63,61,74) !important;
+  margin: 30px 10px 10px 10px !important;
+}
+
+.device-no-storage-groupbox {
+  margin-top: 30px !important;
+  width: 420px;
+}
+
+.device-tab-button-box {
+  margin:0 4px;
+  padding:0px 6px;
+}
+
+sb-device-info > groupbox,
+.device-progress-groupbox {
+  min-height:64px;
+  margin-top:0px;
+  margin-bottom:0px;
+}
+
+
+radiogroup radiogroup {
+  margin:4px;
+}
+
+sb-properties-formatter > hbox > vbox > textbox
+{
+  width: 1em;
+}
+
+.device-spec-row-hide-no-value[novalue="true"]
+{
+  display: none;
+}

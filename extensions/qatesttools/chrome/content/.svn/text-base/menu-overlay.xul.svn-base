@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!-- 
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+<overlay id="mockcdcontroller-menu-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <!-- Target the tools menu -->
+  <menupopup id="menu_ToolsPopup"> 
+
+    <!-- Add a menu item -->
+    <menuitem id="mockdevicecontroller-showcontroller-menuitem"
+              label="Show Mock Device Controller"
+              insertafter="devToolsSeparator"
+              command="mockdevicecontroller-showcontroller-cmd" />
+
+    <menuitem id="mockcdcontroller-showcontroller-menuitem"
+              label="Show Mock CD Controller"
+              insertafter="devToolsSeparator"
+              command="mockcdcontroller-showcontroller-cmd" />
+
+    <menuitem id="device-caps-dump-menuitem"
+              label="Dump Device Capabilities"
+              insertafter="devToolsSeparator"
+              command="dumpdevicecaps-cmd" />
+    <menuitem id="fakepds-menuitem"
+              label="Fake PDS"
+              insertafter="devToolsSeparator"
+              command="fakepds-cmd" />
+  </menupopup>
+
+</overlay>

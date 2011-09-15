@@ -1,0 +1,222 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseGUIDArray.idl
+ * \brief Definition of the sbILocalDatabaseGUIDArray interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface nsIURI;
+interface sbILocalDatabasePropertyCache;
+interface sbIPropertyArray;
+
+/**
+ * \interface sbILocalDatabaseGUIDArrayListener
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(60cc270d-58f9-4cc5-a68c-d16a0139a027)]
+interface sbILocalDatabaseGUIDArrayListener : nsISupports
+{
+  /**
+   * \brief Called before underlying GUID array is invalidated.
+   * \param aInvalidateLength - Indicates if the length of the
+   *        GUID array is likely to change. You may use this param
+   *        to pass to another GUID array to help with it's invalidation.
+   */
+  void onBeforeInvalidate(in boolean aInvalidateLength);
+
+  /**
+   * \brief Called right after underlying GUID array is invalidated.
+   */
+  void onAfterInvalidate();
+};
+
+/**
+ * \interface sbILocalDatabaseGUIDArrayLengthCache
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(80d33aac-dbb1-44eb-bda8-22c764ab16df)]
+interface sbILocalDatabaseGUIDArrayLengthCache : nsISupports
+{
+  void addCachedLength(in AString aKey, in unsigned long aLength);
+  void removeCachedLength(in AString aKey);
+  unsigned long getCachedLength(in AString aKey);
+
+  void addCachedNonNullLength(in AString aKey, in unsigned long aLength);
+  void removeCachedNonNullLength(in AString aKey);
+  unsigned long getCachedNonNullLength(in AString aKey);
+};
+
+/**
+ * \interface sbILocalDatabaseGUIDArray
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(e1b502cc-3e00-4873-bb9b-722cd8a13e99)]
+interface sbILocalDatabaseGUIDArray : nsISupports
+{
+  attribute AString databaseGUID;
+
+  attribute nsIURI databaseLocation;
+
+  attribute AString baseTable;
+
+  attribute AString baseConstraintColumn;
+
+  attribute unsigned long baseConstraintValue;
+
+  attribute unsigned long fetchSize;
+
+  attribute boolean isDistinct;
+
+  readonly attribute boolean isValid;
+  
+  /**
+   * \brief If the guid array is distinct, this value will cause the guid array 
+   *        to be filled with the sortable values instead of human redeable 
+   *        values.
+   */
+  attribute boolean distinctWithSortableValues;
+
+  readonly attribute unsigned long length;
+
+  attribute sbILocalDatabaseGUIDArrayListener listener;
+
+  attribute sbILocalDatabasePropertyCache propertyCache;
+
+  attribute sbILocalDatabaseGUIDArrayLengthCache lengthCache;
+  
+  void addSort(in AString aProperty,
+               in boolean aAscending);
+
+  void clearSorts();
+
+  readonly attribute sbIPropertyArray currentSort;
+
+  void addFilter(in AString aProperty,
+                 in nsIStringEnumerator aValues,
+                 in boolean aIsSearch);
+
+  void clearFilters();
+
+  boolean isIndexCached(in unsigned long aIndex);
+
+  /**
+   * \brief Return the sortable property value at the given index
+   * \param aIndex The index of the array
+   * \return The sortable property value
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getSortPropertyValueByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the media item id at the given index
+   * \param aIndex The index of the array
+   * \return The media item id
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  unsigned long getMediaItemIdByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the ordinal at the given index
+   * \param aIndex The index of the array
+   * \return The ordinal
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getOrdinalByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the guid at the given index
+   * \param aIndex The index of the array
+   * \return The guid
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getGuidByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the rowid at the given index
+   * \param aIndex The index of the array
+   * \return The guid
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  unsigned long long getRowidByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the viewItemUID for the item at the given index
+   * \param aIndex The index of the mediaitem in the array
+   * \return The viewItemUID (rowid-mediaItemid)
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getViewItemUIDByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Invalidate the contents of the array.
+   * \param aInvalidateLength - Also invalidates the cached length of the 
+   *                            array.
+   */
+  void invalidate(in boolean aInvalidateLength);
+
+  sbILocalDatabaseGUIDArray clone();
+
+  void cloneInto(in sbILocalDatabaseGUIDArray aDest);
+
+  void removeByIndex(in unsigned long aIndex);
+
+  unsigned long getFirstIndexByPrefix(in AString aPrefix);
+
+  unsigned long getFirstIndexByGuid(in AString aGuid);
+
+  /* aViewItemUID is a concatenation of the mediaItem's rowid and mediaItemid
+   * in it's libraries database, of the form "rowid-mediaItemid".
+   *
+   * We can use this viewItemUID to find the index in the guid array
+   * of the mediaitem that it corresponds to. */
+  unsigned long getIndexByViewItemUID(in AString aViewItemUID);
+
+  /**
+   * \brief Return true if the array contains the given GUID.
+   * May be forced to fetch and cache all items.
+   */
+  boolean containsGuid(in AString aGuid);
+
+  /**
+   * \brief Counter based invalidation suppression.
+   * \note Don't call this method!
+   */
+  void suppressInvalidation(in boolean aSuppress);
+  
+  /**
+   * \brief Checks to see if the guid array needs to be invalidated
+   *        and invalidates if needed.
+   * \param aDirtyPropertyIDs The list of dirty property ids. This array must
+   *                          best sorted from least to greatest property ID
+   *                          so that it can be binary searched.
+   */
+  void mayInvalidate([array, size_is(aCount)] in unsigned long aDirtyPropertyIDs,
+                     in unsigned long aCount);
+};

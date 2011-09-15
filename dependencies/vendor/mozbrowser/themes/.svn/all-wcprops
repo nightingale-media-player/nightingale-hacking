@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/themes
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/LICENSE
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/vendor/!svn/ver/11137/trunk/xulrunner-1.9.2/mozilla/browser/themes/Makefile.in
+END

@@ -1,0 +1,171 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ 
+ 
+
+/** 
+*******************************************************************************
+DISPLAY PANES
+
+See app/bindings/addonPanes.xml
+
+Style rules pertaining to display panes (below the service pane, below the
+main content area, and to the right of the main content area).
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+/******************************************************************************
+> PANE ICONS
+
+  These are used in the View menu
+******************************************************************************/
+menuitem[target="displaypane_contentpane_bottom"] {
+  list-style-image: url('chrome://songbird/skin/display-pane/content-pane-bottom.png');
+}
+menuitem[target="displaypane_servicepane_bottom"] {
+  list-style-image: url('chrome://songbird/skin/display-pane/service-pane-bottom.png');
+}
+menuitem[target="displaypane_right_sidebar"] {
+  list-style-image: url('chrome://songbird/skin/display-pane/right-sidebar.png');
+}
+
+
+
+/******************************************************************************
+> TITLE BAR
+******************************************************************************/
+.sb-displaypane-header {
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  padding:0px 0px 0px 4px;
+  min-height:16px;
+  max-height:16px;
+}
+.sb-displaypane-header > vbox > .favicon {
+  max-width: 13px;
+  max-height: 13px;
+  padding:0;
+}
+.sb-displaypane-label {
+  margin:0 0 0 4px;
+  padding:0;
+  font-size:9px;
+}
+
+.sb-displaypane-menubutton {
+  -moz-border-radius:0px !important;
+
+  margin:0;
+  padding:0px 2px 0px 0px !important;
+  border:none;
+  outline:none !important;
+  background-image:none;
+  list-style-image:url('chrome://songbird/skin/display-pane/button-addon-picker.png');
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
+}
+.sb-displaypane-menubutton:hover {
+  -moz-image-region: rect(14px, 14px, 28px, 0px);
+}
+.sb-displaypane-menubutton:active {
+  -moz-image-region: rect(28px, 14px, 42px, 0px);
+}
+.sb-displaypane-menubutton[disabled="true"] {
+  -moz-image-region: rect(42px, 14px, 56px, 0px);
+}
+
+.sb-displaypane-header {
+  background-image:url('chrome://songbird/skin/display-pane/bg-header.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+.sb-displaypane-header[button="true"]:hover {
+  background-position:center -19px;
+}
+.sb-displaypane-header[button="true"]:active {
+  background-position:center -38px;
+}
+
+.sb-displaypane-menubutton > .button-box > hbox > .button-text,
+.sb-displaypane-menubutton > .button-box > .button-menu-dropmarker {
+  display: none;
+}
+
+
+
+/******************************************************************************
+> DISPLAYPANE STATUSBAR BUTTONS
+******************************************************************************/
+
+sb-displaypane-button > button {
+  max-height:16px;
+  max-width:16px;
+  margin:0px;
+}
+sb-displaypane-button > button > .button-box {
+  padding:0px;
+  margin:0px;
+}
+
+sb-displaypane-button.service-pane-display-pane-button > button {
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-service-pane-toggle.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+sb-displaypane-button.service-pane-display-pane-button[state="closed"] > button {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+sb-displaypane-button.content-pane-display-pane-button > button {
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-content-pane-toggle.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+sb-displaypane-button.content-pane-display-pane-button[state="closed"] > button {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+sb-displaypane-button.right-sidebar-display-pane-button > button {
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-right-sidebar-toggle.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+sb-displaypane-button.right-sidebar-display-pane-button[state="closed"] > button {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+
+
+/******************************************************************************
+> EMPTY STATE
+******************************************************************************/
+.empty {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+.empty-message {
+  padding:10px;
+}

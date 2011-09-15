@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/client/!svn/ver/18462/trunk/installer/linux
+END
+songbird.sh
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/18434/trunk/installer/linux/songbird.sh
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/18462/trunk/installer/linux/Makefile.in
+END

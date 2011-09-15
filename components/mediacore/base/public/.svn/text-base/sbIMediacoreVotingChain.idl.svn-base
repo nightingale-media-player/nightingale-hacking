@@ -1,0 +1,52 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+
+interface sbIMediacore;
+
+[scriptable, uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]
+interface sbIMediacoreVotingChain : nsISupports
+{
+  /**
+   * \brief Indicates whether the mediacoreChain has any
+   *        cores.
+   */
+  readonly attribute boolean valid;
+  
+  /**
+   * \brief The chain of mediacores that believe they can 
+   *        perform the operation.
+   *
+   *  \note It is possible for this chain to be empty. You can verify this
+   *        quickly by looking at sbIMedicoreVotingChain::valid.
+   */
+  readonly attribute nsIArray mediacoreChain;
+
+  unsigned long getVote(in sbIMediacore aMediacore);
+};

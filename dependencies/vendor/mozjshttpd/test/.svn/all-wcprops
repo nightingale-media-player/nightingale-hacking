@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test
+END
+test_errorhandler_exception.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_errorhandler_exception.js
+END
+test_setstatusline.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_setstatusline.js
+END
+test_response_write.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_response_write.js
+END
+test_default_index_handler.js
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_default_index_handler.js
+END
+test_registerdirectory.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_registerdirectory.js
+END
+test_empty_body.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_empty_body.js
+END
+test_headers.js
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_headers.js
+END
+test_processasync.js
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_processasync.js
+END
+test_host.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_host.js
+END
+test_byte_range.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_byte_range.js
+END
+test_sjs_throwing_exceptions.js
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_sjs_throwing_exceptions.js
+END
+test_setindexhandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_setindexhandler.js
+END
+head_utils.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/head_utils.js
+END
+test_registerfile.js
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_registerfile.js
+END
+test_sjs_object_state.js
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_sjs_object_state.js
+END
+test_header_array.js
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_header_array.js
+END
+test_basic_functionality.js
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_basic_functionality.js
+END
+test_seizepower.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_seizepower.js
+END
+test_cern_meta.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_cern_meta.js
+END
+test_body_length.js
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_body_length.js
+END
+test_sjs.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_sjs.js
+END
+test_sjs_state.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_sjs_state.js
+END
+test_start_stop.js
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_start_stop.js
+END
+test_request_line_split_in_two_packets.js
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_request_line_split_in_two_packets.js
+END
+test_name_scheme.js
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/netwerk/test/httpserver/test/test_name_scheme.js
+END

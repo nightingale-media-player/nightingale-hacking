@@ -1,0 +1,36 @@
+#
+#=BEGIN SONGBIRD LICENSE
+#
+# Copyright(c) 2009-2010 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# For information about the licensing and copyright of this Add-On please
+# contact POTI, Inc. at customer@songbirdnest.com.
+#
+#=END SONGBIRD LICENSE
+#
+
+#filter substitution
+newreleases.jar:
+% content newreleases  %content/	contentaccessible=yes
+% locale  newreleases  ca-AD  %locale/ca-AD/
+% locale  newreleases  de     %locale/de/
+% locale  newreleases  en-US  %locale/en-US/
+% locale  newreleases  fr     %locale/fr/
+% locale  newreleases  pt-PT  %locale/pt-PT/
+#% locale  newreleases  en-GB  %locale/en-GB/
+#% locale  newreleases  eu-ES  %locale/eu-ES/
+#% locale  newreleases  zh-CN  %locale/zh-CN/
+#% locale  newreleases  zh-TW  %locale/zh-TW/
+#% locale  newreleases  kw-GB  %locale/kw-GB/
+#% locale  newreleases  fr-FR  %locale/fr-FR/
+#% locale  newreleases  de-DE  %locale/de-DE/
+#% locale  newreleases  pl-PL  %locale/pl-PL/
+#% locale  newreleases  pt-BR  %locale/pt-BR/
+#% locale  newreleases  ru-RU  %locale/ru-RU/
+#% locale  newreleases  es-ES  %locale/es-ES/
+#% locale  newreleases  sv-SE  %locale/sv-SE/
+% skin    newreleases  classic/1.0 %skin/
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://newreleases/content/scripts-overlay.xul
+  content/main.js    (@SONGBIRD_PP_RELATIVE_PATH@/main.js)
+@include_all_to

@@ -1,0 +1,80 @@
+10
+
+dir
+22041
+http://publicsvn.songbirdnest.com/client/trunk/components/mediacore/gstreamer
+http://publicsvn.songbirdnest.com/client
+
+
+
+2011-05-12T17:36:54.852962Z
+21141
+msmith
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+test
+dir
+
+Makefile.in
+file
+
+
+
+
+2011-09-15T07:24:45.000000Z
+97d60f3ff72b114b4855c7bb2cd814f8
+2009-06-12T22:31:01.868114Z
+13947
+msmith
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+959
+
+src
+dir
+
+content
+dir
+
+stub
+dir
+
+encode-profiles
+dir
+
+public
+dir
+

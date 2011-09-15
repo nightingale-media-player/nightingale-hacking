@@ -1,0 +1,473 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/21549/trunk/components/library/localdatabase/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/18308/trunk/components/library/localdatabase/test/Makefile.in
+END
+test_filterable.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_filterable.js
+END
+test_guidarray_sortmulti.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/8909/trunk/components/library/localdatabase/test/test_guidarray_sortmulti.js
+END
+test_sortable.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_sortable.js
+END
+test_content_type.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15677/trunk/components/library/localdatabase/test/test_content_type.js
+END
+data_sort_playcount_desc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/data_sort_playcount_desc.txt
+END
+test_library_properties.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/12553/trunk/components/library/localdatabase/test/test_library_properties.js
+END
+test_viewandcfslisteners.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_viewandcfslisteners.js
+END
+data_filterable_sml101_album.txt
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/3837/trunk/components/library/localdatabase/test/data_filterable_sml101_album.txt
+END
+media_items.txt
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/8480/trunk/components/library/localdatabase/test/media_items.txt
+END
+test_diffing_medialists.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/18308/trunk/components/library/localdatabase/test/test_diffing_medialists.js
+END
+data_sort_contenturl_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/4011/trunk/components/library/localdatabase/test/data_sort_contenturl_asc.txt
+END
+test_medialistviewclone.js
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_medialistviewclone.js
+END
+test_library_batchcreate.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/9401/trunk/components/library/localdatabase/test/test_library_batchcreate.js
+END
+test_migration.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/14897/trunk/components/library/localdatabase/test/test_migration.js
+END
+test_libraryloader.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19279/trunk/components/library/localdatabase/test/test_libraryloader.js
+END
+test_guidarray_sort.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_guidarray_sort.js
+END
+data_sort_contenturl_desc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/4011/trunk/components/library/localdatabase/test/data_sort_contenturl_desc.txt
+END
+test_bug7950.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/12553/trunk/components/library/localdatabase/test/test_bug7950.js
+END
+data_distinct_artist.txt
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/4240/trunk/components/library/localdatabase/test/data_distinct_artist.txt
+END
+generate_test_data.sql
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/generate_test_data.sql
+END
+test_usereditable.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/13945/trunk/components/library/localdatabase/test/test_usereditable.js
+END
+simple_media_lists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/3825/trunk/components/library/localdatabase/test/simple_media_lists.txt
+END
+test_bulkproperties.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/20864/trunk/components/library/localdatabase/test/test_bulkproperties.js
+END
+data_sort_album_asc_track_desc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/data_sort_album_asc_track_desc.txt
+END
+test_library_statistics.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/11182/trunk/components/library/localdatabase/test/test_library_statistics.js
+END
+test_multilibrary.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/18411/trunk/components/library/localdatabase/test/test_multilibrary.js
+END
+test_simplemedialistnotifications.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/18411/trunk/components/library/localdatabase/test/test_simplemedialistnotifications.js
+END
+data_sort_artist_asc_album_asc_track_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/data_sort_artist_asc_album_asc_track_asc.txt
+END
+data_filterable_view_album.txt
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/7250/trunk/components/library/localdatabase/test/data_filterable_view_album.txt
+END
+test_distinct.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_distinct.js
+END
+test_library_batchcreateasync.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/9401/trunk/components/library/localdatabase/test/test_library_batchcreateasync.js
+END
+test_guidarray_distinct.js
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_guidarray_distinct.js
+END
+test_searchable.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/9354/trunk/components/library/localdatabase/test/test_searchable.js
+END
+test_diffing_listtolibrary.js
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/18308/trunk/components/library/localdatabase/test/test_diffing_listtolibrary.js
+END
+data_distinct_sml101_album.txt
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/3909/trunk/components/library/localdatabase/test/data_distinct_sml101_album.txt
+END
+test_library_constraints.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/15679/trunk/components/library/localdatabase/test/test_library_constraints.js
+END
+test_allowduplicates.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/9401/trunk/components/library/localdatabase/test/test_allowduplicates.js
+END
+data_sort_trackname_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/data_sort_trackname_asc.txt
+END
+test_onitemupdated.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/16623/trunk/components/library/localdatabase/test/test_onitemupdated.js
+END
+test_library_copy_listener.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/9401/trunk/components/library/localdatabase/test/test_library_copy_listener.js
+END
+test_cascadefilterset.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_cascadefilterset.js
+END
+test_library_batchcreateifnotexist.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/client/!svn/ver/15267/trunk/components/library/localdatabase/test/test_library_batchcreateifnotexist.js
+END
+data_sort_trackname_desc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/data_sort_trackname_desc.txt
+END
+test_medialistviewselection.js
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/8506/trunk/components/library/localdatabase/test/test_medialistviewselection.js
+END
+test_smartmedialist.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/10161/trunk/components/library/localdatabase/test/test_smartmedialist.js
+END
+test1.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/4936/trunk/components/library/localdatabase/test/test1.mp3
+END
+test2.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/4936/trunk/components/library/localdatabase/test/test2.mp3
+END
+test_null_properties.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/15670/trunk/components/library/localdatabase/test/test_null_properties.js
+END
+test3.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/4936/trunk/components/library/localdatabase/test/test3.mp3
+END
+head_localdatabaselibrary.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/18308/trunk/components/library/localdatabase/test/head_localdatabaselibrary.js
+END
+test_guidarray_nullsorting.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_guidarray_nullsorting.js
+END
+test_viewandcfs.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/9354/trunk/components/library/localdatabase/test/test_viewandcfs.js
+END
+test_viewdistinctvalues.js
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_viewdistinctvalues.js
+END
+test_guid_property.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_guid_property.js
+END
+test_mediaitem.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/19413/trunk/components/library/localdatabase/test/test_mediaitem.js
+END
+data_sort_created_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/4011/trunk/components/library/localdatabase/test/data_sort_created_asc.txt
+END
+test_medialistview.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/20533/trunk/components/library/localdatabase/test/test_medialistview.js
+END
+resource_properties.txt
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/12290/trunk/components/library/localdatabase/test/resource_properties.txt
+END
+test_propertycache.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_propertycache.js
+END
+data_sort_playcount_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/4240/trunk/components/library/localdatabase/test/data_sort_playcount_asc.txt
+END
+data_distinct_contentlength.txt
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/3909/trunk/components/library/localdatabase/test/data_distinct_contentlength.txt
+END
+test_viewinvalidation.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_viewinvalidation.js
+END
+test_dblocation.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_dblocation.js
+END
+test_search_escaping.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/9354/trunk/components/library/localdatabase/test/test_search_escaping.js
+END
+data_sort_sml101_ordinal_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/3696/trunk/components/library/localdatabase/test/data_sort_sml101_ordinal_asc.txt
+END
+test_library_getmedialists.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/7709/trunk/components/library/localdatabase/test/test_library_getmedialists.js
+END
+test_asyncguidarray.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/12290/trunk/components/library/localdatabase/test/test_asyncguidarray.js
+END
+test_simplemedialist.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/21549/trunk/components/library/localdatabase/test/test_simplemedialist.js
+END
+data_sort_sml101_ordinal_desc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/3696/trunk/components/library/localdatabase/test/data_sort_sml101_ordinal_desc.txt
+END
+test_guidarray_length.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/9354/trunk/components/library/localdatabase/test/test_guidarray_length.js
+END
+test_filterednotifications.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/8096/trunk/components/library/localdatabase/test/test_filterednotifications.js
+END
+test_diffing_library.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/18308/trunk/components/library/localdatabase/test/test_diffing_library.js
+END
+test_fts.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/9509/trunk/components/library/localdatabase/test/test_fts.js
+END
+test_library_notifications.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/8243/trunk/components/library/localdatabase/test/test_library_notifications.js
+END
+test_library.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/19457/trunk/components/library/localdatabase/test/test_library.js
+END
+test_guidarray_prefix.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/7658/trunk/components/library/localdatabase/test/test_guidarray_prefix.js
+END
+data_sort_album_asc_track_asc.txt
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/4322/trunk/components/library/localdatabase/test/data_sort_album_asc_track_asc.txt
+END

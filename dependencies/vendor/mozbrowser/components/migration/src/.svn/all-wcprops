@@ -1,0 +1,167 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src
+END
+nsBrowserProfileMigratorUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsBrowserProfileMigratorUtils.h
+END
+nsSafariProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsSafariProfileMigrator.h
+END
+nsPhoenixProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsPhoenixProfileMigrator.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/Makefile.in
+END
+nsOperaProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsOperaProfileMigrator.h
+END
+nsCaminoProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsCaminoProfileMigrator.h
+END
+nsMacIEProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsMacIEProfileMigrator.cpp
+END
+nsProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsProfileMigrator.cpp
+END
+nsPhoenixProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsPhoenixProfileMigrator.h
+END
+nsMacIEProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsMacIEProfileMigrator.h
+END
+nsProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsProfileMigrator.h
+END
+nsDogbertProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsDogbertProfileMigrator.cpp
+END
+nsSeamonkeyProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsSeamonkeyProfileMigrator.cpp
+END
+nsDogbertProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsDogbertProfileMigrator.h
+END
+nsIEProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsIEProfileMigrator.cpp
+END
+nsNetscapeProfileMigratorBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsNetscapeProfileMigratorBase.cpp
+END
+nsICabProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsICabProfileMigrator.cpp
+END
+nsOmniWebProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsOmniWebProfileMigrator.cpp
+END
+nsSeamonkeyProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsSeamonkeyProfileMigrator.h
+END
+nsNetscapeProfileMigratorBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsNetscapeProfileMigratorBase.h
+END
+nsIEProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsIEProfileMigrator.h
+END
+nsICabProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsICabProfileMigrator.h
+END
+nsBrowserProfileMigratorUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsBrowserProfileMigratorUtils.cpp
+END
+nsOmniWebProfileMigrator.h
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsOmniWebProfileMigrator.h
+END
+nsSafariProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsSafariProfileMigrator.cpp
+END
+nsCaminoProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsCaminoProfileMigrator.cpp
+END
+nsOperaProfileMigrator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/migration/src/nsOperaProfileMigrator.cpp
+END

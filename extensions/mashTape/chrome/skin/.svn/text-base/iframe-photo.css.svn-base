@@ -1,0 +1,65 @@
+* {margin:0;padding:0}
+body{font-family:'Lucida Sans Unicode',Arial,sans-serif;color:#333;}
+div,p,li{font-size:12px}
+
+h4.stitle{color:#666;margin:0 0 5px 0}
+img.control {
+	cursor: pointer;
+}
+#buttons {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	visibility: hidden;
+}
+
+#box {
+	position:absolute;
+}
+#box span{
+	display:block;
+	float:left;
+}
+#info {
+	bottom:0;
+}
+
+/* ********************************** */
+
+.info{
+	width:100%;
+	height:50px;
+	background:#000;
+	position:absolute;
+}
+.info p, .info h4{
+	color:#fff;
+	padding:3px 8px;
+	font-family:Arial;
+}
+.info h4{
+	font-size:14px;
+}
+
+.mask {
+	position:relative;
+	width:100%;
+	height:250px;
+	overflow:hidden;
+	display:none;
+}
+
+span img{
+	border:none;
+	cursor:pointer;
+}
+
+div#loading {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	text-align: center;
+	display: block;
+	z-index: 500;
+}

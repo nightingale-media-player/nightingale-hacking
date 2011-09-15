@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Estem comprovant qui està de gira a prop vostre">
+<!ENTITY concerts.changelocation "Canvia la localització">
+<!ENTITY concerts.easteregg.fail "Fallada">
+<!ENTITY concerts.easteregg.fail.2 "No s'han trobat concerts per">
+<!ENTITY concerts.timeout.error "No esteu connectats a Internet o la nostra base de dades de concerts no funciona correctament. Si us plau, proveu d'aquí a uns minuts.">
+<!ENTITY concerts.timeoutreport.error "Informa d'un problema">

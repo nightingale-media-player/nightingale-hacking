@@ -1,0 +1,203 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/15972/trunk/components/mediacore/metadata/manager/test/files
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/14134/trunk/components/mediacore/metadata/manager/test/files/Makefile.in
+END
+MP3_ID3v22.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v22.mp3
+END
+WavPack.wv
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/WavPack.wv
+END
+MP3_ID3v23.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v23.mp3
+END
+MP3_ID3v24.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v24.mp3
+END
+MPEG4_Useless_Ref.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/15796/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Useless_Ref.m4a
+END
+MP3_ID3v1_and_ID3v2.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1_and_ID3v2.mp3
+END
+MP3_ID3v1v22.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1v22.mp3
+END
+Wave.wav
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/Wave.wav
+END
+MP3_ID3v1v23.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1v23.mp3
+END
+MPEG4_Useless.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/13942/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Useless.m4a
+END
+MP3_ID3v1v24.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1v24.mp3
+END
+test.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/9834/trunk/components/mediacore/metadata/manager/test/files/test.png
+END
+MPEG4_Empty_Shift_Ref.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/15796/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Empty_Shift_Ref.m4a
+END
+MPEG4_Empty_Ref.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/15796/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Empty_Ref.m4a
+END
+MPEG4_Empty_Shift.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/13942/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Empty_Shift.m4a
+END
+MP3_NoTags.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_NoTags.mp3
+END
+FLAC.flac
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/FLAC.flac
+END
+MPEG4_Empty.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/13942/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Empty.m4a
+END
+Ogg_Vorbis.ogg
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/Ogg_Vorbis.ogg
+END
+MP3_ID3v1_ID3v2_APE2.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1_ID3v2_APE2.mp3
+END
+AACADTS.aac
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/AACADTS.aac
+END
+MPEG4_Audio_Apple_Lossless.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Audio_Apple_Lossless.m4a
+END
+MusePack.mpc
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MusePack.mpc
+END
+MPEG4_Expand_Ref.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/15972/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Expand_Ref.m4a
+END
+MPEG4_Audio_Apple_Lossless_NoArt.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/client/!svn/ver/13688/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Audio_Apple_Lossless_NoArt.m4a
+END
+TrueAudio.tta
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/TrueAudio.tta
+END
+MPEG4_Expand.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/13942/trunk/components/mediacore/metadata/manager/test/files/MPEG4_Expand.m4a
+END
+Speex.spx
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/Speex.spx
+END
+MP3_ID3v1.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1.mp3
+END
+MP3_ID3v1_Shift_JIS.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/MP3_ID3v1_Shift_JIS.mp3
+END
+Ogg_FLAC.oga
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/Ogg_FLAC.oga
+END
+WindowsMedia.wma
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/files/WindowsMedia.wma
+END

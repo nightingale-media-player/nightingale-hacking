@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/17485/trunk/components/moz/image/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/17485/trunk/components/moz/image/src/Makefile.in
+END
+sbImageParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/17472/trunk/components/moz/image/src/sbImageParser.cpp
+END
+sbImageParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/17472/trunk/components/moz/image/src/sbImageParser.h
+END
+sbImageParserModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/17472/trunk/components/moz/image/src/sbImageParserModule.cpp
+END

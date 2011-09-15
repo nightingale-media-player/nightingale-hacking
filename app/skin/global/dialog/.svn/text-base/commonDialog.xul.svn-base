@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/dialog/commonDialog.css" type="text/css"?>
+<!DOCTYPE overlay PUBLIC "-//MOZILLA//DTD XUL V1.0//EN" "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<overlay id="commonDialogOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<dialog id="commonDialog"
+  hidechrome="true"
+  buttonpack="end"
+  type="songbird">
+
+  <!-- the sysContol stuff uses data remotes, we need to include it -->
+  <script type="text/javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <script type="text/javascript"><![CDATA[
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+    Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+    Cu.import("resource://app/jsmodules/URLUtils.jsm");
+
+    /* XXX Mook: XUL is messed up, flex= and pack= take precedence over CSS
+                 unset them (the CSS will set our desired behaviour) */
+    addEventListener("load", function() {
+      removeEventListener("load", arguments.callee, false);
+      document.getElementById("info.header")
+              .parentNode
+              .removeAttribute("flex");
+      /* while we're here, fix up some other CSS stuff */
+      document.getElementById("info.header")
+              .parentNode
+              .parentNode
+              .className += " dialog-content-inner";
+
+      /* check if an HTML description should be used */
+      var queryParams = {};
+      URLUtils.extractQuery(document.documentURI, queryParams);
+      if (queryParams.useHTML) {
+        var bodyDescriptionElem = document.getElementById("info.body");
+        DOMUtils.setClass(bodyDescriptionElem, "sb-html-description");
+        DOMUtils.rebindXBL(bodyDescriptionElem);
+      }
+    }, false);
+    
+    /* support the close button */
+    function onExit() {
+      return document.documentElement.cancelDialog();
+    }
+  ]]></script>
+</dialog>
+
+</overlay>

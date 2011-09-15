@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/20891/trunk/components/jscodelib/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/20891/trunk/components/jscodelib/test/Makefile.in
+END
+test_url_utils.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20891/trunk/components/jscodelib/test/test_url_utils.js
+END

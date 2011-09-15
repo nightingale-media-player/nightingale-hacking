@@ -1,0 +1,211 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* ::::: menu/menuitem ::::: */
+
+menu,
+menuitem {
+  -moz-box-align: center;
+  padding:0 !important;
+  margin:0 !important;
+  
+  font-size:11px;
+  padding:0px 0px 0px 16px !important;
+}
+
+menu[disabled="true"],
+menuitem[disabled="true"],
+menu[_moz-menuactive="true"][disabled="true"],
+menuitem[_moz-menuactive="true"][disabled="true"] {
+  background-color:transparent !important;
+}
+menu[disabled="true"] > label,
+menuitem[disabled="true"] > label,
+menu[_moz-menuactive="true"][disabled="true"] > label,
+menuitem[_moz-menuactive="true"][disabled="true"] > label {
+}
+
+.menu-text,
+.menu-iconic-text {
+  margin:2px 4px 2px 2px;
+  padding:0;
+}
+
+.menu-description {
+/*  font-style: italic;*/
+  -moz-margin-start: 1ex !important;
+}
+
+
+.menu-accel,
+.menu-iconic-accel {
+  margin: 1px 0px 1px 0px !important;
+  padding-right: 8px;
+  font-style:normal !important;
+  font-weight:normal !important;
+}
+
+
+.menu-text {
+}
+.menu-iconic-left {
+  margin: 0px 0px 0px 0px !important;
+  max-width: 16px;
+  max-height: 16px;
+}
+
+.menu-iconic-icon {
+}
+
+menuitem[type="checkbox"] > .menu-iconic-left,
+menuitem[type="radio"] > .menu-iconic-left {
+  margin: 0px 0px 0px 0px !important;
+}
+
+/* ..... menu arrow box ..... */
+
+.menu-right {
+  margin: 0px 4px 0px 2px;
+  list-style-image: url(chrome://songbird/skin/menu/icon-arrow.png);
+  -moz-image-region: rect(0px, 10px, 18px, 0px);
+}
+.menu-right[_moz-menuactive="true"] {
+  -moz-image-region: rect(18px, 10px, 36px, 0px);
+}
+.menu-right[disabled="true"] {
+  -moz-image-region: rect(54px, 10px, 72px, 0px);
+}
+
+/* ::::: menu/menuitems in menubar ::::: */
+
+#main-menubar {
+  background-image:none;
+  background-color:transparent !important;
+  border-bottom:none;
+  /*
+  -moz-border-radius:3px;
+
+  background-image: url('chrome://songbird/skin/base-elements/bg-main-menu.png');
+  background-repeat:repeat-x;
+  background-position:left bottom;
+  */
+  padding:0px !important;
+  margin:0px !important;
+}
+#main-menubar > menu {
+  padding:1px 5px 2px 5px !important;
+  margin:0 0 0 0 !important;
+}
+
+#main-menubar > menu > .menubar-text {
+  padding:0 0 0 0 !important;
+  margin:0 0 0 0 !important;
+}
+#main-menubar > menu > .menubar-text:hover {
+  /*no work*/
+}
+
+#main-menubar > menu {
+  background-color:transparent;
+}
+
+/* ..... internal content .... */
+
+.menubar-left,
+.menubar-text {
+padding:0px;
+margin:0px;
+}
+
+
+
+
+/* ::::: menu/menuitems in popups ::::: */
+
+menupopup > menu,
+popup > menu,
+menupopup > menuitem,
+popup > menuitem {
+/*  padding: 0px 3px 2px 3px !important;*/
+  max-width: 42em;
+  min-height: 18px;
+}
+
+menupopup > menu[_moz-menuactive="true"],
+menupopup > menuitem[_moz-menuactive="true"],
+popup > menu[_moz-menuactive="true"],
+popup > menuitem[_moz-menuactive="true"] {
+}
+
+/* ::::: menu/menuitems in menulist popups ::::: */
+
+.menulist-menupopup > menuitem,
+menulist > menupopup > menuitem,
+.menulist-menupopup > menu,
+menulist > menupopup > menu {
+  padding-right: 8px !important;
+  max-width: none;
+}
+
+.menulist-menupopup > menuitem > .menu-iconic-left,
+menulist > menupopup > menuitem > .menu-iconic-left,
+.menulist-menupopup > menu > .menu-iconic-left,
+menulist > menupopup > menu > .menu-iconic-left {
+/*  margin: 0 2px 0 0 !important;*/
+}
+
+/* ::::: checked menuitems :::::  */
+menuitem[checked="true"], 
+menuitem[checked="true"][_moz-menuactive="true"], 
+menulist > menupopup > menuitem[selected="true"],
+.menulist-menupopup > menuitem[selected="true"] {
+  background-image: url(chrome://songbird/skin/menu/bg-check.png);
+  background-repeat:no-repeat;
+  background-position:4px 0px;
+}
+
+/* XXXstevel
+ * Checked menuitems use background-image to set the checked image style,
+ * unfortunately we use background-image for hovered/selected rows, which
+ * means we can't highlight checked items.  suck.  XR 1.9.2 will give us the
+ * ability to use multiple bg-images, so we should fix this back up in 
+ * Madonna/Nirvana, but for now - we approximate it with the purplish color
+ * from bg-selected-row.png
+ */
+menuitem[checked="true"][_moz-menuactive="true"]:not([disabled="true"]), 
+menulist > menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([disabled="true"]),
+.menulist-menupopup > menuitem[_moz-menuactive="true"][selected="true"]:not([disabled="true"]) {
+  background-position:4px -18px;
+}
+menuitem[checked="true"][disabled="true"] {
+  background-position:4px -54px;
+}
+
+
+/* ::::: menuseparator ::::: */
+
+menuseparator {
+
+  min-height:9px;
+  background-image: url(chrome://songbird/skin/menu/bg-separator.png);
+  background-position:center center;
+  background-repeat:repeat-x;
+}
+
+/* ::::: menulist popup ::::: */
+menulist > menupopup {
+}
+
+/* ::::: autocomplete ::::: */
+
+.autocomplete-history-popup > menuitem {
+  max-width: none !important;
+}
+
+
+/* ::::: tree column picker ::::: 
+taken out in lieu of context menu (right-click) on the treecols themselves
+.treecell-popupcell-menu {
+  list-style-image: url("chrome://global/skin/columnselect.gif");
+  -moz-image-region: auto;
+}
+*/

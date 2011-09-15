@@ -1,0 +1,183 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbICascadeFilterSet.idl
+ * \brief Definition of the sbICascadeFilterSet interface
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface nsITreeView;
+interface nsIArray;
+interface sbIMediaList;
+
+/**
+* \interface sbICascadeFilterSetListener
+* \brief Listener interface for sbICascadeFilterSet
+*
+* \sa sbICascadeFilterSet
+*/
+[scriptable, uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]
+interface sbICascadeFilterSetListener : nsISupports
+{
+  void onChange();
+
+  void onValuesChanged(in unsigned short aIndex);
+};
+
+/**
+* \interface sbICascadeFilterSet
+* \brief Cascade filter management for a media list
+*
+* \sa sbICascadeFilterSetListener
+*/
+[scriptable, uuid(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]
+interface sbICascadeFilterSet : nsISupports
+{
+  /**
+   * \bried Number of filters in the set
+   */
+  readonly attribute unsigned short length;
+
+  /**
+   * \brief Add a new property value filter to the end of the cascade
+   * \param aProperty Property that this filter will filter
+   * \return The index of the newly created filter
+   */
+  unsigned short appendFilter(in AString aProperty);
+
+  /**
+   * \brief Add a new text search filter to the end of the cascade
+   * \param aPropertyArray Array of property that this text search filter will
+   *        search over.  Use a single element array with the value "*" to
+   *        indicate all properties are to be searched.
+   * \param aPropertyArrayCount The length of the aPropertyArray array
+   * \return The index of the newly created filter
+   */
+  unsigned short appendSearch([array, size_is(aPropertyArrayCount)] in wstring aPropertyArray,
+                              in unsigned long aPropertyArrayCount);
+
+  /**
+   * \brief Remove a filter from the cascade
+   * \param aIndex Index of the filter to be removed
+   */
+  void remove(in unsigned short aIndex);
+
+  /**
+   * \brief Change the property used on a filter
+   * \param aIndex Index of the filter to change
+   * \param aProperty Property to change the filter to
+   */
+   void changeFilter(in unsigned short aIndex, in AString aProperty);
+
+  /**
+   * \brief Set the configuration of a filter.  Note that changing a filter
+   *        will clear the configuration of all downstream filters.
+   * \param aIndex Index of the filter to be configured
+   * \param aValueArray Array of values used to constrain the filter.  Note
+   *        that only the first item in the array is used to constrain a
+   *        text search filter.  Send a zero-length array to reset the filter.
+   * \param aValueArrayCount length of the aValueArray array
+   */
+  void set(in unsigned short aIndex,
+           [array, size_is(aValueArrayCount)] in wstring aValueArray,
+           in unsigned long aValueArrayCount);
+
+  /**
+   * \brief Get the configuration of a filter.
+   * \param aIndex Index of the filter to retrieve the configuration from
+   * \return An array of values that the filter is currently configured for
+   */
+  nsIArray get(in unsigned short aIndex);
+
+  /**
+   * \brief Clear the configuration of all filters
+   */
+  void clearAll();
+
+  /**
+   * \brief Get the list of possible values for a filter
+   * \param aIndex Index of the filter
+   * \return A string enumerator of the values of the filter
+   */
+  nsIStringEnumerator getValues(in unsigned short aIndex);
+
+  /**
+   * \brief Get a single value of a filter list
+   * \param aIndex Index of the filter
+   * \param aValueIndex Index of the value to get within the specified filter
+   * \return The requested value
+   */
+  AString getValueAt(in unsigned short aIndex, in unsigned long aValueIndex);
+
+  /**
+   * \brief Get a nsITreeView to display the specified filter's contents
+   * \param aIndex Index of the filter
+   * \return An nsITreeView
+   */
+  nsITreeView getTreeView(in unsigned short aIndex);
+
+  /**
+   * \brief Get the number of possible values for a filter
+   * \param aIndex Index of the filter
+   * \param aUseCache If true, use a cached value if available.  This may be
+   *                  used by listeners to get a new value count without forcing
+   *                  the count to be recalculated.  The cached value may not be
+   *                  the most up-to-date value.  The default is false.
+   * \return The number of possible values for a filter
+   */
+  unsigned long getValueCount(in unsigned short aIndex,
+                              [optional] in boolean aUseCache);
+  
+  /**
+   * \brief Get the property for a filter by index
+   * \param aIndex Index of the filter
+   * \return The property for the given filter index
+   */
+  AString getProperty(in unsigned short aIndex);
+
+  /**
+   * \brief Determine if the filter at a given index is a search filter
+   * \param aIndex Index of the filter
+   * \return True if the filter at the index is a search filter
+   */
+  boolean isSearch(in unsigned short aIndex);
+
+  /**
+   * \brief Add a listener to get notified of filter configuration changes
+   * \param aListener Listener to receive change notifications
+   */
+  void addListener(in sbICascadeFilterSetListener aListener);
+
+  /**
+   * \brief Remove listener from notification list
+   * \param aListener Listener to remove
+   */
+  void removeListener(in sbICascadeFilterSetListener aListener);
+};
+

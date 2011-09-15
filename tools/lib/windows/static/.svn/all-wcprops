@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/20522/trunk/tools/lib/windows/static
+END
+sbWinINIString.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWinINIString.h
+END
+sbWindowsUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWindowsUtils.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/17963/trunk/tools/lib/windows/static/Makefile.in
+END
+sbBrandString.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbBrandString.cpp
+END
+sbWindowsEventLog.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWindowsEventLog.cpp
+END
+sbWindowsStorage.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWindowsStorage.cpp
+END
+sbWindowsUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/20522/trunk/tools/lib/windows/static/sbWindowsUtils.h
+END
+WindowsGUIDs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/WindowsGUIDs.cpp
+END
+sbBrandString.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbBrandString.h
+END
+stringconvert.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/stringconvert.cpp
+END
+sbWindowsEventLog.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWindowsEventLog.h
+END
+sbWinINIString.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWinINIString.cpp
+END
+sbWindowsStorage.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/sbWindowsStorage.h
+END
+stringconvert.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/17962/trunk/tools/lib/windows/static/stringconvert.h
+END

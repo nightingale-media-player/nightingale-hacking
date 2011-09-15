@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * First run iTunes import/export library widget.
+   *
+   *   This widget provides a first run iTunes import/export library UI.
+   *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-first-run-itunes"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <xbl:content
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+      <vbox anonid="container_box" class="sb-first-run-itunes-box">
+
+        <!-- Header. -->
+        <label class="sb-first-run-header"
+               value="&first_run.itunes.header.label;"/>
+        <description>&first_run.itunes.description;</description>
+
+		<groupbox anonid="itunes_groupbox">
+
+          <!-- Import from iTunes checkbox. -->
+          <checkbox anonid="itunes_import_checkbox"
+                 checked="false"
+                 label="&first_run.itunes.checkbox.import.label;"/>
+          <description
+            anonid="itunes_import_desc" 
+            class="indent sb-first-run-itunes-sub-checkbox">
+            &first_run.itunes.checkbox.import.description;
+          </description>
+
+          <!-- Export from iTunes radio button. -->
+          <checkbox anonid="itunes_export_checkbox"
+                 checked="false"
+                 label="&first_run.itunes.checkbox.export.label;"/>
+          <description
+            anonid="itunes_export_desc" 
+            class="indent sb-first-run-itunes-sub-checkbox">
+            &first_run.itunes.checkbox.export.description;
+          </description>
+
+        </groupbox>
+
+      </vbox>
+
+    </xbl:content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           First-run iTunes widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new firstRuniTunesSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Save the user settings in the first-run-wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        this._widgetSvc.saveSettings();
+      ]]></body></method>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the device control services.
+        if (typeof(firstRuniTunesSvc) == "undefined") {
+          var jsLoader;
+
+          // Get the Javascript sub-script loader services.
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
+                                   "firstRun/firstRuniTunes.js",
+                                 null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="pageshow"><![CDATA[
+        var libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
+                              .getService(Ci.sbILibraryImporter);
+        // If an iTunes library file isn't present, then update the wizard
+        // so we skip the iTunes wizardpage
+        if (!libraryImporter.libraryDefaultFilePath) {
+          document.documentElement.goTo(this.next);
+        }
+      ]]></handler>
+
+      <handler event="pageadvanced"><![CDATA[
+        // If the user opts to import their iTunes library, then skip the
+        // second Import Media wizardpage and go straight to the first-run
+        // add-ons page
+        var checkbox =
+          document.getAnonymousElementByAttribute(this,
+                                                  "anonid",
+                                                  "itunes_import_checkbox");
+        if (checkbox.checked &&
+            !this.advancing &&
+            this.next == "first_run_import_media_page")
+        {
+          // guard against unwanted recursion
+          this.advancing = true;
+          var wizard = document.documentElement;
+          wizard.advance(wizard.getPageById(this.next).next);
+          this.advancing = false;
+          return false;
+        }
+        return true;
+      ]]></handler>
+    </handlers>
+
+  </binding> <!-- sb-first-run-itunes -->
+
+</bindings>
+

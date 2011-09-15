@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Filtre">
+<!ENTITY shoutcast-radio.genre "Genre">
+<!ENTITY shoutcast-radio.clear "Effacer">
+<!ENTITY shoutcast-radio.add-station "Ajouter une station">
+<!ENTITY shoutcast-radio.enter-name "Saisissez le nom que vous souhaitez donner à cette station">
+<!ENTITY shoutcast-radio.station-name "Nom de la station">
+<!ENTITY shoutcast-radio.enter-url "Saisissez l&apos;adresse (URL) de la station SHOUTcast">
+<!ENTITY shoutcast-radio.enter-genre "Sélectionnez un genre pour cette station">

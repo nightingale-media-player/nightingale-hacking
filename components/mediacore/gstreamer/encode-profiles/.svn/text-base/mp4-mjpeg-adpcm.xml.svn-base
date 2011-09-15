@@ -1,0 +1,45 @@
+<profile>
+  <type>video</type>
+  <id>fa25e632-1dd1-11b2-a48f-c58a35593c6d</id>
+  <priority>500</priority> <!-- Low priority; this is a very poor choice -->
+  <priority quality="0">50</priority> 
+  <priority quality="1">1500</priority>
+  <description>MP4/MJPEG/ADPCM test profile</description>
+  <mimetype>video/quicktime</mimetype>
+  <extension>mp4</extension>
+
+  <container>
+    <type>video/quicktime</type>
+    <attribute name="variant" type="string" value="apple" />
+  </container>
+
+  <video>
+    <type>image/jpeg</type>
+    <quality-property name="bpp" quality="0" value="0.5"/>
+    <quality-property name="bpp" quality="1" value="1.5"/>
+
+    <!-- 
+      the quality setting only goes up to 95 because that is what the
+      libjpeg authors (IJG) recommend as an absolute maximum; see
+      "JPEG image compression FAQ, part 1/2" section 5.
+      
+      At first glance, one may be tempted to increase the default quality
+      to a higher value but this won't really yield better looking videos.
+      
+      Forcing it to a higher default will only yield better looking still
+      frames when the video is paused and only marginally so while increasing
+      the theoretical size too much.
+     -->
+    <!-- XXX: for 1.9, change min from 5 to 59, to select the quality Acme
+         wants for this profile by default. -->
+    <property name="quality" type="int" min="59" max="95" default="50"
+              mapping="video-quality" scale="95"/>
+  </video>
+
+  <audio>
+    <type>audio/x-adpcm</type>
+    <!-- the bitrate is constant (for a given input format) and not
+         tweakable. The actual value here is completely wrong. -->
+    <quality-property name="bitrate" quality="0.5" value="200000"/>
+  </audio>
+</profile>

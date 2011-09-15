@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtres des flux">
+<!ENTITY prefwindow.title "Préférences de SHOUTcast Radio">
+<!ENTITY bit-rate.limit.label "Afficher les flux SHOUTcast qui ont un débit minimum de">
+<!ENTITY listeners.limit.label "Afficher les flux SHOUTcast qui intéressent au minimum">
+<!ENTITY listeners.limit.label.2 "auditeurs">
+<!ENTITY bit-rate.label "Débit (en Kbits/s)">
+<!ENTITY bit-rate.accesskey "D">
+<!ENTITY listeners.label "Nombre d&apos;auditeurs">
+<!ENTITY listeners.accesskey "a">
+<!ENTITY prefs.track.guessing.title "Analyse de titre/artiste">
+<!ENTITY prefs.track.guessing.label "Active l&apos;analyse du titre et de l&apos;artiste">
+<!ENTITY prefs.track.guessing.help "Certains flux de SHOUTcast transmettent du texte sous la forme &apos;Artiste - Titre du morceau&apos;. Si vous activez cette option, l&apos;extension SHOUTcast essaiera de détecter ces informations et enverra des notifications de changements pour les répercuter sur d&apos;autres extensions.">
+<!ENTITY prefs.customGenres "Définir des genres personnalisés">
+<!ENTITY prefs.customGenres.emptytext "Séparés par des virgules Entrez la liste des genres ici">
+<!ENTITY custom-genres.help.label "Si vous souhaitez afficher des genres personnels dans le répertoire de SHOUTcast, veuillez les indiquer ici séparés par des virgules">
+<!ENTITY prefs.tosBegin "L&apos;utilisation du répertoire de SHOUTcast est subordonnée à l&apos;acceptation des conditions d&apos;utilisation">
+<!ENTITY prefs.tosLinkText "Voir les conditions d&apos;utilisation">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Installer la barre">
+<!ENTITY prefs.toolbarLinkText "d&apos;outils de SHOUTcast">
+<!ENTITY prefs.toolbarEnd "une extension qui permet d&apos;accéder facilement à SHOUTcast depuis votre navigateur.">

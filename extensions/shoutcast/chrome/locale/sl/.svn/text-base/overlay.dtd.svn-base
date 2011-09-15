@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Filtriraj">
+<!ENTITY shoutcast-radio.genre "Zvrst">
+<!ENTITY shoutcast-radio.clear "Počisti">
+<!ENTITY shoutcast-radio.add-station "Dodaj postajo">
+<!ENTITY shoutcast-radio.enter-name "Vnesite ime, ki ga želite dati postaji">
+<!ENTITY shoutcast-radio.station-name "Ime postaje">
+<!ENTITY shoutcast-radio.enter-url "Vnesite URL postaje SHOUTcast">
+<!ENTITY shoutcast-radio.enter-genre "Izberite zvrst postaje">

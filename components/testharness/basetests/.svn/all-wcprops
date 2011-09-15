@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/21364/trunk/components/testharness/basetests
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/14099/trunk/components/testharness/basetests/Makefile.in
+END
+test_timingservice.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/9736/trunk/components/testharness/basetests/test_timingservice.js
+END
+head_songbird.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/21364/trunk/components/testharness/basetests/head_songbird.js
+END
+test_helloWorld.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/7658/trunk/components/testharness/basetests/test_helloWorld.js
+END
+tail_songbird.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/5341/trunk/components/testharness/basetests/tail_songbird.js
+END
+test_redirectURI.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/7658/trunk/components/testharness/basetests/test_redirectURI.js
+END

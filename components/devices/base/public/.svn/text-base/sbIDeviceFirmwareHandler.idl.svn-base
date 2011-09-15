@@ -1,0 +1,367 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface nsIURI;
+interface sbIDevice;
+interface sbIDeviceEventListener;
+interface sbIDeviceFirmwareUpdate;
+
+/**
+ * \interface sbIDeviceFirmwareHandler
+ * \note Implementations of this interface must be threadsafe.
+ * \note The methods which take an sbIDeviceEventListener will also
+ *       send events to the registered device listeners. You only need
+ *       to use your own listener if you do not have a listener registered
+ *       with the device.
+ */
+[scriptable, uuid(caf2294b-da39-48ac-859a-6ebfd4433eeb)]
+interface sbIDeviceFirmwareHandler : nsISupports
+{
+  /**
+   * \brief The Contract ID for this handler
+   */
+  readonly attribute AString contractId;
+
+  /**
+   * \brief URI for latest firmware (where it can be downloaded from).
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute nsIURI latestFirmwareLocation;
+  
+  /**
+   * \brief The latest firmware version, in machine friendly format.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute unsigned long latestFirmwareVersion;
+
+  /**
+   * \brief The latest firmware version, in human readable format.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute AString latestFirmwareReadableVersion;
+
+  /**
+   * \brief The current firmware version, in machine friendly format.
+   * \note  The handler must be bound to a device for this value to
+   *        be valid.
+   */
+  readonly attribute unsigned long currentFirmwareVersion;
+  /**
+   * \brief The current firmware version on the device, in human
+   *        readable format (eg. xx.xx.xx.xx).
+   * \note  The handler must be bound to a device for this value to
+   *        be valid.
+   */
+  readonly attribute AString currentFirmwareReadableVersion;
+
+  /**
+   * \brief Location for the release notes of the latest firmware.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute nsIURI releaseNotesLocation;
+
+  /**
+   * \brief Location of the reset instructions.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   * \note This is optional and may be null.
+   */
+  readonly attribute nsIURI resetInstructionsLocation;
+
+  /**
+   * \brief Magic key combination required by the device to go into
+   *        recovery or firmware flashing mode.
+   * \note This value is not valid until it is refreshed at least once.
+   *       This value can be refreshed by calling refreshInfo.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString recoveryModeKeyCombination;
+
+  /**
+   * \brief Device Customer Support URL.
+   * \note This value is not valid until is is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute nsIURI customerSupportLocation;
+
+  /**
+   * \brief Location where one can perform owner registration with the 
+   *        device manufacturer.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute nsIURI registerLocation;
+
+  /**
+   * \brief Whether the device needs to be in recovery mode
+   *        to have its firmware updated.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute boolean needsRecoveryMode;
+
+  /**
+   * \brief Indicates whether the device is in recovery mode or not
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute boolean recoveryMode;
+
+  /**
+   * \brief The default firmware update that is packaged with the
+   *        firmware handler. This update should always be available.
+   */
+  readonly attribute sbIDeviceFirmwareUpdate defaultFirmwareUpdate;
+
+  /**
+   * \brief The device bound to this handler, or null.
+   */
+  readonly attribute sbIDevice boundDevice;
+
+  /**
+   * \brief Device model number / name as reported by the firmware handler.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString deviceModelNumber;
+
+  /**
+   * \brief Device model version / version name as reported 
+   *        by the firmware handler.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString deviceModelVersion;
+
+  /**
+   * \brief Device manufacturer as reported by the firmware handler.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString deviceVendor;
+
+  /**
+   * \brief Array containing the list of devices supported by the
+   *        firmware handler.
+   * \note This is optional and may be null.
+   * \note Array contains sbIDeviceFirmwareSupport objects
+   */
+  readonly attribute nsISimpleEnumerator supportedDevices;
+
+  /** 
+   * \brief Check to see if this handler can update the specified device
+   * \param aDevice - The device
+   * \param aDeviceVendorID [optional] - The device vendor ID. Set to 0 if not
+   *                                     available.
+   * \param aDeviceProductID [optional] - The device product ID. Set to 0 if not
+   *                                      available.
+   * \note No events need to be sent for this method. It should be a synchronous
+   *       operation. But, do try and be as quick about it as possible.
+   */
+  boolean canUpdate(in sbIDevice aDevice, 
+                    in unsigned long aDeviceVendorID, 
+                    in unsigned long aDeviceProductID);
+
+  /**
+   * \brief Notify the handler to expect a device to connect in recovery mode
+   * \param aDeviceVendorID - The device vendor ID of the device that will
+   *                          reconnect in recovery mode, or 0 for the
+   *                          currently bound device.
+   * \param aDeviceProductID - The device product ID of the device that will
+   *                           reconnect in recovery mode, or 0 for the
+   *                           currently bound device.
+   * \note No events need to be sent for this method. It should be a
+   *       synchronous operation. But, do try and be as quick about it
+   *       as possible.
+   */
+  void initiateRecoveryModeSwitch(
+                                 [optional] in unsigned long aDeviceVendorID,
+                                 [optional] in unsigned long aDeviceProductID);
+
+  /**
+   * \brief Bind the handler to a device
+   * \param aDevice - The device you wish to bind to
+   * \param [optional] aListener - Optional event listener 
+   *        to also send events to, may be null.
+   * \warning This can only be called once, all subsequent calls
+   *          to this method will return NS_ERROR_ALREADY_INITIALIZED.
+   * \throw NS_ERROR_ALREADY_INITIALIZED when handler is already bound.
+   */
+  void bind(in sbIDevice aDevice, in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Rebind a device to an already running handler.
+   * \param aDevice - The device you wish to bind to
+   * \param [optional] aListener - Optional event listener 
+   *        to also send events to, may be null.
+   * \note Rebind is meant to be used when a device switches modes
+   *       but must continue an existing firmware update (eg. switching
+   *       to recovery mode).
+   * \retval PR_TRUE Rebinding was successful
+   * \retval PR_FALSE Rebinding failed
+   */
+  boolean rebind(in sbIDevice aDevice, in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Unbind the handler
+   */
+  void unbind();
+
+  /**
+   * \brief Cancel the current operation
+   */
+  void cancel();
+
+  /** 
+   * \brief Refresh the firmware location, version, readable version, 
+   *        notes, and instructions.
+   */
+  void refreshInfo();
+
+  /**
+   * \brief Perform a firmware update on the specified device
+   * \param aFirmwareUpdate - The firmware update to apply
+   */
+  void update(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
+
+  /**
+   * \brief Perform a recovery update on the specified device
+   * \note Calling this method will often wipe all content from the device
+   * \param aFirmwareUpdate - The firmware update to apply during the
+   *                          recovery update. 
+   */
+  void recover(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
+
+  /**
+   * \brief Verify the firmware already on the device
+   */
+  void verifyDevice();
+  
+  /**
+   * \brief Verify the firmware update image
+   * \param aFirmwareUpdate - The firmware update to verify
+   */
+  void verifyUpdate(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
+};
+
+%{C++
+
+#include <nsIComponentManager.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
+#include <nsIServiceManager.h>
+
+#include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsStringGlue.h>
+#include <nsXPCOMCID.h>
+
+class nsIFile;
+struct nsModuleComponentInfo;
+
+#define SB_DEVICE_FIRMWARE_HANDLER_CATEGORY "songbird-device-firmware-handler"
+
+/**
+ * Put this in your module definition file. Give your class name. Then your
+ * moduleInfo should look something like this:
+ *
+ *   NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSampleDeviceFirmwareHanlder, Init);
+ *   SB_MEDIACORE_FACTORY_REGISTERSELF(sbSampleDeviceFirmwareHandler);
+ *
+ *   static nsModuleComponentInfo components[] =
+ *   {
+ *     {
+ *       CLASSNAME, 
+ *       CID,
+ *       CONTRACTID,
+ *       sbSampleDeviceFirmwareHandlerConstructor,
+ *       sbSampleDeviceFirmwareHandlerRegisterSelf,
+ *       sbSampleDeviceFirmwareHandlerUnregisterSelf
+ *     }
+ *   };
+ *
+ *   NS_IMPL_NSGETMODULE(SampleDeviceFirmwareHandler, components)
+ */
+#define SB_DEVICE_FIRMWARE_HANDLER_REGISTERSELF(_name)                               \
+                                                                               \
+  NS_METHOD _name##RegisterSelf(nsIComponentManager* aCompMgr,                 \
+                                nsIFile* aPath,                                \
+                                const char* registryLocation,                  \
+                                const char* componentType,                     \
+                                const nsModuleComponentInfo* info);            \
+                                                                               \
+  NS_METHOD _name##UnregisterSelf(nsIComponentManager* aCompMgr,               \
+                                  nsIFile* aPath,                              \
+                                  const char* registryLocation,                \
+                                  const nsModuleComponentInfo* info)
+
+/**
+ * Stick this in your implementation file. Give your class name.
+ */
+#define SB_DEVICE_FIRMWARE_HANLDER_REGISTERSELF_IMPL(_name, _desc)             \
+                                                                               \
+  NS_METHOD                                                                    \
+  _name##RegisterSelf(nsIComponentManager* aCompMgr,                           \
+                      nsIFile* aPath,                                          \
+                      const char* registryLocation,                            \
+                      const char* componentType,                               \
+                      const nsModuleComponentInfo* info)                       \
+  {                                                                            \
+    nsresult rv;                                                               \
+    nsCOMPtr<nsICategoryManager> catMan =                                      \
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    nsCAutoString prevEntry;                                                   \
+    rv = catMan->AddCategoryEntry(SB_DEVICE_FIRMWARE_HANDLER_CATEGORY,         \
+                                  _desc,                                       \
+                                  info->mContractID,                           \
+                                  PR_TRUE, PR_TRUE,                            \
+                                  getter_Copies(prevEntry));                   \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    NS_WARN_IF_FALSE(prevEntry.IsEmpty(),                                      \
+                     "Another controller was registered with that id!");       \
+    return NS_OK;                                                              \
+  }                                                                            \
+                                                                               \
+  NS_METHOD                                                                    \
+  _name##UnregisterSelf(nsIComponentManager* aCompMgr,                         \
+                        nsIFile* aPath,                                        \
+                        const char* registryLocation,                          \
+                        const nsModuleComponentInfo* info)                     \
+  {                                                                            \
+    nsresult rv;                                                               \
+    nsCOMPtr<nsICategoryManager> catMan =                                      \
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    rv = catMan->DeleteCategoryEntry(SB_DEVICE_FIRMWARE_HANDLER_CATEGORY,      \
+                                     _desc,                                    \
+                                     PR_TRUE);                                 \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    return NS_OK;                                                              \
+  }
+%}

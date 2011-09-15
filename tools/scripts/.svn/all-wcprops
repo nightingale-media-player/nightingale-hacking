@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/client/!svn/ver/20979/trunk/tools/scripts
+END
+process_copyright.sh
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/7658/trunk/tools/scripts/process_copyright.sh
+END
+bugzilla-patch.sh
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/9183/trunk/tools/scripts/bugzilla-patch.sh
+END
+flatten-dir.sh
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/3681/trunk/tools/scripts/flatten-dir.sh
+END
+apply-patches.sh
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/9287/trunk/tools/scripts/apply-patches.sh
+END
+list-files.sh
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/3681/trunk/tools/scripts/list-files.sh
+END
+extract.pl
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/6570/trunk/tools/scripts/extract.pl
+END
+find-extension-config.py
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/15575/trunk/tools/scripts/find-extension-config.py
+END
+clean-profile-mac.sh
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/13962/trunk/tools/scripts/clean-profile-mac.sh
+END
+sanitize-cvs.sh
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/3681/trunk/tools/scripts/sanitize-cvs.sh
+END
+configure-vlc-mac-release.sh
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/5106/trunk/tools/scripts/configure-vlc-mac-release.sh
+END
+make-dependencies-tarball.sh
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/3320/trunk/tools/scripts/make-dependencies-tarball.sh
+END
+dbperflog2pglog.pl
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/10888/trunk/tools/scripts/dbperflog2pglog.pl
+END
+configure-vlc-mac-debug.sh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/5106/trunk/tools/scripts/configure-vlc-mac-debug.sh
+END
+aes.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/client/!svn/ver/19521/trunk/tools/scripts/aes.py
+END
+generate-nsis-manifest.py
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/14659/trunk/tools/scripts/generate-nsis-manifest.py
+END
+make-release-build.sh
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/3681/trunk/tools/scripts/make-release-build.sh
+END
+make_incremental_from_full_updates.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/3681/trunk/tools/scripts/make_incremental_from_full_updates.sh
+END
+generate-update-snippet.pl
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/7658/trunk/tools/scripts/generate-update-snippet.pl
+END
+make-nightly-with-jars-build.sh
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/5718/trunk/tools/scripts/make-nightly-with-jars-build.sh
+END
+make-nightly-l10n-build.sh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/5718/trunk/tools/scripts/make-nightly-l10n-build.sh
+END
+make-macpkg-manifest.py
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/18462/trunk/tools/scripts/make-macpkg-manifest.py
+END
+expand-jar-mn.pl
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/20979/trunk/tools/scripts/expand-jar-mn.pl
+END
+found_copyright.sh
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/7658/trunk/tools/scripts/found_copyright.sh
+END
+make-code-tarball.sh
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/2484/trunk/tools/scripts/make-code-tarball.sh
+END
+check_copyright.sh
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/7658/trunk/tools/scripts/check_copyright.sh
+END

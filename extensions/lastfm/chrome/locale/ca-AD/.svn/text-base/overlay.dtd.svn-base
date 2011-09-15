@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Entrar a Last.fm...">
+<!ENTITY lastfm.menu.logout "Sortir de Last.fm">
+<!ENTITY lastfm.menu.enable "Activar scrobbling">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "Iniciar sessió">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "Registrar-se a Last.fm">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "Entrant...">
+<!ENTITY lastfm.cancel.button "Cancel·lar">
+<!ENTITY lastfm.profile.caption "Perfil">
+<!ENTITY lastfm.profile.scrobble "Scrobble les meves cançons">
+<!ENTITY lastfm.profile.logout "Sortir">
+<!ENTITY lastfm.radio "Radio Last.fm">
+<!ENTITY lastfm.radio.login.help "Per escoltar la Ràdio Last.fm, has d&apos;estar registrat a Last.fm. Si no tens un compte, pots registrar-te primer.">
+<!ENTITY lastfm.radio.start "No estàs segur de per on començar? Prova una recerca, o comprova el que estàs escoltant.">
+<!ENTITY lastfm.radio.start.top.artists "Top Artistes a Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Top Etiquetes a Last.fm">
+<!ENTITY lastfm.radio.register "Registre">
+<!ENTITY lastfm.radio.subscriber.button "Subscriure&apos;s">
+<!ENTITY lastfm.radio.subscriber.help "Per poder escoltar la ràdio de Last.fm, has d&apos;estar subscrit.">
+<!ENTITY lastfm.radio.search "Cercador">
+<!ENTITY lastfm.radio.library "Biblioteca">
+<!ENTITY lastfm.radio.loved "Tracks Apreciats">
+<!ENTITY lastfm.radio.neighbourhood "Veïns">
+<!ENTITY lastfm.radio.recommended "Recomanacions">
+<!ENTITY lastfm.radio.user_stations "Estacions de l&apos;Usuari">
+<!ENTITY lastfm.radio.recent_stations "Estacions Recents">
+<!ENTITY lastfm.radio.from.lastfm "De Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Artistes Recomanats">
+<!ENTITY lastfm.radio.top_artists "El teu Top d&apos;Artistes">
+<!ENTITY lastfm.radio.top_tags "El teu Top d&apos;Etiquetes">
+<!ENTITY lastfm.radio.friends "Els teus Amics">
+<!ENTITY lastfm.radio.neighbours "Veïns">
+<!ENTITY lastfm.radio.from.songbird "Des de Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Els Teus Artistes Més Escoltats">
+<!ENTITY lastfm.radio.highest_rated_artists "Els Teus Artistes Més Valorats">
+<!ENTITY lastfm.radio.popular_genres "Els Teus Gèneres Populars">
+<!ENTITY lastfm.radio.play "Play">
+<!ENTITY lastfm.tags.enter_new "Afegir noves etiquetes (separades per comes)">
+<!ENTITY lastfm.tags.add_fail "Error al afegir etiquetes!">
+<!ENTITY lastfm.tags.user "Les teves etiquetes:">
+<!ENTITY lastfm.tags.global "Etiquetes Globals de Last.fm">

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/20210/trunk/tools/disthelper/macosx
+END
+macutils.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/18314/trunk/tools/disthelper/macosx/macutils.h
+END
+commands.mm
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/20209/trunk/tools/disthelper/macosx/commands.mm
+END
+macutils.mm
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/18314/trunk/tools/disthelper/macosx/macutils.mm
+END
+environment.mm
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/20210/trunk/tools/disthelper/macosx/environment.mm
+END

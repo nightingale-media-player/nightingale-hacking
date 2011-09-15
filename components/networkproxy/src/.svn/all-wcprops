@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/20432/trunk/components/networkproxy/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/20432/trunk/components/networkproxy/src/Makefile.in
+END
+NetworkProxyImport.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/20432/trunk/components/networkproxy/src/NetworkProxyImport.cpp
+END
+NetworkProxyImportComponent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/16234/trunk/components/networkproxy/src/NetworkProxyImportComponent.cpp
+END
+NetworkProxyImport.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/16234/trunk/components/networkproxy/src/NetworkProxyImport.h
+END

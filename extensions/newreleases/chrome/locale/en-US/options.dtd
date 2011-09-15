@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "Country">
+<!ENTITY prefs.location.descr "Find out which albums are being released in your country.  &brandShortName; can track your favorite artists, so you'll never miss another release.  Choose the nearest country to see what releases are coming up.">
+
+<!ENTITY prefs.library "Library">
+<!ENTITY prefs.library.text "Songbird can add a column to your music library that will indicate when any of your artists have new releases.">
+<!ENTITY prefs.library.checklabel "Add the New Release column to my library">
+<!ENTITY prefs.location "Location">
+
+<!ENTITY prefs.country "Country">
+<!ENTITY prefs.country.us "United States">
+<!ENTITY prefs.country.uk "United Kingdom">
+
+<!ENTITY prefs.findReleases "Find releases">

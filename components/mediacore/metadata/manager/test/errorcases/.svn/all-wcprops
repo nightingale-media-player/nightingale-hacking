@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/14134/trunk/components/mediacore/metadata/manager/test/errorcases
+END
+access-tests.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/9032/trunk/components/mediacore/metadata/manager/test/errorcases/access-tests.mp3
+END
+fake-file.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/9009/trunk/components/mediacore/metadata/manager/test/errorcases/fake-file.mp3
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/14134/trunk/components/mediacore/metadata/manager/test/errorcases/Makefile.in
+END
+mp3-disguised-as.flac
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/9563/trunk/components/mediacore/metadata/manager/test/errorcases/mp3-disguised-as.flac
+END
+mp3-disguised-as.ogg
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/client/!svn/ver/9563/trunk/components/mediacore/metadata/manager/test/errorcases/mp3-disguised-as.ogg
+END
+ogg-disguised-as.m4a
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/client/!svn/ver/9563/trunk/components/mediacore/metadata/manager/test/errorcases/ogg-disguised-as.m4a
+END
+corrupt.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/9009/trunk/components/mediacore/metadata/manager/test/errorcases/corrupt.mp3
+END

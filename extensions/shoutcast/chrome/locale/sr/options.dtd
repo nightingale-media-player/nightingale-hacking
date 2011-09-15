@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Филтери тока">
+<!ENTITY prefwindow.title "Подешавања SHOUTcast радија">
+<!ENTITY bit-rate.limit.label "Прикажи само SHOUTcast токове са брзином у битовима од најмање">
+<!ENTITY listeners.limit.label "Прикажи само SHOUTcast токове са најмање">
+<!ENTITY listeners.limit.label.2 "тренутних слушалаца">
+<!ENTITY bit-rate.label "брзином у битовима (kbps)">
+<!ENTITY bit-rate.accesskey "Б">
+<!ENTITY listeners.label "Број слушалаца">
+<!ENTITY listeners.accesskey "с">
+<!ENTITY prefs.track.guessing.title "Рашчлањивање извођача/назива">
+<!ENTITY prefs.track.guessing.label "Омогући рашчлањивање извођача и назива песме">
+<!ENTITY prefs.track.guessing.help "Неки SHOUTcast токови емитују текст у облику „Извођач - Назив песме”. Да бисте омогућили ову опцију, додатак SHOUTcast ће покушати да ово рашчлани и пошаље информацију другим додацима, како би их и они користили.">
+<!ENTITY prefs.customGenres "Прилагођени жанрови">
+<!ENTITY prefs.customGenres.emptytext "Овде унесите списак жанрова раздвојених зарезима">
+<!ENTITY custom-genres.help.label "Ако имате прилагођене жанрове које желите да прикажете у директоријуму SHOUTcast-а, овде унесите списак жанрова раздвојених зарезима">
+<!ENTITY prefs.tosBegin "Коришћење директоријума SHOUTcast-а је ограничено условима коришћења">
+<!ENTITY prefs.tosLinkText "Погледај услове коришћења">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Инсталирај">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast траку са алаткама">
+<!ENTITY prefs.toolbarEnd "додатак прегледачу за лак приступ SHOUTcast-у из прегледача.">

@@ -1,0 +1,227 @@
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser
+END
+title.sjs
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/title.sjs
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/Makefile.in
+END
+browser_privatebrowsing_sslsite_transition.js
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_sslsite_transition.js
+END
+browser_privatebrowsing_forgetthissite.js
+K 25
+svn:wc:ra_dav:version-url
+V 142
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_forgetthissite.js
+END
+browser_privatebrowsing_popupblocker.js
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_popupblocker.js
+END
+browser_privatebrowsing_findbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_findbar.js
+END
+browser_privatebrowsing_popupmode.js
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_popupmode.js
+END
+browser_privatebrowsing_windowtitle.js
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_windowtitle.js
+END
+browser_privatebrowsing_import.js
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_import.js
+END
+browser_privatebrowsing_crh.js
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_crh.js
+END
+staller.sjs
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/staller.sjs
+END
+browser_privatebrowsing_urlbarfocus.js
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_urlbarfocus.js
+END
+browser_privatebrowsing_pageinfo.js
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_pageinfo.js
+END
+browser_privatebrowsing_openlocation.js
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_openlocation.js
+END
+browser_privatebrowsing_windowtitle_page.html
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_windowtitle_page.html
+END
+browser_privatebrowsing_certexceptionsui.js
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_certexceptionsui.js
+END
+browser_privatebrowsing_opendir.js
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_opendir.js
+END
+browser_privatebrowsing_geoprompt_page.html
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_geoprompt_page.html
+END
+ctxmenu.html
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/ctxmenu.html
+END
+ctxmenu-image.png
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/ctxmenu-image.png
+END
+browser_console_clear.js
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_console_clear.js
+END
+browser_privatebrowsing_beforeunload.js
+K 25
+svn:wc:ra_dav:version-url
+V 140
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_beforeunload.js
+END
+browser_privatebrowsing_cookieacceptdialog.js
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_cookieacceptdialog.js
+END
+browser_privatebrowsing_placestitle.js
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_placestitle.js
+END
+browser_privatebrowsing_newwindow_stopcmd.js
+K 25
+svn:wc:ra_dav:version-url
+V 145
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_newwindow_stopcmd.js
+END
+browser_privatebrowsing_geoprompt.js
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_geoprompt.js
+END
+browser_privatebrowsing_ui.js
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_ui.js
+END
+browser_privatebrowsing_fastswitch.js
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_fastswitch.js
+END
+browser_privatebrowsing_downloadmonitor.js
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_downloadmonitor.js
+END
+popup.html
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/popup.html
+END
+browser_privatebrowsing_zoom.js
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_zoom.js
+END
+browser_privatebrowsing_contextmenu_blockimage.js
+K 25
+svn:wc:ra_dav:version-url
+V 150
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_contextmenu_blockimage.js
+END
+browser_privatebrowsing_zoomrestore.js
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_zoomrestore.js
+END
+browser_privatebrowsing_transition.js
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_transition.js
+END
+browser_privatebrowsing_searchbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_searchbar.js
+END
+browser_privatebrowsing_viewsource.js
+K 25
+svn:wc:ra_dav:version-url
+V 138
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_viewsource.js
+END
+browser_privatebrowsing_theming.js
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/privatebrowsing/test/browser/browser_privatebrowsing_theming.js
+END

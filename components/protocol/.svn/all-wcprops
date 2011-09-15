@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/client/!svn/ver/16997/trunk/components/protocol
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/16997/trunk/components/protocol/Makefile.in
+END
+sbAboutCredits.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/12558/trunk/components/protocol/sbAboutCredits.js
+END
+sbSongbirdProtocol.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/13705/trunk/components/protocol/sbSongbirdProtocol.js
+END
+sbAboutDRM.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/16997/trunk/components/protocol/sbAboutDRM.js
+END
+sbAboutRedirector.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/12558/trunk/components/protocol/sbAboutRedirector.js
+END

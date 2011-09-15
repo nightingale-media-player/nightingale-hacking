@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser
+END
+browser_sort_in_library.js
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_sort_in_library.js
+END
+browser_library_left_pane_commands.js
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_left_pane_commands.js
+END
+browser_library_views_liveupdate.js
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_views_liveupdate.js
+END
+browser_423515.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_423515.js
+END
+browser_drag_bookmarks_on_toolbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_drag_bookmarks_on_toolbar.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/Makefile.in
+END
+browser_forgetthissite_single.js
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_forgetthissite_single.js
+END
+browser_bookmarksProperties.js
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_bookmarksProperties.js
+END
+browser_410196_paste_into_tags.js
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_410196_paste_into_tags.js
+END
+browser_0_library_left_pane_migration.js
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_0_library_left_pane_migration.js
+END
+browser_457473_no_copy_guid.js
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_457473_no_copy_guid.js
+END
+browser_library_left_pane_fixnames.js
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_left_pane_fixnames.js
+END
+browser_425884.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_425884.js
+END
+browser_views_liveupdate.js
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/vendor/!svn/ver/11310/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_views_liveupdate.js
+END
+browser_history_sidebar_search.js
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_history_sidebar_search.js
+END
+browser_library_panel_leak.js
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_panel_leak.js
+END
+browser_library_open_leak.js
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_open_leak.js
+END
+browser_sidebarpanels_click.js
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_sidebarpanels_click.js
+END
+browser_library_middleclick.js
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_middleclick.js
+END
+browser_library_infoBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_infoBox.js
+END
+browser_library_search.js
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/browser/browser_library_search.js
+END

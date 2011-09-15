@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/14483/trunk/components/webservices/lastfm/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14483/trunk/components/webservices/lastfm/public/Makefile.in
+END
+sbILastFmWebServices.idl
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/12403/trunk/components/webservices/lastfm/public/sbILastFmWebServices.idl
+END

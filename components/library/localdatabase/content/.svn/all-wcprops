@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/20896/trunk/components/library/localdatabase/content
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/7658/trunk/components/library/localdatabase/content/Makefile.in
+END
+jar.mn
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/3825/trunk/components/library/localdatabase/content/jar.mn
+END
+schema.sql
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/20896/trunk/components/library/localdatabase/content/schema.sql
+END

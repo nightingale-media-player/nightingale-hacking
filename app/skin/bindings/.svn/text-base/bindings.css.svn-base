@@ -1,0 +1,81 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+*******************************************************************************
+
+SONGBIRD WIDGET STYLES    
+
+Imports styles for all the Songbird XBL widgets. 
+
+Songbird widgets, unlike Mozilla's, do not directly include their own 
+styles. This allows easier overriding, as it is up to the feather to
+include the styles.
+
+We assume that most feathers will want the same layout, padding, and
+image rules for the Songbird widgets, and have therefore placed these
+styles in a common chrome://songbird-bindings/skin/ package.  To override
+these rules, supply an alternate provider for this package (using your 
+chrome.manifest), or selectively import the style sheets into your feathers.
+
+For more information, see:
+ *  http://developer.songbirdnest.com/ - The Songbird developer site
+ *  http://developer.mozilla.org/en/docs/Chrome_Registration - Chrome.manifest details
+
+*******************************************************************************
+*/ 
+
+
+/** The global toolbar styles are not included by default **/
+@import url(chrome://global/skin/toolbar.css); 
+
+@import url(browsertoolbar.css);
+@import url(closableBox.css);
+@import url(device/deviceCapacity.css);
+@import url(device/deviceInfo.css);
+@import url(device/deviceProgress.css);
+@import url(device/deviceSync.css);
+@import url(device/deviceTools.css);
+@import url(displayPane.css);
+@import url(drawer.css); 
+@import url(faceplate.css); 
+@import url(filterlist.css); 
+@import url(miniplayer.css); 
+@import url(observesDataRemote.css); 
+@import url(playerControls.css); 
+@import url(playlist.css); 
+@import url(playlistCommands.css);
+@import url(search.css); 
+@import url(servicepane.css); 
+@import url(smartsplitter.css); 
+@import url(statusbar.css); 
+@import url(syscontrols.css); 
+@import url(tabbrowser.css);
+@import url(ratingsControl.css);
+@import url(equalizer.css);
+@import url(cdripMediaView.css);
+
+

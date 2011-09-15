@@ -1,0 +1,72 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbITabBrowser.idl
+ * \brief Definition of the sbITabBrowser and sbITabBrowserTab Interfaces
+ * \sa
+ */
+
+#include "nsISupports.idl"
+
+interface sbITabBrowserTab;
+interface nsIDOMDocument;
+interface nsIDOMElement;
+interface sbIMediaPage;
+interface sbIMediaListView;
+
+/**
+ * \interface sbITabBrowser
+ * \brief 
+ * \sa sbITabBrowserTab
+ */
+[scriptable, uuid(52727f1a-9088-4952-aaa8-f3ec10abc169)]
+interface sbITabBrowser : nsISupports
+{
+  sbITabBrowserTab getTabForDocument( in nsIDOMDocument aContentDocument );
+  nsIDOMElement getBrowserForDocument(in nsIDOMDocument aDocument);
+};
+
+/**
+ * \interface sbITabBrowserTab
+ * \brief 
+ * \sa sbITabBrowser
+ */
+[scriptable, uuid(9f6d5d80-d5d4-11dc-95ff-0800200c9a66)]
+interface sbITabBrowserTab : nsISupports
+{
+  readonly attribute nsIDOMElement outerPlaylist;
+  readonly attribute sbIMediaPage mediaPage;
+  readonly attribute sbIMediaListView mediaListView;
+  nsIDOMElement getPlaylist();
+  void clearOuterPlaylist();
+  void disableScan();
+  void enableScan();
+  void hideOuterPlaylist();
+  void showOuterPlaylist();
+  boolean getOuterPlaylistShowing();
+};
+

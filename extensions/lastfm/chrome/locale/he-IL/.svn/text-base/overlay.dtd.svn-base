@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "התחבר לLast.fm...">
+<!ENTITY lastfm.menu.logout "התנתק מLast.fm">
+<!ENTITY lastfm.menu.enable "אפשר סנכרון">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "התחבר">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "הירשם לLast.fm">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "מתחבר...">
+<!ENTITY lastfm.cancel.button "בטל">
+<!ENTITY lastfm.profile.caption "פרופיל">
+<!ENTITY lastfm.profile.scrobble "סנכרן את השירים שלי">
+<!ENTITY lastfm.profile.logout "התנתק">
+<!ENTITY lastfm.radio "הרדיו של Last.fm">
+<!ENTITY lastfm.radio.login.help "על מנת להאזין לרדיו של Last.fm, אתה צריך להיות מחובר לLast.fm. אם עדיין אין לך חשבון בLast.fm, אתה יכול להירשם.">
+<!ENTITY lastfm.radio.start "לא בטוח היכן להתחיל? נסה לחפש, או לבדוק למה אחרים מקשיבים.">
+<!ENTITY lastfm.radio.start.top.artists "האמנים המובילים בLast.fm">
+<!ENTITY lastfm.radio.start.top.tags "התיוגים המובילים בLast.fm">
+<!ENTITY lastfm.radio.register "הירשם">
+<!ENTITY lastfm.radio.subscriber.button "Subscribe">
+<!ENTITY lastfm.radio.subscriber.help "In order to listen to Last.fm Radio, you must be a subscriber.">
+<!ENTITY lastfm.radio.search "חפש">
+<!ENTITY lastfm.radio.library "ספרייה">
+<!ENTITY lastfm.radio.loved "קטעי שמע אהודים">
+<!ENTITY lastfm.radio.neighbourhood "שכנים">
+<!ENTITY lastfm.radio.recommended "המלצות">
+<!ENTITY lastfm.radio.user_stations "תחנות המשתמש">
+<!ENTITY lastfm.radio.recent_stations "תחנות אחרונות">
+<!ENTITY lastfm.radio.from.lastfm "מLast.fm">
+<!ENTITY lastfm.radio.recommended_artists "אמנים מומלצים">
+<!ENTITY lastfm.radio.top_artists "האמנים הטובים לדעתך">
+<!ENTITY lastfm.radio.top_tags "התיוגים המובילים שלך">
+<!ENTITY lastfm.radio.friends "החברים שלך">
+<!ENTITY lastfm.radio.neighbours "שכנים">
+<!ENTITY lastfm.radio.from.songbird "מSongbird">
+<!ENTITY lastfm.radio.most_played_artists "האמנים המושמעים ביותר אצלך">
+<!ENTITY lastfm.radio.highest_rated_artists "האמנים המדורגים ביותר אצלך">
+<!ENTITY lastfm.radio.popular_genres "הז&apos;אנרים הפופלאריים ביותר אצלך">
+<!ENTITY lastfm.radio.play "נגן">
+<!ENTITY lastfm.tags.enter_new "Enter new tags (comma-separated)">
+<!ENTITY lastfm.tags.add_fail "Failed to add tags!">
+<!ENTITY lastfm.tags.user "Your Tags:">
+<!ENTITY lastfm.tags.global "Last.fm Global Tags:">

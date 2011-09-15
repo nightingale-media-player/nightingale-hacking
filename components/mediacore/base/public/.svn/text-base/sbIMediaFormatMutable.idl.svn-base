@@ -1,0 +1,149 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "sbIMediaInspector.idl"
+
+/**
+ * This is a mutable version of sbIMediaFormatContainer
+ * \see sbIMediaFormatContainer
+ */
+[scriptable, uuid(ba65c974-1dd1-11b2-92ad-de20ff080877)]
+interface sbIMediaFormatContainerMutable : sbIMediaFormatContainer {
+  /**
+   * The container type for this format. This is Songbird defined, but will
+   * probably be mime types or things like ogg and quicktime.
+   */
+  void setContainerType(in AString aContainerType);
+
+  /**
+   * List of properties for the container type
+   */
+  void setProperties(in nsIPropertyBag aProperties);
+};
+
+/**
+ * This is a mutable version of sbIMediaFormatVideo
+ * \see sbIMediaFormatVideo
+ */
+[scriptable, uuid(86e8566a-1dd2-11b2-bf35-834d90ae331b)]
+interface sbIMediaFormatVideoMutable : sbIMediaFormatVideo {
+  /**
+   * The type of video format or codec. Examples: mpeg4, theora, h.264
+   */
+  void setVideoType(in AString aVideoType);
+
+  /**
+   * The width of the video frame
+   */
+  void setVideoWidth(in long aVideoWidth);
+  
+  /**
+   * The height of the video frame
+   */
+  void setVideoHeight(in long aVideoHeight);
+
+  /**
+   * The video pixel aspect ratio. It is returned as a fraction
+   * \param aNumerator The numerator portion of the aspect ratio
+   * \param aDenominator The denominator portion of the aspect ratio
+   */
+  void setVideoPAR(in unsigned long aNumerator, 
+                   in unsigned long aDenominator);
+  
+  /**
+   * The video frame rate in fps. It is returned as a fraction.
+   * \param aNumerator The numerator portion of the framerate
+   * \param aDenominator The denominator portion of the frame rate
+   */ 
+  void setVideoFrameRate(in unsigned long aNumerator,
+                         in unsigned long aDenominator);                       
+
+  /**
+   * This is the bit rate of the video streams in bits per second
+   */
+  void setBitRate(in long aBitRate);
+
+  /**
+   * A list of optional properties that describe the video format
+   */
+  void setProperties(in nsIPropertyBag aProperties);
+};
+
+/**
+ * This is a mutable version of sbIMediaFormatAudio
+ * \see sbIMediaFormatAudio
+ */
+[scriptable, uuid(4025e066-1dd2-11b2-a82a-dfe87181bd8b)]
+interface sbIMediaFormatAudioMutable : sbIMediaFormatAudio {
+
+  /**
+   * This is the audio format type name
+   */
+  void setAudioType(in AString aAudioType);
+
+  /**
+   * this is the bit rate of the audio format in bits per second
+   */
+  void setBitRate(in long aBitRate);
+
+  /**
+   * this is the sample rate of the audio format
+   */
+  void setSampleRate(in long aSampleRate);
+  
+  /**
+   * This is the number of channels contained by the audio format
+   */ 
+  void setChannels(in long aChannels);
+
+  /**
+   * Additional properties of the audio format
+   */
+  void setProperties(in nsIPropertyBag aProperties);
+};
+
+/**
+ * This is a mutable version of sbIMediaFormat
+ * \see sbIMediaFormat
+ */
+[scriptable, uuid(63ebf794-1dd2-11b2-bf2d-d11181482ebd)]
+interface sbIMediaFormatMutable : sbIMediaFormat
+{
+  /**
+   * This is the format container description
+   */
+  void setContainer(in sbIMediaFormatContainer aContainer);
+
+  /**
+   * This is the format for the video stream portion of the media
+   * This may be null
+   */
+  void setVideoStream(in sbIMediaFormatVideo aFormat);
+
+  /**
+   * This is the form for the audio stream portion of the media
+   * This may be null
+   */
+  void setAudioStream(in sbIMediaFormatAudio aFormat);
+};

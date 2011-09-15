@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/17507/trunk/components/mediacore/metadata/lookup/manager/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/14602/trunk/components/mediacore/metadata/lookup/manager/test/Makefile.in
+END
+test_manager.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/17507/trunk/components/mediacore/metadata/lookup/manager/test/test_manager.js
+END

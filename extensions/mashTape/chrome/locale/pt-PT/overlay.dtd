@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "Não foi possível encontrar informação do artista para a música actual">
+<!ENTITY mashTape.msg.no_review_found "Não foi possível encontrar críticas para a música actual">
+<!ENTITY mashTape.msg.no_rss_found "Não foi possível encontrar notícias para a música actual">
+<!ENTITY mashTape.msg.no_photo_found "Não foi possível encontrar fotos para a música actual">
+<!ENTITY mashTape.msg.no_flash_found "Não foi possível encontrar vídeos para a música actual">

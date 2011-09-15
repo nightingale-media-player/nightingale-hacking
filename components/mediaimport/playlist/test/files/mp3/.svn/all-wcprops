@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test/files/mp3
+END
+file2.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test/files/mp3/file2.mp3
+END
+file1.mp3
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test/files/mp3/file1.mp3
+END

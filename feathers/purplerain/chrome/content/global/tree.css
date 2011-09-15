@@ -1,0 +1,254 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is Mozilla Communicator client code, released
+ * March 31, 1998.
+ *
+ * The Initial Developer of the Original Code is
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998-2001
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Joe Hewitt (hewitt@netscape.com)
+ *   Kevin Gerich (webmail@kmgerich.com)
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+/* ===== tree.css ===================================================
+  == Styles used by the XUL outline element.
+  ======================================================================= */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* ::::: tree ::::: */
+
+tree,
+.sb-playlist-tree,
+.sb-filterlist-tree { 
+  -moz-appearance: none;
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty-table.png');
+  /* why? -komi 
+   * because the table treecol header takes up 19px -stevel */
+  background-position:left 19px;
+}
+
+/* actually i lied. technically the treecol header takes up 20px, but the last
+ * pixel is a slightly transparent one to achieve a shadow effect, so the
+ * "visual" height of it is 19px.  we accomplish this by making the image 20px
+ * and shifting the whole tree-stack up 1px */
+tree > stack.tree-stack {
+  margin-top: -1px;
+}
+
+/*
+#trDOMTree,
+.sb-playlist-tree,
+.sb-filterlist-tree {
+  /* the playlist tree however uses a 20px header
+  background-position:left 20px;
+}
+  */
+
+#trDOMTree treechildren::-moz-tree-cell-text(PROCESSING_INSTRUCTION_NODE) {
+  color: rgb(212,210,221);
+}
+
+
+.sb-filterlist-tree,
+.sb-playlist-tree,
+.servicepane-tree {
+  border:none;
+  padding:0;
+  margin:0;
+}
+
+.sb-filterlist-tree treechildren::-moz-tree-cell-text {
+  padding-left: 1px !important;
+}
+
+/* ::::: tree focusring ::::: */
+
+.focusring > .tree-stack > .tree-rows > .tree-bodybox {
+}
+
+.focusring:focus > .tree-stack > .tree-rows > .tree-bodybox {
+}
+
+
+
+
+/* ::::: lines connecting cells ::::: */
+
+treechildren::-moz-tree-line {
+  /* XXX there should be no border on Mac, but trees currently
+         paint the line black by default, so I'll just leave this
+         for now. */
+  visibility: hidden;
+}
+
+
+
+/* ::::: tree columns ::::: */
+
+treecol { 
+  -moz-appearance: none;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  
+  padding:0;
+  margin:0;
+}
+
+treecolpicker { 
+  -moz-appearance: none;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+
+  padding:0;
+  margin:0;
+
+  min-width: 12px;
+}
+
+.treecol-image {
+}
+
+.treecol-text {
+  margin:0;
+  padding:0;
+}
+
+treecol[hideheader="true"] {
+  -moz-appearance: none;
+  border: none;
+  padding: 0;
+  max-height: 0px;
+}
+
+/* ..... internal box ..... */
+
+tree[enableColumnDrag="true"] > treecols > treecol:hover:active {
+}
+
+/* ::::: sort direction indicator :::::  */
+
+.treecol-sortdirection {
+  -moz-appearance: none;
+  list-style-image: none;
+}
+
+/* ::::: twisty :::::  */
+
+treechildren::-moz-tree-twisty {
+  padding-right: 4px;
+}
+
+treechildren::-moz-tree-twisty(open) {
+}
+
+treechildren::-moz-tree-twisty(Name, separator) {
+  -moz-appearance: none;
+}
+
+treechildren::-moz-tree-indentation {
+  width: 16px;
+}
+
+/* ::::: gridline style ::::: */
+
+treechildren.gridlines::-moz-tree-cell {
+  border-right: 1px solid GrayText;
+  border-bottom: 1px solid GrayText;
+}
+
+treechildren.gridlines::-moz-tree-row {
+  border: none;
+}
+
+treechildren::-moz-tree-image(Name) {
+  margin: 0px 4px;
+  list-style-image: url("chrome://global/skin/tree/item.png");
+}
+
+treechildren::-moz-tree-image {
+  margin: 0px 3px 0px 0px;
+}
+
+treechildren::-moz-tree-image(Name, container) {
+ list-style-image: url("chrome://global/skin/tree/folder.png");
+
+}
+
+treechildren::-moz-tree-image(Name, separator) {
+  list-style-image: none;
+  width: 0px !important;
+  height: 0px !important;
+  margin: 0px 0px;
+}
+
+treechildren::-moz-tree-cell-text(Name, separator) {
+  color: #999;
+  margin: 0 5px;
+}
+
+treechildren::-moz-tree-cell-text(Name, separator, selected, focus) {
+  color: #FFF;
+}
+
+
+
+/* ::::: editable tree ::::: */
+
+treechildren::-moz-tree-row(selected, editing) {
+}
+
+treechildren::-moz-tree-cell-text(selected, editing) {
+}
+
+.tree-input {
+  padding: 1px 1px;
+  margin:0 0 0 -6px ;
+}
+
+
+.servicepane-tree .tree-input {
+  margin: 4px 2px 0px -2px !important;
+  padding: 2px 1px;
+}
+
+treechildren::-moz-tree-checkbox {
+  list-style-image: url('chrome://songbird/skin/base-elements/button-checkbox.png') !important;
+  -moz-image-region: rect(0px 14px 14px 0px);
+}
+treechildren::-moz-tree-checkbox(checked) {
+  -moz-image-region: rect(0px 28px 14px 14px);
+}
+treechildren::-moz-tree-checkbox(disabled) {
+  -moz-image-region: rect(42px 14px 56px 0px);
+}
+treechildren::-moz-tree-checkbox(checked disabled) {
+  -moz-image-region: rect(42px 28px 56px 14px);
+}

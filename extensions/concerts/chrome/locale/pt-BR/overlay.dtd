@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Estamos pesquisando quem está em turnê perto de você...">
+<!ENTITY concerts.changelocation "Alterar local">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Nenhum show encontrado em">
+<!ENTITY concerts.timeout.error "Você não está conectado à Internet ou nosso banco de dados de shows está fora do ar. Tente novamente em alguns minutos.">
+<!ENTITY concerts.timeoutreport.error "Comunicar problema">

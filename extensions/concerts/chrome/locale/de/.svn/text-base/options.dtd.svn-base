@@ -1,0 +1,14 @@
+<!ENTITY prefs.location "Ort">
+<!ENTITY prefs.location.descr "Finden Sie heraus, wer in Ihrer Nähe auftritt. &brandShortName; beobachtet Ihre Lieblingskünstler und -Clubs, sodass Sie nie mehr ein Konzert verpassen. Wählen Sie eine Stadt in Ihrer Nähe, und finden Sie heraus, wer dort auftritt.">
+<!ENTITY prefs.library "Mediathek">
+<!ENTITY prefs.library.text "Mit &brandShortName; können Sie eine Spalte zu Ihrer Mediathek hinzufügen, die anzeigt, wann einer Ihrer Lieblingskünstler in Ihrer Nähe auftritt.">
+<!ENTITY prefs.library.checklabel "Spalte &quot;Auf Tour&quot; zu meiner Mediathek hinzufügen&quot;&gt;
+">
+<!ENTITY prefs.country "Land">
+<!ENTITY prefs.country.us "USA">
+<!ENTITY prefs.country.uk "Großbritannien">
+<!ENTITY prefs.state "Bundesstaat/Bundesland">
+<!ENTITY prefs.city "Stadt">
+<!ENTITY prefs.radius "Umkreis">
+<!ENTITY prefs.findShows "Konzerte suchen">
+<!ENTITY concerts.poweredby "Konzertlisten werden bereitgestellt von">

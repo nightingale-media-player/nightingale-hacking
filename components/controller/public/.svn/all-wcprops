@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/14483/trunk/components/controller/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/14483/trunk/components/controller/public/Makefile.in
+END
+sbIApplicationController.idl
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/11669/trunk/components/controller/public/sbIApplicationController.idl
+END

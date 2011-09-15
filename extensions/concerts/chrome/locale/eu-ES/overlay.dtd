@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Zure inguruan biran nor dabilen bilatzen ari gara...">
+<!ENTITY concerts.changelocation "Aldatu kokapena">
+<!ENTITY concerts.easteregg.fail "ERROREA">
+<!ENTITY concerts.easteregg.fail.2 "Ez da aurkitu kontzerturik ondorengoarentzako">
+<!ENTITY concerts.timeout.error "Edo ez zaude internetera konektatuta edo gure kontzertuen datu-basea ez dabil. Mesedez, saiatu berriz minutu batzuk barru.">
+<!ENTITY concerts.timeoutreport.error "Arazo baten berri eman">

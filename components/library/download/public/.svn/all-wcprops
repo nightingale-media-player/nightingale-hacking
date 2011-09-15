@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/19975/trunk/components/library/download/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/19445/trunk/components/library/download/public/Makefile.in
+END
+sbIMediaItemDownloader.idl
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/19445/trunk/components/library/download/public/sbIMediaItemDownloader.idl
+END
+sbIMediaItemDownloadJob.idl
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/19975/trunk/components/library/download/public/sbIMediaItemDownloadJob.idl
+END
+sbIMediaItemDownloadService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/19445/trunk/components/library/download/public/sbIMediaItemDownloadService.idl
+END

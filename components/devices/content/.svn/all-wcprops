@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/21006/trunk/components/devices/content
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/16618/trunk/components/devices/content/Makefile.in
+END
+sbDefaultDeviceInfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/21006/trunk/components/devices/content/sbDefaultDeviceInfo.xml
+END
+jar.mn
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/17626/trunk/components/devices/content/jar.mn
+END

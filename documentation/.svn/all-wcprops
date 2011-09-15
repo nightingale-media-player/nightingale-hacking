@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/client/!svn/ver/19951/trunk/documentation
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/17427/trunk/documentation/Makefile.in
+END
+songbird.dox.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/17427/trunk/documentation/songbird.dox.in
+END
+sb_logo_doc.gif
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/15839/trunk/documentation/sb_logo_doc.gif
+END
+make-webpageapi-docs.sh
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/15839/trunk/documentation/make-webpageapi-docs.sh
+END

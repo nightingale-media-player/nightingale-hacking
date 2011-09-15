@@ -1,0 +1,46 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* ::::: scale ::::: */
+scale {
+  height: 12px;
+  width: 100px;
+}
+scale > .scale-slider {
+  background-image: url('chrome://songbird/skin/base-elements/bg-scale-horizontal.png');
+  background-position:left center;
+  background-repeat:repeat-x;
+}
+scale[orient="vertical"] {
+  width: 12px;
+  height: 100px;
+}
+scale[orient="vertical"] > .scale-slider {
+  background-image: url('chrome://songbird/skin/base-elements/bg-scale-vertical.png');
+  background-position:center top;
+  background-repeat:repeat-y;
+}
+
+/* ::::: scale thumb ::::: */
+.scale-thumb {
+  /* need to undo styles for vanilla thumb */
+  min-width: 12px !important;
+  min-height: 12px !important;
+  max-width: 12px !important;
+  max-height: 12px !important;
+  
+  background-image: url('chrome://songbird/skin/base-elements/button-scale-thumb.png');
+  background-position:center 0px;
+  background-repeat:no-repeat;
+
+  padding: 0;
+  margin: 0;
+}
+.scale-thumb:hover {
+  background-position:center -12px;
+}
+.scale-thumb:active {
+  background-position:center -24px;
+}
+.scale-thumb[disabled="true"] {
+}
+

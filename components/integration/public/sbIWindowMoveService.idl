@@ -1,0 +1,79 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsIDOMWindow;
+
+
+//==============================================================================
+//
+// @interface sbIWindowMoveListener
+// @brief Window move listener callback interface.
+//
+//==============================================================================
+
+[scriptable, uuid(C93F3A89-50F2-447D-BD70-972A3FB79D47)]
+interface sbIWindowMoveListener : nsISupports
+{
+  //
+  // @brief Callback method when the window starts moving.
+  //
+  void onMoveStarted();
+
+  //
+  // @brief Callback method when the window stops moving.
+  //
+  void onMoveStopped();
+};
+
+
+//==============================================================================
+//
+// @inteface sbIWindowMoveService
+// @brief Service for providing window move callback notices for a given window
+//        and a given listener.
+//
+//==============================================================================
+
+[scriptable, uuid(08D7A93E-CD74-48E9-951D-C5B8E601EB16)]
+interface sbIWindowMoveService : nsISupports
+{
+  //
+  // @brief Start listening to window sizing and move events.
+  // @param aWindow The window to start watching.
+  // @param aListener The callback listener for the move events.
+  //
+  void startWatchingWindow(in nsISupports aWindow,
+                           in sbIWindowMoveListener aListener);
+
+  //
+  // @brief Stop listening to window sizing and move events.
+  // @param aWindow The window to stop watching.
+  // @param aListener The callback listener for the move events.
+  //
+  void stopWatchingWindow(in nsISupports aWindow,
+                          in sbIWindowMoveListener aListener);
+};
+

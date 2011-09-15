@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/14702/trunk/components/moz/system/windows/formatter/public
+END
+sbIWindowsFormatter.midl
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/14623/trunk/components/moz/system/windows/formatter/public/sbIWindowsFormatter.midl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/14702/trunk/components/moz/system/windows/formatter/public/Makefile.in
+END

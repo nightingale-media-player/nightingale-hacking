@@ -1,0 +1,59 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the �GPL�).
+// 
+// Software distributed under the License is distributed 
+// on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+/**
+ * \file sbIGStreamerRTPStreamer.idl
+ * 
+ */
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIGStreamerRTPStreamer
+ */
+[scriptable, uuid(23e8fa67-ba74-44b9-bd4a-5d13298a7b8b)]
+interface sbIGStreamerRTPStreamer : nsISupports
+{
+  // Implementation of this interface is an sbIMediaEventTarget. You can
+  // addListener() to receive this and other important events.
+
+  // Custom event with SDP as a string as payload.
+  const unsigned long EVENT_SDP_AVAILABLE = 0x40000000 + 1;
+
+  attribute AString sourceURI; // The source URI to read from
+
+  attribute AString destHost;  // Destination host to stream to
+  attribute long destPort;     // Destination port to stream to
+};
+
+%{C++
+// {fa712427-ac13-449f-ac5c-c2e8fefebc48}
+#define SB_GSTREAMERRTPSTREAMER_CID \
+	{ 0xfa712427, 0xac13, 0x449f, \
+	{ 0xac, 0x5c, 0xc2, 0xe8, 0xfe, 0xfe, 0xbc, 0x48 } }
+
+#define SB_GSTREAMERRTPSTREAMER_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/RTPStreamer;1"
+#define SB_GSTREAMERRTPSTREAMER_CLASSNAME  "GStreamerRTPStreamer"
+%}
+

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/17856/trunk/components/moz/prompter/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/14134/trunk/components/moz/prompter/src/Makefile.in
+END
+sbPrompter.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/17856/trunk/components/moz/prompter/src/sbPrompter.h
+END
+sbPrompterModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/8901/trunk/components/moz/prompter/src/sbPrompterModule.cpp
+END
+sbPrompter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/17856/trunk/components/moz/prompter/src/sbPrompter.cpp
+END

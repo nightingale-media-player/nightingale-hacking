@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/14134/trunk/components/mediaimport/directory/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/14134/trunk/components/mediaimport/directory/public/Makefile.in
+END
+sbIDirectoryImportService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/12280/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl
+END

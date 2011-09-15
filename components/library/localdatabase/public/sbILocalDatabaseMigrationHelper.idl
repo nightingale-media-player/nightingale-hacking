@@ -1,0 +1,58 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseMigration.idl
+ * \brief Definition of the sbILocalDatabaseMigration interface
+ */
+
+#include "nsISupports.idl"
+#include "sbIJobProgress.idl"
+
+interface sbILocalDatabaseLibrary;
+
+[scriptable, uuid(a8a30690-e9bd-11dd-ba2f-0800200c9a66)]
+interface sbILocalDatabaseMigrationHelper : nsISupports
+{
+  /**
+   * \brief The latest schema version.
+   */
+  unsigned long getLatestSchemaVersion();
+
+  /**
+   * \brief Check for appropriate migration between 
+   *        two different schema versions.
+   */
+  boolean canMigrate(in unsigned long aFromVersion, 
+                     in unsigned long aToVersion);
+
+  /**
+   * \brief Migrate a library from/to a specific schema version.
+   */
+  void migrate(in unsigned long aFromVersion, 
+               in unsigned long aToVersion, 
+               in sbILocalDatabaseLibrary aLibrary);
+};

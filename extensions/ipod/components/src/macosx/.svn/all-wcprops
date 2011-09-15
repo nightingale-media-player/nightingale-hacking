@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/20455/trunk/extensions/ipod/components/src/macosx
+END
+sbIPDSysDevice.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/20455/trunk/extensions/ipod/components/src/macosx/sbIPDSysDevice.cpp
+END
+sbIPDController.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20455/trunk/extensions/ipod/components/src/macosx/sbIPDController.cpp
+END
+sbIPDMarshall.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/20455/trunk/extensions/ipod/components/src/macosx/sbIPDMarshall.cpp
+END
+sbIPDSysDevice.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/14206/trunk/extensions/ipod/components/src/macosx/sbIPDSysDevice.h
+END
+sbIPDController.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/14206/trunk/extensions/ipod/components/src/macosx/sbIPDController.h
+END
+sbIPDMarshall.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/14206/trunk/extensions/ipod/components/src/macosx/sbIPDMarshall.h
+END

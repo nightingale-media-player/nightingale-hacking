@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/19189/trunk/components/devicesobsolete/base/src
+END
+DeviceBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7902/trunk/components/devicesobsolete/base/src/DeviceBase.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/14134/trunk/components/devicesobsolete/base/src/Makefile.in
+END
+DeviceBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/19189/trunk/components/devicesobsolete/base/src/DeviceBase.cpp
+END

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/14134/trunk/components/moz/threadpoolservice/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14134/trunk/components/moz/threadpoolservice/src/Makefile.in
+END
+sbThreadPoolService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/13432/trunk/components/moz/threadpoolservice/src/sbThreadPoolService.cpp
+END
+sbThreadPoolService.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/13418/trunk/components/moz/threadpoolservice/src/sbThreadPoolService.h
+END
+sbThreadPoolServiceModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/13418/trunk/components/moz/threadpoolservice/src/sbThreadPoolServiceModule.cpp
+END

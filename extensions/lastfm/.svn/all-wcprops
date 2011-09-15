@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/client/!svn/ver/21086/trunk/extensions/lastfm
+END
+.hgignore
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/12957/trunk/extensions/lastfm/.hgignore
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/10554/trunk/extensions/lastfm/LICENSE
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/15575/trunk/extensions/lastfm/Makefile.in
+END
+extension-config.mk
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/21086/trunk/extensions/lastfm/extension-config.mk
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/13630/trunk/extensions/lastfm/install.rdf.in
+END
+.hgtags
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/13194/trunk/extensions/lastfm/.hgtags
+END

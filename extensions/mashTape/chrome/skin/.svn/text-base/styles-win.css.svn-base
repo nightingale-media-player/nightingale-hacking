@@ -1,0 +1,7 @@
+#mashTape-nav > radiogroup > radio > hbox > .radio-label {
+  padding: 3px 25px 7px 25px;
+}
+
+#mashTape-nav > radiogroup > radio[selected="true"] > hbox > .radio-label {
+  padding-top: 2px;
+}

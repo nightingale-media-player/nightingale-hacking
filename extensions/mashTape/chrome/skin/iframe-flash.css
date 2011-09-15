@@ -1,0 +1,56 @@
+body {
+	margin: 0;
+	padding: 1em 1em 0em 1em;
+}
+
+div#video {
+	float: left;
+	padding-right: 1em;
+}
+
+div#content {
+	padding-right: 1em;
+}
+img#favicon {
+}
+div#caption {
+	position: relative;
+	left: 20px;
+	top: -20px;
+}
+h4 {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+div#caption .time {
+	font-size: 80%;
+	padding-left: 0;
+}
+
+.time {
+	color: rgba(255,255,255,0.55);
+  font-style: italic;
+	padding-left: 1em;
+}
+
+div#description {
+	padding-top: 1em;
+}
+
+div#loading {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	text-align: center;
+}
+
+div#toggle-expand-container {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+}
+img#toggle-expand-img {
+	cursor: pointer;
+}

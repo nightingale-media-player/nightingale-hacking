@@ -1,0 +1,157 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface sbILibraryConstraint;
+interface sbIMediaList; 
+interface sbIMediaPageInfo;
+interface sbIMediaListMatch;
+interface nsISimpleEnumerator;
+
+/**
+* \interface sbIMediaPageManager sbIMediaPageManager.h
+* \brief The medialist page manager, used to register, unregister,
+* enumerate, set and retrieve page/medialists associations
+*/
+[scriptable, uuid(ec133090-2fde-11df-9aae-0800200c9a66)]
+interface sbIMediaPageManager : nsISupports
+{
+  /**
+   * \brief Register a medialist page.
+   *
+   * \param aName The localized name of the page
+   * \param aURL The chrome URL to the page
+   * \param aMatch The interface or js function used to determine whether this page matches a particular medialist
+   * \return An sbMediaListIPageInfo interface describing the page
+   */
+  sbIMediaPageInfo registerPage(in AString aName, in AString aURL, in AString aIcon, in sbIMediaListMatch aMatch);
+
+  /**
+   * \brief Unregister a medialist page.
+   *
+   * \param aPageInfo a sbIMediaPageInfo interface as previously returned by registerPage
+   */
+  void unregisterPage(in sbIMediaPageInfo aPageInfo);
+
+  /**
+   * \brief Get the list of available pages. The list parameter is optional, if 
+   * not specified, the entire list of registered pages is returned.
+   *
+   * \param aList (optional) The medialist for which the list of available matching pages is being requested
+   * \param aConstraint (optional) A library constrain used as an additional matching criteria
+   * \return An nsISimpleEnumerator containing a list of sbIMediaPageInfo interfaces
+   */
+  nsISimpleEnumerator getAvailablePages([optional] in sbIMediaList aList,
+                                        [optional] in sbILibraryConstraint aConstraint);
+
+  /**
+   * \brief Get the active page for a medialist.
+   *
+   * Pages are matched in the order of registration, that is, if several
+   * pages match a particular medialist, the first one to have been registered
+   * is returned.
+   *
+   * If a page has been set to a medialist via the setPage method, the search for
+   * a matching list is bypassed, and that page is returned again, unless it no
+   * longer exists or no longer matches the medialist.
+   *
+   * If a medialist has a defaultMediaPageURL property set to a particular
+   * page, and has not been set to a different one via the setPage method, the 
+   * search is also bypassed, and that page is returned, unless it no longer 
+   * exists or no longer matches the medialist.
+   *
+   * \param aList       The medialist for which the active page is being requested
+   * \param aConstraint (optional) A library constraint used as an additional matching criteria
+   * \param aType       (optional) The content type of the service pane node
+   */
+  sbIMediaPageInfo getPage(in sbIMediaList aList,
+                           [optional] in sbILibraryConstraint aConstraint,
+                           [optional] in AString aType);
+
+  /**
+   * \brief Set the active page for a medialist
+   *
+   * \param aList     The medialist for which the page is being set
+   * \param aPageInfo The page that is being set to the medialist
+   * \param aType     (optional) The content type of the service pane node
+   */
+  void setPage(in sbIMediaList aList, in sbIMediaPageInfo aPageInfo,
+               [optional] in AString aType);
+};
+
+
+/**
+* \interface sbIMediaPageInfo sbIMediaPageInfo.h
+* \brief This interface is used to describe a medialist page.
+*/
+[scriptable, uuid(4817835e-1dd2-11b2-ab1e-81bb1e02f99b)]
+interface sbIMediaPageInfo: nsISupports
+{
+  /**
+   * \brief The localized name of the page.
+   */
+  readonly attribute AString contentTitle;
+
+  /**
+   * \brief The chrome URL to the page.  Must be unique.
+   */
+  readonly attribute AString contentUrl;
+
+  /**
+   * \brief The chrome URL to the icon representing the page.
+   */
+  readonly attribute AString contentIcon;
+
+  /**
+   * \brief The interface used to match medialists
+   */
+  readonly attribute sbIMediaListMatch matchInterface;
+};
+
+
+/**
+* \interface sbIMediaListMatch sbIMediaListMatch.h
+* \brief This interface is used to provide a generic test on medialists.
+*  Note that instead of providing an object with this interface to a method
+*  that requires it, you may instead give a raw javascript function. eg:
+* \code
+  var page = pageMgr.registerPage("MyPage", 
+                     MYURL, 
+                     function(aList) { return (aList.type == "simple"); } );
+* \endcode
+*/
+[scriptable, function, uuid(802efbaa-1dd2-11b2-96d5-b6792a2b14bf)]
+interface sbIMediaListMatch: nsISupports
+{
+  /**
+   * \brief Callback method used to perform the test on the medialist
+   *
+   * \param aList the media list to attempt to match
+   * \param aConstraint (optional) A library constrain used as an additional matching criteria
+   */
+  PRBool match(in sbIMediaList aList,
+               [optional] in sbILibraryConstraint aConstraint);
+};
+

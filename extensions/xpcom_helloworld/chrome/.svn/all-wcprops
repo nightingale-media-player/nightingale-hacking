@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/15575/trunk/extensions/xpcom_helloworld/chrome
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/15575/trunk/extensions/xpcom_helloworld/chrome/Makefile.in
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/6743/trunk/extensions/xpcom_helloworld/chrome/jar.mn.in
+END

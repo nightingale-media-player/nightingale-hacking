@@ -1,0 +1,113 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2008 POTI, Inc.
+# http://songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+# The Original Code is MinimizeToTray.
+# Contributor(s):
+#   Mark Yen <mook.moz+cvs.mozilla.org@gmail.com>, Original author
+#   Brad Peterson <b_peterson@yahoo.com>, Original author
+#   Daniel Glazman <daniel.glazman@disruptive-innovations.com>
+#   Matthew Gertner <matthew@allpeers.com>
+
+DEPTH = ../../../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/extensions/systray/components/src
+VPATH = /media/disk/Linux/makepkg/songbird/extensions/systray/components/src
+
+include $(DEPTH)/build/autodefs.mk
+
+IS_EXTENSION = 1
+
+# ~= mozilla build system's REQUIRES
+EXTRA_CPP_INCLUDES = widget \
+                     appshell \
+                     docshell \
+                     dom \
+                     gfx \
+                     imglib2 \
+                     necko \
+                     content \
+                     layout \
+                     xuldoc \
+                     locale \
+                     thebes \
+                     $(NULL)
+
+CPP_SRCS = trayModule.cpp \
+           $(NULL)
+
+ifeq (windows,$(SB_PLATFORM))
+   CPP_SRCS +=  nsWindowUtilWin.cpp \
+                nsSystemTrayServiceWin.cpp \
+                nsImageToBitmap.cpp \
+                $(NULL)
+
+   CPP_EXTRA_DEFS += -DnsString_h___ \
+                     -DnsAString_h___ \
+                     -DnsStringFwd_h___ \
+                     -DMOZ_INTERNAL_API \
+                     -DnsAFlatCString=nsACString \
+                     $(NULL)
+ 
+   CPP_EXTRA_FLAGS += -wd4311 \
+                      -wd4312 \
+                      -wd4244 \
+                      $(NULL)
+endif 
+
+ifeq (linux,$(SB_PLATFORM))
+   CPP_SRCS += nsSystemTrayServiceGTK.cpp \
+               nsSystemTrayIconGTK.cpp \
+               nsWindowUtilGTK.cpp \
+               $(NULL)
+  
+   CPP_EXTRA_FLAGS += $(GTK_CFLAGS) \
+                      $(NULL)
+
+   DYNAMIC_LIB_RAW_IMPORTS = $(GTK_LIBS) \
+                             $(NULL)
+endif
+
+ifeq (,$(filter $(MOZ_WIDGET_TOOLKIT),windows gtk2))
+   CPPSRCS += nsSystemTrayService.cpp
+endif
+
+CPP_EXTRA_INCLUDES = ../public \
+                     $(addprefix $(MOZSDK_INCLUDE_DIR)/,$(EXTRA_CPP_INCLUDES)) \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = xul \
+                            $(NULL)
+
+# build a component (ie: a dynamically loadable module)
+IS_COMPONENT = 1
+
+# build a library - DLL_SUFFIX is the platform-specific file extensions for
+# dynamic libraries (.so on unix, .dll on windows, etc)
+DYNAMIC_LIB = systray
+
+CREATEDIRS += $(SONGBIRD_COMPONENTSDIR) \
+              $(OUR_EXTENSION_STAGE_DIR)/components/libs \
+              $(NULL)
+
+include $(topsrcdir)/build/rules.mk

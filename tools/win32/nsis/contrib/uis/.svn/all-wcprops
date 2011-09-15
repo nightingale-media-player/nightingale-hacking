@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis
+END
+modern_nodesc.exe
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/modern_nodesc.exe
+END
+sdbarker_tiny.exe
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/sdbarker_tiny.exe
+END
+default.exe
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/default.exe
+END
+modern.exe
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/modern.exe
+END
+modern_headerbmp.exe
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/modern_headerbmp.exe
+END
+modern_smalldesc.exe
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/modern_smalldesc.exe
+END
+modern_headerbmpr.exe
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/5425/trunk/tools/win32/nsis/contrib/uis/modern_headerbmpr.exe
+END

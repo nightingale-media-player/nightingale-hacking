@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/20863/trunk/components/mediamanager/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/20565/trunk/components/mediamanager/test/Makefile.in
+END
+test_mediafilemanager.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/20863/trunk/components/mediamanager/test/test_mediafilemanager.js
+END
+head_mediamanager.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/20863/trunk/components/mediamanager/test/head_mediamanager.js
+END
+tail_mediamanager.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/20863/trunk/components/mediamanager/test/tail_mediamanager.js
+END

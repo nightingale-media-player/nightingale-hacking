@@ -1,0 +1,123 @@
+10
+
+dir
+22041
+http://publicsvn.songbirdnest.com/client/trunk/app/skin/mozapps
+http://publicsvn.songbirdnest.com/client
+
+
+
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+extensions
+dir
+
+profile
+dir
+
+plugins
+dir
+
+update
+dir
+
+Makefile.in
+file
+
+
+
+
+2011-09-15T07:24:23.000000Z
+11f95e92312988c43949cdc8a5ce5514
+2009-06-25T21:49:34.875313Z
+14087
+preed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+910
+
+handling
+dir
+
+shared
+dir
+
+places
+dir
+
+downloads
+dir
+
+jar.mn.in
+file
+
+
+
+
+2011-09-15T07:24:23.000000Z
+31066ed790470344b2e4dc5ebf46f28e
+2008-01-30T20:13:49.469199Z
+8002
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+97
+
+xpinstall
+dir
+

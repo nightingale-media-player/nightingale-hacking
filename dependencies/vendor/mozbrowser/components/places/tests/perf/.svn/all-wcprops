@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf
+END
+perf_large_delete.xul
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/perf_large_delete.xul
+END
+browser_ui_history_menu.js
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/browser_ui_history_menu.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/Makefile.in
+END
+browser_ui_000_data.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/browser_ui_000_data.js
+END
+browser_ui_history_sidebar.js
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/browser_ui_history_sidebar.js
+END
+browser_ui_locationbar.js
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/browser_ui_locationbar.js
+END
+browser_ui_bookmarks_sidebar.js
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/perf/browser_ui_bookmarks_sidebar.js
+END

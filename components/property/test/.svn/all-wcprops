@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/20898/trunk/components/property/test
+END
+test_propertymanager_dependencies.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/19434/trunk/components/property/test/test_propertymanager_dependencies.js
+END
+test_simplebutton.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/7658/trunk/components/property/test/test_simplebutton.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/19249/trunk/components/property/test/Makefile.in
+END
+test_match_properties.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/8243/trunk/components/property/test/test_match_properties.js
+END
+test_statusproperty.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/14683/trunk/components/property/test/test_statusproperty.js
+END
+test_simpleproperty.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/property/test/test_simpleproperty.js
+END
+test_imagelabellink.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/19258/trunk/components/property/test/test_imagelabellink.js
+END
+test_propertyinfo.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/19202/trunk/components/property/test/test_propertyinfo.js
+END
+test_localizationkey.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20898/trunk/components/property/test/test_localizationkey.js
+END
+test_image.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7658/trunk/components/property/test/test_image.js
+END
+test_downloadbutton.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/property/test/test_downloadbutton.js
+END
+test_propertyarray.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/16660/trunk/components/property/test/test_propertyarray.js
+END
+test_rating.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/17848/trunk/components/property/test/test_rating.js
+END

@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Проверка концертов в вашем регионе…">
+<!ENTITY concerts.changelocation "Изменить место">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Ни одного концерта не найдено в">
+<!ENTITY concerts.timeout.error "Либо вы не подключены к Интернет, либо наша база данных в данный момент недоступна. Попробуйте повторить запрос через несколько минут.">
+<!ENTITY concerts.timeoutreport.error "Отправить сообщение о проблеме">

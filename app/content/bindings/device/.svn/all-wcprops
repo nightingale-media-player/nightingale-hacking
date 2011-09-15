@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/21170/trunk/app/content/bindings/device
+END
+deviceTools.xml
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/18477/trunk/app/content/bindings/device/deviceTools.xml
+END
+deviceTranscodeSettings.xml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/20887/trunk/app/content/bindings/device/deviceTranscodeSettings.xml
+END
+deviceProgress.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20810/trunk/app/content/bindings/device/deviceProgress.xml
+END
+deviceVolumeSelector.xml
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/20932/trunk/app/content/bindings/device/deviceVolumeSelector.xml
+END
+deviceInfoPanel.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/15699/trunk/app/content/bindings/device/deviceInfoPanel.xml
+END
+deviceMediaManagement.xml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/21170/trunk/app/content/bindings/device/deviceMediaManagement.xml
+END
+deviceSync.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/20932/trunk/app/content/bindings/device/deviceSync.xml
+END
+deviceCapacityPanel.xml
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/18515/trunk/app/content/bindings/device/deviceCapacityPanel.xml
+END
+deviceMgmtTabs.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/18448/trunk/app/content/bindings/device/deviceMgmtTabs.xml
+END
+deviceSummarySettings.xml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/18816/trunk/app/content/bindings/device/deviceSummarySettings.xml
+END
+deviceImageSync.xml
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/21028/trunk/app/content/bindings/device/deviceImageSync.xml
+END
+deviceControl.xml
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20810/trunk/app/content/bindings/device/deviceControl.xml
+END
+cdinfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/19398/trunk/app/content/bindings/device/cdinfo.xml
+END
+deviceInfo.xml
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/18839/trunk/app/content/bindings/device/deviceInfo.xml
+END
+deviceCapacity.xml
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/18515/trunk/app/content/bindings/device/deviceCapacity.xml
+END
+deviceGeneralSettings.xml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/19065/trunk/app/content/bindings/device/deviceGeneralSettings.xml
+END

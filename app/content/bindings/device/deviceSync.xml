@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Sync widget.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-sync"
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+     <content>
+
+      <xul:vbox class="device-tab-content">
+
+        <xul:vbox sbid="content_selector">
+          <xul:hbox align="center" sbid="import_header">
+            <xul:stack flex="1">
+              <xul:hbox sbid="import_header_background"
+                        class="content_management_header_background"/>
+              <xul:checkbox sbid="import_header_checkbox"
+                            label="&device.import.header.label;"
+                            xbl:inherits="disabled"
+                            oncommand="_onUIPrefChange(true);"/>
+            </xul:stack>
+          </xul:hbox>
+          <xul:hbox align="center" sbid="sync_header">
+            <xul:stack flex="1">
+              <xul:hbox sbid="sync_header_background"
+                        class="content_management_header_background"/>
+              <xul:checkbox sbid="sync_header_checkbox"
+                            label="&device.sync.header.label;"
+                            xbl:inherits="disabled"
+                            oncommand="_onUIPrefChange(true);"/>
+            </xul:stack>
+          </xul:hbox>
+          <xul:groupbox sbid="content_management_groupbox">
+
+            <!-- Management preferences. -->
+            <xul:vbox class="content-controls"
+                      oncommand="_onUIPrefChange(true);">
+
+              <!-- Content management radio group. -->
+              <xul:radiogroup sbid="content_auto_sync_type_radio_group">
+                <xul:radio sbid="content_auto_sync_all_radio"
+                           label="&device.sync.sync_all.label;"
+                           xbl:inherits="disabled"/>
+                <xul:radio sbid="content_auto_sync_selected_radio"
+                           label="&device.sync.sync_selected.label;"
+                           xbl:inherits="disabled"/>
+                <xul:tree sbid="content_auto_sync_playlist_tree"
+                          xbl:inherits="disabled"
+                          hidecolumnpicker="true"
+                          enableColumnDrag="false"
+                          editable="true"
+                          seltype="single"
+                          rows="8"
+                          onkeyup="_onUIPrefChange(false);"
+                          onclick="_onUIPrefChange(false);">
+                  <xul:treecols>
+                    <xul:treecol sbid="content_auto_sync_playlist_check"
+                                 type="checkbox"
+                                 editable="true"
+                                 class="content-auto-sync-playlist-check"/>
+                    <xul:treecol sbid="content_auto_sync_playlist_title"
+                                 label="&device.sync.playlist.title;"
+                                 class="content-auto-sync-playlist-title"
+                                 flex="1"/>
+                    <xul:splitter class="tree-splitter" />
+                    <xul:treecol sbid="content_auto_sync_playlist_duration"
+                                 hidden="true"
+                                 class="content-auto-sync-playlist-duration"
+                                 label="&device.sync.playlist.video.duration;"/>
+                  </xul:treecols>
+
+                  <xul:treechildren sbid="content_auto_sync_playlist_children"
+                                    alternatingbackground="true"/>
+                </xul:tree>
+
+              </xul:radiogroup>
+            </xul:vbox>
+
+          </xul:groupbox>
+
+        </xul:vbox>
+
+      </xul:vbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+      {
+        /* Import external services. */
+        this.importExternalServices();
+      }
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+      {
+        /* Finalize the sync management services. */
+        this.DeviceSyncWidget.finalize(this);
+      }
+      ]]></destructor>
+
+      <!--
+       * \brief Handle changes to the UI.
+       *
+       * \param aNeedUpdate    Whether the UI needs to be updated.
+       -->
+
+      <method name="_onUIPrefChange">
+        <parameter name="aNeedUpdate"/>
+        <body><![CDATA[
+          this.DeviceSyncWidget.onUIPrefChange(aNeedUpdate);
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Handle action events.
+       *
+       * \param aEvent          Action event.
+       -->
+
+      <method name="_onActionEvent">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this.DeviceSyncWidget.onAction(aEvent);
+        ]]></body>
+      </method>
+
+      <!-- *********************************************************************
+       *
+       * Internal sync management panel services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+      {
+        /* Import the device sync services. */
+        if (typeof(this.DeviceSyncWidget) == "undefined") {
+          var jsLoader;
+
+          /* Get the Javascript sub-script loader services. */
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                  ("chrome://songbird/content/scripts/device/deviceSync.js",
+                   this);
+        }
+
+      }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device sync management services. */
+        this.DeviceSyncWidget.finalize(this);
+        this.DeviceSyncWidget.initialize(this);
+        ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the device sync management services. */
+        this.DeviceSyncWidget.finalize(this);
+        this.DeviceSyncWidget.initialize(this);
+        ]]></handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/chrome
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/chrome/Makefile.in
+END
+sample_feed.atom
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/chrome/sample_feed.atom
+END
+test_423060.xul
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/chrome/test_423060.xul
+END

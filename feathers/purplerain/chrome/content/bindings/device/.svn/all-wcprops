@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/20810/trunk/feathers/purplerain/chrome/content/bindings/device
+END
+deviceVolumeSelector.css
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/client/!svn/ver/18445/trunk/feathers/purplerain/chrome/content/bindings/device/deviceVolumeSelector.css
+END
+deviceInfo.css
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/20303/trunk/feathers/purplerain/chrome/content/bindings/device/deviceInfo.css
+END
+deviceInfoPanel.css
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/20099/trunk/feathers/purplerain/chrome/content/bindings/device/deviceInfoPanel.css
+END
+deviceSync.css
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/20810/trunk/feathers/purplerain/chrome/content/bindings/device/deviceSync.css
+END
+deviceCapacity.css
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/18674/trunk/feathers/purplerain/chrome/content/bindings/device/deviceCapacity.css
+END
+deviceImageSync.css
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/17536/trunk/feathers/purplerain/chrome/content/bindings/device/deviceImageSync.css
+END
+deviceTools.css
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/device/deviceTools.css
+END
+deviceProgress.css
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/20810/trunk/feathers/purplerain/chrome/content/bindings/device/deviceProgress.css
+END

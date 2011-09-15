@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/19620/trunk/extensions/concerts/chrome/locale/he
+END
+songkick.properties
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19620/trunk/extensions/concerts/chrome/locale/he/songkick.properties
+END
+about.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/17947/trunk/extensions/concerts/chrome/locale/he/about.dtd
+END
+options.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/17947/trunk/extensions/concerts/chrome/locale/he/options.dtd
+END
+overlay.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/17947/trunk/extensions/concerts/chrome/locale/he/overlay.dtd
+END
+overlay.properties
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/18506/trunk/extensions/concerts/chrome/locale/he/overlay.properties
+END

@@ -1,0 +1,50 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface sbIJobProgress;
+
+/**
+ * \interface sbIWFRemoveHelper9001
+ * \brief A hackish helper that helps the watch folder component
+ *        gracefully handle file removal.
+ * Songbird is frozen if removing a big chunk of files from the watch
+ * folder. A remove progress dialog to improve the user experience.
+ */
+[scriptable, uuid(61044519-d452-44e4-ab76-930806083a9f)]
+interface sbIWFRemoveHelper9001 : nsISupports
+{
+
+  /**
+   * \brief remove media items based on changes to the watch folder.
+   * This method will block, processing events until all updates are
+   * complete.
+   * \param aMediaItems an array media items that may have been removed.
+   */
+  void remove(in nsIArray aMediaItems);
+};
+
+

@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app
+END
+module.ver
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/module.ver
+END
+application.ini
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/application.ini
+END
+splashos2.rc
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/splashos2.rc
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/Makefile.in
+END
+blocklist.xml
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/blocklist.xml
+END
+nsBrowserApp.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/nsBrowserApp.cpp
+END
+firefox.exe.manifest
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/firefox.exe.manifest
+END
+apprunner-beos.rsrc
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/apprunner-beos.rsrc
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/README.txt
+END
+splash.rc
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/app/splash.rc
+END

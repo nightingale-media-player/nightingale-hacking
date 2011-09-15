@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/10243/trunk/app/skin/mozapps/downloads
+END
+buttons.png
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7967/trunk/app/skin/mozapps/downloads/buttons.png
+END
+downloads.css
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/10243/trunk/app/skin/mozapps/downloads/downloads.css
+END
+downloadIcon.png
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/7967/trunk/app/skin/mozapps/downloads/downloadIcon.png
+END
+unknownContentType.css
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7967/trunk/app/skin/mozapps/downloads/unknownContentType.css
+END

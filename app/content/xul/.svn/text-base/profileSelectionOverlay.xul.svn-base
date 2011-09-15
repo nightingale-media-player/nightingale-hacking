@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<overlay id="songbirdProfileSelectionOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript"><![CDATA[
+
+    // Initialize the profile selection overlay on window load.
+    function sbProfileSelectionOverlayInit() {
+      // Remove window event listener.
+      window.removeEventListener("load", sbProfileSelectionOverlayInit, false);
+
+      // Patch the CreateProfile function.
+      var origCreateProfile = window.CreateProfile;
+      window.CreateProfile = function(aProfile) {
+        // Invoke the original CreateProfile function.
+        origCreateProfile(aProfile);
+
+        // Adding a profile to an empty profile listbox can cause the listbox to
+        // grow in height (due to the filled row being bigger than the default
+        // empty row?).  Resize the window to account for this.
+        window.sizeToContent();
+      }
+    }
+    window.addEventListener("load", sbProfileSelectionOverlayInit, false);
+
+  ]]></script>
+</overlay>
+

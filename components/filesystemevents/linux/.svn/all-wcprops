@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/20434/trunk/components/filesystemevents/linux
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20434/trunk/components/filesystemevents/linux/Makefile.in
+END
+sbLinuxFileSystemWatcher.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/20434/trunk/components/filesystemevents/linux/sbLinuxFileSystemWatcher.cpp
+END
+sbLinuxFileSystemWatcher.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/12951/trunk/components/filesystemevents/linux/sbLinuxFileSystemWatcher.h
+END

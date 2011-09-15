@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/17840/trunk/components/devices/firmware/mock/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/17840/trunk/components/devices/firmware/mock/public/Makefile.in
+END
+sbPIMockFirmwareHandlerURLService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/17840/trunk/components/devices/firmware/mock/public/sbPIMockFirmwareHandlerURLService.idl
+END

@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Filtro">
+<!ENTITY shoutcast-radio.genre "Genere">
+<!ENTITY shoutcast-radio.clear "Pulisci">
+<!ENTITY shoutcast-radio.add-station "Aggiungi Stazione">
+<!ENTITY shoutcast-radio.enter-name "Immettere il nome che si vuole dare alla stazione">
+<!ENTITY shoutcast-radio.station-name "Nome Stazione">
+<!ENTITY shoutcast-radio.enter-url "Inserire l&apos;indirizzo della stazione SHOUTcast">
+<!ENTITY shoutcast-radio.enter-genre "Selezionare il genere della stazione">

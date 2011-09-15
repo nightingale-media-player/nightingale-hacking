@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/10037/trunk/components/moz/filedownloader/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/10037/trunk/components/moz/filedownloader/test/Makefile.in
+END
+test_file_downloader.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/10037/trunk/components/moz/filedownloader/test/test_file_downloader.js
+END

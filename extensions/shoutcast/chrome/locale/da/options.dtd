@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Stream-filtre">
+<!ENTITY prefwindow.title "SHOUTcast Radio indstillinger">
+<!ENTITY bit-rate.limit.label "Vis kun SHOUTcast streams med en bitrate på mindst">
+<!ENTITY listeners.limit.label "Vis kun SHOUTcast streams med mindst">
+<!ENTITY listeners.limit.label.2 "pesoner der lytter">
+<!ENTITY bit-rate.label "Bitrate (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Antal lyttere">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "Fortolkning af Kunstner/Titel">
+<!ENTITY prefs.track.guessing.label "Aktiver fortolkning af sportitel og kunstner.">
+<!ENTITY prefs.track.guessing.help "Nogle SHOUTcast streams sender stream-tekst i formen &apos;Kunstner - Sportitel&apos;. Hvis du aktiverer denne valgmulighed, vil tilføjelsen SHOUTcast forsøge at fortolke disse, og sende beskeder når spor ændres, så kan andre tilføjelser blive orienteret om ændringer af spor i et stream.">
+<!ENTITY prefs.customGenres "Tilpas genrer">
+<!ENTITY prefs.customGenres.emptytext "Indtast kommasepareret list med genre her">
+<!ENTITY custom-genres.help.label "Hvis du har tilpassede genrer, du vil have vist i SHOUTcast kataloget, indtast en kommasepareret liste med genrer her.">
+<!ENTITY prefs.tosBegin "Brug af SHOUTcast kataloget er begrænset af  deres anvendelsesbetingelser.">
+<!ENTITY prefs.tosLinkText "Se anvendelsesbetingelser">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Installer">
+<!ENTITY prefs.toolbarLinkText "værktøjslinjen SHOUTcast">
+<!ENTITY prefs.toolbarEnd "browserudvidelse til nem SHOUTcast adgang fra din browser.">

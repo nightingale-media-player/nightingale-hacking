@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+ -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<window
+  id="sb-library-page"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  onload="window.mediaPage.onLoad();"
+  onunload="window.mediaPage.onUnload();"
+  windowtype="Songbird:Library"
+>
+<script><![CDATA[
+
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+
+// TODO Comment
+// TODO Make the playlist widget implement sbIMediaPage and then delegate
+// everything to it.  window.mediaPage = document.getElementById('playlist');
+window.mediaPage = {
+
+  onLoad:  function(e) {
+    // TODO Move this rule out into the page manager
+    // If we're a library, set our desired filterlists
+    if ( this._mediaListView.mediaList instanceof Ci.sbILibrary ) {
+      // Restore the last library filterset or set our defaults
+      var desiredFilterSet;
+      var defaultFilterSet = [
+        SBProperties.year,
+        SBProperties.artistName,
+        SBProperties.albumName
+      ];
+      var savedFilterSet = SBDataGetStringValue( "library.filterset" );
+      if ( savedFilterSet.length > 0 ) {
+        desiredFilterSet = savedFilterSet.split(";");
+      } else {
+        desiredFilterSet = defaultFilterSet;
+      }
+      var filter = this._mediaListView.cascadeFilterSet;
+      for ( var i = 0, end = desiredFilterSet.length; i < end; i++ ) {
+        filter.appendFilter(desiredFilterSet[i]);
+      }
+    }
+  
+    // TODO: Get cmds that are appropriate for the list    
+    var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                      .getService(Ci.sbIPlaylistCommandsManager);
+    var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
+
+    // Set up the playlist
+    this._playlist.bind(this._mediaListView, cmds);
+  },
+
+  onUnload:  function(e) {
+  },
+
+  _mediaListView: null,
+  
+  _playlist: null, 
+
+  get mediaListView()  {
+    return this._mediaListView;
+  },
+
+  set mediaListView(value)  {
+    this._mediaListView = value;
+  },
+
+  ensureListItemVisible: function(aIndex) {
+    // TODO expose this on the playlist binding
+  }
+
+  // TODO Drag and drop
+}
+]]></script>
+
+    <description>
+      This is an Add-On Media Page. To learn more about how to make your own 
+      <html:a href="https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Building_Media_Views">Media Pages</html:a>, 
+      go <html:a href="https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Building_Media_Views">here</html:a>.
+    </description>
+
+</window>

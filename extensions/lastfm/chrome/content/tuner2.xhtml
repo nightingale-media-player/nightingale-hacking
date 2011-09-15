@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE window SYSTEM "chrome://sb-lastfm/locale/overlay.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xml:lang="en" lang="en">
+<head>
+	<title>&lastfm.radio;</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link type="text/css" rel="stylesheet" media="screen"
+		href="chrome://songbird/skin/html.css" />
+	<link type="text/css" rel="stylesheet" media="screen"
+		href="chrome://sb-lastfm/skin/tuner2.css" />
+</head>
+
+<script type="application/x-javascript" src="jquery-1.2.6.min.js"></script>
+<script type="application/x-javascript" src="jquery-ui-personalized-1.6rc2.min.js"></script>
+<script type="application/x-javascript" src="tuner2.js"></script>
+
+<body id="sb-lastfm-body">
+	<div id="subscriber-page">
+    <div class="lightbox-bkg" />
+    <div class="wrapper-box">
+      <div id="subscriber-box">
+        <p>
+        <div id="subscriber-text">
+          <img src="chrome://sb-lastfm/skin/grad_white.png" />
+          <p>&lastfm.radio.subscriber.help;</p>
+          <p>
+            <xul:button class="subscriber-button"
+            label="&lastfm.radio.subscriber.button;"
+            onclick="LastfmTuner.loadPage('http://www.last.fm/subscribe',
+                                          'subscribe')"
+            />
+          </p>
+          </div>
+        </p>
+      </div>
+    </div>
+	</div>
+	<div id="login-page">
+    <div class="lightbox-bkg" />
+    <div class="wrapper-box">
+      <div id="login-box">
+        <p>
+        <div id="login-text">
+          <img src="chrome://sb-lastfm/skin/grad_white.png" />
+          <p>&lastfm.radio.login.help;</p>
+          <p>
+            <xul:button class="login-button"
+            label="&lastfm.login.button;"
+            onclick="LastfmTuner.showLogin()" />
+            <xul:button class="register-button"
+            label="&lastfm.radio.register;"
+            onclick="LastfmTuner.loadPage('http://www.last.fm/join',
+                                          'register')"
+            />
+          </p>
+          </div>
+        </p>
+      </div>
+    </div>
+	</div>
+	<div id="header">
+		<div id="header-top">
+			<a href="chrome://sb-lastfm/content/tuner2.xhtml"><img
+				src="chrome://sb-lastfm/skin/logo.png" id="lastfm-logo" /></a>
+			<div id="user-profile">
+				<img id="lastfm-user-image" />
+				<span id="lastfm-user-name" />
+					<br/>
+				<span id="lastfm-header-style" />
+			</div>
+			<div id="search">
+				<form name="search-form" id="search-form"
+					action="javascript:LastfmTuner.runSearch()">
+					<input type="text" id="search-box"
+						value="&lastfm.radio.search;" />
+				</form>
+				<img src="chrome://sb-lastfm/skin/magnifying-glass.png" 
+					onclick="javascript:LastfmTuner.runSearch()"/>
+			</div>
+		</div>
+		<!--
+		<div id="header-stations">
+			<a id="personal" class="radio" href="">&lastfm.radio.library;</a>
+			<a id="loved" class="radio" href="">&lastfm.radio.loved;</a>
+			<a id="neighbours" class="radio" href="">&lastfm.radio.neighbourhood;</a>
+			<a id="recommended" class="radio" href="">&lastfm.radio.recommended;</a>
+		</div>
+		-->
+	</div>
+	<div style="clear:both;" />
+
+	<div id="content">
+		<div id="right-nav">
+			<div id="nav-user-stations" class="nav-block">
+				<div class="nav-stations">
+					<h3 class="nav-stations">&lastfm.radio.user_stations;</h3>
+				</div>
+				<div class="nav-results section-open" id="nav-user-stations-results">
+					<div class='nav-station row-even'><div
+						class='station-play-button'><a href='' id="personal"
+						><img src="chrome://sb-lastfm/skin/icon_radio_small.png"
+						/>&lastfm.radio.play;</a></div>&lastfm.radio.library;
+					</div>
+					<div class='nav-station row-odd'><div
+						class='station-play-button'><a href='' id="loved"
+						><img src="chrome://sb-lastfm/skin/icon_radio_small.png"
+						/>&lastfm.radio.play;</a></div>&lastfm.radio.loved;
+					</div>
+					<div class='nav-station row-even'><div
+						class='station-play-button'><a href='' id="neighbours"
+						><img src="chrome://sb-lastfm/skin/icon_radio_small.png"
+						/>&lastfm.radio.play;</a></div>&lastfm.radio.neighbourhood;
+					</div>
+					<div class='nav-station row-odd'><div
+						class='station-play-button'><a href='' id="recommended"
+						><img src="chrome://sb-lastfm/skin/icon_radio_small.png"
+						/>&lastfm.radio.play;</a></div>&lastfm.radio.recommended;
+					</div>
+				</div>
+		<!--
+				<a id="loved" class="radio" href="">&lastfm.radio.loved;</a>
+				<a id="neighbours" class="radio" href="">&lastfm.radio.neighbourhood;</a>
+				<a id="recommended" class="radio" href="">&lastfm.radio.recommended;</a>
+				-->
+			</div>
+			<div id="nav-recent-stations" class="nav-block">
+				<div class="nav-stations">
+					<h3 class="nav-stations">&lastfm.radio.recent_stations;</h3>
+				</div>
+				<div class="nav-results" id="nav-recent-stations-results">
+				</div>
+			</div>
+			<div id="right-nav-last-fm">
+				<h3 class="nav-stations-category">&lastfm.radio.from.lastfm;</h3>
+				<div id="nav-recommended-artists" class="nav-block">
+					<div class="nav-stations">
+						<h3 class="nav-stations">&lastfm.radio.recommended_artists;</h3>
+					</div>
+					<div class="nav-results" id="nav-recommended-artists-results" />
+				</div>
+				<div id="nav-top-artists" class="nav-block">
+					<div class="nav-stations">
+						<h3 class="nav-stations">&lastfm.radio.top_artists;</h3>
+					</div>
+					<div class="nav-results" id="nav-top-artists-results" />
+				</div>
+				<div id="nav-top-tags" class="nav-block">
+					<div class="nav-stations">
+						<h3 class="nav-stations">&lastfm.radio.top_tags;</h3>
+					</div>
+					<div class="nav-results" id="nav-top-tags-results" />
+				</div>
+				<div id="nav-friends" class="nav-block">
+					<div class="nav-stations">
+						<h3 class="nav-stations">&lastfm.radio.friends;</h3>
+					</div>
+					<div class="nav-results" id="nav-friends-results" />
+				</div>
+				<div id="nav-neighbours" class="nav-block">
+					<div class="nav-stations">
+						<h3 class="nav-stations">&lastfm.radio.neighbours;</h3>
+					</div>
+					<div class="nav-results" id="nav-neighbours-results" />
+				</div>
+			</div>
+			<h3 class="nav-stations-category">&lastfm.radio.from.songbird;</h3>
+			<div id="nav-played-artists-sb" class="nav-block">
+				<div class="nav-stations">
+					<h3 class="nav-stations">&lastfm.radio.most_played_artists;</h3>
+				</div>
+				<div class="nav-results" id="nav-played-artists-sb-results" />
+			</div>
+			<div id="nav-rated-artists-sb" class="nav-block">
+				<div class="nav-stations">
+					<h3 class="nav-stations">&lastfm.radio.highest_rated_artists;</h3>
+					</div>
+				<div class="nav-results" id="nav-rated-artists-sb-results" />
+			</div>
+			<div id="nav-genres-sb" class="nav-block last">
+				<div class="nav-stations">
+					<h3 class="nav-stations">&lastfm.radio.popular_genres;</h3>
+				</div>
+				<div class="nav-results" id="nav-genres-sb-results" />
+			</div>
+		</div>
+		<div id="left-content">
+			<div id="explorer">
+				<div id="start-text">&lastfm.radio.start;</div>
+				<div id="start-artists" class="start-suggestions">
+					<h3 class="subtitle">&lastfm.radio.start.top.artists;</h3>
+				</div>
+				<div id="start-tags" class="start-suggestions">
+					<h3 class="subtitle">&lastfm.radio.start.top.tags;</h3>
+				</div>
+			</div>
+			<div style="clear:left;">&#160;</div>
+		</div>
+		<div style="clear:both;" />
+	</div>
+</body>
+</html>

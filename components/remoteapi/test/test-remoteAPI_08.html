@@ -1,0 +1,161 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 08</title>
+    <script>
+      var domains = [ null,
+                      "file",
+                      "file:",
+                      "127.0.0.1",
+                      "sandbox.songbirdnest.com",
+                      "songbirdnest.com",
+                      "songbirdnest.com.",
+                      "ongbirdnest.com",
+                      "svn.songbirdnest.com",
+                      location.host,                                            // www.example.com
+                      location.host.replace(/^[^.]+\./, ''),                    // example.com
+                      location.host.replace(/^[^.]+\./, '') + ".",              // example.com.
+                      location.host.replace(/^[^.]+\../, ''),                   // xample.com
+                      "foo." + location.host.replace(/^[^.]+\./, '')];          // foo.example.com
+
+      var p = { one: [ "",                                                    // /some/complicated/path/file.ext
+                       "/",
+                       ".",
+                       "/builds/songbird/",
+                       "/builds/songbird/trunk/components/remoteapi/test/",
+                       "/builds/songbird/trunk/components/remoteapi/test",
+                       "/builds/mofo/"],
+                two: [ null,
+                       "/",
+                       ".",
+                       location.pathname.replace(/(\/[^\/]+){2}$/, "/"),        // /some/complicated/
+                       location.pathname.replace(/\/[^\/]+$/, "/"),             // /some/complicated/path/
+                       location.pathname.replace(/\/[^\/]+$/, ""),              // /some/complicated/path
+                       location.pathname.replace(/(\/[^\/]+){2}$/, "/foo/")],   // /some/complicated/foo/
+                three: [ "",
+                         "/",
+                         ".",
+                         "/staging/songbird_tests/",
+                         "/staging/songbird_tests/remote_api/",
+                         "/staging/songbird_tests/remote_api",
+                         "/staging/songbird_tests/foo/"]
+              };
+
+      //
+      // Dynamic Table Generation code
+      //
+
+      // create a library and return the filename
+      var getFilename = function ( domain, path ) {
+        try {
+          // backward compatibility hack
+          var siteLib = null;
+          if ("setSiteScope" in songbird ) {
+            songbird.setSiteScope( domain, path );
+            siteLib = songbird.siteLibrary;
+          } else {
+            // this is for builds without the changes from bug 4610
+            // this makes it easier to compare before/after behaviour, but
+            // should not be used in web pages in the wild.
+            siteLib = songbird.siteLibrary( domain, path );
+          }
+        } catch (e) { }
+        if (siteLib) {
+          return siteLib.filename;
+        } else {
+          return "FAILED";
+        }
+      }
+
+      // a row of filenames of db files for the domain at each path
+      var getRow = function ( domain, pathArray ) {
+        if ( domain == "" )
+          var htmlText = "<tr><td> '' </td>";
+        else 
+          var htmlText = "<tr><td> '" + domain + "' </td>";
+
+        for ( var stuff in pathArray ) {
+          htmlText += "<td>" + getFilename( domain, pathArray[stuff] ) + "</td>";
+        }
+        htmlText += "</tr>"
+        return htmlText;
+      }
+
+      // a simple header row
+      var getHeaders = function ( pathArray ) {
+        var htmlText = "<tr><td> Domains vs. Paths </td>";
+        for ( var stuff in pathArray ) {
+          if ( pathArray[stuff] == "" )
+            htmlText += "<td> '' </td>";
+          else 
+            htmlText += "<td> '" + pathArray[stuff]  + "' </td>";
+        }
+        htmlText += "</tr>";
+        return htmlText;
+      }
+
+      // get the headers then all the rows of content
+      var getTableContent = function ( domainArray, pathArray ) {
+        var htmlText = "";
+        htmlText += getHeaders( pathArray );
+        for ( var stuff in domainArray ) {
+          if ( domainArray[stuff] == "" )
+            htmlText += getRow( "", pathArray );
+          else 
+            htmlText += getRow( domainArray[stuff], pathArray );
+        }
+        return htmlText;
+      }
+
+    </script> 
+  </head>
+  <body>
+    <h1>Library creation based on Domain and Path and site page is loaded from</h1>
+    <p> Create a remote library, point it to the sitelibrary and add media to it.
+        switch the remote playlist to show the remote library. </p>
+
+    <p> This table should be more successful when the page is loaded from sandbox.songbirdnest.com</p>
+    <table border="1">
+        <script> document.writeln(getTableContent(domains, p.one));</script>
+    </table>
+
+    <p> This table should be more successful when the page is loaded from any http host</p>
+    <table border="1">
+        <script> document.writeln(getTableContent(domains, p.two));</script>
+    </table>
+
+    <p> This table should be more successful when the page is loaded from file:</p>
+    <table border="1">
+        <script> document.writeln(getTableContent(domains, p.three));</script>
+    </table>
+
+  </body>
+</html>
+

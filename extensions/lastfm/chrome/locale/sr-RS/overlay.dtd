@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Пријави се на Last.fm...">
+<!ENTITY lastfm.menu.logout "Одјави се са Last.fm-а">
+<!ENTITY lastfm.menu.enable "Омогући скробловање">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "Пријава">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "Отвори налог на Last.fm-у">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "Пријављујем се...">
+<!ENTITY lastfm.cancel.button "Поништи">
+<!ENTITY lastfm.profile.caption "Профил">
+<!ENTITY lastfm.profile.scrobble "Скроблуј песме које слушам">
+<!ENTITY lastfm.profile.logout "Одјави се">
+<!ENTITY lastfm.radio "Last.fm радио">
+<!ENTITY lastfm.radio.login.help "Да бисте слушали Last.fm радио, морате бити пријављени на Last.fm. Ако већ не поседујете налог на Last.fm-у, можете да га отворите.">
+<!ENTITY lastfm.radio.start "Нисте сигурни одакле да почнете? Покушајте са претграгом, или проверите шта то други слушају.">
+<!ENTITY lastfm.radio.start.top.artists "Најслушанији извођачи на Last.fm-у">
+<!ENTITY lastfm.radio.start.top.tags "Топ ознаке на Last.fm-у">
+<!ENTITY lastfm.radio.register "Региструј се">
+<!ENTITY lastfm.radio.subscriber.button "Претплати се">
+<!ENTITY lastfm.radio.subscriber.help "Да бисте слушали радио, морате бити претплатник.">
+<!ENTITY lastfm.radio.search "Претражуј">
+<!ENTITY lastfm.radio.library "Библиотека">
+<!ENTITY lastfm.radio.loved "Омиљене песме">
+<!ENTITY lastfm.radio.neighbourhood "Суседство">
+<!ENTITY lastfm.radio.recommended "Препоруке">
+<!ENTITY lastfm.radio.user_stations "Радио станице корисника">
+<!ENTITY lastfm.radio.recent_stations "Скорашње станице">
+<!ENTITY lastfm.radio.from.lastfm "Са Last.fm-а">
+<!ENTITY lastfm.radio.recommended_artists "Препоручени извођачи">
+<!ENTITY lastfm.radio.top_artists "Ваши најслушанији извођачи">
+<!ENTITY lastfm.radio.top_tags "Ваше топ ознаке">
+<!ENTITY lastfm.radio.friends "Ваши пријатељи">
+<!ENTITY lastfm.radio.neighbours "Суседи">
+<!ENTITY lastfm.radio.from.songbird "Са Songbird-а">
+<!ENTITY lastfm.radio.most_played_artists "Ваши најслушанији извођачи">
+<!ENTITY lastfm.radio.highest_rated_artists "Ваши најбоље оцењени извођачи">
+<!ENTITY lastfm.radio.popular_genres "Ваши популарни жанрови">
+<!ENTITY lastfm.radio.play "Пусти">
+<!ENTITY lastfm.tags.enter_new "Упишите нове ознаке (раздвојене запетама)">
+<!ENTITY lastfm.tags.add_fail "Неуспело додавање ознака!">
+<!ENTITY lastfm.tags.user "Ваше ознаке:">
+<!ENTITY lastfm.tags.global "Last.fm глобалне ознаке:">

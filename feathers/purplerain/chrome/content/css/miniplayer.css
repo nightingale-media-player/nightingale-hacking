@@ -1,0 +1,483 @@
+
+
+
+#miniplayer {
+  min-width:240px !important;
+  overflow:hidden !important;
+  max-height: 42px;
+  max-width: 1280px;
+  padding:0;
+}
+
+
+#miniplayer,
+#faceplate.mini,
+#control_buttons_box,
+#volume_box {
+  min-height:42px !important;
+  height:42px !important;
+  max-height:42px !important;
+}
+
+
+
+
+#track_info.mini {
+  border:none;
+  padding:0px 8px !important;
+  margin:0px !important;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+}
+
+
+#miniplayer .faceplate-text,
+sb-player-timeelapsed-label label,
+sb-player-totaltime-label label {
+  font-size:10px !important;
+}
+sb-player-timeelapsed-label,
+sb-player-totaltime-label {
+  min-height:0px;
+}
+#sb-faceplate-autoscroll-box {
+  margin-right: 6px;
+}
+label.time-delimiter {
+  padding: 0px 1px;
+  color: rgb(140,140,140);
+}
+
+
+
+
+
+
+#miniplayer #faceplate_seekbar_box {
+  min-height:42px;
+  padding:0 !important;
+  margin:0 !important;
+
+}
+
+
+.faceplate-progressmeter,
+.faceplate-seekbar,
+slider.sb-player-seek-slider,
+progressmeter.sb-player-seek-slider {
+  height: 42px !important;
+  min-height: 42px !important;
+  min-width: 70px !important;
+}
+
+
+#faceplate:hover progressmeter.sb-player-seek-slider > .progress-bar {
+  background-image:url('chrome://songbird/skin/mini-player/tip-hover.png');
+}
+
+#faceplate:hover progressmeter.sb-player-seek-slider {
+  background-image:url('chrome://songbird/skin/mini-player/done-hover.png');
+}
+
+
+/* No thumb for the miniplayer so we constrain the width to 0. */
+#miniplayer thumb.sb-player-seek-slider 
+{
+  max-width: 0px !important;
+  min-width: 0px !important;
+  background-image: none;
+  background-color:transparent;
+}
+
+
+#miniplayer progressmeter.sb-player-seek-slider > .progress-bar {
+  background-image:none;
+}
+
+#miniplayer progressmeter.sb-player-seek-slider
+{
+  margin: 0px !important;
+  padding: 0px !important;
+  
+  background-image:url('chrome://songbird/skin/mini-player/done.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+#miniplayer progressmeter.sb-player-seek-slider > .progress-remainder
+{
+  background-image:url('chrome://songbird/skin/mini-player/remaining.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+#miniplayer progressmeter.sb-player-seek-slider > .progress-bar
+{
+  min-width:0px !important;
+
+  background-image:url('chrome://songbird/skin/mini-player/tip.png');
+  background-repeat:no-repeat;
+  background-position:right center !important;
+}
+
+
+
+/*play&pause*/
+#miniplayer .sb-player-play-button-play > button,
+#miniplayer .sb-player-playpause-button-play > button,
+#miniplayer .sb-player-pause-button-pause > button,
+#miniplayer .sb-player-playpause-button-pause > button {  
+  list-style-image: url(chrome://songbird/skin/mini-player/play-pause.png); 
+  background-image:none !important;
+  background-color:transparent !important;
+}
+/*play*/
+#miniplayer .sb-player-play-button-play > button,
+#miniplayer .sb-player-playpause-button-play > button {
+  -moz-image-region: rect(0px 30px 30px 0px);
+}
+#miniplayer .sb-player-play-button-play:hover > button,
+#miniplayer .sb-player-playpause-button-play:hover > button {
+  -moz-image-region: rect(30px 30px 60px 0px);
+}
+#miniplayer .sb-player-play-button-play:active > button,
+#miniplayer .sb-player-playpause-button-play:active > button {
+  -moz-image-region: rect(60px 30px 90px 0px);
+}
+#miniplayer .sb-player-play-button-play[disabled="true"] > button,
+#miniplayer .sb-player-playpause-button-play[disabled="true"] > button {
+  -moz-image-region: rect(90px 30px 120px 0px);
+}
+/*pause*/
+#miniplayer .sb-player-pause-button-pause > button,
+#miniplayer .sb-player-playpause-button-pause > button {  
+  -moz-image-region: rect(0px 60px 30px 30px);
+}
+#miniplayer .sb-player-pause-button-pause:hover > button,
+#miniplayer .sb-player-playpause-button-pause:hover > button { 
+  -moz-image-region: rect(30px 60px 60px 30px);
+}
+#miniplayer .sb-player-pause-button-pause:active > button,
+#miniplayer .sb-player-playpause-button-pause:active > button {
+  -moz-image-region: rect(60px 60px 90px 30px);
+}
+#miniplayer .sb-player-pause-button-pause[disabled="true"] > button,
+#miniplayer .sb-player-playpause-button-pause[disabled="true"] > button { 
+  -moz-image-region: rect(90px 60px 120px 30px);
+}
+
+#miniplayer .sb-player-stop-button-stop > button {
+  list-style-image: url(chrome://songbird/skin/mini-player/stop.png); 
+}
+#miniplayer sb-player-back-button {
+  list-style-image: url(chrome://songbird/skin/mini-player/previous.png); 
+  padding:0px !important;
+  margin:0px 1px 0px 0px !important;
+}
+#miniplayer sb-player-forward-button {
+  list-style-image: url(chrome://songbird/skin/mini-player/next.png); 
+  padding:0px !important;
+  margin:0px 0px 0px 1px !important;
+}
+#miniplayer .sb-player-stop-button-stop > button,
+#miniplayer sb-player-back-button,
+#miniplayer sb-player-forward-button {
+  -moz-image-region: rect(0px 30px 30px 0px);
+}
+#miniplayer .sb-player-stop-button-stop:hover > button,
+#miniplayer sb-player-back-button:hover,
+#miniplayer sb-player-forward-button:hover { 
+  -moz-image-region: rect(30px 30px 60px 0px);
+}
+#miniplayer .sb-player-stop-button-stop:active > button,
+#miniplayer sb-player-back-button:active,
+#miniplayer sb-player-forward-button:active { 
+  -moz-image-region: rect(60px 30px 90px 0px);
+}
+#miniplayer .sb-player-stop-button-stop[disabled="true"] > button,
+#miniplayer sb-player-back-button[disabled="true"],
+#miniplayer sb-player-forward-button[disabled="true"] { 
+  -moz-image-region: rect(90px 30px 120px 0px);
+}
+
+
+
+#miniplayer #control_buttons_box {
+  padding:0px 0px 2px 0px !important;
+  margin:0px !important;
+  /* 30 * 3 buttons, + 1px padding btwn each button */
+  min-width:92px;
+}
+
+
+
+#miniplayer #volume_box {
+  margin-left: 1px;
+}
+
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+  list-style-image: url(chrome://songbird/skin/mini-player/min-vol.png);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  list-style-image: url(chrome://songbird/skin/mini-player/max-vol.png);
+}
+
+
+
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  -moz-image-region: rect(0px 12px 12px 0px);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"]:hover {
+  -moz-image-region: rect(12px 12px 24px 0px);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"]:active,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"]:active {
+  -moz-image-region: rect(24px 12px 36px 0px);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][disabled="true"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][disabled="true"] {
+  -moz-image-region: rect(36px 12px 48px 0px);
+}
+
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
+  -moz-image-region: rect(0px 24px 12px 12px);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:hover,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:hover {
+  -moz-image-region: rect(12px 24px 24px 12px);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:active,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:active {
+  -moz-image-region: rect(24px 24px 36px 12px);
+}
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked][disabled="true"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked][disabled="true"] {
+  -moz-image-region: rect(36px 24px 48px 12px);
+}
+
+
+
+#miniplayer progressmeter.sb-player-volume-slider {
+  min-width: 48px;
+  max-width: 48px;
+  margin: 0px;
+}
+
+
+#miniplayer sb-player-volume-slider {
+  margin:0;
+  padding:0;
+}
+
+#miniplayer thumb.sb-player-volume-slider {
+  /* no change needed */
+}
+
+
+
+#miniplayer stack.sb-player-volume-slider {
+  padding:0;
+}
+
+
+
+
+
+
+
+#miniplayer #faceplate_seekbar_box > .hook {
+  margin:0 8px;
+  background-repeat:repeat-x;
+  background-position:left center;
+}
+
+
+
+#faceplate.mini > stack {
+  background-image:url('chrome://songbird/skin/mini-player/faceplate.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+
+#faceplate.mini > stack > .hook {
+  min-height:42px;
+}
+#faceplate.mini > stack > .hook > .left,
+#faceplate.mini > stack > .hook > .right {
+  min-width:8px;
+  min-height:42px;
+}
+#faceplate.mini > stack > .hook > .left {
+  background-image:url('chrome://songbird/skin/mini-player/face-l.png');
+  background-repeat:no-repeat;
+  background-position:left center !important;
+}
+#faceplate.mini > stack > .hook > .right {
+  background-image:url('chrome://songbird/skin/mini-player/face-r.png');
+  background-repeat:no-repeat;
+  background-position:right center !important;
+}
+
+#faceplate-tool > .hook {
+/*  background-image:url('chrome://songbird/skin/mini-player/faceplate.png');*/
+  min-height:42px;
+}
+#faceplate-tool > .hook > .left,
+#faceplate-tool > .hook > .right {
+  min-width:8px;
+  min-height:42px;
+}
+/*
+#faceplate-tool > .hook > .left {
+  background-image:url('chrome://songbird/skin/mini-player/face-l.png');
+  background-repeat:no-repeat;
+  background-position:left center !important;
+}
+#faceplate-tool > .hook > .right {
+  background-image:url('chrome://songbird/skin/mini-player/face-r.png');
+  background-repeat:no-repeat;
+  background-position:right center !important;
+}
+*/
+
+#miniplayer_box > .hook {
+  background-image:url('chrome://songbird/skin/mini-player/bg.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+  min-height:42px;
+}
+#miniplayer_box > .hook > .left,
+#miniplayer_box > .hook > .right {
+  min-width:8px;
+  min-height:42px;
+}
+
+
+
+#miniplayer-content {
+  padding:0px 0px 0px 17px !important;
+}
+#miniplayer_box > .hook > .left {
+  background-image:url('chrome://songbird/skin/mini-player/bg-left.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+  min-width: 15px;
+}
+/*
+#miniplayer_box > .hook > .right {
+  background-image:url('chrome://songbird/skin/mini-player/bg-right.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+  min-width: 5px;
+}
+*/
+
+
+
+sb-draggable > stack > titlebar {
+  cursor: -moz-grab;
+}
+sb-draggable > stack > titlebar[ismousedown="true"] {
+  cursor: -moz-grabbing;
+}
+
+
+resizer {
+}
+
+/*
+window[platform=Darwin] resizer {
+  display:none !important;
+}
+*/
+
+#miniplayer_resizer_left {
+  cursor: w-resize;
+  background-image:url('chrome://songbird/skin/mini-player/l.png');
+  background-repeat:repeat-x;
+  background-position:0px 0px;
+  min-width: 2px;
+}
+#miniplayer_resizer_right {
+  cursor: ew-resize;
+  background-image:url('chrome://songbird/skin/mini-player/bg-right.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+  min-width: 13px;
+}
+
+sb-nowplaying-rating {
+  background-image:none;
+  margin-top:-1px;
+}
+
+#faceplate-tool {
+  margin-left:2px;
+}
+
+
+
+vbox#miniplayer_buttons {
+  margin-left:10px;
+}
+vbox#miniplayer_buttons button:focus {
+  outline: none !important;
+}
+
+sb-sys-close-button.mini {
+  list-style-image: url('chrome://songbird/skin/mini-player/button-close.png');
+  -moz-image-region: rect(0px 13px 17px 0px);
+  margin-bottom: 2px;
+}
+sb-sys-close-button.mini:hover {
+  -moz-image-region: rect(17px 13px 34px 0px);
+}
+sb-sys-close-button.mini:active {
+  -moz-image-region: rect(34px 13px 51px 0px);
+}
+
+#miniplayer_feathers_button {
+  list-style-image: url('chrome://songbird/skin/mini-player/button-plus.png');
+  -moz-image-region: rect(0px 13px 17px 0px);
+}
+#miniplayer_feathers_button:hover {
+  -moz-image-region: rect(17px 13px 34px 0px);
+}
+#miniplayer_feathers_button:active {
+  -moz-image-region: rect(34px 13px 51px 0px);
+}
+
+ /*
+window[platform=Darwin] sb-sys-close-button {
+  visibility:collapse;
+}
+#window_controls_box {
+  visibility: collapse;
+}
+
+*/
+
+
+
+
+#faceplate-tool-bar > * {
+  margin-top:1px;
+  margin-bottom:1px;
+}
+#faceplate-tool-bar sb-rating {
+  padding:0px !important;
+  margin:0px !important;
+}
+#faceplate-tool-bar > sb-nowplaying-rating {
+  margin-top:0px !important; 
+  margin-bottom:0px !important; 
+  padding:0px !important;
+  min-height:18px;
+  max-height:18px;
+}
+#faceplate-tool-bar {
+  padding:2px 0px 2px 1px;
+  margin-top:0px !important;
+  margin-bottom:0px !important;
+}

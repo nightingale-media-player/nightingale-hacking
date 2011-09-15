@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI
+END
+WelcomeFinish.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/WelcomeFinish.nsi
+END
+MultiLanguage.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/MultiLanguage.nsi
+END
+ioA.ini
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/ioA.ini
+END
+ioB.ini
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/ioB.ini
+END
+ioC.ini
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/ioC.ini
+END
+Basic.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/Basic.nsi
+END
+InstallOptions.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/InstallOptions.nsi
+END
+StartMenu.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/StartMenu.nsi
+END
+HeaderBitmap.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Modern%20UI/HeaderBitmap.nsi
+END

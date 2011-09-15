@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/14483/trunk/components/moz/windowwatcher/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/14483/trunk/components/moz/windowwatcher/public/Makefile.in
+END
+sbIWindowWatcher.idl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/10914/trunk/components/moz/windowwatcher/public/sbIWindowWatcher.idl
+END

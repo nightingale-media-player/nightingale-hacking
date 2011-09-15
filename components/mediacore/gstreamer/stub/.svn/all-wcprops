@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/19306/trunk/components/mediacore/gstreamer/stub
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/14239/trunk/components/mediacore/gstreamer/stub/Makefile.in
+END
+gst_libs_linux.txt
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/19306/trunk/components/mediacore/gstreamer/stub/gst_libs_linux.txt
+END
+sbGStreamerStub.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/11128/trunk/components/mediacore/gstreamer/stub/sbGStreamerStub.cpp
+END
+gst_libs_macosx.txt
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/19306/trunk/components/mediacore/gstreamer/stub/gst_libs_macosx.txt
+END
+gst_libs_windows.txt
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19306/trunk/components/mediacore/gstreamer/stub/gst_libs_windows.txt
+END

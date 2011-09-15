@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "ที่ตั้ง">
+<!ENTITY prefs.location.descr "ค้นหาว่ามีใครเดินทางมายังพื้นที่ของคุณ &brandShortName; สามารถตรวจสอบศิลปินและคลับที่คุณชื่นชอบได้ ดังนั้นคุณจะไม่พลาดการแสดงอีกเลย เลือกเมืองที่ใกล้ที่สุดเพื่อดูว่ามีใครกำลังเดินทางไป">
+<!ENTITY prefs.library "ไลบรารี่">
+<!ENTITY prefs.library.text "&brandShortName; สามารถเพิ่มแถวไปยังไลบรารี่เพลงของคุณได้ซึ่งจะช่วยแจ้งให้ทราบเมื่อศิลปินของคุณคนใดคนหนึ่งออนทัวร์ในเมืองของคุณ">
+<!ENTITY prefs.library.checklabel "เพิ่มแถวออนทัวร์ไปยังไลบรารี่ของฉัน">
+<!ENTITY prefs.country "ประเทศ">
+<!ENTITY prefs.country.us "สหรัฐอเมริกา">
+<!ENTITY prefs.country.uk "สหราชอาณาจักร">
+<!ENTITY prefs.state "รัฐ">
+<!ENTITY prefs.city "เมือง">
+<!ENTITY prefs.radius "รัศมี">
+<!ENTITY prefs.findShows "ค้นหาการแสดง">
+<!ENTITY concerts.poweredby "ระบุรายการคอนเสิร์ตโดย">

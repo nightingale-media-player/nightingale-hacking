@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin
+END
+exdll.dsw
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/exdll.dsw
+END
+extdll.inc
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/extdll.inc
+END
+exdll_with_unit.dpr
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/exdll_with_unit.dpr
+END
+exdll.c
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/exdll.c
+END
+exdll.dpr
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/exdll.dpr
+END
+exdll.dsp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/exdll.dsp
+END
+exdll.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/exdll.h
+END
+nsis.pas
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/Plugin/nsis.pas
+END

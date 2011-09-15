@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "位置">
+<!ENTITY prefs.location.descr "看看谁要来您的区域。&brandShortName; 可以跟踪您的偶像和最爱的俱乐部，这样您就不会再错过他们的演出。选择最近的城市以查看谁要来表演。">
+<!ENTITY prefs.library "音乐库">
+<!ENTITY prefs.library.text "&brandShortName; 可以为您的音乐库添加一列，以便在您的偶像到您的城镇上巡回演出时告诉您。">
+<!ENTITY prefs.library.checklabel "添加巡回演出列到我的音乐库">
+<!ENTITY prefs.country "国家">
+<!ENTITY prefs.country.us "美国">
+<!ENTITY prefs.country.uk "英国">
+<!ENTITY prefs.state "州">
+<!ENTITY prefs.city "城市">
+<!ENTITY prefs.radius "半径">
+<!ENTITY prefs.findShows "查找演出">
+<!ENTITY concerts.poweredby "演唱会列表由 @ 提供">

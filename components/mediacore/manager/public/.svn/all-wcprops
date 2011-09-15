@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/14847/trunk/components/mediacore/manager/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/14847/trunk/components/mediacore/manager/public/Makefile.in
+END
+sbIMediacoreErrorHandler.idl
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/14847/trunk/components/mediacore/manager/public/sbIMediacoreErrorHandler.idl
+END

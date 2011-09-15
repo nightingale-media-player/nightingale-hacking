@@ -1,0 +1,28 @@
+html,body {
+	width:100%;
+	height:100%;
+	overflow:hidden;
+	margin:0;padding:0;
+	background-color:#333;
+	text-align:center;
+	font-size:9px;
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+#infovis {
+	width:900px;
+	height:500px;
+	background-color:#222;
+}
+
+.node {
+	color: #fff;
+	background-color:#222;
+	font-weight:bold;
+	padding:1px;
+	cursor:pointer;
+}
+
+.hidden {
+	display:none;
+}

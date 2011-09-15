@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/21964/trunk/components/mediaimport/filescan/src
+END
+sbFileScan.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/21964/trunk/components/mediaimport/filescan/src/sbFileScan.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/21964/trunk/components/mediaimport/filescan/src/Makefile.in
+END
+sbFileScan.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/21964/trunk/components/mediaimport/filescan/src/sbFileScan.cpp
+END
+sbFileScanComponent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/9806/trunk/components/mediaimport/filescan/src/sbFileScanComponent.cpp
+END

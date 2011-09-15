@@ -1,0 +1,100 @@
+Many thanks to Mark James for the use of his FAMFAMFAM Silk icons for the
+photo & video icons used in the News/RSS index frame.
+These icons can be found at:
+	http://www.famfamfam.com/lab/icons/silk
+and are used under the Creative Commons CC-BY-2.5 license:
+	http://creativecommons.org/licenses/by/2.5/
+
+This (the mashTape add-on) utilises the following Javascript libraries and/or
+code, which are covered under the described licenses:
+* mooTools (http://mootools.net)
+	- Copyright 2006-2008 Valerio Proiette (http://mad4milk.net)
+	- Used under the MIT License
+* noobSlide (http://www.efectorelativo.net/laboratory/noobSlide/)
+	- Credit: luistar (leo020588 [at] gmail.com)
+	  with modifications by Stephen Lau (stevel@songbirdnest.com)
+	- Used under the MIT License
+* ISO8601 Date Javascript routine (http://delete.me.uk/2005/03/iso8601.html)
+	- Copyright 2005 Paul Sowden
+	- Used under the AFL (Academic Free License)
+
+The individual service provider "favicons" are trademarked and/or copyright
+their respective owners and do not imply any endorsement either of Songbird
+by the provider, or of the respective providers by Pioneers of the Inevitable,
+Inc.
+==============================================================================
+
+The rest of the source for this (the mashTape add-on) is covered under
+the below BSD license + Patent License
+
+The POTI BSD + Patent License has been written to provide maximum flexibility
+to the recipient, as it does not require the recipient to use a particular
+license for the recipient's derivative software (unlike the GPL), nor does it
+require the recipient to grant any patent licenses to the recipient's
+derivative software (unlike the GPL). 
+
+In addition, the POTI BSD + Patent License (unlike the BSD license) grants a
+patent license from POTI not only to POTI's mashTape add-on (the "Software")
+itself, but also to any POTI patent claims that might cover corrections made
+by the recipient.
+
+The text of the POTI BSD + Patent License follows:
+
+Recipient has requested a license and Pioneers of the Inevitable, Incorporated
+("POTI") is willing to grant a license for the software entitled Songbird
+mashTape Add-On (the "Software") being provided by POTI. 
+
+The following definitions apply to this
+license:
+
+* "Licensed Patents" means patent claims licensable by POTI, which are
+  necessarily infringed by the use or sale of the Software alone or when
+  combined with the XULRunner-based applications referred to below.
+
+* "Recipient" means the party to whom POTI delivers
+  the software.
+
+* "Licensee" means Recipient and those third parties that receive a license
+  to any XULRunner-based application licensed under the Mozilla Public
+  License (MPL), Lesser GNU Public License (LGPL), or GNU Public License (GPL).  
+Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+All rights reserved.
+
+The license is provided to Recipient and Recipient's Licensees under the
+following terms.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation 
+  and/or other materials provided with the distribution.
+* Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+  of its contributors may be used to endorse or promote products derived
+  from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+==============================================================================
+Patent grant:
+Pioneers of the Inevitable, Inc. hereby grants Recipient and Licensees a
+non-exclusive, worldwide, royalty-free patent license under Licensed
+Patents to make use, sell, offer to sell, import and otherwise transfer the
+Software, in any, in source code and object code form provided the
+Software is incorporated as an Add-on built as an extension
+and intended to be loaded into any XULRunner-based application licensed under
+any or all of the following licenses: Mozilla Public License (MPL),
+Lesser GNU Public License (LGPL), and GNU Public License (GPL).  This patent
+license shall not apply to any other combinations which include the Software.
+

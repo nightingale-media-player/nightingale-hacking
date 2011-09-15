@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/21067/trunk/components/library/identity/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/20931/trunk/components/library/identity/test/Makefile.in
+END
+test_identity.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/21067/trunk/components/library/identity/test/test_identity.js
+END

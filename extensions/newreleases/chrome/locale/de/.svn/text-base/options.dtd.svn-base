@@ -1,0 +1,10 @@
+<!ENTITY prefs.location "Standort">
+<!ENTITY prefs.location.descr "Finden Sie heraus, welche Alben in Ihrem Land veröffentlicht werden! &brandShortName; kann ihre Lieblingskünstler im Auge behalten, damit Sie nie mehr eine Veröffentlichung verpassen. Einfach Land auswählen, um zu sehen, welche Veröffentlichungen anstehen.">
+<!ENTITY prefs.library "Bibliothek">
+<!ENTITY prefs.library.text "Songbird kann eine Spalte zur Musikbibliothek hinzufügen, welche anzeigt, wann ein Künstler in Ihrer Stadt spielt.">
+<!ENTITY prefs.library.checklabel "Die &quot;Auf Tour&quot;-Spalte zur Bibliothek hinzufügen">
+<!ENTITY prefs.country "Land">
+<!ENTITY prefs.country.us "Vereinigte Staaten">
+<!ENTITY prefs.country.uk "Vereinigtes Königreich">
+<!ENTITY prefs.findReleases "Veröffentlichungen finden">
+<!ENTITY concerts.poweredby "Die Konzertauflistung wird bereitgestellt von">

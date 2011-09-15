@@ -1,0 +1,693 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!--
+
+     This overlay is applied to all layout windows, regardless of whether or not
+     they contain a gBrowser element
+
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%songbirdDTD;
+%charsetDTD;
+%browserDTD;
+]>
+
+<!-- These are only here for backward compatibility, do not target them -->
+<?xul-overlay href="chrome://songbird/content/xul/menuOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/actionSetsOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/popupOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/statusBarOverlay.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/controlToolbarOverlay.xul"?>
+
+<overlay
+  id="layoutBaseOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                      Menubar Overlay Items                      ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+
+  <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
+
+  <menubar id="main-menubar">
+    <menu id="file-menu"
+          label="&menu.file;"
+          accesskey="&menu.file.accesskey;"
+          onpopupshowing="buildFileMenu();">
+      <menupopup id="menu_FilePopup">
+        <menuitem id="menuitem_file_new"
+                  key="newplaylist-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.new;"
+                  accesskey="&menu.file.new.accesskey;">
+          <observes element="servicePaneOpen"
+                    attribute="disabled"/>
+        </menuitem>
+        <menuitem id="menuitem_file_smart"
+                  key="newsmartplaylist-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.smart;"
+                  accesskey="&menu.file.smart.accesskey;">
+          <observes element="servicePaneOpen"
+                    attribute="disabled"/>
+        </menuitem>
+        <!-- disabled per bug 20269
+        <menuitem id="menuitem_file_remote"
+                  class="menuitem-iconic"
+                  label="&menu.file.remote;"
+                  accesskey="&menu.file.remote.accesskey;" />
+        -->
+        <!-- disabled per bug 17607
+        <menuitem id="menuitem_file_podcast"
+                  class="menuitem-iconic"
+                  label="&menu.file.podcast;"
+                  accesskey="&menu.file.podcast.accesskey;" />
+        -->
+        <menuseparator id="menu_ImportSeparator"/>
+
+        <menuitem id="menuitem_file_scan"
+                  key="file-scan-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.scan;"
+                  accesskey="&menu.file.scan.accesskey;"/>
+        <menuitem id="menuitem_file_playlist"
+                  class="menuitem-iconic"
+                  label="&menu.file.playlist;"
+                  accesskey="&menu.file.playlist.accesskey;" />
+        <!-- XXX komi: disable; see bug 11230
+        <menuitem id="menuitem_file_library"
+                  class="menuitem-iconic"
+                  label="&menu.file.library;"
+                  accesskey="&menu.file.library.accesskey;" />
+        -->
+
+        <menuseparator id="menu_OpenSeparator"/>
+
+        <menuitem id="menuitem_file_url"
+                  key="openurl-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.url;"
+                  accesskey="&menu.file.url.accesskey;" />
+        <menuitem id="menuitem_file_file"
+                  key="openfile-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.open;"
+                  accesskey="&menu.file.open.accesskey;" />
+
+        <menuseparator id="menu_LocaleSeparator"/>
+
+        <menu id="songbird_menu_locale"
+              label="&locale.language;"
+              class="menuitem-iconic"
+              accesskey="&locale.language.accesskey;">
+          <menupopup id="locale-popup"
+                     onpopupshowing="fillLocaleList(this);" />
+        </menu>
+        <!-- IDs changed for OS X nsMenuBarX::AquifyMenuBar -->
+        <menuseparator id="menu_FileQuitSeparator"/>
+        <menuitem id="menu_FileQuitItem"
+                  label="&menu.file.exit;"
+                  accesskey="&menu.file.exit.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <!-- Pulled from browser/base/content/browser-menubar.inc and lightly modified -->
+    <menu id="edit-menu"
+          label="&menu.edit;"
+          accesskey="&menu.edit.accesskey;">
+      <menupopup id="menu_EditPopup"
+                 onpopupshowing="updateEditUIVisibility()"
+                 onpopuphidden="updateEditUIVisibility()">
+        <menuitem label="&menu.edit.undo;"
+                  key="undo-key"
+                  accesskey="&menu.edit.undo.accesskey;"
+                  command="cmd_undo"/>
+        <menuitem label="&menu.edit.redo;"
+                  key="redo-key"
+                  accesskey="&menu.edit.redo.accesskey;"
+                  command="cmd_redo"/>
+        <menuseparator/>
+        <menuitem label="&menu.edit.cut;"
+                  key="cut-key"
+                  accesskey="&menu.edit.cut.accesskey;"
+                  command="cmd_cut"/>
+        <menuitem label="&menu.edit.copy;"
+                  key="copy-key"
+                  accesskey="&menu.edit.copy.accesskey;"
+                  command="cmd_copy"/>
+        <menuitem label="&menu.edit.paste;"
+                  key="paste-key"
+                  accesskey="&menu.edit.paste.accesskey;"
+                  command="cmd_paste"/>
+        <menuitem id="menu_EditDeleteMenuItem"
+                  label="&menu.edit.delete;"
+                  key="delete-key"
+                  accesskey="&menu.edit.delete.accesskey;"
+                  command="cmd_delete"/>
+        <menuseparator/>
+        <menuitem label="&menu.edit.selall;"
+                  key="selectall-key"
+                  accesskey="&menu.edit.selall.accesskey;"
+                  command="cmd_selectAll"/>
+        <menuseparator/>
+        <menuitem id="menu_find"
+                  label="&menu.edit.find;"
+                  key="find-key"
+                  accesskey="&menu.edit.find.accesskey;"
+                  command="cmd_find"/>
+        <menuitem label="&menu.edit.findagain;"
+                  key="findagain-key"
+                  accesskey="&menu.edit.findagain.accesskey;"
+                  command="cmd_findAgain"/>
+      </menupopup>
+    </menu>
+
+    <menu id="controls-menu"
+          label="&menu.controls;"
+          accesskey="&menu.controls.accesskey;"
+          onpopupshowing="buildControlsMenu();">
+      <menupopup id="menu_ControlsPopup">
+        <menuitem id="menuitem_control_play"
+                  key="control-playpause-key"
+                  observes="controlIsPlaying"
+                  label="&menu.control.play;"
+                  accesskey="&menu.control.play.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="menuitem_control_next"
+                  key="control-next-key"
+                  observes="controlNextDisabled"
+                  label="&menu.control.next;"
+                  accesskey="&menu.control.next.accesskey;"/>
+        <menuitem id="menuitem_control_prev"
+                  key="control-previous-key"
+                  observes="controlPreviousDisabled"
+                  label="&menu.control.prev;"
+                  accesskey="&menu.control.prev.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="menuitem_control_shuf"
+                  label="&menu.control.shuf;"
+                  type="checkbox"
+                  observes="controlModeShuffle"
+                  accesskey="&menu.control.shuf.accesskey;" />
+        <menuseparator/>
+        <menuitem id="menuitem_control_repx"
+                  label="&menu.control.repx;"
+                  type="radio" observes="controlModeRepeatNever"
+                  accesskey="&menu.control.repx.accesskey;" />
+        <menuitem id="menuitem_control_repa"
+                  label="&menu.control.repa;"
+                  type="radio" observes="controlModeRepeatAlways"
+                  accesskey="&menu.control.repa.accesskey;" />
+        <menuitem id="menuitem_control_rep1"
+                  label="&menu.control.rep1;"
+                  type="radio"
+                  observes="controlModeRepeatOnce"
+                  accesskey="&menu.control.rep1.accesskey;" />
+        <menuseparator id="menu_EQSeparator"/>
+        <menuitem id="menu_equalizer"
+                  key="equalizer-key"
+                  label="&menu.equalizer;"
+                  accesskey="&menu.equalizer.accesskey;"
+                  oncommand="SBOpenEqualizer();" />
+      </menupopup>
+    </menu>
+
+    <menu id="view-menu"
+          label="&menu.view;"
+          accesskey="&menu.view.accesskey;"
+          onpopupshowing="buildViewMenu();">
+      <menupopup id="menu_viewPopup">
+        <sb-feathers-menuitems id="menuitem_view_feathers"/>
+        <menuseparator/>
+        <menu id="player-control-location"
+              label="&menu.switchplayercontrols;">
+          <menupopup id="player-controls">
+            <menuitem id="menuitem-move-player-location-top"
+                      name="player-location"
+                      type="radio"
+                      observes="playercontrols_top"
+                      label="&menu.controllerontop;"
+                      oncommand="movePlayerControls(true);" />
+            <menuitem id="menuitem-move-player-location-bottom"
+                      name="player-location"
+                      type="radio"
+                      observes="playercontrols_bottom"
+                      label="&menu.controlleronbottom;"
+                      oncommand="movePlayerControls(false);" />
+          </menupopup>
+        </menu>
+        <!-- <sb-displaypane-menuitems id="menuitem_view_displaypanes"/> -->
+        <sb-mediapages-menuitems id="menuitem_view_mediapages"
+                                 hideGetMore="true"
+                                 hideBuiltIn="false" />
+        <menuseparator/>
+        <menuitem id="menuitem-video-fullscreen"
+                  key="video-window-full-screen-key"
+                  label="&menu.fullscreen;"
+                  type="checkbox"
+                  oncommand="toggleFullscreenVideo();"/>
+        <menuitem id="menuitem-video-to-front"
+                  key="video-window-to-front-key"
+                  label="&menu.videotofront;"
+                  oncommand="bringVideoWindowToFront();"/>
+      </menupopup>
+    </menu>
+
+    <menu id="tools-menu" label="&menu.tools;"  accesskey="&menu.tools.accesskey;">
+      <menupopup id="menu_ToolsPopup">
+        <menuitem id="menu_downloadmgr"
+                  key="downloadmgr-key"
+                  label="&menu.downloadmgr;"
+                  accesskey="&menu.downloadmgr.accesskey;"/>
+        <menuitem id="menu_extensions"
+                  label="&menu.extensions;"
+                  accesskey="&menu.extensions.accesskey;"/>
+        <menuseparator id="devToolsSeparator"/>
+        <menuitem id="javascriptConsole"
+                  label="&menu.errorconsole;"
+                  accesskey="&menu.errorconsole.accesskey;"/>
+        <menuseparator id="sanitizeSeparator" hidden="true"/>
+        <menuitem id="menuitem_tools_clearprivatedata"
+                  key="sanitize-key"
+                  label="&menu.clearprivatedata;"
+                  accesskey="&menu.clearprivatedata.accesskey;"/>
+        <menuseparator id="menu_PrefsSeparator"/>
+        <menuitem id="menu_preferences"
+                  label="&menu.preferences;"
+                  accesskey="&menu.preferences.accesskey;"/>
+      </menupopup>
+    </menu>
+
+    <menu id="helpMenu"
+          label="&menu.help;"
+          accesskey="&menu.help.accesskey;"
+          onpopupshowing="buildHelpMenu();">
+      <menupopup id="menu_HelpPopup">
+        <menuitem id="menuitem_help_homepage"
+                  label="&menu.help.homepage;"
+                  value="songbird.url.homepage"
+                  accesskey="&menu.help.homepage.accesskey;"/>
+        <menuitem id="menuitem_help_bugz"
+                  label="&menu.help.bugz;"
+                  value="songbird.url.bugzilla"
+                  accesskey="&menu.help.bugz.accesskey;"/>
+        <menuitem id="menuitem_help_topics"
+                  label="&menu.help.topics;"
+                  value="songbird.url.support"
+                  key="help-key"
+                  accesskey="&menu.help.help.accesskey;"/>
+        <menuitem id="menuitem_help_keyboard"
+                  label="&menu.help.keyboard;"
+                  value="songbird.url.keyboard"
+                  accesskey="&menu.help.keyboard.accesskey;"/>
+        <menuseparator/>
+        <menuitem id="updateCmd"
+                  label="&menu.updateCmd.label;"
+                  accesskey="&menu.updateCmd.accessKey;"
+                  oncommand="checkForUpdates();"/>
+        <menuseparator id="aboutName_menuseparator"/>
+        <menuitem id="aboutName"
+                  label="&menu.help.about;"
+                  accesskey="&menu.help.about.accesskey;"/>
+      </menupopup>
+    </menu>
+  </menubar>
+
+
+
+  <!-- group overlay items for popups, command, broadcasters, keys and
+       stringbundles into a single target -->
+  <sb-support id="mainSupportSet">
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                      Popup Overlay Items                        ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <popupset id="feathersPopupSet">
+      <popup id="feathersPopupMenu">
+        <sb-feathers-menuitems />
+      </popup>
+    </popupset>
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                     Commands Overlay Items                      ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <commandset>
+      <commandset id="editMenuCommandSetAll"
+                  commandupdater="true"
+                  events="focus, select"
+                  oncommandupdate="goUpdateGlobalEditMenuItems()"/>
+      <commandset id="editMenuCommandSetUndo"
+                  commandupdater="true"
+                  events="undo"
+                  oncommandupdate="goUpdateUndoEditMenuItems()"/>
+      <commandset id="editMenuCommandSetPaste"
+                  commandupdater="true"
+                  events="clipboard"
+                  oncommandupdate="goUpdatePasteMenuItems()"/>
+      <commandset id="toolsMenuCommandSetMetadata"
+                  commandupdater="true"
+                  events="focus,select,tabchange,tree-select"
+                  oncommandupdate="goUpdateGlobalMetadataMenuItems()"/>
+      <command id="cmd_undo"
+               oncommand="goDoCommand('cmd_undo')"/>
+      <command id="cmd_redo"
+               oncommand="goDoCommand('cmd_redo')"/>
+      <command id="cmd_cut"
+               oncommand="goDoCommand('cmd_cut')"/>
+      <command id="cmd_copy"
+               oncommand="goDoCommand('cmd_copy')"/>
+      <command id="cmd_paste"
+               oncommand="goDoCommand('cmd_paste')"/>
+      <command id="cmd_delete"
+               oncommand="goDoCommand('cmd_delete')"/>
+      <command id="cmd_selectAll"
+               oncommand="goDoCommand('cmd_selectAll')"/>
+      <command id="cmd_switchTextDirection"
+               oncommand="goDoCommand('cmd_switchTextDirection');"/>
+      <command id="cmd_find"
+               oncommand="goDoCommand('cmd_find')"/>
+      <command id="cmd_findAgain"
+               oncommand="goDoCommand('cmd_findAgain')"/>
+      <command id="cmd_volume_up"
+               oncommand="goDoCommand('cmd_volume_up')"/>
+      <command id="cmd_volume_down"
+               oncommand="goDoCommand('cmd_volume_down')"/>
+      <command id="cmd_volume_mute"
+               oncommand="goDoCommand('cmd_volume_mute')"/>
+      <command id="cmd_control_previous"
+               oncommand="goDoCommand(this.id)"/>
+      <command id="cmd_control_next"
+               oncommand="goDoCommand(this.id)"/>
+    </commandset>
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                   Broadcasters Overlay Items                    ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <broadcasterset id="mainBroadcasterSet">
+      <broadcaster id="servicePaneOpen">
+        <observes type="dataremote"
+                  key="splitter.servicepane_splitter.collapsed"
+                  boolean="true"
+                  attribute="disabled"/>
+      </broadcaster>
+      <!-- Used by the Control menu -->
+      <broadcaster id="controlIsPlaying">
+        <observes type="dataremote"
+                  key="faceplate.playing"
+                  attribute="label"
+                  onchange="return (value == '0' ? '&menu.control.play;' : '&menu.control.pause;')" />
+        <observes type="dataremote"
+                  key="faceplate.playing"
+                  attribute="accesskey"
+                  onchange="return (value == '0' ? '&menu.control.play.accesskey;' : '&menu.control.pause.accesskey;')" />
+      </broadcaster>
+      <broadcaster id="controlModeShuffle" >
+        <observes type="dataremote"
+                  key="playlist.shuffle"
+                  attribute="checked"
+                  boolean="true" />
+        <observes type="dataremote"
+                  key="playlist.shuffle.disabled"
+                  attribute="disabled"
+                  boolean="true" />
+      </broadcaster>
+      <broadcaster id="controlModeRepeatAlways" >
+        <observes type="dataremote"
+                  key="playlist.repeat"
+                  attribute="checked"
+                  onchange="return value == '2'" />
+        <observes type="dataremote"
+                  key="playlist.repeat.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="controlModeRepeatOnce" >
+        <observes type="dataremote"
+                  key="playlist.repeat"
+                  attribute="checked"
+                  onchange="return value == '1'" />
+        <observes type="dataremote"
+                  key="playlist.repeat.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="controlModeRepeatNever" >
+        <observes type="dataremote"
+                  key="playlist.repeat"
+                  attribute="checked"
+                  onchange="return value == '0'" />
+        <observes type="dataremote"
+                  key="playlist.repeat.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="controlNextDisabled" >
+        <observes type="dataremote"
+                  key="playlist.next.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="controlPreviousDisabled" >
+        <observes type="dataremote"
+                  key="playlist.previous.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="playercontrols_top" />
+      <broadcaster id="playercontrols_bottom" />
+    </broadcasterset>
+
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                      Keyset Overlay Items                       ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <keyset id="mainKeyset">
+      <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
+      <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
+      <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
+      <key id="redo-key" modifiers="accel" key="&menu.edit.redo.key;" />
+      <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
+      <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
+      <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
+      <key id="selectall-key" modifiers="accel" key="&menu.edit.selall.key;" />
+      <key id="delete-key" modifiers="" keycode="VK_DELETE" command="cmd_delete" />
+      <key id="find-key" modifiers="accel" key="&menu.edit.find.key;" />
+      <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" />
+      <key id="switch-feathers-key" modifiers="accel,shift" key="&switchfeathers.key;" oncommand="toggleNextFeatherLayout();"/>
+      <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
+      <key id="equalizer-key" modifiers="accel" key="&equalizer.key;" oncommand="SBOpenEqualizer();"/>
+      <key id="sanitize-key" modifiers="accel,shift" keycode="&sanitize.keycode;" oncommand="doMenu('menuitem_tools_clearprivatedata');"/>
+      <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
+
+      <!-- player controls -->
+      <key id="volume-down-key" modifiers="accel" keycode="VK_DOWN" command="cmd_volume_down"/>
+      <key id="volume-up-key" modifiers="accel" keycode="VK_UP" command="cmd_volume_up"/>
+      <key id="volume-mute-key" modifiers="accel,alt" keycode="VK_DOWN" command="cmd_volume_mute"/>
+      <key id="volume-mute-key2" modifiers="accel,alt" keycode="VK_UP" command="cmd_volume_mute"/>
+      <key id="control-playpause-key" keytext="&menu.control.playpause.spacebar;" disabled="true"/>
+      <!-- not using accel here because we want control on all platforms -->
+      <key id="control-next-key" keycode="VK_RIGHT" modifiers="control" command="cmd_control_next"/>
+      <key id="control-previous-key" keycode="VK_LEFT" modifiers="control" command="cmd_control_previous"/>
+      <!-- video related controls -->
+      <key id="video-window-to-front-key" modifiers="accel shift" key="&videowindow.bringtofront.key;" oncommand="bringVideoWindowToFront();"/>
+      <key id="video-window-full-screen-key" modifiers="accel shift" key="&videowindow.fullscreen.key;" oncommand="toggleFullscreenVideo();"/>
+
+    </keyset>
+
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                   Stringbundle Overlay Items                    ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <!-- this id matches Firefox's -->
+    <stringbundleset id="stringbundleset">
+      <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+      <stringbundle id="bundle_brand" src="chrome://branding/locale/brand.properties"/>
+    </stringbundleset>
+
+  <!-- end overlay group -->
+  </sb-support>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                       Scripts Overlay Items                     ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <!-- Load the Mozilla helpers -->
+  <script type="application/x-javascript"
+  src="chrome://global/content/dialogOverlay.js" />
+  <script type="application/x-javascript"
+  src="chrome://global/content/editMenuOverlay.js"/>
+
+  <!-- Dataremotes utility functions -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+
+  <!-- Mouse wheel support for volume control -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
+
+  <!-- Support for media file/url opening -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/playerOpen.js"/>
+
+  <!-- Mozilla helpers -->
+  <script type="application/x-javascript"
+  src="chrome://global/content/globalOverlay.js"/>
+
+  <!-- Drag and drop -->
+  <script type="application/x-javascript"
+  src="chrome://global/content/nsDragAndDrop.js"/>
+  <script type="application/x-javascript"
+  src="chrome://global/content/nsTransferable.js"/>
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
+
+  <!-- Command line -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/commandLine.js"/>
+
+  <!-- Window utilities -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/windowUtils.js" />
+
+  <!-- Menubar handler -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
+
+  <!-- Locales switcher -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/switchLocale.js" />
+
+  <!-- Generic message box -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/messageBox.js" />
+
+  <!-- Generic restart box -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/restartBox.js" />
+
+  <!-- Metrics functions -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/metrics.js" />
+
+  <!-- Sanitizer Support (moz) -->
+  <script type="application/x-javascript"
+  src="chrome://browser/content/sanitize.js" />
+
+  <!-- Sanitizer Support (songbird) -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/sanitize.js" />
+
+  <!-- Extension Overlay Support -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/overlayLoader.js" />
+
+  <!-- after first-run has run - run the update service with special args -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/updateOnceAfterFirstRun.js" />
+
+  <!-- 0.6 Feedback Delegate, manages prompting the user for a survey -->
+  <script type="application/x-javascript"
+   src="chrome://songbird/content/scripts/feedbackDelegate.js" />
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                     Statusbar Overlay Items                     ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <statusbar id="status-bar">
+
+    <statusbarpanel id="statusbar-display" flex="1"
+      insertafter="sb-status-bar-numplaylistitems-label">
+      <sb-status-label id="sb-status-bar-status-label"
+          class="sb-status-bar-status-label sb-status-bar-text"
+          value=" " flex="1" crop="end" pack="center"/>
+    </statusbarpanel>
+
+    <sb-player-scanning-label insertbefore="statusbar-progresspanel"
+          id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label
+          sb-status-bar-text" crop="end" pack="center"/>
+
+  </statusbar>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                 Control Toolbar Overlay Items                   ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <toolbox id="control_pane_toolbox"
+           mode="icons"
+           defaultmode="icons"
+           iconsize="large">
+    <toolbarpalette id="control_pane_toolbar_palette">
+    </toolbarpalette>
+    <toolbar
+      id="control_pane_toolbar"
+      toolbarname="ControlPaneToolbar"
+      mode="icons"
+      iconsize="small"
+      customizable="true"
+      defaultset=""
+    >
+    </toolbar>
+  </toolbox>
+
+
+</overlay>

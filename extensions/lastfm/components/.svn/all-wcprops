@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/19459/trunk/extensions/lastfm/components
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/15575/trunk/extensions/lastfm/components/Makefile.in
+END
+sbLastFm.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/19459/trunk/extensions/lastfm/components/sbLastFm.js
+END
+sbLastFmProtocol.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14095/trunk/extensions/lastfm/components/sbLastFmProtocol.js
+END

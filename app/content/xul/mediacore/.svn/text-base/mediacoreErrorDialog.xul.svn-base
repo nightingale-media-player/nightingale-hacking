@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/mediacoreErrorDialog.css"
+                 type="text/css"?>
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
+  %brandDTD;
+  %songbirdDTD;
+  %textcontextDTD;
+]>
+
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="mediacore_error"
+ title="&mediacore.error.title;"
+ buttons="accept"
+ type="songbird"
+ hidechrome="true"
+ minwidth="650"
+ minheight="200"
+ resizers="both"
+ onload="doOnLoad();"
+ onunload="checkForDontShowMe();"
+>
+
+  <script type="application/x-javascript" 
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <commandset id="selectEditMenuItems">
+    <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
+    <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
+  </commandset>
+
+  <popupset id="contentAreaContextSet">
+    <popup id="contentAreaContextMenu"
+           onpopupshowing="goUpdateCommand('cmd_copy')">
+      <menuitem id="context-copyselected"
+                label="&copySelectionCmd.label;"
+                accesskey="&copySelectionCmd.accesskey;"
+                command="cmd_copy"
+                disabled="true"/>
+      <menuitem id="context-selectall"
+                label="&selectAllCmd.label;"
+                accesskey="&selectAllCmd.accesskey;"
+                command="cmd_selectAll"/>
+    </popup>
+  </popupset>
+
+  <vbox flex="1">
+    <vbox flex="1">
+      <!-- Detailed description of the error -->
+      <vbox id="mediacore_error_desc_box" flex="1">
+        <description class="indent mediacore_error_desc"
+                     id="mediacore_error_desc"
+                     context="contentAreaContextMenu" tabindex="-1"/>
+      </vbox>
+    </vbox>
+
+    <vbox id="mediacore_error_codec_not_found" hidden="true">
+      <spacer height="1" />
+      <description>
+        <html:div>&mediacore.error.codec_not_found.text.pre;
+          <label class="text-link" id="codec_not_found_link" />
+          &mediacore.error.codec_not_found.text.post;
+        </html:div>
+      </description>
+    </vbox>
+
+    <spacer height="5" />
+    <checkbox id="mediacore_error_dontshowme" label="&mediacore.error.dontshowme;" checked="false" />
+    <spacer height="5" />
+  </vbox>
+
+  <!-- Import the Songbird services code. -->
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+
+  <script>
+  <![CDATA[
+    function doOnLoad() {
+      try {
+        if ( typeof( window.arguments[0] ) != 'undefined' ) {
+          var mediacoreError = 
+            window.arguments[0].QueryInterface(Ci.sbIMediacoreError);
+          var desc = document.getElementById("mediacore_error_desc");
+
+          desc.textContent = mediacoreError.message + "\n";
+          if (mediacoreError.code ==
+              Ci.sbIMediacoreError.SB_STREAM_CODEC_NOT_FOUND)
+          {
+            var errorMsg =
+                document.getElementById("mediacore_error_codec_not_found");
+            errorMsg.hidden = false;
+
+            var label = document.getElementById("codec_not_found_link");
+            var url = Application.prefs.getValue("songbird.url.codec_not_found",
+                "http://wiki.songbirdnest.com/Docs/Video_Codec_Support");
+            label.setAttribute("value", url);
+            label.setAttribute("onclick", "openLink('" + url + "');");
+          }
+        }
+      }
+      catch( err ) {
+        Cu.reportError(err);
+      }
+    }
+
+    function addError(mediacoreError) {
+      var template = document.getElementById("mediacore_error_desc");
+      var desc = template.cloneNode(true);
+      desc.removeAttribute("id");
+      desc.textContent = mediacoreError.message + "\n";
+      template.parentNode.appendChild(desc);
+
+      window.focus();
+    }
+    
+    function checkForDontShowMe() {
+      if(document.getElementById("mediacore_error_dontshowme").checked) {
+        const prefs = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication)
+                        .prefs;
+        prefs.setValue("songbird.mediacore.error.dontshowme", true);
+      }
+    }
+
+    function openLink(url) {
+      // Open it in the Songbird browser
+      Cc["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Ci.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").gBrowser.loadOneTab(url);
+    }
+  ]]>
+  </script>
+  
+</dialog>

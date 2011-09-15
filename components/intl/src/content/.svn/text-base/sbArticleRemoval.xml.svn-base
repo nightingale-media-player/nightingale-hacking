@@ -1,0 +1,129 @@
+<?xml version="1.0"?> 
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */ 
+ -->
+ 
+ <sb-article-removal-document>
+
+	<article-removal-data lang="English">
+	  <article pattern="The *"/>
+	  <article pattern="*, The"/>
+	  <article pattern="A *"/>
+	  <article pattern="*, A"/>
+	  <article pattern="An *"/>
+	  <article pattern="*, An"/>
+	</article-removal-data>
+
+	<article-removal-data lang="Spanish">
+	  <article pattern="El *"/>
+	  <article pattern="*, El"/>
+	  <article pattern="La *"/>
+	  <article pattern="*, La"/>
+	  <article pattern="Los *"/>
+	  <article pattern="*, Los"/>
+	  <article pattern="Las *"/>
+	  <article pattern="*, Las"/>
+	  <article pattern="Un *"/>
+	  <article pattern="*, Un"/>
+	  <article pattern="Una *"/>
+	  <article pattern="*, Una"/>
+	  <article pattern="Unos *"/>
+	  <article pattern="*, Unos"/>
+	  <article pattern="Unas *"/>
+	  <article pattern="*, Unas"/>
+	</article-removal-data>
+
+	<article-removal-data lang="French">
+	  <article pattern="Le *"/>
+	  <article pattern="*, Le"/>
+	  <article pattern="La *"/>
+	  <article pattern="*, La"/>
+	  <article pattern="L'*"/>
+	  <article pattern="*, L'"/>
+	  <article pattern="Les *"/>
+	  <article pattern="*, Les"/>
+	  <article pattern="Un *"/>
+	  <article pattern="*, Un"/>
+	  <article pattern="Une *"/>
+	  <article pattern="*, Une"/>
+	</article-removal-data>
+
+	<article-removal-data lang="German">
+	  <article pattern="Die *"/>
+	  <article pattern="*, Die"/>
+	  <article pattern="Das *"/>
+	  <article pattern="*, Das"/>
+	  <article pattern="Der *"/>
+	  <article pattern="*, Der"/>
+	  <article pattern="Ein *"/>
+	  <article pattern="*, Ein"/>
+	  <article pattern="Eine *"/>
+	  <article pattern="*, Eine"/>
+	</article-removal-data>
+
+	<article-removal-data lang="Portuguese">
+	  <article pattern="O *"/>
+	  <article pattern="*, O"/>
+	  <article pattern="A *"/>
+	  <article pattern="*, A"/>
+	  <article pattern="À *"/>
+	  <article pattern="*, À"/>
+	  <article pattern="Às *"/>
+	  <article pattern="*, Às"/>
+	  <article pattern="Os *"/>
+	  <article pattern="*, Os"/>
+	  <article pattern="As *"/>
+	  <article pattern="*, As"/>
+	  <article pattern="Um *"/>
+	  <article pattern="*, Um"/>
+	  <article pattern="Uma *"/>
+	  <article pattern="*, Uma"/>
+	  <article pattern="Uns *"/>
+	  <article pattern="*, Uns"/>
+	  <article pattern="Umas *"/>
+	  <article pattern="*, Umas"/>
+	</article-removal-data>
+
+	<article-removal-data lang="Italian">
+	  <article pattern="Il *"/>
+	  <article pattern="*, Il"/>
+	  <article pattern="Lo *"/>
+	  <article pattern="*, Lo"/>
+	  <article pattern="Gli *"/>
+	  <article pattern="*, Gli"/>
+	  <article pattern="L'*"/>
+	  <article pattern="*, L'"/>
+	  <article pattern="La *"/>
+	  <article pattern="*, La"/>
+	  <article pattern="Un *"/>
+	  <article pattern="*, Un"/>
+	  <article pattern="Una *"/>
+	  <article pattern="*, Una"/>
+	</article-removal-data>
+
+</sb-article-removal-document>

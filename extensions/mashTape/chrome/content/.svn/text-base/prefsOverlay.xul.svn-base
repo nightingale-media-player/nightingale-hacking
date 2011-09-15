@@ -1,0 +1,236 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://mashtape/locale/options.dtd">
+<?xml-stylesheet href="chrome://mashtape/skin/prefs.css" type="text/css"?>
+<overlay id="mashtape-prefs-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefwindow id="BrowserPreferences">
+<prefpane id="mashTapePrefsPane" label="mashTape"
+	onpaneload="mashTapePreferences.init()"
+	onpaneunload="mashTapePreferences.unload()"
+	image="chrome://mashtape/content/tape.png">
+
+<preferences>
+	<preference id="general-default-pane" type="string"
+		name="extensions.mashTape.defaultpane" /> 
+	<preference id="general-autohide" type="bool"
+		name="extensions.mashTape.autohide" />
+	<preference id="tab-info-enabled" type="bool"
+		name="extensions.mashTape.info.enabled" />
+	<preference id="tab-info-autolocalise" type="bool"
+		name="extensions.mashTape.info.autolocalise" />
+	<preference id="tab-review-enabled" type="bool"
+		name="extensions.mashTape.review.enabled" />
+	<preference id="tab-rss-enabled" type="bool"
+		name="extensions.mashTape.rss.enabled" />
+	<preference id="tab-photo-enabled" type="bool"
+		name="extensions.mashTape.photo.enabled" />
+	<preference id="tab-flash-enabled" type="bool"
+		name="extensions.mashTape.flash.enabled" />
+	<preference id="photo-speed" type="int"
+		name="extensions.mashTape.photo.speed" />
+	<preference id="photo-keywords" type="string"
+		name="extensions.mashTape.photo.keywords" />
+</preferences>
+
+<command id="cmd-info" oncommand="mashTapePreferences.savePrefs('info')" />
+<command id="cmd-review" oncommand="mashTapePreferences.savePrefs('review')" />
+<command id="cmd-rss" oncommand="mashTapePreferences.savePrefs('rss')" />
+<command id="cmd-photo" oncommand="mashTapePreferences.savePrefs('photo')" />
+<command id="cmd-flash" oncommand="mashTapePreferences.savePrefs('flash')" />
+
+<command id="cmd-toggle-info" oncommand="mashTapePreferences.toggle('info')" />
+<command id="cmd-toggle-review"
+	oncommand="mashTapePreferences.toggle('review')" />
+<command id="cmd-toggle-rss" oncommand="mashTapePreferences.toggle('rss')" />
+<command id="cmd-toggle-photo" oncommand="mashTapePreferences.toggle('photo')"/>
+<command id="cmd-toggle-flash" oncommand="mashTapePreferences.toggle('flash')"/>
+
+<script type="application/x-javascript"
+	src="chrome://mashtape/content/prefs.js" />
+
+<tabbox flex="1">
+	<tabs flex="0">
+		<tab label="&mtprefs.general;"/>
+		<tab label="&mtprefs.info;"/>
+		<tab label="&mtprefs.review;"/>
+		<tab label="&mtprefs.rss;"/>
+		<tab label="&mtprefs.photo;"/>
+		<tab label="&mtprefs.flash;"/>
+	</tabs>
+
+	<tabpanels flex="1">
+		<!-- General mashTape preferences -->
+		<tabpanel id="tabpanel-general" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.defaulttab;" />
+					<hbox>
+						<label class="help" value="&mtprefs.defaulttab.help;" />
+						<menulist preference="general-default-pane"
+							id="general-default-tab">
+							<menupopup flex="1">
+								<menuitem label="&mtprefs.show.info;"
+									value="info" />
+								<menuitem label="&mtprefs.show.review;"
+									value="review" />
+								<menuitem label="&mtprefs.show.rss;"
+									value="rss" />
+								<menuitem label="&mtprefs.show.photo;"
+									value="photo" />
+								<menuitem label="&mtprefs.show.flash;"
+									value="flash" />
+							</menupopup>
+						</menulist>
+					</hbox>
+				</groupbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.autohide;" />
+					<hbox>
+						<checkbox preference="general-autohide" />
+						<description>&mtprefs.autohide.help;</description>
+					</hbox>
+				</groupbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.services;" />
+					<label class="text-link"
+						href="http://addons.songbirdnest.com/tag/mashtape"
+						value="&mtprefs.getmore;" />
+				</groupbox>
+			</vbox>
+		</tabpanel>
+
+		<!-- Artist Info preferences -->
+		<tabpanel id="tabpanel-info" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.info;" />
+					<hbox>
+						<checkbox preference="tab-info-enabled"
+							id="checkbox-info" command="cmd-toggle-info" />
+						<label value="&mtprefs.tab.help;" />
+					</hbox>
+					
+					<description id="help-info">&mtprefs.single;</description>
+					<radiogroup>
+						<richlistbox class="box-services" id="services-info">
+						</richlistbox>
+					</radiogroup>
+				</groupbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.info.autolocalise;" />
+					<hbox>
+						<checkbox preference="tab-info-autolocalise" />
+						<description>&mtprefs.tab.info.autolocalise.help;</description>
+					</hbox>
+				</groupbox>
+			</vbox>
+		</tabpanel>
+
+		<!-- Review preferences -->
+		<tabpanel id="tabpanel-review" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.review;" />
+					<hbox>
+						<checkbox preference="tab-review-enabled"
+							id="checkbox-review" command="cmd-toggle-review" />
+						<label value="&mtprefs.tab.help;" />
+					</hbox>
+					
+					<description
+						id="help-review">&mtprefs.multiple;</description>
+					<radiogroup>
+						<richlistbox class="box-services" id="services-review">
+						</richlistbox>
+					</radiogroup>
+				</groupbox>
+			</vbox>
+		</tabpanel>
+
+		<!-- RSS preferences -->
+		<tabpanel id="tabpanel-rss" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.rss;" />
+					<hbox>
+						<checkbox preference="tab-rss-enabled"
+							id="checkbox-rss" command="cmd-toggle-rss" />
+						<label value="&mtprefs.tab.help;" />
+					</hbox>
+					
+					<description id="help-rss">&mtprefs.multiple;</description>
+					<radiogroup>
+						<richlistbox class="box-services" id="services-rss">
+						</richlistbox>
+					</radiogroup>
+				</groupbox>
+			</vbox>
+		</tabpanel>
+
+		<!-- Photo preferences -->
+		<tabpanel id="tabpanel-photo" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.photo;" />
+					<hbox>
+						<checkbox preference="tab-photo-enabled"
+							id="checkbox-photo" command="cmd-toggle-photo" />
+						<label value="&mtprefs.tab.help;" />
+					</hbox>
+					
+					<description id="help-photo">&mtprefs.single;</description>
+					<radiogroup>
+						<richlistbox class="box-services" id="services-photo">
+						</richlistbox>
+					</radiogroup>
+				</groupbox>
+
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.photo.speed;" />
+					<hbox id="hbox-photo-speed">
+						<label value="&mtprefs.tab.photo.faster;" />
+						<scale id="scale-photo-speed" min="10" max="200"
+							style="width: 10em;" />
+						<label value="&mtprefs.tab.photo.slower;" />
+					</hbox>
+				</groupbox>
+
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.photo.keywords.caption;" />
+					<description>&mtprefs.tab.photo.keywords.help;</description>
+					<hbox id="hbox-photo-keywords">
+						<label value="&mtprefs.tab.photo.keywords;"
+							style="padding-right: 1em;" />
+						<textbox id="textbox-photo-keywords"
+							style="width: 15em;" preference="photo-keywords" />
+					</hbox>
+				</groupbox>
+			</vbox>
+		</tabpanel>
+
+		<!-- Flash preferences -->
+		<tabpanel id="tabpanel-flash" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.flash;" />
+					<hbox>
+						<checkbox preference="tab-flash-enabled"
+							id="checkbox-flash" command="cmd-toggle-flash" />
+						<label value="&mtprefs.tab.help;" />
+					</hbox>
+					
+					<description id="help-flash">&mtprefs.multiple;</description>
+					<radiogroup>
+						<richlistbox class="box-services" id="services-flash">
+						</richlistbox>
+					</radiogroup>
+				</groupbox>
+			</vbox>
+		</tabpanel>
+	</tabpanels>
+</tabbox>
+
+</prefpane>
+</prefwindow>
+</overlay>

@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/17916/trunk/components/integration/public
+END
+IWindowCloak.idl
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/7658/trunk/components/integration/public/IWindowCloak.idl
+END
+IWindowMinMax.idl
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/integration/public/IWindowMinMax.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/17782/trunk/components/integration/public/Makefile.in
+END
+sbIWindowMoveService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/15766/trunk/components/integration/public/sbIWindowMoveService.idl
+END
+IGlobalHotkeys.idl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/integration/public/IGlobalHotkeys.idl
+END
+sbIKnownFolderManager.idl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17782/trunk/components/integration/public/sbIKnownFolderManager.idl
+END
+sbIHotkeyActions.idl
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/8963/trunk/components/integration/public/sbIHotkeyActions.idl
+END
+sbIHotkeyService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/16814/trunk/components/integration/public/sbIHotkeyService.idl
+END
+IWindowResizeHook.idl
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/7658/trunk/components/integration/public/IWindowResizeHook.idl
+END
+IWindowRegion.idl
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/integration/public/IWindowRegion.idl
+END
+sbIScreenSaverSuppressor.idl
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15554/trunk/components/integration/public/sbIScreenSaverSuppressor.idl
+END
+sbIWindowChromeService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17916/trunk/components/integration/public/sbIWindowChromeService.idl
+END
+sbINativeWindowManager.idl
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/12036/trunk/components/integration/public/sbINativeWindowManager.idl
+END

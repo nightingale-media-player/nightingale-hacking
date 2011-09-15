@@ -1,0 +1,57 @@
+extensions.mashTape@songbirdnest.com.description=Αναμίξτε και συνδυάστε διάφορες πηγές web στην μουσική βιβλιοθήκη σας.
+# General
+
+extensions.mashTape.artistinfo=Πληροφορίες καλλιτεχνών
+extensions.mashTape.review=Αξιολογήσεις
+extensions.mashTape.rss=Ειδήσεις
+extensions.mashTape.photo=Φωτογραφίες
+extensions.mashTape.flash=Βίντεο
+extensions.mashTape.msg.readmore=Διαβάστε περισσότερα
+extensions.mashTape.msg.readless=Διαβάστε Λιγότερα
+extensions.mashTape.msg.viewmore=Προβολή περισσότερων
+extensions.mashTape.msg.viewless=Προβολή λιγότερων
+extensions.mashTape.msg.readorig=Προβολή αρχικού άρθρου
+extensions.mashTape.msg.by=από
+extensions.mashTape.msg.provider_tooltip=Προβολή περισσότερων στο %S
+extensions.mashTape.msg.review_tooltip=Εμφάνιση αξιολόγησης στο %S
+extensions.mashTape.msg.rss_tooltip=Προβολή αρχικού άρθρου στο %S
+extensions.mashTape.msg.flash_tooltip=Εμφάνιση αρχικού βίντεο στο %S
+extensions.mashTape.msg.review=Δημιουργία προσωπικής αξιολόγησης
+# Date strings
+
+extensions.mashTape.date.sec=%1$S δευτερόλεπτο πριν
+extensions.mashTape.date.secs=%1$S δευτερόλεπτα πριν
+extensions.mashTape.date.min=%1$S λεπτό πριν
+extensions.mashTape.date.mins=%1$S λεπτά πριν
+extensions.mashTape.date.hour=%1$S ώρα πριν
+extensions.mashTape.date.hours=%1$S ώρες πριν
+extensions.mashTape.date.day=%1$S ημέρα πριν
+extensions.mashTape.date.days=%1$S ημέρες πριν
+extensions.mashTape.date.week=%1$S εβδομάδα πριν
+extensions.mashTape.date.weeks=%1$S εβδομάδες πριν
+extensions.mashTape.date.month=%1$S μήνα πριν
+extensions.mashTape.date.months=%1$S μήνες πριν
+extensions.mashTape.date.year=%1$S χρόνο πριν
+extensions.mashTape.date.years=%1$S χρόνια πριν
+extensions.mashTape.date.decade=%1$S δεκαετία πριν
+extensions.mashTape.date.decades=%1$S δεκαετίες πριν
+# Artist info tab
+
+extensions.mashTape.info.bio=Βιογραφικό καλλιτέχνη
+extensions.mashTape.info.discography=Δισκογραφία
+extensions.mashTape.info.members=Μέλη
+extensions.mashTape.info.tags=Ετικέτες
+extensions.mashTape.info.links=Σύνδεσμοι
+extensions.mashTape.info.create=Κάντε κλικ εδώ για επεξεργασία της βιογραφίας.
+extensions.mashTape.info.no_bio=Δεν βρέθηκε καμία βιβλιογραφία καλλιτέχνη για το %S.
+extensions.mashTape.info.amazon=Προβολή άλμπουμ στο Amazon
+extensions.mashTape.info.lastfm=Προβολή άλμπουμ Last.fm
+# Reviews tab
+
+extensions.mashTape.review.artist=Αξιολόγηση καλλιτέχνη
+extensions.mashTape.review.album=Αξιολόγηση άλμπουμ
+extensions.mashTape.review.track=Αξιολόγηση κομματιού
+# RSS tab
+
+extensions.mashTape.rss.video=Το άρθρο περιλαμβάνει βίντεο
+extensions.mashTape.rss.photo=Το άρθρο περιλαμβάνει φωτογραφίες

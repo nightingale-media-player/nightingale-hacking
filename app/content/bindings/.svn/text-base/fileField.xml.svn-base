@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="sb-filefield" extends="chrome://global/content/bindings/general.xml#control-item">
+    <content>
+      <xul:stringbundle anonid="bundle" src="chrome://mozapps/locale/preferences/preferences.properties"/>
+      <xul:hbox class="fileFieldContentBox" align="center" flex="1">
+        <xul:image class="fileFieldIcon" xbl:inherits="src=image"/>
+        <xul:textbox class="fileFieldLabel" xbl:inherits="value=label,disabled,accesskey,tabindex" flex="1" readonly="true"/>
+      </xul:hbox>
+    </content>
+    <implementation implements="nsIDOMXULLabeledControlElement">
+      <property name="label" onget="return this.getAttribute('label');">
+        <setter>
+          this.setAttribute('label', val); 
+          var elt = document.getAnonymousElementByAttribute(this, "class", "fileFieldLabel");
+          return (elt.value = val);
+        </setter>
+      </property>
+      
+      <field name="_file">null</field>
+      <property name="file"  onget="return this._file">
+        <setter>
+        <![CDATA[
+          this._file = val; 
+          if (val) {
+            this.image = this._getIconURLForFile(val);
+            this.label = this._getDisplayNameForFile(val);
+          }
+          else {
+            this.removeAttribute("image");
+            this.label = "";
+          }            
+          return val;
+        ]]>
+        </setter>
+      </property>      
+      <method name="_getDisplayNameForFile">
+        <parameter name="aFile"/>
+        <body>
+        <![CDATA[
+          Components.utils.import("resource://app/jsmodules/PlatformUtils.jsm");
+         
+          var platformString = PlatformUtils.platformString;
+          
+          if(platformString == "Windows_NT") {
+            //
+            // On Windows we can use the Known Folder Manager to determine the
+            // display name we should use.
+            //
+            
+            var knownFolderManager = 
+              Components.classes["@songbirdnest.com/Songbird/KnownFolderManager;1"]
+                        .createInstance(Components.interfaces.sbIKnownFolderManager);
+            return knownFolderManager.getDisplayNameFromPath(aFile.path);
+          }
+          else if(platformString == "Darwin") {
+            var lfm = aFile.QueryInterface(Components.interfaces.nsILocalFileMac);
+            try {
+              return lfm.bundleDisplayName;
+            }
+            catch (e) {
+              // fall through to the file name
+            }
+          }
+
+          const SEPARATOR = (aFile.path[0] == "/" ? "/" : "\\");
+          const LEAFNAME_REGEXP = RegExp("[^\\" + SEPARATOR + "]*$");
+          var leafname = aFile.path.match(LEAFNAME_REGEXP)[0];
+          return leafname;
+        ]]>
+        </body>
+      </method>
+      
+      <method name="_getIconURLForFile">
+        <parameter name="aFile"/>
+        <body>
+        <![CDATA[
+          if (!aFile)
+            return "";
+          var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                              .getService(Components.interfaces.nsIIOService);
+          var fph = ios.getProtocolHandler("file")
+                       .QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+          var urlspec = fph.getURLSpecFromFile(aFile);
+          return "moz-icon://" + urlspec + "?size=16";  
+        ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>

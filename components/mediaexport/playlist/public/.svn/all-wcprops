@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/18596/trunk/components/mediaexport/playlist/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/15557/trunk/components/mediaexport/playlist/public/Makefile.in
+END
+sbIPlaylistWriter.idl
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/18596/trunk/components/mediaexport/playlist/public/sbIPlaylistWriter.idl
+END

@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Last.fm にログイン...">
+<!ENTITY lastfm.menu.logout "Last.fm からログアウト">
+<!ENTITY lastfm.menu.enable "Scrobbling を有効化">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "ログイン">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "Last.fm に登録する">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "ログイン中...">
+<!ENTITY lastfm.cancel.button "取り消す">
+<!ENTITY lastfm.profile.caption "プロフィール">
+<!ENTITY lastfm.profile.scrobble "曲を Scrobble">
+<!ENTITY lastfm.profile.logout "ログアウト">
+<!ENTITY lastfm.radio "Last.fm ラジオ">
+<!ENTITY lastfm.radio.login.help "Last.fm ラジオを聴くためには、Last.fm にログインしておく必要があります。まだ Last.fm アカウントをお持ちでなければ、登録しましょう。">
+<!ENTITY lastfm.radio.start "どうしたらよいかわからない？検索してみるか、ほかの人が何を聴いているのか確認しましょう。">
+<!ENTITY lastfm.radio.start.top.artists "Last.fm での人気アーティスト">
+<!ENTITY lastfm.radio.start.top.tags "Last.fm での人気タグ">
+<!ENTITY lastfm.radio.register "登録する">
+<!ENTITY lastfm.radio.subscriber.button "購読する">
+<!ENTITY lastfm.radio.subscriber.help "Last.fm ラジオを聴くためには、購読者にならなければなりません。">
+<!ENTITY lastfm.radio.search "検索">
+<!ENTITY lastfm.radio.library "ライブラリ">
+<!ENTITY lastfm.radio.loved "Love トラック">
+<!ENTITY lastfm.radio.neighbourhood "ご近所さん">
+<!ENTITY lastfm.radio.recommended "リコメンド">
+<!ENTITY lastfm.radio.user_stations "ユーザーステーション">
+<!ENTITY lastfm.radio.recent_stations "最近のステーション">
+<!ENTITY lastfm.radio.from.lastfm "Last.fm から">
+<!ENTITY lastfm.radio.recommended_artists "リコメンドされたアーティスト">
+<!ENTITY lastfm.radio.top_artists "あなたのべストアーティスト">
+<!ENTITY lastfm.radio.top_tags "あなたのベストタグ">
+<!ENTITY lastfm.radio.friends "あなたの友だち">
+<!ENTITY lastfm.radio.neighbours "ご近所さん">
+<!ENTITY lastfm.radio.from.songbird "Songbird から">
+<!ENTITY lastfm.radio.most_played_artists "一番再生したアーティスト">
+<!ENTITY lastfm.radio.highest_rated_artists "最高評価のアーティスト">
+<!ENTITY lastfm.radio.popular_genres "ベストジャンル">
+<!ENTITY lastfm.radio.play "再生">
+<!ENTITY lastfm.tags.enter_new "新しくタグを入力 (コンマ区切り)">
+<!ENTITY lastfm.tags.add_fail "タグの追加に失敗！">
+<!ENTITY lastfm.tags.user "あなたのタグ:">
+<!ENTITY lastfm.tags.global "Last.fm 全体のタグ:">

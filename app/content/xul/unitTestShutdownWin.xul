@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+-->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<window
+    id="unittestshutdown-window"
+    title="Unit Test Shutdown Window"
+    orient="horizontal"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    style="width: 100px; height: 100px;"
+    onload="onLoad();">
+    
+    <script type="application/javascript">
+      // If we are on Mac, unfortunately the event-queue slows down to slug
+      // speed when there isn't a window open and we are shutting down. Since 
+      // there isn't a window being used on these unit tests - the hybrid
+      // Cocoa/Gecko event loop takes a long time (over 20 minutes) to kill the
+      // 100 or so threads that get spooled up during the test cases.
+      // 
+      // To fix this problem, we will use a nasty little hack. This window is
+      // opened by the command line service (the handler for the testcases) -
+      // and closes itself after a couple of seconds. This fires the 
+      // application shutdown procedure just as if we had closed the main 
+      // Songbird window. 
+      //
+      // Yes - I know this sucks, I hate myself a little more for doing this.
+      function onLoad() {
+        setTimeout( function() { this.close(); }, 5000);
+      }
+    </script>
+    
+</window>

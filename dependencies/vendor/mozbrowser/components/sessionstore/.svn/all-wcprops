@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/sessionstore
+END
+nsISessionStore.idl
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/sessionstore/nsISessionStore.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/sessionstore/Makefile.in
+END
+jar.mn
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/sessionstore/jar.mn
+END
+nsISessionStartup.idl
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/sessionstore/nsISessionStartup.idl
+END

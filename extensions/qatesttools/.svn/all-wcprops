@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/client/!svn/ver/21086/trunk/extensions/qatesttools
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/15575/trunk/extensions/qatesttools/Makefile.in
+END
+extension-config.mk
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/21086/trunk/extensions/qatesttools/extension-config.mk
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/15543/trunk/extensions/qatesttools/install.rdf.in
+END

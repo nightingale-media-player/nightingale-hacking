@@ -1,0 +1,108 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+interface sbICDDevice;
+interface nsISimpleEnumerator;
+
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDListener
+// @brief This interface is used to provide notification when media is
+//        inserted or removed from a system. This interface will also be
+//        informed when a device has been removed.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(DAAB38B4-659D-4428-A30F-CE04B3541B56)]
+interface sbICDDeviceListener : nsISupports
+{
+  //
+  // @brief Callback method when a CD device has been removed.
+  // @param aCDDevice The CD device that has been removed.
+  //
+  void onDeviceRemoved(in sbICDDevice aCDDevice);
+
+  //
+  // @brief Callback method when media has been inserted into a CD drive.
+  // @param aCDDevice The CD device that had the media inserted.
+  //
+  void onMediaInserted(in sbICDDevice aCDDevice);
+
+  //
+  // @brief Callback method when media has been ejected from a CD drive.
+  // @param aCDDevice The CD device that had the media removed.
+  //
+  void onMediaEjected(in sbICDDevice aCDDevice);
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICD
+// @brief This interface implements the CD devices enumeration functions.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(f3d3e784-1dd1-11b2-bef7-820f9787ed4b)]
+interface sbICDDeviceService : nsISupports
+{
+  //
+  // @brief returns the voting weight of this CD device service
+  // @note higher weight = strong chance this device service will be selected
+  //
+  readonly attribute long weight;
+
+  //
+  // @brief returns the number of CD devices present in the system
+  //
+  readonly attribute long nbDevices;
+
+  //
+  // @brief returns a sbICDDevice object
+  // @note "deviceIndex" is 0-index based
+  //
+  sbICDDevice getDevice(in long deviceIndex);
+
+  //
+  // @brief Get a device based on its identifier.
+  //
+  sbICDDevice getDeviceFromIdentifier(in ACString aDeviceIdentifier);
+
+  //
+  // @brief Return an enumeration of all the cd devices.
+  //
+  nsISimpleEnumerator getCDDevices();
+
+  //
+  // @brief adds a listener to be notified when a device is added/removed
+  //
+  void registerListener(in sbICDDeviceListener listener);
+
+  //
+  // @brief removes a listener
+  //
+  void removeListener(in sbICDDeviceListener listener);
+};
+

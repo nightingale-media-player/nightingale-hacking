@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/client/!svn/ver/14483/trunk/bindings/public
+END
+sbITabBrowser.idl
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/10940/trunk/bindings/public/sbITabBrowser.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/14483/trunk/bindings/public/Makefile.in
+END
+sbIMediaItemStatusEvent.idl
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/9501/trunk/bindings/public/sbIMediaItemStatusEvent.idl
+END
+sbIPlaylistWidget.idl
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/7658/trunk/bindings/public/sbIPlaylistWidget.idl
+END
+sbIPlaylistClickEvent.idl
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7658/trunk/bindings/public/sbIPlaylistClickEvent.idl
+END

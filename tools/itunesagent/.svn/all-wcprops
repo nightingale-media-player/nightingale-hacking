@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/client/!svn/ver/20911/trunk/tools/itunesagent
+END
+sbError.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/13559/trunk/tools/itunesagent/sbError.cpp
+END
+sbiTunesAgentProcessor.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/20911/trunk/tools/itunesagent/sbiTunesAgentProcessor.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20453/trunk/tools/itunesagent/Makefile.in
+END
+sbError.h
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/14658/trunk/tools/itunesagent/sbError.h
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/20553/trunk/tools/itunesagent/main.cpp
+END
+sbiTunesAgentProcessor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/20911/trunk/tools/itunesagent/sbiTunesAgentProcessor.cpp
+END

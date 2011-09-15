@@ -1,0 +1,2 @@
+#filter substitution
+[ addonID="@EXTENSION_UUID@" ] { display: none }

@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/20960/trunk/extensions/qatesttools/chrome/content
+END
+main.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20865/trunk/extensions/qatesttools/chrome/content/main.js
+END
+mockCDController.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/15543/trunk/extensions/qatesttools/chrome/content/mockCDController.js
+END
+deviceCapsDump.xul
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17802/trunk/extensions/qatesttools/chrome/content/deviceCapsDump.xul
+END
+fakePDS.xul
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19235/trunk/extensions/qatesttools/chrome/content/fakePDS.xul
+END
+playlistInfoDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/20960/trunk/extensions/qatesttools/chrome/content/playlistInfoDialog.xul
+END
+commands-overlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/19234/trunk/extensions/qatesttools/chrome/content/commands-overlay.xul
+END
+deviceCapsDump.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/18618/trunk/extensions/qatesttools/chrome/content/deviceCapsDump.js
+END
+fakePDS.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19235/trunk/extensions/qatesttools/chrome/content/fakePDS.js
+END
+deviceControllerDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/15666/trunk/extensions/qatesttools/chrome/content/deviceControllerDialog.xul
+END
+menu-overlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/19234/trunk/extensions/qatesttools/chrome/content/menu-overlay.xul
+END
+pane.xul
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/15666/trunk/extensions/qatesttools/chrome/content/pane.xul
+END
+mockCDControllerDialog.xul
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/15666/trunk/extensions/qatesttools/chrome/content/mockCDControllerDialog.xul
+END
+scripts-overlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/15543/trunk/extensions/qatesttools/chrome/content/scripts-overlay.xul
+END
+deviceController.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/15543/trunk/extensions/qatesttools/chrome/content/deviceController.js
+END

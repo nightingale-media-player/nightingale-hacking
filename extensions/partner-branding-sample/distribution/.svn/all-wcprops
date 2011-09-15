@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/19534/trunk/extensions/partner-branding-sample/distribution
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19534/trunk/extensions/partner-branding-sample/distribution/Makefile.in
+END
+alert.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19524/trunk/extensions/partner-branding-sample/distribution/alert.js
+END
+distribution.ini.in
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/19534/trunk/extensions/partner-branding-sample/distribution/distribution.ini.in
+END
+updater.ini.in
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/19534/trunk/extensions/partner-branding-sample/distribution/updater.ini.in
+END

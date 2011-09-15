@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" ?>
+<?xml-stylesheet href="chrome://sb-lastfm/skin/overlay.css" ?>
+<!--
+Copyright (c) 2010, Pioneers of the Inevitable, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  * Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+    of its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE window [
+<!ENTITY % lastfmDTD SYSTEM "chrome://sb-lastfm/locale/overlay.dtd">
+%lastfmDTD;
+]>
+<overlay id="lastfm-overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"
+          src="chrome://sb-lastfm/content/main.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="lastfmStrings"
+                  src="chrome://sb-lastfm/locale/overlay.properties"/>
+  </stringbundleset>
+
+  <menupopup id="menu_ToolsPopup">
+    <menuseparator id="lastfmMenuSeparator" insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuLogout"
+              label="&lastfm.menu.logout;"
+              insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuLogin"
+              label="&lastfm.menu.login;"
+              insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuEnableScrobbling"
+              label="&lastfm.menu.enable;"
+              type="checkbox"
+              insertbefore="devToolsSeparator"/>
+  </menupopup>
+
+
+  <popupset id="mainPopupSet">
+    <sb-login-panel id="lastfmLoginPanel"
+                    position="before_end"
+                    loginCaptionLabel="&lastfm.login.caption.label;"
+                    usernameLabel="&lastfm.username.label;"
+                    passwordLabel="&lastfm.password.label;"
+                    autoLoginLabel="&lastfm.auto.login.label;"
+                    loginButtonLabel="&lastfm.login.button;"
+                    newAccountCaption="&lastfm.newaccount.caption;"
+                    signupLabel="&lastfm.signup.label;"
+                    signupButtonLabel="&lastfm.signup.button.label;"
+                    loggingLabel="&lastfm.loggingin.label;"
+                    cancelButtonLabel="&lastfm.cancel.button;"
+                    profileCaption="&lastfm.profile.caption;"
+                    profileCheckboxLabel="&lastfm.profile.scrobble;"
+                    logoutButtonLabel="&lastfm.profile.logout;" />
+
+    <panel id="lastfmTagPanel" position="before_end">
+      <stack>
+        <vbox id="background" flex="1" />
+        <vbox id="tag-vbox">
+          <label value="&lastfm.tags.enter_new;" />
+          <textbox id="new-tags" type="search" searchbutton="true"
+                   onkeypress="if (event.keyCode == 13) LastFm.addTags(event)" />
+          <label id="label-user-tags" value="&lastfm.tags.user;" />
+          <vbox id="user-tags" />
+          <label id="label-global-tags" value="&lastfm.tags.global;" />
+          <vbox id="global-tags" />
+        </vbox>
+      </stack>
+    </panel>
+
+  </popupset>
+
+  <statusbar id="status-bar">
+    <statusbarpanel id="lastfmStatusIcon"
+                    class="statusbarpanel-iconic"
+                    src="chrome://sb-lastfm/skin/disabled.png"
+                    tooltiptext=""
+    />
+  </statusbar>
+</overlay>

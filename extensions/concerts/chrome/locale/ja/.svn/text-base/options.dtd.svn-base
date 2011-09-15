@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "地域">
+<!ENTITY prefs.location.descr "お住まいの地域でコンサートを予定しているアーティストを検索できます。&brandShortName; では、お気に入りのアーティストやクラブの最新情報を常に確認できるため、コンサートを見逃すことはありません。お近くの都市を選択して、ツアー予定のアーティストを確認してください。">
+<!ENTITY prefs.library "ライブラリ">
+<!ENTITY prefs.library.text "&brandShortName; では、、お気に入りのアーティストのお住まいの地域でのツアー予定を示す列をミュージックライブラリに追加できます。">
+<!ENTITY prefs.library.checklabel "マイライブラリに［ツアー］列を追加する">
+<!ENTITY prefs.country "国">
+<!ENTITY prefs.country.us "米国">
+<!ENTITY prefs.country.uk "英国">
+<!ENTITY prefs.state "州">
+<!ENTITY prefs.city "都市">
+<!ENTITY prefs.radius "半径">
+<!ENTITY prefs.findShows "コンサートを検索">
+<!ENTITY concerts.poweredby "コンサートリスト提供元：">

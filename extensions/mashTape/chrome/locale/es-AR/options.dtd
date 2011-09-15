@@ -1,0 +1,30 @@
+<!ENTITY mtprefs.general "General">
+<!ENTITY mtprefs.info "Informacion de Artista">
+<!ENTITY mtprefs.review "Comentarios">
+<!ENTITY mtprefs.rss "Noticias">
+<!ENTITY mtprefs.photo "Fotos">
+<!ENTITY mtprefs.flash "Videos">
+<!ENTITY mtprefs.defaulttab "Pestaña por Defecto">
+<!ENTITY mtprefs.defaulttab.help "Cuando inicie mashTape:">
+<!ENTITY mtprefs.show.info "Mostrar informacion de Artista">
+<!ENTITY mtprefs.show.review "Mostrar Comentarios">
+<!ENTITY mtprefs.show.rss "Mostrar Noticias">
+<!ENTITY mtprefs.show.photo "Mostrar Fotos">
+<!ENTITY mtprefs.show.flash "Mostrar Videos">
+<!ENTITY mtprefs.autohide "Ocultar Automaticamente">
+<!ENTITY mtprefs.autohide.help "Ocultar Automaticamente la pantalla de mashTape cuando cambie a una pagina web.">
+<!ENTITY mtprefs.services "Servicios">
+<!ENTITY mtprefs.getmore "Obtener mas servivios para mashTape">
+<!ENTITY mtprefs.tab.info "Configuracion de la Pestaña de Informacion de Artista">
+<!ENTITY mtprefs.tab.review "Configuracion de la Pestaña de Comentarios">
+<!ENTITY mtprefs.tab.rss "Configuracionde la Pestaña de Noticias">
+<!ENTITY mtprefs.tab.photo "Configuracionde la Pestaña de Fotos">
+<!ENTITY mtprefs.tab.flash "Configuracionde la Pestaña de Videos">
+<!ENTITY mtprefs.tab.help "Mostrar esta pestaña en mashTape.">
+<!ENTITY mtprefs.single "Este panel soporta la visualizacion de un servicio a la vez. Por favor, seleccione un servicio de la siguiente lista.">
+<!ENTITY mtprefs.multiple "Este panel soporta la visualizacion de varios servicios a la vez. Por favor, seleccione sus opciones de servicios en la siguiente lista.">
+<!ENTITY mtprefs.tab.photo.speed "Velocidad de movimiento de Fotos">
+<!ENTITY mtprefs.tab.photo.faster "Mas Rapido">
+<!ENTITY mtprefs.tab.photo.slower "Mas Lento">
+<!ENTITY mtprefs.tab.video.autoplay "Auto reproducir videos">
+<!ENTITY mtprefs.tab.video.autoplay.help "Habilitar esta opcion causara que el proveedor de paquetes de video, auto reproduzca uno despues de otro. Esto es muy usado para auto reproducir todos la musica de MTV, por ejemplo. Esta opcion no funcionara con los proveedores de video que no tienen paquetes.">

@@ -1,0 +1,8 @@
+<!ENTITY concerts.loading "We're checking to see who is on tour near you...">
+
+<!ENTITY concerts.changelocation "Change Location">
+
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "No concerts found for ">
+<!ENTITY concerts.timeout.error "You're either not connected to the Internet or our concert database is not working right now.  Please try again in a few minutes.">
+<!ENTITY concerts.timeoutreport.error "Report a problem">

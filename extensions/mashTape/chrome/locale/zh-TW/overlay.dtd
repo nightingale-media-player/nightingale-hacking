@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "無法尋找目前播放曲目的演出者資訊">
+<!ENTITY mashTape.msg.no_review_found "無法尋找目前播放曲目的相關評論">
+<!ENTITY mashTape.msg.no_rss_found "無法尋找目前播放曲目的相關新聞">
+<!ENTITY mashTape.msg.no_photo_found "無法尋找目前播放曲目的相關照片">
+<!ENTITY mashTape.msg.no_flash_found "無法尋找目前播放曲目的相關影片">

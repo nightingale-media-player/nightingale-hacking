@@ -1,0 +1,148 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2010 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsIVariant;
+
+interface sbIMediaItem;
+interface sbIMediaFormatAudio;
+interface sbIMediacoreAudioProcessorListener;
+
+[scriptable, uuid(8d5cc71a-b3af-40b3-bcb3-cf128ec49bcd)]
+interface sbIMediacoreAudioProcessor : nsISupports
+{
+  /* Initialise the processor with a listener to receive audio
+   * data and events.
+   */
+  void init(in sbIMediacoreAudioProcessorListener aListener);
+
+  /* Constraints on the decoded audio format.
+   *
+   * This allows the caller to constrain the format that will be
+   * delivered to the listener. For example, if the listener desires
+   * only mono audio, then rather than receiving arbirary numbers of
+   * channels, and having to implement down-mixing internally, the
+   * caller could set the channels constraint to 1. The AudioProcessor
+   * will then internally downmix (if needed) to mono and provide that
+   * directly to the listener.
+   * 
+   * The caller need not set any constraints as long as the listener is
+   * capable of processing arbitrary formats.
+   *
+   * Constraints may only be set before start() is called.
+   */
+
+  /* A constraint on the sample rate.
+   * 
+   * If the consumer wishes to receive data only at a single, specific
+   * sample rate, it should set this attribute to that value. Otherwise,
+   * it should remain at the default of zero (meaning no constraint).
+   *
+   * The actual rate used will be provided in the sbIMediaFormatAudio
+   * object passed in the EVENT_START event.
+   */
+  attribute unsigned long constraintSampleRate;
+
+  /* A constraint on the number of channels to use.
+   *
+   * This may be set to 1 (mono) or 2 (stereo), or left at the default
+   * value of 0 to indicate no constraint.
+   *
+   * Currently, only mono or stereo is supported. Media items with more
+   * than two channels will be automatically downmixed to stereo (or mono
+   * if this attribute is set to 1).
+   *
+   * The actual number of channels used will be provided in the
+   * sbIMediaFormatAudio object passed in the EVENT_START event.
+   */
+  attribute unsigned long constraintChannelCount;
+
+  /* A constraint on the size of each block of data to deliver to the listener.
+   *
+   * If the listener has a preferred block size to process data in, it should
+   * set this attribute to that value. If left at the default value of 0, the
+   * blocks delivered may have any size.
+   *
+   * Note that even if set, SOME blocks may have a different size (due to
+   * corrupt or missing data, or at the end of the stream). See the listener
+   * documentation for more details.
+   */
+  attribute unsigned long constraintBlockSize;
+
+  /* A constraint on the audio format to deliver to the listener.
+   *
+   * This may be FORMAT_INT16, FORMAT_FLOAT, or FORMAT_ANY.
+   *
+   * If set to FORMAT_INT16, then only the onIntegerAudioDecoded function
+   * on the listener will be called. If set to FORMAT_FLOAT, only
+   * onFloatAudioDecoded will be called. If set to FORMAT_ANY, then
+   * one of these will be selected at runtime depending on the input
+   * format.
+   */
+  attribute unsigned long constraintAudioFormat;
+
+  const unsigned long FORMAT_ANY = 0;
+  const unsigned long FORMAT_INT16 = 1;
+  const unsigned long FORMAT_FLOAT = 2;
+
+  /* Start processing the media item that is passed in.
+   *
+   * This call will not block. The listener will be called
+   * with appropriate events and audio data as it becomes
+   * available.
+   *
+   * The caller can suspend or resume processing with the
+   * suspect/resume functions if desired, in order to control
+   * the rate at which decoded audio is provided. Otherwise,
+   * audio is provided as fast as possible.
+   *
+   * This must only be called from the main thread.
+   */
+  void start(in sbIMediaItem aItem);
+
+  /* Stop processing the media item. This will immediately
+   * terminate processing of the audio. It may be called at any time, but must
+   * be called at some point (e.g. after processing completes), and may only be
+   * called from the main thread.
+   */
+  void stop();
+
+  /* Temporarily suspend processing of the media item until
+   * resume() is called. 
+   *
+   * Must only be called from the main thread.
+   */
+  void suspend();
+
+  /* Resume processing of the media item after suspend() has
+   * been called.
+   *
+   * Must only be called from the main thread.
+   */
+  void resume();
+};
+

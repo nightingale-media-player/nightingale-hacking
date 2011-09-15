@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/5478/trunk/tools/win32/nsis/contrib/ShellLink
+END
+ShellLink.dsw
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/5478/trunk/tools/win32/nsis/contrib/ShellLink/ShellLink.dsw
+END
+build.bat
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/5478/trunk/tools/win32/nsis/contrib/ShellLink/build.bat
+END
+ShellLink.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/5478/trunk/tools/win32/nsis/contrib/ShellLink/ShellLink.cpp
+END
+ConvFunc.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/5478/trunk/tools/win32/nsis/contrib/ShellLink/ConvFunc.h
+END
+ShellLink.dsp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/5478/trunk/tools/win32/nsis/contrib/ShellLink/ShellLink.dsp
+END

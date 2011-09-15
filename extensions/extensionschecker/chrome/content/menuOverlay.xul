@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD LICENSE
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact POTI, Inc. at customer@songbirdnest.com.
+ *
+ *=END SONGBIRD LICENSE
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<overlay
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="main-menubar_overlay">
+
+  <menupopup id="menu_ToolsPopup">
+    <menuitem id="extensions-checker-menuitem"
+              label="Check For Staged Extensions"
+              insertafter="menu_extensions"
+              oncommand="extensionsCheckerMenu.runChecker();" />
+    <menuseparator id="deviceRepairSeparator"
+              hidden="true"
+              insertafter="menu_extensions" />
+  </menupopup>
+
+  <script type="application/x-javascript">
+    <![CDATA[
+    if (typeof Cc == 'undefined')
+	    var Cc = Components.classes;
+    if (typeof Ci == 'undefined')
+	    var Ci = Components.interfaces;
+    if (typeof Cu == 'undefined')
+	    var Cu = Components.utils;
+
+    Cu.import("resource://app/jsmodules/WindowUtils.jsm");
+
+    var extensionsCheckerMenu = {
+      extensionManager: null,
+      requiredAddonIds: null,
+      
+      runChecker: function() {
+        if(!this.requiredAddonIds) {
+          this.getRequiredAddons();
+        }
+        
+        var stagedAddonIds = this.getStagedAddons();
+        
+        // All required Add-Ons are staged and ready, prompt
+        // user for restart.
+        if(stagedAddonIds.length == this.requiredAddonIds.length) {
+          // Prompt for restart.
+          var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                           .getService(Ci.sbIPrompter);
+          var r = prompter.confirmEx(window,
+                                     "Restart Now",
+                                     "Do you wish to restart now to update to the latest version of Songbird? This is highly recommended.",
+                                     Ci.nsIPromptService.STD_YES_NO_BUTTONS,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     {});
+          // 0 == yes, 1 == no.
+          if(r == 0) {
+            // User wants to restart now
+            WindowUtils.restartApp();
+          }
+        }
+        
+        return;
+      },
+      
+      getRequiredAddons: function() {
+        const UPDATE_SECTION = "Update";
+        const REQUIRED_ADDONS_KEY = "addon.required.";
+        const DIST_INI_URL = "resource://app/distribution/distribution.ini";
+        
+        var requiredAddonIds = [];
+        
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService);
+                          
+        var distIniUrl = ioService.newURI(DIST_INI_URL, 
+                                          null, 
+                                          null);
+        var distIniFile = distIniUrl.QueryInterface(Ci.nsIFileURL).file
+        
+        var iniParser = Cc["@mozilla.org/xpcom/ini-parser-factory;1"]
+                          .getService(Ci.nsIINIParserFactory)
+                          .createINIParser(distIniFile);
+        var keys = iniParser.getKeys(UPDATE_SECTION);
+        while(keys.hasMore()) {
+          let key = keys.getNext();
+          if(key.indexOf(REQUIRED_ADDONS_KEY) == 0) {
+            requiredAddonIds.push(iniParser.getString(UPDATE_SECTION, key));
+          }
+        }
+        
+        this.requiredAddonIds = requiredAddonIds;
+      },
+      
+      getStagedAddons: function() {
+        var stagedAddonIds = [];
+        
+        if(!this.extensionManager) {
+          this.extensionManager = Cc["@mozilla.org/extensions/manager;1"]
+                                    .getService(Ci.nsIExtensionManager);
+        }
+
+        for each (let id in this.requiredAddonIds) {
+          let installLocation = this.extensionManager.getInstallLocation(id);
+          
+          if(!installLocation)
+            continue;
+            
+          let staged = installLocation.getStageFile(id);
+          
+          if(!staged)
+            continue;
+            
+          stagedAddonIds.push(id);
+        }
+
+        return stagedAddonIds;
+      }
+    }
+    ]]>
+  </script>
+</overlay>

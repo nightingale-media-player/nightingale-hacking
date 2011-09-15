@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/client/!svn/ver/5425/trunk/tools/win32/nsis/bin
+END
+LibraryLocal.exe
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/5425/trunk/tools/win32/nsis/bin/LibraryLocal.exe
+END
+RegTool.bin
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/5425/trunk/tools/win32/nsis/bin/RegTool.bin
+END
+zip2exe.exe
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/5425/trunk/tools/win32/nsis/bin/zip2exe.exe
+END
+MakeLangId.exe
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/bin/MakeLangId.exe
+END
+GenPat.exe
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/5425/trunk/tools/win32/nsis/bin/GenPat.exe
+END

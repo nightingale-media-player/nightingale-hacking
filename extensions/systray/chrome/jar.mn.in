@@ -1,0 +1,12 @@
+systray.jar:
+# chrome registration
+% content       systray                                                         %content/
+% locale        systray         en-US                                           %locale/en-US/
+% skin          systray         purplerain        %skin/purplerain/
+% skin          systray         gonzo             %skin/gonzo/
+% skin          systray         rubberducky/0.2   %skin/rubberducky/
+# overlays and styling
+% overlay       chrome://songbird/content/xul/layoutWithBrowserOverlay.xul      chrome://systray/content/mainwin.xul
+% style         chrome://global/content/alerts/alert.xul                        chrome://systray/skin/alert.css
+# packing
+@include_all_to

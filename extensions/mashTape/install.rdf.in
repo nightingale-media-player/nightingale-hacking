@@ -1,0 +1,460 @@
+<?xml version="1.0"?>
+
+<!-- 
+ *******************************************************************************
+ * Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation 
+ * 	  and/or other materials provided with the distribution.
+ * 	* Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+ * 	  of its contributors may be used to endorse or promote products derived
+ * 	  from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************
+ *
+ * Install file for the mashTape extension.
+ *
+ *******************************************************************************
+-->
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+	<Description about="urn:mozilla:install-manifest">
+		<em:targetApplication>
+			<Description>
+				<em:id>songbird@songbirdnest.com</em:id>
+				<em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+				<em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+
+		<em:id>@EXTENSION_UUID@</em:id>
+		<em:name>@EXTENSION_NAME@</em:name>
+		<em:version>@EXTENSION_VER@</em:version>
+		<em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
+		<em:contributor>Goofy (fr-FR Translation)</em:contributor>
+		<em:contributor>Nukeador (es-ES Translation)</em:contributor>
+		<em:contributor>drry (ja-JP Translation)</em:contributor>
+		<em:contributor>sembee (it-IT Translation)</em:contributor>
+		<em:contributor>eKuler (cs-CZ Translation)</em:contributor>
+		<em:contributor>markh (nl-NL Translation)</em:contributor>
+		<em:contributor>Waclaw Jacek (pl-PL Translation)</em:contributor>
+		<em:contributor>humbertosartini (pt-BR Translation)</em:contributor>
+		<em:contributor>Schwadegan (sv-SE Translation)</em:contributor>
+		<em:contributor>soham_chatterjee (bn-IN Translation)</em:contributor>
+		<em:contributor>7MB (zh-CN Translation)</em:contributor>
+		<em:contributor>Lukas_Skywalker (de-DE Translation)</em:contributor>
+		<em:contributor>AlleyKat (da-DK Translation)</em:contributor>
+		<em:contributor>muratbiskin (tr-TR Translation)</em:contributor>
+		<em:contributor>Sappa (uk-UA Translation)</em:contributor>
+		<em:contributor>sironitomas (es-AR Translation)</em:contributor>
+		<em:contributor>josesun (zh-TW Translation)</em:contributor>
+		<em:contributor>pokorny (kw-GB Translation)</em:contributor>
+		<em:contributor>Brogh (kw-GB Translation)</em:contributor>
+		<em:contributor>pankrusheff (ru-RU Translation)</em:contributor>
+		<em:contributor>yammesicka (he-IL Translation)</em:contributor>
+		<em:contributor>3kornepenal (sr-RS Translation)</em:contributor>
+		<em:contributor>eljocielfoc (ca-AD Translation)</em:contributor>
+		<em:contributor>bpasu (th-TH Translation)</em:contributor>
+		<em:contributor>Hiromacu (hu-HU Translation)</em:contributor>
+		<em:contributor>miles (sl-SI Translation)</em:contributor>
+		<em:description>Like your favourite old school mix tape, mix and mash up various web sources for your library enhancing pleasure.</em:description>
+		<em:iconURL>chrome://mashtape/content/tape.png</em:iconURL>
+		<em:homepageURL>http://mashtape.mozdev.org</em:homepageURL>
+		<em:optionsURL>chrome://mashtape/content/optionsWindow.xul</em:optionsURL>
+		<songbird:displayPane>
+			<Description>
+				<songbird:contentUrl>chrome://mashtape/content/mashTape.xul</songbird:contentUrl>
+				<songbird:contentTitle>@EXTENSION_NAME@</songbird:contentTitle>
+				<songbird:contentIcon>chrome://mashtape/content/mT_favicon.png</songbird:contentIcon>
+				<songbird:defaultWidth>177</songbird:defaultWidth>
+				<songbird:defaultHeight>177</songbird:defaultHeight>
+				<songbird:suggestedContentGroups>contentpane</songbird:suggestedContentGroups>
+				<songbird:showOnInstall>true</songbird:showOnInstall>
+			</Description>
+    </songbird:displayPane>
+
+    <em:localized>
+      <Description>
+        <em:locale>bn-IN</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>পুরানো কালের মিশ্রিত টেপের মতো, আপনার সংগ্রহের উৎকর্ষণের জন্য বিভিন্ন আন্তর্জাল সূত্র থেকে তথ্য সংমিশ্রণ করুন। বিশেষভাবে আপনার আরামের জন্য নির্মিত। </em:description>
+        <em:translator>soham_chatterjee</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>ca-ID</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Com en les antigues cintes de casset, mescla diversos origens web per millorar la teva biblioteca. Pensat per a la teva comoditat.</em:description>
+        <em:translator>eljocielfoc</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>ca</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Com en les antigues cintes de casset, mescla diversos origens web per millorar la teva biblioteca. Pensat per a la teva comoditat.</em:description>
+        <em:translator>eljocielfoc</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>cs-CZ</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Kombinuje a mixuje informace z různých webů pro příjemnější zážitek z prohlížení knihovny médií.</em:description>
+        <em:translator>eKuler</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>cs</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Kombinuje a mixuje informace z různých webů pro příjemnější zážitek z prohlížení knihovny médií.</em:description>
+        <em:translator>eKuler</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>da-DK</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Som dit gamle favorit skole-miks-kassettebånd, miks og kombinér diverse web-kilder for din biblioteks-forbedrende fornøjelse. Med ribber for ekstra komfort.</em:description>
+        <em:translator>AlleyKat</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>da</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Som dit gamle favorit skole-miks-kassettebånd, miks og kombinér diverse web-kilder for din biblioteks-forbedrende fornøjelse. Med ribber for ekstra komfort.</em:description>
+        <em:translator>AlleyKat</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>de-DE</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Wie mit Ihrem alten Schul-Mix-Kassettengerät mixen und vermischen Sie verschiedene Internetquellen, um ihr Bibliothek aufzuwerten.</em:description>
+        <em:translator>Lukas_Skywalker</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>de</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Wie mit Ihrem alten Schul-Mix-Kassettengerät mixen und vermischen Sie verschiedene Internetquellen, um ihr Bibliothek aufzuwerten.</em:description>
+        <em:translator>Lukas_Skywalker</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>el</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Αναμίξτε και συνδυάστε διάφορες πηγές web στην μουσική βιβλιοθήκη σας.</em:description>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>en-GB</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Like your favourite old school mix tape, mix and mash up various web sources for your library enhancing pleasure.</em:description>
+        <em:translator>Stephen Lau</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>es-AR</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Como en tus viejos cassetes, mezcla y une a varios sitios web con informacion a tu gusto. Hecho para la satisfaccion.</em:description>
+        <em:translator>sironitomas</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>es-ES</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Mashtape recoje y mezcla los datos más relevantes de tus artistas para que tengas toda la información más interesante.</em:description>
+        <em:translator>Nukeador</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>fr-FR</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Comme dans vos bons vieux mix, mélangez et re-mélangez des sources variées du Web pour augmenter le plaisir de votre librairie musicale. Calibré pour votre bien-être.</em:description>
+        <em:translator>Goofy</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>fr</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Comme dans vos bons vieux mix, mélangez et re-mélangez des sources variées du Web pour augmenter le plaisir de votre librairie musicale. Calibré pour votre bien-être.</em:description>
+        <em:translator>Goofy</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>he-IL</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>כמו הטייפ האהוב מבית הספר הרחוק, מצא פרטים אודות השיר ממקורות שונים ברשת על מנת להגביר את ההנאה.</em:description>
+        <em:translator>yammesicka</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>he</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>כמו הטייפ האהוב מבית הספר הרחוק, מצא פרטים אודות השיר ממקורות שונים ברשת על מנת להגביר את ההנאה.</em:description>
+        <em:translator>yammesicka</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>hu-HU</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Mint a régi kedvenc iskolai magnókazetta mixed, keverve és vegyítve különböző internetes forrásokat jelennek meg az adatok a könyvtáradhoz ezzel is növelve az élvezetet. Felosztva a kényelemért.</em:description>
+        <em:translator>Hiromacu</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>hu</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Mint a régi kedvenc iskolai magnókazetta mixed, keverve és vegyítve különböző internetes forrásokat jelennek meg az adatok a könyvtáradhoz ezzel is növelve az élvezetet. Felosztva a kényelemért.</em:description>
+        <em:translator>Hiromacu</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>it-IT</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Funziona come le compilation musicali di una volta; fai un mix tra varie sorgenti web e componile per migliorare la tua library.</em:description>
+        <em:translator>sembee</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>it</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Funziona come le compilation musicali di una volta; fai un mix tra varie sorgenti web e componile per migliorare la tua library.</em:description>
+        <em:translator>sembee</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>ja-JP</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>お気に入りのオールドスクールなミックステープのように、ライブラリを楽しくするいろんな Web ソースをミックスしてマッシュアップします。快適なゴムです。</em:description>
+        <em:translator>drry</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>ja</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>お気に入りのオールドスクールなミックステープのように、ライブラリを楽しくするいろんな Web ソースをミックスしてマッシュアップします。快適なゴムです。</em:description>
+        <em:translator>drry</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>kw-GB</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Kepar hag yn termyn an songystyow miks gis koth, ty a yll kemyska pennfentynyow divers dhyworth an Gesrosweyth ha gwellhe dha lyverva yndella. Asennek rag dha blesour.</em:description>
+        <em:translator>pokorny</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>kw</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Kepar hag yn termyn an songystyow miks gis koth, ty a yll kemyska pennfentynyow divers dhyworth an Gesrosweyth ha gwellhe dha lyverva yndella. Asennek rag dha blesour.</em:description>
+        <em:translator>pokorny</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>nl-NL</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Zoals uw favoriete schoolmixbandje van vroeger; meng en verhaspel diverse webbronnen om het plezier in uw muziekbibliotheek te vergroten. Geribbeld voor meer comfort.</em:description>
+        <em:translator>markh</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>nl</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Zoals uw favoriete schoolmixbandje van vroeger meng en mix diverse webbronnen om het plezier in uw muziekbibliotheek te vergroten.</em:description>
+        <em:translator>markh</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>pl-PL</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Wykorzystaj rozmaite internetowe źródła, aby ulepszyć swoją bibliotekę.</em:description>
+        <em:translator>Waclaw Jacek</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>pl</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Wykorzystaj rozmaite internetowe źródła, aby ulepszyć swoją bibliotekę.</em:description>
+        <em:translator>Waclaw Jacek</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>pt-BR</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Tal como o antigamente misture mix tape, mix e mash up de várias fontes na web para a sua biblioteca.</em:description>
+        <em:translator>humbertosartini</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>pt-PT</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Como o seu antigo misturador ; mix e mash up de várias fontes na web para a sua biblioteca.</em:description>
+        <em:translator>humbertosartini</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>ru-RU</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Смешивайте различные веб-источники информации, дополняющие вашу медиатеку, чтобы получить ещё большее удовольствие от прослушивания музыки. Все сервисы в одном для ещё большего удобства.</em:description>
+        <em:translator>pankrusheff</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>ru</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Смешивайте различные веб-источники информации, дополняющие вашу медиатеку, чтобы получить ещё большее удовольствие от прослушивания музыки. Все сервисы в одном для ещё большего удобства.</em:description>
+        <em:translator>pankrusheff</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>sl-SI</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Tako kot priljubljene, stare, dobre kasete z mešanico glasbe lahko zmešate in spojite različne spletne vire, ki bogatijo vašo knjižnico. Za večji užitek.</em:description>
+        <em:translator>miles</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>sl</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Tako kot priljubljene, stare, dobre kasete z mešanico glasbe lahko zmešate in spojite različne spletne vire, ki bogatijo vašo knjižnico. Za večji užitek.</em:description>
+        <em:translator>miles</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>sr-RS</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Као вашa омиљенa миксета, миксујте и мешајте различите веб изворе за лепши угођај у  вашој музичкој библиотеци. Направљено за ваше задовољство.</em:description>
+        <em:translator>3kornepenal</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>sr</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Као вашa омиљенa миксета, миксујте и мешајте различите веб изворе за лепши угођај у  вашој музичкој библиотеци. Направљено за ваше задовољство.</em:description>
+        <em:translator>3kornepenal</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>sv-SE</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>Precis som ditt gamla blandband, mixa och blanda olika webkällor för ökad prestandard.</em:description>
+        <em:translator>Schwadegan</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>th-TH</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>เหมือนกับเทปรวมฮิตของคุณนั่นแหละ จะยำแหล่งข้อมูลจากเว็บเพื่อเพิ่มสีสันใส่ในตู้เพลงของคุณอย่างไรก็ได้ ขอให้สนุกนะ </em:description>
+        <em:translator>bpasu</em:translator>
+      </Description>
+    </em:localized>
+    <em:localized>
+      <Description>
+        <em:locale>th</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>เหมือนกับเทปรวมฮิตของคุณนั่นแหละ จะยำแหล่งข้อมูลจากเว็บเพื่อเพิ่มสีสันใส่ในตู้เพลงของคุณอย่างไรก็ได้ ขอให้สนุกนะ </em:description>
+        <em:translator>bpasu</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>zh-CN</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>包容了你最喜欢的老牌混合录音，组合和混合了各种网络资源为资源库添加乐趣。 祝健康！</em:description>
+        <em:translator>7MB</em:translator>
+      </Description>
+    </em:localized>
+
+    <em:localized>
+      <Description>
+        <em:locale>zh-TW</em:locale>
+        <em:name>@EXTENSION_NAME@</em:name>
+        <em:description>就像把 Old School 曲風的歌曲重新混音後大受好評一樣，將各種分散在網路中不同來源的資料混合後重新編排，就能大大的豐富媒體庫中的資料。</em:description>
+        <em:translator>josesun</em:translator>
+      </Description>
+    </em:localized>
+
+	</Description>
+</RDF>

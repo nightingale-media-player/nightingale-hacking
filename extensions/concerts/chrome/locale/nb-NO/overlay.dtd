@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Vi finner ut hvem som er på turné i nærheten av deg…">
+<!ENTITY concerts.changelocation "Endre sted">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Ingen konserter funnet for">
+<!ENTITY concerts.timeout.error "Enten er du ikke tilkoblet Internett, eller så fungerer ikke konsertdatabasen vår. Prøv på nytt om noen minutter.">
+<!ENTITY concerts.timeoutreport.error "Rapporter et problem">

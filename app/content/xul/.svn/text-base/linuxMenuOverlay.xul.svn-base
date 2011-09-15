@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%songbirdDTD;
+%charsetDTD;
+%browserDTD;
+]>
+
+<!-- This overlay is loaded on Linux only, via an "OS=Linux" flag in
+     songbird.manifest.  (see jar.mn.in) -->
+
+<overlay
+  id="linuxMenuOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+  <menubar id="main-menubar">
+    <menu id="edit-menu">
+      <menupopup id="menu_EditPopup">
+        <menuseparator/>
+        <menuitem id="menu_preferences"
+                  label="&menu.linux.preferences;"
+                  accesskey="&menu.linux.preferences.accesskey;"
+                  oncommand="openPreferences();"/>
+      </menupopup>
+    </menu>
+  </menubar>
+
+  <!-- XXXredfive this make ctrl-shift-z work but doens't block ctrl-y -->
+  <keyset id="mainKeyset">
+    <key id="redo-key" modifiers="accel,shift" key="&menu.edit.undo.key;" />
+  </keyset>
+
+</overlay>

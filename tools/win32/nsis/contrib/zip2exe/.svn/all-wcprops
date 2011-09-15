@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/3/trunk/tools/win32/nsis/contrib/zip2exe
+END
+Base.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/1/trunk/tools/win32/nsis/contrib/zip2exe/Base.nsh
+END
+Classic.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/1/trunk/tools/win32/nsis/contrib/zip2exe/Classic.nsh
+END
+Modern.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/1/trunk/tools/win32/nsis/contrib/zip2exe/Modern.nsh
+END

@@ -1,0 +1,128 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+* \file sbIFileMetadataService.idl
+* \brief Manages reading and writing metadata from media files.
+* \sa sbIMetadataHandler.idl
+*/
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface nsIStringEnumerator;
+interface sbIJobProgress;
+
+/**
+ * \interface sbIFileMetadataService
+ * \brief Manages reading and writing metadata to and from 
+ *        sbIMediaItem objects and media files
+ *
+ * Supports the creation of threaded read/write jobs for local media 
+ * (URIs beginning with file://), and timer driven read jobs for remote media.
+ *
+ * \example
+ *  var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+ *    .createInstance(Ci.nsIMutableArray);
+ *  mediaItemArray.appendElement(aItem, false);
+ *  var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+ *                          .getService(Ci.sbIFileMetadataService);
+ *  var job = metadataService.read(mediaItemArray);
+ * 
+ * \endcode 
+ */
+[scriptable, uuid(86a7f162-38d6-4b25-bc7e-2d28e625b28b)]
+interface sbIFileMetadataService : nsISupports
+{
+
+  /**
+   * \brief Start a processing job to read metadata from the
+   *        files associated with the given media items.
+   *
+   * Note that all the media items must be from the same library.
+   * This restriction is due to the fact that library batching can
+   * only be done on a per library basis.
+   *
+   * If called off of the main thread, will proxy to complete
+   * job startup.  Be aware that proxy events may be processed
+   * on the calling thread while waiting. Also note that the 
+   * sbIJobProgress token returned should NOT be accessed off 
+   * of the main thread.
+   *
+   * \param aMediaItemsArray An array filled with media items to be scanned.
+   * \return An interface for monitoring the status of the request
+   */
+  sbIJobProgress read(in nsIArray aMediaItemArray);
+  
+  /**
+   * \brief Start a processing job to write metadata from the
+   *        given media items back to their associated files.
+   *
+   * Note that all the media items must be from the same library.
+   * This restriction is due to the fact that library batching can
+   * only be done on a per library basis.
+   *
+   * Also note that if a property is found in a file but does not
+   * exist in the associated sbIMediaItem, it will be removed 
+   * from the file on write.
+   *
+   * Also note that for each item all the properties in the list
+   * of aRequiredProperties will be written even if they have not
+   * changed.
+   *
+   * If called off of the main thread, will proxy to complete
+   * job startup.  Be aware that proxy events may be processed
+   * on the calling thread while waiting. Also note that the 
+   * sbIJobProgress token returned should NOT be accessed off 
+   * of the main thread.
+   *
+   * \param aMediaItemsArray An array filled with media items to be scanned.
+   * \param aRequiredProperties A String Enumertor filled with property ids that
+   *        we wish to write.
+   * \return An interface for monitoring the status of the request
+   */
+  sbIJobProgress write(in nsIArray aMediaItemArray,
+                       in nsIStringEnumerator aRequiredProperties);
+
+  /**
+   * \brief Main Thread Processor Flag for restartProcessors.
+   */
+  const unsigned short MAIN_THREAD_PROCESSOR        = 1;
+  /**
+   * \brief Background Thread Processor Flag for restartProcessors.
+   */
+  const unsigned short BACKGROUND_THREAD_PROCESSOR  = 2;
+
+  /**
+   * \brief Restart the processors.
+   * \param aProcessorsToRestart Combination of desired flags 
+   *        (MAIN_THREAD_PROCESSOR and/or BACKGROUND_THREAD_PROCESSOR)
+   * \note If the requested processor is already running it will not be
+   *       restarted. Restart of the processors only works if the file
+   *       metadata service is currently running. If it is not running
+   *       this method will throw NS_ERROR_UNEXPECTED.
+   */
+  void restartProcessors(in unsigned short aProcessorsToRestart);
+};

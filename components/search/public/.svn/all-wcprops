@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/19340/trunk/components/search/public
+END
+sbISearchEngine.idl
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/19340/trunk/components/search/public/sbISearchEngine.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/19340/trunk/components/search/public/Makefile.in
+END

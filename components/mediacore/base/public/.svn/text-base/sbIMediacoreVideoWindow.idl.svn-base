@@ -1,0 +1,71 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsIDOMXULElement;
+interface sbIMediacoreChain;
+
+[scriptable, uuid(970e737c-fc22-4fb4-be64-42ac2db36d30)]
+interface sbIMediacoreVideoWindow : nsISupports
+{
+  /**
+   * \brief Video window fullscreen attribute
+   * 
+   * This attribute can be used to determine if the video window is
+   * currently in fullscreen mode. It can also be used to set the video
+   * window to fullscreen mode.
+   */
+  attribute boolean fullscreen;
+
+  /**
+   * \brief DOM XUL Element used as the video box.
+   *
+   * Setting this attribute will bind the video window to the box
+   * for the element. This means that the size of the actual video window
+   * will be determined by the size of the box of the element.
+   *
+   * If you ever hide or set the visibility on this element to false, you
+   * must send a resize event to it so that the underlying video window will
+   * redraw correctly. Otherwise, the behavior of the video is undefined.
+   *
+   * You can send this event from JavaScript using the following code:
+   *
+   * \code
+   * var resizeEvent = document.createEvent("UIEvents");
+   * resizeEvent.initUIEvent("resize", true, true, window, 1);
+   *
+   * var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+   *                    .getService(Components.interfaces.sbIMediacoreManager);
+   * mm.video.videoWindow.hidden = false;
+   * mm.video.videoWindow.dispatchEvent(resizeEvent);
+   * \endcode
+   *
+   * Implementors of the video window must respond to the following DOM events:
+   * 'unload', 'hide', 'resize'
+   */
+  attribute nsIDOMXULElement videoWindow;
+};

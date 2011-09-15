@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/installer
+END
+custom.properties
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/installer/custom.properties
+END
+mui.properties
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/installer/mui.properties
+END
+override.properties
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/locales/en-US/installer/override.properties
+END

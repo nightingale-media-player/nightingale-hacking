@@ -1,0 +1,85 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIStringMap;
+
+/**
+ * This interface is called by sbIiTunesXMLParser as it discoveres interesting
+ * pieces in the iTunes XML file. You implement this interface in order to 
+ * handle getting data from the iTunes XML file
+ */
+[scriptable, uuid(41d1c5e6-1dd2-11b2-8d39-ca540ae839c8)] 
+interface sbIiTunesXMLParserListener : nsISupports {
+  /**
+   * Called when the top level properties have been processed
+   * \param aProperties the collection of top level properties. These 
+   *        properties are read-only, QI'ing to sbIStringMapWritable is not
+   *        permitted. And the properties object should not be used beyond
+   *        this call.
+   */
+  void onTopLevelProperties(in sbIStringMap aProperties);
+  /**
+   * Called when a track has been processed
+   * \param aProperties the collection of properties for the track. These 
+   *        properties are read-only, QI'ing to sbIStringMapWritable is not
+   *        permitted. And the properties object should not be used beyond
+   *        this call.
+   */
+  void onTrack(in sbIStringMap aProperties);
+  /**
+   * Called when all the tracks have been read
+   */
+  void onTracksComplete();
+  /**
+   * Called when a playlist has been processed
+   * \param a Properties the collection of properties for the playlist
+   * \param aTrackIds is the list of track ID's for the playlist. These 
+   *        properties are read-only, QI'ing to sbIStringMapWritable is not
+   *        permitted. And the properties object should not be used beyond
+   *        this call.
+   */
+  void onPlaylist(in sbIStringMap aProperties, 
+                  [array, size_is(aTrackIdsCount)] in long aTrackIds,
+                  in unsigned long aTrackIdsCount);
+  /**
+   * Called when an error is encountered
+   * \param aErrorMessage Description of the error where it occured
+   * \@RETURN return true if processing should continue or false to stop
+   */
+  boolean onError(in AString aErrorMessage);
+  /**
+   * Called when all the playlists have been read
+   */
+  void onPlaylistsComplete();
+  /**
+   * Called for progress through the XML stream
+   */
+  void onProgress(in PRInt64 aBytesRead);
+};

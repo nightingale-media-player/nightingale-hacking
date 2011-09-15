@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/12654/trunk/tools/win32/nsis/plugins
+END
+Banner.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/Banner.dll
+END
+TypeLib.dll
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/TypeLib.dll
+END
+UAC.dll
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/12654/trunk/tools/win32/nsis/plugins/UAC.dll
+END
+LangDLL.dll
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/LangDLL.dll
+END
+nsProcess.dll
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/5478/trunk/tools/win32/nsis/plugins/nsProcess.dll
+END
+InstallOptions.dll
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/InstallOptions.dll
+END
+StartMenu.dll
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/StartMenu.dll
+END
+System.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/System.dll
+END
+version.dll
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/1377/trunk/tools/win32/nsis/plugins/version.dll
+END
+nsExec.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/nsExec.dll
+END
+AdvSplash.dll
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/AdvSplash.dll
+END
+ShellLink.dll
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/5478/trunk/tools/win32/nsis/plugins/ShellLink.dll
+END
+VPatch.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/VPatch.dll
+END
+Math.dll
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/Math.dll
+END
+Splash.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/Splash.dll
+END
+UserInfo.dll
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/UserInfo.dll
+END
+BgImage.dll
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/BgImage.dll
+END
+NSISdl.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/NSISdl.dll
+END
+Dialer.dll
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/5425/trunk/tools/win32/nsis/plugins/Dialer.dll
+END

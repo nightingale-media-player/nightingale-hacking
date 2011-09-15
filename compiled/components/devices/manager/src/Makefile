@@ -1,0 +1,115 @@
+#
+#=BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2011 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END SONGBIRD GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/components/devices/manager/src
+VPATH = /media/disk/Linux/makepkg/songbird/components/devices/manager/src \
+        /media/disk/Linux/makepkg/songbird/components/devices/base/src \
+        /media/disk/Linux/makepkg/songbird/components/moz/xpcom/src \
+
+include $(DEPTH)/build/autodefs.mk
+
+DYNAMIC_LIB = sbDeviceManager2
+
+CPP_SRCS = sbDeviceManagerModule.cpp \
+           sbDeviceManager.cpp \
+
+#TODO:XXX should get this from sbDeviceBase.lib
+# included from components/devices/base/src
+CPP_SRCS += sbBaseDeviceEventTarget.cpp \
+            sbDefaultBaseDeviceInfoRegistrar.cpp \
+            sbDeviceCompatibility.cpp \
+            sbDeviceContent.cpp \
+            sbDeviceEvent.cpp \
+            sbDeviceEventBeforeAddedData.cpp \
+            sbDeviceLibrary.cpp \
+            sbDeviceLibraryHelpers.cpp \
+            sbDeviceLibraryMediaSyncSettings.cpp \
+            sbDeviceLibrarySyncSettings.cpp \
+            $(NULL)
+            
+# included from components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
+            $(NULL)
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
+                     $(DEPTH)/components/devices/controller/public \
+                     $(DEPTH)/components/devices/manager/public \
+                     $(DEPTH)/components/devices/marshall/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
+                     $(DEPTH)/components/moz/prompter/public \
+                     $(DEPTH)/components/moz/temporaryfileservice/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/moz/threadservices/public \
+                     $(DEPTH)/components/moz/xpcom/public \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/devices/base/src \
+                     $(topsrcdir)/components/devices/device/src \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/library/localdatabase/src \
+                     $(topsrcdir)/components/moz/errorconsole/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(NULL)
+
+COMPONENTS_OBJDIR = $(SONGBIRD_OBJDIR)/components
+
+DYNAMIC_LIB_STATIC_IMPORTS = \
+ components/devices/device/src/sbDeviceCore \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/errorconsole/src/sbErrorConsole \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ components/watchfolder/utils/sbWatchFolderUtils \
+ components/moz/variant/src/static/sbMozVariantUtils \
+ $(NULL)
+
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
+#XXX Mook : Temporary hack pending bug 7150 (proper static lib)
+CPP_EXTRA_INCLUDES += $(topsrcdir)/components/include \
+                      $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            unicharutil_external_s \
+                            $(NULL)
+
+IS_COMPONENT = 1
+
+include $(topsrcdir)/build/rules.mk

@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/20928/trunk/components/integration/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/15618/trunk/components/integration/src/Makefile.in
+END
+WindowCloak.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/17447/trunk/components/integration/src/WindowCloak.cpp
+END
+sbHotkeyActions.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/15919/trunk/components/integration/src/sbHotkeyActions.js
+END
+sbNativeWindowManagerCID.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/7928/trunk/components/integration/src/sbNativeWindowManagerCID.h
+END
+IntegrationComponent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/19291/trunk/components/integration/src/IntegrationComponent.cpp
+END
+WindowCloak.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/15618/trunk/components/integration/src/WindowCloak.h
+END
+sbBaseScreenSaverSuppressor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15554/trunk/components/integration/src/sbBaseScreenSaverSuppressor.cpp
+END
+sbGlobalHotkeys.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/19224/trunk/components/integration/src/sbGlobalHotkeys.js
+END
+NativeWindowFromNode.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/15618/trunk/components/integration/src/NativeWindowFromNode.cpp
+END
+sbBaseScreenSaverSuppressor.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/15578/trunk/components/integration/src/sbBaseScreenSaverSuppressor.h
+END
+NativeWindowFromNode.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7928/trunk/components/integration/src/NativeWindowFromNode.h
+END

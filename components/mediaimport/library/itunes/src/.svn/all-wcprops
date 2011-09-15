@@ -1,0 +1,107 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/21506/trunk/components/mediaimport/library/itunes/src
+END
+sbiTunesXMLParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/13583/trunk/components/mediaimport/library/itunes/src/sbiTunesXMLParser.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/20436/trunk/components/mediaimport/library/itunes/src/Makefile.in
+END
+sbiTunesImporterComponent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/13542/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterComponent.cpp
+END
+sbiTunesImporterJob.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/20436/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterJob.cpp
+END
+sbiTunesImporterAlbumArtListener.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/13468/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterAlbumArtListener.cpp
+END
+sbiTunesImporter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/21506/trunk/components/mediaimport/library/itunes/src/sbiTunesImporter.cpp
+END
+sbiTunesImporterJob.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/13468/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterJob.h
+END
+sbiTunesSignature.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/13886/trunk/components/mediaimport/library/itunes/src/sbiTunesSignature.cpp
+END
+sbiTunesImporterAlbumArtListener.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/client/!svn/ver/13468/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterAlbumArtListener.h
+END
+sbiTunesImporterStatus.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/20892/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterStatus.cpp
+END
+sbiTunesImporter.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/19889/trunk/components/mediaimport/library/itunes/src/sbiTunesImporter.h
+END
+sbiTunesSignature.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/13681/trunk/components/mediaimport/library/itunes/src/sbiTunesSignature.h
+END
+sbiTunesDatabaseServices.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/13886/trunk/components/mediaimport/library/itunes/src/sbiTunesDatabaseServices.cpp
+END
+sbiTunesImporterStatus.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/13583/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterStatus.h
+END
+sbiTunesDatabaseServices.h
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/13681/trunk/components/mediaimport/library/itunes/src/sbiTunesDatabaseServices.h
+END
+sbiTunesXMLParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/20436/trunk/components/mediaimport/library/itunes/src/sbiTunesXMLParser.cpp
+END
+sbiTunesImporterCommon.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/20892/trunk/components/mediaimport/library/itunes/src/sbiTunesImporterCommon.h
+END

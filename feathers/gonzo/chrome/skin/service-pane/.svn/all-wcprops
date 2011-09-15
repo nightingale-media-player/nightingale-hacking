@@ -1,0 +1,191 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/20839/trunk/feathers/gonzo/chrome/skin/service-pane
+END
+icon-video.png
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/17717/trunk/feathers/gonzo/chrome/skin/service-pane/icon-video.png
+END
+cd_ripping.gif
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/14598/trunk/feathers/gonzo/chrome/skin/service-pane/cd_ripping.gif
+END
+icon-folder.png
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/10601/trunk/feathers/gonzo/chrome/skin/service-pane/icon-folder.png
+END
+twisty.png
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/10594/trunk/feathers/gonzo/chrome/skin/service-pane/twisty.png
+END
+cd_rest.gif
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/14598/trunk/feathers/gonzo/chrome/skin/service-pane/cd_rest.gif
+END
+cd_successful.gif
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/14598/trunk/feathers/gonzo/chrome/skin/service-pane/cd_successful.gif
+END
+icon-busy.png
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/10141/trunk/feathers/gonzo/chrome/skin/service-pane/icon-busy.png
+END
+icon-folder-closed.png
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/10601/trunk/feathers/gonzo/chrome/skin/service-pane/icon-folder-closed.png
+END
+cd_unsuccessful.gif
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/14598/trunk/feathers/gonzo/chrome/skin/service-pane/cd_unsuccessful.gif
+END
+icon-playlistdeviceonly.png
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/20839/trunk/feathers/gonzo/chrome/skin/service-pane/icon-playlistdeviceonly.png
+END
+icon-subscription.png
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/10024/trunk/feathers/gonzo/chrome/skin/service-pane/icon-subscription.png
+END
+icon-birdhouse.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/9999/trunk/feathers/gonzo/chrome/skin/service-pane/icon-birdhouse.png
+END
+icon-web-media-history.png
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/10601/trunk/feathers/gonzo/chrome/skin/service-pane/icon-web-media-history.png
+END
+icon-ipod.png
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/9923/trunk/feathers/gonzo/chrome/skin/service-pane/icon-ipod.png
+END
+icon-concert.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/10679/trunk/feathers/gonzo/chrome/skin/service-pane/icon-concert.png
+END
+button-new-node.png
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/9999/trunk/feathers/gonzo/chrome/skin/service-pane/button-new-node.png
+END
+icon-playlist.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10024/trunk/feathers/gonzo/chrome/skin/service-pane/icon-playlist.png
+END
+bg-container-node.png
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/9828/trunk/feathers/gonzo/chrome/skin/service-pane/bg-container-node.png
+END
+icon-smartplaylist.png
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/10024/trunk/feathers/gonzo/chrome/skin/service-pane/icon-smartplaylist.png
+END
+bg-selected-node.png
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/9862/trunk/feathers/gonzo/chrome/skin/service-pane/bg-selected-node.png
+END
+bg-service-pane.png
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/9862/trunk/feathers/gonzo/chrome/skin/service-pane/bg-service-pane.png
+END
+button-service-pane-toggle.png
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/11266/trunk/feathers/gonzo/chrome/skin/service-pane/button-service-pane-toggle.png
+END
+icon-favoritesplaylist.png
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/10190/trunk/feathers/gonzo/chrome/skin/service-pane/icon-favoritesplaylist.png
+END
+bg-status-bar.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10186/trunk/feathers/gonzo/chrome/skin/service-pane/bg-status-bar.png
+END
+icon-downloads.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/9923/trunk/feathers/gonzo/chrome/skin/service-pane/icon-downloads.png
+END
+icon-downloads-progress.png
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/9923/trunk/feathers/gonzo/chrome/skin/service-pane/icon-downloads-progress.png
+END
+icon-podcast.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/14521/trunk/feathers/gonzo/chrome/skin/service-pane/icon-podcast.png
+END
+icon-device.png
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/9923/trunk/feathers/gonzo/chrome/skin/service-pane/icon-device.png
+END
+read-only.png
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/17717/trunk/feathers/gonzo/chrome/skin/service-pane/read-only.png
+END
+icon-library.png
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/9923/trunk/feathers/gonzo/chrome/skin/service-pane/icon-library.png
+END
+icon-bookmark.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10024/trunk/feathers/gonzo/chrome/skin/service-pane/icon-bookmark.png
+END

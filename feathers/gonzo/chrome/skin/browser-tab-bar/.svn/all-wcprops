@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/10601/trunk/feathers/gonzo/chrome/skin/browser-tab-bar
+END
+bg-tab.png
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/10594/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-tab.png
+END
+icon-scroll-left.png
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/10141/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/icon-scroll-left.png
+END
+bg-tab-bar.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/9999/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-tab-bar.png
+END
+button-close.png
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/10141/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/button-close.png
+END
+bg-selected-media-tab.png
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/10601/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-selected-media-tab.png
+END
+icon-scroll-right.png
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/10141/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/icon-scroll-right.png
+END
+bg-selected-tab.png
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/10594/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-selected-tab.png
+END
+bg-scroll.png
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/10594/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-scroll.png
+END
+icon-drop-indicator.png
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/10073/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/icon-drop-indicator.png
+END
+bg-tab-delimiter.png
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/9999/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-tab-delimiter.png
+END
+bg-media-tab.png
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/10594/trunk/feathers/gonzo/chrome/skin/browser-tab-bar/bg-media-tab.png
+END

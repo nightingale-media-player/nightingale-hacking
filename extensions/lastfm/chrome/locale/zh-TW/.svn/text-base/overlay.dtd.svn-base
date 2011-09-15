@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "登入到 Last.fm...">
+<!ENTITY lastfm.menu.logout "登出 Last.fm">
+<!ENTITY lastfm.menu.enable "啟用「歌曲記錄」">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "登入">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "註冊 Last.fm">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "登入中...">
+<!ENTITY lastfm.cancel.button "取消">
+<!ENTITY lastfm.profile.caption "個人檔案">
+<!ENTITY lastfm.profile.scrobble "記錄我的歌曲">
+<!ENTITY lastfm.profile.logout "登出">
+<!ENTITY lastfm.radio "Last.fm 電台">
+<!ENTITY lastfm.radio.login.help "為了收聽 Last.fm 電台，你必須先登入 Last.fm。若你還沒有 Last.fm 帳號，可以立即註冊。">
+<!ENTITY lastfm.radio.start "不知道從何聽起？除了搜尋電台之外，也可以看看其他人在聽些什麼。">
+<!ENTITY lastfm.radio.start.top.artists "Last.fm 演出者排行榜">
+<!ENTITY lastfm.radio.start.top.tags "Last.fm 標籤排行榜">
+<!ENTITY lastfm.radio.register "註冊">
+<!ENTITY lastfm.radio.subscriber.button "訂閱">
+<!ENTITY lastfm.radio.subscriber.help "你必須先訂閱才能收聽 Last.fm 電台。">
+<!ENTITY lastfm.radio.search "搜尋">
+<!ENTITY lastfm.radio.library "音樂庫">
+<!ENTITY lastfm.radio.loved "喜愛曲目">
+<!ENTITY lastfm.radio.neighbourhood "鄰居">
+<!ENTITY lastfm.radio.recommended "推薦">
+<!ENTITY lastfm.radio.user_stations "使用者電台">
+<!ENTITY lastfm.radio.recent_stations "最近收聽的電台">
+<!ENTITY lastfm.radio.from.lastfm "來自 Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "推薦的演出者">
+<!ENTITY lastfm.radio.top_artists "你的演出者排行榜">
+<!ENTITY lastfm.radio.top_tags "你的標籤排行榜">
+<!ENTITY lastfm.radio.friends "你的朋友">
+<!ENTITY lastfm.radio.neighbours "鄰居">
+<!ENTITY lastfm.radio.from.songbird "來自 Songbird">
+<!ENTITY lastfm.radio.most_played_artists "你的最常播放演出者">
+<!ENTITY lastfm.radio.highest_rated_artists "你的最高評價演出者">
+<!ENTITY lastfm.radio.popular_genres "你的熱門曲風">
+<!ENTITY lastfm.radio.play "播放">
+<!ENTITY lastfm.tags.enter_new "請輸入新標籤 (以逗號分隔)">
+<!ENTITY lastfm.tags.add_fail "加入標籤失敗！">
+<!ENTITY lastfm.tags.user "你的標籤:">
+<!ENTITY lastfm.tags.global "Last.fm 全域標籤:">

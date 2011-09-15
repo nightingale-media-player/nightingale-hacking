@@ -1,0 +1,39 @@
+body {
+	margin: 0;
+	padding: 1em;
+}
+
+img.favicon {
+	float: left;
+	height: 16px;
+	width: 16px;
+}
+
+div#caption {
+	padding-left: 20px;
+}
+h4 {
+	margin: 0;
+	padding: 0
+}
+
+div#content,
+div#read-more,
+div#write-review {
+	padding-top: 1em;
+	padding-left: 20px;
+}
+
+.time {
+	color: rgba(255,255,255,0.55);
+  font-style: italic;
+	padding-left: 1em;
+}
+
+div#loading {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	text-align: center;
+}

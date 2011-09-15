@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/client/!svn/ver/18578/trunk/components/dataremote
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/13373/trunk/components/dataremote/Makefile.in
+END
+dataremote.vcbuild
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/2484/trunk/components/dataremote/dataremote.vcbuild
+END

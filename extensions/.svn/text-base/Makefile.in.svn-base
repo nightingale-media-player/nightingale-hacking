@@ -1,0 +1,85 @@
+#
+#=BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2009 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END SONGBIRD GPL
+#
+
+DEPTH = ..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+DEFAULT_EXTENSIONS = AlbumArt \
+                     concerts \
+                     xpcom_helloworld \
+                     $(NULL)
+
+# The ipod extension should build out-of-the-box on Linux and Mac, but needs
+# the DDK on Windows; this is a new build requirement, so to make it so
+# all the contributors' builds don't break, don't build ipod on Win32
+# by default; there's some configure.ac goo that goes with this to ensure
+# we have the right header files here...
+
+# Also, for now, disable the iPod in nightly and release builds.
+ifeq (,$(SONGBIRD_OFFICIAL)$(SONGBIRD_NIGHTLY))
+   ifeq (windows,$(SB_PLATFORM))
+      ifeq (1,$(HAS_EXTRAS))
+         DEFAULT_EXTENSIONS += ipod
+      endif
+   else
+      DEFAULT_EXTENSIONS += ipod
+   endif
+endif
+
+# AlbumArt is not on the list because it's used internally by the bird, so
+# we need to build it regardless of platform
+NOARCH_EXTENSIONS = 7digital \
+                    albumartlastfm \
+                    lastfm \
+                    mashTape \
+                    newreleases \
+                    qatesttools \
+                    shoutcast \
+                    $(NULL)
+
+# Right now, all of these addons are so-called "noarch" addons; because
+# of this, we only want to build them on one platform if we're an official
+# build; we're using Linux now (see bug 13477#6)
+ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
+   DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
+else
+   ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
+      DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
+   endif
+endif
+
+# XXX Mook: NOT installed by default yet, this shouldn't go anywhere,
+# just a build check
+ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
+   DEFAULT_EXTENSIONS += systray
+endif
+
+SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
+          $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
+
+include $(topsrcdir)/build/rules.mk

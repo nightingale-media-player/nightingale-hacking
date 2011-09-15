@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/client/!svn/ver/21423/trunk/feathers/purplerain
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/19291/trunk/feathers/purplerain/Makefile.in
+END
+chrome.manifest
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome.manifest
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/20067/trunk/feathers/purplerain/install.rdf.in
+END

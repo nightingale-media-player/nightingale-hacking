@@ -1,0 +1,413 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/21549/trunk/components/remoteapi/src
+END
+sbRemoteIndexedMediaItem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteIndexedMediaItem.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/20440/trunk/components/remoteapi/src/Makefile.in
+END
+sbRemoteSiteMediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/19472/trunk/components/remoteapi/src/sbRemoteSiteMediaList.cpp
+END
+sbRemotePlayer.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/18577/trunk/components/remoteapi/src/sbRemotePlayer.h
+END
+sbRemoteSiteLibraryResource.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/9644/trunk/components/remoteapi/src/sbRemoteSiteLibraryResource.cpp
+END
+sbRemotePlaylistClickEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/18793/trunk/components/remoteapi/src/sbRemotePlaylistClickEvent.cpp
+END
+sbRemoteWebMediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19472/trunk/components/remoteapi/src/sbRemoteWebMediaList.cpp
+END
+sbRemoteForwardingMacros.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/9147/trunk/components/remoteapi/src/sbRemoteForwardingMacros.h
+END
+sbRemoteMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteMediaList.h
+END
+sbRemoteLibraryResource.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteLibraryResource.h
+END
+sbScriptableFilterResult.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbScriptableFilterResult.cpp
+END
+sbRemoteNotificationManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/7764/trunk/components/remoteapi/src/sbRemoteNotificationManager.h
+END
+sbRemoteSiteLibrary.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteSiteLibrary.cpp
+END
+sbRemotePlayer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20440/trunk/components/remoteapi/src/sbRemotePlayer.cpp
+END
+sbRemoteLibraryBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20445/trunk/components/remoteapi/src/sbRemoteLibraryBase.cpp
+END
+sbRemoteWebPlaylist.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/13369/trunk/components/remoteapi/src/sbRemoteWebPlaylist.cpp
+END
+sbRemoteWrappingSimpleEnumerator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWrappingSimpleEnumerator.cpp
+END
+sbRemoteMediaItem.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteMediaItem.h
+END
+sbRemoteIndexedMediaItem.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteIndexedMediaItem.h
+END
+sbRemoteSiteLibraryResource.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteSiteLibraryResource.h
+END
+sbRemoteSecurityEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/18793/trunk/components/remoteapi/src/sbRemoteSecurityEvent.cpp
+END
+sbRemoteLibrary.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteLibrary.h
+END
+sbRemoteMediaListBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/21549/trunk/components/remoteapi/src/sbRemoteMediaListBase.h
+END
+sbRemoteLibraryResource.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/19244/trunk/components/remoteapi/src/sbRemoteLibraryResource.cpp
+END
+sbURIChecker.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbURIChecker.h
+END
+sbRemoteWebMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWebMediaList.h
+END
+sbRemotePlaylistClickEvent.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/18793/trunk/components/remoteapi/src/sbRemotePlaylistClickEvent.h
+END
+sbRemoteAPIModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/7706/trunk/components/remoteapi/src/sbRemoteAPIModule.cpp
+END
+sbRemoteWrappingStringEnumerator.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWrappingStringEnumerator.h
+END
+sbScriptableFilterResult.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbScriptableFilterResult.h
+END
+sbScriptableFunction.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7859/trunk/components/remoteapi/src/sbScriptableFunction.h
+END
+sbRemotePlayerFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemotePlayerFactory.h
+END
+sbScriptableFilterItems.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbScriptableFilterItems.h
+END
+sbXPCScriptableStub.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/15586/trunk/components/remoteapi/src/sbXPCScriptableStub.h
+END
+sbRemoteMediaItem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/19472/trunk/components/remoteapi/src/sbRemoteMediaItem.cpp
+END
+sbRemoteSiteLibrary.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteSiteLibrary.h
+END
+sbRemoteAPIService.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteAPIService.h
+END
+sbRemoteAPIUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20440/trunk/components/remoteapi/src/sbRemoteAPIUtils.h
+END
+sbRemoteCommands.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20278/trunk/components/remoteapi/src/sbRemoteCommands.cpp
+END
+sbRemoteWebMediaItem.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWebMediaItem.h
+END
+sbRemoteLibrary.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/13266/trunk/components/remoteapi/src/sbRemoteLibrary.cpp
+END
+sbRemoteLibraryBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20440/trunk/components/remoteapi/src/sbRemoteLibraryBase.h
+END
+sbRemoteWebPlaylist.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/8031/trunk/components/remoteapi/src/sbRemoteWebPlaylist.h
+END
+sbSecurityMixin.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbSecurityMixin.h
+END
+sbRemoteMediaListBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/21549/trunk/components/remoteapi/src/sbRemoteMediaListBase.cpp
+END
+sbRemoteWebLibrary.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWebLibrary.h
+END
+sbURIChecker.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbURIChecker.cpp
+END
+sbRemoteWrappingSimpleEnumerator.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWrappingSimpleEnumerator.h
+END
+sbRemoteMediaItemStatusEvent.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/18793/trunk/components/remoteapi/src/sbRemoteMediaItemStatusEvent.h
+END
+sbRemoteAPI.h
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteAPI.h
+END
+sbRemoteSecurityEvent.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/18793/trunk/components/remoteapi/src/sbRemoteSecurityEvent.h
+END
+sbRemoteWrappingStringEnumerator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWrappingStringEnumerator.cpp
+END
+sbScriptableFunction.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/8019/trunk/components/remoteapi/src/sbScriptableFunction.cpp
+END
+sbRemoteSiteMediaItem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/19472/trunk/components/remoteapi/src/sbRemoteSiteMediaItem.cpp
+END
+sbRemotePlayerFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemotePlayerFactory.cpp
+END
+sbScriptableFilterItems.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/20440/trunk/components/remoteapi/src/sbScriptableFilterItems.cpp
+END
+sbScriptableFilter.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbScriptableFilter.h
+END
+sbRemoteAPIService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteAPIService.cpp
+END
+sbRemoteWebMediaItem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19472/trunk/components/remoteapi/src/sbRemoteWebMediaItem.cpp
+END
+sbSecurityMixin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/18607/trunk/components/remoteapi/src/sbSecurityMixin.cpp
+END
+sbRemoteWebLibrary.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteWebLibrary.cpp
+END
+sbRemoteMediaItemStatusEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18793/trunk/components/remoteapi/src/sbRemoteMediaItemStatusEvent.cpp
+END
+sbRemoteSiteMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteSiteMediaList.h
+END
+sbRemoteCommands.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteCommands.h
+END
+sbRemoteMediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/19472/trunk/components/remoteapi/src/sbRemoteMediaList.cpp
+END
+sbRemoteNotificationManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/8513/trunk/components/remoteapi/src/sbRemoteNotificationManager.cpp
+END
+sbScriptableFilter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7859/trunk/components/remoteapi/src/sbScriptableFilter.cpp
+END
+sbRemoteSiteMediaItem.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/remoteapi/src/sbRemoteSiteMediaItem.h
+END

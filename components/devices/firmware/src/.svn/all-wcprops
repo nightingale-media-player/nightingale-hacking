@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/21696/trunk/components/devices/firmware/src
+END
+sbDeviceFirmwareSupport.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/17674/trunk/components/devices/firmware/src/sbDeviceFirmwareSupport.cpp
+END
+sbBaseDeviceFirmwareHandler.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/21696/trunk/components/devices/firmware/src/sbBaseDeviceFirmwareHandler.h
+END
+sbDeviceFirmwareDownloader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/19470/trunk/components/devices/firmware/src/sbDeviceFirmwareDownloader.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20441/trunk/components/devices/firmware/src/Makefile.in
+END
+sbDeviceFirmwareSupport.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/17674/trunk/components/devices/firmware/src/sbDeviceFirmwareSupport.h
+END
+sbDeviceFirmwareUpdate.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17674/trunk/components/devices/firmware/src/sbDeviceFirmwareUpdate.cpp
+END
+sbDeviceFirmwareDownloader.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/18104/trunk/components/devices/firmware/src/sbDeviceFirmwareDownloader.h
+END
+sbDeviceFirmwareUpdater.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/21696/trunk/components/devices/firmware/src/sbDeviceFirmwareUpdater.cpp
+END
+sbDeviceFirmwareModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17674/trunk/components/devices/firmware/src/sbDeviceFirmwareModule.cpp
+END
+sbDeviceFirmwareUpdate.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17674/trunk/components/devices/firmware/src/sbDeviceFirmwareUpdate.h
+END
+sbBaseDeviceFirmwareHandler.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/21696/trunk/components/devices/firmware/src/sbBaseDeviceFirmwareHandler.cpp
+END
+sbDeviceFirmwareUpdater.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18072/trunk/components/devices/firmware/src/sbDeviceFirmwareUpdater.h
+END
+sbDeviceFirmwareAutoCheckForUpdate.js
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/18952/trunk/components/devices/firmware/src/sbDeviceFirmwareAutoCheckForUpdate.js
+END

@@ -1,0 +1,224 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<html>
+  <head>
+  <script>
+// Test all the properties and methods of a remote media list.  Use simple
+// tests to test that things that should be acessible, and try/catch blocks
+// around the things that should not.
+const SB_NS = "http://songbirdnest.com/data/1.0#";
+function runTest(tester) {
+  try {
+
+    var library = songbird.siteLibrary;
+    var list = library.createSimpleMediaList("testRemoteMediaList1");
+
+    // Test sbILibrarResource
+    tester.assertTrue(list.created > 0);
+    tester.assertTrue(list.updated > 0);
+
+    list.setProperty(SB_NS + "artistName", "foo");
+    tester.assertEqual(list.getProperty(SB_NS + "artistName"), "foo");
+
+    tester.assertTrue(list.equals(list));
+
+    // Test sbIMediaItem
+    tester.assertEqual(list.isMutable, true);
+    tester.assertTrue(list.mediaCreated > 0);
+    tester.assertTrue(list.mediaUpdated > 0);
+
+    try {
+      list.contentLength = 123;
+      tester.fail("did not throw: contentLength");
+    }
+    catch(e) {}
+
+    try {
+      list.contentType = "text/html";
+      tester.fail("did not throw: contentType");
+    }
+    catch(e) {}
+
+    try {
+      var junk = list.library;
+      tester.fail("did not throw: library");
+    }
+    catch(e) {}
+
+    try {
+      var junk = list.contentSrc;
+      tester.fail("did not throw: contentSrc");
+    }
+    catch(e) {}
+
+    try {
+      list.testIsURIAvailable(null);
+      tester.fail("did not throw: testIsURIAvailable");
+    }
+    catch(e) {}
+
+    try {
+      list.openInputStreamAsync(null, null);
+      tester.fail("did not throw: openInputStreamAsync");
+    }
+    catch(e) {}
+
+    try {
+      list.openInputStream();
+      tester.fail("did not throw: openInputStream");
+    }
+    catch(e) {}
+
+    try {
+      list.openOutputStream();
+      tester.fail("did not throw: openOutputStream");
+    }
+    catch(e) {}
+
+    try {
+      list.toString();
+      tester.fail("did not throw: toString");
+    }
+    catch(e) {}
+
+    // Test sbIMediaList
+    list.name = "testname";
+    tester.assertEqual(list.name, "testname");
+    tester.assertEqual(list.type, "simple");
+    tester.assertEqual(list.length, 0);
+
+    var url = "http://www.example.com/foo.mp3";
+    var item = library.createMediaItem(url);
+    list.add(item);
+    tester.assertEqual(list.length, 1);
+
+    tester.assertTrue(list.getItemByGuid(item.guid).equals(item));
+    tester.assertTrue(list.getItemByIndex(0).equals(item));
+
+    var e = list.getDistinctValuesForProperty(SB_NS + "contentURL");
+    tester.assertTrue(e.hasMore());
+    tester.assertTrue(e.getNext() == url);
+    tester.assertFalse(e.hasMore());
+
+    var listener = {
+      _item: null,
+      onEnumerationBegin: function() {
+      },
+      onEnumeratedItem: function(list, item) {
+        this._item = item;
+        return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+      },
+      onEnumerationEnd: function() {
+      }
+    };
+
+    list.enumerateAllItems(listener, 1);
+    tester.assertTrue(listener._item.equals(item));
+
+    list.enumerateItemsByProperty(SB_NS + "contentURL", url, listener, 1);
+    tester.assertTrue(listener._item.equals(item));
+
+    tester.assertEqual(list.indexOf(item, 0), 0);
+    tester.assertEqual(list.lastIndexOf(item, 0), 0);
+    tester.assertTrue(list.contains(item));
+
+    var list2 = library.createSimpleMediaList("testRemoteMediaList2");
+    list2.addAll(list);
+    tester.assertEqual(list2.length, 1);
+
+    list2.remove(item);
+    tester.assertEqual(list2.length, 0);
+
+    list.removeByIndex(0);
+    tester.assertEqual(list.length, 0);
+
+    list.clear();
+    tester.assertEqual(list.length, 0);
+
+    try {
+      list.enumerateItemsByProperties(null, null, 0);
+      tester.fail("did not throw: enumerateItemsByProperties");
+    }
+    catch(e) {}
+
+    try {
+      list.addSome(null);
+      tester.fail("did not throw: addSome");
+    }
+    catch(e) {}
+
+    try {
+      list.removeSome(null);
+      tester.fail("did not throw: removeSome");
+    }
+    catch(e) {}
+
+    try {
+      list.addListener(null);
+      tester.fail("did not throw: addListener");
+    }
+    catch(e) {}
+
+    try {
+      list.removeListener(null);
+      tester.fail("did not throw: removeListener");
+    }
+    catch(e) {}
+
+    try {
+      list.createView();
+      tester.fail("did not throw: createView");
+    }
+    catch(e) {}
+
+    try {
+      list.beginUpdateBatch();
+      tester.fail("did not throw: beginUpdateBatch");
+    }
+    catch(e) {}
+
+    try {
+      list.endUpdateBatch();
+      tester.fail("did not throw: endUpdateBatch");
+    }
+    catch(e) {}
+  }
+  catch(e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_remotemedialist_page.html</body>
+</html>

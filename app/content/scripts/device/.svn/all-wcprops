@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/21696/trunk/app/content/scripts/device
+END
+deviceInfo.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/19847/trunk/app/content/scripts/device/deviceInfo.js
+END
+deviceCapacity.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/19170/trunk/app/content/scripts/device/deviceCapacity.js
+END
+deviceFirmwareWizard.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/21696/trunk/app/content/scripts/device/deviceFirmwareWizard.js
+END
+deviceGeneralSettings.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/18958/trunk/app/content/scripts/device/deviceGeneralSettings.js
+END
+deviceTranscodeSettings.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/20287/trunk/app/content/scripts/device/deviceTranscodeSettings.js
+END
+deviceProgress.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/21450/trunk/app/content/scripts/device/deviceProgress.js
+END
+deviceVolumeSelector.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/19170/trunk/app/content/scripts/device/deviceVolumeSelector.js
+END
+deviceInfoPanel.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/21037/trunk/app/content/scripts/device/deviceInfoPanel.js
+END
+deviceMediaManagement.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/21170/trunk/app/content/scripts/device/deviceMediaManagement.js
+END
+deviceSupport.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20589/trunk/app/content/scripts/device/deviceSupport.js
+END
+deviceSync.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/21667/trunk/app/content/scripts/device/deviceSync.js
+END
+deviceCapacityPanel.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/18515/trunk/app/content/scripts/device/deviceCapacityPanel.js
+END
+multiCDLookupResultsDialog.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19398/trunk/app/content/scripts/device/multiCDLookupResultsDialog.js
+END
+deviceMgmtTabs.js
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/18816/trunk/app/content/scripts/device/deviceMgmtTabs.js
+END
+deviceSummarySettings.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/18958/trunk/app/content/scripts/device/deviceSummarySettings.js
+END
+deviceControl.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20810/trunk/app/content/scripts/device/deviceControl.js
+END

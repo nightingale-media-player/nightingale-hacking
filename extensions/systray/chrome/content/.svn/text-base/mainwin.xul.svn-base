@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- vim: set fileencoding=utf-8 shiftwidth=2 : -->
+<?xml-stylesheet href="chrome://systray/content/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://systray/skin/mainwin.css" type="text/css"?>
+<!DOCTYPE window [
+    <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+    %brandDTD;
+    <!ENTITY % systrayDTD SYSTEM "chrome://systray/locale/mainwin.dtd">
+    %systrayDTD;
+]>
+<overlay id="overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <!-- Since there's a total lack of id= attributes, we have to do things
+       from script.  See also http://www.songbirdnest.com/xbl-overlays -->
+  <script type="application/javascript"
+          src="chrome://systray/content/mainwin.js"/>
+  <popupset id="mainPopupSet">
+    <menupopup id="trayicon-mainwin-popup">
+      <!-- expect these to break... just like everywhere else.
+           yay songbird.  -->
+      <menuitem label="&playpause.label;"
+                oncommand="doMenu('menuitem_control_play')"/>
+      <menuitem id="trayicon-mainwin-menuitem-stop" label="&stop.label;"
+                oncommand="doMenu('menuitem_control_stop')"/>
+      <menuseparator/>
+      <menuitem label="&previous.label;"
+                oncommand="doMenu('menuitem_control_prev')"/>
+      <menuitem label="&next.label;"
+                oncommand="doMenu('menuitem_control_next')"/>
+      <menuseparator/>
+      <menuitem label="&restore.label;"
+                oncommand="systray.restore()"/>
+      <menuitem label="&quit.label;"
+                oncommand="doMenu('menu_FileQuitItem')"/>
+    </menupopup>
+  </popupset>
+  <window id="mainplayer">
+    <trayicon id="trayicon-mainwin" contextmenu="trayicon-mainwin-popup"
+              title="&brandShortName;"
+              image="chrome://songbird-branding/skin/logo_16.png"/>
+  </window>
+</overlay>

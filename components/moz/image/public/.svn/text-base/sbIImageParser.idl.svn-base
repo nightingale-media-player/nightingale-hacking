@@ -1,0 +1,53 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+#include "nsIURI.idl"
+#include "nsILocalFile.idl"
+
+/**
+ * \interface sbIImageParser
+ *
+ * Provides a set of utility routines for parsing various image formats.
+ *
+ * "@songbirdnest.com/Songbird/ImageParser;1"
+ * Use getService with this component.
+ */
+
+[scriptable, uuid(510785b8-1dd2-11b2-8bd0-d9416eff4e0c)]
+interface sbIImageParser : nsISupports
+{
+  /**
+   * Given an nsILocalFile pointing to the .ico file, and a given size,
+   * return the base64 encoded data representing the actual icon file itself.
+   *
+   * \param aICOFile    The .ICO file to parse
+   * \param aSize       The resolution of the frame to return (16, 32, 64, etc.)
+   */
+  AString getICOBySize(in nsILocalFile aICOFile, in PRUint32 aSize);
+};
+
+%{C++
+#define SONGBIRD_IMAGEPARSER_CONTRACTID "@songbirdnest.com/Songbird/ImageParser;1"
+%}C++

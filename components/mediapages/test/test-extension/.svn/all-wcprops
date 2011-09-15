@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/18944/trunk/components/mediapages/test/test-extension
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/15575/trunk/components/mediapages/test/test-extension/Makefile.in
+END
+extension-config.mk
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/18944/trunk/components/mediapages/test/test-extension/extension-config.mk
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/15696/trunk/components/mediapages/test/test-extension/install.rdf.in
+END

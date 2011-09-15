@@ -1,0 +1,224 @@
+/*
+ *
+ *=BEGIN SONGBIRD LICENSE
+ *
+ * Copyright(c) 2009-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact POTI, Inc. at customer@songbirdnest.com.
+ *
+ *=END SONGBIRD LICENSE
+ *
+ */
+
+/* FIRST RUN/EDIT LOCATION PAGE */
+#newReleases-firstrun-page {
+	overflow: auto;
+  padding: 15px;
+  background-color: white;
+}
+
+#newReleases-firstrun-page description,
+#newReleases-firstrun-page label {
+  color: rgb(79,61,99);
+  line-height: 25px;
+}
+
+#newReleases-firstrun-page image.powered-by-image {
+  margin-left: 7px;
+}
+
+/* the Location & On Tour header font */
+label.prefs-header {
+	font-size: 21px;
+  font-weight: bold;
+  font-family: Helvetica, Arial, Sans;
+}
+label#location {
+  margin-top: 20px;
+}
+/* the text underneath Location */
+.descriptive-text * {
+  margin: 0px;
+}
+description.descr-text {
+  font-size: 21px;
+  margin-bottom: 1em;
+  font-family: Helvetica, Arial, Sans;
+}
+
+/* the container for the rest of the doc */
+.newReleases-location-box {
+  -moz-border-radius: 5px;
+  background-color: #efefef;
+  padding: 10px;
+}
+
+#library-newrelease-box description {
+  font-size: 21px;
+  margin: 0px;
+  font-family: Helvetica, Arial, Sans;
+  line-height: 25px;
+}
+
+#library-newrelease-box checkbox {
+  margin-top: 20px;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+#library-newrelease-box checkbox > hbox > label {
+  font-size: 14px;
+  font-family: Helvetica, Arial, Sans;
+}
+
+#newReleases-firstrun-page menulist > hbox.menulist-label-box,
+#newReleases-firstrun-page button > hbox.button-box {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+#newReleases-firstrun-page .menu-iconic-text,
+#newReleases-firstrun-page menulist > hbox > label,
+#newReleases-firstrun-page button > hbox > label {
+  color: white;
+  line-height: 10px;
+  padding: 0px !important;
+}
+#newReleases-firstrun-page menulist {
+	font-size: 10pt;
+  max-width: 150px !important;
+  min-width: 50px;
+  width: 150px !important;
+}
+#newReleases-firstrun-page menulist > hbox > label {
+  text-align: center;
+}
+
+/* the country, state, and city labels */
+label.pref-label {
+	font-size: 10pt;
+	margin-bottom: -2px;
+}
+
+/* the cancel/save buttons */
+hbox#command-buttons {
+  padding-left: 5em;
+}
+button#pref-cancel-button > hbox > label {
+  color: rgb(79,61,99);
+}
+button#pref-cancel-button {
+	visibility: hidden;
+  background-image: none;
+  background-color: transparent;
+}
+
+#library-ontour-box {
+  background-color: rgb(219,219,219);
+  -moz-border-radius: 5px;
+  padding: 10px;
+}
+#library-ontour-box label,
+#library-ontour-box description {
+  font-size: 21px;
+  margin: 0px;
+  font-family: Helvetica, Arial, Sans;
+  line-height: 25px;
+}
+
+hbox.library-ontour-image-box {
+  margin-right: 15px;
+}
+
+description#library-text {
+	width: 5px;
+}
+
+#library-ontour-box checkbox {
+  margin-top: 20px;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+#library-ontour-box checkbox > hbox > label {
+  font-size: 14px;
+  font-family: Helvetica, Arial, Sans;
+}
+
+/* the "Concert listings powered by Songkick" label at the bottom right of the
+ * first run/location page */
+.powered-by {
+	padding-right: 1em;
+	padding-top: 1em;
+}
+.powered-by image,
+image.clickable {
+	cursor: pointer;
+}
+
+/* LOADING RESULTS/PROGRESS BAR PAGE */
+#newReleases-loading-page {
+	font-size: 175%;
+  padding-bottom: 70px;
+}
+
+/* BROWSE CONCERT LISTINGS (in artist or date view) PAGE */
+.concerts-top-header {
+	-moz-box-pack: center;
+	-moz-box-align: center;
+	padding-right: 3px;
+}
+
+/* the city/state/country label at the top right */
+label.region {
+	font-weight: bold;
+}
+.image-edit-location {
+	cursor: pointer;
+}
+
+/* the group by (artist/date) label at the top left */
+label.groupby {
+	margin-right: 3px;
+}
+
+#index-deck {
+	padding:0.25em 0;
+}
+#box-index-letter > label,
+#box-index-date > label {
+	border: none;
+	font-size: 135%;
+}
+#box-index-letter > label:not(.text-link),
+#box-index-date > label:not(.text-link) {
+	color: #AAA;
+}
+
+#box-index-letter>label {
+	margin: 0 0.25em;
+}
+#box-index-date>label {
+	margin: 0 0.5em;
+}
+
+/* NO RESULTS PAGE */
+#no-results-deck label {
+}
+#no-results-deck image#noresults-newReleases-icon {
+	list-style-image: url(chrome://newreleases/skin/node-icon.png);
+}
+
+.fail-noresults label {
+	color: black;
+	font-weight: bold;
+}
+
+/* TIMEOUT ERROR PAGE */
+vbox#timeout-vbox description {
+}
+vbox#timeout-vbox {
+	max-width: 85%;
+	width: 85%;
+}
+

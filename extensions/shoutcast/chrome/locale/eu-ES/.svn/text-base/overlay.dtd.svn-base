@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Iragazkia">
+<!ENTITY shoutcast-radio.genre "Generoa">
+<!ENTITY shoutcast-radio.clear "Garbitu">
+<!ENTITY shoutcast-radio.add-station "Add Station">
+<!ENTITY shoutcast-radio.enter-name "Enter the name you wish to give the station">
+<!ENTITY shoutcast-radio.station-name "Station Name">
+<!ENTITY shoutcast-radio.enter-url "Enter the URL to the SHOUTcast station">
+<!ENTITY shoutcast-radio.enter-genre "Select a genre for the station">

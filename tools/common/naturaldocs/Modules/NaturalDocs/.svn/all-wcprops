@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs
+END
+ClassHierarchy.pm
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/ClassHierarchy.pm
+END
+Menu.pm
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Menu.pm
+END
+ConfigFile.pm
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/ConfigFile.pm
+END
+DefineMembers.pm
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/DefineMembers.pm
+END
+Project.pm
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Project.pm
+END
+Languages.pm
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Languages.pm
+END
+Constants.pm
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Constants.pm
+END
+SymbolTable.pm
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolTable.pm
+END
+File.pm
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/File.pm
+END
+NDMarkup.pm
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/NDMarkup.pm
+END
+Version.pm
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Version.pm
+END
+ReferenceString.pm
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/ReferenceString.pm
+END
+Builder.pm
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Builder.pm
+END
+StatusMessage.pm
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/StatusMessage.pm
+END
+Error.pm
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Error.pm
+END
+Parser.pm
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Parser.pm
+END
+SymbolString.pm
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/SymbolString.pm
+END
+Settings.pm
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Settings.pm
+END
+Topics.pm
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/5701/trunk/tools/common/naturaldocs/Modules/NaturalDocs/Topics.pm
+END

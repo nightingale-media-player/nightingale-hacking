@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/7967/trunk/app/skin/mozapps/plugins
+END
+missingPlugin.css
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/7967/trunk/app/skin/mozapps/plugins/missingPlugin.css
+END
+pluginInstallerWizard.css
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7967/trunk/app/skin/mozapps/plugins/pluginInstallerWizard.css
+END
+pluginGeneric.png
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/7967/trunk/app/skin/mozapps/plugins/pluginGeneric.png
+END

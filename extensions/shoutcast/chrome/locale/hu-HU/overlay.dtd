@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Szűrő">
+<!ENTITY shoutcast-radio.genre "Műfaj">
+<!ENTITY shoutcast-radio.clear "Törlés">
+<!ENTITY shoutcast-radio.add-station "Állomás hozzáadása">
+<!ENTITY shoutcast-radio.enter-name "Adja meg az állomás nevét">
+<!ENTITY shoutcast-radio.station-name "Állomás neve">
+<!ENTITY shoutcast-radio.enter-url "Adja meg a SHOUTcast állomás nevét">
+<!ENTITY shoutcast-radio.enter-genre "Válassza ki az állomás műfaját">

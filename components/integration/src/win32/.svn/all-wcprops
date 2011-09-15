@@ -1,0 +1,143 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/20928/trunk/components/integration/src/win32
+END
+sbNativeWindowManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15794/trunk/components/integration/src/win32/sbNativeWindowManager.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/20522/trunk/components/integration/src/win32/Makefile.in
+END
+MultiMonitor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/integration/src/win32/MultiMonitor.cpp
+END
+sbNativeWindowManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/7928/trunk/components/integration/src/win32/sbNativeWindowManager.h
+END
+sbWindowMoveService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17411/trunk/components/integration/src/win32/sbWindowMoveService.cpp
+END
+GlobalHotkeys.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7658/trunk/components/integration/src/win32/GlobalHotkeys.cpp
+END
+MultiMonitor.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/integration/src/win32/MultiMonitor.h
+END
+sbKnownFolderManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20928/trunk/components/integration/src/win32/sbKnownFolderManager.cpp
+END
+sbWindowMoveService.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/15906/trunk/components/integration/src/win32/sbWindowMoveService.h
+END
+WindowResizeHook.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowResizeHook.cpp
+END
+sbWindowChromeService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/19138/trunk/components/integration/src/win32/sbWindowChromeService.cpp
+END
+sbScreenSaverSuppressor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/15578/trunk/components/integration/src/win32/sbScreenSaverSuppressor.cpp
+END
+WindowRegion.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowRegion.cpp
+END
+GlobalHotkeys.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/integration/src/win32/GlobalHotkeys.h
+END
+sbKnownFolderManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/20522/trunk/components/integration/src/win32/sbKnownFolderManager.h
+END
+WindowResizeHook.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowResizeHook.h
+END
+WindowRegion.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowRegion.h
+END
+sbScreenSaverSuppressor.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15578/trunk/components/integration/src/win32/sbScreenSaverSuppressor.h
+END
+sbWindowChromeService.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17807/trunk/components/integration/src/win32/sbWindowChromeService.h
+END
+WindowMinMaxSubclass.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/15618/trunk/components/integration/src/win32/WindowMinMaxSubclass.cpp
+END
+WindowMinMax.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowMinMax.cpp
+END
+WindowMinMaxSubclass.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowMinMaxSubclass.h
+END
+WindowMinMax.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/integration/src/win32/WindowMinMax.h
+END

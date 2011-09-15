@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/Makefile.in
+END
+bug368464-data.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/bug368464-data.xml
+END
+test_registerHandler.html
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/test_registerHandler.html
+END
+test_bug408328.html
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/test_bug408328.html
+END
+bug408328-data.xml
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/bug408328-data.xml
+END
+test_bug368464.html
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/feeds/test/test_bug368464.html
+END

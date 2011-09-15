@@ -1,0 +1,66 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface sbIJobProgressListener;
+
+/**
+ * \interface sbIWFMoveRenameHelper9000 
+ * \brief A hackish service that helps the watch folder component
+ *        gracefully handle moved or renamed files.
+ * Since the watch folders are only notified of added and removed
+ * paths, we have to make educated guesses when files are moved or 
+ * renamed.  If we don't we delete and then re-add media items, b
+ * breaking existing playlists and lose information like ratings.
+ *
+ * Ultimately the file system watcher should be able to report
+ * move and rename events, but that is not possible at this time.
+ * This is a temporary helper for the watch folders only, and should  
+ * not be used anywhere else. 
+ */
+[scriptable, uuid(d46865e0-1dd1-11b2-bc5b-b0ab6abf03e8)]
+interface sbIWFMoveRenameHelper9000 : nsISupports
+{
+
+  /**
+   * \brief Infer moved/renamed media items based on changes
+   *        to the file system. 
+   * This method will block, processing events until all
+   * updates are complete.
+   * \param aMediaItems an array media items that may have
+   *        been moved or renamed
+   * \param aAddedPaths an array of candidate nsIFile paths
+   * \param aListener Optional in-param to listen to when the
+   *                  opertion has finished.
+   */
+  void process(in nsIArray aMediaItems,
+               in nsIArray aNewPaths,
+               in sbIJobProgressListener aListener);
+};
+
+

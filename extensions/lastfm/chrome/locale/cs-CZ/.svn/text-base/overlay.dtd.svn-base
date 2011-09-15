@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Přihlásit k Last.fm...">
+<!ENTITY lastfm.menu.logout "Odhlásit">
+<!ENTITY lastfm.menu.enable "Povolit odesílání informací o přehrávané hudbě">
+<!ENTITY lastfm.login.caption.label "Přihlášení">
+<!ENTITY lastfm.username.label "Uživatelské jméno:">
+<!ENTITY lastfm.password.label "Heslo:">
+<!ENTITY lastfm.auto.login.label "Automaticky přihlásit při spuštění">
+<!ENTITY lastfm.login.button "Přihlásit se">
+<!ENTITY lastfm.newaccount.caption "Vytvořit nový účet">
+<!ENTITY lastfm.signup.label "Zaregistrovat se do Last.fm">
+<!ENTITY lastfm.signup.button.label "Vytvořit nový účet">
+<!ENTITY lastfm.loggingin.label "Přihlašování...">
+<!ENTITY lastfm.cancel.button "Zrušit">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Odesílat informace o přehrávané hudbě">
+<!ENTITY lastfm.profile.logout "Odhlásit">
+<!ENTITY lastfm.radio "Rádio Last.fm">
+<!ENTITY lastfm.radio.login.help "Pro poslouchání rádia Last.fm musíte být přihlášeni do Last.fm. Pokud ještě účet nemáte, stačí se zaregistrovat.">
+<!ENTITY lastfm.radio.start "Nevíte kde začít? Zkuste vyhledávaní nebo se podívejte, co poslouchají ostatní.">
+<!ENTITY lastfm.radio.start.top.artists "Nejoblíbenější umělci na Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Nejoblíbenější štítky na Last.fm">
+<!ENTITY lastfm.radio.register "Registrovat">
+<!ENTITY lastfm.radio.subscriber.button "Přihlásit">
+<!ENTITY lastfm.radio.subscriber.help "Pro poslech rádia Last.fm musíte být předplatitel.">
+<!ENTITY lastfm.radio.search "Hledat">
+<!ENTITY lastfm.radio.library "Knihovna">
+<!ENTITY lastfm.radio.loved "Milované skladby">
+<!ENTITY lastfm.radio.neighbourhood "Sousedství">
+<!ENTITY lastfm.radio.recommended "Doporučení">
+<!ENTITY lastfm.radio.user_stations "Uživatelské stanice">
+<!ENTITY lastfm.radio.recent_stations "Nedávné stanice">
+<!ENTITY lastfm.radio.from.lastfm "Z Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Doporučení umělci">
+<!ENTITY lastfm.radio.top_artists "Vaši oblíbení umělci">
+<!ENTITY lastfm.radio.top_tags "Vaše oblíbené štítky">
+<!ENTITY lastfm.radio.friends "Vaši přátelé">
+<!ENTITY lastfm.radio.neighbours "Sousedé">
+<!ENTITY lastfm.radio.from.songbird "Ze Songbirdu">
+<!ENTITY lastfm.radio.most_played_artists "Vaši nejčastěji přehrávaní umělci">
+<!ENTITY lastfm.radio.highest_rated_artists "Vaši nejlépe hodnocení umělci">
+<!ENTITY lastfm.radio.popular_genres "Vaše oblíbené žánry">
+<!ENTITY lastfm.radio.play "Přehrát">
+<!ENTITY lastfm.tags.enter_new "Vložit nové štítky (oddělené čárkou)">
+<!ENTITY lastfm.tags.add_fail "Nepodařilo se přidat štítky!">
+<!ENTITY lastfm.tags.user "Vaše štítky:">
+<!ENTITY lastfm.tags.global "Last.fm štítky:">

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/15575/trunk/extensions/ipod/components/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/15575/trunk/extensions/ipod/components/public/Makefile.in
+END
+sbIIPDDeviceEvent.idl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/14206/trunk/extensions/ipod/components/public/sbIIPDDeviceEvent.idl
+END

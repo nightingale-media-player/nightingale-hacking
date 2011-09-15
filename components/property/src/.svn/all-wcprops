@@ -1,0 +1,515 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/21067/trunk/components/property/src
+END
+sbStatusPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/14668/trunk/components/property/src/sbStatusPropertyInfo.h
+END
+sbTextPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/12365/trunk/components/property/src/sbTextPropertyInfo.h
+END
+sbRatingPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/15199/trunk/components/property/src/sbRatingPropertyInfo.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/20430/trunk/components/property/src/Makefile.in
+END
+sbPropertyFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/7658/trunk/components/property/src/sbPropertyFactory.cpp
+END
+sbDummyProperties.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/10771/trunk/components/property/src/sbDummyProperties.h
+END
+sbNumberPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20430/trunk/components/property/src/sbNumberPropertyInfo.h
+END
+sbImageLinkPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/19247/trunk/components/property/src/sbImageLinkPropertyInfo.cpp
+END
+sbPropertiesCID.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/19465/trunk/components/property/src/sbPropertiesCID.h
+END
+sbPropertyUnitConverter.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/12568/trunk/components/property/src/sbPropertyUnitConverter.h
+END
+sbStandardProperties.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20896/trunk/components/property/src/sbStandardProperties.h
+END
+sbAbstractPropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/19240/trunk/components/property/src/sbAbstractPropertyBuilder.h
+END
+sbDownloadButtonPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19247/trunk/components/property/src/sbDownloadButtonPropertyInfo.cpp
+END
+sbPropertyManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/21067/trunk/components/property/src/sbPropertyManager.h
+END
+sbImageLabelLinkPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/19465/trunk/components/property/src/sbImageLabelLinkPropertyInfo.h
+END
+sbPropertyArray.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7658/trunk/components/property/src/sbPropertyArray.h
+END
+sbFrequencyPropertyUnitConverter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/20430/trunk/components/property/src/sbFrequencyPropertyUnitConverter.cpp
+END
+sbSimpleButtonPropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/13503/trunk/components/property/src/sbSimpleButtonPropertyBuilder.cpp
+END
+sbStoragePropertyUnitConverter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/19078/trunk/components/property/src/sbStoragePropertyUnitConverter.cpp
+END
+sbOriginPageImagePropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/13503/trunk/components/property/src/sbOriginPageImagePropertyBuilder.cpp
+END
+sbImagePropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/7658/trunk/components/property/src/sbImagePropertyBuilder.h
+END
+sbSimpleProperty.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/7658/trunk/components/property/src/sbSimpleProperty.h
+END
+sbStatusPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19404/trunk/components/property/src/sbStatusPropertyInfo.cpp
+END
+sbStandardProperties.pl
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/7658/trunk/components/property/src/sbStandardProperties.pl
+END
+sbImagePropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/15199/trunk/components/property/src/sbImagePropertyInfo.h
+END
+sbDummyContentTypePropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17575/trunk/components/property/src/sbDummyContentTypePropertyInfo.cpp
+END
+sbSimpleButtonPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/15199/trunk/components/property/src/sbSimpleButtonPropertyInfo.h
+END
+sbPropertyUnitConverter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/20430/trunk/components/property/src/sbPropertyUnitConverter.cpp
+END
+sbDownloadButtonPropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19242/trunk/components/property/src/sbDownloadButtonPropertyBuilder.cpp
+END
+sbURIPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/13854/trunk/components/property/src/sbURIPropertyInfo.h
+END
+sbImageLinkPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19243/trunk/components/property/src/sbImageLinkPropertyInfo.h
+END
+sbDurationPropertyUnitConverter.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/9849/trunk/components/property/src/sbDurationPropertyUnitConverter.h
+END
+sbSimpleProperty.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/7658/trunk/components/property/src/sbSimpleProperty.cpp
+END
+sbImagePropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/13503/trunk/components/property/src/sbImagePropertyBuilder.cpp
+END
+sbStatusPropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/19242/trunk/components/property/src/sbStatusPropertyBuilder.cpp
+END
+sbStandardOperators.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/10118/trunk/components/property/src/sbStandardOperators.h
+END
+sbBooleanPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/15199/trunk/components/property/src/sbBooleanPropertyInfo.h
+END
+sbImmutablePropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/20604/trunk/components/property/src/sbImmutablePropertyInfo.h
+END
+sbRatingPropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/7658/trunk/components/property/src/sbRatingPropertyBuilder.h
+END
+sbStoragePropertyUnitConverter.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19078/trunk/components/property/src/sbStoragePropertyUnitConverter.h
+END
+sbSimpleButtonPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/19247/trunk/components/property/src/sbSimpleButtonPropertyInfo.cpp
+END
+sbSimpleButtonPropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/7658/trunk/components/property/src/sbSimpleButtonPropertyBuilder.h
+END
+sbOriginPageImagePropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/7658/trunk/components/property/src/sbOriginPageImagePropertyBuilder.h
+END
+sbProperties.jsm.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/8841/trunk/components/property/src/sbProperties.jsm.in
+END
+sbDurationPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19244/trunk/components/property/src/sbDurationPropertyInfo.h
+END
+sbDatetimePropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/20430/trunk/components/property/src/sbDatetimePropertyInfo.cpp
+END
+sbDummyContentTypePropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17575/trunk/components/property/src/sbDummyContentTypePropertyInfo.h
+END
+sbURIPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20430/trunk/components/property/src/sbURIPropertyInfo.cpp
+END
+sbImageLabelLinkPropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/19248/trunk/components/property/src/sbImageLabelLinkPropertyBuilder.h
+END
+sbDummyPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/12365/trunk/components/property/src/sbDummyPropertyInfo.h
+END
+sbDurationPropertyUnitConverter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/11079/trunk/components/property/src/sbDurationPropertyUnitConverter.cpp
+END
+sbDownloadButtonPropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/19242/trunk/components/property/src/sbDownloadButtonPropertyBuilder.h
+END
+sbBitratePropertyUnitConverter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/20430/trunk/components/property/src/sbBitratePropertyUnitConverter.cpp
+END
+sbStatusPropertyValue.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/19404/trunk/components/property/src/sbStatusPropertyValue.h
+END
+sbTrackTypeImageLabelPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19522/trunk/components/property/src/sbTrackTypeImageLabelPropertyInfo.h
+END
+sbBooleanPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19247/trunk/components/property/src/sbBooleanPropertyInfo.cpp
+END
+sbImmutablePropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/20604/trunk/components/property/src/sbImmutablePropertyInfo.cpp
+END
+sbRatingPropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/13503/trunk/components/property/src/sbRatingPropertyBuilder.cpp
+END
+sbDummyPlaylistPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/17575/trunk/components/property/src/sbDummyPlaylistPropertyInfo.h
+END
+sbStatusPropertyBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19242/trunk/components/property/src/sbStatusPropertyBuilder.h
+END
+sbTextPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/19139/trunk/components/property/src/sbTextPropertyInfo.cpp
+END
+sbPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/20604/trunk/components/property/src/sbPropertyInfo.h
+END
+sbRatingPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19247/trunk/components/property/src/sbRatingPropertyInfo.cpp
+END
+sbDurationPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/20430/trunk/components/property/src/sbDurationPropertyInfo.cpp
+END
+sbNumberPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20430/trunk/components/property/src/sbNumberPropertyInfo.cpp
+END
+sbDummyPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/12365/trunk/components/property/src/sbDummyPropertyInfo.cpp
+END
+sbImageLabelLinkPropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19465/trunk/components/property/src/sbImageLabelLinkPropertyBuilder.cpp
+END
+sbOriginPageImagePropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/13503/trunk/components/property/src/sbOriginPageImagePropertyInfo.h
+END
+sbPropertyManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/21067/trunk/components/property/src/sbPropertyManager.cpp
+END
+sbAbstractPropertyBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/11147/trunk/components/property/src/sbAbstractPropertyBuilder.cpp
+END
+sbPropertyFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/7658/trunk/components/property/src/sbPropertyFactory.h
+END
+sbImageLabelLinkPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/19466/trunk/components/property/src/sbImageLabelLinkPropertyInfo.cpp
+END
+sbDatetimePropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/12365/trunk/components/property/src/sbDatetimePropertyInfo.h
+END
+sbPropertyArray.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/19244/trunk/components/property/src/sbPropertyArray.cpp
+END
+sbDownloadButtonPropertyInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/15199/trunk/components/property/src/sbDownloadButtonPropertyInfo.h
+END
+sbSmartPlaylistPropertyRegistrar.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/17575/trunk/components/property/src/sbSmartPlaylistPropertyRegistrar.js
+END
+sbTrackTypeImageLabelPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/19522/trunk/components/property/src/sbTrackTypeImageLabelPropertyInfo.cpp
+END
+sbBitratePropertyUnitConverter.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/10393/trunk/components/property/src/sbBitratePropertyUnitConverter.h
+END
+sbDummyPlaylistPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17575/trunk/components/property/src/sbDummyPlaylistPropertyInfo.cpp
+END
+sbPropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/21067/trunk/components/property/src/sbPropertyInfo.cpp
+END
+sbPropertiesModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/19910/trunk/components/property/src/sbPropertiesModule.cpp
+END
+sbImagePropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/19247/trunk/components/property/src/sbImagePropertyInfo.cpp
+END
+sbFrequencyPropertyUnitConverter.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/20443/trunk/components/property/src/sbFrequencyPropertyUnitConverter.h
+END
+sbPropertyOperator.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/20443/trunk/components/property/src/sbPropertyOperator.h
+END
+sbOriginPageImagePropertyInfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/13503/trunk/components/property/src/sbOriginPageImagePropertyInfo.cpp
+END

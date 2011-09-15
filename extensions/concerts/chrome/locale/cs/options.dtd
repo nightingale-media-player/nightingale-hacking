@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "Místo">
+<!ENTITY prefs.location.descr "Získejte přehled o koncertech u vás.  &brandShortName; pohlídá aktivity vašich oblíbených umělců a klubů tak, že už nikdy o žádnou akci nepřijdete.  Zvolte nejbližší město a zjistěte, kdo u vás bude vystupovat.">
+<!ENTITY prefs.library "Knihovna">
+<!ENTITY prefs.library.text "&brandShortName; může k vaší hudební knihovně přidat sloupek, který vás upozorní na koncerty vašich oblíbenců.">
+<!ENTITY prefs.library.checklabel "Přidat sloupek Na turné k mojí knihovně">
+<!ENTITY prefs.country "Země">
+<!ENTITY prefs.country.us "Spojené státy">
+<!ENTITY prefs.country.uk "Velká Británie">
+<!ENTITY prefs.state "Stát">
+<!ENTITY prefs.city "Město">
+<!ENTITY prefs.radius "V okruhu">
+<!ENTITY prefs.findShows "Vyhledat akce">
+<!ENTITY concerts.poweredby "Údaje o koncertech poskytnuty společností ">

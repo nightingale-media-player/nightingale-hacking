@@ -1,0 +1,47 @@
+/* General classes used by all iframes */
+body {
+  padding: 11px;
+}
+div#main-content {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
+a {
+	text-decoration:none;
+	outline:0;
+}
+a:hover {
+}
+img {
+	border:0;
+}
+
+img.clickable {
+	cursor:pointer;
+}
+
+div.ratings {
+	display: inline-block;
+	vertical-align: middle;
+	width: 70px;
+	min-width: 70px;
+	width: 70px;
+	height: 18px;
+	min-height: 18px;
+	background-repeat: no-repeat;
+	opacity: 0.5;
+	background-image: url(chrome://songbird/skin/media-control-pane/button-faceplate-ratings.png);
+}
+div.rate0 { background-position:0px -18px; }
+div.rate1 { background-position:0px -54px; }
+div.rate2 { background-position:0px -90px; }
+div.rate3 { background-position:0px -126px; }
+div.rate4 { background-position:0px -162px; }
+div.rate5 { background-position:0px -198px; }
+
+div#caption div.ratings,
+div.row-selected div.ratings {
+	opacity: 1.0;
+}

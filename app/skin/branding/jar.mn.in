@@ -1,0 +1,4 @@
+songbird.jar:
+% skin  songbird-branding classic/1.0  %skin/branding/
+% content songbird-branding nowhere contentaccessible=yes
+@include_all_to skin/branding/

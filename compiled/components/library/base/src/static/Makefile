@@ -1,0 +1,58 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+# Static lib helpers for library base
+# Note that this can't be under library/base due to --enable-static
+
+DEPTH = ../../../../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/components/library/base/src/static
+VPATH = /media/disk/Linux/makepkg/songbird/components/library/base/src/static
+
+include $(DEPTH)/build/autodefs.mk
+
+STATIC_LIB = sbLibraryUtils
+
+CPP_SRCS = sbLibraryUtils.cpp \
+           sbMediaListEnumSingleItemHelper.cpp \
+           sbMediaListEnumArrayHelper.cpp \
+           $(NULL)
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/devices/base/public \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/streams/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/rdf \
+                     $(NULL)
+
+include $(topsrcdir)/build/rules.mk

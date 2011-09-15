@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/20658/trunk/components/devices/device/mock/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/14740/trunk/components/devices/device/mock/public/Makefile.in
+END
+sbDeviceDeviceTesterInterfaces.idl
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/14740/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl
+END
+sbIMockDevice.idl
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/20658/trunk/components/devices/device/mock/public/sbIMockDevice.idl
+END

@@ -1,0 +1,130 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIClickablePropertyInfo.idl
+ * \brief Definition of the sbIClickablePropertyInfo interface
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+#include "sbIPropertyInfo.idl"
+
+interface sbIClickablePropertyCallback;
+interface sbIMediaItem;
+
+/**
+ * \interface sbIClickablePropertyInfo
+ * \brief The property information specific to clickable properties
+ *
+ * A property that implements this interface indicates that it can convert a
+ * mouse click into a value for the property.
+ *
+ * \sa sbIPropertyInfo
+ */
+[scriptable, uuid(b684129e-1dd1-11b2-bdb0-f02ef2b938e4)]
+interface sbIClickablePropertyInfo : nsISupports
+{
+  /**
+   * Whether tree row selection should be suppressed for clicks on tree cells
+   * representing this property
+   */
+  attribute boolean suppressSelect;
+
+  /**
+   * \brief Whether the tree cell widget representing this property should be
+   *        disabled given a value (for this property)
+   * \param aCurrentValue the property value of an item
+   * \return true if the cell should be disabled
+   */
+  boolean isDisabled(in AString aCurrentValue);
+
+  /**
+   * \brief Hit testing for a cell
+   * \param aCurrentValue the property value of the item (row) clicked on
+   * \param aPart the pseudoelement being hit
+   * \param aBoxWidth the total box object width of the cell
+   * \param aBoxHeight the total box object height of the cell
+   * \param aMouseX the X coordinate of the mouse, relative to the left edge of
+   *                the box object
+   * \param aMouseY the Y coordinate of the mouse, relative to the top edge of
+   *                the box object
+   * \return true if the click should be registered
+   * \see nsITreeBoxObject::getCellAt() for pseudoelement part names
+   */
+  boolean hitTest(in AString aCurrentValue,
+                  in AString aPart,
+                  in unsigned long aBoxWidth,
+                  in unsigned long aBoxHeight,
+                  in unsigned long aMouseX,
+                  in unsigned long aMouseY);
+
+  /**
+   * \brief Callback for a click event for special handling
+   * \param aItem the media item being clicked on
+   * \param aEvent the DOM click event
+   * \param aContext a context for the click; most likely a playlist widget
+   * \return True if the event has been handled and should be suppressed
+   */
+  boolean onClick(in sbIMediaItem aItem,
+                  [optional] in nsISupports aEvent,
+                  [optional] in nsISupports aContext);
+
+  /**
+   * \brief Convert a mouse click to a value for this property
+   * \param aCurrentValue The current value of this property
+   * \param aBoxWidth Width of the clickable area
+   * \param aBoxHeight Height of the clickable area
+   * \param aMouseX The X coordinate of the click location
+   * \param aMouseY The Y coordinate of the click location
+   * \return The value that should be given to this property for the click
+   */
+  AString getValueForClick(in AString aCurrentValue,
+                           in unsigned long aBoxWidth,
+                           in unsigned long aBoxHeight,
+                           in unsigned long aMouseX,
+                           in unsigned long aMouseY);
+};
+
+[scriptable, function, uuid(74f08874-1dd2-11b2-9bf2-c0919899c308)]
+interface sbIClickablePropertyCallback : nsISupports
+{
+  /**
+   * Callback to be triggered when a user clicks on a cell in the playlist
+   * column associated with the property info
+   * \param aPropertyInfo the property info object associated with the column
+   *        being clicked on
+   * \param aItem the media item associated with the row vbeing clicked on
+   * \param aEvent the click (DOM) event
+   * \param aContext a context for the click; most likely a playlist widget
+   * \return True if the event has been handled and default handling should
+   *         be suppressed
+   */
+  boolean onClick(in sbIPropertyInfo aPropertyInfo,
+                  in sbIMediaItem aItem,
+                  [optional] in nsISupports aEvent,
+                  [optional] in nsISupports aContext);
+};

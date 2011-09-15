@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Strömningsfilter">
+<!ENTITY prefwindow.title "Inställningar för SHOUTcast Radio">
+<!ENTITY bit-rate.limit.label "Visa endast SHOUTcast-strömmar med en bithastighet på minst">
+<!ENTITY listeners.limit.label "Visa endast SHOUTcast-strömmar med minst">
+<!ENTITY listeners.limit.label.2 " lyssnare">
+<!ENTITY bit-rate.label "Bithastighet (kbit/s)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Antal lyssnare">
+<!ENTITY listeners.accesskey "l">
+<!ENTITY prefs.track.guessing.title "Artist- &amp; titelparsning">
+<!ENTITY prefs.track.guessing.label "Aktivera spårtitel- och artistparsning">
+<!ENTITY prefs.track.guessing.help "En del SHOUTcast-strömmar sänder strömtext i formatet &quot;Artist - Spårtitel&quot;.  Om du aktiverar det här alternativet kommer SHOUTcast-tillägget att försöka tolka texten och skicka spårändringsmeddelandehändelser, så att andra tillägg kan meddelas om spårändringar inuti en ström.">
+<!ENTITY prefs.customGenres "Anpassade genrer">
+<!ENTITY prefs.customGenres.emptytext "Ange en kommateckenavgränsad lista över genrer här">
+<!ENTITY custom-genres.help.label "Om du har egna genrer du vill visa i SHOUTcast-katalogen, ange en kommateckenavgränsad lista över genresträngar här">
+<!ENTITY prefs.tosBegin "Användning av SHOUTcast-katalogen är bundet av">
+<!ENTITY prefs.tosLinkText "Användarvillkoren">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Installera">
+<!ENTITY prefs.toolbarLinkText "SHOUTcasts verktygsfält">
+<!ENTITY prefs.toolbarEnd "för enklare åtkomst av SHOUTcast från din webbläsare.">

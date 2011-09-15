@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Eλέγχουμε ποιος περιοδεύει κοντά στην περιοχή σας…">
+<!ENTITY concerts.changelocation "Αλλαγή τοποθεσίας">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Δεν βρέθηκαν συναυλίες για το(ν)/τη(ν)">
+<!ENTITY concerts.timeout.error "Είτε δεν είστε συνδεδεμένοι στο Internet είτε η βάση δεδομένων των συναυλιών μας δεν λειτουργεί αυτή τη στιγμή. Παρακαλούμε ξαναπροσπαθήστε σε λίγα λεπτά.">
+<!ENTITY concerts.timeoutreport.error "Αναφορά προβλήματος">

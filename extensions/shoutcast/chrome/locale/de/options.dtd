@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Streams filtern">
+<!ENTITY prefwindow.title "SHOUTcast Radio-Einstellungen">
+<!ENTITY bit-rate.limit.label "Nur SHOUTcast-Streams anzeigen, die eine Mindestbitrate haben">
+<!ENTITY listeners.limit.label "Nur SHOUTcast-Streams mit mindestens">
+<!ENTITY listeners.limit.label.2 "Hörern anzeigen">
+<!ENTITY bit-rate.label "Bitrate (kb/s)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Anzahl Hörer">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "Künstler/Titel wird geparst">
+<!ENTITY prefs.track.guessing.label "Titel- und Künstler-Parsing aktivieren">
+<!ENTITY prefs.track.guessing.help "Einige SHOUTcast-Streams senden Informationen der Form 'Künstler-Liedtitel'. Wenn Sie diese Option aktivieren, wird das SHOUTcast Addon versuchen, diese Informationen zu erhalten, damit andere Addons über Titeländerungen im Stream benachrichtigt werden können.">
+<!ENTITY prefs.customGenres "Benutzerdefinierte Genres">
+<!ENTITY prefs.customGenres.emptytext "Geben Sie eine Komma-separierte Liste der Genres hier ein">
+<!ENTITY custom-genres.help.label "Wenn Sie benutzerdefinierte Genres im SHOUTcast-Ordner anzeigen lassen wollen, geben Sie hier eine durch Kommas abgetrennte Liste der Genres ein">
+<!ENTITY prefs.tosBegin "Die Benutzung von SHOUTcast ist an die Nutzungsbedingungen gebunden">
+<!ENTITY prefs.tosLinkText "Nutzungsbedingungen anzeigen">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Die">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast Toolbar">
+<!ENTITY prefs.toolbarEnd "für einen einfacheren Zugriff auf SHOUTcast mit dem Browser installieren.">

@@ -1,0 +1,138 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIDOMWindow;
+
+/**
+ * \interface sbIWindowWatcher
+ *
+ *   The sbIWindowWatcher interface provides support for using ready windows.
+ * Windows are considered ready when all of their overlays have loaded.
+ *   Main thread code may use callWithWindow to be called when a window is
+ * ready.  Main thread code may also use getWindow to get a ready window, but
+ * there's no guarantee that a window will be ready, and getWindow won't wait
+ * for one.
+ *   Non-main thread code may use waitForWindow to wait until a window is ready.
+ * This code may then dispatch to the main thread to get and use the window.
+ *
+ * "@songbirdnest.com/Songbird/window-watcher;1"
+ * Use get service with this component.
+ */
+
+interface sbICallWithWindowCallback;
+
+[scriptable, uuid(93cf33df-770f-49ec-afb7-20db242dd366)]
+interface sbIWindowWatcher : nsISupports
+{
+  /**
+   * \brief True if the window watcher is shutting down and no more windows will
+   *        become available.
+   */
+
+  readonly attribute boolean isShuttingDown;
+
+
+  /**
+   * \brief Call callback specified by aCallback with a window of the type
+   *        specified by aWindowType.  Wait until a window of the specified type
+   *        is available or until shutdown.  Call callback with null window on
+   *        shutdown.  Call callback on main thread.
+   *        If aWait is true, don't return until callback is called.
+   *
+   * \param aWindowType         Type of window with which to call.
+   * \param aCallback           Callback to call with window.
+   * \param aWait               If true, wait until callback is called.
+   */
+  /*XXXeps add cancel. */
+
+  void callWithWindow(in AString                   aWindowType,
+                      in sbICallWithWindowCallback aCallback,
+                      [optional] in boolean        aWait);
+
+
+  /**
+   * \brief Get the top-most available window of the type specified by
+   *        aWindowType.  Return null if no matching window is available.  Since
+   *        nsIDOMWindow is not thread-safe, this method may only be called on
+   *        the main thread.
+   *
+   * \param aWindowType         Type of window to get.
+   *
+   * \return                    Window of specified type or null if none
+   *                            available.
+   */
+
+  nsIDOMWindow getWindow(in AString aWindowType);
+
+
+  /**
+   * \brief Wait until a window of the type specified by aWindowType is
+   *        available or until shutdown.  This method may not be called on the
+   *        main thread.
+   *        Since the available window can only be used on the main thread, the
+   *        available window may become unavailable after waitForWindow returns
+   *        but before processing continues on the main thread.
+   *
+   * \param aWindowType         Type of window to get.
+   */
+
+  void waitForWindow(in AString aWindowType);
+};
+
+
+/**
+ * \interface sbICallWithWindowCallback
+ * \brief A callback interface that is called with a window.
+ *
+ * \sa sbIWindowWatcher
+ */
+
+[scriptable, function, uuid(4052eb5e-fe52-4e31-abca-1263c2cfd009)]
+interface sbICallWithWindowCallback : nsISupports
+{
+  /**
+   * \brief Handle the callback with the window specified by aWindow.
+   *
+   * \param aWindow             Callback window.
+   */
+
+  void handleWindowCallback(in nsIDOMWindow aWindow);
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_WINDOWWATCHER_CONTRACTID \
+          "@songbirdnest.com/Songbird/window-watcher;1"
+%}C++
+

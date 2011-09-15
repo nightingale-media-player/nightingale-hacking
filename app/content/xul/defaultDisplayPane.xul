@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<?xml-stylesheet href="chrome://global/skin/defaultDisplayPane.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<window title="Default Display Pane"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:html="http://www.w3.org/1999/xhtml">
+
+<box pack="center" align="center" flex="1" class="empty-box">
+
+  <vbox class="instructions" flex="1" pack="center" align="center">
+    <description flex="0">
+      <html:div>
+        &displaypane.default.image.pre; <image id="add-on-picker" alt="&displaypane.default.image.tooltip;"/> &displaypane.default.image.post; &displaypane.default.link.pre;
+        <label class="text-link" href="&getDisplayPanesURL;" value="&displaypane.default.link.text;"/> &displaypane.default.link.post;
+      </html:div>
+    </description>
+  </vbox>
+
+</box>
+
+</window>

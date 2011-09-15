@@ -1,0 +1,79 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-size: 70%;
+}
+
+body b {
+	font-weight:normal !important;
+}
+
+.time {
+	color: rgba(255,255,255,0.55);
+  font-style: italic;
+	padding-left: 1em;
+	padding-right: 5px;
+}
+
+div.row-selected,
+div.row-unselected,
+div.row-even,
+div.row-odd {
+	padding: 7px 13px 7px 7px;
+	clear: both;
+	cursor: pointer;
+	overflow: hidden;
+}
+div.row-selected {
+  padding-left: 6px;
+  padding-right: 12px;
+}
+
+div.metadata-flash img,
+div.metadata-rss img,
+div.metadata-review img {
+	width: 10px;
+	height: 10px;
+	vertical-align:middle;
+}
+div.metadata-flash{
+	margin-left: 106px;
+}
+div.metadata-rss, 
+div.metadata-review {
+	margin-left: 21px;
+}
+
+div.row-unselected img.favicon-flash {
+  opacity: .65;
+}
+div.row-selected img.favicon-flash {
+  opacity: 1;
+}
+
+img.favicon-flash {
+  padding-top: 2px;
+	padding-left: 4px;
+}
+img.favicon {
+	float: left;
+	height: 16px;
+	width: 16px;
+}
+img.thumbnail {
+	float: left;
+	width: 80px;
+  border: 1px solid rgb(54,52,63);
+}
+div.row-even .time,
+div.row-odd .time {
+	font-size: 80%;
+	white-space: nowrap;
+}
+div.metadata-flash .time {
+	padding-left: 0;
+}
+
+img.legend {
+	padding-left: 3px;
+}

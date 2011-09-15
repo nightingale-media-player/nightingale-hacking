@@ -1,0 +1,24 @@
+prefpane#mashTapePrefsPane #general-default-tab {
+	min-width: 15em;
+}
+
+prefpane#mashTapePrefsPane hbox,
+prefpane#mashTapePrefsPane richlistitem {
+	-moz-box-align: center;
+}
+
+prefpane#mashTapePrefsPane richlistitem {
+  border-bottom: none;
+}
+prefpane#mashTapePrefsPane richlistitem[selected="true"] {
+  background-image: url(chrome://songbird/skin/base-elements/bg-selected-row-big.png);
+}
+prefpane#mashTapePrefsPane richlistitem image {
+	padding-left: 2px;
+}
+
+prefpane#mashTapePrefsPane radiogroup {
+	border: none;
+	padding: 0;
+	margin: 0;
+}

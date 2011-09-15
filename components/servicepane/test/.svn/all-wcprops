@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/20072/trunk/components/servicepane/test
+END
+head_servicepane.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/18937/trunk/components/servicepane/test/head_servicepane.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/18937/trunk/components/servicepane/test/Makefile.in
+END
+test_libraryservicepane.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/18384/trunk/components/servicepane/test/test_libraryservicepane.js
+END
+test_servicepane.js
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/20072/trunk/components/servicepane/test/test_servicepane.js
+END
+test_servicepanehelper.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/18937/trunk/components/servicepane/test/test_servicepanehelper.js
+END

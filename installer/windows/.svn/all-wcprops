@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/client/!svn/ver/20460/trunk/installer/windows
+END
+Songbird.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/18560/trunk/installer/windows/Songbird.nsi
+END
+common.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/18003/trunk/installer/windows/common.nsh
+END
+songbird.ico
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/16997/trunk/installer/windows/songbird.ico
+END
+songbird_uninstaller.ico
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/16997/trunk/installer/windows/songbird_uninstaller.ico
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20122/trunk/installer/windows/Makefile.in
+END
+songbird_vista.ico
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/16997/trunk/installer/windows/songbird_vista.ico
+END
+sb-installer.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/20460/trunk/installer/windows/sb-installer.nsi
+END
+defines.nsi.in
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/20081/trunk/installer/windows/defines.nsi.in
+END
+sb-filelist.nsi.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/15410/trunk/installer/windows/sb-filelist.nsi.in
+END
+sb-uninstaller.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/20460/trunk/installer/windows/sb-uninstaller.nsi
+END
+songbird_installer.ico
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/16997/trunk/installer/windows/songbird_installer.ico
+END
+songbird_nightly.ico
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/16997/trunk/installer/windows/songbird_nightly.ico
+END

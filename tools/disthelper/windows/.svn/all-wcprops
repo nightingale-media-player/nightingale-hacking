@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/20486/trunk/tools/disthelper/windows
+END
+commands.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/20486/trunk/tools/disthelper/windows/commands.cpp
+END
+versioninfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/18314/trunk/tools/disthelper/windows/versioninfo.cpp
+END
+winmain.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/13548/trunk/tools/disthelper/windows/winmain.cpp
+END
+environment.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/20210/trunk/tools/disthelper/windows/environment.cpp
+END
+icon.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/20453/trunk/tools/disthelper/windows/icon.cpp
+END

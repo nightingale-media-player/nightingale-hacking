@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/20441/trunk/components/devices/cd/mock/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/20441/trunk/components/devices/cd/mock/src/Makefile.in
+END
+sbMockCDDevice.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/18711/trunk/components/devices/cd/mock/src/sbMockCDDevice.cpp
+END

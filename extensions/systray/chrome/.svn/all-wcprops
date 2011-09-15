@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/18793/trunk/extensions/systray/chrome
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/15608/trunk/extensions/systray/chrome/Makefile.in
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/17223/trunk/extensions/systray/chrome/jar.mn.in
+END

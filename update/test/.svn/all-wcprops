@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/client/!svn/ver/19369/trunk/update/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/client/!svn/ver/19369/trunk/update/test/Makefile.in
+END
+test_windows_update.sh
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/19349/trunk/update/test/test_windows_update.sh
+END
+test_windows_forward_update.sh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/19349/trunk/update/test/test_windows_forward_update.sh
+END

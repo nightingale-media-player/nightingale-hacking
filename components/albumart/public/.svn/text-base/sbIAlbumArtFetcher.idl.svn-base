@@ -1,0 +1,137 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Interface description for the album art fetcher interface.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+#include "nsISupports.idl"
+
+
+/**
+ * \interface sbIAlbumArtFetcher
+ * \brief Interface for an album art fetcher.  Instantiate as a component
+ *        instance.
+ * \sa sbIAlbumArtListener
+ */
+
+interface nsIArray;
+interface nsIDOMWindow;
+interface sbIAlbumArtListener;
+interface sbIMediaItem;
+
+[scriptable, uuid(3792b0e2-1dd2-11b2-bdc8-cf5bc3f7931c)]
+interface sbIAlbumArtFetcher : nsISupports
+{
+  /**
+   * \brief Short name of AlbumArtFetcher.
+   */
+  readonly attribute AString shortName;
+
+  /**
+   * \brief Name of AlbumArtFetcher to display to the user on things like
+   *        menus.
+   */
+  readonly attribute AString name;
+
+  /**
+   * \brief Description of the AlbumArtFetcher to display to the user.
+   */
+  readonly attribute AString description;
+
+  /**
+   * \brief Flag to indicate if this Fetcher fetches from local sources.
+   */
+  readonly attribute boolean isLocal;
+
+  /**
+   * \brief Flag to indicate if this Fetcher is enabled or not
+   */
+  attribute boolean isEnabled;
+  
+  /**
+   * \brief Priority of this fetcher, a lower number represents a higher
+   *        priority (so 0 is higher than 10). If multiple fetchers have the
+   *        same priority then it is first come first serve at that priority.
+   *        The priorities should not fall below 0 except where a priority of
+   *        -1 will mean to append to end of list (so it will be the lowest
+   *        priority).
+   */
+  attribute PRInt32 priority;
+
+  /**
+   * \brief List of sources of album art (e.g., sbIMetadataHandler).
+   */
+  attribute nsIArray albumArtSourceList;
+
+  /**
+   * \brief Flag to indicate if this fetcher is currently fetching.
+   */
+  readonly attribute boolean isFetching;
+
+  /**
+   * \brief Try to fetch album art for a list of items that belong to the same
+   *        album. This function infers that all items in the list are from
+   *        the same album.
+   * \param aMediaItems is an array of sbIMediaItems from the same album
+   * \param aListener the listener to inform of success or failure
+   */
+  void fetchAlbumArtForAlbum(in nsIArray            aMediaItems,
+                             in sbIAlbumArtListener aListener);
+
+
+  /**
+   * \brief Try to fetch album art for a single track.
+   * \param aMediaItem is an sbIMediaItem to scan for artwork.
+   * \param aListener the listener to inform of success or failure
+   */
+  void fetchAlbumArtForTrack(in sbIMediaItem         aMediaItem,
+                             in sbIAlbumArtListener  aListener);
+  
+  /* \brief shut down the fetcher
+   */
+  void shutdown();
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_ALBUM_ART_FETCHER_CATEGORY "songbird-album-art-fetcher"
+
+#define SB_FILEALBUMARTFETCHER_CONTRACTID \
+          "@songbirdnest.com/Songbird/album-art/file-fetcher;1"
+
+#define SB_METADATAALBUMARTFETCHER_CONTRACTID \
+          "@songbirdnest.com/Songbird/album-art/metadata-fetcher;1"
+%}C++
+

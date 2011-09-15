@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtri Stazioni">
+<!ENTITY prefwindow.title "Preferenze SHOUTcast Radio">
+<!ENTITY bit-rate.limit.label "Mostra solo le stazioni SHOUTcast con una velocità bit di almeno">
+<!ENTITY listeners.limit.label "Mostra solo le stazioni SHOUTcast con almeno">
+<!ENTITY listeners.limit.label.2 "persone in ascolto">
+<!ENTITY bit-rate.label "Velocità Bit (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Numero di Ascoltatori">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "Analisi Artista/Titolo">
+<!ENTITY prefs.track.guessing.label "Attiva l&apos;analisi per il cambio di artista e titolo">
+<!ENTITY prefs.track.guessing.help "Alcune stazioni SHOUTcast trasmettono il testo &apos;Artista - Titolo&apos;. Se si attiva questa opzione, l&apos;estensione SHOUTcast cercherà di analizzare il cambiamento della traccia per poterlo inviare ad altre estensioni permettendo le notifiche di cambio traccia.">
+<!ENTITY prefs.customGenres "Personalizza Generi">
+<!ENTITY prefs.customGenres.emptytext "Inserire qui i generi separati da una virgola">
+<!ENTITY custom-genres.help.label "Per personalizzare la visualizzazione dei generi nella lista degli SHOUTcast, inserire qui i generi separati da una virgola">
+<!ENTITY prefs.tosBegin "L&apos;utilizzo della lista degli SHOUTcast è vincolata dai">
+<!ENTITY prefs.tosLinkText "Termini D&apos;uso">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Installare la">
+<!ENTITY prefs.toolbarLinkText "barra degli strumenti SHOUTcast">
+<!ENTITY prefs.toolbarEnd "un estensione per un accesso facile a SHOUTcast dal browser.">

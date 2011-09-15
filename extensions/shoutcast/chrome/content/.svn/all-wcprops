@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/20603/trunk/extensions/shoutcast/chrome/content
+END
+directory.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20457/trunk/extensions/shoutcast/chrome/content/directory.js
+END
+main.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20603/trunk/extensions/shoutcast/chrome/content/main.js
+END
+favourites.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/favourites.js
+END
+addFavourite.xul
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/addFavourite.xul
+END
+radioProperties.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/18256/trunk/extensions/shoutcast/chrome/content/radioProperties.js
+END
+playlist.xul
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/playlist.xul
+END
+prefsOverlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/10192/trunk/extensions/shoutcast/chrome/content/prefsOverlay.xul
+END
+shoutcast.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20457/trunk/extensions/shoutcast/chrome/content/shoutcast.js
+END
+radioPrefs.js
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/radioPrefs.js
+END
+faceplate-overlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/faceplate-overlay.xul
+END
+optionsWindow.xul
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/10192/trunk/extensions/shoutcast/chrome/content/optionsWindow.xul
+END
+prefsPane.xul
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19112/trunk/extensions/shoutcast/chrome/content/prefsPane.xul
+END
+directory.xul
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/directory.xul
+END
+scripts-overlay.xul
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/19232/trunk/extensions/shoutcast/chrome/content/scripts-overlay.xul
+END

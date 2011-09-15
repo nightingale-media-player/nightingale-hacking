@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/21086/trunk/extensions/xpcom_helloworld
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/15575/trunk/extensions/xpcom_helloworld/Makefile.in
+END
+extension-config.mk
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/21086/trunk/extensions/xpcom_helloworld/extension-config.mk
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/14297/trunk/extensions/xpcom_helloworld/install.rdf.in
+END
+README.TXT
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/9733/trunk/extensions/xpcom_helloworld/README.TXT
+END

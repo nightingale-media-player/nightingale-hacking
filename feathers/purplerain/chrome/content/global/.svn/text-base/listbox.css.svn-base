@@ -1,0 +1,170 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is Mozilla Communicator client code, released
+ * March 31, 1998.
+ *
+ * The Initial Developer of the Original Code is
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998-2001
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Joe Hewitt (hewitt@netscape.com)
+ *   Kevin Gerich (webmail@kmgerich.com)
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+/* ===== listbox.css =======================================================
+  == Styles used by XUL listbox-related elements.
+  ======================================================================= */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* ::::: listbox ::::: */
+
+listbox {
+}
+
+.listcell-label {
+  white-space: nowrap;
+}
+
+/* ::::: listitem ::::: */
+
+listitem,
+listitem > label {
+  min-height:18px;
+  max-height:18px;
+}
+
+listbox:focus > listitem[selected="true"][current="true"] {
+
+}
+
+listitem[disabled="true"][selected="true"] {
+  background-color:transparent !important;
+}
+
+
+
+listbox:focus,
+listbox:focus > listitem[selected="true"] {  
+
+}
+
+/* ::::: listheader ::::: */
+
+listheader { 
+  -moz-box-align: center;
+  min-height:0 !important;
+  height:16px !important;
+  max-height:16px !important;
+
+}
+
+listheader[sortable="true"]:hover:active {
+}
+
+.listheader-icon {
+
+}
+
+
+/* ..... sort direction icon ..... */
+
+
+
+.listheader-sortdirection {
+  list-style-image: none;
+}
+
+/* ::::: listcell ::::: */
+listitem > label,
+.listheader-label,
+.listcell-label {
+  white-space: nowrap;
+  margin:0;
+}
+
+/* komi: why? */
+listitem > label {
+  padding:2px 4px !important;
+}
+.listheader-label,
+.listcell-label {
+  padding:0 4px !important;
+}
+
+
+
+.listcell-icon {
+  margin-right: 2px;
+}
+
+.listcell-label[disabled="true"] {
+}
+
+/* ::::: listcell checkbox ::::: */
+
+/* ..... checkmark image ..... 
+
+.listcell-check {
+  width: 14px;
+  height: 14px;
+  background: -moz-Field no-repeat 50% 50%;
+}
+*/
+/* ..... checked state ..... 
+
+listitem[checked="true"] .listcell-check 
+{
+  background-image: url("chrome://songbird/skin/checkbox/checkbox-checkmark.png");
+}
+*/
+
+.listcell-check {
+  list-style-image: url(chrome://songbird/skin/base-elements/button-checkbox.png);
+  -moz-image-region: rect(0px 14px 14px 0px);
+  min-height:14px;
+  min-width:14px;
+  margin-left:4px;
+}
+listitem[disabled="true"] > .listcell-check {
+  -moz-image-region: rect(42px 14px 56px 0px);
+}
+
+
+listitem[checked="true"] .listcell-check {
+  -moz-image-region: rect(0px 28px 14px 14px);
+}
+listitem[checked="true"][disabled="true"] > .listcell-check {
+  -moz-image-region: rect(42px 28px 56px 14px);
+}
+
+
+listheader:last-child {
+  border-right:none !important;
+}

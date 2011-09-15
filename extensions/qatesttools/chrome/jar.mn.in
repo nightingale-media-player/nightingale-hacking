@@ -1,0 +1,8 @@
+mockcdcontroller.jar:
+% content mockcdcontroller  %content/	contentaccessible=yes
+% locale  mockcdcontroller  en-US  %locale/en-US/
+% skin    mockcdcontroller  classic/1.0 %skin/
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://mockcdcontroller/content/scripts-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://mockcdcontroller/content/menu-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://mockcdcontroller/content/commands-overlay.xul
+@include_all_to

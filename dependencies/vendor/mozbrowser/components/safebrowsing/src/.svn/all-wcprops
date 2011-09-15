@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/src/Makefile.in
+END
+nsSafebrowsingApplication.js
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/safebrowsing/src/nsSafebrowsingApplication.js
+END

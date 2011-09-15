@@ -1,0 +1,306 @@
+<?xml version="1.0"?>
+<!--
+  Originally from /browser/base/content/browser-context.inc
+  Forked on April 10, 2008, to accomodate for Songbird's needs
+-->
+
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE overlay [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
+  <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+  <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd" >
+  %brandDTD;
+  %songbirdDTD;
+  %textcontextDTD;
+  %browserDTD;
+  %globalDTD;
+]>
+
+<overlay id="contentAreaContextOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+  <popup id="contentAreaContextMenu">
+    <menuitem id="spell-no-suggestions"
+       disabled="true"
+       label="&spellNoSuggestions.label;"/>
+    <menuitem id="spell-add-to-dictionary"
+       label="&spellAddToDictionary.label;"
+       accesskey="&spellAddToDictionary.accesskey;"
+       oncommand="InlineSpellCheckerUI.addToDictionary();"/>
+    <menuseparator id="spell-suggestions-separator"/>
+    <menuitem id="context-copyselected"
+       label="&copySelectionCmd.label;"
+       accesskey="&copySelectionCmd.accesskey;"
+       command="cmd_copy"/>
+    <menuitem id="context-searchselect"
+       accesskey="&search.accesskey;"
+       oncommand="BrowserSearch.loadSearch(getBrowserSelection(), true);"/>
+    <menuseparator id="context-sep-selected"/>
+    <menuitem id="context-openlinkintab"
+       label="&openLinkCmdInTab.label;"
+       accesskey="&openLinkCmdInTab.accesskey;"
+       oncommand="gContextMenu.openLinkInTab();"/>
+    <menuseparator id="context-sep-open"/>
+    <menuitem id="context-back"
+       label="&backCmd.label;"
+       accesskey="&backCmd.accesskey;"
+       chromedir="&locale.dir;"
+       command="Browser:Back"/>
+    <menuitem id="context-forward"
+       label="&forwardCmd.label;"
+       accesskey="&forwardCmd.accesskey;"
+       chromedir="&locale.dir;"
+       command="Browser:Forward"/>
+    <menuitem id="context-reload"
+       label="&reloadCmd.label;"
+       accesskey="&reloadCmd.accesskey;"
+       command="Browser:Reload"/>
+    <menuitem id="context-stop"
+       label="&stopCmd.label;"
+       accesskey="&stopCmd.accesskey;"
+       command="Browser:Stop"/>
+    <menuseparator id="context-sep-stop"/>
+
+    <menuitem id="context-openpageexternal"
+       label="&openPageCmdInDefaultBrowser.label;"
+       accesskey="&openPageCmdInDefaultBrowser.accesskey;"
+       oncommand="gContextMenu.openPageInDefaultBrowser();"/>
+    <menuitem id="context-openlinkexternal"
+       label="&openLinkCmdInDefaultBrowser.label;"
+       accesskey="&openLinkCmdInDefaultBrowser.accesskey;"
+       oncommand="gContextMenu.openLinkInDefaultBrowser();"/>
+    <menuseparator id="context-sep-openexternal"/>
+
+    <menuitem id="context-playmedia"
+       label="&playMediaCmd.label;"
+       accesskey="&playMediaCmd.accesskey;"
+       oncommand="gContextMenu.playMedia();"/>
+    <menuitem id="context-downloadmedia"
+       label="&downloadMediaCmd.label;"
+       accesskey="&downloadMediaCmd.accesskey;"
+       oncommand="gContextMenu.downloadMedia();"/>
+    <menu id="context-addmediatoplaylist" 
+       label="&addMediaToPlaylistCmd.label;" 
+       accesskey="&addMediaToPlaylistCmd.accesskey;">
+      <menupopup>
+        <menuitem id="context-addmediatoplaylist-noplaylist"
+           label="&addMediaToPlaylistCmd.noPlaylist.label;"
+           disabled="true"/>
+        <menuseparator id="context-sep-playlists"/>
+        <menuitem id="context-addmediatoplaylist-newplaylist"
+           label="&addMediaToPlaylistCmd.newPlaylist.label;"
+           accesskey="&addMediaToPlaylistCmd.newPlaylist.accesskey;"
+           oncommand="gContextMenu.addMediaToNewPlaylist();"/>
+      </menupopup>
+    </menu>
+    <menuseparator id="context-sep-media"/>
+
+    <menuitem id="context-savelink"
+       label="&saveLinkCmd.label;"
+       accesskey="&saveLinkCmd.accesskey;"
+       oncommand="gContextMenu.saveLink();"/>
+    <menuitem id="context-copylink"
+       label="&copyLinkCmd.label;"
+       accesskey="&copyLinkCmd.accesskey;"
+       oncommand="goDoCommand('cmd_copyLink');"/>
+    <menuseparator id="context-sep-copylink"/>
+
+    <menuitem id="context-showimage"
+       label="&reloadImageCmd.label;"
+       accesskey="&reloadImageCmd.accesskey;"
+       oncommand="gContextMenu.showImage();"/>
+    <menuseparator id="context-sep-viewbgimage"/>
+    <menuitem id="context-viewimage"
+       label="&viewImageCmd.label;"
+       accesskey="&viewImageCmd.accesskey;"
+       oncommand="gContextMenu.viewImage(event);"
+       onclick="checkForMiddleClick(this, event);"/>
+    <menuitem id="context-copyimage-contents"
+       label="&copyImageContentsCmd.label;"
+       accesskey="&copyImageContentsCmd.accesskey;"
+       oncommand="goDoCommand('cmd_copyImageContents');"/>
+    <menuitem id="context-copyimage"
+       label="&copyImageCmd.label;"
+       accesskey="&copyImageCmd.accesskey;"
+       oncommand="goDoCommand('cmd_copyImageLocation');"/>
+    <menuseparator id="context-sep-copyimage"/>
+    <menuitem id="context-openimageexternal"
+       label="&openImageCmdInDefaultBrowser.label;"
+       accesskey="&openImageCmdInDefaultBrowser.accesskey;"
+       oncommand="gContextMenu.openImageInDefaultBrowser();"/>
+    <menuseparator id="context-sep-openimageexternal"/>
+
+    <!--
+    <menuitem id="context-subscribemedia-page"
+       label="&subscribeMediaPageCmd.label;"
+       accesskey="&subscribeMediaPageCmd.accesskey;"
+       oncommand="gContextMenu.subscribeMediaPage();"/>
+       -->
+    <menuitem id="context-savepage"
+       label="&savePageCmd.label;"
+       accesskey="&savePageCmd.accesskey2;"
+       oncommand="gContextMenu.savePageAs();"/>
+    <menuseparator id="context-sep-savepage"/>
+
+    <menuitem id="context-saveimage"
+       label="&saveImageCmd.label;"
+       accesskey="&saveImageCmd.accesskey;"
+       oncommand="gContextMenu.saveImage();"/>
+    <menuitem id="context-blockimage"
+       type="checkbox"
+       accesskey="&blockImageCmd.accesskey;"
+       oncommand="gContextMenu.toggleImageBlocking(this.getAttribute('checked') == 'true');"/>
+    <menuitem id="context-undo"
+       label="&undoCmd.label;"
+       accesskey="&undoCmd.accesskey;"
+       command="cmd_undo"/>
+    <menuseparator id="context-sep-undo"/>
+    <menuitem id="context-cut"
+       label="&cutCmd.label;"
+       accesskey="&cutCmd.accesskey;"
+       command="cmd_cut"/>
+    <menuitem id="context-copy"
+       label="&copyCmd.label;"
+       accesskey="&copyCmd.accesskey;"
+       command="cmd_copy"/>
+    <menuitem id="context-paste"
+       label="&pasteCmd.label;"
+       accesskey="&pasteCmd.accesskey;"
+       command="cmd_paste"/>
+    <menuitem id="context-delete"
+       label="&deleteCmd.label;"
+       accesskey="&deleteCmd.accesskey;"
+       command="cmd_delete"/>
+    <menuseparator id="context-sep-paste"/>
+    <menuitem id="context-selectall"
+       label="&selectAllCmd.label;"
+       accesskey="&selectAllCmd.accesskey;"
+       command="cmd_selectAll"/>
+    <menuseparator id="context-sep-selectall"/>
+    <menuseparator id="frame-sep"/>
+    <menu id="frame" 
+       label="&thisFrameMenu.label;" 
+       accesskey="&thisFrameMenu.accesskey;">
+      <menupopup>
+        <menuitem id="context-showonlythisframe"
+            label="&showOnlyThisFrameCmd.label;"
+            accesskey="&showOnlyThisFrameCmd.accesskey;"
+            oncommand="gContextMenu.showOnlyThisFrame();"/>
+        <menuitem id="context-openframeintab"
+            label="&openFrameCmdInTab.label;"
+            accesskey="&openFrameCmdInTab.accesskey;"
+            oncommand="gContextMenu.openFrameInTab();"/>
+        <menuseparator/>
+        <menuitem id="context-reloadframe"
+            label="&reloadFrameCmd.label;"
+            accesskey="&reloadFrameCmd.accesskey;"
+            oncommand="gContextMenu.reloadFrame();"/>
+        <menuseparator/>
+        <menuitem id="context-openframeexternal"
+           label="&openFrameCmdInDefaultBrowser.label;"
+           accesskey="&openFrameCmdInDefaultBrowser.accesskey;"
+           oncommand="gContextMenu.openFrameInDefaultBrowser();"/>
+        <menuseparator id="context-sep-openframeexternal"/>
+        <!--
+        <menuitem id="context-subscribemedia-frame"
+           label="&subscribeMediaFrameCmd.label;"
+           accesskey="&subscribeMediaFrameCmd.accesskey;"
+           oncommand="gContextMenu.subscribeMediaFrame();"/>
+        -->
+        <menuitem id="context-saveframe"
+            label="&saveFrameCmd.label;"
+            accesskey="&saveFrameCmd.accesskey;"
+            oncommand="saveDocument(gContextMenu.target.ownerDocument);"/>
+        <menuseparator/>
+        <menuitem id="context-viewframesource"
+            label="&viewFrameSourceCmd.label;"
+            accesskey="&viewFrameSourceCmd.accesskey;"
+            oncommand="gContextMenu.viewFrameSource();"
+            observes="isFrameImage"/>
+      </menupopup>
+    </menu>
+    <menuseparator id="frame-sep-after"/>
+    <menuseparator id="context-sep-properties"/>
+    <menuitem id="context-viewsource"
+       label="&viewPageSourceCmd.label;"
+       accesskey="&viewPageSourceCmd.accesskey;"
+       oncommand="BrowserViewSourceOfDocument(gContextMenu.tabbrowser.selectedBrowser.contentDocument);"
+       observes="isImage"/>
+    <menuseparator id="spell-separator" hidden="true"/>
+    <menuitem id="spell-check-enabled"
+       label="&spellCheckEnable.label;"
+       type="checkbox"
+       accesskey="&spellCheckEnable.accesskey;"
+       oncommand="InlineSpellCheckerUI.toggleEnabled();"/>
+    <menuitem id="spell-add-dictionaries-main"
+       label="&spellAddDictionaries.label;"
+       accesskey="&spellAddDictionaries.accesskey;"
+       oncommand="gContextMenu.addDictionaries();"/>
+    <menu id="spell-dictionaries"
+         label="&spellDictionaries.label;"
+         accesskey="&spellDictionaries.accesskey;">
+       <menupopup id="spell-dictionaries-menu">
+           <menuseparator id="spell-language-separator"/>
+           <menuitem id="spell-add-dictionaries"
+             label="&spellAddDictionaries.label;"
+             accesskey="&spellAddDictionaries.accesskey;"
+             oncommand="gContextMenu.addDictionaries();"/>
+       </menupopup>
+    </menu>
+    <menuseparator hidden="true" id="context-sep-bidi"/>
+    <menuitem hidden="true" id="context-bidi-text-direction-toggle"
+       label="&bidiSwitchTextDirectionItem.label;"
+       accesskey="&bidiSwitchTextDirectionItem.accesskey;"
+       command="cmd_switchTextDirection"/>
+    <menuitem hidden="true" id="context-bidi-page-direction-toggle"
+       label="&bidiSwitchPageDirectionItem.label;"
+       accesskey="&bidiSwitchPageDirectionItem.accesskey;"
+       oncommand="gContextMenu.switchPageDirection();"/>
+  </popup>
+
+  <script type="application/x-javascript"
+    src="chrome://songbird/content/scripts/contentAreaContextMenu.js" />
+  <script type="application/x-javascript"
+    src="chrome://global/content/inlineSpellCheckUI.js" />
+  <script type="application/x-javascript"
+    src="chrome://global/content/contentAreaUtils.js" />
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="bundle_browser" src="chrome://browser/locale/browser.properties"/>
+  </stringbundleset>
+
+  <broadcasterset id="mainBroadcasterSet">
+    <broadcaster id="isFrameImage"/>
+  </broadcasterset>
+
+</overlay>

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/19674/trunk/installer/windows/partner
+END
+common.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/19558/trunk/installer/windows/partner/common.nsh
+END
+PartnerPlayer.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/19674/trunk/installer/windows/partner/PartnerPlayer.nsi
+END
+functions.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/19564/trunk/installer/windows/partner/functions.nsi
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/19674/trunk/installer/windows/partner/Makefile.in
+END
+partner.ico
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/19558/trunk/installer/windows/partner/partner.ico
+END
+defines.nsi.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/19617/trunk/installer/windows/partner/defines.nsi.in
+END

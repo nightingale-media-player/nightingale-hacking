@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "Impossible de trouver des infos sur l'artiste pour le titre en cours de lecture">
+<!ENTITY mashTape.msg.no_review_found "Impossible de trouver des commentaires pour le titre en cours de lecture">
+<!ENTITY mashTape.msg.no_rss_found "Impossible de trouver de nouvelles pour le titre en cours de lecture">
+<!ENTITY mashTape.msg.no_photo_found "Impossible de trouver des photos pour le titre en cours de lecture">
+<!ENTITY mashTape.msg.no_flash_found "Impossible de trouver des vidéos pour le titre en cours de lecture">

@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtry strumieni">
+<!ENTITY prefwindow.title "SHOUTcast Radio - preferencje">
+<!ENTITY bit-rate.limit.label "Wyświetlaj wyłącznie strumienie SHOUTcasta o bitrate wynoszącym co najmniej">
+<!ENTITY listeners.limit.label "Wyświetlaj wyłącznie strumienie SHOUTcasta z co najmniej">
+<!ENTITY listeners.limit.label.2 "słuchaczami">
+<!ENTITY bit-rate.label "Bitrate (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Liczba słuchaczy">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "Przetwarzanie nazw wykonawców/tytułów">
+<!ENTITY prefs.track.guessing.label "Włącz przetwarzanie tytułów i nazw wykonawców">
+<!ENTITY prefs.track.guessing.help "Niektóre strumienie SHOUTcasta dostarczają informacji o odtwarzanym utworze w formie &quot;Wykonawca - Tytuł utworu&quot;.  Jeżeli włączysz tę opcję, rozszerzenie SHOUTcast spróbuje przetworzyć te dane i wysłać informację o zmianie odtwarzanego w strumieniu utworu, aby inne rozszerzenia wiedziały o tym fakcie.">
+<!ENTITY prefs.customGenres "Własne gatunki">
+<!ENTITY prefs.customGenres.emptytext "Wprowadź listę oddzielonych przecinkami gatunki tutaj">
+<!ENTITY custom-genres.help.label "Jeżeli masz zdefiniowane własne gatunki, które chcesz, by były wyświetlane w katalogu SHOUTcasta, wprowadź tutaj listę ich nazw oddzielonych przecinkami.">
+<!ENTITY prefs.tosBegin "Użytkowanie katalogu SHOUTcasta wiąże się z akceptacją zasad jego użytkowania">
+<!ENTITY prefs.tosLinkText "Zobacz zasady użytkowania">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Zainstaluj">
+<!ENTITY prefs.toolbarLinkText "pasek narzędzi SHOUTcastu">
+<!ENTITY prefs.toolbarEnd "dodatek do przeglądarki ułatwiający dostęp do SHOUTcastu z Twojej przeglądarki.">

@@ -1,0 +1,167 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/20878/trunk/feathers/purplerain/chrome/content/bindings
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/Makefile.in
+END
+cdripMediaView.css
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/cdripMediaView.css
+END
+addOnBundleInstaller.css
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/addOnBundleInstaller.css
+END
+bindings.css
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/20878/trunk/feathers/purplerain/chrome/content/bindings/bindings.css
+END
+closableBox.css
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/closableBox.css
+END
+observesDataRemote.css
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/observesDataRemote.css
+END
+infoPanels.css
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17514/trunk/feathers/purplerain/chrome/content/bindings/infoPanels.css
+END
+dialog.css
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/dialog.css
+END
+wizard.css
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/wizard.css
+END
+playlist.css
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/20798/trunk/feathers/purplerain/chrome/content/bindings/playlist.css
+END
+equalizer.css
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20099/trunk/feathers/purplerain/chrome/content/bindings/equalizer.css
+END
+syscontrols.css
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/17563/trunk/feathers/purplerain/chrome/content/bindings/syscontrols.css
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/jar.mn.in
+END
+servicepane.css
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/20838/trunk/feathers/purplerain/chrome/content/bindings/servicepane.css
+END
+search.css
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/17614/trunk/feathers/purplerain/chrome/content/bindings/search.css
+END
+browsertoolbar.css
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/browsertoolbar.css
+END
+ratingsControl.css
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/ratingsControl.css
+END
+statusbar.css
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20099/trunk/feathers/purplerain/chrome/content/bindings/statusbar.css
+END
+miniplayer.css
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/miniplayer.css
+END
+displayPane.css
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/20099/trunk/feathers/purplerain/chrome/content/bindings/displayPane.css
+END
+tabbrowser.css
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/tabbrowser.css
+END
+smartsplitter.css
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/smartsplitter.css
+END
+addOnBundle.css
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/addOnBundle.css
+END
+playerControls.css
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/18751/trunk/feathers/purplerain/chrome/content/bindings/playerControls.css
+END
+filterlist.css
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/20878/trunk/feathers/purplerain/chrome/content/bindings/filterlist.css
+END
+playlistCommands.css
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/16997/trunk/feathers/purplerain/chrome/content/bindings/playlistCommands.css
+END
+faceplate.css
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18751/trunk/feathers/purplerain/chrome/content/bindings/faceplate.css
+END

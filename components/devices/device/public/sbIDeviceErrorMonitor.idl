@@ -1,0 +1,113 @@
+/* vim: ts=2 sw=2 expandtab
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIDeviceErrorMonitor.idl
+ * \brief Interface to the device service pane provider
+ */
+
+#include "nsISupports.idl"
+
+interface sbIDevice;
+interface nsIArray;
+interface sbIDeviceErrorMonitorListener;
+
+/**
+ * \interface sbIDeviceErrorMonitor
+ * \brief This service monitors devices for errors and stores them for easy
+ *        access later.
+ */
+[scriptable, uuid(d70905a8-4644-4c9a-a976-7e9614af8ff2)]
+interface sbIDeviceErrorMonitor : nsISupports {
+
+  /**
+   * \brief Checks to see if a device has had any recent errors.
+   *
+   * \param aDevice device to check for errors on.
+   * \param aContentType type of content we want to check for errors on. This
+   *                     may be blank in which case errors returned are not
+   *                     filtered by content type.
+   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT] or this may be 0 and
+   *                   errors returned are not filtered based on direction.
+   * \returns true if any errors are currently registered for this device.
+   */
+  boolean deviceHasErrors(in sbIDevice aDevice, 
+                          in AString aContentType,
+                          in unsigned long aDirection);
+
+  /**
+   * \brief Gets an array of property bags containing information about the
+   *        errors.
+   *
+   * \param aDevice The device to get the list of errors for
+   * \param aContentType type of content we want errors for, or empty string for all
+   *                     types.
+   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT]
+   * \returns array of property bags that contain error information
+   *
+   * The property bag currently contains msg and state for the error message
+   * and device state respectively
+   */
+  nsIArray getDeviceErrors(in sbIDevice aDevice,
+                           [optional] in AString aContentType,
+                           [optional] in unsigned long aDirection);
+
+  /**
+   * \brief Clears the array of error strings for a device.
+   *
+   * \param aDevice device to clear error list from.
+   */
+  void clearErrorsForDevice(in sbIDevice aDevice);
+
+  /**
+   * \brief Adds a listener for new device errors.
+   *
+   * \param aListener listener to call when a device error is logged.
+   */
+  void addListener(in sbIDeviceErrorMonitorListener aListener);
+
+  /**
+   * \brief Removes a listener for new device errors.
+   *
+   * \param aListener listener to remove.
+   */
+  void removeListener(in sbIDeviceErrorMonitorListener aListener);
+};
+
+/**
+ * \interface sbIDeviceErrorMonitorListener
+ * \brief This interface is used to notify device error listeners of new errors.
+ */
+[scriptable, function, uuid(a34659d6-1dd1-11b2-8659-af363aaf72c0)]
+interface sbIDeviceErrorMonitorListener : nsISupports {
+  /**
+   * \brief Called when a device error is logged for the device specified by
+   *        aDevice.
+   *
+   * \param aDevice device for which error was logged.
+   */
+  void onDeviceError(in sbIDevice aDevice);
+};

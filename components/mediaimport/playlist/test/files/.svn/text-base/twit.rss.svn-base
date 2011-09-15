@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+  <channel>
+    <title>this WEEK in TECH - MP3 Edition</title>
+    <link>http://twit.tv</link>
+    <description>Your first podcast of the week is the last word in tech. Join Leo Laporte, Patrick Norton, Kevin Rose, John C. Dvorak, and other tech luminaries in a roundtable discussion of the latest trends in digital technology. Winner of the 2005 People&apos;s Choice Podcast Award for best overall podcast and Best Technology Podcast. Released every Sunday at midnight Pacific.</description>
+    <generator>Feeder 1.4.4 http://reinventedsoftware.com/feeder/</generator>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <language>en-us</language>
+    <copyright>This work is licensed under a Creative Commons License - Attribution-NonCommercial-ShareAlike - http://creativecommons.org/licenses/by-nc-sa/2.0/</copyright>
+    <managingEditor>leo@leoville.com (Leo Laporte)</managingEditor>
+    <webMaster>leo@leoville.com (Leo Laporte)</webMaster>
+    <pubDate>Sun, 27 May 2007 21:48:03 -0700</pubDate>
+    <lastBuildDate>Sun, 27 May 2007 21:48:03 -0700</lastBuildDate>
+    <category>Technology</category>
+    <ttl>720</ttl>
+    <image>
+      <url>http://leoville.tv/podcasts/coverart/twit144.jpg</url>
+      <title>this WEEK in TECH</title>
+      <link>http://twit.tv</link>
+      <width>138</width>
+      <height>138</height>
+    </image>
+    <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+    <itunes:subtitle>Your first podcast of the week is the last word in tech. Join Leo Laporte, Patrick Norton, Kevin Rose, John C. Dvorak, and other tech luminaries in a roundtable discussion of the latest trends in digital tech. 2005 People&apos;s Choice Podcast Award winner.</itunes:subtitle>
+    <itunes:summary>Your first podcast of the week is the last word in tech. Join Leo Laporte, Patrick Norton, Kevin Rose, John C. Dvorak, and other tech luminaries in a roundtable discussion of the latest trends in high tech. Winner of People&apos;s Choice Podcast and Best Technology Podcast in the 2005 People&apos;s Choice Podcast Awards. Released every Sunday at midnight Pacific.</itunes:summary>
+    <itunes:keywords>twit, techtv, leo laporte, kevin rose, patrick norton, john c. dvorak </itunes:keywords>
+    <itunes:explicit>clean</itunes:explicit>
+    <itunes:image href="http://leoville.tv/podcasts/coverart/twit300.jpg"/>
+    <itunes:owner>
+      <itunes:name>Leo Laporte</itunes:name>
+      <itunes:email>leo@leoville.com</itunes:email>
+    </itunes:owner>
+    <itunes:block>no</itunes:block>
+    <itunes:category text="Technology">
+      <itunes:category text="Tech News"/>
+      <itunes:category text="Gadgets"/>
+      <itunes:category text="Software How-To"/>
+    </itunes:category>
+    <item>
+      <title>TWiT 99: Happy Towel Day</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0099H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dl.tv">Patrick Norton</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>Borrowing Wi-Fi is a crime, Dell arrives at Wal-Mart, and Norton crashes Chinese PCs....</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:13:56</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 27 May 2007 21:47:42 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/99</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0099H.mp3" length="35587310" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-99-happy-towel-day</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Borrowing Wi-Fi is a crime, Dell arrives at Wal-Mart, and Norton crashes Chinese PCs....
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Patrick Norton, and John C. Dvorak
+
+Borrowing Wi-Fi is a crime, Dell arrives at Wal-Mart, and Norton crashes Chinese PCs....
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:13:56</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:13:56</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 98: The Big Bang</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0098H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://wilharris.co.uk">Wil Harris</a>, <a href="http://cwob.com">Andy Ihnatko</a>, and <a href=*http://www.stonehenge.com/merlyn/">Randal Schwartz</a></p>
+
+<p>Microsoft spreads FUD, Engadget costs Apple $4B, and Leo hits the dirt...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:01:36</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 20 May 2007 22:29:16 -0700</pubDate>
+      <category>News</category>
+      <category>Technology</category>
+      <comments>http://twit.tv/98</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0098H.mp3" length="29666709" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-98-the-big-bang</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Microsoft spreads FUD, Engadget costs Apple $4B, and Leo hits the dirt...
+</itunes:subtitle>
+      <itunes:summary>
+
+Hosts: Leo Laporte, Wil Harris, Andy Ihnatko, and Randal Schwartz
+
+Microsoft spreads FUD, Engadget costs Apple $4B, and Leo hits the dirt...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:01:36</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:01:36</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 97: Cedar Closet Linings</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0097H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://revision3.com">David Prager</a>, <a href="askaninja.com">Kent "Ask A Ninja" Nichols</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>PC World editor returns, Joost raises big bucks, and Nokia goes green...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 58:58</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 13 May 2007 21:59:45 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/97</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0097H.mp3" length="27289984" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-97-cedar-closet-linings</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>PC World editor returns, Joost raises big bucks, and Nokia goes green...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, David Prager, Kent &quot;Ask A Ninja&quot; Nichols, and John C. Dvorak
+
+PC World editor returns, Joost raises big bucks, and Nokia goes green...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 58:58</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>56:41</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 96: 09 F9 11 02 9D 74 E3 58 D8 41 56 C5 63 56 88 C0</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0096H.mp3</link>
+      <description><![CDATA[<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://cwob.com">Andy Ihnatko</a>, <a href="http://dl.tv">Patrick Norton<a/>, <a href="http://arstechnica.com">Jaqui Cheng</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>Guest: <a href="http://digg.com">Kevin Rose</a></p>
+
+<p>The Digg revolt, inside and out, why a Microsoft Yahoo merger makes no sense, and the My Space candidate...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show. The TWiT opening theme is by <a href="http://podcastthemes.com">Mark Blasco</a>. The closing theme is by <a href="http://www.tenhauser.com/">Ashley Witt</a>. TWiT album art by <a href="http://www.geekculture.com/geekculturestore/webstore/nitroportraits.html">Nitrozac</a>.</p>
+
+<p><b>Running time:</b> 1:11:00</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 06 May 2007 21:35:47 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/96</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0096H.mp3" length="34331836" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-96-09-f9-11-02-9d-74-e3-58-d8-41-56-c5-63-56</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>The Digg revolt, inside and out, why a Microsoft Yahoo merger makes no sense, and the My Space candidate...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Andy Ihnatko, Patrick Norton, Jaqui Cheng, and John C. Dvorak
+
+Guest: Kevin Rose
+
+The Digg revolt, inside and out, why a Microsoft Yahoo merger makes no sense, and the My Space candidate...
+
+Thanks to AOL Radio for the bandwidth for this show. The TWiT opening theme is by Mark Blasco. The closing theme is by Ashley Witt. TWiT album art by Nitrozac.
+
+Running time: 1:11:00</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:11:00</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 95: NABbed Red-Handed</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0095H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://wilharris.co.uk">Wil Harris</a>, <a href="http://pixelcorps.com">Alex Lindsay</a>, <a href="http://www.dvorak.org/blog">John C. Dvorak</a>, and <a href="http://cyber.law.harvard.edu/projectvrm/Main_Page">Doc Searls</a>   </p>
+
+<p>News from NAB, a debate over Red, and a eulogy for AMD...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 59:16</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Mon, 23 Apr 2007 02:38:37 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/95</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0095H.mp3" length="28545742" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-95-nabbed-redhanded</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>News from NAB, a debate over Red, and a eulogy for AMD...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Wil Harris, Alex Lindsay, John C. Dvorak, and Doc Searls   
+
+News from NAB, a debate over Red, and a eulogy for AMD...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 59:16</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>59:16</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 94: Tastes Like Chicken</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0094H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dl.tv">Patrick Norton</a>, <a href="http://bol.cnet.com">Tom Merritt</a>, <a href="http://cnet.com">Harry Fuller</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>Apple lets Leopard slip, Google buys DoubleClick, and Microsoft is dead... </p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 56:01</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 15 Apr 2007 21:19:41 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/94</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0094H.mp3" length="26991846" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-94-tastes-like-chicken</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Apple lets Leopard slip, Google buys DoubleClick, and Microsoft is dead... 
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Patrick Norton, Tom Merritt, Harry Fuller, and John C. Dvorak
+
+Apple lets Leopard slip, Google buys DoubleClick, and Microsoft is dead... 
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 56:01</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>56:01</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 93: GMT</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0093H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://revision3.com">David Prager</a>, <a href="http://dl.tv">Robert Heron</a>,  <a href="http://dl.tv">Roger Chang</a>, <a href="http://bol.cnet.com">Veronica Belmont</a>, <a href="http://dl.tv">Patrick Norton</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>The old gang reunites for a live appearance at the Gear*Media*Tech seminar. Look for video in the next day or so. </p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 58:58</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 01 Apr 2007 21:55:26 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/93</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0093H.mp3" length="28397785" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-93-gmt</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>The old gang reunites for a live appearance at the Gear*Media*Tech seminar. Look for video in the next day or so. 
+</itunes:subtitle>
+      <itunes:summary>
+
+Hosts: Leo Laporte, David Prager, Robert Heron,  Roger Chang, Veronica Belmont, Patrick Norton, and John C. Dvorak
+
+The old gang reunites for a live appearance at the Gear*Media*Tech seminar. Look for video in the next day or so. 
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 58:58</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>58:58</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 92: The Tiki Gods</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0092H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://43folders.net">Merlin Mann</a>, <a href="http://gruntmedia.com">Craig Syverson</a>, and Kevin "Johnny Johnny" Gamble and Jeff "Dr. Tiki" Macpherson of <a href="http://tikibartv.com">Tiki Bar TV</a></p>
+
+<p>A roundtable of video podcasters discuss the impact of Apple TV on new media. </p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:54:05</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 25 Mar 2007 23:26:31 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/92</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0092H.mp3" length="54853185" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-92-the-tiki-gods</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>A roundtable of video podcasters discuss the impact of Apple TV on new media. 
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Merlin Mann, Craig Syverson, and Kevin &quot;Johnny Johnny&quot; Gamble and Jeff &quot;Dr. Tiki&quot; Macpherson of Tiki Bar TV
+
+A roundtable of video podcasters discuss the impact of Apple TV on new media. 
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:54:05</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:54:05</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 91: All A-Twitter</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0091H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://wilharris.co.uk">Wil Harris</a>, <a href="http://pixelcorps.com">Alex Lindsay</a>, <a href="http://www.podtech.net/scobleshow/">Robert Scoble</a>, and <a href="http://cyber.law.harvard.edu/projectvrm/Main_Page">Doc Searls</a>   </p>
+
+<p>Our first show live on Talkshoe.com (but not our last) with our SxSW post mortem, Google vs. Viacom, and the new TechCrunch...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:23:18</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 18 Mar 2007 21:43:16 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/91</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0091H.mp3" length="39991056" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-91-all-atwitter</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Our first show live on Talkshoe.com (but not our last) with our SxSW post mortem, Google vs. Viacom, and the new TechCrunch...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Wil Harris, Alex Lindsay, Robert Scoble, and Doc Searls   
+
+Our first show live on Talkshoe.com (but not our last) with our SxSW post mortem, Google vs. Viacom, and the new TechCrunch...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:23:18</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:23:18</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 90: Idiocracy</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0090H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://43folders.net">Merlin Mann</a>, <a href="http://cwob.com">Andy Ihnatko</a>, <a href="http://willharris.co.uk">Wil Harris</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>Microsoft's OneCare fails the av test, the Microsoft way, and Sony Home...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 45:58</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 11 Mar 2007 20:37:00 -0700</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/90</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0090H.mp3" length="22155355" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-90-idiocracy</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Microsoft&apos;s OneCare fails the av test, the Microsoft way, and Sony Home...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Merlin Mann, Andy Ihnatko, Wil Harris, and John C. Dvorak
+
+Microsoft&apos;s OneCare fails the av test, the Microsoft way, and Sony Home...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 45:58</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>45:58</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 89: The Future Is In Your Hand</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0089H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://43folders.net">Merlin Mann</a>, <a href="http://bol.cnet.com">Veronica Belmont</a>, <a href="http://dl.tv">Patrick Norton</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>Talking urinal cakes, the XM Sirius Merger, and the top 25 web 2.0 startups dissected...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:39:20</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 25 Feb 2007 21:53:59 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/89</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0089H.mp3" length="47785401" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-90-the-future-is-in-your-hand</guid>
+      <itunes:author>Leo Laporte, John C. Dvorak, Patrick Norton, Merlin Mann, and Veronica Belmont</itunes:author>
+      <itunes:subtitle>Talking urinal cakes, the XM Sirius Merger, and the top 25 web 2.0 startups dissected...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Merlin Mann, Veronica Belmont, Patrick Norton, and John C. Dvorak
+
+Talking urinal cakes, the XM Sirius Merger, and the top 25 web 2.0 startups dissected...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:38:00</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:39:20</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 88: Batteries Included</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0088H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://43folders.net">Merlin Mann</a>, <a href="http://bol.cnet.com">Tom Merritt</a>, <a href="http://bit-tech.net">Wil Harris</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>Quantum computing, teraflop chips, and iPod bans...</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:17:40</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 11 Feb 2007 21:22:03 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/88</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0088H.mp3" length="37384069" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-88-batteries-included</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Quantum computing, teraflop chips, and iPod bans...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Merlin Mann, Tom Merritt, Wil Harris, and John C. Dvorak
+
+Quantum computing, teraflop chips, and iPod bans...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:17:40</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:17:40</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 87: We&apos;ve Got Wood</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0087H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 /></p>
+
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dl.tv">Patrick Norton</a>, <a href="http://dl.tv">Robert Heron</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a></p>
+
+<p>From the mind of George Wood, a best of 2006. Thanks, George. We have other best of episodes submitted. Stay tuned. And TWiT will be back with a new show on Sunday.</p>
+
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.</p>
+
+<p><b>Running time:</b> 1:16:55</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Wed, 07 Feb 2007 11:49:24 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/87</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0087H.mp3" length="32403803" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-87-weve-got-wood</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>From the mind of George Wood, a best of 2006. Thanks, George</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Patrick Norton, Robert Heron, and John C. Dvorak
+
+From the mind of George Wood, a best of 2006. Thanks, George. We have other best of episodes submitted. Stay tuned. And TWiT will be back with a new show on Sunday.
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:16:55</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:16:55</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 86: Web Celebs</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0086H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+</p>
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dl.tv">Patrick Norton</a>, <a href="http://dl.tv">Robert Heron</a>, and <a href="http://dvorak.org/blog">John C. Dvorak</a>
+</p>
+<p>Wikipedia woes, Forbes' Web Celebs, and classroom porn storms...
+</p>
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.
+</p>
+<p><b>Running time:</b> 59:22</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 28 Jan 2007 22:00:00 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/86</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0086H.mp3" length="28601284" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-86-web-celebs</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Wikipedia woes, Forbes&apos; Web Celebs, and classroom porn storms...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Patrick Norton, Robert Heron, and John C. Dvorak
+
+Wikipedia woes, Forbes&apos; Web Celebs, and classroom porn storms...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 59:22</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>59:22</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 85: The Podfather</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0085H.mp3</link>
+      <description><![CDATA[<p><img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+</p>
+<p><b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dl.tv">Patrick Norton</a>, and <a href="http://bit-tech.net">Wil Harris, and <a href="http://curry.com">Adam Curry</a>
+</p>
+<p>Adam and Patrick joust over Joost and Pirate Bay tries to buy a nation, while Steve Ballmer giggles nervously... 
+</p>
+<p>Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.
+</p>
+<p><b>Running time:</b> 1:15:01</p>]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 21 Jan 2007 21:31:05 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/85</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0085H.mp3" length="35876699" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-85-the-podfather</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Adam and Patrick joust over Joost, Pirate Bay tries to buy a nation, and Steve Ballmer giggles nervously... 
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, Patrick Norton, and Wil Harris, and Adam Curry
+
+Adam and Patrick joust over Joost, Pirate Bay tries to buy a nation, and Steve Ballmer giggles nervously... 
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:15:01</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:15:00</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 84: Hahn, I&apos;m Home!</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0084H.mp3</link>
+      <description><![CDATA[<img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+<b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dvorak.org/blog">John C. Dvorak</a>, <a href="http://dl.tv">Robert Heron</a>, <a href="http://revision3.com/indigital">Hahn Choi</a>, and <a href="http://craphound.com/overclocked/">Cory Doctorow</a>
+<p>
+Our CES post-mortem
+<p>
+Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.<p>
+<b>Running time:</b> 1:15:01]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 14 Jan 2007 16:54:01 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/84</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3/aolradio.podcast.aol.com/twit/TWiT0084H.mp3" length="36116190" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-84-hahn-im-home</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Our CES post-mortem...</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, John C. Dvorak, Robert Heron, Hahn Choi, and Cory Doctorow
+
+Our CES post-mortem
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:15:01</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:15:01</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 83: MacCESWorld</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0083H.mp3</link>
+      <description><![CDATA[<img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+<b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dvorak.org/blog">John C. Dvorak</a>, <a href="http://diggnation.com">Kevin Rose</a>, <a href="http://revision3.com">David Prager</a>, and Bill Machrone
+<p>
+Our CES and MacWorld preview...
+<p>
+Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.<p>
+<b>Running time:</b> 1:07:28]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 07 Jan 2007 11:05:49 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/83</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0083H.mp3" length="32477019" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-83-maccesworld</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Our CES and MacWorld preview...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, John C. Dvorak, Kevin Rose, David Prager, and Bill Machrone
+
+Our CES and MacWorld preview...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:07:28</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:07:28</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 82: The Year In Review</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0082H.mp3</link>
+      <description><![CDATA[<img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+<b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dvorak.org/blog">John C. Dvorak</a>, <a href="http://bit-tech.net">Wil Harris</a>, <a href="http://cwob.com">Andy Ihnatko</a>, and <a href="http://techcrunch.com">Michael Arrington</a>
+<p>
+A look back at the stories that made 2006, and what's ahead for 2007...
+<p>
+Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.<p>
+<b>Running time:</b> 1:00:00]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Mon, 01 Jan 2007 18:35:13 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/82</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0082H.mp3" length="29249330" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-82-the-year-in-review</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>A look back at the stories that made 2006, and what&apos;s ahead for 2007...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, John C. Dvorak, Wil Harris, Andy Ihnatko, and Michael Arrington
+
+A look back at the stories that made 2006, and what&apos;s ahead for 2007...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:00:00</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:00:00</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 81: The Early Years</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0081H.mp3</link>
+      <description><![CDATA[<img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+<b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dvorak.org/blog">John C. Dvorak</a>, <a href="http://dl.tv">Patrick Norton</a>, <a href="http://diggnation.com">Kevin Rose</a>, <a href="http://revision3.com">David Prager</a>, <a href="http://dl.tv">Robert Heron</a>
+<p>
+This Christmas Eve we present another special compilation. This time it's a collection of moments from the first ten TWiTs - TWiT 0, the pilot, through TWiT 9. Thanks so much to Alfred Chan of Hong Kong for creating this show for us. We hope you enjoy it. TWiT will be back next week with a fresh show looking back at 2006 and ahead at 2007. Happy holidays and all the best for 2007!
+<p>
+Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.<p>
+<b>Running time:</b> 1:15:03]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Sun, 24 Dec 2006 08:32:41 -0600</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/81</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0081H.mp3" length="36127266" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-81-the-early-years</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>The best of TWiT 0-9...</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, John C. Dvorak, Patrick Norton, Kevin Rose, David Prager, Robert Heron
+
+This Christmas Eve we present another special compilation. This time it&apos;s a collection of moments from the first ten TWiTs - TWiT 0, the pilot, through TWiT 9. Thanks so much to Alfred Chan of Hong Kong for creating this show for us. We hope you enjoy it. TWiT will be back next week with a fresh show looking back at 2006 and ahead at 2007. Happy holidays and all the best for 2007!
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:15:03</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:15:03</itunes:duration>
+    </item>
+    <item>
+      <title>TWiT 80: The Person of the Year is… You!</title>
+      <link>http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0080H.mp3</link>
+      <description><![CDATA[<img src="http://leoville.tv/podcasts/coverart/twit.gif" align=right hspace=20 vspace=20 border=0 />
+<b>Hosts:</b> <a href="http://leoville.com">Leo Laporte</a>, <a href="http://dvorak.org/blog">John C. Dvorak</a>, <a href="http://revision3.com">David Prager</a>, Kevin Krewell, and <a href="grc.com">Steve Gibson</a>
+<p>
+Time's Person of the Year, the iPhone, the AMD roadmap, and more...
+<p>
+Thanks to <a href="http://music.aol.com/radioguide/podcasting">AOL Radio</a> for the bandwidth for this show.<p>
+<b>Running time:</b> 1:06:12]]></description>
+      <author>leo@leoville.com (Leo Laporte) </author>
+      <pubDate>Mon, 18 Dec 2006 05:28:13 -0800</pubDate>
+      <category>Technology</category>
+      <category>News</category>
+      <comments>http://twit.tv/80</comments>
+      <enclosure url="http://www.podtrac.com/pts/redirect.mp3?http://aolradio.podcast.aol.com/twit/TWiT0080H.mp3" length="31867928" type="audio/mpeg"/>
+      <guid isPermaLink="false">twit-80-the-person-of-the-year-is-you</guid>
+      <itunes:author>Leo Laporte and the TWiTs</itunes:author>
+      <itunes:subtitle>Time&apos;s Person of the Year, the iPhone, the AMD roadmap, and more...
+</itunes:subtitle>
+      <itunes:summary>Hosts: Leo Laporte, John C. Dvorak, David Prager, Kevin Krewell, and Steve Gibson
+
+Time&apos;s Person of the Year, the iPhone, the AMD roadmap, and more...
+
+Thanks to AOL Radio for the bandwidth for this show.
+
+Running time: 1:06:12</itunes:summary>
+      <itunes:explicit>no</itunes:explicit>
+      <itunes:duration>1:06:12</itunes:duration>
+    </item>
+  </channel>
+</rss>

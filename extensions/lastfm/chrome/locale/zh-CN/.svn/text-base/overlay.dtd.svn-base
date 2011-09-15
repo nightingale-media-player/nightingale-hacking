@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "登录Last.fm...">
+<!ENTITY lastfm.menu.logout "退出Last.fm">
+<!ENTITY lastfm.menu.enable "允许擦除">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "登入">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "注册表Last.fm">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "登入中">
+<!ENTITY lastfm.cancel.button "取消">
+<!ENTITY lastfm.profile.caption "文件">
+<!ENTITY lastfm.profile.scrobble "Scrobble my tracks">
+<!ENTITY lastfm.profile.logout "退出">
+<!ENTITY lastfm.radio "Last.fm 收音机">
+<!ENTITY lastfm.radio.login.help "想听到Last.fm收音机，你需要要登陆到Last.fm 并且成为一个Last.fm 的签署者，如果你还没有Last.fm账户，可以注册一个。">
+<!ENTITY lastfm.radio.start "不确定从哪里开始？尝试搜索一下，看看别人在听什么">
+<!ENTITY lastfm.radio.start.top.artists "Last.fm上的最好作家">
+<!ENTITY lastfm.radio.start.top.tags "Last.fm上的最好标签">
+<!ENTITY lastfm.radio.register "注册">
+<!ENTITY lastfm.radio.subscriber.button "签署">
+<!ENTITY lastfm.radio.subscriber.help "想听到Last.fm收音机，你必须成为一个Last.fm 的签署者">
+<!ENTITY lastfm.radio.search "搜索">
+<!ENTITY lastfm.radio.library "库">
+<!ENTITY lastfm.radio.loved "喜好标签">
+<!ENTITY lastfm.radio.neighbourhood "邻域">
+<!ENTITY lastfm.radio.recommended "推荐">
+<!ENTITY lastfm.radio.user_stations "用户位置">
+<!ENTITY lastfm.radio.recent_stations "最近位置">
+<!ENTITY lastfm.radio.from.lastfm "从Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "推荐作家">
+<!ENTITY lastfm.radio.top_artists "你的Top Artists">
+<!ENTITY lastfm.radio.top_tags "你的Top Tags">
+<!ENTITY lastfm.radio.friends "你的朋友">
+<!ENTITY lastfm.radio.neighbours "邻居">
+<!ENTITY lastfm.radio.from.songbird "从Songbird">
+<!ENTITY lastfm.radio.most_played_artists "你经常弹的Artists">
+<!ENTITY lastfm.radio.highest_rated_artists "你的最高频率的Artists">
+<!ENTITY lastfm.radio.popular_genres "你的流行类型">
+<!ENTITY lastfm.radio.play "播放">
+<!ENTITY lastfm.tags.enter_new "输入新的标签（以逗号分开）">
+<!ENTITY lastfm.tags.add_fail "添加标签失败！">
+<!ENTITY lastfm.tags.user "你的标签：">
+<!ENTITY lastfm.tags.global "Last.fm整体标签">

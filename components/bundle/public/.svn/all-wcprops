@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/14483/trunk/components/bundle/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/14483/trunk/components/bundle/public/Makefile.in
+END
+sbIBundleInstallListener.idl
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/7658/trunk/components/bundle/public/sbIBundleInstallListener.idl
+END
+sbIBundle.idl
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/10991/trunk/components/bundle/public/sbIBundle.idl
+END
+sbIBundleDataListener.idl
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/7658/trunk/components/bundle/public/sbIBundleDataListener.idl
+END
+sbPIBundle.idl
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/7658/trunk/components/bundle/public/sbPIBundle.idl
+END

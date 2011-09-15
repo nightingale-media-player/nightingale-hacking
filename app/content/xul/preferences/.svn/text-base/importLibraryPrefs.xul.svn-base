@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<!-- Import library prefs overlay. -->
+<overlay id="import_library_pref_overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Panel preferences. -->
+  <preferences id="import_media_preferences">
+
+    <!-- Library path preference. -->
+    <preference
+      id="library_file_path_pref"
+      prefid="library_file_path_pref"
+      name="songbird.library_importer.library_file_path"
+      type="unichar"
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
+    
+    <!-- Alert user on unsupported media preference. -->
+    <preference
+      id="unsupported_media_alert_pref"
+      prefid="unsupported_media_alert_pref"
+      name="songbird.library_importer.unsupported_media_alert.enabled"
+      type="bool"
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
+
+    <!-- Import tracks from iTunes  -->
+    <preference 
+      id="import_tracks_itunes_pref"
+      prefid="import_tracks_itunes_pref"
+      name="songbird.library_importer.import_tracks"
+      type="bool"
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
+
+    <!-- Import playlists from iTunes -->
+    <preference
+      id="import_playlists_itunes_pref"
+      prefid="import_playlists_itunes_pref"
+      name="songbird.library_importer.import_playlists"
+      type="bool"
+      onchange=""/>
+
+    <!-- Export tracks to iTunes -->
+    <preference
+      id="export_tracks_itunes_pref"
+      prefid="export_tracks_itunes_pref"
+      name="songbird.library_exporter.export_tracks"
+      type="bool"
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
+
+    <!-- Export playlists to iTunes -->
+    <preference
+      id="export_playlists_itunes_pref"
+      prefid="export_playlists_itunes_pref"
+      name="songbird.library_exporter.export_playlists"
+      type="bool"
+      onchange=""/>
+
+    <!-- Export smart playlists to iTunes -->
+    <preference
+      id="export_smartplaylists_itunes_pref"
+      prefid="export_smartplaylists_itunes_pref"
+      name="songbird.library_exporter.export_smartplaylists"
+      type="bool"
+      onchange=""/>
+
+    <!-- Show notifications when import/export is complete  -->
+    <preference
+      id="importexport_show_notifications_pref"
+      prefid="importexport_show_notifications_pref"
+      name="songbird.library_importexport.show_notifications"
+      type="bool"
+      onchange=""/>
+  
+  </preferences>
+
+  <!-- Import library tab. -->
+  <tabs id="import_media_tabs">
+    <tab id="import_library_tab" label="&import_library.prefs.title;"/>
+  </tabs>
+
+  <!-- Import library tab panel. -->
+  <tabpanels id="import_media_tabpanels">
+    <tabpanel id="import_library_tabpanel"
+              orient="vertical"
+              onpaneload="importLibraryPrefsPane.doPaneLoad();">
+
+      <!-- Broadcasters -->
+      <broadcasterset>
+        <broadcaster id="import_tracks_itunes_broadcaster" />
+        <broadcaster id="export_tracks_itunes_broadcaster" />
+      </broadcasterset>
+
+      <!-- Library path preference controls. -->
+      <groupbox>
+
+        <!-- Library path preference group caption. -->
+        <caption label="&import_library.prefs.path_group_caption;"/>
+
+        <!-- Library path box. -->
+        <hbox id="import_library_path_box"
+              observes="import_tracks_itunes_broadcaster">
+
+          <!-- Library path text box. -->
+          <label value="&import_library.library_file_label;"/>
+          <textbox id="import_library_path_textbox"
+                   preference="library_file_path_pref"/>
+
+          <!-- Browse button. -->
+          <!-- bug 17988.  Tab panel command elements don't always render
+          properly if they're placed in the tab panel.  It seems the second time
+          the preference window is opened with the import media preference pane
+          selected, tab panel command buttons don't display the command label.-->
+          <button id="import_library_browse_button"
+                  label="&window.browse;"
+                  oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
+          <button id="import_library_button"
+                  label="&import_library.import_command;"
+                  oncommand="importLibraryPrefsUI.doImportCommand(event);"/>
+
+        </hbox>
+
+      </groupbox>
+
+      <!-- Library import options group. -->
+      <groupbox>
+
+        <!-- Library import options group caption. -->
+        <caption label="&import_library.prefs.options_group_caption;"/>
+
+        <!-- Import tracks from iTunes checkbox -->
+        <checkbox id="import_tracks_itunes_checkbox"
+                  preference="import_tracks_itunes_pref"
+                  label="&import_tracks_itunes_checkbox;" />
+        
+        <vbox class="indent" observes="import_tracks_itunes_broadcaster">
+          
+          <!-- Import playlists from iTunes checkbox -->
+          <checkbox id="import_playlists_itunes_checkbox"
+                    preference="import_playlists_itunes_pref"
+                    observes="import_tracks_itunes_broadcaster"
+                    label="&import_playlists_itunes_checkbox;" />
+        </vbox>
+
+        <spacer height="10" />
+
+        <!-- Export tracks checkbox -->
+        <checkbox id="export_tracks_itunes_checkbox"
+                  preference="export_tracks_itunes_pref"
+                  label="&export_tracks_itunes_checkbox;" />
+
+        <vbox class="indent" observes="export_tracks_itunes_broadcaster">
+         
+          <!-- Export playlists checkbox -->
+          <checkbox id="export_playlists_itunes_checkbox"
+                    preference="export_playlists_itunes_pref"
+                    observes="export_tracks_itunes_broadcaster"
+                    label="&export_playlists_itunes_checkbox;" />
+         
+          <!-- Export smart playlists checkbox -->
+          <checkbox id="export_smartplaylists_itunes_checkbox"
+                    preference="export_smartplaylists_itunes_pref"
+                    observes="export_tracks_itunes_broadcaster"
+                    label="&export_smartplaylists_itunes_checkbox;" />
+        
+        </vbox>
+
+        <spacer height="10" />
+
+        <!-- Show notifications during import/export checkbox -->
+        <checkbox id="importexport_show_notifications_checkbox"
+                  preference="importexport_show_notifications_pref"
+                  label="&importexport_show_notifications_checkbox;" />
+
+      </groupbox>
+
+    </tabpanel> <!-- import_library_tabpanel -->
+  </tabpanels> <!-- import_media_tabpanels -->
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the import library preferences panel services. -->
+  <script
+    type="application/x-javascript"
+    src="chrome://songbird/content/scripts/preferences/importLibraryPrefs.js"/>
+
+</overlay>
+

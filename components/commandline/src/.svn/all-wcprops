@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/15919/trunk/components/commandline/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7658/trunk/components/commandline/src/Makefile.in
+END
+sbCommandLine.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/15919/trunk/components/commandline/src/sbCommandLine.js
+END

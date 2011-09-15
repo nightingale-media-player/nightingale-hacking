@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test
+END
+head_playlistreader.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/16649/trunk/components/mediaimport/playlist/test/head_playlistreader.js
+END
+test_manager_async.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15663/trunk/components/mediaimport/playlist/test/test_manager_async.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test/Makefile.in
+END
+test_asxhandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/9806/trunk/components/mediaimport/playlist/test/test_asxhandler.js
+END
+test_manager.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/21362/trunk/components/mediaimport/playlist/test/test_manager.js
+END
+test_plshandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test/test_plshandler.js
+END
+test_feedhandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/11048/trunk/components/mediaimport/playlist/test/test_feedhandler.js
+END
+test_htmlhandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/11048/trunk/components/mediaimport/playlist/test/test_htmlhandler.js
+END
+test_m3uhandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/21568/trunk/components/mediaimport/playlist/test/test_m3uhandler.js
+END

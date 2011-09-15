@@ -1,0 +1,147 @@
+/**
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL aPRInt32 with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsIURI;
+interface nsIStringEnumerator;
+
+[scriptable, uuid(4c4cebf8-1dd2-11b2-9ce7-bf7e9e3a2b69)]
+interface sbIMediacoreTypeSniffer : nsISupports
+{
+  /**
+   * \brief Returns all audio file extensions.
+   */
+  readonly attribute nsIStringEnumerator audioFileExtensions;
+
+  /**
+   * \brief Returns all video file extensions.
+   */
+  readonly attribute nsIStringEnumerator videoFileExtensions;
+
+  /**
+   * \brief Returns all playlist file extensions.
+   */
+  readonly attribute nsIStringEnumerator playlistFileExtensions;
+
+  /**
+   * \brief Returns all image file extensions.
+   */
+  readonly attribute nsIStringEnumerator imageFileExtensions;
+
+  /**
+   * \brief Returns all media file extensions. Media file extensions are a 
+   *        combination of audio, video file extensions.
+   */
+  readonly attribute nsIStringEnumerator mediaFileExtensions;
+
+  /**
+   * \brief Returns all of the unsupported video file extensions for the
+   *        mediacore.
+   */
+  readonly attribute nsIStringEnumerator unsupportedVideoFileExtensions;
+
+  /**
+   * \brief Check to see if an url points to media content
+   * This checks for a number of known file extensions and prefixes to see
+   *   if the URL contains them and is therefore media.
+   * 
+   * \param aURL - the URL to check
+   * \return true if the URL points to media content
+   * \return false if the URL does not point to media content
+   */
+  boolean isValidMediaURL(in nsIURI aURL);
+
+  /**
+   * \brief Check to see if an url points to audio content
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore audio.
+   *
+   * \param aURL - the URL to check
+   * \return true if the URL points to audio content
+   * \return false if the URL does not point to audio content
+   */
+  boolean isValidAudioURL(in nsIURI aURL);
+
+  /**
+   * \brief Check to see if an url points to video content
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore video.
+   *
+   * \param aURL - the URL to check
+   * \return true if the URL points to video content
+   * \return false if the URL does not point to video content
+   */
+  boolean isValidVideoURL(in nsIURI aURL);
+
+  /**
+   * \brief Check to see if an url points to image content
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore image.
+   *
+   * \param aURL - the URL to check
+   * \return true if the URL points to image content
+   * \return false if the URL does not point to image content
+   */
+  boolean isValidImageURL(in nsIURI aURL);
+
+  /**
+   * \brief Check to see if an url points to a playlist
+   * This checks for a number of known file extensions to see
+   *   if the URL contains them and is therefore a playlist.
+   *
+   * \param aURL - the URL to check
+   * \return true if the URL points to a playlist
+   * \return false if the URL does not point a playlist
+   */
+  boolean isValidPlaylistURL(in nsIURI aURL);
+
+  /**
+   * \brief Check to see if an url points to a playlist.
+   * \note This is a websafe version. It filters out html, php and other 
+   *       common extensions that the html playlist reader provides that aren't
+   *       safe to use during web browsing.
+   */
+  boolean isValidWebSafePlaylistURL(in nsIURI aURL);
+};
+
+%{C++
+
+#define SB_MEDIACORETYPESNIFFER_DESCRIPTION         \
+  "Songbird Mediacore Type Sniffer"
+#define SB_MEDIACORETYPESNIFFER_CONTRACTID          \
+  "@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"
+#define SB_MEDIACORETYPESNIFFER_CLASSNAME           \
+  "sbMediacoreTypeSniffer"
+#define SB_MEDIACORETYPESNIFFER_CID                 \
+{ /* {eba99588-f058-4b6e-9706-9f9bb293dac0} */      \
+  0xeba99588,                                       \
+  0xf058,                                           \
+  0x4b6e,                                           \
+  { 0x97, 0x6, 0x9f, 0x9b, 0xb2, 0x93, 0xda, 0xc0 } \
+}
+
+%}

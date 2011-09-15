@@ -1,0 +1,3 @@
+testMediaPage.jar:
+% content  songbird-test-media-page  %content/
+@include_all_to 

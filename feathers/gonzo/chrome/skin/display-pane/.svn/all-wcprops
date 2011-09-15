@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/12098/trunk/feathers/gonzo/chrome/skin/display-pane
+END
+button-maximize.png
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/11248/trunk/feathers/gonzo/chrome/skin/display-pane/button-maximize.png
+END
+button-restore.png
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/11248/trunk/feathers/gonzo/chrome/skin/display-pane/button-restore.png
+END
+button-right-sidebar-toggle.png
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/11265/trunk/feathers/gonzo/chrome/skin/display-pane/button-right-sidebar-toggle.png
+END
+content-pane-bottom.png
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/11265/trunk/feathers/gonzo/chrome/skin/display-pane/content-pane-bottom.png
+END
+bg-header.png
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/10952/trunk/feathers/gonzo/chrome/skin/display-pane/bg-header.png
+END
+button-content-pane-toggle.png
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/11265/trunk/feathers/gonzo/chrome/skin/display-pane/button-content-pane-toggle.png
+END
+service-pane-bottom.png
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/11265/trunk/feathers/gonzo/chrome/skin/display-pane/service-pane-bottom.png
+END
+bg-empty.png
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/10421/trunk/feathers/gonzo/chrome/skin/display-pane/bg-empty.png
+END
+right-sidebar.png
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/10141/trunk/feathers/gonzo/chrome/skin/display-pane/right-sidebar.png
+END
+button-addon-picker.png
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/10952/trunk/feathers/gonzo/chrome/skin/display-pane/button-addon-picker.png
+END
+button-service-pane-toggle.png
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/11265/trunk/feathers/gonzo/chrome/skin/display-pane/button-service-pane-toggle.png
+END

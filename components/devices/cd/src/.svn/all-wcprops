@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/21765/trunk/components/devices/cd/src
+END
+sbCDDeviceDefines.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/14779/trunk/components/devices/cd/src/sbCDDeviceDefines.h
+END
+sbCDDeviceController.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/14580/trunk/components/devices/cd/src/sbCDDeviceController.cpp
+END
+sbCDDeviceMarshall.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20441/trunk/components/devices/cd/src/sbCDDeviceMarshall.cpp
+END
+sbCDDevice.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/21456/trunk/components/devices/cd/src/sbCDDevice.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/21765/trunk/components/devices/cd/src/Makefile.in
+END
+sbCDDeviceModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/14855/trunk/components/devices/cd/src/sbCDDeviceModule.cpp
+END
+sbCDLog.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/14573/trunk/components/devices/cd/src/sbCDLog.h
+END
+sbCDDeviceUtils.jsm
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/19421/trunk/components/devices/cd/src/sbCDDeviceUtils.jsm
+END
+sbCDDeviceController.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14545/trunk/components/devices/cd/src/sbCDDeviceController.h
+END
+sbCDDeviceMarshall.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/18291/trunk/components/devices/cd/src/sbCDDeviceMarshall.h
+END
+sbCDDeviceRequest.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/21456/trunk/components/devices/cd/src/sbCDDeviceRequest.cpp
+END
+sbCDRipServicePaneService.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/19404/trunk/components/devices/cd/src/sbCDRipServicePaneService.js
+END
+sbCDDevice.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/21456/trunk/components/devices/cd/src/sbCDDevice.cpp
+END

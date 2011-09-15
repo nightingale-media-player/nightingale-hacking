@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Songbird Media Player
+Comment=Playback, organize, and manage digital media
+Exec=songbird
+Icon=songbird-512.png
+Terminal=false
+Type=Application
+Categories=Application;AudioVideo;
+StartupNotify=true

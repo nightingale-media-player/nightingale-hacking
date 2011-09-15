@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE window [
+<!ENTITY % optionsDTD SYSTEM "chrome://mashTape/locale/options.dtd" >
+<!ENTITY % mashTapeDTD SYSTEM "chrome://mashtape/locale/overlay.dtd" >
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd" >
+%optionsDTD;
+%mashTapeDTD;
+%songbirdDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/defaultDisplayPane.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://mashtape/skin/styles.css"
+                 type="text/css"?>
+
+<page title="mashTape"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:xbl="http://www.mozilla.org/xbl">
+
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="mashTape-strings"
+				src="chrome://mashTape/locale/mashtape.properties"/>
+	</stringbundleset>
+	
+	<script type="application/x-javascript;charset=UTF-8" src="mashTape.js" />
+
+	<tooltip id="aHTMLTooltip"
+		onpopupshowing="return mashTape.tooltip(document.tooltipNode);"/>
+
+  <deck id="mashTape-deck" flex="1">
+    <hbox flex="1" class="nothing-playing" id="nothing-playing-firstrun">
+      <vbox flex="1" id="nothing-playing-firstrun-text" pack="end">
+        <spacer flex="10" />
+        <hbox flex="0">
+          <image src="chrome://mashTape/skin/mashtape-logomark_w_tape.png"
+            flex="0"/>
+        </hbox>
+        <description flex="1">&mashTape.firstrun.text;</description>
+      </vbox>
+    </hbox>
+
+    <vbox flex="1" class="nothing-playing" id="nothing-playing">
+      <vbox flex="1" pack="end" class="nothing-playing-text">
+        <hbox flex="0">
+          <image src="chrome://mashTape/skin/mashtape-logomark-big-gray.png"
+            flex="0"/>
+        </hbox>
+      </vbox>
+    </vbox>
+
+    <vbox flex="1" id="mashTape-content-vbox">
+      <hbox flex="0" id="mashTape-nav" pack="center" align="center">
+        <radiogroup orient="horizontal" flex="0" id="mashTape-nav-radiogroup">
+          <radio id="mashTape-nav-tab-info" class="nav-tab"
+                 label="&mtprefs.info;" />
+          <radio id="mashTape-nav-tab-review" class="nav-tab"
+                 label="&mtprefs.review;" />
+          <radio id="mashTape-nav-tab-rss" class="nav-tab"
+                 label="&mtprefs.rss;" />
+          <radio id="mashTape-nav-tab-photo" class="nav-tab"
+                 label="&mtprefs.photo;" />
+          <radio id="mashTape-nav-tab-flash" class="nav-tab"
+                 label="&mtprefs.flash;" />
+        </radiogroup>
+        <spacer flex="1" />
+        <image flex="0" src="chrome://mashTape/skin/logo.png" height="21"/>
+      </hbox>
+      
+      <deck flex="1" id="mashTape-content-deck">
+        <deck id="mashTape-panel-info" flex="1">
+          <iframe id="mashTape-frame-info" flex="1" class="content-frame"
+                  src="chrome://mashTape/content/iframeInfo.html"
+                  tooltip="aHTMLTooltip"/>
+          <hbox class="no-data-found-hbox" align="center" flex="1">
+            <vbox class="instructions" align="center" flex="1">
+              <description flex="0">
+                <html:div>&mashTape.msg.no_info_found;</html:div>
+              </description>
+            </vbox>
+          </hbox>
+        </deck>
+        <deck id="mashTape-panel-review" flex="1">
+          <hbox id="mashTape-box-review" flex="1" class="content-frame">
+            <iframe id="mashTape-panel-review-index" flex="0"
+                    src="chrome://mashTape/content/iframeIndex.html"
+                    class="index-frame" />
+            <splitter id="mashTape-panel-review-splitter" collapse="before"
+                      class="mashTape-splitter" />
+            <iframe id="mashTape-panel-review-detail" flex="1"
+                    src="chrome://mashTape/content/iframeReview.html"
+                    class="detail-frame" />
+          </hbox>
+          <hbox class="no-data-found-hbox" align="center" flex="1">
+            <vbox class="instructions" align="center" flex="1">
+              <description flex="0">
+                <html:div>&mashTape.msg.no_review_found;</html:div>
+              </description>
+            </vbox>
+          </hbox>
+        </deck>
+        <deck id="mashTape-panel-rss" flex="1">
+          <hbox id="mashTape-box-rss" flex="1" class="content-frame">
+            <iframe id="mashTape-panel-rss-index" flex="0"
+                    src="chrome://mashTape/content/iframeIndex.html"
+                    class="index-frame" />
+            <splitter id="mashTape-panel-rss-splitter" collapse="before"
+                      class="mashTape-splitter" />
+            <iframe id="mashTape-panel-rss-detail" flex="1"
+                    src="chrome://mashTape/content/iframeRss.html"
+                    class="detail-frame" />
+          </hbox>
+          <hbox class="no-data-found-hbox" align="center" flex="1">
+            <vbox class="instructions" align="center" flex="1">
+              <description flex="0">
+                <html:div>&mashTape.msg.no_rss_found;</html:div>
+              </description>
+            </vbox>
+          </hbox>
+
+        </deck>
+        <deck id="mashTape-panel-photo" flex="1">
+          <iframe id="mashTape-frame-photo" flex="1" class="content-frame"
+                  src="chrome://mashTape/content/iframePhoto.html"
+                  tooltip="aHTMLTooltip"/>
+          <hbox class="no-data-found-hbox" align="center" flex="1">
+            <vbox class="instructions" align="center" flex="1">
+              <description flex="0">
+                <html:div>&mashTape.msg.no_photo_found;</html:div>
+              </description>
+            </vbox>
+          </hbox>
+        </deck>
+        <deck id="mashTape-panel-flash" flex="1">
+          <hbox id="mashTape-box-flash" flex="1" class="content-frame">
+            <iframe id="mashTape-panel-flash-index" flex="0"
+                    src="chrome://mashTape/content/iframeIndex.html"
+                    class="index-frame" />
+            <splitter id="mashTape-panel-flash-splitter" collapse="before"
+                      class="mashTape-splitter" />
+                    <!--src="chrome://mashTape/content/iframeFlash.html"-->
+            <iframe id="mashTape-panel-flash-detail" flex="1"
+                    src="http://mashtape.songbirdnest.com/iframeFlash2.html"
+                    type="content" tooltip="aHTMLTooltip"
+                    class="detail-frame" />
+          </hbox>
+          <hbox class="no-data-found-hbox" align="center" flex="1">
+            <vbox class="instructions" align="center" flex="1">
+              <description flex="0">
+                <html:div>&mashTape.msg.no_flash_found;</html:div>
+              </description>
+            </vbox>
+          </hbox>
+        </deck>
+      </deck>
+              <!--
+      <tabbox flex="1" id="mashTape-tabbox" orient="horizontal">
+        <tabpanels flex="1" id="mashTape-tabpanels">
+        </tabpanels>
+      </tabbox>
+      -->
+    </vbox>
+  </deck>
+</page>

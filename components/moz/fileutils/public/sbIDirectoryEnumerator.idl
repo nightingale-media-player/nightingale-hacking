@@ -1,0 +1,133 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIDirectoryEnumerator
+ *
+ *   This interface provides support for enumerating directory contents.  The
+ * order of the enumeration is not determinate.
+ *
+ * "@songbirdnest.com/Songbird/DirectoryEnumerator;1"
+ * Use create instance with this component.
+ *
+ * XXXeps should add depth/breadth first support.
+ */
+
+interface nsIFile;
+interface nsISimpleEnumerator;
+
+[scriptable, uuid(508bc51e-001f-4f3e-b036-d7dbff91e8dd)]
+interface sbIDirectoryEnumerator : nsISupports
+{
+  /**
+   * \brief Maximum depth to which to enumerate.  A depth of 0 will enumerate to
+   *        an unlimited depth.  A depth of 1 will enumerate only the base
+   *        directory (same as getDirectoryEntries).
+   */
+
+  attribute unsigned long maxDepth;
+
+
+  /**
+   * \brief If true, only return directories in getNext.
+   */
+
+  attribute boolean directoriesOnly;
+
+
+  /**
+   * \brief If true, only return files in getNext.
+   */
+
+  attribute boolean filesOnly;
+
+
+  /**
+   * \brief Enumerate the directory specified by aDirectory.
+   *
+   * \param aDirectory          Directory to enumerate.
+   */
+
+  void enumerate(in nsIFile aDirectory);
+
+
+  /**
+   * \brief Return true if more elements are available to enumerate.
+   *
+   * \return True if more elements are available.
+   */
+
+  boolean hasMoreElements();
+
+
+  /**
+   * \brief Return the next file in the enumeration.
+   *
+   * \return Next file in enumeration.
+   */
+
+  nsIFile getNext();
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_DIRECTORYENUMERATOR_CONTRACTID \
+          "@songbirdnest.com/Songbird/DirectoryEnumerator;1"
+          
+#include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
+
+  inline nsresult sbGetDirectoryEntries(
+                                       nsIFile * aFile,
+                                       sbIDirectoryEnumerator ** aDirEntryEnumerator)
+  {
+    nsresult rv;
+    nsCOMPtr<sbIDirectoryEnumerator> dirEntries = 
+      do_CreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    rv = dirEntries->SetFilesOnly(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = dirEntries->SetMaxDepth(1);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = dirEntries->Enumerate(aFile);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    dirEntries.forget(aDirEntryEnumerator);
+    
+    return NS_OK;
+  }
+%}C++
+
+

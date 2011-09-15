@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/build
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/build/Makefile.in
+END
+nsModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/build/nsModule.cpp
+END
+nsBrowserCompsCID.h
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/build/nsBrowserCompsCID.h
+END

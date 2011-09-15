@@ -1,0 +1,275 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/client/!svn/ver/21696/trunk/app/content/scripts
+END
+popupBlocker.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/9828/trunk/app/content/scripts/popupBlocker.js
+END
+mouseWheelVolume.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/12576/trunk/app/content/scripts/mouseWheelVolume.js
+END
+feedOverlay.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/14510/trunk/app/content/scripts/feedOverlay.js
+END
+updateOnceAfterFirstRun.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/14839/trunk/app/content/scripts/updateOnceAfterFirstRun.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/14087/trunk/app/content/scripts/Makefile.in
+END
+dndDefaultHandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/11048/trunk/app/content/scripts/dndDefaultHandler.js
+END
+smartPlaylist.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/17735/trunk/app/content/scripts/smartPlaylist.js
+END
+miniPlayer.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/21304/trunk/app/content/scripts/miniPlayer.js
+END
+extensionManagerOverlay.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20032/trunk/app/content/scripts/extensionManagerOverlay.js
+END
+playQueue.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/21364/trunk/app/content/scripts/playQueue.js
+END
+trackEditorWidgetAlbumArtwork.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/14715/trunk/app/content/scripts/trackEditorWidgetAlbumArtwork.js
+END
+trackEditor.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/19662/trunk/app/content/scripts/trackEditor.js
+END
+playerOpen.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/20663/trunk/app/content/scripts/playerOpen.js
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/8133/trunk/app/content/scripts/jar.mn.in
+END
+setupProgress.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/11291/trunk/app/content/scripts/setupProgress.js
+END
+commandLine.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/12682/trunk/app/content/scripts/commandLine.js
+END
+mainWinInit.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/21304/trunk/app/content/scripts/mainWinInit.js
+END
+windowUtils.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/21423/trunk/app/content/scripts/windowUtils.js
+END
+mainPlayerWindow.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/19123/trunk/app/content/scripts/mainPlayerWindow.js
+END
+recommendedAddOnsWizard.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/11209/trunk/app/content/scripts/recommendedAddOnsWizard.js
+END
+firstRunWizard.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/19290/trunk/app/content/scripts/firstRunWizard.js
+END
+contentAreaContextMenu.js
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/18253/trunk/app/content/scripts/contentAreaContextMenu.js
+END
+restartBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/12457/trunk/app/content/scripts/restartBox.js
+END
+importLibrary.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/12457/trunk/app/content/scripts/importLibrary.js
+END
+searchHandler.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/19555/trunk/app/content/scripts/searchHandler.js
+END
+balloonTip.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/9082/trunk/app/content/scripts/balloonTip.js
+END
+waitForCompletion.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/9265/trunk/app/content/scripts/waitForCompletion.js
+END
+metrics.js
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/7658/trunk/app/content/scripts/metrics.js
+END
+overlayLoader.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/8074/trunk/app/content/scripts/overlayLoader.js
+END
+xpInstallHat.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/16997/trunk/app/content/scripts/xpInstallHat.js
+END
+trackEditorState.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/14119/trunk/app/content/scripts/trackEditorState.js
+END
+addOnBundle.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/10909/trunk/app/content/scripts/addOnBundle.js
+END
+browserUtilities.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/18253/trunk/app/content/scripts/browserUtilities.js
+END
+feedbackDelegate.js
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/16224/trunk/app/content/scripts/feedbackDelegate.js
+END
+switchLocale.js
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/11291/trunk/app/content/scripts/switchLocale.js
+END
+wizardService.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/13928/trunk/app/content/scripts/wizardService.js
+END
+videoWindowControls.js
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/18355/trunk/app/content/scripts/videoWindowControls.js
+END
+menuBarXBLTEMP.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/18816/trunk/app/content/scripts/menuBarXBLTEMP.js
+END
+sanitize.js
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/7658/trunk/app/content/scripts/sanitize.js
+END
+messageBox.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/7658/trunk/app/content/scripts/messageBox.js
+END
+addOnBundleInstaller.js
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/11091/trunk/app/content/scripts/addOnBundleInstaller.js
+END
+videoWindow.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/19236/trunk/app/content/scripts/videoWindow.js
+END
+jobProgress.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/16647/trunk/app/content/scripts/jobProgress.js
+END
+trackEditorWidgets.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/17970/trunk/app/content/scripts/trackEditorWidgets.js
+END
+browserViewMenu.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/9844/trunk/app/content/scripts/browserViewMenu.js
+END

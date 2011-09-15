@@ -1,0 +1,160 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface sbIJobProgressListener;
+
+
+
+/**
+ * \interface sbIJobProgress
+ * \brief Generic interface for exposing long running jobs to the UI
+ *
+ * This is a first-stab at a generic way to expose job progress 
+ * to the UI.  This interface should be used for things like
+ * file importing, copying to devices and metadata syncing. 
+ *
+ * \note This interface is likely to change before 1.0
+ */
+[scriptable, uuid(13979e02-1dd2-11b2-9e89-eefb590278a8)]
+interface sbIJobProgress : nsISupports
+{
+  /**
+   * \brief Constant indicating that the job has completed with errors
+   */
+  const unsigned short STATUS_FAILED = 0x00;
+  
+  /**
+   * \brief Constant indicating that the job has completed
+   */
+  const unsigned short STATUS_SUCCEEDED = 0x10;
+  
+  /**
+   * \brief Constant indicating that the job is active
+   */
+  const unsigned short STATUS_RUNNING = 0x20;
+  
+  /**
+   * \brief Current status of the job. 
+   * \sa STATUS_FAILED, STATUS_RUNNING, etc.
+   */
+  readonly attribute unsigned short status;
+
+  /**
+   * \brief If true, progress of job is blocked (e.g., due to locked resource).
+   */
+  readonly attribute boolean blocked;
+
+  /**
+   * \brief Localized message describing the status of the job
+   */
+  readonly attribute AString statusText;
+
+  /**
+   * \brief Localized message describing the type or purpose of the job
+   */
+  readonly attribute AString titleText;
+  
+  
+  /**
+   * \brief Number of work units completed
+   */  
+  readonly attribute unsigned long progress;
+  
+  /**
+   * \brief Total number of work units to be completed
+   * May be set to 0 if the job length is indeterminate 
+   */  
+  readonly attribute unsigned long total;
+  
+  
+  /**
+   * \brief Number of errors that have been encountered
+   */  
+  readonly attribute unsigned long errorCount;
+  
+  /**
+   * \brief Enumerate all the errors encountered during the job 
+   * \return A string enumerator of localized error messages
+   */  
+  nsIStringEnumerator getErrorMessages();
+  
+  
+  /**
+   * \brief Add a listener to be notified when significant job progress has been made
+   * \note Notification frequency is at the discretion of the sbIJobProgress implementor
+   * \param aListener The listener instance
+   */  
+  void addJobProgressListener(in sbIJobProgressListener aListener);
+  
+  /**
+   * \brief Remove a previously added listener
+   * \param aListener The listener instance
+   */  
+  void removeJobProgressListener(in sbIJobProgressListener aListener);
+};
+
+
+
+/**
+ * \interface sbIJobProgressListener
+ * \brief Implemented to receive notifications from sbIJobProgress interfaces
+ */
+[scriptable, function, uuid(75302170-1174-11dd-bd0b-0200200c9a66)]
+interface sbIJobProgressListener : nsISupports
+{
+  /**
+   * \brief Notification that an object implementing sbIJobProgress has changed
+   * \param aJobProgress The job whose status has been updated
+   * \note Notification frequency is at the discretion of the sbIJobProgress implementor
+   */
+  void onJobProgress(in sbIJobProgress aJobProgress);
+};
+
+/**
+ * \interface sbIJobProgressTime
+ * \brief Generic interface extending sbIJobProgress that can track expected
+ *        time, etc in addition to abstract work units.
+ *
+ */
+[scriptable, uuid(2693a1e5-7e07-4730-bf3b-68e76dd95f90)]
+interface sbIJobProgressTime : sbIJobProgress
+{
+  /**
+   * \brief Time elapsed while working on this job, in milliseconds.
+   */
+  readonly attribute unsigned long elapsedTime;
+
+  /**
+   * \brief Estimated time remaining for this job to complete, in milliseconds.
+   *        May be -1 if the remaining time is indeterminate.
+   */
+  readonly attribute unsigned long remainingTime;
+
+};
+

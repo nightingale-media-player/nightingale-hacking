@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/wintaskbar
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/wintaskbar/Makefile.in
+END
+WindowsPreviewPerTab.jsm
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/wintaskbar/WindowsPreviewPerTab.jsm
+END

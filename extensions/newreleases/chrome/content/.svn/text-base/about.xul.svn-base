@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/*
+ *
+ *=BEGIN SONGBIRD LICENSE
+ *
+ * Copyright(c) 2009-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact POTI, Inc. at customer@songbirdnest.com.
+ *
+ *=END SONGBIRD LICENSE
+ *
+ */
+-->
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE dialog SYSTEM "chrome://newreleases/locale/about.dtd">
+<!-- ABOUT BOX - Specified in install.rdf and loaded by the Extension Manager -->
+<dialog title="&about;" orient="vertical" autostretch="always" onload="sizeToContent()" buttons="accept" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<!-- Original template by Jed Brown -->
+  <groupbox align="center" orient="horizontal">
+    <vbox>
+      <text value="New Releases" style="font-weight: bold; font-size: x-large;"/>
+      <text value="&version; 1.0"/>
+      <separator class="thin"/>
+      <text value="&createdBy;" style="font-weight: bold;"/>
+      <text value="PJ Ople (pjople@songbirdnest.com)"/>
+      <separator class="thin"/>
+    </vbox>
+  </groupbox>
+</dialog>

@@ -1,0 +1,57 @@
+extensions.mashTape@songbirdnest.com.description=就像把 Old School 曲風的歌曲重新混音後大受好評一樣，將各種分散在網路中不同來源的資料混合後重新編排，就能大大的豐富媒體庫中的資料。
+#
+
+extensions.mashTape.artistinfo=演出者資訊
+extensions.mashTape.review=評論
+extensions.mashTape.rss=新聞
+extensions.mashTape.photo=照片
+extensions.mashTape.flash=影片
+extensions.mashTape.msg.readmore=閱讀全部
+extensions.mashTape.msg.readless=閱讀摘要
+extensions.mashTape.msg.viewmore=檢視全部
+extensions.mashTape.msg.viewless=檢視摘要
+extensions.mashTape.msg.readorig=檢視原文
+extensions.mashTape.msg.by=來自
+extensions.mashTape.msg.provider_tooltip=檢視 %S 上的內容
+extensions.mashTape.msg.review_tooltip=閱讀 %S 上的評論
+extensions.mashTape.msg.rss_tooltip=檢視 %S 上的原文
+extensions.mashTape.msg.flash_tooltip=檢視 %S 上的原始影片
+extensions.mashTape.msg.review=撰寫你自己的評論
+#
+
+extensions.mashTape.date.sec=%1$S 秒前
+extensions.mashTape.date.secs=%1$S 秒前
+extensions.mashTape.date.min=%1$S 分前
+extensions.mashTape.date.mins=%1$S 分前
+extensions.mashTape.date.hour=%1$S 小時前
+extensions.mashTape.date.hours=%1$S 小時前
+extensions.mashTape.date.day=%1$S 天前
+extensions.mashTape.date.days=%1$S 天前
+extensions.mashTape.date.week=%1$S 週前
+extensions.mashTape.date.weeks=%1$S 週前
+extensions.mashTape.date.month=%1$S 月前
+extensions.mashTape.date.months=%1$S 月前
+extensions.mashTape.date.year=%1$S 年前
+extensions.mashTape.date.years=%1$S 年前
+extensions.mashTape.date.decade=%1$S0 年前
+extensions.mashTape.date.decades=%1$S0 年前
+#
+
+extensions.mashTape.info.bio=演出者簡介
+extensions.mashTape.info.discography=歷年專輯
+extensions.mashTape.info.members=成員
+extensions.mashTape.info.tags=標籤
+extensions.mashTape.info.links=鏈結
+extensions.mashTape.info.create=按這裡編輯其簡介。
+extensions.mashTape.info.no_bio=找不到有關 %S 的演出者簡介。
+extensions.mashTape.info.amazon=檢視 Amazon 上的專輯資訊
+extensions.mashTape.info.lastfm=檢視 Last.fm 上的專輯資訊
+#
+
+extensions.mashTape.review.artist=演出者評論
+extensions.mashTape.review.album=專輯評論
+extensions.mashTape.review.track=歌曲評論
+#
+
+extensions.mashTape.rss.video=含此演出者的影片
+extensions.mashTape.rss.photo=含此演出者的照片

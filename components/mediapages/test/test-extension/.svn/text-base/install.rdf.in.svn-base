@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:version>1.0</em:version>
+
+    <!-- Songbird -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:name>Media Page Test</em:name>
+    <em:description>Sample install.rdf used to test the media page metadata reader</em:description>
+    <em:locked>true</em:locked>
+    <em:creator>Pioneers of the Inevitable</em:creator>
+    
+    <!-- insert metadata here -->
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Match All)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul</songbird:contentUrl>
+      </Description>
+    </songbird:mediaPage>
+
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Downloads Match)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?downloads</songbird:contentUrl>
+        <songbird:match>customType:download</songbird:match>
+      </Description>
+    </songbird:mediaPage>
+
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Library Match)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?library</songbird:contentUrl>
+        <songbird:match>library</songbird:match>
+      </Description>
+    </songbird:mediaPage>
+
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Video Match)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?video</songbird:contentUrl>
+        <songbird:match>contentType:video</songbird:match>
+      </Description>
+    </songbird:mediaPage>
+
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+
+</RDF>

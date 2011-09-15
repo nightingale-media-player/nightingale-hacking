@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE window SYSTEM "chrome://mashtape/locale/overlay.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link type="text/css" rel="stylesheet" media="screen"
+		href="chrome://songbird/skin/html.css" />
+	<link type="text/css" rel="stylesheet" media="screen"
+		href="chrome://mashtape/skin/iframe.css" />
+	<link type="text/css" rel="stylesheet" media="screen"
+		href="chrome://mashtape/skin/iframe-rss.css" />
+	<script type="application/x-javascript" src="mootools-1.2-core.js"></script>
+	<script type="application/x-javascript" src="iframe-utils.js"></script>
+</head>
+
+<body class="darker">
+	<div id="loading">
+		<img onerror="this.src='chrome://mashtape/skin/load.png'"
+			src="chrome://songbird/skin/base-elements/icon-loading-large.png" />
+	</div>
+	<div id="actual-content">
+		<a id="link" href=""><img id="favicon" class="favicon"></a>
+		<div id="caption">
+			<h4 id="title" class="indent"></h4>
+			<div id="subtitle" class="indent"></div>
+		</div>
+		<div id="content"></div>
+		<div id="write-review"></div>
+	</div>
+</body>
+</html>

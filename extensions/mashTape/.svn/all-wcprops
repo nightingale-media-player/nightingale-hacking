@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/client/!svn/ver/21694/trunk/extensions/mashTape
+END
+.hgignore
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/11186/trunk/extensions/mashTape/.hgignore
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/11246/trunk/extensions/mashTape/LICENSE
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/15575/trunk/extensions/mashTape/Makefile.in
+END
+extension-config.mk
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/21086/trunk/extensions/mashTape/extension-config.mk
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/20106/trunk/extensions/mashTape/install.rdf.in
+END
+.hgtags
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/13568/trunk/extensions/mashTape/.hgtags
+END

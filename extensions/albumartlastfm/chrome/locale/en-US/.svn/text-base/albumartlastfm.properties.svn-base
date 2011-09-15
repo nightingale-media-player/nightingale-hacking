@@ -1,0 +1,3 @@
+# Album Art Fetcher strings
+extensions.albumart.lastfm.name=Last FM
+extensions.albumart.lastfm.description=Last.FM Web Service Fetcher

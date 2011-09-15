@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "אנו בודקים מי במסע הופעות קרוב אליך...">
+<!ENTITY concerts.changelocation "שנה מיקום">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "לא נמצאו הופעות ב">
+<!ENTITY concerts.timeout.error "ייתכן שאינן מחובר לאינטרנט או שמסד הנתונים של ההופעות אינו פועל כעת. נסה שוב בעוד כמה דקות.">
+<!ENTITY concerts.timeoutreport.error "דווח על בעיה">

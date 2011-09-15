@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtri pretoka">
+<!ENTITY prefwindow.title "Nastavitve radia SHOUTcast">
+<!ENTITY bit-rate.limit.label "Pokaži le pretoke SHOUTcast z bitno hitrostjo najmanj">
+<!ENTITY listeners.limit.label "Pokaži le pretoke SHOUTcast z najmanj">
+<!ENTITY listeners.limit.label.2 "poslušalcev">
+<!ENTITY bit-rate.label "Bitna hitrost (kb/s)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Število poslušalcev">
+<!ENTITY listeners.accesskey "Š">
+<!ENTITY prefs.track.guessing.title "Razčlenjevanje izvajalcev/naslovov">
+<!ENTITY prefs.track.guessing.label "Omogoči razčlenjevanje naslovov in izvajalcev posnetka">
+<!ENTITY prefs.track.guessing.help "Nekateri toki SHOUTcast oddajajo besedilo v obliki &apos;Izvajalec - Naslov posnetka&apos;. Če omogočite to možnost, bo dodatek SHOUTcast skušal razčleniti in poslati dogodke o spremembah posnetka, da bodo tudi drugi dodatki lahko obveščeni o spremembi posnetka v toku.">
+<!ENTITY prefs.customGenres "Zvrsti po meri">
+<!ENTITY prefs.customGenres.emptytext "Tukaj vnesite z vejico ločen seznam zvrsti">
+<!ENTITY custom-genres.help.label "Če želite v imeniku SHOUTcast prikazati zvrsti po meri, vnesite z vejico ločen seznam nizov zvrsti tukaj">
+<!ENTITY prefs.tosBegin "Uporaba mape SHOUTcast je zavezana z njihovimi">
+<!ENTITY prefs.tosLinkText "pogoji uporabe">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Namesti">
+<!ENTITY prefs.toolbarLinkText "orodno vrstico SHOUTcast,">
+<!ENTITY prefs.toolbarEnd "dodatek za brskalnik, ki omogoča enostaven dostop do SHOUTcasta iz vašega brskalnika.">

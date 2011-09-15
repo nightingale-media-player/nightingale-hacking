@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/client/!svn/ver/20839/trunk/feathers/gonzo
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/14447/trunk/feathers/gonzo/Makefile.in
+END
+chrome.manifest
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/client/!svn/ver/10094/trunk/feathers/gonzo/chrome.manifest
+END
+install.rdf.in
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/client/!svn/ver/20067/trunk/feathers/gonzo/install.rdf.in
+END
+jar.mn.in
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/10415/trunk/feathers/gonzo/jar.mn.in
+END

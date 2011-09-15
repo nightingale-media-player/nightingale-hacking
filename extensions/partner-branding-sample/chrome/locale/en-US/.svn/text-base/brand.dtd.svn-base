@@ -1,0 +1,28 @@
+<!-- Used for the default window title, and as the app name in menus and
+     throughout the rest of the app -->
+<!ENTITY brandShortName        "Partner Media Player">
+
+<!-- Temporary window title flashed after first run, usually set to the same
+     as brandShortName -->
+<!ENTITY window.dev.title      "Partner Media Player">
+
+<!-- Various URLs used in default dialogs -->
+<!ENTITY bugzillaURL           "http://bugzilla.org/">
+<!ENTITY supportURL            "http://getsatisfaction.com/">
+<!ENTITY vendorURL             "http://google.com/">
+<!ENTITY productURL            "http://change.gov">
+<!ENTITY getDisplayPanesURL    "http://yahoo.com">
+<!ENTITY faviconURL            "chrome://partnerbrand/skin/logo_favicon.png">
+<!ENTITY aboutImageURL         "chrome://partnerbrand/skin/logo_aboutiamge.jpg">
+
+<!-- Update the following prior to every release -->
+<!ENTITY releaseNotesURL       "http://news.google.com/">
+
+<!-- Not used -->
+<!ENTITY window.main.title     "Product Name">
+<!ENTITY brandFullName         "Full long Partner Name">
+
+<!-- DO NOT CHANGE; used in about: after the Copyright notice -->
+<!ENTITY vendorShortName       "POTI, Inc.">
+<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2008">
+

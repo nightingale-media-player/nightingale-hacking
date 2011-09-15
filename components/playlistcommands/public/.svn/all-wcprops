@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/21597/trunk/components/playlistcommands/public
+END
+sbIPlaylistCommandsBuilder.idl
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/20171/trunk/components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20278/trunk/components/playlistcommands/public/Makefile.in
+END
+sbIPlaylistCommands.idl
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/21597/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl
+END
+sbIPlaylistCommandsHelper.idl
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/20278/trunk/components/playlistcommands/public/sbIPlaylistCommandsHelper.idl
+END

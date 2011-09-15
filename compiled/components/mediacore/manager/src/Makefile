@@ -1,0 +1,104 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/components/mediacore/manager/src
+VPATH = /media/disk/Linux/makepkg/songbird/components/mediacore/manager/src \
+        /media/disk/Linux/makepkg/songbird/components/mediacore/base/src \
+        /media/disk/Linux/makepkg/songbird/components/moz/xpcom/src \
+        
+
+include $(DEPTH)/build/autodefs.mk
+
+DYNAMIC_LIB = sbMediacoreManager
+
+CPP_SRCS = sbMediacoreManager.cpp \
+           sbMediacoreManagerModule.cpp \
+           sbMediacoreShuffleSequenceGenerator.cpp \
+           sbMediacoreSequencer.cpp \
+           sbMediacoreTypeSniffer.cpp \
+           $(NULL)
+
+# From components/mediacore/base/src
+CPP_SRCS += sbMediacoreVotingChain.cpp \
+            sbMediacoreEvent.cpp \
+            sbMediacoreError.cpp \
+            sbBaseMediacoreEventTarget.cpp \
+            sbBaseMediacoreMultibandEqualizer.cpp \
+            sbBaseMediacoreVolumeControl.cpp \
+            sbMediacoreEqualizerBand.cpp \
+            $(NULL)
+            
+# From components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
+            $(NULL)
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/mediacore/base/public \
+               $(DEPTH)/components/mediacore/manager/public \
+               $(DEPTH)/components/mediaimport/playlist/public \
+               $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/include \
+               $(topsrcdir)/components/mediacore/base/src \
+               $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/moz/strings/components/public \
+               $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
+               $(topsrcdir)/components/moz/xpcom/src \
+               $(DEPTH)/components/moz/windowwatcher/public \
+               $(topsrcdir)/components/property/src \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/gfx \
+               $(MOZSDK_INCLUDE_DIR)/layout \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/uriloader \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+               $(NULL)
+
+# MSVC has 'deprecated' std::copy, etc. This is remarkably unhelpful, so define
+# this to suppress the warning.
+CPP_EXTRA_FLAGS += "-D_SCL_SECURE_NO_WARNINGS"
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
+
+IS_COMPONENT = 1
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbMediacoreErrorHandler.js \
+                      $(NULL)
+
+include $(topsrcdir)/build/rules.mk

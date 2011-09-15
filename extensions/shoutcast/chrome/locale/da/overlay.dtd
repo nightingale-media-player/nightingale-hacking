@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Filter">
+<!ENTITY shoutcast-radio.genre "Genre">
+<!ENTITY shoutcast-radio.clear "Ryd">
+<!ENTITY shoutcast-radio.add-station "Tilføj station">
+<!ENTITY shoutcast-radio.enter-name "Indtast navnet du ønsker at give stationen">
+<!ENTITY shoutcast-radio.station-name "Stationsnavn">
+<!ENTITY shoutcast-radio.enter-url "Indtast URLen på SHOUTcast stationen">
+<!ENTITY shoutcast-radio.enter-genre "Vælg en genre til stationen">

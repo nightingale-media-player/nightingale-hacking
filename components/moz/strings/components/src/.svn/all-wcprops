@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/20433/trunk/components/moz/strings/components/src
+END
+sbStringMap.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/13327/trunk/components/moz/strings/components/src/sbStringMap.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/20433/trunk/components/moz/strings/components/src/Makefile.in
+END
+sbStringsModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18490/trunk/components/moz/strings/components/src/sbStringsModule.cpp
+END
+sbStringBundleService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/20214/trunk/components/moz/strings/components/src/sbStringBundleService.cpp
+END
+sbCharsetDetector.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/18717/trunk/components/moz/strings/components/src/sbCharsetDetector.cpp
+END
+sbStringMap.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/13327/trunk/components/moz/strings/components/src/sbStringMap.cpp
+END
+sbStringBundleService.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/15983/trunk/components/moz/strings/components/src/sbStringBundleService.h
+END
+sbCharsetDetector.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18490/trunk/components/moz/strings/components/src/sbCharsetDetector.h
+END

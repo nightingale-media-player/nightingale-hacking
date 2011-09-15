@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/20407/trunk/components/sqlbuilder/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/7658/trunk/components/sqlbuilder/test/Makefile.in
+END
+test_misc.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/7658/trunk/components/sqlbuilder/test/test_misc.js
+END
+test_join.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/7658/trunk/components/sqlbuilder/test/test_join.js
+END
+test_select.js
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/20407/trunk/components/sqlbuilder/test/test_select.js
+END
+test_delete.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7658/trunk/components/sqlbuilder/test/test_delete.js
+END
+test_update.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7658/trunk/components/sqlbuilder/test/test_update.js
+END
+test_insert.js
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/7658/trunk/components/sqlbuilder/test/test_insert.js
+END

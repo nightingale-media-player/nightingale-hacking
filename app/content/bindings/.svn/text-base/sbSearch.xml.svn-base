@@ -1,0 +1,503 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+
+  <!-- Songbird Search Widget
+
+       Extends the Firefox searchbar widget to add "search as you type" functionality
+       and other Songbird customizations.
+
+       Unlike the Firefox searchbar, this widget fires a "search" event instead of
+       dispatching search queries itself.  This allows gSearchHandler (in searchHandler.js)
+       to provide special processing for the Songbird internal search engine.
+
+       See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+    -->
+  <binding id="sb-searchbar"
+           extends="chrome://browser/content/search/search.xml#searchbar">
+    <implementation>
+
+      <constructor>
+        Components.utils.import("resource://app/jsmodules/StringUtils.jsm",
+                                this);
+
+        // Add the songbird autocomplete source to the textbox.
+        this._textbox.setAttribute("autocompletesearch",
+                  "search-autocomplete songbird-autocomplete");
+
+        // Initialize value to the textbox value.
+        this.value = this._textbox.value;
+
+        let tooltip = this.SBString("searchbar.tooltip.clear");
+        this._clearButton.setAttribute("tooltiptext", tooltip);
+      </constructor>
+
+
+      <!-- Map of engine names to booleans.
+           Used to determine which engines send searches
+           on input idle. -->
+      <field name="_liveSearchEngines">new Object();</field>
+
+      <!-- Map of engine names to display strings.
+           Used by overrideEngineDisplayText() -->
+      <field name="_engineDisplayText">new Object();</field>
+
+      <field name="_clearButton">document.getAnonymousElementByAttribute(
+          this, "anonid", "search-go-button");</field>
+
+      <!-- When true, causes searches to be sent automatically after
+           a short delay -->
+      <property name="liveSearchMode">
+        <getter><![CDATA[
+          return this.isInLiveSearchMode(this.currentEngine);
+        ]]></getter>
+      </property>
+
+
+
+
+      <!-- Replace base currentEngine setter so that changing engines immediately
+           executes the current query -->
+      <property name="currentEngine"
+                onset="">
+        <getter><![CDATA[
+          var currentEngine = this.searchService.currentEngine;
+          // Return a dummy engine if there is no currentEngine
+          return currentEngine || {name:"", uri:null};
+        ]]></getter>
+        <setter><![CDATA[
+          this.searchService.currentEngine = val;
+
+          // Set the live search indicator attribute
+          // according to the state of the new engine
+          this.updateLiveSearchAttribute();
+
+          // JMC - Don't return just val in case it's null
+          return this.searchService.currentEngine;
+        ]]></setter>
+      </property>
+
+
+
+
+      <!-- Override the normal get method in order to manage
+           the "empty" and "livesearchmode" attributes for this
+           element.
+        -->
+      <property name="value">
+        <getter><![CDATA[
+          if (this.getAttribute("empty") == "true") {
+            return "";
+          }
+          return this._textbox.value;
+        ]]></getter>
+        <setter><![CDATA[
+          // Make sure to remove the "empty" attribute if someone is setting
+          // the search bar value to a non-empty string. Similarly, we need to
+          // add the "empty" attribute if someone is clearing the search box.
+          if (val) {
+            this.removeAttribute("empty");
+            // Only programmatically set the textbox value if they aren't in
+            // sync already.  This prevents us from re-setting the textbox
+            // value and thus losing the scroll position if the user is
+            // typing a long string of text that overflows the textbox.
+            if (val != this._textbox.value)
+              this._textbox.value = val;
+          }
+          else {
+            this._textbox.value = "";
+            this.setAttribute("empty", "true");
+            if (!this._textbox.hasAttribute("focused")) {
+              this.updateDisplay();
+            }
+          }
+
+          this.updateLiveSearchAttribute();
+
+          return val;
+        ]]></setter>
+      </property>
+
+
+
+
+      <!-- Overrides the text displayed when a given engine is active
+           and nothing has been entered in the textbox.
+           Setting aText null causes the default text to be restored
+        -->
+      <method name="setEngineDisplayText">
+        <parameter name="aEngine"/>
+        <parameter name="aText"/>
+        <body><![CDATA[
+           // Add text to the engine name -> text map
+           this._engineDisplayText[aEngine.name] = aText;
+        ]]></body>
+      </method>
+
+
+
+
+      <!-- Has the given engine been flagged for live search -->
+      <method name="isInLiveSearchMode">
+        <parameter name="aEngine"/>
+        <body><![CDATA[
+          if (aEngine.name && aEngine.name in this._liveSearchEngines
+              && this._liveSearchEngines[aEngine.name] == true)
+          {
+            return true;
+          }
+          return false;
+        ]]></body>
+      </method>
+
+
+
+
+
+      <!-- Flag the given engine for live search ("search as you type")
+        -->
+      <method name="setLiveSearchMode">
+        <parameter name="aEngine"/>
+        <parameter name="aEnabled"/>
+        <body><![CDATA[
+          this._liveSearchEngines[aEngine.name] = aEnabled;
+
+          // If the given engine is currently active then
+          // set the livesearch indicator attribute appropriately.
+          // This can be used to apply a special CSS style.
+          if (this.currentEngine == aEngine) {
+            this.updateLiveSearchAttribute();
+          }
+        ]]></body>
+      </method>
+
+
+
+      <!-- Update the livesearchmode element attribute.
+           This attribute is set true when the current search
+           engine is in live search mode and the user has
+           entered at least one character in the search box.
+        -->
+      <method name="updateLiveSearchAttribute">
+        <body><![CDATA[
+          var enable = (this.liveSearchMode && this.value != "");
+          this.setAttribute("livesearchmode", (enable) ? "true" : "false");
+        ]]></body>
+      </method>
+
+
+
+      <!-- Override the method responsible for executing searches
+           so that we can splice in internal search support
+        -->
+      <method name="handleSearchCommand">
+        <parameter name="aEvent"/>
+        <body>
+            <![CDATA[
+          var textBox = this._textbox;
+          var textValue = this.value;
+
+          if (this._editIdleInterval) {
+            clearInterval(this._editIdleInterval);
+          }
+
+          this.updateLiveSearchAttribute();
+
+          // Go-button clicks clear the search terms
+          if (aEvent
+              && aEvent.originalTarget.getAttribute("anonid") == "search-go-button")
+          {
+            // Clear the search terms
+            this.value = "";
+
+            // Search on cleared term in live search mode
+            if (this.liveSearchMode)
+              this._sendSearchEvent();
+
+            return;
+          }
+
+          // Save the current value in the form history
+          if (textValue) {
+            textBox._formHistSvc.addEntry(textBox.getAttribute("autocompletesearchparam"),
+                                          textValue);
+          }
+          // Kanye release easter egg
+          else if ( textValue == "Taylor Swift" )  {
+            const BYPASSKEY = "kanye.easteregg.bypass";
+            if (!SBDataGetBoolValue(BYPASSKEY)) {
+              var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                                    .getService(Ci.nsIPromptService);
+              var check = { value: false };
+              var promptValue = promptService.confirmEx(window,
+                "Kanye West says:",
+                "\"Hey Taylor, I'm really happy for you, and I'm gonna let you\n" +
+                "finish, but Beyoncé is one of the best searches of all time!\"",
+                Ci.nsIPromptService.STD_YES_NO_BUTTONS,
+                null, null, null,
+                "Don't let Kanye interrupt this search again.",
+                check);
+              if (check.value == true) {
+                // don't easter-egg if the pref is set
+                SBDataSetBoolValue(BYPASSKEY, true);
+              }
+              if (promptValue == 0) { // 0 = yes, 1 = no
+                this.value = "Beyoncé"
+              }
+            }
+          }
+
+          this._sendSearchEvent();
+        ]]></body>
+      </method>
+
+
+
+      <!-- Dispatch a search event -->
+      <method name="_sendSearchEvent">
+        <body><![CDATA[
+          try {
+            metrics_inc("search.widget", this.currentEngine.name, null);
+          } catch(e) { Components.utils.reportError(e); }
+          var e = document.createEvent("Events");
+          e.initEvent("search", false, true);
+          this.dispatchEvent(e);
+        ]]></body>
+      </method>
+
+
+      <!-- Overrides the normal updateDisplay to display override text as appropriate -->
+      <method name="updateDisplay">
+        <body><![CDATA[
+          // find the previous updateDisplay in the prototype chain
+          var proto = this;
+          while (proto && proto.updateDisplay !== arguments.callee) {
+            proto = proto.__proto__;
+          }
+          while (proto && proto.updateDisplay === arguments.callee) {
+            proto = proto.__proto__;
+          }
+
+          if ("function" == typeof(proto.updateDisplay)) {
+            proto.updateDisplay.apply(this, arguments);
+          }
+
+          // Check for an emptyText override
+          var name = this.currentEngine.name;
+          if (name in this._engineDisplayText && this._engineDisplayText[name]) {
+            name = this._engineDisplayText[name];
+          }
+
+          this._textbox.emptyText =
+            SBFormattedString('search.prefix',
+                              [name]);
+        ]]></body>
+      </method>
+
+
+      <!-- Called when a Songbird search is selected, and a short delay has passed since
+           the last keystroke.  Provides "search as you type" functionality.
+         -->
+      <method name="_onSearchEditIdle">
+        <body>
+        <![CDATA[
+          if (this.liveSearchMode)
+          {
+            this._sendSearchEvent();
+
+            this.updateLiveSearchAttribute();
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!-- Open the autocomplete menu if the object's class is 'autocomplete-textbox'
+           and the content is empty (since we do no want to autoopen the menu if the
+           user clicked to move its carret) -->
+      <method name="_autoOpenMenu">
+        <body>
+          <![CDATA[
+          const target = this._textbox.inputField;
+          // If the class is right, and ...
+          if (target.getAttribute("class").indexOf("autocomplete-textbox") != -1) {
+            // ... If the textbox is empty, then show the autocomplete
+            if (this.value == "") {
+              // Defer launching the popup so that we don't end up
+              // refocusing the textbox and screwing up the
+              // text displayed on empty=true
+              if (this._popupTimeout)
+                clearTimeout(this._popupTimeout);
+              this._popupTimeout = setTimeout(function(o) {
+                  if (!o._textbox.popupOpen)
+                    o._textbox.toggleHistoryPopup();
+                  this._popupTimeout = null;
+              }, 10, this);
+            }
+          }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+
+    <handlers>
+
+      <!-- Capture mousedown on the autocomplete textbox so that we can
+           pop out the autocomplete menu (this needs to only occur if
+           the textbox is empty, since we do not want to pop the menu if
+           the user is just moving the cursor within the text).
+
+           Ideally, the code in the mousedown handler would simply call
+           this._autoOpenMenu(), however, further focus events that
+           occur after the mousedown event will cancel the popup, so
+           what we need to do instead is set a variable to remember that
+           we need to open the menu when we get those focus events.
+
+           Now, if we were only getting one focus event, all we would
+           have to do when we intercept it is to pop the menu, and reset
+           that variable, but unfortunately, there is a case that will
+           trigger several chained focus events (clicking in the part of
+           the search box that has no text), although nothing in the
+           event variable lets us distinguish this case (whether the
+           click happens on the text or not, the event variable has the
+           same target and originalTarget). In this case, the additional
+           focus events will again cancel our history menu, which means
+           that we should not reset the variable immediately, we need
+           the additional focus events to keep causing more attempts to
+           open the menu (the _autoOpenMenu method is smart enough to
+           cancel its previous attempts if necessary).
+
+           Still, we need to reset our trigger variable at some point,
+           otherwise we will end up opening the menu again whenever
+           the control is refocused in the future, which we do not want
+           (we want the menu only if the focus occured due to a click).
+           We solve this by setting a short timeout to reset the variable,
+           but not so short as to miss the focus events we want to handle.
+
+           In addition, we want to open the menu when the control is
+           already focused, and a simple click occurs. In this case, we need
+           to do so immediately, since no futher event is going to give us
+           that opportunity (note that clicking on the control when the app
+           is deactivated is handled by this case as well, because the focus
+           event will occur before the mousedown event).  -->
+
+      <handler event="mousedown" button="0"> <![CDATA[
+        // only handle the clicks we should
+        if (event.originalTarget.tagName == "div" &&
+            event.originalTarget.parentNode.tagName == "html:input") {
+          // if we are already focused, open the auto complete menu immediately
+          if (this._textbox.hasAttribute("focused")) {
+            this._autoOpenMenu();
+          } else {
+            // otherwise cause any focus event that occurs within the next 250ms
+            // to try to open the menu again
+            this._openPopupOnFocus = true;
+            setTimeout(function(o) {
+              o._openPopupOnFocus = false;
+            }, 250, this);
+          }
+        }
+      ]]></handler>
+
+
+      <handler event="focus" phase="capturing"><![CDATA[
+        // remember we have focus
+        this.setAttribute("focused", "true");
+        // should we attempt to open the autocomplete menu?
+        if (this._openPopupOnFocus) {
+          this._autoOpenMenu();
+        }
+      ]]></handler>
+
+      <handler event="blur" phase="capturing"><![CDATA[
+        // forget that we were focused
+        if (this.hasAttribute("focused")) {
+          this.removeAttribute("focused");
+        }
+      ]]></handler>
+
+
+      <!-- Starts the idle search timer on input when in live search mode  -->
+      <handler event="input"><![CDATA[
+        // Update widget value to the search textbox value.
+        this.value = this._textbox.value;
+
+        if (!this.liveSearchMode) {
+          return;
+        }
+        if ( this._editIdleInterval ) {
+          clearInterval( this._editIdleInterval );
+          this._editIdleInterval = null;
+        }
+
+        var timeout = 1000;
+        var isBackspace = (event.keyCode == KeyEvent.DOM_VK_BACK_SPACE);
+        var length = this.value.length;
+        
+        // If a few chars have been entered, run the search sooner
+        // since it probably won't take long.
+        if ( (length == 1 && isBackspace)  ||  // Empty search is fast
+             (length >= 3 && !isBackspace))    // Everything with 3 or greater is fast
+        {
+          timeout = 100;
+        }
+        
+        this._editIdleInterval = setInterval(
+          function(o) {
+            clearInterval( o._editIdleInterval );
+            o._onSearchEditIdle();
+          }, timeout, this);
+      ]]></handler>
+
+      <!-- Overrides command handler to send search event upon selection -->
+      <handler event="command"><![CDATA[
+        const target = event.originalTarget;
+        if (target.classList.contains("addengine-item")) {
+          // We only detect OpenSearch files
+          var type = Ci.nsISearchEngine.DATA_XML;
+          this.searchService.addEngine(target.getAttribute("uri"), type,
+                                       target.getAttribute("src"), false);
+        }
+        else if (target.engine) {
+          this.currentEngine = target.engine;
+        }
+        else {
+          return;
+        }
+
+        this.focus();
+        this.select();
+
+        this._sendSearchEvent();
+      ]]></handler>
+    </handlers>
+  </binding>
+</bindings>

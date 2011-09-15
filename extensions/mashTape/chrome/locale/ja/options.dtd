@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "曲を再生して関連する Flickr の写真や YouTube の動画、Last.fm の略歴、Google ニュースの記事などを見つけ出そう！">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "全般">
+<!ENTITY mtprefs.info "アーティスト情報">
+<!ENTITY mtprefs.review "レビュー">
+<!ENTITY mtprefs.rss "ニュース">
+<!ENTITY mtprefs.photo "写真">
+<!ENTITY mtprefs.flash "動画">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "既定タブ">
+<!ENTITY mtprefs.defaulttab.help "mashTape 開始時:">
+<!ENTITY mtprefs.show.info "アーティスト情報を表示する">
+<!ENTITY mtprefs.show.review "レビューを表示する">
+<!ENTITY mtprefs.show.rss "ニュースを表示する">
+<!ENTITY mtprefs.show.photo "写真を表示する">
+<!ENTITY mtprefs.show.flash "動画を表示する">
+<!ENTITY mtprefs.autohide "自動非表示">
+<!ENTITY mtprefs.autohide.help "ウェブページの表示に切り替えたら自動的に mashTape 表示枠を非表示にします。">
+<!ENTITY mtprefs.services "サービス">
+<!ENTITY mtprefs.getmore "mashTape に関する追加のサービスを取得する">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "アーティスト情報タブ設定">
+<!ENTITY mtprefs.tab.review "レビュータブ設定">
+<!ENTITY mtprefs.tab.rss "ニュースタブ設定">
+<!ENTITY mtprefs.tab.photo "写真タブ設定">
+<!ENTITY mtprefs.tab.flash "動画タブ設定">
+<!ENTITY mtprefs.tab.help "このタブを mashTape の中に表示します。">
+<!ENTITY mtprefs.single "この枠は一度でひとつのサービスからのコンテンツ表示に対応します。以下の一覧からサービスをひとつ選択してください。">
+<!ENTITY mtprefs.multiple "この枠は一度で複数のサービスからのコンテンツ表示に対応します。以下の一覧から好みのサービスを選択してください。">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "現地語化済み情報">
+<!ENTITY mtprefs.tab.info.autolocalise.help "現地語化されたアーティスト情報が利用可能なら自動的に読み出します。">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "写真スクロール速度:">
+<!ENTITY mtprefs.tab.photo.faster "速く">
+<!ENTITY mtprefs.tab.photo.slower "遅く">
+<!ENTITY mtprefs.tab.photo.keywords.caption "キーワード検索">
+<!ENTITY mtprefs.tab.photo.keywords "追加検索キーワード:">
+<!ENTITY mtprefs.tab.photo.keywords.help "写真プロバイダ検索に追加されるキーワードを指定できます。キーワードは空白で区切ります。例: live concert band">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "動画を自動再生する">
+<!ENTITY mtprefs.tab.video.autoplay.help "このオプションを有効にするとバンドル済み動画プロバイダの結果が次々と自動再生されるでしょう。これは例えばすべての MTV Music Video を自動再生するのに便利です。バンドルされていない動画プロバイダはこのオプションで機能しません。">

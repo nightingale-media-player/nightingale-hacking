@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "Не получается найти информацию об артисте для воспроизводимого трека">
+<!ENTITY mashTape.msg.no_review_found "Не получается найти обзоры для воспроизводимого трека">
+<!ENTITY mashTape.msg.no_rss_found "Не получается найти новости для воспроизводимого трека">
+<!ENTITY mashTape.msg.no_photo_found "Не получается найти фотографии для воспроизводимого трека">
+<!ENTITY mashTape.msg.no_flash_found "Не получается найти видео для воспроизводимого трека">

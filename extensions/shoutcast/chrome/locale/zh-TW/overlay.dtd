@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "過濾條件">
+<!ENTITY shoutcast-radio.genre "曲風">
+<!ENTITY shoutcast-radio.clear "清除">
+<!ENTITY shoutcast-radio.add-station "加入電台">
+<!ENTITY shoutcast-radio.enter-name "請輸入你為這個電台取的名稱">
+<!ENTITY shoutcast-radio.station-name "電台名稱">
+<!ENTITY shoutcast-radio.enter-url "請輸入 SHOUTcast 電台網址">
+<!ENTITY shoutcast-radio.enter-genre "請選擇這個電台的曲風">

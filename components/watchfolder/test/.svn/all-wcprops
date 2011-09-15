@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/16649/trunk/components/watchfolder/test
+END
+head_watchfolders.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/16649/trunk/components/watchfolder/test/head_watchfolders.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/14134/trunk/components/watchfolder/test/Makefile.in
+END
+test_moverename.js
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/12989/trunk/components/watchfolder/test/test_moverename.js
+END
+tail_watchfolders.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/12869/trunk/components/watchfolder/test/tail_watchfolders.js
+END

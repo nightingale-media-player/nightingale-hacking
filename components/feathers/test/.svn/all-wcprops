@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/client/!svn/ver/19204/trunk/components/feathers/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/client/!svn/ver/7658/trunk/components/feathers/test/Makefile.in
+END
+test_feathersManager.js
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/19204/trunk/components/feathers/test/test_feathersManager.js
+END

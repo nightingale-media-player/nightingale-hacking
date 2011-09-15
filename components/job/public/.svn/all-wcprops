@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/client/!svn/ver/17789/trunk/components/job/public
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/14483/trunk/components/job/public/Makefile.in
+END
+sbIJobProgressUI.idl
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/12658/trunk/components/job/public/sbIJobProgressUI.idl
+END
+sbIJobProgress.idl
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/16647/trunk/components/job/public/sbIJobProgress.idl
+END
+sbIJobProgressService.idl
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/17789/trunk/components/job/public/sbIJobProgressService.idl
+END
+sbIJobCancelable.idl
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/client/!svn/ver/9093/trunk/components/job/public/sbIJobCancelable.idl
+END
+sbIShutdownJob.idl
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/13335/trunk/components/job/public/sbIShutdownJob.idl
+END

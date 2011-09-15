@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Sidhlow-Fros">
+<!ENTITY prefwindow.title "Dewisyansow Radyo SHOUTcast">
+<!ENTITY bit-rate.limit.label "Na dhiskwedh saw frosow SHOUTcast gans kevradhbyt a (dhe&apos;n leha)">
+<!ENTITY listeners.limit.label "Na dhiskwedh saw frosow SHOUTcast gans (dhe&apos;n leha)">
+<!ENTITY listeners.limit.label.2 "a woslowysi">
+<!ENTITY bit-rate.label "Kevradhbyt (kv/e)">
+<!ENTITY bit-rate.accesskey "K">
+<!ENTITY listeners.label "Niver a Woslowysi">
+<!ENTITY listeners.accesskey "N">
+<!ENTITY prefs.track.guessing.title "Styryans Artydh/Titel">
+<!ENTITY prefs.track.guessing.label "Galosegi styryans titel hag artydh an hyns">
+<!ENTITY prefs.track.guessing.help "Nebes frosow SHOUTcast a fros tekst y&apos;n furvas &apos;Artydh - Titel an Hyns&apos;. Mar kwre&apos;ta galosegi an ethol ma, SHOUTcast a assay styrya hemma ha danvon negys a-dro dhe janjyow hynsyow a-berth y&apos;n fros dhe geworansow erel.">
+<!ENTITY prefs.customGenres "Ehennow Personelhes">
+<!ENTITY prefs.customGenres.emptytext "Enter comma-separated list of genres here">
+<!ENTITY custom-genres.help.label "Mar mynn&apos;ta diskwedhes ehennow personelhes yn Arayel SHOUTcast, ynwor omma rol a ehennow diberthys gans kommas.">
+<!ENTITY prefs.tosBegin "Kyns gul devnydh a Arayel SHOUTcast, res yw degemeres aga Thermow Usya">
+<!ENTITY prefs.tosLinkText "Gweles Termow Usya">
+<!ENTITY prefs.tosEnd ".">
+<!ENTITY prefs.toolbarBegin "Lea">
+<!ENTITY prefs.toolbarLinkText "Toulvar SHOUTcast">
+<!ENTITY prefs.toolbarEnd "keworrans-peurel may hyllydh hedhes SHOUTcast yn es dhyworth dha beurel.">

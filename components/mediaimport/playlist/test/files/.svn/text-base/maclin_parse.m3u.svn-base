@@ -1,0 +1,16 @@
+#EXTM3U
+#EXTINF:3155,2006-06-25 (Abstract, Techno, Punk)
+/home/Media/Music/Aus/2006-06-25\ \(Abstract,\ Techno,\ Punk\).mp3
+#EXTINF:
+/home/file1.mp3
+#EXTINF:,
+/home/file2.mp3
+#EXTINF:12.34
+/home/file3.mp3
+#EXTINF:-1,
+/home/file4.mp3
+#EXTINF:,title,2
+/home/file5.mp3
+#EXTINF:invalid
+/home/file6.mp3
+http://64.62.252.130:8070

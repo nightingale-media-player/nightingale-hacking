@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/20658/trunk/components/devices/controller/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/20658/trunk/components/devices/controller/src/Makefile.in
+END
+sbBaseDeviceController.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/20441/trunk/components/devices/controller/src/sbBaseDeviceController.cpp
+END
+sbBaseDeviceController.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/8086/trunk/components/devices/controller/src/sbBaseDeviceController.h
+END

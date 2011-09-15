@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/20785/trunk/components/mediaexport/agent/src
+END
+sbMediaExportITunesAgentService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/20785/trunk/components/mediaexport/agent/src/sbMediaExportITunesAgentService.cpp
+END
+sbMediaExportITunesAgentComponent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/13577/trunk/components/mediaexport/agent/src/sbMediaExportITunesAgentComponent.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/20437/trunk/components/mediaexport/agent/src/Makefile.in
+END
+sbMediaExportITunesAgentService.h
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/13577/trunk/components/mediaexport/agent/src/sbMediaExportITunesAgentService.h
+END

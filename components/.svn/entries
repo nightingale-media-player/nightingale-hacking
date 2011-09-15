@@ -1,0 +1,160 @@
+10
+
+dir
+22041
+http://publicsvn.songbirdnest.com/client/trunk/components
+http://publicsvn.songbirdnest.com/client
+
+
+
+2011-09-01T05:07:33.282908Z
+21964
+dbradley
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+mediaexport
+dir
+
+devices
+dir
+
+controller
+dir
+
+property
+dir
+
+dataremote
+dir
+
+draganddrop
+dir
+
+addonmetadata
+dir
+
+commandline
+dir
+
+mediacore
+dir
+
+networkproxy
+dir
+
+aboutprotocol
+dir
+
+displaypanes
+dir
+
+mediapages
+dir
+
+protocol
+dir
+
+testharness
+dir
+
+appstartup
+dir
+
+servicepane
+dir
+
+library
+dir
+
+search
+dir
+
+sqlbuilder
+dir
+
+intl
+dir
+
+parsererror
+dir
+
+albumart
+dir
+
+job
+dir
+
+devicesobsolete
+dir
+
+contenthandling
+dir
+
+webservices
+dir
+
+update
+dir
+
+playlistcommands
+dir
+
+include
+dir
+
+integration
+dir
+
+faceplate
+dir
+
+remoteapi
+dir
+
+jscodelib
+dir
+
+feathers
+dir
+
+watchfolder
+dir
+
+moz
+dir
+
+metrics
+dir
+
+filesystemevents
+dir
+
+bundle
+dir
+
+mediamanager
+dir
+
+mediaimport
+dir
+
+playqueue
+dir
+
+dbengine
+dir
+

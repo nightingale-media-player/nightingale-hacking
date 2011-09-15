@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/System
+END
+Resource.dll
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/System/Resource.dll
+END
+SysFunc.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/System/SysFunc.nsh
+END
+System.nsh
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/System/System.nsh
+END
+System.nsi
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/5425/trunk/tools/win32/nsis/examples/System/System.nsi
+END

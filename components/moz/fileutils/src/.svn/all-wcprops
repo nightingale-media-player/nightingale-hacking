@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/21964/trunk/components/moz/fileutils/src
+END
+sbDirectoryEnumerator.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/21964/trunk/components/moz/fileutils/src/sbDirectoryEnumerator.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/16638/trunk/components/moz/fileutils/src/Makefile.in
+END
+sbFileUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/20594/trunk/components/moz/fileutils/src/sbFileUtils.cpp
+END
+sbFileUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/16638/trunk/components/moz/fileutils/src/sbFileUtils.h
+END
+sbDirectoryEnumerator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/21964/trunk/components/moz/fileutils/src/sbDirectoryEnumerator.cpp
+END
+sbFileUtilsModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/16638/trunk/components/moz/fileutils/src/sbFileUtilsModule.cpp
+END

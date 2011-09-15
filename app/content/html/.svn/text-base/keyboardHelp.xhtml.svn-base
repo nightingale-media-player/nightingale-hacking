@@ -1,0 +1,815 @@
+<!DOCTYPE html [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % songbirdHelpDTD SYSTEM "chrome://songbird/locale/help.dtd">
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%songbirdDTD;
+%songbirdHelpDTD;
+%browserDTD;
+]>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>&help.keyboard.title;</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <link href="chrome://songbird/content/html/keyboardHelp.css" type="text/css" rel="stylesheet"/>
+    <link href="keyboardHelp.css" type="text/css" rel="stylesheet"/>
+  </head>
+
+  <body>
+    <div class="content">
+      <h2 id="title">&help.keyboard.subtitle;</h2>
+      <p id="description">&help.keyboard.description;</p>
+
+      <div class="primary">
+
+        <ul id="shortcuts-nav">
+          <li platform="windows">
+            <a href="#windows" class="windows">&help.platform.windows;</a>
+          </li>
+          <li platform="macosx">
+            <a href="#macosx" class="macosx">&help.platform.macosx;</a>
+          </li>
+          <li platform="linux">
+            <a href="#linux" class="linux">&help.platform.linux;</a>
+          </li>
+        </ul>
+
+        <div id="shortcuts">
+          <h4>&help.keyboard.section.playback;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.playcontrol.pause;</td>
+                <td>
+                  <span class="windows macosx linux">&menu.control.playpause.spacebar;</span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.playcontrol.prev;</td>
+                <td>
+                  <!-- not using accel here, because we want control on all
+                       platforms -->
+                  &help.keyboard.key.ctrl; + &help.keyboard.key.left;
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.playcontrol.next;</td>
+                <td>
+                  <!-- not using accel here, because we want control on all
+                       platforms -->
+                  &help.keyboard.key.ctrl; + &help.keyboard.key.right;
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.volume.down;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.down;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.volume.up;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.up;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.volume.mute;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + <span class="alt"/> + &help.keyboard.key.down;
+                  </span>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + <span class="alt"/> + &help.keyboard.key.up;
+                  </span>
+                </td>
+              </tr>
+              <!--
+              <tr>
+                <td>&help.keyboard.name.volume.max;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + <span class="alt"/> + &help.keyboard.key.up;
+                  </span>
+                </td>
+              </tr>
+              -->
+              <tr>
+                <td>&help.keyboard.name.equalizer;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &equalizer.key;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.library;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.new.playlist;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.file.new.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.new.smartplaylist;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + <span class="alt"/> + &menu.file.smart.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.import;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &menu.file.filescan.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.currenttrack;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &currentTrackCmd.commandKey;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.mediapage.switch;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &mediapage.next.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.feather.switch;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &switchfeathers.key;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.editing;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.trackeditor;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &trackeditor.key2;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.undo;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.undo.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.redo;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.redo.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.selectall;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.selall.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.cut;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.cut.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.copy;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.copy.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.paste;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.paste.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.edit.delete;</td>
+                <td>
+                  <span class="windows macosx linux">&help.keyboard.key.delete;</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.navigation;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.browser.back;</td>
+                <td>
+                  <span class="macosx linux">
+                    <span class="accel"/> + &goBackCmd.commandKey;
+                  </span>
+                  <span class="macosx">
+                    <span class="accel"/> + &help.keyboard.key.left;
+                  </span>
+                  <span class="windows linux">
+                    <span class="alt"/> + &help.keyboard.key.left;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.browser.forward;</td>
+                <td>
+                  <span class="macosx linux">
+                    <span class="accel"/> + &goForwardCmd.commandKey;
+                  </span>
+                  <span class="macosx">
+                    <span class="accel"/> + &help.keyboard.key.right;
+                  </span>
+                  <span class="windows linux">
+                    <span class="alt"/> + &help.keyboard.key.right;
+                  </span>
+                </td>
+              </tr>
+
+              <tr>
+                <td>&help.keyboard.name.browser.reload;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &reloadCmd.commandkey;
+                  </span>
+                  <span class="windows macosx linux">&help.keyboard.key.f5;</span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.browser.stop;</td>
+                <td>
+                  <span class="windows macosx linux">&help.keyboard.key.escape;</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.browser;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.open.file;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.file.open.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.open.url;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.file.url.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.open.link;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    &help.keyboard.key.shift; + &help.keyboard.mouse.click.primary;
+                  </span>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.mouse.click.primary;
+                  </span>
+                  <span class="windows macosx linux">
+                    &help.keyboard.mouse.click.middle;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.save.link;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="alt"/> + &help.keyboard.mouse.click.primary;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.file.print;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &printCmd.commandkey;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.view.source;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &menu.viewpagesource.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.view.zoomin;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &fullZoomEnlargeCmd.commandkey;
+                  </span>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &fullZoomEnlargeCmd.commandkey2;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.view.zoomout;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &fullZoomReduceCmd.commandkey;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.view.zoomreset;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &fullZoomResetCmd.commandkey;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.locationbar;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &locationbar.key;
+                  </span>
+                  <span class="windows macosx linux">
+                    <span class="alt"/> + &locationbar.key2;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.windows;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.new;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.file.newtab.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.close;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.file.closetab.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.next;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    &help.keyboard.key.ctrl; + &help.keyboard.key.pgdn;
+                  </span>
+                  <span class="windows macosx linux">
+                    &help.keyboard.key.ctrl; + &help.keyboard.key.tab;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.previous;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    &help.keyboard.key.ctrl; + &help.keyboard.key.pgup;
+                  </span>
+                  <span class="windows macosx linux">
+                    &help.keyboard.key.ctrl; + &help.keyboard.key.shift; + &help.keyboard.key.tab;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.1;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 1
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.2;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 2
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.3;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 3
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.4;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 4
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.5;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 5
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.6;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 6
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.7;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 7
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.8;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 8
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.tab.9;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + 9
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.page.top;</td>
+                <td>
+                  <span class="windows macosx linux">&help.keyboard.key.home;</span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.page.bottom;</td>
+                <td>
+                  <span class="windows macosx linux">&help.keyboard.key.end;</span>
+                </td>
+              </tr>
+              <tr platform="macosx">
+                <td>&help.keyboard.name.mac.minimize;</td>
+                <td>
+                  <span class="macosx">
+                    <span class="accel"/> + &menu.mac.minimize.key;
+                  </span>
+                </td>
+              </tr>
+              <tr platform="macosx">
+                <td>&help.keyboard.name.mac.hide;</td>
+                <td>
+                  <span class="macosx">
+                    <span class="accel"/> + &menu.mac.hide.key;
+                  </span>
+                </td>
+              </tr>
+              <tr platform="macosx">
+                <td>&help.keyboard.name.mac.hideothers;</td>
+                <td>
+                  <span class="macosx">
+                    <span class="accel"/> + <span class="alt"/> + &menu.mac.hideothers.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.downloads;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &downloadmgr.key;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.search;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.find;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.find.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.find.again;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &menu.edit.findagain.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.find.text;</td>
+                <td>
+                  <span class="windows macosx linux">/</span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.find.link;</td>
+                <td>
+                  <span class="windows macosx linux">'</span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.search.focus;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &searchFocus.key;
+                  </span>
+                  <span class="macosx">
+                    <span class="accel"/> + &search.key;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.video;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.video.fullscreen;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &videowindow.fullscreen.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.video.bringtofront;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &videowindow.bringtofront.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.video.escape;</td>
+                <td>
+                  <span class="windows macosx linux">&help.keyboard.key.escape;</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+
+          <h4>&help.keyboard.section.cdrip;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.cdrip.start;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &cdrip.mediaview.rip.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.cdrip.stop;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &cdrip.mediaview.stop_rip.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.cdrip.eject;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &cdrip.mediaview.eject.key;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>&help.keyboard.section.misc;</h4>
+          <table>
+            <tbody class="rows">
+              <tr>
+                <th>&help.keyboard.heading.command;</th>
+                <th>&help.keyboard.heading.shortcut;</th>
+              </tr>
+              <tr platform="macosx linux">
+                <td>&help.keyboard.name.quit;</td>
+                <td>
+                  <span class="macosx">
+                    <span class="accel"/> + &menu.mac.exit.key;
+                  </span>
+                  <span class="linux">
+                    <!-- XXX Mook: Yes, this is _not_ localizable :/ -->
+                    <span class="accel"/> + Q
+                  </span>
+                </td>
+              </tr>
+              <tr platform="macosx">
+                <td>&help.keyboard.name.preferences;</td>
+                <td>
+                  <span class="macosx">
+                    <span class="accel"/> + &menu.mac.preferences.key;
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.help;</td>
+                <td>
+                  <span class="windows linux">&help.keyboard.key.f1;</span>
+                  <span class="macosx">
+                    <!-- XXX Mook: not localizable -->
+                    <span class="accel"/> + &help.keyboard.key.shift; + ?
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>&help.keyboard.name.sanitize;</td>
+                <td>
+                  <span class="windows macosx linux">
+                    <span class="accel"/> + &help.keyboard.key.shift; + &sanitize.key;
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+      </div>
+    </div>
+    <!-- .content -->
+
+    <script type="text/javascript">
+      /* these get imported from the DTD */
+      const ACCEL = { windows: "&help.keyboard.key.ctrl;",
+                      linux:   "&help.keyboard.key.ctrl;",
+                      macosx:  "&help.keyboard.key.cmd;" };
+      const ALT = { windows: "&help.keyboard.key.alt;",
+                    linux:   "&help.keyboard.key.alt;",
+                    macosx:  "&help.keyboard.key.opt;" };
+      const META = { windows: "&help.keyboard.key.meta;",
+                     linux:   "&help.keyboard.key.meta;",
+                     macosx:  "&help.keyboard.key.cmd;" };
+      <![CDATA[
+
+        function show(platform) {
+          var i, tableIdx, rowIdx;
+          
+          // choose which heading is selected
+          var links = document.getElementById('shortcuts-nav').getElementsByTagName("li");
+          for (i = 0; i < links.length; ++i) {
+            links[i].className = (platform == links[i].getAttribute("platform")) ? "selected" : "";
+          }
+          
+          // show/hide rows and set even/odd as appropriate
+          var tables = document.getElementsByClassName("rows");
+          for (tableIdx = 0; tableIdx < tables.length; ++tableIdx) {
+            var rows = tables[tableIdx].getElementsByTagName("tr");
+            var rowCount = 0;
+            for (rowIdx = 0; rowIdx < rows.length; ++rowIdx) {
+              var row = rows[rowIdx];
+              if (row.hasAttribute("platform")) {
+                if (row.getAttribute("platform").split(/\s/).indexOf(platform) == -1) {
+                  // platform-specific, but not for this platform
+                  row.className = "hide";
+                  continue;
+                }
+              }
+              
+              // this is flipped, because the heading row shows up too
+              row.className = (rowCount++ % 2) ? "odd" : "even";
+            }
+          }
+          
+          // show/hide platform-specific keys
+          document.getElementById("shortcuts").setAttribute("platform", platform);
+          
+          // set platform-specific key naming schemes
+          var keys = document.getElementsByClassName("accel");
+          for (i = 0; i < keys.length; ++i) {
+            keys[i].textContent = ACCEL[platform];
+          }
+          keys = document.getElementsByClassName("alt");
+          for (i = 0; i < keys.length; ++i) {
+            keys[i].textContent = ALT[platform];
+          }
+        }
+        
+        function onload() {
+          var shortcuts = document.getElementById('shortcuts-nav').getElementsByTagName("a");
+          for (i = 0; i < shortcuts.length; i++) {
+            shortcuts[i].onclick = function(event){
+              show(this.className);
+              event.preventDefault();
+              return false;
+            };
+          }
+          
+          if (/^Win/(navigator.platform)) {
+            show("windows");
+          } else if (/^Mac/(navigator.platform)) {
+            show("macosx");
+          } else {
+            show("linux");
+          }
+        }
+      ]]>
+    </script>
+
+  </body>
+</html>

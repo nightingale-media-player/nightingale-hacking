@@ -1,0 +1,16 @@
+#filter substitution
+locales.jar:
+#ifdef USING_FLAT_JARS
+#define LOCALE_LOCATION locales
+#else
+#define LOCALE_LOCATION jar:locales.jar!
+#endif
+% locale  branding  en-US  @LOCALE_LOCATION@/locale/branding/
+% locale  songbird  en-US  @LOCALE_LOCATION@/locale/en-US/songbird/
+  locale/en-US/songbird/songbird.dtd                      (en-US/songbird/songbird.dtd)
+  locale/en-US/songbird/songbird.properties               (en-US/songbird/songbird.properties)
+  locale/en-US/songbird/preferences.dtd                   (en-US/songbird/preferences.dtd)
+  locale/en-US/songbird/help.dtd                          (en-US/songbird/help.dtd)
+  locale/branding/brand.dtd                               (branding/brand.dtd)
+  locale/branding/brand.properties                        (branding/brand.properties)
+% override chrome://browser/locale/preferences/preferences.dtd chrome://songbird/locale/preferences.dtd

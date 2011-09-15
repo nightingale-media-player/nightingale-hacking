@@ -1,0 +1,4 @@
+songbird.jar:
+% skin  songbird-dialogs classic/1.0  %skin/dialogs/
+% style chrome://mozapps/content/extensions/extensions.xul chrome://songbird-dialogs/skin/addons.css
+@include_all_to skin/dialogs/

@@ -1,0 +1,773 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface sbIDevice;
+interface nsIVariant;
+interface nsIStringEnumerator;
+
+/**
+ * \interface sbIImageSize
+ * \note A specific supported size
+ *
+ */
+[scriptable, uuid(3d8c5686-26b7-47a9-a18d-2254b77a6c9a)]
+interface sbIImageSize : nsISupports
+{
+  void Initialize(in long width, in long height);
+  
+  /* \brief The supported width */
+  readonly attribute long width;
+
+  /* \brief The supported height */
+  readonly attribute long height;
+};
+
+%{C++
+#define SB_IMAGESIZE_DESCRIPTION             \
+  "Songbird Device Capabilities Image Size Component"
+#define SB_IMAGESIZE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbimagesize;1"
+#define SB_IMAGESIZE_CLASSNAME               \
+  "Songbird Device Capabilities Image Size"
+#define SB_IMAGESIZE_CID                     \
+{ 0xf2915d0, 0xf43, 0x46fd, { 0x90, 0xbd, 0x84, 0x22, 0x48, 0x43, 0xb, 0xf } }
+%}
+
+/**
+ * \interface sbIDevCapRange
+ * \note Ranges of supported values (for image/video sizes, bitrates, etc.)
+ *
+ */
+[scriptable, uuid(8A62D336-9489-46f3-BB16-AED90DA7F775)]
+interface sbIDevCapRange : nsISupports
+{
+  void Initialize(in long aMin,
+                  in long aMax,
+                  in long aStep);
+  /**
+   * The values permitted. If this array is non-empty, then only these values
+   * are permitted. If it is empty, instead, the min/max/step values should
+   * be used
+   */
+  /**
+   * Returns the value of a given index
+   * \param aIndex the index of the value to return
+   */
+  long GetValue(in unsigned long aIndex);
+  
+  /**
+   * Adds a value to the range
+   * \param aValue The value to append
+   */
+  void AddValue(in long aValue);
+  /**
+   * The number of values in the range
+   */
+  readonly attribute unsigned long valueCount;
+
+  /* \brief The minimum supported value */
+  readonly attribute long min;
+
+  /* \brief The maximum supported value */
+  readonly attribute long max;
+
+  /* \brief If non-zero, the range is not continuous, but instead only
+     increments of 'step' are permitted */
+  readonly attribute long step;
+  
+  /* \brief Determine whether the value is in range. The range could be
+   *        discrete values, or value array.
+   * \returns true if the value is in range.
+   */
+  boolean IsValueInRange(in long aValue);
+};
+
+%{C++
+#define SB_IDEVCAPRANGE_DESCRIPTION             \
+  "Songbird Device Capabilities Range Component"
+#define SB_IDEVCAPRANGE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbrange;1"
+#define SB_IDEVCAPRANGE_CLASSNAME               \
+  "Songbird Device Capabilities Range"
+#define SB_IDEVCAPRANGE_CID                     \
+{ 0x491604ba, 0x51e1, 0x45e4, { 0x9d, 0x11, 0xce, 0x1e, 0xc6, 0x3d, 0xe, 0xae } }
+%}
+
+/**
+ * \interface sbIDevCapFraction
+ * \brief Interface for storing a fractional value.
+ */
+[scriptable, uuid(0168409c-1dd2-11b2-a064-b25ec073dc48)]
+interface sbIDevCapFraction : nsISupports
+{
+  readonly attribute unsigned long numerator;
+  readonly attribute unsigned long denominator;
+
+  void initialize(in unsigned long aNumerator,
+                  in unsigned long aDenominator);
+};
+
+%{C++
+#define SB_IDEVCAPFRACTION_DESCRIPTION             \
+  "Songbird Device Capabilities Fraction Component"
+#define SB_IDEVCAPFRACTION_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbfraction;1"
+#define SB_IDEVCAPFRACTION_CLASSNAME               \
+  "Songbird Device Capabilities Fraction"
+#define SB_IDEVCAPFRACTION_CID                     \
+{0xb8b158a2, 0x1dd1, 0x11b2, {0x9f, 0x1d, 0xb9, 0x56, 0x08, 0x79, 0x0a, 0xb8}}
+%}
+
+/**
+ * \interface sbIFormatTypeConstraint
+ *
+ * This allows additional format-specific constraints to be defined.
+ * e.g. For H.264, you might define the profiles and/or levels supported via
+ * sbIFormatTypeConstraints
+ */
+[scriptable, uuid(eb46c4ab-1842-4e0b-ba69-e60b3dd9c792)]
+interface sbIFormatTypeConstraint : nsISupports
+{
+  void Initialize(in AString aConstraintName,
+                  in nsIVariant aMinValue,
+                  in nsIVariant aMaxValue);
+                  
+  readonly attribute AString constraintName;
+
+  readonly attribute nsIVariant constraintMinValue;
+
+  readonly attribute nsIVariant constraintMaxValue;
+};
+
+%{C++
+#define SB_IFORMATTYPECONSTRAINT_DESCRIPTION             \
+  "Songbird Device Capabilities Format Type Constraint Component"
+#define SB_IFORMATTYPECONSTRAINT_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbformattypeconstraint;1"
+#define SB_IFORMATTYPECONSTRAINT_CLASSNAME               \
+  "Songbird Device Capabilities Format Type Constraint"
+#define SB_IFORMATTYPECONSTRAINT_CID                     \
+{ 0x5d73ba28, 0xf460, 0x48bd, { 0x92, 0x3b, 0x68, 0xd4, 0xa8, 0x8e, 0x92, 0xda } }
+%}
+
+/**
+ * \interface sbIImageFormatType
+ * \note Implementations of this interface must be threadsafe.
+ *
+ */
+[scriptable, uuid(3dac965e-be7b-4792-ba4d-2af3f683caad)]
+interface sbIImageFormatType : nsISupports
+{
+  void Initialize(in ACString aImageFormat, 
+                  in nsIArray aSupportedExplicitSizes,
+                  in sbIDevCapRange aSupportedWidths,
+                  in sbIDevCapRange aSupportedHeights);
+  /**
+   * The mime-type of the image format.
+   *
+   * e.g. image/jpeg, image/png, image/x-my-private-format
+   */
+  readonly attribute ACString imageFormat;
+
+  /* Array of supported sizes. Each item in the array is an sbIImageSize giving
+     an explicit width and height.
+
+     The array MUST NOT be empty; if arbitrary dimensions are supported then
+     this array should contain a single 'recommended' size
+   */
+  readonly attribute nsIArray supportedExplicitSizes;
+
+  /* Range of supported widths.
+
+     May be null, in which case only the explicit sizes are permitted.
+   */
+  readonly attribute sbIDevCapRange supportedWidths;
+
+  /* Range of supported heights.
+
+     May be null, in which case only the explicit sizes are permitted.
+   */
+  readonly attribute sbIDevCapRange supportedHeights;
+};
+
+%{C++
+#define SB_IIMAGEFORMATTYPE_DESCRIPTION             \
+  "Songbird Device Capabilities Image Format Type Component"
+#define SB_IIMAGEFORMATTYPE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbimageformattype;1"
+#define SB_IIMAGEFORMATTYPE_CLASSNAME               \
+  "Songbird Device Capabilities Image Format Type"
+#define SB_IIMAGEFORMATTYPE_CID                     \
+{ 0x496881cb, 0xed03, 0x435f, { 0x9d, 0xa5, 0xdf, 0x99, 0x63, 0x6f, 0x9e, 0xe3 } }
+%}
+
+/**
+ * \interface sbIAudioContentType
+ * \note Implementations of this interface must be threadsafe.
+ *
+ */
+[scriptable, uuid(5ec50372-7137-4671-8e75-e8f8dc237dd7)]
+interface sbIAudioFormatType : nsISupports
+{
+  void Initialize(in ACString aFormat,
+                  in ACString aCodec,
+                  in sbIDevCapRange aBitRates,
+                  in sbIDevCapRange aSampleRates,
+                  in sbIDevCapRange aChannels,
+                  in nsIArray aFormatSpecificConstraints);
+  /* Mime type of the container format.
+   *
+   * May be empty if there is no container format (e.g. a raw FLAC bitstream)
+   */
+  readonly attribute ACString containerFormat;
+
+  /* Mime type of the audio codec in use.
+   */
+  readonly attribute ACString audioCodec;
+
+  /* The supported bitrates.
+   */
+  readonly attribute sbIDevCapRange supportedBitrates;
+
+  /* The supported sample rates.
+   */
+  readonly attribute sbIDevCapRange supportedSampleRates;
+
+  /* The supported numbers of channels
+   */
+  readonly attribute sbIDevCapRange supportedChannels;
+
+  /* An array of sbIFormatTypeConstraint specific to this content type.
+   *
+   * For example, if audioCodec is audio/aac, this might have a constraint 
+   *   profile=LC
+   * to indicate that only the low complexity profile is supported (as is the
+   * case for ipods, for example).
+   */
+  readonly attribute nsIArray formatSpecificConstraints;
+};
+
+%{C++
+#define SB_IAUDIOFORMATTYPE_DESCRIPTION             \
+  "Songbird Device Capabilities Audio Format Type Component"
+#define SB_IAUDIOFORMATTYPE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbaudioformattype;1"
+#define SB_IAUDIOFORMATTYPE_CLASSNAME               \
+  "Songbird Device Capabilities Audio Format Type"
+#define SB_IAUDIOFORMATTYPE_CID                     \
+{ 0xfbfadb32, 0xb95b, 0x49cb, { 0xb5, 0xf0, 0x8, 0xf9, 0xa8, 0x70, 0x57, 0xe5 } }
+%}
+
+/**
+ * This interface describes the capabilities for the video streams
+ */
+ 
+[scriptable, uuid(7062120d-eb8b-469c-9606-bbe86502735c)]
+interface sbIDevCapVideoStream : nsISupports
+{
+  /**
+   * Initializes the video stream capabilities
+   *
+   * If supported PARs is a range, the array should have exactly two elements,
+   * the first of which is the minimum and the second is the maximum.
+   * Similarly, if the supported frame rates is a range, that array should have
+   * exactly two elements in the same order as well.
+   */
+  void initialize(in ACString aType,
+                  in nsIArray aExplicitSizes,
+                  in sbIDevCapRange aWidths,
+                  in sbIDevCapRange aHeights,
+                  in nsIArray aSupportedPARs,
+                  in boolean aSupportedPARsIsRange,
+                  in nsIArray aSupportedFrameRates,
+                  in boolean aSupportedFrameRatesIsRange,
+                  in sbIDevCapRange aBitRates);
+  
+  /**
+   * Container type
+   */
+  readonly attribute ACString type;
+  
+  /**
+   * Array of supported sizes. Each item in the array is an sbIImageSize giving
+   * an explicit width and height.
+   *
+   * The array MUST NOT be empty; if arbitrary dimensions are supported then
+   * this array should contain a single 'recommended' size
+   */
+  readonly attribute nsIArray supportedExplicitSizes;
+
+  /** 
+   * Range of supported widths.
+   *
+   * May be null, in which case only the explicit sizes are permitted.
+   */
+  readonly attribute sbIDevCapRange supportedWidths;
+
+  /**
+   * Range of supported heights.
+   *
+   * May be null, in which case only the explicit sizes are permitted.
+   */
+  readonly attribute sbIDevCapRange supportedHeights;
+
+  /**
+   * Returns true if the video stream supports ranges (i.e. min/max values)
+   * for the PAR. If this attribute is true, use the |minimumSupportedPAR| and
+   * the |maximumSupportedPAR| attributes on this interface for the PAR range.
+   *
+   * If this attribute returns false, a set list of PAR values will be
+   * available via the |supportedPARs| attribute.
+   */
+  readonly attribute boolean doesSupportPARRange;
+
+  /**
+   * Returns an array of the supported PAR values as |sbIDevCapFraction|
+   * instances. When the attribute |doesSupportPARRange| is false, use this
+   * array of PAR values to get the supported PAR values.
+   */
+  readonly attribute nsIArray supportedPARs;
+
+  /**
+   * Returns the minimum and maximum PAR values. If |doesSupportPARRange| is
+   * false, these values will throw NS_ERROR_NOT_AVAILABLE.
+   */
+  readonly attribute sbIDevCapFraction minimumSupportedPAR;
+  readonly attribute sbIDevCapFraction maximumSupportedPAR;
+
+  /**
+   * Returns true if the video stream supports ranges (i.e. min/max values)
+   * for the frame rates. If this attribute is true, use the
+   * |minimumSupportedFrameRate| and the |maximumSupportedFrameRate| attributes
+   * this interface for the frame rate range.
+   *
+   * If this attribute returns false, a set list of frame rate values will be
+   * available via the |supportedFrameRates| attribute.
+   */
+  readonly attribute boolean doesSupportFrameRateRange;
+
+  /**
+   * Returns an array of the supported frame rate values as |sbIDevCapFraction|
+   * instances. When the attribute |doesSupportFrameRateRange| is false, use
+   * this array of frame rate values to get the supported frame rate values.
+   */
+  readonly attribute nsIArray supportedFrameRates;
+
+  /**
+   * Returns the minimum and maximum frame rate values.
+   * If |doesSupportFrameRateRange| is false, these values will throw
+   * NS_ERROR_NOT_AVAILABLE.
+   */
+  readonly attribute sbIDevCapFraction minimumSupportedFrameRate;
+  readonly attribute sbIDevCapFraction maximumSupportedFrameRate;
+
+  /**
+   * Returns a range of bit rates
+   */
+  readonly attribute sbIDevCapRange supportedBitRates;
+};
+
+%{C++
+#define SB_IDEVCAPVIDEOSTREAM_DESCRIPTION             \
+  "Songbird Device Capabilities Video Stream Component"
+#define SB_IDEVCAPVIDEOSTREAM_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbdevcapvideostream;1"
+#define SB_IDEVCAPVIDEOSTREAM_CLASSNAME               \
+  "Songbird Device Capabilities Video Stream"
+#define SB_IDEVCAPVIDEOSTREAM_CID                     \
+  {0x1eb66418, 0x11bd, 0x493c, {0x93, 0x29, 0x29, 0x0d, 0x0e, 0x4f, 0xb7, 0x8a}}
+%}
+
+[scriptable, uuid(5651ca06-284a-457f-8dd8-9e60da4471f0)]
+interface sbIDevCapAudioStream : nsISupports
+{
+  /**
+   * Initializes the audio stream object
+   *
+   * \param aType The audio stream type. This is a Songbird defined value.
+   * \param aBitRates A range of bit rates supported
+   * \param aSampleRates A range of sample rates supported
+   * \param aChannels The audio channels supported
+   */
+  void initialize(in ACString aType,
+                  in sbIDevCapRange aBitRates,
+                  in sbIDevCapRange aSampleRates,
+                  in sbIDevCapRange aChannels); 
+  /**
+   * Type of audio stream.
+   */
+  readonly attribute ACString type;
+
+  /**
+   * The supported bitrates.
+   */
+  readonly attribute sbIDevCapRange supportedBitRates;
+
+  /**
+   * The supported sample rates.
+   */
+  readonly attribute sbIDevCapRange supportedSampleRates;
+
+  /**
+   * The supported numbers of channels
+   */
+  readonly attribute sbIDevCapRange supportedChannels;
+};
+
+%{C++
+#define SB_IDEVCAPAUDIOSTREAM_DESCRIPTION             \
+  "Songbird Device Capabilities Audio Stream Component"
+#define SB_IDEVCAPAUDIOSTREAM_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1"
+#define SB_IDEVCAPAUDIOSTREAM_CLASSNAME               \
+  "Songbird Device Capabilities Audio Stream"
+#define SB_IDEVCAPAUDIOSTREAM_CID                     \
+  {0xa8e9d2f7, 0x6640, 0x41a1, {0x9b, 0xd7, 0xb6, 0xce, 0xf2, 0x84, 0xb9, 0x47}}
+%}
+
+/**
+ * This is interface is used to inspect video capabilities of a device
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(39fe77d1-f46d-4ca8-acff-435ccec8af1b)]
+interface sbIVideoFormatType : nsISupports
+{
+  /**
+   * Initializes the video format object
+   */
+  void initialize(in ACString aContainerType,
+                  in sbIDevCapVideoStream aVideoStream,
+                  in sbIDevCapAudioStream aAudioStream);
+  /**
+   * Container format, this may be a mime type or a songbird defined string
+   */
+  readonly attribute ACString containerType;
+  
+  /**
+   * video capabilities of this supported video format
+   */
+  readonly attribute sbIDevCapVideoStream videoStream;
+  
+  /**
+   * Audio capabilities of this supported video format
+   */
+  readonly attribute sbIDevCapAudioStream audioStream;
+};
+
+%{C++
+#define SB_IVIDEOORMATTYPE_DESCRIPTION             \
+  "Songbird Device Capabilities Video Format Type Component"
+#define SB_IVIDEOFORMATTYPE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbvideoformattype;1"
+#define SB_IVIDEOFORMATTYPE_CLASSNAME               \
+  "Songbird Device Capabilities Video Format Type"
+#define SB_IVIDEOFORMATTYPE_CID                     \
+  {0x87cced11, 0x258e, 0x4131, {0xae, 0x51, 0xa5, 0x2a, 0xf7, 0x6d, 0xaa, 0xbc}}
+%}
+
+/**
+ * This interface is used to inspect the playlist capabilities of a device
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(1042b7ea-eb3f-4b82-b730-b0a3d0b8e2ec)]
+interface sbIPlaylistFormatType : nsISupports
+{
+  /**
+   * Initializes the playlist format object
+   */
+  void initialize(in ACString aPathSeparator);
+
+  /**
+   * Path separator used when writing playlist resource locations
+   */
+  readonly attribute ACString pathSeparator;
+};
+
+%{C++
+#define SB_IPLAYLISTFORMATTYPE_DESCRIPTION         \
+  "Songbird Device Capabilities Playlist Format Type Component"
+#define SB_IPLAYLISTFORMATTYPE_CONTRACTID          \
+  "@songbirdnest.com/Songbird/Device/sbplaylistformattype;1"
+#define SB_IPLAYLISTFORMATTYPE_CLASSNAME           \
+  "Songbird Device Capabilities Playlist Format Type"
+#define SB_IPLAYLISTFORMATTYPE_CID                 \
+  {0xdc2b0702, 0xb8d7, 0x4ef5, {0x83, 0xb6, 0x64, 0x85, 0xe5, 0xef, 0xd5, 0xf1}}
+%}
+
+/**
+ * \interface sbIDeviceCapabilities
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(7ce2a138-d1b4-4980-9c36-04c0389c6ce2)]
+interface sbIDeviceCapabilities : nsISupports
+{
+  /**
+   * \brief Initialize the device capabilities, sets up to be able to accept
+   *  the set and add functions below.
+   */
+  void init();
+
+  /**
+   * \brief Sets an array of function types
+   * \param aFunctionTypes and array of function types
+   * \param aFunctionTypesCount length of aFunctionTypes array
+   */
+  void setFunctionTypes([array, size_is(aFunctionTypesCount)]
+                         in PRUint32 aFunctionTypes,
+                        in unsigned long aFunctionTypesCount);
+
+  /**
+   * \brief Sets an array of event types
+   * \param aEventTypes an array of event types
+   * \param aEventCount length of aEventTypes array
+   */
+  void setEventTypes([array, size_is(aEventTypesCount)]
+                       in unsigned long aEventTypes,
+                     in unsigned long aEventTypesCount);
+
+  /**
+   * \brief Add an array of content types for a function type
+   * \param aFunctionType Function type these content types fall under
+   * \param aContentTypes an array of content types for aFunctionType
+   * \param aContentTypesCount length of aContentTypes array
+   */
+  void addContentTypes(in PRUint32 aFunctionType,
+                       [array, size_is(aContentTypesCount)]
+                         in unsigned long aContentTypes,
+                       in unsigned long aContentTypesCount);
+  
+  /**
+   * \brief Add an array of mime types for a content type
+   * \param aContentType Content type these mime types fall under
+   * \param aMimeTypes an array of mime types for aContentType
+   * \param aMimeTypesCount length of aMimeTypes array
+   */
+  void addMimeTypes(in PRUint32 aContentType,
+                  [array, size_is(aMimeTypesCount)] in string aMimeTypes,
+                  in unsigned long aMimeTypesCount);
+
+  /**
+   * \brief Add a constraint to a mime type
+   * \param aContentType the content type this format falls under, see the
+   *                     CONTENT_* constants below.
+   * \param aMimeType the mime type we're adding a constraint for. This must 
+   *                  correspond to a mime type previously added by addMimeTypes
+   * \param aFormatType the object describing the format type. For example it 
+   *                    it could be a sbIAudioFormatType or a sbIImageFormatType
+   */
+  void AddFormatType(in PRUint32 aContentType,
+                     in AString aMimeType,
+                     in nsISupports aFormatType);
+
+  /**
+   * \brief Add a preferred constraint to a mime type (these are used for
+   *        target formats when transcoding.
+   * \param aContentType the content type this format falls under, see the
+   *                     CONTENT_* constants below.
+   * \param aMimeType the mime type we're adding a constraint for. This must 
+   *                  correspond to a mime type previously added by addMimeTypes
+   * \param aFormatType the object describing the format type. For example it 
+   *                    it could be a sbIAudioFormatType or a sbIImageFormatType
+   */
+  void AddPreferredFormatType(in PRUint32 aContentType,
+                     in AString aMimeType,
+                     in nsISupports aFormatType);
+                           
+  /**
+   * \brief Add the capabilities specified by aCapabilities
+   * \param aCapabilities Set of capabilities to add
+   */
+  void addCapabilities(in sbIDeviceCapabilities aCapabilities);
+
+  /**
+   * \brief Indicates that the configuration is complete, the add and set
+   *        functions above will no longer affect the data.
+   */
+  void configureDone();
+  
+  /**
+   *
+   */
+  const PRUint32 FUNCTION_UNKNOWN        = 0x00;
+  const PRUint32 FUNCTION_DEVICE         = 0x01;
+  const PRUint32 FUNCTION_AUDIO_PLAYBACK = 0x02;
+  const PRUint32 FUNCTION_AUDIO_CAPTURE  = 0x03;
+  const PRUint32 FUNCTION_IMAGE_DISPLAY  = 0x04;
+  const PRUint32 FUNCTION_IMAGE_CAPTURE  = 0x05;
+  const PRUint32 FUNCTION_VIDEO_PLAYBACK = 0x06;
+  const PRUint32 FUNCTION_VIDEO_CAPTURE  = 0x07;
+
+  /**
+   * 
+   */
+  const PRUint32 FUNCTION_CLIENT_DEFINED = 0x80000000;
+
+  /**
+   * An array of nsISupportsPRUint32 values defined above.
+   */
+  // 
+  void getSupportedFunctionTypes(out unsigned long aArrayCount,
+                                 [retval, array, size_is(aArrayCount)]
+                                  out PRUint32 aFunctionTypes);
+
+  /**
+   * 
+   */
+  const PRUint32 CONTENT_UNKNOWN  = 0x00;
+  const PRUint32 CONTENT_FILE     = 0x01;
+  const PRUint32 CONTENT_FOLDER   = 0x02;
+  const PRUint32 CONTENT_AUDIO    = 0x03;
+  const PRUint32 CONTENT_IMAGE    = 0x04;
+  const PRUint32 CONTENT_VIDEO    = 0x05;
+  const PRUint32 CONTENT_PLAYLIST = 0x06;
+  const PRUint32 CONTENT_ALBUM    = 0x07;
+  const PRUint32 CONTENT_MAX_TYPES= 0x08; // Must be last
+
+  /**
+   * 
+   */
+  const PRUint32 CONTENT_CLIENT_DEFINED = 0x80000000;
+
+  /**
+   * An array of nsISupportsPRUint32 values defined above.
+   */
+  void getSupportedContentTypes(in PRUint32 aFunctionType,
+                                out unsigned long aArrayCount,
+                                [retval, array, size_is(aArrayCount)]
+                                  out PRUint32 aContentTypes);
+
+  /**
+   * Returns an array of mime types supported for this type of content.
+   */
+  void getSupportedMimeTypes(in PRUint32 aContentType,
+                             out unsigned long aArrayCount,
+                             [retval, array, size_is(aArrayCount)]
+                               out string aSupportedMimeTypes);
+
+  /**
+   * Returns an array of constraint objects (sbIVideoFormatType,
+   * sbIAudioFormatType, sbIImageFormatType, depending on the content
+   * type requested) for this mime type and type of content.
+   */
+  void getFormatTypes(in PRUint32 aContentType,
+                      in AString aMimeType,
+                      out unsigned long aArrayCount,
+                      [retval, array, size_is(aArrayCount)]
+                        out nsISupports aSupportedFormats);
+
+  /**
+   * Returns an array of constraint objects (sbIVideoFormatType,
+   * sbIAudioFormatType, sbIImageFormatType, depending on the content
+   * type requested) for this mime type and type of content.
+   *
+   * These specify the preferred format for this type of data. If transcoding
+   * is required, it will always transcode to parameters matching one of these
+   * constraint objects. If an implementation has no specific knowledge of
+   * preferred values, it should simply return the same information here as from
+   * getFormatTypes.
+   */
+  void getPreferredFormatTypes(in PRUint32 aContentType,
+                               in AString aMimeType,
+                               out unsigned long aArrayCount,
+                               [retval, array, size_is(aArrayCount)]
+                                  out nsISupports aPreferredFormats);
+ 
+  /**
+   * Returns an array of nsISupportsPRUint32 values defined in
+   * sbIDeviceEvent.idl
+   */
+  void getSupportedEvents(out unsigned long aArrayCount,
+                          [retval, array, size_is(aArrayCount)]
+                            out unsigned long aSupportedEvents);
+
+  /**
+   * Whether the device supports the content type specified by aContentType
+   * \param aFunctionType   the function type to check.
+   * \param aContentType    the content type to check.
+   * \returns true if the content type is supported.
+   */
+  boolean supportsContent(in PRUint32 aFunctionType, in PRUint32 aContentType);
+
+  /**
+   * Get all the file extensions of the content type specified by aContentType
+   * supported by the device specified by aDevice.
+   *
+   * \param aDevice             Device from which to get file extensions.
+   * \param aContentType        Content type for the file extensions to get.
+   * \returns all file extensions the device supports
+   */
+  nsIStringEnumerator getSupportedFileExtensions(in sbIDevice aDevice,
+                                                 in PRUint32 aContentType);
+};
+
+%{C++
+#define SONGBIRD_DEVICECAPABILITIES_DESCRIPTION             \
+  "Songbird Device Capabilities Component"
+#define SONGBIRD_DEVICECAPABILITIES_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/DeviceCapabilities;1"
+#define SONGBIRD_DEVICECAPABILITIES_CLASSNAME               \
+  "Songbird Device Capabilities"
+#define SONGBIRD_DEVICECAPABILITIES_CID                     \
+{ /* 54d42a87-9031-4928-991e-e66f4916a90b */              \
+  0x54d42a87,                                             \
+  0x9031,                                                 \
+  0x4928,                                                 \
+  {0x99, 0x1e, 0xe6, 0x6f, 0x49, 0x16, 0xa9, 0x0b}        \
+}
+%}
+
+/**
+ * \interface sbIDeviceCapabilitiesUtils
+ * \brief Temporary interface to allow us to access the mime-type ->
+ *        file extension mappings in sbDeviceUtils
+ */
+[scriptable, uuid(9e1f9988-1dd1-11b2-a7fc-80bbd1fa9089)]
+interface sbIDeviceCapabilitiesUtils : nsISupports
+{
+  /**
+   * Returns an enumerator of file extensions for the given mimeType & contentType
+   */
+  nsIStringEnumerator mapContentTypeToFileExtensions(in AString aMimeType,
+                                                     in PRUint32 aContentType);
+};
+
+%{C++
+#define SONGBIRD_DEVICECAPABILITIESUTILS_DESCRIPTION \
+  "Songbird Device Capabilities Utils Component"
+#define SONGBIRD_DEVICECAPABILITIESUTILS_CONTRACTID \
+  "@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"
+#define SONGBIRD_DEVICECAPABILITIESUTILS_CLASSNAME \
+  "Songbird Device Capabilities Utils"
+#define SONGBIRD_DEVICECAPABILITIESUTILS_CID \
+{ /* 9e1f9988-1dd1-11b2-a7fc-80bbd1fa9089 */ \
+  0xc20c7dfa, \
+  0x1dd1,     \
+  0x11b2,     \
+  {0xa4, 0xa6, 0xb9, 0x8b, 0xb9, 0xa0, 0xaa, 0x47} \
+}
+%}

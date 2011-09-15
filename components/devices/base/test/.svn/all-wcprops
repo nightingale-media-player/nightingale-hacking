@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/client/!svn/ver/20868/trunk/components/devices/base/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/client/!svn/ver/20747/trunk/components/devices/base/test/Makefile.in
+END
+test_device_sync_diff.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/20868/trunk/components/devices/base/test/test_device_sync_diff.js
+END

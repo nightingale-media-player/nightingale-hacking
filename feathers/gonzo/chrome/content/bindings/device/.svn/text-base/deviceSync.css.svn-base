@@ -1,0 +1,87 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+
+/**
+*******************************************************************************
+DEVICE SYNC
+
+See app/content/bindings/device/deviceSync.xml
+
+Style rules pertaining to the device sync widget.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+.content-auto-sync-playlist-duration {
+  text-align: right;
+}
+
+/* we must, at present, use all-lowercase attribute names.
+   see https://bugzilla.mozilla.org/show_bug.cgi?id=535806 */
+sb-device-sync[contenttype="video"] .content-controls radio {
+  display: none;
+}
+
+sb-device-sync[disabled="true"],
+sb-device-image-sync[disabled="true"] {
+  opacity: 1;
+}
+
+sb-device-sync[disabled="true"] [disabled="true"],
+hbox.content_management_header_background[disabled="true"] [disabled="true"],
+groupbox[sbid="content_management_groupbox"][disabled="true"] [disabled="true"],
+sb-device-image-sync[disabled="true"] [disabled="true"] {
+  opacity: 1;
+}
+
+sb-device-sync[disabled="true"] vbox[sbid="content_selector"],
+hbox.content_management_header_background[disabled="true"],
+groupbox[sbid="content_management_groupbox"][disabled="true"],
+sb-device-image-sync[disabled="true"] groupbox[sbid="content_selector"],
+sb-device-image-sync[disabled="true"] label[sbid="sync_images_supported_formats"] {
+  opacity: .5;
+}
+
+checkbox[sbid="import_header_checkbox"],
+checkbox[sbid="sync_header_checkbox"] {
+  padding: 3px;
+}
+
+checkbox[sbid="import_header_checkbox"] label,
+checkbox[sbid="sync_header_checkbox"] label {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+label[sbid="sync_images_supported_formats"] {
+  color: rgb(170, 168, 179);
+  font-size: 11px;
+}
+
+vbox[sbid="sync_images_supported_formats_box"] {
+  height: 20px;
+}

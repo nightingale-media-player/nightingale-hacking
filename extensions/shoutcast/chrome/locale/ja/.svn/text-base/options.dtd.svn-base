@@ -1,0 +1,22 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "ストリームフィルタ">
+<!ENTITY prefwindow.title "SHOUTcast ラジオ設定">
+<!ENTITY bit-rate.limit.label "ビットレートが次の値以上の SHOUTcast ストリームのみを表示する">
+<!ENTITY listeners.limit.label "視聴者数が次の人数以上の SHOUTcast ストリームのみを表示する">
+<!ENTITY listeners.limit.label.2 "人">
+<!ENTITY bit-rate.label "ビットレート(kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "視聴者数">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "アーティスト/タイトルの解析">
+<!ENTITY prefs.track.guessing.label "トラックのタイトルおよびアーティストの解析を有効にする">
+<!ENTITY prefs.track.guessing.help "いくつかの SHOUTcast ストリーム放送では &apos;アーティスト - トラックのタイトル&apos; という書式でテキストを流しています。このオプションを有効にすると、SHOUTcast アドオンがトラック情報を解析し、トラック情報の変更通知イベントを発行します。このイベントによって、他のアドオンがストリーム中のトラック情報の変更通知を受け取ることができます。">
+<!ENTITY prefs.customGenres "カスタムジャンル">
+<!ENTITY prefs.customGenres.emptytext "コンマで区切って入力してジャンルのリストはこちら">
+<!ENTITY custom-genres.help.label "SHOUTcast ディレクトリに表示するジャンルを限定したいときは、ここにジャンル名をカンマで区切って入力してください。">
+<!ENTITY prefs.tosBegin "SHOUTcast ディレクトリの利用は Nullsoft 社の">
+<!ENTITY prefs.tosLinkText "利用規約">
+<!ENTITY prefs.tosEnd "に従います。">
+<!ENTITY prefs.toolbarBegin "ブラウザから簡単に SHOUTcast にアクセスできる">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast ツールバー">
+<!ENTITY prefs.toolbarEnd "アドオンをインストールしてください。">

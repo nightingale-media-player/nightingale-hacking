@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser
+END
+newtab.png
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/newtab.png
+END
+alltabs-box-bkgnd-icon.png
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/alltabs-box-bkgnd-icon.png
+END
+tabDragIndicator.png
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/tabDragIndicator.png
+END
+tabbrowser-tabs-bkgnd.png
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/tabbrowser-tabs-bkgnd.png
+END
+tab-arrow-left.png
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/tab-arrow-left.png
+END
+alltabs-box-overflow-bkgnd-animate.png
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/alltabs-box-overflow-bkgnd-animate.png
+END
+tab-arrow-right.png
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/tab-arrow-right.png
+END
+tab-bkgnd.png
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/themes/pinstripe/browser/tabbrowser/tab-bkgnd.png
+END

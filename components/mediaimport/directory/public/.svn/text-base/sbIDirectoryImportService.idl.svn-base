@@ -1,0 +1,104 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface sbIMediaList;
+interface nsIArray;
+interface nsISimpleEnumerator;
+interface sbIJobProgress;
+
+/**
+ * \interface sbIDirectoryImportJob
+ * \brief Represents a recursive directory import operation.
+ * Use sbIDirectoryImportService to start a new import job.
+ * Use sbIJobProgress to track job status and wait for completion.
+ * \sa sbIDirectoryImportService, sbIJobProgress
+ */
+[scriptable, uuid(6b029f20-cadd-11dd-ad8b-0800200c9a66)]
+interface sbIDirectoryImportJob : nsISupports
+{
+  /**
+   * \brief Number of items that were added to the target media list
+   * (Note that items may already existed in the library, 
+   * but not the target list)
+   */
+  readonly attribute unsigned long totalAddedToMediaList;
+
+  /**
+   * \brief Number of new (unknown) items that were added to the library
+   */
+  readonly attribute unsigned long totalAddedToLibrary;
+
+  /**
+   * \brief Number of items that already existed in the target library
+   */
+  readonly attribute unsigned long totalDuplicates;
+
+  /**
+   * \brief Enumerator for sbIMediaItems that were found
+   *        during this job
+   */
+  nsISimpleEnumerator enumerateAllItems();
+
+  /**
+   * \brief Media list receiving found items
+   */  
+  readonly attribute sbIMediaList targetMediaList;
+
+  /**
+   * \brief Index into targetMediaList where found items are inserted
+   */
+  readonly attribute unsigned long targetIndex;
+};
+
+
+/**
+ * \interface sbIDirectoryImportService
+ * \brief Handles finding media files in directories and
+ * adding them to a library or list
+ */
+[scriptable, uuid(13ab5520-449e-11dd-ae16-0800200c9a66)]
+interface sbIDirectoryImportService : nsISupports
+{
+
+  /**
+   * \brief Recursively import from the given directories into 
+   *        the specified media list.
+   *
+   * \param aDirectories an array of nsIFile paths
+   * \param aTargetMediaList the media list into which found items should be loaded
+   *        (defaults to the main library)
+   * \param aTargetIndex the index into the media list where items should be inserted
+   *        (ignored if aTargetMediaList is not an sbIOrderableMediaList)
+   */
+  sbIDirectoryImportJob import(in nsIArray aDirectories,
+                               [optional] in sbIMediaList aTargetMediaList,
+                               [optional] in PRInt32 aTargetIndex);
+};
+
+

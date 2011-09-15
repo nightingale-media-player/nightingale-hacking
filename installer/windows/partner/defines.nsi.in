@@ -1,0 +1,71 @@
+#filter substitution
+!define FALSE                  "0"
+!define TRUE                   "1"
+
+!define BrandShortName         "@SB_BRAND_SHORT_NAME@"
+!define BrandFullName          "@SB_BRAND_FULL_NAME@"
+
+!define SongbirdInstallerEXE   "@SB_BASE_INSTALLER_BASENAME@"
+!define SongbirdUninstallerEXE "@SB_BASE_UNINSTALLER_BASENAME@"
+!define FileMainEXE            "@SB_BRAND_SHORT_NAME@.exe"
+
+!define BrandFullNameInternal  "@SB_BRAND_FULL_NAME_INTERNAL@"
+!define CompanyName            "@SB_BRAND_VENDOR_NAME@"
+!define LegalTrademarks        "@SB_BRAND_TRADEMARKS@"
+
+!define AppVersion             @DISTRIBUTION_VERSION@
+!define AppVersionWindows      @DISTRIBUTION_VERSION_WIN@
+!define AppBuildNumber         1000
+
+!define WindowClass            "SongbirdMessageWindow"
+!define InstallerMutexName     "@SB_BRAND_SHORT_NAME@InstallerMutex"
+
+!define SubApplicationWait     2000
+!define QuitApplicationWait    3000
+
+!define InstallerTmpDir           "$INSTDIR\install.tmp"
+!define PreferredInstallerName    "@DISTRIBUTION_INSTALLER_NAME@"
+!define PreferredUninstallerName  "${BrandShortName}-uninstall.exe"
+!define PreferredInstallDir       "$PROGRAMFILES\${BrandFullNameInternal}\"
+!define SongbirdInstDir           "$INSTDIR\@SB_BRAND_FULL_NAME@"
+!define PreferredIcon             "@DISTRIBUTION_APP_ICON@"
+!define PreferredInstallerIcon    "@DISTRIBUTION_APP_ICON@"
+!define PreferredUninstallerIcon  "@DISTRIBUTION_APP_ICON@"
+
+; Registry key paths/names shared between the installer/uninstaller
+
+!define RootAppRegistryKey     "Software\${BrandFullNameInternal}"
+!define MuiStartmenupageRegName "StartMenuFolder"
+!define DesktopShortcutRegName "DesktopShortcutLocation"
+!define QuicklaunchRegName "QuicklaunchShortcutLocation"
+
+# Strings
+
+!define ForceQuitMessage            "${BrandShortName} is currently running and will be forced to quit."
+
+!define UninstallMessageSameFolder  "The selected installation folder contains an older version of ${BrandShortName}. Do you wish to uninstall it and replace it with ${BrandShortName} ${AppVersion}?"
+
+!define UninstallMessageOldVersion  "An older version of ${BrandShortName} is installed; only one version of ${BrandShortName} may be installed at a time.$\n$\nDo you wish to uninstall it and install ${BrandShortName} ${AppVersion}?"
+
+!define DirectoryNotEmptyMessage    "The selected installation folder is not empty.$\n$\nThis can cause problems with your ${BrandShortName} installation.$\n$\nAre you sure you want to install into this directory?"
+
+!define AbortInstallMessage         "Are you sure you want to cancel installation of ${BrandShortName}?"
+
+!define AppKillFailureMessage       "Failed to shut down the running instance of ${BrandShortName}.$\n$\nPlease quit ${BrandShortName} before running this installer."
+
+!define InstallerRunningMesg    "The ${BrandShortName} installer or uninstaller is already running."
+
+!define DetailPrintQuitApp "Requesting ${BrandShortName} application shutdown..."
+!define DetailPrintKillApp "Forcefully terminating ${BrandShortName} application..."
+!define DetailPrintQuitAppWait "Waiting for requested application to shutdown..."
+!define DetailPrintQuitAgentWait "Requesting ${BrandShortName} agent shutdown..."
+!define DetailPrintQuitAgent "Requesting ${BrandShortName} agent shutdown..."
+
+!define InstallUnsupportedWinVersion "${BrandShortName} is currently untested on this version of Windows.$\n$\nYou may continue the installation, but some functionality may be unavailable." 
+
+!define UninstallRebootNow "${BrandShortName} has been uninstalled, but your computer must be rebooted to complete the uninstallation.$\n$\nReboot now?"
+
+!define PreInstallRebootNow "Your machine must be rebooted before ${BrandShortName} can be installed.$\n$\nReboot now?"
+
+!define InstallRebootNow "${BrandShortName} has been installed, but your computer must be rebooted to complete the installation.$\n$\nReboot now?"
+

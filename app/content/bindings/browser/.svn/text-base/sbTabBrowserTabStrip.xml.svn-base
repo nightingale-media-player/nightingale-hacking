@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
+[
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%songbirdDTD;
+<!ENTITY % tabBrowserDTD SYSTEM "chrome://browser/locale/tabbrowser.dtd" >
+%tabBrowserDTD;
+]
+>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<bindings
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="tabbrowser-tabs"
+           extends="chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs">
+    <content>
+      <xul:stack flex="1" class="tabs-stack" tooltip="_child" context="_child">
+        <xul:vbox>
+          <xul:spacer flex="1"/>
+          <xul:hbox class="tabs-bottom" align="center"/>
+        </xul:vbox>
+        <xul:vbox>
+          <xul:hbox xbl:inherits="overflow">
+            <xul:stack>
+              <xul:spacer class="tabs-left"/>
+            </xul:stack>
+
+            <xul:stack flex="1" class="tabs-container"
+                       ondraggesture="nsDragAndDrop.startDrag(event, document.getBindingParent(this)); event.stopPropagation();"
+                       ondragover="nsDragAndDrop.dragOver(event, document.getBindingParent(this)); event.stopPropagation();"
+                       ondragdrop="nsDragAndDrop.drop(event, document.getBindingParent(this)); event.stopPropagation();"
+                       ondragexit="nsDragAndDrop.dragExit(event, document.getBindingParent(this)); event.stopPropagation();">
+              <xul:hbox>
+                <!-- The fake media tab, see sbTabBrowserTab.xml -->
+                <xul:tab selected="true" validate="never" anonid="media-tab"
+                         onerror="document.getBindingParent(this).tabBrowser.addToMissedIconCache(this.getAttribute('image'));
+                                  this.setIcon(null);"
+                         collapsed="true"
+                         class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
+                <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1"
+                                    style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
+                  <children/>
+                </xul:arrowscrollbox>
+              </xul:hbox>
+              <xul:hbox class="tab-drop-indicator-bar" mousethrough="always">
+                <xul:hbox class="tab-drop-indicator" mousethrough="always"/>
+              </xul:hbox>
+            </xul:stack>
+
+            <xul:stack align="center" pack="end" class="tabs-alltabs-stack">
+              <xul:hbox flex="1" class="tabs-alltabs-box"
+                        anonid="alltabs-box"/>
+              <xul:hbox flex="1" class="tabs-alltabs-box-animate"
+                        anonid="alltabs-box-animate"/>
+              <xul:toolbarbutton class="tabs-alltabs-button"
+                                 type="menu"
+                                 anonid="alltabs-button"
+                                 mousethrough="never"
+                                 collapsed="true"
+                                 tooltipstring="&tabs.listAllTabs;">
+                <xul:menupopup class="tabs-alltabs-popup"
+                               anonid="alltabs-popup" position="after_end"/>
+              </xul:toolbarbutton>
+            </xul:stack>
+            <xul:hbox class="tabs-closebutton-box" align="center" pack="end" anonid="tabstrip-closebutton">
+              <xul:toolbarbutton class="close-button tabs-closebutton"/>
+            </xul:hbox>
+          </xul:hbox>
+          <xul:spacer class="tabs-bottom-spacer"/>
+        </xul:vbox>
+
+        <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
+        <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
+          <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
+                        oncommand="doMenu('menuitem_file_newtab');"
+                        xbl:inherits="oncommand=onnewtab"/>
+          <xul:menuseparator/>
+          <xul:menuitem label="&reloadTab.label;" accesskey="&reloadTab.accesskey;"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.reloadTab(tabstrip.mContextTab);"/>
+          <xul:menuitem label="&reloadAllTabs.label;" accesskey="&reloadAllTabs.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.reloadAllTabs(tabstrip.mContextTab);"/>
+          <xul:menuitem label="&closeOtherTabs.label;" accesskey="&closeOtherTabs.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.removeAllTabsBut(tabstrip.mContextTab);"/>
+          <xul:menuseparator/>
+          <xul:menuitem id="sb_context_closeTab"
+                        label="&closeTab.label;"
+                        accesskey="&closeTab.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.removeTab(tabstrip.mContextTab);"/>
+        </xul:menupopup>
+      </xul:stack>
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        // load the data remote helpers locally
+        Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm",
+                                this);
+        if (this._mediaTab) {
+          this._firstTab.linkedTab = this._mediaTab;
+          this._mediaTab.targetTab = this._firstTab;
+          // yeah, XUL says attributes override CSS.  yay.
+          var width = window.getComputedStyle(this._firstTab, "").minWidth;
+          if (this._firstTab.hasAttribute("minwidth"))
+            width = parseInt(this._firstTab.getAttribute("minwidth"));
+          this._mediaTab.setAttribute("minwidth", width);
+          
+          // add media tab CSS styles
+          this._firstTab.className += " sb-media-tab";
+          this._mediaTab.className += " sb-media-tab";
+        }
+      ]]></constructor>
+
+      <!-- cached elements -->
+      <field name="_tabbrowser">document.getBindingParent(this)</field>
+
+      <property name="_mediaTab">
+        <getter>
+          // note that the tabbrowser definition is just the first tab, which is
+          // not what we want; we still ask the tabbrowser if one exists though
+          if (!this._tabbrowser.mediaTab)
+            return null;
+          return document.getAnonymousElementByAttribute(this, "anonid", "media-tab");
+        </getter>
+      </property>
+      <property name="_firstTab">
+        <getter>
+          return this.tabBrowser.mTabs[0];
+        </getter>
+      </property>
+      <property name="_scrollbox">
+        <getter>
+          var arrowscrollbox = document.getAnonymousElementByAttribute(this, "anonid", "arrowscrollbox");
+          return document.getAnonymousElementByAttribute(arrowscrollbox, "anonid", "scrollbox");
+        </getter>
+      </property>
+      
+      <!-- last selected non-media tab -->
+      <field name="lastSelectedTab">null</field>
+      
+      <!-- to support moving tabstrip outside tabbox -->
+      <!-- override tabBrowserTabStrip -->
+      <property name="tabBrowser" onget="return this._tabbrowser" readonly="true"/>
+      <property name="selectedIndex">
+        <getter>
+        <![CDATA[
+          const tabs = this.childNodes;
+          for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].selected)
+              return i;
+          }
+          return -1;
+        ]]>
+        </getter>
+        
+        <setter>
+        <![CDATA[
+          var tab = this.getItemAtIndex(val);
+          if (tab) {
+            var alreadySelected = tab.selected;
+
+            Array.forEach(this.childNodes, function (aTab) {
+              if (aTab.selected && aTab != tab)
+                aTab._selected = false;
+            });
+            tab._selected = true;
+
+            this.setAttribute("value", tab.value);
+
+            var parent = this.tabBrowser.mTabBox;
+            parent.setAttribute("selectedIndex", val);
+            var tabpanels = parent.tabpanels;
+            // This will cause an onselect event to fire for the tabpanel element.
+            if (tabpanels) {
+              // find an id 
+              var linkedPanelId = tab.linkedPanel;
+              var linkedPanel = linkedPanelId ? document.getElementById(linkedPanelId) : null;
+              if (linkedPanel)
+                tabpanels.selectedPanel = linkedPanel;
+              else
+                tabpanels.selectedIndex = val;
+            }
+
+            if (!alreadySelected) {
+              // Fire an onselect event for the tabs element.
+              var event = document.createEvent('Events');
+              event.initEvent('select', true, true);
+              this.dispatchEvent(event);
+            }
+          }
+          return val;
+        ]]>
+        </setter>
+      </property>
+
+      <!-- Drag-and-drop overrides to support dropping from media lists -->
+      <method name="_getNewIndex">
+        <!-- for static media tab -->
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            // figure out if we're dragging the media tab; if yes, disable drag
+            var dragSession = Components.classes["@mozilla.org/widget/dragservice;1"]
+                                        .getService(Components.interfaces.nsIDragService)
+                                        .getCurrentSession();
+            if (dragSession && this._mediaTab) {
+              var target = dragSession.sourceNode;
+              if (target && (target == this._mediaTab || target == this._firstTab)) {
+                // umm, can't drag the media tab anywhere
+                return 0;
+              }
+            }
+            
+            // okay, call the underlying getNewIndex
+            var proto = this;
+            while (proto && ("_getNewIndex" in proto) && proto._getNewIndex != this._getNewIndex)
+              proto = proto.__proto__;
+            while (proto && ("_getNewIndex" in proto) && proto._getNewIndex == this._getNewIndex)
+              proto = proto.__proto__;
+            
+            if (!proto) {
+              // meh, throw
+              (new Object)._getNewIndex(aEvent);
+            }
+            
+            var i = proto._getNewIndex.apply(this, arguments);
+            if (this._mediaTab && i == 0) {
+              return 1;
+            }
+            return i;
+          ]]>
+        </body>
+      </method>
+      <method name="getSupportedFlavours">
+        <body>
+        <![CDATA[
+          // giant dance to call the inherited getSupportedFlavours safely
+          var proto = this;
+          while (proto && proto.getSupportedFlavours != arguments.callee)
+            proto = proto.__proto__;
+          while (proto && proto.getSupportedFlavours == arguments.callee)
+            proto = proto.__proto__;
+
+          var flavourSet;
+          if (proto)
+            flavourSet = proto.getSupportedFlavours.call(this);
+          else
+            flavourSet = new FlavourSet();
+          
+          // XXX Mook: this makes no sense, since you can't actually drop those
+          // things on tabs.  You can probably drop them into the browser the
+          // tab is associated with, of course...
+          // and pretending support is necessary to switch the tab to the
+          // foreground. boo.
+          flavourSet.appendFlavour("application/x-sb-transfer-media-item");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-list");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-items");
+          return flavourSet;
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+    <handlers>
+      <!--
+        - the underflow and overflow handlers exist to handle the fake tab; see
+        - the top of sbTabBrowserTab.xml for a more detailed explanation.
+        -->
+      <handler event="underflow" phase="target"><![CDATA[
+        if (event.originalTarget != this._scrollbox) {
+          return;
+        }
+        if ((!this._mediaTab) || this._mediaTab.collapsed) {
+          return;
+        }
+        this._firstTab.collapsed = false;
+        this._mediaTab.collapsed = true;
+        this.mAllTabsButton.collapsed = true;
+      ]]></handler>
+      <handler event="overflow" phase="target"><![CDATA[
+        if (event.originalTarget != this._scrollbox) {
+          return;
+        }
+        if ((!this._mediaTab) || (!this._mediaTab.collapsed)) {
+          return;
+        }
+        if (this.childNodes.length <= 1) {
+          // Only one tab "overflowing"? We don't care...
+          return;
+        }
+        var total = this.childNodes[0].boxObject.width * this.childNodes.length;
+        if (total < this._scrollbox.boxObject.width) {
+          // bogus event
+          return;
+        }
+        this._firstTab.collapsed = true;
+        this._mediaTab.collapsed = false;
+        this.mAllTabsButton.collapsed = false;
+      ]]></handler>
+      <handler event="select" phase="capturing"><![CDATA[
+        if (this._mediaTab) {
+          // if a media tab exists, only set lastSelectedTab
+          // when we're not switching to it
+          if (this.selectedItem != this._firstTab) {
+            this.lastSelectedTab = this.selectedItem;
+          }
+        } else {
+          this.lastSelectedTab = this.selectedItem;
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
+
+</bindings>

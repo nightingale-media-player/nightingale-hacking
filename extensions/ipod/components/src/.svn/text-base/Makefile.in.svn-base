@@ -1,0 +1,246 @@
+#
+#=BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END SONGBIRD GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@ \
+        @srcdir@/$(SB_PLATFORM) \
+        @top_srcdir@/components/devices/base/src
+
+include $(DEPTH)/build/autodefs.mk
+
+IS_EXTENSION = 1
+
+CPP_SRCS = MLEVL.cpp \
+           QTAtomReader.cpp \
+           sbIPDDevice.cpp \
+           sbIPDFairPlay.cpp \
+           sbIPDFairPlayEvent.cpp \
+           sbIPDLog.cpp \
+           sbIPDLibrary.cpp \
+           sbIPDMap.cpp \
+           sbIPDModule.cpp \
+           sbIPDPref.cpp \
+           sbIPDProperties.cpp \
+           sbIPDRequest.cpp \
+           sbIPDStatus.cpp \
+           sbIPDSync.cpp \
+           sbIPDTrack.cpp \
+           sbIPDPlaylist.cpp \
+           sbIPDUtils.cpp \
+           $(NULL)
+
+# From the $(SB_PLATFORM) directory...
+CPP_SRCS += sbIPDController.cpp \
+            sbIPDMarshall.cpp \
+            sbIPDSysDevice.cpp \
+            $(NULL)
+
+CPP_EXTRA_INCLUDES = $(srcdir) \
+                     $(srcdir)/$(SB_PLATFORM) \
+                     $(DEPS_DIR)/libgpod/$(SB_CONFIGURATION)/include/gpod-1.0/gpod \
+                     $(DEPTH)/components/dbengine/public \
+                     $(DEPTH)/components/devices/base/public \
+                     $(DEPTH)/components/devices/controller/public \
+                     $(DEPTH)/components/devices/marshall/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
+                     $(DEPTH)/components/moz/prompter/public \
+                     $(DEPTH)/components/moz/temporaryfileservice/public \
+                     $(DEPTH)/components/moz/threadservices/public \
+                     $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/playlistplayback/public \
+                     $(DEPTH)/extensions/ipod/components/public \
+                     $(topsrcdir)/components/devices/base/src \
+                     $(topsrcdir)/components/devices/controller/src \
+                     $(topsrcdir)/components/devices/device/src \
+                     $(topsrcdir)/components/devices/marshall/src \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/moz/errorconsole/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(NULL)
+
+#XXXeps should get this from sbDeviceBase.lib
+# included from components/devices/base/src
+CPP_SRCS += sbBaseDeviceEventTarget.cpp \
+            sbDeviceCompatibility.cpp \
+            sbDeviceContent.cpp \
+            sbDeviceEvent.cpp \
+            sbDeviceLibrary.cpp \
+            sbDeviceLibraryHelpers.cpp \
+            sbDeviceLibraryMediaSyncSettings.cpp \
+            sbDeviceLibrarySyncSettings.cpp \
+            $(NULL)
+
+CPP_EXTRA_INCLUDES += $(DEPTH)/components/library/localdatabase/public \
+                      $(topsrcdir)/components/include \
+                      $(topsrcdir)/components/library/localdatabase/src \
+                      $(topsrcdir)/components/moz/strings/src \
+                      $(NULL)
+
+DYNAMIC_LIB = sbIPDDevice
+
+DYNAMIC_LIB_STATIC_IMPORTS = \
+ components/devices/controller/src/sbDeviceController \
+ components/devices/device/src/sbDeviceCore \
+ components/devices/marshall/src/sbDeviceMarshall \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/errorconsole/src/sbErrorConsole \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ components/moz/variant/src/static/sbMozVariantUtils \
+ components/watchfolder/utils/sbWatchFolderUtils \
+ $(NULL)
+
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = glib-2.0 \
+                            gpod \
+                            plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+ $(DEPS_DIR)/libgpod/$(SB_CONFIGURATION)/lib \
+ $(NULL)
+
+DYNAMIC_LIB_DEPENDENCIES = \
+ $(DEPS_DIR)/libgpod/$(SB_CONFIGURATION)/lib/libgpod$(DLL_SUFFIX) \
+ $(NULL)
+
+ifeq (macosx,$(SB_PLATFORM))
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-2.0 \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-2.0/include \
+    $(NULL)
+
+
+   DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib
+
+   DYNAMIC_LIB_DEPENDENCIES += \
+    $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib/libintl$(DLL_SUFFIX) \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/libglib-2.0$(DLL_SUFFIX) \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/libgobject-2.0$(DLL_SUFFIX) \
+    $(NULL)
+
+   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+
+   DYNAMIC_LIB_EXTRA_FLAGS = -framework Carbon \
+                             -framework CoreFoundation \
+                             -framework CoreServices \
+                             -framework IOKit \
+                             -mmacosx-version-min=10.4 \
+                             $(NULL)
+
+   DYNAMIC_LIB_EXTRA_FLAGS += \
+    -dylib_file \
+    libintl.dylib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib/libintl.dylib \
+    $(NULL)
+
+   DYNAMIC_LIB_EXTRA_FLAGS += \
+    -dylib_file \
+    libglib-2.0.dylib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/libglib-2.0.dylib\
+    $(NULL)
+
+   DYNAMIC_LIB_EXTRA_FLAGS += \
+    -dylib_file \
+    libgobject-2.0.dylib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/libgobject-2.0.dylib \
+    $(NULL)
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+   # from $(srcdir)/linux
+   CPP_SRCS += sbLibHal.cpp
+
+   CPP_EXTRA_FLAGS += $(GLIB_CFLAGS) \
+                      $(DBUS_CFLAGS) \
+                      $(HAL_CFLAGS) \
+                      $(NULL)
+
+   DYNAMIC_LIB_RAW_IMPORTS += $(DBUS_LIBS) \
+                              $(HAL_LIBS) \
+                              $(NULL)
+endif
+
+ifeq (windows,$(SB_PLATFORM))
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-2.0 \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-2.0/include \
+    $(DEPS_DIR)/private/windows_ddk/$(SB_CONFIGURATION)/include \
+    $(NULL)
+
+   # Suppress a warning from libgpod headers.
+   CPP_EXTRA_FLAGS += "-wd4309"
+
+   DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib
+
+   DYNAMIC_LIB_DEPENDENCIES += \
+    $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/bin/intl$(DLL_SUFFIX) \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/libglib-2.0-0$(DLL_SUFFIX) \
+    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/libgobject-2.0-0$(DLL_SUFFIX) \
+    $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/iconv$(DLL_SUFFIX)
+
+   DYNAMIC_LIB_EXTRA_IMPORTS += setupapi \
+                                uuid \
+                                $(NULL)
+endif
+
+ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
+    $(NULL)
+endif
+
+EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbIPDEventHandler.js \
+                          $(srcdir)/sbIPDServicePaneService.js \
+                          $(NULL)
+
+EXTENSION_LIB_DIR = $(EXTENSION_STAGE_DIR)/libraries
+
+CREATEDIRS = $(EXTENSION_LIB_DIR) 
+
+SONGBIRD_COMPONENTS += $(EXTRA_SCRIPT_COMPONENTS)
+
+# sbIPDDevice should go in libraries, not the components dir
+NO_DIST_INSTALL = 1
+
+include $(topsrcdir)/build/rules.mk
+
+libs::
+	$(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(EXTENSION_LIB_DIR)
+	$(INSTALL_PROG) $(DYNAMIC_LIB_DEPENDENCIES) $(EXTENSION_LIB_DIR)

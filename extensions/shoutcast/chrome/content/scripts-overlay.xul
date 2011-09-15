@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://shoutcast-radio/skin/sps.css" type="text/css"?>
+<overlay id="shoutcast-radio-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script type="application/x-javascript" src="radioProperties.js"/>
+  <script type="application/x-javascript" src="main.js"/>
+
+  <stringbundleset id="stringbundleset"> 
+    <stringbundle id="shoutcast-radio-strings"
+      src="chrome://shoutcast-radio/locale/overlay.properties"/>
+  </stringbundleset>  
+
+</overlay>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="mashTape_SwitchToPreferencesPane(); window.close();">
+
+<script type="application/x-javascript">
+function mashTape_SwitchToPreferencesPane() {
+	Components.classes["@mozilla.org/appshell/window-mediator;1"]
+		.getService(Components.interfaces.nsIWindowMediator)
+		.getMostRecentWindow("Songbird:Main")
+		.SBOpenPreferences("mashTapePrefsPane");
+}
+</script>
+
+
+</window>

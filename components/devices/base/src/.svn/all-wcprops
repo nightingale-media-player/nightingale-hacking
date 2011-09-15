@@ -1,0 +1,221 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/21765/trunk/components/devices/base/src
+END
+sbDeviceLibraryHelpers.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/20833/trunk/components/devices/base/src/sbDeviceLibraryHelpers.h
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/21765/trunk/components/devices/base/src/Makefile.in
+END
+sbDeviceCapabilities.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/18596/trunk/components/devices/base/src/sbDeviceCapabilities.h
+END
+sbDeviceLibrarySyncDiff.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/20747/trunk/components/devices/base/src/sbDeviceLibrarySyncDiff.h
+END
+sbDeviceProperties.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/14594/trunk/components/devices/base/src/sbDeviceProperties.h
+END
+sbDeviceLibrary.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/21549/trunk/components/devices/base/src/sbDeviceLibrary.h
+END
+sbDeviceCapabilitiesUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/19847/trunk/components/devices/base/src/sbDeviceCapabilitiesUtils.cpp
+END
+sbDeviceCompatibility.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/8077/trunk/components/devices/base/src/sbDeviceCompatibility.h
+END
+sbDeviceContent.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/8512/trunk/components/devices/base/src/sbDeviceContent.h
+END
+sbDeviceLibrarySyncSettings.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/20956/trunk/components/devices/base/src/sbDeviceLibrarySyncSettings.cpp
+END
+sbDefaultBaseDeviceInfoRegistrar.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/21539/trunk/components/devices/base/src/sbDefaultBaseDeviceInfoRegistrar.h
+END
+sbDeviceEventBeforeAddedData.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17164/trunk/components/devices/base/src/sbDeviceEventBeforeAddedData.h
+END
+sbDeviceCapsCompatibility.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17244/trunk/components/devices/base/src/sbDeviceCapsCompatibility.h
+END
+sbDeviceEvent.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/15858/trunk/components/devices/base/src/sbDeviceEvent.h
+END
+sbDeviceLibraryMediaSyncSettings.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/20810/trunk/components/devices/base/src/sbDeviceLibraryMediaSyncSettings.h
+END
+sbDeviceLibraryHelpers.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/20876/trunk/components/devices/base/src/sbDeviceLibraryHelpers.cpp
+END
+sbDeviceStatus.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/client/!svn/ver/17899/trunk/components/devices/base/src/sbDeviceStatus.h
+END
+sbBaseDeviceEventTarget.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/17645/trunk/components/devices/base/src/sbBaseDeviceEventTarget.h
+END
+sbDeviceCapabilities.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/20441/trunk/components/devices/base/src/sbDeviceCapabilities.cpp
+END
+sbDeviceLibrarySyncDiff.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/21438/trunk/components/devices/base/src/sbDeviceLibrarySyncDiff.cpp
+END
+sbDeviceProperties.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/19539/trunk/components/devices/base/src/sbDeviceProperties.cpp
+END
+sbDeviceLibrary.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/client/!svn/ver/21549/trunk/components/devices/base/src/sbDeviceLibrary.cpp
+END
+sbDeviceCompatibility.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/client/!svn/ver/8077/trunk/components/devices/base/src/sbDeviceCompatibility.cpp
+END
+sbBaseDeviceAPI.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/14573/trunk/components/devices/base/src/sbBaseDeviceAPI.h
+END
+sbDeviceContent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/9401/trunk/components/devices/base/src/sbDeviceContent.cpp
+END
+sbDefaultBaseDeviceInfoRegistrar.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/21539/trunk/components/devices/base/src/sbDefaultBaseDeviceInfoRegistrar.cpp
+END
+sbDeviceCapabilitiesUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17112/trunk/components/devices/base/src/sbDeviceCapabilitiesUtils.h
+END
+sbDeviceCapsCompatibility.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18632/trunk/components/devices/base/src/sbDeviceCapsCompatibility.cpp
+END
+sbDeviceBaseModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/20747/trunk/components/devices/base/src/sbDeviceBaseModule.cpp
+END
+sbDeviceEventBeforeAddedData.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/17164/trunk/components/devices/base/src/sbDeviceEventBeforeAddedData.cpp
+END
+sbDeviceEvent.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/client/!svn/ver/17658/trunk/components/devices/base/src/sbDeviceEvent.cpp
+END
+sbDeviceLibraryMediaSyncSettings.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/20849/trunk/components/devices/base/src/sbDeviceLibraryMediaSyncSettings.cpp
+END
+sbStandardDeviceProperties.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/20607/trunk/components/devices/base/src/sbStandardDeviceProperties.h
+END
+sbBaseDeviceEventTarget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/19457/trunk/components/devices/base/src/sbBaseDeviceEventTarget.cpp
+END
+sbDeviceStatus.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20441/trunk/components/devices/base/src/sbDeviceStatus.cpp
+END
+sbDeviceLibrarySyncSettings.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/20849/trunk/components/devices/base/src/sbDeviceLibrarySyncSettings.h
+END

@@ -1,0 +1,78 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+DYNAMIC_LIB = sbMediacoreBase
+
+CPP_SRCS = sbBaseMediacore.cpp \
+           sbBaseMediacoreEventTarget.cpp \
+           sbBaseMediacoreModule.cpp \
+           sbBaseMediacoreMultibandEqualizer.cpp \
+           sbBaseMediacoreFactory.cpp \
+           sbBaseMediacorePlaybackControl.cpp \
+           sbBaseMediacoreVolumeControl.cpp \
+           sbMediacoreCapabilities.cpp \
+           sbMediacoreEqualizerBand.cpp \
+           sbMediacoreError.cpp \
+           sbMediacoreEvent.cpp \
+           sbMediacoreFactoryWrapper.cpp \
+           sbMediacoreVotingChain.cpp \
+           sbMediacoreWrapper.cpp \
+           sbMediaInspector.cpp \
+           sbVideoBox.cpp \
+           $(NULL)
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/moz/prompter/public \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/mediacore/base/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
+
+IS_COMPONENT = 1
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbOSDControlService.js \
+                      $(NULL)
+
+include $(topsrcdir)/build/rules.mk

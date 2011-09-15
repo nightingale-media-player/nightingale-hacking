@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/21765/trunk/components/devices/device/mock/src
+END
+sbMockDevice.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/21456/trunk/components/devices/device/mock/src/sbMockDevice.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/21765/trunk/components/devices/device/mock/src/Makefile.in
+END
+sbDeviceDeviceTesterModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/14740/trunk/components/devices/device/mock/src/sbDeviceDeviceTesterModule.cpp
+END
+sbDeviceDeviceTesterUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/14740/trunk/components/devices/device/mock/src/sbDeviceDeviceTesterUtils.h
+END
+sbMockDevice.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/21456/trunk/components/devices/device/mock/src/sbMockDevice.h
+END
+sbDeviceDeviceTesterUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/14740/trunk/components/devices/device/mock/src/sbDeviceDeviceTesterUtils.cpp
+END

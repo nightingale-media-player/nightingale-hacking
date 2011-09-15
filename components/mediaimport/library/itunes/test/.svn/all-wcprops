@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/client/!svn/ver/15676/trunk/components/mediaimport/library/itunes/test
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/13472/trunk/components/mediaimport/library/itunes/test/Makefile.in
+END
+test_itunes_importer.js
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/9806/trunk/components/mediaimport/library/itunes/test/test_itunes_importer.js
+END
+test_itunes_xml_parser_error.js
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/15474/trunk/components/mediaimport/library/itunes/test/test_itunes_xml_parser_error.js
+END
+test_itunes_xml_parser.js
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/15676/trunk/components/mediaimport/library/itunes/test/test_itunes_xml_parser.js
+END

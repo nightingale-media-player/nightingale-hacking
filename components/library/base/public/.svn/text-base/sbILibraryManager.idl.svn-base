@@ -1,0 +1,138 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryManager.idl
+ * \brief Definition of the sbILibraryManager interface
+ * \sa sbILibrary.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIRDFDataSource;
+interface nsISimpleEnumerator;
+interface sbILibrary;
+interface sbILibraryFactory;
+interface sbILibraryManagerListener;
+
+/**
+* \interface sbILibraryManager
+* \brief Manages the lifecycle of libraries in the system
+* \sa sbILibrary
+*/
+[scriptable, uuid(c299b8fc-7aab-4247-a2f8-0ef88b06958f)]
+interface sbILibraryManager : nsISupports
+{
+  /**
+   * \brief Returns the main library.
+   */
+  readonly attribute sbILibrary mainLibrary;
+
+  /**
+   * \brief RDF datasource that exposes the currently active libraries and
+   * library factories
+   */
+  readonly attribute nsIRDFDataSource dataSource;
+
+  /**
+   * \brief Get a library by its guid
+   * \param aGuid Guid of the library you seek
+   * \return Library instance identified by the supplied guid
+   */
+  sbILibrary getLibrary(in AString aGuid);
+
+  /**
+   * \brief Returns a simple enumerator to enumerate all registered libraries.
+   */
+  nsISimpleEnumerator getLibraries();
+
+  /**
+   * \brief Returns a simple enumerator to enumerate all startup libraries.
+   */
+  nsISimpleEnumerator getStartupLibraries();
+
+  /**
+   * \brief Runtime registration of a library
+   *
+   * \param aLibrary Library to register
+   * \param aLoadAtStartup Whether or not the library manager should reload
+   *                       this library at the next startup.
+   */
+  void registerLibrary(in sbILibrary aLibrary,
+                       in boolean aLoadAtStartup);
+
+  /**
+   * \brief Runtime removal of a library
+   * \param aLibrary Library to unregister
+   */
+  void unregisterLibrary(in sbILibrary aLibrary);
+
+  /**
+   * \brief Configures a library to run at startup.
+   */
+  void setLibraryLoadsAtStartup(in sbILibrary aLibrary,
+                                in boolean aLoadAtStartup);
+
+  /**
+   * \brief Returns whether or not a library loads at startup.
+   */
+  boolean getLibraryLoadsAtStartup(in sbILibrary aLibrary);
+
+  /**
+   * \brief Returns whether or not a library has been registered
+   */
+  boolean hasLibrary(in sbILibrary aLibrary);
+
+  /**
+   * \brief Adds a listener.
+   */
+  void addListener(in sbILibraryManagerListener aListener);
+
+  /**
+   * \brief Removes a listener.
+   */
+  void removeListener(in sbILibraryManagerListener aListener);
+};
+
+%{C++
+
+// The Library Manager will use this topic to notify interested components that
+// its startup libraries have all been registered.
+#define SB_LIBRARY_MANAGER_READY_TOPIC "songbird-library-manager-ready"
+
+// This notification is sent when shutdown has begun but before the individual
+// libraries are notified of shutdown
+#define SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC "songbird-library-manager-before-shutdown"
+
+// This notification is sent when shutdown has begun and notifies individual
+// libraries to immediately shutdown
+#define SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC "songbird-library-manager-shutdown"
+
+// This notification is sent when shutdown has begun and after the individual
+// libraries are notified of shutdown
+#define SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC "songbird-library-manager-after-shutdown"
+
+%}

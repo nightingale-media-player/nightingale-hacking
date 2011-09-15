@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit
+END
+test_txnGUIDs.js
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_txnGUIDs.js
+END
+test_421483.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_421483.js
+END
+test_browserGlue_migrate.js
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_migrate.js
+END
+test_384370.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_384370.js
+END
+head_bookmarks.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/head_bookmarks.js
+END
+bookmarks.glue.html
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/bookmarks.glue.html
+END
+test_bookmarks_html.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_bookmarks_html.js
+END
+bookmarks.corrupt.html
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/bookmarks.corrupt.html
+END
+test_browserGlue_corrupt.js
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_corrupt.js
+END
+test_browserGlue_smartBookmarks.js
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_smartBookmarks.js
+END
+bookmarks.glue.json
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/bookmarks.glue.json
+END
+test_398914.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_398914.js
+END
+distribution.ini
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/distribution.ini
+END
+test_457441-import-export-corrupt-bookmarks-html.js
+K 25
+svn:wc:ra_dav:version-url
+V 141
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_457441-import-export-corrupt-bookmarks-html.js
+END
+corruptDB.sqlite
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/corruptDB.sqlite
+END
+test_browserGlue_shutdown.js
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_shutdown.js
+END
+bookmarks.preplaces.html
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/bookmarks.preplaces.html
+END
+test_browserGlue_distribution.js
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_distribution.js
+END
+test_browserGlue_prefs.js
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_prefs.js
+END
+test_browserGlue_corrupt_nobackup.js
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_corrupt_nobackup.js
+END
+test_placesTxn.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_placesTxn.js
+END
+tail_bookmarks.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/tail_bookmarks.js
+END
+test_bookmarksRestoreNotification.js
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_bookmarksRestoreNotification.js
+END
+test_browserGlue_restore.js
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_restore.js
+END
+test_browserGlue_corrupt_nobackup_default.js
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/places/tests/unit/test_browserGlue_corrupt_nobackup_default.js
+END

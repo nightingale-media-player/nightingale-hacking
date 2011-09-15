@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/18506/trunk/extensions/newreleases/chrome/locale/de
+END
+about.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/17579/trunk/extensions/newreleases/chrome/locale/de/about.dtd
+END
+options.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/17579/trunk/extensions/newreleases/chrome/locale/de/options.dtd
+END
+newReleases.properties
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/17579/trunk/extensions/newreleases/chrome/locale/de/newReleases.properties
+END
+overlay.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/17579/trunk/extensions/newreleases/chrome/locale/de/overlay.dtd
+END
+overlay.properties
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/18506/trunk/extensions/newreleases/chrome/locale/de/overlay.properties
+END
+country.properties
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/17579/trunk/extensions/newreleases/chrome/locale/de/country.properties
+END

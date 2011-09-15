@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "Localização">
+<!ENTITY prefs.location.descr "Descubra quem vai actuar na sua zona. O &brandShortName; pode acompanhar os seus artistas e bares favoritos; para não voltar a perder nenhum espectáculo.  Escolha a cidade mais próxima de si para saber quem vem de visita">
+<!ENTITY prefs.library "Biblioteca">
+<!ENTITY prefs.library.text "O &brandShortName; pode adicionar uma coluna à sua biblioteca que indica quando o artista está em tour ou na sua cidade.">
+<!ENTITY prefs.library.checklabel "Adicionar a coluna Em digressão à minha biblioteca">
+<!ENTITY prefs.country "País">
+<!ENTITY prefs.country.us "Estados Unidos">
+<!ENTITY prefs.country.uk "Reino Unido">
+<!ENTITY prefs.state "Estado">
+<!ENTITY prefs.city "Cidade">
+<!ENTITY prefs.radius "Raio">
+<!ENTITY prefs.findShows "Encontrar espectáculos">
+<!ENTITY concerts.poweredby "Listas de concertos fornecidas por">

@@ -1,0 +1,425 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/client/!svn/ver/21602/trunk/components/library/localdatabase/src
+END
+sbLocalDatabaseCascadeFilterSet.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/20121/trunk/components/library/localdatabase/src/sbLocalDatabaseCascadeFilterSet.h
+END
+sbLocalDatabaseSmartMediaListFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/10033/trunk/components/library/localdatabase/src/sbLocalDatabaseSmartMediaListFactory.cpp
+END
+sbFilterTreeSelection.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/8994/trunk/components/library/localdatabase/src/sbFilterTreeSelection.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/20947/trunk/components/library/localdatabase/src/Makefile.in
+END
+sbLocalDatabaseMediaListListener.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/client/!svn/ver/20415/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListListener.cpp
+END
+sbLocalDatabaseMediaListViewSelection.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/client/!svn/ver/18838/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListViewSelection.h
+END
+sbLocalDatabaseMigrationUtils.jsm
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/12834/trunk/components/library/localdatabase/src/sbLocalDatabaseMigrationUtils.jsm
+END
+sbLocalDatabaseSimpleMediaListFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/client/!svn/ver/7658/trunk/components/library/localdatabase/src/sbLocalDatabaseSimpleMediaListFactory.h
+END
+sbLocalDatabaseSmartMediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/21181/trunk/components/library/localdatabase/src/sbLocalDatabaseSmartMediaList.cpp
+END
+sbPlaylistTreeSelection.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/14927/trunk/components/library/localdatabase/src/sbPlaylistTreeSelection.cpp
+END
+sbDatabaseResultStringEnumerator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/7658/trunk/components/library/localdatabase/src/sbDatabaseResultStringEnumerator.cpp
+END
+sbLocalDatabaseDiffingService.h
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/18308/trunk/components/library/localdatabase/src/sbLocalDatabaseDiffingService.h
+END
+sbLocalDatabaseSQL.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/13854/trunk/components/library/localdatabase/src/sbLocalDatabaseSQL.cpp
+END
+sbLocalDatabaseLibraryFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/15740/trunk/components/library/localdatabase/src/sbLocalDatabaseLibraryFactory.h
+END
+sbLocalMediaListBaseEnumerationListener.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/16687/trunk/components/library/localdatabase/src/sbLocalMediaListBaseEnumerationListener.h
+END
+sbLocalDatabaseCID.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/14507/trunk/components/library/localdatabase/src/sbLocalDatabaseCID.h
+END
+sbLocalDatabaseMediaListViewState.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/client/!svn/ver/8439/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListViewState.cpp
+END
+sbLocalDatabaseLoggingService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/8967/trunk/components/library/localdatabase/src/sbLocalDatabaseLoggingService.cpp
+END
+sbLocalDatabaseQuery.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/19794/trunk/components/library/localdatabase/src/sbLocalDatabaseQuery.h
+END
+sbLocalDatabaseMediaListViewSelection.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/20533/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListViewSelection.cpp
+END
+sbLocalDatabasePropertyCache.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/21231/trunk/components/library/localdatabase/src/sbLocalDatabasePropertyCache.h
+END
+sbLocalDatabaseGUIDArrayLengthCache.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/client/!svn/ver/20947/trunk/components/library/localdatabase/src/sbLocalDatabaseGUIDArrayLengthCache.cpp
+END
+sbFilterTreeSelection.h
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/client/!svn/ver/8439/trunk/components/library/localdatabase/src/sbFilterTreeSelection.h
+END
+sbLocalDatabaseDynamicMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/21549/trunk/components/library/localdatabase/src/sbLocalDatabaseDynamicMediaList.h
+END
+sbLocalDatabaseAsyncGUIDArray.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/21231/trunk/components/library/localdatabase/src/sbLocalDatabaseAsyncGUIDArray.cpp
+END
+sbLocalDatabaseMediaListListener.h
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/20214/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListListener.h
+END
+sbLocalDatabaseGUIDArray.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/21232/trunk/components/library/localdatabase/src/sbLocalDatabaseGUIDArray.cpp
+END
+sbLocalDatabaseLibraryFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/20409/trunk/components/library/localdatabase/src/sbLocalDatabaseLibraryFactory.cpp
+END
+sbPlaylistTreeSelection.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/8453/trunk/components/library/localdatabase/src/sbPlaylistTreeSelection.h
+END
+sbLocalMediaListBaseEnumerationListener.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/client/!svn/ver/16687/trunk/components/library/localdatabase/src/sbLocalMediaListBaseEnumerationListener.cpp
+END
+sbLocalDatabaseTreeView.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/20798/trunk/components/library/localdatabase/src/sbLocalDatabaseTreeView.h
+END
+sbLocalDatabaseSQL.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/11497/trunk/components/library/localdatabase/src/sbLocalDatabaseSQL.h
+END
+sbLocalDatabasePropertyCache.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/21231/trunk/components/library/localdatabase/src/sbLocalDatabasePropertyCache.cpp
+END
+sbFixedInterfaceCache.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/11550/trunk/components/library/localdatabase/src/sbFixedInterfaceCache.h
+END
+sbLocalDatabaseMediaListView.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/20121/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListView.h
+END
+sbLocalDatabaseResourcePropertyBag.h
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/client/!svn/ver/20604/trunk/components/library/localdatabase/src/sbLocalDatabaseResourcePropertyBag.h
+END
+sbLocalDatabaseLoggingService.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/8967/trunk/components/library/localdatabase/src/sbLocalDatabaseLoggingService.h
+END
+sbLocalDatabaseMediaListViewState.h
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/8439/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListViewState.h
+END
+sbLocalDatabaseDynamicMediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/14521/trunk/components/library/localdatabase/src/sbLocalDatabaseDynamicMediaList.cpp
+END
+sbLocalDatabaseSchemaInfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/21067/trunk/components/library/localdatabase/src/sbLocalDatabaseSchemaInfo.h
+END
+sbLocalDatabaseGUIDArrayLengthCache.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/20947/trunk/components/library/localdatabase/src/sbLocalDatabaseGUIDArrayLengthCache.h
+END
+sbSmartMediaListsUpdater.js
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/17575/trunk/components/library/localdatabase/src/sbSmartMediaListsUpdater.js
+END
+sbLocalDatabaseSimpleMediaList.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/client/!svn/ver/21549/trunk/components/library/localdatabase/src/sbLocalDatabaseSimpleMediaList.cpp
+END
+sbLocalDatabaseAsyncGUIDArray.h
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/20214/trunk/components/library/localdatabase/src/sbLocalDatabaseAsyncGUIDArray.h
+END
+sbLocalDatabaseTreeView.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/20798/trunk/components/library/localdatabase/src/sbLocalDatabaseTreeView.cpp
+END
+sbLocalDatabaseLibraryLoader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/20409/trunk/components/library/localdatabase/src/sbLocalDatabaseLibraryLoader.cpp
+END
+sbLocalDatabaseGUIDArray.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/21231/trunk/components/library/localdatabase/src/sbLocalDatabaseGUIDArray.h
+END
+sbLocalDatabaseMediaItem.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/20010/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaItem.h
+END
+sbLocalDatabaseCascadeFilterSet.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/21579/trunk/components/library/localdatabase/src/sbLocalDatabaseCascadeFilterSet.cpp
+END
+sbLocalDatabaseMediaListView.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/20947/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListView.cpp
+END
+sbLocalDatabaseResourcePropertyBag.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/client/!svn/ver/20633/trunk/components/library/localdatabase/src/sbLocalDatabaseResourcePropertyBag.cpp
+END
+sbSelectionListUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/8994/trunk/components/library/localdatabase/src/sbSelectionListUtils.h
+END
+sbLocalDatabaseLibrary.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/21549/trunk/components/library/localdatabase/src/sbLocalDatabaseLibrary.h
+END
+sbLocalDatabaseMediaListBase.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/21064/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListBase.h
+END
+sbLocalDatabaseDynamicMediaListFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/14507/trunk/components/library/localdatabase/src/sbLocalDatabaseDynamicMediaListFactory.h
+END
+sbLocalDatabaseSimpleMediaListFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/7658/trunk/components/library/localdatabase/src/sbLocalDatabaseSimpleMediaListFactory.cpp
+END
+sbLocalDatabaseSmartMediaListFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/client/!svn/ver/7658/trunk/components/library/localdatabase/src/sbLocalDatabaseSmartMediaListFactory.h
+END
+sbLocalDatabaseMigrationHelper.js
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/20896/trunk/components/library/localdatabase/src/sbLocalDatabaseMigrationHelper.js
+END
+sbLocalDatabaseModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/14507/trunk/components/library/localdatabase/src/sbLocalDatabaseModule.cpp
+END
+sbLocalDatabaseDiffingService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/20796/trunk/components/library/localdatabase/src/sbLocalDatabaseDiffingService.cpp
+END
+sbLocalDatabaseSmartMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/client/!svn/ver/21549/trunk/components/library/localdatabase/src/sbLocalDatabaseSmartMediaList.h
+END
+sbLocalDatabaseSimpleMediaList.h
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/21549/trunk/components/library/localdatabase/src/sbLocalDatabaseSimpleMediaList.h
+END
+sbLocalDatabaseMediaItem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/20409/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaItem.cpp
+END
+sbLocalDatabaseLibraryLoader.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/client/!svn/ver/13639/trunk/components/library/localdatabase/src/sbLocalDatabaseLibraryLoader.h
+END
+sbDatabaseResultStringEnumerator.h
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/client/!svn/ver/7658/trunk/components/library/localdatabase/src/sbDatabaseResultStringEnumerator.h
+END
+sbSelectionListUtils.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/client/!svn/ver/8994/trunk/components/library/localdatabase/src/sbSelectionListUtils.cpp
+END
+sbLocalDatabaseLibrary.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/21549/trunk/components/library/localdatabase/src/sbLocalDatabaseLibrary.cpp
+END
+sbLocalDatabaseQuery.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/21220/trunk/components/library/localdatabase/src/sbLocalDatabaseQuery.cpp
+END
+sbLocalDatabaseMediaListBase.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/client/!svn/ver/21602/trunk/components/library/localdatabase/src/sbLocalDatabaseMediaListBase.cpp
+END
+sbLocalDatabaseDynamicMediaListFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/client/!svn/ver/14507/trunk/components/library/localdatabase/src/sbLocalDatabaseDynamicMediaListFactory.cpp
+END

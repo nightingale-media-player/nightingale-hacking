@@ -1,0 +1,10 @@
+radioFolderLabel=Радио
+streamName=Название радиостанции
+bitRate=Битрейт
+comment=Текущий трек
+listenerCount=Число слушателей
+bookmark=Избранное
+bookmarkButton=Добавить в избранное
+favourites=Любимые радиостанции
+stationsFound=радиостанций найдено.
+radioTabTitle=SHOUTcast

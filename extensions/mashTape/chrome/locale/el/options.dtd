@@ -1,0 +1,42 @@
+<!ENTITY mashTape.firstrun.text "Παίξτε ένα μουσικό κομμάτι και να ανακαλύψουν σχετικές φωτογραφίες, βίντεο, βιογραφίες, άρθρα, και πολλά άλλα!">
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "Γενικά">
+<!ENTITY mtprefs.info "Πληροφορίες καλλιτέχνη">
+<!ENTITY mtprefs.review "Αξιολογήσεις">
+<!ENTITY mtprefs.rss "Ειδήσεις">
+<!ENTITY mtprefs.photo "Φωτογραφίες">
+<!ENTITY mtprefs.flash "Βίντεο">
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Προεπιλεγμένη ετικέτα">
+<!ENTITY mtprefs.defaulttab.help "Όταν ανοίγει το mashTape:">
+<!ENTITY mtprefs.show.info "Εμφάνιση πληροφοριών καλλιτέχνη">
+<!ENTITY mtprefs.show.review "Εμφάνιση αξιολογήσεων">
+<!ENTITY mtprefs.show.rss "Εμφάνιση ειδήσεων">
+<!ENTITY mtprefs.show.photo "Εμφάνιση φωτογραφιών">
+<!ENTITY mtprefs.show.flash "Εμφάνιση βίντεο">
+<!ENTITY mtprefs.autohide "Αυτόματη απόκρυψη">
+<!ENTITY mtprefs.autohide.help "Αυτόματη από κρυψη του παραθύρου εμφάνισης του mashTape κατά την αλλαγή προβολής μιας ιστοσελίδας.">
+<!ENTITY mtprefs.services "Υπηρεσίες">
+<!ENTITY mtprefs.getmore "Λήψη περισσότερων υπηρεσιών για το mashTape">
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Ρυθμίσεις καρτέλας 'Πληροφορίες καλλιτέχνη'">
+<!ENTITY mtprefs.tab.review "Ρυθμίσεις καρτέλας 'Αξιολογήσεις’">
+<!ENTITY mtprefs.tab.rss "Ρυθμίσεις καρτέλας '‘Ειδήσεις’">
+<!ENTITY mtprefs.tab.photo "Ρυθμίσεις καρτέλας  'Φωτογραφίες'">
+<!ENTITY mtprefs.tab.flash "Ρυθμίσεις καρτέλας 'Βίντεο'">
+<!ENTITY mtprefs.tab.help "Εμφάνιση αυτής της καρτέλας στο mashTape.">
+<!ENTITY mtprefs.single "Αυτό το παράθυρο υποστηρίζει τη δυνατότητα εμφάνισης περιεχομένου από μια υπηρεσία κάθε φορά.  Παρακαλούμε, επιλέξτε μια υπηρεσία από τη λίστα παρακάτω.">
+<!ENTITY mtprefs.multiple "Αυτό το παράθυρο υποστηρίζει τη δυνατότητα εμφάνισης περιεχομένου από πολλαπλές υπηρεσίες κάθε φορά.  Παρακαλούμε, επιλέξτε τις υπηρεσίες της προτίμησής σας από τη λίστα παρακάτω.">
+<!-- Info prefs -->
+<!ENTITY mtprefs.tab.info.autolocalise "Τοπικοποιημένα δεδομένα">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Αυτόματη ανάκτηση τοπικοποιημένων πληροφοριών καλλιτέχνη, εφόσον είναι διαθέσιμες.">
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Ταχύτητα scrolling της φωτογραφίας">
+<!ENTITY mtprefs.tab.photo.faster "Πιο γρήγορη">
+<!ENTITY mtprefs.tab.photo.slower "Πιο αργή">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Αναζήτηση λέξεων-κλειδιών">
+<!ENTITY mtprefs.tab.photo.keywords "Αναζήτηση πρόσθετων λέξεων-κλειδιών:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Μπορείτε να ορίσετε πρόσθετες λέξεις-κλειδιά για επισύναψη στην αναζήτηση του παρόχου φωτογραφιών σας.  Οι λέξεις κλειδιά θα πρέπει να χωρίζονται με διαστήματα, παράδειγμα: συγκρότημα live συναυλία">
+<!-- Video prefs -->
+<!ENTITY mtprefs.tab.video.autoplay "Αυτόματη αναπαραγωγή βίντεο">
+<!ENTITY mtprefs.tab.video.autoplay.help "Ενεργοποιώντας αυτήν την επιλογή τα αποτελέσματα του δεσμοποιημένου παρόχου βίντεο θα αναπαράγονται αυτόματα το ένα μετά το άλλο.  Για παράδειγμα, αυτή η επιλογή είναι χρήσιμη για αυτόματη αναπαραγωγή όλων των μουσικών βίντεο MTV.  Η μη δεσμοποιημένοι παροχείς βίντεο δεν λειτουργούν με αυτή την επιλογή.">

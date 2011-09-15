@@ -1,0 +1,58 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+#include "nsISupports.idl"
+#include "nsIObserver.idl"
+#include "sbIDataRemote.idl"
+
+/**
+ * \interface sbPIDataRemote2
+ * \brief An additional interface for accessing dataremote values.
+ * Adds the ability to access values via methods rather than attributes. 
+ * This is needed by the Remote API, which cannot access attributes on
+ * JavaScript XPCOM components due to Mozilla Bug 304048. 
+ * In order to work around this problem we've replaced the old 
+ * DataRemote class with a C++ wrapper that delegates to the old
+ * implementation using this interface.
+ * 
+ * This entire system should be scrapped, per bug 8703.
+ *
+ * \sa https://bugzilla.mozilla.org/show_bug.cgi?id=304048
+ *     http://bugzilla.songbirdnest.com/show_bug.cgi?id=10806
+ */
+[scriptable, uuid(5a263930-e9c0-11dd-ba2f-0800200c9a66)]
+interface sbPIDataRemote2 : sbIDataRemote
+{
+  void setAsString(in AString aValue);
+  AString getAsString();
+  void setAsInt(in long long aValue);
+  long long getAsInt();
+  void setAsBool(in boolean aValue);
+  boolean getAsBool();
+};
+
+
+

@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Omgelmi dhe Last.fm...">
+<!ENTITY lastfm.menu.logout "Omdenna dhyworth Last.fm">
+<!ENTITY lastfm.menu.enable "Galosegi skroblyans">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "Omgelmi">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "Gwruthyl akont Last.fm">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "Owth omgelmi...">
+<!ENTITY lastfm.cancel.button "Hedhi">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Skroblya ow hynsow">
+<!ENTITY lastfm.profile.logout "Omdenna">
+<!ENTITY lastfm.radio "Radyo Last.fm">
+<!ENTITY lastfm.radio.login.help "Mar mynn'ta goslowes orth Radyo Last.fm, res vydh dhis bos omgelmys ha ragbrenys dhe Last.fm. Mar ny'th eus akont Last.fm na hwath, ty a yll ygeri onan.">
+<!ENTITY lastfm.radio.start "A nyns os ta sur ple dhe dhalleth? Assay hwilas neppyth po mir orth an pyth usi tus erel ow koslowes orto.">
+<!ENTITY lastfm.radio.start.top.artists "Artydhyon A-wartha war Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Taggys A-wartha war Last.fm">
+<!ENTITY lastfm.radio.register "Ragbrena">
+<!ENTITY lastfm.radio.subscriber.button "Ragskrifa">
+<!ENTITY lastfm.radio.subscriber.help "Mar mynnydh goslowes orth Radyo Last.fm, res yw dhis bos ragbrener.">
+<!ENTITY lastfm.radio.search "Hwilas">
+<!ENTITY lastfm.radio.library "Kovskrifva">
+<!ENTITY lastfm.radio.loved "Hynsow Kerys">
+<!ENTITY lastfm.radio.neighbourhood "Kentreveth">
+<!ENTITY lastfm.radio.recommended "Komendyansow">
+<!ENTITY lastfm.radio.user_stations "Gorsavow-Radyo an Usyer">
+<!ENTITY lastfm.radio.recent_stations "Gorsavow Goslowys Orta A-Dhiwedhes">
+<!ENTITY lastfm.radio.from.lastfm "Dhwyorth Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Artydhyon Komendys">
+<!ENTITY lastfm.radio.top_artists "Dha Arthydhyon A-wartha">
+<!ENTITY lastfm.radio.top_tags "Dha Daggys A-wartha">
+<!ENTITY lastfm.radio.friends "Dha Gowetha">
+<!ENTITY lastfm.radio.neighbours "Kentrevogyon">
+<!ENTITY lastfm.radio.from.songbird "Dhyworth Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Dha Arthydhyon Moyha Senys">
+<!ENTITY lastfm.radio.highest_rated_artists "Dha Arthydhon a Vri">
+<!ENTITY lastfm.radio.popular_genres "Dha Ehennow-Ilow Gwella Kerys">
+<!ENTITY lastfm.radio.play "Seni">
+<!ENTITY lastfm.tags.enter_new "Ynwor taggys nowyth (diberthys gans komma)">
+<!ENTITY lastfm.tags.add_fail "Gwall ow keworra taggys!">
+<!ENTITY lastfm.tags.user "Dha Daggys:">
+<!ENTITY lastfm.tags.global "Taggys Ollgemmyn Last.fm:">

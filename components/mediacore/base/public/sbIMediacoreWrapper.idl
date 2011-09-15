@@ -1,0 +1,48 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediacoreCapabilities;
+
+[scriptable, uuid(d9a012b9-5be8-4b10-8810-f959df5698a9)]
+interface sbIMediacoreWrapper : nsISupports
+{
+  void initialize(in AString aInstanceName,
+                  in sbIMediacoreCapabilities aCapabilities,
+                  in ACString aChromePageURL);
+};
+
+%{C++
+
+#define SB_MEDIACOREWRAPPER_DESCRIPTION    \
+  "Songbird Mediacore Wrapper"
+#define SB_MEDIACOREWRAPPER_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/Wrapper;1"
+#define SB_MEDIACOREWRAPPER_CLASSNAME      \
+  "sbMediacoreWrapper"
+#define SB_MEDIACOREWRAPPER_CID            \
+  { 0xb244213a, 0x3eed, 0x42f8, { 0xa2, 0xab, 0x8c, 0x21, 0x22, 0xc8, 0x1f, 0xef } }
+
+%};

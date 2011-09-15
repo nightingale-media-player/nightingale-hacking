@@ -1,0 +1,8 @@
+.sb-displaypane-maximizebutton > .button-box {
+	padding: 0px !important;
+}
+	
+.sb-displaypane-maximizebutton > .button-box > .button-text {
+	display: none;
+}
+

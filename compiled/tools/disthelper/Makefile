@@ -1,0 +1,99 @@
+# vim: set sw=3 noet syntax=Makefile :
+#
+#=BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END SONGBIRD GPL
+#
+
+DEPTH = ../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/tools/disthelper
+VPATH = /media/disk/Linux/makepkg/songbird/tools/disthelper \
+        /media/disk/Linux/makepkg/songbird/tools/disthelper/$(SB_PLATFORM)
+
+include $(DEPTH)/build/autodefs.mk
+
+CPP_SRCS = main.cpp \
+           readini.cpp \
+           stringconvert.cpp \
+           debug.cpp \
+           utils.cpp \
+           $(NULL)
+
+# we force include mozilla-config.h/xpcom-config.h; otherwise this is not necessary
+CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+                     $(MOZSDK_INCLUDE_DIR)/xpcom \
+                     $(srcdir)
+                     $(NULL)
+
+SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                              $(NULL)
+
+ifneq (,$(SB_ENABLE_TESTS))
+   SUBDIRS += tests
+endif
+
+ifeq ($(SB_PLATFORM),windows)
+   SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
+                                  shlwapi \
+                                  version \
+                                  $(NULL)
+
+   ifeq (,$(DEBUG))
+      SIMPLE_PROGRAM_FLAGS = -subsystem:windows
+   endif
+
+   CPP_SRCS += icon.cpp \
+               versioninfo.cpp \
+               commands.cpp \
+               environment.cpp \
+               winmain.cpp \
+               $(NULL)
+
+endif # SB_PLATFORM == windows
+
+ifeq ($(SB_PLATFORM),macosx)
+   CMM_EXTRA_INCLUDES = $(srcdir) \
+                        $(NULL)
+   CMM_SRCS += $(SB_PLATFORM)/macutils.mm \
+               $(SB_PLATFORM)/commands.mm \
+               $(SB_PLATFORM)/environment.mm \
+               $(NULL)
+   SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
+                                -Wl,-framework,AppKit \
+                                $(NULL)
+
+endif # SB_PLATFORM == macosx
+
+
+# This executable gets called by the updater, so having a _d in the debug
+# version will make it impossible to use a debug disthelper and test udpates
+# end-to-end; so, disable naming.
+
+DISABLE_IMPLICIT_NAMING = 1
+
+SIMPLE_PROGRAM = disthelper$(BIN_SUFFIX)
+
+FINAL_TARGET = $(SONGBIRD_DISTDIR)
+
+CREATEDIRS = $(SB_PLATFORM)
+
+include $(topsrcdir)/build/rules.mk

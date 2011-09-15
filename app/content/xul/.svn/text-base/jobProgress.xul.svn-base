@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/jobProgress.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!-- 
+ Dialog used to display the status of an object implementing 
+ the sbIJobProgress interface.
+ 
+ Launch via SBJobUtils.showProgressDialog in SBJobUtils.jsm.
+ -->
+
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="job_progress_dialog"
+ buttons="none"
+ type="songbird"
+ hidechrome="true"
+ onload="JobProgressDialog.onLoad()"
+ onunload="JobProgressDialog.onUnLoad()"
+ ondialogcancel="JobProgressDialog.onCancel()"
+>
+
+  <vbox>
+    <vbox id="jobprogress_title_box">
+      <description id="jobprogress_title_desc" />
+    </vbox>
+    <vbox id="jobprogress_status_box" >
+      <description id="jobprogress_status_desc" />
+    </vbox>
+    <progressmeter id="jobprogress_progressmeter" />
+    <sb-closable-box id="jobprogress_error_box" hidden="true" label="&jobprogress.details;">
+      <listbox id="jobprogress_error_list" flex="1" maxrows="4" mousethrough="never" />
+    </sb-closable-box>
+  </vbox>
+
+  <script type="application/x-javascript" 
+    src="chrome://global/content/globalOverlay.js"/> 
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/jobProgress.js" />
+  <script type="application/x-javascript" 
+    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+</dialog>

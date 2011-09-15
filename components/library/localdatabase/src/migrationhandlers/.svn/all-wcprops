@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/client/!svn/ver/20896/trunk/components/library/localdatabase/src/migrationhandlers
+END
+sbMigrate070RC1to070.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/10687/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate070RC1to070.js
+END
+sbMigrate070RC2to070.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/10691/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate070RC2to070.js
+END
+sbMigrate11pre1To11pre1b.js
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/client/!svn/ver/12365/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate11pre1To11pre1b.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/20896/trunk/components/library/localdatabase/src/migrationhandlers/Makefile.in
+END
+sbMigrate070To08pre1.js
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/client/!svn/ver/10889/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate070To08pre1.js
+END
+sbMigrate18to19pre0.indexSort.js
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/client/!svn/ver/19900/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate18to19pre0.indexSort.js
+END
+sbMigrate12pre1To12pre1b.js
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/client/!svn/ver/13144/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate12pre1To12pre1b.js
+END
+sbMigrate19to110pre0.addMetadataHashIdentity.js
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/client/!svn/ver/20896/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate19to110pre0.addMetadataHashIdentity.js
+END
+sbMigrate14to15pre.smartplaylist.js
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/client/!svn/ver/15689/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate14to15pre.smartplaylist.js
+END
+sbMigrate11pre1bTo11pre1c.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/client/!svn/ver/12740/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate11pre1bTo11pre1c.js
+END
+sbMigrate10To11pre1.js
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/client/!svn/ver/12365/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate10To11pre1.js
+END
+sbMigrate11pre1cTo11pre1d.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/client/!svn/ver/12722/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate11pre1cTo11pre1d.js
+END
+sbMigrate11pre1dTo11pre1e.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/client/!svn/ver/12834/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate11pre1dTo11pre1e.js
+END
+sbMigrate11pre1eTo11pre1f.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/client/!svn/ver/12861/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate11pre1eTo11pre1f.js
+END
+sbMigrate18to19pre0.discSortTrackSort.js
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/client/!svn/ver/19434/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate18to19pre0.discSortTrackSort.js
+END
+sbMigrate08pre1To08pre2.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/client/!svn/ver/11078/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate08pre1To08pre2.js
+END
+sbMigrate08pre2To08pre3.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/client/!svn/ver/14743/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate08pre2To08pre3.js
+END
+sbMigrate08pre3To08pre4.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/client/!svn/ver/11681/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate08pre3To08pre4.js
+END
+sbMigrate13to14.wmaprotected.js
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/client/!svn/ver/16647/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate13to14.wmaprotected.js
+END
+sbMigrate14to17pre0.smartplaylist.js
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/client/!svn/ver/17575/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate14to17pre0.smartplaylist.js
+END
+sbMigrate18to19pre0.fileURL.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/client/!svn/ver/19126/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate18to19pre0.fileURL.js
+END
+sbMigrate14to15pre0.contentType.js
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/client/!svn/ver/15673/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate14to15pre0.contentType.js
+END
+sbMigrate12To13pre.js
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/client/!svn/ver/13854/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate12To13pre.js
+END
+sbMigrate061to070.js
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/client/!svn/ver/10175/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate061to070.js
+END
+sbMigrate18to19pre0.index.js
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/client/!svn/ver/19546/trunk/components/library/localdatabase/src/migrationhandlers/sbMigrate18to19pre0.index.js
+END

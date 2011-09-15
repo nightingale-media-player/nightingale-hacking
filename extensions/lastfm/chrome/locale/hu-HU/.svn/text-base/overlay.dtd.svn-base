@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Bejelentkezés a Last.fm-re...">
+<!ENTITY lastfm.menu.logout "Kijelentkezés a Last.fm-ről">
+<!ENTITY lastfm.menu.enable "Továbbítás engedélyezése">
+<!ENTITY lastfm.login.caption.label "Bejelentkezés">
+<!ENTITY lastfm.username.label "Felhasználónév:">
+<!ENTITY lastfm.password.label "Jelszó:">
+<!ENTITY lastfm.auto.login.label "Automatikus bejelentkezés indításkor">
+<!ENTITY lastfm.login.button "Bejelentkezés">
+<!ENTITY lastfm.newaccount.caption "Új felhasználói fiók létrehozása">
+<!ENTITY lastfm.signup.label "Regisztrálás a Last.fm-re">
+<!ENTITY lastfm.signup.button.label "Új felhasználói fiók létrehozása">
+<!ENTITY lastfm.loggingin.label "Bejelentkezés folyamatban...">
+<!ENTITY lastfm.cancel.button "Mégsem">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Saját számok továbbítása">
+<!ENTITY lastfm.profile.logout "Kijelentkezés">
+<!ENTITY lastfm.radio "Last.fm rádió">
+<!ENTITY lastfm.radio.login.help "A Last.fm rádió hallgatásához be kell jelentkezni a Last.fm-hez. Regisztrációval Last.fm fiók hozható létre.">
+<!ENTITY lastfm.radio.start "Ha nem tudja, hogy hol kezdje, próbálja meg a keresését, vagy nézze meg, hogy mit hallgatnak mások.">
+<!ENTITY lastfm.radio.start.top.artists "Legkedveltebb előadók a Last.fm-en">
+<!ENTITY lastfm.radio.start.top.tags "Legkedveltebb címkék a Last.fm-en">
+<!ENTITY lastfm.radio.register "Regisztrálás">
+<!ENTITY lastfm.radio.subscriber.button "Előfizetés">
+<!ENTITY lastfm.radio.subscriber.help "A Last.fm rádiót hallgatásához előfizetés szükséges.">
+<!ENTITY lastfm.radio.search "Keresés">
+<!ENTITY lastfm.radio.library "Könyvtár">
+<!ENTITY lastfm.radio.loved "Kedvelt számok">
+<!ENTITY lastfm.radio.neighbourhood "Szomszédok">
+<!ENTITY lastfm.radio.recommended "Ajánlások">
+<!ENTITY lastfm.radio.user_stations "Felhasználói rádióállomások">
+<!ENTITY lastfm.radio.recent_stations "Legutóbbi rádióállomások">
+<!ENTITY lastfm.radio.from.lastfm "Last.fm-ről">
+<!ENTITY lastfm.radio.recommended_artists "Ajánlott előadók">
+<!ENTITY lastfm.radio.top_artists "Kedvenc előadói">
+<!ENTITY lastfm.radio.top_tags "Kedvenc címkéi">
+<!ENTITY lastfm.radio.friends "Kedvenc barátai">
+<!ENTITY lastfm.radio.neighbours "Szomszédok">
+<!ENTITY lastfm.radio.from.songbird "Songbird-ről">
+<!ENTITY lastfm.radio.most_played_artists "Legtöbbször játszott előadói">
+<!ENTITY lastfm.radio.highest_rated_artists "Legmagasabban értékelt előadói">
+<!ENTITY lastfm.radio.popular_genres "Kedvelt stílusai">
+<!ENTITY lastfm.radio.play "Lejátszás">
+<!ENTITY lastfm.tags.enter_new "Új címke megadása (vesszővel elválasztva)">
+<!ENTITY lastfm.tags.add_fail "Címke hozzáadása sikertelen!">
+<!ENTITY lastfm.tags.user "Címkéi:">
+<!ENTITY lastfm.tags.global "Last.fm globális címkék:">

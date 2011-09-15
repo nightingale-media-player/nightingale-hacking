@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/client/!svn/ver/21356/trunk/extensions/shoutcast/chrome/locale/sl
+END
+options.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/21356/trunk/extensions/shoutcast/chrome/locale/sl/options.dtd
+END
+overlay.dtd
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/21356/trunk/extensions/shoutcast/chrome/locale/sl/overlay.dtd
+END
+overlay.properties
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/21356/trunk/extensions/shoutcast/chrome/locale/sl/overlay.properties
+END
+genres.properties
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/21356/trunk/extensions/shoutcast/chrome/locale/sl/genres.properties
+END

@@ -1,0 +1,134 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+/**
+ * \file sbITranscodeVideoJob.idl
+ * \brief An interface for transcoding media streams.
+ */
+#include "nsISupports.idl"
+
+interface sbIPropertyArray;
+interface sbIMediaItem;
+interface sbITranscodingConfigurator;
+interface nsIInputStream;
+interface nsIOutputStream;
+
+/**
+ * \interface sbITranscodeVideoJob sbITranscodeVideoJob.h
+ * \brief An object capable of transcoding a source URI to a destination file
+ *       
+ * User code should request an instance using
+ *   sbITranscodeManager::getTranscoder()
+ * 
+ * Implementations should also implement sbIJobProgress, and usually
+ * sbIJobCancelable.
+ *
+ * \sa sbITranscodeManager
+ * \sa sbIJobProgress
+ * \sa sbIJobCancelable
+ */
+[scriptable, uuid(51d4676c-98cb-4b35-83dd-62fbbd7ab9a0)]
+interface sbITranscodeVideoJob : nsISupports
+{
+  /**
+   * \brief An array of metadata properties
+   *
+   * Metadata properties to be written into the destination file.
+   * Metadata items in this property array should be used to replace those
+   * in the source file (where present), and add them otherwise. Metadata
+   * items present in the source stream but not in this array should be
+   * preserved where possible.
+   */
+  attribute sbIPropertyArray metadata;
+
+  /**
+   * \brief An input stream for the encoded image.
+   *
+   * If an image is desired in the encoded file (e.g. album art cover),
+   * set this to an input stream that the encoded image can be read from.
+   */
+  attribute nsIInputStream  metadataImage;
+
+  /**
+   * \brief The configurator that will be used to configurate the transcoder
+   *        for the specific input URI.
+   *
+   * The transcoding job will use the configurator to decide on parameters for
+   * the raw media input to the encoder, and to decide on the specific
+   * encoder settings to use.
+   */
+  attribute sbITranscodingConfigurator configurator;
+
+  /**
+   * \brief The source URI to transcode from.
+   */
+  attribute AString sourceURI;
+
+  /**
+   * \brief The destination URI to transcode to. Used only if destStream is
+   *        set to a non-null value.
+   *
+   * Note that, in general, only file URIs will be supported for destination
+   * URI. For non-file URIs, an nsIOutputStream should be used instead (see
+   * below). 
+   */
+  attribute AString destURI;
+
+  /**
+   * \brief A stream to write the output to. Used in preference to destURI
+   *        if this is set.
+   *
+   * Note that the output stream may not be seekable, in which case some formats
+   * may not work correctly. If the stream does implement nsISeekableStream,
+   * any format should be usable.
+   */
+  attribute nsIOutputStream destStream;
+
+  /**
+   * \brief Vote to be the handler returned for the given url
+   *
+   * The sbITranscodeManager will instantiate one of every sbITranscodeVideoJob
+   * subclass and ask it to vote on whether it can support transcoding a given
+   * media item with a given transcoding profile. The highest vote will be 
+   * used as the handler for the media item.
+   *
+   * Values less than zero cause that handler to be ignored.
+   *
+   * At the moment, our handlers return -1, 0, or 1000 (for "no," "maybe," and
+   * "yes").
+   *
+   * \param aMediaItem The media item on which to vote
+   * \return The vote
+   * \sa sbITranscodeManager
+   * TODO: Determine what info this will actually be passed!
+  */
+  PRInt32 vote( in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Start the transcoding operation
+   *
+   * Caller should monitor progress via sbIJobProgress
+   */
+  void transcode();
+};

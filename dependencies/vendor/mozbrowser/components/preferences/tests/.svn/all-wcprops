@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests
+END
+browser_privacypane_1.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_1.js
+END
+browser_privacypane_2.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_2.js
+END
+browser_privacypane_3.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_3.js
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/Makefile.in
+END
+browser_privacypane_4.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_4.js
+END
+browser_privacypane_5.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_5.js
+END
+browser_privacypane_6.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_6.js
+END
+browser_privacypane_7.js
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_privacypane_7.js
+END
+browser_bug410900.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/browser_bug410900.js
+END
+privacypane_tests.js
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/vendor/!svn/ver/11091/trunk/xulrunner-1.9.2/mozilla/browser/components/preferences/tests/privacypane_tests.js
+END

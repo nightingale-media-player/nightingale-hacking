@@ -1,0 +1,22 @@
+<!ENTITY mtprefs.general "সাধারণ">
+<!ENTITY mtprefs.info "শিল্পী তথ্য">
+<!ENTITY mtprefs.rss "সংবাদ">
+<!ENTITY mtprefs.photo "চিত্রগুলি">
+<!ENTITY mtprefs.flash "চলচ্চিত্রগুলি">
+<!ENTITY mtprefs.defaulttab "স্বাভাবিক সারণপট">
+<!ENTITY mtprefs.defaulttab.help "যখন ম্যাশ্‌টেপ আরম্ভ হয়:">
+<!ENTITY mtprefs.show.info "শিল্পী তথ্য প্রদর্শন">
+<!ENTITY mtprefs.show.rss "সংবাদ প্রদর্শন">
+<!ENTITY mtprefs.show.photo "চিত্র প্রদর্শন">
+<!ENTITY mtprefs.show.flash "চলচ্চিত্র প্রদর্শন">
+<!ENTITY mtprefs.autohide "স্বয়ংক্রিয় গোপন">
+<!ENTITY mtprefs.autohide.help "ম্যাশ্‌টেপের প্রদর্শন পাটকে স্বয়ংক্রিয়ভাবে গোপন করা সক্রিয় করুন যখন আপনি আন্তর্জালপৃষ্ঠা দেখতে পরিবর্তন করবেন।">
+<!ENTITY mtprefs.services "পরিষেবাগুলি">
+<!ENTITY mtprefs.getmore "ম্যাশ্‌টেপের জন্য আরও পরিষেবা উপলব্ধ কর">
+<!ENTITY mtprefs.tab.info "শিল্পী তথ্য সারণপট নির্ধারণমানগুলি">
+<!ENTITY mtprefs.tab.rss "সংবাদ সারণপট নির্ধারণমানগুলি">
+<!ENTITY mtprefs.tab.photo "চিত্র সারণপট নির্ধারণমানগুলি">
+<!ENTITY mtprefs.tab.flash "চলচ্চিত্র সারণপট নির্ধারণমানগুলি">
+<!ENTITY mtprefs.tab.help "ম্যাশ্‌টেপে এই সারণপটটির প্রদর্শন">
+<!ENTITY mtprefs.single "এই পাটটি এক মূহুর্তে একটি পরিষেবা থেকে তত্ত্ব প্রদর্শন সমর্থন করে। অনুগ্রহ করে নিম্নোক্ত তালিকা থেকে একটি পরিষেবা নির্বাচন করুন।">
+<!ENTITY mtprefs.multiple "এই পাটটি এক মূহুর্তে বহু পরিষেবাগুলির মধ্য থেকে তত্ত্ব প্রদর্শন সমর্থন করে। অনুগ্রহ করে আপনার ইচ্ছানুযায়ীক পরিষেবাগুলি নিম্নোক্ত তালিকা থেকে নির্বাচন করুন।">

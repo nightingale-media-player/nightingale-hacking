@@ -1,0 +1,132 @@
+#
+#=BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END SONGBIRD GPL
+#
+
+DEPTH = ../../..
+topsrcdir = /media/disk/Linux/makepkg/songbird
+srcdir = /media/disk/Linux/makepkg/songbird/components/property/src
+VPATH = /media/disk/Linux/makepkg/songbird/components/property/src \
+        /media/disk/Linux/makepkg/songbird/components/moz/xpcom/src \
+        
+
+include $(DEPTH)/build/autodefs.mk
+
+DYNAMIC_LIB = sbProperties
+
+export:: sbProperties.jsm
+
+#preedTODO: WTF?
+sbProperties.jsm: sbProperties.jsm.in sbStandardProperties.h
+sbProperties.jsm: sbStandardProperties.pl
+	$(PERL) $< $(srcdir)
+
+CPP_SRCS = sbPropertyManager.cpp \
+           sbSimpleProperty.cpp \
+           sbPropertyArray.cpp \
+           sbPropertyFactory.cpp \
+           sbPropertyInfo.cpp \
+           sbTextPropertyInfo.cpp \
+           sbTrackTypeImageLabelPropertyInfo.cpp \
+           sbNumberPropertyInfo.cpp \
+           sbURIPropertyInfo.cpp \
+           sbDatetimePropertyInfo.cpp \
+           sbDurationPropertyInfo.cpp \
+           sbPropertiesModule.cpp \
+           sbDownloadButtonPropertyBuilder.cpp \
+           sbDownloadButtonPropertyInfo.cpp \
+           sbOriginPageImagePropertyBuilder.cpp \
+           sbOriginPageImagePropertyInfo.cpp \
+           sbImmutablePropertyInfo.cpp \
+           sbSimpleButtonPropertyBuilder.cpp \
+           sbSimpleButtonPropertyInfo.cpp \
+           sbImagePropertyBuilder.cpp \
+           sbImagePropertyInfo.cpp \
+           sbBooleanPropertyInfo.cpp \
+           sbRatingPropertyBuilder.cpp \
+           sbRatingPropertyInfo.cpp \
+           sbAbstractPropertyBuilder.cpp \
+           sbPropertyUnitConverter.cpp \
+           sbDurationPropertyUnitConverter.cpp \
+           sbStoragePropertyUnitConverter.cpp \
+           sbFrequencyPropertyUnitConverter.cpp \
+           sbBitratePropertyUnitConverter.cpp \
+           sbDummyPropertyInfo.cpp \
+           sbDummyPlaylistPropertyInfo.cpp \
+           sbDummyContentTypePropertyInfo.cpp \
+           sbImageLinkPropertyInfo.cpp \
+           sbImageLabelLinkPropertyBuilder.cpp \
+           sbImageLabelLinkPropertyInfo.cpp \
+           sbStatusPropertyBuilder.cpp \
+           sbStatusPropertyInfo.cpp \
+           $(NULL)
+
+# From components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
+            $(NULL)
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/enumeration/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
+                     $(topsrcdir)/components/include \
+                     $(DEPTH)/components/intl/public \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/locale \
+                     $(MOZSDK_INCLUDE_DIR)/places \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/xpcom \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+ifeq (solaris,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_IMPORTS += m
+endif
+
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/strings/src/sbMozStringUtils \
+ $(NULL)
+
+ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
+    $(NULL)
+endif
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbSmartPlaylistPropertyRegistrar.js \
+                      $(NULL)
+
+IS_COMPONENT = 1
+
+SONGBIRD_JSMODULES =  sbProperties.jsm \
+                      $(NULL)           
+
+
+include $(topsrcdir)/build/rules.mk

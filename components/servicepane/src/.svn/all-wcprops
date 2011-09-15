@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/20838/trunk/components/servicepane/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/client/!svn/ver/18937/trunk/components/servicepane/src/Makefile.in
+END
+sbDeviceServicePaneService.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/20838/trunk/components/servicepane/src/sbDeviceServicePaneService.js
+END
+sbServicePaneService.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/20072/trunk/components/servicepane/src/sbServicePaneService.js
+END
+sbLibraryServicePaneService.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/19209/trunk/components/servicepane/src/sbLibraryServicePaneService.js
+END
+ServicePaneHelper.jsm
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/18956/trunk/components/servicepane/src/ServicePaneHelper.jsm
+END

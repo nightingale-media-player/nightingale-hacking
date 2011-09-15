@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/client/!svn/ver/21789/trunk/components/moz/errorconsole/src
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/client/!svn/ver/19969/trunk/components/moz/errorconsole/src/Makefile.in
+END
+sbErrorConsole.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/client/!svn/ver/21789/trunk/components/moz/errorconsole/src/sbErrorConsole.cpp
+END
+sbErrorConsole.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/client/!svn/ver/21789/trunk/components/moz/errorconsole/src/sbErrorConsole.h
+END

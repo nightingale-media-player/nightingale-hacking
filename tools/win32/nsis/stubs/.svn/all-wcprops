@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs
+END
+bzip2_solid
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs/bzip2_solid
+END
+uninst
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/client/!svn/ver/1/trunk/tools/win32/nsis/stubs/uninst
+END
+zlib
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs/zlib
+END
+lzma
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs/lzma
+END
+bzip2
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs/bzip2
+END
+zlib_solid
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs/zlib_solid
+END
+lzma_solid
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/client/!svn/ver/5425/trunk/tools/win32/nsis/stubs/lzma_solid
+END

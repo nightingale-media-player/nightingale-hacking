@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- Replacement binding for the treecols object, collapses the columnpicker
+       icon and replaces it with a context menu handler -->
+       
+  <binding id="treecols-context" 
+           extends="chrome://global/content/bindings/tree.xml#treecols">
+    <implementation>
+      <constructor>
+        <![CDATA[
+          // collapse the column picker (we cannot use hidecolumnpicker="true"
+          // on the <tree/> because that makes it impossible to show the child 
+          // menu)
+          this.picker.collapsed = true;
+
+          // and force show the popup
+          this.popup.style.visibility = "visible";
+        ]]>
+      </constructor>
+
+      <field name="picker" readonly="true">
+        document.getAnonymousElementByAttribute(this,
+                                                "class",
+                                                "treecol-image");
+      </field>
+      
+      <field name="popup" readonly="true">
+        document.getAnonymousElementByAttribute(this.picker, 
+                                                "anonid", 
+                                                "popup");
+      </field>
+      
+    </implementation>
+
+    <handlers>
+      <handler event="contextmenu">
+        <![CDATA[
+          var treecol = event.originalTarget;
+          if (!treecol ||
+              !(treecol instanceof XULElement) ||
+              (treecol.localName != "treecol" &&
+               treecol.className.split(/\s/).indexOf("tree-scrollable-columns") == -1))
+          {
+            // ignore clicks not on a treecol
+            return;
+          }
+
+          // build popup menu          
+          this.picker.buildPopup(this.popup);
+
+          // find coordinates of click relative to treecol, then map to
+          // tree content
+          var y = (event.screenY - treecol.boxObject.screenY);
+          var x = (event.screenX - treecol.boxObject.screenX);
+          
+          // show popup
+          this.popup.openPopup(treecol,
+                               "overlap",
+                               x,
+                               y,
+                               true,
+                               false);
+        ]]>
+      </handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

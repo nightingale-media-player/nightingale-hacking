@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/client/!svn/ver/20408/trunk/components/mediacore/transcode/src
+END
+sbTranscodeAlbumArt.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/client/!svn/ver/15495/trunk/components/mediacore/transcode/src/sbTranscodeAlbumArt.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/client/!svn/ver/20408/trunk/components/mediacore/transcode/src/Makefile.in
+END
+sbTranscodeProfileProperty.h
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/16888/trunk/components/mediacore/transcode/src/sbTranscodeProfileProperty.h
+END
+sbTranscodeManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18400/trunk/components/mediacore/transcode/src/sbTranscodeManager.cpp
+END
+sbTranscodeAlbumArt.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/14739/trunk/components/mediacore/transcode/src/sbTranscodeAlbumArt.h
+END
+sbTranscodeManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/13899/trunk/components/mediacore/transcode/src/sbTranscodeManager.h
+END
+sbTranscodeProfileAttribute.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/17532/trunk/components/mediacore/transcode/src/sbTranscodeProfileAttribute.cpp
+END
+sbTranscodeModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/client/!svn/ver/17580/trunk/components/mediacore/transcode/src/sbTranscodeModule.cpp
+END
+sbTranscodeProfileLoader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/client/!svn/ver/17532/trunk/components/mediacore/transcode/src/sbTranscodeProfileLoader.cpp
+END
+sbTranscodeError.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17581/trunk/components/mediacore/transcode/src/sbTranscodeError.cpp
+END
+sbTranscodeProfileAttribute.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/17532/trunk/components/mediacore/transcode/src/sbTranscodeProfileAttribute.h
+END
+sbTranscodingConfigurator.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/18545/trunk/components/mediacore/transcode/src/sbTranscodingConfigurator.cpp
+END
+sbTranscodeProfileLoader.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/client/!svn/ver/17532/trunk/components/mediacore/transcode/src/sbTranscodeProfileLoader.h
+END
+sbTranscodeError.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/17580/trunk/components/mediacore/transcode/src/sbTranscodeError.h
+END
+sbImageTools.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/18793/trunk/components/mediacore/transcode/src/sbImageTools.cpp
+END
+sbTranscodeProfile.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/client/!svn/ver/18069/trunk/components/mediacore/transcode/src/sbTranscodeProfile.cpp
+END
+sbTranscodingConfigurator.h
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/client/!svn/ver/18545/trunk/components/mediacore/transcode/src/sbTranscodingConfigurator.h
+END
+sbTranscodeProfile.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/client/!svn/ver/17532/trunk/components/mediacore/transcode/src/sbTranscodeProfile.h
+END
+sbImageTools.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/client/!svn/ver/15284/trunk/components/mediacore/transcode/src/sbImageTools.h
+END
+sbTranscodeProfileProperty.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/client/!svn/ver/16888/trunk/components/mediacore/transcode/src/sbTranscodeProfileProperty.cpp
+END
+sbTranscodeUtils.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/client/!svn/ver/17580/trunk/components/mediacore/transcode/src/sbTranscodeUtils.h
+END

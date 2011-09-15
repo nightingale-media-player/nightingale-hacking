@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<!-- vim: set fileencoding=utf-8 shiftwidth=2 : -->
+<!-- stolen from https://bugzilla.mozilla.org/show_bug.cgi?id=325353 :D
+     note that this version has been simplified (no multi-window support) -->
+<bindings id="systrayBindings"
+  xmlns="http://www.mozilla.org/xbl"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="trayicon">
+    <implementation>
+      <constructor><![CDATA[
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+        // prefer window cloak if we have it; it's more stable.
+        if (!this._useWindowCloak || !this._windowCloak) {
+          var windowUtil = Cc["@mozilla.org/window-util;1"]
+                             .createInstance(Ci.nsIWindowUtil);
+   
+          if (!windowUtil) {
+            throw("window util component not found");
+          }
+          this._windowUtil = windowUtil;
+          windowUtil.init(window);
+
+          try {
+            windowUtil.watch();
+          } catch (ex) {
+            // not implemented on GTK
+          }
+        }
+        
+        if (this.alwaysShow)
+          this.showIcon();
+         
+        // add event handlers for window events
+        window.addEventListener("activating", this._handleActivatingEvent,
+                                false);
+        window.addEventListener("unload", this._handleUnload, false);
+        
+        var item = document.getElementById("trayicon-mainwin-menuitem-stop");
+        this._stopMenuItem = SBDataBindElementProperty("faceplate.playing", item, "disabled", true, true);
+      ]]>
+      </constructor>
+
+      <destructor><![CDATA[
+        this._windowUtil = null;
+      
+        // remove event handlers for window events
+        window.removeEventListener("activating", this._handleActivatingEvent,
+          false);
+        window.removeEventListener("unload", this._handleUnload, false);
+
+        if (this.alwaysShow)
+          this.hideIcon();
+        
+        this._stopMenuItem.unbind();
+      ]]>
+      </destructor>
+
+      <field name="_trayService" readonly="true"><![CDATA[
+          "@mozilla.org/system-tray-service;1" in Components.classes &&
+          Components.classes["@mozilla.org/system-tray-service;1"]
+                    .getService(Components.interfaces.nsISystemTrayService);
+      ]]>
+      </field>
+
+      <field name="_windowCloak" readonly="true"><![CDATA[
+          "@songbirdnest.com/Songbird/WindowCloak;1" in Components.classes &&
+          Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+                    .getService(Components.interfaces.sbIWindowCloak);
+      ]]>
+      </field>
+
+      <field name="_isMinimizing">false</field>
+      
+      <field name="_isHidden">false</field>
+
+      <field name="_handleActivatingEvent">
+        ({ self: this, handleEvent :
+          function handleEvent(e) { this.self.onActivating(e); } })
+      </field>
+      
+      <field name="_handleUnload">
+        ({ self: this, handleEvent :
+          function handleEvent(e) { this.self.onUnload(e); } })
+      </field>
+      
+      <field name="_useWindowCloak" readonly="true">
+        <!-- use window cloak on windows, but not elsewhere -->
+        Components.classes["@mozilla.org/xre/runtime;1"]
+                  .getService(Components.interfaces.nsIXULRuntime)
+                  .OS == "WINNT";
+      </field>
+
+      <property name="_rootWindow">
+        <getter><![CDATA[
+          var requestor =
+              window.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+          var nav =
+              requestor.getInterface(Components.interfaces.nsIWebNavigation);
+          var dsti =
+              nav.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
+          var owner = dsti.treeOwner;
+          requestor =
+              owner.QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+          var rv = requestor.getInterface(Components.interfaces.nsIXULWindow);
+          return rv;
+        ]]>
+        </getter>
+      </property>
+
+      <property
+        name="title"
+        onset="this.setAttribute('title', val);
+               if (this._isHidden)
+                 this._trayService.setTitle(this.id, this.title);
+               return val;"
+        onget="return this.getAttribute('title');"
+      />
+
+      <property
+        name="image"
+        onset="this.setAttribute('image', val);
+               if (this.alwaysShow || this._isHidden) this.showIcon();
+               return val;"
+        onget="return this.getAttribute('image');"
+      />
+
+      <property
+        name="alwaysShow"
+        onset="this.setAttribute('alwaysshow', val);
+               if (!val &amp;&amp; !this._isHidden) this.hideIcon();
+               return val;"
+        onget="return this.getAttribute('alwaysshow') == 'true';"
+      />
+
+      <method name="showIcon">
+        <body><![CDATA[
+          var trayService = this._trayService;
+          if (!trayService)
+            return;
+
+          var imageSpec = this.getAttribute("image");
+          var imageUri = null;
+          if (imageSpec)
+          {
+            var ioService =
+              Components.classes["@mozilla.org/network/io-service;1"].
+                getService(Components.interfaces.nsIIOService);
+            imageUri = ioService.newURI(imageSpec,
+                                        document.location.href, null);
+          }
+          trayService.showIcon(this.id, imageUri, window, this._rootWindow);
+          if (this.title)
+            trayService.setTitle(this.id, this.title);
+        ]]>
+        </body>
+      </method>
+
+      <method name="hideIcon">
+        <body><![CDATA[
+          var trayService = this._trayService;
+          if (!trayService)
+            return;
+
+          trayService.hideIcon(this.id);
+        ]]>
+        </body>
+      </method>
+
+      <method name="onActivating">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this.restoreWindow();
+        ]]></body>
+      </method>
+      
+      <method name="onUnload">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this.hideIcon();
+        ]]></body>
+      </method>
+
+      <method name="minimizeWindow">
+        <body><![CDATA[
+          if (this._isMinimizing)
+            return false;
+          
+          var isHidden = false;
+          if (this._useWindowCloak && this._windowCloak) {
+            isHidden = this._windowCloak.isCloaked(window);
+          } else {
+            // fall back to window util
+            isHidden = !this._windowUtil ||
+                       this._windowUtil.hidden;
+          }
+          
+          if (isHidden)
+            return false;
+          
+          this._isMinimizing = true;
+          
+          if (this._useWindowCloak && this._windowCloak) {
+            this._windowCloak.cloak(window);
+          } else {
+            // Don't call window.minimize() since this won't reduce the working
+            // set on Windows
+            // (it uses SW_SHOWMINIMIZE instead of SW_MINIMIZE)
+            this._windowUtil.minimize();
+          }
+        
+          this._isHidden = true;
+          this.showIcon();
+          
+          this._isMinimizing = false;
+
+          return true;
+        ]]>
+        </body>
+      </method>
+
+      <method name="restoreWindow">
+        <body><![CDATA[
+          if (this._useWindowCloak && this._windowCloak) {
+            if (this._windowCloak.isCloaked(window))
+              this._windowCloak.uncloak(window);
+          } else {
+            if (!this._windowUtil || !this._windowUtil.hidden)
+              return false;
+            window.restore();
+          }
+
+          this._isHidden = false;
+          if (!this.alwaysShow)
+            this.hideIcon();
+
+          return true;
+        ]]>
+        </body>
+      </method>
+      
+      <method name="_getContextMenu">
+        <body><![CDATA[
+          // get the id of the desired menu (with fallback)
+          // see XULPopupListenerImpl::LaunchPopup
+          var attr = this.getAttribute("context");
+          if (!attr) attr = this.getAttribute("contextmenu");
+          if (!attr) return null;
+          
+          // find the actual element
+          if ("_child" == attr) {
+            // find the immediate child that is a menupopup
+            // warning: this might not work (need to put the menupopup
+            //          inside of a <popupset> instead)
+            var child = this.firstChild;
+            for (; child; child = child.nextSibling) {
+              if ("menupopup" == child.localName) {
+                return child;
+              }
+            }
+          } else {
+            return document.getElementById(attr);
+          }
+          return null;
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+
+      <handler event="click" phase="target" button="0">
+        this.restoreWindow();
+        event.preventDefault();
+      </handler>
+
+      <handler event="blur">
+        var thePopup = this._getContextMenu();
+        if (thePopup)
+          thePopup.hidePopup();
+      </handler>
+
+      <handler event="click" button="2" detail="1">
+        var newEvent = document.createEvent("MouseEvents");
+        newEvent.initMouseEvent("contextmenu", true, true,
+                                event.view, event.detail,
+                                event.screenX, event.screenY,
+                                event.clientX, event.clientY,
+                                event.ctrlKey, event.altKey,
+                                event.shiftKey, event.metaKey,
+                                event.button, event.relatedTarget);
+        return this.dispatchEvent(newEvent);
+      </handler>
+      <handler event="contextmenu">
+        var thePopup = this._getContextMenu();
+        if (!thePopup) return;
+
+        var onshown = function(event) {
+          var popup = event.target;
+          event.currentTarget.removeEventListener(event.type,
+                                                  arguments.callee,
+                                                  true);
+          
+          var box = popup.popupBoxObject;
+          // display on the right so the tooltip and/or edge of screen don't
+          // get in the way
+          var x = popup.targetX - box.width;
+          var y = popup.targetY;
+          
+          // show the popup in the right position
+          if (thePopup)
+            popup.hidePopup();
+          document.popupNode = null;
+
+          popup.showPopup(
+             document.documentElement,
+             x, y,
+             "context",
+             "", "");
+        }
+  
+        thePopup.addEventListener("popupshown", onshown, true);
+        
+        thePopup.targetX = event.screenX;
+        thePopup.targetY = event.screenY;
+
+        thePopup.hidePopup();
+        thePopup.showPopup(
+           document.documentElement,   // anchoring element
+           -999999,                    // x
+           -999999,                    // y
+           "context",                  // type
+           "",                         // popupanchor (ignored)
+           "");                        // popupalign (ignored)
+        
+        // need to handle rollup ourselves to prevent reentrancy into our
+        // system tray WindowProc
+        // during menu frame cleanup
+        thePopup.enableRollup(false);
+
+        event.stopPropagation();
+        event.preventDefault();
+      </handler>
+     </handlers>
+  </binding>
+</bindings>

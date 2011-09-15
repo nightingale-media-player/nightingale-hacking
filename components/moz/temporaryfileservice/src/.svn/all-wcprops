@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/client/!svn/ver/17604/trunk/components/moz/temporaryfileservice/src
+END
+sbTemporaryFileServiceModule.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/client/!svn/ver/17604/trunk/components/moz/temporaryfileservice/src/sbTemporaryFileServiceModule.cpp
+END
+sbTemporaryFileFactory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/17604/trunk/components/moz/temporaryfileservice/src/sbTemporaryFileFactory.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/client/!svn/ver/17603/trunk/components/moz/temporaryfileservice/src/Makefile.in
+END
+sbTemporaryFileFactory.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/17604/trunk/components/moz/temporaryfileservice/src/sbTemporaryFileFactory.h
+END
+sbTemporaryFileService.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/client/!svn/ver/17604/trunk/components/moz/temporaryfileservice/src/sbTemporaryFileService.cpp
+END
+sbTemporaryFileService.h
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/client/!svn/ver/17604/trunk/components/moz/temporaryfileservice/src/sbTemporaryFileService.h
+END

@@ -1,0 +1,46 @@
+<!ENTITY lastfm.menu.login "Logga in till Last.fm...">
+<!ENTITY lastfm.menu.logout "Logga ut från Last.fm">
+<!ENTITY lastfm.menu.enable "Aktivera Scrobbling">
+<!ENTITY lastfm.login.caption.label "Login">
+<!ENTITY lastfm.username.label "Username:">
+<!ENTITY lastfm.password.label "Password:">
+<!ENTITY lastfm.auto.login.label "Auto sign-in at launch">
+<!ENTITY lastfm.login.button "Logga in">
+<!ENTITY lastfm.newaccount.caption "Create New Account">
+<!ENTITY lastfm.signup.label "Registrera dig på Last.fm">
+<!ENTITY lastfm.signup.button.label "Create New Account">
+<!ENTITY lastfm.loggingin.label "Loggar in...">
+<!ENTITY lastfm.cancel.button "Avbryt">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Scrobbla mina låtar">
+<!ENTITY lastfm.profile.logout "Logga ut">
+<!ENTITY lastfm.radio "Last.fm Radio">
+<!ENTITY lastfm.radio.login.help "För att lyssna på Last.fm Radio måste duvara inloggad till Last.fm. Om du inte redan har ett konto, kan du registrera dig för ett.">
+<!ENTITY lastfm.radio.start "Vet du inte var du ska börja? Testa att göra en sökning, eller se vad andra lyssnar på.">
+<!ENTITY lastfm.radio.start.top.artists "Toppartister på Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Topptaggar på Last.fm">
+<!ENTITY lastfm.radio.register "Registrera">
+<!ENTITY lastfm.radio.subscriber.button "Subscribe">
+<!ENTITY lastfm.radio.subscriber.help "In order to listen to Last.fm Radio, you must be a subscriber.">
+<!ENTITY lastfm.radio.search "Sök">
+<!ENTITY lastfm.radio.library "Bibliotek">
+<!ENTITY lastfm.radio.loved "Älskade låtar">
+<!ENTITY lastfm.radio.neighbourhood "Grannskap">
+<!ENTITY lastfm.radio.recommended "Rekommendationer">
+<!ENTITY lastfm.radio.user_stations "Användarstationer">
+<!ENTITY lastfm.radio.recent_stations "Senaste stationer">
+<!ENTITY lastfm.radio.from.lastfm "Från Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Rekommenderade artister">
+<!ENTITY lastfm.radio.top_artists "Dina toppartister">
+<!ENTITY lastfm.radio.top_tags "Dina topptaggar">
+<!ENTITY lastfm.radio.friends "Dina vänner">
+<!ENTITY lastfm.radio.neighbours "Grannar">
+<!ENTITY lastfm.radio.from.songbird "Från Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Dina mest spelade artister">
+<!ENTITY lastfm.radio.highest_rated_artists "Dina högst betygsatta artister">
+<!ENTITY lastfm.radio.popular_genres "Dina populära genrer">
+<!ENTITY lastfm.radio.play "Spela">
+<!ENTITY lastfm.tags.enter_new "Enter new tags (comma-separated)">
+<!ENTITY lastfm.tags.add_fail "Failed to add tags!">
+<!ENTITY lastfm.tags.user "Your Tags:">
+<!ENTITY lastfm.tags.global "Last.fm Global Tags:">

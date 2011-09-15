@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+  type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://shoutcast-radio/locale/overlay.dtd">
+
+<dialog id="addFavourite" title="&shoutcast-radio.add-station;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept,cancel"
+  onload="loadGenres()"
+  ondialogaccept="return doOK();"
+  ondialogcancel="return doCancel();">
+
+<script type="application/x-javascript" src="directory.js" />
+<script type="application/x-javascript">
+  function doOK() {
+    var name = document.getElementById("station-name").value;
+    var url = document.getElementById("station-url").value;
+    var genre = document.getElementById("station-genre");
+
+    window.arguments[0].name = name;
+    window.arguments[0].url = url;
+    window.arguments[0].genre = genre.selectedItem.value;
+    return true;
+  }
+
+  function doCancel() {
+    return true;
+  }
+
+  function loadGenres() {
+    var genres = RadioDirectory.getGenres();
+    var menulist = document.getElementById("station-genre");
+    for each (var genre in genres) {
+      var el = menulist.appendItem(genre.label, genre.value);
+    }
+    menulist.selectedIndex = 0;
+  }
+</script>
+
+<groupbox flex="1" orient="vertical">
+  <caption label="&shoutcast-radio.enter-name;" />
+  <textbox id="station-name" size="60"
+    emptytext="&shoutcast-radio.station-name;"/>
+</groupbox>
+<groupbox flex="1" orient="vertical">
+  <caption label="&shoutcast-radio.enter-url;" />
+  <textbox id="station-url" size="60" emptytext="http://locahost/listen.pls" />
+</groupbox>
+<groupbox flex="1" orient="vertical">
+  <caption label="&shoutcast-radio.enter-genre;" />
+  <menulist id="station-genre">
+  </menulist>
+</groupbox>
+</dialog>

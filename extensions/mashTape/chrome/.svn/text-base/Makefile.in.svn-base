@@ -1,0 +1,13 @@
+#preedTODO: add copyright
+DEPTH = ../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+  
+include $(DEPTH)/build/autodefs.mk
+
+IS_EXTENSION = 1
+
+JAR_MANIFEST = jar.mn.in
+
+include $(topsrcdir)/build/rules.mk
