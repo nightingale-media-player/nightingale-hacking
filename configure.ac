@@ -1283,7 +1283,7 @@ AC_SUBST(SB_SEARCHPLUGINS)
 # If our media core is gstreamer, and we're on linux, we may or may not
 # have this file. Warn if we expect it but don't find it.
 if test "$MEDIA_CORE_GST" = "1" -a "$SB_PLATFORM" = "linux"; then
-  AC_CHECK_FILE(${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/private/fluendo-mp3/libgstflump3dec.so,
+  AC_CHECK_FILE(/usr/lib/gstreamer-0.10/libgstflumpegdemux.so,
       [HAVE_FLUENDO_MP3=1],
       [AC_MSG_WARN([Linux MP3 decoder not present so build will not play mp3.])]
   )

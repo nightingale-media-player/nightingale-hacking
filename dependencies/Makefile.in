@@ -32,14 +32,14 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = vendor/mozbrowser
 
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird-bin
+   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/xulrunner-bin
 else
    SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
 endif
 
 ifeq (linux,$(SB_PLATFORM)) 
 	ifndef TAGLIB_LIBS
-	 SONGBIRD_XULRUNNER += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag.so*
+	 SONGBIRD_XULRUNNER += /usr/lib/libtag.so*
 	endif
 endif
 
@@ -410,48 +410,29 @@ ifdef MEDIA_CORE_GST #{
       GST_PLUGINS_GOOD_NAMES += gstpulse \
                                 $(NULL)
 
-      GSTREAMER = \
-       $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
+      GSTREAMER = $(NULL)
 
-      GST_PLUGINS_BASE_LIBS = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
+      GST_PLUGINS_BASE_LIBS = $(NULL)
+      
+      OGG = $(NULL)
 
-      OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
-            $(addsuffix $(DLL_SUFFIX), $(OGG_NAMES)))
+      VORBIS = $(NULL)
 
-      VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
-               $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
+      THEORA = $(NULL)
 
-      THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/lib/lib, \
-               $(addsuffix $(DLL_SUFFIX), $(THEORA_NAMES)))
+      FLAC = $(NULL)
 
-      FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
-             $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
+      JPEG = $(NULL)
 
-      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/lib/lib, \
-             $(addsuffix $(DLL_SUFFIX), $(JPEG_NAMES)))
+      GST_PLUGINS_CORE = $(NULL)
 
-      GST_PLUGINS_CORE = \
-       $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
+      GST_PLUGINS_BASE = $(NULL)
 
-      GST_PLUGINS_BASE = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_BASE_NAMES)))
+      GST_PLUGINS_GOOD = $(NULL)
 
-      GST_PLUGINS_GOOD = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_GOOD_NAMES)))
+      GST_PLUGINS_UGLY = $(NULL)
 
-      GST_PLUGINS_UGLY = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_UGLY_NAMES)))
-
-      GST_PLUGINS_BAD = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
+      GST_PLUGINS_BAD = $(NULL)
 
       SONGBIRD_LIB += $(GSTREAMER) \
                       $(GST_PLUGINS_BASE_LIBS) \
@@ -463,7 +444,7 @@ ifdef MEDIA_CORE_GST #{
                       $(NULL)
 
       ifdef HAVE_FLUENDO_MP3
-         FLUENDO_PLUGIN = $(DEPS_DIR)/private/fluendo-mp3/libgstflump3dec.so
+         FLUENDO_PLUGIN = /usr/lib/gstreamer-0.10/libgstflumpegdemux.so
          SONGBIRD_GST_PLUGINS += $(FLUENDO_PLUGIN)
       endif
    endif # } not mac or windows
@@ -543,7 +524,7 @@ endif
 	$(RM) -r $(XULRUNNER_EXTENSION_ROOTDIR)
 
 libs::
-	$(MV) -f $(SONGBIRD_XR_STUB) $(SONGBIRD_XR_STUB_DIR)
+	ln -s $(SONGBIRD_XR_STUB) $(SONGBIRD_XR_STUB_DIR)
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 	$(INSTALL_PROG) $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
 endif
@@ -581,4 +562,3 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	$(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/songbird.exe, \
 	 $(SONGBIRD_XR_STUB_DIR)/songbird.exe, songbird.res, VersionInfo,1,1033
 endif # }windows
-	$(CHMOD) 0755 $(SONGBIRD_STUB)

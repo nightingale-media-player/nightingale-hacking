@@ -9706,24 +9706,22 @@ fi
 # If our media core is gstreamer, and we're on linux, we may or may not
 # have this file. Warn if we expect it but don't find it.
 if test "$MEDIA_CORE_GST" = "1" -a "$SB_PLATFORM" = "linux"; then
-  as_ac_File=`$as_echo "ac_cv_file_${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/private/fluendo-mp3/libgstflump3dec.so" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/private/fluendo-mp3/libgstflump3dec.so" >&5
-$as_echo_n "checking for ${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/private/fluendo-mp3/libgstflump3dec.so... " >&6; }
-if eval \${$as_ac_File+:} false; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for /usr/lib/gstreamer-0.10/libgstflumpegdemux.so" >&5
+$as_echo_n "checking for /usr/lib/gstreamer-0.10/libgstflumpegdemux.so... " >&6; }
+if ${ac_cv_file__usr_lib_gstreamer_0_10_libgstflumpegdemux_so+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   test "$cross_compiling" = yes &&
   as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/private/fluendo-mp3/libgstflump3dec.so"; then
-  eval "$as_ac_File=yes"
+if test -r "/usr/lib/gstreamer-0.10/libgstflumpegdemux.so"; then
+  ac_cv_file__usr_lib_gstreamer_0_10_libgstflumpegdemux_so=yes
 else
-  eval "$as_ac_File=no"
+  ac_cv_file__usr_lib_gstreamer_0_10_libgstflumpegdemux_so=no
 fi
 fi
-eval ac_res=\$$as_ac_File
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file__usr_lib_gstreamer_0_10_libgstflumpegdemux_so" >&5
+$as_echo "$ac_cv_file__usr_lib_gstreamer_0_10_libgstflumpegdemux_so" >&6; }
+if test "x$ac_cv_file__usr_lib_gstreamer_0_10_libgstflumpegdemux_so" = xyes; then :
   HAVE_FLUENDO_MP3=1
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Linux MP3 decoder not present so build will not play mp3." >&5

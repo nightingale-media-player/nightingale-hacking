@@ -1,3 +1,5 @@
+dependencies/linux-*
+compiled
 .songbirdconfig.mk
 .songbirdconfig.out
 .svn
