@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components/library/base/src
 http://publicsvn.songbirdnest.com/client
 
@@ -94,17 +94,18 @@ msmith
 
 31072
 
-sbMediaListDuplicateFilter.cpp
+Makefile.in
 file
 
 
 
 
 2011-09-15T07:24:54.000000Z
-18cfef1f065885303ee34e1e74e0fe79
-2010-10-01T20:47:02.314189Z
-19609
-aus
+b4a1e5e590dae55c1482854b5341924f
+2011-01-18T22:19:35.957243Z
+20409
+msmith
+has-props
 
 
 
@@ -125,8 +126,7 @@ aus
 
 
 
-
-7873
+3642
 
 sbMediaItemWatcher.cpp
 file
@@ -162,18 +162,17 @@ mook
 
 15687
 
-Makefile.in
+sbMediaListDuplicateFilter.cpp
 file
 
 
 
 
 2011-09-15T07:24:54.000000Z
-b4a1e5e590dae55c1482854b5341924f
-2011-01-18T22:19:35.957243Z
-20409
-msmith
-has-props
+18cfef1f065885303ee34e1e74e0fe79
+2010-10-01T20:47:02.314189Z
+19609
+aus
 
 
 
@@ -194,7 +193,8 @@ has-props
 
 
 
-3642
+
+7873
 
 sbLibrarySearchSuggester.js
 file
@@ -298,39 +298,8 @@ mook
 
 6372
 
-sbMediaListDuplicateFilter.h
-file
-
-
-
-
-2011-09-15T07:24:54.000000Z
-96d22d2aeec635212ceb7f33fb6af244
-2010-10-01T20:47:02.314189Z
-19609
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3369
+static
+dir
 
 sbMediaItemWatcher.h
 file
@@ -366,8 +335,39 @@ erik
 
 4729
 
-static
-dir
+sbMediaListDuplicateFilter.h
+file
+
+
+
+
+2011-09-15T07:24:54.000000Z
+96d22d2aeec635212ceb7f33fb6af244
+2010-10-01T20:47:02.314189Z
+19609
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3369
 
 sbMediaListEnumeratorWrapper.h
 file
@@ -437,40 +437,6 @@ jhawk
 
 10888
 
-sbTimeFormatter.jsm
-file
-
-
-
-
-2011-09-15T07:24:54.000000Z
-ebc78bbc40181282e322ef3147868d92
-2010-01-28T08:12:59.157779Z
-17362
-db48x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3733
-
 sbLibraryCID.h
 file
 
@@ -504,6 +470,40 @@ aus
 
 
 4489
+
+sbTimeFormatter.jsm
+file
+
+
+
+
+2011-09-15T07:24:54.000000Z
+ebc78bbc40181282e322ef3147868d92
+2010-01-28T08:12:59.157779Z
+17362
+db48x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3733
 
 sbLibraryChangeset.h
 file

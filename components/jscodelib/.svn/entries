@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components/jscodelib
 http://publicsvn.songbirdnest.com/client
 
@@ -25,6 +25,9 @@ kurt
 
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+test
+dir
 
 StringUtils.jsm
 file
@@ -59,9 +62,6 @@ kurt
 
 
 21922
-
-test
-dir
 
 WindowUtils.jsm
 file
@@ -131,40 +131,6 @@ mikeh
 
 1790
 
-PlayQueueUtils.jsm
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-aee9cc9a2a6a0d0b050aedd4becacd19
-2011-01-05T01:27:22.877314Z
-20320
-jhawk
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2584
-
 SBDataRemoteUtils.jsm
 file
 
@@ -198,6 +164,40 @@ erik
 
 
 9729
+
+PlayQueueUtils.jsm
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+aee9cc9a2a6a0d0b050aedd4becacd19
+2011-01-05T01:27:22.877314Z
+20320
+jhawk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2584
 
 FolderUtils.jsm
 file
@@ -301,40 +301,6 @@ kurt
 
 48769
 
-PlatformUtils.jsm
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-1b5f238bf63b472c5f4a30027d9e42a9
-2010-06-04T01:14:16.644075Z
-18793
-preed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2157
-
 SBTimer.jsm
 file
 
@@ -369,17 +335,17 @@ erik
 
 3389
 
-AddOnUtils.jsm
+PlatformUtils.jsm
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-77c390b8f340e172d5087b41a7545e18
-2008-09-20T00:04:22.975386Z
-10991
-erik
+1b5f238bf63b472c5f4a30027d9e42a9
+2010-06-04T01:14:16.644075Z
+18793
+preed
 
 
 
@@ -401,7 +367,7 @@ erik
 
 
 
-15038
+2157
 
 ArrayConverter.jsm
 file
@@ -437,17 +403,17 @@ mook
 
 7845
 
-DebugUtils.jsm
+AddOnUtils.jsm
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-c4d7041d54b3ffa98cc7a07322926526
-2010-04-27T22:57:50.498652Z
-18401
-mook
+77c390b8f340e172d5087b41a7545e18
+2008-09-20T00:04:22.975386Z
+10991
+erik
 
 
 
@@ -469,7 +435,7 @@ mook
 
 
 
-2492
+15038
 
 LocalStore.jsm
 file
@@ -504,6 +470,40 @@ alfred
 
 
 1915
+
+DebugUtils.jsm
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+c4d7041d54b3ffa98cc7a07322926526
+2010-04-27T22:57:50.498652Z
+18401
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2492
 
 ObserverUtils.jsm
 file

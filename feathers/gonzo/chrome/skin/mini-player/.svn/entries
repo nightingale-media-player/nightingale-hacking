@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/feathers/gonzo/chrome/skin/mini-player
 http://publicsvn.songbirdnest.com/client
 
@@ -298,40 +298,6 @@ has-props
 
 165
 
-button-close.png
-file
-
-
-
-
-2011-09-15T07:26:13.000000Z
-ee0649f9931b9e85a920ca1c9a1657fa
-2008-08-06T17:05:08.456792Z
-10380
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-612
-
 next.png
 file
 
@@ -365,6 +331,40 @@ has-props
 
 
 4121
+
+button-close.png
+file
+
+
+
+
+2011-09-15T07:26:13.000000Z
+ee0649f9931b9e85a920ca1c9a1657fa
+2008-08-06T17:05:08.456792Z
+10380
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+612
 
 play-pause.png
 file

@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components/mediacore/metadata/manager/test
 http://publicsvn.songbirdnest.com/client
 
@@ -128,40 +128,6 @@ mook
 
 8109
 
-test_metadatahandler.js
-file
-
-
-
-
-2011-09-15T07:24:42.000000Z
-0af17a9a74f615e63836f64177f61054
-2008-07-24T02:26:51.739995Z
-10092
-matt
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2726
-
 test_metadatajob_writing.js
 file
 
@@ -195,6 +161,40 @@ dbradley
 
 
 11157
+
+test_metadatahandler.js
+file
+
+
+
+
+2011-09-15T07:24:42.000000Z
+0af17a9a74f615e63836f64177f61054
+2008-07-24T02:26:51.739995Z
+10092
+matt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2726
 
 tail_metadatamanager.js
 file
@@ -369,6 +369,9 @@ has-props
 
 5180
 
+errorcases
+dir
+
 test_bug7406.js
 file
 
@@ -402,9 +405,6 @@ matt
 
 
 3318
-
-errorcases
-dir
 
 test_performance.js
 file

@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/contrib/graphics/icons
 http://publicsvn.songbirdnest.com/client
 
@@ -25,40 +25,6 @@ has-props
 
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-llama-blue.ico
-file
-
-
-
-
-2011-09-15T07:25:58.000000Z
-2e2c96cb50ec0b34d541004d5398854b
-2006-03-08T22:19:01.511821Z
-1
-ben
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2238
 
 modern-install-colorful.ico
 file
@@ -94,14 +60,14 @@ has-props
 
 23558
 
-modern-install-blue-full.ico
+llama-blue.ico
 file
 
 
 
 
 2011-09-15T07:25:58.000000Z
-b6d66ee2e36cc41fd4cced07a02043ff
+2e2c96cb50ec0b34d541004d5398854b
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -126,7 +92,7 @@ has-props
 
 
 
-23558
+2238
 
 modern-install-blue.ico
 file
@@ -161,6 +127,40 @@ has-props
 
 
 13902
+
+modern-install-blue-full.ico
+file
+
+
+
+
+2011-09-15T07:25:58.000000Z
+b6d66ee2e36cc41fd4cced07a02043ff
+2006-03-08T22:19:01.511821Z
+1
+ben
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+23558
 
 modern-uninstall-colorful.ico
 file
@@ -230,14 +230,14 @@ has-props
 
 25214
 
-modern-uninstall-blue.ico
+modern-uninstall-blue-full.ico
 file
 
 
 
 
 2011-09-15T07:25:58.000000Z
-38bd0e74075cf1668424e48537e0d923
+3ba26092cac1be9afd78ec88a07308c5
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -262,7 +262,7 @@ has-props
 
 
 
-13902
+23558
 
 arrow2-install.ico
 file
@@ -298,14 +298,14 @@ has-props
 
 4710
 
-modern-uninstall-blue-full.ico
+modern-uninstall-blue.ico
 file
 
 
 
 
 2011-09-15T07:25:58.000000Z
-3ba26092cac1be9afd78ec88a07308c5
+38bd0e74075cf1668424e48537e0d923
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -330,7 +330,7 @@ has-props
 
 
 
-23558
+13902
 
 orange-uninstall.ico
 file
@@ -400,40 +400,6 @@ has-props
 
 4710
 
-pixel-install.ico
-file
-
-
-
-
-2011-09-15T07:25:58.000000Z
-f49764fb2a99809ce599ff60f6207c61
-2006-03-08T22:19:01.511821Z
-1
-ben
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5390
-
 classic-install.ico
 file
 
@@ -468,14 +434,14 @@ has-props
 
 1078
 
-modern-install-full.ico
+pixel-install.ico
 file
 
 
 
 
 2011-09-15T07:25:58.000000Z
-f4126775f2aa973682b1c9e142338135
+f49764fb2a99809ce599ff60f6207c61
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -500,7 +466,7 @@ has-props
 
 
 
-23558
+5390
 
 modern-install.ico
 file
@@ -535,6 +501,40 @@ has-props
 
 
 13902
+
+modern-install-full.ico
+file
+
+
+
+
+2011-09-15T07:25:58.000000Z
+f4126775f2aa973682b1c9e142338135
+2006-03-08T22:19:01.511821Z
+1
+ben
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+23558
 
 classic-uninstall.ico
 file

@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/app/content/scripts/device
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ kurt
 
 35007
 
-deviceCapacity.js
-file
-
-
-
-
-2011-09-15T07:24:26.000000Z
-c3ebcd004dbcc556e2b777ae4eb156ba
-2010-07-16T08:01:05.964373Z
-19170
-alfred
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-12065
-
 deviceFirmwareWizard.js
 file
 
@@ -127,6 +93,40 @@ jwatts
 
 
 33658
+
+deviceCapacity.js
+file
+
+
+
+
+2011-09-15T07:24:26.000000Z
+c3ebcd004dbcc556e2b777ae4eb156ba
+2010-07-16T08:01:05.964373Z
+19170
+alfred
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12065
 
 deviceGeneralSettings.js
 file
@@ -298,17 +298,17 @@ jhawk
 
 33762
 
-deviceMediaManagement.js
+deviceSync.js
 file
 
 
 
 
 2011-09-15T07:24:26.000000Z
-26cadb35ecc61995a92d2b99b2c8d660
-2011-05-13T21:49:07.672214Z
-21170
-kurt
+1fffc40dca6ae5f019a3efaad808425f
+2011-07-01T22:10:02.345061Z
+21667
+mikeh
 
 
 
@@ -330,7 +330,7 @@ kurt
 
 
 
-14977
+26036
 
 deviceSupport.js
 file
@@ -366,17 +366,17 @@ dbradley
 
 23385
 
-deviceSync.js
+deviceMediaManagement.js
 file
 
 
 
 
 2011-09-15T07:24:26.000000Z
-1fffc40dca6ae5f019a3efaad808425f
-2011-07-01T22:10:02.345061Z
-21667
-mikeh
+26cadb35ecc61995a92d2b99b2c8d660
+2011-05-13T21:49:07.672214Z
+21170
+kurt
 
 
 
@@ -398,41 +398,7 @@ mikeh
 
 
 
-26036
-
-deviceCapacityPanel.js
-file
-
-
-
-
-2011-09-15T07:24:26.000000Z
-c9b3eb6056d1bf12e8bda918c7e57968
-2010-05-06T14:24:17.049146Z
-18515
-erik
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6193
+14977
 
 multiCDLookupResultsDialog.js
 file
@@ -468,17 +434,17 @@ jhawk
 
 9016
 
-deviceMgmtTabs.js
+deviceCapacityPanel.js
 file
 
 
 
 
 2011-09-15T07:24:26.000000Z
-394e33b7c68764e501284eb1c7175966
-2010-06-07T22:01:10.991392Z
-18816
-preed
+c9b3eb6056d1bf12e8bda918c7e57968
+2010-05-06T14:24:17.049146Z
+18515
+erik
 
 
 
@@ -500,7 +466,7 @@ preed
 
 
 
-12664
+6193
 
 deviceSummarySettings.js
 file
@@ -535,6 +501,40 @@ alfred
 
 
 9142
+
+deviceMgmtTabs.js
+file
+
+
+
+
+2011-09-15T07:24:26.000000Z
+394e33b7c68764e501284eb1c7175966
+2010-06-07T22:01:10.991392Z
+18816
+preed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12664
 
 deviceControl.js
 file

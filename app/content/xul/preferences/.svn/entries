@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/app/content/xul/preferences
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ lone
 
 1321
 
-importMediaPrefs.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-09c62b3bea1e7ad8bbbc820584f9495b
-2009-09-25T17:32:06.752489Z
-15002
-alfred
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2594
-
 albumArtwork.xul
 file
 
@@ -127,6 +93,40 @@ alfred
 
 
 4349
+
+importMediaPrefs.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+09c62b3bea1e7ad8bbbc820584f9495b
+2009-09-25T17:32:06.752489Z
+15002
+alfred
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2594
 
 permissionsOverlay.xul
 file
@@ -230,17 +230,17 @@ redfive
 
 4753
 
-playbackPrefs.xul
+hotKeys.xul
 file
 
 
 
 
 2011-09-15T07:24:30.000000Z
-18c49b3504b9b9ee09c9cbc9ec3032a1
-2010-02-08T23:42:15.945906Z
-17516
-stevel
+f921f0f935c49cf43db0874048e97e21
+2009-11-09T09:37:54.264114Z
+15728
+palant
 
 
 
@@ -262,7 +262,7 @@ stevel
 
 
 
-4700
+2884
 
 mainOverlay.xul
 file
@@ -298,17 +298,17 @@ has-props
 
 4627
 
-hotKeys.xul
+playbackPrefs.xul
 file
 
 
 
 
 2011-09-15T07:24:30.000000Z
-f921f0f935c49cf43db0874048e97e21
-2009-11-09T09:37:54.264114Z
-15728
-palant
+18c49b3504b9b9ee09c9cbc9ec3032a1
+2010-02-08T23:42:15.945906Z
+17516
+stevel
 
 
 
@@ -330,7 +330,7 @@ palant
 
 
 
-2884
+4700
 
 sanitizeOverlay.xul
 file

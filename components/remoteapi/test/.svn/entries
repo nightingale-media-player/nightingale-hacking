@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components/remoteapi/test
 http://publicsvn.songbirdnest.com/client
 
@@ -25,6 +25,9 @@ dbradley
 
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
+
+media
+dir
 
 test_remotemedialist_add2_page.html
 file
@@ -60,8 +63,39 @@ redfive
 
 4817
 
-media
-dir
+test-bug6149.html
+file
+
+
+
+
+2011-09-15T07:25:34.000000Z
+e6859e57a9bc53e2723aecaca515bdf2
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3336
 
 head_remoteapi.js
 file
@@ -97,17 +131,18 @@ has-props
 
 7101
 
-test-bug6149.html
+Makefile.in
 file
 
 
 
 
 2011-09-15T07:25:34.000000Z
-e6859e57a9bc53e2723aecaca515bdf2
-2007-12-20T02:13:55.722209Z
-7658
-lone
+488ba65cbec9fb5ac7887b9737e82736
+2011-05-19T21:36:23.902379Z
+21238
+dbradley
+has-props
 
 
 
@@ -128,8 +163,7 @@ lone
 
 
 
-
-3336
+5567
 
 wpapi_propertyCreation_base_m.html
 file
@@ -165,40 +199,6 @@ redfive
 
 2970
 
-Makefile.in
-file
-
-
-
-
-2011-09-15T07:25:34.000000Z
-488ba65cbec9fb5ac7887b9737e82736
-2011-05-19T21:36:23.902379Z
-21238
-dbradley
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5567
-
 test-remoteAPI_buttons.html
 file
 
@@ -233,40 +233,6 @@ nick
 
 4880
 
-test-remoteAPI_Library_GetMediaList.html
-file
-
-
-
-
-2011-09-15T07:25:34.000000Z
-bd7d90f0ff4ac70b548fa711caacf2db
-2010-03-05T02:15:44.219078Z
-17789
-nick
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2335
-
 test_remotemediaitem.js
 file
 
@@ -300,6 +266,40 @@ has-props
 
 
 963
+
+test-remoteAPI_Library_GetMediaList.html
+file
+
+
+
+
+2011-09-15T07:25:34.000000Z
+bd7d90f0ff4ac70b548fa711caacf2db
+2010-03-05T02:15:44.219078Z
+17789
+nick
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2335
 
 test_remotemedialist_page.html
 file
@@ -1219,40 +1219,6 @@ has-props
 
 960
 
-test_siteID.js
-file
-
-
-
-
-2011-09-15T07:25:34.000000Z
-4c3ca63bb6009274d91415e84d1955a4
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-953
-
 test_remotelibrary_duplicates_page.html
 file
 
@@ -1286,6 +1252,40 @@ redfive
 
 
 3243
+
+test_siteID.js
+file
+
+
+
+
+2011-09-15T07:25:34.000000Z
+4c3ca63bb6009274d91415e84d1955a4
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+953
 
 test_remotedownload.js
 file
@@ -1423,40 +1423,6 @@ ian
 
 1435
 
-test_batchCalls_page.html.in
-file
-
-
-
-
-2011-09-15T07:25:34.000000Z
-b8b22230f12809c54f770d254f0ddc07
-2010-03-10T03:01:38.797505Z
-17852
-nick
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9017
-
 test_crossLibAdd.js
 file
 
@@ -1490,6 +1456,40 @@ lone
 
 
 958
+
+test_batchCalls_page.html.in
+file
+
+
+
+
+2011-09-15T07:25:34.000000Z
+b8b22230f12809c54f770d254f0ddc07
+2010-03-10T03:01:38.797505Z
+17852
+nick
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9017
 
 test-remoteAPI_01.html
 file
@@ -1559,17 +1559,17 @@ matt
 
 1571
 
-wpapi_propertyCreation_base_c.html
+test_empty.js
 file
 
 
 
 
 2011-09-15T07:25:34.000000Z
-fd7f258cb66a42601fb63c54e750df53
-2008-10-28T23:44:22.255541Z
-11489
-redfive
+b73db4fc201b5a514ddf78cf1efdd724
+2007-12-20T02:13:55.722209Z
+7658
+lone
 
 
 
@@ -1591,7 +1591,7 @@ redfive
 
 
 
-3399
+953
 
 test-remoteAPI_hatNotification.html
 file
@@ -1627,17 +1627,17 @@ steve
 
 4375
 
-test_empty.js
+wpapi_propertyCreation_base_c.html
 file
 
 
 
 
 2011-09-15T07:25:34.000000Z
-b73db4fc201b5a514ddf78cf1efdd724
-2007-12-20T02:13:55.722209Z
-7658
-lone
+fd7f258cb66a42601fb63c54e750df53
+2008-10-28T23:44:22.255541Z
+11489
+redfive
 
 
 
@@ -1659,7 +1659,7 @@ lone
 
 
 
-953
+3399
 
 test-remoteAPI_05.html
 file

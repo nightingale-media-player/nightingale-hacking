@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components/devices/base/public
 http://publicsvn.songbirdnest.com/client
 
@@ -264,40 +264,6 @@ has-props
 
 1665
 
-sbIDeviceCompatibility.idl
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-f9c41c4c22a7aad1ad6d116e4eec066b
-2008-01-10T01:35:38.363904Z
-7772
-aus
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1575
-
 sbIDeviceFirmwareSupport.idl
 file
 
@@ -332,16 +298,16 @@ aus
 
 1892
 
-sbIDeviceManager.idl
+sbIDeviceCompatibility.idl
 file
 
 
 
 
 2011-09-15T07:24:38.000000Z
-8775a0aaf76d6a77b3eba0fac4522176
-2010-01-19T02:17:26.392910Z
-17164
+f9c41c4c22a7aad1ad6d116e4eec066b
+2008-01-10T01:35:38.363904Z
+7772
 aus
 has-props
 
@@ -364,41 +330,7 @@ has-props
 
 
 
-3247
-
-sbIDeviceContent.idl
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-1a98d6b46f8f0a48601ec73fdf1cc8f1
-2008-03-08T02:38:10.386389Z
-8512
-erik
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1709
+1575
 
 sbIDeviceFirmwareHandler.idl
 file
@@ -434,6 +366,74 @@ jwatts
 
 14968
 
+sbIDeviceContent.idl
+file
+
+
+
+
+2011-09-15T07:24:38.000000Z
+1a98d6b46f8f0a48601ec73fdf1cc8f1
+2008-03-08T02:38:10.386389Z
+8512
+erik
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1709
+
+sbIDeviceManager.idl
+file
+
+
+
+
+2011-09-15T07:24:38.000000Z
+8775a0aaf76d6a77b3eba0fac4522176
+2010-01-19T02:17:26.392910Z
+17164
+aus
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3247
+
 sbIDeviceInfoRegistrar.idl
 file
 
@@ -468,40 +468,6 @@ has-props
 
 10865
 
-sbIDevice.idl
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-7e3039e21d6cf6cab5e5f4fc6a9447dd
-2011-05-25T20:56:10.798766Z
-21300
-jhawk
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-12234
-
 sbIDeviceFirmwareUpdate.idl
 file
 
@@ -535,6 +501,40 @@ aus
 
 
 1931
+
+sbIDevice.idl
+file
+
+
+
+
+2011-09-15T07:24:38.000000Z
+7e3039e21d6cf6cab5e5f4fc6a9447dd
+2011-05-25T20:56:10.798766Z
+21300
+jhawk
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12234
 
 sbIDeviceEventBeforeAddedData.idl
 file

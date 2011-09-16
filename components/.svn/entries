@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components
 http://publicsvn.songbirdnest.com/client
 
@@ -68,28 +68,28 @@ dir
 protocol
 dir
 
-testharness
-dir
-
 appstartup
 dir
 
-servicepane
+testharness
 dir
 
 library
 dir
 
+servicepane
+dir
+
 search
 dir
 
-sqlbuilder
+parsererror
 dir
 
 intl
 dir
 
-parsererror
+sqlbuilder
 dir
 
 albumart
@@ -98,10 +98,10 @@ dir
 job
 dir
 
-devicesobsolete
+contenthandling
 dir
 
-contenthandling
+devicesobsolete
 dir
 
 webservices
@@ -110,13 +110,13 @@ dir
 update
 dir
 
-playlistcommands
+integration
 dir
 
 include
 dir
 
-integration
+playlistcommands
 dir
 
 faceplate

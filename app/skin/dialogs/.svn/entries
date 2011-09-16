@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/app/skin/dialogs
 http://publicsvn.songbirdnest.com/client
 
@@ -128,40 +128,6 @@ erik
 
 1121
 
-firstRunWizard.css
-file
-
-
-
-
-2011-09-15T07:24:22.000000Z
-7684d88793aa846c127e197acc13ca33
-2011-05-13T22:42:04.921327Z
-21174
-jwatts
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7176
-
 multiCDLookupResultsDialog.css
 file
 
@@ -196,17 +162,17 @@ palant
 
 1156
 
-importLibrary.css
+firstRunWizard.css
 file
 
 
 
 
 2011-09-15T07:24:22.000000Z
-750a279dadb047b5663161ca12a3b394
-2008-07-02T19:54:34.758473Z
-9822
-erik
+7684d88793aa846c127e197acc13ca33
+2011-05-13T22:42:04.921327Z
+21174
+jwatts
 
 
 
@@ -228,7 +194,7 @@ erik
 
 
 
-1251
+7176
 
 jobProgress.css
 file
@@ -263,6 +229,40 @@ stevel
 
 
 1897
+
+importLibrary.css
+file
+
+
+
+
+2011-09-15T07:24:22.000000Z
+750a279dadb047b5663161ca12a3b394
+2008-07-02T19:54:34.758473Z
+9822
+erik
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1251
 
 preferences.css
 file
@@ -366,17 +366,17 @@ matt
 
 198
 
-videoWinControls.css
+addons.css
 file
 
 
 
 
 2011-09-15T07:24:22.000000Z
-133b46fff1f8a36bb253c815a23d23b0
-2010-04-24T04:40:27.638549Z
-18355
-alfred
+bda8db25b13002f41505792db4db70c0
+2007-12-20T02:13:55.722209Z
+7658
+lone
 
 
 
@@ -398,7 +398,7 @@ alfred
 
 
 
-9801
+1076
 
 smartPlaylist.css
 file
@@ -434,17 +434,17 @@ stevel
 
 3851
 
-addons.css
+videoWinControls.css
 file
 
 
 
 
 2011-09-15T07:24:22.000000Z
-bda8db25b13002f41505792db4db70c0
-2007-12-20T02:13:55.722209Z
-7658
-lone
+133b46fff1f8a36bb253c815a23d23b0
+2010-04-24T04:40:27.638549Z
+18355
+alfred
 
 
 
@@ -466,7 +466,7 @@ lone
 
 
 
-1076
+9801
 
 playQueue.css
 file

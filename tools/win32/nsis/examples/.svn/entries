@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/examples
 http://publicsvn.songbirdnest.com/client
 
@@ -316,40 +316,6 @@ aus
 
 6836
 
-makensis.nsi
-file
-
-
-
-
-2011-09-15T07:26:02.000000Z
-9b717c39f3dd583abe05ac755d9c4bdb
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-33490
-
 UserVars.nsi
 file
 
@@ -383,6 +349,40 @@ aus
 
 
 1326
+
+makensis.nsi
+file
+
+
+
+
+2011-09-15T07:26:02.000000Z
+9b717c39f3dd583abe05ac755d9c4bdb
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+33490
 
 example1.nsi
 file
@@ -486,40 +486,6 @@ aus
 
 1550
 
-StrFunc.nsi
-file
-
-
-
-
-2011-09-15T07:26:02.000000Z
-b13e95700505a03d094bc61c326f398c
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-22706
-
 gfx.nsi
 file
 
@@ -553,6 +519,40 @@ aus
 
 
 3209
+
+StrFunc.nsi
+file
+
+
+
+
+2011-09-15T07:26:02.000000Z
+b13e95700505a03d094bc61c326f398c
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+22706
 
 ShellLink.nsi
 file
@@ -588,40 +588,6 @@ aus
 
 2827
 
-waplugin.nsi
-file
-
-
-
-
-2011-09-15T07:26:02.000000Z
-7adf8523dbb4bffe47ff6f45447bb279
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4616
-
 TextFunc.ini
 file
 
@@ -656,14 +622,14 @@ aus
 
 2007
 
-WordFuncTest.nsi
+waplugin.nsi
 file
 
 
 
 
 2011-09-15T07:26:02.000000Z
-a0956cbbf8357abe23f6a203783985f4
+7adf8523dbb4bffe47ff6f45447bb279
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -688,7 +654,7 @@ aus
 
 
 
-17326
+4616
 
 WordFunc.nsi
 file
@@ -724,14 +690,14 @@ aus
 
 16624
 
-FileFunc.nsi
+WordFuncTest.nsi
 file
 
 
 
 
 2011-09-15T07:26:02.000000Z
-685cae5b6d790d3558ef8873c0051e64
+a0956cbbf8357abe23f6a203783985f4
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -756,7 +722,7 @@ aus
 
 
 
-19854
+17326
 
 FileFuncTest.nsi
 file
@@ -791,6 +757,40 @@ aus
 
 
 13998
+
+FileFunc.nsi
+file
+
+
+
+
+2011-09-15T07:26:02.000000Z
+685cae5b6d790d3558ef8873c0051e64
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+19854
 
 System
 dir

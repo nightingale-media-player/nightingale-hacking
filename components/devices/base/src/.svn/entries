@@ -1,7 +1,7 @@
 10
 
 dir
-22041
+22045
 http://publicsvn.songbirdnest.com/client/trunk/components/devices/base/src
 http://publicsvn.songbirdnest.com/client
 
@@ -502,40 +502,6 @@ has-props
 
 2919
 
-sbDeviceLibraryHelpers.cpp
-file
-
-
-
-
-2011-09-15T07:24:37.000000Z
-7788f24f4bec15b6b5b266095c8466e9
-2011-04-06T01:04:18.860226Z
-20876
-dbradley
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9247
-
 sbDeviceLibraryMediaSyncSettings.h
 file
 
@@ -570,17 +536,18 @@ jhawk
 
 2944
 
-sbDeviceStatus.h
+sbDeviceLibraryHelpers.cpp
 file
 
 
 
 
 2011-09-15T07:24:37.000000Z
-0b8b3e4ac59ac3b56a701f7392155d11
-2010-03-15T20:37:00.423274Z
-17899
-db48x
+7788f24f4bec15b6b5b266095c8466e9
+2011-04-06T01:04:18.860226Z
+20876
+dbradley
+has-props
 
 
 
@@ -601,8 +568,7 @@ db48x
 
 
 
-
-2503
+9247
 
 sbBaseDeviceEventTarget.h
 file
@@ -637,6 +603,40 @@ has-props
 
 
 2006
+
+sbDeviceStatus.h
+file
+
+
+
+
+2011-09-15T07:24:37.000000Z
+0b8b3e4ac59ac3b56a701f7392155d11
+2010-03-15T20:37:00.423274Z
+17899
+db48x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2503
 
 sbDeviceCapabilities.cpp
 file
@@ -774,40 +774,6 @@ dbradley
 
 43366
 
-sbDeviceCompatibility.cpp
-file
-
-
-
-
-2011-09-15T07:24:37.000000Z
-c62ccebc83ae0a27234271af1ef19ce9
-2008-02-06T00:54:19.764367Z
-8077
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2590
-
 sbBaseDeviceAPI.h
 file
 
@@ -841,6 +807,40 @@ has-props
 
 
 1033
+
+sbDeviceCompatibility.cpp
+file
+
+
+
+
+2011-09-15T07:24:37.000000Z
+c62ccebc83ae0a27234271af1ef19ce9
+2008-02-06T00:54:19.764367Z
+8077
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2590
 
 sbDeviceContent.cpp
 file
@@ -944,17 +944,17 @@ stevel
 
 1249
 
-sbDeviceCapsCompatibility.cpp
+sbDeviceEventBeforeAddedData.cpp
 file
 
 
 
 
 2011-09-15T07:24:37.000000Z
-983df7f64ec684a08742efa4cf9044dc
-2010-05-17T18:25:03.202252Z
-18632
-msmith
+25994f82e7e1e6ab332cf4ecac1c99c5
+2010-01-19T02:17:26.392910Z
+17164
+aus
 
 
 
@@ -976,7 +976,7 @@ msmith
 
 
 
-33207
+2994
 
 sbDeviceBaseModule.cpp
 file
@@ -1012,17 +1012,17 @@ has-props
 
 4848
 
-sbDeviceEventBeforeAddedData.cpp
+sbDeviceCapsCompatibility.cpp
 file
 
 
 
 
 2011-09-15T07:24:37.000000Z
-25994f82e7e1e6ab332cf4ecac1c99c5
-2010-01-19T02:17:26.392910Z
-17164
-aus
+983df7f64ec684a08742efa4cf9044dc
+2010-05-17T18:25:03.202252Z
+18632
+msmith
 
 
 
@@ -1044,7 +1044,7 @@ aus
 
 
 
-2994
+33207
 
 sbDeviceEvent.cpp
 file
