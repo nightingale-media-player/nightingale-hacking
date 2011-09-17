@@ -1,4 +1,5 @@
-dependencies/linux-*
+dependencies/linux-i686
+dependencies/linux-x86_64
 compiled
 .songbirdconfig.mk
 .songbirdconfig.out
