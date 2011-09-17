@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/extensions/lastfm/chrome/locale
 http://publicsvn.songbirdnest.com/client
 
@@ -26,46 +26,46 @@ kurt
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
 
-cs-CZ
-dir
-
 zh-CN
 dir
 
-da-DK
-dir
-
-nl-NL
+cs-CZ
 dir
 
 ro
 dir
 
-uk-UA
+nl-NL
 dir
 
-pl-PL
+da-DK
+dir
+
+uk-UA
 dir
 
 pt-BR
 dir
 
-hu-HU
+pl-PL
 dir
 
-en-US
+hu-HU
 dir
 
 sl-SI
 dir
 
+en-US
+dir
+
 en-GB
 dir
 
-ja
+fi-FI
 dir
 
-fi-FI
+ja
 dir
 
 sv-SE

@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/devices/device/src
 http://publicsvn.songbirdnest.com/client
 
@@ -607,40 +607,6 @@ preed
 
 4533
 
-sbBaseDevice.h
-file
-
-
-
-
-2011-09-15T07:24:35.000000Z
-2afb2a38ac694f9f93068bcd86a84dba
-2011-06-10T07:36:03.433979Z
-21468
-dbradley
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-63485
-
 sbUSBDeviceUtils.h
 file
 
@@ -674,6 +640,40 @@ erik
 
 
 12626
+
+sbBaseDevice.h
+file
+
+
+
+
+2011-09-15T07:24:35.000000Z
+2afb2a38ac694f9f93068bcd86a84dba
+2011-06-10T07:36:03.433979Z
+21468
+dbradley
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+63485
 
 sbDeviceXMLInfo.h
 file
@@ -879,40 +879,6 @@ alfred
 
 4667
 
-sbDeviceStatistics.h
-file
-
-
-
-
-2011-09-15T07:24:35.000000Z
-eaa503be489c5b447c0fef5f460b14f8
-2010-02-23T21:40:59.190467Z
-17664
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5527
-
 sbDeviceEnsureSpaceForWrite.cpp
 file
 
@@ -946,6 +912,40 @@ has-props
 
 
 7758
+
+sbDeviceStatistics.h
+file
+
+
+
+
+2011-09-15T07:24:35.000000Z
+eaa503be489c5b447c0fef5f460b14f8
+2010-02-23T21:40:59.190467Z
+17664
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5527
 
 sbTranscodeProgressListener.h
 file

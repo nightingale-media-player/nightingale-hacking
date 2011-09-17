@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/mediacore/metadata/manager/test/files
 http://publicsvn.songbirdnest.com/client
 
@@ -876,40 +876,6 @@ mook
 
 1332
 
-TrueAudio.tta
-file
-
-
-
-
-2011-09-15T07:24:42.000000Z
-e0bb4f2d9ddbfc72161fa15ba346f972
-2008-04-22T18:39:41.986018Z
-9032
-matt
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-20778
-
 MPEG4_Audio_Apple_Lossless_NoArt.m4a
 file
 
@@ -943,6 +909,40 @@ stevel
 
 
 25603
+
+TrueAudio.tta
+file
+
+
+
+
+2011-09-15T07:24:42.000000Z
+e0bb4f2d9ddbfc72161fa15ba346f972
+2008-04-22T18:39:41.986018Z
+9032
+matt
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+20778
 
 MPEG4_Expand.m4a
 file

@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/docs
 http://publicsvn.songbirdnest.com/client
 
@@ -26,31 +26,31 @@ aus
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
 
-StartMenu
+InstallOptions
 dir
 
 Modern UI
 dir
 
-InstallOptions
-dir
-
-System
+StartMenu
 dir
 
 StrFunc
 dir
 
-nsExec
+System
 dir
 
-VPatch
+AdvSplash
 dir
 
 ShellLink
 dir
 
-AdvSplash
+VPatch
+dir
+
+nsExec
 dir
 
 Math

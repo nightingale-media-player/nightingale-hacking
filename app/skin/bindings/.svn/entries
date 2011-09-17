@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/app/skin/bindings
 http://publicsvn.songbirdnest.com/client
 
@@ -94,40 +94,6 @@ preed
 
 910
 
-closableBox.css
-file
-
-
-
-
-2011-09-15T07:24:24.000000Z
-e41d59e4fac10aeda15d69e7c936d8d4
-2008-02-20T21:35:14.119618Z
-8291
-erik
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1301
-
 bindings.css
 file
 
@@ -161,6 +127,40 @@ nick
 
 
 2637
+
+closableBox.css
+file
+
+
+
+
+2011-09-15T07:24:24.000000Z
+e41d59e4fac10aeda15d69e7c936d8d4
+2008-02-20T21:35:14.119618Z
+8291
+erik
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1301
 
 observesDataRemote.css
 file
@@ -230,40 +230,6 @@ has-props
 
 2295
 
-equalizer.css
-file
-
-
-
-
-2011-09-15T07:24:24.000000Z
-13676bf2bd93b6b858a190c84bdb6a9d
-2009-05-15T22:38:44.899440Z
-13620
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-921
-
 playlist.css
 file
 
@@ -297,6 +263,40 @@ jhawk
 
 
 14534
+
+equalizer.css
+file
+
+
+
+
+2011-09-15T07:24:24.000000Z
+13676bf2bd93b6b858a190c84bdb6a9d
+2009-05-15T22:38:44.899440Z
+13620
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+921
 
 syscontrols.css
 file
@@ -468,9 +468,6 @@ palant
 
 7116
 
-device
-dir
-
 ratingsControl.css
 file
 
@@ -504,6 +501,9 @@ matt
 
 
 2751
+
+device
+dir
 
 statusbar.css
 file

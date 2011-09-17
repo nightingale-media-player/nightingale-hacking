@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/app/content/xul
 http://publicsvn.songbirdnest.com/client
 
@@ -477,40 +477,6 @@ erik
 
 4171
 
-messageBox.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-8ceb1cda1c7f94f86768f4abb0597f89
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2221
-
 dirtyPlaylistDialog.xul
 file
 
@@ -544,6 +510,40 @@ erik
 
 
 6355
+
+messageBox.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+8ceb1cda1c7f94f86768f4abb0597f89
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2221
 
 unknownContentTypeOverlay.xul
 file
@@ -681,7 +681,7 @@ nick
 
 2072
 
-controlToolbarOverlay.xul
+popupOverlay.xul
 file
 
 
@@ -749,75 +749,7 @@ palant
 
 2717
 
-popupOverlay.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-c9786c43f661962baf631fa0b9901dfb
-2008-01-18T23:06:30.616193Z
-7832
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2267
-
-menuOverlay.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-c9786c43f661962baf631fa0b9901dfb
-2008-01-18T23:06:30.616193Z
-7832
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2267
-
-miniScriptsOverlay.xul
+controlToolbarOverlay.xul
 file
 
 
@@ -885,6 +817,74 @@ preed
 
 4861
 
+miniScriptsOverlay.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+c9786c43f661962baf631fa0b9901dfb
+2008-01-18T23:06:30.616193Z
+7832
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2267
+
+menuOverlay.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+c9786c43f661962baf631fa0b9901dfb
+2008-01-18T23:06:30.616193Z
+7832
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2267
+
 layoutWithoutBrowserOverlay.xul
 file
 
@@ -919,40 +919,6 @@ lone
 
 6164
 
-profileSelectionOverlay.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-0fb8f02c43e6c5ccc92193faff403102
-2009-02-09T16:09:16.496861Z
-12716
-erik
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1803
-
 browserToolbarOverlay.xul
 file
 
@@ -986,6 +952,40 @@ has-props
 
 
 2267
+
+profileSelectionOverlay.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+0fb8f02c43e6c5ccc92193faff403102
+2009-02-09T16:09:16.496861Z
+12716
+erik
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1803
 
 extensionManagerOverlay.xul
 file

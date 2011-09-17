@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/feathers/gonzo/chrome/skin/playlist
 http://publicsvn.songbirdnest.com/client
 
@@ -230,40 +230,6 @@ has-props
 
 1164
 
-icon-dragging.png
-file
-
-
-
-
-2011-09-15T07:26:13.000000Z
-17f5b9dd758f631c821b26388f94a8e3
-2008-07-11T06:01:15.116799Z
-9923
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-543
-
 button-download-left.png
 file
 
@@ -297,6 +263,40 @@ has-props
 
 
 1192
+
+icon-dragging.png
+file
+
+
+
+
+2011-09-15T07:26:13.000000Z
+17f5b9dd758f631c821b26388f94a8e3
+2008-07-11T06:01:15.116799Z
+9923
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+543
 
 bg-progress-paused.png
 file
@@ -332,40 +332,6 @@ has-props
 
 233
 
-icon-originnotinmainlibrary.png
-file
-
-
-
-
-2011-09-15T07:26:13.000000Z
-d6b3e6e6a1df9506d41f63872df509bd
-2011-03-24T22:50:10.090388Z
-20798
-jhawk
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-377
-
 bg-download-failed.png
 file
 
@@ -399,6 +365,40 @@ has-props
 
 
 560
+
+icon-originnotinmainlibrary.png
+file
+
+
+
+
+2011-09-15T07:26:13.000000Z
+d6b3e6e6a1df9506d41f63872df509bd
+2011-03-24T22:50:10.090388Z
+20798
+jhawk
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+377
 
 bg-download-done.png
 file

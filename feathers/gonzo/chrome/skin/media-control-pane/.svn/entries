@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/feathers/gonzo/chrome/skin/media-control-pane
 http://publicsvn.songbirdnest.com/client
 
@@ -672,40 +672,6 @@ has-props
 
 3250
 
-bg-faceplate-inactive-splash.png
-file
-
-
-
-
-2011-09-15T07:26:13.000000Z
-f77d0ccfeb93bf0b1859a1ba19339c6a
-2008-07-10T02:08:56.506620Z
-9899
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-447
-
 bg-faceplate-left.png
 file
 
@@ -739,6 +705,40 @@ has-props
 
 
 3245
+
+bg-faceplate-inactive-splash.png
+file
+
+
+
+
+2011-09-15T07:26:13.000000Z
+f77d0ccfeb93bf0b1859a1ba19339c6a
+2008-07-10T02:08:56.506620Z
+9899
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+447
 
 button-max-volume.png
 file

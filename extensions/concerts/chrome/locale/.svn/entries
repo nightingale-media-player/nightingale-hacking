@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/extensions/concerts/chrome/locale
 http://publicsvn.songbirdnest.com/client
 
@@ -71,40 +71,40 @@ dir
 ru-RU
 dir
 
-pl
-dir
-
 th
 dir
 
-hu
-dir
-
-es-ES
+pl
 dir
 
 fr-FR
 dir
 
-de-DE
+es-ES
+dir
+
+hu
 dir
 
 eu-ES
 dir
 
-nl-NL
+de-DE
 dir
 
 da-DK
 dir
 
+nl-NL
+dir
+
 ca
 dir
 
-pt-BR
+pl-PL
 dir
 
-pl-PL
+pt-BR
 dir
 
 tr

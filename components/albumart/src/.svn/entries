@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/albumart/src
 http://publicsvn.songbirdnest.com/client
 
@@ -94,40 +94,6 @@ msmith
 
 2579
 
-sbAlbumArtModule.cpp
-file
-
-
-
-
-2011-09-15T07:24:56.000000Z
-f73c9263b7f1d41ce3f70e00d4b1a3eb
-2011-02-15T02:00:58.781833Z
-20554
-msmith
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-11275
-
 sbFileAlbumArtFetcher.h
 file
 
@@ -161,6 +127,40 @@ steven
 
 
 4938
+
+sbAlbumArtModule.cpp
+file
+
+
+
+
+2011-09-15T07:24:56.000000Z
+f73c9263b7f1d41ce3f70e00d4b1a3eb
+2011-02-15T02:00:58.781833Z
+20554
+msmith
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11275
 
 sbMetadataAlbumArtFetcher.h
 file
@@ -298,40 +298,6 @@ msmith
 
 21284
 
-sbAlbumArtCommon.h
-file
-
-
-
-
-2011-09-15T07:24:56.000000Z
-213c2878791f5179d824535f26aace3b
-2009-01-31T07:40:12.191125Z
-12640
-steven
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1304
-
 sbCoverHelper.jsm
 file
 
@@ -365,6 +331,40 @@ erik
 
 
 20271
+
+sbAlbumArtCommon.h
+file
+
+
+
+
+2011-09-15T07:24:56.000000Z
+213c2878791f5179d824535f26aace3b
+2009-01-31T07:40:12.191125Z
+12640
+steven
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1304
 
 sbAlbumArtScanner.h
 file

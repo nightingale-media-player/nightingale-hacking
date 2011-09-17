@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/library/localdatabase/src/migrationhandlers
 http://publicsvn.songbirdnest.com/client
 
@@ -128,40 +128,6 @@ lone
 
 3937
 
-sbMigrate070To08pre1.js
-file
-
-
-
-
-2011-09-15T07:24:51.000000Z
-7cf9be262365fc9c575e1cbb8e33f8e3
-2008-09-12T16:13:29.315952Z
-10889
-matt
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3922
-
 Makefile.in
 file
 
@@ -196,17 +162,17 @@ jhawk
 
 2445
 
-sbMigrate12pre1To12pre1b.js
+sbMigrate070To08pre1.js
 file
 
 
 
 
 2011-09-15T07:24:51.000000Z
-7e03ba7ed136c02033b14bac341bd29c
-2009-03-16T17:10:00.345707Z
-13144
-erik
+7cf9be262365fc9c575e1cbb8e33f8e3
+2008-09-12T16:13:29.315952Z
+10889
+matt
 
 
 
@@ -228,7 +194,7 @@ erik
 
 
 
-3381
+3922
 
 sbMigrate18to19pre0.indexSort.js
 file
@@ -264,17 +230,17 @@ aus
 
 3819
 
-sbMigrate11pre1bTo11pre1c.js
+sbMigrate12pre1To12pre1b.js
 file
 
 
 
 
 2011-09-15T07:24:51.000000Z
-47ce13c4dac3e1186493cbf261432dd0
-2009-02-11T01:19:23.616496Z
-12740
-matt
+7e03ba7ed136c02033b14bac341bd29c
+2009-03-16T17:10:00.345707Z
+13144
+erik
 
 
 
@@ -296,41 +262,7 @@ matt
 
 
 
-6020
-
-sbMigrate14to15pre.smartplaylist.js
-file
-
-
-
-
-2011-09-15T07:24:51.000000Z
-4688faeb3bc9b905864020fe73de0b79
-2009-11-05T06:06:46.150052Z
-15689
-alfred
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4490
+3381
 
 sbMigrate19to110pre0.addMetadataHashIdentity.js
 file
@@ -366,17 +298,17 @@ jhawk
 
 14349
 
-sbMigrate11pre1cTo11pre1d.js
+sbMigrate14to15pre.smartplaylist.js
 file
 
 
 
 
 2011-09-15T07:24:51.000000Z
-bcba7d25ee044baf2c63917e79252ec5
-2009-02-10T01:03:39.981643Z
-12722
-mook
+4688faeb3bc9b905864020fe73de0b79
+2009-11-05T06:06:46.150052Z
+15689
+alfred
 
 
 
@@ -398,7 +330,41 @@ mook
 
 
 
-3857
+4490
+
+sbMigrate11pre1bTo11pre1c.js
+file
+
+
+
+
+2011-09-15T07:24:51.000000Z
+47ce13c4dac3e1186493cbf261432dd0
+2009-02-11T01:19:23.616496Z
+12740
+matt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6020
 
 sbMigrate10To11pre1.js
 file
@@ -433,6 +399,40 @@ lone
 
 
 3968
+
+sbMigrate11pre1cTo11pre1d.js
+file
+
+
+
+
+2011-09-15T07:24:51.000000Z
+bcba7d25ee044baf2c63917e79252ec5
+2009-02-10T01:03:39.981643Z
+12722
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3857
 
 sbMigrate11pre1dTo11pre1e.js
 file

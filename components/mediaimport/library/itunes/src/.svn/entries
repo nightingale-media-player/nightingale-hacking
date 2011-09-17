@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/mediaimport/library/itunes/src
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ has-props
 
 4137
 
-sbiTunesImporterComponent.cpp
-file
-
-
-
-
-2011-09-15T07:25:41.000000Z
-c2e7947561d78a536cbd5abb65874fb6
-2009-05-08T06:22:38.078236Z
-13542
-dbradley
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3205
-
 Makefile.in
 file
 
@@ -127,6 +93,40 @@ has-props
 
 
 3332
+
+sbiTunesImporterComponent.cpp
+file
+
+
+
+
+2011-09-15T07:25:41.000000Z
+c2e7947561d78a536cbd5abb65874fb6
+2009-05-08T06:22:38.078236Z
+13542
+dbradley
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3205
 
 sbiTunesImporterJob.cpp
 file
@@ -196,17 +196,17 @@ dbradley
 
 3251
 
-sbiTunesSignature.cpp
+sbiTunesImporter.cpp
 file
 
 
 
 
 2011-09-15T07:25:41.000000Z
-2df6bc460987063793773aae2542fe84
-2009-06-09T07:25:52.215709Z
-13886
-aus
+ba037a138b6a1a471081d5c93a6458f4
+2011-06-14T01:55:18.210595Z
+21506
+kurt
 
 
 
@@ -228,7 +228,7 @@ aus
 
 
 
-5046
+56435
 
 sbiTunesImporterJob.h
 file
@@ -264,17 +264,17 @@ dbradley
 
 3229
 
-sbiTunesImporter.cpp
+sbiTunesSignature.cpp
 file
 
 
 
 
 2011-09-15T07:25:41.000000Z
-ba037a138b6a1a471081d5c93a6458f4
-2011-06-14T01:55:18.210595Z
-21506
-kurt
+2df6bc460987063793773aae2542fe84
+2009-06-09T07:25:52.215709Z
+13886
+aus
 
 
 
@@ -296,7 +296,7 @@ kurt
 
 
 
-56435
+5046
 
 sbiTunesImporterAlbumArtListener.h
 file
@@ -366,40 +366,6 @@ msmith
 
 4699
 
-sbiTunesSignature.h
-file
-
-
-
-
-2011-09-15T07:25:41.000000Z
-a9302afce75230e8ae1d56de5f34b178
-2009-05-22T02:35:37.446125Z
-13681
-dbradley
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2647
-
 sbiTunesImporter.h
 file
 
@@ -433,6 +399,40 @@ msmith
 
 
 10582
+
+sbiTunesSignature.h
+file
+
+
+
+
+2011-09-15T07:25:41.000000Z
+a9302afce75230e8ae1d56de5f34b178
+2009-05-22T02:35:37.446125Z
+13681
+dbradley
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2647
 
 sbiTunesDatabaseServices.cpp
 file

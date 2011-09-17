@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/integration/src/macosx
 http://publicsvn.songbirdnest.com/client
 
@@ -162,40 +162,6 @@ nick
 
 1249
 
-WindowCloak.mm
-file
-
-
-
-
-2011-09-15T07:24:59.000000Z
-203be8de274838f71a1b1b083ffd3cb8
-2008-01-25T00:54:45.529491Z
-7928
-ian
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-30
-
 sbMacAppDelegate.mm
 file
 
@@ -230,17 +196,17 @@ msmith
 
 17502
 
-sbMacWindowMoveService.mm
+WindowCloak.mm
 file
 
 
 
 
 2011-09-15T07:24:59.000000Z
-1c042b4f388a10b544da1701b2eb23b8
-2010-11-01T20:16:26.212683Z
-20022
-mikeh
+203be8de274838f71a1b1b083ffd3cb8
+2008-01-25T00:54:45.529491Z
+7928
+ian
 
 
 
@@ -262,7 +228,7 @@ mikeh
 
 
 
-10987
+30
 
 sbMacWindowTitlebarService.mm
 file
@@ -297,6 +263,40 @@ msmith
 
 
 21689
+
+sbMacWindowMoveService.mm
+file
+
+
+
+
+2011-09-15T07:24:59.000000Z
+1c042b4f388a10b544da1701b2eb23b8
+2010-11-01T20:16:26.212683Z
+20022
+mikeh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10987
 
 sbScreenSaverSuppressor.h
 file
@@ -400,40 +400,6 @@ nick
 
 2438
 
-sbMacWindowMoveService.h
-file
-
-
-
-
-2011-09-15T07:24:59.000000Z
-45309aa55128aa87a83f1d8c9ac75aa4
-2009-11-10T23:56:33.934822Z
-15766
-nick
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3013
-
 sbMacWindowTitlebarService.h
 file
 
@@ -468,17 +434,17 @@ erik
 
 5749
 
-IntegrationComponent.mm
+sbMacWindowMoveService.h
 file
 
 
 
 
 2011-09-15T07:24:59.000000Z
-8c5aa159cb3e2861efcb3741444dd1e5
-2008-01-25T00:54:45.529491Z
-7928
-ian
+45309aa55128aa87a83f1d8c9ac75aa4
+2009-11-10T23:56:33.934822Z
+15766
+nick
 
 
 
@@ -500,7 +466,7 @@ ian
 
 
 
-39
+3013
 
 sbBaseScreenSaverSuppressor.mm
 file
@@ -535,4 +501,38 @@ erik
 
 
 47
+
+IntegrationComponent.mm
+file
+
+
+
+
+2011-09-15T07:24:59.000000Z
+8c5aa159cb3e2861efcb3741444dd1e5
+2008-01-25T00:54:45.529491Z
+7928
+ian
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+39
 

@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/contrib/language%20files
 http://publicsvn.songbirdnest.com/client
 
@@ -604,48 +604,14 @@ ben
 
 5293
 
-Breton.nlf
+TradChinese.nlf
 file
 
 
 
 
 2011-09-15T07:25:59.000000Z
-abeb1800f4ed0d952891e403e132234e
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5616
-
-English.nlf
-file
-
-
-
-
-2011-09-15T07:25:59.000000Z
-1cc2dafd7f676fd17e5ab3900a243b00
+d66896cf51448d52db4cb9d39d4dc7e3
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -670,7 +636,7 @@ ben
 
 
 
-5127
+4390
 
 Norwegian.nlf
 file
@@ -706,14 +672,14 @@ aus
 
 5205
 
-TradChinese.nlf
+English.nlf
 file
 
 
 
 
 2011-09-15T07:25:59.000000Z
-d66896cf51448d52db4cb9d39d4dc7e3
+1cc2dafd7f676fd17e5ab3900a243b00
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -738,7 +704,41 @@ ben
 
 
 
-4390
+5127
+
+Breton.nlf
+file
+
+
+
+
+2011-09-15T07:25:59.000000Z
+abeb1800f4ed0d952891e403e132234e
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5616
 
 Malay.nlf
 file
@@ -774,14 +774,14 @@ ben
 
 4959
 
-Bulgarian.nlf
+Romanian.nlf
 file
 
 
 
 
 2011-09-15T07:25:59.000000Z
-4222fda201cf425b12766e02cd6801c1
+58dbdfe1bdbfb5ebc370880237ddb50a
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -806,7 +806,7 @@ aus
 
 
 
-5638
+5837
 
 Farsi.nlf
 file
@@ -842,14 +842,14 @@ aus
 
 5028
 
-Romanian.nlf
+Bulgarian.nlf
 file
 
 
 
 
 2011-09-15T07:25:59.000000Z
-58dbdfe1bdbfb5ebc370880237ddb50a
+4222fda201cf425b12766e02cd6801c1
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -874,7 +874,7 @@ aus
 
 
 
-5837
+5638
 
 Spanish.nlf
 file
@@ -944,40 +944,6 @@ aus
 
 5293
 
-Galician.nlf
-file
-
-
-
-
-2011-09-15T07:25:59.000000Z
-24cf39a20ebc674aa785ba3219fe416e
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5573
-
 Dutch.nlf
 file
 
@@ -1012,14 +978,14 @@ aus
 
 5386
 
-Icelandic.nlf
+Galician.nlf
 file
 
 
 
 
 2011-09-15T07:25:59.000000Z
-bc80d4a7eae3f9f597012b4c692fe3fb
+24cf39a20ebc674aa785ba3219fe416e
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -1044,7 +1010,7 @@ aus
 
 
 
-5569
+5573
 
 SerbianLatin.nlf
 file
@@ -1079,6 +1045,40 @@ aus
 
 
 5610
+
+Icelandic.nlf
+file
+
+
+
+
+2011-09-15T07:25:59.000000Z
+bc80d4a7eae3f9f597012b4c692fe3fb
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5569
 
 Hungarian.nlf
 file

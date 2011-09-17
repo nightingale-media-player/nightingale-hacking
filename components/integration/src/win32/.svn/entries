@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/integration/src/win32
 http://publicsvn.songbirdnest.com/client
 
@@ -196,40 +196,6 @@ db48x
 
 7363
 
-MultiMonitor.h
-file
-
-
-
-
-2011-09-15T07:24:59.000000Z
-7c9104afc3ae91ae17f257f2974e0e67
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1570
-
 GlobalHotkeys.cpp
 file
 
@@ -263,6 +229,40 @@ has-props
 
 
 6453
+
+MultiMonitor.h
+file
+
+
+
+
+2011-09-15T07:24:59.000000Z
+7c9104afc3ae91ae17f257f2974e0e67
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1570
 
 sbKnownFolderManager.cpp
 file
@@ -366,18 +366,17 @@ has-props
 
 4616
 
-WindowRegion.cpp
+sbWindowChromeService.cpp
 file
 
 
 
 
 2011-09-15T07:24:59.000000Z
-30ec611f8f6c332305143fccd97fc2da
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
+61586540ed98392463604252142257a1
+2010-07-08T20:36:37.336358Z
+19138
+mook
 
 
 
@@ -398,7 +397,8 @@ has-props
 
 
 
-2281
+
+12314
 
 sbScreenSaverSuppressor.cpp
 file
@@ -434,17 +434,18 @@ aus
 
 3073
 
-sbWindowChromeService.cpp
+WindowRegion.cpp
 file
 
 
 
 
 2011-09-15T07:24:59.000000Z
-61586540ed98392463604252142257a1
-2010-07-08T20:36:37.336358Z
-19138
-mook
+30ec611f8f6c332305143fccd97fc2da
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
 
 
 
@@ -465,8 +466,7 @@ mook
 
 
 
-
-12314
+2281
 
 GlobalHotkeys.h
 file

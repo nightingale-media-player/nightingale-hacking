@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/extensions
 http://publicsvn.songbirdnest.com/client
 
@@ -30,9 +30,6 @@ concerts
 dir
 
 xpcom_helloworld
-dir
-
-qatesttools
 dir
 
 Makefile.in
@@ -69,6 +66,9 @@ preed
 
 2725
 
+qatesttools
+dir
+
 extensionschecker
 dir
 
@@ -90,15 +90,15 @@ dir
 partner-branding-sample
 dir
 
-newreleases
-dir
-
 shoutcast
 dir
 
-albumartlastfm
+newreleases
 dir
 
 systray
+dir
+
+albumartlastfm
 dir
 

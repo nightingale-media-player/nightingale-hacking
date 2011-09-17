@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/library/localdatabase/test
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ dbradley
 
 4960
 
-test_guidarray_sortmulti.js
-file
-
-
-
-
-2011-09-15T07:24:50.000000Z
-6a1833059b1146dd07b3db48642ed57e
-2008-04-09T17:29:38.138580Z
-8909
-steve
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6744
-
 test_filterable.js
 file
 
@@ -128,17 +94,18 @@ has-props
 
 3165
 
-test_content_type.js
+test_guidarray_sortmulti.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-33c98128a8900aea9d92a473883bbde0
-2009-11-04T18:20:06.366498Z
-15677
-mook
+6a1833059b1146dd07b3db48642ed57e
+2008-04-09T17:29:38.138580Z
+8909
+steve
+has-props
 
 
 
@@ -159,8 +126,7 @@ mook
 
 
 
-
-4914
+6744
 
 test_sortable.js
 file
@@ -196,17 +162,17 @@ has-props
 
 2647
 
-test_library_properties.js
+test_content_type.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-1b8547cd50f7e2ea4626b1518eb97aec
-2009-01-24T01:42:57.503640Z
-12553
-aus
+33c98128a8900aea9d92a473883bbde0
+2009-11-04T18:20:06.366498Z
+15677
+mook
 
 
 
@@ -228,7 +194,7 @@ aus
 
 
 
-2475
+4914
 
 data_sort_playcount_desc.txt
 file
@@ -263,6 +229,40 @@ steve
 
 
 4209
+
+test_library_properties.js
+file
+
+
+
+
+2011-09-15T07:24:50.000000Z
+1b8547cd50f7e2ea4626b1518eb97aec
+2009-01-24T01:42:57.503640Z
+12553
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2475
 
 test_viewandcfslisteners.js
 file
@@ -332,40 +332,6 @@ steve
 
 35
 
-test_diffing_medialists.js
-file
-
-
-
-
-2011-09-15T07:24:50.000000Z
-554912ceaaf4a2fa93396bcfca20af79
-2010-04-20T21:35:04.793961Z
-18308
-dbradley
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9863
-
 media_items.txt
 file
 
@@ -400,17 +366,17 @@ steve
 
 13279
 
-test_medialistviewclone.js
+test_diffing_medialists.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-23c244d38ee12ee8c6d0e5f990e38c71
-2008-02-15T02:13:08.762781Z
-8243
-matt
+554912ceaaf4a2fa93396bcfca20af79
+2010-04-20T21:35:04.793961Z
+18308
+dbradley
 
 
 
@@ -432,7 +398,7 @@ matt
 
 
 
-4600
+9863
 
 data_sort_contenturl_asc.txt
 file
@@ -468,17 +434,17 @@ ben
 
 8217
 
-test_migration.js
+test_medialistviewclone.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-38290013838761475c2b19fcaf7f380d
-2009-09-18T21:38:14.137177Z
-14897
-mook
+23c244d38ee12ee8c6d0e5f990e38c71
+2008-02-15T02:13:08.762781Z
+8243
+matt
 
 
 
@@ -500,7 +466,7 @@ mook
 
 
 
-2716
+4600
 
 test_library_batchcreate.js
 file
@@ -535,6 +501,40 @@ has-props
 
 
 3992
+
+test_migration.js
+file
+
+
+
+
+2011-09-15T07:24:50.000000Z
+38290013838761475c2b19fcaf7f380d
+2009-09-18T21:38:14.137177Z
+14897
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2716
 
 test_libraryloader.js
 file
@@ -1148,40 +1148,6 @@ has-props
 
 2365
 
-test_diffing_listtolibrary.js
-file
-
-
-
-
-2011-09-15T07:24:50.000000Z
-d26f9c60d24e9b8abeca2ef32de0350e
-2010-04-20T21:35:04.793961Z
-18308
-dbradley
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8792
-
 test_searchable.js
 file
 
@@ -1216,17 +1182,17 @@ has-props
 
 3436
 
-test_library_constraints.js
+test_diffing_listtolibrary.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-c7091d14ab0513a0f2f956fcfb615140
-2009-11-04T19:42:11.695091Z
-15679
-mook
+d26f9c60d24e9b8abeca2ef32de0350e
+2010-04-20T21:35:04.793961Z
+18308
+dbradley
 
 
 
@@ -1248,7 +1214,7 @@ mook
 
 
 
-3302
+8792
 
 data_distinct_sml101_album.txt
 file
@@ -1283,6 +1249,40 @@ steve
 
 
 35
+
+test_library_constraints.js
+file
+
+
+
+
+2011-09-15T07:24:50.000000Z
+c7091d14ab0513a0f2f956fcfb615140
+2009-11-04T19:42:11.695091Z
+15679
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3302
 
 test_allowduplicates.js
 file
@@ -1658,18 +1658,17 @@ has-props
 
 17392
 
-head_localdatabaselibrary.js
+test_null_properties.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-d151183e4c2fd69d23823008f283cfa5
-2010-04-20T21:35:04.793961Z
-18308
-dbradley
-has-props
+2c188751f4072a77f0e39e7503656ff3
+2009-11-04T16:59:38.125189Z
+15670
+mook
 
 
 
@@ -1690,7 +1689,8 @@ has-props
 
 
 
-13088
+
+4499
 
 test3.mp3
 file
@@ -1726,17 +1726,18 @@ has-props
 
 17392
 
-test_null_properties.js
+head_localdatabaselibrary.js
 file
 
 
 
 
 2011-09-15T07:24:50.000000Z
-2c188751f4072a77f0e39e7503656ff3
-2009-11-04T16:59:38.125189Z
-15670
-mook
+d151183e4c2fd69d23823008f283cfa5
+2010-04-20T21:35:04.793961Z
+18308
+dbradley
+has-props
 
 
 
@@ -1757,8 +1758,7 @@ mook
 
 
 
-
-4499
+13088
 
 test_guidarray_nullsorting.js
 file
@@ -1828,40 +1828,6 @@ aus
 
 5321
 
-test_guid_property.js
-file
-
-
-
-
-2011-09-15T07:24:50.000000Z
-7d31b6820f954502f05b54299bf31875
-2008-02-15T02:13:08.762781Z
-8243
-matt
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2439
-
 test_viewdistinctvalues.js
 file
 
@@ -1895,6 +1861,40 @@ matt
 
 
 3485
+
+test_guid_property.js
+file
+
+
+
+
+2011-09-15T07:24:50.000000Z
+7d31b6820f954502f05b54299bf31875
+2008-02-15T02:13:08.762781Z
+8243
+matt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2439
 
 test_mediaitem.js
 file
@@ -2032,40 +2032,6 @@ lone
 
 58966
 
-data_sort_playcount_asc.txt
-file
-
-
-
-
-2011-09-15T07:24:50.000000Z
-e2cb6938814b3c3a94e798e0c68fd74b
-2007-04-21T01:40:45.896231Z
-4240
-steve
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4209
-
 test_propertycache.js
 file
 
@@ -2099,6 +2065,40 @@ has-props
 
 
 2046
+
+data_sort_playcount_asc.txt
+file
+
+
+
+
+2011-09-15T07:24:50.000000Z
+e2cb6938814b3c3a94e798e0c68fd74b
+2007-04-21T01:40:45.896231Z
+4240
+steve
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4209
 
 data_distinct_contentlength.txt
 file

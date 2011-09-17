@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/remoteapi/public
 http://publicsvn.songbirdnest.com/client
 
@@ -128,17 +128,18 @@ has-props
 
 3327
 
-Makefile.in
+sbIWrappedMediaList.h
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-c086c5f75f019422d1660a372703d670
-2010-05-12T19:31:22.127370Z
-18577
-aus
+17677277f5f59c9f3ab17a7d1cf29928
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
 
 
 
@@ -159,8 +160,7 @@ aus
 
 
 
-
-1398
+1428
 
 sbIRemoteCommands.idl
 file
@@ -196,18 +196,17 @@ has-props
 
 2544
 
-sbIWrappedMediaList.h
+Makefile.in
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-17677277f5f59c9f3ab17a7d1cf29928
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
+c086c5f75f019422d1660a372703d670
+2010-05-12T19:31:22.127370Z
+18577
+aus
 
 
 
@@ -228,7 +227,8 @@ has-props
 
 
 
-1428
+
+1398
 
 sbIRemoteLibrary.idl
 file
@@ -366,40 +366,6 @@ has-props
 
 4867
 
-sbIRemotePlayerFactory.idl
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-cfa6182d8f75f3ffb245fc76902c6947
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1084
-
 sbIWrappedMediaItem.h
 file
 
@@ -433,6 +399,40 @@ has-props
 
 
 1470
+
+sbIRemotePlayerFactory.idl
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+cfa6182d8f75f3ffb245fc76902c6947
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1084
 
 sbIRemoteObserver.idl
 file

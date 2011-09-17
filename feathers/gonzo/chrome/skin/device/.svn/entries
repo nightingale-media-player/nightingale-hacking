@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/feathers/gonzo/chrome/skin/device
 http://publicsvn.songbirdnest.com/client
 
@@ -162,40 +162,6 @@ has-props
 
 156
 
-button-eject.png
-file
-
-
-
-
-2011-09-15T07:26:12.000000Z
-287fb10017c9e3e80a2d70f56dda7202
-2008-07-26T01:41:12.798967Z
-10141
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-297
-
 battery-draining.png
 file
 
@@ -229,6 +195,40 @@ has-props
 
 
 396
+
+button-eject.png
+file
+
+
+
+
+2011-09-15T07:26:12.000000Z
+287fb10017c9e3e80a2d70f56dda7202
+2008-07-26T01:41:12.798967Z
+10141
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+297
 
 button-info.png
 file
@@ -298,40 +298,6 @@ has-props
 
 414
 
-battery-empty.png
-file
-
-
-
-
-2011-09-15T07:26:12.000000Z
-9de3e99d1caaa13610c87f1519760d1c
-2008-08-07T23:49:55.707831Z
-10455
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-338
-
 video.png
 file
 
@@ -365,6 +331,40 @@ has-props
 
 
 505
+
+battery-empty.png
+file
+
+
+
+
+2011-09-15T07:26:12.000000Z
+9de3e99d1caaa13610c87f1519760d1c
+2008-08-07T23:49:55.707831Z
+10455
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+338
 
 bg-capacity-bar-left.png
 file

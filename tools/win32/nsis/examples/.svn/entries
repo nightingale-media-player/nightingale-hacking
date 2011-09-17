@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/examples
 http://publicsvn.songbirdnest.com/client
 
@@ -316,40 +316,6 @@ aus
 
 6836
 
-UserVars.nsi
-file
-
-
-
-
-2011-09-15T07:26:02.000000Z
-5d426e3dbb4feea412c3139320d943fc
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1326
-
 makensis.nsi
 file
 
@@ -383,6 +349,40 @@ aus
 
 
 33490
+
+UserVars.nsi
+file
+
+
+
+
+2011-09-15T07:26:02.000000Z
+5d426e3dbb4feea412c3139320d943fc
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1326
 
 example1.nsi
 file
@@ -486,40 +486,6 @@ aus
 
 1550
 
-gfx.nsi
-file
-
-
-
-
-2011-09-15T07:26:02.000000Z
-2479e5983f503b45fabeeb8550497fab
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3209
-
 StrFunc.nsi
 file
 
@@ -553,6 +519,40 @@ aus
 
 
 22706
+
+gfx.nsi
+file
+
+
+
+
+2011-09-15T07:26:02.000000Z
+2479e5983f503b45fabeeb8550497fab
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3209
 
 ShellLink.nsi
 file
@@ -588,40 +588,6 @@ aus
 
 2827
 
-TextFunc.ini
-file
-
-
-
-
-2011-09-15T07:26:02.000000Z
-e39f24de0123412aefd6f8d44d42ee43
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2007
-
 waplugin.nsi
 file
 
@@ -656,14 +622,14 @@ aus
 
 4616
 
-WordFunc.nsi
+TextFunc.ini
 file
 
 
 
 
 2011-09-15T07:26:02.000000Z
-87d03ca9e0f83852229c2de6aa3f2b78
+e39f24de0123412aefd6f8d44d42ee43
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -688,7 +654,7 @@ aus
 
 
 
-16624
+2007
 
 WordFuncTest.nsi
 file
@@ -724,14 +690,14 @@ aus
 
 17326
 
-FileFuncTest.nsi
+WordFunc.nsi
 file
 
 
 
 
 2011-09-15T07:26:02.000000Z
-73c3ea61b3f84ee55dfbc2c5116af55c
+87d03ca9e0f83852229c2de6aa3f2b78
 2007-07-10T18:47:28.753350Z
 5425
 aus
@@ -756,7 +722,7 @@ aus
 
 
 
-13998
+16624
 
 FileFunc.nsi
 file
@@ -791,6 +757,40 @@ aus
 
 
 19854
+
+FileFuncTest.nsi
+file
+
+
+
+
+2011-09-15T07:26:02.000000Z
+73c3ea61b3f84ee55dfbc2c5116af55c
+2007-07-10T18:47:28.753350Z
+5425
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+13998
 
 System
 dir

@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/app/content/bindings/device
 http://publicsvn.songbirdnest.com/client
 
@@ -196,40 +196,6 @@ alfred
 
 4467
 
-deviceSync.xml
-file
-
-
-
-
-2011-09-15T07:24:31.000000Z
-97c7549929f49c9abf34a1ee13fdf058
-2011-04-15T22:58:08.127528Z
-20932
-jhawk
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-8339
-
 deviceMediaManagement.xml
 file
 
@@ -263,6 +229,40 @@ kurt
 
 
 14296
+
+deviceSync.xml
+file
+
+
+
+
+2011-09-15T07:24:31.000000Z
+97c7549929f49c9abf34a1ee13fdf058
+2011-04-15T22:58:08.127528Z
+20932
+jhawk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8339
 
 deviceCapacityPanel.xml
 file
@@ -298,40 +298,6 @@ erik
 
 4879
 
-deviceSummarySettings.xml
-file
-
-
-
-
-2011-09-15T07:24:31.000000Z
-ed588b3283e6d9df66a11dd4826ce46c
-2010-06-07T22:01:10.991392Z
-18816
-preed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5894
-
 deviceMgmtTabs.xml
 file
 
@@ -365,6 +331,40 @@ alfred
 
 
 7294
+
+deviceSummarySettings.xml
+file
+
+
+
+
+2011-09-15T07:24:31.000000Z
+ed588b3283e6d9df66a11dd4826ce46c
+2010-06-07T22:01:10.991392Z
+18816
+preed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5894
 
 deviceImageSync.xml
 file

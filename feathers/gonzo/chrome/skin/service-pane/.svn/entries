@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/feathers/gonzo/chrome/skin/service-pane
 http://publicsvn.songbirdnest.com/client
 
@@ -978,40 +978,6 @@ has-props
 
 390
 
-icon-library.png
-file
-
-
-
-
-2011-09-15T07:26:13.000000Z
-4972be262d90001f1636fbbf048c5880
-2008-07-11T06:01:15.116799Z
-9923
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-420
-
 read-only.png
 file
 
@@ -1045,6 +1011,40 @@ has-props
 
 
 2957
+
+icon-library.png
+file
+
+
+
+
+2011-09-15T07:26:13.000000Z
+4972be262d90001f1636fbbf048c5880
+2008-07-11T06:01:15.116799Z
+9923
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+420
 
 icon-bookmark.png
 file

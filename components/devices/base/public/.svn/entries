@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/devices/base/public
 http://publicsvn.songbirdnest.com/client
 
@@ -264,40 +264,6 @@ has-props
 
 1665
 
-sbIDeviceFirmwareSupport.idl
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-827ab2319718de4194d27d405332cd83
-2010-02-24T03:19:43.456281Z
-17674
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1892
-
 sbIDeviceCompatibility.idl
 file
 
@@ -332,17 +298,17 @@ has-props
 
 1575
 
-sbIDeviceFirmwareHandler.idl
+sbIDeviceFirmwareSupport.idl
 file
 
 
 
 
 2011-09-15T07:24:38.000000Z
-1699022982bc9a01b45f7ff17bf1f599
-2011-07-11T19:12:23.169477Z
-21696
-jwatts
+827ab2319718de4194d27d405332cd83
+2010-02-24T03:19:43.456281Z
+17674
+aus
 
 
 
@@ -364,41 +330,7 @@ jwatts
 
 
 
-14968
-
-sbIDeviceContent.idl
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-1a98d6b46f8f0a48601ec73fdf1cc8f1
-2008-03-08T02:38:10.386389Z
-8512
-erik
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1709
+1892
 
 sbIDeviceManager.idl
 file
@@ -434,6 +366,74 @@ has-props
 
 3247
 
+sbIDeviceContent.idl
+file
+
+
+
+
+2011-09-15T07:24:38.000000Z
+1a98d6b46f8f0a48601ec73fdf1cc8f1
+2008-03-08T02:38:10.386389Z
+8512
+erik
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1709
+
+sbIDeviceFirmwareHandler.idl
+file
+
+
+
+
+2011-09-15T07:24:38.000000Z
+1699022982bc9a01b45f7ff17bf1f599
+2011-07-11T19:12:23.169477Z
+21696
+jwatts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14968
+
 sbIDeviceInfoRegistrar.idl
 file
 
@@ -468,40 +468,6 @@ has-props
 
 10865
 
-sbIDeviceFirmwareUpdate.idl
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-09b4b9345027345d73f37ecc20f5fff4
-2009-05-29T01:13:07.339149Z
-13746
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1931
-
 sbIDevice.idl
 file
 
@@ -535,6 +501,40 @@ has-props
 
 
 12234
+
+sbIDeviceFirmwareUpdate.idl
+file
+
+
+
+
+2011-09-15T07:24:38.000000Z
+09b4b9345027345d73f37ecc20f5fff4
+2009-05-29T01:13:07.339149Z
+13746
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1931
 
 sbIDeviceEventBeforeAddedData.idl
 file

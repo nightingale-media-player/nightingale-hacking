@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/app/content/scripts/device
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ kurt
 
 35007
 
-deviceFirmwareWizard.js
-file
-
-
-
-
-2011-09-15T07:24:26.000000Z
-70bdc26082395486747d8608a56a4769
-2011-07-11T19:12:23.169477Z
-21696
-jwatts
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-33658
-
 deviceCapacity.js
 file
 
@@ -127,6 +93,40 @@ alfred
 
 
 12065
+
+deviceFirmwareWizard.js
+file
+
+
+
+
+2011-09-15T07:24:26.000000Z
+70bdc26082395486747d8608a56a4769
+2011-07-11T19:12:23.169477Z
+21696
+jwatts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+33658
 
 deviceGeneralSettings.js
 file
@@ -298,17 +298,17 @@ jhawk
 
 33762
 
-deviceSync.js
+deviceMediaManagement.js
 file
 
 
 
 
 2011-09-15T07:24:26.000000Z
-1fffc40dca6ae5f019a3efaad808425f
-2011-07-01T22:10:02.345061Z
-21667
-mikeh
+26cadb35ecc61995a92d2b99b2c8d660
+2011-05-13T21:49:07.672214Z
+21170
+kurt
 
 
 
@@ -330,7 +330,7 @@ mikeh
 
 
 
-26036
+14977
 
 deviceSupport.js
 file
@@ -366,17 +366,17 @@ dbradley
 
 23385
 
-deviceMediaManagement.js
+deviceSync.js
 file
 
 
 
 
 2011-09-15T07:24:26.000000Z
-26cadb35ecc61995a92d2b99b2c8d660
-2011-05-13T21:49:07.672214Z
-21170
-kurt
+1fffc40dca6ae5f019a3efaad808425f
+2011-07-01T22:10:02.345061Z
+21667
+mikeh
 
 
 
@@ -398,41 +398,7 @@ kurt
 
 
 
-14977
-
-multiCDLookupResultsDialog.js
-file
-
-
-
-
-2011-09-15T07:24:26.000000Z
-58d6c347da91f5dde716314e1b2f2919
-2010-09-02T19:50:37.636029Z
-19398
-jhawk
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9016
+26036
 
 deviceCapacityPanel.js
 file
@@ -468,17 +434,17 @@ erik
 
 6193
 
-deviceSummarySettings.js
+multiCDLookupResultsDialog.js
 file
 
 
 
 
 2011-09-15T07:24:26.000000Z
-2f37496975028d4da5465f185e8c86f2
-2010-06-17T15:17:00.110353Z
-18958
-alfred
+58d6c347da91f5dde716314e1b2f2919
+2010-09-02T19:50:37.636029Z
+19398
+jhawk
 
 
 
@@ -500,7 +466,7 @@ alfred
 
 
 
-9142
+9016
 
 deviceMgmtTabs.js
 file
@@ -535,6 +501,40 @@ preed
 
 
 12664
+
+deviceSummarySettings.js
+file
+
+
+
+
+2011-09-15T07:24:26.000000Z
+2f37496975028d4da5465f185e8c86f2
+2010-06-17T15:17:00.110353Z
+18958
+alfred
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9142
 
 deviceControl.js
 file

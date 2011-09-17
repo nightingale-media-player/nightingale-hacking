@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/components/mediacore/metadata/manager/src
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ has-props
 
 12782
 
-sbMetadataManager.cpp
-file
-
-
-
-
-2011-09-15T07:24:43.000000Z
-b8ac807323c7ae39a11e1880d8bfe04c
-2011-01-18T22:19:32.911174Z
-20408
-msmith
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-10501
-
 sbMetadataJob.cpp
 file
 
@@ -127,6 +93,40 @@ aus
 
 
 57500
+
+sbMetadataManager.cpp
+file
+
+
+
+
+2011-09-15T07:24:43.000000Z
+b8ac807323c7ae39a11e1880d8bfe04c
+2011-01-18T22:19:32.911174Z
+20408
+msmith
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10501
 
 Makefile.in
 file
@@ -162,17 +162,17 @@ has-props
 
 4378
 
-sbMetadataCrashTracker.cpp
+sbBackgroundThreadMetadataProcessor.h
 file
 
 
 
 
 2011-09-15T07:24:43.000000Z
-c1b08b1f8bf2227502320a724fd8e056
-2011-01-18T22:19:32.911174Z
-20408
-msmith
+529117cbf600da23dc2ce3902ddcc8e4
+2008-07-24T02:26:51.739995Z
+10092
+matt
 
 
 
@@ -194,7 +194,7 @@ msmith
 
 
 
-15508
+2621
 
 sbMainThreadMetadataProcessor.cpp
 file
@@ -230,17 +230,17 @@ erik
 
 8282
 
-sbBackgroundThreadMetadataProcessor.h
+sbMetadataCrashTracker.cpp
 file
 
 
 
 
 2011-09-15T07:24:43.000000Z
-529117cbf600da23dc2ce3902ddcc8e4
-2008-07-24T02:26:51.739995Z
-10092
-matt
+c1b08b1f8bf2227502320a724fd8e056
+2011-01-18T22:19:32.911174Z
+20408
+msmith
 
 
 
@@ -262,7 +262,7 @@ matt
 
 
 
-2621
+15508
 
 sbMetadataChannel.h
 file
@@ -298,40 +298,6 @@ has-props
 
 3905
 
-sbMetadataJob.h
-file
-
-
-
-
-2011-09-15T07:24:43.000000Z
-242693cd6d006b0dc71c7c40256d16ee
-2011-01-18T22:19:32.911174Z
-20408
-msmith
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-11154
-
 sbMetadataManager.h
 file
 
@@ -366,17 +332,17 @@ has-props
 
 3074
 
-sbMetadataCrashTracker.h
+sbMetadataJob.h
 file
 
 
 
 
 2011-09-15T07:24:43.000000Z
-cc92f30b38a703d6647c688298640c48
-2010-11-19T21:59:32.042708Z
-20156
-mook
+242693cd6d006b0dc71c7c40256d16ee
+2011-01-18T22:19:32.911174Z
+20408
+msmith
 
 
 
@@ -398,7 +364,7 @@ mook
 
 
 
-5398
+11154
 
 sbMainThreadMetadataProcessor.h
 file
@@ -433,6 +399,40 @@ matt
 
 
 2635
+
+sbMetadataCrashTracker.h
+file
+
+
+
+
+2011-09-15T07:24:43.000000Z
+cc92f30b38a703d6647c688298640c48
+2010-11-19T21:59:32.042708Z
+20156
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5398
 
 sbMetadataModule.cpp
 file

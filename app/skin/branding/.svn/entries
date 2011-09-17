@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/app/skin/branding
 http://publicsvn.songbirdnest.com/client
 
@@ -162,40 +162,6 @@ has-props
 
 3007
 
-logo_16_white.png
-file
-
-
-
-
-2011-09-15T07:24:23.000000Z
-d0b7dbb5a24875605372939b36c1871f
-2007-04-10T18:12:24.268236Z
-4060
-matt
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2932
-
 logo_16.png
 file
 
@@ -229,6 +195,40 @@ has-props
 
 
 3189
+
+logo_16_white.png
+file
+
+
+
+
+2011-09-15T07:24:23.000000Z
+d0b7dbb5a24875605372939b36c1871f
+2007-04-10T18:12:24.268236Z
+4060
+matt
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2932
 
 jar.mn.in
 file
@@ -434,40 +434,6 @@ has-props
 
 16164
 
-powered-by-mozilla.png
-file
-
-
-
-
-2011-09-15T07:24:23.000000Z
-048ac9181cd1b33142f462598c2240a9
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-39016
-
 first-run-welcome.png
 file
 
@@ -501,6 +467,40 @@ has-props
 
 
 29586
+
+powered-by-mozilla.png
+file
+
+
+
+
+2011-09-15T07:24:23.000000Z
+048ac9181cd1b33142f462598c2240a9
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+39016
 
 faceplate.png
 file

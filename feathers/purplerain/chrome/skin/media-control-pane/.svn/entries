@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/feathers/purplerain/chrome/skin/media-control-pane
 http://publicsvn.songbirdnest.com/client
 
@@ -672,40 +672,6 @@ has-props
 
 3447
 
-bg-faceplate-inactive-splash.png
-file
-
-
-
-
-2011-09-15T07:26:07.000000Z
-2f09c22de8c43c6cf5fc32daf237cd5e
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4729
-
 bg-faceplate-left.png
 file
 
@@ -739,6 +705,40 @@ has-props
 
 
 3225
+
+bg-faceplate-inactive-splash.png
+file
+
+
+
+
+2011-09-15T07:26:07.000000Z
+2f09c22de8c43c6cf5fc32daf237cd5e
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4729
 
 button-max-volume.png
 file
@@ -978,40 +978,6 @@ has-props
 
 122
 
-bg-media-control-pane-right.png
-file
-
-
-
-
-2011-09-15T07:26:07.000000Z
-3e249e320e3f68c24eeed92dea76e9b9
-2010-05-28T21:02:37.052516Z
-18751
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3711
-
 button-vertical-slider-thumb.png
 file
 
@@ -1045,6 +1011,40 @@ has-props
 
 
 785
+
+bg-media-control-pane-right.png
+file
+
+
+
+
+2011-09-15T07:26:07.000000Z
+3e249e320e3f68c24eeed92dea76e9b9
+2010-05-28T21:02:37.052516Z
+18751
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3711
 
 bg-eq-slider-bkgd.png
 file

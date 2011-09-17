@@ -1,7 +1,7 @@
 10
 
 dir
-22045
+22050
 http://publicsvn.songbirdnest.com/client/trunk/extensions/lastfm/chrome/skin
 http://publicsvn.songbirdnest.com/client
 
@@ -94,40 +94,6 @@ has-props
 
 509
 
-default-avatar.png
-file
-
-
-
-
-2011-09-15T07:25:48.000000Z
-2a4d8666855e5868ca1b285b16f7bf45
-2008-08-16T01:35:31.148153Z
-10670
-komi
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3515
-
 logo.png
 file
 
@@ -161,6 +127,40 @@ has-props
 
 
 7537
+
+default-avatar.png
+file
+
+
+
+
+2011-09-15T07:25:48.000000Z
+2a4d8666855e5868ca1b285b16f7bf45
+2008-08-16T01:35:31.148153Z
+10670
+komi
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3515
 
 bg-header-lastfm.png
 file
@@ -230,40 +230,6 @@ has-props
 
 3431
 
-bg-faceplate-buttons.png
-file
-
-
-
-
-2011-09-15T07:25:48.000000Z
-7f0915fc760a91c2a34d9abd1bdcba68
-2010-05-28T21:02:37.052516Z
-18751
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3386
-
 artist.png
 file
 
@@ -298,16 +264,16 @@ has-props
 
 385
 
-disabled.png
+bg-faceplate-buttons.png
 file
 
 
 
 
 2011-09-15T07:25:48.000000Z
-7a34b9475b5007887fe5b8b0e6b14214
-2010-01-06T18:35:02.402204Z
-16997
+7f0915fc760a91c2a34d9abd1bdcba68
+2010-05-28T21:02:37.052516Z
+18751
 stevel
 has-props
 
@@ -330,7 +296,7 @@ has-props
 
 
 
-3400
+3386
 
 librefm_disabled.png
 file
@@ -365,6 +331,40 @@ has-props
 
 
 3084
+
+disabled.png
+file
+
+
+
+
+2011-09-15T07:25:48.000000Z
+7a34b9475b5007887fe5b8b0e6b14214
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3400
 
 button-ban.png
 file
