@@ -1,5 +1,10 @@
 # this depends on your system's gstreamer location
-export GST_PLUGIN_PATH=/usr/lib/gstreamer-0.10
+for dir in /usr/lib64 /usr/lib ; do
+  if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
+    export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
+    break
+  fi
+done
 
 # i think this is archlinux specific
 export PYTHON=/usr/bin/python2
