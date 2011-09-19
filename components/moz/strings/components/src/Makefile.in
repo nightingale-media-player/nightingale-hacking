@@ -48,6 +48,7 @@ DYNAMIC_LIB_STATIC_IMPORTS = components/moz/strings/src/sbMozStringUtils \
                              $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            mozalloc \
                             $(NULL)
 
 IS_COMPONENT = 1
