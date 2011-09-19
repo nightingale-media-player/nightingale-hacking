@@ -1,4 +1,0 @@
-<!ENTITY newReleases.loading "Wir prüfen welche Veröffentlichungen in Ihrem Land anstehen...">
-<!ENTITY newReleases.changelocation "Standort ändern">
-<!ENTITY newReleases.timeout.error "Entweder besteht momentan keine Internetverbindung oder unsere Datenbank funktioniert gerade nicht richtig. Bitte versuchen Sie es in ein paar Minuten erneut.">
-<!ENTITY newReleases.timeoutreport.error "Ein Problem melden">

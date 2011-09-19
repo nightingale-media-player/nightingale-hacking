@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "お近くの地域をツアー中のアーティストを確認しています...">
-<!ENTITY concerts.changelocation "地域を変更">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "次の地域のコンサートが見つかりませんでした：">
-<!ENTITY concerts.timeout.error "インターネットに接続されていないか、コンサートデータベースに問題があります。しばらくしてから再試行してください。">
-<!ENTITY concerts.timeoutreport.error "問題を報告">

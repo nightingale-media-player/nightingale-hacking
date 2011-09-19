@@ -1,80 +1,0 @@
-10
-
-dir
-22052
-http://publicsvn.songbirdnest.com/client/trunk/components/mediacore
-http://publicsvn.songbirdnest.com/client
-
-
-
-2011-05-12T17:36:54.852962Z
-21141
-msmith
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-metadata
-dir
-
-transcode
-dir
-
-Makefile.in
-file
-
-
-
-
-2011-09-15T07:24:47.000000Z
-a0e637ad490c9f48dba60042f5e439f4
-2009-06-10T18:08:42.608027Z
-13899
-msmith
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1031
-
-playback
-dir
-
-gstreamer
-dir
-
-base
-dir
-
-manager
-dir
-

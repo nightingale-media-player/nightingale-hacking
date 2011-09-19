@@ -1,4 +1,0 @@
-<!ENTITY newReleases.loading "Estamos a verificar que lançamentos há na sua área...">
-<!ENTITY newReleases.changelocation "Mudar Localização">
-<!ENTITY newReleases.timeout.error "Ou não está ligado à Internet ou a nossa base de dados de lançamentos não está a funcionar de momento. Por favor volte a tentar dentro de alguns minutos.">
-<!ENTITY newReleases.timeoutreport.error "Relatar um problema">

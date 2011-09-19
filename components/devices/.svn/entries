@@ -1,86 +1,0 @@
-10
-
-dir
-22052
-http://publicsvn.songbirdnest.com/client/trunk/components/devices
-http://publicsvn.songbirdnest.com/client
-
-
-
-2011-07-29T19:11:46.148554Z
-21810
-jwatts
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-device
-dir
-
-Makefile.in
-file
-
-
-
-
-2011-09-15T07:24:38.000000Z
-8c51b753e8a57f0d609f044382900bd5
-2009-12-10T04:37:15.646869Z
-16618
-erik
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1047
-
-controller
-dir
-
-marshall
-dir
-
-cd
-dir
-
-base
-dir
-
-content
-dir
-
-manager
-dir
-
-firmware
-dir
-

@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Vyhledáváme turné vystoupení ve vašem okolí...">
-<!ENTITY concerts.changelocation "Změnit místo">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "Nenalezeny žádné koncerty v ">
-<!ENTITY concerts.timeout.error "Buď nejste připojeni k Internetu nebo došlo k dočasné chybě v databázi koncertů.  Zkuste znovu za pár minut.">
-<!ENTITY concerts.timeoutreport.error "Nahlásit problém">

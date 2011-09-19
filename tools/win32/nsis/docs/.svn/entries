@@ -1,76 +1,0 @@
-10
-
-dir
-22052
-http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/docs
-http://publicsvn.songbirdnest.com/client
-
-
-
-2007-07-12T02:36:46.312821Z
-5478
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-StartMenu
-dir
-
-Modern UI
-dir
-
-InstallOptions
-dir
-
-System
-dir
-
-StrFunc
-dir
-
-nsExec
-dir
-
-VPatch
-dir
-
-ShellLink
-dir
-
-AdvSplash
-dir
-
-Math
-dir
-
-Splash
-dir
-
-BgImage
-dir
-
-NSISdl
-dir
-
-Dialer
-dir
-
-makensisw
-dir
-
-Banner
-dir
-

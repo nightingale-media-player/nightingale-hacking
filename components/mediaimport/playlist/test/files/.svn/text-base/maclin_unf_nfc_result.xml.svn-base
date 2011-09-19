@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<item-tests>
-  <item-test property="#contentURL" value="file:///home/eugene/My%5C%20Music/%C3%85%5C%20Unicorn%5C%20Lullaby.mp3">
-    <assert-property-value name="#contentURL" value="file:///home/eugene/My%5C%20Music/%C3%85%5C%20Unicorn%5C%20Lullaby.mp3"/>
-  </item-test>
-</item-tests>
-

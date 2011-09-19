@@ -1,3 +1,0 @@
-songbird.jar:
-% skin  songbird-mozapps classic/1.0  %skin/mozapps/
-@include_all_to skin/mozapps/

@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "เรากำลังตรวจสอบเพื่อดูว่าใครออนทัวร์ใกล้คุณ...">
-<!ENTITY concerts.changelocation "เปลี่ยนที่ตั้ง">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "ไม่พบคอนเสิร์ตใน">
-<!ENTITY concerts.timeout.error "คุณไม่ได้เชื่อมต่ออินเตอร์เน็ตหรือฐานข้อมูลคอนเสิร์ตของเราไม่ทำงานในขณะนี้ โปรดลองอีกครั้งในอีกสองสามนาที">
-<!ENTITY concerts.timeoutreport.error "รายงานปัญหา">

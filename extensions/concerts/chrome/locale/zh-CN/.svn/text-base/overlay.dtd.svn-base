@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "我们正在查找离您最近的演唱会…">
-<!ENTITY concerts.changelocation "更改位置">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "此地未找到演唱会：">
-<!ENTITY concerts.timeout.error "您可能未连接至互联网或者我们的演唱会数据库当前工作不正常。请在几分钟后再试一次。">
-<!ENTITY concerts.timeoutreport.error "报告问题">

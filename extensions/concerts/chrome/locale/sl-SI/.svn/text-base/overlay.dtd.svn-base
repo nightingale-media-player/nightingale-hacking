@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Preverjamo, kdo nastopa v vaši bližini ...">
-<!ENTITY concerts.changelocation "Spremeni kraj">
-<!ENTITY concerts.easteregg.fail "NEUSPEH">
-<!ENTITY concerts.easteregg.fail.2 "Ni najdenih koncertov izvajalca">
-<!ENTITY concerts.timeout.error "Niste povezani v internet ali pa naša zbirka podatkov o koncertih trenutno ne deluje. Poskusite znova čez nekaj minut.">
-<!ENTITY concerts.timeoutreport.error "Poročaj o težavi">

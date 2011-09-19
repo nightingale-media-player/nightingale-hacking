@@ -1,128 +1,0 @@
-10
-
-dir
-22052
-http://publicsvn.songbirdnest.com/client/trunk/components/moz
-http://publicsvn.songbirdnest.com/client
-
-
-
-2011-09-01T05:07:33.282908Z
-21964
-dbradley
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-distribution
-dir
-
-proxy
-dir
-
-Makefile.in
-file
-
-
-
-
-2011-09-15T07:25:38.000000Z
-e15013192ac64c7a02173101ec6e1ef0
-2010-12-08T21:51:04.813587Z
-20214
-msmith
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1491
-
-image
-dir
-
-threadpoolservice
-dir
-
-system
-dir
-
-windowwatcher
-dir
-
-urlformatter
-dir
-
-xpcom
-dir
-
-strings
-dir
-
-dirprovider
-dir
-
-threads
-dir
-
-shutdownservice
-dir
-
-filedownloader
-dir
-
-uri
-dir
-
-clipboard
-dir
-
-fileutils
-dir
-
-temporaryfileservice
-dir
-
-variant
-dir
-
-prompter
-dir
-
-errorconsole
-dir
-
-streams
-dir
-
-process
-dir
-

@@ -1,5 +1,0 @@
-/* ===== appPicker.css ===================================================
-   == Styles used by the app picker dialog.
-   ======================================================================= */
-
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");

@@ -1,7 +1,0 @@
-STRINGTABLE
-BEGIN
-  1000 "Songbird Windows Volume Formatter"
-END
-
-1 TYPELIB "sbIWindowsFormatter.tlb"
-
