@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/feathers/purplerain/chrome/skin/mini-player
 http://publicsvn.songbirdnest.com/client
 
@@ -25,40 +25,6 @@ stevel
 
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-tip.png
-file
-
-
-
-
-2011-09-15T07:26:07.000000Z
-60fd81d1330fc9d8c0ea76234c70237f
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3064
 
 button-plus.png
 file
@@ -93,6 +59,40 @@ has-props
 
 
 3650
+
+tip.png
+file
+
+
+
+
+2011-09-15T07:26:07.000000Z
+60fd81d1330fc9d8c0ea76234c70237f
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3064
 
 face-r.png
 file
@@ -366,40 +366,6 @@ has-props
 
 3173
 
-button-close.png
-file
-
-
-
-
-2011-09-15T07:26:07.000000Z
-ca63aa138dd9465083a12450bfcd074d
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3849
-
 next.png
 file
 
@@ -434,14 +400,14 @@ has-props
 
 9458
 
-bg-left.png
+button-close.png
 file
 
 
 
 
 2011-09-15T07:26:07.000000Z
-de6e82fad7d9b95322f1251a4c0fd84d
+ca63aa138dd9465083a12450bfcd074d
 2010-01-06T18:35:02.402204Z
 16997
 stevel
@@ -466,7 +432,7 @@ has-props
 
 
 
-3203
+3849
 
 play-pause.png
 file
@@ -501,6 +467,40 @@ has-props
 
 
 11712
+
+bg-left.png
+file
+
+
+
+
+2011-09-15T07:26:07.000000Z
+de6e82fad7d9b95322f1251a4c0fd84d
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3203
 
 min-vol.png
 file

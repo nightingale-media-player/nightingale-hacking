@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/plugins
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ has-props
 
 4096
 
-TypeLib.dll
-file
-
-
-
-
-2011-09-15T07:26:00.000000Z
-b831834c36865d99f46409cb2ae2eb64
-2007-07-10T18:47:28.753350Z
-5425
-aus
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3584
-
 UAC.dll
 file
 
@@ -127,6 +93,40 @@ has-props
 
 
 17408
+
+TypeLib.dll
+file
+
+
+
+
+2011-09-15T07:26:00.000000Z
+b831834c36865d99f46409cb2ae2eb64
+2007-07-10T18:47:28.753350Z
+5425
+aus
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3584
 
 LangDLL.dll
 file
@@ -196,40 +196,6 @@ has-props
 
 4096
 
-InstallOptions.dll
-file
-
-
-
-
-2011-09-15T07:26:00.000000Z
-7e49eb67f1f3c62bb8c4b0a868b30645
-2007-07-10T18:47:28.753350Z
-5425
-aus
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-14336
-
 StartMenu.dll
 file
 
@@ -263,6 +229,40 @@ has-props
 
 
 7168
+
+InstallOptions.dll
+file
+
+
+
+
+2011-09-15T07:26:00.000000Z
+7e49eb67f1f3c62bb8c4b0a868b30645
+2007-07-10T18:47:28.753350Z
+5425
+aus
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14336
 
 System.dll
 file
@@ -298,17 +298,85 @@ has-props
 
 10240
 
-version.dll
+VPatch.dll
 file
 
 
 
 
 2011-09-15T07:26:00.000000Z
-ebc5bb904cdac1c67ada3fa733229966
-2006-07-22T02:31:17.852264Z
-1377
-mig
+88eeb349ec110f52535e08f91108ef7e
+2007-07-10T18:47:28.753350Z
+5425
+aus
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7680
+
+ShellLink.dll
+file
+
+
+
+
+2011-09-15T07:26:00.000000Z
+073d44e11a4bcff06e72e1ebfe5605f7
+2007-07-12T02:36:46.312821Z
+5478
+aus
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4096
+
+AdvSplash.dll
+file
+
+
+
+
+2011-09-15T07:26:00.000000Z
+2cb8584d0faec595fe480166d32fde25
+2007-07-10T18:47:28.753350Z
+5425
+aus
 has-props
 
 
@@ -366,17 +434,17 @@ has-props
 
 6144
 
-AdvSplash.dll
+version.dll
 file
 
 
 
 
 2011-09-15T07:26:00.000000Z
-2cb8584d0faec595fe480166d32fde25
-2007-07-10T18:47:28.753350Z
-5425
-aus
+ebc5bb904cdac1c67ada3fa733229966
+2006-07-22T02:31:17.852264Z
+1377
+mig
 has-props
 
 
@@ -399,74 +467,6 @@ has-props
 
 
 6144
-
-ShellLink.dll
-file
-
-
-
-
-2011-09-15T07:26:00.000000Z
-073d44e11a4bcff06e72e1ebfe5605f7
-2007-07-12T02:36:46.312821Z
-5478
-aus
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4096
-
-VPatch.dll
-file
-
-
-
-
-2011-09-15T07:26:00.000000Z
-88eeb349ec110f52535e08f91108ef7e
-2007-07-10T18:47:28.753350Z
-5425
-aus
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7680
 
 Math.dll
 file

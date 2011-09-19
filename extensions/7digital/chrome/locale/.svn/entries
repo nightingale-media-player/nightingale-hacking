@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/extensions/7digital/chrome/locale
 http://publicsvn.songbirdnest.com/client
 
@@ -29,16 +29,16 @@ slloyd
 zh-CN
 dir
 
-pt-BR
-dir
-
 da
 dir
 
-tr
+pt-BR
 dir
 
 nn-NO
+dir
+
+tr
 dir
 
 ru
@@ -53,10 +53,10 @@ dir
 ja
 dir
 
-he
+lt-LT
 dir
 
-lt-LT
+he
 dir
 
 sv-SE

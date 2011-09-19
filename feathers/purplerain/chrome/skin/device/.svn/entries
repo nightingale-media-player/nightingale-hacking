@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/feathers/purplerain/chrome/skin/device
 http://publicsvn.songbirdnest.com/client
 
@@ -128,40 +128,6 @@ has-props
 
 3001
 
-battery-left.png
-file
-
-
-
-
-2011-09-15T07:26:06.000000Z
-7991528454a5be95e243c78c8283c8bf
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-156
-
 bg-device-screen.png
 file
 
@@ -196,14 +162,14 @@ has-props
 
 2836
 
-battery-draining.png
+battery-left.png
 file
 
 
 
 
 2011-09-15T07:26:06.000000Z
-8ae726d4b247e918421f93aecce110c0
+7991528454a5be95e243c78c8283c8bf
 2010-01-06T18:35:02.402204Z
 16997
 stevel
@@ -228,7 +194,7 @@ has-props
 
 
 
-396
+156
 
 button-eject.png
 file
@@ -263,6 +229,40 @@ has-props
 
 
 331
+
+battery-draining.png
+file
+
+
+
+
+2011-09-15T07:26:06.000000Z
+8ae726d4b247e918421f93aecce110c0
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+396
 
 button-info.png
 file
@@ -332,40 +332,6 @@ has-props
 
 414
 
-video.png
-file
-
-
-
-
-2011-09-15T07:26:06.000000Z
-0ef87de7c369678d2776c7451cdae906
-2010-02-08T23:05:34.071990Z
-17514
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-674
-
 battery-empty.png
 file
 
@@ -400,16 +366,16 @@ has-props
 
 338
 
-bg-capacity-bar-left.png
+video.png
 file
 
 
 
 
 2011-09-15T07:26:06.000000Z
-f4d195d3272ef0a4385d98630b9f125e
-2010-01-06T18:35:02.402204Z
-16997
+0ef87de7c369678d2776c7451cdae906
+2010-02-08T23:05:34.071990Z
+17514
 stevel
 has-props
 
@@ -432,7 +398,7 @@ has-props
 
 
 
-2991
+674
 
 check.png
 file
@@ -467,6 +433,40 @@ has-props
 
 
 637
+
+bg-capacity-bar-left.png
+file
+
+
+
+
+2011-09-15T07:26:06.000000Z
+f4d195d3272ef0a4385d98630b9f125e
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2991
 
 music.png
 file

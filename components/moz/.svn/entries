@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/moz
 http://publicsvn.songbirdnest.com/client
 
@@ -30,12 +30,6 @@ distribution
 dir
 
 proxy
-dir
-
-threadpoolservice
-dir
-
-image
 dir
 
 Makefile.in
@@ -72,22 +66,28 @@ msmith
 
 1491
 
+image
+dir
+
+threadpoolservice
+dir
+
 system
 dir
 
 windowwatcher
 dir
 
-xpcom
-dir
-
 urlformatter
 dir
 
-dirprovider
+xpcom
 dir
 
 strings
+dir
+
+dirprovider
 dir
 
 threads

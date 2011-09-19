@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/feathers/purplerain/chrome/skin
 http://publicsvn.songbirdnest.com/client
 
@@ -195,16 +195,16 @@ dir
 menu
 dir
 
-scrollbars
-dir
-
 video
 dir
 
-ratings
+scrollbars
 dir
 
 window
+dir
+
+ratings
 dir
 
 formsImport.css
@@ -250,9 +250,6 @@ dir
 service-pane
 dir
 
-mini-player
-dir
-
 device.css
 file
 
@@ -286,6 +283,9 @@ jhawk
 
 
 6023
+
+mini-player
+dir
 
 notification-bar
 dir

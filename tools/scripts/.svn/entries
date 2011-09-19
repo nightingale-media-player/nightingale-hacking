@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/tools/scripts
 http://publicsvn.songbirdnest.com/client
 
@@ -25,40 +25,6 @@ has-props
 
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
-
-process_copyright.sh
-file
-
-
-
-
-2011-09-15T07:26:04.000000Z
-e22f187754393ffaa2169567d2c671bd
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1086
 
 bugzilla-patch.sh
 file
@@ -93,6 +59,40 @@ has-props
 
 
 236
+
+process_copyright.sh
+file
+
+
+
+
+2011-09-15T07:26:04.000000Z
+e22f187754393ffaa2169567d2c671bd
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1086
 
 flatten-dir.sh
 file
@@ -162,17 +162,17 @@ has-props
 
 761
 
-list-files.sh
+find-extension-config.py
 file
 
 
 
 
 2011-09-15T07:26:04.000000Z
-d56707a07d0fabb332c1ce499bb23f2c
-2007-03-05T20:01:46.491821Z
-3681
-ben
+db3a384ff655854b1cc3582d3c541715
+2009-10-29T23:39:09.190170Z
+15575
+preed
 has-props
 
 
@@ -194,7 +194,7 @@ has-props
 
 
 
-470
+1462
 
 extract.pl
 file
@@ -230,17 +230,17 @@ has-props
 
 930
 
-find-extension-config.py
+list-files.sh
 file
 
 
 
 
 2011-09-15T07:26:04.000000Z
-db3a384ff655854b1cc3582d3c541715
-2009-10-29T23:39:09.190170Z
-15575
-preed
+d56707a07d0fabb332c1ce499bb23f2c
+2007-03-05T20:01:46.491821Z
+3681
+ben
 has-props
 
 
@@ -262,7 +262,7 @@ has-props
 
 
 
-1462
+470
 
 clean-profile-mac.sh
 file
@@ -298,40 +298,6 @@ has-props
 
 153
 
-sanitize-cvs.sh
-file
-
-
-
-
-2011-09-15T07:26:04.000000Z
-a168197329e57678f69c2ccea9fda1af
-2007-03-05T20:01:46.491821Z
-3681
-ben
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-403
-
 configure-vlc-mac-release.sh
 file
 
@@ -366,17 +332,17 @@ has-props
 
 902
 
-make-dependencies-tarball.sh
+sanitize-cvs.sh
 file
 
 
 
 
 2011-09-15T07:26:04.000000Z
-ac3d96559a04ac1fa9e1faddac6897bc
-2007-02-07T23:31:53.555818Z
-3320
-redfive
+a168197329e57678f69c2ccea9fda1af
+2007-03-05T20:01:46.491821Z
+3681
+ben
 has-props
 
 
@@ -398,7 +364,7 @@ has-props
 
 
 
-2311
+403
 
 dbperflog2pglog.pl
 file
@@ -434,6 +400,40 @@ has-props
 
 1358
 
+make-dependencies-tarball.sh
+file
+
+
+
+
+2011-09-15T07:26:04.000000Z
+ac3d96559a04ac1fa9e1faddac6897bc
+2007-02-07T23:31:53.555818Z
+3320
+redfive
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2311
+
 configure-vlc-mac-debug.sh
 file
 
@@ -468,40 +468,6 @@ has-props
 
 903
 
-generate-nsis-manifest.py
-file
-
-
-
-
-2011-09-15T07:26:04.000000Z
-141aa78b59620f73a2487af25ba158a0
-2009-08-26T23:22:03.658760Z
-14659
-preed
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3707
-
 aes.py
 file
 
@@ -535,6 +501,40 @@ preed
 
 
 27692
+
+generate-nsis-manifest.py
+file
+
+
+
+
+2011-09-15T07:26:04.000000Z
+141aa78b59620f73a2487af25ba158a0
+2009-08-26T23:22:03.658760Z
+14659
+preed
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3707
 
 libgen
 dir

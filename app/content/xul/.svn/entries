@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/app/content/xul
 http://publicsvn.songbirdnest.com/client
 
@@ -477,40 +477,6 @@ erik
 
 4171
 
-dirtyPlaylistDialog.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-3f3bc242af71ddd2753aabd9b8f25984
-2008-07-15T17:06:52.073589Z
-9965
-erik
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6355
-
 messageBox.xul
 file
 
@@ -544,6 +510,40 @@ has-props
 
 
 2221
+
+dirtyPlaylistDialog.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+3f3bc242af71ddd2753aabd9b8f25984
+2008-07-15T17:06:52.073589Z
+9965
+erik
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6355
 
 unknownContentTypeOverlay.xul
 file
@@ -681,7 +681,7 @@ nick
 
 2072
 
-popupOverlay.xul
+controlToolbarOverlay.xul
 file
 
 
@@ -749,75 +749,7 @@ palant
 
 2717
 
-controlToolbarOverlay.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-c9786c43f661962baf631fa0b9901dfb
-2008-01-18T23:06:30.616193Z
-7832
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2267
-
-parserError.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-19f860837fbeca8eb458fcab3483c93a
-2009-01-14T00:26:16.815116Z
-12457
-preed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4861
-
-miniScriptsOverlay.xul
+popupOverlay.xul
 file
 
 
@@ -885,6 +817,74 @@ lone
 
 2267
 
+miniScriptsOverlay.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+c9786c43f661962baf631fa0b9901dfb
+2008-01-18T23:06:30.616193Z
+7832
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2267
+
+parserError.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+19f860837fbeca8eb458fcab3483c93a
+2009-01-14T00:26:16.815116Z
+12457
+preed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4861
+
 layoutWithoutBrowserOverlay.xul
 file
 
@@ -919,40 +919,6 @@ lone
 
 6164
 
-browserToolbarOverlay.xul
-file
-
-
-
-
-2011-09-15T07:24:30.000000Z
-c9786c43f661962baf631fa0b9901dfb
-2008-01-18T23:06:30.616193Z
-7832
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2267
-
 profileSelectionOverlay.xul
 file
 
@@ -986,6 +952,40 @@ erik
 
 
 1803
+
+browserToolbarOverlay.xul
+file
+
+
+
+
+2011-09-15T07:24:30.000000Z
+c9786c43f661962baf631fa0b9901dfb
+2008-01-18T23:06:30.616193Z
+7832
+lone
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2267
 
 extensionManagerOverlay.xul
 file

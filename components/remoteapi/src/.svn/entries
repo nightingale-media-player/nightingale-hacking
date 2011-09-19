@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/remoteapi/src
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ has-props
 
 3817
 
-Makefile.in
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-63899855bc9a7e118b42489541f724b0
-2011-01-25T18:42:13.032214Z
-20440
-msmith
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4638
-
 sbRemoteSiteMediaList.cpp
 file
 
@@ -128,17 +94,17 @@ has-props
 
 3736
 
-sbRemotePlayer.h
+Makefile.in
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-8e134da3501a8bb3f0a019184dc2db26
-2010-05-12T19:31:22.127370Z
-18577
-aus
+63899855bc9a7e118b42489541f724b0
+2011-01-25T18:42:13.032214Z
+20440
+msmith
 has-props
 
 
@@ -160,7 +126,7 @@ has-props
 
 
 
-8830
+4638
 
 sbRemoteSiteLibraryResource.cpp
 file
@@ -196,17 +162,17 @@ redfive
 
 3393
 
-sbRemotePlaylistClickEvent.cpp
+sbRemotePlayer.h
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-9646cb8c806ddc412ab5245ea95ca3cc
-2010-06-04T01:14:16.644075Z
-18793
-preed
+8e134da3501a8bb3f0a019184dc2db26
+2010-05-12T19:31:22.127370Z
+18577
+aus
 has-props
 
 
@@ -228,7 +194,7 @@ has-props
 
 
 
-6515
+8830
 
 sbRemoteWebMediaList.cpp
 file
@@ -263,6 +229,40 @@ has-props
 
 
 3353
+
+sbRemotePlaylistClickEvent.cpp
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+9646cb8c806ddc412ab5245ea95ca3cc
+2010-06-04T01:14:16.644075Z
+18793
+preed
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6515
 
 sbRemoteForwardingMacros.h
 file
@@ -332,40 +332,6 @@ has-props
 
 1384
 
-sbRemoteLibraryResource.h
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-26cc8f5277d0d4d8e900a58471851ac4
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1814
-
 sbScriptableFilterResult.cpp
 file
 
@@ -399,6 +365,40 @@ has-props
 
 
 9956
+
+sbRemoteLibraryResource.h
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+26cc8f5277d0d4d8e900a58471851ac4
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1814
 
 sbRemoteNotificationManager.h
 file
@@ -1080,40 +1080,6 @@ has-props
 
 2985
 
-sbRemotePlayerFactory.h
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-1ac96f312d11590c9cb69848f4606553
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1644
-
 sbScriptableFilterItems.h
 file
 
@@ -1147,6 +1113,40 @@ has-props
 
 
 3297
+
+sbRemotePlayerFactory.h
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+1ac96f312d11590c9cb69848f4606553
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1644
 
 sbXPCScriptableStub.h
 file
@@ -1182,40 +1182,6 @@ has-props
 
 7914
 
-sbRemoteMediaItem.cpp
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-8e67695cd29c618cc9be06f909c3d8be
-2010-09-16T23:15:11.799159Z
-19472
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-4541
-
 sbRemoteSiteLibrary.h
 file
 
@@ -1250,16 +1216,16 @@ has-props
 
 2538
 
-sbRemoteAPIService.h
+sbRemoteMediaItem.cpp
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-b93cb549e0295f8d54783e2dbb7009d4
-2007-12-20T02:13:55.722209Z
-7658
+8e67695cd29c618cc9be06f909c3d8be
+2010-09-16T23:15:11.799159Z
+19472
 lone
 has-props
 
@@ -1282,7 +1248,7 @@ has-props
 
 
 
-2013
+4541
 
 sbRemoteAPIUtils.h
 file
@@ -1318,17 +1284,17 @@ has-props
 
 8704
 
-sbRemoteCommands.cpp
+sbRemoteAPIService.h
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-e124fc050a1c124faaa8afdcb9ca021a
-2010-12-17T00:56:02.433502Z
-20278
-jhawk
+b93cb549e0295f8d54783e2dbb7009d4
+2007-12-20T02:13:55.722209Z
+7658
+lone
 has-props
 
 
@@ -1350,7 +1316,7 @@ has-props
 
 
 
-18198
+2013
 
 sbRemoteWebMediaItem.h
 file
@@ -1386,16 +1352,50 @@ has-props
 
 1285
 
-sbRemoteLibrary.cpp
+sbRemoteCommands.cpp
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-f39b68e30068ed4749b3482349ee15a2
-2009-03-30T21:25:58.017420Z
-13266
+e124fc050a1c124faaa8afdcb9ca021a
+2010-12-17T00:56:02.433502Z
+20278
+jhawk
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+18198
+
+sbRemoteWebPlaylist.h
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+e90254e8a7fce21e088885c41787f83e
+2008-02-01T02:19:22.424982Z
+8031
 redfive
 has-props
 
@@ -1418,7 +1418,7 @@ has-props
 
 
 
-4728
+2197
 
 sbRemoteLibraryBase.h
 file
@@ -1454,16 +1454,16 @@ has-props
 
 5113
 
-sbRemoteWebPlaylist.h
+sbRemoteLibrary.cpp
 file
 
 
 
 
 2011-09-15T07:25:35.000000Z
-e90254e8a7fce21e088885c41787f83e
-2008-02-01T02:19:22.424982Z
-8031
+f39b68e30068ed4749b3482349ee15a2
+2009-03-30T21:25:58.017420Z
+13266
 redfive
 has-props
 
@@ -1486,7 +1486,7 @@ has-props
 
 
 
-2197
+4728
 
 sbSecurityMixin.h
 file
@@ -1590,40 +1590,6 @@ has-props
 
 1262
 
-sbURIChecker.cpp
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-9fd36017094817e9ff7e6ea35b62c466
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-10125
-
 sbRemoteWrappingSimpleEnumerator.h
 file
 
@@ -1657,6 +1623,40 @@ has-props
 
 
 2092
+
+sbURIChecker.cpp
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+9fd36017094817e9ff7e6ea35b62c466
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10125
 
 sbRemoteMediaItemStatusEvent.h
 file
@@ -1692,40 +1692,6 @@ preed
 
 2826
 
-sbRemoteAPI.h
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-69f94cc01acda828ed09a9ea315fb9e3
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7104
-
 sbRemoteSecurityEvent.h
 file
 
@@ -1759,6 +1725,40 @@ preed
 
 
 3511
+
+sbRemoteAPI.h
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+69f94cc01acda828ed09a9ea315fb9e3
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7104
 
 sbRemoteWrappingStringEnumerator.cpp
 file
@@ -1862,40 +1862,6 @@ has-props
 
 4239
 
-sbRemotePlayerFactory.cpp
-file
-
-
-
-
-2011-09-15T07:25:35.000000Z
-f0043eb29bcfd893c06ebc63ed623b40
-2007-12-20T02:13:55.722209Z
-7658
-lone
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1524
-
 sbScriptableFilterItems.cpp
 file
 
@@ -1929,6 +1895,40 @@ has-props
 
 
 18730
+
+sbRemotePlayerFactory.cpp
+file
+
+
+
+
+2011-09-15T07:25:35.000000Z
+f0043eb29bcfd893c06ebc63ed623b40
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1524
 
 sbScriptableFilter.h
 file

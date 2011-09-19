@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/property/src
 http://publicsvn.songbirdnest.com/client
 
@@ -60,40 +60,6 @@ has-props
 
 1990
 
-sbTextPropertyInfo.h
-file
-
-
-
-
-2011-09-15T07:24:40.000000Z
-e3929f53cb5ea996592db3cf21009c58
-2009-01-05T17:53:13.435479Z
-12365
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1885
-
 sbRatingPropertyInfo.h
 file
 
@@ -128,17 +94,17 @@ aus
 
 2016
 
-Makefile.in
+sbTextPropertyInfo.h
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-dd9a20a8af1f16710ad34fb740c5d945
-2011-01-25T18:41:52.402204Z
-20430
-msmith
+e3929f53cb5ea996592db3cf21009c58
+2009-01-05T17:53:13.435479Z
+12365
+lone
 has-props
 
 
@@ -160,7 +126,7 @@ has-props
 
 
 
-4351
+1885
 
 sbPropertyFactory.cpp
 file
@@ -195,6 +161,40 @@ has-props
 
 
 1413
+
+Makefile.in
+file
+
+
+
+
+2011-09-15T07:24:40.000000Z
+dd9a20a8af1f16710ad34fb740c5d945
+2011-01-25T18:41:52.402204Z
+20430
+msmith
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4351
 
 sbDummyProperties.h
 file
@@ -264,17 +264,17 @@ has-props
 
 1847
 
-sbImageLinkPropertyInfo.cpp
+sbPropertyUnitConverter.h
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-94da19b41bcf4a260e83bd427a92342c
-2010-08-07T01:24:10.751897Z
-19247
-mook
+ee40c122ba127eda9fc8de470b6f3d63
+2009-01-26T23:35:23.705784Z
+12568
+aus
 
 
 
@@ -296,7 +296,7 @@ mook
 
 
 
-6391
+4204
 
 sbPropertiesCID.h
 file
@@ -332,17 +332,17 @@ has-props
 
 11984
 
-sbPropertyUnitConverter.h
+sbImageLinkPropertyInfo.cpp
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-ee40c122ba127eda9fc8de470b6f3d63
-2009-01-26T23:35:23.705784Z
-12568
-aus
+94da19b41bcf4a260e83bd427a92342c
+2010-08-07T01:24:10.751897Z
+19247
+mook
 
 
 
@@ -364,7 +364,7 @@ aus
 
 
 
-4204
+6391
 
 sbStandardProperties.h
 file
@@ -400,17 +400,18 @@ has-props
 
 13309
 
-sbAbstractPropertyBuilder.h
+sbPropertyManager.h
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-985722f1798b910e2076dbdd8267582e
-2010-08-07T01:23:54.435727Z
-19240
-mook
+a0ae3d9ba048d44c63292d3f18c9d99c
+2011-05-05T22:56:12.844229Z
+21067
+slloyd
+has-props
 
 
 
@@ -431,8 +432,7 @@ mook
 
 
 
-
-3349
+7654
 
 sbDownloadButtonPropertyInfo.cpp
 file
@@ -468,18 +468,17 @@ mook
 
 8278
 
-sbPropertyManager.h
+sbAbstractPropertyBuilder.h
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-a0ae3d9ba048d44c63292d3f18c9d99c
-2011-05-05T22:56:12.844229Z
-21067
-slloyd
-has-props
+985722f1798b910e2076dbdd8267582e
+2010-08-07T01:23:54.435727Z
+19240
+mook
 
 
 
@@ -500,7 +499,8 @@ has-props
 
 
 
-7654
+
+3349
 
 sbImageLabelLinkPropertyInfo.h
 file
@@ -1114,40 +1114,6 @@ lone
 
 1767
 
-sbSimpleProperty.cpp
-file
-
-
-
-
-2011-09-15T07:24:40.000000Z
-e5445f705e5f47b780f053501dc02e0e
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1097
-
 sbImagePropertyBuilder.cpp
 file
 
@@ -1181,6 +1147,40 @@ mook
 
 
 2031
+
+sbSimpleProperty.cpp
+file
+
+
+
+
+2011-09-15T07:24:40.000000Z
+e5445f705e5f47b780f053501dc02e0e
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1097
 
 sbStatusPropertyBuilder.cpp
 file
@@ -1250,17 +1250,17 @@ has-props
 
 1907
 
-sbBooleanPropertyInfo.h
+sbRatingPropertyBuilder.h
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-7899c7996d166efbf77eeaf637f3d8c1
-2009-10-06T07:36:48.715173Z
-15199
-aus
+d35dd46d6d47f0fecc0aea8d80b2b2df
+2007-12-20T02:13:55.722209Z
+7658
+lone
 
 
 
@@ -1282,7 +1282,7 @@ aus
 
 
 
-1925
+1358
 
 sbImmutablePropertyInfo.h
 file
@@ -1318,17 +1318,17 @@ jhawk
 
 1979
 
-sbRatingPropertyBuilder.h
+sbBooleanPropertyInfo.h
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-d35dd46d6d47f0fecc0aea8d80b2b2df
-2007-12-20T02:13:55.722209Z
-7658
-lone
+7899c7996d166efbf77eeaf637f3d8c1
+2009-10-06T07:36:48.715173Z
+15199
+aus
 
 
 
@@ -1350,75 +1350,7 @@ lone
 
 
 
-1358
-
-sbStoragePropertyUnitConverter.h
-file
-
-
-
-
-2011-09-15T07:24:40.000000Z
-7f0522e2cd34c78fd9c81e482f2bc0aa
-2010-06-29T21:10:05.905178Z
-19078
-erik
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1694
-
-sbSimpleButtonPropertyInfo.cpp
-file
-
-
-
-
-2011-09-15T07:24:40.000000Z
-8d59d771c14b63c00b99742e0abd04d5
-2010-08-07T01:24:10.751897Z
-19247
-mook
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6491
+1925
 
 sbSimpleButtonPropertyBuilder.h
 file
@@ -1454,17 +1386,17 @@ lone
 
 1458
 
-sbOriginPageImagePropertyBuilder.h
+sbSimpleButtonPropertyInfo.cpp
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-89746e9ded28fdacaa50b39e4039c868
-2007-12-20T02:13:55.722209Z
-7658
-lone
+8d59d771c14b63c00b99742e0abd04d5
+2010-08-07T01:24:10.751897Z
+19247
+mook
 
 
 
@@ -1486,7 +1418,41 @@ lone
 
 
 
-1436
+6491
+
+sbStoragePropertyUnitConverter.h
+file
+
+
+
+
+2011-09-15T07:24:40.000000Z
+7f0522e2cd34c78fd9c81e482f2bc0aa
+2010-06-29T21:10:05.905178Z
+19078
+erik
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1694
 
 sbProperties.jsm.in
 file
@@ -1521,6 +1487,40 @@ has-props
 
 
 2826
+
+sbOriginPageImagePropertyBuilder.h
+file
+
+
+
+
+2011-09-15T07:24:40.000000Z
+89746e9ded28fdacaa50b39e4039c868
+2007-12-20T02:13:55.722209Z
+7658
+lone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1436
 
 sbDurationPropertyInfo.h
 file
@@ -1658,40 +1658,6 @@ has-props
 
 11255
 
-sbImageLabelLinkPropertyBuilder.h
-file
-
-
-
-
-2011-09-15T07:24:40.000000Z
-4df84f558fa04f8aff20ad0c5fd1efaf
-2010-08-07T01:24:12.899761Z
-19248
-mook
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1958
-
 sbDummyPropertyInfo.h
 file
 
@@ -1725,6 +1691,40 @@ lone
 
 
 1705
+
+sbImageLabelLinkPropertyBuilder.h
+file
+
+
+
+
+2011-09-15T07:24:40.000000Z
+4df84f558fa04f8aff20ad0c5fd1efaf
+2010-08-07T01:24:12.899761Z
+19248
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1958
 
 sbDurationPropertyUnitConverter.cpp
 file
@@ -1896,16 +1896,16 @@ alfred
 
 1513
 
-sbBooleanPropertyInfo.cpp
+sbRatingPropertyBuilder.cpp
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-707ac16de2f8d0b5d193675d65a1c4a8
-2010-08-07T01:24:10.751897Z
-19247
+647cacd443320ebc47ce15bc5993b3f2
+2009-05-05T23:51:24.808814Z
+13503
 mook
 
 
@@ -1928,7 +1928,7 @@ mook
 
 
 
-7628
+2050
 
 sbImmutablePropertyInfo.cpp
 file
@@ -1964,16 +1964,16 @@ jhawk
 
 11008
 
-sbRatingPropertyBuilder.cpp
+sbBooleanPropertyInfo.cpp
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-647cacd443320ebc47ce15bc5993b3f2
-2009-05-05T23:51:24.808814Z
-13503
+707ac16de2f8d0b5d193675d65a1c4a8
+2010-08-07T01:24:10.751897Z
+19247
 mook
 
 
@@ -1996,7 +1996,7 @@ mook
 
 
 
-2050
+7628
 
 sbDummyPlaylistPropertyInfo.h
 file
@@ -2066,18 +2066,17 @@ has-props
 
 1582
 
-sbTextPropertyInfo.cpp
+sbRatingPropertyInfo.cpp
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-89399d6ac618b17d73e87dde8e7de673
-2010-07-09T07:12:56.348727Z
-19139
-alfred
-has-props
+bea8edfe514e62ccb1cf8b7974cc6b5a
+2010-08-07T01:24:10.751897Z
+19247
+mook
 
 
 
@@ -2098,7 +2097,8 @@ has-props
 
 
 
-11343
+
+8615
 
 sbPropertyInfo.h
 file
@@ -2134,17 +2134,18 @@ has-props
 
 7304
 
-sbRatingPropertyInfo.cpp
+sbTextPropertyInfo.cpp
 file
 
 
 
 
 2011-09-15T07:24:40.000000Z
-bea8edfe514e62ccb1cf8b7974cc6b5a
-2010-08-07T01:24:10.751897Z
-19247
-mook
+89399d6ac618b17d73e87dde8e7de673
+2010-07-09T07:12:56.348727Z
+19139
+alfred
+has-props
 
 
 
@@ -2165,8 +2166,7 @@ mook
 
 
 
-
-8615
+11343
 
 sbDurationPropertyInfo.cpp
 file

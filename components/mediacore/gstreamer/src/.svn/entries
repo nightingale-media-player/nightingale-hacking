@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/mediacore/gstreamer/src
 http://publicsvn.songbirdnest.com/client
 
@@ -502,40 +502,6 @@ aus
 
 3722
 
-sbGStreamerTranscodeDeviceConfigurator.cpp
-file
-
-
-
-
-2011-09-15T07:24:45.000000Z
-44cb1402732ce4ffe9fe14ce849e1299
-2010-10-16T04:14:20.770168Z
-19801
-msmith
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-52815
-
 sbGStreamerMediacoreFactory.h
 file
 
@@ -570,17 +536,17 @@ palant
 
 1797
 
-sbIGstPlatformInterface.h
+sbGStreamerTranscodeDeviceConfigurator.cpp
 file
 
 
 
 
 2011-09-15T07:24:45.000000Z
-540cb088ee74331e414ebfcb9b9a2dc8
-2009-11-18T20:07:51.009547Z
-15906
-aus
+44cb1402732ce4ffe9fe14ce849e1299
+2010-10-16T04:14:20.770168Z
+19801
+msmith
 
 
 
@@ -602,7 +568,7 @@ aus
 
 
 
-2908
+52815
 
 sbGStreamerTranscodeAudioConfigurator.cpp
 file
@@ -638,6 +604,40 @@ msmith
 
 31376
 
+sbIGstPlatformInterface.h
+file
+
+
+
+
+2011-09-15T07:24:45.000000Z
+540cb088ee74331e414ebfcb9b9a2dc8
+2009-11-18T20:07:51.009547Z
+15906
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2908
+
 sbGStreamerMediacore.h
 file
 
@@ -671,6 +671,9 @@ dbradley
 
 
 9190
+
+metadata
+dir
 
 sbGStreamerService.cpp
 file
@@ -706,9 +709,6 @@ erik
 
 20284
 
-metadata
-dir
-
 sbAboutGStreamer.js
 file
 
@@ -743,40 +743,6 @@ msmith
 
 1867
 
-sbGStreamerPipeline.cpp
-file
-
-
-
-
-2011-09-15T07:24:45.000000Z
-37ec4ec9c866f402db013b4a6431fe96
-2011-01-18T22:19:32.911174Z
-20408
-msmith
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-12068
-
 sbGStreamerPlatformOSX.mm
 file
 
@@ -810,6 +776,40 @@ msmith
 
 
 11311
+
+sbGStreamerPipeline.cpp
+file
+
+
+
+
+2011-09-15T07:24:45.000000Z
+37ec4ec9c866f402db013b4a6431fe96
+2011-01-18T22:19:32.911174Z
+20408
+msmith
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12068
 
 sbGStreamerAudioProcessor.h
 file
@@ -981,40 +981,6 @@ aus
 
 4851
 
-sbGStreamerVideoTranscode.h
-file
-
-
-
-
-2011-09-15T07:24:45.000000Z
-c8f1b16a322f56a6a3a797a5988f89bb
-2010-08-17T20:53:11.416475Z
-19307
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-10082
-
 sbGStreamerMediacoreUtils.h
 file
 
@@ -1048,6 +1014,40 @@ msmith
 
 
 5561
+
+sbGStreamerVideoTranscode.h
+file
+
+
+
+
+2011-09-15T07:24:45.000000Z
+c8f1b16a322f56a6a3a797a5988f89bb
+2010-08-17T20:53:11.416475Z
+19307
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10082
 
 sbGStreamerPlatformBase.cpp
 file

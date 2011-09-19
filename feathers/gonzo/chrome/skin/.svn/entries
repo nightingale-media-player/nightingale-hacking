@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/feathers/gonzo/chrome/skin
 http://publicsvn.songbirdnest.com/client
 
@@ -198,10 +198,10 @@ dir
 video
 dir
 
-window
+ratings
 dir
 
-ratings
+window
 dir
 
 formsImport.css
@@ -327,10 +327,10 @@ dir
 artist-info
 dir
 
-playlist
+preferences
 dir
 
-preferences
+playlist
 dir
 
 os-specific

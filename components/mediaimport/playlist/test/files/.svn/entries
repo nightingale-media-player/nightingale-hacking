@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/mediaimport/playlist/test/files
 http://publicsvn.songbirdnest.com/client
 
@@ -471,17 +471,17 @@ has-props
 
 66
 
-maclin_utf8_result.xml
+maclin_utf8.pls
 file
 
 
 
 
 2011-09-15T07:25:40.000000Z
-80aba02bf82a886833ad46f8d9b60eaf
-2010-06-30T17:25:10.098016Z
-19092
-erik
+0e507053355862625e3e181b6dcff6c2
+2007-05-08T01:01:10.986777Z
+4443
+steve
 
 
 
@@ -503,7 +503,7 @@ erik
 
 
 
-956
+361
 
 win_utf8.m3u
 file
@@ -539,17 +539,17 @@ has-props
 
 248
 
-maclin_utf8.pls
+maclin_utf8_result.xml
 file
 
 
 
 
 2011-09-15T07:25:40.000000Z
-0e507053355862625e3e181b6dcff6c2
-2007-05-08T01:01:10.986777Z
-4443
-steve
+80aba02bf82a886833ad46f8d9b60eaf
+2010-06-30T17:25:10.098016Z
+19092
+erik
 
 
 
@@ -571,7 +571,7 @@ steve
 
 
 
-361
+956
 
 maclin_unf.pls
 file
@@ -607,40 +607,6 @@ erik
 
 93
 
-maclin_parsepls_result.xml
-file
-
-
-
-
-2011-09-15T07:25:40.000000Z
-78c73943c74b2395b039b85bc544aa53
-2007-06-15T18:45:22.127195Z
-5039
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1131
-
 win_parsem3u_result.xml
 file
 
@@ -674,6 +640,40 @@ has-props
 
 
 1910
+
+maclin_parsepls_result.xml
+file
+
+
+
+
+2011-09-15T07:25:40.000000Z
+78c73943c74b2395b039b85bc544aa53
+2007-06-15T18:45:22.127195Z
+5039
+aus
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1131
 
 music
 dir
@@ -780,40 +780,6 @@ aus
 
 4506
 
-maclin_parse.pls
-file
-
-
-
-
-2011-09-15T07:25:40.000000Z
-92c780e9e41d421521e6c9bdf5014263
-2007-05-08T01:01:10.986777Z
-4443
-steve
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-360
-
 win_parse.m3u
 file
 
@@ -848,16 +814,16 @@ has-props
 
 314
 
-fluxblog_org.html
+maclin_parse.pls
 file
 
 
 
 
 2011-09-15T07:25:40.000000Z
-fd11672431f4d32bf0f174ddaeba93c9
-2007-05-11T16:22:09.308473Z
-4498
+92c780e9e41d421521e6c9bdf5014263
+2007-05-08T01:01:10.986777Z
+4443
 steve
 
 
@@ -880,7 +846,7 @@ steve
 
 
 
-74368
+360
 
 absolute_remote.m3u
 file
@@ -916,6 +882,40 @@ steve
 
 62
 
+fluxblog_org.html
+file
+
+
+
+
+2011-09-15T07:25:40.000000Z
+fd11672431f4d32bf0f174ddaeba93c9
+2007-05-11T16:22:09.308473Z
+4498
+steve
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+74368
+
 kqedradio.asx
 file
 
@@ -950,40 +950,6 @@ aus
 
 748
 
-win_utf8.m3u8
-file
-
-
-
-
-2011-09-15T07:25:40.000000Z
-32bcbc59f06268d5cf5a4b94d054e4a1
-2011-06-01T18:19:33.610129Z
-21362
-mikeh
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-248
-
 absolute_remote_localhost_result.xml
 file
 
@@ -1017,6 +983,40 @@ steve
 
 
 608
+
+win_utf8.m3u8
+file
+
+
+
+
+2011-09-15T07:25:40.000000Z
+32bcbc59f06268d5cf5a4b94d054e4a1
+2011-06-01T18:19:33.610129Z
+21362
+mikeh
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+248
 
 maclin_unf_nfd_result.xml
 file

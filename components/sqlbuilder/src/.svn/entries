@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/sqlbuilder/src
 http://publicsvn.songbirdnest.com/client
 
@@ -94,40 +94,6 @@ has-props
 
 1962
 
-Makefile.in
-file
-
-
-
-
-2011-09-15T07:24:55.000000Z
-d1d7e35cb0bc6014b0671ffd658188ea
-2009-07-31T22:23:49.587864Z
-14483
-preed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1522
-
 sbSQLBuilderModule.cpp
 file
 
@@ -161,6 +127,40 @@ has-props
 
 
 1897
+
+Makefile.in
+file
+
+
+
+
+2011-09-15T07:24:55.000000Z
+d1d7e35cb0bc6014b0671ffd658188ea
+2009-07-31T22:23:49.587864Z
+14483
+preed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1522
 
 sbSQLUpdateBuilder.h
 file
@@ -298,40 +298,6 @@ has-props
 
 6231
 
-sbSQLBuilderCID.h
-file
-
-
-
-
-2011-09-15T07:24:55.000000Z
-495349e37cae8a25333969bab24c6a2e
-2007-12-20T02:13:55.722209Z
-7658
-lone
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1622
-
 sbSQLInsertBuilder.cpp
 file
 
@@ -365,6 +331,40 @@ has-props
 
 
 4529
+
+sbSQLBuilderCID.h
+file
+
+
+
+
+2011-09-15T07:24:55.000000Z
+495349e37cae8a25333969bab24c6a2e
+2007-12-20T02:13:55.722209Z
+7658
+lone
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1622
 
 sbSQLDeleteBuilder.h
 file
@@ -434,40 +434,6 @@ has-props
 
 1739
 
-sbSQLBuilderBase.cpp
-file
-
-
-
-
-2011-09-15T07:24:55.000000Z
-79121674ff6560b5d63439e148cb4575
-2008-05-20T22:41:06.745275Z
-9354
-aus
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7026
-
 sbSQLWhereBuilder.cpp
 file
 
@@ -501,6 +467,40 @@ has-props
 
 
 9308
+
+sbSQLBuilderBase.cpp
+file
+
+
+
+
+2011-09-15T07:24:55.000000Z
+79121674ff6560b5d63439e148cb4575
+2008-05-20T22:41:06.745275Z
+9354
+aus
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7026
 
 sbSQLSelectBuilder.cpp
 file

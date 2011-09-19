@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/extensions/mashTape/chrome/locale
 http://publicsvn.songbirdnest.com/client
 
@@ -26,37 +26,37 @@ mook
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
 
-zh-CN
-dir
-
 cs-CZ
 dir
 
-nl-NL
+zh-CN
 dir
 
 da-DK
 dir
 
-th-TH
-dir
-
-pt-BR
+nl-NL
 dir
 
 pl-PL
 dir
 
-hu-HU
+pt-BR
+dir
+
+th-TH
 dir
 
 it-IT
 dir
 
-sl-SI
+hu-HU
 dir
 
 en-US
+dir
+
+sl-SI
 dir
 
 en-GB

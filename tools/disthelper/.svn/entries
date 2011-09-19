@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/tools/disthelper
 http://publicsvn.songbirdnest.com/client
 
@@ -230,6 +230,12 @@ has-props
 
 5113
 
+windows
+dir
+
+macosx
+dir
+
 tchar_compat.h
 file
 
@@ -263,12 +269,6 @@ mook
 
 
 945
-
-macosx
-dir
-
-windows
-dir
 
 readini.cpp
 file

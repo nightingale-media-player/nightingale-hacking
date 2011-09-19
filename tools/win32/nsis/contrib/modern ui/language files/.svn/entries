@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/tools/win32/nsis/contrib/modern%20ui/language%20files
 http://publicsvn.songbirdnest.com/client
 
@@ -502,40 +502,6 @@ aus
 
 6566
 
-Hebrew.nsh
-file
-
-
-
-
-2011-09-15T07:25:58.000000Z
-4798e30a2efaee98ebaf103e101c05fb
-2006-03-08T22:19:01.511821Z
-1
-ben
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5436
-
 Hungarian.nsh
 file
 
@@ -569,6 +535,40 @@ ben
 
 
 6193
+
+Hebrew.nsh
+file
+
+
+
+
+2011-09-15T07:25:58.000000Z
+4798e30a2efaee98ebaf103e101c05fb
+2006-03-08T22:19:01.511821Z
+1
+ben
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5436
 
 NorwegianNynorsk.nsh
 file
@@ -706,40 +706,6 @@ aus
 
 5974
 
-Serbian.nsh
-file
-
-
-
-
-2011-09-15T07:25:58.000000Z
-dc2b887252b3b8844dd970dd3ff7ccc4
-2007-07-10T18:47:28.753350Z
-5425
-aus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6541
-
 Mongolian.nsh
 file
 
@@ -774,17 +740,17 @@ aus
 
 5989
 
-Russian.nsh
+Serbian.nsh
 file
 
 
 
 
 2011-09-15T07:25:58.000000Z
-d5efebd2229ff40f075bea04ecf5069e
-2006-03-08T22:19:01.511821Z
-1
-ben
+dc2b887252b3b8844dd970dd3ff7ccc4
+2007-07-10T18:47:28.753350Z
+5425
+aus
 
 
 
@@ -806,7 +772,7 @@ ben
 
 
 
-6206
+6541
 
 Default.nsh
 file
@@ -841,6 +807,40 @@ ben
 
 
 7700
+
+Russian.nsh
+file
+
+
+
+
+2011-09-15T07:25:58.000000Z
+d5efebd2229ff40f075bea04ecf5069e
+2006-03-08T22:19:01.511821Z
+1
+ben
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6206
 
 Belarusian.nsh
 file
@@ -910,40 +910,6 @@ ben
 
 6723
 
-Turkish.nsh
-file
-
-
-
-
-2011-09-15T07:25:58.000000Z
-9859e869ec78f4f60c8acd441a8dd60b
-2006-03-08T22:19:01.511821Z
-1
-ben
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6603
-
 Bosnian.nsh
 file
 
@@ -978,14 +944,14 @@ ben
 
 6621
 
-Lithuanian.nsh
+Turkish.nsh
 file
 
 
 
 
 2011-09-15T07:25:58.000000Z
-71a2859421662d37f92f40d186586189
+9859e869ec78f4f60c8acd441a8dd60b
 2006-03-08T22:19:01.511821Z
 1
 ben
@@ -1010,7 +976,7 @@ ben
 
 
 
-6083
+6603
 
 Czech.nsh
 file
@@ -1045,6 +1011,40 @@ aus
 
 
 6350
+
+Lithuanian.nsh
+file
+
+
+
+
+2011-09-15T07:25:58.000000Z
+71a2859421662d37f92f40d186586189
+2006-03-08T22:19:01.511821Z
+1
+ben
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6083
 
 Greek.nsh
 file

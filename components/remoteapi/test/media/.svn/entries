@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/components/remoteapi/test/media
 http://publicsvn.songbirdnest.com/client
 
@@ -26,14 +26,14 @@ nick
 
 5aad4ff5-4b58-4159-ba3f-0e6328df4cad
 
-test11.mp3
+test02.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-4ac0ad404e0be7b508a37426fcb67788
+b4415dddc025031a1c3071b78349e0d4
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -94,48 +94,14 @@ nick
 
 3925935
 
-test02.mp3
+test11.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-b4415dddc025031a1c3071b78349e0d4
-2008-10-11T01:39:50.589895Z
-11270
-redfive
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-17392
-
-test12.mp3
-file
-
-
-
-
-2011-09-15T07:25:33.000000Z
-89ffd9d7de448dd607d8a0bf95475665
+4ac0ad404e0be7b508a37426fcb67788
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -196,14 +162,14 @@ has-props
 
 17392
 
-test13.mp3
+test12.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-214e3b2558fb4eac3945952c2b7a729e
+89ffd9d7de448dd607d8a0bf95475665
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -264,14 +230,14 @@ has-props
 
 17392
 
-test14.mp3
+test13.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-b25f373c524813464f71a5a4da3c1909
+214e3b2558fb4eac3945952c2b7a729e
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -332,14 +298,14 @@ has-props
 
 17392
 
-test15.mp3
+test14.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-8d06455f7906d4951a77f5f3cac2247c
+b25f373c524813464f71a5a4da3c1909
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -400,14 +366,14 @@ has-props
 
 17392
 
-test16.mp3
+test15.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-8031b731853e34a440c106948376dc50
+8d06455f7906d4951a77f5f3cac2247c
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -432,7 +398,41 @@ has-props
 
 
 
-17393
+17392
+
+test07.mp3
+file
+
+
+
+
+2011-09-15T07:25:33.000000Z
+e2cd77878b049b6103f58437c40c3885
+2008-10-11T01:39:50.589895Z
+11270
+redfive
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17392
 
 nyx_-_Undercover.mp3
 file
@@ -468,14 +468,14 @@ nick
 
 5198264
 
-test07.mp3
+test16.mp3
 file
 
 
 
 
 2011-09-15T07:25:33.000000Z
-e2cd77878b049b6103f58437c40c3885
+8031b731853e34a440c106948376dc50
 2008-10-11T01:39:50.589895Z
 11270
 redfive
@@ -500,7 +500,7 @@ has-props
 
 
 
-17392
+17393
 
 test08.mp3
 file

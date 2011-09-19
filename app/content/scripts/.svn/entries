@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/app/content/scripts
 http://publicsvn.songbirdnest.com/client
 
@@ -539,40 +539,6 @@ has-props
 
 11680
 
-commandLine.js
-file
-
-
-
-
-2011-09-15T07:24:28.000000Z
-254b89622c0facc055a47fde2c8e20af
-2009-02-04T00:33:50.870516Z
-12682
-pvh
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-5973
-
 mainWinInit.js
 file
 
@@ -606,6 +572,40 @@ kurt
 
 
 15328
+
+commandLine.js
+file
+
+
+
+
+2011-09-15T07:24:28.000000Z
+254b89622c0facc055a47fde2c8e20af
+2009-02-04T00:33:50.870516Z
+12682
+pvh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5973
 
 windowUtils.js
 file
@@ -709,17 +709,18 @@ erik
 
 9196
 
-firstRunWizard.js
+restartBox.js
 file
 
 
 
 
 2011-09-15T07:24:28.000000Z
-4e020070f07ba37ca09040dc473aa02d
-2010-08-16T21:01:40.477216Z
-19290
-mook
+787a4e32686afaf12a10b80c8ec5d63d
+2009-01-14T00:26:16.815116Z
+12457
+preed
+has-props
 
 
 
@@ -740,8 +741,7 @@ mook
 
 
 
-
-14082
+3337
 
 contentAreaContextMenu.js
 file
@@ -777,18 +777,17 @@ palant
 
 53150
 
-restartBox.js
+firstRunWizard.js
 file
 
 
 
 
 2011-09-15T07:24:28.000000Z
-787a4e32686afaf12a10b80c8ec5d63d
-2009-01-14T00:26:16.815116Z
-12457
-preed
-has-props
+4e020070f07ba37ca09040dc473aa02d
+2010-08-16T21:01:40.477216Z
+19290
+mook
 
 
 
@@ -809,7 +808,8 @@ has-props
 
 
 
-3337
+
+14082
 
 importLibrary.js
 file
@@ -845,40 +845,6 @@ preed
 
 4859
 
-searchHandler.js
-file
-
-
-
-
-2011-09-15T07:24:28.000000Z
-306f49df15c4727db66445c865a4c0bb
-2010-09-27T18:54:57.755684Z
-19555
-mook
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-24016
-
 balloonTip.js
 file
 
@@ -912,6 +878,40 @@ lone
 
 
 22969
+
+searchHandler.js
+file
+
+
+
+
+2011-09-15T07:24:28.000000Z
+306f49df15c4727db66445c865a4c0bb
+2010-09-27T18:54:57.755684Z
+19555
+mook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+24016
 
 waitForCompletion.js
 file

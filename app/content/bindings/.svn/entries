@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/app/content/bindings
 http://publicsvn.songbirdnest.com/client
 
@@ -505,40 +505,6 @@ slloyd
 
 6415
 
-addOnBundleInstaller.xml
-file
-
-
-
-
-2011-09-15T07:24:32.000000Z
-794c93ee8aca49af06bda31b7a05781b
-2008-09-29T18:25:33.678002Z
-11091
-erik
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7229
-
 eqBandSlider.xml
 file
 
@@ -573,17 +539,17 @@ aus
 
 4854
 
-springLoadButton.xml
+addOnBundleInstaller.xml
 file
 
 
 
 
 2011-09-15T07:24:32.000000Z
-98b766d29927e08dda19d09347e6c691
-2008-07-17T00:40:36.324434Z
-9992
-mook
+794c93ee8aca49af06bda31b7a05781b
+2008-09-29T18:25:33.678002Z
+11091
+erik
 
 
 
@@ -605,7 +571,7 @@ mook
 
 
 
-7807
+7229
 
 infoPanels.xml
 file
@@ -641,17 +607,17 @@ alfred
 
 12643
 
-mediaPages.xml
+springLoadButton.xml
 file
 
 
 
 
 2011-09-15T07:24:32.000000Z
-b288d24e57d3f99c93d2a7afbcfa7d02
-2010-07-23T18:32:27.892412Z
-19192
-slloyd
+98b766d29927e08dda19d09347e6c691
+2008-07-17T00:40:36.324434Z
+9992
+mook
 
 
 
@@ -673,7 +639,7 @@ slloyd
 
 
 
-21407
+7807
 
 dialog.xml
 file
@@ -709,6 +675,43 @@ has-props
 
 4276
 
+mediaPages.xml
+file
+
+
+
+
+2011-09-15T07:24:32.000000Z
+b288d24e57d3f99c93d2a7afbcfa7d02
+2010-07-23T18:32:27.892412Z
+19192
+slloyd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+21407
+
+device
+dir
+
 wizard.xml
 file
 
@@ -742,43 +745,6 @@ jwatts
 
 
 13635
-
-device
-dir
-
-playlist.xml
-file
-
-
-
-
-2011-09-15T07:24:32.000000Z
-fa1bc24abecbd842772cf8226d0c85ab
-2011-06-01T22:39:04.527038Z
-21364
-slloyd
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-117074
 
 feathers.xml
 file
@@ -814,6 +780,40 @@ has-props
 
 20284
 
+playlist.xml
+file
+
+
+
+
+2011-09-15T07:24:32.000000Z
+fa1bc24abecbd842772cf8226d0c85ab
+2011-06-01T22:39:04.527038Z
+21364
+slloyd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+117074
+
 sysControls.xml
 file
 
@@ -847,40 +847,6 @@ has-props
 
 
 36110
-
-saveFolderBox.xml
-file
-
-
-
-
-2011-09-15T07:24:32.000000Z
-d187e853501b6720025ee2280c3e110d
-2011-04-15T20:42:33.671613Z
-20928
-jwatts
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6827
 
 localKey.xml
 file
@@ -916,18 +882,17 @@ lone
 
 18490
 
-servicePane.xml
+saveFolderBox.xml
 file
 
 
 
 
 2011-09-15T07:24:32.000000Z
-e04c896c5c628487f0fab94d83fc8469
-2011-04-14T20:36:17.661794Z
-20920
-kurt
-has-props
+d187e853501b6720025ee2280c3e110d
+2011-04-15T20:42:33.671613Z
+20928
+jwatts
 
 
 
@@ -948,7 +913,8 @@ has-props
 
 
 
-82014
+
+6827
 
 displayPaneGrippy.xml
 file
@@ -983,6 +949,40 @@ stevel
 
 
 5177
+
+servicePane.xml
+file
+
+
+
+
+2011-09-15T07:24:32.000000Z
+e04c896c5c628487f0fab94d83fc8469
+2011-04-14T20:36:17.661794Z
+20920
+kurt
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+82014
 
 progressSlider.xml
 file

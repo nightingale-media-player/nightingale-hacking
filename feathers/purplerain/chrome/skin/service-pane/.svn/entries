@@ -1,7 +1,7 @@
 10
 
 dir
-22050
+22052
 http://publicsvn.songbirdnest.com/client/trunk/feathers/purplerain/chrome/skin/service-pane
 http://publicsvn.songbirdnest.com/client
 
@@ -774,40 +774,6 @@ has-props
 
 3262
 
-cd_ripping.png
-file
-
-
-
-
-2011-09-15T07:26:07.000000Z
-32f5b70f1c6296071e6ef0d976a9aadf
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2644
-
 icon-new-playlist.png
 file
 
@@ -841,6 +807,40 @@ has-props
 
 
 3438
+
+cd_ripping.png
+file
+
+
+
+
+2011-09-15T07:26:07.000000Z
+32f5b70f1c6296071e6ef0d976a9aadf
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2644
 
 container_arrows.png
 file
@@ -944,40 +944,6 @@ has-props
 
 3068
 
-cd_rest.png
-file
-
-
-
-
-2011-09-15T07:26:07.000000Z
-12e7a17a039fdf213c8592d55fec1cd6
-2010-01-06T18:35:02.402204Z
-16997
-stevel
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-853
-
 icon-podcast.png
 file
 
@@ -1011,6 +977,40 @@ has-props
 
 
 498
+
+cd_rest.png
+file
+
+
+
+
+2011-09-15T07:26:07.000000Z
+12e7a17a039fdf213c8592d55fec1cd6
+2010-01-06T18:35:02.402204Z
+16997
+stevel
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+853
 
 bg-active-node.png
 file
