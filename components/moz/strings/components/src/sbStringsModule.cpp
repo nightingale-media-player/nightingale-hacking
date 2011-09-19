@@ -50,8 +50,8 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
 #include <nsServiceManagerUtils.h>
+#include <mozilla/ModuleUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -63,70 +63,11 @@
 // Construct the sbStringBundleService object and call its Initialize method.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStringBundleService, Initialize)
 
-
-/**
- * Register the Songbird string bundle service component.
- */
-
-static NS_METHOD
-sbStringBundleServiceRegister(nsIComponentManager*         aCompMgr,
-                              nsIFile*                     aPath,
-                              const char*                  aLoaderStr,
-                              const char*                  aType,
-                              const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the profile-after-change category (so that the locales are ready)
-  rv = categoryManager->AddCategoryEntry
-                          ("profile-after-change",
-                           SB_STRINGBUNDLESERVICE_CLASSNAME,
-                           "service," SB_STRINGBUNDLESERVICE_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Unregister the Songbird string bundle service component.
- */
-
-static NS_METHOD
-sbStringBundleServiceUnregister(nsIComponentManager*         aCompMgr,
-                                nsIFile*                     aPath,
-                                const char*                  aLoaderStr,
-                                const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the app-startup category.
-  rv = categoryManager->DeleteCategoryEntry("profile-after-change",
-                                            SB_STRINGBUNDLESERVICE_CLASSNAME,
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 //------------------------------------------------------------------------------
 // sbStringMap stuff
 //------------------------------------------------------------------------------
+
+NS_DEFINE_NAMED_CID(SB_STRINGBUNDLESERVICE_CID);
 
 #define SB_STRINGMAP_CLASSNAME "sbStringMap"
 #define SB_STRINGMAP_CID \
@@ -134,9 +75,11 @@ sbStringBundleServiceUnregister(nsIComponentManager*         aCompMgr,
   { 0xae, 0x12, 0xef, 0x53, 0x93, 0x5d, 0xcf, 0x3e } }
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbStringMap)
+NS_DEFINE_NAMED_CID(SB_STRINGMAP_CID);
 
 // Songbird charset detect utilities defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbCharsetDetector)
+NS_DEFINE_NAMED_CID(SB_CHARSETDETECTOR_CID);
 
 //------------------------------------------------------------------------------
 //
@@ -144,34 +87,35 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbCharsetDetector)
 //
 //------------------------------------------------------------------------------
 
-// Module component information.
-static nsModuleComponentInfo sbStringsComponents[] =
-{
-  // String bundle service component info.
-  {
-    SB_STRINGBUNDLESERVICE_CLASSNAME,
-    SB_STRINGBUNDLESERVICE_CID,
-    SB_STRINGBUNDLESERVICE_CONTRACTID,
-    sbStringBundleServiceConstructor,
-    sbStringBundleServiceRegister,
-    sbStringBundleServiceUnregister
-  },
-  // sbStringMap
-  {
-    SB_STRINGMAP_CLASSNAME,
-    SB_STRINGMAP_CID,
-    SB_STRINGMAP_CONTRACTID,
-    sbStringMapConstructor
-  },
-  // Songbird charset detect utilities component info.
-  {
-    SB_CHARSETDETECTOR_CLASSNAME,
-    SB_CHARSETDETECTOR_CID,
-    SB_CHARSETDETECTOR_CONTRACTID,
-    sbCharsetDetectorConstructor
-  }
+
+static const mozilla::Module::CIDEntry kSongbirdMozStringsCIDs[] = {
+    { &kSB_STRINGBUNDLESERVICE_CID, true, NULL, sbStringBundleServiceConstructor },
+    { &kSB_STRINGMAP_CID, false, NULL, sbStringMapConstructor },
+    { &kSB_CHARSETDETECTOR_CID, false, NULL, sbCharsetDetectorConstructor },
+    { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbStringsModule, sbStringsComponents)
+
+static const mozilla::Module::ContractIDEntry kSongbirdMozStringsContracts[] = {
+    { SB_STRINGBUNDLESERVICE_CONTRACTID, &kSB_STRINGBUNDLESERVICE_CID },
+    { SB_STRINGMAP_CONTRACTID, &kSB_STRINGMAP_CID },
+    { SB_CHARSETDETECTOR_CONTRACTID, &kSB_CHARSETDETECTOR_CID },
+    { NULL }
+};
+
+
+static const mozilla::Module::CategoryEntry kSongbirdMozStringsCategories[] = {
+    { "profile-after-change", SB_STRINGBUNDLESERVICE_CLASSNAME, SB_STRINGBUNDLESERVICE_CONTRACTID },
+    { NULL }
+};
+
+
+static const mozilla::Module kSongbirdMozStringsModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozStringsCIDs,
+    kSongbirdMozStringsContracts,
+    kSongbirdMozStringsCategories
+};
+
+NSMODULE_DEFN(sbMozStringsModule) = &kSongbirdMozStringsModule;
 

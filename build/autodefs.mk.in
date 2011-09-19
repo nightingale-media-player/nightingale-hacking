@@ -107,7 +107,7 @@ HAVE_FLUENDO_MP3 = @HAVE_FLUENDO_MP3@
 #
 
 DEPS_DIR = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
-XULRUNNER_DIR = $(topsrcdir)/dependencies/linux-x86_64/xulrunner-6.0.2/release
+XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-6.0.2/$(SB_CONFIGURATION)
 SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 
 #
@@ -118,14 +118,14 @@ SB_MACOSX_SDK_10_4 = @SB_MACOSX_SDK_10_4@
 SB_MACOSX_SDK_10_5 = @SB_MACOSX_SDK_10_5@
 SB_MACOSX_SDK = @SB_MACOSX_SDK_DEFAULT@
 
-MOZSDK_DIR = $(topsrcdir)/dependencies/linux-x86_64/mozilla-6.0.2
+MOZSDK_DIR = $(DEPS_DIR)/mozilla-6.0.2/$(SB_CONFIGURATION)
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
 MOZSDK_LIB_DIR = $(MOZSDK_DIR)/lib
 MOZSDK_BIN_DIR = $(MOZSDK_DIR)/bin
 MOZSDK_IDL_DIR = $(MOZSDK_DIR)/idl
 
 #put these somewhere better sometime
-MOZSDK_SCRIPTS_DIR = $(topsrcdir)/dependencies/linux-x86_64/mozilla-6.0.2/scripts
+MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
 
 # Boo for hardcoding this; this appears in songbird.mk as well; so make
 # changes there, too.
@@ -247,7 +247,7 @@ UNZIP = @UNZIP@
 ZIP = @ZIP@
 
 XPIDL = $(MOZSDK_DIR)/bin/xpidl
-XPTLINK = python2 $(MOZSDK_DIR)/debug/frozen/bin/xpt.py link
+XPTLINK = python2 $(MOZSDK_DIR)/frozen/bin/xpt.py link
 MAR = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 
