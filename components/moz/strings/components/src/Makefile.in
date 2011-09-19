@@ -1,4 +1,3 @@
-#
 #=BEGIN SONGBIRD GPL
 #
 # This file is part of the Songbird web player.
@@ -40,6 +39,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/strings/components/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(MOZSDK_INCLUDE_DIR)/chardet \
                      $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/frozen/lib \
                      $(NULL)
 
 DYNAMIC_LIB = sbStrings

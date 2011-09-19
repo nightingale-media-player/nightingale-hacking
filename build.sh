@@ -6,10 +6,15 @@ for dir in /usr/lib64 /usr/lib ; do
   fi
 done
 
-# i think this is archlinux specific
-export PYTHON=/usr/bin/python2
+# this will only build with python2! maybe we'll fix that some day
 
-# this fixes a build error, let's toss it into the makefile(s) eventually
+if [ -f /usr/bin/python2 ] ; then
+	export PYTHON=/usr/bin/python2
+fi
+# otherwise, we'll use whatever version is at /usr/bin/python
+# cross your fingers!
+
+# this fixes a build error, let's toss it into the makefiles eventually
 export CXXFLAGS=-std=gnu++0x
 
 make -f songbird.mk clobber
