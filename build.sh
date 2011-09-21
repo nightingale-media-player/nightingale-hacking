@@ -6,15 +6,9 @@ for dir in /usr/lib64 /usr/lib ; do
   fi
 done
 
-# this will only build with python2! maybe we'll fix that some day
+# hopefully we have python2 on this system
+export = PYTHON="$(which python2 2>/dev/null || which python)"
 
-if [ -f /usr/bin/python2 ] ; then
-	export PYTHON=/usr/bin/python2
-fi
-# otherwise, we'll use whatever version is at /usr/bin/python
-# cross your fingers!
-
-# this fixes a build error, let's toss it into the makefiles eventually
 export CXXFLAGS="-std=gnu++0x"
 
 # use our own gstreamer libs
