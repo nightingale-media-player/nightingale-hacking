@@ -1,0 +1,19 @@
+Nightingale is a community based fork of the Songbird Web/Media player
+distributed under the GNU GPL and portions (xulrunner and mozilla libs)
+licensed under the Mozilla MPL/BSD license. 
+
+The goal of Nightingale is to create a Linux only player, which will 
+eventually use only system libraries to conserve space. Currently, some
+libraries are still bundled, but progress is being made to change this 
+fact.
+
+This git tree is the upstream/future version of Nightingale, slated
+to use xulrunner 6.0.2+ and other current libraries. Hopefully, it's
+first release will be without the libraries bundled within, so that
+it can use system libs.
+
+Contributors:
+
+ilikenwf/Matt Parnell
+Mook
+GeekShadow
