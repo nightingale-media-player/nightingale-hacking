@@ -15,7 +15,7 @@ fi
 # cross your fingers!
 
 # this fixes a build error, let's toss it into the makefiles eventually
-export CXXFLAGS=-std=gnu++0x
+export CXXFLAGS="-std=gnu++0x -DMOZ_NO_MOZALLOC"
 
 make -f songbird.mk clobber
 make -f songbird.mk
