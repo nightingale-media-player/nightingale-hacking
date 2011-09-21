@@ -15,7 +15,10 @@ fi
 # cross your fingers!
 
 # this fixes a build error, let's toss it into the makefiles eventually
-export CXXFLAGS="-std=gnu++0x -DMOZ_NO_MOZALLOC"
+export CXXFLAGS="-std=gnu++0x"
+
+# use our own gstreamer libs
+grep -sq gstreamer-system songbird.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> songbird.config )
 
 make -f songbird.mk clobber
 make -f songbird.mk

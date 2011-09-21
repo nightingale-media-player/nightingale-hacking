@@ -1,3 +1,5 @@
+autom4te.cache
+songbird.config
 vcproj
 configure
 dependencies/linux-i686
