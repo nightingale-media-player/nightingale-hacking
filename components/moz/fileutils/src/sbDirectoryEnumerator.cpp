@@ -225,6 +225,7 @@ nsresult sbDirectoryEnumeratorHelper::OpenDir(const nsAString & aPath)
   nsresult rv;
 
 #if XP_WIN
+  // Handle long paths
   nsString path = NS_LITERAL_STRING("\\\\?\\");
   path.Append(aPath);
 
@@ -616,17 +617,23 @@ sbDirectoryEnumerator::ScanForNextFile()
 
     // Skip file if it doesn't match enumerator criteria.
     PRBool skipFile = PR_FALSE;
+    PRBool isDirectory;
+    rv = file->IsDirectory(&isDirectory);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("IsDirectory failed, assuming not a directory");
+      isDirectory = PR_FALSE;
+    }
     if (mDirectoriesOnly) {
-      PRBool isDirectory;
-      rv = file->IsDirectory(&isDirectory);
-      NS_ENSURE_SUCCESS(rv, rv);
       if (!isDirectory)
         skipFile = PR_TRUE;
     }
     if (mFilesOnly) {
       PRBool isFile;
       rv = file->IsFile(&isFile);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("IsFile failed, assuming not a file");
+        isFile = PR_FALSE;
+      }
       if (!isFile)
         skipFile = PR_TRUE;
     }
@@ -635,9 +642,6 @@ sbDirectoryEnumerator::ScanForNextFile()
 
     // If the current file is a directory, and the maximum depth has not been
     // reached, enumerate the directory entries.
-    PRBool isDirectory;
-    rv = file->IsDirectory(&isDirectory);
-    NS_ENSURE_SUCCESS(rv, rv);
     PRUint32 depth = mEntriesEnumStack.Count();
     if (isDirectory && !((mMaxDepth > 0) && (depth >= mMaxDepth))) {
       // Get the directory entries.  If file not found is returned, the

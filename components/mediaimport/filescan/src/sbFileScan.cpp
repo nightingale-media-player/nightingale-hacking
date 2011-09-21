@@ -893,7 +893,7 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
             rv = pMoreEntries->Enumerate(pEntry);
             NS_ENSURE_SUCCESS(rv, rv);
 
-            if(pMoreEntries)
+            if(pEntry)
             {
               dirStack.push_back(pDirEntries);
               fileEntryStack.push_back(pEntry);
