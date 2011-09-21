@@ -48,6 +48,11 @@
 // Self imports.
 #include "sbDirectoryEnumerator.h"
 
+// Platform includes
+#if XP_WIN
+#include <windows.h>
+#endif
+
 // Mozilla imports.
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
@@ -101,24 +106,49 @@ public:
    */
   nsresult Init(nsIFile * aDirectory);
 private:
-  PRDir * mDir;
   nsCOMPtr<nsIFile> mDirectory;
-  PRDirEntry * mEntry;
+  nsString mNextPath;
+#if XP_WIN
+  typedef HANDLE Directory;
+#else
+  typedef PRDir * Directory;
+#endif
+  Directory mDir;
+
+  /**
+   * Platform implementation of opening a directory. This will update the mDir
+   * data member if successful.
+   */
+  nsresult OpenDir(const nsAString & aPath);
+
+  /**
+   * Platform implementation of closing a directory. This will update the mDir
+   * data member.
+   */
+  void CloseDir();
+
+  /**
+   * Platform implementation of reading the directory. Places the directory
+   * entry's path in aPath.
+   * \param aPath the path of the next directory entry
+   */
+  nsresult ReadDir(nsAString & aPath);
 };
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDirectoryEnumeratorHelper, nsISimpleEnumerator)
 
 sbDirectoryEnumeratorHelper::sbDirectoryEnumeratorHelper() :
-  mDir(nsnull),
-  mEntry(nsnull)
+#if XP_WIN
+  mDir(INVALID_HANDLE_VALUE)
+#else
+  mDir(nsnull)
+#endif
 {
 }
 
 sbDirectoryEnumeratorHelper::~sbDirectoryEnumeratorHelper()
 {
-  if (mDir) {
-    PR_CloseDir(mDir);
-  }
+  CloseDir();
 }
 nsresult sbDirectoryEnumeratorHelper::Init(nsIFile * aDirectory)
 {
@@ -132,16 +162,9 @@ nsresult sbDirectoryEnumeratorHelper::Init(nsIFile * aDirectory)
   rv = aDirectory->GetPath(path);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mDir = PR_OpenDir(NS_ConvertUTF16toUTF8(path).BeginReading());
-  NS_ENSURE_TRUE(mDir, NS_ERROR_FILE_NOT_FOUND);
+  rv = OpenDir(path);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Preload the first entry, so HasMoreElements knows there is an entry
-  // waiting or not.
-  mEntry = PR_ReadDir(mDir, PR_SKIP_BOTH);
-  if (!mEntry) {
-    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
-                   NS_ERROR_UNEXPECTED);
-  }
   return NS_OK;
 }
 
@@ -150,7 +173,7 @@ sbDirectoryEnumeratorHelper::HasMoreElements(PRBool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  *_retval = mEntry ? PR_TRUE : PR_FALSE;
+  *_retval = mNextPath.IsEmpty() ? PR_FALSE: PR_TRUE;
   return NS_OK;
 }
 
@@ -159,7 +182,7 @@ sbDirectoryEnumeratorHelper::GetNext(nsISupports ** aEntry NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(aEntry);
 
-  if (!mEntry) {
+  if (mNextPath.IsEmpty()) {
     return NS_ERROR_NOT_AVAILABLE;
   }
 
@@ -175,19 +198,114 @@ sbDirectoryEnumeratorHelper::GetNext(nsISupports ** aEntry NS_OUTPARAM)
   rv = file->InitWithPath(path);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = file->AppendNative(nsCString(mEntry->name));
+  rv = file->Append(mNextPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aEntry = file.get();
   file.forget();
 
   // Prefetch the next entry if any, skipping . and ..
-  mEntry = PR_ReadDir(mDir, PR_SKIP_BOTH);
-  if (!mEntry) {
-    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
-                   NS_ERROR_UNEXPECTED);
+  rv = ReadDir(mNextPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+template <class T>
+inline
+bool IsDotDir(T const * aPath)
+{
+  // If "." or ".."
+  return aPath[0] == (T)'.' &&
+      ((aPath[1] == (T)'.' && aPath[2] == 0) || aPath[1] == 0);
+}
+
+nsresult sbDirectoryEnumeratorHelper::OpenDir(const nsAString & aPath)
+{
+  nsresult rv;
+
+#if XP_WIN
+  nsString path = NS_LITERAL_STRING("\\\\?\\");
+  path.Append(aPath);
+
+  //If 'name' ends in a slash or backslash, do not append
+  //another backslash.
+  if (path.IsEmpty() ||
+      path[path.Length() - 1] == L'/' ||
+      path[path.Length() -1] == L'\\')
+    path.AppendLiteral("*");
+  else
+    path.AppendLiteral("\\*");
+
+  PRUnichar *begin, *end;
+
+  for (path.BeginWriting(&begin, &end); begin < end; ++begin) {
+    if (*begin == L'/') {
+      *begin = L'\\';
+    }
   }
 
+  WIN32_FIND_DATAW findData;
+  mDir = ::FindFirstFileW(path.BeginReading(), &findData);
+  NS_ENSURE_TRUE(mDir != INVALID_HANDLE_VALUE, NS_ERROR_FILE_NOT_FOUND);
+  if (IsDotDir(findData.cFileName)) {
+    rv = ReadDir(mNextPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mNextPath.Assign(findData.cFileName);
+  }
+#else
+  mDir = PR_OpenDir(NS_ConvertUTF16toUTF8(aPath).BeginReading());
+  NS_ENSURE_TRUE(mDir, NS_ERROR_FILE_NOT_FOUND);
+
+  rv = ReadDir(mNextPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+#endif
+
+  return NS_OK;
+}
+void sbDirectoryEnumeratorHelper::CloseDir()
+{
+#if XP_WIN
+  if (mDir != INVALID_HANDLE_VALUE) {
+    ::FindClose(mDir);
+    mDir = INVALID_HANDLE_VALUE;
+  }
+#else
+  if (!mDir) {
+    PR_CloseDir(mDir);
+    mDir = nsnull;
+  }
+#endif
+}
+
+nsresult sbDirectoryEnumeratorHelper::ReadDir(nsAString & aPath)
+{
+#if XP_WIN
+  WIN32_FIND_DATAW findData;
+  BOOL succeeded = ::FindNextFileW(mDir, &findData);
+  while (succeeded && IsDotDir(findData.cFileName)) {
+    succeeded = ::FindNextFileW(mDir, &findData);
+  }
+  if (succeeded) {
+    aPath.Assign(nsString(findData.cFileName));
+  }
+  else
+  {
+    aPath.Truncate();
+  }
+#else
+  PRDirEntry * entry = PR_ReadDir(mDir, PR_SKIP_BOTH);
+  if (entry) {
+    aPath.Assign(NS_ConvertUTF8toUTF16(entry->name));
+  }
+  else {
+    aPath.Truncate();
+    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
+                      NS_ERROR_UNEXPECTED);
+  }
+#endif
   return NS_OK;
 }
 
