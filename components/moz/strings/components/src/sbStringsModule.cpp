@@ -52,6 +52,7 @@
 #include <nsICategoryManager.h>
 #include <nsServiceManagerUtils.h>
 #include <mozilla/ModuleUtils.h>
+#include <xpcom-config.h>
 
 
 //------------------------------------------------------------------------------
