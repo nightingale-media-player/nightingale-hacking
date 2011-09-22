@@ -9,6 +9,7 @@ done
 # hopefully we have python2 on this system
 export = PYTHON="$(which python2 2>/dev/null || which python)"
 
+# fixes a build error, let's add to the main makefiles later
 export CXXFLAGS="-std=gnu++0x"
 
 # use our own gstreamer libs
