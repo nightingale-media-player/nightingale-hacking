@@ -801,6 +801,7 @@ export:: $(OUR_WIN32_RC_OBJS)
 DEFAULT_DYNAMIC_LIBS_IMPORTS = xpcomglue_s \
                                nspr4 \
                                xpcom \
+                               mozalloc \
                                $(NULL)
 
 DEFAULT_DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
