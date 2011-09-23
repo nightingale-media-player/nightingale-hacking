@@ -514,7 +514,7 @@ SONGBIRD_XR_EXTENSIONS = $(foreach e, \
 
 ## See comment above about, re: the specifics of this export::'s logic.
 export::
-	#$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
+	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
 	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
 ifneq (,$(XULRUNNER_EXTENSION_DIRS))
 	ifneq (1,$(SONGBIRD_OFFICIAL))
@@ -523,8 +523,14 @@ ifneq (,$(XULRUNNER_EXTENSION_DIRS))
 endif
 	$(RM) -r $(XULRUNNER_EXTENSION_ROOTDIR)
 
-libs::
-	ln -s $(SONGBIRD_XR_STUB) $(SONGBIRD_XR_STUB_DIR)
+$(SONGBIRD_STUB): $(SONGBIRD_XR_STUB)
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+	ln -s $< $@
+else
+	$(MV) -f $< $@
+endif
+
+libs:: $(SONGBIRD_STUB)
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 	$(INSTALL_PROG) $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
 endif
