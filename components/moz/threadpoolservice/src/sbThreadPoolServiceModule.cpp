@@ -35,64 +35,38 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOM.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbThreadPoolService, Init)
+NS_DEFINE_NAMED_CID(SB_THREADPOOLSERVICE_CID);
 
-static NS_METHOD
-sbThreadPoolServiceRegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* registryLocation,
-                                const char* componentType,
-                                const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->
-         AddCategoryEntry(NS_XPCOM_STARTUP_CATEGORY,
-                          SB_THREADPOOLSERVICE_CLASSNAME,
-                          SB_THREADPOOLSERVICE_CONTRACTID,
-                          PR_TRUE, PR_TRUE, nsnull);
-  return rv;
-}
-
-static NS_METHOD
-sbThreadPoolServiceUnregisterSelf(nsIComponentManager* aCompMgr,
-                                  nsIFile* aPath,
-                                  const char* registryLocation,
-                                  const nsModuleComponentInfo* info)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> categoryManager =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = categoryManager->DeleteCategoryEntry(NS_XPCOM_STARTUP_CATEGORY,
-                                            SB_THREADPOOLSERVICE_CLASSNAME,
-                                            PR_TRUE);
-
-  return rv;
-}
-
-// Module component information.
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SB_THREADPOOLSERVICE_CLASSNAME,
-    SB_THREADPOOLSERVICE_CID,
-    SB_THREADPOOLSERVICE_CONTRACTID,
-    sbThreadPoolServiceConstructor,
-    sbThreadPoolServiceRegisterSelf,
-    sbThreadPoolServiceUnregisterSelf
-  }
+static const mozilla::Module::CIDEntry kSongbirdMozThreadpoolCIDs[] = {
+    { &kSB_THREADPOOLSERVICE_CID, true, NULL, sbThreadPoolServiceConstructor },
+    { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbThreadPoolService, components)
+
+static const mozilla::Module::ContractIDEntry kSongbirdMozThreadpoolContracts[] = {
+    { SB_THREADPOOLSERVICE_CONTRACTID, &kSB_THREADPOOLSERVICE_CID },
+    { NULL }
+};
+
+
+static const mozilla::Module::CategoryEntry kSongbirdMozThreadpoolCategories[] = {
+    { NS_XPCOM_STARTUP_CATEGORY, SB_THREADPOOLSERVICE_CLASSNAME, SB_THREADPOOLSERVICE_CONTRACTID },
+    { NULL }
+};
+
+
+static const mozilla::Module kSongbirdMozThreadpoolModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozThreadpoolCIDs,
+    kSongbirdMozThreadpoolContracts,
+    kSongbirdMozThreadpoolCategories
+};
+
+NSMODULE_DEFN(sbMozThreadpoolModule) = &kSongbirdMozThreadpoolModule;
