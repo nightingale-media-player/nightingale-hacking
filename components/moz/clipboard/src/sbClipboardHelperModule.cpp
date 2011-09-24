@@ -24,23 +24,37 @@
 //
  */
 
+// Local includes
 #include "sbClipboardHelper.h"
 
-#include <nsIGenericFactory.h>
+// Mozilla includes
+#include <mozilla/ModuleUtils.h>
+
+#define SB_CLIPBOARD_HELPER_CLASSNAME "sbClipboardHelper"
+#define SB_CLIPBOARD_HELPER_CID \
+{ 0x6063116b, 0x2b98, 0x44d5, \
+  { 0x8f, 0x6e, 0x0a, 0x70, 0x43, 0xf0, 0x1f, 0xc3 } }
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbClipboardHelper)
+NS_DEFINE_NAMED_CID(SB_CLIPBOARD_HELPER_CID);
 
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_CLIPBOARD_HELPER_CLASSNAME,
-    SONGBIRD_CLIPBOARD_HELPER_CID,
-    SONGBIRD_CLIPBOARD_HELPER_CONTRACTID,
-    sbClipboardHelperConstructor
-  }
+static const mozilla::Module::CIDEntry kSongbirdMozClipboardCIDs[] = {
+    { &kSB_CLIPBOARD_HELPER_CID, true, NULL, sbClipboardHelperConstructor },
+    { NULL }
 };
 
-// create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdClipboardHelper, components)
+//I can't figure out why I get
+// sbClipboardHelperModule.cpp:47:4: 
+//error: ‘SB_CLIPBOARD_HELPER_CONTRACTID’ was not declared in this scope
+/*static const mozilla::Module::ContractIDEntry kSongbirdMozClipboardContracts[] = {
+	{ SB_CLIPBOARD_HELPER_CONTRACTID, &kSB_CLIPBOARD_HELPER_CID },
+	{ NULL }
+};*/
 
+static const mozilla::Module kSongbirdMozClipboardModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozClipboardCIDs/*,
+    kSongbirdMozClipboardContracts*/
+};
+
+NSMODULE_DEFN(SongbirdClipboardHelper) = &kSongbirdMozClipboardModule;
