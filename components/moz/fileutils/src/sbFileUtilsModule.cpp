@@ -36,67 +36,38 @@
  * \file  sbFileUtilsModule.cpp
  * \brief Songbird File Utilities Component Factory and Main Entry Point.
  */
-
-//------------------------------------------------------------------------------
-//
-// Songbird file utilities module imported services.
-//
-//------------------------------------------------------------------------------
-
+ 
 // Local imports.
 #include "sbDirectoryEnumerator.h"
 #include "sbFileUtils.h"
 
 // Mozilla imports.
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
-
-//------------------------------------------------------------------------------
-//
-// Songbird file utilities module directory enumerator services.
-//
-//------------------------------------------------------------------------------
-
-// Songbird directory enumerator defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDirectoryEnumerator, Initialize)
 
-
-//------------------------------------------------------------------------------
-//
-// Songbird file utilities module file utilities services.
-//
-//------------------------------------------------------------------------------
-
-// Songbird file utilities defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileUtils)
+NS_DEFINE_NAMED_CID(SB_FILEUTILS_CID);
 
+NS_DEFINE_NAMED_CID(SB_DIRECTORYENUMERATOR_CID);
 
-//------------------------------------------------------------------------------
-//
-// Songbird file utilities module registration services.
-//
-//------------------------------------------------------------------------------
-
-// Module component information.
-static nsModuleComponentInfo sbFileUtilsComponents[] =
-{
-  // Songbird directory enumerator component info.
-  {
-    SB_DIRECTORYENUMERATOR_CLASSNAME,
-    SB_DIRECTORYENUMERATOR_CID,
-    SB_DIRECTORYENUMERATOR_CONTRACTID,
-    sbDirectoryEnumeratorConstructor
-  },
-
-  // Songbird file utilities component info.
-  {
-    SB_FILEUTILS_CLASSNAME,
-    SB_FILEUTILS_CID,
-    SB_FILEUTILS_CONTRACTID,
-    sbFileUtilsConstructor
-  }
+static const mozilla::Module::CIDEntry kSongbirdMozFileUtilsCIDs[] = {
+    { &kSB_DIRECTORYENUMERATOR_CID, false, NULL, sbDirectoryEnumeratorConstructor },
+    { &kSB_FILEUTILS_CID, false, NULL, sbFileUtilsConstructor },
+    { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbFileUtilsModule, sbFileUtilsComponents)
+static const mozilla::Module::ContractIDEntry kSongbirdMozFileUtilsContracts[] = {
+    { SB_DIRECTORYENUMERATOR_CONTRACTID, &kSB_DIRECTORYENUMERATOR_CID },
+    { SB_FILEUTILS_CONTRACTID, &kSB_FILEUTILS_CID },
+    { NULL }
+};
+
+static const mozilla::Module kSongbirdMozFileUtilsModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozFileUtilsCIDs,
+    kSongbirdMozFileUtilsContracts
+};
+
+NSMODULE_DEFN(sbMozFileUtilsModule) = &kSongbirdMozFileUtilsModule;
 
