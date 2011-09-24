@@ -42,7 +42,7 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsServiceManagerUtils.h>
 
 
@@ -52,83 +52,32 @@
 //
 //------------------------------------------------------------------------------
 
-// Construct the sbWindowWatcher object and call its Init method.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowWatcher, Init)
+NS_DEFINE_NAMED_CID(SB_WINDOWWATCHER_CID);
 
-
-/**
- * \brief Register the Songbird window watcher component.
- */
-
-static NS_METHOD
-sbWindowWatcherRegister(nsIComponentManager*         aCompMgr,
-                        nsIFile*                     aPath,
-                        const char*                  aLoaderStr,
-                        const char*                  aType,
-                        const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the device marshall category.
-  rv = categoryManager->AddCategoryEntry("app-startup",
-                                         SB_WINDOWWATCHER_CLASSNAME,
-                                         "service," SB_WINDOWWATCHER_CONTRACTID,
-                                         PR_TRUE,
-                                         PR_TRUE,
-                                         nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * \brief Unregister the Songbird window watcher component.
- */
-
-static NS_METHOD
-sbWindowWatcherUnregister(nsIComponentManager*         aCompMgr,
-                          nsIFile*                     aPath,
-                          const char*                  aLoaderStr,
-                          const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the device marshall category.
-  rv = categoryManager->DeleteCategoryEntry("app-startup",
-                                            SB_WINDOWWATCHER_CLASSNAME,
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-// Module component information.
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SB_WINDOWWATCHER_CLASSNAME,
-    SB_WINDOWWATCHER_CID,
-    SB_WINDOWWATCHER_CONTRACTID,
-    sbWindowWatcherConstructor,
-    sbWindowWatcherRegister,
-    sbWindowWatcherUnregister
-  }
+static const mozilla::Module::CIDEntry kSongbirdMozWindowWatcherCIDs[] = {
+    { &kSB_WINDOWWATCHER_CID, false, NULL, sbWindowWatcherConstructor },
+    { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbWindowWatcher, components)
 
+static const mozilla::Module::ContractIDEntry kSongbirdMozWindowWatcherContracts[] = {
+    { SB_WINDOWWATCHER_CONTRACTID, &kSB_WINDOWWATCHER_CID },
+    { NULL }
+};
+
+
+static const mozilla::Module::CategoryEntry kSongbirdMozWindowWatcherCategories[] = {
+    { "app-startup", SB_WINDOWWATCHER_CLASSNAME, SB_WINDOWWATCHER_CONTRACTID },
+    { NULL }
+};
+
+
+static const mozilla::Module kSongbirdMozWindowWatcherModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozWindowWatcherCIDs,
+    kSongbirdMozWindowWatcherContracts,
+    kSongbirdMozWindowWatcherCategories
+};
+
+NSMODULE_DEFN(sbWindowWatcher) = &kSongbirdMozWindowWatcherModule;
