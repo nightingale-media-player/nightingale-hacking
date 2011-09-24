@@ -142,8 +142,8 @@ private:
 //
 
 // contract ID defined in sbIPrompter.idl
-#define SONGBIRD_PROMPTER_CLASSNAME "Songbird Prompter"
-#define SONGBIRD_PROMPTER_CID \
+#define SB_PROMPTER_CLASSNAME "Songbird Prompter"
+#define SB_PROMPTER_CID \
   /* {fa7ec5bd-7cab-4a63-a970-7bc4e83ee891} */ \
   { \
     0xfa7ec5bd, \

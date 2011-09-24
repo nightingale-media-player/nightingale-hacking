@@ -43,18 +43,9 @@ static const mozilla::Module::CIDEntry kSongbirdMozClipboardCIDs[] = {
     { NULL }
 };
 
-//I can't figure out why I get
-// sbClipboardHelperModule.cpp:47:4: 
-//error: ‘SB_CLIPBOARD_HELPER_CONTRACTID’ was not declared in this scope
-/*static const mozilla::Module::ContractIDEntry kSongbirdMozClipboardContracts[] = {
-	{ SB_CLIPBOARD_HELPER_CONTRACTID, &kSB_CLIPBOARD_HELPER_CID },
-	{ NULL }
-};*/
-
 static const mozilla::Module kSongbirdMozClipboardModule = {
     mozilla::Module::kVersion,
-    kSongbirdMozClipboardCIDs/*,
-    kSongbirdMozClipboardContracts*/
+    kSongbirdMozClipboardCIDs
 };
 
 NSMODULE_DEFN(SongbirdClipboardHelper) = &kSongbirdMozClipboardModule;
