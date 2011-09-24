@@ -35,7 +35,6 @@
 #include <prprf.h>
 #include <prdtoa.h>
 #include <math.h>
-#include <nsAutoLock.h>
 #include <nsCRT.h>
 
 #include <sbMemoryUtils.h>
@@ -1788,12 +1787,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbVariant,
                               nsIWritableVariant)
 
 sbVariant::sbVariant()
-: mDataLock(nsnull)
-, mWritable(PR_TRUE)
+: mWritable(PR_TRUE)
 {
   sbVariant::Initialize(&mData);
-  mDataLock = nsAutoLock::NewLock("sbVariant::mLock");
-  NS_WARN_IF_FALSE(mDataLock, "Failed to create data lock.");
 
 #ifdef DEBUG
   {
@@ -1843,9 +1839,6 @@ sbVariant::sbVariant()
 sbVariant::~sbVariant()
 {
   sbVariant::Cleanup(&mData);
-  if(mDataLock) {
-    nsAutoLock::DestroyLock(mDataLock);
-  }
 }
 
 // For all the data getters we just forward to the static (and sharable)
@@ -1854,7 +1847,6 @@ sbVariant::~sbVariant()
 /* readonly attribute PRUint16 dataType; */
 NS_IMETHODIMP sbVariant::GetDataType(PRUint16 *aDataType)
 {
-  nsAutoLock lock(mDataLock);
   *aDataType = mData.mType;
   return NS_OK;
 }
@@ -1862,113 +1854,96 @@ NS_IMETHODIMP sbVariant::GetDataType(PRUint16 *aDataType)
 /* PRUint8 getAsInt8 (); */
 NS_IMETHODIMP sbVariant::GetAsInt8(PRUint8 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToInt8(mData, _retval);
 }
 
 /* PRInt16 getAsInt16 (); */
 NS_IMETHODIMP sbVariant::GetAsInt16(PRInt16 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToInt16(mData, _retval);
 }
 
 /* PRInt32 getAsInt32 (); */
 NS_IMETHODIMP sbVariant::GetAsInt32(PRInt32 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToInt32(mData, _retval);
 }
 
 /* PRInt64 getAsInt64 (); */
 NS_IMETHODIMP sbVariant::GetAsInt64(PRInt64 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToInt64(mData, _retval);
 }
 
 /* PRUint8 getAsUint8 (); */
 NS_IMETHODIMP sbVariant::GetAsUint8(PRUint8 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToUint8(mData, _retval);
 }
 
 /* PRUint16 getAsUint16 (); */
 NS_IMETHODIMP sbVariant::GetAsUint16(PRUint16 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToUint16(mData, _retval);
 }
 
 /* PRUint32 getAsUint32 (); */
 NS_IMETHODIMP sbVariant::GetAsUint32(PRUint32 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToUint32(mData, _retval);
 }
 
 /* PRUint64 getAsUint64 (); */
 NS_IMETHODIMP sbVariant::GetAsUint64(PRUint64 *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToUint64(mData, _retval);
 }
 
 /* float getAsFloat (); */
 NS_IMETHODIMP sbVariant::GetAsFloat(float *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToFloat(mData, _retval);
 }
 
 /* double getAsDouble (); */
 NS_IMETHODIMP sbVariant::GetAsDouble(double *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToDouble(mData, _retval);
 }
 
 /* PRBool getAsBool (); */
 NS_IMETHODIMP sbVariant::GetAsBool(PRBool *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToBool(mData, _retval);
 }
 
 /* char getAsChar (); */
 NS_IMETHODIMP sbVariant::GetAsChar(char *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToChar(mData, _retval);
 }
 
 /* wchar getAsWChar (); */
 NS_IMETHODIMP sbVariant::GetAsWChar(PRUnichar *_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToWChar(mData, _retval);
 }
 
 /* [notxpcom] nsresult getAsID (out nsID retval); */
 NS_IMETHODIMP_(nsresult) sbVariant::GetAsID(nsID *retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToID(mData, retval);
 }
 
 /* AString getAsAString (); */
 NS_IMETHODIMP sbVariant::GetAsAString(nsAString & _retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToAString(mData, _retval);
 }
 
 /* DOMString getAsDOMString (); */
 NS_IMETHODIMP sbVariant::GetAsDOMString(nsAString & _retval)
 {
-  nsAutoLock lock(mDataLock);
-
   // A DOMString maps to an AString internally, so we can re-use
   // ConvertToAString here.
   return sbVariant::ConvertToAString(mData, _retval);
@@ -1977,63 +1952,54 @@ NS_IMETHODIMP sbVariant::GetAsDOMString(nsAString & _retval)
 /* ACString getAsACString (); */
 NS_IMETHODIMP sbVariant::GetAsACString(nsACString & _retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToACString(mData, _retval);
 }
 
 /* AUTF8String getAsAUTF8String (); */
 NS_IMETHODIMP sbVariant::GetAsAUTF8String(nsAUTF8String & _retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToAUTF8String(mData, _retval);
 }
 
 /* string getAsString (); */
 NS_IMETHODIMP sbVariant::GetAsString(char **_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToString(mData, _retval);
 }
 
 /* wstring getAsWString (); */
 NS_IMETHODIMP sbVariant::GetAsWString(PRUnichar **_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToWString(mData, _retval);
 }
 
 /* nsISupports getAsISupports (); */
 NS_IMETHODIMP sbVariant::GetAsISupports(nsISupports **_retval)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToISupports(mData, _retval);
 }
 
 /* void getAsInterface (out nsIIDPtr iid, [iid_is (iid), retval] out nsQIResult iface); */
 NS_IMETHODIMP sbVariant::GetAsInterface(nsIID * *iid, void * *iface)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToInterface(mData, iid, iface);
 }
 
 /* [notxpcom] nsresult getAsArray (out PRUint16 type, out nsIID iid, out PRUint32 count, out voidPtr ptr); */
 NS_IMETHODIMP_(nsresult) sbVariant::GetAsArray(PRUint16 *type, nsIID *iid, PRUint32 *count, void * *ptr)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToArray(mData, type, iid, count, ptr);
 }
 
 /* void getAsStringWithSize (out PRUint32 size, [size_is (size), retval] out string str); */
 NS_IMETHODIMP sbVariant::GetAsStringWithSize(PRUint32 *size, char **str)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToStringWithSize(mData, size, str);
 }
 
 /* void getAsWStringWithSize (out PRUint32 size, [size_is (size), retval] out wstring str); */
 NS_IMETHODIMP sbVariant::GetAsWStringWithSize(PRUint32 *size, PRUnichar **str)
 {
-  nsAutoLock lock(mDataLock);
   return sbVariant::ConvertToWStringWithSize(mData, size, str);
 }
 
@@ -2042,13 +2008,11 @@ NS_IMETHODIMP sbVariant::GetAsWStringWithSize(PRUint32 *size, PRUnichar **str)
 /* attribute PRBool writable; */
 NS_IMETHODIMP sbVariant::GetWritable(PRBool *aWritable)
 {
-  nsAutoLock lock(mDataLock);
   *aWritable = mWritable;
   return NS_OK;
 }
 NS_IMETHODIMP sbVariant::SetWritable(PRBool aWritable)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable && aWritable)
     return NS_ERROR_FAILURE;
   mWritable = aWritable;
@@ -2063,7 +2027,6 @@ NS_IMETHODIMP sbVariant::SetWritable(PRBool aWritable)
 /* void setAsInt8 (in PRUint8 aValue); */
 NS_IMETHODIMP sbVariant::SetAsInt8(PRUint8 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromInt8(&mData, aValue);
 }
@@ -2071,7 +2034,6 @@ NS_IMETHODIMP sbVariant::SetAsInt8(PRUint8 aValue)
 /* void setAsInt16 (in PRInt16 aValue); */
 NS_IMETHODIMP sbVariant::SetAsInt16(PRInt16 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromInt16(&mData, aValue);
 }
@@ -2079,7 +2041,6 @@ NS_IMETHODIMP sbVariant::SetAsInt16(PRInt16 aValue)
 /* void setAsInt32 (in PRInt32 aValue); */
 NS_IMETHODIMP sbVariant::SetAsInt32(PRInt32 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromInt32(&mData, aValue);
 }
@@ -2087,7 +2048,6 @@ NS_IMETHODIMP sbVariant::SetAsInt32(PRInt32 aValue)
 /* void setAsInt64 (in PRInt64 aValue); */
 NS_IMETHODIMP sbVariant::SetAsInt64(PRInt64 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromInt64(&mData, aValue);
 }
@@ -2095,7 +2055,6 @@ NS_IMETHODIMP sbVariant::SetAsInt64(PRInt64 aValue)
 /* void setAsUint8 (in PRUint8 aValue); */
 NS_IMETHODIMP sbVariant::SetAsUint8(PRUint8 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromUint8(&mData, aValue);
 }
@@ -2103,7 +2062,6 @@ NS_IMETHODIMP sbVariant::SetAsUint8(PRUint8 aValue)
 /* void setAsUint16 (in PRUint16 aValue); */
 NS_IMETHODIMP sbVariant::SetAsUint16(PRUint16 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromUint16(&mData, aValue);
 }
@@ -2111,7 +2069,6 @@ NS_IMETHODIMP sbVariant::SetAsUint16(PRUint16 aValue)
 /* void setAsUint32 (in PRUint32 aValue); */
 NS_IMETHODIMP sbVariant::SetAsUint32(PRUint32 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromUint32(&mData, aValue);
 }
@@ -2119,7 +2076,6 @@ NS_IMETHODIMP sbVariant::SetAsUint32(PRUint32 aValue)
 /* void setAsUint64 (in PRUint64 aValue); */
 NS_IMETHODIMP sbVariant::SetAsUint64(PRUint64 aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromUint64(&mData, aValue);
 }
@@ -2127,7 +2083,6 @@ NS_IMETHODIMP sbVariant::SetAsUint64(PRUint64 aValue)
 /* void setAsFloat (in float aValue); */
 NS_IMETHODIMP sbVariant::SetAsFloat(float aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromFloat(&mData, aValue);
 }
@@ -2135,7 +2090,6 @@ NS_IMETHODIMP sbVariant::SetAsFloat(float aValue)
 /* void setAsDouble (in double aValue); */
 NS_IMETHODIMP sbVariant::SetAsDouble(double aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromDouble(&mData, aValue);
 }
@@ -2143,7 +2097,6 @@ NS_IMETHODIMP sbVariant::SetAsDouble(double aValue)
 /* void setAsBool (in PRBool aValue); */
 NS_IMETHODIMP sbVariant::SetAsBool(PRBool aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromBool(&mData, aValue);
 }
@@ -2151,7 +2104,6 @@ NS_IMETHODIMP sbVariant::SetAsBool(PRBool aValue)
 /* void setAsChar (in char aValue); */
 NS_IMETHODIMP sbVariant::SetAsChar(char aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromChar(&mData, aValue);
 }
@@ -2159,7 +2111,6 @@ NS_IMETHODIMP sbVariant::SetAsChar(char aValue)
 /* void setAsWChar (in wchar aValue); */
 NS_IMETHODIMP sbVariant::SetAsWChar(PRUnichar aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromWChar(&mData, aValue);
 }
@@ -2167,7 +2118,6 @@ NS_IMETHODIMP sbVariant::SetAsWChar(PRUnichar aValue)
 /* void setAsID (in nsIDRef aValue); */
 NS_IMETHODIMP sbVariant::SetAsID(const nsID & aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromID(&mData, aValue);
 }
@@ -2175,7 +2125,6 @@ NS_IMETHODIMP sbVariant::SetAsID(const nsID & aValue)
 /* void setAsAString (in AString aValue); */
 NS_IMETHODIMP sbVariant::SetAsAString(const nsAString & aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromAString(&mData, aValue);
 }
@@ -2183,7 +2132,6 @@ NS_IMETHODIMP sbVariant::SetAsAString(const nsAString & aValue)
 /* void setAsDOMString (in DOMString aValue); */
 NS_IMETHODIMP sbVariant::SetAsDOMString(const nsAString & aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
 
   DATA_SETTER_PROLOGUE((&mData));
@@ -2195,7 +2143,6 @@ NS_IMETHODIMP sbVariant::SetAsDOMString(const nsAString & aValue)
 /* void setAsACString (in ACString aValue); */
 NS_IMETHODIMP sbVariant::SetAsACString(const nsACString & aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromACString(&mData, aValue);
 }
@@ -2203,7 +2150,6 @@ NS_IMETHODIMP sbVariant::SetAsACString(const nsACString & aValue)
 /* void setAsAUTF8String (in AUTF8String aValue); */
 NS_IMETHODIMP sbVariant::SetAsAUTF8String(const nsAUTF8String & aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromAUTF8String(&mData, aValue);
 }
@@ -2211,7 +2157,6 @@ NS_IMETHODIMP sbVariant::SetAsAUTF8String(const nsAUTF8String & aValue)
 /* void setAsString (in string aValue); */
 NS_IMETHODIMP sbVariant::SetAsString(const char *aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromString(&mData, aValue);
 }
@@ -2219,7 +2164,6 @@ NS_IMETHODIMP sbVariant::SetAsString(const char *aValue)
 /* void setAsWString (in wstring aValue); */
 NS_IMETHODIMP sbVariant::SetAsWString(const PRUnichar *aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromWString(&mData, aValue);
 }
@@ -2227,7 +2171,6 @@ NS_IMETHODIMP sbVariant::SetAsWString(const PRUnichar *aValue)
 /* void setAsISupports (in nsISupports aValue); */
 NS_IMETHODIMP sbVariant::SetAsISupports(nsISupports *aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromISupports(&mData, aValue);
 }
@@ -2235,7 +2178,6 @@ NS_IMETHODIMP sbVariant::SetAsISupports(nsISupports *aValue)
 /* void setAsInterface (in nsIIDRef iid, [iid_is (iid)] in nsQIResult iface); */
 NS_IMETHODIMP sbVariant::SetAsInterface(const nsIID & iid, void * iface)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromInterface(&mData, iid, (nsISupports*)iface);
 }
@@ -2243,7 +2185,6 @@ NS_IMETHODIMP sbVariant::SetAsInterface(const nsIID & iid, void * iface)
 /* [noscript] void setAsArray (in PRUint16 type, in nsIIDPtr iid, in PRUint32 count, in voidPtr ptr); */
 NS_IMETHODIMP sbVariant::SetAsArray(PRUint16 type, const nsIID * iid, PRUint32 count, void * ptr)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromArray(&mData, type, iid, count, ptr);
 }
@@ -2251,7 +2192,6 @@ NS_IMETHODIMP sbVariant::SetAsArray(PRUint16 type, const nsIID * iid, PRUint32 c
 /* void setAsStringWithSize (in PRUint32 size, [size_is (size)] in string str); */
 NS_IMETHODIMP sbVariant::SetAsStringWithSize(PRUint32 size, const char *str)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromStringWithSize(&mData, size, str);
 }
@@ -2259,7 +2199,6 @@ NS_IMETHODIMP sbVariant::SetAsStringWithSize(PRUint32 size, const char *str)
 /* void setAsWStringWithSize (in PRUint32 size, [size_is (size)] in wstring str); */
 NS_IMETHODIMP sbVariant::SetAsWStringWithSize(PRUint32 size, const PRUnichar *str)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromWStringWithSize(&mData, size, str);
 }
@@ -2267,7 +2206,6 @@ NS_IMETHODIMP sbVariant::SetAsWStringWithSize(PRUint32 size, const PRUnichar *st
 /* void setAsVoid (); */
 NS_IMETHODIMP sbVariant::SetAsVoid()
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetToVoid(&mData);
 }
@@ -2275,7 +2213,6 @@ NS_IMETHODIMP sbVariant::SetAsVoid()
 /* void setAsEmpty (); */
 NS_IMETHODIMP sbVariant::SetAsEmpty()
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetToEmpty(&mData);
 }
@@ -2283,7 +2220,6 @@ NS_IMETHODIMP sbVariant::SetAsEmpty()
 /* void setAsEmptyArray (); */
 NS_IMETHODIMP sbVariant::SetAsEmptyArray()
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetToEmptyArray(&mData);
 }
@@ -2291,7 +2227,6 @@ NS_IMETHODIMP sbVariant::SetAsEmptyArray()
 /* void setFromVariant (in nsIVariant aValue); */
 NS_IMETHODIMP sbVariant::SetFromVariant(nsIVariant *aValue)
 {
-  nsAutoLock lock(mDataLock);
   if(!mWritable) return NS_ERROR_OBJECT_IS_IMMUTABLE;
   return sbVariant::SetFromVariant(&mData, aValue);
 }
