@@ -47,7 +47,6 @@
 #include "sbPrompter.h"
 
 // Mozilla imports.
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIDOMWindowInternal.h>
 #include <nsIProxyObjectManager.h>
@@ -298,7 +297,6 @@ sbPrompter::Cancel()
 NS_IMETHODIMP
 sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 {
-  nsAutoLock autoLock(mPrompterLock);
   aParentWindowType.Assign(mParentWindowType);
   return NS_OK;
 }
@@ -306,7 +304,6 @@ sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 NS_IMETHODIMP
 sbPrompter::SetParentWindowType(const nsAString& aParentWindowType)
 {
-  nsAutoLock autoLock(mPrompterLock);
   mParentWindowType.Assign(aParentWindowType);
   return NS_OK;
 }
@@ -321,7 +318,6 @@ NS_IMETHODIMP
 sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
 {
   NS_ENSURE_ARG_POINTER(aWaitForWindow);
-  nsAutoLock autoLock(mPrompterLock);
   *aWaitForWindow = mWaitForWindow;
   return NS_OK;
 }
@@ -329,7 +325,6 @@ sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
 NS_IMETHODIMP
 sbPrompter::SetWaitForWindow(PRBool aWaitForWindow)
 {
-  nsAutoLock autoLock(mPrompterLock);
   mWaitForWindow = aWaitForWindow;
   return NS_OK;
 }
@@ -343,7 +338,6 @@ NS_IMETHODIMP
 sbPrompter::GetRenderHTML(PRBool* aRenderHTML)
 {
   NS_ENSURE_ARG_POINTER(aRenderHTML);
-  nsAutoLock autoLock(mPrompterLock);
   *aRenderHTML = mRenderHTML;
   return NS_OK;
 }
@@ -351,7 +345,6 @@ sbPrompter::GetRenderHTML(PRBool* aRenderHTML)
 NS_IMETHODIMP
 sbPrompter::SetRenderHTML(PRBool aRenderHTML)
 {
-  nsAutoLock autoLock(mPrompterLock);
   mRenderHTML = aRenderHTML;
   return NS_OK;
 }
@@ -1154,10 +1147,6 @@ sbPrompter::sbPrompter() :
 
 sbPrompter::~sbPrompter()
 {
-  // Dispose of prompter lock.
-  if (mPrompterLock)
-    nsAutoLock::DestroyLock(mPrompterLock);
-  mPrompterLock = nsnull;
 }
 
 
@@ -1170,13 +1159,8 @@ sbPrompter::Init()
 {
   nsresult rv;
 
-  // Create a lock for the prompter.
-  mPrompterLock = nsAutoLock::NewLock("sbPrompter::mPrompterLock");
-  NS_ENSURE_TRUE(mPrompterLock, NS_ERROR_OUT_OF_MEMORY);
-
   // Set defaults.
   {
-    nsAutoLock autoLock(mPrompterLock);
     mWaitForWindow = PR_FALSE;
   }
 
@@ -1253,9 +1237,6 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
 {
   nsCOMPtr<nsIDOMWindow> parent;
   nsresult rv;
-
-  // Operate under lock.
-  nsAutoLock autoLock(mPrompterLock);
 
   // If the Songbird window watcher is shutting down, don't wait for a window.
   {
