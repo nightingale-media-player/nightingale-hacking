@@ -30,6 +30,7 @@
 
 /* The long avoided variant support for xpcom. */
 
+#include <nsIVariant.h>
 #include "sbVariant.h"
 #include <nsStringAPI.h>
 #include <prprf.h>
@@ -41,99 +42,6 @@
 
 /***************************************************************************/
 // Helpers for static convert functions...
-
-/**
-* This is a copy of |PR_cnvtf| with a bug fixed.  (The second argument
-* of PR_dtoa is 2 rather than 1.)
-*
-* XXX(darin): if this is the right thing, then why wasn't it fixed in NSPR?!?
-*/
-static void 
-Modified_cnvtf(char *buf, int bufsz, int prcsn, double fval)
-{
-  PRIntn decpt, sign, numdigits;
-  char *num, *nump;
-  char *bufp = buf;
-  char *endnum;
-
-  /* If anything fails, we store an empty string in 'buf' */
-  num = (char*)malloc(bufsz);
-  if (num == NULL) {
-    buf[0] = '\0';
-    return;
-  }
-  if (PR_dtoa(fval, 2, prcsn, &decpt, &sign, &endnum, num, bufsz)
-    == PR_FAILURE) {
-      buf[0] = '\0';
-      goto done;
-  }
-  numdigits = endnum - num;
-  nump = num;
-
-  /*
-  * The NSPR code had a fancy way of checking that we weren't dealing
-  * with -0.0 or -NaN, but I'll just use < instead.
-  * XXX Should we check !isnan(fval) as well?  Is it portable?  We
-  * probably don't need to bother since NAN isn't portable.
-  */
-  if (sign && fval < 0.0f) {
-    *bufp++ = '-';
-  }
-
-  if (decpt == 9999) {
-    while ((*bufp++ = *nump++) != 0) {} /* nothing to execute */
-    goto done;
-  }
-
-  if (decpt > (prcsn+1) || decpt < -(prcsn-1) || decpt < -5) {
-    *bufp++ = *nump++;
-    if (numdigits != 1) {
-      *bufp++ = '.';
-    }
-
-    while (*nump != '\0') {
-      *bufp++ = *nump++;
-    }
-    *bufp++ = 'e';
-    PR_snprintf(bufp, bufsz - (bufp - buf), "%+d", decpt-1);
-  }
-  else if (decpt >= 0) {
-    if (decpt == 0) {
-      *bufp++ = '0';
-    }
-    else {
-      while (decpt--) {
-        if (*nump != '\0') {
-          *bufp++ = *nump++;
-        }
-        else {
-          *bufp++ = '0';
-        }
-      }
-    }
-    if (*nump != '\0') {
-      *bufp++ = '.';
-      while (*nump != '\0') {
-        *bufp++ = *nump++;
-      }
-    }
-    *bufp++ = '\0';
-  }
-  else if (decpt < 0) {
-    *bufp++ = '0';
-    *bufp++ = '.';
-    while (decpt++) {
-      *bufp++ = '0';
-    }
-
-    while (*nump != '\0') {
-      *bufp++ = *nump++;
-    }
-    *bufp++ = '\0';
-  }
-done:
-  free(num);
-}
 
 static nsresult String2Double(const char* aString, double* retval)
 {
@@ -907,7 +815,7 @@ static nsresult ToString(const nsDiscriminatedUnion& data,
   case nsIDataType :: type_ :                                           \
     {                                                                   \
       char buf[40];                                                     \
-      Modified_cnvtf(buf, sizeof(buf), 6, data.u. member_);             \
+      PR_cnvtf(buf, sizeof(buf), 6, data.u. member_);             \
       outString.Assign(buf);                                            \
       return NS_OK;                                                     \
     }
@@ -916,7 +824,7 @@ static nsresult ToString(const nsDiscriminatedUnion& data,
   case nsIDataType :: type_ :                                           \
     {                                                                   \
       char buf[40];                                                     \
-      Modified_cnvtf(buf, sizeof(buf), 15, data.u. member_);            \
+      PR_cnvtf(buf, sizeof(buf), 15, data.u. member_);            \
       outString.Assign(buf);                                            \
       return NS_OK;                                                     \
     }
