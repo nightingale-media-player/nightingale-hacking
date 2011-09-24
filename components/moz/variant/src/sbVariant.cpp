@@ -30,7 +30,6 @@
 
 /* The long avoided variant support for xpcom. */
 
-#include <nsIVariant.h>
 #include "sbVariant.h"
 #include <nsStringAPI.h>
 #include <prprf.h>
