@@ -39,9 +39,7 @@ class NS_COM_GLUE sbSupportsWeakReference : public nsISupportsWeakReference
 {
 public:
   sbSupportsWeakReference() 
-    : mProxy(nsnull)
-  
-  NS_DECL_NSISUPPORTSWEAKREFERENCE
+    : mProxy(nsnull){};
 
 protected:
   inline ~sbSupportsWeakReference();
