@@ -1103,9 +1103,6 @@ sbWindowWatcherWaitForWindow::HandleWindowCallback(nsIDOMWindow* aWindow)
   mWindow = aWindow;
   mReady = PR_TRUE;
 
-  // Send notification that the window is ready.
-  autoReadyMonitor.Notify();
-
   return NS_OK;
 }
 
@@ -1176,12 +1173,6 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   // Set up to call this instance with a matching window.
   rv = mSBWindowWatcher->CallWithWindow(aWindowType, this, false);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Wait for a window to be ready.
-  if (!mReady) {
-    rv = autoReadyMonitor.Wait();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }
