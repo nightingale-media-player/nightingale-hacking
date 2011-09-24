@@ -697,7 +697,6 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
   NS_ENSURE_TRUE(aWindow, /* void */);
 
   // Function variables.
-  PRBool   success;
   nsresult rv;
 
   // If window is the main Songbird window, notify observers.
@@ -1100,9 +1099,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbWindowWatcherWaitForWindow,
 NS_IMETHODIMP
 sbWindowWatcherWaitForWindow::HandleWindowCallback(nsIDOMWindow* aWindow)
 {
-  // Operate under the ready monitor.
-  nsAutoMonitor autoReadyMonitor(mReadyMonitor);
-
   // Get the ready window.
   mWindow = aWindow;
   mReady = PR_TRUE;
@@ -1159,11 +1155,6 @@ sbWindowWatcherWaitForWindow::New(sbWindowWatcherWaitForWindow** aWaitForWindow)
 
 sbWindowWatcherWaitForWindow::~sbWindowWatcherWaitForWindow()
 {
-  // Dispose of the monitor.
-  if (mReadyMonitor)
-    nsAutoMonitor::DestroyMonitor(mReadyMonitor);
-  mReadyMonitor = nsnull;
-
   // Remove object references.
   mSBWindowWatcher = nsnull;
   mWindow = nsnull;
@@ -1185,9 +1176,6 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   // Set up to call this instance with a matching window.
   rv = mSBWindowWatcher->CallWithWindow(aWindowType, this, false);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Operate under the ready monitor.
-  nsAutoMonitor autoReadyMonitor(mReadyMonitor);
 
   // Wait for a window to be ready.
   if (!mReady) {
@@ -1229,11 +1217,6 @@ sbWindowWatcherWaitForWindow::Initialize()
   mSBWindowWatcher =
     do_GetService("@songbirdnest.com/Songbird/window-watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create a monitor.
-  mReadyMonitor =
-    nsAutoMonitor::NewMonitor("sbWindowWatcherWaitForWindow::mReadyMonitor");
-  NS_ENSURE_TRUE(mReadyMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
