@@ -39,12 +39,6 @@ CONFIG_MK_INCLUDED=1
 EXIT_ON_ERROR = set -e; # Shell loops continue past errors without this.
 
 ####
-# check for missing vendor-binaries and mozbrowser dir (common errors)
-ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
-   $(error Please check out or build vendor-binaries - \
-      see https://wiki.getnightingale.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
-endif
-
 ifeq (,$(wildcard $(MOZBROWSER_DIR)))
    $(error Missing mozbrowser directory ($(MOZBROWSER_DIR)). Bailing...)
 endif

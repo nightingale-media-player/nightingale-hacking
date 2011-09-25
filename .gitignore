@@ -8,3 +8,6 @@ compiled
 .songbirdconfig.mk
 .songbirdconfig.out
 .svn
+.nightingaleconfig.mk
+.nightingaleconfig.out
+compiled-release*
