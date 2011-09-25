@@ -1,0 +1,75 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbILibraryFactory.idl
+ * \brief Definition of the sbILibraryFactory interface
+ * \sa sbILibrary.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIPropertyBag2;
+interface sbILibrary;
+
+/**
+* \interface sbILibraryFactory
+* \brief Factory for new library instances.
+*
+* This interface is used to create new instances of a library.
+*
+* \sa sbILibrary
+*/
+[scriptable, uuid(3818fff4-b908-4bf2-9eb1-cf4d02eb446a)]
+interface sbILibraryFactory : nsISupports
+{
+  /**
+   * \brief A human-readable string identifying the type of library that will
+   *        be created by this factory.
+   */
+  readonly attribute AString type;
+
+  /**
+   * \brief The contract ID through which an instance of this factory can be
+   *        created.
+   */
+  readonly attribute ACString contractID;
+
+  /**
+   * \brief Create a new instance of a library.
+   *
+   * \param aCreationParameters - A collection of properties that will be used
+   *                              to create the library.  The accepted parameters
+   *                              vary for each library implementation.
+   *                              
+   *                              - For the localdatabase implementation, a \c databaseFile
+   *                              parameter containing a nsILocalFile to store the
+   *                              database in is required.
+   *
+   * \return A new library instance.
+   */
+  sbILibrary createLibrary(in nsIPropertyBag2 aCreationParameters);
+};

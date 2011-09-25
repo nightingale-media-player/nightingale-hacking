@@ -1,0 +1,107 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseLibrary.idl
+ * \brief Definition of the sbILocalDatabaseLibrary interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface nsISimpleEnumerator;
+interface nsIURI;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIDatabaseQuery;
+interface sbILocalDatabaseLibraryCopyListener;
+interface sbILocalDatabaseGUIDArray;
+interface sbILocalDatabasePropertyCache;
+interface sbIPropertyArray;
+
+%{C++
+class sbLocalDatabaseLibrary;
+%}
+
+[ptr] native sbLocalDatabaseLibrary(sbLocalDatabaseLibrary);
+
+/**
+ * \interface sbILocalDatabaseLibrary
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(c73c2057-e0bf-4caa-8f48-9b4582909b51)]
+interface sbILocalDatabaseLibrary : nsISupports
+{
+  readonly attribute AString databaseGuid;
+
+  /**
+   * \brief Returns the folder in which the database is stored.
+   *
+   * This can be null to indicate that the library lives in the default location
+   */
+  readonly attribute nsIURI databaseLocation;
+
+  readonly attribute sbILocalDatabasePropertyCache propertyCache;
+  
+  /**
+   * \brief Add a copy listener to this library.
+   */
+  void addCopyListener(in sbILocalDatabaseLibraryCopyListener aCopyListener);
+
+  /**
+   * \brief Remove a copy listener from this library.
+   */
+  void removeCopyListener(in sbILocalDatabaseLibraryCopyListener aCopyListener);
+
+  ACString getContractIdForGuid(in AString aGuid);
+
+  unsigned long getMediaItemIdForGuid(in AString aGuid);
+
+  void NotifyListenersItemUpdated(in sbIMediaItem aItem,
+                                  in sbIPropertyArray aProperties);
+
+  void notifyCopyListenersItemCopied(in sbIMediaItem aSourceItem,
+                                     in sbIMediaItem aDestinationItem);
+
+  sbIDatabaseQuery createQuery();
+
+  /**
+   * These aren't meant to be called directly. Use sbAutoBatchHelper
+   * to avoid the risk of leaving a batch in progress
+   */
+  void forceBeginUpdateBatch();
+  void forceEndUpdateBatch();
+
+  /**
+   * Oh My.  We need this here to avoid a static cast in
+   * sbLocalDatabaseSimpleMediaListFactory where we need a
+   * sbLocalDatabaseLibrary class pointer to construct the simple media list.
+   * This is better than the static cast since it explicitly requires the
+   * implementing class to be able to return a sbLocalDatabaseLibrary pointer.
+   */
+  [noscript] readonly attribute sbLocalDatabaseLibrary nativeLibrary;
+};
+

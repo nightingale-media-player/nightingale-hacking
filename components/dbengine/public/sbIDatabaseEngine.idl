@@ -1,0 +1,123 @@
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbIDatabaseEngine.idl
+ * \brief 
+ * 
+ * \sa sbIDatabaseQuery.idl, sbIDatabaseResult.idl
+ */
+#include "nsISupports.idl"
+
+interface nsIFile;
+
+
+[ptr] native CDatabaseQueryPtr(CDatabaseQuery);
+[ref] native stlCStringRef(std::string);
+
+/**
+* \interface sbIDatabaseEngine 
+* \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+*
+* You should use the sbIDatabaseQuery object to submit SQL queries to the database.
+*
+* \sa sbIDatabaseQuery, sbIDatabaseResult
+*/
+[scriptable, uuid(2fbdee94-afa1-4fd3-abec-c87e5c340681)]
+interface sbIDatabaseEngine : nsISupports
+{
+  /**
+   * \brief Submit a query to the database engine for processing.
+   *
+   * \param aDBQuery - Native CDatabaseQuery Pointer.
+   * \sa sbIDatabaseQuery
+   */
+  [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
+
+  /**
+   * \brief Shutdown a database.
+   * \note Do not use this method unless you really know why you are using it.
+   * \note You are not guaranteed that the database will remain shutdown. If a 
+   *       query is submitted that requires access to this database, it will be
+   *       reopened.
+   */
+  void closeDatabase(in AString aDatabaseGUID);
+
+  /**
+   * \brief Dump the contents of a database to file.
+   */
+  void dumpDatabase(in AString aDatabaseGUID, in nsIFile aOutFile);
+  
+  /**
+   * \brief Dump memory usage to the console.
+   * See components/dbengine/src/sqlite3.c#6625 for details.
+   */
+  void dumpMemoryStatistics();
+
+  /**
+   * \brief Get the current amount of memory in use for a given sqlite3 flag.
+   */
+  long getCurrentMemoryUsage(in long flag);
+
+  /**
+   * \brief Get the high water mark memory in use for a given SQLite3 flag.
+   */
+  long getHighWaterMemoryUsage(in long flag);
+
+  /**
+   * SQLITE memory usage flags:
+   *
+   * \brief MEMORYUSED: total dynamically alocated memory use.
+   * \brief PAGECACHEUSED: total used pre-allocated page cache.
+   * \brief PAGECACHEOVERFLOW: dynamically allocated page-cache use.
+   * There are other allowable flags but the rest are usually not useful.
+   * see: http://www.sqlite.org/c3ref/c_status_malloc_size.html
+   */
+  const long DATABASE_MEMORYUSED = 0;
+  const long DATABASE_PAGECACHEUSED = 1;
+  const long DATABASE_PAGECACHEOVERFLOW = 2;
+
+  /**
+   * \brief Release all non-essential memory.
+   * Attempt to release all non-essential memory currently
+   * held by SQLite. An example of non-essential memory is memory 
+   * used to cache database pages that are not currently in use.
+   */
+  void releaseMemory();
+  
+  /**
+   * \brief This flag may be set to false to disable locale collation sequences
+   * (eg, for consistent unit tests regardless of locale and platform collation
+   * implementation)
+   */
+  attribute boolean localeCollationEnabled;
+  
+  /**
+   * \brief Returns the identifier of the localized collation sequence
+   */
+  readonly attribute AString localeCollationID;
+   
+};

@@ -1,0 +1,135 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+#include "nsISupports.idl"
+
+#include "nsIProgressEventSink.idl"
+#include "nsIPrompt.idl"
+#include "nsIAuthPrompt.idl"
+
+interface sbIMediaList;
+interface sbIPlaylistFormatType;
+interface nsIFile;
+/**
+ * \interface sbIPlaylistWriterListener
+ * \brief Implements playlist writing logic for a particular format.
+ */
+[scriptable, uuid(69140b92-1dd2-11b2-8028-8e852c70b55a)]
+interface sbIPlaylistWriterListener : nsIProgressEventSink
+{
+};
+
+/**
+ * \interface sbIPlaylistWriter
+ * \brief Write a playlist file.
+ */
+[scriptable, uuid(9e64107d-74ef-4e62-9d5c-a639c2a9bbe6)]
+interface sbIPlaylistWriter : nsISupports
+{
+  attribute sbIPlaylistWriterListener writerListener;
+
+  /**
+   * \brief The function which actually outputs the file.
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  void write(in nsIFile aFile,
+             in sbIMediaList aMediaList,
+             in AString aContentType,
+             [optional] in sbIPlaylistFormatType aPlaylistFormatType);
+
+  /**
+   * \brief A name for this playlist writer.
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  AString name();
+
+  /**
+   * \brief A description of the type of playlists it outputs.
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  AString description();
+
+  /**
+   * \brief Mimetypes recognized by this writer.
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  void supportedMIMETypes(out PRUint32 aMIMECount,
+    [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+   * \brief File extensions recognized by this writer.
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  void supportedFileExtensions(out PRUint32 aExtCount,
+    [array, size_is (aExtCount), retval] out wstring aExts);
+};
+
+/**
+ * \interface sbIPlaylistWriterManager
+ * \brief Write a file using an appropriate registered playlist writer.
+ * Playlist writers are registered by adding them to the playlist-writer
+ * category at startup and are not enumerated again.
+ */
+[scriptable, uuid(ee2dabc8-0158-49d4-bda9-9ebb2cf20ab8)]
+interface sbIPlaylistWriterManager : nsISupports
+{
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void write(in nsIFile aFile,
+             in sbIMediaList aMediaList,
+             in AString aContentType,
+             [optional] in sbIPlaylistFormatType aPlaylistFormatType);
+
+  /**
+   * \brief
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  void supportedMIMETypes(out PRUint32 aMIMECount,
+    [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+   * \brief
+   *
+   * \param
+   * \sa sbIDatabaseQuery
+   */
+  void supportedFileExtensions(out PRUint32 aExtCount,
+    [array, size_is (aExtCount), retval] out wstring aExts);
+};
+

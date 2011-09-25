@@ -1,0 +1,82 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/**
+*******************************************************************************
+DEVICE MEDIA MANAGEMENT
+
+See app/content/bindings/device/deviceMediaManagement.xml
+
+*******************************************************************************
+*/
+
+.indent-margins {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+hbox > .notch-box {
+}
+
+.notch-box > hbox {
+  border-right: 2px solid;
+  -moz-border-right-colors: rgb(121,120,126) rgb(61,61,61);
+}
+
+.notch-box > hbox.end {
+  border-right: none;
+}
+
+.notch-box > hbox[disabled="true"] {
+}
+
+.notch-box > hbox.end[disabled="true"] {
+  border-right: none;
+}
+
+.notch-0percent-description {
+  text-align: left;
+  margin: 0px !important;
+}
+
+.notch-100percent-description {
+  text-align: right;
+  margin: 0px !important;
+}
+
+.notch-0percent-description[disabled="true"] {
+  color: #d3d3d3 !important;
+}
+
+.notch-100percent-description[disabled="true"] {
+  color: #d3d3d3 !important;
+}
+
+.encoding-format-list {
+  min-width: 4.5em;
+}
+

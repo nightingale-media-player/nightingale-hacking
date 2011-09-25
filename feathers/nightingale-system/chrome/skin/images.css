@@ -1,0 +1,869 @@
+ /*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+/** 
+*******************************************************************************
+
+ADDITIONAL IMAGES
+
+This css file provides additional image rules that are specific to
+this feather.
+
+Note that most image rules are outside of the feathers packages, and can be
+found in /app/skin/global/ and /app/skin/bindings/.  We assume that most 
+feathers will want to use the same image rules set, and will only replace
+the existing graphics.  Moving the rules out of the feathers makes maintenance
+simpler, and feather packages less complex.
+
+You can override the default image rules by re-specifying them here.
+Explore the app/skin/ folder in the Nightingale subversion repository 
+to find existing rules, or use DOM Inspector to make your own.
+
+*******************************************************************************
+*/
+
+
+
+/*******************************************************************************
+WINDOW CHROME
+There is one image for the light effect on every window, including nested ones.
+*******************************************************************************/
+
+/* No images for splitter grippies on the main window*/
+#control_pane_splitter,
+#servicepane_splitter,
+#filter_splitter,
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter,
+#displaypane_right_sidebar_splitter,
+#search-splitter {
+  background-image: none;
+}
+
+sb-smart-splitter#sb-playlist-splitter,
+sb-smart-splitter.playlist-web-splitter {
+  background-image: url('chrome://nightingale/skin/splitter/playlist-splitter.png') !important;
+  background-repeat:repeat-x !important;
+  border: none !important;
+  height: 4px !important;
+}
+
+
+treechildren::-moz-tree-progressmeter {
+  background-image: url('chrome://nightingale/skin/playlist/bg-progress.png') !important;
+  background-repeat:repeat-x;
+  background-position:left center;
+}
+
+treecolpicker > .tree-columnpicker-icon {
+  list-style-image:url('chrome://nightingale/skin/base-elements/button-column-picker.png');
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
+}
+
+menulist .dropmarker-icon {
+  margin-right: 10px;
+  margin-left: -10px;
+}
+.dropmarker-icon {
+  list-style-image: url("chrome://nightingale/skin/menu/dropmarker.png");
+}
+
+button,
+toolbarbutton,
+menulist {
+  -moz-background-clip:border;
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+button:hover,
+toolbarbutton:hover,
+menulist:hover {
+  background-position:center -25px;
+}
+button:active,
+button[open],
+button[checked="true"],
+toolbarbutton:active,
+toolbarbutton[open],
+toolbarbutton[checked="true"],
+menulist:active, 
+menulist[open="true"] {
+  background-position:center -50px;
+}
+button[checked="true"]:hover,
+toolbarbutton[checked="true"] {
+  background-position:center -100px;
+}
+
+button[disabled="true"],
+toolbarbutton[disabled="true"],
+menulist[disabled="true"] {
+  background-position:center -75px;
+}
+
+button[dropon] {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button-highlighted.png');
+}
+tabs {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+}
+tab {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+tab:hover {
+  background-position:center -25px;
+}
+tab[selected="true"],
+tab[selected="true"]:hover {
+  background-image: url('chrome://nightingale/skin/base-elements/bg-generic-header.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+notification,
+.dialog-notification {
+  background-position:center top;
+  background-repeat:repeat-x;
+}
+notification[type="info"],
+.dialog-notification.notification-info {
+  background-image:url('chrome://nightingale/skin/notification-bar/bg-info.png');
+}
+notification[type="warning"],
+.dialog-notification.notification-warning {
+  background-image:url('chrome://nightingale/skin/notification-bar/bg-warning.png');
+}
+notification[type="critical"],
+.dialog-notification.notification-critical {
+  background-image:url('chrome://nightingale/skin/notification-bar/bg-critical.png');
+}
+
+#tabstrip-container {
+  /*background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-tab-bar.png');
+  background-repeat:repeat-x;
+  background-position:center bottom;
+  */
+  background-image: none;
+  background-color: black;
+}
+#tabstrip-container > tabs#tabstrip {
+  border-bottom: 1px solid rgb(43,42,53) !important;
+}
+#tabstrip-container > tabs#tabstrip > stack {
+  border-right: 1px solid rgb(15,15,23) !important;
+}
+.tabbrowser-tab {
+  background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-tab-delimiter.png') !important;
+  background-repeat:no-repeat;
+  background-position:right 0px !important;
+  padding-bottom: 1px !important;
+}
+.tabbrowser-tab > .tab-image-middle,
+.tabbrowser-tab > .tab-image-left,
+.tabbrowser-tab > .tab-image-right,
+.tabbrowser-tab > .tab-close-button {
+  background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-tab.png');
+  background-repeat:no-repeat;
+  background-position:center 0px;
+}
+.tabbrowser-tab > .tab-image-left {
+  background-position:left 0px;
+}
+.tabbrowser-tab > .tab-image-right {
+  background-position:right 0px;
+}
+
+.tabbrowser-tab:hover > .tab-image-middle,
+.tabbrowser-tab:hover > .tab-close-button {
+  background-position:center -30px;
+}
+.tabbrowser-tab:hover > .tab-image-left {
+  background-position:left -30px;
+}
+.tabbrowser-tab:hover > .tab-image-right {
+  background-position:right -30px;
+}
+
+.tabbrowser-tab:active > .tab-image-middle,
+.tabbrowser-tab:active > .tab-close-button {
+  background-position:center -60px;
+}
+.tabbrowser-tab:active > .tab-image-left {
+  background-position:left -60px;
+}
+.tabbrowser-tab:active > .tab-image-right {
+  background-position:right -60px;
+}
+
+.tabbrowser-tab[selected="true"] > .tab-image-middle,
+.tabbrowser-tab[selected="true"] > .tab-image-left,
+.tabbrowser-tab[selected="true"] > .tab-image-right,
+.tabbrowser-tab[selected="true"] > .tab-close-button {
+  background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-selected-tab.png');
+}
+.tabbrowser-tab.sb-media-tab > .tab-image-middle,
+.tabbrowser-tab.sb-media-tab > .tab-image-left,
+.tabbrowser-tab.sb-media-tab > .tab-image-right,
+.tabbrowser-tab.sb-media-tab > .tab-close-button {
+  background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-media-tab.png');
+}
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-middle,
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-left,
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-right,
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-close-button {
+  background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-selected-media-tab.png');
+}
+.tab-icon-image {
+  list-style-image: url("chrome://nightingale/skin/base-elements/icon-default-favicon.png");
+}
+.tabbrowser-tab[busy] > .tab-icon-image,
+.tabbrowser-tab[busy] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url('chrome://nightingale/skin/base-elements/icon-loading-white.png') !important;
+}
+
+.tabbrowser-tab > .tab-image-middle {
+}
+
+
+
+.smart-condition-minus > .button-box > .button-icon {
+  list-style-image:  url("chrome://nightingale/skin/smart-playlist/button-remove.png");
+}
+.smart-condition-plus > .button-box > .button-icon {
+  list-style-image:  url("chrome://nightingale/skin/smart-playlist/button-add.png");
+}
+
+
+
+#servicepane-status-bar-box > .service-pane-spring-load-button,
+#status-bar-box > .service-pane-spring-load-button {
+  list-style-image:  url("chrome://nightingale/skin/service-pane/button-service-pane-toggle.png");
+  background-image: none;
+  background-color: transparent;
+  min-width: 0px;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+
+/* the open/expand servicepane button */
+#status-bar-box > .service-pane-spring-load-button {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+  margin-left: -2px !important;
+}
+#status-bar-box > .service-pane-spring-load-button:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+/* the close/collapse servicepane button */
+#servicepane-status-bar-box > .service-pane-spring-load-button {
+  -moz-image-region: rect(32px, 16px, 48px, 0px);
+  margin-right: -2px !important;
+}
+#servicepane-status-bar-box > .service-pane-spring-load-button:hover {
+  -moz-image-region: rect(48px, 16px, 64px, 0px);
+}
+
+
+.servicepane-toolbar-newitem-button > .clickhold-button > .button-box > .button-icon {
+  list-style-image:  url("chrome://nightingale/skin/service-pane/button-new-node.png");
+}
+
+
+#titlebar_box > .hook > .right,
+#titlebar_box > .hook > .left,
+#titlebar_box > .hook {
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+/*
+ * Currently unused since we want a uniform look, but leaving this here in
+ * case Featherers want to tweak with it
+#titlebar_box > .hook > .left {
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar-left.png');
+  background-position:left top;
+  background-repeat:no-repeat;
+}
+#titlebar_box > .hook > .right {
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar-right.png');
+  background-position:right top;
+  background-repeat:no-repeat;
+}
+  */
+
+
+.servicepane-tree > treechildren::-moz-tree-row( selected ),
+.servicepane-tree > treechildren::-moz-tree-row( selected focus ) {
+  background-image: url('chrome://nightingale/skin/service-pane/bg-selected-node.png');
+  background-repeat:repeat-x;
+  background-position:center 1px;
+}
+
+
+
+
+/**
+  Player Control Box
+**/
+#control_pane_box > .hook > .left {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-media-control-pane-left.png');
+  background-position:left top;
+  background-repeat:no-repeat;
+}
+#control_pane_box > .hook > .right {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-media-control-pane-right.png');
+  background-position:right top;
+  background-repeat:no-repeat;
+}
+#control_pane_box > .hook {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-media-control-pane.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+
+/**
+  Faceplate
+**/
+#faceplate > .hook > .middle {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+#faceplate > .hook > .left {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-left.png');
+  background-repeat:no-repeat;
+  background-position:left top;
+}
+#faceplate > .hook > .right {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-right.png');  
+  background-repeat:no-repeat;
+  background-position:right top;
+}
+
+#faceplate-inactive-splash {
+  min-height:44px;
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-inactive-splash.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+#faceplate-inactive-splash-prince {
+  min-height:44px;
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-prince.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+#faceplate_inactive > .hook > .middle {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-inactive.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+#faceplate_inactive > .hook > .left {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-inactive-left.png');
+  background-repeat:no-repeat;
+  background-position:left top;
+}
+#faceplate_inactive > .hook > .right {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-faceplate-inactive-right.png');
+  background-repeat:no-repeat;
+  background-position:right top;
+}
+
+
+
+
+#faceplate_seekbar_box > .hook > .left {
+  /* this image has some padding build in to align the center of the thumb to the end of the seekabr */
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-left.png');
+  background-repeat:no-repeat;
+  background-position:left center;
+}
+#faceplate_seekbar_box > .hook > .right {
+  /* this image has some padding build in to align the center of the thumb to the end of the seekabr */
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-right.png');
+  background-repeat:no-repeat;
+  background-position:right center;
+}
+#faceplate_seekbar_box > .hook > .middle {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar.png');
+  background-repeat:repeat-x;
+  background-position:left center;
+}
+
+/* buffering state */
+#faceplate_seekbar_box[buffering="true"] > .hook > .left {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-buffering-left.png');
+}
+#faceplate_seekbar_box[buffering="true"] > .hook > .right {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-buffering-right.png');
+}
+#faceplate_seekbar_box[buffering="true"] > .hook > .middle {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-buffering.png');
+}
+#faceplate_seekbar_box[buffering="true"] > sb-player-seek-slider {
+  visibility:hidden;
+}
+
+/* the seekbar has 4 hboxes that can be used to display notches */
+#faceplate_seekbar_box > .notches > hbox+hbox {
+  /*
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-notch.png');
+  background-repeat:no-repeat;
+  background-position:left center;
+  */
+}
+
+progressmeter.sb-player-seek-slider {
+  border: none;
+}
+progressmeter.sb-player-seek-slider > .progress-bar {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-progress.png');
+  background-repeat:no-repeat;
+  /* start the background image 8px from the left because of the rounded corner of the seekbar */
+  background-position: 8px 0;
+}
+progressmeter.sb-player-seek-slider > .progress-remainder {
+  background-image: url('chrome://nightingale/skin/media-control-pane/bg-seekbar-remainder.png');
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+thumb.sb-player-seek-slider  {
+  background-image: url('chrome://nightingale/skin/media-control-pane/button-seek-thumb.png');
+  background-repeat: no-repeat;
+  background-position: center 0px;
+}
+/*
+ * XXXstevel commenting out per bug 19192 for now, sigh.
+thumb.sb-player-seek-slider:hover {
+  background-position: center -12px;
+}
+thumb.sb-player-seek-slider:active {
+  background-position: center -24px;
+}
+*/
+thumb.sb-player-seek-slider[disabled="true"] {
+  background-position: center -36px;
+}
+
+/* this is the image is displayed between the title/artist and artist/album */
+#sb-player-artist-label-label:not([value=""]),
+#sb-player-album-label-label:not([value=""]) {
+  background-image: url('chrome://nightingale/skin/media-control-pane/icon-text-delimiter.png');
+  background-repeat:no-repeat;
+  background-position:left center;
+}
+
+
+toolbar,
+menubar,
+.generic-bar {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color: rgb(39,37,49);
+}
+
+.sb-commands-toolbar {
+  background-image:url('chrome://nightingale/skin/playlist/bg-command-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+textbox,
+.datetimepicker-input-subbox,
+.datetimepicker-year,
+sb-rating,
+.menulist-editable-box {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-text-input.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+
+.closable-box-image,
+treechildren::-moz-tree-twisty(closed) {
+  list-style-image: url('chrome://nightingale/skin/service-pane/twisty.png');
+  -moz-image-region: rect(0px, 9px, 9px, 0px);
+}
+.closable-box-image[open="true"],
+treechildren::-moz-tree-twisty(open) {
+  list-style-image: url('chrome://nightingale/skin/service-pane/twisty.png');
+  -moz-image-region: rect(9px, 9px, 18px, 0px);
+}
+
+.servicepane-tree > treechildren::-moz-tree-twisty {
+  list-style-image: url('chrome://nightingale/skin/service-pane/twisty.png');
+  -moz-image-region: rect(0px, 9px, 9px, 0px);
+}
+.servicepane-tree > treechildren::-moz-tree-twisty(closed) {
+  -moz-image-region: rect(0px, 9px, 9px, 0px);
+}
+.servicepane-tree > treechildren::-moz-tree-twisty(open) {
+  -moz-image-region: rect(9px, 9px, 18px, 0px);
+}
+
+
+
+
+
+
+#nav_bar_box {
+  border:none;
+  background-image:none;
+  background-color:black;
+  border-bottom: 1px solid rgb(43,42,53);
+}
+#nav-bar {
+  background-color: transparent;
+  background-image: none;
+  border-right: 1px solid rgb(15,15,23);
+}
+/*
+#nav_bar_box > .hook > .left {
+  background-image: url('chrome://nightingale/skin/nav-bar/bg-nav-bar-left.png');
+  background-position:left top;
+  background-repeat:no-repeat;
+}
+#nav_bar_box > .hook > .right {
+  background-image: url('chrome://nightingale/skin/nav-bar/bg-nav-bar.png');
+  background-position:right top;
+  background-repeat:no-repeat;
+}
+#nav_bar_box > .hook {
+  background-image: url('chrome://nightingale/skin/nav-bar/bg-nav-bar-right.png');
+  background-position:center top;
+  background-repeat:repeat-x;
+}
+  */
+
+#nav-bar toolbarbutton {
+  background-image: url('chrome://nightingale/skin/nav-bar/bg-nav-bar-button.png');
+  background-position: center 0px;
+  background-repeat: no-repeat;
+  -moz-background-clip:border;
+  -moz-image-region: rect(0px 24px 20px 0px);
+  opacity: 1.0 !important;
+}
+#nav-bar toolbarbutton[type="menu-button"] {
+  background-image: url('chrome://nightingale/skin/nav-bar/bg-nav-bar-menubutton.png');
+}
+#nav-bar toolbarbutton:hover {
+  background-position: center -20px;
+  -moz-image-region: rect(20px 24px 40px 0px);
+  opacity: 1.0 !important;
+}
+#nav-bar toolbarbutton:active,
+#nav-bar toolbarbutton[open="true"] {
+  background-position: center -40px;
+  -moz-image-region: rect(40px 24px 60px 0px);
+  opacity: 1.0 !important;
+}
+#nav-bar toolbarbutton[disabled="true"] {
+  background-position: center -60px;
+  -moz-image-region: rect(60px 24px 80px 0px);
+  opacity: 1.0 !important;
+}
+
+#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-icon,
+#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
+#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
+  opacity: 1.0 !important;
+}
+/* dropmarkers in toolbarbuttons in the nav bar gets to be white */
+/*
+#nav-bar toolbarbutton > .toolbarbutton-menu-dropmarker > .dropmarker-icon,
+#nav-bar toolbarbutton > .toolbarbutton-menubutton-dropmarker > .dropmarker-icon {
+  list-style-image: url("chrome://nightingale/skin/nav-bar/dropmarker.png");
+}
+  */
+
+/* In Purple Rain we have hard-coded images that incorporate background &
+ * foreground into one list-style-image.  If you're a third-party featherer,
+ * you may wish to just define foreground icons and overlay the regular
+ * bg-nav-bar-button.png, in which case you can remove this rule
+ */
+#back-button,
+#forward-button,
+#stop-button,
+.sb-browser-stopreload-stop-button,
+#reload-button,
+.sb-browser-stopreload-reload-button,
+#home-button,
+#mediapages-button-listview,
+#mediapages-button-filterview,
+#mediapages-button
+{
+  background-image: none !important;
+}
+
+#back-button {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-button-back.png');
+}
+#forward-button {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-button-forward.png');
+}
+#stop-button,
+.sb-browser-stopreload-stop-button {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-button-stop.png');
+}
+#reload-button,
+.sb-browser-stopreload-reload-button {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-button-reload.png');
+}
+#home-button {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-button-home.png');
+}
+/*
+#bookmark-subscribe-button > .clickhold-button {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/button-add.png');
+}
+*/
+
+#mediapages-button-listview > .toolbarbutton-icon {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-toggle-left.png');
+}
+#mediapages-button-filterview > .toolbarbutton-icon {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-toggle-right.png');
+}
+#mediapages-button > .toolbarbutton-icon {
+  list-style-image: url('chrome://nightingale/skin/nav-bar/nav-toggle-drop.png');
+}
+#mediapages-other {
+  min-height: 20px;
+  max-height: 20px;
+}
+#mediapages-other > toolbarbutton.mp-other {
+  min-width: 23px !important;
+  max-width: 23px !important;
+  min-height: 20px;
+  max-height: 20px;
+  background-image: url('chrome://nightingale/skin/nav-bar/bg-mp-button.png');
+  background-position: center 0px;
+}
+
+#mediapages-other > toolbarbutton.mp-other:hover {
+  background-position: center -20px;
+}
+
+#mediapages-other > toolbarbutton.mp-other:active,
+#mediapages-other > toolbarbutton.mp-other[open="true"] {
+  background-position: center -40px;
+}
+
+#mediapages-other > toolbarbutton.mp-other[disabled="true"],
+#mediapages-other > toolbarbutton.mp-other[disabled="true"]:hover {
+  background-position: center -60px;
+}
+
+
+.searchbar-engine-button {  
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+.searchbar-engine-button:hover {
+  background-position:center -25px;
+}
+.searchbar-engine-button:active,
+.searchbar-engine-button[open="true"] {
+  background-position:center -50px;
+}
+
+.search-go-button {
+  border-left:none !important;
+}
+.autocomplete-history-dropmarker > .dropmarker-icon {
+  padding-bottom: 2px !important;
+  margin-right: 5px !important;
+}
+.autocomplete-history-dropmarker > .dropmarker-icon,
+.searchbar-dropmarker-image {
+  list-style-image: url("chrome://nightingale/skin/nav-bar/nav-search-drop.png");
+  border:none;
+}
+.searchbar-engine-button[addengines="true"] > .searchbar-dropmarker-image {
+  list-style-image: url("chrome://nightingale/skin/nav-bar/button-add-search-service.png");
+} 
+/*
+ * Taking this out of Purple Rain, but leaving this commented here in case
+ * Featherers want to enable it
+ *
+.searchbar-engine-button[addengines="true"] {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button-highlighted.png');
+}
+*/
+searchbar[empty="true"] > .searchbar-textbox > .search-go-container > .search-go-button {
+  visibility: collapse;
+}
+searchbar:not([empty="true"]) > .searchbar-textbox > .search-go-container > .search-go-button {
+  visibility: visible;
+  list-style-image: url("chrome://nightingale/skin/nav-bar/button-clear-search.png");
+}
+
+
+
+.dialog-button-box,
+.wizard-buttons,
+.device-tab-button-box,
+/** prefs **/
+.paneDeckContainer+hbox,
+#addonsMsg+vbox {
+  /*background-image: url('chrome://nightingale/skin/base-elements/bg-button-box.png');
+  background-repeat:repeat-x;
+  background-position:center top;*/
+}
+
+
+#displaypane_right_sidebar_splitter {
+  width: 22px !important;
+  min-width: 22px !important;
+  max-width: 22px !important;
+  background-image: url("chrome://nightingale/skin/splitter/splitter-vertical.png");
+  background-repeat: repeat-y;
+  background-position: center 0px;
+}
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter {
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  background-image: url("chrome://nightingale/skin/splitter/splitter-horizontal.png");
+  background-repeat: repeat-x;
+  background-position: center 0px;
+}
+
+.playlist-splitter,
+.playlist-web-splitter {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-splitter-horizontal.png') !important;
+  background-repeat:repeat-x !important;
+  background-position:center top !important;
+}
+
+#servicepane_splitter,
+#filter_splitter {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-splitter-vertical.png');
+  background-repeat:repeat-y;
+  background-position:center top;
+}
+
+
+findbar {
+  background-image:url('chrome://nightingale/skin/playlist/bg-command-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+
+scrollbar[orient="vertical"] {
+  background-color: rgb(42,42,53);
+}
+scrollbar[orient="horizontal"] {
+  background-color: rgb(42,42,53);
+}
+scrollbar[orient="vertical"] > slider > thumb {
+  background-image: url("chrome://nightingale/skin/base-elements/bg-scroll-thumb-vertical.png");
+}
+scrollbar[orient="horizontal"] > slider > thumb {
+  background-image: url("chrome://nightingale/skin/base-elements/bg-scroll-thumb-horizontal.png");
+}
+/*
+scrollcorner { 
+  background-image: url("chrome://nightingale/skin/base-elements/bg-scroll-corner.png");
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+  */
+
+/*
+.sb-sys-outer-frame-resizer-bottomleft {
+  background-image: url('chrome://nightingale/skin/window/bg-resizer-bottom-corner.png');
+  background-repeat:no-repeat;
+  background-position:left top;
+}
+.sb-sys-outer-frame-resizer-bottomright {
+  background-image: url('chrome://nightingale/skin/window/bg-resizer-bottom-corner.png');
+  background-repeat:no-repeat;
+  background-position:right top;
+}
+  */
+
+
+.wizard-header {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+}
+
+
+#downloadManager > #search {
+  background-image:url('chrome://nightingale/skin/playlist/bg-command-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+
+/*
+.paneSelector {
+  background-image:url('chrome://nightingale/skin/playlist/bg-command-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+*/
+
+#viewGroup {
+  background-image:url('chrome://nightingale/skin/playlist/bg-command-bar.png') !important;
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+/* make the radio button look like a tab */
+#viewGroup > radio {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+}
+#viewGroup > radio:hover {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center -25px;
+}
+#viewGroup > radio[selected="true"],
+#viewGroup > radio[selected="true"]:hover {
+  background-image: url('chrome://nightingale/skin/base-elements/bg-generic-header.png') !important;
+  background-position:center 0px;
+  background-repeat:repeat-x;
+}
+
+
+
+.addonThrobber,
+richlistitem[loading="true"] .updateBadge {
+  list-style-image: url("chrome://nightingale/skin/base-elements/icon-loading-white.png");
+}

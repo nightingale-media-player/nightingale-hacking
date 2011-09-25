@@ -1,0 +1,33 @@
+<!-- Nightingale-specific preferences entities -->
+<!-- Media Management general description -->
+<!ENTITY prefWindow.manageMedia.generalDescription.title "Please Note:">
+<!ENTITY prefWindow.manageMedia.generalDescription.p1 "Turning Manage Files ON — Existing tracks will be copied to the &brandShortName; Music library folder. Subsequent imported tracks will be copied to this location as well.">
+<!ENTITY prefWindow.manageMedia.generalDescription.p2 "Turning Manage Files OFF — Existing tracks will remain in their current &brandShortName; Music library folder. Subsequent imported tracks will not be copied.">
+
+<!-- Media Management entities -->
+<!ENTITY prefWindow.manageMedia.enablebox.description.pre "Advanced users can control how &brandShortName; organizes music files on their
+computer.  Manage Files mode will copy music files to a directory structure
+based on the settings below.">
+<!ENTITY prefWindow.manageMedia.enablebox.warning     "This cannot be undone.">
+<!ENTITY prefWindow.manageMedia.enablebox.description.post "">
+
+<!ENTITY prefWindow.manageMedia.label                 "Manage Files">
+<!ENTITY prefWindow.manageMedia.title                 "Manage Files">
+<!ENTITY prefWindow.manageMedia.library.browse.label  "Choose...">
+
+<!ENTITY prefWindow.manageMedia.format.box.label      "Structure folders as:">
+<!ENTITY prefWindow.manageMedia.format.dir.suffix     "Song files">
+<!ENTITY prefWindow.manageMedia.format.file.label     "Rename files as:">
+<!ENTITY prefWindow.manageMedia.format.file.suffix    ".ext">
+<!ENTITY prefWindow.manageMedia.format.file.suffix.tooltip "The file type of your media file, such as .mp3 or .ogg">
+
+<!ENTITY prefWindow.manageMedia.enable.enable.label   "Allow &brandShortName; to manage files">
+<!ENTITY prefWindow.manageMedia.enable.preview.label  "Preview Folder Structure">
+<!ENTITY prefWindow.manageMedia.mac_button.label      "Apply">
+
+<!-- Media Management preview entities -->
+<!ENTITY prefWindow.manageMedia.preview.title         "Manage Media Preview">
+<!ENTITY prefWindow.manageMedia.preview.more.label    "More...">
+<!ENTITY prefWindow.manageMedia.preview.reveal.label  "Show Source File...">
+<!ENTITY prefWindow.manageMedia.preview.item.direction "normal">
+<!ENTITY prefWindow.manageMedia.preview.description.label2 "These changes will occur when you commit the File Management preferences:">

@@ -1,0 +1,55 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/**
+*******************************************************************************
+DEVICE VOLUME SELECTOR
+
+See app/content/bindings/device/deviceVolumeSelector.xml
+
+Style rules pertaining to the device volume selector widget.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+.sb-device-volume-selector-label,
+.sb-device-volume-selector-menulist {
+  margin: 2px 0px;
+  max-height: 19px;
+  height: 19px;
+  min-height: 19px;
+  /* 2px solid transparent outline to trick XUL renderer */
+  outline: 2px solid rgba(102,134,70, 0);
+  -moz-outline-radius: 3px;
+}
+
+.sb-device-volume-selector-label[highlight],
+.sb-device-volume-selector-menulist[highlight] {
+  margin: 2px 0px;
+  outline: 2px solid rgb(102,134,70);
+  -moz-outline-radius: 3px;
+}
+

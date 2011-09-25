@@ -1,0 +1,65 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIFile;
+
+/**
+ * \interface sbIDeviceFirmwareUpdate
+ * \note The default implementation of this interface is threadsafe. 
+ */
+[scriptable, uuid(77407578-e395-4199-bb84-b3856b58b578)]
+interface sbIDeviceFirmwareUpdate : nsISupports
+{
+  /**
+   * \brief The firmware image file
+   * \note Uninitialized until Init is called.
+   */
+  readonly attribute nsIFile firmwareImageFile;
+  
+  /**
+   * \brief The human readable version of this firmware
+   * \note Uninitialized until Init is called.
+   */
+  readonly attribute AString firmwareReadableVersion;
+  
+  /**
+   * \brief Machine friendly firmware version
+   * \note Uninitialized until Init is called.
+   */
+  readonly attribute unsigned long firmwareVersion;
+
+  /**
+   * \brief Initialize the firmware update object
+   * \param aFirmwareImageFile - The firmware file
+   * \param aFirmwareReadableVersion - The human readable version of the firmware file
+   * \param aFirmwareVersion - The machine friendly version of the firmware file
+   */
+  void init(in nsIFile aFirmwareImageFile, 
+            in AString aFirmwareReadableVersion,
+            in unsigned long aFirmwareVersion);
+};

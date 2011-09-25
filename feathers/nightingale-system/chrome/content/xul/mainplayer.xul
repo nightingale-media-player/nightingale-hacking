@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css" title="Skin"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css" title="Skin"?>
+
+<?xml-stylesheet href="chrome://nightingale-system/content/css/mainplayer.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<!-- Include this to import the standard overlays for a window containing a gBrowser element -->
+<?xul-overlay href="chrome://nightingale/content/xul/layoutWithBrowserOverlay.xul"?>
+
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<window
+  id="mainplayer"
+  title="&window.dev.title;"
+  windowtype="Nightingale:Main"
+  hidechrome="true"
+
+  titlemenuseparator="&window.browser.titlemenuseparator;"
+  titlemodifier="&window.browser.titlemodifier;"
+  titlepreface="&window.browser.titlepreface;"
+  titledefault="&window.browser.titledefault;"
+
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+
+  onload="windowPlacementSanityChecks();"
+  onclose="quitApp();"
+  persist="screenX screenY width height sizemode"
+>
+  <!-- No matter what mig says, don't take this out!! -->
+  <windowregion/>
+  
+  <!-- standard overlays insertion point for popups, commands, broadcasters,
+       keys and stringbundles -->
+  <sb-support id="mainSupportSet"/>
+
+  <sb-sys-outer-frame flex="1">
+
+
+  <menubar id="main-menubar" hidden="false"
+           oncommand="onMenu(event.target)" mousethrough="never" />
+
+    <vbox flex="1" id="content_player_wrapper" playercontrols="bottom">
+      <hbox id="sp_content_wrapper" flex="1">
+        <!-- SERVICE PANE -->
+        <vbox id="servicepane_box">
+          <sb-servicepane id="servicepane" flex="1" browser="content">
+          </sb-servicepane>
+          <hbox pack="end" flex="1" id="servicepane-status-bar-box">
+            <button class="service-pane-spring-load-button"
+                    tooltiptext="&tooltip.servicepane.collapse;"
+                    oncommand="gServicePane.open = !gServicePane.open;
+                               SBDataSetBoolValue(
+                                  'splitter.servicepane_splitter.was_collapsed',
+                                  gServicePane.open);"
+                    style="min-height:16px; min-width:16px;"
+                    hidden="true"
+                    >
+              <observes type="dataremote"
+                        key="splitter.servicepane_splitter.collapsed"
+                        boolean="true"
+                        attribute="hidden" />
+            </button>
+            <statusbar id="servicepane-status-bar"
+                       mousethrough="never"
+                       flex="1"
+                       align="center">
+              <label id="servicepane-status-bar-label"
+                     class="sb-status-bar-text" />
+            </statusbar>
+          </hbox> <!-- /servicepane-status-bar-box -->
+        </vbox> <!-- /servicepane_box -->
+
+        <sb-smart-splitter id="servicepane_splitter" state="open"
+                           resizebefore="closest" resizeafter="closest"
+                           collapsethreshold="20"
+                           collapseelement="servicepane_box"
+                           hideoncollapse="servicepane_box"
+                           showonopen="servicepane_box"
+                           metricscategory="app"
+                           metricsid="collapse.servicepane"/>
+
+        <vbox id="content_sidebar_statusbar_wrapper" flex="1">
+          <hbox id="content_sidebar_wrapper" flex="1">
+            <vbox id="content_wrapper" flex="1">
+              <stack id="nav_bar_box">
+                <hbox flex="1" class="hook">
+                  <hbox class="left"/>
+                  <hbox class="middle" flex="1"/>
+                  <hbox class="right"/>
+                </hbox>
+                <!-- BROWSER TOOLBAR.  Filled via overlay by
+                     layoutWithBrowserOverlay.xul and others. 
+                     Note: this item must have id="navigator-toolbox" for Firefox
+                     extension compatibility.
+                -->
+                <toolbox id="navigator-toolbox" flex="1"/>
+              </stack>
+
+              <notificationbox id="application-notificationbox"/>
+
+              <hbox id="tabstrip-container">
+                <observes type="dataremote"
+                          key="splitter.servicepane_splitter.collapsed"
+                          boolean="true" 
+                          attribute="servicepane_pinned"
+                          inverted="true"/>
+                <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs"
+                      setfocus="false" flex="1"
+                      onclick="gBrowser.onTabClick(event);"
+                      ondblclick="gBrowser.onTabBarDblClick(event);"
+                      onclosetab="gBrowser.removeCurrentTab();"
+                      collapsed="true">
+                  <tab selected="true" validate="never"
+                       onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);"
+                       class="tabbrowser-tab" crop="end"/>
+                </tabs>
+              </hbox>
+
+              <vbox id="inner_player_box" flex="1">
+                <vbox id="middle_pane_box" flex="1">
+                  <hbox id="middle_pane_inner_box" flex="1">
+                    <vbox id="appcontent" flex="1">
+
+                      <hbox flex="1">
+                        <vbox flex="1">
+
+                          <!-- BROWSER.  Note: these IDs are required for
+                               Firefox extension compatibility. -->
+                          <sb-tabbrowser id="content" flex="1"
+                                  contenttooltip="aHTMLTooltip"
+                                  contentcontextmenu="contentAreaContextMenu"
+                                  hasmediatab="true"
+                                  tabstrip="tabstrip"/>
+
+                          <!-- CONTENT PANE DISPLAY PANE -->
+                          <sb-displaypane-splitter
+                              collapse="after"
+                              orient="vertical"
+                              resizeafter="closest"
+                              id="displaypane_contentpane_bottom_splitter"
+                              menuid="displaypane_contentpane_bottom_menu" />
+                          <sb-displaypane id="displaypane_contentpane_bottom" 
+                              label="&displaypane.name.browser;"
+                              contentgroup="contentpane"
+                              splitter="displaypane_contentpane_bottom_splitter"/>
+                        </vbox>
+                      </hbox>
+
+                      <!-- menupopup needs to be outside the vbox otherwise it
+                           gets height adjusted to 0 when the splitter is
+                           adjusted -->
+                      <menupopup id="displaypane_contentpane_bottom_menu"
+                                 class="menulist-menupopup">
+                        <sb-displaypane-content-menuitems
+                                 paneid="displaypane_contentpane_bottom" />
+                      </menupopup>
+                      <menupopup id="displaypane_right_sidebar_menu"
+                                 class="menulist-menupopup">
+                        <sb-displaypane-content-menuitems
+                                 paneid="displaypane_right_sidebar" />
+                      </menupopup>
+
+                    </vbox> <!-- /appcontent -->
+                  </hbox> <!-- /middle_pane_inner_box -->
+                </vbox> <!-- /middle_pane_box -->
+              </vbox> <!-- /inner_player_box -->
+            </vbox> <!-- /content_wrapper -->
+
+            <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu
+                 and sbIDisplayPaneManager service. -->
+            <sb-displaypane-splitter
+                      collapse="after"
+                      orient="horizontal"
+                      resizeafter="closest"
+                      id="displaypane_right_sidebar_splitter"
+                      menuid="displaypane_right_sidebar_menu" />
+            <sb-displaypane id="displaypane_right_sidebar"
+                      style="min-width: 102px;"
+                      contentgroup="sidebar"
+                      orient="vertical"
+                      label="&displaypane.name.sidebar;"
+                      splitter="displaypane_right_sidebar_splitter"/>
+          </hbox> <!-- /content_sidebar_wrapper -->
+
+          <!-- STATUS BAR.  Filled via overlay by
+                 layoutWithBrowserOverlay.xul
+                 Note: this item must have id="status-bar" for Firefox
+                 extension compatibility.
+          -->
+          <hbox id="status-bar-box" flex="1">
+            <button class="service-pane-spring-load-button"
+                    tooltiptext="&tooltip.servicepane.show;"
+                    oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
+                               gServicePane.open = !gServicePane.open;
+                               SBDataSetBoolValue(key, gServicePane.open);"
+                    style="min-height:16px; min-width:16px;"
+                    hidden="true" >
+              <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                        attribute="hidden" inverted="true"/>
+            </button>
+            <statusbar id="status-bar" mousethrough="never" flex="1">
+            </statusbar>
+          </hbox> <!-- /status-bar-box -->
+        </vbox> <!-- /content_sidebar_statusbar_wrapper -->
+
+      </hbox> <!-- /sp_content_wrapper -->
+
+
+      <vbox id="player_wrapper">
+        <stack id="control_pane_box" pack="center" >
+          <!-- TODO Move corner xul into an sb-themed-frame-stack -->
+          <hbox flex="1" class="hook">
+            <hbox class="left"/>
+            <hbox class="middle" flex="1"/>
+            <hbox class="right"/>
+          </hbox>
+          <!-- /TODO -->
+          
+          <hbox flex="1" id="control_pane_context_box" context="playerControlsPopupMenu" />
+
+          <hbox id="control_pane" flex="1" mousethrough="always">
+            <hbox id="control_buttons_box" pack="center" align="center">
+              <sb-player-back-button id="play_back_button" class="sb-player-button"/>
+              <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
+              <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
+            </hbox>
+
+            <hbox id="volume_box" pack="center" align="center">
+              <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
+            </hbox>
+            
+            <hbox id="faceplate_box" flex="1" pack="center" align="center">
+              <stack id="faceplate" flex="1">
+    
+                <observes type="dataremote"
+                          id="active-faceplate-observes"
+                          key="faceplate.seenplaying"
+                          attribute="hidden"
+                          boolean="true"
+                          inverted="true" />
+
+                <!-- TODO Move corner xul into an sb-themed-frame-stack -->
+                <hbox flex="1" class="hook">
+                  <hbox class="left"/>
+                  <hbox class="middle" flex="1"/>
+                  <hbox class="right"/>
+                </hbox>
+                <!-- /TODO -->
+
+                <hbox id="faceplate_content" flex="1">
+                  <vbox flex="1">
+                    <hbox id="track_info" pack="center" align="center">
+                      <sb-player-curtrack-box class="faceplate-curtrack-box" flex="1">
+                        <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
+                          <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                          <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                          <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
+                        </sb-autoscroll>
+                      </sb-player-curtrack-box>
+                      <hbox id="faceplate-tool-bar">
+                        <sb-nowplaying-rating/>
+                      </hbox>
+                    </hbox>
+                    <hbox class="faceplate-seekinfo-box" align="center" pack="center">
+                      <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
+                      <stack id="faceplate_seekbar_box" flex="1">
+                        <hbox flex="1" class="hook">
+                          <hbox class="left"/>
+                          <hbox class="middle" flex="1"/>
+                          <hbox class="right"/>
+                        </hbox>
+                        <hbox flex="1" class="notches">
+                          <hbox flex="1"/>
+                          <hbox flex="1"/>
+                          <hbox flex="1"/>
+                          <hbox flex="1"/>
+                        </hbox>
+                        <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
+                        <observes type="dataremote"
+                          id="buffering-faceplate-observes"
+                          key="faceplate.buffering"
+                          attribute="buffering"
+                          boolean="true"
+                          inverted="false" />
+                      </stack>
+                      <sb-player-totaltime-label class="faceplate-text" align="left" />
+                    </hbox>
+                  </vbox>
+    <!--              <hbox id="faceplate-album-art"/>-->
+                </hbox>
+              </stack>
+<!-- /TODO -->
+
+              <stack id="faceplate_inactive" flex="1">
+                <observes type="dataremote"
+                          id="inactive-faceplate-observes"
+                          key="faceplate.seenplaying"
+                          attribute="hidden"
+                          boolean="true"
+                          inverted="false" />
+
+                <hbox flex="1" class="hook">
+                  <hbox class="left"/>
+                  <hbox class="middle" flex="1"/>
+                  <hbox class="right"/>
+                </hbox>
+                <hbox flex="1" id="faceplate-inactive-splash-prince">
+                  <observes type="dataremote"
+                            id="active-faceplate-prince-observes"
+                            key="nightingale-system.prince"
+                            attribute="hidden"
+                            boolean="true"
+                            inverted="true" />
+                </hbox>
+                <hbox flex="1" id="faceplate-inactive-splash">
+                  <observes type="dataremote"
+                            id="inactive-faceplate-prince-observes"
+                            key="nightingale-system.prince"
+                            attribute="hidden"
+                            boolean="true"
+                            inverted="false" />
+                </hbox>
+              </stack>
+            </hbox>
+            
+            <hbox id="shuffle_repeat_box" pack="center" align="center">
+              <sb-player-shuffle-button class="sb-player-button" />
+              <sb-player-repeat-button class="sb-player-button" />
+            </hbox>
+          </hbox>
+        </stack> <!-- /control_pane_box -->
+      </vbox> <!-- /player_wrapper -->
+    </vbox> <!-- /content_player_wrapper -->
+
+  </sb-sys-outer-frame>
+
+</window>

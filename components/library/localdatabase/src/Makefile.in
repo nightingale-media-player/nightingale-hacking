@@ -1,0 +1,165 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@ \
+        @top_srcdir@/components/library/base/src/
+
+include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
+
+DYNAMIC_LIB = sbLocalDatabaseLibrary
+
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
+                       $(NULL)
+
+XPIDL_HEADER_SRCS = \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreEvent.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventTarget.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventListener.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreManager.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreSequencer.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreStatus.idl \
+ $(NULL)
+
+# preedTODO: fix the basename call
+XPIDL_EXTRA_FLAGS = \
+ -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
+ $(NULL)                     
+
+CPP_SRCS = sbLocalDatabaseModule.cpp \
+           sbLocalDatabaseGUIDArray.cpp \
+           sbLocalDatabaseAsyncGUIDArray.cpp \
+           sbLocalDatabaseDynamicMediaList.cpp \
+           sbLocalDatabaseDynamicMediaListFactory.cpp \
+           sbLocalDatabaseLibraryLoader.cpp \
+           sbLocalDatabasePropertyCache.cpp \
+           sbLocalDatabaseTreeView.cpp \
+           sbLocalDatabaseQuery.cpp \
+           sbLocalDatabaseMediaItem.cpp \
+           sbLocalDatabaseMediaListListener.cpp \
+           sbLocalDatabaseLibrary.cpp \
+           sbLocalDatabaseLibraryFactory.cpp \
+           sbLocalDatabaseMediaListBase.cpp \
+           sbLocalDatabaseResourcePropertyBag.cpp \
+           sbLocalDatabaseSimpleMediaList.cpp \
+           sbLocalDatabaseSimpleMediaListFactory.cpp \
+           sbLocalDatabaseSmartMediaList.cpp \
+           sbLocalDatabaseSmartMediaListFactory.cpp \
+           sbLocalDatabaseSQL.cpp \
+           sbLocalDatabaseCascadeFilterSet.cpp \
+           sbLocalDatabaseMediaListView.cpp \
+           sbLocalDatabaseMediaListViewSelection.cpp \
+           sbLocalDatabaseMediaListViewState.cpp \
+           sbLocalMediaListBaseEnumerationListener.cpp \
+           sbDatabaseResultStringEnumerator.cpp \
+           sbPlaylistTreeSelection.cpp \
+           sbFilterTreeSelection.cpp \
+           sbSelectionListUtils.cpp \
+           sbLocalDatabaseDiffingService.cpp \
+           $(NULL)
+
+# From components/library/base/src/
+CPP_SRCS += sbLibraryChangeset.cpp
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
+                     $(DEPTH)/components/devices/base/public \
+                     $(DEPTH)/components/devicesobsolete/base/public \
+                     $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediamanager/public \
+                     $(DEPTH)/components/metrics/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/playlistplayback/public \
+                     $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/sqlbuilder/public \
+                     $(MOZSDK_IDL_DIR) \
+                     $(MOZSDK_INCLUDE_DIR)/appcomps \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+                     $(topsrcdir)/components/dbengine/src \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/library/localdatabase/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threadpoolservice/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/property/src \
+                     $(topsrcdir)/components/sqlbuilder/src \
+                     $(NULL)
+
+ifdef DEBUG
+   CPP_EXTRA_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                         $(MOZSDK_INCLUDE_DIR)/js \
+                         $(NULL)
+endif
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/strings/src/sbMozStringUtils \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
+
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
+ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
+	 $(NULL)
+endif
+
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbSmartMediaListsUpdater.js \
+                      $(srcdir)/sbLocalDatabaseMigrationHelper.js \
+                      $(NULL)
+
+IS_COMPONENT = 1
+                      
+NIGHTINGALE_JSMODULES = $(srcdir)/sbLocalDatabaseMigrationUtils.jsm
+
+SUBDIRS = migrationhandlers \
+          $(NULL)
+
+include $(topsrcdir)/build/rules.mk

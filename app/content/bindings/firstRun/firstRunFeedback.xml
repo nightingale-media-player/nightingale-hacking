@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * First-run feedback widget.
+   *
+   *   This widget provides first-run user feedback UI.
+   *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-first-run-feedback">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox anonid="container_box" class="sb-first-run-feedback-box">
+
+        <!-- Header and description. -->
+        <xul:label class="sb-first-run-header"
+                   value="&first_run.feedback.header.label;"/>
+        <xul:description>
+          &first_run.feedback.description;
+        </xul:description>
+
+        <!-- Options box. -->
+        <xul:vbox anonid="options_box">
+
+          <!-- Metrics collection checkbox. -->
+          <xul:checkbox anonid="metrics_checkbox"
+                        label="&first_run.feedback.metrics.label;"/>
+          <xul:description class="indent sb-first-run-checkbox-description">
+            &first_run.feedback.metrics.description;
+          </xul:description>
+
+        </xul:vbox> <!-- options_box -->
+
+        <!-- E-mail box. -->
+        <xul:groupbox anonid="email_box" class="sb-first-run-feedback-email-box">
+
+          <!-- E-mail header. -->
+          <xul:label class="sb-first-run-header"
+                     value="&first_run.feedback.email.header.label;"/>
+
+          <!-- E-mail textbox. -->
+          <xul:description>
+            &first_run.feedback.email.description;
+          </xul:description>
+          <xul:textbox
+            anonid="email_textbox"
+            class="sb-first-run-feedback-email-textbox"
+            emptytext="&first_run.feedback.email.textbox.emptytext;"/>
+
+        </xul:groupbox>
+
+      </xul:vbox> <!-- container_box -->
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+      <constructor><![CDATA[
+        var metricsChecked = 
+          Application.prefs.getValue("app.metrics.checkedByDefault", true);
+        var metricsCheckbox = 
+          document.getAnonymousElementByAttribute(this,
+                                                  "anonid",
+                                                  "metrics_checkbox");
+        metricsCheckbox.checked = metricsChecked;
+      ]]></constructor>
+
+      <!--
+       * Save the user settings in the first-run wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        // Save the metrics collection setting.
+        var metricsCheckbox =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "metrics_checkbox");
+        var metricsEnabled = metricsCheckbox.checked ? "1" : "0";
+        Application.prefs.setValue("app.metrics.enabled", metricsEnabled);
+
+        // Register the subscription e-mail.
+        var eMailTextBox =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "email_textbox");
+        var eMail = eMailTextBox.value;
+        if (eMail && (eMail.length > 0)) {
+          // Get the subscribe URL.
+          var subscribeURL =
+                Application.prefs.getValue("nightingale.url.subscribe", "");
+
+          // Register the subscription e-mail.
+          if (subscribeURL && (subscribeURL.length > 0)) {
+            // Component manager defs.
+            var Cc = Components.classes;
+            var Ci = Components.interfaces;
+            var Cu = Components.utils;
+
+            // Produce the subscription URL query string.
+            Cu.import("resource://app/jsmodules/URLUtils.jsm");
+            var reqParams = { id:     "c8c47a06ad",
+                              MERGE0: eMail };
+            var reqBody = URLUtils.produceQuery(reqParams);
+
+            // Send the subscription request.
+            var httpReq = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+                            .createInstance(Ci.nsIXMLHttpRequest);
+            httpReq.mozBackgroundRequest = true;
+            httpReq.open("POST", subscribeURL, false);
+            httpReq.setRequestHeader("Content-Type",
+                                     "application/x-www-form-urlencoded");
+            httpReq.send(reqBody);
+          }
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- sb-first-run-feedback -->
+
+</bindings>
+

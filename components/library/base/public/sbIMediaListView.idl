@@ -1,0 +1,218 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbIMediaListView.idl
+ * \brief Definition of the sbIMediaListView interface
+ * \sa sbIMediaListView.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIMutableArray;
+interface nsIStringEnumerator;
+interface nsITreeView;
+interface sbICascadeFilterSet;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIMediaListView;
+interface sbIMutablePropertyArray;
+interface sbIMediaListViewSelection;
+
+/**
+ * \interface sbIMediaListViewState
+ * \brief Saved state of a media list view
+ *
+ * \sa sbIMediaList
+ */
+[scriptable, uuid(bb26d18e-8387-4512-9d99-8ce9b18f929b)]
+interface sbIMediaListViewState : nsISupports
+{
+  AString toString();
+};
+
+/**
+ * \interface sbIMediaListViewListener
+ * \brief Saved state of a media list view
+ *
+ * \sa sbIMediaListView
+ */
+[scriptable, uuid(378fc540-9592-43df-908c-ed84ac0e1221)]
+interface sbIMediaListViewListener : nsISupports
+{
+  /**
+   * \brief Called when the view's filter configuration changes.
+   */
+  void onFilterChanged(in sbIMediaListView aChangedView);
+
+  /**
+   * \brief Called when the view's search changes.
+   */
+  void onSearchChanged(in sbIMediaListView aChangedView);
+
+  /**
+   * \brief Called when the view's sort configuration changes.
+   */
+  void onSortChanged(in sbIMediaListView aChangedView);
+};
+
+/**
+ * \interface sbIMediaListView
+ * \brief A distinct view on a given media list
+ *
+ * \sa sbIMediaList
+ */
+[scriptable, uuid(53cefc7c-0967-4cab-84bd-11b52b1bf081)]
+interface sbIMediaListView : nsISupports
+{
+  /**
+   * \brief The media list this view is on
+   */
+  readonly attribute sbIMediaList mediaList;
+
+  /**
+   * \brief Returns the length of filtered view of this list
+   */
+  readonly attribute unsigned long length;
+
+  /**
+   * \brief Get a treeview that will display this media list view
+   */
+  readonly attribute nsITreeView treeView;
+
+  /**
+   * \brief Get the cascade filter set for this media list view
+   */
+  readonly attribute sbICascadeFilterSet cascadeFilterSet;
+
+  /**
+   * \brief Get a media item in the filtered view of this list by index
+   * \param aIndex Filtered index of the media item
+   * \return Media item with the requested index
+   */
+  sbIMediaItem getItemByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Searches the view for the first occurrence of the specified media
+   *        item and returns the index where it was found.
+   * \param aMediaItem Media item to search for
+   * \return Index where the media item was found
+   * \throws NS_ERROR_NOT_AVAILABLE if the media item is not in the view
+   */
+  unsigned long getIndexForItem(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Given an index of an item in the filtered list, get the index of
+   *        the same item in the unfiltered list
+   * \param aIndex Filtered index of the media item
+   * \return Index of the same item in the unfiltered list
+   */
+  unsigned long getUnfilteredIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Returns an opaque identifier that uniquely identifies the media
+   *        item at a given position.  This identifier can be used later to
+   *        find the same media item after this view's filter and sort has
+   *        been changed.
+   * \param aIndex Filtered index of the media item
+   * \return Opaque identifier of specified media item
+   */
+  AString getViewItemUIDForIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Given an opaque identifier returned by getViewItemUIDForIndex,
+   *        return the index of the media item it identifies.
+   * \param aViewItemUID The opaque identifier returned by
+   *        getViewItemUIDForIndex
+   * \return Index of media item the identifer identifies.
+   */
+  unsigned long getIndexForViewItemUID(in AString aViewItemUID);
+
+  /*
+   * \brief Return the distinct values in the view for a given property
+   * \param aPropertyID Propery ID to get distinct values for
+   * \return String enumerator of distinct values for the given property
+   */
+  nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
+
+  /**
+   * \brief Create a clone of this view.  This will return a copy with the
+   *        same search, filter, sort, and cascade filter set as the original.
+   * \return A clone of the media list view
+   */
+  sbIMediaListView clone();
+
+  /**
+   * \brief Returns a snapshot of the current state of this view.  Can later
+   *        be used to restore the state by passing the returned object as an
+   *        argument to sbIMediaList::CreateView()
+   * \return The state of this media list view
+   */
+  sbIMediaListViewState getState();
+
+  /**
+   * \brief Add a listener to this view to be notified of changes to filter
+   *        configuration, search, and sort configuration.
+   *
+   * Calling addListener twice with the same listener and weak setting will be
+   * ignored. Calling twice with the same listener but different weak settings
+   * will cause two references to be stored, one weak and one strong.
+   *
+   * \param aListener The listener instance.
+   * \param aOwnsWeak [optional] Whether or not to hold a weak reference to the
+   *                  listener. If aOwnsWeak is true then aListener must be able
+   *                  to QI to nsISupportsWeakReference.
+   * \sa sbIMediaListViewListener
+   * \sa nsISupportsWeakReference
+   */
+  void addListener(in sbIMediaListViewListener aListener,
+                   [optional] in boolean aOwnsWeak);
+
+  /**
+   * \brief Remove a listener from the view.
+   *
+   * Calling removeListener with a listener that has not been previously added
+   * with addListener is a no-op.
+   *
+   * Calling removeListener with a listener that had both a weak and a strong
+   * reference stored (via two calls to addListener with different values for
+   * aOwnsWeak) will cause the weak listener to be removed first. A second call
+   * to removeListener is necessary to remove the strong reference.
+   *
+   * \param aListener The listener instance to remove.
+   */
+  void removeListener(in sbIMediaListViewListener aListener);
+
+  /**
+   * \brief Get the selection for the view
+   */
+  readonly attribute sbIMediaListViewSelection selection;
+
+  /**
+   * \brief Remove selected items from the view's media list
+   */
+  void removeSelectedMediaItems();
+};

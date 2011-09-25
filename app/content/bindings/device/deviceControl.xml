@@ -1,0 +1,675 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 :miv -->
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device control widget.
+   *
+   *   Fields
+   *   ======
+   *   deviceID                 ID of device to which widget is bound.
+   *   device                   Bound device object.
+   *   boundElem                Element bound to widget.
+   *
+   *   Attributes
+   *   ==========
+   *   device-id                ID of device to which widget is bound.
+   *   dev-lib-guid             GUID of device library to which widget is bound.
+   *   service_pane_node_id     ID of associated service pane node.
+   *   bindelem                 Element to which to bind device control.
+   *   bindforward              Element through which to forward device control.
+   *   accesskey_<state>        Accesskey attribute setting for state.
+   *   action_<state>           Action attribute setting for state.
+   *   disabled_<state>         Disabled attribute setting for state.
+   *   label_<state>            Label attribute setting for state.
+   *   action                   Action to take on "command" events.
+   *   listentodevice           Listen to device state changes.
+   *
+   *   States
+   *   ======
+   *   default                  Default state.
+   *   readonly                 Device is read-only.
+   *   readwrite                Device is read/write.
+   *   cancel                   Device is cancelling operations.
+   *   copy                     Device is copying content.
+   *   delete                   Device is deleting content.
+   *   mount                    Device is mounting.
+   *   sync                     Device is syncing content.
+   *   update                   Device is updating content.
+   *   transcode                Device is transcoding content.
+   *   format                   Device is being formatted.
+   *   busy                     Device is busy.
+   *   idle                     Device is idle.
+   *   mgmt_not_manual          Device is not configured for manual management.
+   *   can_trigger_sync         Device sync can be triggered.
+   *   supports_playlist        Device supports playlists.
+   *   not_supports_playlist    Device does not support playlists.
+   *
+   *   Actions
+   *   =======
+   *   cancel                   Cancel all device operations.
+   *   eject                    Eject device.
+   *   get_info                 Display device info.
+   *   new_playlist             Create new device playlist.
+   *   rename                   Rename device.
+   *   sync                     Sync device.
+   *   rip                      Transcode items from a device.
+   *   rescan                   Rescan the device (CD Lookup on rip cd device)
+   *
+   *   Binding specs
+   *   =============
+   *   prev                     Bind to previous sibling.
+   *   next                     Bind to next sibling.
+   *   parent                   Bind to parent.
+   *   id=elem_id               Bind to element with ID "elem_id". XXXeps TODO
+   *
+   *   Psuedo-entities
+   *   ===============
+   *   product_name             Set to the device product name string (e.g.,
+   *                            "Apple iPod").
+   *   device_model_cap         Set to the device model/capacity string (e.g.,
+   *                            "Apple iPod(3.8GB)").
+   *   remove_attribute         Remove the attribute.
+   *
+   *   Events
+   *   ======
+   *   deviceBound              Widget has been bound to a device.
+   *
+   *   This widget provides a base level of services for device control widgets.
+   * It may be used directly as a widget or extened by other widgets.
+   *
+   *   This widget may be bound to a device by setting the "device-id"
+   * attribute.  When the widget is bound to a device, the "deviceBound" event
+   * is dispatched.
+   *   This widget may be bound to a device library by setting the
+   * "dev-lib-guid" attribute.
+   *   Binding the widget to a device will also bind the widget to the default
+   * device library.  Binding the widget to a device library will also bind the
+   * widget to the library's device.
+   *   When the widget is bound to a new device, the "deviceBound" event is
+   * dispatched.  When the widget is bound to a new device library, the
+   * "devLibBound" event is dispatched.
+   *
+   *   This widget updates its attributes based upon the device state.  These
+   * attributes include the accesskey, action, disabled, and label attributes.
+   * The attribute setting for a particular state is specified with an attribute
+   * of the name <update_attribute_name>_<state> (e.g., "label_idle").
+   *   If the device is in a state matching an attribute state setting, the
+   * corresponding attribute value is set to the attribute state setting value.
+   * If the device state does not match any attribute state setting, the
+   * attribute is set to the default attribute state setting value (e.g.,
+   * "label_default").
+   *   If the listentodevice attribute is set to "true", the widget listens for
+   * device state changes and updates the attribute state settings accordingly.
+   * Otheriwse, the attribute state settings are only updated when the widget is
+   * bound to a device.
+   *
+   *   The widget provides support for psuedo-entities in attribute state
+   * setting values.  A psuedo-entity string is replaced with a matching string
+   * value.  For example, anywhere "device_model_cap" appears in an attribute
+   * state setting, it may be replaced by "Apple iPod(3.8GB)".
+   *   If an attribute state setting value is equal to the psuedo-entity
+   * "remove_attribute", the attribute is removed for that state.
+   *
+   *   Device control widgets may be bound to other elements.  The device
+   * control state attribute values are copied to the bound element.  The
+   * element to which a device control widget is bound is set with the bindelem
+   * attribute.  The element is specified with a binding spec string.
+   *   If a device control widget is contained within another XBL widget, the
+   * device control binding may be forwarded using the bindforward attribute.
+   * If the bindforward attribute is set, the bindelem binding spec is relative
+   * to the bindforward specified element.
+   *
+   *   The device control widget provides a "command" event handler.  The action
+   * taken by this handler is specified by the action attribute.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+      <!--
+       * Public fields.
+       *
+       *   deviceID             ID of device to which widget is bound.
+       *   device               Bound device object.
+       *   devLibGUID           GUID of device library to which widget is bound.
+       *   devLib               Bound device library object.
+       *   boundElem            Element bound to widget.
+       -->
+
+      <field name="deviceID"/>
+      <field name="device"/>
+      <field name="devLibGUID"/>
+      <field name="devLib"/>
+      <field name="boundElem"/>
+
+
+      <!--
+       * Private fields.
+       *
+       *   _deviceControlWidget Device control widget services object.
+       -->
+
+      <field name="_deviceControlWidget"/>
+
+
+      <!--
+       * Construct the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this.sbDeviceControl_importExternalServices();
+
+        // Create a device control widget object.
+        this._deviceControlWidget = new deviceControlWidget(this);
+
+        // Try binding to a device or a device library.
+        this._deviceControlWidget.bindDevice();
+
+        // Add a node destroy function.
+        var _this = this;
+        var func = function() { _this.sbDeviceControl_destroy() };
+        DOMUtils.addNodeDestroyFunc(this, func);
+      ]]></constructor>
+
+
+      <!--
+       * Destroy the widget.
+       -->
+
+      <destructor> <![CDATA[
+        this.sbDeviceControl_destroy();
+      ]]></destructor>
+
+      <method name="sbDeviceControl_destroy"><body><![CDATA[
+        // Finalize the device control services.
+        if (this._deviceControlWidget)
+          this._deviceControlWidget.finalize();
+        this._deviceControlWidget = null;
+
+        // Remove object references.  But only if they're not read only...
+        if (!this.__lookupGetter__("deviceID") ||
+            this.__lookupSetter__("deviceID")) {
+          this.deviceID = null;
+        }
+        if (!this.__lookupGetter__("device") ||
+            this.__lookupSetter__("device")) {
+          this.device = null;
+        }
+        if (!this.__lookupGetter__("devLibGUID") ||
+            this.__lookupSetter__("devLibGUID")) {
+          this.devLibGUID = null;
+        }
+        if (!this.__lookupGetter__("devLib") ||
+            this.__lookupSetter__("devLib")) {
+          this.devLib = null;
+        }
+        this.boundElem = null;
+      ]]></body></method>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="sbDeviceControl_importExternalServices"><body><![CDATA[
+      {
+        // Nightingale imports.
+        Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
+
+        // Import the device control services.
+        if (typeof(deviceControlWidget) == "undefined") {
+          var jsLoader;
+
+          // Get the Javascript sub-script loader services.
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                  ("chrome://nightingale/content/scripts/device/deviceControl.js",
+                   null);
+        }
+      }
+      ]]></body></method>
+
+    </implementation>
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+
+      <handler event="DOMAttrModified"
+               action="if (this._deviceControlWidget)
+                         this._deviceControlWidget.bindDevice();"/>
+
+      <handler event="deviceBound"><![CDATA[
+        // Stop event so that is doesn't propagate beyond widget.  Even with
+        // bubbling disabled, deviceBound events will propagate to parent
+        // elements.
+        event.stopPropagation();
+        event.preventDefault();
+      ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        // Stop event so that is doesn't propagate beyond widget.  Even with
+        // bubbling disabled, deviceBound events will propagate to parent
+        // elements.
+        event.stopPropagation();
+        event.preventDefault();
+      ]]></handler>
+
+    </handlers>
+
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device eject command widget.
+   *
+   *   This widget implements a device eject command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-eject-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id,label,accesskey"
+         bindforward="parent"
+         label="&command.device.ejectdevice;"
+         accesskey="&command.device.ejectdevice.accesskey;"
+         action="eject"
+         listentodevice="true"
+         disabled_default="remove_attribute"
+         disabled_busy="true"/>
+    </content>
+  </binding>
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device format command widget.
+   *
+   *   This widget implements a device format command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-format-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         label="&command.device.formatdevice;"
+         accesskey="&command.device.formatdevice.accesskey;"
+         action="format"
+         listentodevice="true"
+         disabled_default="remove_attribute"
+         disabled_busy="true"
+         hidden_default="true"
+         hidden_supports_reformat="remove_attribute"/>
+    </content>
+  </binding>
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device ignore command widget.
+   *
+   *   This widget implements a device ignore command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-ignore-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         bindforward="parent"
+         label="&command.device.ignoredevice;"
+         accesskey="&command.device.ignoredevice.accesskey;"
+         action="ignore"
+         listentodevice="true"
+         disabled_default="remove_attribute"
+         disabled_busy="true"
+         hidden_default="true"
+         hidden_msc="remove_attribute"/>
+    </content>
+  </binding>
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device get info command widget.
+   *
+   *   This widget implements a device get info command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-get-info-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         label="&command.device.getdeviceinfo;"
+         accesskey="&command.device.getdeviceinfo.accesskey;"
+         action="get_info"/>
+    </content>
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device product name command widget.
+   *
+   *   This widget implements a product name display command widget.  It sets
+   * the label to the device product name (e.g., "Apple iPod") and is always
+   * disabled.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-product-name-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         disabled="true"
+         label_default="product_name"/>
+    </content>
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device model/capacity command widget.
+   *
+   *   This widget implements a model/capacity display command widget.  It sets
+   * the label to the device model/capacity (e.g., "Apple iPod(3.8GB)") and is
+   * always disabled.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-model-capacity-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         disabled="true"
+         label_default="device_model_cap"/>
+    </content>
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device new playlist command widget.
+   *
+   *   This widget implements a device new playlist command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-new-playlist-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         label="&menu.file.new;"
+         accesskey="&menu.file.new.accesskey;"
+         action="new_playlist"
+         listentodevice="true"
+         disabled_default="remove_attribute"
+         disabled_not_supports_playlist="true"
+         disabled_readonly="true"/>
+    </content>
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device rename command widget.
+   *
+   *   This widget implements a device rename command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-rename-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         bindforward="parent"
+         label="&command.device.renamedevice;"
+         accesskey="&command.device.renamedevice.accesskey;"
+         action="rename"/>
+    </content>
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device sync command widget.
+   *
+   *   This widget implements a device sync command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-sync-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         listentodevice="true"
+         label="&command.device.devicesync;"
+         accesskey="&command.device.devicesync.accesskey;"
+         disabled_default="true"
+         disabled_can_trigger_sync="remove_attribute"
+         action="sync"/>
+    </content>
+  </binding> <!-- sb-device-sync-command -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device cancel command widget.
+   *
+   *   This widget implements a device cancel command.  It disables itself if
+   * the device is in the middle of a cancel.  It hides itself if the device is
+   * in the middle of a format.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-cancel-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.cancel;"
+                             accesskey="&command.device.cancel.accesskey;"
+                             hidden_default="remove_attribute"
+                             hidden_format="true"
+                             disabled_default="remove_attribute"
+                             disabled_cancel="true"
+                             action="cancel"/>
+    </content>
+  </binding> <!-- sb-device-cancel-command -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device sync/cancel command widget.
+   *
+   *   This widget implements a device sync/cancel command.  By default, this
+   * command implements a sync command.  When the device is busy, this command
+   * implements a cancel command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-sync-cancel-command">
+    <content>
+      <xul:sb-device-control
+        xbl:inherits="bindelem,device-id,dev-lib-guid"
+        bindforward="parent"
+        listentodevice="true"
+
+        label_default="&command.device.devicesync;"
+        accesskey_default="&command.device.devicesync.accesskey;"
+        action_default="sync"
+        disabled_default="true"
+        disabled_can_trigger_sync="remove_attribute"
+
+        label_copy="&command.device.canceldevicecopy;"
+        accesskey_copy="&command.device.canceldevicecopy.accesskey;"
+        action_copy="cancel"
+        disabled_copy="remove_attribute"
+
+        label_delete="&command.device.canceldevicedelete;"
+        accesskey_delete="&command.device.canceldevicedelete.accesskey;"
+        action_delete="cancel"
+        disabled_delete="remove_attribute"
+
+        label_sync="&command.device.canceldevicesync;"
+        accesskey_sync="&command.device.canceldevicesync.accesskey;"
+        action_sync="cancel"
+        disabled_sync="remove_attribute"
+
+        label_update="&command.device.canceldeviceupdate;"
+        accesskey_update="&command.device.canceldeviceupdate.accesskey;"
+        action_update="cancel"
+        disabled_update="remove_attribute"
+
+        disabled_mount="true"/>
+    </content>
+  </binding>
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device rip command widget.
+   *
+   *   This widget implements a device rip command.  It disables itself if
+   * the device is in the middle of a process (sync, rip, etc).
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-rip-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,service_pane_node_id"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.rip;"
+                             accesskey="&command.device.rip.accesskey;"
+                             disabled_default="true"
+                             disabled_idle="remove_attribute"
+                             action="rip"/>
+    </content>
+  </binding> <!-- sb-device-rip-command -->
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device stop rip command widget.
+   *
+   *   This widget implements a device stop rip command. It disables itself if
+   * the device is not currently transcoding.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-stoprip-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
+                             bindforward="parent"
+                             listentodevice="true"
+                             disabled_default="true"
+                             disabled_transcode="remove_attribute"
+                             action="cancel"/>
+    </content>
+  </binding> <!-- sb-device-stoprip-command -->
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device rescan command widget.
+   *
+   *   This widget implements a rescan command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-rescan-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,dev-lib-guid,label,accesskey"
+                             bindforward="parent"
+                             listentodevice="true"
+                             disabled_default="true"
+                             disabled_idle="remove_attribute"
+                             action="rescan"/>
+    </content>
+  </binding> <!-- sb-device-rescan-command -->
+
+</bindings>

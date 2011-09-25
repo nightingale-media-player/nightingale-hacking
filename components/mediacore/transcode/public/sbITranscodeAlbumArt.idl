@@ -1,0 +1,84 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright© 2005-2009 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbITranscodeAlbumArt.idl
+ * \brief Album Art routines for converting for devices
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface nsIArray;
+interface nsIInputStream;
+
+/**
+ * \interface sbITranscodeAlbumArt
+ */
+[scriptable, uuid(06ab285d-54c4-4423-8d20-298d3e2db4ac)]
+interface sbITranscodeAlbumArt : nsISupports
+{
+  /* Init device album art helper for this item, with this set of image formats
+   * supported on the device.
+   * 
+   * \param aItem               The media item to work on
+   * \param aSupportedFormats   Array of sbIImageFormatType describing the
+   *                            album art formats that are supported.
+   */
+  void Init(in sbIMediaItem aItem,
+            in nsIArray     aSupportedFormats);
+
+  /* Does the album art on this item need conversion for the device? */
+  readonly attribute boolean needsAlbumArtConversion;
+
+  /* Convert album art on the item to a supported format */
+  void ConvertArt();
+
+  /* Get an input stream from which the transcoded art can be read */
+  nsIInputStream GetTranscodedArt();
+
+  /* Get the target format that will be transcoded to */
+  void GetTargetFormat(out AUTF8String mimeType,
+                       out long width,
+                       out long height);
+};
+
+%{C++
+
+#define NIGHTINGALE_TRANSCODEALBUMART_CONTRACTID               \
+  "@getnightingale.com/Nightingale/Mediacore/TranscodeAlbumArt;1"
+#define NIGHTINGALE_TRANSCODEALBUMART_CLASSNAME                \
+  "Nightingale Album Art Transcoder Interface"
+#define NIGHTINGALE_TRANSCODEALBUMART_CID                      \
+{ /* 1f9e8770-0fa8-4a40-abd0-ba9202216d3e */               \
+  0x1f9e8770,                                              \
+  0x0fa8,                                                  \
+  0x4a40,                                                  \
+  {0xab, 0xd0, 0xba, 0x92, 0x02, 0x21, 0x6d, 0x3e}         \
+}
+
+%}C++
+

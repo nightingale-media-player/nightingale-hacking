@@ -1,0 +1,251 @@
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2007 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+#filter substitution
+<html>
+  <head>
+  <script>
+
+var gMusicURLArray =
+  [ "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3",
+    "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3" ];
+
+// These forms aren't getting supported yet.
+/*
+var gMusicObjArray = [ {url:"http://example.com/foo.mp3", artist:"fooburger", track:"Eat my foo"},
+                       {url:"http://example.com/bar.mp3", artist:"The Foos", track:"My Favorite Bar"} ];
+var gMusicURLObj = { 1:"http://example.com/foo.mp3", 2:"http://example.com/bar.mp3" };
+var gMusicObjObj = { a39207:{url:"http://example.com/foo.mp3", artist:"fooburger", track:"Eat my foo"},
+                     g23s3982:{url:"http://example.com/bar.mp3", artist:"The Foos", track:"My Favorite Bar"} };
+*/
+
+function runBatchCallsTest(tester) {
+
+  // open everything up so we can test functionality. We check
+  // security at the end.
+  tester.setAllAccess();
+
+  var siteLib = nightingale.siteLibrary;
+  var mainLib = nightingale.mainLibrary;
+  var siteList = siteLib.createSimpleMediaList("siteList");
+  var mainList = mainLib.createSimpleMediaList("mainList");
+  var mediaItem = {};
+
+
+  var objs = { mainLib: nightingale.mainLibrary,
+               mainList: mainList,
+               siteLib: nightingale.siteLibrary,
+               siteList: siteList };
+
+  // length of each object at each point
+  var fooLength = 0;
+
+  try {
+    for ( var obj in objs ) {
+
+      // clear out the libraries first
+      siteLib.clear();
+      siteList.clear();
+      mainList.clear();
+
+      var foo = objs[obj];
+      tester.log("");
+      tester.log("---------------------------------------------------");
+      tester.log("                  " + obj);
+      tester.log("---------------------------------------------------");
+
+      // get the length from the source first
+      fooLength = foo.length;
+      tester.log( "Starting length is " + fooLength );
+
+      // make sure I don't break existing functionality
+      try {
+        foo.add( mediaItem, mediaItem );
+        tester.fail( "Error: Shouldn't be able to add 2 items." );
+      } catch (e) {
+        tester.log( "Success: Was not able to add 2 items. ( Error: " + e + ")" );
+      }
+
+      try {
+        foo.add();
+        tester.fail( "Error: Shouldn't be able to add 0 items." );
+      } catch (e) {
+        tester.log( "Success: Was not able to add 0 items. ( Error: " + e  + ")");
+      }
+
+      // add one simple string
+      foo.add( "http://example.com/foo2.mp3" );
+      tester.log( "Success: Was able to add 1 literal string to " + obj + "." );
+      tester.assertEqual(foo.length, ++fooLength);
+
+      // add an array with one string
+      foo.add( [ "http://example.com/foo3.mp3" ] );
+      tester.log( "Success: Was able to add 1 literal array with a string to " + obj + ".");
+      tester.assertEqual(foo.length, ++fooLength);
+
+      // add an array with mulitple (2) strings
+      foo.add( gMusicURLArray );
+      tester.log( "Success: Was able to add 1 URL array containing 2 strings to " + obj + "." );
+      tester.assertEqual(foo.length, (fooLength += 2) );
+
+      // pass in 2 strings, only the first should get added.
+      foo.add( "http://example.com/foo6.mp3", "http://example.com/foo7.mp3" );
+      tester.log( "Success: Was able to add when passing in 2 strings." );
+      tester.assertEqual(foo.length, ++fooLength );
+
+      // this shouldn't add anything, but won't throw.
+      foo.add( 6 );
+      tester.log( "Success: Was able to add a number. (silent failure)" );
+      tester.assertEqual(foo.length, fooLength);
+
+      // this shouldn't add anything, but won't throw.
+      foo.add( [ ] );
+      tester.log( "Success: Was able to add 1 empty array. (silent failure)" );
+      tester.assertEqual(foo.length, fooLength );
+
+      // this shouldn't add anything, but won't throw.
+      foo.add( "" );
+      tester.log( "Success: Was able to add 1 empty string. (silent failure)" );
+      tester.assertEqual(foo.length, fooLength );
+
+      // test some cases that shouldn't work - loud failure
+      try {
+        foo.add( [ {} ] );
+        tester.fail( "Error: Adding an array w/ object should have thrown." );
+      } catch (e) {
+        tester.log( "Success: Was not able to add 1 array(containing an empty object). ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      try {
+        foo.add( {} );
+        tester.fail( "Error: Adding an object should have thrown." );
+      } catch (e) {
+        tester.log( "Success: Was not able to add 1 empty object. ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      // don't add nested arrays
+      try {
+        foo.add( [ [ "http://example.com/foo4.mp3" ],
+                   [ "http://example.com/foo5.mp3", "http://example.com/foo6.mp3" ] ]);
+        tester.log( "Error: Shouldn't be able to add nested arrays." );
+      } catch (e) {
+        tester.log( "Success: Was not able to add nested arrays. ( Error: " + e + ")" );
+      }
+      tester.assertEqual(foo.length, fooLength );
+
+      // Test cases where the wrapper (this) passed to add() is the wrong object
+      try {
+        foo.add.call([], "http://example.com/foo99.mp3"); // JS object
+        tester.fail( "Error: Array wrapper should cause a throw." );
+      } catch (e) {
+        tester.log( "Success: Array wrapper doesn't impl ifaces. ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      try {
+        foo.add.call(window, "http://example.com/foo99.mp3"); // scriptable object
+        tester.fail( "Error: Scriptable window object should cause a throw." );
+      } catch (e) {
+        tester.log( "Success: Scriptable window doesn't impl the right ifaces. ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      try {
+        foo.add.call(document.documentElement, "http://example.com/foo99.mp3"); // DOM element
+        tester.fail( "Error: Scriptable documentElement object should cause a throw." );
+      } catch (e) {
+        tester.log( "Success: Scriptable documentElement doesn't impl the right ifaces. ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      try {
+        foo.add.call(Components.interfaces.nsISupports, "http://example.com/foo99.mp3"); // evil (this crashes)
+        tester.fail( "Error: Ci.nsISupports should cause a throw." );
+      } catch (e) {
+        tester.log( "Success: Ci.nsISupports doesn't impl the right ifaces. ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      // make sure we don't recurse and die
+      try {
+        var a = [];
+        a[0] = a;
+        foo.add(a);
+        tester.fail( "Error: Array containing non-strings should fail." );
+      } catch (e) {
+        tester.log( "Success: Array containing itself failed - don't recurse inifitely. ( Error: " + e + ")." );
+      }
+      tester.assertEqual(foo.length, fooLength);
+
+      // adding tracks to mainLib causes the auto-downloader to kick off
+      tester.log( "Sleeping to give things a chance to clean up." );
+      tester.sleep(600)
+
+    }
+
+    //
+    // Security check - mainLib should be locked down and siteLib should be ok.
+    //
+
+    tester.setDefaultAccess();
+    try {
+      mainLib.add("http;//example.com/foobar.mp3");
+      tester.fail( "Error: Should not be able to add to mainLib with default security." );
+    } catch (e) {
+      tester.log( "Success: Can't add to mainLib with default security. ( Error: " + e + ")." );
+    }
+
+    try {
+      mainList.add("http;//example.com/foobar2.mp3");
+      tester.fail( "Error: Should not be able to add to mainList with default security." );
+    } catch (e) {
+      tester.log( "Success: Can't add to mainList with default security. ( Error: " + e + ")." );
+    }
+
+    siteLib.add("http://example.com/foobar3.mp3");
+    siteList.add("http://example.com/foobar4.mp3");
+
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.log( "Sleeping to give things a chance to clean up." );
+  tester.sleep(600)
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runBatchCallsTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_batchCalls_page.html
+  </body>
+</html>

@@ -1,0 +1,115 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface sbIPropertyInfo;
+
+/**
+ * \interface sbIPropertyUnit sbIPropertyUnit.h
+ * \brief Property unit interface
+ * This interface describes a property unit.
+ */
+[scriptable, uuid(7b86a6fc-a9d4-4ef9-90e3-3334e58cc3d6)]
+interface sbIPropertyUnit : nsISupports
+{
+  /**
+   * \brief The id of the unit. This string is not localized and is
+   *  used in calls to sbIPropertyUnitConverter's convert function
+   *  to specify to and from which unit to convert, it should be unique
+   *  within the list units in an sbIPropertyUnitConverter.
+   */
+  readonly attribute AString id;
+  
+  /**
+   * \brief The full name of the unit, ie. Kilobyte. This is a localized
+   *  string, ie. a partial entity such as "&my.partial.entity", which needs
+   *  to be translated before being shown on a user interface.
+   */
+  readonly attribute AString name;
+
+  /**
+   * \brief The short name of the unit, ie. kB. This is a localized
+   *  string, ie. a partial entity such as "&my.partial.entity", which needs
+   *  to be translated before being shown on a user interface.
+   */
+  readonly attribute AString shortName;
+};
+
+/**
+ * \interface sbIPropertyUnitConverter sbIPropertyUnitConverter.h
+ * \brief Property unit converter interface
+ * This is an interface nightingale property converter, used to convert a property
+ * value between its various units representations.
+ */
+[scriptable, uuid(16814f07-373a-404a-a31b-73ca83cb3c96)]
+interface sbIPropertyUnitConverter : nsISupports
+{
+  /**
+   * \brief Convert a value to a different unit. Use -1 for aMinDecimals and
+   *        aMaxDecimals if you do not wish to set any limits on the number
+   *        of decimals in the returned value.
+   */
+  AString convert(in AString aValue, 
+                  in AString aFromUnitID, 
+                  in AString aToUnitID,
+                  in long aMinDecimals,
+                  in long aMaxDecimals);
+  
+  /**
+   * \brief The list of available units for this property.
+   */
+  readonly attribute nsISimpleEnumerator units;
+  
+  /**
+   * \brief The native unit for this property. This is the unit used
+   * for storage in the database, and that is implied when getting and
+   * setting the property.
+   */
+  readonly attribute AString nativeUnitId;
+  
+  /**
+   * \brief The url to the string bundle used to localize partial entities
+   */
+  readonly attribute AString stringBundle;
+  
+  /**
+   * \brief Formats a value using the most suitable unit. Use -1 for 
+   *        aMinDecimals and aMaxDecimals if you do not wish to set any limits
+   *        on the number of decimals in the returned value.
+   */
+  AString autoFormat(in AString aValue,
+                     in long aMinDecimals,
+                     in long aMaxDecimals);
+  
+  /**
+   * \brief The sbIPropertyInfo this converter is associated with. This
+   *        attribute will be set automatically by the propertyinfo object
+   *        when its converter is assigned.
+   */
+  attribute sbIPropertyInfo propertyInfo;
+};

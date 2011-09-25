@@ -1,0 +1,17 @@
+#filter substitution
+locales.jar:
+#ifdef USING_FLAT_JARS
+#define LOCALE_LOCATION locales
+#else
+#define LOCALE_LOCATION jar:locales.jar!
+#endif
+% locale  branding  en-US  @LOCALE_LOCATION@/locale/branding/
+% locale  nightingale  en-US  @LOCALE_LOCATION@/locale/en-US/nightingale/
+  locale/en-US/nightingale/nightingale.dtd                      (en-US/nightingale/nightingale.dtd)
+  locale/en-US/nightingale/nightingale.properties               (en-US/nightingale/nightingale.properties)
+  locale/en-US/nightingale/preferences.dtd                   (en-US/nightingale/preferences.dtd)
+  locale/en-US/nightingale/preferences-nightingale.dtd          (en-US/nightingale/preferences-nightingale.dtd)
+  locale/en-US/nightingale/help.dtd                          (en-US/nightingale/help.dtd)
+  locale/branding/brand.dtd                               (branding/brand.dtd)
+  locale/branding/brand.properties                        (branding/brand.properties)
+% override chrome://browser/locale/preferences/preferences.dtd chrome://nightingale/locale/preferences.dtd

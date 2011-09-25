@@ -1,0 +1,67 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+ 
+/** 
+*******************************************************************************
+
+JOB PROGRESS DIALOG
+
+Displays the status of an object implementing the sbIJobProgress interface.
+See SBJobUtils.jsm and sbIJobProgress.idl.
+
+*******************************************************************************
+*/
+
+#job_progress_dialog {
+  width: 500px;
+  min-width: 500px;
+  max-width: 500px;
+  min-height: 11.5em;
+}
+
+#jobprogress_title_desc {
+  font-weight: bold !important;
+}
+
+#jobprogress_error_list {
+  margin: 0;
+}
+
+#jobprogress_error_list > listrows > listboxbody {
+  overflow: scroll;
+}
+
+/* This rule modifies the behavior of the attribute "hidden" so that instead of
+making things display: none; it makes them visibility: hidden;. display: none;
+makes elements not effect layout and not get drawn, while visibility: hidden;
+makes them not get drawn but still affect layout. The upshot is that the
+contents of the closable box will still have a height even when the box is
+"closed", so the dialog will always be the correct size. */
+#jobprogress_error_box .closable-box-content[hidden]
+{
+  display: inherit;
+  visibility: hidden;
+}

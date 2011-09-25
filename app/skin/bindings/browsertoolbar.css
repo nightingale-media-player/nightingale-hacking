@@ -1,0 +1,300 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+WEB TOOLBAR IMAGES
+
+Applies images to the toolbar items in browserToolbarOverlay.xul.  
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+/** The back button **/
+#back-button
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+#back-button:hover
+{
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+#back-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 16px 64px 0px);
+}
+#back-button[active="true"]
+{
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+
+
+/** The reload button **/
+#reload-button,
+.sb-browser-stopreload-reload-button
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 48px 16px 32px);
+}
+#reload-button:hover,
+.sb-browser-stopreload-reload-button:hover
+{
+  -moz-image-region: rect(16px 48px 32px 32px);
+}
+#reload-button[disabled="true"],
+.sb-browser-stopreload-reload-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 48px 94px 32px);
+}
+#reload-button[active="true"],
+.sb-browser-stopreload-reload-button[active="true"]
+{
+  -moz-image-region: rect(32px 48px 48px 32px);
+}
+
+
+/** The stop button **/
+#stop-button,
+.sb-browser-stopreload-stop-button
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 64px 16px 48px);
+}
+#stop-button:hover,
+.sb-browser-stopreload-stop-button:hover
+{
+  -moz-image-region: rect(16px 64px 32px 48px);
+}
+#stop-button[disabled="true"],
+.sb-browser-stopreload-stop-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 64px 64px 48px);
+}
+#stop-button[active="true"],
+.sb-browser-stopreload-stop-button[active="true"]
+{
+  -moz-image-region: rect(32px 64px 48px 48px);
+}
+
+
+/** The forward button **/
+#forward-button
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 32px 16px 16px);
+}
+#forward-button:hover
+{
+  -moz-image-region: rect(16px 32px 32px 16px);
+}
+#forward-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 32px 64px 16px);
+}
+#forward-button[active="true"]
+{
+  -moz-image-region: rect(32px 32px 48px 16px);
+}
+
+
+/** The home button **/
+#home-button
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 80px 16px 64px);
+}
+#home-button:hover
+{
+  -moz-image-region: rect(16px 80px 32px 64px);
+}
+#home-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 80px 64px 64px);
+}
+#home-button[active="true"]
+{
+  -moz-image-region: rect(32px 80px 48px 64px);
+}
+
+
+#subscription-button
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 112px 16px 96px);
+}
+#subscription-button:hover
+{
+  -moz-image-region: rect(16px 112px 32px 96px);
+}
+#subscription-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 112px 64px 96px);
+}
+#subscription-button[active="true"]
+{
+  -moz-image-region: rect(32px 112px 48px 96px);
+}
+
+/** The Media Pages button **/
+#mediapages-button > .toolbarbutton-icon
+{
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 144px 16px 128px);
+}
+#mediapages-button:hover > .toolbarbutton-icon
+{
+  -moz-image-region: rect(16px 144px 32px 128px);
+}
+#mediapages-button[disabled="true"] > .toolbarbutton-icon
+{
+  -moz-image-region: rect(48px 144px 64px 128px);
+}
+#mediapages-button[active="true"] > .toolbarbutton-icon
+{
+  -moz-image-region: rect(32px 144px 48px 128px);
+}
+
+
+/** 
+*******************************************************************************
+LOCATION TEXTBOX
+*******************************************************************************
+*/
+
+
+/* the box with the url image and the url textbox */
+.locationbar-textbox
+{
+  max-height: 26px;
+  min-height: 26px;
+  margin: 1px 0px 1px 2px;
+  padding: 0px 0px 1px 0px;
+}
+
+
+.locationbar-image
+{
+  list-style-image: url("chrome://nightingale/skin/icons/small-globe-sunken.png");
+  background-color: transparent;
+  height: 16px;
+  width: 16px;
+  max-height: 16px !important;
+  max-width: 16px !important;
+  min-height: 16px !important;
+  min-width: 16px !important;
+  margin: 3px 5px 3px 5px;
+}
+
+
+/** Convert the favicon into a spinner animation when
+    the browser is loading **/ 
+.locationbar-textbox[loading="true"] > .locationbar-image {
+  background-image: url(chrome://nightingale/skin/icons/spinner-spin.png) !important;
+  width:16px;
+  height:16px;
+  padding-top:100px;
+  overflow:hidden;
+}
+
+/** NOTE: If the URL is from the servicepane it may have a hardcoded 
+    image URL or may get an icon from CSS.  In order to apply icons 
+    from CSS we reflect a list of properties onto the image element.  
+    See /app/skin/bindings/servicepane.css for details. **/
+    
+
+/** 
+************************************************************************************************************************************************
+SPINNER 
+Used to indicate that the system is busy doing something
+************************************************************************************************************************************************
+*/
+
+sb-browser-spinner
+{
+  background-color: transparent;
+  padding: 2px;
+}
+.browser-spinner-image
+{
+  list-style-image: url(chrome://nightingale/skin/icons/spinner-stopped.png) ;  
+}
+.browser-spinner-image[spinning="true"]
+{
+  list-style-image: url(chrome://nightingale/skin/icons/spinner-spin.png) ;
+}
+
+
+/** 
+*******************************************************************************
+GENERAL RULES
+*******************************************************************************
+*/
+
+#navigator-toolbox > toolbar > toolbarbutton,
+.sb-browser-stopreload-button > toolbarbutton
+{
+  min-height: 26px;
+  min-width: 28px;  
+  padding: 0px 0px 0px 0px;
+  margin: 0px 2px 0px 2px;
+}
+
+#navigator-toolbox > toolbar
+{
+  padding: 4px 2px 4px 2px; 
+}
+
+#nav-bar
+{
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+#spinner-container,
+#urlbar-container,
+#searchbar-container 
+{
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+/* hide the overflow here so that as the window shrinks below a certain size
+   the scrollbars on the browser window don't disappear.
+ */
+#navigator-toolbox > toolbar
+{
+  overflow: hidden;
+}
+
+
+
+
+
+

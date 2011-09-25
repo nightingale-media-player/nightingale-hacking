@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/feathers.css" type="text/css"?>
+<?xml-stylesheet href="chrome://albumart/skin/albumArt.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
+]>
+
+<window xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <popupset id="albumArtPopupSet">
+    <menupopup id="nowSelectedMenu" onpopupshowing="AlbumArt.onPopupShowing();">
+      <menuitem id="cutMenuItem"
+                label="&albumart.displaypane.selected.menu.cut;"
+                oncommand="AlbumArt.onCut();"/>
+      <menuitem id="copyMenuItem"
+                label="&albumart.displaypane.selected.menu.copy;"
+                oncommand="AlbumArt.onCopy();"/>
+      <menuitem id="pasteMenuItem"
+                label="&albumart.displaypane.selected.menu.paste;"
+                oncommand="AlbumArt.onPaste();"/>
+      <menuseparator />
+      <menuitem id="showNowPlayingMenuItem"
+                label="&albumart.displaypane.contextmenu.showplaying;"
+                type="radio"
+                name="displayState"
+                oncommand="AlbumArt.switchState(STATE_PLAYING);"/>
+      <menuitem id="showNowSelectedMenuItem"
+                label="&albumart.displaypane.contextmenu.showselected;"
+                type="radio"
+                name="displayState"
+                oncommand="AlbumArt.switchState(STATE_SELECTED);"/>
+      <menuseparator id="getArtworkSeparator"/>
+      <menuitem id="getArtworkMenuItem"
+                label="&menu.tools.getartwork;"
+                oncommand="AlbumArt.onGetArtwork();"/>
+      <menuseparator />
+      <menuitem id="clearMenuItem"
+                label="&albumart.displaypane.selected.menu.clear;"
+                oncommand="AlbumArt.onClear();"/>
+    </menupopup>
+  </popupset>
+  
+  <deck selectedIndex="1" id="sb-albumart-deck" flex="1">
+    <!-- Now Selected Deck -->
+    <stack flex="1" id="sb-albumart-nowselected-stack" class="artwork-none">
+      <vbox class="albumArtNowSelectedContainer"
+            contextmenu="nowSelectedMenu"
+            ondblclick="AlbumArt.onImageDblClick(event);"
+            ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
+            ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
+            ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
+        <!-- Set initial height to 0 to work around mozilla bug 452031. -->
+        <svg:svg flex="1" height="0">
+          <svg:image id="sb-albumart-selected" width="100%" height="100%"/>
+        </svg:svg>
+      </vbox>
+      <vbox id="sb-albumart-select-drag"
+            contextmenu="nowSelectedMenu"
+            class="albumArtNowSelectedDragAndDrop"
+            ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
+            ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
+          <description class="drop-message" />
+      </vbox>
+      <vbox id="sb-albumart-not-selected"
+            contextmenu="nowSelectedMenu"
+            class="albumArtNotSelectedContainer">
+        <description class="empty-message" value="&albumart.displaypane.not_selected_message;" />
+      </vbox>
+    </stack>
+
+    <!-- Now Playing Deck -->
+    <stack flex="1" id="sb-albumart-nowplaying-stack" class="artwork-none">
+      <vbox class="albumArtNowPlayingContainer"
+            contextmenu="nowSelectedMenu"
+            ondblclick="AlbumArt.onImageDblClick(event);"
+            ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
+            ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
+            ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
+        <!-- Set initial height to 0 to work around mozilla bug 452031. -->
+        <svg:svg flex="1" height="0">
+          <svg:image id="sb-albumart-playing" width="100%" height="100%"/>
+        </svg:svg>
+      </vbox>
+      <vbox id="sb-albumart-playing-drag"
+            contextmenu="nowSelectedMenu"
+            class="albumArtNowPlayingDragAndDrop"
+            ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
+            ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
+          <description class="drop-message" />
+      </vbox>    
+      <vbox id="sb-albumart-not-playing"
+            contextmenu="nowSelectedMenu"
+            class="albumArtNotPlayingContainer">
+        <description class="empty-message" value="&albumart.displaypane.not_playing_message;" />
+      </vbox>
+    </stack>
+  </deck>
+  
+  <script type="application/x-javascript" 
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"  
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://albumart/content/albumArtPane.js" />
+  <script src="chrome://global/content/nsDragAndDrop.js"/>
+
+</window>

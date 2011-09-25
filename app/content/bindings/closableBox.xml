@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 : -->
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Closable box widget.
+   *
+   *   This widget is a box that can contain items and can be closed.  It
+   * provides and open/close twisty that shows or hides the contents of the box.
+   * It may also be given a label that it will display above the box contents.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-closable-box">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox flex="1">
+
+        <!-- Box open/close twisty and label. -->
+        <xul:hbox>
+          <xul:vbox pack="center">
+            <xul:image sbid="twisty"
+                       class="closable-box-image"
+                       mousethrough="never"
+                       xbl:inherits="open"
+                       onclick="toggleOpenClose(event);"/>
+          </xul:vbox>
+          <xul:label xbl:inherits="value=label" onclick="toggleOpenClose(event);"/>
+        </xul:hbox>
+
+        <!-- Box contents. -->
+        <xul:box sbid="content" class="closable-box-content" hidden="true" xbl:inherits="orient">
+          <children/>
+        </xul:box>
+
+      </xul:vbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+    <!--
+      - \brief Toggle the open/close state of the box contents.
+      -->
+
+    <method name="toggleOpenClose">
+      <body><![CDATA[
+      this.open = !this.open;
+      ]]></body>
+    </method>
+
+    <!--
+      - \brief Get/Set the open/close state of the box contents
+      -->
+    <property name="open">
+      <getter><![CDATA[
+        return this.hasAttribute("open");
+      ]]></getter>
+      <setter><![CDATA[
+        let wasOpen = this.hasAttribute("open");
+        if (val == wasOpen) {
+          // no-op
+          return val;
+        }
+
+        let contentBox = document.getAnonymousElementByAttribute(this,
+                                                                 "sbid",
+                                                                 "content");
+        if (!wasOpen) {
+          contentBox.hidden = false;
+          this.setAttribute("open", true);
+        } else {
+          contentBox.hidden = true;
+          this.removeAttribute("open");
+        }
+
+        // Update window size.
+        window.sizeToContent();
+
+        // tell anybody listening that we just changed state
+        var event = document.createEvent("Event");
+
+        event.initEvent("collapse", true, true);
+        event.detail = !wasOpen;
+
+        contentBox.dispatchEvent(event);
+      ]]></setter>
+    </property>
+
+    <!--
+      - \brief restore the open/close state from the attribute
+      -->
+    <constructor>
+      <![CDATA[
+        // must wait for the attribute to get set
+        setTimeout(function(self){
+          if (self.hasAttribute("open")) {
+            // force lose the open state, so we can toggle it
+            self.removeAttribute("open");
+            // go down the normal path to fire events
+            self.open = true;
+          }
+        }, 0, this);
+      ]]>
+    </constructor>
+
+    </implementation>
+
+  </binding>
+
+</bindings>
+

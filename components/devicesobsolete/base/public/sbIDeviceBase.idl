@@ -1,0 +1,470 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbIDeviceBase.idl
+ *
+ * \brief The IDL for sbIDeviceBase.
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * Forward references
+ */
+interface nsIArray;
+interface nsIStringEnumerator;
+interface nsIURI;
+
+interface sbILibrary;
+interface sbIMediaItem;
+interface sbIMediaList;
+
+/**
+ * \interface sbIDeviceBaseCallback
+ * \brief [SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase
+ * 
+ * <TODO:Detail>.
+ *
+ */
+[scriptable, uuid(c52a5f0f-fd6e-4f41-a681-3ed88c9e5a9f)]
+interface sbIDeviceBaseCallback : nsISupports
+{
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param aDeviceIdentifier [in AString] A string that describes the device.
+   */
+  void onDeviceConnect(in AString aDeviceIdentifier);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param aDeviceIdentifier [in AString] A string that describes the device.
+   */
+  void onDeviceDisconnect(in AString aDeviceIdentifier);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param aMediaItem [in sbIMediaItem] <TODO>.
+   */
+  void onTransferStart(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief <TODO:Brief>.
+   *
+   * <TODO:Detail>.
+   *
+   * \param aMediaItem [in sbIMediaItem] <TODO>.
+   * \param aStatus [in PRInt32] <TODO>.
+   */
+  void onTransferComplete(in sbIMediaItem aMediaItem,
+                          in PRInt32 aStatus);
+
+  /**
+   * \brief Called when the device state has changed.
+   *
+   * \param aDeviceIdentifier [in AString] A string that describes the device.
+   * \param aState [in unsigned long] New device state.
+   */
+  void onStateChanged(in AString aDeviceIdentifier,
+                      in unsigned long aState);
+};
+
+
+/**
+ * \interface sbIDeviceBase
+ * \brief [SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.
+ *
+ * Base interface for all supported devices. The supported devices can be CD,
+ * Windows Media Device, iPod, etc., and even a download device for downloading
+ * and uploading files.
+ *
+ * All devices implement this base interface to perform the basic operations
+ * such as enumerating tracks (media files) and perform supported I/O
+ * operations.
+ *
+ * In addition, a device class instance, not to be confused with a device
+ * instance, can provide extended information about a device, for example
+ * recording speed for a CD drive.
+ *
+ * "Device Category" is used in identifying device class instances (using
+ * sbIDeviceManager) and "Device String" is for identifying a device. For
+ * instance "Nightingale CD Device" is the Device Category and "D:\" is the Device
+ * String.
+ */
+[scriptable, uuid(2964c3bf-18d6-4a72-8ccf-f08b732b4bab)]
+interface sbIDeviceBase : nsISupports
+{
+  /**
+   * File format constants
+   *
+   * XXXben We have an explicit -1 here but later we have PRUint32 as a param
+   *        for get/set Upload and Download FileType. Also, should these be
+   *        renamed to FILE_TYPE_XXX or should we change the other funcs to use
+   *        FileFormat?
+   */
+  const PRUint32 FILE_FORMAT_UNDEFINED = 9999;
+  const PRUint32 FILE_FORMAT_WAV       = 0;
+  const PRUint32 FILE_FORMAT_MP3       = 1;
+  const PRUint32 FILE_FORMAT_WMA       = 2;
+
+  /**
+   * Device State constants
+   *
+   * Generally speaking I/O commands can be issued to a device if device state
+   * is STATE_IDLE for the device. But if STATE_DOWNLOADING then it can be
+   * asked to transfer more tracks, and the same applies to STATE_UPLOADING and
+   * STATE_DELETING. STATE_TRANSFERRING_PAUSED indicates a paused transfer.
+   *
+   * XXXben STATE_TRANSFERRING_PAUSED no longer exists
+   */
+  const PRUint32 STATE_IDLE            = 0;
+  const PRUint32 STATE_BUSY            = 1;
+  const PRUint32 STATE_DOWNLOADING     = 2;
+  const PRUint32 STATE_UPLOADING       = 3;
+  const PRUint32 STATE_DOWNLOAD_PAUSED = 4;
+  const PRUint32 STATE_UPLOAD_PAUSED   = 5;
+  const PRUint32 STATE_DELETING        = 6;
+
+  /**
+   * \brief Device Operation Constants
+   * \sa transferItems
+   */
+  const unsigned long OP_UPLOAD    = 1;
+  const unsigned long OP_DOWNLOAD  = 2;
+  const unsigned long OP_MOVE      = 3;
+  
+  /**
+   * \brief The name of the device category handler.
+   */
+	attribute AString name;
+
+  /**
+   * \brief Initialize the device category handler.
+   */
+  void initialize();
+
+  /**
+   * \brief Finalize usage of the device category handler.
+   *
+   * This effectively prepares the device category handler for
+   * application shutdown.
+   */
+  void finalize();
+
+  /**
+   * \brief Add a device category handler callback.
+   *
+   * Enables you to get callbacks when devices are connected and when
+   * transfers are initiated.
+   *
+   * \param aCallback The device category handler callback you wish to add.
+   */
+  void addCallback(in sbIDeviceBaseCallback aCallback);
+
+  /**
+   * \brief Remove a device category handler callback.
+   * 
+   * \param aCallback The device category handler callback you wish to remove.
+   */
+  void removeCallback(in sbIDeviceBaseCallback aCallback);
+
+  /**
+   * \brief Device category name for this class of devices.
+   */
+	readonly attribute AString deviceCategory;
+
+  /**
+   * \brief Contains nsISupportsStrings representing the device unique identifiers 
+   * for all connected devices of this category.
+   */
+	readonly attribute nsIStringEnumerator deviceIdentifiers;
+
+  /**
+   * \brief Get the number of devices currently connected.
+   */
+	readonly attribute unsigned long deviceCount;
+
+  /**
+   * \brief Get the device library representing the content
+   * available on the device.
+   * 
+   * \param aDeviceIdentifier The unique device identifier.
+   * \return The library for the specified device.
+   */
+  sbILibrary getLibrary(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Get the device's current state.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return The current state of the device.
+   */
+  unsigned long getDeviceState(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Get preferred transfer location for item
+   *
+   * Get a transfer location for the specified media item. This enables
+   * the device to determine where best to put this media item based on 
+   * it's own set of criteria.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItem The media item that is about to be transferred.
+   * \return The transfer location for the item.
+   */
+  nsIURI getTransferLocation(in AString aDeviceIdentifier,
+                             in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Transfer items to a library or destination.
+   *
+   * If you call this method with a library only, the device
+   * will attempt to read the library's preferred transfer 
+   * destination and use it.
+   *
+   * If you call this method with a destination only, the device
+   * will attempt to transfer the items to that destination only.
+   *
+   * If you call this method with a library and destination path, the
+   * device will attempt to simply pass a destination if you do not wish to add
+   * the item to a library after the transfer is complete.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItems An array of media items to transfer.
+   * \param aDestinationPath The desired destination path, path may include full filename.
+   * \param aDeviceOperation The desired operation (upload, download, move).
+   * \param aBeginTransferNow Begin the transfer operation immediately?
+   * \param aDestinationLibrary The desired destination library.
+   * \return Number of items actually queued for transfer.
+   */
+  unsigned long transferItems(in AString aDeviceIdentifier,
+                              in nsIArray aMediaItems, 
+                              in nsIURI aDestionationPath, 
+                              in unsigned long aDeviceOperation,
+                              in boolean aBeginTransferNow,
+                              in sbILibrary aDestinationLibrary);
+
+  /**
+   * \brief Update items on the device.
+   */
+  unsigned long updateItems(in AString aDeviceIdentifier,
+                            in nsIArray aMediaItems);
+
+  /**
+   * \brief Delete items from the device.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   * \param aMediaItems An array of sbIMediaItem objects.
+   *
+   * \return Number of items actually deleted from the device.
+   */
+  unsigned long deleteItems(in AString aDeviceIdentifier,
+                            in nsIArray aMediaItems);
+
+  unsigned long deleteAllItems(in AString aDeviceIdentifier);
+
+  unsigned long createPlaylists(in AString aDeviceIdentifier,
+                                in nsIArray aMediaLists);
+
+  unsigned long deletePlaylists(in AString aDeviceIdentifier,
+                                in nsIArray aMediaLists);
+
+  unsigned long addToPlaylist(in AString aDeviceIdentifier,
+                              in sbIMediaList aMediaList,
+                              in nsIArray aMediaItems,
+                              in unsigned long aBeforeIndex);
+                              
+  unsigned long removeFromPlaylist(in AString aDeviceIdentifier,
+                                   in sbIMediaList aMediaList,
+                                   in sbIMediaItem aMediaItem,
+                                   in unsigned long aIndex);
+
+  unsigned long movePlaylistItem(in AString aDeviceIdentifier,
+                                 in sbIMediaList aMediaList,
+                                 in unsigned long aFromIndex,
+                                 in unsigned long aToIndex);
+
+  unsigned long clearPlaylist(in AString aDeviceIdentifier,
+                              in sbIMediaList aMediaList);
+   /**
+    * \brief Begin transfer operations.
+    * \return The media item that began transferring.
+    */
+  sbIMediaItem beginTransfer(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Cancel a transfer by removing it from the queue.
+   *
+	 * Cancel a transfer by removing it from the queue. If the item
+   * has already been transfered this function has no effect.
+   *
+   * \param aDeviceIdentifier The device unique identifier
+   * \param aMediaItems An array of media items.
+   * \return The number of transfers actually cancelled.
+   */
+  unsigned long cancelTransfer(in AString aDeviceIdentifier,
+                               in nsIArray aMediaItems);
+
+  /**
+   * \brief Suspend all transfers.
+   *
+	 * Suspend all active transfers.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return Number of transfer items actually suspended.
+   */
+  unsigned long suspendTransfer(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Resume pending transfers.
+   *
+	 * Resume pending transfers for a device.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return Number of transfer items actually resumed.
+   */
+  unsigned long resumeTransfer(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Get the amount of used space from a device.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return The amount of used space on the device, in bytes.
+   */
+  long long getUsedSpace(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Get the amount of available space from a device.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return The amount of available space, in bytes.
+   */
+	long long getAvailableSpace(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Returns a list of file extensions representing the 
+   * formats supported by a specific device.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return An array of nsISupportsString containing the supported
+   * formats in file extension format.
+   */
+	nsIArray getSupportedFormats(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Download is to copy a track from the device to the host.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return True or false.
+   */
+	boolean isDownloadSupported(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Is uploading supported on this device?
+   *
+   * Upload is to copy a track from host to the device
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return True or false.
+   */
+	boolean isUploadSupported(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Is it possible to delete items from the device?
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return True or false.
+   */
+	boolean isDeleteSupported(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Is it possible to update items directly on the device?
+   *
+	 * This method could be used for updating tracks on a device
+	 * or applying CDDB match for a CD.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return True or false.
+   */
+	boolean isUpdateSupported(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Is eject or unmount supported by the device?.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return True or false.
+   */
+	boolean isEjectSupported(in AString aDeviceIdentifier);
+
+  /**
+   * \brief Eject or unmount the device from the system.
+   *
+   * \param aDeviceIdentifier The device unique identifier.
+   *
+   * \return True or false.
+   */
+  boolean ejectDevice(in AString aDeviceIdentifier);
+};
+
+// XXXben These are left here for the time being so the world doesn't break
+// XXXmig When these are left at the top, doxygen breaks.
+%{ C++
+// File format constants
+#define kSB_DEVICE_FILE_FORMAT_UNDEFINED  -1
+#define kSB_DEVICE_FILE_FORMAT_WAV        0
+#define kSB_DEVICE_FILE_FORMAT_MP3        1
+#define kSB_DEVICE_FILE_FORMAT_WMA        2
+
+// Device State constants
+#define kSB_DEVICE_STATE_IDLE             0
+#define kSB_DEVICE_STATE_BUSY             1
+#define kSB_DEVICE_STATE_DOWNLOADING      2
+#define kSB_DEVICE_STATE_UPLOADING        3
+#define kSB_DEVICE_STATE_DOWNLOAD_PAUSED  4
+#define kSB_DEVICE_STATE_UPLOAD_PAUSED    5
+#define kSB_DEVICE_STATE_DELETING         6
+%}
+

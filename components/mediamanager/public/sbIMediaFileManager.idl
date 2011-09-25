@@ -1,0 +1,113 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIFile;
+interface nsIPropertyBag2;
+
+interface sbIMediaItem;
+
+[scriptable, uuid(acd38470-1dd1-11b2-8d4e-98f3080e5a73)]
+interface sbIMediaFileManager : nsISupports
+{
+  /**
+   * Initialize the media file manager instance
+   * For all optional arguments, defaults are taken from the prefs
+   * \param [optional] aProperties properties to use in place of prefs
+   *   known key/value pairs:
+   *     "media-folder": (nsIFile) the folder to organize things into
+   *     "file-format": (ACString) the formatting string to use for the leaf name
+   *     "dir-format": (ACString) the formatting string to use for the path
+   *     "manage-mode": (PRUint32) the MANAGE_* constants
+   */
+  void init([optional] in nsIPropertyBag2 aProperties);
+  
+  /**
+   * Organization Flags:
+   *  MANAGE_RENAME - This renames a file so that it matches the metadata
+   *   of the item, the rename will only happen if the item is located in or
+   *   will be located in the Managed Folder.
+   *  MANAGE_DELETE - This deletes an items file if it is located in the
+   *   Managed Folder.
+   *  MANAGE_COPY   - This will copy an items file into the Managed Folder.
+   *  MANAGE_MOVE   - This will move a file into a sub folder in the Managed
+   *   Folder based on the items metadata, the move will only happen if the
+   *   item is located in or will be located in the Managed Folder.
+   *
+   *  Example modes:
+   *   MANAGE_RENAME | MANAGE_MOVE - This will move and rename a file if it is
+   *    located in the Managed Folder based on the items metadata.
+   *     example: /ManagedFolder/Artist/Album/## - Title.ext
+   *   MANAGE_COPY - This will only copy the file into the Managed Folder, it
+   *    will not move or rename it based on the items metadata.
+   *   MANAGE_RENAME | MANAGE_MOVE | MANAGE_COPY - This will copy, move and
+   *    rename the items file into the Managed Folder based on the items
+   *    metadata.
+   */
+
+  // Rename the file so it matches the items metadata
+  const unsigned short MANAGE_RENAME  = 1;
+
+  // Delete a file that has been removed from the list
+  const unsigned short MANAGE_DELETE  = 2; 
+  
+  // Copy a file into the media library
+  const unsigned short MANAGE_COPY    = 4;
+  
+  // Move a file into the correct sub folder so it matches the items metadata
+  const unsigned short MANAGE_MOVE    = 8;
+
+  /**
+   * Organize an item in the media library folder
+   *
+   * @param aMediaItem the item to organize
+   * @param aManageType the actions to take (see flags above)
+   * @param aForceTargetFile if given, force the target file to be based on this
+   *        path, ignoring the properties on the item itself
+   */
+  boolean organizeItem(in sbIMediaItem aMediaItem,
+                       in unsigned short aManageType,
+                       [optional] in nsIFile aForceTargetFile);
+  
+  /**
+   * Get the path the item would be organized to if we were to do it
+   * 
+   * @param aMediaItem  - the media item we will organize
+   * @param aManageType - the actions to take (see flags above)
+   * @return              the resulting path
+   */
+  nsIFile getManagedPath(in sbIMediaItem aItem, in unsigned short aManageType);
+};
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_MEDIAFILEMANAGER_CONTRACTID \
+          "@getnightingale.com/Nightingale/media-manager/file;1"
+%}C++

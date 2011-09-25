@@ -1,0 +1,53 @@
+#itemList {
+  -moz-appearance: listbox;
+  border: 1px solid gray;
+  -moz-border-radius:3px;
+  background-color:white;
+  margin:4px;
+}
+
+#dialogContentBox {
+}
+
+installitem {
+}
+
+.warning {
+  font-weight: bold;
+}
+
+.xpinstallItemIcon {
+  width: 32px;
+  height: 32px;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  list-style-image: url(chrome://nightingale/skin/base-elements/icon-generic-addon.png);
+}
+
+.xpinstallItemName {
+  font-weight: bold;
+}
+
+.xpinstallItemSigned {
+  font-style: italic;
+}
+
+.xpinstallItemSigned[signed=false] {
+  color: #ED1C24;
+  font-style: normal;
+  font-weight: bold;
+}
+
+.xpinstallItemNameRow {
+}
+
+.xpinstallItemURL {
+}
+
+.xpinstallItemIcon {
+}
+
+/* Hide the un-signed author string */
+.xpinstallItemSigned[signed="false"] {
+  visibility: hidden;
+}

@@ -1,0 +1,162 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+#include "nsISupports.idl"
+
+
+/**
+ * \interface sbIHotkeyConfiguration.
+ *
+ *   This interface provides configuration settings for a hotkey.
+ *
+ * "@getnightingale.com/Nightingale/HotkeyConfiguration;1";
+ * Use create instance with this component.
+ */
+
+[scriptable, uuid(b021d970-1dd1-11b2-9c4e-8c3e3cfe9b88)]
+interface sbIHotkeyConfiguration : nsISupports
+{
+  /**
+   * \brief Hotkey key.
+   */
+
+  attribute AString key;
+
+
+  /**
+   * \brief Human readable key name.
+   */
+
+  attribute AString keyReadable;
+
+
+  /**
+   * \brief Hotkey action string.
+   */
+
+  attribute AString action;
+};
+
+
+/**
+ * \interface sbIHotkeyService
+ *
+ *   This interface provides services for managing global hot key settings.
+ *
+ * "@getnightingale.com/Nightingale/HotkeyService;1"
+ * Use get service with this component.
+ */
+
+interface nsIArray;
+
+[scriptable, uuid(99c883d0-1dd1-11b2-88fc-a67455e77067)]
+interface sbIHotkeyService : nsISupports
+{
+  /**
+   * \brief If true, hotkeys are enabled.
+   */
+
+  attribute boolean hotkeysEnabled;
+
+
+  /**
+   * \brief Key string for data remote used to enable or disable hot keys.
+   */
+
+  readonly attribute AString hotkeysEnabledDRKey;
+
+
+  /**
+   * \brief Return the set of hot key configurations as an nsIArray of
+   *        sbIHotkeyConfiguration objects.
+   *
+   * \return Hot key configuration list.
+   */
+
+  nsIArray getHotkeys();
+
+
+  /**
+   * \brief Return the hotkey configuration for the key specified by aKey.
+   *
+   * \param aKey                Key for which to get hotkey configuration.
+   *
+   * \return Hotkey configuration.
+   */
+
+  sbIHotkeyConfiguration getHotkey(in AString aKey);
+
+
+  /**
+   * \brief Set the hot key configuration to the nsIArray of
+   *        sbIHotkeyConfiguration objects specified by aHotkeyConfigList.
+   *
+   * \param aHotkeyConfigList   Hotkey configuration list.
+   */
+
+  void setHotkeys(in nsIArray aHotkeyConfigList);
+
+
+  /**
+   * \brief Add the hotkey specified by aHotkeyConfig.
+   *
+   * \param aHotkeyConfig       Hotkey configuration.
+   */
+
+  void addHotkey(in sbIHotkeyConfiguration aHotkeyConfig);
+
+
+  /**
+   * \brief Remove the hotkey with the key specified by aKey.
+   *
+   * \param aKey                Hotkey to remove.
+   */
+
+  void removeHotkeyByKey(in AString aKey);
+
+
+  /**
+   * \brief Remove all hotkeys with the action specified by aAction.
+   *
+   * \param aAction             Action for which to remove hotkeys.
+   */
+
+  void removeHotkeysByAction(in AString aAction);
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_HOTKEY_SERVICE_CONTRACTID \
+          "@getnightingale.com/Nightingale/HotkeyService;1"
+
+#define SB_HOTKEY_CONFIGURATION_CONTRACTID \
+          "@getnightingale.com/Nightingale/HotkeyConfiguration;1"
+%}C++
+
+

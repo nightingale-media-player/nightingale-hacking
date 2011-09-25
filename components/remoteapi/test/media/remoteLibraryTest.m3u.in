@@ -1,0 +1,5 @@
+#filter substitution
+http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/cdk_-_Good_Bye_Mr._Rogers.mp3
+http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3
+http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3
+http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/Sawtooth_-_We_Are_Not_Evil_Down_To_Brass_Tacks_Remix.mp3

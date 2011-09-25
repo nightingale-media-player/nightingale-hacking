@@ -1,0 +1,59 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbIImageLinkPropertyInfo.idl
+ * \brief Definition of the sbIImageLinkPropertyInfo interface
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIImageLinkPropertyInfo
+ * \brief The property information specific to image link properties
+ *
+ * A property that implements this interface indicates that it can navigate
+ * to an associated property url when clicked.
+ *
+ * \sa sbIPropertyInfo, sbIClickablePropertyInfo
+ */
+[scriptable, uuid(b3fd8e80-aad7-4d10-86af-22e348cd64fd)]
+interface sbIImageLinkPropertyInfo : nsISupports
+{
+  /**
+   * \brief The id of the property containing the URL to navigate to.
+   */
+  readonly attribute AString urlProperty;
+  
+  /**
+   * \brief If this attribute is true, navigation will not occur when the
+   *        user clicks on the image regardless of the url property content
+   * \param aImageValue The value of the image property
+   * \param aUrlValue The value of the associated url property
+   */
+  boolean getPreventNavigation(in AString aImageValue, in AString aUrlValue);
+};
+

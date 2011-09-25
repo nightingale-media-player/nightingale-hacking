@@ -1,0 +1,258 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<!-- ***************************************************************************
+ *
+ * "CD Information Not Found" dialog for CD Lookup metadata
+ *
+ * This dialog is used for when no metadata information is found when CD
+ * lookup is initiated by media being inserted.
+ *
+ *   objects                    nsISupports parameters.
+ *     nsIDevice                Device object.
+ *
+ *************************************************************************** -->
+
+<!-- "CD Information Not Found" dialog box. -->
+<dialog
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="cd_info_not_found_dialog"
+  hidechrome="true"
+  flex="1"
+  type="nightingale"
+  buttons="accept,cancel"
+  title="&cdrip.lookup.info_not_found.title;"
+  ondialogaccept="cdInfoNotFoundDlg.onAccept();"
+  ondialogcancel="cdInfoNotFoundDlg.onCancel();"
+  onload="cdInfoNotFoundDlg.onLoad();"
+  onunload="cdInfoNotFoundDlg.onUnload();"
+  width="300"
+  height="280">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <groupbox>
+    <caption label="&cdrip.lookup.info_not_found.title;" />
+    <description
+       id="dialog-msg">&cdrip.lookup.info_not_found.descr;</description>
+  </groupbox>
+
+  <vbox>
+    <label id="artist" value="&cdrip.lookup.info_not_found.artist;" />
+    <textbox id="artist-textbox"
+             oninput="cdInfoNotFoundDlg.updateButton();" />
+    <label id="album" value="&cdrip.lookup.info_not_found.album;" />
+    <textbox id="album-textbox"
+             oninput="cdInfoNotFoundDlg.updateButton();" />
+  </vbox>
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Nightingale services. -->
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
+
+  <!-- Unsupported media dialog services. -->
+  <script><![CDATA[
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+    Cu.import("resource://app/jsmodules/sbProperties.jsm");
+
+    if (typeof(SBString) == "undefined") {
+      Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+    }
+
+    var cdInfoNotFoundDlg = {
+      _deviceLibrary: null,
+      _device: null,
+      _dialog: null,
+      _okButton: null,
+      _curTrackIndex: 1,
+
+      /**
+       * \brief Handle load events.
+       */
+      onLoad: function cdInfoNotFoundDlg_onLoad() {
+        try {
+          // Save the device reference
+          this._deviceLibrary =
+              window.arguments[0].QueryInterface(Ci.sbILibrary);
+          this._device = this._deviceLibrary.device;
+        } catch (e) {
+          dump("Failed to get device reference: " + e + "\n");
+          dump("arg0: " + window.arguments[0] + "\n");
+        }
+
+        // Get the dialog and okay button
+        this._dialog = document.getElementById('cd_info_not_found_dialog');
+        this._okButton = this._dialog.getButton("accept");
+
+        this.updateButton();
+
+        // Listen for device events.
+        var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        deviceManager.addEventListener(this);
+      },
+
+      /**
+       * \brief Update the disabled state of the Okay/Accept button when
+       * the values of the textboxes are changed
+       */
+      updateButton: function cdInfoNotFoundDlg_updateButton() {
+        var artistTextbox = document.getElementById("artist-textbox");
+        var albumTextbox = document.getElementById("album-textbox");
+        if (artistTextbox.value == "" || albumTextbox.value == "")
+          this._okButton.disabled = true;
+        else
+          this._okButton.disabled = false;
+      },
+
+      /**
+       * \brief Handle unload events.
+       */
+      onUnload: function cdInfoNotFoundDlg_onUnload() {
+        // Remove device event listener.
+        var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        deviceManager.removeEventListener(this);
+      },
+
+      /**
+       * \brief Handle accept/okay button.
+       */
+      onAccept: function cdInfoNotFoundDlg_onAccept() {
+        // Need to enumerate through the device library now and set the
+        // artist and album metadata for each track to be the values
+        // entered in the XUL textbox
+        if (!this._deviceLibrary) {
+          throw Components.results.NS_ERROR_NOT_AVAILABLE;
+        }
+
+        this._artistValue = document.getElementById("artist-textbox").value;
+        this._albumValue = document.getElementById("album-textbox").value;
+
+        // Update the device library album name.
+        this._deviceLibrary.setProperty(SBProperties.albumName,
+                                        this._albumValue);
+
+        this._setEmptyOnly = false;
+        this._deviceLibrary.enumerateAllItems(this);
+      },
+
+      /**
+       * \brief Handle cancel button.
+       */
+      onCancel: function cdInfoNotFoundDlg_onCancel() {
+        // Populate all of the tracks w/ the default entries.
+        this._artistValue = SBString("cdrip.lookup.default_artistname");
+        this._albumValue = SBString("cdrip.lookup.default_albumname");
+        this._setEmptyOnly = true;
+        this._deviceLibrary.enumerateAllItems(this);
+
+        window.close();
+      },
+
+      /**
+       * sbIMediaListEnumerationListener interface
+       */
+      onEnumerationBegin: function (aList) {
+      },
+      onEnumeratedItem: function (aList, aItem) {
+        if (!this._setEmptyOnly || !aItem.getProperty(SBProperties.albumArtistName))
+          aItem.setProperty(SBProperties.albumArtistName, this._artistValue);
+        if (!this._setEmptyOnly || !aItem.getProperty(SBProperties.artistName))
+          aItem.setProperty(SBProperties.artistName, this._artistValue);
+        if (!this._setEmptyOnly || !aItem.getProperty(SBProperties.albumName))
+          aItem.setProperty(SBProperties.albumName, this._albumValue);
+
+        if (!aItem.getProperty(SBProperties.trackName)) {
+          // Only pad the track count to two digits since a CD can only have
+          // up to 99 tracks on it. Don't pad if there are < 10 tracks.
+          var curTrackNum = this._curTrackIndex++;
+          if (curTrackNum < 10 && this._deviceLibrary.length >= 10) {
+            curTrackNum = "0" + curTrackNum;
+          }
+          aItem.setProperty(SBProperties.trackName,
+                            SBFormattedString("cdrip.lookup.default_trackname",
+                                              [curTrackNum]));
+        }
+      },
+      onEnumerationEnd: function (aList, aStatus) {
+      },
+
+      /**
+       * sbIDeviceEventListener interface
+       */
+      onDeviceEvent: function cdInfoNotFoundDlg_onDeviceEvent(aEvent) {
+        switch(aEvent.type) {
+          case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+            // Close dialog if device is removed.
+            if (aEvent.data == this._device)
+              window.close();
+            break;
+
+          default :
+            break;
+        }
+      }
+    };
+
+  ]]></script>
+
+</dialog>

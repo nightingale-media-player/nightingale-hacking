@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>about:gstreamer</title>
+  <script type="application/javascript">
+<![CDATA[
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
+function parseClass(klass) {
+
+  var a = klass.split("/");
+
+  var c = {
+    encoder:   a.indexOf("Encoder") >= 0,
+    decoder:   a.indexOf("Decoder") >= 0,
+    demuxer:   a.indexOf("Demuxer") >= 0,
+    muxer:     a.indexOf("Muxer") >= 0,
+    audio:     a.indexOf("Audio") >= 0,
+    video:     a.indexOf("Video") >= 0,
+    formatter: a.indexOf("Formatter") >= 0,
+  }
+
+  return c;
+}
+
+
+function onLoad() {
+
+  var gst =
+    Cc["@getnightingale.com/Nightingale/Mediacore/GStreamer/Service;1"]
+    .getService(Ci.sbIGStreamerService);
+
+  var audioDecoders = [];
+  var audioEncoders = [];
+  var videoDecoders = [];
+  var videoEncoders = [];
+  var demuxers = [];
+  var muxers = [];
+
+  var handler = {
+    _currentPlugin: null,
+    _currentFactoryClass: null,
+    _currentFactoryName: null,
+    beginInspect: function() {
+    },
+    endInspect: function() {
+    },
+    beginPluginInfo: function(aName, aDescription, aFilename, aVersion, aLicense, aSource, aPackage, aOrigin) {
+      this._currentPlugin = aName;
+    },
+    endPluginInfo: function() {
+      this._currentPlugin = null;
+    },
+    beginFactoryInfo: function(aShortName, aLongName, aClass, aDescription, aAuthor, aRankName, aRank) {
+      this._currentFactoryName = aShortName;
+      this._currentFactoryClass = aClass;
+      this._currentFactoryDescription = aDescription;
+    },
+    endFactoryInfo: function() {
+      this._currentFactoryName = null;
+      this._currentFactoryClass = null;
+    },
+    beginPadTemplateInfo: function(aName, aDirection, aPresence, aCodecDescription) {
+      if (aDirection == Ci.sbIGStreamerService.PAD_DIRECTION_SINK) {
+        var description = aCodecDescription;
+        if (!description)
+          description = this._currentFactoryDescription;
+
+        var o = {
+          plugin: this._currentPlugin,
+          factory: this._currentFactoryName,
+          codecDescription: description
+        }
+
+        var c = parseClass(this._currentFactoryClass);
+        if (c.decoder && c.audio) {
+          audioDecoders.push(o);
+        }
+        if (c.encoder && c.audio) {
+          audioEncoders.push(o);
+        }
+        if (c.decoder && c.video) {
+          videoDecoders.push(o);
+        }
+        if (c.encoder && c.video) {
+          videoEncoders.push(o);
+        }
+        if (c.demuxer) {
+          demuxers.push(o);
+        }
+        if (c.muxer || c.formatter) {
+          // we treat formatters as muxers, since we use them the same way
+          muxers.push(o);
+        }
+      }
+    },
+    endPadTemplateInfo: function() {
+    }
+  };
+
+  gst.inspect(handler);
+
+  var body = document.getElementById("body");
+
+  function appendDef(name, value) {
+    var dl = document.createElement("dl");
+    var dt = document.createElement("dt");
+    var dd = document.createElement("dd");
+    dt.textContent = name;
+    dd.textContent = value;
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+    body.appendChild(dl);
+  }
+
+  function appendTableRow(table, textentries, elemententries) {
+    var tr = document.createElement("tr");
+    textentries.forEach(function(t) {
+      var td = document.createElement("td");
+      td.textContent = t;
+      tr.appendChild(td);
+    });
+    elemententries.forEach(function(e) {
+      var td = document.createElement("td");
+      td.appendChild(e);
+      tr.appendChild(td);
+    });
+
+    table.appendChild(tr);
+  }
+
+  function writeList(name, a) {
+    var h1 = document.createElement("h1");
+    h1.textContent = name;
+    body.appendChild(h1);
+
+    var table = document.createElement("table");
+    appendTableRow(table, ["Plugin", "Factory", "Codec Description", "Additional Information"], []);
+
+    a.forEach(function(e) {
+      var info = [];
+      if (e.factory == "flump3dec") {
+        var para = document.createElement("p");
+        para.appendChild(document.createTextNode("© Fluendo S.A.: "));
+        var link = document.createElement("a");
+        link.setAttribute("href", "https://shop.fluendo.com/");
+        link.textContent = "More plugins from Fluendo";
+        para.appendChild(link);
+        info = [para]
+      }
+
+      appendTableRow(table, [e.plugin, e.factory, e.codecDescription], info);
+    });
+
+    body.appendChild(table);
+  }
+
+  writeList("Audio Decoders", audioDecoders);
+  writeList("Audio Encoders", audioEncoders);
+  writeList("Video Decoders", videoDecoders);
+  writeList("Video Encoders", videoEncoders);
+  writeList("Demuxers", demuxers);
+  writeList("Muxers", muxers);
+}
+
+]]>
+  </script>
+</head>
+<body id="body" onload="onLoad();">
+</body>
+</html>

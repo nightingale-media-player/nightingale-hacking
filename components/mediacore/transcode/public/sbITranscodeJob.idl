@@ -1,0 +1,135 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbITranscodeJob.idl
+ * \brief An interface for transcoding media streams.
+ */
+#include "nsISupports.idl"
+#include "sbIPropertyArray.idl"
+#include "sbITranscodeProfile.idl"
+
+interface sbIMediaItem;
+interface nsIInputStream;
+
+/**
+ * \interface sbITranscodeJob sbITranscodeJob.h
+ * \brief An object capable of transcoding a source URI to a destination file
+ *       
+ * User code should request an instance using
+ *   sbITranscodeManager::getTranscoder()
+ * 
+ * Implementations should also implement sbIJobProgress, and usually
+ * sbIJobCancelable.
+ *
+ * \sa sbITranscodeManager
+ * \sa sbIJobProgress
+ * \sa sbIJobCancelable
+ */
+[scriptable, uuid(ae96cb85-b09f-454e-aea5-014c258fd132)]
+interface sbITranscodeJob : nsISupports
+{
+  /**
+   * \brief An array of metadata properties
+   *
+   * Metadata properties to be written into the destination file.
+   * Metadata items in this property array should be used to replace those
+   * in the source file (where present), and add them otherwise. Metadata
+   * items present in the source stream but not in this array should be
+   * preserved where possible.
+   */
+  attribute sbIPropertyArray metadata;
+
+  /**
+   * \brief An input stream for the encoded image.
+   *
+   * If an image is desired in the encoded file (e.g. album art cover),
+   * set this to an input stream that the encoded image can be read from.
+   */
+  attribute nsIInputStream  metadataImage;
+
+  /**
+   * \brief The source URI to transcode from.
+   *
+   * 
+   */
+  attribute AString sourceURI;
+
+  /**
+   * \brief The destination URI to transcode to
+   *
+   * Note that, in general, only file URIs will be supported for destination
+   * URI.
+   */
+  attribute AString destURI;
+
+
+  /**
+   * \brief The encoding profile to use
+   *
+   * A profile description for the transcode.
+   */
+  attribute sbITranscodeProfile profile;
+
+  /**
+   * \brief Get an array of all sbITranscodeProfiles that can be used with
+   *        this job.
+   */
+  readonly attribute nsIArray availableProfiles;
+
+  /**
+   * \brief Vote to be the handler returned for the given url
+   *
+   * The sbITranscodeManager will instantiate one of every sbITranscodeJob
+   * subclass and ask it to vote on whether it can support transcoding a given
+   * media item with a given transcoding profile. The highest vote will be 
+   * used as  the handler for the media item.
+   *
+   * Values less than zero cause that handler to be ignored.
+   *
+   * At the moment, our handlers return -1, 0, or 1 (for "no," "maybe," and
+   * "yes").
+   *
+   * \param aMediaItem The media item on which to vote
+   * \param aProfile The transcoding profile to be used
+   * \return The vote
+   * \sa sbITranscodeManager
+  */
+  PRInt32 vote( in sbIMediaItem aMediaItem, in sbITranscodeProfile aProfile );
+
+  /**
+   * \brief Conservatively estimate the output size in bytes, given an input
+   *        duration in milliseconds, and the currently-set profile.
+   */
+  PRInt64 estimateOutputSize(in PRInt32 inputDuration);
+
+  /**
+   * \brief Start the transcoding operation
+   *
+   * Caller should monitor progress via sbIJobProgress
+   */
+  void transcode();
+};

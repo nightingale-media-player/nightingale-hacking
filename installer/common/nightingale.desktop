@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Nightingale Media Player
+Comment=Playback, organize, and manage digital media
+Exec=nightingale
+Icon=nightingale-512.png
+Terminal=false
+Type=Application
+Categories=Application;AudioVideo;
+StartupNotify=true

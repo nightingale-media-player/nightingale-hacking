@@ -1,0 +1,1751 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+/******************************************************************************
+* FEATHERS.CSS
+*******************************************************************************
+
+TABLE OF CONTENTS
+> BASE
+> TEXTBOXES
+> BUTTONS
+> TABS
+> NOTIFICATION
+> STATUS BAR
+> SELECTED STATES
+> DISABLED STATES
+> TITLE BAR
+> SERVICE PANE
+> DRAG BADGE
+> FACEPLATE
+> PLAYLIST COMMAND BAR
+> NAV BAR
+> DISPLAY PANES
+> SPLITTERS
+> DEVICE SUMMARY PAGE
+> FIRST RUN WIZARD
+> TRACK EDITOR
+> MEDIACORE ERROR DIALOG
+> SMART PLAYLIST EDITOR
+> ABOUT DIALOG
+> FIND BAR
+> SCROLLBAR
+> WINDOW RESIZERS
+> FILE DOWNLOAD MANAGER (MOZAPP)
+> ABOUT CONFIG (MOZAPP)
+> PREFERENCES (MOZAPP)
+> FIREFOX API
+
+******************************************************************************
+
+This feather focuses on images more than styles defined though CSS. Often 
+times you'll update colors in this file but wont see any change in the final 
+appearance because there is a background-image that is drawn over it. There 
+are a few colors defined in this file that might be of interest:
+
+Often used by boxes that contain elements that update what is displayed in the 
+content pane. eg: service pane, find bar, top half of the device summary 
+page, command bar.
+> rgb(220,220,220);
+
+The following is used by all/most borders in the content area. eg: borders for 
+filer pane splitters, border for treecols and list headers.
+> rgb(161,161,161);
+
+The following is used by all/most borders in the chrome area. eg: splitter for 
+service pane, splitters for display panes, borders for windows/dialogs/wizards.
+> rgb(131,131,131)
+
+This file contains most but not all colors used in the feather. The styles in 
+the following files need to be there for technical reasons.
+> formsImport.css for text selection color
+> os-specific/max/overrides.css for Mac-specific styles
+> os-specific/unix/overrides.css for Linux-specific styles
+> os-specific/win/overrides.css for Windows-specific styles
+
+All the other CSS files in the feather and elsewhere in the app need major 
+clean up. Don't go there if you can help it, for now.
+
+******************************************************************************
+
+We are eager to hear your feedback - please drop by and say hi:
+
+nightingale-dev Google Group:
+http://groups.google.com/group/nightingale-dev
+
+IRC:
+irc.mozilla.org #nightingale
+
+******************************************************************************/
+
+
+
+
+
+/******************************************************************************
+* BASE
+*
+* Mostly vanilla elements that act as the starting point for rules to follow.
+******************************************************************************/
+wizard,
+dialog,
+window,
+prefwindow,
+panel {
+  background-color: rgb(43,41,54);
+}
+page {
+  background-color: rgb(68,68,80);
+}
+menupopup, 
+popup {
+  background-color:rgb(94,91,109);
+  border: 1px solid rgb(28,27,38);
+}
+menuitem > label {
+  color: rgb(255,255,255);
+}
+
+tree,
+groupbox,
+radiogroup,
+listbox,
+richlistbox {
+  background-color: rgb(87,86,94);
+}
+tree.autocomplete-tree {
+  background-color:rgb(94,91,109);
+}
+groupbox caption {
+  background-color: rgb(74,73,79);
+  height: 28px;
+  color: rgb(255,255,255);
+}
+groupbox caption menulist {
+  font-weight: normal;
+}
+
+browser label,
+browser description {
+  color: rgb(40,40,40);
+}
+description,
+caption,
+label {
+  color: rgb(255,255,255);
+  font-family: Lucida Grande, Lucida Sans, Helvetica, Arial, Sans;
+  font-size: 11px;
+}
+label.button-text {
+  font-size: 10px;
+}
+tooltip description,
+tooltip label {
+  color: rgb(40,40,40);
+}
+treechildren::-moz-tree-cell-text {
+  color: rgb(212,210,221);
+}
+
+listheader,
+treecol {
+  height: 20px;
+}
+
+listheader > label,
+treecol > label {
+  color: rgb(204,204,204);
+}
+
+treecol[insertafter="true"],
+treechildren::-moz-tree-cell( insertafter ) {
+  border-right: 1px solid rgb(131,131,131);
+  padding-right: 4px;
+}
+treecol[insertbefore="true"],
+treechildren::-moz-tree-cell( insertbefore ) {
+  border-left: 1px solid rgb(131,131,131);
+  padding-left: 4px;
+}
+treecol[hidden="true"] + splitter.tree-splitter {
+  display: none;
+}
+richlistitem {
+  border-bottom: 1px solid rgb(80,78,91);
+}
+
+/* treecolAutoCompleteComment is document.title in the case of the location bar */
+.autocomplete-treebody::-moz-tree-cell-text( treecolAutoCompleteComment ) {
+  color: rgb(255,255,255);
+}
+
+/* progress meters in trees do not support background-images or list-style-images
+   we'll fall back on a translucent solid color
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
+treechildren::-moz-tree-progressmeter {
+  color:rgba(89,144,14,0.5);
+}
+
+treechildren::-moz-tree-separator {
+  border-top: 1px dotted rgb(161,161,161);
+}
+
+toolbar,
+menubar,
+.generic-bar {
+  background-color: rgb(39,37,49);
+}
+toolbar,
+menubar,
+.generic-bar {
+  /*XXXstevel border-bottom:1px solid rgb(131,131,131);*/
+}
+toolbarseparator {
+  background-color:rgb(131,131,131);
+}
+
+/* shortcut keys displayed in menus */
+.menu-accel,
+.menu-iconic-accel {
+  color:rgb(131,131,131);
+}
+
+tooltip {
+  -moz-appearance: none;
+  background-color: rgb(239,245,202) !important;
+}
+progressmeter,
+sb-status-progressmeter {
+  border: 1px solid rgb(28,27,33);
+}
+
+#addonsMsg+vbox {
+  height: 50px;
+  padding: 10px 0px;
+}
+
+html|*.loss-of-data-text,
+.loss-of-data-text {
+  color: rgb(255,58,109);
+}
+
+
+/******************************************************************************
+* TEXTBOXES
+* 
+* Styles for textboxes and elements that we want to look like textboxes
+******************************************************************************/
+textbox,
+.datetimepicker-input-subbox,
+.datetimepicker-year,
+sb-rating,
+.menulist-editable-box {
+  background-color: rgb(230,230,230);
+  border: 1px solid rgb(58,58,62);
+  -moz-border-radius: 3px;
+}
+
+/*
+  Edited state - mainly used for the track editor
+*/
+textbox[edited="true"],
+sb-rating[edited],
+searchbar:not([empty="true"])[livesearchmode="true"] .search-go-button,
+searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
+  background-color:rgb(255,255,255) !important;
+}
+
+/*
+  Focused state
+*/
+textbox[focused="true"]:not(.plain),
+searchbar[focused="true"] .search-go-button,
+searchbar[focused="true"] .searchbar-textbox {
+  background-color: rgb(255,255,255) !important;
+}
+
+/* Invalid state */
+textbox[invalid="true"],
+textbox[focused="true"][invalid="true"] {
+  background-color:rgb(255,224,200) !important;
+  color:rgb(235,125,41);
+} 
+textbox[empty="true"],
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
+  color:rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
+* BUTTONS
+*
+* Normal buttons, buttons in toolbars, menu buttons, and menubutton buttons.
+******************************************************************************/
+
+button,
+toolbarbutton,
+menulist {
+  -moz-border-radius:3px;
+  border: 1px solid rgba(32,31,39,0.75);
+}
+menulist {
+  min-width: 60px;
+}
+
+button:focus,
+toolbarbutton:focus,
+checkbox:focus > .checkbox-check,
+radio[focused="true"] > .radio-check,
+menulist:focus {
+  outline:2px solid rgba(144,143,154,0.6); 
+  outline-offset:0px;
+  -moz-outline-radius:5px;
+}
+
+button:active:focus,
+toolbarbutton:focus,
+checkbox:focus > .checkbox-check,
+radio[focused="true"]:active > .radio-check,
+menulist:focus {
+  outline: 0px !important
+}
+radio[focused="true"] > .radio-check {
+  /* this makes the outline look like a circle which matches the radio button well */
+  -moz-outline-radius:8px;
+}
+button.button-menubutton-button:focus {
+  /* this is the best we can do - the right outline is 1px offset too much */
+  outline-offset:1px;
+  -moz-outline-radius-topright:0px;
+  -moz-outline-radius-bottomright:0px;
+}
+
+
+
+/******************************************************************************
+* TABS
+*
+* Vanilla tabs - they can be on top, at the bottom, left or right.
+******************************************************************************/
+stack.tabs-stack {
+  margin-left: 1px;
+}
+/**
+  Base
+**/
+tabbox {
+  background-color: transparent;
+}
+tabpanels {
+  background-color: transparent;
+  background-image: url(chrome://nightingale/skin/base-elements/bg-tabpanel.png);
+  background-position: left top;
+  background-repeat: repeat-x;
+  border: 1px solid rgb(80,78,91) !important;
+  padding: 15px 10px 10px 10px !important;
+}
+tabpanel {
+}
+/* prevent the content pane bottom display pane from being resized high enough
+ * that it breaks the tabbrowser vertical scrollbar */
+sb-tabbrowser {
+  min-height: 110px;
+}
+sb-tabbrowser > tabbox > tabpanels {
+  padding: 0px !important;
+  border: none !important;
+}
+tabs {
+  background-color: transparent;
+  background-image: none;
+}
+tabs > tab > hbox > label.tab-text {
+  color: rgba(255,255,255,0.6);
+}
+tabs > tab[selected="true"] > hbox > label.tab-text {
+  color: rgba(255,255,255,1.0);
+}
+
+/**
+  Top
+**/
+tabs[orient="horizontal"] tab {
+  -moz-border-radius:0px;
+}
+tabs[orient="horizontal"] tab[selected="true"] {
+  opacity: 1.0;
+}
+
+/**
+  Bottom
+**/
+tabs[orient="horizontal"].tabs-bottom tab {
+  -moz-border-radius:0px;
+}
+tabs[orient="horizontal"].tabs-bottom tab[selected="true"] {
+  opacity: 1.0;
+}
+
+/**
+  Right
+**/
+tabs[orient="vertical"] tab {
+  -moz-border-radius:0px;
+}
+tabs[orient="vertical"] tab[selected="true"] {
+  opacity: 1.0;
+}
+
+/**
+  Left
+**/
+tabs[orient="vertical"].tabs-left tab {
+  -moz-border-radius:0px;
+}
+tabs[orient="vertical"].tabs-left tab[selected="true"] {
+  opacity: 1.0;
+}
+
+
+
+/******************************************************************************
+* NOTIFICATION
+*
+* Used for displaying notification hats in the browser and metadata editor.
+******************************************************************************/
+notification[type="info"],
+.dialog-notification.notification-info {
+  /* green */
+  border-top: 1px solid rgb(70,98,26);
+  border-bottom: 1px solid rgb(70,98,26);
+}
+notification[type="warning"],
+.dialog-notification.notification-warning {
+  /* orange */
+  border-top: 1px solid rgb(147,78,4);
+  border-bottom: 1px solid rgb(147,78,4);
+}
+notification[type="critical"],
+.dialog-notification.notification-critical {
+  /* red */
+  border-top: 1px solid rgb(128,42,69);
+  border-bottom: 1px solid rgb(128,42,69);
+}
+
+
+
+/******************************************************************************
+* STATUS BAR
+*
+* One for the browser and another for the service pane
+******************************************************************************/
+statusbar {
+  margin-right: 8px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+#servicepane-status-bar-box,
+#status-bar-box {
+  background-color: rgb(43,41,54);
+  background-image: url(chrome://nightingale/skin/base-elements/bg-statusbar.png);
+  border-top:1px solid rgb(87,86,100);
+  min-height: 25px;
+  -moz-box-align: center;
+}
+.service-pane-spring-load-button,
+.servicepane-toolbar-newitem-button,
+sb-displaypane-button > button {
+  border-right: none;
+  border-left: none;
+}
+
+
+
+/******************************************************************************
+* SELECTED STATES
+******************************************************************************/
+
+/**
+  Unfocused
+**/
+listitem[selected="true"],
+richlistitem[selected="true"],
+treechildren::-moz-tree-row( selected, even ) {
+  /*background-color: rgb(225,225,225);*/
+  background-image: url(chrome://nightingale/skin/playlist/bg-selected-row-unfocused.png);
+}
+/* alternating rows for trees */
+treechildren::-moz-tree-row( selected, odd ) {
+  /*background-color: rgb(220,220,220);*/
+  background-image: url(chrome://nightingale/skin/playlist/bg-selected-row-unfocused.png);
+}
+
+/**
+  Focused
+**/
+listbox:focus listitem[selected="true"],
+richlistbox:focus richlistitem[selected="true"],
+menu[_moz-menuactive="true"],
+menuitem[_moz-menuactive="true"],
+treechildren.autocomplete-treebody::-moz-tree-row( selected even ),
+treechildren::-moz-tree-row( selected focus even ) {
+  background-image: url(chrome://nightingale/skin/playlist/bg-selected-row.png);
+}
+/* alternating rows for trees */
+treechildren.autocomplete-treebody::-moz-tree-row( selected odd ),
+treechildren::-moz-tree-row( selected focus odd ) {
+  background-image: url(chrome://nightingale/skin/playlist/bg-selected-row.png);
+}
+
+/**
+  Text
+**/
+listitem[selected="true"] label,
+richlistitem[selected="true"] label,
+richlistitem[selected="true"] description,
+menu[_moz-menuactive="true"] > label,
+menuitem[_moz-menuactive="true"] > label,
+.autocomplete-treebody::-moz-tree-cell-text(selected),
+treechildren::-moz-tree-cell-text( selected ),
+treechildren::-moz-tree-cell-text( selected, focus ) {
+  color:rgb(255,255,255);
+}
+
+
+menuitem[checked="true"][_moz-menuactive="true"],
+menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
+.menulist-menupopup > menuitem[selected="true"][_moz-menuactive="true"] {
+  background-color: rgb(67,52,111);
+}
+
+/******************************************************************************
+* DISABLED STATES
+******************************************************************************/
+*[disabled="true"] {
+  opacity:0.5;
+}
+richlistitem[isDisabled="true"] > * {
+  opacity:0.5;
+}
+dropmarker[disabled="true"] > .dropmarker-icon {
+  opacity:0.5;
+}
+toolbarbutton[disabled="true"] > .toolbarbutton-icon,
+toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
+toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
+  opacity:0.25;
+}
+.service-pane-spring-load-button[disabled="true"] >.button-box {
+  opacity:0.5;
+}
+
+
+
+/******************************************************************************
+* TITLE BAR
+******************************************************************************/
+#sb-sys-title-title {
+  font-weight:bold;
+  color: rgb(200,200,202);
+}
+/* used for Linux and Windows only - this is the file menu displayed in the title bar*/
+#main-menubar > menu[_moz-menuactive="true"][open="true"] {
+  background-color: black;
+}
+#main-menubar > menu[_moz-menuactive="true"] {
+  background-image: none;
+  background-color: rgb(21,21,28);
+}
+#main-menubar > menu[_moz-menuactive="true"] > label {
+  color: rgb(243,243,243);
+}
+#main-menubar > menu > label {
+  color: rgb(200,200,202);
+}
+
+
+
+/******************************************************************************
+* SERVICE PANE
+******************************************************************************/
+#sp_content_wrapper {
+  border-top: 1px solid rgb(43,42,53);
+}
+
+#servicepane {
+  background-color: rgb(47,43,58);
+  border-left: 1px solid rgb(43,41,54);
+}
+
+#displaypane_servicepane_bottom {
+  border-bottom: 1px solid rgb(44,42,55);
+}
+
+#sb_servicepane_box {
+  border: none;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+/* BEGIN NEW SERVICEPANE */
+sb-servicepane-group > vbox > vbox.servicepane-group-overflow-container {
+  overflow: hidden;
+}
+sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
+  overflow: hidden;
+}
+vbox.servicepane-group-nodes {
+  padding-bottom: 4px;
+}
+
+sb-servicepane-group .servicepane-group-header {
+  background-repeat: repeat-x;
+  background-position: center 0px;
+}
+
+sb-servicepane-group hbox.servicepane-group-header-wrapper {
+  background-image: url(chrome://nightingale/skin/service-pane/group-header-bg.png);
+  min-height: 20px;
+  max-height: 20px;
+  -moz-box-align: center;
+}
+
+#servicepane > sb-servicepane-group:first-child .servicepane-group-header{
+  background-image: url(chrome://nightingale/skin/service-pane/group-header-first-bg.png);
+}
+
+sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wrapper:-moz-drag-over,
+/* Commented out per bug 21108
+ * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper {
+ */
+sb-servicepane-group .servicepane-group-header-wrapper:hover,
+sb-servicepane-group toolbarbutton:hover {
+  background-position: center -20px;
+}
+/* Commented out per bug 21108
+ * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper:active { */
+sb-servicepane-group .servicepane-group-header-wrapper:active,
+sb-servicepane-group toolbarbutton:active {
+  background-position: center -40px;
+}
+
+sb-servicepane-group description.servicepane-group-label {
+  color: rgb(185,184,188);
+  margin: 0px;
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+
+sb-servicepane-group toolbarbutton,
+sb-servicepane-group toolbarbutton.clickhold-button {
+  background-image: url(chrome://nightingale/skin/service-pane/group-header-bg.png);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton {
+  background-image: url(chrome://nightingale/skin/service-pane/new-playlist.png);
+  background-position: left 0px;
+  min-height: 20px;
+  max-height: 20px;
+  min-width: 23px;
+  max-width: 23px;
+}
+sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton:hover {
+  background-position: left -20px;
+}
+sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton:active {
+  background-position: left -40px;
+}
+/* SERVICE PANE NODES */
+sb-servicepane-node {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+sb-servicepane-node > vbox > hbox.servicepane-node-info {
+  min-height: 18px;
+  max-height: 18px;
+}
+
+hbox.servicepane-node-info > stack > hbox > label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: rgb(219,219,219);
+  font: message-box;
+  font-size: 11px;
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
+  color: white;
+}
+sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
+  padding-left: 10px;
+}
+sb-servicepane-node[indent="2"] > vbox > hbox.servicepane-node-info {
+  padding-left: 24px;
+}
+/* if you really have this much nesting, you're crazy */
+sb-servicepane-node[indent="3"] > vbox > hbox.servicepane-node-info {
+  padding-left: 38px;
+}
+sb-servicepane-node[indent="4"] > vbox > hbox.servicepane-node-info {
+  padding-left: 52px;
+}
+sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
+  padding-left: 66px;
+}
+
+/* loaded in the browser & selected in the servicepane */
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-image: url(chrome://nightingale/skin/service-pane/bg-active-node.png);
+  background-position: left bottom;
+  border-left: 1px solid rgb(82,75,107);
+  border-right: 1px solid rgb(82,75,107);
+}
+
+/* Set user focus to normal so we can tell when the servicepane is focused
+ * or not */
+#servicepane {
+  -moz-user-focus: normal;
+}
+#servicepane:focus sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-position: left top;
+  border-left: 1px solid rgb(74,65,104);
+  border-right: 1px solid rgb(74,65,104);
+}
+
+/* highlighted in the servicepane for when a node is right-clicked, but not
+ * loaded in the browser */
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+/* needed to avoid the above border side-shifting all the elements 1px */
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
+  margin-left: -1px;
+}
+
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+
+/* highlighted in the servicepane for when a node is the keyboard focus */
+#servicepane sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+#servicepane:focus sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info {
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(193,182,231);
+}
+/* to compensate for the 1px border added above */
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > stack > textbox {
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.dndAcceptIn > vbox > hbox.servicepane-node-info {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+
+/* overlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptBefore > vbox > hbox.servicepane-node-info {
+  border-top: 2px solid rgb(143,132,181);
+}
+
+/* underlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
+  border-bottom: 2px solid rgb(143,132,181);
+}
+
+/* when an open container node is a droptarget, then highlight the node and
+ * all its children */
+sb-servicepane-node.container.droptarget:not([closed]) {
+  margin-top: 0px;
+}
+sb-servicepane-node.container.droptarget:not([closed]) > vbox {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+/* undo the above changes for container node droptargets */
+sb-servicepane-node.container.droptarget:not([closed]) > vbox > hbox.servicepane-node-info {
+  background-color: transparent;
+  border: none;
+  margin-left: 0px;
+  margin-right: -1px;
+}
+sb-servicepane-node.container.droptarget:not([closed]) > vbox > vbox {
+  margin-left: -1px;
+}
+
+/* the open/closed container toggle arrow for the node and its subnodes */
+sb-servicepane-node image.servicepane-node-container-arrow {
+  padding: 10px 3px;
+  min-width: 7px;
+  min-height: 7px;
+  margin-right: 1px;
+  background-image: none;
+  background-repeat: no-repeat;
+}
+
+sb-servicepane-node.container > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://nightingale/skin/service-pane/container_arrows.png);
+  background-position: left top;
+}
+sb-servicepane-node.active.container > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right top;
+}
+
+sb-servicepane-node.container[closed] > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://nightingale/skin/service-pane/container_arrows.png);
+  background-position: left bottom;
+}
+sb-servicepane-node.active.container[closed] > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right bottom;
+}
+
+/* the image for the node itself */
+sb-servicepane-node > vbox > hbox.servicepane-node-info,
+sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
+  -moz-box-align: center;
+}
+
+sb-servicepane-node textbox {
+  margin: 0px;
+}
+
+/* SERVICE PANE BADGES */
+hbox.servicepane-node-badges {
+  -moz-box-pack: end;
+  margin-right: 0px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
+  margin-right: -1px;
+}
+
+/* Badge Text labels */
+sb-servicepane-node-badge > hbox > label {
+  background-color: rgb(96,91,110);
+  color: rgb(31,30,39);
+  padding-left: 5px;
+  padding-right: 5px;
+  -moz-border-radius: 6px;
+  margin: 0px 4px 0px 0px;
+  font-family: Helvetica Neue, Helvetica, Arial;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
+  background-color: rgba(255,255,255,0.4);
+  color: rgba(31,30,39,0.8);
+}
+
+/* Badge Images */
+sb-servicepane-node-badge > hbox > image {
+  margin-left: 5px;
+  margin-right: 2px;
+}
+sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,18px,18px,0px);
+}
+sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,18px,36px,0px);
+}
+sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,18px,54px,0px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,36px,18px,18px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,36px,36px,18px);
+}sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,36px,54px,18px);
+}
+/* END NEW SERVICEPANE */
+
+/* shift the servicepane tree contents down 4px, but don't shift the scrollbar
+ * with it
+ */
+.servicepane-tree > .tree-stack > .tree-rows > .tree-bodybox {
+  margin-top: 4px;
+}
+.servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
+  font-weight:bold;
+}
+
+.servicepane-tree > treechildren::-moz-tree-row {
+  height: 22px;
+}
+.servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-cell( folder ) {
+}
+
+/* rm bottom border for treecols */
+#servicepane treecols {
+  border:none;
+}
+/* rm empty.png */
+.servicepane-tree {
+  background-image:none;
+}
+.servicepane-tree > treechildren::-moz-tree-row {
+  /* rm alternating row colors */
+  background-color:transparent;
+
+  /* borders for reordering rows */
+  border-top:1px solid transparent;
+  border-bottom:1px solid transparent;
+}
+
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
+  border-top:1px solid rgb(131,131,131);
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+/* this is the style used when items are dragged over applicable rows */
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
+  background-color:rgb(46,42,66);
+  border:2px solid rgb(124,111,166);
+  -moz-border-radius:2px;
+}
+
+
+
+
+/******************************************************************************
+* DRAG BADGE
+*
+* Appears when dragging media items - it's a combination of an image and a
+* badge with a count
+******************************************************************************/
+.sb-playlist-drag-badge:not([value="1"]) {
+  color:rgb(255,255,255);
+  font-weight: bold;
+  background-color: rgb(0,0,0);
+  -moz-border-radius: 4px;
+}
+
+
+
+/******************************************************************************
+* FACEPLATE
+******************************************************************************/
+.faceplate-text {
+  color:rgb(250,250,250);
+  font: message-box;
+  font-size: 11px;
+}
+#sb-player-title-label-label {
+  font-weight:bold;
+}
+#sb-player-artist-label-label,
+#sb-player-album-label-label {
+  color:rgb(215,215,215);
+}
+#sb-player-timeelapsed-label > label,
+#sb-player-totaltime-label > label {
+  color:rgb(140,140,140);
+  font-size:10px;
+}
+
+
+
+/******************************************************************************
+* PLAYLIST COMMAND BAR
+*
+* A bar used to hold buttons for media lists - eg: downloads, smart playlists
+******************************************************************************/
+.sb-commands-toolbar {
+  /* XXXstevel border-top:1px solid rgb(131,131,131); */
+  background-color: rgb(35,33,44);
+}
+
+
+
+/******************************************************************************
+* NAV BAR
+******************************************************************************/
+#nav-bar toolbarbutton {
+  background-color: transparent;
+  border: none;
+  -moz-border-radius: 0px;
+}
+#nav-bar toolbarbutton button {
+  -moz-border-radius: 2px;
+}
+#nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  border: none;
+}
+
+
+/**
+  Location bar and search bar in the nav bar
+**/
+.locationbar-textbox html|*.textbox-input,
+.searchbar-textbox html|*.textbox-input {
+}
+.locationbar-textbox {
+  cursor: default;
+}
+.locationbar-textbox,
+.searchbar-textbox {
+  background-color: rgb(230,230,230);
+  border: 1px solid rgb(58,58,62);
+  -moz-border-radius: 3px;
+}
+.searchbar-engine-button {
+  background-image: none;
+  border: none;
+}
+
+/* highlight the menu item when it's available */
+.addengine-item {
+  /* XXXstevel we opt'd not to do this, leaving it here in case other
+   * Featherers want to */
+}
+
+#searchbar menupopup menuitem {
+  margin-left: -8px !important;
+}
+
+
+/******************************************************************************
+* DISPLAY PANES
+******************************************************************************/
+.empty-message {
+  -moz-border-radius:8px;
+  background-color:rgb(54,52,63);;
+  color: rgb(212,210,221);
+}
+
+.empty-box {
+  background-color: rgb(36,34,46);
+}
+
+.instructions description {
+  color: rgb(190,190,190);
+  background-color: rgb(47,45,58);
+  border: 1px solid rgb(35,34,43);
+  line-height: 16px;
+}
+
+.drop-message {
+  color: rgb(212,210,221);
+  white-space: pre;
+}
+
+/******************************************************************************
+* DISPLAY PANES SPLITTERS & GRIPPIES
+******************************************************************************/
+sb-displaypane-splitter {
+  cursor: -moz-grab;
+}
+sb-displaypane-splitter[disabled="true"] {
+  opacity: 1;
+  cursor: auto;
+}
+sb-displaypane-splitter[disabled="true"]:active {
+  cursor: auto;
+}
+sb-displaypane-splitter:active {
+  cursor: -moz-grabbing;
+}
+sb-displaypane-splitter > stack > box > #dropdown-button {
+  cursor: pointer;
+}
+sb-displaypane-splitter > stack > box > #dropdown-button[disabled="true"] {
+  cursor: auto;
+  opacity: 1 !important;
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > label {
+  color: rgb(191,191,191);
+  font-size: 11px;
+}
+sb-displaypane-splitter[state="collapsed"] > stack > box > label {
+  color: rgb(58,58,58);
+}
+
+sb-displaypane-splitter[orient="vertical"][hovergrippy="true"] > stack > box > sb-displaypane-grippy {
+  background-image: none;
+}
+sb-displaypane-splitter[orient="vertical"][hovergrippy="true"] > stack > box > sb-displaypane-grippy:hover {
+  background-image: url(chrome://nightingale/skin/splitter/splitter-horizontal-gripper.png);
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > sb-displaypane-grippy {
+  cursor: pointer;
+  background-image: url(chrome://nightingale/skin/splitter/splitter-horizontal-gripper.png);
+  margin: 0;
+  padding: 0 10px;
+  height: 22px;
+  max-height: 22px;
+  min-height: 22px;
+  background-position:center 0px;
+  background-repeat:no-repeat;
+  min-width: 49px;
+  max-width: 49px;
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -44px;
+}
+sb-displaypane-splitter[orient="vertical"][state="collapsed"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -66px;
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > #dropdown-button {
+  margin-left: 2px;
+}
+
+sb-displaypane-splitter[orient="horizontal"] > stack > box > sb-displaypane-grippy {
+  cursor: pointer;
+  background-image: url(chrome://nightingale/skin/splitter/splitter-vertical-gripper.png);
+  margin: 0;
+  padding: 0;
+  width: 22px;
+  max-width: 22px;
+  min-width: 22px;
+  background-position:center 0px;
+  background-repeat:no-repeat;
+  min-height: 19px;
+  max-height: 19px;
+}
+sb-displaypane-splitter[orient="horizontal"][hovergrippy="true"] > stack > box > sb-displaypane-grippy {
+  background-image: none;
+}
+sb-displaypane-splitter[orient="horizontal"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -38px;
+}
+sb-displaypane-splitter[orient="horizontal"][state="collapsed"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -57px;
+}
+sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
+  margin-top: 3px;
+  margin-left: 2px;
+}
+
+/******************************************************************************
+* SPLITTERS (the non-displaypane variety)
+******************************************************************************/
+#servicepane_splitter {
+  border-left: 1px solid rgb(19,20,26);
+  border-right: 1px solid rgb(0,0,0);
+}
+#servicepane_box[collapsed="true"] + #servicepane_splitter {
+  margin-left: 2px;
+}
+
+#filter_splitter {
+  background-color: rgb(0,0,0);
+  background-image: none;
+  border-right: 1px solid rgb(43,41,54);
+  border-left: 1px solid rgb(19,20,26);
+}
+
+.playlist-splitter,
+.playlist-web-splitter {
+  border-top: 1px solid rgb(43,41,54);
+  border-bottom: 1px solid rgb(43,41,54);
+}
+
+
+
+/******************************************************************************
+* DEVICE SUMMARY PAGE
+*
+* The page that is displayed when the device node is clicked on - iPod, MTP
+******************************************************************************/
+window > vbox#main_box {
+  overflow: auto;
+}
+
+sb-device-info-panel {
+  border-bottom: 1px solid rgb(67,65,76);
+}
+
+sb-device-info-panel[collapsed="true"] {
+  border-bottom: 0px;
+}
+
+sb-device-managetabs {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 12px;
+}
+
+/* the top half of the summary page + background for tabs (ipod only) */
+#overall_device_info_box,
+#device_management_tabs {
+  background-color: rgb(43,41,54);
+}
+/* Override the shadow from generic-bar with our own device one */
+#overall_device_info_box > #sb-device-progress > hbox.generic-bar {
+  background-image: url(chrome://nightingale/skin/device/bg-device-screen.png);
+  background-color: rgb(54,52,63);
+  border-bottom: 1px solid rgb(62,60,71);
+}
+#device_management_tabs > tab[selected] {
+  border-bottom: none;
+}
+
+#device-icon {
+  margin-right: 2px;
+}
+
+#device-name {
+  margin-top: -1px;
+  margin-left: -3px;
+}
+
+#volume-selector {
+  min-width: 164px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.eject-info-buttons {
+  margin: 0px 6px 0px 0px;
+  padding: 0px;
+}
+
+.device-capacity-bar-box {
+  margin-left: 1px;
+}
+/*
+.device-capacity-bar-box > hbox + hbox:not([flex="0"]) {
+  margin-left: 1px;
+}
+*/
+.device-capacity-bar-box > hbox {
+  max-height: 18px !important;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.device-capacity-music,
+.device-capacity-legend-color-box[type="music"] {
+  background-color: rgb(84,69,130);
+}
+.device-capacity-video,
+.device-capacity-legend-color-box[type="video"] {
+  background-color: rgb(82,113,50);
+}
+.device-capacity-image,
+.device-capacity-legend-color-box[type="image"] {
+  background-color: rgb(140,42,81);
+}
+.device-capacity-other,
+.device-capacity-legend-color-box[type="other"] {
+  background-color: rgb(171,98,23);
+}
+.device-capacity-free,
+.device-capacity-legend-color-box[type="free"] {
+  background-color: rgb(43,41,54);
+}
+/* the device capacity bar has 9 notches (10 sections)
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
+.device-capacity-bar-notches hbox+hbox {
+  margin: 2px 0px;
+  border-left: 2px solid;
+  -moz-border-left-colors: rgba(0,0,0,0.4) rgba(255,255,255,0.25);
+}
+#device_management_box {
+  margin: 10px 10px 13px 10px;
+}
+
+.device-settings-tab-header-box,
+.device-tab-header-box {
+  background-color: rgb(74,73,79);
+  height: 28px;
+}
+.device-tab-header-box {
+  margin-top: 15px;
+}
+.device-tab-content groupbox {
+  margin: 0px 0px 2px 0px;
+}
+radiogroup#auto_sync_settings_radio_group {
+  background-color: rgb(69,67,78);
+}
+radiogroup#auto_sync_settings_radio_group > listbox {
+  border: 1px solid rgb(87,86,94);
+  background-color: transparent;
+}
+
+/* box that holds all the buttons for sync settings */
+.device-tab-button-box {
+  background-image: url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+  margin: -2px -1px -1px -1px;
+  border-left: 1px solid rgb(35,33,44);
+  border-right: 1px solid rgb(35,33,44);
+  border-bottom: 1px solid rgb(35,33,44);
+}
+
+.device-settings-button-box {
+  background-image: url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+  border: 1px solid rgb(35,33,44);
+}
+
+.device-capacity-legend-label-box > label.capacity_header_label,
+label.device-name-label {
+  color: rgb(234,234,234);
+}
+.device-capacity-legend-label-box > label.capacity_value_label {
+  font-size: 9px !important;
+  color: rgb(159,157,166);
+}
+
+.device_management_tabpanels {
+  padding-top: 30px !important;
+}
+
+/* tree that holds the list of playlists to sync */
+sb-device-sync tree,
+sb-device-image-sync tree {
+  background-image: none;
+  background-color: rgb(69,67,78);
+  border: 1px solid rgb(42,42,53);
+}
+sb-device-sync tree treecol[type="checkbox"],
+sb-device-image-sync tree treecol[type="checkbox"] {
+  min-width: 23px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-right: -3px !important;
+}
+sb-device-image-sync radiogroup {
+  padding: 0px;
+}
+/******************************************************************************
+* WIZARDS
+******************************************************************************/
+
+.sb-wizard-header {
+  font-weight:bold;
+  font-size:120%;
+}
+
+
+
+/******************************************************************************
+* FIRST RUN WIZARD
+******************************************************************************/
+.sb-first-run-eula-browser {
+  border-left:1px solid rgb(131,131,131);
+  border-bottom:1px solid rgb(131,131,131);
+  border-top: 1px solid rgb(41,41,51);
+  border-right: 1px solid rgb(41,41,51);
+}
+
+
+/******************************************************************************
+* RECOMMENDED AND FIRST RUN ADD-ONS
+******************************************************************************/
+.sb-add-on-bundle-listbox > richlistitem {
+  background-color: rgb(63,59,72);
+}
+
+.sb-add-on-bundle-listbox > richlistitem[selected="true"] {
+  background-image: url(chrome://nightingale/skin/base-elements/bg-selected-row-big-unfocused.png);
+}
+
+.sb-add-on-bundle-listbox:focus richlistitem[selected="true"] {
+  background-image: url(chrome://nightingale/skin/base-elements/bg-selected-row-big.png);
+}
+
+
+
+/******************************************************************************
+* TRACK EDITOR
+******************************************************************************/
+/* the track editor has tabs and tabpanels but are hidden for the time being
+   this rule makes the tabpanels have the same background color as a dialog window */
+#track_editor tabpanels {
+  background-color: rgb(87,86,94);
+}
+.art {
+  background-color:rgb(230,230,230);
+  border:1px solid rgb(58,58,62);
+  -moz-border-radius: 3px;
+}
+.art:focus {
+  background-color:rgb(255,255,255);
+}
+
+.art > vbox.artWrapperBox > label.drop-message {
+  color: black;
+}
+
+
+/******************************************************************************
+* MEDIACORE ERROR DIALOG
+******************************************************************************/
+#mediacore_error > sb-sys-outer-frame > .dialog-content-box {
+  overflow: visible;
+}
+
+#mediacore_error_desc_box {
+  width: 440px;
+}
+
+
+
+/******************************************************************************
+* DEVICE ERROR DIALOG
+******************************************************************************/
+#device_error_dialog > sb-sys-outer-frame > .dialog-content-box {
+  overflow: visible;
+  width: 440px;
+}
+
+#infoContainer > #errors_box > #errors_grid_box {
+  overflow: auto;
+  height: 100px;
+  width: 440px;
+  background-color:rgb(255,255,255);
+  border: 1px solid rgb(131,131,131);
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#infoContainer > #errors_box > #errors_grid_box > grid > rows > row > label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: black;
+}
+
+/******************************************************************************
+* SMART PLAYLIST EDITOR
+*
+*  Dialog for editing properties of smart playlists.
+******************************************************************************/
+/* the box that contains n number of rules */
+.drawer-box {
+  background-color:rgb(64,64,75);
+  border:1px solid rgb(42,42,53);
+}
+
+
+
+/******************************************************************************
+* ABOUT DIALOG
+******************************************************************************/
+#about_browser {
+  border-top:1px solid rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
+* FIND BAR
+******************************************************************************/
+findbar {
+  background-color: rgb(35,33,44);
+  /* XXXstevel border-bottom:1px solid rgb(131,131,131); */
+}
+/* text that shows the status of the search - eg: "Phrase now found" */
+findbar > .findbar-container > .findbar-find-status {
+  color:rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
+* SCROLLBAR
+*
+* These styles are used for scrollbars and scroll buttons in the chrome AND in
+* the browser window
+******************************************************************************/
+scrollbarbutton,
+scrollbar > slider > thumb {   
+}
+
+#servicepane scrollbar {
+  border-left: 1px solid rgb(26,26,30);
+}
+
+
+
+/******************************************************************************
+* WINDOW RESIZERS
+*  
+* Draw a border around windows that are resizable - Linux and Windows only
+* Make sure to update skin/window/bg-resizer-bottom-corner.png to match
+* changes made here
+******************************************************************************/
+.sb-sys-outer-frame-resizer {
+  background-color: rgb(19,20,26);
+}
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-bottomleft,
+.sb-sys-outer-frame-resizer-leftbottom,
+.sb-sys-outer-frame-resizer-lefttop,
+.sb-sys-outer-frame-resizer[dir="left"] {
+  border-left: 1px solid rgb(29,30,44);
+}
+.sb-sys-outer-frame-resizer-topright,
+.sb-sys-outer-frame-resizer-bottomright,
+.sb-sys-outer-frame-resizer-rightbottom,
+.sb-sys-outer-frame-resizer-righttop,
+.sb-sys-outer-frame-resizer[dir="right"] {
+  border-right: 1px solid rgb(29,30,44);
+}
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-topright,
+.sb-sys-outer-frame-resizer[dir="top"] {
+  border-top: 1px solid rgb(29,30,44);
+}
+.sb-sys-outer-frame-resizer-bottomleft,
+.sb-sys-outer-frame-resizer-bottomright,
+.sb-sys-outer-frame-resizer[dir="bottom"] {
+  border-bottom: 1px solid rgb(29,30,44);
+}
+
+/******************************************************************************
+* FILE DOWNLOAD MANAGER (MOZAPP)
+******************************************************************************/
+#downloadManager > #downloadView {
+  background-color: transparent;
+}
+#downloadManager > #search {
+  background-color: rgb(35,33,44);
+  /* XXX stevel border-top:1px solid rgb(131,131,131); */
+}
+
+#downloadView richlistitem {
+  background-color: rgb(63,59,72);
+}
+
+#downloadView richlistitem[selected="true"] {
+  background-image: url(chrome://nightingale/skin/base-elements/bg-selected-row-big-unfocused.png);
+}
+
+#downloadView:focus richlistitem[selected="true"] {
+  background-image: url(chrome://nightingale/skin/base-elements/bg-selected-row-big.png);
+}
+
+
+
+/******************************************************************************
+* ABOUT CONFIG (MOZAPP)
+******************************************************************************/
+#filterRow {
+  /* XXXstevel border-bottom:1px solid rgb(131,131,131); */
+}
+
+
+
+/******************************************************************************
+* PREFERENCES (MOZAPP)
+******************************************************************************/
+/* this dude is really a radiogroup... */
+.paneSelector {
+  background-color: rgb(41,40,48) !important;
+  -moz-border-right-colors: rgb(32,31,40) rgb(0,0,0) rgb(0,0,0) rgb(32,31,40) !important;
+  border-right: 4px solid !important;
+  padding-top: 5px !important;
+}
+.paneSelector > radio {
+  padding-left: 10px !important;
+  padding-right: 8px !important;
+  height: 24px;
+}
+.paneSelector > radio[selected="true"] {
+  background-image: url(chrome://nightingale/skin/playlist/bg-selected-row.png) !important;
+  background-position: center center;
+  background-repeat: repeat-x;
+}
+.paneSelector > radio > label {
+  color: rgb(200,200,200) !important;
+}
+.paneSelector > radio[selected="true"] > label {
+  color: rgb(255,255,255) !important;
+}
+
+/* For the add-ons/extensions manager prefpane */
+/* this dude is really a radiogroup... */
+#viewGroup {
+  background-color: transparent;
+  background-image: none !important;
+}
+
+/* Need to specialcase the manage media prefpane due to the notificationbox */
+prefpane:not(#paneManageMedia) {
+  padding: 15px 10px !important;
+}
+#media_manage_notification_box_contents {
+  padding: 15px 10px !important;
+}
+prefpane groupbox {
+  margin-top: 0px !important;
+  margin-bottom: 2px !important;
+}
+
+/******************************************************************************
+* FIREFOX API
+* 
+* Nightingale does not use the following rules but add-ons ported from Firefox
+* might.
+******************************************************************************/
+html|*.error-text,
+.error-text {
+  color: rgb(255,0,0);
+}
+
+/* text that looks like a link */
+.text-link {
+  color: rgb(177,153,255);
+  text-decoration: none;
+}
+.text-link:hover {
+  text-decoration: underline;
+} 
+.text-link:hover:active {
+} 
+.text-link[visited="true"] {
+}
+.text-link[disabled="true"]:hover {
+  text-decoration: none;
+  cursor: default !important;
+}
+
+/******************************************************************************
+* ALBUM ARTWORK
+******************************************************************************/
+/* The color used for when artwork is displayed */
+deck#sb-albumart-deck > stack.artwork-found {
+  background-color: black;
+}
+/* The color used for when no artwork is found */
+deck#sb-albumart-deck > stack.artwork-none {
+  background-color: rgb(36,34,46);
+}
+deck#sb-albumart-deck > stack > vbox > description {
+  color: rgb(190,190,190);
+  background-color: transparent;
+}
+
+sb-displaypane#displaypane_servicepane_bottom {
+  max-height: 300px !important;
+}
+/******************************************************************************
+* DOM INSPECTOR
+******************************************************************************/
+domi-panelset label.viewer-title {
+  color: white;
+}
+
+/******************************************************************************
+* XPI INSTALL DIALOG
+******************************************************************************/
+#itemList {
+  background-color: rgb(43,41,54);
+  border: none;
+  overflow: visible !important;
+}
+
+/******************************************************************************
+* ERROR CONSOLE
+******************************************************************************/
+#ConsoleBox {
+  background-color: transparent;
+  border-bottom: none;
+}
+#ConsoleBox hbox.lineNumberRow > label {
+  color: rgb(15,15,15);
+}
+#console-toolbox > toolbar#ToolbarMode > toolbarbutton {
+  background-image: url(chrome://nightingale/skin/base-elements/bg-button-tall.png);
+  background-position: center 0px;
+}
+#console-toolbox > toolbar#ToolbarMode > toolbarbutton:hover {
+  background-position: center -45px;
+}
+#console-toolbox > toolbar#ToolbarMode > toolbarbutton:active,
+#console-toolbox > toolbar#ToolbarMode > toolbarbutton[checked="true"] {
+  background-position: center -90px;
+}
+#console-toolbox > toolbar#ToolbarMode > toolbarbutton:disabled {
+  background-position: center -135px;
+}
+
+/******************************************************************************
+* EXTENSIONS ABOUT
+******************************************************************************/
+#clientBox {
+  background-color: transparent !important;
+}
+#extensionDescription {
+  color: rgb(230,230,230) !important;
+}
+
+/******************************************************************************
+* SOFTWARE UPDATE DIALGO
+******************************************************************************/
+#incompatibleWarning {
+  background-color: white !important;
+}
+#incompatibleWarning > vbox > description {
+  color: black !important;
+}
+
+#updateCheckErrorNotFound {
+  background-color: transparent;
+  border: none;
+}
+
+/*******************************************************************************
+* MEDIA IMPORT DIALOG
+*******************************************************************************/
+#dialog_desc_box
+{
+  background-color: #4b4a57;
+  border: 1px solid #504e5b;
+}
+

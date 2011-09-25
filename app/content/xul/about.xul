@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="about"
+ title="&menu.help.about;"
+ buttons="extra1,accept"
+ defaultButton="accept"
+ width="480"
+ height="360"
+ hidechrome="true"
+ type="nightingale"
+ onload="return doInit();"
+ ondialogaccept="return doOK();"
+ buttonlabelextra1="&about.buttons.credits;"
+ ondialogextra1="return doCredits();"
+>
+
+  <vbox flex="1">
+    <textbox value="&about.version;" id="version_number" class="plain" clickSelectsAll="true" readonly="true" tabindex="2" />
+    <browser id="about_browser" src="chrome://nightingale/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
+  </vbox>
+
+  <!-- And intrepid instructions! -->
+  <script type="application/x-javascript" 
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
+  
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
+  <script>
+  <![CDATA[
+    function doInit() {
+      // Make sure we're initially focused on the browser, not the version
+      setTimeout(function() { document.getElementById( "about_browser" ).focus(); } , 0);
+
+      // Figure out a string to use from the user agent.
+      var build_number = SBDataGetStringValue("buildNumber");
+
+      var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+
+      // Paste it into the label
+      var version = document.getElementById( "version_number" );
+      version.value += ": " + appInfo.name + " " + appInfo.version + 
+       ", Build " + build_number + " (" + appInfo.appBuildID + ")";
+ 
+      // Disable the "Credits" button if we're not in a browser layout
+      var mainWin =
+           Components.classes["@mozilla.org/appshell/window-mediator;1"]
+           .getService(Components.interfaces.nsIWindowMediator)
+		   .getMostRecentWindow("Nightingale:Main");
+      if (!mainWin || !mainWin.gBrowser)
+        document.documentElement.getButton("extra1").disabled = true;
+
+      // Handle passing off URI links to an external protocol handler for the eula.
+      document.getElementById("about_browser")
+              .addEventListener("click", onContentClick, false);
+    }
+    function doOK() {
+      if ( typeof( window.arguments[0] ) != 'undefined' )
+        window.arguments[0].retval = "ok";
+
+      document.getElementById("about_browser")
+              .removeEventListener("click", onContentClick, false);
+
+      return true;
+    }
+    function doCredits() {
+      var browser =
+        Components.classes["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Components.interfaces.nsIWindowMediator)
+        .getMostRecentWindow("Nightingale:Main").gBrowser;
+      browser.loadOneTab("about:credits");
+      window.close();
+      return true;
+    }
+    function onContentClick(aEvent) {
+      try {
+        // If the event's target is a URL, pass that off to the external
+        // protocol handler service since our web browser isn't available
+        // during the eula stage$.
+        var targetURI =
+          Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService)
+                    .newURI(aEvent.target, null, null);
+
+        var extLoader =
+          Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                    .getService(Components.interfaces.nsIExternalProtocolService);
+        extLoader.loadURI(targetURI, null);
+        aEvent.preventDefault();
+      }
+      catch (e) {
+      }
+    }
+  ]]>
+  </script>
+</dialog>

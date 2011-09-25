@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/setupprogress.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="messagebox"
+ title="&setupprogress.installingextensions;"
+ buttons="none"
+ onload="init();"
+ onkeydown="handleKeyDown(event);"
+>
+  
+  <!-- Astounding complexity! -->  
+  
+  <vbox>
+    <label flex="1" id="setupprogress_label" value="&setupprogress.pleasewait;"/>
+    <spacer height="5" width="250"/>
+    <progressmeter flex="1" id="setupprogress_progress"/>
+    <hbox class="setupprogress-buttonbar">
+      <button id="setupprogress_cancel" oncommand="cancelDownload();" label="&setupprogress.cancel;" />
+    </hbox>
+  </vbox>
+
+  <script type="application/x-javascript" 
+    src="chrome://global/content/globalOverlay.js"/> 
+  <script type="application/x-javascript" 
+    src="chrome://nightingale/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript" 
+    src="chrome://nightingale/content/scripts/setupProgress.js" />
+    
+
+  
+</dialog>

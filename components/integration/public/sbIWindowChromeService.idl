@@ -1,0 +1,49 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIWindowChromeService
+ * \brief Component used to do platform-level tricks to hide the window chrome.
+ * Expected to only be used by sysControls.xml
+ * \note May not be implemented on all platforms; check for the component
+ *       having been registered before using.
+ */
+[scriptable, uuid(7E8B6103-E12B-44FA-9AEF-9818E84BF924)]
+interface sbIWindowChromeService : nsISupports {
+  /**
+   * \brief Hides (or shows) the chrome of a given window
+   * \param aWindow the window to hide or show
+   * \param aHide true to hide the window chrome, or false to show it again
+   *              (only if it was previously hidden via this service)
+   */
+  void hideChrome(in nsISupports aWindow, in boolean aHide);
+
+  /**
+   * \brief Returns true if desktop composition is enabled.
+   */
+  readonly attribute boolean isCompositionEnabled;
+};
+

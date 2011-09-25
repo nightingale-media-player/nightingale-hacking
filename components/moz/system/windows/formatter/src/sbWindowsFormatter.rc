@@ -1,0 +1,7 @@
+STRINGTABLE
+BEGIN
+  1000 "Nightingale Windows Volume Formatter"
+END
+
+1 TYPELIB "sbIWindowsFormatter.tlb"
+

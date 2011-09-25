@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:nightingale="http://www.getnightingale.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:version>1.0</em:version>
+
+    <!-- Nightingale -->
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:name>Display Pane Test</em:name>
+    <em:description>Sample install.rdf used to test the addon metadata reader</em:description>
+    <em:locked>true</em:locked>
+    <em:creator>Pioneers of the Inevitable</em:creator>
+
+    <nightingale:displayPane>
+      <Description>
+        <nightingale:contentTitle>Display Pane Test</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-display-pane/content/testDisplayPane.html</nightingale:contentUrl>
+        <nightingale:contentIcon>http://www.getnightingale.com/favicon.ico</nightingale:contentIcon>
+        <nightingale:defaultWidth>180</nightingale:defaultWidth>
+        <nightingale:defaultHeight>50</nightingale:defaultHeight>
+        <nightingale:suggestedContentGroups>test-content-group</nightingale:suggestedContentGroups>
+        <nightingale:showOnInstall>false</nightingale:showOnInstall>
+      </Description>
+    </nightingale:displayPane>
+
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+
+</RDF>

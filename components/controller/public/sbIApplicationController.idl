@@ -1,0 +1,90 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**       
+ * \file sbIApplicationController.idl
+ * \brief Root application interface
+ * \sa sbApplicationController.js
+ */
+#include "nsISupports.idl"
+interface nsIDOMWindow;
+
+/**
+ * \interface sbIApplicationController
+ * \brief Global root controller for the Nightingale application
+ *
+ * This service represents the global instance of the Nightingale
+ * application. 
+ * 
+ * One day the implementation of this interface will be responsible for
+ * bringing up the main window and generally managing application lifecycle.
+ *
+ * The interface may also be exposed as a replacement for / addition to 
+ * FUEL's Application object, and offer accessors for other global Nightingale
+ * objects.  For example, we may eventually have accessors like
+ * Application.nightingale.mediacoreManager.playbackControl.
+ *
+ * Other future functionality may include:
+ *   - quit();
+ *   - openMainWindow();
+ *
+ * @halfbaked
+ */
+[scriptable, uuid(e4836af0-ab89-11dd-ad8b-0800200c9a66)]
+interface sbIApplicationController : nsISupports
+{
+
+  /**
+   * \brief The current active window.
+   * The current active window, regardless of category.
+   */
+  readonly attribute nsIDOMWindow activeWindow;
+
+  /**
+   * \brief The current active Nightingale window
+   * The current active window of type Nightingale:Main.
+   * Usually the primary Nightingale window, with playback
+   * controls, playlist display panes, etc.
+   */
+  readonly attribute nsIDOMWindow activeMainWindow;
+
+  /**
+   * \brief Begin playback using whatever UI context is available.
+   *
+   * Used to initiate playback when what to play is not clear.
+   * Will try to delegate playback to the UI, and match user
+   * expectations.  If the open windows are unable to determine
+   * what should be played, the first track in the main library
+   * will be selected.
+   * 
+   * This method should be used as a fallback when no context
+   * is available to callers.
+   *
+   * This method may be removed once we have a standard way
+   * to broadcast application wide events.
+   */
+  void playDefault();
+};

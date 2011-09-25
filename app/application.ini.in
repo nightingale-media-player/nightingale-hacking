@@ -1,0 +1,23 @@
+#filter substitution
+[App]
+Name=@SB_APPNAME@
+Vendor=Nightingale.com
+Version=@SB_MILESTONE@
+BuildID=@SB_BUILD_ID@
+BuildNumber=@SB_BUILD_NUMBER@
+Copyright=Copyright(c) 2010-2011 Nightingale.com
+ID=nightingale@getnightingale.com
+Profile=@SB_APPNAME@@SB_PROFILE_VERSION@
+
+[Gecko]
+MinVersion=1.9.0
+MaxVersion=1.9.0.*
+
+[XRE]
+EnableExtensionManager=true
+
+[Crash Reporter]
+#if SB_ENABLE_BREAKPAD
+Enabled=1
+#endif
+ServerURL=@SB_CRASHREPORT_SERVER_URL@

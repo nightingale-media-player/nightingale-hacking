@@ -1,0 +1,355 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "sbILibrary.idl"
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface sbIPropertyArray;
+interface nsIURI;
+interface nsIFile;
+interface sbIDeviceLibrarySyncSettings;
+
+/**
+ * \interface sbIDeviceLibraryListener
+ * \brief Interface used to listen to changes to a device library.
+ * \note Implementations of this interface must be threadsafe.
+ *
+ * \sa sbIDeviceLibrary
+ */
+[scriptable, uuid(4a242d99-8eef-4ed4-a661-29434e61e432)]
+interface sbIDeviceLibraryListener : nsISupports
+{
+  /**
+   * \brief Called when the library is about to perform multiple operations at
+   *        once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to ignore further notifications until the onBatchEnd notification
+   * is received.
+   *
+   * \param sbIMediaList aMediaList The list that has changed.
+   */
+  void onBatchBegin(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called when the library has finished performing multiple operations
+   *        at once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to stop ignoring notifications after receiving this notification.
+   *
+   * \param sbIMediaList aMediaList The list that has changed.
+   */
+  void onBatchEnd(in sbIMediaList aMediaList);
+
+  /**
+   * Listener functions for media list changes (sbIMediaList)
+   */
+  /**
+   * \brief Called when a media item is added to a list, through add or addAll.
+   * \param sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem aMediaItem The new media item.
+   * \param unsigned long aIndex The index of the new media item
+   * \return True if you do not want any further onItemAdded notifications for
+   *         the current batch.  If there is no current batch, the return value
+   *         is ignored.
+   */
+  boolean onItemAdded(in sbIMediaList aMediaList,
+                      in sbIMediaItem aMediaItem,
+                      in unsigned long aIndex);
+
+  /**
+   * \brief Called before a media item is removed from a list, through remove,
+   *        removeAll or removeByIndex.
+   * \param sbIMediaList sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem sbIMediaItem aMediaItem The removed media item.
+   * \param unsigned long aIndex The index of the item to be removed
+   * \return True if you do not want any further onItemRemoved for the
+   *         current batch.  If there is no current batch, the return value is
+   *         ignored.
+   */
+  boolean onBeforeItemRemoved(in sbIMediaList aMediaList,
+                              in sbIMediaItem aMediaItem,
+                              in unsigned long aIndex);
+
+  /**
+   * \brief Called after a media item has been removed from a list, through
+   *        remove, removeAll or removeByIndex.
+   * \param sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem aMediaItem The removed media item.
+   * \param unsigned long aIndex The index of the removed item
+   * \return True if you do not want any further onItemRemoved for the
+   *         current batch.  If there is no current batch, the return value is
+   *         ignored.
+   */
+  boolean onAfterItemRemoved(in sbIMediaList aMediaList,
+                             in sbIMediaItem aMediaItem,
+                             in unsigned long aIndex);
+
+  /**
+   * \Brief Called before a media list is cleared.
+   * \param sbIMediaList aMediaList The list that is about to be cleared.
+   * \param aExcludeLists If true, only media items, not media lists, are being
+   *                      cleared.
+   * \return True if you do not want any further onBeforeListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onBeforeListCleared(in sbIMediaList aMediaList,
+                              in boolean      aExcludeLists);
+
+  /**
+   * \Brief Called when a media list is cleared.
+   * \param sbIMediaList aMediaList The list that was cleared.
+   * \param aExcludeLists If true, only media items, not media lists, were
+   *                      cleared.
+   * \return True if you do not want any further onListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onListCleared(in sbIMediaList aMediaList,
+                        in boolean      aExcludeLists);
+
+  /**
+   * \brief Called when a media item is changed.
+   * \param sbIMediaList aMediaList The list that has changed.
+   * \param sbIMediaItem aMediaItem The item that has changed.
+   * \param aProperties Array of properties that were updated.  Each property's
+   *        value is the previous value of the property
+   * \return True if you do not want any further onItemUpdated notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onItemUpdated(in sbIMediaList aMediaList,
+                        in sbIMediaItem aMediaItem,
+                        in sbIPropertyArray aProperties);
+
+  /**
+   * \brief Called when a media item is moved.
+   * \param sbIMediaList aMediaList The list that contains the item that moved.
+   * \param aFromIndex Index of the item that was moved
+   * \param aToIndex New index of the moved item
+   * \return True if you do not want any further onItemMoved notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onItemMoved(in sbIMediaList aMediaList,
+                      in unsigned long aFromIndex,
+                      in unsigned long aToIndex);
+
+ /**
+   * \brief Called when a media item has been copied.
+   * \param sbIMediaItem aSourceItem The item that was copied from.
+   * \param sbIMediaItem aDestItem The item that was copied to.
+   */
+  void onItemCopied(in sbIMediaItem aSourceItem,
+                    in sbIMediaItem aDestItem);
+
+
+  /**
+   * These are listener functions that will get called before some actions
+   * take place, like adding, or creating items in the library.
+   */
+
+  /**
+   * \brief Called before a media item is going to be created.
+   * \sa sbILibrary::CreateMediaItem
+   */
+  boolean onBeforeCreateMediaItem(in nsIURI aContentUri,
+                                  [optional] in sbIPropertyArray aProperties,
+                                  [optional] in boolean aAllowDuplicates);
+
+  /**
+   * \brief Called before a media list is going to be created.
+   * \sa sbILibrary::CreateMediaList
+   */
+  boolean onBeforeCreateMediaList(in AString aType,
+                                  [optional] in sbIPropertyArray aProperties);
+
+  /**
+   * \brief Called before an item is added.
+   * \sa sbIMediaList::Add
+   */
+  boolean onBeforeAdd(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called before all item from a list are added.
+   * \sa sbIMediaList::AddAll
+   */
+  boolean onBeforeAddAll(in sbIMediaList aMediaList);
+
+  /**
+   * \brief Called before some items are added.
+   * \sa sbIMediaList::AddSome
+   */
+  boolean onBeforeAddSome(in nsISimpleEnumerator aMediaItems);
+
+  /**
+   * \brief Called before the device is cleared.
+   * \sa sbIMediaList::Clear
+   */
+  boolean onBeforeClear();
+
+  const unsigned long SYNC_SETTINGS_APPLIED = 0;
+  const unsigned long SYNC_SETTINGS_CHANGED = 1;
+  const unsigned long SYNC_SETTINGS_RESET   = 2;
+  
+  void onSyncSettings(in unsigned long aAction, 
+                      in sbIDeviceLibrarySyncSettings aSyncSettings);
+};
+
+/**
+ * \interface sbIDeviceLibrary
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(ec3c810f-5221-4a5c-82e5-dfe709c27ba9)]
+interface sbIDeviceLibrary : sbILibrary
+{
+  /**
+   * \brief Initialize the device library.
+   * \param aLibraryId Device library identifier.
+   */
+  void initialize(in AString aLibraryId);
+
+  /**
+   * \brief Finalize the device library.
+   */
+  void finalize();
+
+  /**
+   * Syncronization settings
+   */
+
+  const unsigned long MGMT_PREF_UNINITIALIZED           = 0;
+  /**
+   * Media type for management type and playlist list.
+   */
+
+  const unsigned long MEDIATYPE_UNKNOWN                 = 0x0A;
+
+  const unsigned long MEDIATYPE_AUDIO                   = 0x00;
+
+  const unsigned long MEDIATYPE_VIDEO                   = 0x01;
+
+  const unsigned long MEDIATYPE_IMAGE                   = 0x02;
+
+  const unsigned long MEDIATYPE_COUNT                   = 0x03;
+
+  /**
+   * \brief The flag on whether the device is in manual mode.
+   *
+   */
+
+  readonly attribute boolean isManualSyncMode;
+  
+  /**
+   * Gets/Sets the current sync mode of the device. The object 
+   * returned by the getter is a temporary transient object. Changes
+   * are not made until you call setter.
+   */
+  attribute sbIDeviceLibrarySyncSettings syncSettings;
+
+  /***************************************************************
+   * Following functions are convenience functions for the UI
+   * An alternative option would be to make this mainstream and
+   * have syncSettings return a live object and make it read-only
+   */
+
+  /**
+   * returns a reference to single temporary instance of the
+   * device's synchronization setting. Calling this multiple times
+   * will return a reference to the same object for this 
+   * device/library
+   */
+  readonly attribute sbIDeviceLibrarySyncSettings tempSyncSettings;
+
+  /**
+   * resets the temporary settings to the currently active settings.
+   */
+  void resetSyncSettings();
+
+  /**
+   * apply the temporary settings to the currently active settings.
+   */
+  void applySyncSettings();
+  
+  /**
+   * Returns true if the temp settings have been modified
+   */
+  readonly attribute boolean tempSyncSettingsChanged;
+   
+  /**
+   * \brief Return the list of folders with content type aContentType the
+   *        user wants to sync from his disk to the device.
+   *
+   * \param aContentType Content type to be synced
+   *
+   * \return List of nsIFile that represent the folders to sync.
+   */
+  nsIArray getSyncFolderListByType(in unsigned long aContentType);
+
+  /**
+   * \brief Set the list of folders with content type aContentType the user
+   *        wants to sync from his disk to the device.
+   *
+   * \param aContentType Content type to be synced
+   * \param aFolderList List of nsIFIle that represent the folders
+   *                      to sync.
+   */
+  void setSyncFolderListByType(in unsigned long aContentType,
+                               in nsIArray aFolderList);
+
+  /**
+   * \brief Initiates a sync operation on this library
+   *
+   * This is a no-op if this library is in manual management mode.
+   *
+   */
+
+  void sync();
+
+
+  /**
+   * \brief Add a listener to this device library.
+   * \param sbIDeviceLibraryListener aListener listener to add.
+   */
+  void addDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
+
+  /**
+   * \brief Remove a listener from this device library.
+   * \param sbIDeviceLibraryListener aListener listener to remove.
+   */
+  void removeDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
+  
+  /**
+   * A bit of a hack so we can notify UI bits that our temp sync settings have
+   * changed. This is really a private API and should not generally be used.
+   */
+  [noscript] void fireTempSyncSettingsEvent(in unsigned long aEvent); 
+};

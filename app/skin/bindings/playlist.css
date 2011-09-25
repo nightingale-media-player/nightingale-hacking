@@ -1,0 +1,450 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+THE PLAYLIST
+
+Applies images and layout to playlist.xml and sbPlaylistPage.xul.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+
+
+sb-playlist,
+sb-playlist > stack > vbox,
+.sb-playlist-tree,
+.sb-playlist-tree > treechildren::-moz-tree-row
+{
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+
+
+.sb-playlist-tree > treechildren::-moz-tree-cell
+{
+  margin: 0px !important;
+  padding: 0px 0px 2px 5px !important;
+  border-right: 1px solid !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text
+{
+  padding-top: 1px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
+{
+  border: none !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( selected )
+{
+  font-weight: normal;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-drop-feedback
+{
+  background-image: url(chrome://nightingale/skin/backgrounds/drop-target.png);
+  margin: 0;
+  /* the width must use absolute number of units here, no percentages */
+  width: 63360in;
+}
+
+
+/** 
+*******************************************************************************
+Tree Progress Meter
+*******************************************************************************
+*/
+
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter
+{
+  border: none !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+  height: 10px !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
+{
+  border: none !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( rating ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text( rating )
+{
+  color: transparent !important;
+}
+
+/** Show rating states by repositioning a large background image.
+    This prevents flickering on state change **/
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating )
+{
+  background-repeat: no-repeat;
+  background-image: url(chrome://nightingale/skin/playlist/ratings.png);
+}
+
+
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating )
+{
+  background-repeat: no-repeat;
+  background-image: url(chrome://nightingale/skin/playlist/ratings-readonly.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating0 )
+{
+  background-position:4px 0px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, selected ),
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating0, selected )
+{
+  background-position:4px -18px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating1 )
+{
+  background-position:4px -36px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating1, selected )
+{
+  background-position:4px -54px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating2 )
+{
+  background-position:4px -72px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating2, selected )
+{
+  background-position:4px -90px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating3 )
+{
+  background-position:4px -108px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating3, selected )
+{
+  background-position:4px -126px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating4 )
+{
+  background-position:4px -144px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating4, selected )
+{
+  background-position:4px -162px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating5 )
+{
+  background-position:4px -180px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5, selected ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating5, selected )
+{
+  background-position:4px -198px;
+}
+
+
+/** 
+*******************************************************************************
+In-cell Buttons
+*******************************************************************************
+*/
+
+/* button default state and baseline */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button )
+{
+       background-image: url(chrome://nightingale/skin/playlist/button/button_left.png);
+       background-position:0px -36px;
+       background-repeat:no-repeat;
+       padding:0 0 0 0 ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button )
+{
+       background-image: url(chrome://nightingale/skin/playlist/button/button_right.png);
+       background-position:100% -36px;
+       background-repeat:no-repeat;
+       margin:0 0 0 13px ! important;
+       padding:2px 14px 5px 0 ! important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button selected )
+{
+}
+
+/* button hover state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-hover )
+{
+       background-position:0px -18px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover )
+{
+       background-position:100% -18px;
+}
+
+/* button active state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-active )
+{
+       background-position:0px 0px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
+{
+       background-position:100% 0px;
+       padding:3px 14px 4px 0 ! important;
+}
+
+/* button disabled state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button disabled )
+{
+       background-position:0px -54px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled )
+{
+       background-position:100% -54px;
+}
+
+
+/** 
+*******************************************************************************
+In-cell Clickable Images
+*******************************************************************************
+*/
+
+/* clickable image */
+.sb-playlist-tree > treechildren::-moz-tree-cell( image )
+{
+       padding:0px ! important;
+       margin:0px ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-image( image )
+{
+       padding:1px 1px 1px 1px ! important;
+       margin:0 ! important;
+       /* ALWAYS resize the image to 16px high because max-height wont work */
+       height:16px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-image( image cell-active )
+{
+       padding:2px 1px 0 1px ! important;
+}
+
+
+/** 
+*******************************************************************************
+In-cell Download Buttons
+*******************************************************************************
+*/
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton )
+{
+       padding:0 ! important;
+       margin:0 ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter
+{
+       background-image:url(chrome://nightingale/skin/playlist/download/remain.png);
+       border: none !important;
+       background-color: transparent !important;
+       padding:0 ! important;
+       margin:5px 0 ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressNotStarted)
+{
+       background: url(chrome://nightingale/skin/playlist/download/not-started.png);
+       background-position:left center;
+       background-repeat:repeat-x;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressNotStarted )
+{
+
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressCompleted )
+{
+       background: url(chrome://nightingale/skin/playlist/download/done.png);
+       background-position:center center;
+       background-repeat:no-repeat;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( button downloadbutton progressFailed )
+{
+       background-image: url(chrome://nightingale/skin/playlist/button/button_left-error.png);
+       padding:0 0 0 16px ! important;
+}
+
+/** 
+*******************************************************************************
+In-cell Origin Page Image (Source Column)
+*******************************************************************************
+*/
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-originPageImage, image webOrigin )
+{
+  list-style-image: url(chrome://nightingale/skin/icons/small-globe-sunken.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-originPageImage, image unknownOrigin )
+{
+}
+
+/** 
+*******************************************************************************
+In-cell Artist detail image
+*******************************************************************************
+*/
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-artistDetailImage, image link )
+{
+  list-style-image: url(chrome://nightingale/skin/icons/small-globe-sunken.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-artistDetailImage, image noLink )
+{
+}
+
+/** 
+*******************************************************************************
+In-cell Album detail image
+*******************************************************************************
+*/
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-albumDetailImage, image link )
+{
+  list-style-image: url(chrome://nightingale/skin/icons/small-globe-sunken.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-albumDetailImage, image noLink )
+{
+}
+
+/** 
+*******************************************************************************
+Playing track indicator
+*******************************************************************************
+*/
+.sb-playlist-tree > treecols > treecol[bind = 'http://getnightingale.com/data/1.0#trackName']
+{
+  padding-left: 18px !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName )
+{
+  padding-left: 18px !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName, playing )
+{
+  background-repeat: no-repeat;
+  background-image: url(chrome://nightingale/skin/playlist/playing.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName, playing, selected )
+{
+  background-position: 0% -18px;
+}
+
+/**
+*******************************************************************************
+Right align Track No, Time/Duration, Size, and Sample Rate
+*******************************************************************************
+*/
+treecol[bind="http://getnightingale.com/data/1.0#trackNumber"],
+treecol[bind="http://getnightingale.com/data/1.0#duration"],
+treecol[bind="http://getnightingale.com/data/1.0#sampleRate"],
+treecol[bind="http://getnightingale.com/data/1.0#contentLength"]
+{
+  text-align:right;
+}
+treecol[bind="http://getnightingale.com/data/1.0#trackNumber"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-trackNumber ),
+treecol[bind="http://getnightingale.com/data/1.0#duration"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-duration ),
+treecol[bind="http://getnightingale.com/data/1.0#sampleRate"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-sampleRate ),
+treecol[bind="http://getnightingale.com/data/1.0#contentLength"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-contentLength )
+{
+  padding-right:5px;
+}
+
+/** 
+*******************************************************************************
+Playlist Commands
+*******************************************************************************
+*/
+
+/** Playlist commands toolbar **/
+.sb-commands-toolbar-bkg
+{
+  height: 25px !important;
+  padding: 1px;
+}
+
+/** Playlist commands context menu **/
+.sb-playlist-popup
+{
+  min-width: 160px !important;
+}
+
+/** 
+*******************************************************************************
+Drag and drop Icon
+*******************************************************************************
+*/
+
+.sb-playlist-drag-image {
+  list-style-image: url(chrome://nightingale/skin/icons/drag-document-icon.png);
+}
+
+.sb-playlist-drag-badge[value="1"] {
+  display: none;
+}
+
+.sb-playlist-drag-badge:not([value="1"]) {
+  font-weight: bold;
+  background-color: red;
+  margin-top: 16px;
+  margin-left: 16px;
+  padding: 4px;
+  -moz-border-radius: 8px 8px 8px 8px;
+}

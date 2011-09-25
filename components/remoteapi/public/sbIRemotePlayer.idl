@@ -1,0 +1,1425 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/**
+ *
+ * \file sbIRemotePlayer.idl
+ * \brief Definition of the Web Page Player Interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface nsIURI;
+interface sbIMediaItem;
+interface sbIMediaListView;
+interface sbIRemoteCommands;
+interface sbIRemoteLibrary;
+interface sbIRemoteMediaList;
+interface sbIRemoteObserver;
+interface sbIRemoteWebPlaylist;
+
+/*
+Class: Nightingale
+
+The Nightingale object provides several pieces of functionality to your web page: playback,
+download, listener adding and removing and library creation and retrieval.
+
+This object provides you with functions that enable you to initiate playback
+of URL's, <MediaLists> and <WebPlaylists>. Basic playback control functions are also
+provided.
+
+The Nightingale object provides download functionality as well. You may use it to download
+<MediaItems>, <MediaLists> and user selected items present in the <WebPlaylist>.
+
+You may listen for download events by adding "downloadstart" or
+"downloadcomplete" event listeners to the document object.  These events will
+only be sent to handlers within the scope of the page that originated the
+downloaded items.  The event listener is provided the downloaded media item
+within the main Nightingale library.  To access the media item properties, the user
+must have enabled remote access to the main Nightingale library.
+
+The Nightingale object is accessible (from Javascript) using the "nightingale" global variable attached
+to the currently loaded document. See the example below.
+
+Example:
+(start code)
+<script>
+//Get the currently playing artist.
+var artist = nightingale.currentArtist;
+
+//Create default library with current domain and path automatically guessed.
+//This is the suggested way to create your site library.
+var library = nightingale.siteLibrary;
+
+// Look up the artist in your web service database
+// ...
+
+//Create a media item from a file
+var mediaItem = library.createMediaItem("http://mirrors.creativecommons.org/ccmixter/contrib/Wired/David%20Byrne%20-%20My%20Fair%20Lady.mp3");
+
+//Create a simple media list.
+var mediaList = library.createSimpleMediaList("PlaylistName");
+
+//Add a mediaitem to it.
+mediaList.add(mediaItem);
+
+//Play it.
+nightingale.playMediaList(mediaList, 0);
+
+//You may also want to trigger a download to the users machine, for this mediaitem.
+function onDownloadComplete(aEvent) {
+  // The event item is the one in the user's main library.
+  alert(aEvent.item.guid);
+  alert(aEvent.status);
+}
+document.addEventListener("downloadcomplete", onDownloadComplete, false);
+nightingale.downloadItem(mediaItem);
+</script>
+(end)
+
+See Also:
+  For more information about the <MediaItem> object, see the <MediaItem> reference.
+  For more information about the <MediaList> object, see the <MediaList> reference.
+  For more information about the <WebPlaylist> object, see the <WebPlaylist> reference.
+*/
+/**
+ * \interface sbIRemotePlayer
+ * \brief This interface is a composition of many of our other interfaces with the
+ *  goal of exposing a more web-friendly interface to web sites. This defines
+ *  our "Remote API" the websites can call to get information about and interact
+ *  with Nightingale.
+ */
+[scriptable, uuid(91a57ebd-65e4-4320-84a1-fa0f6f74af15)]
+interface sbIRemotePlayer : nsISupports
+{
+
+  /*
+  Group: Methods
+  */
+
+  /**
+   * \brief Convenience method to see if the requested API version
+   *        is supported.
+   */ 
+
+  /*
+  Func: supportsVersion
+
+  Convenience method to see if the requested API version
+  is supported.
+
+  Prototype: 
+    boolean supportsVersion(String apiVersion)
+
+  Parameters:
+    apiVersion - A string representing the API version requested (eg. '1.2').
+  */
+  boolean supportsVersion(in AString aAPIVersion);
+
+  /*
+  Group: Properties
+  */
+
+  /**
+   * \brief The major API version.
+   */
+
+  /*
+  Prop: apiVersionMajor
+
+  The major API version (eg. 1).
+
+  Type:
+    integer
+  */
+  readonly attribute unsigned long apiVersionMajor;
+
+  /**
+   * \brief The minor API version.
+   */
+
+  /*
+  Prop: apiVersionMinor
+
+  The minor API version.
+
+  Type:
+    integer
+  */
+  readonly attribute unsigned long apiVersionMinor;
+
+  /**
+   * \brief The name of the player
+   */
+
+  /*
+  Prop: name
+
+  The name of the player.
+
+  Type:
+    String
+  */
+  readonly attribute AString name;
+
+  /**
+   * \brief The name of the artist for the currently playing media item.
+   */
+
+  /*
+  Prop: currentArtist
+
+  The name of the artist for the currently playing track.
+
+  Type:
+    String
+  */
+  readonly attribute AString currentArtist;
+
+  /**
+   * \brief The name of the album for the currently playing track
+   */
+
+  /*
+  Prop: currentAlbum
+
+  The name of the album for the currently playing media item.
+
+  Type:
+    String
+  */
+  readonly attribute AString currentAlbum;
+
+  /**
+   * \brief The name of the currently playing track
+   */
+
+  /*
+  Prop: currentTrack
+
+  The track name of the currently playing media item.
+
+  Type:
+    String
+  */
+  readonly attribute AString currentTrack;
+
+  /**
+   * \brief The playing state of the application
+   *
+   * \returns false if the application is stopped
+   * \returns true if the application is playing or paused
+   */
+
+  /*
+  Prop: playing
+
+  This is the playing state of the application. If stopped this will be false,
+  otherwise this will be true. If the application is paused this will be true
+  so for a complete status you need to check the paused state as well.
+
+  Type:
+    boolean
+  */
+  readonly attribute boolean playing;
+
+  /**
+   * \brief The paused state of the application
+   *
+   * \returns false if the application is not paused
+   * \returns true if the application is paused
+   */
+
+  /*
+  Prop: paused
+
+  This is the pause state of the application. This will be true if the
+  application has been paused during playback. It will be false if not
+  paused or stopped.
+
+  Type:
+    boolean
+  */
+  readonly attribute boolean paused;
+
+  /**
+   * \brief The repeat state for playback
+   *
+   * The repeat state for playback. This can be one of three values:
+   *   0 - no repeat
+   *   1 - repeat the current track forever
+   *   2 - repeat the current playlist forever
+   */
+
+  /*
+  Prop: repeat
+
+  The repeat state for playback. This can be one of three values:
+    0 - no repeat
+    1 - repeat the current track forever
+    2 - repeat the current playlist forever
+
+  Type:
+    integer
+  */
+  readonly attribute long long repeat;
+
+  /**
+   * \brief Shuffle state for playback
+   *
+   * This will be true if shuffle is enabled, false if not.
+   */
+
+  /*
+  Prop: shuffle
+
+  The shuffle state for playback. This will be true if shuffle is enabled,
+  false otherwise.
+
+  Type:
+    boolean
+  */
+  readonly attribute boolean shuffle;
+
+  /**
+   * \brief The location of playback within the current media, in milliseconds.
+   */
+
+  /*
+  Prop: position
+
+  The location of playback within the current media, in milliseconds. The position
+  will be 0 when there is no media currently playing.
+
+  Type:
+    integer
+  */
+  attribute long long position;
+
+  /**
+   * \brief The duration of the current media, in milliseconds.
+   */
+
+  /*
+  Prop: duration
+
+  The duration of the current media, in milliseconds. The duration may
+  be 0 if it cannot be determined or there is no media currently playing.
+
+  Type:
+    integer
+  */
+  readonly attribute unsigned long long duration;
+
+  /**
+   * \brief The volume on a range from 0 to 255
+   */
+
+  /*
+  Prop: volume
+
+  The volume of the application on a range from 0 to 255.
+
+  Type:
+    integer
+  */
+  readonly attribute long long volume;
+
+  /**
+   * \brief The mute state.
+   *
+   * True if muted or the volume is set to 0, false otherwise
+   */
+
+  /*
+  Prop: mute
+
+    True if muted or the volume is set to 0, false otherwise
+
+  Type:
+    boolean
+  */
+  readonly attribute boolean mute;
+
+  /**
+   * \brief The collection of commands associated with the current page.
+   */
+
+  /*
+  Prop: commands
+
+  The collection of <Commands> associated with the current page.
+
+  Type:
+    <Commands>
+  */
+  readonly attribute sbIRemoteCommands commands;
+
+  /**
+   * \brief The current web playlist
+   */
+
+  /*
+  Prop: webPlaylist
+
+  The current <WebPlaylist> object associated with this <Player> instance.
+
+  Type:
+    <WebPlaylist>
+  */
+  readonly attribute sbIRemoteWebPlaylist webPlaylist;
+
+/*
+  Prop: mainLibrary
+
+  The main <Library> for Nightingale. This will contain all the <MediaItem>s the
+  user has on their system.
+
+  Type: 
+    <Library>
+
+  Example:
+    (start code)
+    var mainLib = nightingale.mainLibrary;
+    (end code)
+
+  See Also:
+    <webLibrary>
+    <libraries()>
+    <siteLibrary>
+  */
+  readonly attribute sbIRemoteLibrary mainLibrary;
+
+  /*
+  Prop: webLibrary
+
+  The web <Library> for Nightingale. This will contain all the <MediaItem>s that
+  have been discovered on web pages the user has visited.
+
+  Type: 
+    <Library>
+
+  Example:
+    (start code)
+    var webLib = nightingale.webLibrary;
+    (end code)
+
+  See Also:
+    <mainLibrary>
+    <libraries()>
+    <siteLibrary>
+  */
+  readonly attribute sbIRemoteLibrary webLibrary;
+
+  /*
+  Prop: siteLibrary
+
+  Access to a sitelibrary for the current scope (domain and path).  If you wish to
+  change the scope, use <setSiteScope()>.
+
+  If a library was already created for the scope, the existing library will be returned.
+  
+  Type:
+    <Library>
+
+  Example:
+    (start code)
+    //Access your site library
+    var library = nightingale.siteLibrary;
+    (end)
+  
+  See Also:
+    <setSiteScope()>
+  */
+  readonly attribute sbIRemoteLibrary siteLibrary;
+
+
+  /**
+   * \brief 
+   */
+  /*
+  Prop: downloadMediaList
+
+  This <MediaList> is the list that gets all the <MediaItems>s that get
+  added throught the 3 download methods. If the user has enabled downloading,
+  tracks can be added to this playlist directly in order to begin downloads.
+
+  Type:
+    <MediaList>
+
+  Example:
+    (start code)
+    // Get the download media list
+    var dlList = nightingale.downloadMediaList;
+    (end)
+  
+  See Also:
+    <downloadItem()>
+    <downloadList()>
+    <downloadSelected()>
+  */
+
+  readonly attribute sbIRemoteMediaList downloadMediaList;
+
+  /*
+  Group: Methods
+  */
+
+  /**
+   * \brief Bind an observer to get called on changes to Nightingale metadata/state
+   */
+  /*
+  Method: addListener()
+
+  Add a listener to get notified of changes to Nightingale metadata and state.
+
+  Prototype:
+    addListener(String key, Object listener)
+
+  Parameters:
+    key - The key for the metadata or state value.
+    listener - The listener that will get called when the metadata or state value specified by the key changes.
+
+  Example:
+    (start code)
+    //Make a listener object. The listener must always have at least this function.
+
+    //You may add any number of functions and properties to it for your own use.
+
+    //Make sure to save this object somewhere so you may unregister it when you are done
+    //listening for changes.
+    var listener = {
+      observe: function(key, value) {
+        // Key is the metadata key
+        // Value is the current value of the metadata for the registered key
+      }
+    }
+
+    var key = "metadata.genre";
+
+    nightingale.addListener(key, listener);
+
+    ...
+
+    nightingale.removeListener(key, listener);
+    (end)
+
+  See Also:
+    <removeListener()>
+
+    Visit <Listener Topics> for a list of keys for metadata and state.
+
+    Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
+  */
+  void addListener( in AString aKey,
+                    in sbIRemoteObserver aObserver );
+
+  /**
+   * \brief Remove an observer from the metadata key
+   */
+
+  /*
+  Method: removeListener()
+
+  Remove a listener that was previously added using <addListener>.
+
+  Prototype:
+    removeListener(String key, Object listener)
+
+  Parameters:
+    key - The key for the metadata or state value.
+    listener - The listener that was previously added using <addListener>.
+
+  Example:
+    (start code)
+    //This example assumes there was a listener object named 'listener' that was previously
+    //created and added using the key 'metadata.genre'.
+
+    ...
+
+    var key = "metadata.genre";
+    nightingale.removeListener(key, listener);
+    (end)
+
+  See Also:
+    <addListener()>
+  */
+  void removeListener( in AString aKey,
+                       in sbIRemoteObserver aObserver );
+
+  /**
+   * \brief Download the item passed in
+   */
+  /*
+  Method: downloadItem()
+
+  Download a <MediaItem>. <MediaList>s and <Library>ies not allowed.
+
+  Prototype:
+    downloadItem(<MediaItem> mediaItem)
+
+  Parameters:
+    mediaItem - The <MediaItem> to download.
+
+  Example:
+    (start code)
+    //Create or get library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Create the mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Download the mediaitem to the users local machine.
+    nightingale.downloadItem(mediaItem);
+    (end)
+
+  See Also:
+    <downloadList()>
+    <downloadSelected()>
+  */
+  void downloadItem( in sbIMediaItem aItem );
+
+  /**
+   * \brief Download all items in a MediaList
+   */
+
+  /*
+  Method: downloadList()
+
+  Download a <MediaList>. As <Library>ies are <MediaList>s they are
+  allowed here.
+
+  Prototype:
+    downloadList(<MediaList> mediaList)
+
+  Parameters:
+    mediaList - The <MediaList> to download.
+
+  Example:
+    (start code)
+    //Create or get site library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Create mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create medialist to download.
+    var mediaList = library.createSimpleMediaList("Name of List");
+
+    //Add item to medialist.
+    mediaList.add(mediaItem);
+
+    //Download the medialist.
+    nightingale.downloadList(mediaList);
+    (end)
+
+  See Also:
+    <downloadItem()>
+    <downloadSelected()>
+  */
+  void downloadList( in sbIRemoteMediaList aList );
+
+  /**
+   * \brief Download only the selected elements from a WebPlaylist
+   */
+
+  /*
+  Method: downloadSelected()
+
+  Download the <MediaItems> selected by the user in a <WebPlaylist>.
+
+  Prototype:
+    downloadSelected(<WebPlaylist> webPlaylist)
+
+  Parameters:
+    webPlaylist - The <WebPlaylist> from which to download the selected <MediaItems>.
+
+  Example:
+    (start code)
+    //Download the mediaitems currently selected by the user in
+    //the current webplaylist.
+
+    nightingale.downloadSelected(nightingale.webPlaylist);
+    (end)
+
+  See Also:
+    <downloadItem()>
+    <downloadList()>
+  */
+  void downloadSelected( in sbIRemoteWebPlaylist aWebPlaylist );
+
+  /**
+   * \brief Begin playback at the current location
+   */
+
+  /*
+  Method: play()
+
+  Prototype:
+    play()
+
+  Begin playback at the current location in the <WebPlaylist>.
+
+  Example:
+    (start code)
+    nightingale.play();
+    (end)
+
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
+  See Also:
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
+  */
+  void play();
+
+  /*
+  Method: playMediaList()
+
+  Begin playback of a <MediaList> at the specified index in the list.
+
+  Prototype:
+    playMediaList(<MediaList> mediaList, Number index)
+
+  Parameters:
+    mediaList - The <MediaList> to play.
+    index - Where to start playing in the list. Index starts at 0.
+
+  Example:
+    (start code)
+    //Nightingale object implements Player.
+    //Play the media list, starting with item at index 2.
+
+    player.playMediaList(mediaList, 2);
+    (end)
+
+  Note:
+    Metadata for <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
+  See Also:
+    <play()>
+    <playURL()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
+  */
+  void playMediaList( in sbIRemoteMediaList aList,
+                      in PRInt32 aIndex );
+
+  /**
+   * \brief Play an media file by URL
+   */
+
+  /*
+  Method: playURL()
+
+  Begin playback of a URL.
+
+  Prototype:
+    playURL(String url)
+
+  Parameters:
+    url - The URL to play.
+
+  Example:
+    (start code)
+    nightingale.playURL("http://path/to/item.mp3");
+    (end)
+
+  Note:
+    Metadata for the <MediaItem> associated with this URL may get updated 
+    and overwritten during playback. See <Metadata Updates> for more details 
+    about cases where metadata may get updated.
+
+  See Also:
+    <play()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
+    <next()>
+  */
+  void playURL(in AString aURL);
+
+  /**
+   * \brief Stop playback. Sets position to beginning.
+   */
+
+  /*
+  Method: stop()
+
+  Stop playback.
+
+  Prototype:
+    stop()
+
+  Example:
+    (start code)
+     nightingale.stop();
+    (end)
+
+  See Also:
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <previous()>
+    <next()>
+  */
+  void stop();
+
+  /**
+   * \brief Stop playback, leaves position at current location.
+   */
+
+  /*
+  Method: pause()
+
+  Pause playback.
+
+  Prototype:
+    pause()
+
+  Example:
+    (start code)
+    nightingale.pause();
+    (end)
+
+  See Also:
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <stop()>
+    <previous()>
+    <next()>
+  */
+  void pause();
+
+  /**
+   * \brief Skip to the next track and begin playing
+   */
+
+  /*
+  Method: next()
+
+  Skip to the next item, if there is one, and begin playing.
+
+  If there is no next item playback will continue until the
+  end of the current item.
+
+  Prototype:
+    next()
+
+  Example:
+    (start code)
+    nightingale.next();
+    (end)
+
+  See Also:
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <previous()>
+  */
+  void next();
+
+  /**
+   * \brief Skip to the previous track and begin playing
+   */
+
+  /*
+  Method: previous()
+
+  Skip to the previous item, if there is one, and begin playing.
+
+  If there is no previous item playback will continue until the of the current item.
+
+  Prototype:
+    previous()
+
+  Example:
+    (start code)
+    nightingale.previous();
+    (end)
+
+  See Also:
+    <play()>
+    <playURL()>
+    <playMediaList()>
+    <pause()>
+    <stop()>
+    <next()>
+  */
+  void previous();
+
+  /*
+  Method: setSiteScope()
+  
+  Set the scope for which to access site-specific privilegs such as the <siteLibrary>.
+  By default, the page's current domain and path is used.
+  Use an empty string for the domain and the path to use the default values.
+  
+  Note:
+    This may not be called more than once, and not after accessing the <siteLibrary>.
+    Accessing <siteLibrary> without calling <setSiteScope()> defaults to the most
+    restrictive scope possible (i.e. full host name, deepest path).
+  
+  Prototype:
+    setSiteScope(String domain, String path)
+  
+  Parameters:
+    domain - The domain name of the library. This may be an empty string.
+    path - The path within the domain for the library. This may be an empty string.
+
+  Example:
+    (start code)
+    // sets the site scope to TLD+1 (will throw unless the page was on *.example.com)
+    nightingale.setSiteScope("example.com", "");
+    // sets the site scope to default values
+    // (will throw because it has already been set once)
+    nightingale.setSiteScope("", "");
+    (end)
+  
+  See Also:
+    <siteLibrary>
+  */
+  void setSiteScope(in AUTF8String aDomain, in AUTF8String aPath);
+
+  /**
+   * \brief Get the site scope.
+   */
+  nsIURI getSiteScope();
+
+  /*
+  Method: libraries()
+
+  Access to any library in the system via path or 'magic' keyword.
+
+  Prototype:
+    libraries(String libraryID)
+
+  Parameters:
+    libraryID - Library ID you wish to access, this can be a path or 'magic' keyword.
+                Currently supported keywords are "main" and "web".
+
+  Example:
+    (start code)
+    var libraryID = "web";
+    var library = nightingale.libraries(libraryID);
+    (end)
+
+  See Also:
+    <siteLibrary>
+  */
+  sbIRemoteLibrary libraries(in AString aLibraryID);
+
+  /**
+   * \brief Fires the event to the webpage
+   */
+  [noscript] void fireEventToContent(in AString aClass, in AString aType);
+
+  /**
+   * \brief Fires the media item status event to the webpage
+   */
+  [noscript] void fireMediaItemStatusEventToContent(in AString aClass,
+                                                    in AString aType,
+                                                    in sbIMediaItem aMediaItem,
+                                                    in long aStatus);
+
+  /**
+   * \brief Forces the webplaylist to rescan it's commands
+   */
+  [noscript] void onCommandsChanged();
+
+  /**
+   * \brief Check if the code has access to a category
+   */
+  /*
+  Method: hasAccess()
+
+  Check if the code has access to a category.
+
+  Prototype:
+    boolean hasAccess( String Category )
+
+  Parameters:
+    Category - The category to check for access to.  See <Security> for a list
+               of valid categories.
+
+  Example:
+    (start code)
+    ...
+    if (nightingale.hasAccess('Read Current'))
+    {
+      var artist = nightingale.currentArtist;
+    }
+    ...
+    (end)
+  */
+  boolean hasAccess( in AString aRemotePermCataegory );
+
+  /* Group: Property Creation
+
+  Properties define the list of available columns, as well as provide a 
+  means of storing data about a <MediaItem>. This section defines and
+  explains the parameters for the various property creation methods below.
+
+  Common Parameters:
+    ID - A unique text id of the new property. Does not need to be in URL format
+         but that is a recommended format for ensuring uniqueness.
+    displayName - The displayed name of the property.
+    readOnly - If true this property's value can NOT be edited by the user.
+    viewable - If true this property will be viewable in all locations of Nightingale
+               including the main library.
+    nullSort - The type of null sorting desired. When sorted will empty values
+               sort small or large; see below for more detail.
+
+  Specific Parameters: 
+    timeType - Determines the formatting of the datetime string. Present only in
+               <createDateTimeProperty()>.
+    buttonLabel - The text displayed on a button. Present only in
+               <createButtonProperty()> and <createDownloadButtonProperty()>. For
+               standard button properties the absence of this parameter at property
+               creation allows buttons to have different text on them by setting
+               the value of the property on various <MediaItem>s. That is not
+               possible with download buttons as the value determines the state
+               and therefore the display of the button. The text for download
+               buttons MUST be set at creation or the button will not have any
+               and will not draw properly.
+
+  nullSort values:
+    0 - Null values are infinitely small.  This is the default.
+    1 - Null values are infinitely large.
+    2 - Null values are always first (regardless of sort direction)
+    3 - Null values are always last
+
+  timeType values:
+   -1 - Unintialized
+    0 - 2007-03-28 , in localized format
+    1 - HH:mm:ss.ms, in localized format. Limited to 24 hour days.
+    2 - Long date format, 2007-03-28 12:33:01 , no milliseconds.
+    3 - Duration, represented in HH:mm:ss.ms, in localized format. May exceed 24 hours
+    4 - Timestamp format, respects unix time, microsecond format. Also internal
+        storage type.
+
+  See:
+    <createTextProperty()>, <createDateTimeProperty()>, <createURIProperty()>,
+    <createNumberProperty()>, <createImageProperty()>, <createRatingsProperty()>,
+    <createButtonProperty()>, <createDownloadButtonProperty()>
+  */
+  
+  /*
+  Func: createTextProperty()
+
+  Add a text property to the system that will be available for all media items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createTextProperty ( in AString ID,
+                         in AString displayName,
+                         [optional] in boolean readOnly = false,
+                         [optional] in boolean viewable = false,
+                         [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that indicates what store this item is from.
+    nightingale.createTextProperty("http://example.com/Store",
+                                "Store", true, false, 0);
+
+    // Add the store name to the media item
+    mediaitem.setProperty("Store", "Amazon");
+    (end)
+
+  See Also:
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createTextProperty( in AString ID,
+                           in AString displayName,
+                           [optional] in boolean readOnly,
+                           [optional] in boolean viewable,
+                           [optional] in unsigned long nullSort );
+
+  /*
+  Func: createDateTimeProperty()
+
+  Add a date time property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>.
+  This property accept values for time in microseconds, 5 minutes 52 seconds
+  would be a value of 352000000. For the date based time types the time is the
+  number of microseconds from the linux epoch: 1 January 1970 00:00:00 UTC.
+
+  Prototype:
+    createDateTimeProperty ( in AString ID,
+                             in AString displayName,
+                             in PRInt32 timeType,
+                             [optional] in boolean readOnly = false,
+                             [optional] in boolean viewable = false,
+                             [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property of when this item was added to the store
+    nightingale.createDateTimeProperty("http://example.com/DateAdded",
+                                    "Added", true, false, 0);
+
+    // Add the added date to the media item
+    mediaitem.setProperty("DateAdded", "4948575738");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createDateTimeProperty( in AString ID,
+                               in AString displayName,
+                               in PRInt32 timeType,
+                               [optional] in boolean readOnly,
+                               [optional] in boolean viewable,
+                               [optional] in unsigned long nullSort );
+
+  /*
+  Func: createURIProperty()
+
+  Add a URI property to the system that will be available for all media items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createURIProperty ( in AString ID,
+                        in AString displayName,
+                        [optional] in boolean readOnly = false,
+                        [optional] in boolean viewable = false,
+                        [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that links to the store
+    nightingale.createURIProperty("http://example.com/StoreLink",
+                               "Store", true, false, 0);
+
+    // Add a url to the media item
+    mediaitem.setProperty("StoreLink", "http://www.store.com/item.php?id=1");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createURIProperty( in AString ID,
+                          in AString displayName,
+                          [optional] in boolean readOnly,
+                          [optional] in boolean viewable,
+                          [optional] in unsigned long nullSort );
+
+  /*
+  Func: createNumberProperty()
+
+  Add a number property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createNumberProperty ( in AString ID,
+                           in AString displayName,
+                           [optional] in boolean readOnly = false,
+                           [optional] in boolean viewable = false,
+                           [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that shows the price of this item
+    nightingale.createNumberProperty("http://example.com/Price", "Price", true);
+
+    // Add a price to the media item
+    mediaitem.setProperty("Price", "0.99");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createNumberProperty( in AString ID,
+                             in AString displayName,
+                             [optional] in boolean readOnly,
+                             [optional] in boolean viewable,
+                             [optional] in unsigned long nullSort );
+
+  /*
+  Func: createImageProperty()
+
+  Add an image property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createImageProperty ( in AString ID,
+                          in AString displayName,
+                          [optional] in boolean readOnly = false,
+                          [optional] in boolean viewable = false,
+                          [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that shows the logo of the store this item is from
+    nightingale.createImageProperty("http://example.com/Logo",
+                                 "Logo", true, false, 0);
+
+    // Add a logo to the media item
+    mediaitem.setProperty("Logo", "http://www.domain.com/image.jpg");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createImageProperty( in AString ID,
+                            in AString displayName,
+                            [optional] in boolean readOnly,
+                            [optional] in boolean viewable,
+                            [optional] in unsigned long nullSort );
+
+  /*
+  Func: createRatingsProperty()
+
+  Add a ratings property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>.
+
+  Prototype:
+    createRatingsProperty ( in AString ID,
+                            in AString displayName,
+                            [optional] in boolean readOnly = false,
+                            [optional] in boolean viewable = false,
+                            [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a  property that shows what the average rating for this item is
+    nightingale.createRatingsProperty("http://example.com/StoreRatings", "Ratings");
+
+    // Add a share button to the media item
+    mediaitem.setProperty("StoreRatings", "2");
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createRatingsProperty( in AString ID,
+                              in AString displayName,
+                              [optional] in boolean readOnly,
+                              [optional] in boolean viewable,
+                              [optional] in unsigned long nullSort );
+
+  /*
+  Func: createButtonProperty()
+
+  Add a button property to the system that will be available for all media
+  items.
+  Properties define the set of possible columns available to the <WebPlaylist>
+
+  Prototype:
+    createButtonProperty ( in AString ID,
+                           in AString displayName,
+                           in AString buttonLabel,
+                           [optional] in boolean readOnly = false,
+                           [optional] in boolean viewable = false,
+                           [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that allows the user to share this item with others
+    nightingale.createButtonProperty("http://example.com/ShareItem",
+                                  "Share", "Share Me", true, false, 0);
+
+    // Add a share button to the media item
+    mediaitem.setProperty("ShareItem", "Share me");
+    (end)
+
+  See Also:
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+    <createDownloadButtonProperty()>
+  */
+  void createButtonProperty( in AString ID,
+                             in AString displayName,
+                             in AString buttonLabel,
+                             [optional] in boolean readOnly,
+                             [optional] in boolean viewable,
+                             [optional] in unsigned long nullSort );
+
+  /*
+  Func: createDownloadButtonProperty()
+
+  Add a download button property to the system that will be available for all
+  media items.
+  Properties define the set of possible columns available to the <WebPlaylist>.
+  The value to set on this button is a triple field value that includes the
+  size of the object and the amount downloaded. The fields are separated by
+  '|' characters. The format is:
+ (start code)
+ <mode>|<total size>|<current size>
+ (end)
+
+  Prototype:
+    createDownloadButtonProperty ( in AString ID,
+                                   in AString displayName,
+                                   in AString buttonLabel,
+                                   [optional] in boolean readOnly = false,
+                                   [optional] in boolean viewable = false,
+                                   [optional] in unsigned long nullSort = 0 )
+
+  Parameters:
+    See <Property Creation> for a complete list of parameter types and their values.
+
+  Download Mode Types:
+    0 - none
+    1 - new
+    2 - starting
+    3 - downloading
+    4 - paused
+    5 - complete
+
+  Example:
+    (start code)
+    //This example assumes you already have created
+    //a mediaitem and assigned it to mediaItem.
+
+    // Create a property that will allow the user to get the item (Download)
+    nightingale.createDownloadButtonProperty("http://example.com/DownlodButton",
+                                          "Download", "Get", true, false, 0);
+
+    // Add a download button to the media item
+    mediaitem.setProperty("DownloadButton", "1|0|0");
+
+    (end)
+
+  See Also:
+    <createTextProperty()>
+    <createDateTimeProperty()>
+    <createURIProperty()>
+    <createNumberProperty()>
+    <createImageProperty()>
+    <createRatingsProperty()>
+    <createButtonProperty()>
+  */
+  void createDownloadButtonProperty( in AString ID,
+                                     in AString displayName,
+                                     in AString buttonLabel,
+                                     [optional] in boolean readOnly,
+                                     [optional] in boolean viewable,
+                                     [optional] in unsigned long nullSort );
+
+};

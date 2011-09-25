@@ -1,0 +1,80 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+#include "nsISupports.idl"
+#include "sbITranscodeJob.idl"
+
+interface nsIArray;
+interface sbIMediaItem;
+
+/**
+* \interface sbITranscodeManager sbITranscodeManager.h
+* \brief The manager from which to request a transcoding job, transcoding
+*        profiles, etc.
+*
+* \sa sbITranscodeJob
+*/
+[scriptable, uuid(db1af2f9-d644-46ec-8561-3e8c2af97172)]
+interface sbITranscodeManager : nsISupports
+{
+  /**
+  * \brief Request a transcoding job
+  *
+  * Selects an appropriate transcoding handler to transcode this media item.
+  * The highest-voting implementor of the interface will be selected.
+  *
+  * The returned job will not be configured - the caller is responsible for
+  * setting the source and destination URIs, encoding profile, etc.
+  *
+  * \param aMediaItem The media item to transcode.
+  * \return The handler to use, or NULL.
+  */
+  nsISupports getTranscoderForMediaItem(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Get an array of all the sbITranscodeProfiles available and usable.
+   *
+   * \param aType Type of transcode profile to return. Use one of the
+   *              TRANSCODE_TYPE_* constants from sbITranscodeProfile
+   */
+  nsIArray getTranscodeProfiles(in unsigned long aType);
+
+};
+
+%{C++
+
+#define NIGHTINGALE_TRANSCODEMANAGER_CONTRACTID               \
+  "@getnightingale.com/Nightingale/Mediacore/TranscodeManager;1"
+#define NIGHTINGALE_TRANSCODEMANAGER_CLASSNAME                \
+  "Nightingale Transcode Manager Interface"
+#define NIGHTINGALE_TRANSCODEMANAGER_CID                      \
+{ /* 5aa13c5f-2ee9-45f4-95ea-53d985693baf */               \
+  0x5aa13c5f,                                              \
+  0x2ee9,                                                  \
+  0x45f4,                                                  \
+  {0x95, 0xea, 0x53, 0xd9, 0x85, 0x69, 0x3b, 0xaf}         \
+}
+
+%}C++
+

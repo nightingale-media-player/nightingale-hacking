@@ -1,0 +1,56 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIInputStream;
+
+/**
+ * Forward declaration of the interface you will want to implement to do work
+ * \@SEE sbIiTunesXMLParserListener
+ */
+interface sbIiTunesXMLParserListener;
+
+/**
+ * Interface that provides access to the the parser for the iTunes XML file
+ */
+[scriptable, uuid(656dc264-1dd2-11b2-9454-f3afd4b63478)]
+interface sbIiTunesXMLParser : nsISupports {
+  /**
+   * Initiates the parsing of the file, calling methods on listener as it goes.
+   * \param aiTunesXMLFilePath Path of XML file to process
+   * \param aListener listener to call as we find interesting bits
+   */
+  void parse(in nsIInputStream aiTunesXMLInputStream, 
+             in sbIiTunesXMLParserListener aListener);
+  /**
+   * Cleans up resources in use by the parser. Calling this isn't required, but
+   * highly encouraged.
+   */
+  void finalize();
+};

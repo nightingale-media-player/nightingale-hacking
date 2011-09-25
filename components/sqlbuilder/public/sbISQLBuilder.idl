@@ -1,0 +1,492 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbISQLBuilder.idl
+ * \brief Definition of the sbISQLBuilder interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface sbISQLBuilderCriterion;
+interface sbISQLBuilderCriterionIn;
+interface sbISQLSelectBuilder;
+
+/**
+* \interface sbISQLBuilder
+* \brief Base interface for SQL building components
+*
+* Components implementing this interface are used to build SQL string.
+* The interface is inspired by Squiggle:
+* http://joe.truemesh.com/squiggle/javadoc/index.html
+*/
+[scriptable, uuid(c214b05b-0aa8-4bf9-aa0f-a1b1ff646539)]
+interface sbISQLBuilder : nsISupports
+{
+  const unsigned long MATCH_EQUALS       = 0;
+  const unsigned long MATCH_NOTEQUALS    = 1;
+  const unsigned long MATCH_GREATER      = 2;
+  const unsigned long MATCH_GREATEREQUAL = 3;
+  const unsigned long MATCH_LESS         = 4;
+  const unsigned long MATCH_LESSEQUAL    = 5;
+  const unsigned long MATCH_LIKE         = 6;
+  const unsigned long MATCH_NOTLIKE      = 7;
+  const unsigned long MATCH_MATCH        = 8;
+
+  /**
+   * \brief Value for the limit clause
+   */
+  attribute long limit;
+
+  /**
+   * \brief Is the limit clause a parameter?
+   */
+  attribute boolean limitIsParameter;
+
+  /**
+   * \brief Value for the offset clause
+   */
+  attribute long offset;
+
+  /**
+   * \brief Is the offset clause a parameter?
+   */
+  attribute boolean offsetIsParameter;
+
+  const unsigned long JOIN_INNER      = 0;
+  const unsigned long JOIN_LEFT       = 1;
+  const unsigned long JOIN_LEFT_OUTER = 2;
+
+  /**
+   * \brief Add a join to the query
+   * \param aJoinType Join type, must be one of the JOIN constant values
+   * \param aJoinedTableName Table name of the table to join
+   * \param aJoinedTableAlias Alias to give the joined table, null for none
+   * \param aJoinedColumnName Column from joined table to use in join
+   *        expression
+   * \param aJoinToTableName Table name of the table to join to
+   * \param aJoinToColumnName Column from the joined to table to use in join
+   *        expression
+   */
+  void addJoin(in unsigned long aJoinType,
+               in AString aJoinedTableName,
+               in AString aJoinedTableAlias,
+               in AString aJoinedColumnName,
+               in AString aJoinToTableName,
+               in AString aJoinToColumnName);
+
+  /**
+   * \brief Add a join to the query
+   * \param aJoinType Join type, must be one of the JOIN constant values
+   * \param aJoinedTableName Table name of the table to join
+   * \param aJoinedTableAlias Alias to give the joined table, null for none
+   * \param aJoinedColumnName Column from joined table to use in join
+   *        expression
+   * \param aJoinToTableName Table name of the table to join to
+   * \param aJoinToColumnName Column from the joined to table to use in join
+   *        expression
+   * \param aRequiresFromTableIndexHint This will attempt to add a hint to
+   *        the join statement so that sqlite uses the correct index.
+   * \param aRequiresToTableIndexHint This will attempt to add a hint to 
+   *        the join statement so that sqlite uses the correct index.
+   * \note  Do not use this method unless you know _exactly_ why you are using it.
+   *        Attempting to add a hint for index use can break queries or make them
+   *        extremely slow.
+   */
+  void addJoinWithIndexHint(in unsigned long aJoinType,
+                            in AString aJoinedTableName,
+                            in AString aJoinedTableAlias,
+                            in AString aJoinedColumnName,
+                            in AString aJoinToTableName,
+                            in AString aJoinToColumnName,
+                            in boolean aRequiresFromTableIndexHint,
+                            in boolean aRequiresToTableIndexHint);
+
+  /**
+   * \brief Add a subquery join join to the query
+   * \param aJoinType Join type, must be one of the JOIN constant values
+   * \param aJoinedSubquery Select query to be used as the subquery
+   * \param aJoinedTableAlias Alias to give the joined subquery, null for none
+   * \param aJoinedColumnName Column from joined subquery to use in join
+   *        expression
+   * \param aJoinToTableName Table name of the table to join to
+   * \param aJoinToColumnName Column from the joined to table to use in join
+   *        expression
+   */
+  void addSubqueryJoin(in unsigned long aJoinType,
+                       in sbISQLSelectBuilder aJoinedSubquery,
+                       in AString aJoinedTableAlias,
+                       in AString aJoinedColumnName,
+                       in AString aJoinToTableName,
+                       in AString aJoinToColumnName);
+
+  /**
+   * \brief Add a join to the query with a critera object specifcying the join
+   *        constraints
+   * \param aJoinType Join type, must be one of the JOIN constant values
+   * \param aJoinedTableName Table name of the table to join
+   * \param aJoinedTableAlias Alias to give the joined table, null for none
+   * \param aCriterion Criterion of the join constraints
+   */
+  void addJoinWithCriterion(in unsigned long aJoinType,
+                            in AString aJoinedTableName,
+                            in AString aJoinedTableAlias,
+                            in sbISQLBuilderCriterion aCriterion);
+
+  /**
+   * \brief Add a subquery to the from clause
+   * \param aSubquery Query to add
+   * \param aAlias Alias to give the subquery, null for none
+   */
+  void addSubquery(in sbISQLSelectBuilder aSubquery,
+                   in AString aAlias);
+
+  /**
+   * \brief Clears out query configuration to this instance can be reused
+   */
+  void reset();
+
+  /**
+   * \brief Return the generated SQL statement for the query
+   * \return The generated SQL statement
+   */
+  AString toString();
+};
+
+/**
+* \interface sbISQLWhereBuilder
+* \brief Interface for building WHERE expressions
+*/
+[scriptable, uuid(7a35ea83-e75f-4299-935c-9a678e74c13f)]
+interface sbISQLWhereBuilder : sbISQLBuilder
+{
+  /**
+   * \brief Add a criteria constraint to the query
+   * \param aCriterion The Criterion to add
+   */
+  void addCriterion(in sbISQLBuilderCriterion aCriterion);
+
+  /**
+   * \brief Remve a criteria constraint from the query
+   * \param aCriterion The Criterion to remove
+   */
+  void removeCriterion(in sbISQLBuilderCriterion aCriterion);
+
+  /**
+   * \brief Create a match criterion with an AString datatype
+   * \param aTableName The table name the column in the criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type, must be one of the MATCH
+   *        constant values
+   * \param aValue The AString value to match agains
+   */
+  sbISQLBuilderCriterion createMatchCriterionString(in AString aTableName,
+                                                    in AString aSrcColumnName,
+                                                    in unsigned long aMatchType,
+                                                    in AString aValue);
+
+  sbISQLBuilderCriterion createMatchCriterionBetweenString(in AString aTableName,
+                                                           in AString aSrcColumnName,
+                                                           in AString aLeftValue,
+                                                           in AString aRightValue);
+
+  sbISQLBuilderCriterion createMatchCriterionNotBetweenString(in AString aTableName,
+                                                              in AString aSrcColumnName,
+                                                              in AString aLeftValue,
+                                                              in AString aRightValue);
+
+  /**
+   * \brief Create a match criterion with an long datatype
+   * \param aTableName The table name the column in the criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type, must be one of the MATCH
+   *        constant values
+   * \param aValue The long value to match agains
+   */
+  sbISQLBuilderCriterion createMatchCriterionLong(in AString aTableName,
+                                                  in AString aSrcColumnName,
+                                                  in unsigned long aMatchType,
+                                                  in long aValue);
+
+  /**
+   * \brief Create a match criterion that tests against the null value
+   * \param aTableName The table name the column in the Criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type, must be either MATCH_EQUALS or
+   *        MATCH_NOTEQUALS
+   */
+  sbISQLBuilderCriterion createMatchCriterionNull(in AString aTableName,
+                                                  in AString aSrcColumnName,
+                                                  in unsigned long aMatchType);
+
+  /**
+   * \brief Create a match criterion that tests against a table column
+   * \param aLeftTableName The table name on the left side of the match
+   * \param aLeftColumnName The column name on the right side of the match
+   * \param aMatchType The criterion match type
+   * \param aRightTableName The table name on the left side of the match
+   * \param aRightColumnName The column name on the right side of the match
+   */
+  sbISQLBuilderCriterion createMatchCriterionTable(in AString aLeftTableName,
+                                                   in AString aLeftColumnName,
+                                                   in unsigned long aMatchType,
+                                                   in AString aRightTableName,
+                                                   in AString aRightColumnName);
+
+  /**
+   * \brief Create a match criterion using the IN() operator
+   * \param aTableName The table name the column in the Criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   */
+  sbISQLBuilderCriterionIn createMatchCriterionIn(in AString aTableName,
+                                                  in AString aSrcColumnName);
+
+  /**
+   * \brief Create a match criterion that tests against a parameter placeholder
+   * \param aTableName The table name the column in the Criterion belongs to
+   * \param aSrcColumnName The name the column to use in the criterion
+   * \param aMatchType The criterion match type
+   */
+  sbISQLBuilderCriterion createMatchCriterionParameter(in AString aTableName,
+                                                       in AString aSrcColumnName,
+                                                       in unsigned long aMatchType);
+  /**
+   * \brief Create a match criterion that is the logical AND of two critera
+   * \param aLeft The left side of the expression
+   * \param aRight The right side of the expression
+   */
+  sbISQLBuilderCriterion createAndCriterion(in sbISQLBuilderCriterion aLeft,
+                                            in sbISQLBuilderCriterion aRight);
+
+  /**
+   * \brief Create a match criterion that is the logical OR of two critera
+   * \param aLeft The left side of the expression
+   * \param aRight The right side of the expression
+   */
+  sbISQLBuilderCriterion createOrCriterion(in sbISQLBuilderCriterion aLeft,
+                                           in sbISQLBuilderCriterion aRight);
+
+
+};
+
+/**
+* \interface sbISQLSelectBuilder
+* \brief Interface for building SELECT statements
+*/
+[scriptable, uuid(b91ae93b-9c1e-427c-a751-5c0c19fcdbc3)]
+interface sbISQLSelectBuilder : sbISQLWhereBuilder
+{
+  /**
+   * \brief The query's base table
+   */
+  attribute AString baseTableName;
+
+  /**
+   * \brief The query's base table's alias
+   */
+  attribute AString baseTableAlias;
+
+  /**
+   * \brief Is the query distinct?
+   */
+  attribute boolean distinct;
+
+  /**
+   * \brief Add a column to the output column list
+   * \param aTableName The table name the column belongs to.  To omit the table
+   *        name qualification, use null.
+   * \param aColumnName The name of the column to add to the list
+   */
+  void addColumn(in AString aTableName,
+                 in AString aColumnName);
+
+  /**
+   * \brief Clears added columns
+   */
+  void clearColumns();
+
+  /**
+   * \brief Add an order clause to the query
+   * \param aTableName Table name the column belongs to
+   * \param aColumnName Name of the column to sort
+   * \param aAscending True if the sort should be ascending
+   */
+  void addOrder(in AString aTableName,
+                in AString aColumnName,
+                in boolean aAscending);
+
+  /**
+   * \brief Add a random order clause to the query
+   * \param aTableName Table name the column belongs to
+   */
+  void addRandomOrder();
+
+  /**
+   * \brief Add an group by clause to the query
+   * \param aTableName Table name the column belongs to
+   * \param aColumnName Name of the column to group on
+   */
+  void addGroupBy(in AString aTableName,
+                  in AString aColumnName);
+
+};
+
+/**
+* \interface sbISQLInsertBuilder
+* \brief Interface for building INSERT statements
+*/
+[scriptable, uuid(8c584d54-2fa1-4965-8345-f1eda5a1e304)]
+interface sbISQLInsertBuilder : sbISQLBuilder
+{
+  /**
+   * \brief Add a column to the insert list
+   * \param aColumnName The name of the column to add to the list
+   */
+  void addColumn(in AString aColumnName);
+
+  /**
+   * \brief Add a string value to the value list
+   * \param aValue String value to add
+   */
+  void addValueString(in AString aValue);
+
+  /**
+   * \brief Add a long value to the value list
+   * \param aValue Long value to add
+   */
+  void addValueLong(in long aValue);
+
+  /**
+   * \brief Add a null to the value list
+   */
+  void addValueNull();
+
+  /**
+   * \brief Add a parameter to the value list
+   */
+  void addValueParameter();
+
+  /**
+   * \brief Add a raw string the value list.  Note that this does not do any
+   *        escaping of the value so please only use this if you know what
+   *        you are doing.
+   */
+  void addValueRaw(in AString aValue);
+
+  /**
+   * \brief Table to insert into
+   */
+  attribute AString intoTableName;
+
+  /**
+   * \brief Select statement to use as the source of data for the insert.
+   *        This can be used in place of the value list.
+   */
+  attribute sbISQLSelectBuilder select;
+};
+
+/**
+ * \interface sbISQLUpdateBuilder
+ * \brief Interface for building UPDATE statements
+ */
+[scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
+interface sbISQLUpdateBuilder : sbISQLWhereBuilder
+{
+  /**
+   * \brief Table to update
+   */
+  attribute AString tableName;
+
+  /**
+   * \brief Add a string assignment to the set clause
+   * \param aColumnName Column to set
+   * \param aValue String value to set the column to
+   */
+  void addAssignmentString(in AString aColumnName,
+                           in AString aValue);
+
+  /**
+   * \brief Add a parameter assignment to the set clause
+   * \param aColumnName Column to set
+   */
+  void addAssignmentParameter(in AString aColumnName);
+};
+
+/**
+ * \interface sbISQLDeleteBuilder
+ * \brief Interface for building DELETE statements
+ */
+[scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
+interface sbISQLDeleteBuilder : sbISQLWhereBuilder
+{
+  /**
+   * \brief Table to delete from
+   */
+  attribute AString tableName;
+};
+
+/**
+* \interface sbISQLBuilderCriterion
+* \brief Interface for SQL critera.  This interface has no public methods as
+*        it is used only as a return type for the critera creation methods.
+*/
+[scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
+interface sbISQLBuilderCriterion : nsISupports
+{
+  [noscript] AString toString();
+};
+
+/**
+* \interface sbISQLBuilderCriterionIn
+* \brief Interface for "in" SQL critera.
+*/
+[scriptable, uuid(51992f09-7b9a-4a91-b708-b4551c25acf9)]
+interface sbISQLBuilderCriterionIn : sbISQLBuilderCriterion
+{
+  /**
+   * \brief Adds a string value to the list of IN criteria
+   * \param aValue String to add to the list
+   */
+  void addString(in AString aValue);
+
+  /**
+   * \brief Adds a long value to the list of IN criteria
+   * \param aValue Long to add to the list
+   */
+  void addLong(in long aValue);
+
+  /**
+   * \brief Adds a subquery to the IN list
+   * \param aSubquery Subquery to add to the list
+   */
+  void addSubquery(in sbISQLSelectBuilder aSubquery);
+
+  /**
+   * \brief Clear In critera list
+   */
+  void clear();
+};
+

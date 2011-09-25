@@ -1,0 +1,85 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbIDownloadDevice.idl
+ *
+ * \brief The IDL for sbIDownloadDevice.
+ */
+
+#include "nsISupports.idl"
+#include "sbIDeviceBase.idl"
+
+interface sbIMediaItem;
+interface sbIMediaList;
+interface nsIFile;
+interface nsISimpleEnumerator;
+
+/**
+ * \interface sbIDownloadDevice
+ *
+ * \brief Nightingale DownloadDevice Interface.
+ *
+ * <TODO:Detail>.
+ *
+ * \sa sbIDeviceBase.idl
+ */
+[scriptable, uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
+interface sbIDownloadDevice : sbIDeviceBase
+{
+  /**
+   * \brief The media list containing items for download.
+   */
+  readonly attribute sbIMediaList downloadMediaList;
+
+  /**
+   * \brief The number of completed download items.
+   */
+  readonly attribute unsigned long completedItemCount;
+
+  /**
+   * \brief Clear all completed items from download device.
+   */
+  void clearCompletedItems();
+};
+
+[scriptable, uuid(28ebcce9-7ce4-4e92-8c23-c0a23d3a3bd4)]
+interface sbIDownloadDeviceHelper : nsISupports
+{
+  /**
+   * These have to be getter methods rather than attributes due to an XPConnect
+   * bug.
+   */
+  sbIMediaList getDownloadMediaList();
+  nsIFile getDownloadFolder();
+  nsIFile getDefaultMusicFolder();
+
+  void downloadItem(in sbIMediaItem aMediaItem);
+
+  void downloadSome(in nsISimpleEnumerator aMediaItems);
+
+  void downloadAll(in sbIMediaList aMediaList);
+};

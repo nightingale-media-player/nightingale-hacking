@@ -1,0 +1,176 @@
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<html>
+  <head>
+  <script>
+// Test all the properties and methods of the remote player object.  Use simple
+// tests to test that things that should be acessible, and try/catch blocks
+// around the things that should not.
+function runTest(tester) {
+
+  const RAPI_VERSION_MAJOR = 1;
+  const RAPI_VERSION_MINOR = 0;
+  
+  const RAPI_VERSION_STRING = RAPI_VERSION_MAJOR + "." + RAPI_VERSION_MINOR;
+  
+  try {
+
+    // access to libraries
+    var siteLib = nightingale.siteLibrary;
+    var mainLib = nightingale.libraries("main");
+    var webLib = nightingale.libraries("web");
+    mainLib = nightingale.mainLibrary;
+    webLib = nightingale.webLibrary;
+
+    // Need the mainpage UI for this one
+    //var webpl = nightingale.webPlaylist;
+
+    // this causes a command refresh which doesn't work without UI
+    //var cmnds = nightingale.commands;
+
+    // api version tests
+    var apiVersionMajor = nightingale.apiVersionMajor;
+    
+    if(apiVersionMajor != RAPI_VERSION_MAJOR) {
+      tester.fail("Major API version doesn't match! Expecting " + 
+                  RAPI_VERSION_MAJOR + " but got " + apiVersionMajor);
+    }
+    
+    var apiVersionMinor = nightingale.apiVersionMinor;
+    
+    if(apiVersionMinor != RAPI_VERSION_MINOR) {
+      tester.fail("Minor API version doesn't match! Expecting " +
+                  RAPI_VERSION_MINOR + " but got " + apiVersionMinor);
+    }
+    
+    var supported = nightingale.supportsVersion(RAPI_VERSION_STRING);
+    if(!supported) {
+      tester.fail("supportsVersion failed, should support version " + 
+                  RAPI_VERSION_STRING + " but claims it doesn't!");
+    }
+
+    var badVersion = RAPI_VERSION_MAJOR + 1;
+    badVersion += "." + RAPI_VERSION_MINOR;
+    
+    supported = nightingale.supportsVersion(badVersion);
+    if(supported) {
+      tester.fail("supportsVersion says we support version " + 
+                  badVersion + " but actual maximum version supported is " + 
+                  RAPI_VERSION_STRING);
+    }
+    
+    badVersion = RAPI_VERSION_MAJOR + "." + (RAPI_VERSION_MINOR + 1);
+    supported = nightingale.supportsVersion(badVersion);
+    
+    if(supported) {
+      tester.fail("supportsVersion says we support version " + 
+                  badVersion + " but actual maximum version supported is " + 
+                  RAPI_VERSION_STRING);
+    }
+
+    // readable properties
+    var junk = nightingale.name;
+    junk = nightingale.currentArtist;
+    junk = nightingale.currentAlbum;
+    junk = nightingale.currentTrack;
+    junk = nightingale.playing;
+    junk = nightingale.paused;
+    junk = nightingale.repeat;
+    junk = nightingale.shuffle;
+    junk = nightingale.position;
+    junk = nightingale.volume;
+    junk = nightingale.mute;
+
+    // listeners
+    var listener = {
+      observe: function(b,c) {
+      }
+    }
+
+    // valid string should work
+    nightingale.addListener("faceplate.playing", listener);
+    nightingale.removeListener("faceplate.playing", listener);
+
+    // invalid string should throw
+    try {
+      nightingale.addListener("foo.bar", listener);
+      tester.fail("did not throw: addListener('foo.bar')");
+    }
+    catch (e) {}
+
+    nightingale.removeListener("foo.bar", listener);
+
+    // downloading - set in test_ file to go to tmpD/remoteapi_test/
+    var item = siteLib.createMediaItem("http://example.com/track.mp3");
+    var list = siteLib.createSimpleMediaList("testRemotePlayer1");
+    list.add(item);
+
+    nightingale.downloadItem(item);
+    nightingale.downloadList(list);
+
+    // Need the mainpage UI for this one
+    // requires a webplaylist
+    //nightingale.downloadSelected(webpl);
+
+    // controls - these need a core to be spun up, or a fake core added.
+    // Need the mainpage UI for this one
+    //nightingale.play();
+    //nightingale.playURL("http://example.com/track2.mp3");
+    //nightingale.pause();
+    //nightingale.stop();
+    //nightingale.next();
+    //nightingale.previous();
+
+    // Test the adding of properties
+    nightingale.createTextProperty("Test_1_Text", "Test_Text", true, true, 0);
+    nightingale.createDateTimeProperty("Test_1_DateTime", "Test_DateTime", true, true, 0);
+    nightingale.createURIProperty("Test_1_URI", "Test_URI", true, true, 0);
+    nightingale.createNumberProperty("Test_1_Number", "Test_Number", true, true, 0);
+    nightingale.createImageProperty("Test_1_Image", "Test_Image", true, true, 0);
+    nightingale.createRatingsProperty("Test_1_Rating", "Test_Rating", true, true, 0);
+    nightingale.createButtonProperty("Test_1_Button", "Test_Button", "Test", true, true, 0);
+    nightingale.createDownloadButtonProperty("Test_1_DownloadButton", "Test_DownloadButton", "Test", true, true, 0);
+
+    // We need to do this to give the web browser persists component a chance
+    // to tidy up, otherwise it will leak
+    tester.sleep(2000);
+  }
+  catch(e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_remoteplayer_page.html</body>
+</html>

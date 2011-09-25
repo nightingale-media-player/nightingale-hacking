@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device storage capacity panel.
+   *
+   *   This widget employs a pop-up panel to provide more detailed information
+   * on the type of media residing on a device.  It is triggered by clicking
+   * on either the legend for a type of media (music/video), or on the capacity
+   * bar corresponding to the type of media.  There should only ever be one of
+   * these per device summary page.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+   <binding id="sb-device-capacity-panel" 
+     extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:panel sbid="capacity-panel">
+        <xul:label sbid="panel-label" />
+      </xul:panel>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        /* Import external services. */
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the device capacity services. */
+        this.DCW.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device capacity services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        var                         jsLoader;
+
+        /* Get the Javascript sub-script loader services. */
+        jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService
+                                (Components.interfaces.mozIJSSubScriptLoader);
+
+        /* Import the device capacity services. */
+        if (typeof(this.DCW) == "undefined") {
+          jsLoader.loadSubScript
+            ("chrome://nightingale/content/scripts/device/deviceCapacityPanel.js",
+             this);
+        }
+      ]]></body></method>
+
+      <!--
+       * openPopup
+       *
+       *   This function passes on the openPopup call to the panel itself
+       -->
+
+      <method name="openPopup">
+        <parameter name="anchor" />
+        <body><![CDATA[
+          this.DCW.openPopup(anchor);
+        ]]></body>
+      </method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device capacity services. */
+        this.DCW.finalize(this);
+        this.DCW.initialize(this);
+        ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the device capacity services. */
+        this.DCW.finalize(this);
+        this.DCW.initialize(this);
+        ]]></handler>
+    </handlers>
+
+
+  </binding>
+
+</bindings>

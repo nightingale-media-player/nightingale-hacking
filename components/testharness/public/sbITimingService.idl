@@ -1,0 +1,85 @@
+                          /*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbITimingService.idl
+ * \brief Definition of the sbITimingService Interface
+ */
+
+#include "nsISupports.idl"
+#include "nsIStringEnumerator.idl"
+
+interface nsIFile;
+
+/**
+ * \interface sbITimingService
+ * \brief An interface for running simple, time based, profiling.
+ */
+[scriptable, uuid(b13a1c2c-6c62-422e-a478-a08f0ff9dbd9)]
+interface sbITimingService : nsISupports
+{
+  /**
+   * \brief Output the results of each timer to standard output
+   *        when the service is shutdown. This is on by default.
+   */
+  attribute boolean enabled;
+
+  /**
+   * \brief Output the results to a log file. This is off by default.
+   *        To enable, simple set this attribute to the log file you 
+   *        wish to use.
+   */
+  attribute nsIFile logFile;
+
+  /**
+   * \brief Start a performance timer.
+   * \param aTimerName A unique name for the performance timer.
+   * \throws NS_ERROR_ALREADY_INITIALIZED if a timer of 
+   *         the same name already exists.
+   */
+  void startPerfTimer(in AString aTimerName);
+
+  /** 
+   * \brief Stop a performance timer.
+   * \param aTimerName The unique name of the performance timer.
+   * \throws NS_ERROR_NOT_INITIALIZED if the timer was
+   *         never initialized before being stopped or 
+   *         is already stopped.
+   * \return The delta between the start and the stop time in microseconds.
+   */
+  long long stopPerfTimer(in AString aTimerName);
+};
+
+[scriptable, uuid(5b61947d-111c-4060-b53b-fcd7d0617845)]
+interface sbITimingServiceTimer : nsISupports
+{
+  readonly attribute AString name;
+
+  readonly attribute long long startTime;
+  readonly attribute long long stopTime;
+
+  readonly attribute long long totalTime;
+};

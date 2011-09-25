@@ -1,0 +1,161 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbILocalDatabaseGUIDArray.idl
+ * \brief Definition of the sbILocalDatabaseGUIDArray interfaces
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface nsIURI;
+interface sbILocalDatabasePropertyCache;
+interface sbIPropertyArray;
+
+/**
+ * \interface sbILocalDatabaseGUIDArrayListener
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(e12181c0-1dd1-11b2-a410-dbc8dda39b6d)]
+interface sbILocalDatabaseGUIDArrayListener : nsISupports
+{
+  void onBeforeInvalidate();
+
+  void onAfterInvalidate();
+};
+
+/**
+ * \interface sbILocalDatabaseGUIDArray
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(c29bdb6c-2d8a-4cc2-bc8c-5e77a8eea322)]
+interface sbILocalDatabaseGUIDArray : nsISupports
+{
+  attribute AString databaseGUID;
+
+  attribute nsIURI databaseLocation;
+
+  attribute AString baseTable;
+
+  attribute AString baseConstraintColumn;
+
+  attribute unsigned long baseConstraintValue;
+
+  attribute unsigned long fetchSize;
+
+  attribute boolean isDistinct;
+
+  readonly attribute boolean isValid;
+  
+  /**
+   * \brief If the guid array is distinct, this value will cause the guid array 
+   *        to be filled with the sortable values instead of human redeable 
+   *        values.
+   */
+  attribute boolean distinctWithSortableValues;
+
+  readonly attribute unsigned long length;
+
+  attribute sbILocalDatabaseGUIDArrayListener listener;
+
+  attribute sbILocalDatabasePropertyCache propertyCache;
+  
+  void addSort(in AString aProperty,
+               in boolean aAscending);
+
+  void clearSorts();
+
+  readonly attribute sbIPropertyArray currentSort;
+
+  void addFilter(in AString aProperty,
+                 in nsIStringEnumerator aValues,
+                 in boolean aIsSearch);
+
+  void clearFilters();
+
+  boolean isIndexCached(in unsigned long aIndex);
+
+  /**
+   * \brief Return the sortable property value at the given index
+   * \param aIndex The index of the array
+   * \return The sortable property value
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getSortPropertyValueByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the media item id at the given index
+   * \param aIndex The index of the array
+   * \return The media item id
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  unsigned long getMediaItemIdByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the ordinal at the given index
+   * \param aIndex The index of the array
+   * \return The ordinal
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getOrdinalByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the guid at the given index
+   * \param aIndex The index of the array
+   * \return The guid
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  AString getGuidByIndex(in unsigned long aIndex);
+
+  /**
+   * \brief Return the rowid at the given index
+   * \param aIndex The index of the array
+   * \return The guid
+   * \throw NS_ERROR_INVALID_ARG If the index is out of bounds
+   */
+  unsigned long long getRowidByIndex(in unsigned long aIndex);
+
+  void invalidate();
+
+  sbILocalDatabaseGUIDArray clone();
+
+  void cloneInto(in sbILocalDatabaseGUIDArray aDest);
+
+  void removeByIndex(in unsigned long aIndex);
+
+  unsigned long getFirstIndexByPrefix(in AString aPrefix);
+
+  unsigned long getFirstIndexByGuid(in AString aGuid);
+
+  unsigned long getIndexByRowid(in unsigned long long aRowid);
+
+  /**
+   * \brief Return true if the array contains the given GUID.
+   * May be forced to fetch and cache all items.
+   */
+  boolean containsGuid(in AString aGuid);
+};

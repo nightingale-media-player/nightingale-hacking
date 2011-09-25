@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/cdripMediaView.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<!-- Import the standard scripts and overlays for all media pages.
+     Required for the playlist and other widgets to function correctly. -->
+<?xul-overlay href="chrome://nightingale/content/xul/mediaPageOverlay.xul"?>
+
+<!-- CD Rip Media View. -->
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="window.cdripController.onLoad();"
+        onunload="window.cdripController.onUnload();"
+        id="cdrip-mediaview">
+
+  <commandset>
+    <command id="sb-cdrip-eject-command"
+             disabled="true"
+             oncommand="window.cdripController._ejectDevice();" />
+    <command id="sb-cdrip-startrip-command"
+             disabled="true"
+             oncommand="window.cdripController._startRip();" />
+    <command id="sb-cdrip-stoprip-command"
+             disabled="true"
+             oncommand="window.cdripController._stopRip();" />
+  </commandset>
+
+  <keyset>
+    <key id="cdrip-eject-key"
+         modifiers="&cdrip.mediaview.eject.modifiers;"
+         key="&cdrip.mediaview.eject.key;"
+         command="sb-cdrip-eject-command" />
+    <key id="cdrip-rip-key"
+         modifiers="&cdrip.mediaview.rip.modifiers;"
+         key="&cdrip.mediaview.rip.key;"
+         command="sb-cdrip-startrip-command"/>
+    <key id="cdrip-stop-rip-key"
+         modifiers="&cdrip.mediaview.stop_rip.modifiers;"
+         key="&cdrip.mediaview.stop_rip.key;"
+         command="sb-cdrip-stoprip-command"/>
+  </keyset>
+
+  <vbox id="cdrip-outter" flex="1">
+    <vbox id="sb-cdrip-header">
+      <hbox id="sb-cdrip-header-hbox" class="sb-cdrip-header-hbox">
+
+        <!-- RIP SETTINGS VIEW -->
+        <hbox id="sb-cdrip-settings-hbox" class="sb-cdrip-header-hbox">
+          <vbox>
+            <label class="sb-cdrip-settings-label"
+                   value="&cdrip.mediaview.cd_rip_settings_label;" />
+            <hbox>
+              <label class="sb-cdrip-settings-label"
+                     value="&cdrip.mediaview.format_label;"/>
+              <label id="sb-cdrip-format-label" class="sb-cdrip-settings-label" />
+            </hbox>
+            <hbox id="sb-cdrip-bitrate-hbox">
+              <label class="sb-cdrip-settings-label"
+                     value="&cdrip.mediaview.quality_label;" />
+              <label id="sb-cdrip-quality-label" class="sb-cdrip-settings-label" />
+            </hbox>
+
+          </vbox>
+
+          <spacer width="20" />
+
+          <vbox pack="center">
+            <button id="sb-cdrip-settings-button"
+                    label="&cdrip.mediaview.settings_button;"
+                    onclick="window.cdripController.showCDRipSettings();" />
+          </vbox>
+        </hbox>
+
+        <spacer id="sb-cdrip-spacer" flex="1" />
+
+        <!-- RIP ACTION AND STATUS -->
+        <hbox id="sb-cdrip-actionstatus-hbox"
+              class="sb-cdrip-header-hbox"
+              pack="center">
+
+          <!-- Status Image -->
+          <spacer id="sb-cdrip-statusimage-pre-spacer" width="10" />
+
+          <hbox id="sb-cdrip-actionstatus-image-box">
+            <vbox pack="center">
+              <image id="sb-cdrip-status-image" />
+            </vbox>
+          </hbox>
+
+          <spacer id="sb-cdrip-statusimage-post-spacer" width="4" />
+
+          <!-- Status Label -->
+          <hbox id="sb-cdrip-actionstatus-label-box">
+            <vbox pack="center">
+              <label id="sb-cdrip-status-label"
+                     class="sb-cdrip-status-label" />
+            </vbox>
+          </hbox>
+
+          <!-- Provider Logo -->
+          <spacer id="sb-cdrip-logo-pre-spacer" width="6" />
+
+          <hbox id="sb-cdrip-actionstatus-logo-box">
+            <vbox pack="center">
+              <image id="sb-cdrip-provider-logo" />
+            </vbox>
+          </hbox>
+
+          <spacer id="sb-cdrip-logo-post-spacer" width="4" />
+
+          <!-- Action buttions -->
+          <spacer id="sb-cdrip-buttons-pre-spacer" width="20" />
+
+          <!-- CD device buttons -->
+          <hbox id="sb-cdrip-status-buttons">
+            <button id="sb-cdrip-rip-cd-button"
+                    label="&cdrip.mediaview.rip_cd_button;"
+                    command="sb-cdrip-startrip-command" />
+            <button id="sb-cdrip-stop-rip-button"
+                    label="&cdrip.mediaview.stop_rip_button;"
+                    command="sb-cdrip-stoprip-command" />
+            <button id="sb-cdrip-eject-cd-button"
+                    label="&cdrip.mediaview.eject_cd_button;"
+                    command="sb-cdrip-eject-command" />
+          </hbox>
+        </hbox>
+
+      </hbox>
+
+    </vbox>
+
+    <vbox id="cdrip-playlist-content"
+          flex="1">
+      <sb-playlist id="sb-cdrip-playlist"
+          flex="1"
+          persist="column-list column-widths"
+          editable="false"
+          hidefilters="true"
+          hidecolumnpicker="true"
+          enableColumnDrag="false"
+      />
+    </vbox>
+  </vbox>
+
+  <!-- CD Rip media view controller -->
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/mediapages/cdripMediaView.js"/>
+
+  <!-- Import Nightingale services -->
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
+
+</window>

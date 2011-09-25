@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<!-- 
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<!-- Import media prefs overlay. -->
+<overlay id="cdrip_prefpane_overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/preferences/cdripPrefs.js"/>
+
+
+  <prefpane id="paneCDRip"
+            onpaneload="CDRipPrefsPane.doPaneLoad();">
+
+    <preferences>
+      <preference id="rip_format_pref"
+                  prefid="rip_format_pref"
+                  name="nightingale.cdrip.transcode_profile.profile_id"
+                  type="string" />
+
+      <preference id="rip_quality_pref"
+                  prefid="rip_quality_pref"
+                  name="nightingale.cdrip.transcode_profile.audio_properties.bitrate"
+                  type="string" />
+
+      <preference id="rip_oncomplete_autoeject_pref"
+                  prefid="rip_oncomplete_autoeject_pref"
+                  name="nightingale.cdrip.oncomplete.autoeject"
+                  type="bool" />
+
+      <preference id="rip_oncomplete_notifysound"
+                  prefid="rip_oncomplete_notifysound"
+                  name="nightingale.cdrip.oncomplete.notifysound"
+                  type="bool" />
+
+      <preference id="rip_cdlookup_provider"
+                  predif="rip_cdlookup_provider"
+                  name="metadata.lookup.default_provider"
+                  type="string" />
+    </preferences>
+
+    <notificationbox id="cdrip_notification_box" flex="1">
+
+      <groupbox>
+
+        <!-- Format -->
+        <vbox>
+          <label value="&cdrip.prefpane.format;" />
+          <hbox>
+            <menulist id="rip-format-menulist"
+                      preference="rip_format_pref">
+              <menupopup flex="1" id="rip-format-list"
+                         oncommand="CDRipPrefsPane.formatChanged(event);">
+              </menupopup>
+            </menulist>
+          </hbox>
+        </vbox>
+
+        <!-- Quality -->
+        <vbox id="transcoding-bitrate-settings">
+          <label value="&cdrip.prefpane.quality;" />
+          <hbox>
+            <textbox id="transcoding-bitrate-kbps"
+                     type="number"
+                     onchange="CDRipPrefsPane.updateBitratePref();"
+                     increment="32"/>
+            <label value="&cdrip.prefpane.quality.units.kbps;"/>
+          </hbox>
+          <label value="&cdrip.prefpane.quality_desc;" />
+        </vbox>
+
+        <vbox>
+          <spacer height="10" />
+
+          <!-- Eject after complete checkbox -->
+          <checkbox id="eject-after-rip-checkbox"
+                    preference="rip_oncomplete_autoeject_pref"
+                    label="&cdrip.prefpane.eject_after_rip;" />
+
+          <!-- Play system alert after rip checkbox -->
+          <checkbox id="soundalert-after-rip-checkbox"
+                    preference="rip_oncomplete_notifysound"
+                    label="&cdrip.prefpane.soundalert_after_rip;" />
+        </vbox>
+      </groupbox>
+
+      <groupbox>
+        <caption label="&cdrip.prefpane.providers.title;" />
+        <hbox align="start">
+          <hbox flex="0">
+            <menulist id="provider-list"
+                      preference="rip_cdlookup_provider"
+                      width="100" flex="0">
+              <menupopup id="provider-popup" flex="0"
+                         oncommand="CDRipPrefsPane.providerChanged(event)">
+              </menupopup>
+            </menulist>
+          </hbox>
+
+          <hbox flex="1">
+            <description id="provider-description"
+                         width="0" flex="1" />
+          </hbox>
+        </hbox>
+      </groupbox>
+
+    
+    </notificationbox>
+
+  </prefpane>
+</overlay>

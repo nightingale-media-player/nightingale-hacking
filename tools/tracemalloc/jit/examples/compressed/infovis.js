@@ -1,0 +1,1 @@
+var Infovis={initLayout:function(){var B=Window.getSize();var G=$("header"),E=$("left"),A=$("infovis");var F=G.getSize().y,D=E.getSize().x;var C={height:Math.floor((B.y-F)/1),width:Math.floor((B.x-D)/1)};A.setProperties(C);A.setStyles(C);A.setStyles({position:"absolute",top:F+"px",left:D+"px"});E.setStyle("height",C.height)}};

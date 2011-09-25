@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/preferences.css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
+<!ENTITY % nightingalePrefsDTD SYSTEM "chrome://nightingale/locale/preferences-nightingale.dtd">
+%nightingalePrefsDTD;
+]>
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/preferences/mainOverlay.js"/>
+
+  <!-- Nightingale per-pane overlays that tie in with event listeners -->
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/preferences/mainPaneOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/preferences/advancedPaneOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/preferences/contentPaneOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/preferences/tabPaneOverlay.js"/>
+
+  <stringbundleset>
+    <stringbundle id="bundleNightingalePreferences"
+                  src="chrome://nightingale/locale/nightingale.properties"/>
+  </stringbundleset>
+
+ <prefwindow id="BrowserPreferences">
+   <preferences id="common_prefs">
+     <preference id="manage_media_pref_library_enable"
+                 name="nightingale.media_management.library.enabled"
+		 type="bool"/>
+     <preference id="manage_media_pref_library_folder"
+                 name="nightingale.media_management.library.folder"
+		 type="file"/>
+     <preference id="watch_folder_enable_pref"
+                 name="nightingale.watch_folder.enable"
+                 type="bool"/>
+     <preference id="watch_folder_path_pref"
+                 name="nightingale.watch_folder.path"
+                 type="unichar"/>
+   </preferences>
+
+  <prefpane id="paneManageMedia"
+            label="&prefWindow.manageMedia.label;"
+            insertafter="paneMain"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/manageMediaPrefs.xul" />
+
+  <!-- Hide the Applications panel for the moment -->
+  <prefpane id="paneApplications"
+            removeelement="true"/>
+          
+  <prefpane id="paneContent"
+            label="&prefpane.content.label;" />
+
+#ifdef XP_WIN
+  <prefpane id="paneHotkeys"
+            label="&hotkeys.prefpane;"
+            insertafter="paneMain"
+            src="chrome://nightingale/content/xul/preferences/hotKeys.xul" />
+#endif
+  <prefpane id="panePlayback"
+            label="&playback.prefpane.label;"
+            insertafter="paneContent"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/playbackPrefs.xul" />
+  <prefpane id="paneCDRip"
+            label="&cdrip.prefpane.label;"
+            insertafter="panePlayback"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/cdripOverlay.xul" />
+  <prefpane id="paneAlbumArtwork"
+            label="&albumartpreferences.prefpane.label;"
+            insertafter="paneCDRip"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/albumArtwork.xul" />
+  <prefpane id="paneAddons"
+            label="&prefpane.addons.label;"
+            insertafter="paneAdvanced"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/addOns.xul" />
+  <prefpane id="paneRemoteAPI"
+            label="&rapi.prefpane.title;"
+            insertafter="paneAddons"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/remoteAPI.xul" />
+  <prefpane id="paneImportMedia"
+            label="&import_media.prefs.title;"
+            insertafter="paneRemoteAPI"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/importMediaPrefs.xul" />
+ </prefwindow>
+
+</overlay>

@@ -1,0 +1,368 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+MINI PLAYER CONTROLS BINDING SKIN
+
+Applies images and layout to the miniplayer binding (app/content/miniPlayer.xml)
+that is used in the video window, miniplayer, and collapsed top pane view.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/  
+
+
+/** 
+*******************************************************************************
+Player Controls (Back, Play, Pause, Forward Buttons)
+*******************************************************************************
+*/
+
+
+/* the back button */
+sb-player-back-button.miniplayer
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
+  -moz-image-region: rect(46px 45px 68px 0px);
+  background-color: transparent;
+}
+sb-player-back-button.miniplayer:hover
+{
+  -moz-image-region: rect(23px 45px 45px 0px);
+}
+sb-player-back-button.miniplayer:active
+{
+  -moz-image-region: rect(0px 45px 22px 0px);
+}
+sb-player-back-button.miniplayer[disabled="true"]
+{
+  -moz-image-region: rect(69px 45px 91px 0px);
+}
+
+
+/* the play/pause button */
+sb-player-playpause-button.miniplayer {
+  min-width: 44px !important;
+  max-width: 44px !important;
+  -moz-box-flex: 1 !important;
+  -moz-box-pack: center !important;
+  -moz-box-align: center !important;  
+}
+
+/* the play state */
+.miniplayer > .sb-player-play-button-play > button,
+.miniplayer > .sb-player-playpause-button-play > button
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
+  -moz-image-region: rect(46px 135px 68px 91px);
+  background-color: transparent;
+}
+.miniplayer > .sb-player-play-button-play > button:hover,
+.miniplayer > .sb-player-playpause-button-play > button:hover
+{
+  -moz-image-region: rect(23px 135px 45px 91px);
+}
+.miniplayer > .sb-player-play-button-play > button:active,
+.miniplayer > .sb-player-playpause-button-play > button:active
+{
+  -moz-image-region: rect(0px 135px 22px 91px);
+}
+.miniplayer > .sb-player-play-button-play > button[disabled="true"],
+.miniplayer > .sb-player-playpause-button-play > button[disabled="true"]
+{
+  -moz-image-region: rect(69px 135px 91px 91px);
+}
+
+
+/* the pause state */
+.miniplayer > .sb-player-pause-button-pause > button,
+.miniplayer > .sb-player-playpause-button-pause > button
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
+  -moz-image-region: rect(46px 90px 68px 46px);
+  background-color: transparent;
+}
+.miniplayer > .sb-player-pause-button-pause > button:hover,
+.miniplayer > .sb-player-playpause-button-pause > button:hover
+{
+  -moz-image-region: rect(23px 90px 45px 46px);
+}
+.miniplayer > .sb-player-pause-button-pause > button:active,
+.miniplayer > .sb-player-playpause-button-pause > button:active
+{
+  -moz-image-region: rect(0px 90px 22px 46px);
+}
+.miniplayer > .sb-player-pause-button-pause > button[disabled="true"],
+.miniplayer > .sb-player-playpause-button-pause > button[disabled="true"]
+{
+  -moz-image-region: rect(69px 90px 91px 46px);
+}
+
+/* the resume state */
+.miniplayer > .sb-player-pause-button-resume > button
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
+    -moz-image-region: rect(46px 135px 68px 91px);
+  background-color: transparent;
+}
+.miniplayer > .sb-player-pause-button-resume > button:hover
+{
+  -moz-image-region: rect(23px 135px 45px 91px);
+}
+.miniplayer > .sb-player-pause-button-resume > button:active
+{
+  -moz-image-region: rect(0px 135px 22px 91px);
+}
+.miniplayer > .sb-player-pause-button-resume > button[disabled="true"]
+{
+  -moz-image-region: rect(69px 135px 91px 91px);
+}
+
+/* the stop button */
+.miniplayer > .sb-player-stop-button-stop > button
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
+  -moz-image-region: rect(46px 180px 68px 136px);
+  background-color: transparent;
+}
+.miniplayer > .sb-player-stop-button-stop > button:hover
+{
+  -moz-image-region: rect(23px 180px 45px 136px);
+}
+.miniplayer > .sb-player-stop-button-stop > button:active
+{
+  -moz-image-region: rect(0px 180px 22px 136px);
+}
+.miniplayer > .sb-player-stop-button-stop > button[disabled="true"]
+{
+  -moz-image-region: rect(69px 180px 91px 136px);
+}
+
+
+/* the fwd button */
+sb-player-forward-button.miniplayer
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
+  -moz-image-region: rect(46px 225px 68px 181px);
+  background-color: transparent;
+}
+sb-player-forward-button.miniplayer:hover
+{
+  -moz-image-region: rect(23px 225px 45px 181px);
+}
+sb-player-forward-button.miniplayer:active
+{
+  -moz-image-region: rect(0px 225px 22px 181px);
+}
+sb-player-forward-button.miniplayer[disabled="true"]
+{
+  -moz-image-region: rect(69px 225px 91px 181px);
+}
+
+
+
+/** 
+*******************************************************************************
+VOLUME
+Mute and Slider
+*******************************************************************************
+*/
+
+
+progressmeter.sb-player-volume-slider.miniplayer {
+  min-width: 40px;
+  max-width: 80px;
+  margin: 0px 0px 0px 6px;
+}
+
+
+sb-player-volume-slider.miniplayer
+{
+  margin-top: 2px !important;
+  margin-bottom: 1px !important; 
+}
+
+thumb.sb-player-volume-slider.miniplayer
+{
+  width: 11px;
+  height: 11px;
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-thumb.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: none;
+}
+thumb.sb-player-volume-slider.miniplayer:active
+{
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-thumb-active.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+
+progressmeter.sb-player-volume-slider.miniplayer > .progress-bar
+{
+  -moz-appearance: none !important;
+  background-image: none;
+}
+progressmeter.sb-player-volume-slider.miniplayer > .progress-remainder
+{
+  background-image: none;
+}
+    
+    
+slider.sb-player-volume-slider.miniplayer
+{
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-progress-slider-bkgd.png);
+  background-position: left center;
+  background-repeat: no-repeat;
+  height: 13px !important;
+  border: none;
+  margin-right: 2px;  
+  padding-left: 2px;  
+}
+
+
+progressmeter.sb-player-volume-slider.miniplayer
+{
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-progressmeter-bkgd.png);
+  background-position: right center;
+  height: 13px !important;
+  border: none;
+}
+
+
+
+/** 
+*******************************************************************************
+MINI DASHBOARD
+*******************************************************************************
+*/
+
+/* Dashboard background box */
+.sb-mini-player-controls-dash-box
+{
+  height: 22px;
+  background-image: url(chrome://nightingale/skin/miniplayer/dashboard-background.png); 
+  background-repeat: repeat-x;
+  padding: 0px 0px 0px 0px;
+}
+
+/* Dashboard edges (rounded corners) */
+.sb-mini-player-controls-dash-left-image
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/dashboard.png) !important;
+  -moz-image-region: rect(0px 9px 22px 0px);
+}
+.sb-mini-player-controls-dash-right-image
+{
+  list-style-image: url(chrome://nightingale/skin/miniplayer/dashboard.png) !important;
+  -moz-image-region: rect(0px 20px 22px 11px);
+}
+
+/* Artist and title, etc. */
+label.mini-dash-text 
+{
+  -moz-box-align: baseline;
+  font-family: Arial, Helvetica, Sans-serif !important;
+  font-weight: bold;
+  width: auto;
+  height: 16px;
+  margin: 0px;
+  padding: 1px 0px 0px 0px;
+  overflow: hidden !important;
+}
+
+
+/* the seekbar slider */
+sb-player-seek-slider.miniplayer
+{
+  height: 4px !important;
+  width: auto !important;
+  border: 0px !important;
+  margin: 15px 0px 0px 0px !important;
+}
+thumb.sb-player-seek-slider.miniplayer
+{
+  width: 11px !important;
+  height: 4px !important;
+  background-image: none;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  border: 0px !important;
+  margin: 0px;
+  padding: 0px;  
+}
+thumb.sb-player-seek-slider.miniplayer > gripper
+{
+  height: 4px !important;
+}
+progressmeter.sb-player-seek-slider.miniplayer
+{
+  height: 4px !important;
+  border: 0px !important;
+}
+progressmeter.sb-player-seek-slider.miniplayer > .progress-bar
+{
+  background-image: none;
+  min-width:0px;
+}
+
+/** 
+*******************************************************************************
+SPACING
+*******************************************************************************
+*/
+
+sb-player-playpause-button.miniplayer {
+  margin: 0px 0px 0px 0px !important;
+}
+
+sb-player-mute-button.miniplayer 
+{
+  margin: 0px 7px 1px 0px;
+}
+
+sb-player-mute-button.miniplayer > .sb-player-mute-button-muteoff > .clickhold-button,
+sb-player-mute-button.miniplayer > .sb-player-mute-button-muteon > .clickhold-button
+{
+  background-color: Transparent;
+}
+
+.sb-mini-player-controls-volume-box
+{
+  max-width: 106px;
+  margin: 0px 12px 0px 14px;
+}
+
+.sb-mini-player-controls-dash-autoscroll-box 
+{
+  margin-right:10px;
+}
+

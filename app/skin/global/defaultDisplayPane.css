@@ -1,0 +1,28 @@
+box {
+  background-color:transparent;
+/*  background-image: url('chrome://nightingale/skin/display-pane/bg-empty.png');*/
+}
+
+.instructions {
+  padding:8px;
+}
+
+.instructions description,
+.instructions label {
+  margin:0px;
+  padding:0px;
+}
+
+.instructions description {
+  text-align:center;
+  -moz-border-radius:6px;
+}
+#add-on-picker {
+  vertical-align:top;
+  list-style-image:  url("chrome://nightingale/skin/display-pane/button-addon-picker.png");
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
+}
+
+.instructions div {
+  padding:10px;
+}

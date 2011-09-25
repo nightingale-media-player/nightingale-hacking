@@ -1,0 +1,213 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/* *****************************************************************************
+ *******************************************************************************
+ *
+ * Interface description for the library importer interface.
+ *
+ *******************************************************************************
+ ******************************************************************************/
+
+#include "nsISupports.idl"
+
+
+/**
+* \interface sbILibraryImporterListener
+* \brief Interface for listening to library importer events.
+*
+* Implementors of this interface can listen to library importer events.
+*/
+
+[scriptable, uuid(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]
+interface sbILibraryImporterListener : nsISupports
+{
+    /**
+     * \brief Handle library changed events.  These events occur when the
+     * contents of the import library change.
+     *
+     * \param aLibFilePath File path to external library that changed.
+     * \param aGUID GUID of Nightingale library into which external library was
+     * imported.
+     */
+
+    void onLibraryChanged(
+        in AString                  aLibFilePath,
+        in AString                  aGUID);
+
+
+    /**
+     * \brief Handle library import error events.  These events occur whenever
+     * an error is encountered while importing a library.
+     */
+
+    void onImportError();
+
+
+    /**
+     * \brief Handle non-existent media events.  These events occur whenever the
+     * media file for an imported track does not exist.
+     *
+     * \param aNonExistentMediaCount Count of the number of non-existent track
+     * media files.
+     * \param aTrackCount Count of the number of tracks.
+     */
+
+    void onNonExistentMedia(
+        in unsigned long            aNonExistentMediaCount,
+        in unsigned long            aTrackCount);
+
+
+    /**
+     * \brief Handle unsupported media events.  These events occur whenever an
+     * attempt is made to import media that is not supported by Nightingale.
+     */
+
+    void onUnsupportedMedia();
+
+
+    /**
+     * \brief Handle dirty playlist events.  These events occur when an imported
+     * library playlist has been modified in Nightingale.  This method returns the
+     * action to take, "keep" to keep the Nightingale playlist unmodified, "merge"
+     * to merge the import library playlist into the Nightingale playlist, and
+     * "replace" to replace the Nightingale playlist.
+     * This method also returns whether to apply the action to all dirty
+     * playlists.
+     *
+     * \param aPlaylistName Name of dirty playlist.
+     * \param aApplyAll Apply action to all playlists.
+     * \return Import action.
+     */
+
+    AString onDirtyPlaylist(
+        in AString                  aPlaylistName,
+        out boolean                 aApplyAll);
+};
+
+
+/**
+* \interface sbILibraryImporter
+* \brief Interface for importing external libraries.
+*
+* This interface is used for importing external libraries into Nightingale.
+*/
+
+interface sbIJobProgress;
+
+[scriptable, uuid(04E3F8E9-70F4-4129-9A74-CEC88A8AEE93)]
+interface sbILibraryImporter : nsISupports
+{
+    /*
+     * Attributes.
+     *
+     * libraryType              Library type.
+     * libraryReadableType      Readable library type.
+     * libraryDefaultFileName   Default library file name.
+     * libraryDefaultFilePath   Default library file path.
+     * libraryFileExtensionList Comma separated list of library file extensions.
+     * libraryPreviouslyImported
+     *                          True if a library has previously been imported.
+     * libraryPreviousImportPath
+     *                          File path of previously imported library.
+     */
+
+    readonly attribute AString  libraryType;
+    readonly attribute AString  libraryReadableType;
+    readonly attribute AString  libraryDefaultFileName;
+    readonly attribute AString  libraryDefaultFilePath;
+    readonly attribute AString  libraryFileExtensionList;
+    readonly attribute boolean  libraryPreviouslyImported;
+    readonly attribute AString  libraryPreviousImportPath;
+
+
+    /**
+     * \brief Initialize the library importer.
+     */
+
+    void initialize();
+
+
+    /**
+     * \brief Finalize the library importer.
+     */
+
+    void finalize();
+
+
+    /**
+     * \brief Initiate external library importing.
+     *
+     * \param aLibFilePath File path to external library to import.
+     * \param aGUID GUID of Nightingale library into which to import.
+     * \param aCheckForChanges If true, check for changes in external library
+     * before importing.
+     *
+     * \return Import job object.
+     */
+
+    sbIJobProgress import(
+        in AString                  aLibFilePath,
+        in AString                  aGUID,
+        in boolean                  aCheckForChanges);
+
+
+    /**
+     * \brief Set the listener for import events.
+     *
+     * \param aListener Import event listener.
+     */
+
+    void setListener(
+        in sbILibraryImporterListener   aListener);
+};
+
+
+/**
+ * \interface sbILibraryImporterManager
+ *
+ *   The sbILibraryImporterManager interface is provided by the library importer
+ * manager.
+ *
+ * Implementations:
+ *
+ *   "@getnightingale.com/Nightingale/LibraryImporterManager;1"
+ *   Use get service with this component.
+ */
+
+[scriptable, uuid(81c027cd-1c4d-42d7-8b70-134cba5175a1)]
+interface sbILibraryImporterManager : nsISupports
+{
+  /**
+   * Default library importer.
+   */
+
+  attribute sbILibraryImporter defaultLibraryImporter;
+};
+
+

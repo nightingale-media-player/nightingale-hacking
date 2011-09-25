@@ -1,0 +1,175 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+ 
+ 
+/** 
+*******************************************************************************
+
+PREFERENCES DIALOG
+
+Extra styles for Nightingale additions to the Firefox preferences dialog
+
+*******************************************************************************
+*/ 
+
+
+/* make the dialog size correctly, see bug 14274 */
+.paneSelector {
+  visibility: collapse; /* will get reset by JS to visible */
+}
+
+radio[pane=paneHotkeys] 
+{
+  list-style-image: url("chrome://nightingale/skin/preferences/options.png") !important; 
+	-moz-image-region: rect(0px, 32px,  32px, 0px)
+}
+radio[pane=paneHotkeys]:hover, 
+radio[pane=paneHotkeys][selected="true"]  {
+	-moz-image-region: rect(0px, 32px,  32px, 0px)
+}
+
+/* tabs in the Advanced Preferences */
+tabpanels
+{
+  margin-top: -1px;
+}
+
+listheader
+{
+}
+
+/* Is this necessary?  -gse */
+.bottomBox {
+  padding-bottom: 4px;
+}
+
+
+/*
+ * Import library prefs styles.
+ */
+
+/* Import library prefs library path box style. */
+#import_library_path_box {
+  -moz-box-align: center;
+}
+
+/* Import library prefs library path text box style. */
+#import_library_path_textbox {
+  -moz-box-flex: 1;
+}
+
+
+/*
+ * Watch folder prefs styles.
+ */
+
+/* import media preference panel */
+#paneImportMedia {
+  -moz-box-flex: 1;
+}
+#import_media_tabpanels {
+  -moz-box-flex: 1;
+}
+
+/* watch folders */
+#watch_folder_notification_box {
+  -moz-box-flex: 1;
+}
+
+/* Watch folder prefs path box style. */
+#watch_folder_path_box {
+  -moz-box-align: center;
+}
+
+/* Watch folder prefs path text box style. */
+#watch_folder_path_textbox {
+  -moz-box-flex: 1;
+}
+
+
+/* media management tab */
+#manage_media_format_box {
+  margin: 4px;
+  display: -moz-groupbox;
+}
+
+#manage_media_format_dir_file .fileFieldLabel,
+#manage_media_format_dir_formatter > hbox > vbox > textbox {
+  background: none;
+  border: none;
+}
+#manage_media_format_file_formatter > hbox > vbox > textbox:hover > hbox > input,
+#manage_media_format_file_formatter > hbox > vbox > textbox > hbox > input:focus {
+  text-decoration: underline;
+}
+#manage_media_format_dir_file .fileFieldLabel > .textbox-input-box,
+#manage_media_format_dir_formatter > hbox > vbox > textbox > .textbox-input-box,
+#manage_media_format_file_formatter > hbox > vbox > textbox > .textbox-input-box {
+  width: 1em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > menulist,
+#manage_media_format_file_formatter > hbox > vbox > menulist {
+  min-width: 10em;
+}
+#manage_media_format_dir_container > label,
+#manage_media_format_file_container > label,
+label#manage_media_format_dir_suffix_label,
+label#manage_media_format_file_suffix_label {
+  min-height: 2em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > label.text-link,
+#manage_media_format_file_formatter > hbox > vbox  > label.text-link {
+  /* the add/remove/etc links */
+  font-size: 0.8em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > label[disabled],
+#manage_media_format_file_formatter > hbox > vbox  > label[disabled],
+#manage_media_format_dir_formatter > hbox > vbox > label[disabled]:hover,
+#manage_media_format_file_formatter > hbox > vbox  > label[disabled]:hover {
+  /* the add/remove/etc links, disabled */
+  color: GrayText;
+  cursor: default !important;
+  text-decoration: none;
+}
+
+.header
+{
+  font-weight: bold;
+}
+
+.emphasis
+{
+  font-weight: bold;
+}
+
+#manage_media_library_file {
+  margin-left: 1em;
+}
+
+/* the nightingale theme ought to handle this, really */
+#manage_media_global_cmd .checkbox-label-box {
+  margin-left: 4px;
+}

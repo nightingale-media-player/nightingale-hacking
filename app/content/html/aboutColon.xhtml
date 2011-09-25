@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
+%brandDTD;
+]>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>About &brandShortName;</title>
+    <link rel="shortcut icon" href="&faviconURL;" type="image/vnd.microsoft.icon" />
+    <link rel="stylesheet" href="chrome://nightingale-branding/skin/aboutColon.css" type="text/css" media="screen" charset="utf-8" />
+
+  </head>
+
+  <body>
+
+    <div id="aboutPageContainer">
+      <a class="productURL" href="&productURL;">
+        <img src="&aboutImageURL;" alt="&brandShortName;"/>
+      </a>
+      <p>&copyright; <a class="vendorURL" href="&vendorURL;">&vendorShortName;</a>.</p>
+    </div>
+
+    <div id="thirdPartySoftwareContainer">
+      <p class="details">
+        <a href="about:buildconfig">Build Configuration</a> <a href="about:gstreamer">GStreamer Configuration</a> <a href="about:license">License Agreement</a>
+      </p>
+      <p>
+        For a complete listing of third party software used in &brandShortName;, see the <a href="about:license#3rdparty">&brandShortName; License Agreement</a>. 
+      </p>
+    </div>
+
+</body>
+</html>

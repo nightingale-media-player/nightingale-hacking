@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * First run EULA widget.
+   *
+   *   This widget provides first run end user license agreement UI.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-first-run-eula">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox anonid="container_box" class="sb-first-run-eula-box">
+
+        <xul:groupbox flex="1">
+          <!-- Header. -->
+          <xul:label class="sb-first-run-header"
+                     value="&first_run.eula.header.label;"/>
+
+          <!-- EULA browser. -->
+          <xul:browser anonid="eula_browser"
+                       class="sb-first-run-eula-browser"
+                       type="content"
+                       disablehistory="true"
+                       src="chrome://nightingale/content/html/eula.html"/>
+
+          <!-- Accept EULA checkbox. -->
+          <xul:checkbox anonid="accept_checkbox"
+                        label="&first_run.eula.accept_checkbox.label;"
+                        oncommand="_widgetSvc.doAcceptChanged();"/>
+        </xul:groupbox>
+
+        <!-- Language selection list. -->
+        <xul:hbox class="sb-first-run-eula-language-box">
+          <xul:label value="&first_run.eula.language.label;"/>
+          <xul:menulist anonid="locale_menulist"
+                        class="sb-first-run-eula-language-menulist"
+                        onselect="_widgetSvc.localeDoSelect(event);">
+            <xul:menupopup anonid="locale_menupopup"/>
+          </xul:menulist>
+        </xul:hbox>
+
+      </xul:vbox> <!-- container_box -->
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           First-run EULA widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <field name="eulaBrowser">
+        <![CDATA[
+          document.getAnonymousElementByAttribute(
+              this, 'anonid', 'eula_browser');
+        ]]>
+      </field>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new firstRunEULASvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the first-run EULA widget services.
+        if (typeof(firstRunEULASvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+            ("chrome://nightingale/content/scripts/firstRun/firstRunEula.js",
+             null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding>
+
+</bindings>
+

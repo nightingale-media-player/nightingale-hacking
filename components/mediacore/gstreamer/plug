@@ -1,0 +1,138 @@
+content/about.xhtml:    _currentPlugin: null,
+content/about.xhtml:    beginPluginInfo: function(aName, aDescription, aFilename, aVersion, aLicense, aSource, aPackage, aOrigin) {
+content/about.xhtml:      this._currentPlugin = aName;
+content/about.xhtml:    endPluginInfo: function() {
+content/about.xhtml:      this._currentPlugin = null;
+content/about.xhtml:          plugin: this._currentPlugin,
+content/about.xhtml:    appendTableRow(table, ["Plugin", "Factory", "Codec Description", "Additional Information"], []);
+content/about.xhtml:        link.textContent = "More plugins from Fluendo";
+content/about.xhtml:      appendTableRow(table, [e.plugin, e.factory, e.codecDescription], info);
+public/sbIGStreamerService.idl:  void beginPluginInfo(in ACString aName,
+public/sbIGStreamerService.idl:  void endPluginInfo();
+src/Makefile.in:    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+src/Makefile.in:    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib \
+src/sbGStreamerService.cpp:  NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
+src/sbGStreamerService.cpp:  NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
+src/sbGStreamerService.cpp:  PRBool noSystemPlugins;
+src/sbGStreamerService.cpp:  nsString pluginPaths;
+src/sbGStreamerService.cpp:  nsString systemPluginPaths;
+src/sbGStreamerService.cpp:  noSystemPlugins = PR_TRUE;
+src/sbGStreamerService.cpp:  // On unix, default to using the bundled gstreamer (plus the system plugins
+src/sbGStreamerService.cpp:  // And if this one is set, don't use system plugins
+src/sbGStreamerService.cpp:  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_NO_SYSTEM"), &noSystemPlugins);
+src/sbGStreamerService.cpp:    // Build the plugin path. This is from highest-to-lowest priority, so 
+src/sbGStreamerService.cpp:    // we prefer our plugins to the system ones (unless overridden by 
+src/sbGStreamerService.cpp:    // GST_PLUGIN_PATH).
+src/sbGStreamerService.cpp:    //   1. Plugin directories set by the user using GST_PLUGIN_PATH (if any),
+src/sbGStreamerService.cpp:    //   2. Extension-provided plugin directories (in no particular order)
+src/sbGStreamerService.cpp:    //   3. Our bundled gst-plugins directory
+src/sbGStreamerService.cpp:    // Plus the system plugin path on linux:
+src/sbGStreamerService.cpp:    //   4. $HOME/.gstreamer-0.10/plugins
+src/sbGStreamerService.cpp:    pluginPaths = EmptyString();
+src/sbGStreamerService.cpp:    // 1. Read the existing GST_PLUGIN_PATH (if any)
+src/sbGStreamerService.cpp:    PRBool pluginPathExists;
+src/sbGStreamerService.cpp:    rv = envSvc->Exists(kGstPluginPath, &pluginPathExists);
+src/sbGStreamerService.cpp:    if (pluginPathExists) {
+src/sbGStreamerService.cpp:      rv = envSvc->Get(kGstPluginPath, pluginPaths);
+src/sbGStreamerService.cpp:      pluginPaths = EmptyString();
+src/sbGStreamerService.cpp:    // 2. Add extension-provided plugin directories (if any)
+src/sbGStreamerService.cpp:      rv = extensionDir->Append(NS_LITERAL_STRING("gst-plugins"));
+src/sbGStreamerService.cpp:          pluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
+src/sbGStreamerService.cpp:        pluginPaths.Append(dirPath);
+src/sbGStreamerService.cpp:        // for the plugin(s) to work. So, load those if there's a special
+src/sbGStreamerService.cpp:    // 3. Add our bundled gst-plugins directory
+src/sbGStreamerService.cpp:    nsCOMPtr<nsIFile> pluginDir;
+src/sbGStreamerService.cpp:                           getter_AddRefs(pluginDir));
+src/sbGStreamerService.cpp:    rv = pluginDir->Append(NS_LITERAL_STRING("gst-plugins"));
+src/sbGStreamerService.cpp:    nsString pluginDirStr;
+src/sbGStreamerService.cpp:    rv = pluginDir->GetPath(pluginDirStr);
+src/sbGStreamerService.cpp:      pluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
+src/sbGStreamerService.cpp:    pluginPaths.Append(pluginDirStr);
+src/sbGStreamerService.cpp:    if (!noSystemPlugins) {
+src/sbGStreamerService.cpp:      // 4. Add $HOME/.gstreamer-0.10/plugins to system plugin path
+src/sbGStreamerService.cpp:      char *homeDirPlugins = g_build_filename (g_get_home_dir (), 
+src/sbGStreamerService.cpp:              ".gstreamer-0.10", "plugins", NULL);
+src/sbGStreamerService.cpp:      systemPluginPaths = NS_ConvertUTF8toUTF16(homeDirPlugins);
+src/sbGStreamerService.cpp:      // 5. Add /usr/lib/gstreamer-0.10 to system plugin path
+src/sbGStreamerService.cpp:      // renamed plugins. Older versions of decodebin2 were in 
+src/sbGStreamerService.cpp:      // To avoid this, do not use system plugins if this old plugin file
+src/sbGStreamerService.cpp:        systemPluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
+src/sbGStreamerService.cpp:        systemPluginPaths.Append(sysLibDir);
+src/sbGStreamerService.cpp:    systemPluginPaths = NS_LITERAL_STRING("");
+src/sbGStreamerService.cpp:    LOG(("sbGStreamerService[0x%.8x] - Setting GST_PLUGIN_PATH=%s", this,
+src/sbGStreamerService.cpp:         NS_LossyConvertUTF16toASCII(pluginPaths).get()));
+src/sbGStreamerService.cpp:    rv = SetEnvVar(kGstPluginPath, pluginPaths);
+src/sbGStreamerService.cpp:    LOG(("sbGStreamerService[0x%.8x] - Setting GST_PLUGIN_SYSTEM_PATH=%s", this,
+src/sbGStreamerService.cpp:         NS_LossyConvertUTF16toASCII(systemPluginPaths).get()));
+src/sbGStreamerService.cpp:    rv = SetEnvVar(kGstPluginSystemPath, systemPluginPaths);
+src/sbGStreamerService.cpp:  GList *plugins, *orig_plugins;
+src/sbGStreamerService.cpp:  orig_plugins = plugins = gst_default_registry_get_plugin_list();
+src/sbGStreamerService.cpp:  while (plugins) {
+src/sbGStreamerService.cpp:    GstPlugin *plugin;
+src/sbGStreamerService.cpp:    plugin = (GstPlugin *) (plugins->data);
+src/sbGStreamerService.cpp:    plugins = g_list_next (plugins);
+src/sbGStreamerService.cpp:    if (plugin->filename) {
+src/sbGStreamerService.cpp:      filename = plugin->filename;
+src/sbGStreamerService.cpp:    rv = aHandler->BeginPluginInfo(nsDependentCString(plugin->desc.name),
+src/sbGStreamerService.cpp:                                   nsDependentCString(plugin->desc.description),
+src/sbGStreamerService.cpp:                                   nsDependentCString(plugin->desc.version),
+src/sbGStreamerService.cpp:                                   nsDependentCString(plugin->desc.license),
+src/sbGStreamerService.cpp:                                   nsDependentCString(plugin->desc.source),
+src/sbGStreamerService.cpp:                                   nsDependentCString(plugin->desc.package),
+src/sbGStreamerService.cpp:                                   nsDependentCString(plugin->desc.origin));
+src/sbGStreamerService.cpp:      gst_registry_get_feature_list_by_plugin(gst_registry_get_default(),
+src/sbGStreamerService.cpp:                                              plugin->desc.name);
+src/sbGStreamerService.cpp:      GstPluginFeature *feature;
+src/sbGStreamerService.cpp:      feature = GST_PLUGIN_FEATURE(features->data);
+src/sbGStreamerService.cpp:    gst_plugin_feature_list_free(orig_features);
+src/sbGStreamerService.cpp:    rv = aHandler->EndPluginInfo();
+src/sbGStreamerService.cpp:  gst_plugin_list_free(orig_plugins);
+src/sbGStreamerService.cpp:      GST_ELEMENT_FACTORY(gst_plugin_feature_load(GST_PLUGIN_FEATURE
+src/sbGStreamerService.cpp:  gint rank = GST_PLUGIN_FEATURE(factory)->rank;
+src/sbGStreamerService.cpp:  rv = aHandler->BeginFactoryInfo(nsDependentCString(GST_PLUGIN_FEATURE(factory)->name),
+src/metadata/Makefile.in:    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+src/metadata/sbGStreamerMetadataHandler.cpp:#include <gst/pbutils/missing-plugins.h>
+src/metadata/sbGStreamerMetadataHandler.cpp:      if (gst_is_missing_plugin_message(message)) {
+src/metadata/sbGStreamerMetadataHandler.cpp:        /* If we got a missing plugin message about a missing video decoder,
+src/sbGStreamerMediaInspector.cpp:  // TODO: Connect up autoplug-sort signal to handle some special cases
+src/sbGStreamerMediaInspector.cpp://  g_signal_connect (decodebin, "autoplug-sort",
+src/sbGStreamerMediacoreFactory.cpp:    // This crap should really look for a plugin that may possibly actually decode
+src/sbGStreamerMediacoreFactory.cpp:      //   * mp4/m4v/mov (w/ qtvideowrapper plugin)
+src/sbGStreamerMediacoreFactory.cpp:      //   * divx/avi/mkv (w/ ewmpeg4dec plugin)
+src/sbGStreamerMediacoreFactory.cpp:      // Check for the 'qtvideowrapper' plugin to add mp4/m4v extensions.
+src/sbGStreamerMediacoreFactory.cpp:      PRBool foundQTPlugin = PR_FALSE;
+src/sbGStreamerMediacoreFactory.cpp:      GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
+src/sbGStreamerMediacoreFactory.cpp:      if (plugin) {
+src/sbGStreamerMediacoreFactory.cpp:        foundQTPlugin = PR_TRUE;
+src/sbGStreamerMediacoreFactory.cpp:        gst_object_unref(plugin);
+src/sbGStreamerMediacoreFactory.cpp:      // Check for the 'ewmpeg4dec' plugin to add divx/avi extensions.
+src/sbGStreamerMediacoreFactory.cpp:      plugin = gst_default_registry_find_plugin("ewmpeg4dec");
+src/sbGStreamerMediacoreFactory.cpp:      if (plugin) {
+src/sbGStreamerMediacoreFactory.cpp:        // This plugin will also handle "mp4" and "m4v", only append those
+src/sbGStreamerMediacoreFactory.cpp:        if (!foundQTPlugin) {
+src/sbGStreamerMediacoreFactory.cpp:        gst_object_unref(plugin);
+src/sbGStreamerMediacoreFactory.cpp:      const gchar* factoryName = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory));
+src/sbGStreamerMediacore.cpp:#include <gst/pbutils/missing-plugins.h>
+src/sbGStreamerMediacore.cpp:void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
+src/sbGStreamerMediacore.cpp:  debugMessage = gst_missing_plugin_message_get_description(message);
+src/sbGStreamerMediacore.cpp:      } else if (gst_is_missing_plugin_message(message)) {
+src/sbGStreamerMediacore.cpp:        HandleMissingPluginMessage(message);
+src/sbGStreamerMediacore.cpp:  // The plugin may simply be missing from the user's installation.
+src/sbGStreamerMediacore.cpp:  // The plugin may simply be missing from the user's installation.
+src/sbGStreamerMediacore.cpp:  // The plugin may simply be missing from the user's installation.
+src/sbGStreamerMediacore.cpp:  // The plugin may simply be missing from the user's installation.
+src/sbGStreamerMediacore.h:  void HandleMissingPluginMessage (GstMessage *message);
+src/sbGStreamerMediacoreUtils.cpp:match_element_filter (GstPluginFeature * feature, TypeMatchingInfo * data)
+src/sbGStreamerMediacoreUtils.cpp:  name = gst_plugin_feature_get_name (feature);
+src/sbGStreamerMediacoreUtils.cpp:          (GstPluginFeatureFilter)match_element_filter, FALSE, &data);
+src/sbGStreamerMediacoreUtils.cpp:    guint rank = gst_plugin_feature_get_rank (GST_PLUGIN_FEATURE (factory));
+src/sbGStreamerMediacoreUtils.cpp:  return gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (bestfactory));
+test/Makefile.in:                 $(srcdir)/test_plugins.js \
+test/test_plugins.js:    beginPluginInfo: function(aName, aDescription, aFilename, aVersion, aLicense, aSource, aPackage, aOrigin) {
+test/test_plugins.js:    endPluginInfo: function() {
+test/test_plugins.js:  log(list.length + " plugins found");
+test/test_plugins.js:    assertTrue(a.indexOf(b[i]) >= 0, "Plugin not found: " + b[i]);
+test/test_plugins.js:    assertFalse(a.indexOf(b[i]) >= 0, "Plugin unexpectedly found: "+b[i]);
+test/test_inspect.js:    beginPluginInfo: function(aName, aDescription, aFilename, aVersion, aLicense, aSource, aPackage, aOrigin) {
+test/test_inspect.js:    endPluginInfo: function() {
+test/test_inspect.js:  log(count + " plugins found");

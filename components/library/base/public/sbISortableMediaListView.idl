@@ -1,0 +1,73 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbISortableMediaListView.idl
+ * \brief Definition of the sbISortableMediaListView interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface sbIPropertyArray;
+
+/**
+* \interface sbISortableMediaListView
+* \brief Control the sort settings on a media list
+*
+* Media lists that implement this interface declare themselves as sortable.
+*
+* \sa sbIMediaList
+*/
+[scriptable, uuid(a3579817-5ba7-49e6-98ad-5ab8270d1848)]
+interface sbISortableMediaListView : nsISupports
+{
+  /**
+   * \brief A list of properties that support sorting
+   */
+  readonly attribute nsIStringEnumerator sortableProperties;
+
+  /**
+   * \brief The current sort
+   */
+  readonly attribute sbIPropertyArray currentSort;
+
+  /**
+   * \brief Set a new sort for the media list
+   * \param aSort A property bag containing the sort parameters.  The keys
+   * map to sortable properties and the value for each key is either "a" for
+   * ascending or "d" for decending.
+   */
+  void setSort(in sbIPropertyArray aSort);
+
+  /**
+   * \brief Clear the sort
+   */
+  void clearSort();
+
+};
+

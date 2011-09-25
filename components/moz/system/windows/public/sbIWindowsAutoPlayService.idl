@@ -1,0 +1,119 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIWindowsAutoPlayService
+ *
+ *   This interface provides support for interacting with the Windows AutoPlay
+ * service.
+ *   This interface allows clients to add handlers for various Windows AutoPlay
+ * actions.  Clients should add handlers before the main application window is
+ * presented ("nightingale-main-window-presented") in order to receive all actions.
+ *
+ * "@getnightingale.com/Nightingale/WindowsAutoPlayService;1"
+ * Use get service with this component.
+ */
+
+interface sbIWindowsAutoPlayActionHandler;
+
+[scriptable, uuid(bdf4d304-1dd1-11b2-8e21-86d275880563)]
+interface sbIWindowsAutoPlayService : nsISupports
+{
+  //
+  // AutoPlay actions.
+  //
+
+  const unsigned long ACTION_MANAGE_VOLUME_DEVICE = 0;
+  const unsigned long ACTION_CD_RIP = 1;
+  const unsigned long ACTION_MANAGE_MTP_DEVICE = 2;
+
+  /**
+   * Add the action handler specified by aHandler as a handler for the AutoPlay
+   * action specified by aAction.
+   *
+   * \param aHandler            AutoPlay action handler.
+   * \param aAction             Action to handle.
+   */
+
+  void addActionHandler(in sbIWindowsAutoPlayActionHandler aHandler,
+                        in unsigned long                   aAction);
+
+
+  /**
+   * Remove the action handler specified by aHandler as a handler for the
+   * AutoPlay action specified by aAction.
+   *
+   * \param aHandler            AutoPlay action handler.
+   * \param aAction             Action to handle.
+   */
+
+  void removeActionHandler(in sbIWindowsAutoPlayActionHandler aHandler,
+                           in unsigned long                   aAction);
+};
+
+
+/**
+ * \interface sbIWindowsAutoPlayActionHandler
+ *
+ *   A handler for AutoPlay actions.
+ *
+ * \sa sbIWindowsAutoPlayService
+ */
+
+interface nsIVariant;
+
+[scriptable, function, uuid(7843536a-1dd2-11b2-ac8e-fa37a19126b8)]
+interface sbIWindowsAutoPlayActionHandler : nsISupports
+{
+  /**
+   * Handle the Windows AutoPlay action specified by aAction with the argument
+   * specified by aActionArg.  Return true if the action is handled.
+   *
+   * \param aAction             AutoPlay action to handle.
+   * \param aActionArg          Action argument.
+   *
+   * \return true               Action was handled.
+   */
+
+  boolean handleAction(in unsigned long aAction,
+                       in nsIVariant    aActionArg);
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_WINDOWSAUTOPLAYSERVICE_CONTRACTID \
+          "@getnightingale.com/Nightingale/WindowsAutoPlayService;1"
+%}C++
+

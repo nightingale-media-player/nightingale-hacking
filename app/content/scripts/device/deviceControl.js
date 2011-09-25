@@ -1,0 +1,954 @@
+/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/**
+* \file  deviceControl.js
+* \brief Javascript source for the device control widget.
+*/
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Device control widget.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+//
+// Device control imported services.
+//
+//------------------------------------------------------------------------------
+
+// Nightingale imports.
+Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
+
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+
+
+//------------------------------------------------------------------------------
+//
+// Device control services defs.
+//
+//------------------------------------------------------------------------------
+
+// Component manager defs.
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+
+
+//------------------------------------------------------------------------------
+//
+// Device control services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Construct a device control services object for the widget specified by
+ * aWidget.
+ *
+ * \param aWidget               Device control widget.
+ */
+
+function deviceControlWidget(aWidget) {
+  this._widget = aWidget;
+}
+
+// Set the constructor.
+deviceControlWidget.prototype.constructor = deviceControlWidget;
+
+// Define the object.
+deviceControlWidget.prototype = {
+  //
+  // Device control object fields.
+  //
+  //   _widget                  Device control widget.
+  //   _device                  Device bound to device control widget.
+  //   _deviceLibrary           Bound device library.
+  //   _boundElem               Element bound to device control widget.
+  //   _domEventListenerSet     Set of DOM event listeners.
+  //   _deviceListenerAdded     True if a device listener has been added.
+  //   _currentState            Current device operational state.
+  //   _currentReadOnly         Current device read only state.
+  //   _currentMgmtType         Current device management type array.
+  //
+
+  _widget: null,
+  _device: null,
+  _deviceLibrary: null,
+  _boundElem: null,
+  _domEventListenerSet: null,
+  _deviceListenerAdded: false,
+  _currentState: Ci.sbIDevice.STATE_IDLE,
+  _currentReadOnly: false,
+  _currentMgmtType: Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device control services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Bind the device control widget to a device library or device.
+   */
+
+  bindDevice: function deviceControlWidget_bindDevice() {
+    // If the device library GUID is specified, check if it has changed.
+    // Otherwise, check if the device ID has changed.
+    let devLibGUID = this._widget.getAttribute("dev-lib-guid");
+    let devLib;
+    let deviceID;
+    let device;
+    if (devLibGUID) {
+      // Just return if the device library GUID has not changed.
+      if (devLibGUID == this._widget.devLibGUID)
+        return;
+
+      // Get the device library.
+      let libMgr = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
+                     .getService(Ci.sbILibraryManager);
+      devLib = libMgr.getLibrary(devLibGUID);
+
+      // Get the device info from the device library.
+      if (devLib)
+        device = devLib.device;
+      if (device)
+        deviceID = device.id;
+    }
+    else {
+      // Get the device ID.  Just return if it has not changed or has not been
+      // specified.
+      deviceID = this._widget.getAttribute("device-id");
+      if (!deviceID || (deviceID == this._widget.deviceID))
+        return;
+
+      // Get the device object.
+      let deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      device = deviceManager.getDevice(Components.ID(deviceID));
+
+      // Get the device default library info.
+      if (device)
+        devLib = device.defaultLibrary;
+      if (devLib)
+        devLibGUID = devLib.guid;
+    }
+
+    // Determine whether a new device or device library has been bound.
+    let deviceBound = device != this._widget.device;
+    let devLibBound = devLib != this._widget.devLib;
+
+    // Set some widget fields.
+    this._widget.device = device;
+    this._widget.deviceID = deviceID;
+    this._widget.devLib = devLib;
+    this._widget.devLibGUID = devLibGUID;
+
+    // Re-initialize the device control widget services.
+    this.finalize(true);
+    this.initialize();
+
+    // Send a device bound event.  It doesn't bubble, and it can't be cancelled.
+    if (deviceBound) {
+      let event = document.createEvent("Events");
+      event.initEvent("deviceBound", false, false);
+      this._widget.dispatchEvent(event);
+    }
+
+    // Send a device library bound event.  It doesn't bubble, and it can't be
+    // cancelled.
+    if (devLibBound) {
+      let event = document.createEvent("Events");
+      event.initEvent("devLibBound", false, false);
+      this._widget.dispatchEvent(event);
+    }
+  },
+
+
+  /**
+   * Initialize the device control services.
+   */
+
+  initialize: function deviceControlWidget_initialize() {
+    var _this = this;
+    var func;
+
+    // Initialize object fields.
+    this._device = this._widget.device;
+    this._deviceLibrary = this._widget.devLib;
+
+    // Get the bound element.
+    this._getBoundElem();
+
+    // Create a DOM event listener set.
+    this._domEventListenerSet = new DOMEventListenerSet();
+
+    // Add a DOM command event handler.
+    func = function(aEvent) { _this.onAction(aEvent); };
+    this._domEventListenerSet.add(this._boundElem, "command", func, false);
+
+    // Add device event listener.
+    if (this._widget.getAttribute("listentodevice") == "true") {
+      var deviceEventTarget = this._device.QueryInterface
+                                             (Ci.sbIDeviceEventTarget);
+      deviceEventTarget.addEventListener(this);
+      this._deviceListenerAdded = true;
+    }
+
+    // Only attempt to migrate sync settings if we have a device library.
+    if (this._deviceLibrary) {
+      // Migrate the old preference if available
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch);
+
+      var syncPlaylistPrefKey = "nightingale.device." + this._widget.deviceID +
+                                ".preferences.library." + this._deviceLibrary.guid +
+                                ".sync.playlists"
+
+      var syncPlaylistPrefs = null;
+      if (prefs.prefHasUserValue(syncPlaylistPrefKey))
+        syncPlaylistPrefs = prefs.getCharPref(syncPlaylistPrefKey);
+
+      // Migration starts.
+      if (syncPlaylistPrefs) {
+        // Get the list of the guid
+        var guidList = syncPlaylistPrefs.split(",");
+        var syncAudioPlaylists = "";
+        var syncVideoPlaylists = "";
+        var mediaList;
+        for (var i = 0; i < guidList.length; ++i) {
+          try {
+            mediaList = LibraryUtils.mainLibrary.getMediaItem(guidList[i])
+            var contentType = mediaList.getListContentType();
+            if (contentType & Ci.sbIMediaList.CONTENTTYPE_AUDIO)
+              syncAudioPlaylists += guidList[i] + ",";
+            if (contentType & Ci.sbIMediaList.CONTENTTYPE_VIDEO)
+              syncVideoPlaylists += guidList[i] + ",";
+          }
+          catch (ex) {
+          }
+        }
+
+        prefs.setCharPref(syncPlaylistPrefKey + ".audio", syncAudioPlaylists);
+        prefs.setCharPref(syncPlaylistPrefKey + ".video", syncVideoPlaylists);
+
+        // Reset the old preference so that migration only happans once.
+        prefs.setCharPref(syncPlaylistPrefKey, "");
+      }
+    }
+
+    // Force an update of the widget.
+    this._update(true);
+  },
+
+
+  /**
+   * Finalize the device info services.  If aReset is true, the finalization is
+   * for a services reset, so don't clear the device control widget.
+   */
+
+  finalize: function deviceControlWidget_finalize(aReset) {
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet) {
+      this._domEventListenerSet.removeAll();
+    }
+    this._domEventListenerSet = null;
+
+    // Remove device event listener.
+    if (this._deviceListenerAdded) {
+      var deviceEventTarget = this._device.QueryInterface
+                                             (Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+    this._deviceListenerAdded = false;
+
+    // Clear object fields.
+    this._device = null;
+    this._deviceLibrary = null;
+    this._boundElem = null;
+    if (!aReset)
+      this._widget = null;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device control event handling services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle the event specified by aEvent for elements with defined actions.
+   *
+   * \param aEvent              Event to handle.
+   */
+
+  onAction: function deviceControlWidget_onAction(aEvent) {
+    // Do nothing if not bound to a device.
+    if (!this._device)
+      return;
+
+    // Dispatch processing of action.
+    switch (aEvent.target.getAttribute("action")) {
+      case "cancel" :
+        this._device.cancelRequests();
+        break;
+
+      case "eject" :
+        this._device.eject();
+        break;
+
+      case "format" :
+        this._device.format();
+        break;
+
+      case "ignore" :
+        this._ignoreDevice();
+        break;
+
+      case "get_info" :
+        this._getDeviceInfo();
+        break;
+
+      case "new_playlist" :
+        this._createPlaylist();
+        break;
+
+      case "rename" :
+        this._renameDevice();
+        break;
+
+      case "sync" :
+        // Sync specific device library or all libraries on device.
+        if (this._deviceLibrary) {
+          this._deviceLibrary.sync();
+        }
+        else {
+          this._device.syncLibraries();
+        }
+        break;
+
+      case "rip" :
+        sbCDDeviceUtils.doCDRip(this._device);
+        break;
+
+      case "rescan" :
+        sbCDDeviceUtils.doCDLookUp(this._device);
+        break;
+
+      default :
+        break;
+    }
+  },
+
+  /**
+   * Create a new device playlist.
+   */
+
+  _createPlaylist: function deviceControlWidget__createPlaylist() {
+    var libSPS = Cc["@getnightingale.com/servicepane/library;1"]
+                   .getService(Ci.sbILibraryServicePaneService);
+
+    // Create the playlist.
+    var mediaList = this._deviceLibrary.createMediaList("simple");
+    mediaList.name = libSPS.suggestNameForNewPlaylist(this._deviceLibrary);
+
+    // Edit the playlist service pane node.
+    if (gServicePane) {
+      var libDSPS = Cc["@getnightingale.com/servicepane/device;1"]
+                     .getService(Ci.sbIDeviceServicePaneService);
+      var node = libSPS.getNodeForLibraryResource(mediaList);
+      var deviceNode = libDSPS.getNodeForDevice(this._device);
+      deviceNode.appendChild(node);
+      gServicePane.startEditingNode(node);
+    }
+  },
+
+  /**
+   * Rename the device.
+   */
+
+  _renameDevice: function deviceControlWidget__renameDevice() {
+    // Get the service pane node associated with the widget.
+    var servicePaneNode = this._getServicePaneNode();
+
+    // Edit the service pane node if specified.  Otherwise, present a rename
+    // dialog.
+    if (servicePaneNode && (typeof(gServicePane) != "undefined")) {
+      gServicePane.startEditingNode(servicePaneNode);
+    } else {
+      // Get the device friendly name.
+      var friendlyName = null;
+      try { friendlyName = this._device.properties.friendlyName; } catch(ex) {}
+
+      // Get the device vendor/model name.
+      var vendorModelName = "";
+      var vendorName = null;
+      var modelNumber = null;
+      try { vendorName = this._device.properties.vendorName; } catch(ex) {}
+      try { modelNumber = this._device.properties.modelNumber; } catch(ex) {}
+      if (!modelNumber)
+        modelNumber = SBString("device.default.model.number");
+      if (vendorName)
+        vendorModelName += vendorName + " ";
+      vendorModelName += modelNumber;
+
+      // Prompt user for new name.
+      var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Ci.nsIPromptService);
+      var newName = { value: friendlyName };
+      var ok = promptService.prompt
+                 (window,
+                  SBString("device.dialog.rename.title"),
+                  SBFormattedString("device.dialog.rename.message",
+                                    [vendorModelName]),
+                  newName,
+                  null,
+                  {});
+
+      // Set new device name.
+      if (ok) {
+        try {
+          this._device.properties.friendlyName = newName.value;
+        } catch (ex) {
+          Cu.reportError("Cannot write device name.\n");
+        }
+      }
+    }
+  },
+
+  /**
+   * Ignore device
+   * First, explain to the user what is happening, then
+   * add the device to the blacklist, and "eject" it.
+   */
+  _ignoreDevice: function deviceControlWidget__ignoreDevice() {
+    var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                                  .getService(Ci.nsIPromptService);
+
+    window.focus();
+    var buttonPressed = promptService.confirmEx(window,
+                          SBString('device.dialog.setup.ignoreDeviceTitle'),
+                          SBString('device.dialog.setup.ignoreDevice'),
+                          promptService.STD_YES_NO_BUTTONS,
+                          null, null, null,
+                          null, {});
+    // don't set the pref unless they press OK
+    acceptedBlacklist = (buttonPressed == 0);
+    if (acceptedBlacklist) {
+      var ignoreList = Application.prefs
+                                  .getValue("nightingale.device.ignorelist", "");
+      // Append a separator if necessary.
+      if (ignoreList != "") {
+        ignoreList += ";";
+      }
+      ignoreList += this._device.id;
+      Application.prefs.setValue("nightingale.device.ignorelist", ignoreList);
+
+      // Remove the device from the application
+      var manager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
+                      .getService(Ci.sbIDeviceManager2);
+      var controller = manager.getController(this._device.controllerId);
+      controller.releaseDevice(this._device);
+    }
+    return acceptedBlacklist;
+  },
+
+  /**
+   * Get the device information and show it to the user.
+   */
+
+  _getDeviceInfo: function deviceControlWidget__getDeviceInfo() {
+    // Show the device info dialog.
+    WindowUtils.openModalDialog
+      (window,
+       "chrome://nightingale/content/xul/device/deviceInfoDialog.xul",
+       "",
+       "chrome,centerscreen",
+       [ this._device ],
+       null);
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device control sbIDeviceEventListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Handle the device event specified by aEvent.
+   *
+   * \param aEvent              Device event.
+   */
+
+  onDeviceEvent: function DeviceSyncWidget_onDeviceEvent(aEvent) {
+    // Dispatch processing of the event.
+    switch(aEvent.type)
+    {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED :
+        this._update();
+        break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED :
+        this._update();
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal device control device services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Return the device product name string (e.g., "Apple iPod").
+   *
+   * \return Device model string.
+   */
+
+  _getProductName: function deviceControlWidget__getProductName() {
+    // Get the device product name.
+    var productName = null;
+    try { productName = this._device.productName; } catch(err) {}
+    if (productName == null)
+      productName = SBString("device.info.unknown");
+
+    return productName;
+  },
+
+
+  /**
+   * Return the device model/capacity string (e.g., "Apple iPod(4GB)").
+   *
+   * \return Device model/capacity string.
+   */
+
+  _getDeviceModelCap: function deviceControlWidget__getDeviceModelCap() {
+    // Get the device product name.
+    var productName = null;
+    try { productName = this._device.productName; } catch(err) {}
+    if (productName == null)
+      productName = SBString("device.info.unknown");
+
+    // Get the device capacity.
+    var capacity = "";
+    if (this._deviceLibrary) {
+      try {
+        storageConverter =
+          Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
+            .createInstance(Ci.sbIPropertyUnitConverter);
+        capacity = this._deviceLibrary.getProperty
+                     ("http://getnightingale.com/device/1.0#capacity");
+        capacity = storageConverter.autoFormat(capacity, -1, 1);
+      } catch (ex) {};
+    }
+
+    return SBFormattedString("device.info.model_cap",
+                             [ productName, capacity ]);
+  },
+
+
+  /**
+   * Return true if device is read-only; return false otherwise.
+   *
+   * \return true if device is read-only.
+   */
+
+  _isReadOnly: function deviceControlWidget__isReadOnly() {
+    var readOnly;
+
+    // If device is read-only, return true.
+    var accessCompatibility;
+    var deviceProperties = this._device.properties.properties;
+    try {
+      accessCompatibility =
+        deviceProperties.getPropertyAsAString("http://getnightingale.com/" +
+                                              "device/1.0#accessCompatibility");
+    } catch (ex) {}
+    if (accessCompatibility == "ro")
+      return true;
+
+    // Treat device as read-only if it doesn't have a library.
+    if (!this._deviceLibrary)
+      return true;
+
+    // If we're formatting treat the device as readOnly
+    if (this._device.state == Ci.sbIDevice.STATE_FORMATTING)
+      return true;
+
+    // This is just preventative measure in case the library is being
+    // destroyed or bad state, we'll just treat as readOnly
+    try {
+      // Treat device as read-only if its library is read-only.
+      if (this._deviceLibrary.getProperty(SBProperties.isReadOnly) == "1")
+        readOnly = true;
+      else
+        readOnly = false;
+    }
+    catch (ex) {
+      // This is just preventative measure in case the library is being
+      // destroyed or bad state, we'll just treat as readOnly
+      readOnly = true;
+    }
+    return readOnly;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal device control services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Update the widget to reflect device state changes.  Do nothing if no device
+   * state has changed and aForce is false.
+   *
+   * \param aForce              Force an update.
+   */
+
+  _update: function deviceControlWidget__update(aForce) {
+    // Get the device state.
+    var state = this._device.state;
+    var readOnly = this._isReadOnly();
+    var supportsReformat = this._device.supportsReformat;
+    var supportsPlaylist = this._supportsPlaylist();
+    var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
+
+    var mgmtType = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+    if (this._deviceLibrary)
+      mgmtType = this._deviceLibrary.tempSyncSettings.syncMode;
+
+    // Do nothing if no device state changed and update is not forced.
+    if (!aForce &&
+        (this._currentMgmtType == mgmtType) &&
+        (this._currentState == state) &&
+        (this._currentReadOnly == readOnly) &&
+        (this._currentSupportsReformat == supportsReformat) &&
+        (this._currentSupportsPlaylist == supportsPlaylist) &&
+        (this._currentMsc == msc)) {
+      return;
+    }
+
+    // Update the current state.
+    this._currentMgmtType = mgmtType;
+    this._currentState = state;
+    this._currentReadOnly = readOnly;
+    this._currentSupportsReformat = supportsReformat;
+    this._currentSupportsPlaylist = supportsPlaylist;
+    this._currentMsc = msc;
+
+    // Update widget attributes.
+    var updateAttributeList = [];
+    this._updateAttribute("accesskey", updateAttributeList);
+    this._updateAttribute("action", updateAttributeList);
+    this._updateAttribute("disabled", updateAttributeList);
+    this._updateAttribute("label", updateAttributeList);
+    this._updateAttribute("hidden", updateAttributeList);
+    this._updateAttribute("checked", updateAttributeList);
+
+    // Update bound element attributes.
+    if (this._boundElem != this._widget) {
+      DOMUtils.copyAttributes(this._widget,
+                              this._boundElem,
+                              updateAttributeList,
+                              true);
+    }
+  },
+
+  /**
+   * Check the device capabilities to see if it supports playlists.
+   * Device implementations may respond to CONTENT_PLAYLIST for either
+   * FUNCTION_DEVICE or FUNCTION_AUDIO_PLAYBACK.
+   */
+  _supportsPlaylist: function deviceControlWidget__supportsPlaylist() {
+    var capabilities = this._device.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    try {
+      if (capabilities.supportsContent(sbIDC.FUNCTION_DEVICE,
+                                       sbIDC.CONTENT_PLAYLIST) ||
+          capabilities.supportsContent(sbIDC.FUNCTION_AUDIO_PLAYBACK,
+                                       sbIDC.CONTENT_PLAYLIST)) {
+        return true;
+      }
+    } catch (e) {}
+
+    // couldn't find PLAYLIST support in either the DEVICE
+    // or AUDIO_PLAYBACK category
+    return false;
+  },
+
+  /**
+   * Update the widget attribute specified by aAttrName to reflect changes to
+   * the device state.  If a value is specified for the attribute, add the
+   * attribute name to the attribute update list specified by aAttrList.
+   *
+   * \param aAttrName           Name of attribute to update.
+   * \param aAttrList           List of attributes to update.
+   */
+
+  _updateAttribute: function deviceControlWidget__updateAttribute(aAttrName,
+                                                                  aAttrList) {
+    // Get the attribute value for the current state.
+    var attrVal = {};
+    if (this._currentReadOnly &&
+        this._getStateAttribute(attrVal, aAttrName, "readonly")) {}
+    else if (!this._currentReadOnly &&
+             this._getStateAttribute(attrVal, aAttrName, "readwrite")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_CANCEL) &&
+             this._getStateAttribute(attrVal, aAttrName, "cancel")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_COPYING) &&
+             this._getStateAttribute(attrVal, aAttrName, "copy")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_DELETING) &&
+             this._getStateAttribute(attrVal, aAttrName, "delete")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_MOUNTING) &&
+             this._getStateAttribute(attrVal, aAttrName, "mount")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_SYNCING) &&
+             this._getStateAttribute(attrVal, aAttrName, "sync")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_UPDATING) &&
+             this._getStateAttribute(attrVal, aAttrName, "update")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_TRANSCODE) &&
+             this._getStateAttribute(attrVal, aAttrName, "transcode")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_FORMATTING) &&
+             this._getStateAttribute(attrVal, aAttrName, "format")) {}
+    else if ((this._currentState != Ci.sbIDevice.STATE_IDLE) &&
+             this._getStateAttribute(attrVal, aAttrName, "busy")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
+             this._getStateAttribute(attrVal, aAttrName, "idle")) {}
+    else if (this._deviceLibrary && !(this._deviceLibrary.isManualSyncMode) &&
+             this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
+    else if (this._deviceLibrary && this._canTriggerSync() &&
+             this._getStateAttribute(attrVal, aAttrName, "can_trigger_sync")) {}
+    else if (this._currentSupportsReformat &&
+             this._getStateAttribute(attrVal,
+                                     aAttrName,
+                                     "supports_reformat")) {}
+    else if (this._currentMsc &&
+             this._getStateAttribute(attrVal, aAttrName, "msc")) {}
+    else if (this._currentSupportsPlaylist &&
+             this._getStateAttribute(attrVal,
+                                     aAttrName,
+                                     "supports_playlist")) {}
+    else if (!this._currentSupportsPlaylist &&
+             this._getStateAttribute(attrVal,
+                                     aAttrName,
+                                     "not_supports_playlist")) {}
+    else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
+    else this._getStateAttribute(attrVal, aAttrName, null);
+
+    // Do nothing if no attribute value to set.
+    if ((typeof(attrVal.value) == "undefined") || (attrVal.value == null))
+      return;
+    attrVal = attrVal.value;
+
+    // If attribute value is "remove_attribute", remove the attribute instead
+    // of setting it.
+    var removeAttr = false;
+    if (attrVal == "remove_attribute")
+      removeAttr = true;
+
+    // Replace "product_name" in attribute value with the device product name
+    // string.
+    if (attrVal.match(/product_name/)) {
+      var productName = this._getProductName();
+      attrVal = attrVal.replace(/product_name/g, productName);
+    }
+
+    // Replace "device_model_cap" in attribute value with the device
+    // model/capacity string.
+    if (attrVal.match(/device_model_cap/)) {
+      var deviceModelCap = this._getDeviceModelCap();
+      attrVal = attrVal.replace(/device_model_cap/g, deviceModelCap);
+    }
+
+    // Update attribute value.
+    if (!removeAttr)
+      this._widget.setAttribute(aAttrName, attrVal);
+    else
+      this._widget.removeAttribute(aAttrName);
+    aAttrList.push(aAttrName);
+  },
+
+
+  /**
+   *   Get the state attribute value for the attribute with the name specified
+   * by aAttrName and the state specified by aAttrState.  Return the state
+   * attribute value in aAttrVal.  If a state attribute value is available,
+   * return true; otherwise return false and don't return anything in aAttrVal.
+   *   If aAttrState is not specified, simply return the attribute with the name
+   * specified by aAttrName.
+   *
+   * \param aAttrVal            Returned state attribute value.
+   * \param aAttrName           Attribute name.
+   * \param aAttrState          State.
+   *
+   * \return                    True if state attribute value is available.
+   */
+
+  _getStateAttribute: function deviceControlWidget__getStateAttribute
+                                 (aAttrVal,
+                                  aAttrName,
+                                  aAttrState) {
+    // Get the state attribute name.
+    var stateAttrName = aAttrName;
+    if (aAttrState)
+      stateAttrName += "_" + aAttrState;
+
+    // Return false if no state attribute value available.
+    if (!this._widget.hasAttribute(stateAttrName))
+      return false;
+
+    // Return the state attribute value.
+    aAttrVal.value = this._widget.getAttribute(stateAttrName);
+    return true;
+  },
+
+
+  /**
+   * Get the element bound to the device control widget.  Default to binding the
+   * widget to itself.
+   */
+
+  _getBoundElem: function deviceControlWidget__getBoundElem() {
+    var boundElem;
+
+    // Get the bound element from the bind element attributes.
+    boundElem = this._getElementFromSpec(this._widget, "bindforward");
+    boundElem = this._getElementFromSpec(boundElem, "bindelem");
+
+    // Set the bound element.
+    this._boundElem = boundElem;
+    this._widget.boundElem = boundElem;
+  },
+
+
+  /**
+   * Search for and return the element specified by the element spec
+   * aElementSpec, starting from the element specified by aElementStart.
+   *
+   * \param aElementStart       Element from which to start search.
+   * \param aElementSpec        Element search specification.
+   *
+   * \return                    Found element.
+   */
+
+  _getElementFromSpec: function deviceControlWidget__getElement(aElementStart,
+                                                                aElementSpec) {
+    // Get the element from the spec.
+    var element;
+    var elementSpec = this._widget.getAttribute(aElementSpec).split("=");
+    switch (elementSpec[0]) {
+      case "prev" :
+        element = aElementStart.previousSibling;
+        while (element && (element.nodeType != Node.ELEMENT_NODE)) {
+          element = element.previousSibling;
+        }
+        break;
+
+      case "next" :
+        element = aElementStart.nextSibling;
+        while (element && (element.nodeType != Node.ELEMENT_NODE)) {
+          element = element.nextSibling;
+        }
+        break;
+
+      case "parent" :
+        element = aElementStart.parentNode;
+        break;
+
+      default :
+        element = aElementStart;
+        break;
+    }
+
+    return element;
+  },
+
+
+  /**
+   * Return the service pane node associated with the widget.
+   *
+   * \return                    Service pane node associated with widget.
+   */
+
+  _getServicePaneNode: function deviceControlWidget__getServicePaneNode() {
+    // Get the service pane node ID.
+    var servicePaneNodeID = this._widget.getAttribute("service_pane_node_id");
+    if (!servicePaneNodeID)
+      return null;
+
+    // Get the service pane node.
+    var servicePaneService = Cc["@getnightingale.com/servicepane/service;1"]
+                               .getService(Ci.sbIServicePaneService);
+    servicePaneNode = servicePaneService.getNode(servicePaneNodeID);
+
+    return servicePaneNode;
+  },
+
+  _canTriggerSync: function deviceControlWidget__canTriggerSync() {
+    // Can not sync if there is no library.
+    if (!this._deviceLibrary)
+      return false;
+
+    // user can trigger sync if management is not manual.
+    if (!(this._deviceLibrary.isManualSyncMode))
+      return true;
+
+    // Check photo sync settings since they are separate from the other types
+    let syncSettings = this._deviceLibrary.tempSyncSettings;
+
+    // Can not sync if there are no settings.
+    if (!syncSettings)
+      return false;
+
+    let mediaSettings = syncSettings.getMediaSettings(
+                                          this._deviceLibrary.MEDIATYPE_IMAGE);
+    // Can not sync if there are no settings for IMAGE media type.
+    if (!mediaSettings)
+      return false;
+
+    return (mediaSettings.mgmtType !=
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
+  }
+};

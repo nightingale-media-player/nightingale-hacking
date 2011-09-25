@@ -1,0 +1,110 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+ 
+#include "nsISupports.idl"
+
+/**
+ * forward declared interfaces
+ */
+interface nsIArray;
+interface nsIFile;
+interface sbIMediaList;
+ 
+[scriptable, uuid(0172e449-18d2-4930-aebf-1a87375b8515)] 
+interface sbIDeviceLibraryPlaylistListener : nsISupports
+{
+  void onPlaylistAdded(in sbIMediaList aPlaylist);
+  void onPlaylistRemoved(in sbIMediaList aPlaylist); 
+};
+
+[scriptable, uuid(d2fe5d91-1118-461f-ae49-dff6dac56f69)]
+interface sbIDeviceLibraryMediaSyncSettings : nsISupports
+{
+  /** 
+   * Sync management settings
+   *   SYNC_MGMT_NONE -      No media items of this type are sync'd
+   *   SYNC_MGMT_ALL -       Synchronize all media items of this type
+   *   SYNC_MGMT_PLAYLISTS - Synchronize only media belonging to selected 
+   *                         playlists
+   */
+  const unsigned long SYNC_MGMT_NONE                  = 0;
+  const unsigned long SYNC_MGMT_ALL                   = 10;
+  const unsigned long SYNC_MGMT_PLAYLISTS             = 11;
+  
+  /**
+   * Sets the management type for a given content type 
+   * SYNC_MGMT_NONE | SYNC_MGMT_ALL | SYNC_MGMT_PLAYLISTS
+   */
+  attribute unsigned long mgmtType;
+  
+  /**
+   * Represents the playlists that are currently selected. The array returned
+   * is a copy. Call the setter to change the selected playlists
+   */
+  attribute nsIArray selectedPlaylists;
+   
+  /**
+   * Adds a playlist to this media type's settings
+   */
+  void setPlaylistSelected(in sbIMediaList aPlaylist, 
+                           in boolean aSelected);
+
+  /**
+   * Determines if the playlist is selected to be sync'd
+   */
+  boolean getPlaylistSelected(in sbIMediaList aPlaylist);
+
+  /**
+   * Removes all playlist selections
+   */
+  void clearSelectedPlaylists();
+
+  /**
+   * The folder on the device to sync to. It's a relative path
+   * so that it can be used by MSC and MTP
+   */
+  attribute AString syncFolder;
+
+  /**
+   * Currently only used by images, this is the folder on the host machine to
+   * sync from
+   */
+  attribute nsIFile syncFromFolder;
+  
+  /**
+   * Returns playlists that can be selected for this MediaType
+   */
+  readonly attribute nsIArray syncPlaylists;
+  
+  /**
+   * Notifies when the list of playlists for this media type changes
+   */
+  void addPlaylistListener(in sbIDeviceLibraryPlaylistListener aListener);
+  
+  /**
+   * removes the listener
+   */
+  void removePlaylistListener(in sbIDeviceLibraryPlaylistListener aListener);
+};
+ 

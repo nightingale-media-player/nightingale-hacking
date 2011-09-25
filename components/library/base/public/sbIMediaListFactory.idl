@@ -1,0 +1,71 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbIMediaListFactory.idl
+ * \brief Definition of the sbIMediaListFactory interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface sbIMediaList;
+
+/**
+ * \interface sbIMediaListFactory
+ * \brief Factory for new media list instances
+ *
+ * This interface is used to create new instances of a media list. 
+ *
+ * \sa sbIMediaList
+ */
+[scriptable, uuid(c3e4bb1e-1051-4027-913b-f57c31039b97)]
+interface sbIMediaListFactory : nsISupports
+{
+  /**
+   * \brief A human-readable string identifying the type of media list that will
+   *        be created by this factory.
+   */
+  readonly attribute AString type;
+
+  /**
+   * \brief The contract ID through which an instance of this class can be
+   *        created.
+   */
+  readonly attribute ACString contractID;
+
+  /**
+   * \brief Create a new instance of a media list based on the template
+   *        sbIMediaItem provided.
+   *
+   * \param aInner - An sbIMediaItem created by the library
+   *
+   * \return A object implementing the sbIMediaList interface.
+   */
+  sbIMediaList createMediaList(in sbIMediaItem aInner);
+};
+

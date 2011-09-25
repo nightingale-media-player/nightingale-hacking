@@ -1,0 +1,435 @@
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbIDatabaseQuery.idl
+ * \brief Objects for executing SQL queries against the internal database 
+ * 
+ * \sa sbIDatabaseQuery.idl, DatabaseQuery.h
+ */
+#include "nsISupports.idl"
+
+interface nsIURI;
+interface sbIDatabaseResult;
+interface sbIDatabasePreparedStatement;
+
+/**
+ * \interface sbIDatabaseSimpleQueryCallback 
+ * \brief A callback object used to inform client code that a query has completed
+ *
+ * This interface is meant to be implemented as a callback by client code.
+ *
+ * Clients that simply need to be informed when a query has completed may
+ * implement this interface and pass it to 
+ * sbIDatabaseQuery::addSimpleQueryCallback().
+ *
+ * NOTE: The onQueryEnd() method is called from a database thread.
+ *
+ * \sa sbIDatabaseQueryCallback, sbIDatabaseQuery, sbIDatabaseResult
+ */
+[scriptable, uuid(918745AE-0F40-4d08-BA4E-27A739459952)]
+interface sbIDatabaseSimpleQueryCallback : nsISupports
+{
+  /**
+   * \brief Called when the query has completed
+   *
+   * NOTE: The onQueryEnd() method is called from a database thread.
+   *
+   * \param dbResultObject The result object of the completed query
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryEnd(in sbIDatabaseResult dbResultObject, in AString dbGUID, in AString strQuery);
+};
+
+
+/**
+ * \interface sbIDatabaseQueryCallback 
+ * \brief A more complex callback object that can be used to read each row of the results in turn
+ *
+ * This interface is meant to be implemented as a callback by client code.
+ *
+ * Clients that simply need to be informed when a query has completed may
+ * implement this interface and pass it to sbIDatabaseQuery::addCallback().
+ *
+ * NOTE: The callback methods are called from a database thread.
+ *
+ * \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQuery
+ */
+[scriptable, uuid(A901158A-3735-44fd-9AD2-1753F1407284)]
+interface sbIDatabaseQueryCallback : nsISupports
+{
+  /**
+   * \brief Called if the query has an error
+   *
+   * NOTE: The onQueryError() method is called from a database thread.
+   *
+   * \param dbError The error code from SQLITE (equivalent to the return from sbIDatabaseQuery::execute)
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryError(in long dbError, in AString dbGUID, in AString strQuery);
+
+  /**
+   * \brief Called for each query that executes
+   *
+   * NOTE: The onQueryStart() method is called from a database thread.
+   *
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryStart(in AString dbGUID, in AString strQuery);
+
+  /**
+   * \brief Called as each row is added to the result set
+   *
+   * NOTE: The onQueryRow() method is called from a database thread.
+   *
+   * \param dbResultObject The result object of the completed query
+   * \param dbRowResult The current row filled in the result object
+   * \param dbRowTotal The total rows to be filled in the result object
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryRow(in sbIDatabaseResult dbResultObject, in unsigned long dbRowResult, in unsigned long dbRowTotal);
+
+  /**
+   * \brief Called when the query has completed
+   *
+   * NOTE: The onQueryEnd() method is called from a database thread.
+   *
+   * \param dbResultObject The result object of the completed query
+   * \param dbGUID The guid of the database bring queried
+   * \param strQuery The query string that executed
+   * \sa sbIDatabaseQuery
+   */
+  void onQueryEnd(in sbIDatabaseResult dbResultObject, in AString dbGUID, in AString strQuery); 
+};
+
+/**
+* \interface sbIDatabaseQuery
+* \brief An object responsible for executing SQL queries on the database
+*
+* The sbIDatabaseQuery object is used to execute queries on the underlying
+* databases that store library and playlist data.
+*
+* While client code running from chrome is free to query the databases
+* directly, this object is more commonly passed to the database helper objects
+* that translate their methods into SQL queries placed into the passed 
+* sbIDatabaseQuery instance.
+*
+* The basic loop for using a query is as follows:
+*
+* 1) Object Initialization - setDatabaseGUID(), optionally setAsyncQuery(), 
+* set callbacks, etc
+*
+* 2) Query Construction - addQuery(), or calls to the helper objects
+*
+* 3) Execution - execute(), optionally waitForCompletion()
+*
+* 4) Get Results - getResultObject(), the returned object may be null 
+*    if there was an error. You should always check the value returned
+*    by execute. 
+*
+* 5) Reset - optionally resetQuery(), if you're going to reuse the object
+* with a new set of query strings
+* 
+* Multiple queries may be added to the object via multiple calls to addQuery,
+* or multiple calls to the helper interfaces.  The queries will execute
+* sequentially and the result object will be for the last query executed.
+*
+* \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQueryCallback
+*/
+[scriptable, uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]
+interface sbIDatabaseQuery : nsISupports
+{
+  /**
+   * \brief Set a specific folder/directory URI for the database.
+   *
+   * Set a specific folder URI where you wish your database to reside.
+   * For example, you could set the location to be the following:
+   * 'file:///C:/MyDB/'
+   *
+   * Note that the directory is not created for you and must exist by
+   * the time execute() is called on the query.
+   */
+  attribute nsIURI databaseLocation;
+
+  /**
+   * \brief Set the query to run asynchronously (ie: execute() does not block)
+   *
+   * Use callbacks or poll via isExecuting() to know when the query completes.
+   *
+   * \param bAsyncQuery If true, do not block on execute (default: false)
+   */
+  void setAsyncQuery(in PRBool bAsyncQuery);
+
+  /**
+   * \brief Return whether or not the query will run asynchronously
+   *
+   * \return If the query will run asynchronously
+   * \sa setAsyncQuery
+   */
+  PRBool isAyncQuery();
+  
+  /**
+   * \brief Add a sbIDatabaseSimpleQueryCallback instance to the query
+   *
+   * \param dbPersistCB The callback instance
+   */
+  void addSimpleQueryCallback(in sbIDatabaseSimpleQueryCallback dbPersistCB);
+
+  /**
+   * \brief Remove a sbIDatabaseSimpleQueryCallback instance from the query
+   *
+   * \param dbPersistCB The callback instance
+   */
+  void removeSimpleQueryCallback(in sbIDatabaseSimpleQueryCallback dbPersistCB);
+
+  /**
+   * \brief Set the database to be queried
+   *
+   * This function associates the query object with a particular database.
+   *
+   * The dbGUID parameter is any unique string used as a filename to create a
+   * queryable database sandbox.
+   *
+   * The special character "*" may be passed to execute a query across all 
+   * databases tracked by the application.
+   *
+   * \param dbGUID The database identifier
+   */
+  void setDatabaseGUID(in AString dbGUID);
+
+  /**
+   * \brief Get the database identifier string
+   *
+   * \return The identifier string 
+   */
+  AString getDatabaseGUID();
+
+  /**
+   * \brief Add a SQL query string to the queue
+   *
+   * This method enqueues a string to be exectued as a SQL query.
+   *
+   * See: http://www.sqlite.org/lang.html for supported query syntax.
+   *
+   * \param strQuery The query string
+   */
+  void addQuery(in AString strQuery);
+
+  /**
+   * \brief Create a prepared statement object to reduce overhead for repeated queries.
+   *
+   * This method only creates the object, and does not actually compile the statement until
+   * first execution. As of first execution, the sqlite database pointer becomes fixed, and 
+   * from that point on, it will return null if the Engine attempts to execute it via
+   * a different database engine.
+   *
+   * See: http://www.sqlite.org/lang.html for supported query syntax.
+   *
+   * \param strQuery The query string
+   */
+  sbIDatabasePreparedStatement prepareQuery(in AString strQuery);
+  
+  /**
+   * \brief Add a prepared query to the queue
+   *
+   * This method enqueues a PreparedStatement prepared via prepareQuery().
+   *
+   * \param PreparedStatement The prepared query. Must be prepared for use with this Query object.
+   */
+  void addPreparedStatement(in sbIDatabasePreparedStatement PreparedStatement);
+
+  /**
+   * \brief Return the number of query strings enqueued for execution
+   *
+   * \return The number of query strings enqueued
+   */
+  unsigned long getQueryCount();
+
+  /**
+   * \brief Get the query at the Nth index
+   *
+   * \param nIndex The index into the queue
+   * \return The Prepared Query.
+   */
+  sbIDatabasePreparedStatement getQuery(in unsigned long nIndex);
+
+  /**
+   * \brief Clear out the query and make it all sparkly new
+   *
+   * You *must* call this method if you want to reuse a query object with new
+   * query strings.
+   *
+   * Otherwise, you may simply call execute again on a query object to
+   * reissue the last set of queries.
+   */
+  void resetQuery();
+  
+  /**
+   * \brief Get the results object for the query that has executed
+   *
+   * Don't get this object unless you know the query has completed executing.
+   *
+   * \return The results object 
+   * \note The result object may be null if there was an error during query
+   *       execution.
+   */
+  sbIDatabaseResult getResultObject();
+
+  /**
+   * \brief Get the last error on the query that has executed
+   *
+   * Don't call this method unless you know the query has completed executing.
+   *
+   * \return The error code, or 0 if no error 
+   */
+  long getLastError();
+
+  /**
+   * \brief Set the last error on the query
+   *
+   * The database engine calls this.  Don't.
+   *
+   * \param dbError The error code to insert
+   */
+  void setLastError(in long dbError);
+
+  /**
+   * \brief Execute the queries enqueued in the object
+   *
+   * \return The error value if synchronous, or 0 if async
+   * \retval 0 - No error
+   * \retval > 0 - Error.
+   */
+  long execute();
+
+  /**
+   * \brief Wait until the query has finished executing asynchronously
+   *
+   * If the query is not executing, this immediately returns.
+   *
+   * \return NS_OK
+   */
+  long waitForCompletion();
+
+  /**
+   * \brief Return whether or not the query is currently executing
+   *
+   * \return true if executing
+   */
+  boolean isExecuting();
+
+  /**
+   * \brief Return the current index in the queue being indexed
+   *
+   * \return The current query index 
+   */
+  unsigned long currentQuery();
+
+  /**
+   * \brief Abort a currently executing query
+   *
+   * This method blocks until the query has aborted
+   *
+   * \return True, if the query was executing and aborted (false if not executing) 
+   */
+  boolean abort();
+
+  /**
+   * \brief Set the rolling limit for this query
+   *
+   * If set, this query will be a rolling limit query.  Rather than return the
+   * full result of the query, a rolling limit query will add up the values of
+   * the column specified in rollingLimitColumnIndex and stop running once the
+   * limit set in rollingLimit is reached.  The query result will be a single
+   * row containing the row that met or exceeded the limit.  The row number
+   * of this row will be set in rollingLimitResult.  If the limit is not
+   * reach, no rows are returned.
+   */
+  attribute unsigned long long rollingLimit;
+
+  /**
+   * \brief The index of the column used to add to the limit total
+   */
+  attribute unsigned long rollingLimitColumnIndex;
+
+  /**
+   * \brief The number of the row (1 is the first row) that met or exceeded
+   *        the limit
+   */
+  attribute unsigned long rollingLimitResult;
+
+  /**
+   * \brief Binds a UTF8String to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindUTF8StringParameter(in unsigned long aParamIndex,
+                               in AUTF8String aValue);
+
+  /**
+   * \brief Binds a String to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindStringParameter(in unsigned long aParamIndex,
+                           in AString aValue);
+
+  /**
+   * \brief Binds a double to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindDoubleParameter(in unsigned long aParamIndex,
+                           in double aValue);
+
+  /**
+   * \brief Binds an int32 to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindInt32Parameter(in unsigned long aParamIndex,
+                          in long aValue);
+
+  /**
+   * \brief Binds an int64 to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   * \param aValue Value to bind to the specified index
+   */
+  void bindInt64Parameter(in unsigned long aParamIndex,
+                          in long long aValue);
+
+  /**
+   * \brief Binds a null to the last added query
+   * \param aParamIndex The index of the parameter to bind
+   */
+  void bindNullParameter(in unsigned long aParamIndex);
+};

@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device general settings widget.
+   *
+   *   This widget provides a UI for general device settings.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-general-settings"
+    extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:groupbox sbid="device_general_settings_box"
+                    flex="1"
+                    oncommand="_widgetSvc.dispatchSettingsChangeEvent();">
+
+        <!-- Device general settings caption. -->
+        <xul:caption label="&device.settings.general.label;"/>
+
+        <!-- Device general settings. -->
+        <xul:checkbox sbid="auto_launch_checkbox"
+                      xbl:inherits="disabled"
+                      label="&device.settings.auto_launch.checkbox.label;"/>
+        <xul:checkbox
+          sbid="auto_firmware_check_checkbox"
+          xbl:inherits="disabled"
+          label="&device.settings.auto_firmware_check.checkbox.label;"/>
+
+      </xul:groupbox> <!-- device_general_settings_box -->
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Device general settings widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!--
+       * \brief Construct the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new deviceGeneralSettingsSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * \brief Destroy the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * \brief Save the UI settings to the device.
+       *-->
+
+      <method name="save"><body><![CDATA[
+        this._widgetSvc.save();
+      ]]></body></method>
+
+
+      <!--
+       * \brief Reset the UI settings to the current device settings.
+       *-->
+
+      <method name="reset"><body><![CDATA[
+        this._widgetSvc.reset();
+      ]]></body></method>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the device general settings widget services.
+        if (typeof(deviceGeneralSettingsSvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                     ("chrome://nightingale/content/scripts/device/" +
+                        "deviceGeneralSettings.js",
+                      null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        // Re-initialize the device info services.
+        this._widgetSvc.finalize();
+        this._widgetSvc.initialize();
+      ]]></handler>
+    </handlers>
+
+  </binding> <!-- sb-device-general-settings -->
+
+</bindings>
+

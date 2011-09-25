@@ -1,0 +1,131 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+#include "nsISupports.idl"
+#include "nsIPromptService.idl"
+
+/**
+ * \interface sbIPrompter
+ *
+ *   The sbIPrompter interface provides an nsIPromptService to environments
+ * without a default window (e.g., XPCOM components).  For all methods that take
+ * a parent window as an argument, the parent may be set to null.
+ *   If a parent window is set to null, this interface will use a window of the
+ * type specified by parentWindowType.  If no parent window type is specified,
+ * this interface uses a default type (e.g., "Nightingale:Main").  If a window of
+ * the specified type is not available, this interface finds an appropriate
+ * default window to use.
+ *   This interface allows a parent window type to be set to be used as the
+ * parent window in these cases.
+ *   In addition, the sbIPrompter interface can be set to wait for a parent
+ * window to be available before calling the nsIPromptService methods.  If the
+ * parent window type is not available and wait for window is false, dialogs are
+ * opened with the currently active window as the parent.
+ *   A window is not considered to be available until after its overlays have
+ * loaded.
+ *   If a method is called from a non-main thread, and wait for window is set,
+ * and a window is not available, the method will wait for a window to become
+ * available.
+ *   If a method is called from the main thread, and wait for window is set, and
+ * a window is not available, the method will return NS_ERROR_NOT_AVAILABLE.  If
+ * any error occurs, the method will return NS_ERROR_FAILURE.
+ *
+ * "@getnightingale.com/Nightingale/Prompter;1"
+ * Use create instance with this component.  No default parent window type is
+ * set and the default waitForWindow is false.
+ */
+
+[scriptable, uuid(c1735c28-1dd1-11b2-b223-92817f2c227a)]
+interface sbIPrompter : nsIPromptService
+{
+  /**
+   * The parent window type.
+   */
+  attribute AString parentWindowType;
+
+  /**
+   * If true, wait for a parent window of the configured type to be available
+   * before prompting.
+   */
+  attribute boolean waitForWindow;
+
+  /**
+   * If true, render prompt text as HTML.
+   */
+  attribute boolean renderHTML;
+
+  /**
+   * Open a dialog window with the chrome URL specified by aUrl and parent
+   * specified by aParent.  The window name is specified by aName and the window
+   * options are specified by aOptions.  Additional window arguments may be
+   * provided in aExtraArguments.
+   *
+   * Default window options for openDialog are the following:
+   *   "centerscreen,chrome,modal,titlebar".
+   *
+   * \param aParent             Parent window.
+   * \param aUrl                URL of window chrome.
+   * \param aName               Window name.
+   * \param aOptions            Window options.
+   * \param aExtraArguments     Extra window arguments.
+   */
+
+  nsIDOMWindow openDialog(in nsIDOMWindow aParent,
+                          in DOMString    aUrl,
+                          in DOMString    aName,
+                          in DOMString    aOptions,
+                          in nsISupports  aExtraArgument);
+
+  /**
+   * Open a window with the chrome URL specified by aUrl and parent specified
+   * by aParent. The window name is specified by aName and the window options
+   * are specified by aOptions. Additional window arguments may be provided in 
+   * aExtraArguments.
+   *
+   * There are no default options for openWindow.
+   *
+   * \param aParent             Parent window.
+   * \param aUrl                URL of window chrome.
+   * \param aName               Window name.
+   * \param aOptions            Window options.
+   * \param aExtraArguments     Extra window arguments.
+   */
+  nsIDOMWindow openWindow(in nsIDOMWindow aParent,
+                          in DOMString    aUrl,
+                          in DOMString    aName,
+                          in DOMString    aOptions,
+                          in nsISupports  aExtraArgument);
+
+  /**
+   * Cancel and close the current prompter window.
+   */
+  void cancel();
+};
+
+%{C++
+#define NIGHTINGALE_PROMPTER_CONTRACTID "@getnightingale.com/Nightingale/Prompter;1"
+%}C++
+

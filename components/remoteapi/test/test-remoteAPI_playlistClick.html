@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<html lang="en">
+<head>
+  <title>Remote API Test: Playlist click</title>
+  <script type="application/javascript">
+    var webPL;
+    // create this property before the page finished loading so the scraped
+    // webplaylist has this available.
+    nightingale.createImageProperty("logo-image", "logo");     
+
+    function onload() {
+        document.addEventListener("PlaylistCellClick", onplaylistclick, false);
+        nightingale.webPlaylist.appendColumn("logo-image", 20);
+    }
+
+    function setScrapedList() {
+      if (webPL) {
+        nightingale.webPlaylist.mediaList = webPL;
+      }
+    }
+
+    function setMainList() {
+      if (!webPL) {
+        webPL = nightingale.webPlaylist.mediaList;
+      }
+
+      nightingale.webPlaylist.mediaList = nightingale.mainLibrary;
+    }
+
+    function setSiteList() {
+      if (!webPL) {
+        webPL = nightingale.webPlaylist.mediaList;
+      }
+
+      var list = nightingale.siteLibrary.createSimpleMediaList("MyList");
+      var item = nightingale.siteLibrary.createMediaItem(
+        "http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3");
+        
+      item.setProperty("logo-image", "http://getnightingale.com/favicon.ico");
+      list.add(item);
+      nightingale.webPlaylist.mediaList = list;
+    }
+
+    function onplaylistclick(event) {
+      var myDiv = document.getElementById("output");
+      myDiv.appendChild(document.createTextNode(event.button + ", "));
+      myDiv.appendChild(document.createTextNode(event.ctrlKey + ", "));
+      myDiv.appendChild(document.createTextNode(event.property));
+      if ("item" in event) {
+        myDiv.appendChild(document.createTextNode(", " + event.item.guid));
+        myDiv.appendChild(document.createTextNode(", " + event.item.getProperty(event.property)));
+      }
+      myDiv.appendChild(document.createElement("br"));
+    }
+
+  </script>
+</head>
+<body>
+  <h1>Excercise the Remote Library API</h1>
+  
+  <h2>Instructions</h2>
+  <p>
+    <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Love</a>
+    <br/>
+    Click on the items in the playlist.
+    <dl>
+      <dt>Expected results:</dt>
+      <dd>New text should show up, containing
+        <ol>
+          <li>the button pressed (0 for left)
+          <li>the state of the Ctrl key
+          <li>the property clicked on
+          <li>the guid of the item clicked on
+          <li>the value of the property clicked on
+        </ol>
+      </dd>
+    </dl>
+    <form>
+      Click on button to change to a main list away from the scraped playlist.<br/>
+      <input type="button" id="main_list_button" value="Set Main List" onclick="setMainList();" />
+      <br />
+      Click on button to change to a site list away from the scraped playlist.<br/>
+      <input type="button" id="site_list_button" value="Set Site List" onclick="setSiteList();" /> 
+      <br />
+      Click on button to change to a site list back to the scraped playlist.<br/>
+      <input type="button" id="scraped_list_button" value="Set Scraped List" onclick="setScrapedList();" /> 
+    </form>
+  </p>
+  <hr>
+  <div id="output">
+  </div>
+</body>
+</html>

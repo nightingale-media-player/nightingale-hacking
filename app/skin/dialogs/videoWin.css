@@ -1,0 +1,69 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+
+CHEESY VIDEO WINDOW 
+
+Additional styles imported by the Cheesy Video Window
+
+*******************************************************************************
+*/ 
+
+#video_window {
+  width: 800px;
+  height: 600px;
+  min-width: 320px;
+  min-height: 240px;
+}
+
+#controls,
+#sb-sys-title-title, /* the text label of the window caption */
+spacer {
+  visibility:collapse;
+}
+
+#video_window sb-sys-titlebar {
+  min-height:22px;
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) sb-sys-titlebar,
+#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-chrome,
+#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-resizer,
+#video_window[fullscreen="true"] sb-sys-titlebar,
+#video_window[fullscreen="true"] .sb-sys-outer-frame-chrome,
+#video_window[fullscreen="true"] .sb-sys-outer-frame-resizer {
+  display: none;
+}
+
+#video_window #video-box {
+  background-color: black;
+}

@@ -1,0 +1,700 @@
+<?xml version="1.0"?>
+
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- 
+
+     This overlay is applied to layout windows that contain a gBrowser element 
+     (for instance, mainplayer.xul)
+
+-->
+
+<?xml-stylesheet href="chrome://global/skin/pageReport.css" type="text/css"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%nightingaleDTD;
+%charsetDTD;
+%browserDTD;
+]>
+
+<!-- Include the overlay common to all layouts -->
+<?xul-overlay href="chrome://nightingale/content/xul/layoutBaseOverlay.xul"?>
+
+<!-- Include the firefox compatibility overlay -->
+<?xul-overlay href="chrome://browser/content/browser.xul"?>
+
+<!-- These are only here for backward compatibility, do not target them -->
+<?xul-overlay href="chrome://nightingale/content/xul/browserToolbarOverlay.xul"?>
+<?xul-overlay href="chrome://nightingale/content/xul/mainScriptsOverlay.xul"?>
+
+<overlay
+  id="layoutWithBrowserOverlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                      Menubar Overlay Items                      ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+  
+
+      <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
+
+      <menupopup id="menu_FilePopup">
+        <menuseparator insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" hidden="true" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_tools_reveal" key="reveal-key" class="menuitem-iconic" label="&menu.tools.reveal;" accesskey="&menu.tools.reveal.accesskey;" insertbefore="menu_LocaleSeparator" command="cmd_reveal"/>
+        <menuseparator id="menuseparator_file_print"
+                       insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_file_print" key="printKb" command="cmd_print" 
+                  accesskey="&printCmd.accesskey;" label="&printCmd.label;"
+                  insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_tools_metadata" key="trackeditor-key2"
+                  class="menuitem-iconic" label="&menu.file.metadata;"
+                  accesskey="&menu.file.metadata.accesskey;"
+                  insertbefore="menu_LocaleSeparator" command="cmd_metadata"/>
+      </menupopup>
+
+
+      <menupopup id="menu_viewPopup">
+<!--+
+    | The rest of this menu is copied from the Firefox View menu, see:
+    | http://mxr.mozilla.org/seamonkey/source/browser/base/content/browser-menubar.inc#144
+    +-->
+        <menuseparator id="menu_viewTopSeparator"/>
+        <menuitem label="&stopCmd.label;"
+                  accesskey="&stopCmd.accesskey;"
+                  command="Browser:Stop"
+                  key="key_stop"/>
+        <menuitem label="&reloadCmd.label;" accesskey="&reloadCmd.accesskey;" command="Browser:Reload" key="key_reload"/>
+        <menuseparator/>
+        <menu id="viewFullZoomMenu" label="&fullZoom.label;" accesskey="&fullZoom.accesskey;" observes="isImage">
+          <menupopup>
+            <menuitem key="key_fullZoomEnlarge" label="&fullZoomEnlargeCmd.label;" accesskey="&fullZoomEnlargeCmd.accesskey;"
+                      command="cmd_fullZoomEnlarge"/>
+            <menuitem key="key_fullZoomReduce"  label="&fullZoomReduceCmd.label;"  accesskey="&fullZoomReduceCmd.accesskey;"
+                      command="cmd_fullZoomReduce"/>
+            <menuseparator/>
+            <menuitem key="key_fullZoomReset" label="&fullZoomResetCmd.label;" accesskey="&fullZoomResetCmd.accesskey;"
+                      command="cmd_fullZoomReset"/>
+          </menupopup>
+        </menu>
+        <menu id="pageStyleMenu" label="&pageStyleMenu.label;" accesskey="&pageStyleMenu.accesskey;" observes="isImage">
+          <menupopup onpopupshowing="stylesheetFillPopup(this);"
+                     oncommand="stylesheetSwitchAll(window.content, event.target.getAttribute('data')); setStyleDisabled(false);">
+            <menuitem label="&pageStyleNoStyle.label;" accesskey="&pageStyleNoStyle.accesskey;"
+                      oncommand="setStyleDisabled(true); event.stopPropagation();" type="radio"/>
+            <menuitem label="&pageStylePersistentOnly.label;" accesskey="&pageStylePersistentOnly.accesskey;" type="radio" checked="true"/>
+            <menuseparator/>
+          </menupopup>
+        </menu>
+
+        <menu id="charsetMenu"
+              label="&charsetMenu.label;"
+              accesskey="&charsetMenu.accesskey;"
+              datasources="rdf:charset-menu"
+              ref="NC:BrowserCharsetMenuRoot"
+              oncommand="MultiplexHandler(event)"
+              onpopupshowing="CreateMenu('browser');UpdateMenus(event)"
+              onpopupshown="CreateMenu('more-menu');"
+              observes="isImage">
+            <template>
+                <rule rdf:type="http://home.netscape.com/NC-rdf#oookmarkSeparator">
+                    <menupopup>
+                    <menuseparator uri="..." />
+                    </menupopup>
+                </rule>
+                <rule>
+                    <menupopup>
+                    <menuitem type="radio" name="charsetGroup" checked="rdf:http://home.netscape.com/NC-rdf#Checked" uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                    </menupopup>
+                </rule>
+            </template>
+            <menupopup>
+              <menu label="&charsetMenuAutodet.label;" accesskey="&charsetMenuAutodet.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserAutodetMenuRoot">
+                  <template>
+                      <rule rdf:type="http://home.netscape.com/NC-rdf#CharsetDetector">
+                          <menupopup>
+                          <menuitem type="radio" name="detectorGroup" checked="rdf:http://home.netscape.com/NC-rdf#Checked" uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                          </menupopup>
+                      </rule>
+                  </template>
+                  <menupopup>
+                  </menupopup>
+              </menu>
+              <menu label="&charsetMenuMore.label;" accesskey="&charsetMenuMore.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMoreCharsetMenuRoot">
+                  <template>
+                      <rule>
+                          <menupopup>
+                          <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                          </menupopup>
+                      </rule>
+                  </template>
+                  <menupopup>
+                      <menu label="&charsetMenuMore1.label;" accesskey="&charsetMenuMore1.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore1CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore2.label;" accesskey="&charsetMenuMore2.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore2CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore3.label;" accesskey="&charsetMenuMore3.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore3CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore4.label;" accesskey="&charsetMenuMore4.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore4CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuMore5.label;" accesskey="&charsetMenuMore5.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserMore5CharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menu label="&charsetMenuUnicode.label;" accesskey="&charsetMenuUnicode.accesskey;" datasources="rdf:charset-menu" ref="NC:BrowserUnicodeCharsetMenuRoot">
+                          <template>
+                              <rule>
+                                  <menupopup>
+                                  <menuitem uri="..." label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+                                  </menupopup>
+                              </rule>
+                          </template>
+                          <menupopup>
+                          </menupopup>
+                      </menu>
+                      <menuseparator />
+                  </menupopup>
+              </menu>
+              <menuitem name="charsetCustomize" accesskey="&charsetCustomize.accesskey;" label="&charsetCustomize.label;" oncommand="window.openDialog('chrome://global/content/customizeCharset.xul','PrefWindow', 'chrome,modal=yes,resizable=yes', 'browser')"/>
+            </menupopup>
+          </menu>
+        <menuseparator/>
+        <menuitem accesskey="&pageSourceCmd.accesskey;" label="&pageSourceCmd.label;" key="key_viewSource" command="View:PageSource"/>
+      </menupopup>
+
+      <menupopup id="menu_ToolsPopup">
+        <menuitem id="menuitem_tools_artwork" key="key_getartwork"
+                  class="menuitem-iconic" label="&menu.tools.getartwork;"
+                  accesskey="&menu.tools.getartwork.accesskey;"
+                  insertbefore="menu_downloadmgr" command="cmd_getartwork"/>
+        <!-- This needs to be hidden when pref is turned off. -->
+        <menuitem id="menuitem_tools_exportmedia" key="key_exportmedia"
+                  class="menuitem-iconic" label="&menu.tools.exportmedia;"
+                  insertbefore="menu_downloadmgr" command="cmd_exportmedia"/>
+        <menuseparator insertbefore="menu_downloadmgr"/>
+      </menupopup>
+
+  <!-- group overlay items for popups, command, broadcasters, keys and 
+       stringbundles into a single target -->
+  <sb-support id="mainSupportSet">
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                      Popup Overlay Items                        ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <popupset id="mainPopupSet">
+    
+      <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
+      <!-- filled via overlay -->
+      <popup id="contentAreaContextMenu"
+            onpopupshowing="if (event.target != this) return true; return gBrowser.onContextPopupShowing(this, event)"
+            onpopuphiding="if (event.target == this) gBrowser.onContextPopupHiding(this)">
+      </popup>
+
+      <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
+      <popup id="playlist_edit_popup"  ignorekeys="true">
+        <textbox id="playlist_edit" multiline="false" wrap="off" onchange="onPlaylistEditChange();" onkeypress="onPlaylistEditKeypress( event );" onblur="onPlaylistEditChange( event )"/>
+      </popup>
+
+      <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
+      
+      <!-- POPUP FOR THE POPUPBLOCKER MENU -->
+      <menupopup id="blockedPopupOptions" 
+                onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
+        <menuitem sbid="blockedPopupAllowSite" 
+                  accesskey="&allowPopups.accesskey;"
+                  oncommand="gPopupBlockerObserver.toggleAllowPopupsForSite(event);"/>
+        <menuitem sbid="blockedPopupEditSettings" 
+                  label="&editPopupSettings.label;" 
+                  accesskey="&editPopupSettings.accesskey;" 
+                  oncommand="gPopupBlockerObserver.editPopupSettings();"/>
+        <menuitem sbid="blockedPopupDontShowMessage" 
+                  type="checkbox"
+                  accesskey="&dontShowMessage.accesskey;"
+                  oncommand="gPopupBlockerObserver.dontShowMessage();"/>
+        <menuseparator sbid="blockedPopupSeparator"/>
+      </menupopup>
+      
+      <!-- POPUP FOR PLAYER CONTROLS MENU -->
+      <popup id="playerControlsPopupMenu">
+        <menuitem id="popupmenuitem-move-player-location-top" 
+                  name="player-location"
+                  type="radio"
+                  observes="playercontrols_top"
+                  label="&menu.controllerontop;" 
+                  oncommand="movePlayerControls(true);" />
+        <menuitem id="popupmenuitem-move-player-location-bottom" 
+                  name="player-location"
+                  type="radio"
+                  observes="playercontrols_bottom"
+                  label="&menu.controlleronbottom;" 
+                  oncommand="movePlayerControls(false);" />
+      </popup>
+
+      <tooltip id="aHTMLTooltip" onpopupshowing="return FillInHTMLTooltip(document.tooltipNode);"/>
+      
+    </popupset> 
+
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                     Commands Overlay Items                      ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <commandset id="mainCommandSet" >
+      <commandset id="tabChangeCommandUpdater" commandupdater="true" events="focus, select, tabchange"
+                  oncommandupdate="goUpdateGlobalContentMenuItems()"/>
+
+      <command id="Browser:Home"    oncommand="gBrowser.goHome();"/>
+
+      <!-- Bound to legacy dataremotes for now.  This will have to change
+          once we support multiple browser windows.
+        -->
+      <command id="Browser:Back"    oncommand="gBrowser.goBack();"  >
+        <observes type="dataremote"
+                  key="browser.cangoback" 
+                  attribute="disabled" 
+                  boolean="true"
+                  inverted="true" />  
+      </command>
+      <command id="Browser:Forward" oncommand="gBrowser.goForward();" >
+        <observes type="dataremote"
+                  key="browser.cangofwd" 
+                  attribute="disabled" 
+                  boolean="true"
+                  inverted="true" />  
+      </command>
+      <command id="Browser:Stop"    oncommand="gBrowser.stop();" >
+        <observes type="dataremote"
+                  key="faceplate.loading" 
+                  attribute="disabled" 
+                  boolean="true"
+                  inverted="true" />  
+      </command>
+      
+      <command id="cmd_print" oncommand="goDoCommand('cmd_print');"/>
+      <command id="Browser:Reload"  oncommand="gBrowser.reload();" />
+      <!-- TODO: Make ReloadSkipCache work correctly-->
+      <command id="Browser:ReloadSkipCache"  oncommand="gBrowser.reload();" disabled="true"/>
+      <command id="cmd_fullZoomReduce"  oncommand="FullZoom.reduce()"/>
+      <command id="cmd_fullZoomEnlarge" oncommand="FullZoom.enlarge()"/>
+      <command id="cmd_fullZoomReset"   oncommand="FullZoom.reset()"/>
+
+      <!-- disabled per bug 20269
+      <command id="cmd_bm_newsubscription"    oncommand="SBSubscribe(null, gBrowser.currentURI)"  >
+        <observes type="dataremote"
+                  key="browser.cansubscription" 
+                  attribute="disabled" 
+                  boolean="true"
+                  inverted="true" />  
+      </command>
+      -->
+
+      <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
+      <command id="cmd_mediapage_next" oncommand="goDoCommand(this.id);"/>
+      <command id="cmd_metadata" oncommand="goDoCommand('cmd_metadata');"/>
+      <command id="cmd_getartwork" oncommand="goDoCommand('cmd_getartwork');"/>
+      <command id="cmd_exportmedia" oncommand="goDoCommand('cmd_exportmedia');"/>
+      <command id="cmd_editmetadata" oncommand="goDoCommand('cmd_editmetadata');"/>
+      <command id="cmd_viewmetadata" oncommand="goDoCommand('cmd_viewmetadata');"/>
+      <command id="cmd_reveal" oncommand="goDoCommand('cmd_reveal');"/>
+    </commandset>
+    
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                   Broadcasters Overlay Items                    ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+
+    <!-- No browser-specific brodcasters -->
+
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                      Keyset Overlay Items                       ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+    
+    <keyset id="mainKeyset">
+      <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('menuitem_file_new');"/>
+      <key id="newsmartplaylist-key" modifiers="accel,alt" key="&menu.file.smart.key;" oncommand="doMenu('menuitem_file_smart');"/>
+      <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
+      <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
+      <key id="printKb" key="&printCmd.commandkey;" command="cmd_print" modifiers="accel"/>
+      <key id="file-scan-key" modifiers="accel shift" key="&menu.file.filescan.key;" oncommand="doMenu('menuitem_file_scan');"/>
+      <!-- key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/ -->
+      <!-- 
+        Due to the mozilla bug 330458, loading the XUL key/command overlay information from |layoutBaseOverlay.xul|
+        doesn't load into this file. In order to get the find key events to work via key-strokes, we have to 
+        duplicate the key definition here.
+      -->
+      <key id="find-key" modifiers="accel" key="&menu.edit.find.key;" oncommand="goDoCommand('cmd_find');" />
+      <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" oncommand="goDoCommand('cmd_findAgain');" />
+      <key id="find-current-track-key" modifiers="accel shift" key="&currentTrackCmd.commandKey;" oncommand="goDoCommand('cmd_find_current_track');"/>
+      
+      <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
+      <key id="locationbar-key2" modifiers="alt" key="&locationbar.key2;" oncommand="document.getElementById('location_bar').focus();"/>
+      <key id="trackeditor-key2" modifiers="accel" key="&trackeditor.key2;" command="cmd_metadata"/>
+      <key id="key_getartwork" modifiers="accel,shift" key="&getartwork.key;" command="cmd_getartwork"/>
+      <key id="mediapage-next-key" modifiers="accel shift" key="&mediapage.next.key;" command="cmd_mediapage_next"/>
+
+      <key id="key_fullZoomReduce"  key="&fullZoomReduceCmd.commandkey;"   command="cmd_fullZoomReduce"  modifiers="accel"/>
+      <key id="key_fullZoomEnlarge" key="&fullZoomEnlargeCmd.commandkey;"  command="cmd_fullZoomEnlarge" modifiers="accel"/>
+      <key                          key="&fullZoomEnlargeCmd.commandkey2;" command="cmd_fullZoomEnlarge" modifiers="accel"/>
+      <key id="key_fullZoomReset"   key="&fullZoomResetCmd.commandkey;"    command="cmd_fullZoomReset"   modifiers="accel"/>
+
+      <key id="key_viewSource" key="&menu.viewpagesource.key;" command="View:PageSource" modifiers="accel,shift"/>
+
+      <!-- 
+      <key id="key_subscribe" key="&bookmarkPage.key;" command="cmd_bm_newsubscription" modifiers="accel,shift"/>
+      -->
+
+      <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
+      <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
+      <key id="key_reload2" keycode="VK_F5" command="Browser:Reload"/>
+      <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
+      <key id="reveal-key" modifiers="&menu.tools.reveal.modifiers;" key="&menu.tools.reveal.accesskey;" command="cmd_reveal"/>
+      <key id="browser_view" keycode="VK_F11" oncommand="window.fullScreen = !window.fullScreen;"/>
+	
+      <key id="key_selectTab1" oncommand="BrowserNumberTabSelection(event, 0);" key="1" modifiers="accel"/>
+      <key id="key_selectTab2" oncommand="BrowserNumberTabSelection(event, 1);" key="2" modifiers="accel"/>
+      <key id="key_selectTab3" oncommand="BrowserNumberTabSelection(event, 2);" key="3" modifiers="accel"/>
+      <key id="key_selectTab4" oncommand="BrowserNumberTabSelection(event, 3);" key="4" modifiers="accel"/>
+      <key id="key_selectTab5" oncommand="BrowserNumberTabSelection(event, 4);" key="5" modifiers="accel"/>
+      <key id="key_selectTab6" oncommand="BrowserNumberTabSelection(event, 5);" key="6" modifiers="accel"/>
+      <key id="key_selectTab7" oncommand="BrowserNumberTabSelection(event, 6);" key="7" modifiers="accel"/>
+      <key id="key_selectTab8" oncommand="BrowserNumberTabSelection(event, 7);" key="8" modifiers="accel"/>
+      <key id="key_selectTab9" oncommand="BrowserNumberTabSelection(event, 8);" key="9" modifiers="accel"/>
+      <key id="key_search" key="&searchFocus.key;" oncommand="BrowserSearch.webSearch();" modifiers="accel"/>
+
+      <!--
+      Removed per bug 20069, but left here for posterity - stevel
+      <key keycode="VK_BACK" oncommand="BrowserHandleBackspace();"/>
+      <key keycode="VK_BACK" oncommand="BrowserHandleShiftBackspace();" modifiers="shift"/>
+      -->
+
+#ifndef XP_MACOSX
+      <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>
+      <key id="goForwardKb"  keycode="VK_RIGHT" command="Browser:Forward" modifiers="alt"/>
+#else
+      <key id="goBackKb" keycode="VK_LEFT" command="Browser:Back" modifiers="accel" />
+      <key id="goForwardKb" keycode="VK_RIGHT" command="Browser:Forward" modifiers="accel" />
+      <!-- Taken from Firefox's browser-sets.inc this matches the key_search2 found there -->
+      <key id="key_search2" key="&search.key;" oncommand="BrowserSearch.webSearch();" modifiers="accel,alt"/>
+#endif
+
+#ifdef XP_UNIX
+      <key id="goBackKb2" key="&goBackCmd.commandKey;" command="Browser:Back" modifiers="accel"/>
+      <key id="goForwardKb2" key="&goForwardCmd.commandKey;" command="Browser:Forward" modifiers="accel"/>
+#endif
+    </keyset>
+
+
+    <!-- ********************************************************************* -->
+    <!-- **                                                                 ** -->
+    <!-- **                   Stringbundle Overlay Items                    ** -->
+    <!-- **                                                                 ** -->
+    <!-- ********************************************************************* -->
+    
+    <!-- No browser-specific stringbundles -->
+  
+  <!-- end overlay group -->
+  </sb-support>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                       Scripts Overlay Items                     ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+  
+  <!-- Load the main window data bindings -->
+  <script type="application/x-javascript"   
+  src="chrome://nightingale/content/scripts/mainWinInit.js" />
+
+  <!-- Load the Mozilla helpers -->
+  <script type="application/x-javascript"   
+  src="chrome://global/content/viewSourceUtils.js" />
+  <script type="application/x-javascript"   
+  src="chrome://nightingale/content/scripts/browserUtilities.js" />
+  <script type="application/x-javascript" 
+  src="chrome://nightingale/content/scripts/browserViewMenu.js" />
+  <script type="application/x-javascript"
+  src="chrome://browser/content/browser-textZoom.js"/>
+  <script type="application/x-javascript"
+  src="chrome://global/content/viewZoomOverlay.js"/>
+  <script type="application/x-javascript"
+  src="chrome://global/content/printUtils.js"/>
+
+  <!-- Web Scraper implementation -->
+  <script type="application/x-javascript;version=1.8" 
+  src="chrome://nightingale/content/scripts/webscraper/scraperSteps.js"/>
+  <script type="application/x-javascript;version=1.8" 
+  src="chrome://nightingale/content/scripts/webscraper/webScraper.js" />
+
+  <!-- Generic search engine support -->
+  <script type="application/x-javascript"   
+  src="chrome://nightingale/content/scripts/searchHandler.js" />
+
+  <!-- Popup Blocker UI functions -->
+  <script type="application/x-javascript" 
+  src="chrome://nightingale/content/scripts/popupBlocker.js" />
+
+  <!-- Callbacks for xpinstall-denied browser hat (notification) -->
+  <script type="application/x-javascript" 
+  src="chrome://nightingale/content/scripts/xpInstallHat.js" />
+
+  <!-- Window Controller -->
+  <script type="application/x-javascript"
+  src="chrome://nightingale/content/scripts/mainPlayerWindow.js" />
+
+  <!-- Device support -->
+  <script type="application/x-javascript"
+  src="chrome://nightingale/content/scripts/device/deviceSupport.js" />
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                  Browser Toolbar Overlay Items                  ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <!-- 
+    BROWSER TOOLBAR
+    
+    A toolbox for controlling the browser.
+    
+    See http://www.xulplanet.com/tutorials/xultu/toolbar.html
+    and http://developer.mozilla.org/en/docs/Custom_Toolbar_Button
+    
+    The classes and IDs used in this binding are intended to match those
+    in used in FireFox.
+    -->
+
+  <toolbox id="navigator-toolbox" class="toolbox-top" mode="icons" 
+            defaultmode="icons" iconsize="small" mousethrough="never">
+    <toolbarpalette id="BrowserToolbarPalette">
+    
+      <!-- IDs and classes match FireFox in order to make porting 
+           extensions easier -->
+      <toolbaritem id="back-forward-buttons">
+        <toolbarbutton id="back-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&tooltip.browser.back;"
+                       oncommand="BrowserBack(event, true)"
+                       onclick="checkForMiddleClick(this, event);"
+                       tooltiptext="&tooltip.browser.back;">
+          <observes element="Browser:Back" attribute="disabled"/>
+        </toolbarbutton>
+            
+        <toolbarbutton id="forward-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&tooltip.browser.fwd;"
+                       oncommand="BrowserForward(event, true)"
+                       onclick="checkForMiddleClick(this, event);"
+                       tooltiptext="&tooltip.browser.fwd;">
+          <observes element="Browser:Forward" attribute="disabled"/>
+        </toolbarbutton>
+      </toolbaritem>
+                      
+      <toolbarbutton id="reload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.refresh;"
+                     command="Browser:Reload"
+                     tooltiptext="&tooltip.browser.refresh;"/>
+                      
+      <toolbarbutton id="stop-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.stop;"
+                     command="Browser:Stop"
+                     tooltiptext="&tooltip.browser.stop;"/>
+
+      <!-- COMBINED STOP/RELOAD BUTTON -->
+      <toolbaritem id="stopreload-container" title="&tooltip.search;">
+        <sb-browser-stopreload-button id="stopreload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"/>   
+      </toolbaritem>                     
+                      
+      <toolbarbutton id="home-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.home;"
+                     tooltiptext="&tooltip.browser.home;"
+                     onclick="BrowserHomeClick(event);"/>
+
+      <toolbarbutton id="subscription-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+                     label="&tooltip.browser.subscription;"
+                     command="cmd_bm_newsubscription"
+                     tooltiptext="&tooltip.browser.subscription;"/>
+
+      <!-- ADDRESS BOX -->                 
+      <toolbaritem id="urlbar-container" align="center" flex="6"
+                   title="URL">
+        <sb-locationbar-textbox id="location_bar"
+                                flex="1" align="center" />  
+      </toolbaritem>
+      
+      <toolbaritem id="nav-bar-spacer" flex="1"/>
+      
+      <splitter id="search-splitter"/>
+      
+      <!-- SEARCH WIDGET -->
+      <toolbaritem id="searchbar-container" align="center" flex="6"
+                   title="&tooltip.search;">
+        <searchbar id="searchbar"  flex="1"/>   
+      </toolbaritem>
+
+      <!-- SPINNER -->
+      <toolbaritem id="spinner-container" align="center" pack="center">
+          <sb-browser-spinner />
+      </toolbaritem>
+
+      <!--  MEDIA PAGES -->
+      <toolbaritem id="mediapages-container" align="center" pack="center">
+          <sb-mediapages-button />
+      </toolbaritem>
+
+    </toolbarpalette>
+    
+    <toolbar id="nav-bar" class="toolbar-primary chromeclass-toolbar"
+             toolbarname="WebToolbar"
+             mode="icons" 
+             iconsize="small"
+             customizable="true"
+             defaultset="back-forward-buttons,stopreload-container,home-button,urlbar-container,nav-bar-spacer,mediapages-container,search-splitter,searchbar-container"
+             flex="1">
+             <observes type="dataremote" key="browser.in_media_page"
+                       boolean="true" attribute="isAtMediaPage"/>
+    </toolbar>
+    
+    <toolbarset id="customToolbars" />
+          
+  </toolbox>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                     Statusbar Overlay Items                     ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <statusbar id="status-bar">
+
+    <sb-player-numplaylistitems-label
+          id="sb-status-bar-numplaylistitems-label"
+          class="sb-status-bar-numplaylistitems-label sb-status-bar-text" 
+          crop="end" pack="center"/>
+
+    <statusbarpanel class="statusbarpanel-progress" 
+          id="statusbar-progresspanel">
+      <vbox pack="center">
+        <sb-status-progressmeter id="sb-status-bar-status-progressmeter" 
+            class="sb-status-bar-status-progressmeter" mode="undetermined"/>
+      </vbox>
+    </statusbarpanel>
+
+    <statusbarpanel id="page-report-button" type="menu" mousethrough="never"
+                     class="statusbarpanel-menu-iconic" 
+                     tooltiptext="&pageReportIcon.tooltip;">
+       <menupopup id="blockedPopupOptionsPanel" 
+                  onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
+         <menuitem sbid="blockedPopupAllowSite" 
+                   accesskey="&allowPopups.accesskey;"
+                   oncommand="gPopupBlockerObserver.toggleAllowPopupsForSite(event);"/>
+         <menuitem sbid="blockedPopupEditSettings" 
+                   label="&editPopupSettings.label;" 
+                   accesskey="&editPopupSettings.accesskey;" 
+                   oncommand="gPopupBlockerObserver.editPopupSettings();"/>
+         <menuitem sbid="blockedPopupDontShowMessage" 
+                   type="checkbox"
+                   accesskey="&dontShowMessage.accesskey;"
+                   oncommand="gPopupBlockerObserver.dontShowMessage();"/>
+         <menuseparator sbid="blockedPopupSeparator"/>
+       </menupopup>
+     </statusbarpanel>
+
+  </statusbar>
+
+
+  <!-- ********************************************************************* -->
+  <!-- **                                                                 ** -->
+  <!-- **                 Control Toolbar Overlay Items                   ** -->
+  <!-- **                                                                 ** -->
+  <!-- ********************************************************************* -->
+
+  <!-- no browser-specific control toolbar items -->
+
+</overlay>

@@ -1,0 +1,199 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "sbIDevice.idl"
+#include "sbIDeviceEvent.idl"
+#include "nsISupports.idl"
+interface nsIArray;
+
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDTOCEntry
+// @brief This interface represents a track entry in the CD table of contents.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(2e06760a-1dd2-11b2-bdee-fcb2b291e86e)]
+interface sbICDTOCEntry : nsISupports
+{
+  //
+  // @brief Track mode type constants
+  //
+  const unsigned short TRACKMODE_AUDIO = 0;
+  const unsigned short TRACKMODE_DATA  = 1;
+  const unsigned short TRACKMODE_OTHER = 3;
+
+  readonly attribute long    frameOffset;
+  readonly attribute PRTime  length;
+  readonly attribute long    trackNumber;
+  readonly attribute AString trackURI;
+  readonly attribute short   trackMode;
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDTOC
+// @brief This interface represents a CD table of contents.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(3b3b290a-1dd2-11b2-aabc-9439b224f085)]
+interface sbICDTOC : nsISupports
+{
+  //
+  // @brief First track index (this value is used for CD database lookup)
+  //
+  readonly attribute long firstTrackIndex;
+
+  //
+  // @brief Last track index (this value is used for CD database lookup)
+  //
+  readonly attribute long lastTrackIndex;
+
+  //
+  // @brief Lead-out track offset (this value is used for CD database lookup)
+  //
+  readonly attribute long leadOutTrackOffset;
+
+  //
+  // @brief tracks contains an array of sbICDTOCEntry values
+  //
+  readonly attribute nsIArray tracks;
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDDeviceEvent
+// @brief Base CD device event interface.
+//
+//------------------------------------------------------------------------------
+[scriptable, uuid(052861b6-1dd2-11b2-b2bc-d05cabd40402)]
+interface sbICDDeviceEvent : sbIDeviceEvent
+{
+  //
+  // @brief  CD metadata lookup query started event.
+  //
+  const unsigned long EVENT_CDLOOKUP_INITIATED = EVENT_CLIENT_DEFINED + 1;
+
+  //
+  // @brief CD metadata lookup query completed event.
+  //
+  const unsigned long EVENT_CDLOOKUP_COMPLETED = EVENT_CLIENT_DEFINED + 2;
+
+  //
+  // @brief CD metadata has been applied to the device's items.
+  //
+  const unsigned long EVENT_CDLOOKUP_METADATA_COMPLETE = EVENT_CLIENT_DEFINED + 3;
+
+  //
+  // @brief CD rip has completed.
+  //
+  const unsigned long EVENT_CDRIP_COMPLETED = EVENT_CLIENT_DEFINED + 4;
+
+  //
+  // @brief Request constants
+  //
+  const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
+
+  //
+  // @brief State constants
+  //
+  const unsigned long STATE_LOOKINGUPCD = sbIDevice::STATE_USER + 1;
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDDevice
+// @brief This interface represents one CD device.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(9D51DC46-3038-430A-94C5-C98C0C3301E2)]
+interface sbICDDevice : nsISupports
+{
+  //
+  // @brief Disc type contants
+  //
+  const unsigned long AUDIO_DISC_TYPE = 0;
+  const unsigned long DATA_DISC_TYPE  = 1;
+
+  //
+  // @brief name of the device (usually contains manufacturer's name)
+  //
+  readonly attribute AString name;
+
+  //
+  // @brief can we read (rip) data off this device?
+  //
+  readonly attribute boolean readable;
+
+  //
+  // @brief can we write (burn) data to this device?
+  //
+  readonly attribute boolean writeable;
+
+  //
+  // @brief returns true if a CD is currently in the drive
+  //
+  readonly attribute boolean isDiscInserted;
+
+  //
+  // @brief Unique identifier for this CD device.
+  // @note String varies on implementor.
+  //
+  readonly attribute ACString identifier;
+
+  //
+  // @brief returns the table of contents of the current CD in the drive
+  //
+  readonly attribute sbICDTOC discTOC;
+
+  //
+  // @brief returns the disc type of the CD in the drive ("audio" or "data")
+  //
+  readonly attribute unsigned long discType;
+
+  //
+  // @brief ejects the CD from the drive
+  //
+  void eject();
+
+  //
+  // @brief Return the locked state of the device.
+  //
+  readonly attribute boolean isDeviceLocked;
+
+  //
+  // @brief Lock the CD drive (prevent the tray from being opened)
+  //
+  void lockDevice();
+
+  //
+  // @brief Unlock the CD drive (allow the tray from being opened)
+  //
+  void unlockDevice();
+};

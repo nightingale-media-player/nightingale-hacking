@@ -1,0 +1,134 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface sbIPropertyArray;
+
+/**
+ *
+ */
+[scriptable, uuid(3e2733de-9e30-4bde-99f0-274bacdd0b20)]
+interface sbIPlaybackHistoryEntry : nsISupports
+{
+  /**
+   * \note This is not the _index_ of the entry.
+   * \internal
+   */
+  readonly attribute long long entryId;
+
+  /**
+   * \brief The item that was played.
+   */
+  readonly attribute sbIMediaItem item;
+  
+  /**
+   * \brief Timestamp indicating at which time the item started playing.
+   * \note The timestamp is a usecs since the unix epoch.
+   */
+  readonly attribute long long timestamp;
+
+  /**
+   * \brief Duration of playback in microseconds.
+   * \note This is optional.
+   */
+  readonly attribute long long duration;
+
+  /**
+   * \brief Annotations to the entry. Annotations are properties.
+   * \sa sbIProperty
+   */
+  readonly attribute sbIPropertyArray annotations;
+
+  /**
+   * \brief Get an annotation by id.
+   * \param aAnnotationId The annotation id.
+   * \return The annotation value.
+   * \throw NS_ERROR_NOT_AVAILABLE when the annotation is not available.
+   */
+  AString getAnnotation(in AString aAnnotationId);
+
+  /**
+   * \brief Verify the presence of an annotation.
+   * \param aAnnotationId The annotation id.
+   * \retval true The annotation is present.
+   * \retval false The annotation is not available.
+   */
+  boolean hasAnnotation(in AString aAnnotationId);
+
+  /**
+   * \brief Set an annotation on the entry.
+   * \param aAnnotationId The annotation id.
+   * \param aAnnotationValue The annotation value.
+   */
+  void setAnnotation(in AString aAnnotationId, 
+                     in AString aAnnotationValue);
+
+  /** 
+   * \brief Remove an annotation from the entry.
+   * \param aAnnotationId The annotation id.
+   */
+  void removeAnnotation(in AString aAnnotationId);
+
+  /**
+   * \brief Initialize a playback history entry
+   * \param aItem The media item for the entry.
+   * \param aTimestamp The time at which the item started playing.
+   * \param aDuration The duration of playback for the item for this entry.
+   * \param aAnnotations The annotations for the entry.
+   * \note The timestamp is a standard UNIX style timestamp.
+   */
+  void init(in sbIMediaItem aItem, 
+            in long long aTimestamp,
+            in long long aDuration,
+            in sbIPropertyArray aAnnotations);
+
+  /**
+   * \brief Set the entry id.
+   * \note This method is for internal use only.
+   * \internal
+   */
+  [notxpcom] void setEntryId(in long long aEntryId);
+};
+
+%{C++
+
+#define SB_PLAYBACKHISTORYENTRY_DESCRIPTION    \
+  "Nightingale Playback History Entry"
+#define SB_PLAYBACKHISTORYENTRY_CONTRACTID     \
+  "@getnightingale.com/Nightingale/PlaybackHistoryEntry;1"
+#define SB_PLAYBACKHISTORYENTRY_CLASSNAME      \
+  "sbPlaybackHistoryEntry"
+#define SB_PLAYBACKHISTORYENTRY_CID            \
+{ /* 64abdd62-3481-4ce9-89c6-e02398a4aa5c */   \
+  0x64abdd62,                                  \
+  0x3481,                                      \
+  0x4ce9,                                      \
+  { 0x89, 0xc6, 0xe0, 0x23, 0x98, 0xa4, 0xaa, 0x5c }  \
+}
+
+%}

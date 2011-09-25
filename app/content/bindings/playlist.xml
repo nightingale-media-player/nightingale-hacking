@@ -1,0 +1,3612 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="playlist">
+    <content mousethrough="never">
+      <stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        <!-- this box contains the nodes for the drag icon.
+             ideally, these nodes would be created at run-time.
+             unfortunately, it is very difficult to hide a node from view
+             without making it ineligible for dragSessionWithImage.
+             to get rid of this, figure out how to fix that call. -->
+        <box top="0" left="0">
+          <stack sbid="dragIcon">
+            <image sbid="dragImage"
+                   class="sb-playlist-drag-image"
+                   top="0"
+                   left="0"/>
+            <description sbid="dragBadge"
+                         class="sb-playlist-drag-badge"
+                         top="0"
+                         left="0"/>
+          </stack>
+        </box>
+        <vbox id="sb-playlist" flex="1"  style="margin: 0px;padding: 0px;">
+          <!-- Playlist Tree -->
+          <tree
+            xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker"
+            id="sb-playlist-tree"
+            sbid="sb-playlist-tree"
+            class="sb-playlist-tree"
+            flex="3"
+            editable="true"
+            oncontextmenu="_onPlaylistContextMenu(event);"
+            onblur="_onPlaylistBlur(event);"
+          >
+            <treecols sbid="treecols" type="sb-contextpicker"/>
+            <treechildren
+              sbid="sb-playlist-treechildren"
+              onclick="_onPlaylistClick(event);"
+              ondraggesture="_onDragGesture(event);"
+              ondragover="_onDragOver(event);"
+              ondragdrop="_onDragDrop(event);"
+              onmouseup="_onMouseUp(event);"
+            />
+          </tree>
+
+          <!-- Playlist Toolbar -->
+          <sb-commands-toolbar id="sb-playlist-tree-toolbar" sbid="playlist_toolbar" commandtype="mediaitem" metricscategory="playlist.toolbar"/>
+          <sb-commands-shortcuts id="sb-playlist-tree-shortcuts" sbid="playlist_shortcuts" commandtype="mediaitem" metricscategory="playlist.shortcut"/>
+
+          <!-- Popupset -->
+          <popupset>
+            <!-- Context Popup -->
+            <popup
+              id="sb-playlist-popup"
+              sbid="sb-playlist-popup"
+              class="sb-playlist-popup"
+              onpopupshown="onPopupShown( event );"
+              onpopuphidden="onPopupHidden( event );"
+            >
+              <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem" metricscategory="playlist.context"/>
+              <children/>
+            </popup>
+          </popupset>
+        </vbox>
+        </stack>
+        </content>
+
+    <implementation
+      implements="nsISupportsWeakReference,sbIPlaylistWidget,sbIMediaListViewTreeViewObserver,sbIMediaListViewListener"
+      type="application/x-javascript"
+    >
+
+      <constructor>
+<![CDATA[
+  this._destroyed = false;
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+  Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
+  Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+  Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+  Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+  Components.utils.import("resource://app/jsmodules/sbMetadataUtils.jsm");
+
+  // Attach event handler closures
+  var self = this;
+
+  // Attach a attribute modified event handler to the treecols element.  This
+  // allows us to be notified when the user drags a column (the "dragging"
+  // attribute on a child element is set and it then removed) or when one is
+  // resized (the width attribute changes) or when a column is hidden/shown
+  // (the "hidden" attribute changes).  Save the column spec attributes when\
+  // this happens.
+  this._onColumnMutationClosure = function(event) {
+    self._onColumnMutation(event);
+  };
+  this._treecols.addEventListener("DOMAttrModified",
+                                  this._onColumnMutationClosure,
+                                  false);
+
+  // Install our special keyNavigate function. The signature must match the
+  // keyNavigate method in tree.xml.
+  this.tree._keyNavigate = this._treeKeyNavigate;
+
+  // Load the drag and drop helper, if needed
+  if (typeof(nsDragAndDrop) == "undefined") {
+    var jsLoader = this._Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(this._Ci.mozIJSSubScriptLoader);
+    jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", null);
+  }
+
+  // Add a capturing listener so we can swallow command events
+  // in cases such as column restoreNaturalOrder.
+  this._onCommandClosure = function(event) {
+    self._onCommand(event);
+  };
+  this.addEventListener("command",
+                        this._onCommandClosure,
+                        true);
+
+  // Add the controller to respond to the edit menu
+  this.tree.controllers.appendController(this._commandController);
+
+  // Nothing has been selected yet.
+  this._lastClickIndex = -1;
+]]>
+      </constructor>
+
+      <destructor>
+        if (this._destroyed) return;
+        this.destroy();
+      </destructor>
+
+      <!-- Selection listener for the media list view -->
+      <field name="_mediaListSelectionListener">null</field>
+
+      <!-- The media list view this playlist is showing -->
+      <field name="_mediaListView">null</field>
+      <property name="mediaListView">
+        <getter>
+          <![CDATA[
+            return this._mediaListView;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            // Remove selection listener from the old media list view and add
+            // it to the new one.
+            if (!this._mediaListSelectionListener) {
+              this._mediaListSelectionListener = {
+                playlist: this,
+                onSelectionChanged:
+                    function mediaListSelectionListener_onSelectionChanged() {
+                  this.playlist._onPlaylistSelectClick();
+                },
+                onCurrentIndexChanged:
+                    function mediaListSelectionListener_onCurrentIndexChanged() {},
+                QueryInterface: function columnSpecWatcher_QI(aIID) {
+                  if (aIID.equals(Components.interfaces.sbIMediaListViewSelectionListener) ||
+                      aIID.equals(Components.interfaces.nsISupports)) {
+                    return this;
+                  }
+                  throw Components.results.NS_ERROR_NO_INTERFACE;
+                }
+              };
+            }
+            if (this._mediaListView)
+              this._mediaListView.selection.removeListener(this._mediaListSelectionListener);
+            if (val)
+              val.selection.addListener(this._mediaListSelectionListener);
+
+            return this._mediaListView = val;
+          ]]>
+        </setter>
+      </property>
+
+      <!-- Disable the ability to drag items from this playlist -->
+      <field name="_disableDrag">false</field>
+      <property name="disableDrag">
+        <getter>
+          <![CDATA[
+            return this._disableDrag;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            return this._disableDrag = val;
+          ]]>
+        </setter>
+      </property>
+
+      <!-- Disable the ability to drop items to this playlist -->
+      <field name="_disableDrop">false</field>
+      <property name="disableDrop">
+        <getter>
+          <![CDATA[
+            return this._disableDrop;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            return this._disableDrop = val;
+          ]]>
+        </setter>
+      </property>
+
+      <!-- The outer window, set from the outside -->
+      <field name="_outerWindow">null</field>
+      <property name="outerWindow">
+        <getter>
+          <![CDATA[
+            // If we weren't supplied with an outer window, brute force it
+            if (!this._outerWindow) {
+              this._outerWindow =
+                window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                      .getInterface(Components.interfaces.nsIWebNavigation)
+                      .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+                      .rootTreeItem
+                      .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                      .getInterface(Components.interfaces.nsIDOMWindow)
+              if (!this._outerWindow) {
+                Components.utils.reportError("Playlist.xml failed to get the outer window");
+              }
+            }
+            return this._outerWindow;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._outerWindow = val;
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="getListView">
+        <body> <![CDATA[
+          return this.mediaListView;
+        ]]> </body>
+      </method>
+
+      <!-- The anonymous xul tree element -->
+      <field name="tree" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-tree");
+      </field>
+
+      <!-- XXXben This is here to fix a bug where 'this.tree.view' will return
+                  null even when the tree actually has a view. Remove once that
+                  works as expected. -->
+      <!-- Get the tree's view -->
+      <field name="_treeView">null</field>
+      <property name="treeView">
+        <getter>
+        <![CDATA[
+          return this.tree.view || this._treeView;
+        ]]>
+        </getter>
+
+        <setter>
+        <![CDATA[
+          return this.tree.view = this._treeView = val;
+        ]]>
+        </setter>
+      </property>
+
+      <property name="mediaList" readonly="true">
+        <getter>
+        <![CDATA[
+          if (this.mediaListView)
+            return this.mediaListView.mediaList;
+          return null;
+        ]]>
+        </getter>
+      </property>
+
+      <property name="library" readonly="true">
+        <getter>
+        <![CDATA[
+          if (this.mediaListView)
+            return this.mediaListView.mediaList.library;
+          return null;
+        ]]>
+        </getter>
+      </property>
+
+      <property name="description" readonly="true">
+        <getter>
+        <![CDATA[
+          /*
+          if (this.mediaListView)
+            return this.mediaListView.mediaList.name;
+          */
+          return "";
+        ]]>
+        </getter>
+      </property>
+
+      <property name="usedefaultcommands">
+        <getter>
+          <![CDATA[
+            return (this.getAttribute("usedefaultcommands") != "false");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this.setAttribute("usedefaultcommands", val);
+            if (this._commandmenuitems) this._commandmenuitems.usedefault = val;
+            if (this._toolbar) this._toolbar.usedefault = val;
+            if (this._shortcuts) this._shortcuts.usedefault = val;
+          ]]>
+        </setter>
+      </property>
+
+      <!--
+        - The media type for this media list; may be null (for mixed)
+        -->
+      <property name="_mediaType">
+        <getter>
+          <![CDATA[
+            if (!this.mediaListView) {
+              return null;
+            }
+            if (!(this.mediaListView instanceof this._Ci.sbIFilterableMediaListView)) {
+              return null;
+            }
+            var constraint = this.mediaListView.filterConstraint;
+            if (!constraint) {
+              return null;
+            }
+            for (let group in ArrayConverter.JSEnum(constraint.groups)) {
+              if (!(group instanceof this._Ci.sbILibraryConstraintGroup )) {
+                continue;
+              }
+              if (!group.hasProperty(SBProperties.contentType)) {
+                continue;
+              }
+              let types =
+                ArrayConverter.JSArray(group.getValues(SBProperties.contentType));
+              if (types.length == 1) {
+                return types[0];
+              }
+              return null;
+            }
+            return null;
+          ]]>
+        </getter>
+      </property>
+
+      <!-- Holds the text value of the cell that was right clicked -->
+      <field name="context_term">""</field>
+
+      <!-- Store the last clicked row and column so we know which cell to edit
+           when we are asked to start an edit -->
+      <field name="edit_row">0;</field>
+      <field name="edit_col">0;</field>
+
+      <!-- Stores the last click event, to be passed to the remote API
+           (this is a sbIPlaylistClickEvent)
+           XXXeps this can be removed since click events now use
+                  "datacontainerevent", and the property and item can be read
+                  from the event using nsIDOMDataContainerEvent. -->
+      <field name="_lastClickEvent">null</field>
+      <property name="lastClickEvent">
+        <getter>
+        <![CDATA[
+          if (!this._lastClickEvent)
+            return null;
+          var obj = {
+            QueryInterface: function lastEventInfo_QI(aIID) {
+              if (aIID.equals(Components.interfaces.nsISupports) ||
+                  aIID.equals(Components.interfaces.nsIDOMMouseEvent) ||
+                  aIID.equals(Components.interfaces.sbIPlaylistClickEvent)
+                 )
+              {
+                return this;
+              }
+              throw Components.results.NS_ERROR_NO_INTERFACE;
+            }
+          };
+          const props = ["property", "item", "ctrlKey", "shiftKey",
+                         "altKey", "metaKey", "button"];
+          for each (var i in props) {
+            obj[i] = this._lastClickEvent[i];
+          }
+          return obj;
+        ]]>
+        </getter>
+      </property>
+
+      <!-- Last click row index.  This is used to activate
+           inline edit -->
+      <field name="_lastClickIndex">0</field>
+
+      <!-- Maximum time in milliseconds between two clicks to consider them a
+           double-click -->
+      <field name="_maxDoubleClickTime">
+        parseInt(Application.prefs.getValue("nightingale.playlist.doubleclickspeed", 500));
+      </field>
+
+      <!-- Time of last click, used to determine whether double-clicks should be
+           ignored -->
+      <field name="_lastClickTime">0</field>
+
+      <!-- Interval used to defer in-cell editing, just incase we see a
+           double-click and need to start playback instead -->
+      <field name="_startEditingTimer">null</field>
+
+      <!-- Sortcuts for various anonymous elements -->
+      <field name="_context_popup" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-popup");
+      </field>
+      <field name="_treecols" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "treecols");
+      </field>
+      <field name="_treechildren" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-treechildren");
+      </field>
+      <field name="_toolbar">
+        document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
+      </field>
+      <field name="_shortcuts">
+        document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_shortcuts');
+      </field>
+      <field name="_commandmenuitems">
+        document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_popup_commands');
+      </field>
+
+      <field name="_toolbarbuttons">new Array();</field>
+      <field name="_menuitems">new Array();</field>
+
+      <!-- Cached reference to the Nightingale string bundle -->
+      <field name="_stringbundle">null;</field>
+
+      <!-- Internal and external storage of the given commands? -->
+      <field name="_commands">null;</field>
+      <field name="commands">null;</field>
+
+      <!-- Coordinates of the last shown content menu popup -->
+      <field name="_context_x">-1</field>
+      <field name="_context_y">-1</field>
+
+      <!-- A timeout to save the column metadata -->
+      <field name="_saveColumnSpecTimeout">null</field>
+
+      <!-- Indicates that the column metadata should not
+           be used as the default -->
+      <field name="_suppressSaveAsDefaultColumnSpec">false</field>
+
+      <!-- Where the columnSpec came from. For possible values, see
+        sbColumnSpecParser.jsm ORIGIN_* constants
+      -->
+      <field name="_columnSpecOrigin">0</field>
+
+      <!-- Track mouse for sending mouse state to the tree view and determining
+           click location -->
+      <field name="_onMouseDownRow">-1</field>
+      <field name="_onMouseDownColumn">null</field>
+      <field name="_onMouseDownObject">null</field>
+      <field name="_mouseIsDown">false</field>
+      <field name="_isHandlingClickableContent">false</field>
+      <field name="_lastMouseOverRow">-1</field>
+      <field name="_lastMouseOverColumn">null</field>
+      <field name="_lastPlaylistCellMouseOverState">null</field>
+
+      <!-- Drag and Drop flavors -->
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM" readonly="true">
+        "application/x-sb-transfer-media-item"
+      </field>
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_LIST" readonly="true">
+        "application/x-sb-transfer-media-list"
+      </field>
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEMS" readonly="true">
+        "application/x-sb-transfer-media-items"
+      </field>
+      <field name="_TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD" readonly="true">
+        "application/x-sb-transfer-disable-download"
+      </field>
+
+      <field name="_Cc"     readonly="true">Components.classes</field>
+      <field name="_Ci"     readonly="true">Components.interfaces</field>
+      <field name="_Cr"     readonly="true">Components.results</field>
+      <field name="_XUL_NS" readonly="true">
+        "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      </field>
+      <field name="_pm"     readonly="true">
+        this._Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
+        .getService(this._Ci.sbIPropertyManager)
+      </field>
+
+      <!-- Expose the human readable name of this playlist
+           Note: mediaList.name always returns "" at the moment?
+        -->
+      <property name="displayName" readonly="true">
+        <getter>
+<![CDATA[
+  // Attempt to get the search filter on the playlist
+  if (this.mediaListView && this.mediaListView.mediaList) {
+    return this.mediaListView.mediaList.name;
+  }
+  return "";
+]]>
+        </getter>
+      </property>
+
+      <!-- sbIPlaylistWidget - Initialization and Control -->
+      <method name="bind">
+        <parameter name="mediaListView"/>
+        <parameter name="commands"/>
+        <parameter name="resize"/>
+        <parameter name="collapse"/>
+        <body>
+<![CDATA[
+
+  // clear previous columnspec watcher
+  if (this.columnSpecWatcher) {
+    this.columnSpecWatcher.
+         medialist.library.removeListener(this.columnSpecWatcher);
+  }
+
+  // columnspec watcher: update the columns when the columnspec property changes
+  this.columnSpecWatcher = {
+    playlist: this,
+    medialist: mediaListView.mediaList,
+    onItemAdded: function(list, item, index) { return true; },
+    onBeforeItemRemoved: function(list, item, index) { return true; },
+    onAfterItemRemoved: function(list, item, index) { return true; },
+    onItemMoved: function(list, item, index) { return true; },
+    onBeforeListCleared: function(list, excludeLists) { return true; },
+    onListCleared: function(list, excludeLists) { return true; },
+    onBatchBegin: function(list) {},
+    onBatchEnd: function(list) {},
+    onItemUpdated:
+      function columnSpecWatcher_onItemUpdated(aMediaList,
+                                               aMediaItem,
+                                               aProperties) {
+      // ignore notifications that are not about our medialist
+      if (aMediaItem != this.medialist)
+        return false;
+      // ignore notifications that we caused
+      if (this.playlist.ignoreColumnSpecUpdate)
+        return true;
+      // if the udpate is on the columnspec, reload columns
+      for (var i=0; i<aProperties.length; i++) {
+        var property = aProperties.getPropertyAt(i);
+        if (property.id == SBProperties.columnSpec) {
+          this.playlist._setupColumns();
+        }
+      }
+      return false;
+    },
+    QueryInterface: function columnSpecWatcher_QI(aIID) {
+      if (aIID.equals(Components.interfaces.sbIMediaListListener) ||
+          aIID.equals(Components.interfaces.nsISupports)) {
+        return this;
+      }
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+  }
+  // begin watching changes to column specs
+  mediaListView.mediaList
+               .library
+               .addListener(this.columnSpecWatcher,
+                            false,
+                            this._Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
+
+  // Make sure we save the column spec
+  // for the existing view
+  if (this._saveColumnSpecTimeout) {
+    clearTimeout(this._saveColumnSpecTimeout);
+    this._saveColumnSpecTimeout = null;
+    this._saveColumnSpec();
+  }
+
+  this._suppressSaveAsDefaultColumnSpec = false;
+
+  this.mediaListView = mediaListView;
+  this.treeView = mediaListView.treeView;
+
+  this.isSortable = mediaListView.mediaList.getProperty(SBProperties.isSortable);
+
+  // Set up the columns
+  this._setupColumns();
+
+  // Attach our observer
+  var mediaListViewTreeView =
+    this.treeView.QueryInterface(this._Ci.sbIMediaListViewTreeView);
+
+  mediaListViewTreeView.observer = this;
+
+  if (this._toolbar) this._toolbar.outerWindow = this.outerWindow;
+  if (this._commandmenuitems) this._commandmenuitems.outerWindow = this.outerWindow;
+  if (this._shortcuts) this._shortcuts.outerWindow = this.outerWindow;
+
+  // Clear out the old commands and add the new ones
+  this._toolbar.hidden = true;
+  this.setCommands(commands);
+
+  // If boolean true, read from the XUL file.
+  if (resize == true) {
+    resize = this.getAttribute("resize_height");
+  }
+
+  // If an integer
+  if (parseInt(resize) > 0) {
+    this.height = resize;
+  }
+
+  // Apply the customtype of the medialist/library to the playlist
+  // element just in case we want to apply special styles
+  var customType = this.mediaList.getProperty(SBProperties.customType);
+  if (this.mediaList instanceof Components.interfaces.sbILibrary) {
+    this.setAttribute("library-customtype", customType);
+    if (this.hasAttribute("list-customtype")) {
+      this.removeAttribute("list-customtype");
+    }
+  } else {
+    var libCustomType = this.mediaList.library.getProperty(SBProperties.customType);
+    this.setAttribute("library-customtype", libCustomType);
+    this.setAttribute("list-customtype", customType);
+  }
+
+  // listen for media list view changes to stop editing; see bug 13272
+  // use a weak listener to avoid creating a reference cycle
+  mediaListView.addListener(this, true);
+]]>
+        </body>
+      </method>
+
+      <method name="destroy">
+        <body>
+<![CDATA[
+  if (!this._destroyed) {
+
+    if (this.columnSpecWatcher) {
+      this.columnSpecWatcher.
+           medialist.library.removeListener(this.columnSpecWatcher);
+    }
+
+    if (this._mediaListView) {
+      this._mediaListView.
+           selection.removeListener(this._mediaListSelectionListener);
+    }
+
+    if (this._saveColumnSpecTimeout) {
+      clearTimeout(this._saveColumnSpecTimeout);
+      this._saveColumnSpecTimeout = null;
+      this._saveColumnSpec();
+    }
+
+    // only removes the commands elements
+    this.removeCommands();
+    // actually removes any reference to command objects
+    this._toolbar.destroy();
+    this._shortcuts.destroy();
+    this._commandmenuitems.destroy();
+
+    // Make sure we aren't waiting for in-cell editing to start
+    this._cancelEditTimer();
+
+    // Remove event listeners
+    this._treecols.removeEventListener("DOMAttrModified",
+                                      this._onColumnMutationClosure,
+                                        false);
+
+    this.removeEventListener("command",
+                            this._onCommandClosure,
+                            true);
+
+    // Break the cycle between ourselves and the tree view
+    if (this.treeView && this.treeView instanceof this._Ci.sbIMediaListViewTreeView) {
+      this.treeView.observer = null;
+    }
+    this.treeView = null;
+    this.mediaListView = null;
+
+    var e = document.createEvent("Events");
+    e.initEvent("playlist-destroy", false, true);
+    this.dispatchEvent(e);
+    this._destroyed = true;
+  }
+]]>
+        </body>
+      </method>
+
+    <method name="removeSelectedTracks">
+      <body>
+<![CDATA[
+        var numSelected = this.mediaListView.selection.count;
+        const BYPASSKEY = "playlist.confirmremovetracks.bypass";
+        const DELETEFILEKEY = "playlist.confirmdeletefiles";
+        const STRINGROOT_UNIQUE = "playlist.confirmremoveitem.";
+        const STRINGROOT_MULTIPLE = "playlist.confirmremoveitems.";
+        const STRINGROOT_BTN = "playlist.button.";
+        const STRINGROOT_TYPE = "playlist.type.";
+
+        var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        var selectedDevice =
+              deviceManager.getDeviceForItem(this.mediaListView.mediaList);
+
+        // We have two paths here, one is with either libraries other than the
+        // main library or if media management is turned off. The other is when
+        // we are on the main library and media management is on.
+        // For the first path we display the normal "don't show me again" check
+        // box, for the second we display the "also delete files" check box.
+        // Also if we are managed then we always display this dialog even if
+        // the user checked do not show again.
+        var isManaged = false;
+
+        var mediaMgrService = Cc["@getnightingale.com/Nightingale/media-manager-service;1"]
+                                .getService(Ci.sbIMediaManagementService);
+        if (this.mediaListView.mediaList == LibraryUtils.mainLibrary &&
+            mediaMgrService.isEnabled)
+        {
+          isManaged = true;
+        }
+
+        var disableDialog = false;
+        if (selectedDevice) {
+          disableDialog =
+            !selectedDevice.getWarningDialogEnabled("remove_tracks");
+        } else if (!isManaged) {
+          disableDialog = SBDataGetBoolValue(BYPASSKEY);
+        }
+
+        var isDownloadList =
+          (this.mediaListView.mediaList.getProperty(SBProperties.customType) == "download");
+
+        if (!disableDialog && !isDownloadList) {
+          var STRINGROOT = (numSelected > 1) ? STRINGROOT_MULTIPLE : STRINGROOT_UNIQUE;
+          var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                        .getService(Components.interfaces.nsIPromptService);
+          var isLibrary = this.mediaListView.mediaList instanceof Ci.sbILibrary;
+          check = { value: false };
+
+          var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                              .getService(Components.interfaces.nsIStringBundleService);
+          var nightingaleStrings = sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
+          var strTitle = nightingaleStrings.GetStringFromName(STRINGROOT + "title");
+
+          if (isLibrary && selectedDevice) {
+            var strContext =
+                  nightingaleStrings.formatStringFromName("playlist.type.device",
+                                                       [selectedDevice.name],
+                                                       1);
+          } else {
+            var contextKey = isLibrary ? "library" : "playlist";
+            var strContext = nightingaleStrings.GetStringFromName
+                                               ("playlist.type." + contextKey);
+          }
+
+          var removedItemsInfo;
+          if (numSelected == 1) {
+            var selectedMediaItem =
+                  this.mediaListView.selection.currentMediaItem;
+            removedItemsInfo = selectedMediaItem.getProperty
+                                                   (SBProperties.trackName);
+          } else {
+            removedItemsInfo = numSelected;
+          }
+
+          var strMsg = nightingaleStrings.formatStringFromName
+                                         (STRINGROOT + "message",
+                                          [removedItemsInfo, strContext],
+                                          2);
+
+          var strCheck;
+          if (isManaged) {
+            strCheck = nightingaleStrings.GetStringFromName("mediamanager.dialog.confirm.delete");
+            check.value = SBDataGetBoolValue(DELETEFILEKEY);
+          } else {
+            strCheck = nightingaleStrings.GetStringFromName("dialog.confirm.dontaskme");
+          }
+          var removeStr = nightingaleStrings.GetStringFromName(STRINGROOT_BTN + "remove");
+          var cancelStr = nightingaleStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
+
+          if (isLibrary &&
+              !selectedDevice &&
+              (deviceManager.marshalls.length > 0)) {
+            strMsg += "\n\n" + nightingaleStrings.GetStringFromName("playlist.confirmremoveitem.devicewarning");
+          }
+
+          var btnFlags =
+            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_0) +  // remove
+            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_1) +  // cancel
+            Ci.nsIPromptService.BUTTON_POS_0_DEFAULT;
+
+          // XXX lone> see mozbug 345067, there is no way to tell the prompt service what
+          // code to return when the titlebar's X close button is clicked, it is always 1,
+          // so we have to make the cancel button the second button.
+
+          var retval =
+            promptService.confirmEx(window,
+                                    strTitle,
+                                    strMsg,
+                                    btnFlags,
+                                    removeStr,
+                                    cancelStr,
+                                    null,
+                                    strCheck,
+                                    check);
+          if (isManaged) {
+            SBDataSetBoolValue(DELETEFILEKEY, check.value);
+            if (check.value == true) {
+              // Flag all these items to be deleted by the media manager.
+              var selectedEnum = this.mediaListView.selection.selectedMediaItems;
+              while (selectedEnum.hasMoreElements()) {
+                var curItem = selectedEnum.getNext()
+                                          .QueryInterface(Ci.sbIMediaItem);
+                curItem.setProperty("http://getnightingale.com/data/1.0#deleteFromDisk",
+                                    "1");
+              }
+            }
+          } else {
+            if (check.value == true) {
+              if (selectedDevice) {
+                selectedDevice.setWarningDialogEnabled("remove_tracks", false);
+              } else {
+                SBDataSetBoolValue(BYPASSKEY, true);
+              }
+            }
+          }
+          if (retval == 1) { // 1 = cancel/X, 0 = remove
+            return;
+          }
+        }
+        this.mediaListView.removeSelectedMediaItems();
+]]>
+      </body>
+    </method>
+
+      <method name="startCellEditing">
+        <parameter name="row"/>
+        <parameter name="col"/>
+        <body>
+<![CDATA[
+  this._cancelEditTimer();
+
+  if (row == null)
+    row = this.edit_row;
+  if (col == null)
+    col = this.edit_col;
+
+  var item = this.mediaListView.getItemByIndex(row);
+  if (!LibraryUtils.canEditMetadata(item)) {
+    // read only mode, don't start
+    return;
+  }
+
+  if (row >= 0 && col.index >= 0)
+    this.tree.startEditing(row, col);
+]]>
+        </body>
+      </method>
+
+      <method name="_onColumnMutation">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  if((event.attrName == "dragging" && event.newValue == "") ||
+     event.attrName == "width" || event.attrName == "hidden") {
+     this._ensureEndSplitter(null);
+    this._setColumnSpecDirty();
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_setupColumns">
+        <body>
+<![CDATA[
+  var medialist = this.mediaListView.mediaList;
+  var parser = new ColumnSpecParser(medialist, this, null, this._mediaType);
+
+  // read the current column specs
+  var columnMap = parser.columnMap;
+  this._columnSpecOrigin = parser.origin;
+
+  // make a set of the properties in the default columns specs
+  var defaultSpecParser =
+    new ColumnSpecParser(medialist,
+                         this,
+                         parser.ORIGIN_MEDIALISTDEFAULT |
+                         parser.ORIGIN_LIBRARYDEFAULT |
+                         parser.ORIGIN_DEFAULT,
+                         this._mediaType);
+
+  var defaultColumns = defaultSpecParser.columnMap;
+  var defaultColumnsMap = {};
+  for (var i = 0; i < defaultColumns.length; i++) {
+    defaultColumnsMap[defaultColumns[i].property] = true;
+  }
+
+  this._removeAllChildren(this._treecols);
+
+  // If the columns were initialized from some defaults..
+  if ( this._columnSpecOrigin & ~(
+         parser.ORIGIN_PROPERTY |
+         parser.ORIGIN_PREFERENCES |
+         parser.ORIGIN_ATTRIBUTE |
+         parser.ORIGIN_ONLY_CONSTRAINT ) )
+  {
+
+    // Make sure we save the spec for this playlist.
+    // If we don't, then this playlist will change if the default
+    // changes, and the user will be confused.
+    this._setColumnSpecDirty();
+
+    // If this is a playlist inited from library defaults, we may need
+    // to tweak the column spec a little
+
+    if ( !(medialist instanceof Components.interfaces.sbILibrary) &&
+         !(this._columnSpecOrigin & parser.ORIGIN_MEDIALISTDEFAULT))
+    {
+
+      // All playlists should have an ordinal column
+      var hasOrdinal = columnMap.some(function(columnInfo) {
+           return columnInfo.property == SBProperties.ordinal;
+         });
+
+      if (!hasOrdinal) {
+        ColumnSpecParser.reduceWidthsProportionally(columnMap,
+                     /* arbitrary size for # col */ 42);
+        columnMap.unshift({
+            property: SBProperties.ordinal,
+            sort: "ascending",
+            width: 42
+          });
+      }
+
+      // We probably do not want the sort hint from the default spec.
+      sortProperty = SBProperties.ordinal;
+      sortDirection = "ascending";
+    }
+  }
+
+  // Get the list of columns from the property manager and add them to the
+  // tree
+  var numColumns = columnMap.length;
+
+  // Add the columns that have saved settings, keeping track of which column
+  // were added
+  var alreadyAdded = {};
+  var addedColumns = 0;
+  var ordinal = 1;
+  var sortProperty;
+  var sortDirection;
+  columnMap.forEach(
+    function(columnInfo) {
+      var propertyInfo = this._pm.getPropertyInfo(columnInfo.property);
+      if (!sortProperty && columnInfo.sort) {
+        sortProperty = columnInfo.property;
+        sortDirection = columnInfo.sort;
+      }
+
+      this._appendColumn(propertyInfo,
+                         false,
+                         columnInfo.width,
+                         ordinal);
+      alreadyAdded[columnInfo.property] = true;
+      addedColumns++;
+      ordinal += 2;
+    },
+    this);
+
+  // Add the rest of the columns from the property manager.  Note if there was
+  // any saved column info, add these additional columns as hidden, otherwise
+  // show them. Also, if pref "nightingale.columnpicker.allowSecondaryProperties"
+  // is true, do a second pass with everything that has not yet been added, and
+  // set the secondary attribute to true, so we can use it later to sort the
+  // additional properties below the primary ones
+  var enableAll = Application.prefs.getValue(
+                 "nightingale.columnpicker.allowSecondaryProperties", false);
+  var alsoUnlocalized = Application.prefs.getValue(
+                 "nightingale.columnpicker.allowUnlocalizedSecondaryProperties",
+                 false);
+  for (var i=0;i<2;i++) {
+    var isSecondary = (i == 1);
+    if (!enableAll &&
+        isSecondary)
+      break;
+    var propEnumerator = this._pm.propertyIDs;
+    while (propEnumerator.hasMore()) {
+      var propertyID = propEnumerator.getNext();
+      if (!alreadyAdded[propertyID]) {
+        var propertyInfo = this._pm.getPropertyInfo(propertyID);
+        if (propertyInfo.userViewable ||
+            propertyID in defaultColumnsMap ||
+            isSecondary) {
+          // if this is a secondary prop, and it has no localized string
+          // it probably doesn't make sense to have it there, so only show it
+          // if the user really really wants it there
+          if (isSecondary &&
+              !alsoUnlocalized &&
+              propertyInfo.displayName.indexOf("http://") == 0)
+            continue;
+          // add the column, hidden (meaning it will appear in the column picker
+          // but with no checkmark)
+          this._appendColumn(propertyInfo,
+                             true,
+                             null,
+                             ordinal,
+                             isSecondary);
+          alreadyAdded[propertyInfo.id] = true;
+          addedColumns++;
+          ordinal += 2;
+        }
+      }
+    }
+  }
+
+  // If there is no sort, default to the ordinal column
+  if (!sortProperty) {
+    sortProperty = SBProperties.ordinal;
+    sortDirection = "ascending";
+  }
+
+  if (this.isSortable == "1" && this.tree.view) {
+    var ldtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+    ldtv.setSort(sortProperty, sortDirection == "ascending");
+  }
+
+  if (this.tree.columns) {
+    this.tree.columns.invalidateColumns();
+  }
+]]>
+        </body>
+      </method>
+
+
+      <method name="_restoreDefaultColumns">
+        <body>
+<![CDATA[
+  // Remove all the columnSpecs for this list
+  var medialist = this.mediaListView.mediaList;
+  medialist.setProperty(SBProperties.columnSpec, null);
+  medialist.setProperty(SBProperties.columnSpec +
+                          "+(" + this._mediaType + ")",
+                        null);
+
+  // Reset the columnSpec pref, if we have one
+  if (this.hasAttribute("useColumnSpecPreference")) {
+    var pref = this.getAttribute("useColumnSpecPreference");
+
+    try {
+      if (Application.prefs.has(pref)) {
+        Application.prefs.get(pref).reset();
+      }
+    } catch (e) {}
+  }
+
+  // Then rebuild the columns
+  if (this._saveColumnSpecTimeout) {
+    clearTimeout(this._saveColumnSpecTimeout);
+    this._saveColumnSpecTimeout = null;
+  }
+  this._suppressSaveAsDefaultColumnSpec = false;
+  this._setupColumns();
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="getColumnCount">
+        <body>
+<![CDATA[
+  // Get the number of visible columns
+  return this._getVisibleColumnArray().length;
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="clearColumns">
+        <body>
+<![CDATA[
+  // Hide all visible columns
+  this._getVisibleColumnArray().forEach(function(column) {
+    column.element.setAttribute("hidden", "true");
+  });
+  this._setColumnSpecDirty();
+  this._suppressSaveAsDefaultColumnSpec = true;
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="appendColumn">
+        <parameter name="aPropertyID"/>
+        <parameter name="aWidth"/>
+        <body>
+<![CDATA[
+  this.insertColumnBefore(aPropertyID, "", aWidth);
+  this._setColumnSpecDirty();
+  this._suppressSaveAsDefaultColumnSpec = true;
+]]>
+        </body>
+      </method>
+
+
+      <!-- sbIPlaylistWidget -->
+      <method name="insertColumnBefore">
+        <parameter name="aPropertyID"/>
+        <parameter name="aBeforePropertyID"/>
+        <parameter name="aWidth"/>
+        <body>
+<![CDATA[
+  // Find some important indices
+  var columnIndex       = -1;
+  var beforeColumnIndex = -1;
+  var lastVisibleIndex  = -1;
+
+  var columns = this._getSortedColumnArray();
+  for (var i = 0; i < columns.length; i++) {
+    var col = columns[i];
+    var bind = col.element.getAttribute("bind");
+    if (bind == aPropertyID) {
+      columnIndex = i;
+    }
+    if (aBeforePropertyID && bind == aBeforePropertyID) {
+      beforeColumnIndex = i;
+    }
+    if (!col.element.hasAttribute("hidden") ||
+        col.element.getAttribute("hidden") != "true") {
+      lastVisibleIndex = i;
+    }
+  }
+
+  // If we didn't find the column, check to see if it has been added
+  // to the system as a property after our bind call. Add it hidden.
+  if (columnIndex < 0) {
+    if (this._pm.hasProperty(aPropertyID)) {
+      var propertyInfo = this._pm.getPropertyInfo(aPropertyID);
+      this._appendColumn(propertyInfo,
+                         true,
+                         null,
+                         (columns.length * 2));
+      columnIndex = columns.length;
+
+      // get the new array of columns
+      columns = this._getSortedColumnArray();
+    }
+  }
+
+  // If the column or the before column was not found, throw
+  if (columnIndex < 0 || (aBeforePropertyID && beforeColumnIndex < 0)) {
+    throw this._Cr.NS_ERROR_INVALID_ARG;
+  }
+
+  var mover;
+
+  // If no columns are visible, just move this column to the front
+  if (lastVisibleIndex < 0) {
+    mover = this._moveColumnBefore(columns, columnIndex, 0);
+  }
+  else {
+    // If a before column was specified, splice the mover into the array
+    // before that column
+    if (aBeforePropertyID) {
+      mover = this._moveColumnBefore(columns, columnIndex, beforeColumnIndex);
+    }
+    else {
+      // If no before column was specified, splice the mover into the array
+      // after the last visible column
+      if (lastVisibleIndex < columns.length) {
+        mover = this._moveColumnBefore(columns, columnIndex, lastVisibleIndex + 1);
+      }
+      else {
+        mover = this._moveLast(columns, columnIndex);
+      }
+    }
+  }
+
+  mover.element.removeAttribute("hidden");
+
+  // set the width if it isn't already set and we got one passed in
+  var width = mover.element.getAttribute("width");
+  if ( aWidth && width == "" ) {
+    mover.element.setAttribute("width", aWidth);
+  }
+  this._setColumnSpecDirty();
+  this._suppressSaveAsDefaultColumnSpec = true;
+]]>
+        </body>
+      </method>
+
+      <method name="_moveColumnBefore">
+        <parameter name="aColumns"/>
+        <parameter name="aFromIndex"/>
+        <parameter name="aToIndex"/>
+        <body>
+<![CDATA[
+  var mover = aColumns.splice(aFromIndex, 1)[0];
+  if (aFromIndex < aToIndex) {
+    aToIndex--;
+  }
+  aColumns.splice(aToIndex, 0, mover);
+
+  aColumns.forEach(function(column, i) {
+    column.element.setAttribute("ordinal", (i * 2) + 1);
+  });
+
+  return mover;
+]]>
+        </body>
+      </method>
+
+      <method name="_moveColumnLast">
+        <parameter name="aColumns"/>
+        <parameter name="aFromIndex"/>
+        <body>
+<![CDATA[
+  var mover = aColumns.splice(aFromIndex, 1)[0];
+  aColumns.push(mover);
+
+  aColumns.forEach(function(column, i) {
+    column.element.setAttribute("ordinal", (i * 2) + 1);
+  });
+
+  return mover;
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="removeColumn">
+        <parameter name="aPropertyID"/>
+        <body>
+<![CDATA[
+  // Find some important indices
+  var columnIndex       = -1;
+  var firstHiddenIndex  = -1;
+
+  var columns = this._getSortedColumnArray();
+  for (var i = 0; i < columns.length; i++) {
+    var col = columns[i];
+    if (col.element.getAttribute("bind") == aPropertyID) {
+      columnIndex = i;
+    }
+    if (firstHiddenIndex < 0 && col.element.getAttribute("hidden") == "true") {
+      firstHiddenIndex = i;
+    }
+  }
+
+  if (columnIndex < 0) {
+    throw this._Cr.NS_ERROR_INVALID_ARG;
+  }
+
+  var mover;
+  if (firstHiddenIndex < 0) {
+    mover = this._moveColumnLast(columns, columnIndex);
+  }
+  else {
+    mover = this._moveColumnBefore(columns, columnIndex, firstHiddenIndex);
+  }
+  mover.element.setAttribute("hidden", "true");
+  this._setColumnSpecDirty();
+  this._suppressSaveAsDefaultColumnSpec = true;
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="getColumnPropertyIDByIndex">
+        <parameter name="aIndex"/>
+        <body>
+<![CDATA[
+  var columns = this._getVisibleColumnArray();
+  if (aIndex < 0 || aIndex >= columns.length) {
+    throw this._Cr.NS_ERROR_INVALID_ARG;
+  }
+  return columns[aIndex].element.getAttribute("bind");
+]]>
+        </body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="setSortColumn">
+        <parameter name="aPropertyID"/>
+        <parameter name="aIsAscending"/>
+        <body>
+<![CDATA[
+  var ldtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
+  ldtv.setSort(aPropertyID, aIsAscending);
+  this._setColumnSpecDirty();
+  this._suppressSaveAsDefaultColumnSpec = true;
+]]>
+        </body>
+      </method>
+
+      <method name="_getVisibleColumnArray">
+        <body>
+<![CDATA[
+  var columns = this.tree.columns;
+  var a = [];
+  for (var i = 0; i < columns.length; i++) {
+    var column = columns.getColumnAt(i);
+    if (!column.element.hasAttribute("hidden") ||
+        column.element.getAttribute("hidden") != "true") {
+      a.push(column);
+    }
+  }
+
+  a.sort(function(a, b) {
+    var o1 = parseInt(a.element.getAttribute("ordinal"));
+    var o2 = parseInt(b.element.getAttribute("ordinal"));
+    return o1 - o2;
+  });
+  return a;
+]]>
+        </body>
+      </method>
+
+      <method name="_getSortedColumnArray">
+        <body>
+<![CDATA[
+  var columns = this.tree.columns;
+  var a = [];
+  for (var i = 0; i < columns.length; i++) {
+    a.push(columns.getColumnAt(i));
+  }
+
+  a.sort(function(a, b) {
+    var o1 = parseInt(a.element.getAttribute("ordinal"));
+    var o2 = parseInt(b.element.getAttribute("ordinal"));
+    return o1 - o2;
+  });
+  return a;
+]]>
+        </body>
+      </method>
+
+      <method name="_appendColumn">
+        <parameter name="propertyInfo"/>
+        <parameter name="isHidden"/>
+        <parameter name="width"/>
+        <parameter name="ordinal"/>
+        <parameter name="secondary"/>
+        <body>
+<![CDATA[
+  var treecol = document.createElementNS(this._XUL_NS, "treecol");
+  treecol.setAttribute("bind", propertyInfo.id);
+  treecol.setAttribute("label", propertyInfo.displayName);
+  var labelKey = propertyInfo.localizationKey + ".display";
+  var display = this._getString(labelKey, "");
+  if (display) {
+    treecol.setAttribute("display", display);
+  }
+  if (width) {
+    treecol.setAttribute("width", width);
+  }
+
+  if (isHidden) {
+    treecol.setAttribute("hidden", "true");
+  }
+
+  if (secondary) {
+    treecol.setAttribute("secondary", "true");
+  }
+
+  // Ordinal and track name (title) are special cases, we never want them in
+  // the column picker (bug 12230)
+  if (propertyInfo.id == SBProperties.ordinal ||
+      propertyInfo.id == SBProperties.trackName) {
+    treecol.setAttribute("ignoreincolumnpicker", "true");
+  }
+
+  treecol.setAttribute("ordinal", ordinal);
+
+  if (propertyInfo instanceof this._Ci.sbITreeViewPropertyInfo) {
+    var tvpi = propertyInfo.QueryInterface(this._Ci.sbITreeViewPropertyInfo);
+    switch (tvpi.columnType) {
+      case "progressmeter":
+        treecol.setAttribute("type", "progressmeter");
+        break;
+      case "checkbox":
+        treecol.setAttribute("type", "checkbox");
+        treecol.setAttribute("editable", "true");
+        break;
+      default:
+        // Don't do anything, so this will be "text".
+        break;
+    }
+  }
+
+  this._treecols.appendChild(treecol);
+  // If the last child of the columns element is a treecol, add a splitter
+  this._ensureEndSplitter(ordinal - 1);
+
+  if (this.tree.columns) {
+    this.tree.columns.invalidateColumns();
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_ensureEndSplitter">
+        <parameter name="ordinal"/>
+        <body>
+<![CDATA[
+  // Make sure that their is a splitter at the end of a playlist
+  if (this._treecols.lastChild && this._treecols.lastChild.tagName == "treecol") {
+    var splitter = document.createElementNS(this._XUL_NS, "splitter");
+    splitter.setAttribute("class", "tree-splitter");
+    if (ordinal != null)
+      splitter.setAttribute("ordinal", ordinal);
+    splitter.setAttribute("resizeafter", "grow");
+    this._treecols.appendChild(splitter);
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_setColumnSpecDirty">
+        <body>
+          if (this._saveColumnSpecTimeout) {
+            clearTimeout(this._saveColumnSpecTimeout);
+          }
+          this._saveColumnSpecTimeout =
+            setTimeout(function(o) { o._saveColumnSpec(); }, 5000, this);
+        </body>
+      </method>
+
+      <method name="_saveColumnSpec">
+        <body>
+<![CDATA[
+  this._saveColumnSpecTimeout = null;
+  var columns = [];
+
+  var treecolList = this._treecols.getElementsByTagNameNS(this._XUL_NS,
+                                                          "treecol");
+
+  // Gather the column information for the columns that are not hidden
+  for (var i = 0; i < treecolList.length; i++) {
+    var col = treecolList[i];
+    if (!col.hasAttribute("hidden") ||
+        col.getAttribute("hidden") != "true" ) {
+      var columnInfo = { property: col.getAttribute("bind"),
+                         ordinal:  col.getAttribute("ordinal"),
+                         width:    col.width };
+
+      var sortActive = col.getAttribute("sortActive");
+      if (sortActive) {
+        var sortDirection = col.getAttribute("sortDirection");
+        var sortKey;
+        if (sortDirection == "ascending") {
+          sortKey = "a";
+        }
+        else if (sortDirection == "descending") {
+          sortKey = "d";
+        }
+        if (sortKey) {
+          columnInfo.sort = sortKey;
+        }
+      }
+
+      columns.push(columnInfo);
+    }
+  }
+
+  // Sort the column list by ordinal
+  columns.sort(function(a, b) { return a.ordinal - b.ordinal; });
+
+  var columnSpec = "";
+  var first = true;
+
+  function writeColumnInfo(columnInfo) {
+    var newString;
+    if (first) {
+      newString = "";
+      first = false;
+    }
+    else {
+      newString = " ";
+    }
+
+    newString += columnInfo.property;
+    if (columnInfo.width) {
+      newString += " " + columnInfo.width;
+    }
+    if (columnInfo.sort) {
+      newString += " " + columnInfo.sort;
+    }
+    columnSpec += newString;
+  }
+
+  columns.forEach(writeColumnInfo);
+
+  // Sanity check, don't write a bad string.
+  try {
+    var columns = ColumnSpecParser.parseColumnSpec(columnSpec);
+  }
+  catch (e) {
+    this._reportError('Almost wrote bad columnSpec: "' + columnSpec + '"', e);
+    return;
+  }
+
+  if (!columnSpec) {
+    throw new Error("No columns enumerated");
+  }
+
+  let property = SBProperties.columnSpec;
+  if (this._mediaType) {
+    property += "+(" + this._mediaType + ")";
+  }
+
+  var mediaList = this.mediaListView.mediaList;
+  this.ignoreColumnSpecUpdate = true;
+  mediaList.setProperty(property, columnSpec);
+  this.ignoreColumnSpecUpdate = false;
+
+  dump("\n\nplaylist.xml saving column spec: " + columnSpec + "\n\n");
+
+  // Consider saving this spec as a default
+  if (!this._suppressSaveAsDefaultColumnSpec) {
+
+    // The only time we want to save the column spec as a default is if
+    // multiple playlists are sharing a column spec using a preference.
+    if (this.hasAttribute("useColumnSpecPreference")) {
+      var pref = this.getAttribute("useColumnSpecPreference");
+      Application.prefs.setValue(pref, columnSpec);
+    }
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_cancelEditTimer">
+        <body>
+<![CDATA[
+  if (this._startEditingTimer) {
+    clearTimeout(this._startEditingTimer);
+    this._startEditingTimer = null;
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="refreshCommands">
+        <parameter name="stateonly"/>
+        <body>
+<![CDATA[
+  this._toolbar.outerWindow = this.outerWindow;
+  this._commandmenuitems.outerWindow = this.outerWindow;
+  this._shortcuts.outerWindow = this.outerWindow;
+  this._toolbar.refreshCommands(stateonly);
+  this._commandmenuitems.refreshCommands(stateonly);
+  this._shortcuts.refreshCommands(stateonly);
+]]>
+        </body>
+      </method>
+
+      <method name="setCommands">
+        <parameter name="commands"/>
+        <body>
+        <![CDATA[
+          // Out with the old
+          this.removeCommands();
+          if (this.getAttribute("hidecommands") != "true") {
+              // In with the new
+              this._commands = this.commands = commands;
+              this._toolbar.hidden = true;
+              this._toolbar.bind(this.mediaListView.mediaList, this, commands);
+              this._commandmenuitems.bind(this.mediaListView.mediaList, this, commands);
+              this._shortcuts.bind(this.mediaListView.mediaList, this, commands);
+          }
+        ]]>
+        </body>
+      </method>
+
+      <method name="removeCommands">
+        <body>
+<![CDATA[
+  this._commands = this.commands = null;
+  this._toolbar.removeCommands();
+  this._commandmenuitems.removeCommands();
+  this._shortcuts.removeCommands();
+]]>
+        </body>
+      </method>
+
+      <!-- Removes all children of the given DOM node -->
+      <method name="_removeAllChildren">
+        <parameter name="parentNode"/>
+        <body>
+<![CDATA[
+  // Bail out if there are no children
+  if (!parentNode.hasChildNodes())
+    return;
+
+  // Loop through and remove all the children
+  var childNodes = parentNode.childNodes;
+  var childCount = childNodes.length;
+  for(var index = 0; index < childCount; index++) {
+    var child = childNodes.item(0);
+    parentNode.removeChild(child);
+  }
+]]>
+        </body>
+      </method>
+
+
+      <!-- Event yellers -->
+
+      <method name="sendPlayEvent">
+        <body>
+          <![CDATA[
+           var event = document.createEvent("Events");
+           event.initEvent("Play", true, true);
+           var notHandled = this.dispatchEvent(event);
+
+           // If nobody handled the event, just
+           // initiate playback manually.
+           if (notHandled) {
+             var mm =
+               Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
+                         .getService(Components.interfaces.sbIMediacoreManager);
+             mm.sequencer.playView(this.mediaListView,
+                Math.max(this.mediaListView.selection.currentIndex, 0));
+           }
+         ]]>
+        </body>
+      </method>
+
+      <method name="sendSelChangeEvent">
+        <body>
+        <![CDATA[
+          var e = document.createEvent("Events");
+          e.initEvent("playlist-selchange", false, true);
+          this.dispatchEvent(e);
+        ]]>
+        </body>
+      </method>
+
+      <method name="sendBurnToCDEvent">
+        <body>
+        <![CDATA[
+          // One day...
+        ]]>
+        </body>
+      </method>
+
+      <method name="onPlaylistEditor">
+        <parameter name="evt"/>
+        <body>
+        <![CDATA[
+          SBTrackEditorOpen("edit");
+        ]]>
+        </body>
+      </method>
+
+      <!-- Tree event listeners -->
+
+      <method name="_onPlaylistDblClick">
+        <parameter name="evt"/>
+        <body>
+         <![CDATA[
+
+         // A single click on an already selected row means start
+         // editing, but only if it isn't followed immediately by
+         // another click.
+         this._cancelEditTimer();
+
+          // If the last single click occurred long ago, the first click of this
+          // double-click was probably consumed by some other element such as
+          // the playlist context menu.  In that case, the double-click really
+          // applies to that element and should not be processed here.
+          if (!this._lastClickTime)
+            return;
+          var currentTime = (new Date()).getTime();
+          var msSinceLastClick = currentTime - this._lastClickTime;
+          if (msSinceLastClick > this._maxDoubleClickTime)
+            return;
+
+          // Check to see that the user double clicked on a row
+          var row = this._onMouseDownRow;
+          var col = this._onMouseDownColumn;
+
+          if (row >= 0 && col) {
+            // Only play the track if the double clicked cell does not contain
+            // clickable content
+            var property = col.element.getAttribute("bind");
+            var info = this._pm.getPropertyInfo(property);
+            if (!(info instanceof this._Ci.sbIClickablePropertyInfo))
+              this.sendPlayEvent();
+          }
+         ]]>
+        </body>
+      </method>
+
+      <method name="_getOuterList">
+        <body>
+          <![CDATA[
+            var outerListGuid =
+              this.mediaList.getProperty(SBProperties.outerGUID);
+            if (outerListGuid) {
+              return this.mediaList.library.getMediaItem(outerListGuid);
+            }
+            return this.mediaList;
+          ]]>
+        </body>
+      </method>
+
+      <field name="_commandController"><![CDATA[
+        ({
+          _self: this,
+          doCommand: function(aCommand) {
+            var listView = this._self._mediaListView;
+            switch (aCommand) {
+              case "cmd_copy":
+                var val = "";
+
+                // if there is selection, set val to the csv string of artist, album, track
+                if ( listView.selection.count > 0 ) {
+                  // get an enumerator for the selected items as sbIIndexedMediaItems
+                  var items = listView.selection.selectedIndexedMediaItems;
+                  while ( items.hasMoreElements() ) {
+                    var item = items.getNext().mediaItem;
+                    if (item) {
+                      val += item.getProperty("http://getnightingale.com/data/1.0#artistName") + ", ";
+                      val += item.getProperty("http://getnightingale.com/data/1.0#albumName") + ", ";
+                      val += item.getProperty("http://getnightingale.com/data/1.0#trackName") + "\n";
+                    }
+                  }
+                }
+
+                // put the data on the clipboard
+                Cc["@mozilla.org/widget/clipboardhelper;1"]
+                  .getService(Ci.nsIClipboardHelper)
+                  .copyString(val);
+                break;
+              case "cmd_selectAll":
+                this._self.treeView.selection.selectAll();
+                break;
+              case "cmd_delete":
+                var list = this._self._getOuterList();
+                if (list.userEditable &&
+                    list.userEditableContent) {
+                  this._self.removeSelectedTracks();
+                }
+                break;
+              case "cmd_find":
+                var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                               .getService(Components.interfaces.nsIWindowMediator);
+                var nightingaleWindow = windowMediator.getMostRecentWindow("Nightingale:Main");
+                if (nightingaleWindow && nightingaleWindow.gSearchHandler) {
+                  var searchBar = nightingaleWindow.gSearchHandler.getSearchBar();
+                  if (searchBar) {
+                    searchBar.select();
+                    searchBar.focus();
+                  }
+                }
+                break;
+            }
+          },
+          supportsCommand: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_selectAll":
+              case "cmd_delete":
+              case "cmd_copy":
+              case "cmd_find":
+                return true;
+            }
+            return false;
+          },
+          isCommandEnabled: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_selectAll":
+              case "cmd_find":
+                return true;
+              case "cmd_delete":
+                var list = this._self._getOuterList();
+                // if list or content is not user editable, don't do delete
+                if (!list.userEditable ||
+                    !list.userEditableContent)
+                  return false;
+                // fall through allow based on selection
+              case "cmd_copy":
+                return (this._self._mediaListView.selection.count > 0);
+            }
+            return false;
+          },
+          onEvent: function(aEventName) {}
+        })
+      ]]></field>
+
+      <method name="_onPlaylistContextMenu">
+        <parameter name="evt"/>
+        <body>
+<![CDATA[
+  // If there is no actual commands, do not allow the context menu to pop.
+  if (!this._commandmenuitems.hasCommands()) {
+    return;
+  }
+
+  // we can get here in two ways:
+  var isMouseEvent;
+  if (evt.originalTarget == this._treechildren) {
+    // the user right clicked on the treechildren
+    isMouseEvent = true;
+  } else if (evt.originalTarget == this.tree) {
+    // the user pressed the context menu key (on the keyboard)
+    isMouseEvent = false;
+  } else {
+    // we got here from some other way (e.g. right click on scrollbar)
+    // ignore this event
+    return;
+  }
+
+  if (isMouseEvent) {
+    // HEY LOOK!  WE CAN TRUST THE EVENT DATA!!!  WOW!!!!!
+    this._context_x = evt.screenX;
+    this._context_y = evt.screenY;
+  } else {
+    this._context_x = this._treechildren.boxObject.screenX;
+    var treeBoxObject = this.tree.boxObject;
+    var rowOffset = 0;
+    if (treeBoxObject instanceof Components.interfaces.nsITreeBoxObject) {
+      // find the offset within the tree; the +1 makes the popup appear below
+      // the focused row (so it doesn't obscure things)
+      rowOffset = treeBoxObject.rowHeight * (this.tree.currentIndex + 1);
+    }
+    this._context_y = this._treechildren.boxObject.screenY + rowOffset;
+  }
+
+  // XXXlone -- there is still a bug when opening the context menu in webplaylists
+  // inside tabs, when another tab has a playlist opened inside a browser (for instance,
+  // it is showing the library)... wtf.
+
+  //dump("this._context_x = " + this._context_x + "\n");
+  //dump("this._context_y = " + this._context_y + "\n");
+
+  document.popupNode = null;
+
+  var tree = this.tree;
+  if (tree.currentIndex < 0)
+    return;
+
+  this._context_popup.showPopup(tree, this._context_x, this._context_y,
+                                "context", null, null, null);
+
+  //dump("this._context_popup.boxObject.screenX = " + this._context_popup.boxObject.screenX + "\n");
+  //dump("this._context_popup.boxObject.screenY = " + this._context_popup.boxObject.screenY + "\n");
+]]>
+        </body>
+      </method>
+
+      <method name="_onPlaylistSelectClick">
+        <body>
+<![CDATA[
+  window.updateCommands("tree-select");
+  this.refreshCommands(false);
+  this.sendSelChangeEvent();
+]]>
+        </body>
+      </method>
+
+    <method name="_onPlaylistClick">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  try
+  {
+    // Record time of this click event
+    this._lastClickTime = (new Date()).getTime();
+
+    // Any additional clicks mean stop waiting for in-cell editing to start.
+    this._cancelEditTimer();
+
+    if ( evt.button == 0 )
+    {
+      // Get the current mouse over cell info
+      var bo = this.tree.treeBoxObject;
+      var mouseOverObj = {}, mouseOverRow = {}, mouseOverCol = {};
+      bo.getCellAt( evt.clientX,
+                    evt.clientY,
+                    mouseOverRow,
+                    mouseOverCol,
+                    mouseOverObj );
+      mouseOverRow = mouseOverRow.value;
+      mouseOverCol = mouseOverCol.value;
+      mouseOverObj = mouseOverObj.value;
+
+      // Use the mouse down event cell as the click event cell
+      var row = this._onMouseDownRow;
+      var col = this._onMouseDownColumn;
+      var obj = this._onMouseDownObject;
+      if (obj)
+      {
+        // If this clickable cell is disabled, just return
+        var props = this._Cc["@mozilla.org/supports-array;1"]
+                            .createInstance(this._Ci.nsISupportsArray);
+        this.tree.view.getCellProperties(row, col, props);
+        for (var i = 0; i < props.Count(); i++) {
+          var atom = props.QueryElementAt(i, this._Ci.nsIAtom);
+          if (atom.equals("disabled")) {
+            return;
+          }
+        }
+
+        var property = col.element.getAttribute("bind");
+        var item = this.mediaListView.getItemByIndex(row);
+
+        function fireEvent(aElement) {
+          var event = document.createEvent("datacontainerevent");
+          event.initEvent("PlaylistCellClick", true, true);
+          event.setData("property", property);
+          event.setData("item", item);
+          event.setData("row", row);
+          event.setData("column", col);
+          aElement._lastClickEvent = { property: property, item: item, __proto__: evt };
+          aElement.dispatchEvent(event);
+          aElement._lastClickEvent = null;
+        }
+
+        var info = this._pm.getPropertyInfo(property);
+        if (info instanceof this._Ci.sbIClickablePropertyInfo) {
+          var clickable =
+            info.QueryInterface(this._Ci.sbIClickablePropertyInfo);
+
+          // Don't register click if mouse is no longer over clicked cell
+          if ((mouseOverRow != row) ||
+              (mouseOverCol != col) ||
+              (mouseOverObj != obj)) {
+            return;
+          }
+
+          // Get the coordinates of the cell that the mouse is over
+          var coords = this._getCellCoords(evt, mouseOverRow, mouseOverCol);
+
+          var oldValue = item.getProperty(property);
+
+          // Should this click register?
+          var hit = clickable.hitTest(oldValue,
+                                      obj,
+                                      coords.cellWidth,
+                                      coords.cellHeight,
+                                      coords.x,
+                                      coords.y);
+          if (!hit) {
+            return;
+          }
+
+          // XXXben Remove these special cases. Fire the event and add handlers
+          // to catch them elsewhere.
+
+          // Special case for the download button propery. If it is clicked,
+          // start the download
+          if (property == SBProperties.downloadButton) {
+            this._downloadItem(item);
+            evt.stopPropagation();
+            return;
+          }
+
+          // Special case for clickable image links
+          if (info instanceof this._Ci.sbIImageLinkPropertyInfo) {
+            // Get the associated uri to navigate to
+            var uri = item.getProperty(info.urlProperty);
+            // Get the text value of the image property, this will depend on
+            // which property we're handling as each may have its own set of
+            // special strings for css purposes. For instance #originPageImage
+            // will have either <empty>, "webOrigin", or "unknownOrigin", which
+            // determines the icon that is displayed. Standard image link
+            // properties (such as #artistDetailImage), will have <empty>,
+            // "default", or the url to an image.
+            // Since the meaning of the value is not determinate, we cannot
+            // rely on a simple test to determine whether to proceed with
+            // navigation or not (for instance "unknownOrigin" should block it),
+            // so we ask the property info. Also, although the property info
+            // probably checks for empty urls, we still check here, just in
+            // case, so we don't try to navigate to nothing.
+            var image = item.getProperty(info.id);
+            if (uri != null &&
+                uri != "" &&
+                !info.getPreventNavigation(image, uri)) {
+              // navigate to the url
+              var browser = null;
+              if (typeof SBGetBrowser == 'function')
+                browser = SBGetBrowser();
+              if (browser) {
+                browser.loadURI(uri, null, null, evt);
+              } else {
+                SBBrowserOpenURLInNewWindow(uri);
+              }
+            }
+            evt.stopPropagation();
+            return;
+          }
+
+          // Only assign the new value if userEditable
+          if (item.userEditable) {
+            // Get and assign the new value to the property
+            try {
+              var value = clickable.getValueForClick(oldValue,
+                                                     coords.cellWidth,
+                                                     coords.cellHeight,
+                                                     coords.x,
+                                                     coords.y);
+              this.tree.view.setCellValue(row, col, value);
+            }
+            catch(e if e.result == this._Cr.NS_ERROR_NOT_IMPLEMENTED) {
+              // It is ok for this not to be implemented
+            }
+          }
+          evt.stopPropagation();
+        }
+        else if (this.tree.currentIndex != -1 &&
+                 this.treeView.isEditable(row, col))
+        {
+          let handleEdit = item.userEditable;
+
+          let isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
+          if((isMac && 'metaKey' in evt && evt.metaKey) ||
+             (!isMac && 'ctrlKey' in evt && evt.ctrlKey) ||
+             ('shiftKey' in evt && evt.shiftKey)) {
+            handleEdit = false;
+          }
+
+          if (handleEdit) {
+            // Remember the row and column
+            this.edit_row = row;
+            this.edit_col = col;
+
+            if ( this.tree.currentIndex == this._lastClickIndex &&
+                 this.tree.view.selection.count == 1)
+            {
+              // Don't start editing immediately since a) we can't do it in
+              // the middle of the event chain anyway without crashing, and
+              // b) since this click may be part of a doubleclick, in which
+              // case we want to play rather than edit.
+              var params = { that: this, row: this.edit_row, col: this.edit_col };
+              this._startEditingTimer = setTimeout(
+                function() { params.that.startCellEditing( params.row, params.col ); },
+                this._maxDoubleClickTime);
+            }
+          }
+        }
+        // Always fire the event.
+        fireEvent(this);
+      }
+
+      this._lastClickIndex = this.tree.currentIndex;
+    }
+  }
+  catch( err )
+  {
+    alert( "playlist.xml - onPlaylistClick - " + err );
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_onPlaylistBlur">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+        // Check to make sure we are losing focus on the tree and nothing else inside.
+        // We do this so that when the user selects a track then clicks some where else
+        // they don't get the edit box appearing when they click back onto the track.
+        if (evt.originalTarget == this.tree) {
+          this._lastClickIndex = -1;
+          this._cancelEditTimer();
+        }
+]]>
+      </body>
+    </method>
+
+    <method name="_onMouseMove">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  var view = this.treeView;
+
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+
+  // Determine if mouse is over the same cell as the previous event.
+  var sameCell = false;
+  var lastCell = null;
+  if ((this._lastMouseOverRow >= 0) && this._lastMouseOverColumn) {
+    lastCell = { row: this._lastMouseOverRow, col: this._lastMouseOverColumn };
+  }
+  if ((evt.type != "mouseout") && lastCell &&
+      (row.value == lastCell.row) && (col.value == lastCell.col)) {
+    sameCell = true;
+  }
+
+  // If the mouse is not over the same cell, clear the last mouse over state.
+  if (!sameCell) {
+    this._lastMouseOverRow = -1;
+    this._lastMouseOverColumn = null;
+  }
+
+  // If the mouse moved out of a cell, update the playlist cell mouse over state
+  // to mouse out.
+  if (!sameCell) {
+    this._playlistCellMouseOut();
+  }
+
+  // If the mouse is not over any cell, set mouse state to none and do nothing
+  // more.
+  if (!obj.value || (evt.type == "mouseout")) {
+    view.setMouseState(-1,
+                       null,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
+    return;
+  }
+
+  // Determine if mouse is over the cell content (hits clickable property
+  // content or over any other cell)
+  var overCellContent = false;
+
+  var property = col.value.element.getAttribute("bind");
+  var propertyInfo = this._pm.getPropertyInfo(property);
+  if (propertyInfo instanceof this._Ci.sbIClickablePropertyInfo) {
+    var cpi = propertyInfo.QueryInterface(this._Ci.sbIClickablePropertyInfo);
+
+    var coords = this._getCellCoords(evt, row.value, col.value);
+
+    var item = this.mediaListView.getItemByIndex(row.value);
+    var oldValue = item.getProperty(property);
+
+    // Should this hover register?
+    var hit = cpi.hitTest(oldValue,
+                          obj.value,
+                          coords.cellWidth,
+                          coords.cellHeight,
+                          coords.x,
+                          coords.y);
+
+    if (hit) {
+      overCellContent = true;
+    }
+  }
+  else {
+    overCellContent = true;
+  }
+
+  // Update the last mouse over state
+  this._lastMouseOverRow = row.value;
+  this._lastMouseOverColumn = col.value;
+
+  // If the mouse is not down and is over cell content, set the mouse state to
+  // hover.  If the mouse is down over the same cell content as the mouse down
+  // event, set the mouse state to down.  Otherwise, set the mouse state to
+  // none.
+  if (!this._mouseIsDown && overCellContent) {
+    view.setMouseState(row.value,
+                       col.value,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
+
+    // Update the playlist cell mouse over state.
+    this._playlistCellMouseOver(row.value, col.value);
+  } else if (this._mouseIsDown &&
+             overCellContent &&
+             (row.value == this._onMouseDownRow) &&
+             (col.value == this._onMouseDownColumn) &&
+             (obj.value == this._onMouseDownObject)) {
+    view.setMouseState(row.value,
+                       col.value,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
+  } else {
+    // Update the playlist cell mouse over state to mouse out.
+    this._playlistCellMouseOut();
+
+    view.setMouseState(-1,
+                       null,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_playlistCellMouseOver">
+      <parameter name="row"/>
+      <parameter name="col"/>
+      <body>
+<![CDATA[
+  // Don't update playlist cell mouse over state while the mouse is down.
+  if (this._mouseIsDown)
+    return;
+
+  // Don't update playlist cell mouse over state if mouse is already over a
+  // playlist cell.  When moving to a different cell, the state should change to
+  // mouse out first.
+  if (this._lastPlaylistCellMouseOverState)
+    return;
+
+  // Update the playlist cell mouse over state.
+  var property = col.element.getAttribute("bind");
+  var item = this.mediaListView.getItemByIndex(row);
+  this._lastPlaylistCellMouseOverState = {
+    property: property,
+    item:     item,
+    row:      row,
+    col:      col
+  };
+
+  // Dispatch a playlist cell mouse over event.
+  var event = document.createEvent("datacontainerevent");
+  event.initEvent("PlaylistCellMouseOver", true, true);
+  event.setData("property", property);
+  event.setData("item", item);
+  event.setData("row", row);
+  event.setData("column", col);
+  this.dispatchEvent(event);
+]]>
+      </body>
+    </method>
+
+    <method name="_playlistCellMouseOut">
+      <body>
+<![CDATA[
+  // Don't update playlist cell mouse over state while the mouse is down.
+  if (this._mouseIsDown)
+    return;
+
+  // Don't update playlist cell mouse over state if mouse is not over a playlist
+  // cell.
+  if (!this._lastPlaylistCellMouseOverState)
+    return;
+
+  // Get the playlist cell mouse over state data and then clear it, setting the
+  // state to mouse out.
+  var property = this._lastPlaylistCellMouseOverState.property;
+  var item = this._lastPlaylistCellMouseOverState.item;
+  var row = this._lastPlaylistCellMouseOverState.row;
+  var col = this._lastPlaylistCellMouseOverState.col;
+  this._lastPlaylistCellMouseOverState = null;
+
+  // Dispatch a playlist cell mouse out event.
+  var event = document.createEvent("datacontainerevent");
+  event.initEvent("PlaylistCellMouseOut", true, true);
+  event.setData("property", property);
+  event.setData("item", item);
+  event.setData("row", row);
+  event.setData("column", col);
+  this.dispatchEvent(event);
+]]>
+      </body>
+    </method>
+
+    <method name="_onMouseDown">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  // Do nothing if event does not occur over a visible tree cell
+  if (!this._pointInTreeRows(this.tree, evt.clientX, evt.clientY)) {
+    return;
+  }
+
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+
+  this._onMouseDownRow             = row.value;
+  this._onMouseDownColumn          = col.value;
+  this._onMouseDownObject          = obj.value;
+  this._isHandlingClickableContent = false;
+  this._mouseIsDown                = true;
+
+  if (!obj.value) {
+    return;
+  }
+
+  var view = this.treeView;
+
+  // Register a mouse down on all clickable cells that pass the hit test or
+  // all other cells
+
+  var property = col.value.element.getAttribute("bind");
+  var propertyInfo = this._pm.getPropertyInfo(property);
+  if (propertyInfo instanceof this._Ci.sbIClickablePropertyInfo) {
+    var cpi = propertyInfo.QueryInterface(this._Ci.sbIClickablePropertyInfo);
+
+    var coords = this._getCellCoords(evt, row.value, col.value);
+
+    var item = this.mediaListView.getItemByIndex(row.value);
+    var oldValue = item.getProperty(property);
+
+    // Should this click register?
+    var hit = cpi.hitTest(oldValue,
+                          obj.value,
+                          coords.cellWidth,
+                          coords.cellHeight,
+                          coords.x,
+                          coords.y);
+    if (hit) {
+      this._isHandlingClickableContent = true;
+      view.setMouseState(row.value,
+                         col.value,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
+      if (cpi.suppressSelect) {
+        evt.stopPropagation();
+      }
+    }
+  }
+  else {
+    view.setMouseState(row.value,
+                       col.value,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_onMouseUp">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+
+  if (obj.value) {
+    var view = this.treeView;
+    if (row.value == this._onMouseDownRow &&
+        col.value == this._onMouseDownColumn) {
+      view.setMouseState(row.value,
+                         col.value,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
+    }
+    else {
+      view.setMouseState(-1,
+                         null,
+                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
+    }
+  }
+
+  // The mouse is no longer down and widget is no longer handling clickable
+  // content
+  this._mouseIsDown = false;
+  this._isHandlingClickableContent= false;
+]]>
+      </body>
+    </method>
+
+    <method name="_getCellCoords">
+      <parameter name="evt"/>
+      <parameter name="row"/>
+      <parameter name="col"/>
+      <body>
+<![CDATA[
+  // Compute the X and Y coordinates within the cell
+  var bo = this.tree.treeBoxObject;
+  var cellX = {};
+  var cellY = {};
+  var cellWidth  = {};
+  var cellHeight = {};
+  bo.getCoordsForCellItem(row,
+                          col,
+                          "cell",
+                          cellX,
+                          cellY,
+                          cellWidth,
+                          cellHeight);
+
+  var x = evt.screenX - this._treechildren.boxObject.screenX - cellX.value;
+  var y = evt.screenY - this._treechildren.boxObject.screenY - cellY.value;
+  return {x: x, y: y, cellWidth: cellWidth, cellHeight: cellHeight};
+]]>
+      </body>
+    </method>
+
+    <method name="onPopupShown">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this._commandmenuitems.setDeferRefresh();
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPopupShown - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onPopupHidden">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            this._commandmenuitems.clearDeferRefresh();
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPopupHidden - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
+
+
+    <method name="_onCommand">
+      <parameter name="event"/>
+      <body>
+<![CDATA[
+
+  // Catch the "Restore Default Columns" colpicker menu item
+  if (event.originalTarget &&
+      event.originalTarget.getAttribute("anonid") == "menuitem")
+  {
+    event.stopPropagation();
+    this._restoreDefaultColumns();
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_addAllItems">
+      <parameter name="source"/>
+      <parameter name="item"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
+      <body>
+<![CDATA[
+  var ml = this.mediaListView.mediaList;
+  var oldLength = ml.length;
+
+  var sort = this.mediaListView.currentSort;
+  var isAscending = sort.getPropertyAt(0).value == "a";
+
+  // If this is a descending sort, we need to flip around the row and the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
+  if (!isAscending) {
+    row = this.mediaListView.length - (row + 1);
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
+  }
+
+  // If this media lists supports ordering, insert the item where it was
+  // dropped
+  var doInsert = false;
+  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
+  if (isOrderable && oldLength > 0 && row >= 0 ) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      doInsert = true;
+    }
+    else {
+      if (row + 1 < oldLength) {
+        row++;
+        doInsert = true;
+      }
+    }
+  }
+
+  if (item.equals(ml)) {
+    return;
+  }
+  else {
+    item.setProperty(SBProperties.downloadStatusTarget,
+                     item.library.guid + "," + item.guid);
+    if (doInsert) {
+      ml.insertAllBefore(row, item);
+    }
+    else {
+      ml.addAll(item);
+    }
+
+    var added = ml.length - oldLength;
+    DNDUtils.reportAddedTracks(added,
+                               1 - added,
+                               0,
+                               this.mediaList.name);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_addItems">
+      <parameter name="source"/>
+      <parameter name="enumerator"/>
+      <parameter name="indicesEnumerator"/>
+      <parameter name="count"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
+      <body>
+<![CDATA[
+  var ml = this.mediaListView.mediaList;
+  var oldLength = ml.length;
+
+  var sort = this.mediaListView.currentSort;
+  var isAscending = sort.getPropertyAt(0).value == "a";
+
+  // If this is a descending sort, we need to flip around the row and the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
+  if (!isAscending) {
+    row = this.mediaListView.length - (row + 1);
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
+  }
+
+  // If this media lists supports ordering, insert the item where it was
+  // dropped
+  var doInsert = false;
+  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
+  if (isOrderable && oldLength > 0 && row >= 0 ) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      doInsert = true;
+    }
+    else {
+      if (row + 1 < oldLength) {
+        row++;
+        doInsert = true;
+      }
+    }
+  }
+
+  if (source.equals(ml)) {
+    // Find the indices of all the selected rows
+    var indices = [];
+    var viewLength = this.mediaListView.length;
+    while (indicesEnumerator.hasMoreElements()) {
+      var index = indicesEnumerator.getNext().index;
+      if (!isAscending) {
+        index = viewLength - (index + 1);
+      }
+      indices.push(index);
+    }
+
+    if (!isAscending) {
+      indices.reverse();
+    }
+
+    if (doInsert) {
+      ml.moveSomeBefore(indices, indices.length, row);
+    }
+    else {
+      // Moving items within a list that is not orderable does nothing
+      if (isOrderable) {
+        ml.moveSomeLast(indices, indices.length);
+      }
+    }
+  }
+  else {
+    var self = this;
+    if (doInsert) {
+      ml.insertSomeBefore(row, enumerator);
+    }
+    else {
+      ml.addSome(enumerator);
+    }
+
+    var added = ml.length - oldLength;
+    DNDUtils.reportAddedTracks(added,
+                               count - added,
+                               0,
+                               this.mediaList.name);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_pointInTreeRows">
+      <parameter name="tree"/>
+      <parameter name="mouseX"/>
+      <parameter name="mouseY"/>
+        <body>
+<![CDATA[
+  // Make sure the user actually double clicked on a tree cell.
+  // Previously this used getCellAt() on the tree, however, it was
+  // unreliable.  This code compares the mouse position with the box
+  // object of the contaier of the tree's rows (which excludes the
+  // column headers and scroll bar)
+  var treeRows = document.getAnonymousElementByAttribute(tree, "class", "tree-rows");
+  if(!treeRows) {
+      return false;
+  }
+  var treeBodyBox = document.getAnonymousElementByAttribute(treeRows, "class", "tree-bodybox");
+  if(!treeBodyBox) {
+      return false;
+  }
+  var bo = treeBodyBox.boxObject;
+  if(mouseX >= bo.x && mouseX <= (bo.x + bo.width) &&
+     mouseY >= bo.y && mouseY <= (bo.y + bo.height)) {
+     return true;
+  }
+  return false;
+]]>
+        </body>
+      </method>
+
+      <method name="deselectAll">
+        <body>
+<![CDATA[
+  this.mediaListView.selection.selectNone();
+]]>
+        </body>
+      </method>
+
+      <method name="_getString">
+        <parameter name="name"/>
+        <parameter name="defaultValue"/>
+        <body>
+<![CDATA[
+  if (!this._stringbundle) {
+    var src = "chrome://nightingale/locale/nightingale.properties";
+    var stringBundleService = this._Cc["@mozilla.org/intl/stringbundle;1"]
+                                  .getService(this._Ci.nsIStringBundleService);
+    this._stringbundle = stringBundleService.createBundle(src);
+  }
+
+  try {
+    return this._stringbundle.GetStringFromName(name);
+  }
+  catch(e) {
+    return defaultValue;
+  }
+]]>
+        </body>
+      </method>
+
+      <method name="_downloadItem">
+        <parameter name="item"/>
+        <body>
+<![CDATA[
+  var ddh = this._Cc["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
+                    .getService(this._Ci.sbIDownloadDeviceHelper);
+  ddh.downloadItem(item);
+]]>
+        </body>
+      </method>
+
+      <method name="_canDownloadDrop">
+        <parameter name="aDragSession"/>
+        <body>
+<![CDATA[
+  // bail out if the drag session does not contain internal items.
+  // We may eventually add a handler to add an external media URL
+  // drop on the download playlist.
+  if (!InternalDropHandler.isSupported(aDragSession)) {
+    return false;
+  }
+
+  var IOS = Cc["@mozilla.org/network/io-service;1"]
+              .getService(Ci.nsIIOService);
+
+  function canDownload(aMediaItem) {
+    var contentSpec = aMediaItem.getProperty(SBProperties.contentURL);
+    var contentURL = IOS.newURI(contentSpec, null, null);
+    switch(contentURL.scheme) {
+      case "http":
+      case "https":
+      case "ftp":
+        // these are safe to download
+        return true;
+    }
+    return false;
+  }
+
+  if (aDragSession.isDataFlavorSupported(
+                     this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+    var context = DNDUtils.
+      getInternalTransferDataForFlavour(aDragSession,
+                                        this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                        Ci.sbIMediaItemsTransferContext);
+ 
+    var items = context.items;
+    // we must remember to reset the context before we exit, so that when we
+    // actually need the items in onDrop we can get them again!
+    var count = 0;
+    var downloadable = true;
+    while (items.hasMoreElements() && downloadable) {
+      downloadable = canDownload(items.getNext());
+      ++count;
+    }
+    // we can't download nothing.
+    if (count == 0) { downloadable = false; }
+
+    // rewind the items list.
+    context.reset();
+
+    return downloadable;
+  } else {
+    Cu.reportError("_getMediaListForDrop should have returned null");
+    return false;
+  }
+]]>
+        </body>
+      </method>
+
+      <field name="nsDragAndDropObserver">
+        <![CDATA[({
+        _self: this,
+
+        // the function calling onDragStart was rewritten
+        // but we have left this husk here to satisfy nsDragAndDrop.js
+        onDragStart: function(event, transferData, dragAction) {},
+
+        // whether we can accept the drop or not
+        canDrop: function(event, session) {
+          // XXX Alfred: same hack as we did for bug 4760 to do special
+          // handling for the download playlist.
+          var list = this._self.mediaList;
+          var customType = list.getProperty(SBProperties.customType);
+          if (customType == "download") {
+            return this._self._canDownloadDrop(session);
+          }
+
+          // this is a playlist for a readonly library, can't drop
+          if (!list.userEditable || !list.userEditableContent) {
+            return false;
+          }
+          return (InternalDropHandler.isSupported(session) ||
+                  ExternalDropHandler.isSupported(session));
+        },
+
+        // expose the flavours we support
+        getSupportedFlavours: function() {
+          var flavours = new FlavourSet();
+          InternalDropHandler.addFlavours(flavours);
+          ExternalDropHandler.addFlavours(flavours);
+          return flavours;
+        },
+
+        // this method is only here to keep nsDragAndDrop.js happy
+        onDragOver: function(event, flavor, session) {
+        }
+
+      })]]></field>
+
+      <!-- Items are dragged from the list -->
+      <method name="_onDragGesture">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+    // Don't initiate a drag if disableDrag is set
+    if (this._disableDrag) {
+      event.stopPropagation();
+      return;
+    }
+
+    // Don't initiate a drag if handling clickable content
+    if (this._isHandlingClickableContent) {
+      event.stopPropagation();
+      return;
+    }
+
+    var view = this._mediaListView;
+    var numRows = view.selection.count;
+    if (numRows == 0) {
+      return; // Nothing selected to drag.
+    }
+
+    var transArray = this._prepareTransferArray(view);
+    var dragAction = Ci.nsIDragService.DRAGDROP_ACTION_COPY;
+    var icon       = this._prepareDragIcon();
+
+    var dragService = Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(Ci.nsIDragService);
+    dragService.invokeDragSessionWithImage(event.target, transArray,
+                                           null, dragAction,
+                                           icon, 0, 0, event);
+
+    // Mouse events will be handled by drag-and-drop, so clear the mouse down
+    // state
+    this._onMouseDownRow = -1;
+    this._onMouseDownColumn = null;
+    this._onMouseDownObject = null;
+    this._mouseIsDown = false;
+    this._isHandlingClickableContent= false;
+
+    event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <method name="_prepareTransferArray">
+        <parameter name="view"/>
+        <body>
+<![CDATA[
+    var dnd = this._Cc["@getnightingale.com/Nightingale/DndSourceTracker;1"]
+                      .getService(this._Ci.sbIDndSourceTracker);
+    dnd.reset();
+
+    var transferData = new TransferData();
+    // Create a context which describes the media items being moved.
+    var context = new DNDUtils.MediaListViewSelectionTransferContext(view);
+    var handle = dnd.registerSource(context);
+    transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
+
+    // add a second flavour for a single media item so it can be recognized by
+    // drop targets that only accept a single media item
+    if (view.selection.count == 1) {
+      transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+
+      // for single media lists, we'll add another special flavor
+      var item = view.selection.currentMediaItem;
+      if (item instanceof this._Ci.sbIMediaList) {
+        var context = new DNDUtils.MediaListTransferContext(item, view.mediaList);
+
+        context.QueryInterface(this._Ci.sbIMediaItemsTransferContext);
+        var handle = dnd.registerSource(context);
+        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
+      }
+    }
+
+    // are any of these items marked as not downloadable?
+    var enumerator = view.selection.selectedMediaItems;
+    while (enumerator.hasMoreElements()) {
+      var item = enumerator.getNext().QueryInterface(Ci.sbIMediaItem);
+      if (!item) continue; // WTF?
+      if (item.getProperty(SBProperties.disableDownload) == '1') {
+        // one of the items has download disabled, we need to disable the command
+        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD, '');
+      }
+    }
+
+
+    var transArray = Cc["@mozilla.org/supports-array;1"]
+                       .createInstance(Ci.nsISupportsArray);
+
+    var trans = Cc["@mozilla.org/widget/transferable;1"]
+                  .createInstance(Ci.nsITransferable);
+    for (var i = 0; i < transferData.dataList.length; ++i)  {
+      var currData = transferData.dataList[i];
+      var currFlavour = currData.flavour.contentType;
+      trans.addDataFlavor(currFlavour);
+      var supports = null; // nsISupports data
+      var length = 0;
+      if (currData.flavour.dataIIDKey == "nsISupportsString") {
+        supports = Components.classes["@mozilla.org/supports-string;1"]
+                             .createInstance(Components.interfaces.nsISupportsString);
+
+        supports.data = currData.supports;
+        length = supports.data.length;
+      }
+      else {
+        // non-string data.
+        supports = currData.supports;
+        length = this._Ci.nsITransferable.kFlavorHasDataProvider;
+      }
+      // length * 2 is because of sizeof(PRUnichar) and pure evil
+      trans.setTransferData(currFlavour, supports, length * 2);
+    }
+    transArray.AppendElement(trans);
+
+    return transArray;
+]]>
+        </body>
+      </method>
+
+      <method name="_prepareDragIcon">
+        <body>
+<![CDATA[
+    // Prepare the badged drag icon for the drag session.
+    var numRows = this._mediaListView.selection.count;
+
+    var icon = document.getAnonymousElementByAttribute(this, "sbid", "dragIcon");
+    var badge = document.getAnonymousElementByAttribute(this, "sbid", "dragBadge");
+
+    icon.setAttribute("items", numRows);
+    badge.setAttribute("value", numRows);
+
+    return icon;
+]]>
+        </body>
+      </method>
+
+      <!-- Something is dragged over the list -->
+      <method name="_onDragOver">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+    nsDragAndDrop.dragOver(event, this.nsDragAndDropObserver);
+]]>
+        </body>
+      </method>
+
+      <!-- Something is dropped on the list -->
+      <method name="_onDragDrop">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // The actual drop is not handled here, it is taken care of by the tree
+  // observer. This is so we can know what row and orientation the drop
+  // happened at.
+
+  // This method is here to prevent the default drag and drop handler
+  // from handling the drop
+  event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <!-- Called from either the tree observer (when dropping inside the tree,
+           via .drop()) or the mediapage (when dropping on a browser tab) -->
+      <method name="_dropOnTree">
+        <parameter name="row"/>
+        <parameter name="orientation"/>
+        <parameter name="session"/>
+        <body>
+<![CDATA[
+  this._dragSession = session;
+
+  // Note that this is called by our tree observer
+  var dnd = this._Cc["@getnightingale.com/Nightingale/DndSourceTracker;1"]
+                    .getService(this._Ci.sbIDndSourceTracker);
+
+  // handle mediaitem drops
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                                session);
+  if (data) {
+    var context = dnd.getSourceSupports(data)
+                     .QueryInterface(this._Ci.sbIMediaListTransferContext);
+    this._addAllItems(context.source, context.list, row, orientation);
+    return;
+  }
+
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                            session);
+  if (data) {
+    var context = dnd.getSourceSupports(data)
+                     .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
+    this._addItems(context.source, context.items, context.indexedItems, context.count, row, orientation);
+    return;
+  }
+
+  // figure out where the track insertion should occur
+  var position = row;
+  if (orientation != this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+    position++;
+  }
+  if (position > this.mediaListView.length-1) {
+    position = -1;
+  }
+
+  // if we are using the reverse ordinal sort, we need to reverse the drop position
+  // and if we are sorted in any other way, we'll just drop at the end of the list
+
+  var sort = this.mediaListView.currentSort;
+  if (sort && sort.length == 1) {
+    if (sort.getPropertyAt(0).id == SBProperties.ordinal) {
+      var isAscending = sort.getPropertyAt(0).value == "a";
+      if (!isAscending) {
+        switch (position) {
+          case 0:
+            position = -1;
+            break;
+          case -1:
+            position = 0;
+            break;
+          default:
+            position = this.mediaList.length - position;
+            break;
+        }
+      }
+    } else {
+      position = -1;
+    }
+  } else {
+    position = -1;
+  }
+
+  var dropHandlerListener = {
+    onDropComplete: function(aTargetList,
+                             aImportedInLibrary,
+                             aDuplicates,
+                             aInsertedInMediaList,
+                             aOtherDropsHandled) {
+      // show the standard report on the status bar
+      return true;
+    },
+    onFirstMediaItem: function(aTargetList, aFirstMediaItem) {}
+  };
+
+  ExternalDropHandler.dropOnList(window,
+                                 session,
+                                 this.mediaList,
+                                 position,
+                                 dropHandlerListener);
+
+]]>
+        </body>
+      </method>
+
+      <method name="_treeKeyNavigate">
+        <parameter name="event"/>
+        <body><![CDATA[
+          // Watch out, 'this' here refers to the tree (_incrementalString and
+          // _lastKeyTime are members of the tree).
+
+          var key = String.fromCharCode(event.charCode).toLowerCase();
+          if (event.timeStamp - this._lastKeyTime > 500)
+            this._incrementalString = key;
+          else
+            this._incrementalString += key;
+          this._lastKeyTime = event.timeStamp;
+
+          var incrementalString = this._incrementalString;
+
+          // Grab our special interface for the lookup.
+          var view =
+            this.view.QueryInterface(Components.interfaces.sbIMediaListViewTreeView);
+
+          var currentIndex = this.currentIndex;
+          var start = 1;
+
+          if (incrementalString.length > 1) {
+            start = 0;
+
+            if (currentIndex < 0) {
+              currentIndex = 0;
+            }
+          }
+
+          var index =
+            view.getNextRowIndexForKeyNavigation(incrementalString,
+                                                 currentIndex + start);
+
+          if (index == -1) {
+            index = view.getNextRowIndexForKeyNavigation(incrementalString, 0);
+          }
+          return index;
+
+        ]]></body>
+      </method>
+
+      <!-- sbIPlaylistWidget -->
+      <method name="rescanCommands">
+        <body>
+          // push our usedefaultcommands state because the RemoteAPI only has
+          // access to attributes right now and this needs to get to commands
+          if (this._commandmenuitems) {
+            this._commandmenuitems.usedefault = this.usedefaultcommands;
+            this._commandmenuitems.rescanCommands();
+          }
+          if (this._toolbar) {
+            this._toolbar.usedefault = this.usedefaultcommands;
+            this._toolbar.rescanCommands();
+          }
+          if (this._shortcuts) {
+            this._shortcuts.usedefault = this.usedefaultcommands;
+            this._shortcuts.rescanCommands();
+          }
+        </body>
+      </method>
+
+      <method name="_reportError">
+        <parameter name="message"/>
+        <parameter name="error"/>
+        <body>
+          <![CDATA[
+            dump("*** ERROR: " + message + "\n");
+            Components.utils.reportError(message);
+            if (error) {
+              Components.utils.reportError(error);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="_logMessage">
+        <parameter name="message"/>
+        <body>
+          <![CDATA[
+            dump("*** " + message + "\n");
+            var consoleService =
+              Components.classes["@mozilla.org/consoleservice;1"]
+                        .getService(Components.interfaces.nsIConsoleService);
+            consoleService.logStringMessage(message);
+          ]]>
+        </body>
+      </method>
+
+      <method name="isOrdinalSort">
+        <body>
+        <![CDATA[
+          var sort = this.mediaListView.currentSort;
+
+          if (sort && sort.length > 0) {
+            if (sort.length > 1) {
+              // multiple sort criteria, obviously we're sorted on more than the ordinal
+              return false;
+            } else {
+              // only one sort criteria, check if that's the ordinal order (unsorted)
+              if (sort.getPropertyAt(0).id != SBProperties.ordinal) {
+                // not the ordinal order, we're sorted on something else
+                return false;
+              }
+            }
+          }
+          return true;
+        ]]>
+        </body>
+      </method>
+
+      <!-- called by the tree observer to see whether we can drop at this position -->
+      <method name="canDrop">
+        <parameter name="aIndex"/>
+        <parameter name="aOrientation"/>
+        <body>
+<![CDATA[
+
+  // Our tree observer callback does not get the drag session as a parameter,
+  // that is fine on windows, but on linux, the dragservice does not hold on
+  // to the session after the drop completes, so we cannot ask it for the
+  // session that just got dropped. Because of this, we need to remember the
+  // session during the drag over event, and reuse it later in the drop event.
+  // Note that canDrop is also called before calling the drop event, so in that
+  // case on linux, getCurrentSession will fail, we need to test if we got
+  // something and only record it if we did.
+
+  // Special flag we use to disable dropping items to a playlist, this allows
+  // the playlist to still be editable but stop drag and drop.
+  if (this._disableDrop) {
+    return false;
+  }
+
+  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(this._Ci.nsIDragService);
+  var session = dragService.getCurrentSession();
+  if (session != null)
+    this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
+
+  // XXX Alfred: same hack as we did for bug 4760 to do special handling
+  // for the download playlist.
+  var customType = this.mediaList.getProperty(SBProperties.customType);
+  if (customType == "download") {
+    return this._canDownloadDrop(this._dragSession);
+  }
+
+  // this is a playlist for a readonly library, can't drop
+  if (!this.mediaList.userEditable ||
+      !this.mediaList.userEditableContent) {
+    return false;
+  }
+
+  // look for the source of the dnd, if it is ourselves, we need to test whether
+  // we are a sorted playlist, or a library (cannot reorder tracks in a library),
+  // in which case we disallow dropping, because it does not make sense.
+
+  var dnd = this._Cc["@getnightingale.com/Nightingale/DndSourceTracker;1"]
+                    .getService(this._Ci.sbIDndSourceTracker);
+
+  var context;
+
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                                this._dragSession);
+  if (data) {
+    context = dnd.getSourceSupports(data)
+                .QueryInterface(this._Ci.sbIMediaListTransferContext);
+  }
+  else {
+    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                              this._dragSession);
+    if (data) {
+      context = dnd.getSourceSupports(data)
+                   .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
+    } else {
+      // the dnd does not contain nightingale mediaitems, it cannot have
+      // been made by ourselves, only accept the drop if it is a supported
+      // flavour
+      if (!ExternalDropHandler.isSupported(this._dragSession))
+        return false;
+
+      // we want to accept the drop, but ideally, we would test this.isOrdinalSort()
+      // and make it so the drop target cue is not shown. Unfortunately, returning
+      // false here, with an external drag and drop session, will prevent us from
+      // dropping entirely :/
+      return true;
+    }
+  }
+
+  if (context.source != this.mediaList) {
+    // the drop source is not ourselves, always accept the drop
+    return true;
+  }
+
+  // the source is ourselves, so this is a track reordering operation, only
+  // allow it if we are not sorted
+
+  // is this a library ? libraries cannot have their tracks reordered
+  if (this.mediaList == this.library)
+    return false;
+
+  // if we are sorted on anything else than the ordinal property, refuse reordering
+  if (!this.isOrdinalSort())
+    return false;
+
+  // looks like it is safe to perform a track reordering, so go for it!
+  return true;
+]]>
+        </body>
+      </method>
+
+      <!-- called by the tree observer when items are dropped on the tree -->
+      <method name="drop">
+        <parameter name="aIndex"/>
+        <parameter name="aOrientation"/>
+        <body>
+          <![CDATA[
+            this._dropOnTree(aIndex, aOrientation, this._dragSession);
+          ]]>
+        </body>
+      </method>
+
+      <method name="cycleHeader">
+        <parameter name="aCol"/>
+        <body>
+<![CDATA[
+  this._setColumnSpecDirty();
+]]>
+        </body>
+      </method>
+
+      <method name="onCellEdited">
+        <parameter name="aItem"/>
+        <parameter name="aPropertyName"/>
+        <parameter name="aOldValue"/>
+        <body>
+          <![CDATA[
+            // Data has been changed so we need to write back the metadata.
+            // Defer a tick, as the job manager may launch a dialog which
+            // at this time will totally lock up the player.
+
+            // Don't bother writing the rating if the item is readonly, or
+            // if ratings are disabled
+            // Note that it is OK to rate items that cannot be written to
+            if ((aPropertyName == SBProperties.rating && (!aItem.userEditable ||
+                 !Application.prefs.getValue("nightingale.metadata.ratings.enableWriting", false)))) {
+              return;
+            }
+
+            var self = this;
+            setTimeout(function() {
+              sbMetadataUtils.writeMetadata([aItem],
+                                            [aPropertyName],
+                                            null,
+                                            self.mediaListView.mediaList);
+            }, 0);
+          ]]>
+        </body>
+      </method>
+
+      <method name="highlightItem">
+        <parameter name="aIndex" />
+        <body><![CDATA[
+          this.mediaListView.selection.selectNone();
+          this.mediaListView.selection.select(aIndex);
+          this.treeView.selection.tree.ensureRowIsVisible(aIndex);
+          ]]></body>
+      </method>
+
+      <!-- sbIMediaListViewListener -->
+      <method name="onFilterChanged">
+        <parameter name="aChangedView"/>
+        <body><![CDATA[
+          this.tree.stopEditing(false);
+        ]]></body>
+      </method>
+      <!-- sbIMediaListViewListener -->
+      <method name="onSearchChanged">
+        <parameter name="aChangedView"/>
+        <body><![CDATA[
+          this.tree.stopEditing(false);
+        ]]></body>
+      </method>
+      <!-- sbIMediaListViewListener -->
+      <method name="onSortChanged">
+        <parameter name="aChangedView"/>
+        <body><![CDATA[
+          this.tree.stopEditing(false);
+        ]]></body>
+      </method>
+
+      <method name="issueCommand">
+        <parameter name="aCommand"/>
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+          var windowMediator =
+            Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                      .getService(Components.interfaces.nsIWindowMediator);
+          var nightingaleWindow =
+            windowMediator.getMostRecentWindow("Nightingale:Main");
+
+          var controller =
+            nightingaleWindow.controllers.getControllerForCommand(aCommand);
+
+          if (controller) {
+            controller.doCommand(aCommand);
+            aEvent.preventDefault();
+            aEvent.stopPropagation();
+          }
+        ]]></body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <!-- Grab mouse events in the capturing phase to enable proper handling
+           of clickable properties (e.g., prevent row selection, stop movement
+           event propagation).  This also enables reading of the mouse down cell
+           info before any tree scrolling occurs. -->
+      <handler event="mousedown" clickcount="1" phase="capturing">
+        <![CDATA[
+          this._onMouseDown(event);
+        ]]>
+      </handler>
+
+      <handler event="mousemove" phase="capturing">
+        <![CDATA[
+          // Handle the event
+          this._onMouseMove(event);
+
+          // Don't propagate event if handling clickable content
+          if (this._isHandlingClickableContent)
+            event.stopPropagation();
+        ]]>
+      </handler>
+
+      <handler event="mouseout" phase="capturing">
+        <![CDATA[
+          // Handle the event
+          this._onMouseMove(event);
+
+          // Don't propagate event if handling clickable content
+          if (this._isHandlingClickableContent)
+            event.stopPropagation();
+
+          // Since the mouse can no longer be tracked after it moves out, treat
+          // the mouse as no longer down and the widget as no longer handling
+          // clickable content.  Also, clear the on mouse down cell info.
+          this._onMouseDownRow = -1;
+          this._onMouseDownColumn = null;
+          this._onMouseDownObject = null;
+          this._mouseIsDown = false;
+          this._isHandlingClickableContent= false;
+        ]]>
+      </handler>
+
+      <!-- Grab doubleclicks in the capturing phase, so we can prevent
+           the standard click function from being called (prevent inline editing, etc.) -->
+      <handler event="click" clickcount="2" phase="capturing">
+        <![CDATA[
+          if (event.originalTarget == this._treechildren) {
+            this._onPlaylistDblClick(event);
+            event.stopPropagation();
+            event.preventDefault();
+          }
+        ]]>
+      </handler>
+
+      <handler event="keypress" key=" " phase="target">
+        <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
+          var mm =
+            Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
+                      .getService(Components.interfaces.sbIMediacoreManager);
+          var primaryCore = mm.primaryCore;
+          var status = mm.status;
+          const sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+
+          if (primaryCore &&
+              (status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+               status.state == sbIMediacoreStatus.STATUS_BUFFERING))
+          {
+            primaryCore.pause();
+          } else {
+            if (primaryCore && status.state == sbIMediacoreStatus.STATUS_PAUSED) {
+              primaryCore.play();
+            } else {
+              this.sendPlayEvent();
+            }
+          }
+          event.stopPropagation();
+        ]]>
+      </handler>
+
+      <handler event="keypress" keycode="VK_RETURN" phase="target">
+        <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
+
+          this.sendPlayEvent();
+          event.stopPropagation();
+        ]]>
+      </handler>
+      <handler event="keypress" keycode="VK_UP" modifiers="accel" phase="capturing">
+        <![CDATA[
+          this.issueCommand("cmd_volume_up", event);
+        ]]>
+      </handler>
+      <handler event="keypress" keycode="VK_DOWN" modifiers="accel" phase="capturing">
+        <![CDATA[
+          this.issueCommand("cmd_volume_down", event);
+        ]]>
+      </handler>
+      <handler event="keypress" keycode="VK_LEFT" modifiers="control" phase="target">
+        <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
+          var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
+                             .getService(Components.interfaces.sbIMediacoreManager);
+          var status = mm.status;
+
+          var playing = ( status.state == status.STATUS_PLAYING ||
+                          status.state == status.STATUS_BUFFERING ||
+                          status.state == status.STATUS_PAUSED );
+          if (playing)
+            mm.sequencer.previous();
+        ]]>
+      </handler>
+
+      <handler event="keypress" keycode="VK_RIGHT" modifiers="control" phase="target">
+        <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
+          var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
+                             .getService(Components.interfaces.sbIMediacoreManager);
+          var status = mm.status;
+
+          var playing = ( status.state == status.STATUS_PLAYING ||
+                          status.state == status.STATUS_BUFFERING ||
+                          status.state == status.STATUS_PAUSED );
+          if (playing)
+            mm.sequencer.next();
+        ]]>
+      </handler>
+
+      <handler event="PlaylistCellMouseOver">
+        <![CDATA[
+          // If the mouse is over a playlist origin page image cell, set the
+          // browser over link to the origin page URI.
+          var property = event.getData("property");
+          if (property == SBProperties.originPageImage) {
+            // Get the origin page URI.
+            var item = event.getData("item");
+            var originPageURI = null;
+            if (item)
+              originPageURI = item.getProperty(SBProperties.originPage);
+
+            // Set the browser status over link.
+            if (originPageURI && this._outerWindow.XULBrowserWindow) {
+              this._outerWindow.XULBrowserWindow.setOverLink(originPageURI,
+                                                             null);
+            }
+          }
+        ]]>
+      </handler>
+
+      <handler event="PlaylistCellMouseOut">
+        <![CDATA[
+          // If the mouse has moved out of a playlist origin page image cell
+          // with a valid origin page URI, clear the browser over link.
+          var property = event.getData("property");
+          if (property == SBProperties.originPageImage) {
+            // Get the origin page URI.
+            var item = event.getData("item");
+            var originPageURI = null;
+            if (item)
+              originPageURI = item.getProperty(SBProperties.originPage);
+
+            // Clear the over link if the origin page URI is valid.
+            if (originPageURI && this._outerWindow.XULBrowserWindow)
+              this._outerWindow.XULBrowserWindow.setOverLink("", null);
+          }
+        ]]>
+      </handler>
+
+    </handlers>
+
+  </binding>
+
+
+  <!-- override the column picker object to change the order of the items
+       (we want them all sorted by label, without having the checkmarked
+       items at the top) -->
+
+  <binding id="columnpicker"
+           extends="chrome://global/content/bindings/tree.xml#columnpicker">
+    <implementation>
+
+      <constructor>
+        // don't you wish there was a simpler way with bindings to make an
+        // overriding method that calls its ancestor ? grrr
+        this.prevBuildPopup = this.buildPopup;
+        this.buildPopup = function(aPopup) {
+          this.prevBuildPopup(aPopup);
+          this.sortContent(aPopup);
+        }
+      </constructor>
+
+      <method name="sortContent">
+        <parameter name="aPopup"/>
+        <body>
+          <![CDATA[
+            var sortarray = [];
+            var sortarray2 = [];
+            var secondaryMap = {};
+            var sep = null;
+            var i;
+            // make a map of colindex/secondary attribute
+            var tree = this.parentNode.parentNode;
+            var colIndex = 0;
+            for (var currCol = tree.columns.getFirstColumn(); currCol;
+                 currCol = currCol.getNext()) {
+              var element = currCol.element;
+              secondaryMap[colIndex] =
+                (element.getAttribute("secondary") == "true");
+              colIndex++;
+            }
+            // put everything that precedes the separator in an array. if the
+            // property is secondary, put it in a different array
+            // (if no separator is there, use everything)
+            for (i = 0; i < aPopup.childNodes.length; i++) {
+              var item = aPopup.childNodes[i];
+              if (item.localName == "menuseparator") {
+                sep = item;
+                break;
+              }
+              var colIndex = item.getAttribute("colindex");
+              if (secondaryMap[colIndex])
+                sortarray2.push(item);
+              else
+                sortarray.push(item);
+            }
+            // remove all the items from the dom
+            for (i = 0; i < sortarray.length; i++) {
+              aPopup.removeChild(sortarray[i]);
+            }
+            for (i = 0; i < sortarray2.length; i++) {
+              aPopup.removeChild(sortarray2[i]);
+            }
+            // sort them
+            var sortFn = function(a, b) {
+              var alabel = a.getAttribute("label").toLowerCase();
+              var blabel = b.getAttribute("label").toLowerCase();
+              if (alabel == blabel) return 0;
+              if (alabel < blabel) return -1;
+              return 1;
+            }
+            sortarray.sort(sortFn);
+            sortarray2.sort(sortFn);
+            // and reinsert them in the dom
+            for (i = 0; i < sortarray.length; i++) {
+              aPopup.insertBefore(sortarray[i], sep);
+            }
+            // if there are any secondary item, separate them from the rest
+            if (sortarray2.length > 0) {
+              var sep2 = document.createElement("separator");
+              aPopup.insertBefore(sep2, sep);
+              for (i = 0; i < sortarray2.length; i++) {
+                aPopup.insertBefore(sortarray2[i], sep);
+              }
+            }
+           ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+  </binding>
+
+
+</bindings>

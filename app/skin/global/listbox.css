@@ -1,0 +1,28 @@
+/* ===== listbox.css =====================================================
+   == Styles used by XUL listbox-related elements.
+   ======================================================================= */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/** Note: 
+    
+    These rules MUST live in global/listbox.css, as this file is 
+    included directly into listbox.xml, and if the rules are elsewhere the
+    [sortActive=] selectors will not work when XUL cacheing is enabled.
+    
+    See bugs like https://bugzilla.mozilla.org/show_bug.cgi?id=76195
+    and maybe https://bugzilla.mozilla.org/show_bug.cgi?id=433533    
+ **/
+
+listheader {
+  background-image: url('chrome://nightingale/skin/base-elements/bg-table-header.png');
+  background-position:center 0px;
+  background-repeat:repeat-x;
+}
+
+.listheader-sortdirection[sortDirection="ascending"] {
+  list-style-image:url("chrome://nightingale/skin/base-elements/icon-sort-ascending.png") !important;
+}
+.listheader-sortdirection[sortDirection="descending"] {
+  list-style-image:url("chrome://nightingale/skin/base-elements/icon-sort-descending.png") !important;
+}

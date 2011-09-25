@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:nightingale="http://www.getnightingale.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:version>1.0</em:version>
+
+    <!-- Nightingale -->
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>0.2</em:minVersion>
+        <em:maxVersion>*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:name>Media Page Test</em:name>
+    <em:description>Sample install.rdf used to test the media page metadata reader</em:description>
+    <em:locked>true</em:locked>
+    <em:creator>Pioneers of the Inevitable</em:creator>
+    
+    <!-- insert metadata here -->
+    <nightingale:mediaPage>
+      <Description>
+        <nightingale:contentTitle>Media Page Test (Match All)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul</nightingale:contentUrl>
+      </Description>
+    </nightingale:mediaPage>
+
+    <nightingale:mediaPage>
+      <Description>
+        <nightingale:contentTitle>Media Page Test (Downloads Match)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul?downloads</nightingale:contentUrl>
+        <nightingale:match>customType:download</nightingale:match>
+      </Description>
+    </nightingale:mediaPage>
+
+    <nightingale:mediaPage>
+      <Description>
+        <nightingale:contentTitle>Media Page Test (Library Match)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul?library</nightingale:contentUrl>
+        <nightingale:match>library</nightingale:match>
+      </Description>
+    </nightingale:mediaPage>
+
+    <nightingale:mediaPage>
+      <Description>
+        <nightingale:contentTitle>Media Page Test (Video Match)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul?video</nightingale:contentUrl>
+        <nightingale:match>contentType:video</nightingale:match>
+      </Description>
+    </nightingale:mediaPage>
+
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+
+</RDF>

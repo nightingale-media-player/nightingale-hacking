@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<!-- Watch folder prefs overlay. -->
+<overlay id="watch_folder_pref_overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Watch folder tab. -->
+  <tabs id="import_media_tabs">
+    <tab id="watch_folder_tab"
+         label="&watch_folder.prefs.title;"
+         observes="watch_folder_hidden_broadcaster"/>
+  </tabs>
+
+  <!-- Watch folder tab panel. -->
+  <tabpanels id="import_media_tabpanels">
+    <tabpanel id="watch_folder_tabpanel"
+              orient="vertical"
+              observes="watch_folder_hidden_broadcaster"
+              onpaneload="watchFolderPrefsPane.doPaneLoad();">
+
+      <!-- Panel broadcasters. -->
+      <broadcasterset>
+        <broadcaster id="watch_folder_disabled_broadcaster"/>
+        <broadcaster id="watch_folder_hidden_broadcaster"/>
+      </broadcasterset>
+
+      <!-- Watch folder settings preference controls. -->
+      <notificationbox id="watch_folder_notification_box">
+        <groupbox>
+  
+          <!-- Watch folder settings preference group caption. -->
+          <caption label="&watch_folder.prefs.settings_group_caption;"/>
+  
+          <!-- Watch folder description. -->
+          <description>
+            &watch_folder.prefs.description;
+          </description>
+  
+          <!-- Watch folder enable checkbox. -->
+          <checkbox id="watch_folder_enable_checkbox"
+                    preference="watch_folder_enable_pref"
+                    oncommand="return watchFolderPrefsPane.onPathChanged(event)"
+                    label="&watch_folder.prefs.enable_checkbox;"/>
+  
+          <!-- Watch folder path box. -->
+          <hbox id="watch_folder_path_box"
+                observes="watch_folder_disabled_broadcaster">
+
+            <!-- Watch folder path text box. -->
+            <label value="&watch_folder.prefs.watch_folder_label;"/>
+            <textbox id="watch_folder_path_textbox"
+                     preference="watch_folder_path_pref"
+                     observes="watch_folder_disabled_broadcaster"
+                     onchange="return watchFolderPrefsPane.onPathChanged(event)"/>
+  
+            <!-- Browse button. -->
+            <button id="watch_folder_browse_button"
+                    label="&window.browse;"
+                    oncommand="watchFolderPrefsPane.doBrowseCommand(event);"
+                    observes="watch_folder_disabled_broadcaster"/>
+  
+          </hbox>
+  
+        </groupbox>
+
+        <groupbox>
+          <description>&watch_folder.prefs.general_description;</description>
+        </groupbox>
+      </notificationbox>
+
+    </tabpanel> <!-- watch_folder_tabpanel -->
+  </tabpanels> <!-- import_media_tabpanels -->
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the watch folder preferences panel services. -->
+  <script
+    type="application/x-javascript"
+    src="chrome://nightingale/content/scripts/preferences/watchFolderPrefs.js"/>
+
+</overlay>
+

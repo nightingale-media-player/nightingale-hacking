@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/importLibrary.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+
+<!-- Import library dialog box. -->
+<dialog
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="import_library_dialog"
+  title="&import_library.dialog.title;"
+  hidechrome="true"
+  flex="1"
+  type="nightingale"
+  buttonlabelaccept="&window.yes;"
+  buttonlabelcancel="&window.no;"
+  onload="importLibrary.doLoad();"
+  ondialogaccept="if (importLibrary.doAccept()) onExit();"
+>
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Dialog commands. -->
+  <commandset>
+    <command id="browse_command"
+             label="&window.browse;"
+             oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
+  </commandset>
+
+  <!-- Use Nightingale window region. -->
+  <windowregion/>
+
+  <!-- Dialog text. -->
+  <vbox id="import_library_text_box">
+
+    <!-- Dialog box user query text. -->
+    <description id="import_library_query"/>
+
+    <!-- Dialog box error alert. -->
+    <description id="import_library_error_alert" hidden="true"/>
+
+  </vbox> <!-- import_library_text_box" -->
+
+  <!-- Library path box. -->
+  <hbox id="import_library_path_box">
+
+    <!-- Library path text box. -->
+    <label value="&import_library.library_file_label;"/>
+    <textbox id="import_library_path_textbox"
+             prefid="library_file_path_pref"
+             prefname="nightingale.library_importer.library_file_path"
+             preftype="unichar"/>
+
+    <!-- Browse button. -->
+    <button id="import_library_browse_button" command="browse_command"/>
+
+  </hbox> <!-- import_library_path_box -->
+
+  <!-- Library import options. -->
+  <vbox id="import_library_checkbox_box"
+        oncommand="importLibraryPrefsUI.doImportOptionsChange(event);">
+
+    <!-- Checkbox for track import. -->
+    <checkbox id="import_library_import_track_checkbox"
+              prefid="import_tracks_pref"
+              prefname="nightingale.library_importer.import_tracks"
+              preftype="bool"
+              label="&import_tracks_itunes_checkbox;"/>
+
+    <!-- Checkbox for playlist import. -->
+    <checkbox id="import_library_import_playlist_checkbox"
+              prefid="import_playlists_pref"
+              prefname="nightingale.library_importer.import_playlists"
+              preftype="bool"
+              label="&import_playlists_itunes_checkbox;"/>
+
+  </vbox> <!-- Checkboxes. -->
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Nightingale services. -->
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/windowUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
+
+  <!-- Import the import library dialog services. -->
+  <script
+    type="application/x-javascript"
+    src="chrome://nightingale/content/scripts/preferences/importLibraryPrefs.js"/>
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/importLibrary.js"/>
+
+</dialog>
+

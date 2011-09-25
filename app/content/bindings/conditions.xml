@@ -1,0 +1,2159 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!DOCTYPE bindings SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="conditions">
+
+    <content>
+      <xul:sb-multi-drawer
+          sbid="drawer" 
+          header="false" 
+          flex="1" 
+          xbl:inherits="maxvisibleitems">
+        <xul:hbox
+            class="smart-condition-item-box"
+            align="center"
+            flex="1"
+            oninput="document.getBindingParent(document.getBindingParent(this)).onInput(this, event);"
+            drawer-prop-map="interval=interval"
+        >
+          <!-- List of properties -->
+          <xul:menulist 
+              id="propertypopup" 
+              class="smart-condition-list" 
+              value="artist" 
+              drawer-prop-map="value=metadata" 
+              sizetopopup="none">
+            <xul:menupopup class="smart-condition-popup">
+            </xul:menupopup>
+          </xul:menulist>
+          <!-- List of operators for the selected property -->
+          <xul:menulist id="operatorpopup" 
+              class="smart-condition-list" 
+              drawer-prop-map="value=condition" 
+              sizetopopup="none">
+            <xul:menupopup class="smart-condition-popup">
+            </xul:menupopup>
+          </xul:menulist>
+          <xul:hbox flex="1">
+            <xul:hbox 
+                id="textconditionbox"
+                drawer-prop-map-set="hidden=!textfield" 
+                flex="1" 
+                width="0"
+                hidden="true">
+              <!-- Text comparison field 1 -->
+              <xul:textbox
+                  id="conditiontext1"
+                  sbid="conditionvalue1"
+                  class="smart-condition-value dialog_textbox"
+                  type="autocomplete"
+                  drawer-prop-map="value=value"
+                  drawer-attr-map="invalid=invalid"
+                  drawer-attr-map-set="range=interval,units=useunits"
+                  flex="1" 
+                  width="0"
+              />
+              <!-- Range separator -->
+              <xul:label 
+                  id="textrangeseparator"
+                  value="&smart.to;" 
+                  hidden="true" 
+                  drawer-prop-map-set="hidden=!interval"
+                  class="smart_condition_rangeseparator"
+              />
+              <!-- Text comparison field 2 -->
+              <xul:textbox
+                  id="conditiontext2"
+                  sbid="conditionvalue2"
+                  class="smart-condition-value dialog_textbox"
+                  type="autocomplete"
+                  drawer-prop-map-set="hidden=!interval"
+                  drawer-prop-map="value=value2"
+                  drawer-attr-map="invalid=invalid2"
+                  drawer-attr-map-set="units=useunits"
+                  range="true"
+                  hidden="true"
+                  flex="1" 
+                  width="0"
+              />
+            </xul:hbox>
+            <xul:hbox 
+                class="rating-condition-box"
+                drawer-prop-map-set="hidden=!ratingfield" 
+                hidden="true" 
+                flex="1">
+              <!-- Rating comparison field 1 -->
+              <xul:sb-rating
+                  id="conditionrating1"
+                  sbid="conditionvalue1"
+                  class="smart-condition-value"
+                  drawer-prop-map="value=value"
+                  drawer-attr-map="invalid=invalid"
+                  drawer-attr-map-set="range=interval,units=useunits"
+              />
+              <!-- Range separator -->
+              <xul:label 
+                  id="ratingrangeseparator"
+                  value="&smart.to;" 
+                  hidden="true" 
+                  drawer-prop-map-set="hidden=!interval"
+                  class="smart_condition_label smart_condition_rangeseparator"
+              />
+              <!-- Rating comparison field 2 -->
+              <xul:sb-rating 
+                  id="conditionrating2"
+                  sbid="conditionvalue2"
+                  class="smart-condition-value"
+                  drawer-prop-map-set="hidden=!interval"
+                  drawer-prop-map="value=value2"
+                  drawer-attr-map="invalid=invalid2"
+                  drawer-attr-map-set="units=useunits"
+                  range="true"
+              />
+            </xul:hbox>
+            <xul:hbox
+                drawer-prop-map-set="hidden=!playlistfield"
+                hidden="true">
+              <xul:menulist id="conditionplaylist"
+                sbid="conditionvalue1"
+                drawer-prop-map="value=value"
+                drawer-attr-map="invalid=invalid"
+                onmousedown="event.stopPropagation();"
+                onmouseup="event.stopPropagation();">
+                <xul:menupopup>
+                  <xul:menuitem label="&smart.playlistcondition.library;" 
+                                value=""/>
+                  <xul:sb-playlist-menuitems 
+                      id="playlist-condition-listofplaylists"
+                      nolibraries="true"
+                      separator="before"
+                      drawer-prop-map-set="library=source,exclude=listguid"/>
+                </xul:menupopup>
+              </xul:menulist>
+            </xul:hbox>
+            <xul:hbox
+                drawer-prop-map-set="hidden=!mediatypefield"
+                hidden="true">
+              <xul:menulist id="conditionmediatype"
+                drawer-prop-map="value=value"
+                drawer-attr-map="invalid=invalid"
+                onmousedown="event.stopPropagation();"
+                onmouseup="event.stopPropagation();">
+                <xul:menupopup>
+                  <xul:menuitem id="menuitem_mediatype_audio"
+                                class="menuitem-iconic"
+                                label="&smart.contenttypecondition.audio;"
+                                value="audio"/>
+                  <xul:menuitem id="menuitem_mediatype_video"
+                                class="menuitem-iconic"
+                                label="&smart.contenttypecondition.video;"
+                                value="video"/>
+                </xul:menupopup>
+              </xul:menulist>
+            </xul:hbox>
+             <!-- List of available units -->
+            <xul:menulist 
+                id="unitspopup" 
+                class="smart-condition-list"
+                hidden="true"
+                drawer-prop-map="value=unit,useunits=useunits" 
+                drawer-prop-map-set="hidden=!multiunits" 
+                sizetopopup="none">
+              <xul:menupopup class="smart-condition-popup">
+              </xul:menupopup>
+            </xul:menulist>
+            <xul:label
+                id="unitlabel"
+                class="smart-condition-label smart_condition_singleunit"
+                hidden="true"
+                drawer-prop-map-set="value=unitlocale,hidden=!singleunit"
+                drawer-prop-map="useunits=useunits" 
+                drawer-attr-map="unit=unit"/>
+          </xul:hbox>
+          <xul:button label="-" 
+              class="smart-condition-minus" 
+              sbtype="remove-drawer-item"/>
+          <xul:button 
+              label="+" class="smart-condition-plus" 
+              sbtype="add-drawer-item"/>
+        </xul:hbox>
+      </xul:sb-multi-drawer>
+    </content>
+
+    <handlers>
+      <handler event="select" action="onSelect(event);"/>
+      <handler event="blur" action="onBlur(event);"/>
+      <handler event="additem" action="onNewItem(event);"/>
+    </handlers>
+
+    <implementation>
+
+      <constructor>
+      <![CDATA[
+        this._refreshingUI = 0;
+        // Load properties module
+        if (typeof(SBProperties) == "undefined") {
+          Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+          if (!SBProperties)
+            throw new Error("Import of sbProperties module failed");
+        }
+        // Load property manager
+        this._pm = 
+          this._Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
+              .getService(this._Ci.sbIPropertyManager);
+
+        // Scan the metadata and fill the metadata popup with appropriate items
+        this.fillMetadata();
+      ]]>
+      </constructor>
+      
+      <destructor>
+      </destructor>
+
+      <!-- The drawer item, which clones the smart-condition-item-box as many
+           times as there are conditions -->
+      <field name="drawer">
+        document.getAnonymousElementByAttribute(this, "sbid", "drawer");
+      </field>
+      <!-- The property manager -->
+      <field name="_pm">null</field>
+      <!-- Convenience consts -->
+      <field name="_Cc" readonly="true">Components.classes</field>
+      <field name="_Ci" readonly="true">Components.interfaces</field>
+      <field name="_Cr" readonly="true">Components.results</field>
+
+      <!-- Set and get the state of all conditions. This is used by the window
+           that instantiated us to mirror the sbILocalDatabaseSmartMediaList-
+           Condition objects -->
+      <property name="conditions">
+        <getter>
+          // First get the drawer item state
+          var state = this.drawer.getState();
+          
+          // Then apply unit conversions from UI to native
+          this._applyStateConversionsFromUI(state);
+          
+          // And return the tweaked state
+          return state;
+        </getter>
+        <setter>
+          this._refreshingUI++;
+          // Read the state and determine widgets visibility
+          this._updateUIStates(val);
+
+          // Convert the units from native to UI
+          this._applyStateConversionsToUI(val);
+
+          // Create a default state with source and listguid props
+          var defaultState = {
+            source: val[0].source,
+            listguid: val[0].listguid
+          }
+          
+          // Set the drawer item state, objects are showing/hiding automatically
+          this.drawer.setState(val, defaultState);
+
+          // Update all autocomplete boxes
+          this._updateAllAutocompletes();
+
+          // Record the unit for the metadata in each condition item
+          this._setMetadataMaps(val);
+
+          // Playlist menulist got its value from drawer attribute mapping,
+          // but that is not enough to cause a checkmark to appear in front
+          // of the corresponding element. fix this here if necessary.
+          this._setPlaylistConditionCheckmarks();
+
+          this._refreshingUI--;
+
+          // Validate the values
+          this._doAllValidations();
+
+          // focus the first edit field of the first condition
+          this._focusDefault();
+        </setter>
+      </property>
+      <property name="isValid">
+        <getter>
+        <![CDATA[
+          var valid = true;
+          this.conditions.forEach(function(condition) {
+            // conditions array will not contain the invalid2 property
+            // if the second edit field is hidden, so it is safe to
+            // just check if it's equal to "true" without regards to
+            // the operator the condition used
+            if (condition.invalid == "true" ||
+                condition.invalid2 == "true")
+              valid = false;
+          });
+          return valid;
+        ]]>
+        </getter>
+      </property>
+
+      <!-- Create a brand new condition, this clones smart-condition-item-box
+           along with its children -->
+      <method name="newCondition">
+        <body>
+          this.drawer.addItem();
+        </body>
+      </method>
+      
+      <!-- Create items for a menu based on a name/value array, and perform
+           localization of partial entities. Note that the stringBundleUrl
+           parameter is optional, the default nightingale stringbundle will
+           be used if none was provided. -->
+      <method name="_generateMenuPopup">
+        <parameter name="aParent"/>
+        <parameter name="aMenuitemArray"/>
+        <parameter name="stringBundleUrl"/>
+        <parameter name="noRemoveItems"/>
+        <body>
+          <![CDATA[
+            // Clear the current set of menuitems
+            if (!noRemoveItems)
+              aParent.removeAllItems();
+          
+            // And generate a new set of menuitem children
+            for ( var index = 0; index < aMenuitemArray.length; index++ ) {
+              var obj = aMenuitemArray[ index ];
+              var name;
+              
+              // We accept either {name, value} array or string array
+              if ( obj.name ) {
+                name = obj.name;
+              } else {
+                name = "" + obj;
+                obj = {};
+              }
+              
+              name = this._localize(name, stringBundleUrl);
+              
+              // And append the menutitem to the list (and make it pretty)
+              aParent.appendItem( name, ( obj.value ) ? obj.value : index )
+                     .setAttribute( "class", "smart-condition-item" );              
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_localize">
+        <parameter name="str"/>
+        <parameter name="stringBundleUrl"/>
+        <body>
+          <![CDATA[
+            var stringBundle;
+            if (stringBundleUrl) {
+              stringBundle = this._Cc["@mozilla.org/intl/stringbundle;1"]
+                .getService(this._Ci.nsIStringBundleService)
+                .createBundle(stringBundleUrl);
+            }
+            // Cook out the translated value if requested
+            if ( str[0] == "&" ) {
+              str = SBString( str.substr( 1, str.length ), str, stringBundle );
+            }
+            return str;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Fill the metadata menulist, this happen before any item is created by
+           the drawer code, so we won't have to fill it for every item, since
+           each new item will have its list already filled -->
+      <method name="fillMetadata">
+        <body>
+        <![CDATA[
+          var seen = {};
+          var top_metadata = [];
+          var bottom_metadata = [];
+          
+          // add properties from a string enumerator 
+          var that = this;
+          function addProperties(enumerator, toplist, bottomlist, allownonviewable) {
+            var more;
+            if (enumerator.hasMore)
+              more = enumerator.hasMore;
+            else
+              more = enumerator.hasMoreElements;
+            while (more()) {
+              var prop = enumerator.getNext();
+              if (prop instanceof Ci.sbISmartPlaylistProperty)
+                prop = prop.propertyID;
+              // if we already have it, skip it
+              if (prop in seen)
+                continue;
+              // remember that we have it
+              seen[prop] = true;
+              // get info about that property
+              var info = that._pm.getPropertyInfo(prop);
+              // if the user can't see the property, it shouldn't be in
+              // the list
+              if (!allownonviewable && !info.userViewable) 
+                continue;
+              // item name and id
+              var entry = { name: info.displayName, value: info.id };
+              // insert in the appropriate list
+              if (toplist && that._isInternalMetadata(prop))
+                toplist.push(entry);
+              else
+                bottomlist.push(entry);
+            }
+          }
+          
+          // get the smart playlist property registrar
+          var registrar = 
+            this.
+              _Cc["@getnightingale.com/Nightingale/SmartPlaylistPropertyRegistrar;1"]
+                 .getService(Components.interfaces
+                                       .sbISmartPlaylistPropertyRegistrar);
+          
+          // get the list of properties for the default context. this will
+          // eventually be extended to include specific contexts depending
+          // on the source for the smart playlist data
+          var props = registrar.getPropertiesForContext("default");
+
+          // add the properties registered for this context, use either top or
+          // bottom array depending on whether the property is internal or
+          // third party
+          addProperties(props, top_metadata, bottom_metadata, true);
+
+          // see if the user has asked to see all the properties
+          var enableAll = Application.prefs.getValue(
+                         "nightingale.smartplaylisteditor.enableAllProperties", false);
+
+          if (enableAll) {
+            // and if he has, insert all the remaining props here, use the
+            // bottom array no matter what
+            var ids = this._pm.propertyIDs;
+            addProperties(ids, null, bottom_metadata, false);
+          }
+          
+          // sort function
+          function sortEntry(a, b) {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+          }
+          
+          // sort the top array
+          top_metadata.sort(sortEntry);
+
+          // get the property popup
+          var popup = document.getAnonymousElementByAttribute(this,
+                                                              "id",
+                                                              "propertypopup");
+          // insert the top array items in the popup
+          this._generateMenuPopup(popup, top_metadata);
+  
+          // if the bottom array has anything, add it too
+          if (bottom_metadata.length > 0) {
+            // but first, sort the data
+            bottom_metadata.sort(sortEntry);
+            // and add a separator
+            popup.menupopup.appendChild(document.createElement("menuseparator"));
+            // then do the actual insertion of additional items
+            this._generateMenuPopup(popup, bottom_metadata, null, true);
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <!-- Dispatch menulist selection events -->
+      <method name="onSelect">
+        <parameter name="event"/>
+        <body>
+        <![CDATA[
+          switch (event.originalTarget.getAttribute("id")) {
+            case "propertypopup":
+              this.onSelectProperty(event.originalTarget);
+              break;
+            case "operatorpopup":
+              this.onSelectOperator(event.originalTarget);
+              break;
+            case "unitspopup":
+              this.onSelectUnit(event.originalTarget);
+              break;
+            case "conditionplaylist":
+              this.onSelectPlaylist(event.originalTarget);
+              break;
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!-- When the user selects a new property in the list, update the UI for
+           this condition with new operators, completion and unit, and then
+           perform a validation -->
+      <method name="onSelectProperty">
+        <parameter name="propertypopup"/>
+        <body>
+          var oldRefreshValue = this._refreshingUI;
+          try {
+            this._refreshingUI++;
+            var condition = this.drawer.getItem(propertypopup);
+            var operatorpopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "operatorpopup");
+            var list = this._getOperators(propertypopup.value);
+            this._generateMenuPopup(operatorpopup, list);
+            this._selectDefaultOperator(condition,
+                                        operatorpopup, 
+                                        list, 
+                                        propertypopup.value);
+            this._generateUnitPopup(condition, propertypopup.value);
+            var unitspopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitspopup");
+            this._refreshingUI--;
+            this._updateUI(condition);
+            // setAutoComplete and prefill only after the rest of the ui has been updated
+            this._setAutoComplete(condition, propertypopup.value);
+            this._doPrefill(condition, 
+                            propertypopup, 
+                            propertypopup.value, 
+                            operatorpopup.value, 
+                            unitspopup.useunits ? unitspopup.value : null);
+            this._doValidation(this.drawer.getItem(propertypopup));
+          } catch (e) {
+            this._refreshingUI = oldRefreshValue;
+            Components.utils.reportError(e);
+          }
+        </body>
+      </method>
+      
+      <method name="_getOperators">
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+          var info = this._pm.getPropertyInfo(metadata);
+          var ops = info.operators;
+          var list = [];
+
+          var enableAll = Application.prefs.getValue(
+                         "nightingale.smartplaylisteditor.enableAllOperators", false);
+
+          while (ops.hasMoreElements()) {
+            var op = ops.getNext()
+                        .QueryInterface(this._Ci.sbIPropertyOperator);
+            switch (info.type) {
+              case "boolean":
+                // these two never make sense to present to the user along with
+                // the istrue/isfalse operators, though they are still exposed
+                // for completion and so someone could use them programatically
+                if (op.operator == info.OPERATOR_EQUALS ||
+                    op.operator == info.OPERATOR_NOTEQUALS) {
+                  continue;
+                }
+                break;
+              case "datetime": {
+                // these don't make sense either given that we strip the time
+                // part of the datetime value in the interface, we only want to
+                // keep the date-only operators. the full datetime operators
+                // are exposed for completion and programmatic usage.
+                if (op.operator == info.OPERATOR_EQUALS ||
+                    op.operator == info.OPERATOR_NOTEQUALS ||
+                    op.operator == info.OPERATOR_GREATER ||
+                    op.operator == info.OPERATOR_GREATEREQUAL ||
+                    op.operator == info.OPERATOR_LESS ||
+                    op.operator == info.OPERATOR_LESSEQUAL ||
+                    op.operator == info.OPERATOR_BETWEEN)
+                  continue;
+                break;
+              }
+            }
+            if (!enableAll) {
+              if (info.type == "datetime")
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+              if (op.operator == info.OPERATOR_LESSEQUAL ||
+                  op.operator == info.OPERATOR_GREATEREQUAL ||
+                  op.operator == info.OPERATOR_NOTBEGINSWITH ||
+                  op.operator == info.OPERATOR_NOTENDSWITH ||
+                  op.operator == info.OPERATOR_AFTERORONDATE ||
+                  op.operator == info.OPERATOR_BEFOREORONDATE) {
+                continue;
+              }
+            }
+            var knownType = this._isKnownType(info.type);
+            // if the operator is isset or isnotset, only keep it if the
+            // property type is an explicitely known type.
+            if ((op.operator == info.OPERATOR_ISSET ||
+                 op.operator == info.OPERATOR_ISNOTSET) &&
+                knownType) {
+              continue;
+            }
+            // if the property type is not explicitely known, only keep
+            // isset/isnotset
+            if (!knownType &&
+                op.operator != info.OPERATOR_ISSET &&
+                op.operator != info.OPERATOR_ISNOTSET) {
+              continue;
+            }
+            // add the operator to the list
+            list.push({ name: op.operatorReadable, value: op.operator });
+          }
+
+          return list;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Fills up the unit popup with the available options for a given
+           property, and select the default one. -->
+      <method name="_generateUnitPopup">
+        <parameter name="condition"/>
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+            var units = this._getUnits(metadata);
+            var unitspopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitspopup");
+            if (units.length == 0) {
+              // no units for this property
+              return;
+            }
+            this._generateMenuPopup(unitspopup, 
+                                    units);
+            this._selectUnit(condition, unitspopup);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_getUnits">
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+            var list = [];
+            var info = this._pm.getPropertyInfo(metadata);
+            var converter;
+            var uselong = false;
+            if (info.type == "datetime") {
+              // datetime has no unit conversion that makes sense, unless we
+              // are using the inthelast/notinthelast operators, in which case
+              // we need to use the duration unit converter
+              converter = this._pm.getPropertyInfo(SBProperties.duration)
+                                  .unitConverter;
+              // And use the long unit format (ie. "Weeks", and not "w")
+              uselong = true;
+            } else {
+              converter = info.unitConverter;
+            }
+            if (converter) {
+              var units = converter.units;
+              while (units.hasMoreElements()) {
+                var unit = units.getNext();
+                unit = unit.QueryInterface(this._Ci.sbIPropertyUnit)
+                // whitelist units on some properties and property types
+                switch (metadata) {
+                  case SBProperties.bitRate:
+                    if (unit.id != "kbps" &&
+                        unit.id != "mbps")
+                        continue;
+                    break;
+                  case SBProperties.sampleRate:
+                    if (unit.id != "khz")
+                      continue;
+                    break;
+                  case SBProperties.contentLength:
+                    if (unit.id != "kb" &&
+                        unit.id != "mb" &&
+                        unit.id != "gb")
+                      continue;
+                    break;
+                }
+                switch (info.type) {
+                  case "datetime":
+                    if (unit.id != "h" &&
+                        unit.id != "d" &&
+                        unit.id != "w" &&
+                        unit.id != "m")
+                      continue;
+                    break;
+                }
+                var u = {};
+                u.name = uselong ? unit.name : unit.shortName;
+                u.value = unit.id;
+                u.name = this._localize(u.name, 
+                                        converter ? 
+                                          converter.stringBundle : 
+                                          null);
+                list.push(u);
+              }
+            }
+            return list;
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_selectUnit">
+        <parameter name="condition"/>
+        <parameter name="unitspopup"/>
+        <body>
+          if (!unitspopup) 
+            unitspopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitspopup");
+            unitstxt = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitlabel");
+          var property = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "propertypopup");
+          // use default unit
+          var unit = this._getDefaultUnit(property.value);
+
+          if (!unit || unit == "") {
+            // no default ? use the first available unit
+            unitspopup.selectedIndex = 0;
+            unitstxt.setAttribute("unit", unitspopup.value);
+          } else {
+            // select appropriate unit
+            unitspopup.value = unit;
+            unitstxt.setAttribute("unit", unit);
+          }
+        </body>
+      </method>
+
+      <!-- Returns the default UI unit to use for a given property -->
+      <method name="_getDefaultUnit">
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+            var info = this._pm.getPropertyInfo(metadata);
+            var def;
+            // these two switches together should cover all cases where we
+            // allow the units popup to show
+            switch (info.type) {
+              case "datetime":
+                return "d";
+              case "duration":
+                return "min";
+            }
+            switch(metadata) {
+              case SBProperties.contentLength:
+                return "mb";
+              case SBProperties.sampleRate:
+                return "khz";
+              case SBProperties.bitRate:
+                return "kbps";
+            }
+            // Default unit does not apply
+            return null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="_updateAllAutocompletes">
+        <body>
+          <![CDATA[
+            var items = this.drawer.items;
+            for (var i=0;i<items.length;i++) {
+              var condition = items[i];
+              var propertypopup = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "id", 
+                                                      "propertypopup");
+              this._setAutoComplete(condition, propertypopup.value);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <!-- Sets autocompletion on the textbox fields if appropriate, or
+           remove it otherwise -->
+      <method name="_setAutoComplete">
+        <parameter name="condition"/>
+        <parameter name="property"/>
+        <body>
+        <![CDATA[
+          var libraryManager =
+            this._Cc["@getnightingale.com/Nightingale/library/Manager;1"]
+                .getService(this._Ci.sbILibraryManager);
+
+          var library = libraryManager.mainLibrary;
+          var libraryGuid = library.guid;
+          
+          var textbox1 = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "conditiontext1");
+          var textbox2 = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "conditiontext2");
+          
+          var dodistinct;
+
+          // These are the properties we autocomplete on          
+          switch (property) {
+            case SBProperties.artistName:
+            case SBProperties.albumName:
+            case SBProperties.albumArtistName:
+            case SBProperties.trackName:
+            case SBProperties.composerName:
+            case SBProperties.genre:
+            case SBProperties.year:
+            case SBProperties.bpm:
+            case SBProperties.bitRate:
+            case SBProperties.sampleRate:
+              dodistinct = true;
+              break;
+            default:
+              dodistinct = false;
+              break;
+          }
+          
+          if (dodistinct) {
+            var unitspopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitspopup");
+            var unit;
+            if (unitspopup.useunits)
+              unit = unitspopup.value;
+            textbox1.setAttribute("autocompletesearch", 
+                                  "library-distinct-properties");
+            textbox1.setAttribute("autocompletesearchparam", 
+                                  property + ";" + 
+                                  libraryGuid + ";;" + 
+                                  (unit ? unit : ""));
+            textbox2.setAttribute("autocompletesearch", 
+                                  "library-distinct-properties");
+            textbox2.setAttribute("autocompletesearchparam", 
+                                  property + ";" + 
+                                  libraryGuid + ";;" + 
+                                  (unit ? unit : ""));
+          } else {
+            textbox1.removeAttribute("autocompletesearch");
+            textbox1.removeAttribute("autocompletesearchparam");
+            textbox2.removeAttribute("autocompletesearch");
+            textbox2.removeAttribute("autocompletesearchparam");
+          }
+          ]]>
+        </body>
+      </method>
+
+      <!-- Select the default operator for a given property -->
+      <method name="_selectDefaultOperator">
+        <parameter name="condition"/>
+        <parameter name="aParent"/>
+        <parameter name="metadataArray"/>
+        <parameter name="property"/>
+        <body>
+        <![CDATA[
+          var def = this._getMetadataMap("operators", 
+                                         condition, 
+                                         property);
+          if (!def || def == "") {
+            var info = this._pm.getPropertyInfo(property);
+            switch (info.type) {
+              case "boolean": 
+                info.QueryInterface(this._Ci.sbIBooleanPropertyInfo);
+                def = info.OPERATOR_ISTRUE; 
+                break;
+              case "uri": 
+              case "text": 
+                def = info.OPERATOR_CONTAINS; 
+                break;
+              case "datetime":
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+                def = info.OPERATOR_ONDATE;
+                break;
+              case "duration":
+              case "number":
+              case "rating":
+                def = info.OPERATOR_EQUALS;
+                break;
+              case "smartmedialist_playlist":
+              case "smartmedialist_contenttype":
+                def = info.OPERATOR_EQUALS;
+                break;
+              default:
+                // properties that aren't explicitely supported only have 
+                // isset/isnotset. use that, it is guaranteed to be there.
+                def = info.OPERATOR_ISSET;
+                break;
+            }
+          }
+          for (var i=0;i<metadataArray.length;i++) {
+            if (metadataArray[i].value == def) {
+              aParent.selectedIndex = i;
+              return;
+            }
+          }
+          // Write a debug message since this is not supposed to happen
+          Components.utils.
+            reportError("Default for property type " + 
+                        info.type + " (" + 
+                        def + 
+                        ") not found, using first operator instead");
+          aParent.selectedIndex = 0;
+        ]]>
+        </body>
+      </method>
+
+      <!-- When the user selects an operator, update the widgets visibility, so
+           that we show the second value field, or hide it as needed. Once that
+           is done, perform the validation again, because there may be a new
+           field to validate -->
+      <method name="onSelectOperator">
+        <parameter name="menu"/>
+        <body>
+          if (this._refreshingUI) {
+            return;
+          }
+          var condition = this.drawer.getItem(menu);
+          this._updateUI(condition);
+          this._selectUnit(condition);
+          var propertypopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "propertypopup");
+          this._setMetadataMap("operators", 
+                               condition, 
+                               propertypopup.value,
+                               menu.value);
+
+          var operatorpopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "operatorpopup");
+
+          var unitspopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "unitspopup");
+          
+          // setAutoComplete and prefill only after the rest of the ui has been updated
+          this._setAutoComplete(condition, propertypopup.value);
+          this._doPrefill(condition, 
+                          propertypopup, 
+                          propertypopup.value, 
+                          operatorpopup.value, 
+                          unitspopup.useunits ? unitspopup.value : null);
+          this._doValidation(condition);
+        </body>
+      </method>
+      
+      <method name="_doPrefill">
+        <parameter name="condition"/>
+        <parameter name="propertypopup"/>
+        <parameter name="property"/>
+        <parameter name="operator"/>
+        <parameter name="unit"/>
+        <body>
+          <![CDATA[
+            // note that the prefill value should be in native units, always.
+            var prefillValue;
+
+            // get property info for this metadata
+            var info = this._pm.getPropertyInfo(property);
+            
+            // first try to find a prefill value per property type
+            switch (info.type) {
+              case "datetime":
+                // default prefill on date depends on operator
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+                switch (operator) {
+                  case info.OPERATOR_ONDATE:
+                  case info.OPERATOR_NOTONDATE:
+                  case info.OPERATOR_AFTERDATE:
+                  case info.OPERATOR_AFTERORONDATE:
+                  case info.OPERATOR_BEFOREDATE:
+                  case info.OPERATOR_BEFOREORONDATE:
+                  case info.OPERATOR_BETWEENDATES:
+                    var d = new Date();
+                    d.setMilliseconds(0);
+                    d.setSeconds(0);
+                    d.setMinutes(0);
+                    d.setHours(0);
+                    prefillValue = d.getTime();
+                    break;
+                  case info.OPERATOR_INTHELAST:
+                  case info.OPERATOR_NOTINTHELAST:
+                    prefillValue = 1000*60*60*24; // one day
+                    break;
+                  default:
+                    var d = new Date();
+                    prefillValue = d.getTime();
+                    break;
+                }
+                break;
+              case "rating":
+                prefillValue = 5;
+                break;
+            }
+            // then based on the property itself
+            switch (property) {
+              case SBProperties.bitRate:
+                prefillValue = 128;
+                break;
+              case SBProperties.bpm:
+                prefillValue = 60;
+                break;
+              case SBProperties.discNumber:
+              case SBProperties.trackNumber:
+                prefillValue = 1;
+                break;
+              case SBProperties.skipCount:
+              case SBProperties.playCount:
+                prefillValue = 0;
+                break;
+              case SBProperties.sampleRate:
+                prefillValue = 44100;
+                break;
+              case SBProperties.contentLength:
+                prefillValue = 0;
+                break;
+              case SBProperties.duration:
+                prefillValue = 0;
+                break;
+              case SBProperties.year:
+                var d = new Date;
+                prefillValue = d.getFullYear();
+                break;
+            }
+            // if no prefill value defined, prefill to an empty string
+            // (clear previous prefill)
+            if (prefillValue == undefined)
+              prefillValue = "";
+            
+            // we need to value to be a string no matter what
+            prefillValue = ""+prefillValue;
+            
+            // format from the native unit into the current unit
+            var formattedPrefill = this._convertToUI(property, 
+                                                     operator, 
+                                                     prefillValue, 
+                                                     unit);
+
+            var value1 = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue1", 
+                                                    true); // get the visible one
+            if (value1)
+              value1.value = formattedPrefill;
+
+            var value2 = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue2", 
+                                                    true); // get the visible one
+            if (value2)
+              value2.value = formattedPrefill;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- This takes the drawer item state and feeds it to the updateUIState
+           function. Like at initialization, that function will set drawer state
+           properties to true or false based on what the user is currently
+           editing. Once that is done, we send the updated state back to the
+           drawer item, which shows and hides the appropriate widgets via the
+           mappings --> 
+      <method name="_updateUI">
+        <parameter name="condition"/>
+        <body>
+          if (this._refreshingUI)
+            return;
+          var state = {};
+          // read the drawer item state
+          this.drawer.getItemState(condition, state);
+          // apply UI logic
+          this._updateUIState(state);
+          // send the state back to the drawer item
+          this.drawer.setItemState(condition, state);
+        </body>
+      </method>
+
+      <!-- Whenever the user edits one of the fields, perform validation -->
+      <method name="onInput">
+        <parameter name="condition"/>
+        <parameter name="event"/>
+        <body>
+          if (this._refreshingUI)
+            return;
+          var condition = this.drawer.getItem(condition);
+          this._doValidation(condition);
+        </body>
+      </method>
+
+      <!-- Perform validations on all edit fields for all condition items -->
+      <method name="_doAllValidations">
+        <body>
+          <![CDATA[
+          // get all drawer items
+          var items = this.drawer.items;
+          // and validate them
+          for (var i=0;i<items.length;i++)
+            this._doValidation(items[i]);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_checkForceValid">
+        <parameter name="v"/>
+        <parameter name="info"/>
+        <parameter name="operator"/>
+        <body>
+          <![CDATA[
+            var forcevalid = false;
+            // force validation to succeed when doing a string/substring
+            // matches, all values are valid to search in any text-based field.
+            // Note that the caller (smartPlaylist.js) will still mark some of
+            // these cases as invalid when the user clicks OK (for instance,
+            // empty values with CONTAINS operator). Also, this test will not
+            // interfere with non-text matches, because these do not implement
+            // any of those text-specific operators.
+            if (operator.value == info.OPERATOR_CONTAINS ||
+                operator.value == info.OPERATOR_NOTCONTAINS ||
+                operator.value == info.OPERATOR_BEGINSWITH ||
+                operator.value == info.OPERATOR_NOTBEGINSWITH ||
+                operator.value == info.OPERATOR_ENDSWITH ||
+                operator.value == info.OPERATOR_NOTENDSWITH) {
+              forcevalid = true;
+            }
+            // allow 0 for durations
+            if (v == "0" &&
+                info.type == "duration") {
+              forcevalid = true;
+            }
+            // also force valid for empty value with operators equal/notequal,
+            // since we want to let the user match empty strings. unknown
+            // properties will have isset/isnotset operators instead.
+            if (v == null || v == "") {
+              if (operator.value == info.OPERATOR_EQUALS ||
+                  operator.value == info.OPERATOR_NOTEQUALS) {
+                forcevalid = true;
+              }
+              // equivalent for date operators
+              if (info.type == "datetime") {
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+                if (operator.value == info.OPERATOR_ONDATE ||
+                    operator.value == info.OPERATOR_NOTONDATE) {
+                  forcevalid = true;
+                }
+              }
+            }
+            // same for datetime, but on date-specific equal operator
+            return forcevalid;
+          ]]>
+        </body>
+      </method>
+
+      <!-- Perform user input validation -->
+      <method name="_doValidation">
+        <parameter name="condition"/>
+        <body>
+          <![CDATA[
+          if (this._refreshingUI)
+            return;
+
+          // we need to read a bunch of things off of the UI
+          var value1 = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "sbid", 
+                                                  "conditionvalue1", 
+                                                  true); // get the visible one
+          var value2 = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "sbid", 
+                                                  "conditionvalue2", 
+                                                  true); // get the visible one
+          var property = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "propertypopup");
+          var operator = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "operatorpopup");
+          var unitspopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "unitspopup");
+          
+          // if the popup is hidden, no unit conversion applies
+          var units = unitspopup.useunits ? unitspopup.value : null;
+          
+          // get property info for this metadata
+          var info = this._pm.getPropertyInfo(property.value);
+
+          // it is valid for no value to be visible (boolean)
+          if (value1) {
+            // Before validating value1, first convert it from UI units/format
+            // into native units/format
+            var v = value1.value;
+            v = this._convertFromUI(property.value, operator.value, v, units);
+
+            // check whether we should force this value to validate
+            var forcevalid = this._checkForceValid(v, info, operator);
+            
+            // Then validate and set the invalid attribute accordingly
+            if (!forcevalid && 
+                (!v || 
+                 v == "" || 
+                 !info.validate(v))) {
+              value1.setAttribute("invalid", "true");
+            } else {
+              value1.setAttribute("invalid", "false");
+            }
+          }
+
+          // If the second user input widget is visible, validate it too
+          if (value2 && !value2.hidden) {
+
+            // Before validating value2, first convert it from UI units/format
+            // into native units/format
+            v = value2.value;
+            v = this._convertFromUI(property.value, operator.value, v, units);
+
+            // check whether we should force this value to validate
+            var forcevalid = this._checkForceValid(v, info, operator);
+          
+            // Then validate and set the invalid attribute accordingly
+            if (!forcevalid && 
+                (!v || 
+                 v == "" || 
+                 !info.validate(v))) {
+              value2.setAttribute("invalid", "true");
+            } else {
+              value2.setAttribute("invalid", "false");
+            }
+          }
+          
+          // The invalid attribute is mapped to a drawer item state property,
+          // there is nothing we have to do extra in order to forward the
+          // invalid state down to the window. The event that caused this
+          // validation to occur will also cause the window to read our isValid
+          // binding property thus reading the drawer item state back, and will
+          // disable its ok button if needed.
+          
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Update the state variables for all condition items -->
+      <method name="_updateUIStates">
+        <parameter name="states"/>
+        <body>
+          <![CDATA[
+            states.forEach(function(state) {
+                this._updateUIState(state);
+              }, this);
+          ]]>
+        </body>
+      </method>
+
+      <!-- Update the state variables that turn UI widgets on and off. Upon
+           sending the state object to the drawer item, the widgets will
+           automatically show and hide based on their property and attribute
+           mappings -->
+      <method name="_updateUIState">
+        <parameter name="state"/>
+        <body>
+          <![CDATA[
+            var info = this._pm.getPropertyInfo(state.metadata);
+
+            if (info.type == "datetime")
+              info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+              
+            state.interval = (state.condition == info.OPERATOR_BETWEEN ||
+                              state.condition == info.OPERATOR_BETWEENDATES);
+
+            // hide all fields by default
+            state.ratingfield = false;
+            state.playlistfield = false;
+            state.mediatypefield = false;
+            state.textfield = false;
+
+            switch (info.type) {
+              case "boolean": 
+                // if current operator is istrue or isfalse, hide the input
+                // object.
+                info.QueryInterface(this._Ci.sbIBooleanPropertyInfo);
+                if (state.condition != info.OPERATOR_ISTRUE &&
+                    state.condition != info.OPERATOR_ISFALSE) {
+                  // We actually disable the other operators, but it doesn't
+                  // hurt to be thorough, in case they got reenabled somehow,
+                  // enable the input field so the user may compare the boolean
+                  // value to something
+                  state.textfield = true;
+                }
+                break;
+              case "number":
+              case "uri": 
+              case "text": 
+              case "datetime":
+              case "duration":
+                // Show the text input fields
+                state.textfield = true;
+                break;
+              case "rating":
+                // Show the ratings input fields
+                state.ratingfield = true;
+                break;
+              case "smartmedialist_playlist":
+                state.playlistfield = true;
+                break;
+              case "smartmedialist_contenttype":
+                state.mediatypefield = true;
+                break;
+              default:
+                // property types that are not explicitely supported only expose
+                // isset/isnotset, which require no input
+                break;
+            }
+            switch (state.metadata) {
+              case SBProperties.contentLength:
+              case SBProperties.sampleRate:
+              case SBProperties.bitRate:
+                // Show units popup
+                state.useunits = true;
+                break;
+              default:
+                switch (info.type) {
+                  // If using the datetime inthelast/notinthelast operators,
+                  // show the units popup, it will be filled with duration
+                  // units, so we can compare the date value to the last
+                  // x weeks/months/years/etc
+                  case "datetime":
+                    info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+                    if (state.condition == info.OPERATOR_INTHELAST ||
+                        state.condition == info.OPERATOR_NOTINTHELAST) {
+                      state.useunits = true;
+                    } else {
+                      // unit do not apply to other datetime operators, hide em
+                      state.useunits = false;
+                    }
+                    break;
+                  default:
+                    // Hide units popup
+                    state.useunits = false;
+                    break;
+                }
+                break;
+            }
+            if (state.useunits) {
+              var units = this._getUnits(state.metadata);
+              state.singleunit = units.length == 1;
+              state.multiunits = units.length > 1;
+              if (state.singleunit) {
+                state.unitlocale = units[0].name;
+              }
+            } else {
+              state.singleunit = false;
+              state.multiunits = false;
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Convert from a displayed value to a native value, by either
+           performing a convertion from UI units to native, or by parsing a
+           formatted field -->
+      <method name="_convertFromUI">
+        <parameter name="metadata"/>
+        <parameter name="operator"/>
+        <parameter name="value"/>
+        <parameter name="unit"/>
+        <body>
+          <![CDATA[
+            if (!unit || unit == "") {
+              return this._convertFromUIFormat(metadata, value);
+            } else {
+              return this._convertFromUIUnit(metadata, value, unit);
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Convert from a native value to a displayed value, by either
+           performing a convertion from native to UI units, or by formatting
+           the field -->
+      <method name="_convertToUI">
+        <parameter name="metadata"/>
+        <parameter name="operator"/>
+        <parameter name="value"/>
+        <parameter name="unit"/>
+        <body>
+          <![CDATA[
+            if (!unit || unit == "") {
+              return this._convertToUIFormat(metadata, value);
+            } else {
+              return this._convertToUIUnit(metadata, value, unit);
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Perform unit conversions from UI to native -->
+      <method name="_convertFromUIUnit">
+        <parameter name="metadata"/>
+        <parameter name="value"/>
+        <parameter name="unit"/>
+        <body>
+          <![CDATA[
+            // if no unit or not value, bail out
+            if (!unit || unit == "") return value;
+            if (!value || value == "") return value;
+
+            // var inputValue = value; // for debug
+
+            // parse as number, because conversion requires one. if parsing
+            // fails, return NaN, which will cause the field to be invalid.
+            value = value.replace(/\s/g, "");
+            // match a number, from n to +n.nE+n
+            if (value.match(/^([+-]?\d+(?:\.\d+)?(?:e[+-]?\d+)?)/i)) {
+              var leftover = RegExp.rightContext;
+              if (leftover && leftover != "") 
+                return NaN;
+              value = RegExp.$1;
+            } else {
+              return NaN;
+            }
+
+            // get property info for this metadata
+            var info = this._pm.getPropertyInfo(metadata);
+
+            // get the appropriate unit converter
+            var converter;
+            var factor = 1;
+            if (info.type == "datetime") {
+              // datetime has no unit conversion that makes sense, unless we
+              // are using the inthelast/notinthelast operators, in which case
+              // we need to use the duration unit converter
+              converter = 
+                this._pm.getPropertyInfo(SBProperties.duration)
+                        .unitConverter;
+              // durations are in microsecond, but date/times are in
+              // milleseconds so we'll need to divide by 1000
+              factor = 1/1000;
+            } else {
+              converter = info.unitConverter;
+            }
+            // try to perform the conversion, this may throw an exception if
+            // the value fails to parse into a number, but that should not
+            // happen since we already made sure that it actually is a number.
+            // still try/catch, just in case.
+            try {
+              if (converter) {
+                if (unit != converter.nativeUnitId) {
+                  // parse the result as an int, because we are converting
+                  // *from* ui units, and the native unit is integer.
+                  // this will need to change once we allow number properties to
+                  // hold floating point values, we'll then have to check
+                  // whether that is the case for this particular property, and
+                  // avoid the parseInt in this case.
+                  value = parseInt(converter.convert(value, 
+                                                     unit, 
+                                                     converter.nativeUnitId,
+                                                     -1, // no min decimals
+                                                     -1  /* no max decimals*/));
+                }
+              }
+            } catch (e) {
+              // Write a debug message, since this is not supposed to happen.
+              Components.utils.reportError("Failed to convert " + 
+                                           value + " from " +
+                                           unit);
+              value = null;
+            }
+            // debug
+            // Components.utils.reportError("converting " + 
+            //                              inputValue + 
+            //                              " from " + 
+            //                              unit + " = " + value + 
+            //                              " (" + metadata + ")");
+            return "" + (value * factor);
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Perform unit conversions from native to UI -->
+      <method name="_convertToUIUnit">
+        <parameter name="metadata"/>
+        <parameter name="value"/>
+        <parameter name="unit"/>
+        <body>
+          <![CDATA[
+            // if no unit or not value, bail out
+            if (!unit || unit == "") return value;
+            if (!value || value == "") return value;
+            
+            // var inputValue = value; // for debug
+            
+            // get property info for this metadata
+            var info = this._pm.getPropertyInfo(metadata);
+
+            // get the appropriate unit converter
+            var converter;
+            var factor = 1;
+            if (info.type == "datetime") {
+              // datetime has no unit conversion that makes sense, unless we are
+              // using the inthelast/notinthelast operators, in which case we
+              // need to use the duration unit converter
+              converter = 
+                this._pm.getPropertyInfo(SBProperties.duration)
+                        .unitConverter;
+              // durations are in microsecond, but date/times are in
+              // milleseconds so we will need to multiply by 1000
+              factor = 1000;
+            } else {
+              converter = info.unitConverter;
+            }
+            // try to perform the conversion, this may throw an exception if
+            // the value fails to parse into a number. normally this should not
+            // happen because the value we are converting is supposed to be in
+            // native units, which should always parse, but it may still happen
+            // if the smart playlist fed us a bad value.
+            try {
+              if (converter) {
+                if (unit != converter.nativeUnitId)
+                  // allow as many and as few decimals as needed
+                  value = converter.convert(value, 
+                                            converter.nativeUnitId, 
+                                            unit,
+                                            -1, // no min decimals
+                                            -1  /* no max decimals*/);
+              }
+            } catch (e) {
+              // Write a debug message since this is not supposed to happen
+              Components.utils.reportError("Failed to convert " + 
+                                           value + " to " +
+                                           unit);
+              value = null;
+            }
+            // debug
+            // Components.utils.reportError("converting " + 
+            //                              inputValue + 
+            //                              " to " +
+            //                              unit + " = " + value + 
+            //                              " (" + metadata + ")");
+            return "" + (value * factor);
+          ]]>
+        </body>
+      </method>
+
+      <!-- convert to human readable form. See note in _convertToUIFormat. -->      
+      <method name="_convertFromUIFormat">
+        <parameter name="metadata"/>
+        <parameter name="value"/>
+        <body>
+          <![CDATA[
+            // if no value to convert, bail out
+            if (!value) return null;
+            
+            // get property info for this metadata
+            var info = this._pm.getPropertyInfo(metadata);
+            
+            // do the parsing according to type
+            switch (info.type) {
+              case "datetime":
+                // parse date
+                value = Date.parse(value);
+                // js assumes that short year format are for the 20th century,
+                // but since the base date is 01/01/1970, a better rule is to
+                // use < 70 = 21st century, >= 70 = 20th century. We do this
+                // by adding 36525 days (one century) to the date if the parser
+                // returned a negative value. Yay Y2K hacks.
+                if (value < 0) value += 36525*24*60*60*1000;
+                break;
+              case "duration":
+                var years=0,months=0,days=0,hours=0,
+                    minutes=0,seconds=0,milliseconds=0;
+                
+                // Note: we reverse the string because we want a reverse
+                // precedence in the regexp matching, because 10:05 means
+                // 10min5s, and not 10y5s, and because we do not want to force
+                // the user to *have* to use different letters as separators for
+                // every field. Yes, it's a bit crazy, but it works great. If
+                // there is a way to do this that I don't know of, please do
+                // change this code, but let's not settle for a less powerful
+                // regexp just because it isn't reversed (for instance by
+                // forcing the user to use different letters as separator, or to
+                // enter all the fields, or by changing what the default is when
+                // a simple number is on the field [should be seconds], and so
+                // on)
+                
+                function strrev(s) { return s.split("").reverse().join(""); }
+                
+                // strip spaces because they do not participate in the regexp
+                // rule, and only complicate it
+                value = value.replace(/\s/g, "");
+                
+                // reverse the string
+                var rev = strrev(value);
+                
+                // try to match a duration, using a reverse rule
+                if (rev.match(/(?:(?:SM)?(\d+)\.)?(?:(?:CES|S)?(\d+))?(?:(?:(?:NM|NIM)|[:M])(\d+))?(?:[H:](\d+))?(?:[D,:](\d+))?(?:[M,:](\d+))?(?:[Y,:](\d+))?/i)) {
+                
+                  // read the parsed fields
+                  if (RegExp.$7) years = parseInt(strrev(RegExp.$7), 10);
+                  if (RegExp.$6) months = parseInt(strrev(RegExp.$6), 10);
+                  if (RegExp.$5) days = parseInt(strrev(RegExp.$5), 10);
+                  if (RegExp.$4) hours = parseInt(strrev(RegExp.$4), 10);
+                  if (RegExp.$3) minutes = parseInt(strrev(RegExp.$3), 10);
+                  if (RegExp.$2) seconds = parseInt(strrev(RegExp.$2), 10);
+                  if (RegExp.$1) milliseconds = parseInt(strrev(RegExp.$1), 10);
+                  
+                  // read the leftover portion
+                  var leftover = RegExp.rightContext;
+                  
+                  // debug
+                  // Components.utils.reportError(years + "y " + 
+                  //                              months + "m " + 
+                  //                              days + "d " + 
+                  //                              hours + "h " + 
+                  //                              minutes + "min " + 
+                  //                              seconds + "s " + 
+                  //                              milliseconds + "ms");
+                  // Components.utils.reportError("leftover = " + leftover);
+                  
+                  // if there was anything left over, cause parsing to fail
+                  if (leftover && leftover != "") {
+                    value = NaN;
+                  } else {
+                    // otherwise, compute a datetime value for this duration
+                    var d = new Date(0);
+                    d.setUTCFullYear(years + 1970);
+                    d.setUTCMonth(months);
+                    d.setUTCDate(days+1);
+                    d.setUTCHours(hours);
+                    d.setUTCMinutes(minutes);
+                    d.setUTCSeconds(seconds);
+                    d.setUTCMilliseconds(milliseconds);
+                    value = d.getTime() * 1000;
+                  }
+                } else {
+                  value = NaN;
+                }
+                break;
+            }
+            return value;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- convert from human readable form. See note below. -->
+      <method name="_convertToUIFormat">
+        <parameter name="metadata"/>
+        <parameter name="value"/>
+        <body>
+          <![CDATA[
+            // if there is no value to convert, bail out
+            if (typeof(value) == "undefined" || value === "") 
+              return value;
+
+            // get property info for this metadata
+            var info = this._pm.getPropertyInfo(metadata);
+            try {
+              // and format the field if necessary
+              if (!info.fulltext) {
+                value = info.format(value);
+                if (info.type == "datetime") {
+                  // if this is a datetime, strip the time component. ideally,
+                  // format() would take a parameter that would allow us to
+                  // specify how to format the value.
+                  var space = value.indexOf(" ");
+                  if (space >= 0)
+                    value = value.slice(0, space);
+                }
+              } 
+            } catch (e) {
+            }
+            return value;
+          ]]>
+        </body>
+      </method>
+      
+      
+      <!-- Convert the values for all conditions from their UI unit to the
+           native unit. This is used when exporting the condition's state -->
+      <method name="_applyStateConversionsFromUI">
+        <parameter name="states"/>
+        <body>
+          <![CDATA[
+            states.forEach(function(state) {
+                this._applyStateConversionFromUI(state);
+              }, this);
+          ]]>
+        </body>
+      </method>
+
+      <!-- Convert values for all conditions from the native unit to their UI
+           unit. This is used when importing the condition's state -->
+      <method name="_applyStateConversionsToUI">
+        <parameter name="states"/>
+        <body>
+          <![CDATA[
+            states.forEach(function(state) {
+                this._applyStateConversionToUI(state);
+              }, this);
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Convert values from their UI unit to the native unit.
+           This is used when exporting the condition's state -->
+      <method name="_applyStateConversionFromUI">
+        <parameter name="state"/>
+        <body>
+          <![CDATA[
+            state.value = this._convertFromUI(state.metadata, 
+                                              state.operator, 
+                                              state.value, 
+                                              state.unit);
+            if (state.interval) 
+              state.value2 = this._convertFromUI(state.metadata, 
+                                                 state.operator, 
+                                                 state.value2, 
+                                                 state.unit);
+          ]]>
+        </body>
+      </method>
+
+      <!-- Convert values from the native unit to the UI unit.
+           This is used when importing the condition's state -->
+      <method name="_applyStateConversionToUI">
+        <parameter name="state"/>
+        <body>
+          <![CDATA[
+            state.value = this._convertToUI(state.metadata, 
+                                            state.operator, 
+                                            state.value, 
+                                            state.unit);
+            // check whether the conversion produced a bad value. this should
+            // not happen normally, but still could if the smart playlist fed
+            // us a bad value to start with. don't show NaN, show empty.
+            if (""+state.value == "NaN") 
+              state.value = "";
+              
+            if (state.interval) {
+              state.value2 = 
+                this._convertToUI(state.metadata, 
+                                  state.operator, 
+                                  state.value2, 
+                                  state.unit);
+              // same check as for value1
+              if (""+state.value2 == "NaN") 
+                state.value2 = "";
+            }
+          ]]>
+        </body>
+      </method>
+
+      <!-- Called when a new unit has been selected by the user in the unit 
+           popup -->
+      <method name="onSelectUnit">
+        <parameter name="menu"/>
+        <body>
+          <![CDATA[
+            if (this._refreshingUI)
+              return;
+
+            var condition = this.drawer.getItem(menu)
+            
+            // Update the autocomplete to reflect the newly selected unit,
+            // because autocomplete may perform unit conversion of the suggested
+            // values
+            var propertypopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "propertypopup");
+            this._setAutoComplete(condition, propertypopup.value);
+
+            // When the unit changes, we need to validate again, because 
+            // although 0.5kB is okay, 0.5bytes is not.
+            this._doValidation(condition);
+          ]]>
+        </body>
+      </method>
+      
+      <!-- For each condition item, record the UI operator associated with its
+           metadata, so that switching back to these properties will reselect
+           these operators by default -->
+      <method name="_setMetadataMaps">
+        <parameter name="state"/>
+        <body>
+        <![CDATA[
+          var items = this.drawer.items;
+          for (var i=0;i<items.length;i++) {
+            this._setMetadataMap("operators", 
+                                 items[i], 
+                                 state[i].metadata, 
+                                 state[i].condition);
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!-- Store the UI unit used by this condition in a map that we attach to
+           the metadata popup, so that we can later restore it when the user
+           switches back to that metadata -->
+      <method name="_setMetadataMap">
+        <parameter name="key"/>
+        <parameter name="condition"/>
+        <parameter name="metadata"/>
+        <parameter name="value"/>
+        <body>
+          <![CDATA[
+            var property = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "propertypopup");
+            if (!property[key]) { 
+              property[key] = {} 
+            }
+            property[key][metadata] = value;
+          ]]>
+        </body>
+      </method>
+
+      <!-- Return the default UI unit to use for a metadata -->
+      <method name="_getMetadataMap">
+        <parameter name="key"/>
+        <parameter name="condition"/>
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+            var property = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "propertypopup");
+            var value;
+            if (property[key]) {
+              // if something was saved, return it
+              if (typeof(property[key][metadata]) != undefined) {
+                value = property[key][metadata];
+              }
+            }
+            return value;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- When a text input field loses focus, run a parse+format run on its
+           content, so that the user sees exactly what we've understood of what
+           he typed. For instance, this will convert a duration value of "50"
+           into "0:50" -->
+      <method name="onBlur">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            // get the drawer item that generated this event
+            var condition = this.drawer.getItem(event.originalTarget);
+            
+            // check if the blur event was caused by the conditiontext1 field
+            var textbox1 = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "conditiontext1");
+            if (this._isDeepChild(event.originalTarget, textbox1, condition)) {
+              // do the parse+format run on it, but only if it is containing
+              // a valid value
+              if (textbox1.getAttribute("invalid") != "true")
+                this._reformatTextbox(condition, textbox1);
+            } else {
+              // check if the blur event was caused by the conditiontext2 field
+              var textbox2 = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "id", 
+                                                      "conditiontext2");
+              if (this._isDeepChild(event.originalTarget, 
+                                    textbox2, 
+                                    condition)) {
+                // do the parse+format run on it, but only if it is containing
+                // a valid value
+                if (textbox2.getAttribute("invalid") != "true")
+                  this._reformatTextbox(condition, textbox2);
+                }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <!-- Returns true if child is a child, or grandchild, or grandgrandchild
+           (etc) of parent. -->
+      <method name="_isDeepChild">
+        <parameter name="child"/>
+        <parameter name="parent"/>
+        <parameter name="limit"/>
+        <body>
+          <![CDATA[
+            var element = child;
+            while (element &&
+                   element != limit) {
+              if (element == parent)
+                return true;
+              element = element.parentNode;
+            }
+            return false;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Get a value from a checkbox, parsing it and format it according to
+           what property/operator we're using, and send the result back into
+           the textbox. For instance this will turn a duration value of "50"
+           into "0:50" -->
+      <method name="_reformatTextbox">
+        <parameter name="condition"/>
+        <parameter name="textbox"/>
+        <body>
+          <![CDATA[
+          // read ui for which property, operator and unit we're parsing and
+          // formatting for
+          var property = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "propertypopup");
+          var operator = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "operatorpopup");
+          var unitspopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "unitspopup");
+          var units = unitspopup.useunits ? unitspopup.value : null;
+          
+          // parse
+          var value = this._convertFromUI(property.value, 
+                                          operator.value, 
+                                          textbox.value, 
+                                          units);
+          
+          // format
+          value = this._convertToUI(property.value, 
+                                    operator.value, 
+                                    value, 
+                                    units);
+          
+          // do not send the result back to the textbox if we end up with a bad
+          // value; this will be the case if the value fails to parse (eg.
+          // a text value for a number field)
+          if (""+value != "NaN") textbox.value = value;
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_isKnownType">
+        <parameter name="type"/>
+        <body>
+          <![CDATA[
+            switch (type) {
+              case "datetime":
+              case "number":
+              case "boolean":
+              case "duration":
+              case "text":
+              case "uri":
+              case "rating":
+              case "smartmedialist_playlist":
+              case "smartmedialist_contenttype":
+                break;
+              default:
+                return false;
+            }
+            return true;
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_isInternalMetadata">
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+            for each (var prop in SBProperties) {
+              if (metadata == prop) return true;
+              if (metadata == "http://getnightingale.com/dummy/smartmedialists/1.0#playlist")
+                return true;
+            }
+            return false;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- called whenever a new drawer item is created, this sets the default
+           property, which in turns select the default operator -->
+      <method name="onNewItem">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            // get the new condition
+            var condition = this.drawer.getItem(event.originalTarget);
+            
+            // get the property popup
+            var propertypopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "propertypopup");
+            
+            // select "artist"
+            propertypopup.value = SBProperties.artistName;
+
+            // focus the default widget
+            this._focusDefault(condition);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_focusDefault">
+        <parameter name="condition"/>
+        <body>
+          <![CDATA[
+            // if we were not given a condition, use the first one
+            if (!condition) {
+              condition = this.drawer.items[0];
+            }
+            // get the first value widget
+            var value = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue1", 
+                                                    true); // get the visible one
+            // focus it if it is there
+            if (value)
+              value.focus();
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Make a condition visually invalid, by index. The value will be
+           changed when the user edits it and it is validated -->
+      <method name="makeInvalid">
+        <parameter name="aConditionIndex"/>
+        <body>
+          <![CDATA[
+            // get the item
+            var item = this.drawer.items[aConditionIndex];
+           
+            // bypass widget input events
+            this._refreshingUI++;
+            
+            try {
+              if (item) {
+                // get the item state
+                var state = {};
+                this.drawer.getItemState(item, state);
+                
+                // change it
+                state.invalid = true;
+                
+                // set it back
+                this.drawer.setItemState(item, state);
+              }
+            } catch(e) {
+              Components.utils.reportError(e);
+            }
+            this._refreshingUI--;
+          ]]>
+        </body>
+      </method>
+
+      <!-- focus the edit field in a condition, by index -->
+      <method name="focusInput">
+        <parameter name="aConditionIndex"/>
+        <body>
+          <![CDATA[
+            // get the item
+            var item = this.drawer.items[aConditionIndex];
+            
+            // focus it
+            this._focusDefault(item);
+          ]]>
+        </body>
+      </method>
+
+      <!-- called when the user changes the selected playlist in the 
+           conditionplaylist menulist control -->
+      <method name="onSelectPlaylist">
+        <parameter name="menu"/>
+        <body>
+          <![CDATA[
+            if (this._refreshingUI)
+              return;
+            var condition = this.drawer.getItem(menu);
+            this._doValidation(condition);
+          ]]>
+        </body>
+      </method>
+
+      <method name="_setPlaylistConditionCheckmarks">
+        <body>
+          <![CDATA[
+            var items = this.drawer.items;
+            for (var i=0;i<items.length;i++) {
+              var condition = items[i];
+              var playlistpopup = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "id", 
+                                                      "conditionplaylist");
+              this._setCheckmark(playlistpopup);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="_setCheckmark">
+        <parameter name="playlistpopup"/>
+        <body>
+          <![CDATA[
+            var menupopup = playlistpopup.menupopup;
+            var value = playlistpopup.value;
+            for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
+              var itemvalue = item.getAttribute("value");
+              if (itemvalue == value) {
+                playlistpopup.selectedItem = item;
+                break;
+              }
+            }
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+      
+  </binding>
+
+</bindings>
+
+

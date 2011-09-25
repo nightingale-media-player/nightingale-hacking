@@ -1,0 +1,194 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIPropertyBag;
+interface nsIArray;
+
+interface sbIDevice;
+interface sbIDeviceCompatibility;
+
+/**
+ * \interface sbIDeviceController
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(b4b7ed5d-85f2-4d0b-a7c6-f235acad3fc0)]
+interface sbIDeviceController : nsISupports
+{
+  /**
+   * Unique identifier for the controller.
+   */
+  readonly attribute nsIDPtr id;
+
+  /**
+   * A human readable name.
+   */
+  readonly attribute AString name;
+
+  /**
+   * The nsID of an sbIDeviceMarshall implementor that the controller wishes to
+   * use. This must be valid or the controller will never be instantiated!
+   */
+  readonly attribute nsIDPtr marshallId;
+
+  /**
+   * List of devices that are currently in-use.
+   * Ordering is not guaranteed to be consistent between
+   * reads!
+   */
+  readonly attribute nsIArray devices;
+
+  /**
+   * Given a set of device parameters, attempt to determine if the device
+   * is supported, and with what level of functionality.
+   */
+  sbIDeviceCompatibility getCompatibility(in nsIPropertyBag aParams);
+
+  /**
+   * Constructs a device based on the given parameters.
+   */
+  sbIDevice createDevice(in nsIPropertyBag aParams);
+
+  /**
+   * Determines if a device is currently controlled by the controller
+   */
+  boolean controlsDevice(in sbIDevice aDevice);
+
+  /**
+   * Connects all devices.
+   */
+  void connectDevices();
+
+  /**
+   * Disconnects all devices.
+   */
+  void disconnectDevices();
+
+  /**
+   * Called when the controller should release a single device.
+   */
+  void releaseDevice(in sbIDevice aDevice);
+
+  /**
+   * Called when the controller should release all registered devices.
+   */
+  void releaseDevices();
+};
+
+%{C++
+#include "nsCOMPtr.h"
+#include "nsIComponentManager.h"
+#include "nsICategoryManager.h"
+#include "nsIServiceManager.h"
+#include "nsStringGlue.h"
+#include "nsXPCOMCID.h"
+
+class nsIFile;
+struct nsModuleComponentInfo;
+
+#define SB_DEVICE_CONTROLLER_CATEGORY "nightingale-device-controller"
+
+/**
+ * Put this in your module definition file. Give your class name. Then your
+ * moduleInfo should look something like this:
+ *
+ *   NS_GENERIC_FACTORY_CONSTRUCTOR(sbSampleController);
+ *   SB_DEVICE_CONTROLLER_REGISTERSELF(sbSampleController);
+ *
+ *   static nsModuleComponentInfo components[] =
+ *   {
+ *     {
+ *       CLASSNAME, 
+ *       CID,
+ *       CONTRACTID,
+ *       sbSampleControllerConstructor,
+ *       sbSampleControllerRegisterSelf,
+ *       sbSampleControllerUnregisterSelf
+ *     }
+ *   };
+ *
+ *   NS_IMPL_NSGETMODULE(SampleController, components)
+ */
+#define SB_DEVICE_CONTROLLER_REGISTERSELF(_name)                               \
+                                                                               \
+  NS_METHOD _name##RegisterSelf(nsIComponentManager* aCompMgr,                 \
+                                nsIFile* aPath,                                \
+                                const char* registryLocation,                  \
+                                const char* componentType,                     \
+                                const nsModuleComponentInfo* info);            \
+                                                                               \
+  NS_METHOD _name##UnregisterSelf(nsIComponentManager* aCompMgr,               \
+                                         nsIFile* aPath,                       \
+                                         const char* registryLocation,         \
+                                         const nsModuleComponentInfo* info)
+
+/**
+ * Stick this in your implementation file. Give your class name.
+ */
+#define SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(_name, _desc)                   \
+                                                                               \
+  NS_METHOD                                                                    \
+  _name##RegisterSelf(nsIComponentManager* aCompMgr,                           \
+                      nsIFile* aPath,                                          \
+                      const char* registryLocation,                            \
+                      const char* componentType,                               \
+                      const nsModuleComponentInfo* info)                       \
+  {                                                                            \
+    nsresult rv;                                                               \
+    nsCOMPtr<nsICategoryManager> catMan =                                      \
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    nsCAutoString prevEntry;                                                   \
+    rv = catMan->AddCategoryEntry(SB_DEVICE_CONTROLLER_CATEGORY,               \
+                                  _desc,                                       \
+                                  info->mContractID,                           \
+                                  PR_TRUE, PR_TRUE,                            \
+                                  getter_Copies(prevEntry));                   \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    NS_WARN_IF_FALSE(prevEntry.IsEmpty(),                                      \
+                     "Another controller was registered with that id!");       \
+    return NS_OK;                                                              \
+  }                                                                            \
+                                                                               \
+  NS_METHOD                                                                    \
+  _name##UnregisterSelf(nsIComponentManager* aCompMgr,                         \
+                        nsIFile* aPath,                                        \
+                        const char* registryLocation,                          \
+                        const nsModuleComponentInfo* info)                     \
+  {                                                                            \
+    nsresult rv;                                                               \
+    nsCOMPtr<nsICategoryManager> catMan =                                      \
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);                       \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    rv = catMan->DeleteCategoryEntry(SB_DEVICE_CONTROLLER_CATEGORY,            \
+                                     _desc,                                    \
+                                     PR_TRUE);                                 \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    return NS_OK;                                                              \
+  }
+%}

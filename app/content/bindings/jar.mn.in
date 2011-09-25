@@ -1,0 +1,10 @@
+nightingale.jar:
+% content  nightingale  %content/nightingale/
+#
+# Used to include operating system specific content and skin packages
+% content  nightingale-os-specific  %content/nightingale-os-specific/ platform
+#
+# Include everything in this directory, and preprocess bindings.css
+@include_all_to content/nightingale/bindings/
+* content/nightingale/bindings/bindings.css (bindings.css)
+* content/nightingale/bindings/dialog.xml   (dialog.xml)

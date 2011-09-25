@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/smartPlaylist.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ windowtype="Nightingale:SmartPlaylistEditor"
+ id="smart_playlist"
+ title="&smart.window;"
+ type="nightingale"
+ onload="doLoad();"
+ onunload="doUnLoad();"
+ ondialogaccept="return doOK();"
+ ondialogcancel="return doCancel();"
+ buttons="accept,cancel"
+ hidechrome="true"
+ minheight="200"
+ minwidth="650"
+ height="200"
+ width="650"
+ resizers="all"
+>
+
+  <groupbox>
+    <vbox flex="1">
+      <hbox align="center">
+        <checkbox id="smart_match_check" label="&smart.matchsingle;" labelmultiple="&smart.match;" labelsingle="&smart.matchsingle;" checked="false" oncommand="onCheckMatch(event);"/>
+        <menulist id="smart_any_list" value="any" hidden="true">
+          <menupopup id="smart_any_list_popup" >
+            <menuitem id="smart_any_list_any" label="&smart.any;" value="any" />
+            <menuitem id="smart_any_list_all" label="&smart.all;" value="all" />
+          </menupopup>
+        </menulist>
+        <label id="smart_following_label" value="&smart.following;" hidden="true"/>
+        <spacer flex="1"/>
+      </hbox>
+      <spacer height="2"/>
+      <sb-smart-conditions-drawer id="smart_conditions" flex="1" maxvisibleitems="10"/>
+    </vbox>
+
+    <spacer height="5"/>
+
+    <hbox align="center">
+      <checkbox id="smart_songs_check" label="&smart.limit;" checked="false" oncommand="onCheckLimit(event);"/>
+      <textbox  id="smart_songs_count" value="20" oninput="updateOkButton();"/>
+      <menulist id="smart_songs_list" value="songs">
+        <menupopup id="smart_songs_list_popup">
+          <menuitem id="smart_selected_list_minutes" label="&smart.minutes;" value="minutes" />
+          <menuitem id="smart_selected_list_hours" label="&smart.hours;" value="hours" />
+          <menuitem id="smart_selected_list_mb" label="&smart.mb;" value="MB"/>
+          <menuitem id="smart_selected_list_gb" label="&smart.gb;" value="GB" />
+          <menuitem id="smart_selected_list_songs" label="&smart.songs;" value="songs" />
+        </menupopup>
+      </menulist>
+      <spacer width="8"/>
+      <label value="&smart.selectedby;" control="smart_selected_list"/>
+      <menulist id="smart_selected_list" value="artist" onselect="onSelectSelectedBy(event);">
+        <menupopup id="smart_selected_list_popup" >
+          <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />
+          <menuseparator/>
+          <menuitem id="smart_selected_list_album" label="&smart.album;" value="album" />
+          <menuitem id="smart_selected_list_artist" label="&smart.artist;" value="artist" />
+          <menuitem id="smart_selected_list_genre" label="&smart.genre;" value="genre" />
+          <menuitem id="smart_selected_list_title" label="&smart.title;" value="title" />
+          <menuseparator/>
+          <menuitem id="smart_selected_list_high_rating" label="&smart.high_rating;" value="high_rating" />
+          <menuitem id="smart_selected_list_low_rating" label="&smart.low_rating;" value="low_rating" />
+          <menuseparator/>
+          <menuitem id="smart_selected_list_most_recent" label="&smart.most_recent;" value="most_recent" />
+          <menuitem id="smart_selected_list_least_recent" label="&smart.least_recent;" value="least_recent" />
+          <menuseparator/>
+          <menuitem id="smart_selected_list_most_often" label="&smart.most_often;" value="most_often" />
+          <menuitem id="smart_selected_list_least_often" label="&smart.least_often;" value="least_often" />
+          <menuseparator/>
+          <menuitem id="smart_selected_list_most_added" label="&smart.most_added;" value="most_added" />
+          <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
+        </menupopup>
+      </menulist>
+    </hbox>
+    <hbox>
+      <checkbox id="smart_autoupdate_check" label="&smart.autoupdate;"/>
+      <spacer flex="1" height="25"/>
+    </hbox>
+  </groupbox>
+
+  <!-- SCRIPTS -->
+  <script type="application/x-javascript"
+    src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"
+    src="chrome://global/content/globalOverlay.js"/> 
+  <script type="application/x-javascript"
+    src="chrome://nightingale/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+    src="chrome://nightingale/content/scripts/smartPlaylist.js" />
+
+</dialog>
+

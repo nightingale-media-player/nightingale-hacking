@@ -1,0 +1,141 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+#include "sbRemoteMediaList.h"
+#include "sbRemotePlayer.h"
+#include "sbRemoteLibraryResource.h"
+
+#include <prlog.h>
+#include <sbClassInfoUtils.h>
+
+/*
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbRemoteMediaList:5
+ *   LOG_LIST defined in sbRemoteMediaListBase.h/.cpp
+ */
+#undef LOG
+#define LOG(args) LOG_LIST(args)
+
+const static char* sPublicWProperties[] =
+{
+  // sbIMediaList
+  "library_write:name"
+};
+
+const static char* sPublicRProperties[] =
+{
+  // sbILibraryResource
+  "library_read:guid",
+  "library_read:created",
+  "library_read:updated",
+
+  // sbIMediaItem
+  // omitting library since we don't want the user to get back
+  // to the original library
+  "library_read:isMutable",
+  "library_read:mediaCreated",
+  "library_read:mediaUpdated",
+  "library_read:contentLength",
+  "library_read:contentType",
+
+  // sbIMediaList
+  "library_read:name",
+  "library_read:type",
+  "library_read:length",
+  "library_read:isEmpty",
+
+  // sbIRemoteMediaList
+  "library:selection",
+
+  // nsIClassInfo
+  "classinfo:classDescription",
+  "classinfo:contractID",
+  "classinfo:classID",
+  "classinfo:implementationLanguage",
+  "classinfo:flags"
+};
+
+const static char* sPublicMethods[] =
+{ 
+  // sbILibraryResource
+  "library_read:getProperty",
+  "library_write:setProperty",
+  "library_read:equals",
+
+  // sbIMediaItem
+  // none applicable
+
+  // sbIMediaList
+  "library_read:getItemByGuid",
+  "library_read:getItemByIndex",
+  "library_read:enumerateAllItems",
+  "library_read:enumerateItemsByProperty",
+  "library_read:indexOf",
+  "library_read:lastIndexOf",
+  "library_read:contains",
+  "library_write:add",
+  "library_write:addAll",
+  "library_write:remove",
+  "library_write:removeByIndex",
+  "library_write:clear",
+  "library_read:getDistinctValuesForProperty",
+
+  // sbIRemoteMediaList
+  "internal:getView"
+};
+
+NS_IMPL_ISUPPORTS_INHERITED1( sbRemoteMediaList,
+                              sbRemoteMediaListBase,
+                              nsIClassInfo )
+
+NS_IMPL_CI_INTERFACE_GETTER7( sbRemoteMediaList,
+                              nsISupports,
+                              sbISecurityAggregator,
+                              sbIRemoteMediaList,
+                              sbIMediaList,
+                              sbIMediaItem,
+                              sbILibraryResource,
+                              nsISecurityCheckedComponent )
+
+SB_IMPL_CLASSINFO_INTERFACES_ONLY(sbRemoteMediaList)
+
+SB_IMPL_SECURITYCHECKEDCOMP_INIT_LIBRES(sbRemoteMediaList,
+                                        sbRemoteLibraryResource,
+                                        (mRemotePlayer, mMediaItem) )
+
+sbRemoteMediaList::sbRemoteMediaList( sbRemotePlayer* aRemotePlayer,
+                                      sbIMediaList* aMediaList,
+                                      sbIMediaListView* aMediaListView ) :
+  sbRemoteMediaListBase( aRemotePlayer, aMediaList, aMediaListView )
+{
+  LOG_LIST(("sbRemoteMediaList::sbRemoteMediaList()"));
+}
+
+sbRemoteMediaList::~sbRemoteMediaList()
+{
+  LOG_LIST(("sbRemoteMediaList::~sbRemoteMediaList()"));
+}
+

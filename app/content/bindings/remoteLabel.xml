@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- GENERIC REMOTE DISPLAY -->
+
+  <binding id="remote-label">
+  
+    <content>
+      <xul:hbox id="sb-remote-label" sbid="overlay_box" xbl:inherits="class,align,crop,disabled,flex">
+        <xul:label sbid="label" xbl:inherits="class,value,align,crop,disabled,flex">
+          <xul:observes type="dataremote"
+                        attribute="value"/>  
+        </xul:label> 
+      </xul:hbox>
+    </content>
+
+    <implementation>
+
+      <constructor>
+        <![CDATA[
+          // Get the nodename (without the namespace)
+          var nameArray = this.nodeName.split(":");
+          var nodeName = ( nameArray.length > 1 ) ? nameArray[ 1 ] : nameArray[ 0 ];
+          // OVERLAY TARGET ID MATCHES ELEMENT NAME
+          var box = document.getAnonymousElementByAttribute(this, "sbid", "overlay_box");
+          box.setAttribute( 'id', nodeName );
+          // OVERLAY INSERTBEFORE ID MATCHES ELEMENT NAME + "-label"
+          var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
+          label.setAttribute( 'id', nodeName + "-label" );
+          // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+          this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
+          this.data = this.getAttribute("data");
+          
+          this._textBefore = this.getAttribute("textbefore");
+          this._textAfter = this.getAttribute("textafter");
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          //SB_LOG("remoteLabel.js", "remote-label destructor");
+        ]]>
+      </destructor>
+
+      <field name="label">this</field>
+      
+      <property name="data">
+        <getter>
+          <![CDATA[
+            return this.getAttribute("data");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            //SB_LOG("remoteLabel.js", "remote-label data setter");
+            this.setAttribute("data", val);
+            // Tell the observer to watch us.
+            var observes = document.getAnonymousElementByAttribute(this, "type", "dataremote");
+            observes.key = val;
+            
+            // Set our own 'onchange' handler.
+            var applyText = "return \"" + this._textBefore + "\" + value + \"" + this._textAfter + "\";";
+            observes.setAttribute("onchange", applyText);
+          ]]>
+        </setter>
+      </property>
+      
+    </implementation>
+    
+  </binding>
+
+
+  <!-- bind to a string of ';'-seperated data points -->
+  <binding id="remote-multi-label">
+  
+    <content>
+      <xul:label sbid="label" xbl:inherits="id,class,value,align,crop,disabled,flex" /> 
+    </content>
+
+    <implementation>
+
+      <constructor>
+        <![CDATA[
+          this.dataArray = new Array();
+          this.data = this.getAttribute("data");
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          //SB_LOG("remoteLabel.js", "multiremote-label destructor");
+          if (this.dataArray.length > 0) {
+            for ( var datum in this.dataArray ) {
+              this.dataArray[datum].unbind();
+              this.dataArray[datum] = null;
+            }
+          }
+        ]]>
+      </destructor>
+
+      <field name="label">document.getAnonymousElementByAttribute(this, 'sbid', 'label');</field>
+
+      <property name="data">
+        <getter>
+          <![CDATA[
+            return this.getAttribute("data");
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this.setAttribute("data", val);
+
+            // remove the existing bindings
+            if (this.dataArray.length > 0) {
+              for ( var datum in this.dataArray ) {
+                this.dataArray[datum].unbind();
+                this.dataArray[datum] = null;
+              }
+            }
+
+            // bind to the new bindings
+            var strArray = val.split(";");
+            for ( var datum in strArray ) {
+              this.dataArray[datum] = SBDataBindElementAttribute  ( strArray[datum], this.label, "value" );
+            }
+          ]]>
+        </setter>
+      </property>
+      
+    </implementation>
+    
+  </binding>
+
+
+
+  <!-- REMOTE COMPOUND LABEL -->
+
+
+  <binding id="remote-compound-label">
+    
+    <content>
+      <xul:label sbid="label" xbl:inherits="id,class,align,crop,disabled,flex"/>
+    </content>
+    
+    <implementation>
+
+      <constructor>
+        <![CDATA[
+          this.value_string = this.getAttribute("value");
+          this.dataArray = new Array();
+          this.piecesArray = new Array();
+          this.remotecallback = { 
+            _that: null, 
+            observe: function( aSubject, aTopic, aData ) { this._that.updateLabel(); } 
+          };
+          this.remotecallback._that = this;
+          this.value = this.getAttribute("value");
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          this.unbindRemotes();
+          this.piecesArray = null;
+          this.dataArray = null;
+        ]]>
+      </destructor>
+
+      <field name="label">document.getAnonymousElementByAttribute(this, "sbid", "label");</field>
+
+      <property name="value">
+        <getter>
+          return this.value_string;
+        </getter>
+        <setter>
+          this.value_string = val;
+          this.rescanValue();
+        </setter>
+      </property>
+      
+      <method name="unbindRemotes">
+        <body>
+          <![CDATA[
+            //SB_LOG("playerControls.js", "custom-display destructor");
+            if (this.dataArray.length > 0) {
+              for ( var datum in this.dataArray ) {
+                this.dataArray[datum].unbind();
+                this.dataArray[datum] = null;
+              }
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="rescanValue">
+        <body>
+          <![CDATA[
+            this.piecesArray = new Array();
+            this.unbindRemotes();
+            var parseval = this.value_string;
+            while (parseval.length > 0) {
+              var firstpercent = parseval.indexOf("%", 0);
+              var secondpercent = -1;
+              if (firstpercent > -1) {
+                // found a "%" char, record what was before it
+                this.piecesArray.push(parseval.substring(0, firstpercent));
+                secondpercent = parseval.indexOf("%", firstpercent+1);
+                // found a pair of "%" chars
+                if (secondpercent > -1) {
+                  if (secondpercent == firstpercent + 1) {
+                    // this is a "%%" pair, which translates to a simple "%", record it
+                    this.piecesArray.push("%");
+                  } else {
+                    // extract the %remoteid%
+                    var remoteid = parseval.substring(firstpercent+1, secondpercent);
+                    // create a data remote object
+                    var remote = SB_NewDataRemote( remoteid, null );
+                    // bind it to our callback function
+                    remote.bindObserver(this.remotecallback, true);
+                    // record it to our arrays
+                    this.dataArray.push(remote);
+                    this.piecesArray.push(remote);
+                  }
+                  // remove what we have parsed so far
+                  parseval = parseval.substring(secondpercent+1);
+                }
+              } else {
+                // no "%" found, this is the end of the string, record it
+                this.piecesArray.push(parseval);
+                parseval = "";
+              }
+            }
+            this.updateLabel();
+          ]]>
+        </body>
+      </method>
+
+      <method name="updateLabel">
+        <body>
+          <![CDATA[
+            var val = "";
+            for (var i in this.piecesArray) {
+              var piece = this.piecesArray[i];
+              if (piece instanceof String || typeof(piece) == "string") {
+                val += piece;
+              } else {
+                val += piece.stringValue;
+              }
+            }
+            this.label.value = val;
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  
+  
+  </binding>
+
+
+</bindings>
+

@@ -1,0 +1,143 @@
+#
+#=BEGIN NIGHTINGALE GPL
+# 
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.getnightingale.com
+# 
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+# 
+# Software distributed under the License is distributed 
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+# express or implied. See the GPL for the specific language 
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this 
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc., 
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# 
+#=END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@ \
+        @top_srcdir@/components/devices/base/src
+
+include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
+
+DYNAMIC_LIB = sbCDDevice
+
+CPP_SRCS = sbCDDeviceController.cpp \
+           sbCDDeviceMarshall.cpp \
+           sbCDDeviceModule.cpp \
+           sbCDDevice.cpp \
+           sbCDDeviceRequest.cpp \
+           $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/devices/cd/public \
+               $(DEPTH)/components/devices/manager/public \
+               $(topsrcdir)/components/devices/device/src \
+               $(DEPTH)/components/devices/device/public \
+               $(DEPTH)/components/devices/marshall/public \
+               $(topsrcdir)/components/devices/marshall/src \
+               $(DEPTH)/components/devices/controller/public \
+               $(topsrcdir)/components/devices/controller/src \
+               $(DEPTH)/components/devices/base/public \
+               $(topsrcdir)/components/devices/base/src \
+               $(DEPTH)/components/albumart/public \
+               $(DEPTH)/components/job/public \
+               $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/property/src \
+               $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/library/base/src/static \
+               $(topsrcdir)/components/library/base/src \
+               $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/mediacore/base/public \
+               $(DEPTH)/components/mediacore/transcode/public \
+               $(DEPTH)/components/mediacore/metadata/lookup/manager/public \
+               $(DEPTH)/components/mediamanager/public \
+               $(DEPTH)/components/job/public \
+               $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/moz/strings/components/public \
+               $(DEPTH)/components/moz/temporaryfileservice/public \
+               $(topsrcdir)/components/watchfolder/utils \
+               $(topsrcdir)/components/include \
+               $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/moz/streams/src \
+               $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
+               $(topsrcdir)/components/moz/xpcom/src \
+               $(topsrcdir)/components/library/base/src/static \
+               $(DEPTH)/components/mediacore/transcode/public \
+               $(topsrcdir)/components/moz/xpcom/src \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/widget \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+#XXXeps should get this from sbDeviceBase.lib
+# included from components/devices/base/src
+CPP_SRCS += sbBaseDeviceEventTarget.cpp \
+            sbDeviceCompatibility.cpp \
+            sbDeviceContent.cpp \
+            sbDeviceEvent.cpp \
+            sbDeviceLibrary.cpp \
+            sbDeviceLibraryHelpers.cpp \
+            sbDeviceLibraryMediaSyncSettings.cpp \
+            sbDeviceLibrarySyncSettings.cpp \
+            $(NULL)
+
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS = \
+ components/devices/controller/src/sbDeviceController \
+ components/devices/device/src/sbDeviceCore \
+ components/devices/marshall/src/sbDeviceMarshall \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ components/moz/variant/src/static/sbMozVariantUtils \
+ components/watchfolder/utils/sbWatchFolderUtils \
+ $(NULL)
+
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
+ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
+    $(NULL)
+endif
+
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbCDRipServicePaneService.js \
+                      $(NULL)
+
+NIGHTINGALE_JSMODULES = $(srcdir)/sbCDDeviceUtils.jsm
+
+IS_COMPONENT = 1
+
+include $(topsrcdir)/build/rules.mk

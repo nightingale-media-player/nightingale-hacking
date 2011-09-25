@@ -1,0 +1,474 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbIRemotePlayer.idl
+ * \brief Definition of the Remote API Interfaces
+ */
+
+#include "nsISupports.idl"
+#include "sbIRemoteMediaList.idl"
+
+interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
+interface sbIMediaItem;
+interface sbIMediaList;
+interface nsIVariant;
+
+[scriptable, function, uuid(27bfbb84-ac22-46bd-b1bb-cf3baf6f3b3c)]
+interface sbICreateMediaListCallback : nsISupports
+{
+  void onCreated(in sbIMediaList aMediaList);
+};
+
+/*
+Class: Library
+
+A <Library> is a collection of <MediaItems> and <MediaLists>.
+It is possible to create a <Library> using the <Nightingale::siteLibrary>
+function.
+
+Inherits:
+  <MediaList> <MediaItem>
+
+Example:
+  (start code)
+  //Create or get a library.
+  var library = nightingale.siteLibrary("", "");
+
+  //Create a medialist using the library.
+  var mediaList = library.createSimpleMediaList("Name of List");
+
+  //Create some mediaitems and add them to the medialist.
+  var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];
+  for(var url in itemURLs) {
+
+    //Calling createMediaItem may throw an exception when it fails
+    //to create the mediaitem.
+
+    try {
+      var mediaItem = library.createMediaItem(url);
+      mediaList.add(mediaItem);
+    }
+    catch(e) {
+
+      //Dump it.
+      dump("Failed creation of mediaitem: " + e);
+
+      //Or alert it.
+      alert("Failed creation of mediaitem: " + e);
+
+      //Oops the URL was not valid.
+      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {
+        alert("The URL: " + url + " was not valid.");
+      }
+
+    }
+  }
+  (end code)
+
+See Also:
+  <Nightingale>
+  <MediaItem>
+  <MediaList>
+*/
+
+/**
+ * \interface sbIRemoteLibrary
+ * \brief An interface to control a media library from remote web pages.
+ *
+ * The remote library interface allows websites to create media items in a
+ *   manner more web-like than the internal sbILibrary interface. Access to
+ *   the main or web libraries is controlled through permissions set by the
+ *   user. Some or all calls made to objects that implement this interface
+ *   may fail based on the permissions set by the user.
+ *
+ */
+[scriptable, uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]
+interface sbIRemoteLibrary : nsISupports
+{
+  /**
+   * \brief Control whether or not media is scanned when created
+   *
+   * This attribute controlls whether or not the library will cause the
+   *   metadata to be scanned for any tracks created. If a website wants
+   *   to hand-set it's metadata then it should set this to false. By
+   *   default this is true. If metadat for a particular track has already
+   *   been scanned, that metadata will show up automatically ( for instance
+   *   for 2 items created from the same URL ).
+   */
+
+  /*
+  Group: Library Properties
+  */
+
+  /*
+  Prop: scanMediaOnCreation
+
+  Set this property to true if you wish all new <MediaItems>
+  created to be scanned for metadata.
+
+  Set this property to false if you wish to skip scanning
+  for metadata when <MediaItems> are created.
+
+  If you are attempting to set all of your own metadata for <MediaItems>
+  you create, you may set this to false to prevent your metadata
+  from being overwritten.
+
+  Note:
+    This property defaults to _true_.
+
+  Type:
+    Boolean
+  */
+  attribute boolean scanMediaOnCreation;
+
+  /**
+   * \brief Create a media item from a URL
+   *
+   * Create and insert a media item into the library
+   *
+   * \param An http or https URL that points to a valid media file
+   *
+   * \returns the media item that gets created
+   * \returns NS_ERROR_INVALID_ARG if URL is not an http: or https: URL
+   */
+
+  /*
+  Group: Library Methods
+  */
+
+  /*
+  Method: createMediaItem()
+
+  Create a <MediaItem> from a URL. You may pass in
+  http and https URLs. Local file URLs are not permitted.
+
+  Prototype:
+    <MediaItem> createMediaItem(String url)
+
+  Parameters:
+    url - A URL referring to a media file.
+
+  Returns:
+    The newly created <MediaItem>.
+
+  Throws:
+    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)
+    if the URL isn't http or https.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Create the mediaitem from a url pointing to a media file.
+    var mediaItem = null;
+
+    //This function may throw if it fails to create the item because
+    //the URL is invalid.
+    try {
+      mediaItem = library.createMediaItem("http://path/to/file.mp3");
+    }
+    catch(e) {
+      //Oops, bad URL.
+      if(e.result == Components.results.NS_ERROR_INVALID_ARG) {
+        alert("Oops, the URL was not valid.");
+      }
+    }
+    (end)
+
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may
+    get updated.
+
+  See Also:
+    <createSimpleMediaList()>
+    <createMediaListFromURL()>
+  */
+  sbIMediaItem createMediaItem(in AString aURL);
+
+  /**
+   * \brief Create a simple media list
+   *
+   * Create and insert a media list into the library with the name passed in.
+   *
+   * \param aName A string to be used as an identifier on the media list.
+   * \param aSiteID An optional string to be used as an identifier on the media
+   *                list. If unspecified the siteID will be set to the value of
+   *                aName.
+   *
+   * \returns the media list that gets created.
+   */
+
+  /*
+  Method: createSimpleMediaList()
+
+  Create a simple <MediaList> with the given name.
+
+  Prototype:
+    <MediaList> createSimpleMediaList(String name, String siteID)
+
+  Parameters:
+    name   - The name of the <MediaList> to create.
+    siteID - An optional siteID to assign. If unspecified then the siteID will
+             use the value passed for name.
+
+  Returns:
+    The newly created <MediaList> or null.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Create an empty medialist.
+    var mediaList = library.createSimpleMediaList("MyList");
+    (end)
+
+  See Also:
+    <createMediaItem()>
+    <createSimpleMediaList()>
+    <createMediaListFromURL()>
+  */
+  sbIRemoteMediaList createSimpleMediaList(in AString aName,
+                                           [optional] in AString aSiteID);
+
+  /**
+   * \brief Create a media list from an exising playlist file
+   *
+   * Create and insert a media list into the library. The URL passed in must
+   * be an http or https url that points to a type of playlist file supported
+   * by Nightingale. That is currently: .pls, .m3u, .html, and rss type feeds.
+   *
+   * \param aURL A string that points to a type of playlist file that is
+   *             supported by Nightingale. It must be either http: or https: and
+   *             one of the following playlist types: .pls, .m3u, .html and rss
+   *             type feeds.
+   * \param aCallback Optional callback object that gets called when the media
+   *                  list load is complete.
+   */
+
+  /*
+  Method: createMediaListFromURL()
+
+  Create a <MediaList> from a URL. The URL may point to an
+  m3u, pls, rss or html file. After being created, the <MediaList>
+  will contain all valid <MediaItems> it could create from the URLs
+  it found in the file.
+
+  Prototype:
+    <MediaList> createMediaListFromURL(String url, Function callback)
+
+  Parameters:
+    url - The URL of the file to use for creating the <MediaList>.
+    callback - The optional function that gets called when the load is complete.
+               This function is passed a single argument that is the newly
+               created list.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Create the medialist from a url pointing to a file.
+    library.createMediaListFromURL("http://path/to/file.m3u",
+      function(list) {
+        alert("loaded " + list.length + " items!");
+      }
+    );
+    (end)
+
+  See Also:
+    <createMediaItem()>
+    <createSimpleMediaList()>
+  */
+  void createMediaListFromURL(in AString aName,
+                              in AString aURL,
+                              [optional] in sbICreateMediaListCallback aCallback,
+                              [optional] in AString aSiteID);
+
+  /**
+   * \brief Connect the remote library to the main or web library
+   *
+   * This method retrieves the internal data model's library for use by
+   *   the webpage.
+   *
+   * \param aLibName - Only accepted values are 'main' or 'web'
+   */
+  [noscript] void connectToDefaultLibrary(in AString aLibName);
+
+  /**
+   * \brief Get the media list with the given siteID.
+   * \param aSiteID - The siteID of the media list to fetch
+   * \return The corresponding media list, or null if not found
+   * \sa createSimpleMediaList
+   */
+  /*
+  Method: getMediaListBySiteID()
+
+  Get the site media list with the given siteID.
+
+  Prototype:
+    <MediaList> getMediaListBySiteID(String siteID)
+
+  Paramters:
+    name - The siteID of the media list to fetch
+
+  Returns:
+    The corresponding media list, or null if not found
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Fetch the shopping cart media list
+    var mediaList = library.getMediaListBySiteID("Shopping Cart");
+    (end)
+
+  See Also:
+    <createSimpleMediaList()>
+  */
+  sbIRemoteMediaList getMediaListBySiteID( in AString aSiteID );
+
+  /*
+  Method: getPlaylists()
+
+  Get an Enumerator containing all of the <MediaLists> in the <Library>.
+
+  Prototype:
+    Enumerator getPlaylists()
+
+  Returns:
+    An Enumerator containing all of the
+    <MediaLists> present in the <Library>.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = nightingale.siteLibrary("", "");
+
+    //Get all MediaLists.
+    var mediaLists = library.getPlaylists();
+
+    while(mediaLists.hasMoreElements()) {
+      var mediaList = mediaLists.getNext();
+
+      //Do something with the MediaList
+      alert(mediaList.name);
+    }
+    (end)
+
+  See Also:
+    <getArtists()>
+    <albums>
+    <genres>
+    <years>
+
+  External Reference:
+    Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html> for nsISimpleEnumerator interface reference.
+  */
+  readonly attribute nsISimpleEnumerator playlists;
+
+
+  /*
+  Method: mostPlayedArtists
+
+  Get the most played artists from the <Library>.
+
+  Prototype:
+    Array mostPlayedArtists
+
+  Returns:
+    An array of the most played artists - up to 100.
+
+  Example:
+    (start code)
+    var artists = window.nightingale.mainLibrary.mostPlayedArtists;
+    for (var i in artists) {
+      var elem = document.createElement('li');
+      elem.textContent = artists[i];
+      output.appendChild(elem);
+    }
+    (end)
+
+  See Also:
+    <artists>
+  */
+
+  readonly attribute nsIVariant mostPlayedArtists;
+};
+
+/**
+ * \interface sbIRemoteSiteLibrary
+ * \brief An interface for a sandbox library created by the website.
+ *
+ * This interface is used by the player to connect a library to a specific
+ *   library for a website. The library serves as an area a website can
+ *   use to create the media items and lists needed to populate web playlists
+ *   and to transfer into the user's main library. The restrictions on the
+ *   site library are lighter allowing a website to do more with the limited
+ *   scope of the site library.
+ */
+[scriptable, uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]
+interface sbIRemoteSiteLibrary : sbIRemoteLibrary
+{
+  /**
+   * \brief The filename of the library file
+   * Set only in debug builds
+   */
+  readonly attribute AString filename;
+
+  /**
+   * \brief Connects the remote library to a library from the internal data
+   *        model.
+   *
+   * This method is used to create or load the data model library for a
+   *   specific site's library. The strings passed in follow the format for
+   *   cookies, in that the domain and path must meet the requirements for
+   *   RFC 2109.
+   * In the case of a bad match, the method fails and no library is hooked
+   *   up. Any further attempt to access the library will fail.
+   *
+   * \param aDomain - The domain, or subdomain for the site library. The
+   *        requesting website must be on this domain. A site on foo.bar.com
+   *        may pass in bar.com, but not the other way around.
+   * \param aPath - The path or subpath for the site library. The requesting
+   *        site must be on this patch. A site at foo.com/my/path/index.html
+   *        can pass in '/my/path/', '/my', '/', or ''. In the case of the '/'
+   *        a root level library is created, accessibel by ALL paths in the
+   *        domain. In the case of '' the deepest path is used, which would
+   *        match 'my/path/'. The leading slash MUST be there, except when
+   *        not passing any path (''). Currently the trailing slash is
+   *        important, while this will succeed with or without the slash you
+   *        will get different libraries as a result. This will be fixed --
+   *        bug 4176
+   */
+  [noscript] void connectToSiteLibrary(in AUTF8String aDomain,
+                                       in AUTF8String aPath);
+};

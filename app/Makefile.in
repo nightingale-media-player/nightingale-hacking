@@ -1,0 +1,66 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the “GPL”).
+#
+# Software distributed under the License is distributed
+# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+NIGHTINGALE_XULRUNNER = $(srcdir)/updater.ini
+
+NIGHTINGALE_DIST = $(srcdir)/blocklist.xml \
+                $(srcdir)/updater.ini \
+                $(NULL)
+
+# application.ini handling
+NIGHTINGALE_PP_RESOURCES = $(srcdir)/application.ini.in \
+                        $(srcdir)/nightingale.ini.in \
+                        $(NULL)
+NIGHTINGALE_DIST += $(CURDIR)/application.ini \
+                 $(CURDIR)/nightingale.ini \
+                 $(NULL)
+
+PPDEFINES += $(SB_BRANDING_DEFINES)
+
+ifeq (macosx,$(SB_PLATFORM))
+   NIGHTINGALE_CONTENTS += $(CURDIR)/Info.plist
+   NIGHTINGALE_PP_RESOURCES += $(srcdir)/Info.plist.in
+   NIGHTINGALE_DIST += $(srcdir)/updater.plist
+endif
+
+SUBDIRS = branding \
+          content \
+          skin \
+          preferences \
+          profile \
+          $(NULL)
+
+include $(topsrcdir)/$(NIGHTINGALE_BRANDING_DIR)/branding.mk
+
+include $(topsrcdir)/build/rules.mk
+
+libs::
+	$(TOUCH) $(NIGHTINGALE_DISTDIR)/.autoreg

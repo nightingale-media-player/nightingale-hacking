@@ -1,0 +1,104 @@
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<html>
+  <head>
+  <script>
+function runTest(tester) {
+  try {
+
+    // listeners
+    var listener = {
+      observe: function(key, value) {
+        document.write(key + ":" + value + "</br>");
+      }
+    }
+
+    // these additions should all work
+    nightingale.addListener("metadata.artist", listener);
+    nightingale.addListener("metadata.title", listener);
+    nightingale.addListener("metadata.album", listener);
+    nightingale.addListener("metadata.genre", listener);
+    nightingale.addListener("metadata.position", listener);
+    nightingale.addListener("metadata.position.str", listener);
+    nightingale.addListener("metadata.length", listener);
+    nightingale.addListener("metadata.length.str", listener);
+    nightingale.addListener("playlist.shuffle", listener);
+    nightingale.addListener("playlist.repeat", listener);
+    nightingale.addListener("faceplate.volume", listener);
+    nightingale.addListener("faceplate.mute", listener);
+    nightingale.addListener("faceplate.playing", listener);
+    nightingale.addListener("faceplate.paused", listener);
+
+    // these removals should all work
+    nightingale.removeListener("metadata.artist", listener);
+    nightingale.removeListener("metadata.title", listener);
+    nightingale.removeListener("metadata.album", listener);
+    nightingale.removeListener("metadata.genre", listener);
+    nightingale.removeListener("metadata.position", listener);
+    nightingale.removeListener("metadata.position.str", listener);
+    nightingale.removeListener("metadata.length", listener);
+    nightingale.removeListener("metadata.length.str", listener);
+    nightingale.removeListener("playlist.shuffle", listener);
+    nightingale.removeListener("playlist.repeat", listener);
+    nightingale.removeListener("faceplate.volume", listener);
+    nightingale.removeListener("faceplate.mute", listener);
+    nightingale.removeListener("faceplate.playing", listener);
+    nightingale.removeListener("faceplate.paused", listener);
+
+    // invalid string should throw
+    try {
+      nightingale.addListener("foo.bar", listener);
+      tester.fail("did not throw: addListener('foo.bar')");
+    }
+    catch (e) {}
+
+    try {
+      nightingale.addListener("metadata.url", listener);
+      tester.fail("did not throw: addListener('metadata.url')");
+    }
+    catch (e) {}
+
+    // removing invalid string should fail silently
+    nightingale.removeListener("foo.bar", listener);
+    nightingale.removeListener("metadata.url", listener);
+
+  }
+  catch(e) {
+    tester.endRemoteAPITest(e);
+  }
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+
+</script>
+  </head>
+  <body>test_remoteplayer_page.html</body>
+</html>

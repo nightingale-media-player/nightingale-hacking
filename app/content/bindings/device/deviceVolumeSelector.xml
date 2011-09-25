@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 :miv -->
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device storage volume selector widget.
+   *
+   *   This widget provides an interface for selecting a device storage volume.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-volume-selector"
+           extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Volume selector deck. -->
+      <xul:deck sbid="volume_selector_deck" flex="1">
+
+        <xul:label sbid="volume_label"
+                   class="sb-device-volume-selector-label"
+                   flex="1"
+                   xbl:inherits="highlight"/>
+
+        <xul:menulist sbid="volume_menulist"
+                      class="sb-device-volume-selector-menulist"
+                      flex="1"
+                      xbl:inherits="highlight">
+          <xul:menupopup sbid="volume_menupopup">
+            <xul:sb-device-volume-menuitems xbl:inherits="device-id"/>
+          </xul:menupopup>
+        </xul:menulist>
+
+      </xul:deck>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        this.deviceVolumeSelectorSvc.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device volume selector services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        // Get the Javascript sub-script loader services.
+        var jsLoader =
+          Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+
+        // Import the device volume selector services.
+        if (typeof(this.deviceVolumeSelectorSvc) == "undefined") {
+          jsLoader.loadSubScript
+            ("chrome://nightingale/content/scripts/device/deviceVolumeSelector.js",
+             this);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+
+      <!--
+       * deviceBound
+       *
+       *   Handle a device bound event.
+       -->
+
+      <handler event="deviceBound"><![CDATA[
+        // Re-initialize the device volume selector services.
+        this.deviceVolumeSelectorSvc.finalize(this);
+        this.deviceVolumeSelectorSvc.initialize(this);
+      ]]></handler>
+
+    </handlers>
+
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device storage volume menuitems widget.
+   *
+   *   This widget may be used to add menuitems representing device storage
+   * volumes to menus.  Place this widget inside of a menulist and it will
+   * add a menuitem for each device storage volume.
+   *   The menuitem label will be the device volume library name, and the value
+   * will be the device volume library GUID.
+   *   All UI elements added by this widget will be inserted as children of the
+   * widget's parent, immediately before this widget.
+   *   If minvolumes is specified, this widget will only add menuitems if at
+   * least the specified number of volumes are present on the device.
+   *
+   * Attributes:
+   *
+   *   addseparatorafter        If "true", add a menu separator after menuitems.
+   *   addseparatorbefore       If "true", add a menu separator before
+   *                            menuitems.
+   *   checkdefault             If "true", add a checkmark to the menuitem for
+   *                            the default device volume.
+   *   minvolumes               Minimum number of volumes to add any menuitems.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-volume-menuitems"
+           extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this.importExternalServices();
+
+        // Initialize the widget services.
+        this.deviceVolumeMenuItemsSvc.initialize(this);
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        this.deviceVolumeMenuItemsSvc.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device volume menuitems services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        // Get the Javascript sub-script loader services.
+        var jsLoader =
+          Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+
+        // Import the device volume menuitems services.
+        if (typeof(this.deviceVolumeMenuItemsSvc) == "undefined") {
+          jsLoader.loadSubScript
+            ("chrome://nightingale/content/scripts/device/deviceVolumeSelector.js",
+             this);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+
+      <!--
+       * deviceBound
+       *
+       *   Handle a device bound event.
+       -->
+
+      <handler event="deviceBound"><![CDATA[
+        // Re-initialize the device volume menuitems services.
+        this.deviceVolumeMenuItemsSvc.finalize(this);
+        this.deviceVolumeMenuItemsSvc.initialize(this);
+      ]]></handler>
+
+    </handlers>
+
+  </binding>
+
+</bindings>
+

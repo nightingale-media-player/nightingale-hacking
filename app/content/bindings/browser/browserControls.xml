@@ -1,0 +1,340 @@
+<?xml version="1.0"?>
+<!--
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+-->
+<!DOCTYPE bindings [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+<bindings
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="sb-locationbar-textbox">
+    <content>
+      <xul:hbox id="sb-locationbar-textbox" flex="1">
+        <xul:textbox id="sb-locationbar-textbox-textbox"
+                     anonid="textbox" class="locationbar-textbox"
+                     type="autocomplete"
+                     autocompletesearch="history"
+                     autocompletepopup="PopupAutoComplete"
+                     enablehistory="true"
+                     completeselectedindex="true"
+                     tabscrolling="true"
+                     showcommentcolumn="true"
+                     showimagecolumn="true"
+                     ontextentered="this._saveFocus == ''; this.uri = this.value; window.gBrowser.loadURI(this.value);"
+                     timeout="100"
+                     maxrows="10"
+                     newlines="stripsurroundingwhitespace"
+                     flex="1" align="center">
+          <children/>
+          <xul:image id="sb-locationbar-textbox-image" anonid="image" class="locationbar-image"
+              src="" />
+        </xul:textbox>
+      </xul:hbox>
+    </content>
+    
+    <implementation implements="nsIWebProgressListener">
+      <constructor><![CDATA[
+        // get widgets
+        this._textbox = document.getAnonymousElementByAttribute(this, 'anonid', 'textbox');
+        this._image = document.getAnonymousElementByAttribute(this, 'anonid', 'image');
+        
+        // initial savefocus is ''?
+        this._saveFocus = '';
+        
+        // set up dataremotes
+        this._dataText = SBDataBindElementProperty("browser.url.text", this._textbox, "value");
+        this._dataImage = SBDataBindElementProperty("browser.url.image", this._image, "src");
+        this._dataLoading = SBDataBindElementAttribute( "faceplate.loading", this._textbox, "loading", true );
+
+        
+        /* we want to do some initialization after the window has loaded */
+        var self = this;
+        function tabPropertyChange(event) {
+          self.applyPropertiesFromServicePaneNode();
+        }
+        function windowOnLoad() {
+            self.browser.addProgressListener(self,
+                    Components.interfaces.nsIWebProgress.NOTIFY_LOCATION);
+            self.browser.addEventListener('TabPropertyChange', tabPropertyChange, false);
+            window.removeEventListener('load', windowOnLoad, false);
+        }
+        window.addEventListener('load', windowOnLoad, false);
+      ]]></constructor>
+      <destructor><![CDATA[
+        this.browser.removeProgressListener(this);
+        this._dataText.unbind();
+        this._dataImage.unbind();
+        this._dataLoading.unbind();
+      ]]></destructor>
+      
+      <field name="_browser">null</field>
+      <property name="browser" readonly="true">
+        <getter><![CDATA[
+          if (!this._browser) {
+            // Try different possible methods of getting a browser.
+            var browserId = this.getAttribute('browser');
+            if (browserId.length > 0 ) {
+              // Specifiy an explicit browser (DEPRECATED)
+              this._browser = document.getElementById(browserId);
+            } else if (window.gBrowser != null) {
+              // Use the gBrowser
+              this._browser = window.gBrowser;
+            } else {
+              // Find one in the document
+              this._browser = document.getElementsByTagName("sb-tabbrowser")[0];
+            }
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
+      
+      <property name="value"
+                onget="return this._textbox.value;"
+                onset="this._textbox.value=val;" />
+      
+      <property name="uri">
+        <getter><![CDATA[
+          return SBDataGetStringValue("browser.uri");
+        ]]></getter>
+        <setter><![CDATA[
+          // set the dataremote uri to the right value
+          SBDataSetStringValue("browser.uri", val);
+
+          this.applyPropertiesFromServicePaneNode();
+          
+        ]]></setter>
+      </property>
+      
+      <method name="focus">
+        <body><![CDATA[
+          this._textbox.focus();
+        ]]></body>
+      </method>
+      
+      <!-- nsIWebProgressListener implementation -->
+      <method name="onLocationChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aLocation" />
+        <body><![CDATA[
+          // when the tabbrowser location changes update the location bar
+          if (!aLocation) {
+            this.uri = "about:blank";
+          } else {
+            this.uri = aLocation.spec;
+          }
+        ]]></body>
+      </method>
+      
+      <method name="onProgressChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aCurSelfProgress" />
+        <parameter name="aMaxSelfProgress" />
+        <parameter name="aCurTotalProgress" />
+        <parameter name="aMaxTotalProgress" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+      
+      <method name="onSecurityChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+
+      <method name="onStateChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aStatus" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+
+      <method name="onStatusChange">
+        <parameter name="aWebProgress" />
+        <parameter name="aRequest" />
+        <parameter name="aState" />
+        <parameter name="aMessage" />
+        <body><![CDATA[
+        /* NOTE: This is not called change the constructor above if you want this event */
+        ]]></body>
+      </method>
+
+      <method name="onLinkIconAvailable">
+        <parameter name="aBrowser" />
+        <body><![CDATA[
+          // Do nothing if icon is not for the currently displayed URI.
+          if (!aBrowser.currentURI || aBrowser.currentURI.spec != this.uri)
+            return;
+
+          // Use icon if service pane is not providing one.
+          if (!gServicePane.getURLImage(this.uri)) {
+            var image = aBrowser.mIconURL;
+            SBDataSetStringValue("browser.url.image", image?image:'');
+          }
+        ]]></body>
+      </method>
+
+      <method name="applyPropertiesFromServicePaneNode">
+        <body><![CDATA[
+          // populate the ui with a little help from our servicepane
+          var props = "";
+          var text = null;
+          var servicePaneNode = this.browser.selectedTab.servicePaneNode;
+          var uri = this.browser.currentURI;
+          var spec = "about:blank";
+          
+          if (uri) {
+            spec = uri.spec;
+            
+            if (uri.schemeIs('chrome') && servicePaneNode) {
+              // Only cook the url for chrome urls
+              text = servicePaneNode.name;
+            
+              // Note that node.image only retrieves
+              // hardcoded image URLs.  If the image
+              // is supplied via CSS we need to use 
+              // the class name instead.  
+              if (servicePaneNode.className) {
+                props = servicePaneNode.className;
+              }
+            }
+          }
+          
+          SBDataSetStringValue("browser.url.text", text ? text : spec);
+          
+          if (servicePaneNode) {
+           SBDataSetStringValue("browser.url.image", servicePaneNode.image ? servicePaneNode.image : '');
+          }
+          
+          // Reflect servicepane properties such as "library" onto
+          // the image.  This allows the image source to be set from CSS.
+          this._image.setAttribute("properties", props);
+          ]]></body>
+      </method>
+
+    </implementation>
+    
+    <handlers>
+      <handler event="focus"><![CDATA[
+        this._saveFocus = this._textbox.value;
+        this._textbox.selectionStart = 0;
+        this._textbox.selectionEnd = this._saveFocus.length;
+      ]]></handler>
+      
+      <handler event="keypress" keycode="VK_ESCAPE"><![CDATA[
+        if (this._saveFocus != '') {
+          this.value = this._saveFocus;
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
+  
+  
+  <!-- 
+    SPINNER    
+    Loading indicator.  Pretty much the same as the FireFox throbber.
+    -->
+  <binding id="sb-browser-spinner">
+
+    <content>
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-spinner" flex="1">
+        <image id="sb-browser-spinner-image" anonid="spinner-image" spinning="false" class="browser-spinner-image"/>
+      </hbox>
+    </content>
+
+    <implementation type="application/x-javascript" >
+
+      <constructor>
+       <![CDATA[
+          // XXX: This won't work once we support multiple windows.
+          // Leaving as-is for now.
+          var image = document.getAnonymousElementByAttribute(this,"anonid", "spinner-image");
+          this._dataremote = SBDataBindElementAttribute( "faceplate.loading", image, "spinning", true );
+       ]]>
+      </constructor>
+      
+      <destructor>
+       <![CDATA[
+         if (this._dataremote)
+           this._dataremote.unbind();
+         this._dataremote = null;
+       ]]>
+      </destructor>
+
+      <field name="_dataremote">null</field>
+                            
+    </implementation>
+  </binding>    
+  
+
+  <!-- 
+    STOP/RELOAD
+    Combined stop and reload buttons.  Only one is visible at a time.
+    -->
+  <binding id="sb-browser-stopreload-button">
+
+    <content>
+      <hbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" id="sb-browser-stopreload-button" flex="1">
+        <toolbarbutton id="sb-browser-stopreload-reload-button" class="sb-browser-stopreload-reload-button toolbarbutton-1 chromeclass-toolbar-additional"
+                       anonid="reload-button"
+                       label="&tooltip.browser.refresh;"
+                       command="Browser:Reload"
+                       tooltiptext="&tooltip.browser.refresh;">
+           <observes type="dataremote"
+                     key="faceplate.loading" 
+                     attribute="hidden" 
+                     boolean="true" />  
+        </toolbarbutton>
+        <toolbarbutton id="sb-browser-stopreload-stop-button" class="sb-browser-stopreload-stop-button toolbarbutton-1 chromeclass-toolbar-additional"
+                       anonid="stop-button"
+                       label="&tooltip.browser.stop;"
+                       command="Browser:Stop"
+                       tooltiptext="&tooltip.browser.stop;" >
+           <observes type="dataremote"
+                     key="faceplate.loading" 
+                     attribute="hidden" 
+                     boolean="true"
+                     inverted="true" />  
+        </toolbarbutton>          
+      </hbox>
+    </content>
+  </binding>    
+
+</bindings>

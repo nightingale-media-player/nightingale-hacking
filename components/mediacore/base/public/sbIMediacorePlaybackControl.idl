@@ -1,0 +1,72 @@
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+#include "nsISupports.idl"
+
+interface nsIURI;
+interface sbIMediacoreStatus;
+
+[scriptable, uuid(d20d5810-763a-44d0-97f9-dd780a1ed042)]
+interface sbIMediacorePlaybackControl : nsISupports
+{
+  attribute nsIURI uri;
+
+  /**
+   * The current position of the stream currently being played back, in
+   * milliseconds
+   */
+  attribute unsigned long long position;
+
+  /**
+   * The total duration of the stream currently being played, in milliseconds
+   * @throws NS_ERROR_NOT_AVAILABLE if the duration is unknown
+   */
+  readonly attribute unsigned long long duration;
+
+  /* True if we are currently playing audio */
+  readonly attribute boolean isPlayingAudio;
+
+  /* True if we are currently playing video */
+  readonly attribute boolean isPlayingVideo;
+  
+  void play();
+  void pause();
+  void stop();
+
+  /**
+   * Seek to a specified point, with some seeking flags set.
+   * A normal, simple seek can be done by simply setting the position attribute.
+   * This function is useful for more complex seek types (with flags set)
+   *
+   */
+  void seek(in unsigned long long position, in unsigned long flags);
+
+  /* A normal seek */
+  const unsigned long SEEK_FLAG_NORMAL = 0;
+
+  /* A seek to the nearest keyframe - faster, but less accurate */
+  const unsigned long SEEK_FLAG_KEYFRAME = 1;
+};

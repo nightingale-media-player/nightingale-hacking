@@ -1,0 +1,111 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file This file contains interfaces used by the unit test system to setup
+ * the mock objects
+ */
+ 
+#include "nsISupports.idl"
+
+interface sbIMockCDDeviceController;
+interface sbICDTOC;
+
+/**
+ * The Mock TOC interface to setup the TOC object
+ */
+[scriptable, uuid(1A6C307B-2C9B-45A7-9849-0B95C2247020)]
+interface sbIMockCDTOC : nsISupports
+{
+  /**
+   * Adds a TOC Entry to the TOC
+   * \param frameOffset the frame offset, what else?
+   * \param length Length of the track, probably in seconds see sbICDTOC
+   * \param trackNumber 1 based index
+   * \param aTrackMode The track mode of the entry.
+   */
+  void addTocEntry(in long frameOffset,
+                   in PRTime length, 
+                   in long trackNumber,
+                   in short aTrackMode);
+
+  /**
+   * initializes the TOC
+   * \param firstTrackIndex the index of the first track
+   * \param lastTrackIndex the index of the last track  
+   * \param leadOutTrackOffset some kind of offset
+   */               
+  void initialize(in long firstTrackIndex,
+                  in long lastTrackIndex,
+                  in long leadOutTrackOffset);
+};
+
+/**
+ * The Mock CD Device interface used to setup the Mock CD Device object
+ */
+[scriptable, uuid(2ab578be-0e26-4747-a53a-096ae38441dc)]
+interface sbIMockCDDevice : nsISupports
+{
+  /**
+   * Initializes the device
+   * \param aName Name of the device
+   * \param aReadable whether the device is readable
+   * \param aWritable whether the device is writable
+   * \param aDiscInserted Whether the device has a disc inserted
+   * \param aDiscType The type of disc audio or data
+   * \param aEjected Whether the disc has been ejected
+   */
+  void initialize(in AString aName,
+                  in boolean aReadable,
+                  in boolean aWritable,
+                  in boolean aDiscInserted,
+                  in unsigned long aDiscType,
+                  in boolean aEjected);
+  /**
+   * denotes whether the disc has been ejected
+   */
+  attribute boolean ejected;
+
+  /**
+   * Set the TOC of the mock device.
+   * \param aTOC The TOC instance to assign to the mock device.
+   */
+  void setDiscTOC(in sbICDTOC aTOC);
+};
+
+%{C++
+#define SB_MOCK_CDDEVICE_CLASSNAME "sbMockCDDevice" 
+#define SB_MOCK_CDDEVICE_CID {0xcf0c112e, 0xa2f9, 0x4ca2, {0x90, 0x13, 0xa3, 0xde, 0x6b, 0xcc, 0x6b, 0x85}}
+#define SB_MOCK_CDDEVICE_CONTRACTID "@getnightingale.com/Nightingale/MockCDDevice;1"
+
+#define SB_MOCK_CDTOC_CLASSNAME "sbMockCDTOC" 
+#define SB_MOCK_CDTOC_CID {0x136f8b3a, 0x8747, 0x4a2c, {0x9d, 0xb8, 0x74, 0x1a, 0x6c, 0x79, 0x80, 0x34}}
+#define SB_MOCK_CDTOC_CONTRACTID "@getnightingale.com/Nightingale/MockCDTOC;1"
+
+#define SB_MOCK_CDTOCENTRY_CLASSNAME "sbMockCDTOCEntry" 
+#define SB_MOCK_CDTOCENTRY_CID {0x700a16e0, 0xfc80, 0x4760, {0xa9, 0x57, 0x47, 0x36, 0x27, 0xae, 0x33, 0x71}}
+#define SB_MOCK_CDTOCENTRY_CONTRACTID "@getnightingale.com/Nightingale/MockCDTOCEntry;1"
+%}

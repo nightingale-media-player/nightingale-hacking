@@ -1,0 +1,72 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+
+interface sbIDeviceLibrary;
+interface sbILibraryFactory;
+
+/**
+ * \interface sbIDeviceContent
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(7386c33a-df60-4ffd-9747-ed8e218a966e)]
+interface sbIDeviceContent : nsISupports
+{
+  /**
+   * \brief A simple array of the libraries for this device
+   */
+  readonly attribute nsIArray libraries;
+
+  /**
+   * \brief Not currently implemented
+   */
+  readonly attribute sbILibraryFactory libraryFactory;
+
+  /**
+   * \brief Initialize the device content.
+   */
+  void initialize();
+
+  /**
+   * \brief Finalize the device content.
+   */
+  void finalize();
+
+  /**
+   * \brief Add a device library to the device
+   */
+  void addLibrary(in sbIDeviceLibrary aLibrary);
+
+  /**
+   * \brief Remove a device library from the device
+   */
+  void removeLibrary(in sbIDeviceLibrary aLibrary);
+};
+

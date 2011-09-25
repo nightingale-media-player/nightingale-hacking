@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--  
+  This is a handy class that puts menuitems in place alongside of itself every time the menu is displayed.
+    responsible for:
+    * keeping track of the content
+    * watching for changes
+    * registering with the object
+    * removing old content/adding new content
+    
+    not responsible for:
+    * actually doing a command
+    * actually creating the content.
+  
+   USAGE:
+    extend this class
+    implement generateMenuItems() in the derived class
+      * either return an array of menuitem elements 
+      * or just call _addToMenu 
+   -->
+  <binding id="generated-menuitems-base">
+    <implementation type="application/x-javascript" implements="nsIDOMEventListener">
+      <constructor>
+      <![CDATA[
+          this._addedElements = [];
+          
+          // Get the nightingale string bundle.  Can't use dtd to localize dynamically
+          // generated menuitems.
+          var stringBundleService =
+              Components.classes["@mozilla.org/intl/stringbundle;1"]
+                        .getService(Components.interfaces.nsIStringBundleService);
+          this._stringBundle = stringBundleService.createBundle( 
+                      "chrome://nightingale/locale/nightingale.properties" );
+          
+          this.QueryInterface(Components.interfaces.nsIDOMEventListener);
+          this.parentNode.addEventListener("popupshowing", this, false);
+          this.parentNode.addEventListener("command",      this, false);
+          
+          // XXXpvh: this is a great place to call onPopUpShowing() except... 
+          //         it's too early and the derived class hasn't run its constructor yet
+          //         instead, i'll just call it from in the derived class.
+      ]]>
+      
+      </constructor>
+      <destructor>
+      <![CDATA[
+          this.parentNode.removeEventListener("command",      this, false);
+          this.parentNode.removeEventListener("popupshowing", this, false);
+          this._stringBundle = null;
+        ]]>
+      </destructor>
+      
+      <method name="handleEvent">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            switch(event.type) {
+              case "popupshowing":
+                // Only handle "popupshowing" event from our parent popup
+                if (event.target == this.parentNode) {
+                  this.onPopupShowing();
+                }
+              break;
+              case "command":
+                var handled = this.onCommand(event.target, event);
+                if (handled) {
+                  event.stopPropagation();
+                  event.preventDefault();
+                }
+              break;
+            }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="onCommand">
+        <parameter name="item"/>
+        <body>
+        <![CDATA[
+          if (item.onCommand) {
+            return item.onCommand(item);
+          }
+          else {
+            return false;
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <!--
+        Called just before the popup appears.
+      -->
+      <method name="onPopupShowing">
+        <body>
+          <![CDATA[
+            this._cleanMenu();
+            this._buildMenu();
+          ]]>
+        </body>
+      </method>
+
+      <!-- Get rid of all the children of this menupopup -->
+      <method name="_cleanMenu">
+        <body>
+          <![CDATA[
+            this._addedElements.forEach(function(e) {
+              this.parentNode.removeChild(e);
+            }, this);
+            this._addedElements = [];
+          ]]>
+        </body>
+      </method>
+      
+      <!--  uses the helper method in the derived implementation to actually create the list of elements  -->
+      <method name="_buildMenu">
+        <body>
+        <![CDATA[
+          var menuItems = this.generateMenuItems();
+          if(menuItems) {
+            for( var i = 0; i < menuItems.length; i++ ) { 
+              this._addToMenu(menuItems[i]); 
+            }
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <method name="_addToMenu">
+        <parameter name="element"/>
+        <body>
+          <![CDATA[
+            this.parentNode.insertBefore(element, this);
+            this._addedElements.push(element);
+          ]]>
+        </body>
+      </method>
+         
+    </implementation>
+  </binding>
+
+</bindings>
+

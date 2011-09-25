@@ -1,0 +1,172 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbILibraryDiffingService.idl
+ * \brief Definition of the sbILibraryDiffingService interface
+ * \sa sbILibraryLoggingService.idl, sbILibraryChangeset.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface nsIObserver;
+interface sbIMediaList;
+interface sbILibraryChangeset;
+
+/**
+ * \interface sbILibraryDiffingService
+ * \brief Library and media list diffing service.
+ *
+ * The library diffing service enables to create changesets
+ * for a source library or media list (or multiple libraries or lists)
+ * to a destination library or media list.
+ *
+ * The resulting changeset can be used to make the destination 
+ * the contain the same items and properties as the source (or sources combined)
+ *
+ * \sa sbILibraryLoggingService sbILibraryChangeset getChangeset
+ */
+[scriptable, uuid(0a230a2b-219e-48dd-ba54-4f879147b930)]
+interface sbILibraryDiffingService : nsISupports
+{
+  /**
+   * Create a changeset from a source and destination library or media list.
+   * 
+   * The changeset will contain all the information necessary 
+   * to make the destination the same as the source.
+   *
+   * All changes in the changeset are provided in chronological order.
+   * Applying these changes out of order to the destination will have
+   * adverse effects.
+   *
+   * \param aSource The source library or list.
+   * \param aDestination The destination library or list.
+   * \return A changeset.
+   */
+  sbILibraryChangeset createChangeset(in sbIMediaList aSource, 
+                                      in sbIMediaList aDestination);
+
+  /**
+   * Create a changeset from multiple sources and a destination library or media list.
+   * 
+   * The changeset will contain all information necessary to make the destination have
+   * the same contents and properties for items as the sources. It will _not_ 
+   * give you order information though. Sortable destinations will not have the same
+   * sort order as the sources.
+   *
+   * Applying these changes out of order to the destination will have
+   * adverse effects.
+   *
+   * \note The Destination must be library.
+   *
+   * \param aSources The source libraries or media lists.
+   * \param aDestination The destination library or media list.
+   * \return A changeset.
+   */
+  sbILibraryChangeset createMultiChangeset(in nsIArray aSources,
+                                           in sbIMediaList aDestination);
+
+  /**
+   * Create a changeset from a source and destination library or medialist
+   * in asynchronous fashion.
+   * 
+   * The changeset will contain all the information necessary 
+   * to make the destination the same as the source.
+   *
+   * All changes in the changeset are provided in chronological order.
+   * Applying these changes out of order to the destination will have
+   * adverse effects.
+   *
+   * The observer will get called with the following arguments when
+   * the changeset is ready: 
+   * 
+   *   aSubject will be a sbILibraryChangeset instance.
+   *   aTopic   will be "library-changeset-ready".
+   *   aData    will be the changeset cookie. The cookie can be used to retreive
+   *            the changeset for processing at a later time outside of the observer
+   *            call.
+   *
+   * The observer will be called on the thread it was created.
+   * 
+   * \param aSource The source.
+   * \param aDestination The destination.
+   * \param aObserver An optional observer.
+   * \return a changeset cookie.
+   */
+  AString createChangesetAsync(in sbIMediaList aSource, 
+                               in sbIMediaList aDestination, 
+                               [optional] in nsIObserver aObserver);
+
+  /** 
+   * Create a changeset from multiple sources to a single destination in an
+   * asynchronous fashion.
+   *
+   * The changeset will contain all information necessary to make the destination have
+   * the same contents and properties for items as the sources. It will _not_ 
+   * give you order information though. Sortable destinations will not have the same
+   * sort order as the sources.
+   *
+   * Applying these changes out of order to the destination will have
+   * adverse effects.
+   * 
+   * The observer will get called with the following arguments when 
+   * the changeset is ready:
+   *
+   *   aSubject will be a sbILibraryChangeset instance.
+   *   aTopic   will be "library-changeset-ready".
+   *   aData    will be the changeset cookie. The cookie can be used to retreive
+   *            the changeset for processing at a later time outside of the observer
+   *            call.
+   *
+   * The observer will be called on the thread it was created.
+   *
+   * If you do not wish to use an observer, you may retrieve the changeset using 
+   * the cookie that is returned in conjunction with the getChangeset method.
+   *
+   * \param aSources The source libraries or lists.
+   * \param aDestination The destination.
+   * \param aObserver An optional observer.
+   * \return a changeset cookie.
+   * \sa getChangeset
+   */
+  sbILibraryChangeset createMultiChangesetAsync(in nsIArray aSources,
+                                                in sbIMediaList aDestination,
+                                                [optional] in nsIObserver aObserver);
+
+  /** 
+   * Retreive a changeset using a changeset cookie.
+   *
+   * \param aChangesetCookie 
+   * \return The library changeset.
+   * \throw NS_ERROR_NOT_AVAILABLE when no changeset is available for a given cookie.
+   */
+  sbILibraryChangeset getChangeset(in AString aChangesetCookie);
+};
+
+%{C++
+#define SB_DIFFING_SERVICE_CHANGESET_READY "library-changeset-ready"
+%}

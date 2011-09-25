@@ -1,0 +1,130 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbIPropertyBuilder.idl
+ * \brief Definition of the sbIPropertyBuilder interfaces
+ * \sa List of "see also" files
+ */
+
+#include "nsISupports.idl"
+
+interface sbIPropertyArray;
+interface sbIPropertyInfo;
+interface nsIStringBundle;
+
+/**
+* \interface sbIPropertyBuilder
+* \sa sbIPropertyInfo
+*/
+[scriptable, uuid(9b1026c6-3896-49c6-a72f-4f4a2b21a6be)]
+interface sbIPropertyBuilder : nsISupports
+{
+  attribute AString propertyID;
+
+  attribute AString displayName;
+
+  attribute AString displayNameKey;
+
+  attribute boolean userViewable;
+
+  attribute boolean userEditable;
+
+  attribute boolean remoteReadable;
+
+  attribute boolean remoteWritable;
+  
+  sbIPropertyInfo get();
+};
+
+/**
+* \interface sbISimpleButtonPropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(bd71935f-697f-424d-9721-6477f4e34556)]
+interface sbISimpleButtonPropertyBuilder : sbIPropertyBuilder
+{
+  attribute AString label;
+
+  attribute AString labelKey;
+};
+
+/**
+* \interface sbIDownloadButtonPropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(9ab2e249-e8ef-477b-88a4-790c08a47a54)]
+interface sbIDownloadButtonPropertyBuilder : sbIPropertyBuilder
+{
+  attribute AString label;
+  
+  attribute AString retryLabel;
+
+  attribute AString labelKey;
+  
+  attribute AString retryLabelKey;
+};
+
+
+/**
+* \interface sbIStatusPropertyBuilder
+* \sa sbIPropertyBuilder
+* used for unit testing
+*/
+[scriptable, uuid(6c5495d2-5b26-45f0-9117-b9f775502bae)]
+interface sbIStatusPropertyBuilder : sbIPropertyBuilder
+{
+  attribute AString label;
+  
+  attribute AString completedLabel;
+  
+  attribute AString failedLabel;
+
+  attribute AString labelKey;
+
+  attribute AString completedLabelKey;
+    
+  attribute AString failedLabelKey;
+};
+
+/**
+* \interface sbIImagePropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(7b68af5c-3443-4c5b-9c65-44efe3781510)]
+interface sbIImagePropertyBuilder : sbIPropertyBuilder
+{
+};
+
+/**
+* \interface sbIRatingPropertyBuilder
+* \sa sbIPropertyBuilder
+*/
+[scriptable, uuid(10f69629-3e74-448a-b627-7ea734644715)]
+interface sbIRatingPropertyBuilder : sbIPropertyBuilder
+{
+};
+

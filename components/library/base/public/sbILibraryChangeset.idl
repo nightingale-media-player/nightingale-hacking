@@ -1,0 +1,193 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbILibraryChangeset.idl
+ * \sa sbILibraryLoggingService.idl, sbILibraryLoggingService.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface sbIMediaItem;
+interface sbIMediaList;
+
+/**
+ * \interface sbIChangeOperation
+ * \sa sbIPropertyChange sbILibraryChange
+ */
+[scriptable, uuid(17c6e702-ea9d-46ed-98ed-0bd57d84b25c)]
+interface sbIChangeOperation : nsISupports
+{
+  /**
+   * Unknown operation occurred.
+   */
+  const unsigned long UNKNOWN   = 0;
+
+  /**
+   * Item or property was added.
+   */
+  const unsigned long ADDED     = 0x10;
+
+  /**
+   * Item or property was modified.
+   */
+  const unsigned long MODIFIED  = 0x20;
+
+  /**
+   * Item was moved. This is only valid for ordered / sortable lists.
+   */
+  const unsigned long MOVED     = 0x30;
+
+  /**
+   * Item or property was deleted.
+   */
+  const unsigned long DELETED   = 0x40;
+
+  /**
+   * Type of operation.
+   */
+  readonly attribute unsigned long  operation;
+};
+
+/**
+ * \interface sbIPropertyChange
+ * \sa sbIChangeOperation
+ */
+[scriptable, uuid(182106d3-a5eb-4c59-a161-766940c7c1da)]
+interface sbIPropertyChange : sbIChangeOperation
+{
+  /**
+   * Property ID
+   *
+   * The ID of the property that was changed.
+   * (e.g. http://getnightingale.com/data/1.0#artistName)
+   */
+  readonly attribute AString        id;
+
+  /**
+   * The original value of the property.
+   */
+  readonly attribute AString        oldValue;
+
+  /**
+   * The new value of the property.
+   */
+  readonly attribute AString        newValue;
+};
+
+/**
+ * \interface sbILibraryChange
+ * \sa sbILibraryChangeset sbIPropertyChange sbIChangeOperation
+ */
+[scriptable, uuid(e8db7394-2256-45b1-b079-28fbbcb7f5b9)]
+interface sbILibraryChange : sbIChangeOperation
+{
+  /**
+   * Timestamp for the change. 
+   *
+   * This is a UNIX style timestamp.
+   */
+  readonly attribute unsigned long long timestamp;
+
+  /**
+   * The source item that triggered the change.
+   *
+   * In the case where the sourceItem was added;
+   * the destinationItem will be the same as the 
+   * sourceItem.
+   */
+  readonly attribute sbIMediaItem   sourceItem;
+
+  /**
+   * The destination item that should recieve the change.
+   *
+   * The destination item may be the same as the 
+   * source item.
+   *
+   * In the case where the sourceItem was added;
+   * the destinationItem will be the same as the
+   * sourceItem.
+   */
+  readonly attribute sbIMediaItem destinationItem;
+  
+  /**
+   * Indicates if the item changed is a list.
+   *
+   * If this attribute is true, the item will 
+   * implement sbIMediaList.
+   *
+   * \sa sbIMediaList
+   */
+  readonly attribute boolean        itemIsList;
+
+  /**
+   * The item properties affected by the change.
+   *
+   * This is an array of sbIPropertyChange elements.
+   *
+   * \note This may be null if the item in question was
+   *       deleted.
+   */
+  readonly attribute nsIArray       properties;
+};
+
+
+/** 
+ * \interface sbILibraryChangeset
+ * \sa sbILibraryChange sbIPropertyChange sbIChangeOperation
+ */
+[scriptable, uuid(15ce0b86-4285-481b-8af4-751fc2357f7b)]
+interface sbILibraryChangeset : nsISupports
+{
+  /**
+   * Source Libraries or MediaLists.
+   * 
+   * This is an array of sbIMediaList elements.
+   */
+  readonly attribute nsIArray      sourceLists;
+  
+  /**
+   * Destination Library or MediaList. 
+   *
+   * This may be the same as the source library or media list when using 
+   * sbILibraryLoggingService.
+   * 
+   * When using sbILibraryDiffingService, this will be the destination 
+   * library or media listfor the changeset.
+   */
+  readonly attribute sbIMediaList      destinationList;
+
+  /**
+   * Ordered array of changes. 
+   *
+   * This is an array of sbILibraryChange elements.
+   *
+   * Applying these changes out of order to the destination will have
+   * adverse effects.
+   */
+  readonly attribute nsIArray        changes;
+};

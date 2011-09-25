@@ -1,0 +1,76 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2009 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@ \
+        @srcdir@/.. \
+        @top_srcdir@/components/filesystemevents/base/src
+
+include $(DEPTH)/build/autodefs.mk
+
+ifeq (windows,$(SB_PLATFORM))
+   DISABLE_DEADLY_WARNINGS = 1
+endif
+
+DYNAMIC_LIB = sbWin32FileSystemEvents
+
+CPP_SRCS = sbWin32FileSystemWatcher.cpp \
+           $(NULL)
+
+# From components/filesystemevents/base/src
+CPP_SRCS += sbBaseFileSystemWatcher.cpp \
+            sbFileSystemNode.cpp \
+            sbFileSystemTree.cpp \
+            sbFileSystemTreeState.cpp \
+            sbFileSystemChange.cpp \
+            $(NULL)
+
+# From current_directory/..
+CPP_SRCS += FileSystemComponent.cpp \
+            $(NULL)
+
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
+                     $(topsrcdir)/components/filesystemevents \
+                     $(topsrcdir)/components/filesystemevents/base/src \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/streams/src \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
+                              components/moz/streams/src/sbMozStreams \
+                              components/moz/threads/src/sbMozThreads \
+                              $(NULL)
+
+IS_COMPONENT = 1
+
+include $(topsrcdir)/build/rules.mk
+

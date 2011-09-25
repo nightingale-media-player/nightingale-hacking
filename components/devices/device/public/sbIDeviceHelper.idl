@@ -1,0 +1,84 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright© 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbIDeviceHelper.idl
+ * \brief Helper routines for device implementation
+ */
+
+#include "nsISupports.idl"
+
+interface nsIDOMWindow;
+interface sbIDevice;
+interface sbIDeviceLibrary;
+
+/**
+ * \interface sbIDeviceHelper
+ * \note This interface is NOT expected to be threadsafe
+ *
+ * Helper routines for device implementations
+ */
+[scriptable, uuid(50670cd2-b060-4be9-975e-602c7665e5f0)]
+interface sbIDeviceHelper : nsISupports
+{
+  /**
+   * Check if a given device library has space for a write request
+   * Will prompt the user for a partial write if not enough
+   *
+   * \param aSpaceNeeded the amount of space required, in bytes
+   * \param aLibrary the device library to write to
+   * \param aDevice the device to write to; if not supplied, will attempt to 
+   *                determine based on the library (slow)
+   * \param aSpaceRemaining [optional] the amount of space available
+   * \return True if the write should proceed (even partially), false if not
+   */
+  boolean hasSpaceForWrite(in unsigned long long aSpaceNeeded,
+                           in sbIDeviceLibrary aLibrary,
+                           [optional] in sbIDevice aDevice,
+                           [optional] out unsigned long long aSpaceRemaining);
+
+  /**
+   * Ask the user what action to take in response to an operation space exceeded
+   * event for the device specified by aDevice and device library specified by
+   * aLibrary.  Use the window specified by aParent as a dialog parent.  The
+   * amount of space needed for the operation is specified by aSpaceNeeded and
+   * the amount available by aSpaceAvailable.  Return true if user chooses to
+   * proceed with operation.
+   *
+   * \param aParent the parent window for dialogs
+   * \param aDevice target device of operation
+   * \param aLibrary target device library of operation
+   * \param aSpaceNeeded Space needed by operation
+   * \param aSpaceAvailable Space available to operation
+   * \return True if operation should proceed (even partially), false if not
+   */
+  boolean queryUserSpaceExceeded(in nsIDOMWindow       aParent,
+                                 in sbIDevice          aDevice,
+                                 in sbIDeviceLibrary   aLibrary,
+                                 in unsigned long long aSpaceNeeded,
+                                 in unsigned long long aSpaceAvailable);
+};
+

@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+
+
+<!-- WARNING : this file MUST NOT load nightingale.dtd !! -->
+
+<!-- The reason for this is because an error while parsing that dtd
+     may just be what caused the parser error to pop up, so in those
+     cases, this dialog would fail to load. -->
+
+
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<dialog
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ id="parsererrordetails"
+ title="Parser Error Details"
+ buttons="accept"
+ onload="return doInit();"
+ maxwidth="450"
+>
+
+  <description id="desc"/>
+
+  <script>
+
+   <![CDATA[
+    
+    function doInit() {
+      document.getElementById("desc").textContent = window.arguments[0];
+    }
+    
+   ]]>
+
+  </script>
+
+</dialog>

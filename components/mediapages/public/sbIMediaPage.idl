@@ -1,0 +1,95 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+interface sbIMediaListView;
+interface nsIDOMEvent;
+interface nsIDragSession;
+
+/**
+ * \interface sbIMediaPage
+ * \brief A generic interface for UI that renders a media list view
+ *
+ * Pages that display libraries or other media lists must supply this interface
+ * in order for browser history, playback, find current track, and other 
+ * external functionality to work as expected.
+ *
+ * The primary purpose of the interface is to facilitate setting the
+ * sbIMediaListView that the page is to display.   
+ *
+ * For sample code and more information, see 
+ *    http://developer.getnightingale.com/add-on-api/
+ *
+ * \sa sbIMediaListView, sbIMediaList, playlistPage.xul
+ */
+[scriptable, uuid(0f1e6280-bed3-11de-8a39-0800200c9a66)]
+interface sbIMediaPage : nsISupports
+{
+
+  /**
+   * \brief A filtered, sorted view of the media list that the page 
+   *        is supposed to render.
+   * 
+   * The mediaListView will be set by the browser during the capturing phase 
+   * of the window load event, meaning that it should be available
+   * by standard onLoad time.
+   *
+   * Note that the mediaListView should not be set again after load.
+   */
+  attribute sbIMediaListView mediaListView;
+
+  /**
+   * \brief Should be true if the media page is the only allowed view for
+   *        the data.
+   */
+  readonly attribute PRBool isOnlyView;
+
+  /**
+   * \brief Tell the page to make the MediaItem at the given index visible and highlighted.
+   * \param aViewIndex Index into the MediaListView (needed, since 
+   *        MediaItems may appear multiple times in a list)
+   * \return True if the page is able to show the corresponding item
+   */
+  PRBool highlightItem(in unsigned long aViewIndex);
+
+  /** 
+   * \brief Called when something is dragged over the tabbrowser tab for this page
+   * \param aEvent The draggedover event
+   * \param aSession The items to be dropped  
+   * \return True if the drop can proceed
+   */
+  PRBool canDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+  
+  /** 
+   * \brief Called when something is dropped on the tabbrowser tab for this page
+   * \param aEvent The drop event
+   * \param aSession The items to be dropped  
+   * \return True if the drop succeeded
+   */
+  PRBool onDrop(in nsIDOMEvent aEvent, in nsIDragSession aSession);
+};
+
+

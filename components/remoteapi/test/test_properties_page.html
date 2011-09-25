@@ -1,0 +1,402 @@
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+<html>
+  <head>
+    <script>
+function runTest(tester) {
+  try {
+    // All the standard properties
+    var props = tester.props;
+
+    // must have a value that will parse to a number
+    var numericalPropNames = [
+      "ordinal",
+      "contentLength",
+      "trackNumber",
+      "discNumber",
+      "totalDiscs",
+      "totalTracks",
+      "playCount",
+      "skipCount",
+      "rating",                     // value [0-5]
+      "duration",
+      "lastPlayTime",
+      "bitRate",
+      "channels",
+      "sampleRate",
+      "bpm",
+      "episodeNumber",
+      "seasonNumber",
+    ];
+
+    // must have a uri-valid value
+    var uriPropNames = [
+      "primaryImageURL",
+      "originURL",
+      "copyrightURL",
+      "albumDetailUrl",
+      "artistDetailUrl",
+      "playlistURL"
+    ];
+
+    // this one is just super special
+    var specialNames = [
+      "year"                        // 1877 min value
+    ];
+
+    // boolean value
+    var booleanPropNames = [
+      "hidden",                     // boolean  1/0
+      "isPartOfCompilation",        // boolean  1/0
+      "enableAutoDownload",         // boolean  1/0
+      "excludeFromHistory",         // boolean  1/0
+      "disableDownload",            // boolean  1/0
+      "isSortable",                 // boolean  1/0
+      "isSubscription",             // boolean  1/0
+    ];
+
+    // These we can't read from the WPAPI
+    // contentURL is special cased down below.
+    var nonRemoteReadableNames = [
+      "rapiScopeURL",
+      "created",
+      "updated",
+      "GUID",
+      "storageGUID",
+      "outerGUID",
+      "ordinal",
+      "contentType",
+      "contentLength",
+      "isList",
+      "isReadOnly",
+      "isContentReadOnly",
+      "rapiSiteURL",
+      "destination",
+      "isSortable",
+      "originLibraryGuid",
+      "originItemGuid",
+      "transferPolicy",
+      "defaultMediaPageURL",
+      "customMediaPagesOnly",
+      "onlyCustomMediaPages",
+      "availability",
+      "deviceId",
+      "playCount_AtLastSync",
+      "skipCount_AtLastSync",
+      "smartMediaListState",
+      "createdFirstRunSmartPlaylists",
+      "downloadMediaListGUID",
+      "shouldRip",
+      "cdDiscHash",
+      "isDRMProtected",
+      "lastPlayPosition",
+      "playlistURL",
+      "attemptedRemoteArtFetch",
+      "dontWriteMetadata"
+    ];
+
+    // These we can't modify from the WPAPI
+    var nonRemoteWritableNames = [
+      "rapiScopeURL",
+      "contentURL",
+      "created",
+      "updated",
+      "GUID",
+      "storageGUID",
+      "outerGUID",
+      "ordinal",
+      "contentType",
+      "contentLength",
+      "playCount",
+      "skipCount",
+      "isList",
+      "isReadOnly",
+      "isContentReadOnly",
+      "customType",
+      "destination",
+      "downloadStatusTarget",
+      "rapiSiteURL",
+      "rapiSiteID",
+      "isSortable",
+      "originPage",
+      "originPageTitle",
+      "originLibraryGuid",
+      "originItemGuid",
+      "lastPlayTime",
+      "lastSkipTime",
+      "originURL",
+      "transferPolicy",
+      "defaultMediaPageURL",
+      "onlyCustomMediaPages",
+      "copyrightURL",
+      "availability",
+      "hash",
+      "deviceId",
+      "playCount_AtLastSync",
+      "skipCount_AtLastSync",
+      "smartMediaListState",
+      "listType",
+      "createdFirstRunSmartPlaylists",
+      "downloadMediaListGUID",
+      "shouldRip",
+      "cdDiscHash",
+      "isDRMProtected",
+      "lastPlayPosition",
+      "playlistURL",
+      "attemptedRemoteArtFetch",
+      "dontWriteMetadata"
+    ];
+
+    var library = nightingale.mainLibrary;
+    var list = library.createSimpleMediaList("TestList");
+    var item = library.createMediaItem("http://example.com/foo");
+
+    var sitelibrary = nightingale.siteLibrary;
+    var sitelist = sitelibrary.createSimpleMediaList("TestSiteList");
+    var siteitem = sitelibrary.createMediaItem("http://example.com/foo");
+
+    var testObjs = { sitelibrary: sitelibrary,
+                     sitelist: sitelist,
+                     siteitem: siteitem,
+                     library: library,
+                     list: list,
+                     item: item };
+
+    for ( var obj in testObjs ) {
+      var foo = testObjs[obj];
+
+      tester.log("");
+      tester.log("---------------------------------------------------");
+      tester.log("                  " + obj);
+      tester.log("---------------------------------------------------");
+
+      tester.log("");
+      tester.log("Writing to the properties");
+      tester.log("");
+
+      // loop over all stuff in props to make sure we don't miss anything
+      for ( var stuff in props ) {
+
+        // check that we can't write to properties we aren't supposed
+        // to have write access for.
+        if ( nonRemoteWritableNames.indexOf(stuff) > -1 ) {
+          try {
+            foo.setProperty( props[stuff], "FAIL" );
+            tester.failNoThrow( "property (!w)\t" + stuff +
+                         " ERR: writable when not supposed to be" );
+          } catch (e) {
+            // could not write to a property - SUCCESS
+            tester.log( "property (!w)\t" + stuff );
+          }
+          continue;
+        }
+
+        // Everything else is writable, no test for write only
+
+        try {
+          // year has a min value
+          if ( stuff == "year" ) {
+            foo.setProperty( props[stuff], "1877" );
+          }
+          // these properties get a number
+          else if ( numericalPropNames.indexOf(stuff) > -1 ) {
+            foo.setProperty( props[stuff], "4" );
+          }
+          // these get special numbers
+          else if ( booleanPropNames.indexOf(stuff) > -1 ) {
+            foo.setProperty( props[stuff], "0" );
+          }
+          // these get url format strings
+          else if ( uriPropNames.indexOf(stuff) > -1 ) {
+            foo.setProperty( props[stuff], "http://example.com/foo" );
+          }
+          // everything else gets a test string
+          else {
+            foo.setProperty( props[stuff], "test" );
+          }
+
+          // main library is never writable
+          if ( obj == "library" ) {
+            tester.failNoThrow( "property (!w)\t" + stuff +
+                         " ERR: Able to write library " + stuff );
+          } else {
+            tester.log( "property ( w)\t" + stuff );
+          }
+
+        } catch (e) {
+          // main library is not writable at all
+          if ( obj == "library" ) {
+            tester.log( "property (!w)\t" + stuff );
+          } else {
+            // test for NS_ERROR_NOT_AVAILABLE, can't use Components.results.*
+            // since we're in an html page
+            if (e.result == 0x80070057) {
+              tester.failNoThrow( "property ( w)\t" + stuff +
+                                  " ERR: Tried to write an illegal value, probably missing from a *PropNames array" );
+            } else {
+              tester.failNoThrow( "property ( w)\t" + stuff +
+                                  " ERR: not writable when supposed to be? (" + e + ")");
+            }
+          }
+        }
+      }
+
+      tester.log("");
+      tester.log("Reading the properties");
+      tester.log("");
+
+      // loop over all stuff in props to make sure we don't miss anything
+      for ( var stuff in props ) {
+
+        // report the non-readable names
+        if ( nonRemoteReadableNames.indexOf(stuff) > -1 ) {
+          try {
+            foo.getProperty( props[stuff] );
+            tester.failNoThrow( "property (!r)\t" + stuff +
+                         " ERR: Was able to read non-readable property:" );
+          } catch (e) {
+            // couldn't read from a property we shouldn't be able to read
+            tester.log( "property (!r)\t" + stuff );
+          }
+          continue;
+        }
+
+        if ( stuff == "contentURL" ) {
+          // special case the contentURL for its different settings and
+          // behavior.
+          // We should be able to read
+          // the contentURL for list and item provided they aren't file: and
+          // currently the list is nightingale-medialist:// and the file is 
+          // created above as http: If library becomes a nightingale-library::
+          // url this test will break and need fixing.
+          try {
+            // for non-file siteitems and sitelists
+            var val = foo.getProperty(props[stuff]);
+            if ( obj == "sitelist" || obj == "siteitem" ) {
+              tester.log( "property (ro)\t" + stuff + " is: " + val );
+            } else {
+              tester.failNoThrow( "property (ro)\t" + stuff +
+                           " ERR: Able to read library contentURL" );
+            }
+          } catch (e) {
+            // for sitelibraries - their contentURL is file:
+            // all other mainlib stuff can't access contentURL
+            if ( obj == "sitelibrary" ||
+                 obj == "library" ||
+                 obj == "list" ||
+                 obj == "item" ) {
+              tester.log( "property (!r)\t" + stuff );
+            } else {
+              tester.failNoThrow( "property (!r)\t" + stuff +
+                           " ERR: Not able to read list/item contentURL" );
+            }
+          }
+          continue;
+        }
+
+        // We couldn't write to this properties so just check we can get them
+        if ( nonRemoteWritableNames.indexOf(stuff) > -1 ) {
+          try {
+            foo.getProperty( props[stuff] );
+            tester.log( "property (ro)\t" + stuff );
+          } catch (e) {
+            tester.failNoThrow( "property (ro)\t" + stuff +
+                                " ERR: Not actually readable" );
+          }
+          // continue because the following asserts will fail since we didn't
+          // write anything into them above, they're read only.
+          continue;
+        }
+
+        // main library is all readonly
+        if ( obj == "library" ) {
+          try {
+            // library has it's mediaListName set specifically
+            if ( stuff == "mediaListName" ) {
+              var val = foo.getProperty(props[stuff]);
+              tester.assertEqual( val, "&chrome://nightingale/locale/nightingale.properties#servicesource.library" );
+              tester.log( "property (ro)\t" + stuff + " is: " + val );
+            } else {
+              // All other properties are so varied we can't do value comparisons
+              foo.getProperty( props[stuff] );
+              tester.log( "property (ro)\t" + stuff );
+            }
+          } catch (e) {
+            tester.failNoThrow( "property (ro)\t" + stuff +
+                                " ERR: not readable when supposed to be? (" + e + ")" );
+          }
+          continue;
+        }
+
+        try {
+          // year has a min value
+          if ( stuff == "year" ) {
+            tester.assertEqual( foo.getProperty(props[stuff]), "1877" );
+          }
+          // these properties get a number
+          else if ( numericalPropNames.indexOf(stuff) > -1 ) {
+            tester.assertEqual( foo.getProperty( props[stuff] ), "4" );
+          }
+          // these get special numbers
+          else if ( booleanPropNames.indexOf(stuff) > -1 ) {
+            tester.assertEqual( foo.getProperty(props[stuff] ), "0" );
+          }
+          // these get url format strings
+          else if ( uriPropNames.indexOf(stuff) > -1 ) {
+            tester.assertEqual( foo.getProperty( props[stuff] ),
+                                "http://example.com/foo" );
+          }
+          // everything else gets a test string
+          else {
+            tester.assertEqual( foo.getProperty( props[stuff] ), "test" );
+          }
+
+          tester.log( "property ( r)\t" + stuff );
+        } catch (e) {
+          tester.failNoThrow( "property ( r)\t" + stuff +
+                              " ERR: not readable when supposed to be? (" + e + ")" );
+        }
+      }
+    }
+  } catch (e) {
+    tester.endRemoteAPITest(e);
+  }
+
+  nightingale.downloadMediaList.clear();
+
+  tester.endRemoteAPITest();
+}
+
+function runPageTest(tester) {
+  setTimeout( function runPageTest_setTimeout() { runTest(tester) }, 0 );
+}
+    </script>
+  </head>
+  <body>test_remotelibrary_getters_page.html</body>
+</html>
+

@@ -1,0 +1,3 @@
+testMediaPage.jar:
+% content  nightingale-test-media-page  %content/
+@include_all_to 

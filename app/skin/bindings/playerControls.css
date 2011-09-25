@@ -1,0 +1,180 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+MAIN PLAYBACK CONTROLS
+
+Applies images and layout rules for Play/Pause, Previous (back), Next (forward).
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+
+/** the sb-player-button class is used to get an image-only button
+    with no borders or padding.  **/
+
+.sb-player-button,
+.sb-player-button > .clickhold-button
+{
+  -moz-appearance: none !important;
+  -moz-background-clip: padding !important;
+  background-color: transparent !important;
+  border: none !important;
+  margin: 0px;
+  padding: 0px;
+  min-width: 0px !important;
+  min-height: 0px !important;
+}
+
+.sb-player-button > button > .button-box > .button-text,
+.sb-player-button > .button-box > .button-text,
+.sb-player-button > button > .button-box > .button-icon,
+.sb-player-button > .button-box > .button-icon
+{
+  margin: 0px !important;  
+}
+
+.sb-player-button:focus > button > .button-box > .button-text,
+.sb-player-button > button:focus > .button-box > .button-text,
+.sb-player-button:focus > .button-box > .button-text
+{
+  border: 0px !important;
+  outline: none !important;
+}
+
+
+/** 
+*******************************************************************************
+VOLUME
+Mute and Slider
+*******************************************************************************
+*/
+
+.sb-player-mute-button-muteoff > .clickhold-button
+{
+  list-style-image: url(chrome://nightingale/skin/volume/mute-off.png);
+  -moz-image-region: rect(0px 11px 11px 0px);
+}
+.sb-player-mute-button-muteoff:hover > .clickhold-button
+{
+  -moz-image-region: rect(11px 11px 22px 0px);
+}
+.sb-player-mute-button-muteon > .clickhold-button
+{
+  list-style-image: url(chrome://nightingale/skin/volume/mute-on.png);
+  -moz-image-region: rect(0px 11px 11px 0px);
+}
+.sb-player-mute-button-muteon:hover > .clickhold-button
+{
+  -moz-image-region: rect(11px 11px 22px 0px);
+}
+
+sb-player-mute-button {
+  padding-top: 2px;
+  margin-left: 3px;
+  margin-right: 2px;
+}
+
+progressmeter.sb-player-volume-slider {
+  min-width: 50px;
+  max-width: 100px;
+  margin: 0px 0px 0px 6px;
+}
+
+
+sb-player-volume-slider
+{
+  margin-top: 2px !important;
+  margin-bottom: 1px !important; 
+}
+
+/** The thumb does not respond to list-style-image, so we are forced to 
+    use a background. We put both states in one image and then change
+    the background-position in order to prevent flickering when changing
+    states. **/
+thumb.sb-player-volume-slider
+{
+  width: 14px;
+  height: 14px;
+  background-image: url(chrome://nightingale/skin/volume/volume-thumb.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: none;
+}
+thumb.sb-player-volume-slider:active
+{
+  background-image: url(chrome://nightingale/skin/volume/volume-thumb-active.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+
+progressmeter.sb-player-volume-slider > .progress-bar
+{
+  -moz-appearance: none !important;
+  background-image: none;
+}
+progressmeter.sb-player-volume-slider > .progress-remainder
+{
+  background-image: none;
+}
+    
+    
+slider.sb-player-volume-slider
+{
+  background-image: url(chrome://nightingale/skin/volume/volume-progress-slider-bkgd.png);
+  background-position: left center;
+  background-repeat: no-repeat;
+  height: 22px !important;
+  border: none;
+  margin-right: 5px;  
+  padding-left: 6px;  
+}
+
+
+progressmeter.sb-player-volume-slider
+{
+  background-image: url(chrome://nightingale/skin/volume/volume-progressmeter-bkgd.png);
+  background-position: right center;
+  height: 22px !important;
+  border: none;
+}
+
+
+sb-player-volume-slider,
+thumb.sb-player-volume-slider > gripper,
+thumb.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder
+{
+  background-color: transparent !important;
+}
+

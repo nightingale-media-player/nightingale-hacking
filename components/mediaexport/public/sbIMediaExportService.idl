@@ -1,0 +1,67 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+
+//
+// @brief This IDL file defines the media-export service for Nightingale.
+//        This service listens for changes in the main library and writes
+//        a task file of all the changed data to the profile directory.
+//
+//        The export operation is normally done at Nightingale shutdown,
+//        depending on if the service has been activated 
+//        (see "sbMediaExportDefines.h") by the users prefs. However, a method
+//        is provided on the interface to manually invoke the export data.
+//
+//        The service is also responsible for managing the media-export
+//        agent, which is defined in "sbIMediaExportAgentService.idl".
+//
+
+%{C++
+
+#define SB_MEDIAEXPORTSERVICE_CONTRACTID  \
+  "@getnightingale.com/media-export-service;1"
+#define SB_MEDIAEXPORTSERVICE_CLASSNAME        \
+  "Nightingale Media Export Agent Service" 
+%}
+
+[scriptable, uuid(dfbec368-1dd1-11b2-b467-921fa5b0a7d4)]
+interface sbIMediaExportService : nsISupports
+{
+  //
+  // @brief Property to indicate if the export service has any pending changes 
+  //        that need to be flushed out to disk.
+  //
+  readonly attribute boolean hasPendingChanges;
+
+  //
+  // @brief Manually invoke the media export service. This method will perform
+  //        the tasks that the export service normally does at shutdown.
+  //
+  void exportNightingaleData();
+};
+

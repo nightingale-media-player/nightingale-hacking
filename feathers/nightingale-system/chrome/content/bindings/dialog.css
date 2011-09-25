@@ -1,0 +1,99 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+
+CUSTOM NIGHTINGALE DIALOG STYLES
+
+This file is included directly into <dialog type="nightingale"> elements 
+when using feathers that disable native operating system window chrome 
+(e.g. titlebars).
+
+See also app/content/bindings/dialog.xml and app/skin/global/dialog
+
+*******************************************************************************
+*/
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+dialog:root,
+#dialog-titlebar,
+#sb-sys-title-title,
+dialog:root #sb-sys-outer-frame-children > stack > vbox {
+  padding: 0;
+  margin: 0;
+}
+
+#dialog-titlebar {
+  min-height:22px !important;
+  max-height:22px !important;
+}
+.dialog-button-box,
+.wizard-buttons,
+.paneDeckContainer+hbox /** prefs **/ {
+  -moz-box-pack:end;
+  padding:0 8px;
+}
+
+#dialog-titlebar .hook > .left,
+#dialog-titlebar .hook > .right {
+  min-width:16px;
+  min-height:22px;
+  background-position:center top;
+  background-repeat:no-repeat;
+}
+/*
+#dialog-titlebar .hook > .left {
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar-left.png');
+}
+#dialog-titlebar .hook > .right {
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar-right.png');
+}
+  */
+#dialog-titlebar .hook > .right,
+#dialog-titlebar .hook > .left,
+#dialog-titlebar .hook > .middle {
+  background-image: url('chrome://nightingale/skin/window/bg-title-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+#sb-sys-dialog-titlebar-osx-buttons {
+  visibility:hidden;
+}
+
+#sb-sys-dialog-titlebar-title {
+  min-height:22px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.dialog-content-box {
+  margin: 0px;
+  padding: 4px;
+}

@@ -1,0 +1,502 @@
+#filter substitution
+// Nightingale Default Prefs.
+pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
+
+// This is only used by the MAC version
+pref("browser.chromeURL", "chrome://nightingale/content/xul/macCmdLineFwd.xul");
+
+// Prevent xulrunner from launching multiple instances of Nightingale.
+pref("toolkit.singletonWindowType", "Nightingale:Main");
+
+pref("general.useragent.extra.nightingale", "Nightingale/@SB_MILESTONE@ (@SB_BUILD_ID@)");
+pref("nightingale.buildNumber", "@SB_BUILD_NUMBER@");
+
+// Default feather settings:
+// @see sbFeathersManager.js for more information about each pref
+pref("nightingale.feathers.default_skin_internalname", "nightingale-system");
+pref("nightingale.feathers.default_feather_id", "nightingale-system@getnightingale.com");
+pref("nightingale.feathers.default_main_layout", "chrome://nightingale-system/content/xul/mainplayer.xul");
+pref("nightingale.feathers.default_secondary_layout", "chrome://nightingale-system/content/xul/miniplayer.xul");
+
+pref("accessibility.typeaheadfind", false);
+pref("accessibility.typeaheadfind.timeout", 5000);
+pref("accessibility.typeaheadfind.flashBar", 1);
+pref("accessibility.typeaheadfind.linksonly", false);
+
+// Dump the current ram footprint when minimized.
+pref("config.trim_on_minimize", true);
+
+// Scan for some extra plugins.
+pref("plugin.scan.SunJRE", "1.3");
+pref("plugin.scan.Acrobat", "5.0");
+pref("plugin.scan.Quicktime", "5.0");
+pref("plugin.scan.WindowsMediaPlayer", "7.0");
+
+// Password Manager
+pref("signon.rememberSignons", true);
+pref("signon.expireMasterPassword", false);
+pref("signon.SignonFileName", "signons.txt");
+
+pref("browser.shell.checkDefaultBrowser", false);
+
+pref("browser.formfill.enable", true);
+
+pref("browser.search.update", false);
+pref("browser.search.update.log", false);
+pref("browser.search.updateinterval", 6);
+
+pref("browser.sessionhistory.max_total_viewers", 0);
+pref("browser.sessionhistory.max_entries", 50);
+
+pref("browser.xul.error_pages.enabled", true);
+
+// Download manager prefs
+pref("browser.download.useDownloadDir", true);
+     // 0-desktop  1-download  2-pref("browser.download.dir")
+pref("browser.download.folderList", 0);
+pref("browser.download.manager.showAlertOnComplete", false);
+pref("browser.download.manager.showAlertInterval", 2000);
+     // when downloads are removed from list 0-completion 1-shutdown 2-never
+pref("browser.download.manager.retention", 3);
+     // these two control whether the manager shows up, both must be true
+pref("browser.download.manager.showWhenStarting", true);
+pref("browser.download.manager.useWindow", true);
+     // duh
+pref("browser.download.manager.closeWhenDone", false);
+     // how long to wait before showing dm
+pref("browser.download.manager.openDelay", 0);
+pref("browser.download.manager.focusWhenStarting", false);
+     // flashes this many times when opened - in theory
+pref("browser.download.manager.flashCount", 2);
+pref("browser.download.manager.displayedHistoryDays", 7);
+pref("browser.download.manager.addToRecentDocs", true);
+//pref("privacy.item.downloads",  true);
+pref("browser.download.show_plugins_in_list", true);
+pref("browser.download.hide_plugins_without_extensions", true);
+
+// Default to always downloading without prompting.
+pref("nightingale.download.music.alwaysPrompt", false);
+
+pref("browser.link.open_external", 3);
+pref("browser.link.open_newwindow", 3);
+pref("browser.link.open_newwindow.restriction", 0);
+//pref("browser.tabs.loadInBackground", true);
+pref('browser.tabs.enabled', true);
+pref("browser.tabs.loadDivertedInBackground", false);
+
+// set the default device transcoding/transfer ratio.
+pref("device.transcoding.transfer.ratio", 1);
+
+//
+// Advanced DOM JavaScript preferences
+//
+pref("dom.disable_window_move_resize", true);
+pref("dom.disable_window_flip", true);
+pref("dom.event.contextualmenu.enabled", false);
+pref("dom.disable_window_open_feature.status", true);
+pref("dom.disable_window_status_change", true);
+
+// Default columns for the web playlist
+pref("nightingale.webplaylist.columnspec",  "http://getnightingale.com/data/1.0#ordinal 28 a http://getnightingale.com/data/1.0#trackName 280 http://getnightingale.com/data/1.0#duration 38 http://getnightingale.com/data/1.0#artistName 169 http://getnightingale.com/data/1.0#albumName 159 http://getnightingale.com/data/1.0#downloadButton 83");
+
+// Dynamic Skin Switching
+pref("extensions.dss.enabled", false);
+
+// Non-dynamic switch pending after next restart
+pref("extensions.dss.switchPending", false);
+
+pref("general.autoScroll", true);
+pref("general.smoothScroll", false);
+
+// this will automatically enable inline spellchecking (if it is available) for
+// editable elements in HTML
+// 0 = spellcheck nothing
+// 1 = check multi-line controls [default]
+// 2 = check multi/single line controls
+pref("layout.spellcheckDefault", 1);
+
+pref("network.protocol-handler.external.mailto", true);
+pref("network.protocol-handler.external.news", true);
+pref("network.protocol-handler.external.snews", true);
+pref("network.protocol-handler.external.nntp", true);
+
+// Don't warn when opening external http urls
+// This is to allow for launching _blank targeted links in the default browser
+pref("network.protocol-handler.warn-external.http", false);
+pref("network.protocol-handler.warn-external.https", false);
+
+pref("network.proxy.share_proxy_settings",  false);
+
+pref("plugin.default_plugin_disabled", true);
+pref("security.warn_entering_secure.show_once", true);
+pref("security.warn_leaving_secure.show_once", true);
+
+
+// Prefer a window size that can handle 1024px-ish websites
+// If this pref turns out to be bigger than the screen
+// the window size will fall back to that specified by css
+pref("nightingale.window.frame_outer.w", "1157");
+pref("nightingale.window.frame_outer.h", "718");
+
+#includesubst nightingale-update-prefs.js
+
+#ifdef DEBUG
+#includesubst nightingale-debug-prefs.js
+#endif
+
+#ifdef XP_WIN
+pref("browser.preferences.instantApply", false);
+#else
+pref("browser.preferences.instantApply", true);
+#endif
+
+##ifdef XP_MACOSX
+#pref("browser.preferences.animateFadeIn", true);
+##else
+pref("browser.preferences.animateFadeIn", false);
+##endif
+
+// Backspace and Shift+Backspace behavior
+// Should do nothing on Linux, and go Back/Forward on Mac OSX and Windows
+// 0 goes Back/Forward
+// 2 and other values, nothing
+#ifdef XP_UNIX
+#ifndef XP_MACOSX
+pref("browser.backspace_action", 2);
+#else
+pref("browser.backspace_action", 0);
+#endif
+#else
+pref("browser.backspace_action", 0);
+#endif
+
+// Enable the web playlist.
+// Extracts A tags and add browser context menu.
+// Note that this pref is reset to "1" on every app start.
+pref("nightingale.webplaylist.enabled", "1");
+
+// for tabbrowsing
+pref("browser.chrome.site_icons", true);
+pref("browser.chrome.favicons", true);
+pref("browser.tabs.loadInBackground", false);
+pref("browser.chrome.site_icons", true);
+pref("browser.chrome.favicons", true);
+pref("browser.chrome.image_icons.max_size", 1024);
+pref("browser.tabs.forceHide", false);
+pref("browser.tabs.warnOnClose", false);
+pref("browser.tabs.autoHide", true);
+pref("browser.tabs.selectOwnerOnClose", true);
+
+
+// Override the window XPInstall opens on extension install
+pref("xpinstall.dialog.progress.type.chrome", "Browser:Preferences");
+pref("xpinstall.dialog.progress.type.skin", "Browser:Preferences");
+
+pref("xpinstall.dialog.progress.chrome", "chrome://browser/content/preferences/preferences.xul");
+pref("xpinstall.dialog.progress.skin", "chrome://browser/content/preferences/preferences.xul");
+
+//
+// Search Preferences
+//
+
+// pointer to the default engine name
+pref("browser.search.defaultenginename",      "chrome://branding/locale/brand.properties");
+
+// disable logging for the search service by default
+pref("browser.search.log", false);
+
+// Ordering of Search Engines in the Engine list.
+pref("browser.search.order.1",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.2",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.3",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.4",                "chrome://branding/locale/brand.properties");
+pref("browser.search.order.5",                "chrome://branding/locale/brand.properties");
+
+// search bar results always open in a new tab
+pref("browser.search.openintab", false);
+
+// send ping to the server to update
+pref("browser.search.update", true);
+
+// disable logging for the search service update system by default
+pref("browser.search.update.log", false);
+
+// Check whether we need to perform engine updates every 6 hours
+pref("browser.search.updateinterval", 6);
+
+// enable search suggestions by default
+pref("browser.search.suggest.enabled", true);
+
+
+#ifdef XP_UNIX
+pref("browser.urlbar.clickSelectsAll", false);
+#else
+pref("browser.urlbar.clickSelectsAll", true);
+#endif
+
+//
+// RemoteAPI prefs
+//
+
+// allow access to playback control/read remote api by default
+pref("nightingale.rapi.playback_control_disable", false);
+pref("nightingale.rapi.playback_read_disable", false);
+pref("nightingale.rapi.library_read_disable", true);
+pref("nightingale.rapi.library_write_disable", true);
+
+// by default notify about everything
+pref("nightingale.rapi.playback_control_notify", true);
+pref("nightingale.rapi.playback_read_notify", true);
+pref("nightingale.rapi.library_read_notify", true);
+pref("nightingale.rapi.library_write_notify", true);
+
+// Nightingale default urls
+pref("nightingale.url.addons", "http://addons.getnightingale.com/");
+pref("nightingale.url.addons.displaypanes", "http://addons.getnightingale.com/tag/displaypane");
+pref("nightingale.url.addons.feathers", "http://addons.getnightingale.com/tag/feathers");
+pref("nightingale.url.addons.mediaviews", "http://addons.getnightingale.com/tag/mediaview");
+pref("browser.startup.homepage", "http://getnightingale.com/");
+pref("nightingale.url.firstrunpage", "http://getnightingale.com/firstrun");
+pref("nightingale.url.bugzilla", "http://bugs.getnightingale.com/");
+pref("nightingale.url.metrics", "http://metrics.getnightingale.com/post/");
+pref("nightingale.url.support", "http://getnightingale.com/support/");
+pref("nightingale.url.keyboard", "about:keyboard-help");
+
+//
+// Media Core prefs
+//
+
+// Value is in milliseconds
+pref("nightingale.mediacore.output.buffertime", 2000);
+
+// Value is in kilobytes
+pref("nightingale.mediacore.streaming.buffersize", 128);
+
+pref("nightingale.mediacore.normalization.enabled", true);
+
+// Prefer album gain over track gain. Valid values are 'album' and 'track'.
+pref("nightingale.mediacore.normalization.preferredGain", "album");
+
+// Playback History
+pref("nightingale.mediacore.playback.history.enabled", true);
+
+pref("nightingale.mediascan.enableVideoImporting", true);
+
+// Whether to automatically restart video playback at the last stopped position
+pref("nightingale.mediacore.resumePlaybackPosition", true);
+
+//
+// Metadata prefs
+//
+pref("nightingale.metadata.enableWriting", true);
+pref("nightingale.metadata.promptOnWrite", false);
+pref("nightingale.metadata.ratings.enableWriting", false);
+pref("nightingale.trackeditor.enableAdvancedTab", false);
+
+//
+// Sanitize prefs
+//
+pref("privacy.sanitize.promptOnSanitize", true);
+pref("privacy.sanitize.sanitizeOnShutdown", false);
+pref("privacy.sanitize.didShutdownSanitize", false);
+pref("privacy.item.mediaHistory", true);
+pref("privacy.item.history", true);
+pref("privacy.item.formdata", true);
+pref("privacy.item.passwords", true);
+pref("privacy.item.downloads", true);
+pref("privacy.item.cookies", true);
+pref("privacy.item.cache", true);
+pref("privacy.item.sessions", true);
+
+// Prevent popups by default
+pref("privacy.popups.firstTime",            true);
+pref("privacy.popups.showBrowserMessage",   true);
+pref("dom.disable_open_during_load",        true);
+
+// Disable drag image for linux, see
+// http://bugzilla.getnightingale.com/show_bug.cgi?id=5537
+// https://bugzilla.mozilla.org/show_bug.cgi?id=376238
+#ifdef XP_UNIX
+#ifndef XP_MACOSX
+pref("nglayout.enable_drag_images", false);
+#endif
+#endif
+
+
+
+//
+// Places support
+//
+
+// import bookmarks.html into Places bookmarks
+pref("browser.places.importBookmarksHTML", true);
+
+// if false, will add the "Smart Bookmarks" folder to the personal toolbar
+pref("browser.places.createdSmartBookmarks", false);
+
+// the (maximum) number of the recent visits to sample
+// when calculating frecency
+pref("places.frecency.numVisits", 10);
+
+// Number of records to update frecency for when idle.
+pref("places.frecency.numCalcOnIdle", 50);
+
+// Number of records to update frecency for when migrating from
+// a pre-frecency build.
+pref("places.frecency.numCalcOnMigrate", 50);
+
+// Perform frecency recalculation after this amount of idle, repeating.
+// A value of zero disables updating of frecency on idle.
+// Default is 1 minute (60000ms).
+pref("places.frecency.updateIdleTime", 60000);
+
+// buckets (in days) for frecency calculation
+pref("places.frecency.firstBucketCutoff", 4);
+pref("places.frecency.secondBucketCutoff", 14);
+pref("places.frecency.thirdBucketCutoff", 31);
+pref("places.frecency.fourthBucketCutoff", 90);
+
+// weights for buckets for frecency calculations
+pref("places.frecency.firstBucketWeight", 100);
+pref("places.frecency.secondBucketWeight", 70);
+pref("places.frecency.thirdBucketWeight", 50);
+pref("places.frecency.fourthBucketWeight", 30);
+pref("places.frecency.defaultBucketWeight", 10);
+
+// bonus (in percent) for visit transition types for frecency calculations
+pref("places.frecency.embedVisitBonus", 0);
+pref("places.frecency.linkVisitBonus", 120);
+pref("places.frecency.typedVisitBonus", 200);
+pref("places.frecency.bookmarkVisitBonus", 140);
+pref("places.frecency.downloadVisitBonus", 0);
+pref("places.frecency.permRedirectVisitBonus", 0);
+pref("places.frecency.tempRedirectVisitBonus", 0);
+pref("places.frecency.defaultVisitBonus", 0);
+
+// bonus (in percent) for place types for frecency calculations
+pref("places.frecency.unvisitedBookmarkBonus", 140);
+pref("places.frecency.unvisitedTypedBonus", 200);
+
+pref("browser.urlbar.autoFill", false);
+pref("browser.urlbar.matchOnlyTyped", false);
+
+// the maximum number of results to show in autocomplete when doing richResults
+pref("browser.urlbar.maxRichResults", 25);
+// Size of "chunks" affects the number of places to process between each search
+// timeout (ms). Too big and the UI will be unresponsive; too small and we'll
+// be waiting on the timeout too often without many results.
+pref("browser.urlbar.search.chunkSize", 1000);
+pref("browser.urlbar.search.timeout", 50);
+
+pref("browser.dictionaries.download.url", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/dictionaries/");
+
+// Default the player controls to the top
+pref("nightingale.playercontrol.location", "top");
+
+// Default the service pane location for hovering.
+pref("nightingale.splitter.servicepane_splitter.before.width", "178");
+
+//
+// Library importer prefs
+//
+pref("nightingale.library_importer.unsupported_media_alert.enabled", true);
+
+//
+// Album art preferences
+//
+// Maximum size of images in bytes that we accept.
+pref("nightingale.albumart.maxsize", 16777216);
+// Scanning preferences
+pref("nightingale.albumart.scanner.interval", 10);
+pref("nightingale.albumart.scanner.timeout", 10000);
+pref("nightingale.albumart.autofetch.disabled", true);
+// Fetcher preferences
+pref("nightingale.albumart.file.extensions", "jpg,jpeg,png,gif,bmp");
+pref("nightingale.albumart.file.base_names", "cover,folder");
+// Disable writing artwork to meta data by default
+pref("nightingale.metadata.artwork.enableWriting", false);
+// Setup default priorities and enable/disable fetchers
+pref("nightingale.albumart.file.enabled", false);
+pref("nightingale.albumart.file.priority", -1);
+pref("nightingale.albumart.metadata.enabled", true);
+pref("nightingale.albumart.metadata.priority", 0);
+
+// Show the 'rescan metadata' playlist command ?
+pref("nightingale.commands.enableRescanItem", false);
+
+// Show secondary properties in playlist column pickers ?
+pref("nightingale.columnpicker.allowSecondaryProperties", false);
+
+// If showing secondary properties, also show unlocalized ones ?
+pref("nightingale.columnpicker.allowUnlocalizedSecondaryProperties", false);
+
+// video can be disabled in gstreamer (but is on by default)
+pref("nightingale.mediacore.gstreamer.disablevideo", false);
+
+// playlist double click speed
+pref("nightingale.playlist.doubleclickspeed", 500);
+
+
+// Prefs used to control database memory usage.  
+//
+// All prefs require a restart to take effect, and pageSize
+// can only be changed before databases have been created.
+//
+// See http://www.sqlite.org/malloc.html for details
+// 
+// Also note that page cache and page size can be specified on a 
+// per db basis with keys like
+//  nightingale.dbengine.main@library.getnightingale.com.cacheSize
+// This is the database GUID, not the filename (note no .db)
+
+pref("nightingale.dbengine.pageSize", 16384);
+// Number of pages
+pref("nightingale.dbengine.cacheSize", 200);
+// Number of pages to pre-allocate (avoids fragmentation)
+//pref("nightingale.dbengine.preAllocCacheSize", 500);  
+// Number of scratch slots to use (should be roughly the 
+// number of db query threads)
+//pref("nightingale.dbengine.preAllocScratchSize", 5);
+// An upper limit (in bytes) on the amount of memory
+// sqlite should try to use
+//pref("nightingale.dbengine.softHeapLimit", 0);
+
+// Override settings for the web library
+//pref("nightingale.dbengine.web@library.getnightingale.com.pageSize", 1024);
+//pref("nightingale.dbengine.web@library.getnightingale.com.cacheSize", 160);
+
+//
+// Manage Files Preferences
+//
+
+pref("nightingale.media_management.library.enabled", false);
+// nightingale.media_management.library.format.dir has no default due to platform-
+// specific directory separator character
+pref("nightingale.media_management.library.format.file", "http://getnightingale.com/data/1.0#trackNumber,%20-%20,http://getnightingale.com/data/1.0#trackName");
+pref("nightingale.media_management.library.copy", true);
+pref("nightingale.media_management.library.move", true);
+pref("nightingale.media_management.library.delete", true);
+pref("nightingale.media_management.library.rename", true);
+// pad track numbers by default.
+pref("nightingale.media_management.library.pad_track_num", true);
+
+pref("nightingale.library_exporter.start_agent", true);
+
+// CD Rip default prefs:
+pref("nightingale.cdrip.oncomplete.autoeject", false);
+pref("nightingale.cdrip.oncomplete.notifysound", false);
+
+// First run Media Library loading
+pref("nightingale.firstrun.load_ml_in_background", true);
+
+// Information Panel default settings
+pref("nightingale.infoPanel.interval", 50);
+pref("nightingale.infoPanel.steps", 4);
+
+// Filtered extensions warning dialog
+pref("nightingale.mediaimport.warn_filtered_exts", true);
+
+//
+// Firmware Support Preferences
+//
+pref("nightingale.firmware.update.defaultInterval", 604800); // every 7 days

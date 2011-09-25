@@ -1,0 +1,209 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbIMediaItem.idl
+ * \brief Definition of the sbIMediaItem interface
+ * \sa sbIMediaList.idl
+ */
+
+#include "sbILibraryResource.idl"
+
+interface nsIObserver;
+interface nsIURI;
+interface nsIChannel;
+interface nsIStreamListener;
+interface nsIInputStream;
+interface nsIOutputStream;
+interface sbILibrary;
+
+/**
+* \interface sbIMediaItem
+* \brief Interface that defines a single item of media in the system
+*
+* The Nightingale concept of a media item is the abstraction of a renderable piece
+* of media. A media item contains content as well as metadata about the
+* content.  A media item must be associated with a particular library.
+*
+* \sa sbILibrary, sbIMediaList
+*/
+[scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
+interface sbIMediaItem : sbILibraryResource
+{
+  /*
+  Group: MediaItem Properties
+  */
+
+  /**
+   * \brief The library that this media item is contained in
+   */
+  readonly attribute sbILibrary library;
+
+  /*
+   * \brief The library that this media item is linked from.  This is to aid
+   * in support of foreign media items
+  readonly attribute sbILibrary originLibrary;
+   */
+
+  /**
+   * \brief Can the media item be changed?
+   */
+  readonly attribute boolean isMutable;
+
+
+// Convenience Attributes (these should thunk directly to the sbILibraryResource::G/SetProperty calls)
+
+  /**
+   * \brief Creation time of the media item as a unix timestamp.
+   *
+   * Note that this is the creation time of the media item itself, not the
+   * creation time of the item's content
+   */
+  
+  /*
+  Prop: mediaCreated
+
+  A timestamp representing the date and time at which this <MediaItem> was created.
+
+  Type:
+    Number
+  */
+  attribute long long mediaCreated;
+
+  /**
+   * \brief Last modification time of the media item as a unix timestamp.
+   *
+   * Note that this is the last modification time of the media item itself, not
+   * the creation time of the item's content
+   */
+
+  /*
+  Prop: mediaUpdated
+
+  A timestamp representing the date and time at which this <MediaItem> was last updated.
+
+  Type:
+    Number
+  */
+  attribute long long mediaUpdated;
+
+  /**
+   * \brief A nsIURI that resolves to the content of the media item
+   */
+
+  /*
+  Prop: contentSrc
+
+  The URI representing the location of the <MediaItem>.  If the URI is a URL, it
+  may be QI'ed to an nsIURL.
+
+  Type:
+    Number, in bytes.
+  */
+  attribute nsIURI contentSrc;
+
+  /**
+   * \brief Size (in bytes) of the content of the media item
+   */
+
+  /*
+  Prop: contentLength
+
+  The size (in bytes) of the content of the <MediaItem>. If this <MediaItem>
+  is also a <MediaList>, the contentLength will always be 0. 
+
+  The contentLength may not be available for streams
+
+  Type:
+    Number, in bytes.
+  */
+  attribute long long contentLength;
+
+  /**
+   * \brief Content type of the content of the media item, typically a mime
+   * type (should this be renamed?)
+   */
+
+  /*
+  Prop: contentType
+
+  The content type, also called mime type, of the <MediaItem>.
+
+  Type:
+    String
+
+  Note:
+    This property is never filled currently.
+  */
+  attribute AString contentType;
+
+  /**
+   * \brief Test if this media item is available for playback
+   * \param aObserver An observer that is notified with the item's availabilty
+   */
+  void testIsAvailable(in nsIObserver aObserver);
+
+  /**
+   * \brief Asynchronously get an input stream to the content of the media item
+   *
+   * \note If the listener can also QI to an nsIInterfaceRequestor, it will be
+   * assigned to the internal channel's notificationCallbacks property.
+   *
+   * \param aListener Provide an nsIStreamListener to receive streaming data.
+   * \param aContext Value passed to the stream listener to provide context.
+   */
+  nsIChannel openInputStreamAsync(in nsIStreamListener aListener, in nsISupports aContext);
+
+  /**
+   * \brief Synchronously get an input stream to the content of the media item
+   * \return The input stream
+   */
+  nsIInputStream openInputStream();
+
+  /**
+   * \brief Get an output stream to the content of the media item
+   * \return The output stream
+   */
+  nsIOutputStream openOutputStream();
+
+  /**
+   * \brief Get a string representation of the media item, useful for debugging
+   * \return A string representation of the media item
+   */
+  AString toString();
+};
+
+/**
+ * \interface sbIIndexedMediaItem
+ * \brief A container for a media item and its index
+ */
+[scriptable, uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]
+interface sbIIndexedMediaItem : nsISupports
+{
+  readonly attribute unsigned long index;
+  readonly attribute sbIMediaItem mediaItem;
+};
+

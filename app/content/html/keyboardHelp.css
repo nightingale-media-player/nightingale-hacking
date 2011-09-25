@@ -1,0 +1,124 @@
+/* vim: set sw=2 */
+
+body{
+  font-family:Arial,Helvetica,FreeSans,sans-serif;
+  font-size:62.5%;
+  line-height:1.25;
+  text-align:center;
+  color:#333;
+  background: white;
+  margin:0;
+  padding-top:20px;
+}
+
+table {
+  border-collapse: collapse;
+  font-size:1.3em;
+  line-height:1.62;
+  border-top:1px solid #eee;
+  margin:0 0 2em;
+  width:100%;
+}
+
+a:hover{
+  text-decoration: underline;
+}
+
+.content{
+  width:640px;
+  text-align:left;
+  margin:0 auto;
+}
+
+
+/* TITLE */
+h2#title{
+  font-size: 3.4em;
+  font-weight: normal;
+  letter-spacing: -1px;
+  margin: 0 0 3px 0;
+}
+p#description{
+  margin:0 0 1em;
+  font-size:1.6em;
+  font-weight:bold;
+  line-height:1.5em;
+  color:#777;
+}
+
+/* FIX FLOATS */
+#shortcuts-nav:after {
+  height:0;
+  clear:both;
+  display:block;
+  visibility:hidden;
+  content:".";
+}
+.hide{
+  display:none;
+}
+#shortcuts-nav {
+  line-height:1.62;
+  font-size:1.6em;
+  font-weight:bold;
+  padding:0 10px;
+  border-bottom:1px solid #ccc;
+  margin:0 0 1em;
+  list-style:none;
+}
+li {
+  padding: 0;
+  margin: 0;
+  border:1px solid #ccc;
+  border-bottom:0;
+  margin-right:5px;
+  float:left;
+}
+a {
+  background: #f9f9f9;
+  padding: 4px 12px 2px;
+  display: block;
+  color: #1694d9;
+  text-decoration: none;
+  outline: 0;
+  cursor: pointer;
+}
+li.selected a{
+  color:#333;
+  background:white;
+  padding:3px 12px;
+  position:relative;
+  bottom:-1px;
+}
+
+h4{
+  font-size: 1.6em;
+  margin:0 0 7px 10px;
+}
+th, td
+{
+  width:320px;
+  vertical-align:top;
+  padding:5px 10px;
+  border-bottom:1px solid #eee;
+}
+tr.even {
+  background:#f9f9f9;
+}
+
+#shortcuts[platform~="windows"] span[class~="linux"]:not([class~="windows"]),
+#shortcuts[platform~="windows"] span[class~="macosx"]:not([class~="windows"]) {
+  display: none;
+}
+#shortcuts[platform~="macosx"] span[class~="windows"]:not([class~="macosx"]),
+#shortcuts[platform~="macosx"] span[class~="linux"]:not([class~="macosx"]) {
+  display: none;
+}
+#shortcuts[platform~="linux"] span[class~="windows"]:not([class~="linux"]),
+#shortcuts[platform~="linux"] span[class~="macosx"]:not([class~="linux"]) {
+  display: none;
+}
+
+#shortcuts td > span {
+  display: block;
+}

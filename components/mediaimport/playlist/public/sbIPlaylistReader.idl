@@ -1,0 +1,223 @@
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbIPlaylistReader.idl
+ * \brief
+ *
+ * \sa sbIMediaList.idl
+ */
+
+#include "nsISupports.idl"
+#include "nsIWebProgressListener.idl"
+
+interface nsIObserver;
+interface nsIFile;
+interface sbIMediaList;
+interface sbIPlaylistFormatType;
+
+/**
+ * \interface sbIPlaylistReaderListener
+ * \brief A listener interface for use with sbIPlaylistReader interfaces
+ *
+ * \sa sbIPlaylistReaderManager, sbIPlaylistReader, sbIMediaList
+ */
+[scriptable, uuid(a1fd4697-6459-473f-a660-1915f91cd469)]
+interface sbIPlaylistReaderListener : nsIWebProgressListener
+{
+  /**
+   * \brief
+   *
+   * \param
+   */
+  attribute nsIURI originalURI;
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  attribute nsIURI destinationURI;
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  attribute sbIMediaList mediaList;
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  attribute boolean addDistinctOnly;
+
+  /**
+   * \brief Automatically start playing when stream is done loading.
+   *
+   * False by default.
+   */
+  attribute boolean playWhenLoaded;
+
+  /**
+   * \brief Observer to get notified about the failure or success of creating a playlist.
+   *
+   */
+  attribute nsIObserver observer;
+
+  /**
+   * \brief Only create playlists for media mime-types ( audio* or video* ), not text/html
+   */
+  attribute boolean mediaMimetypesOnly;
+
+  /**
+   * \brief expose the state of the web downloading (currently only set to "" or STATE_STOP)
+   */
+  attribute AString state;
+};
+
+/**
+ * \interface sbIPlaylistReader
+ * \brief A subclass from which one may derive instances to read specific playlist types
+ *
+ * \sa sbIPlaylistReaderManager, sbIPlaylistReaderListener, sbIMediaList
+ */
+[scriptable, uuid(be2cd0d9-eed3-47f4-8a6e-c1e5b2bf508a)]
+interface sbIPlaylistReader : nsISupports
+{
+  /**
+   * \brief
+   *
+   * \param
+   */
+  attribute nsIURI originalURI;
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void read(in nsIFile aFile,
+            in sbIMediaList aMediaList,
+            in PRBool aReplace,
+            [optional] in sbIPlaylistFormatType aPlaylistFormatType);
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  long vote(in AString aURL);
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  AString name();
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  AString description();
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void supportedMIMETypes(out unsigned long aMIMECount,
+    [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void supportedFileExtensions(out unsigned long aExtCount,
+    [array, size_is (aExtCount), retval] out wstring aExts);
+};
+
+/**
+ * \interface sbIPlaylistReaderManager
+ * \brief An interface to be used to read playlists.  
+ * It will try to find the proper sbIPlaylistReader subclass and use it.
+ *
+ * \sa sbIPlaylistReader, sbIPlaylistReaderListener
+ */
+[scriptable, uuid(dee1ccec-b3d1-47cf-bbf0-c20222f84398)]
+interface sbIPlaylistReaderManager : nsISupports
+{
+  /**
+   * \brief
+   *
+   * \param
+   */
+  attribute nsIURI originalURI;
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  long loadPlaylist(in nsIURI aURL,
+                    in sbIMediaList aMediaList,
+                    in AString aContentType,
+                    in boolean aAddDistinctOnly,
+                    in sbIPlaylistReaderListener aPlaylistReaderListener);
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void read(in nsIFile aFile,
+            in sbIMediaList aMediaList,
+            in AString aContentType,
+            in PRBool aAddDistinctOnly,
+            [optional] in sbIPlaylistFormatType aPlaylistFormatType);
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void supportedMIMETypes(out PRUint32 aMIMECount,
+    [array, size_is (aMIMECount), retval] out wstring aMIMETypes);
+
+  /**
+   * \brief
+   *
+   * \param
+   */
+  void supportedFileExtensions(out PRUint32 aExtCount,
+    [array, size_is (aExtCount), retval] out wstring aExts);
+};
+
+

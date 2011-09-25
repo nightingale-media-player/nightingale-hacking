@@ -1,0 +1,85 @@
+<!--
+/*
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: 10 (selection)</title>
+    <script>
+      var mainLib;
+
+      var init = function init() {
+        mainLib = nightingale.libraries("main");
+      }
+
+      // Set the site library as the web playlist
+      var setMain = function setMain() {
+        nightingale.webPlaylist.mediaList = mainLib;
+      }
+
+      var countSelection = function countSelection() {
+        var myDiv = document.getElementById("output");
+        var enumerator = nightingale.webPlaylist.selection;
+        var count = 0;
+        while (enumerator.hasMoreElements() ) {
+          var indexed  = enumerator.getNext();
+          var item  = indexed.mediaItem;
+          count++;
+          myDiv.appendChild(
+            document.createTextNode( "selected track is: " +
+                                     item.getProperty("http://getnightingale.com/data/1.0#trackName") +
+                                     " index: " + indexed.index ) );
+          myDiv.appendChild(document.createElement("br"));
+        }
+        myDiv.appendChild(document.createTextNode("selection count is:" + count));
+        myDiv.appendChild(document.createElement("br"));
+      }
+      
+    </script>
+  </head>
+
+  <body onload="init();">
+    <h1>Excercise the Remote Library API</h1>
+    
+    <p> Force a web playlist to appear. <br />
+      <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Loveshadow</a>
+      <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3">Sawtooth</a>
+    <form>
+      <input type="button" id="set_main_button" value="Set Main Lib"
+             onclick="setMain();" /> 
+      <br />
+      <input type="button" id="count_selection" value="Count Selection"
+             onclick="countSelection();" /> 
+      <br />
+    </form>
+    </p>
+    <div id="output">
+    </div>
+  </body>
+
+</html>
+

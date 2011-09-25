@@ -1,0 +1,4 @@
+nightingale.jar:
+% skin  nightingale-dialogs classic/1.0  %skin/dialogs/
+% style chrome://mozapps/content/extensions/extensions.xul chrome://nightingale-dialogs/skin/addons.css
+@include_all_to skin/dialogs/

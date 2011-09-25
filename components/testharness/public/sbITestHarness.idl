@@ -1,0 +1,67 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+ * \file sbITestHarness.idl
+ * \brief Definition of the sbITestHarness Interface
+ * \sa sbTestHarness.js
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbITestHarness
+ * \brief An interface for launching unit tests from XULRunner apps
+ */
+[scriptable, uuid(5b11ad26-8f01-46a8-8263-1de16be960eb)]
+interface sbITestHarness : nsISupports
+{
+  /**
+   * \brief Initialize the Test Harness object
+   *
+   * Set the location or file to run the tests on. The testharness expects
+   *  to recieve a string containing a comma seperated list of subdirectories
+   *  within the testharness directory to test.
+   * \param aPath A comma seperated list of components to test. If this 
+   *              variable is null, all tests will be run.
+   */
+  void init( in AString aComponentList );
+
+  /**
+   * \brief Run the tests
+   */
+  void run();
+
+  /**
+   * \brief Called by the test harness code when a test fails.
+   * 
+   * This allows all tests to run and the the testharness to return failure
+   *   when complete.
+   */
+  void logFailure( in AString aComponentName );
+};
+
+

@@ -1,0 +1,53 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
+                      $(srcdir)/sbMigrate070RC1to070.js \
+                      $(srcdir)/sbMigrate070RC2to070.js \
+                      $(srcdir)/sbMigrate070To08pre1.js \
+                      $(srcdir)/sbMigrate08pre1To08pre2.js \
+                      $(srcdir)/sbMigrate08pre2To08pre3.js \
+                      $(srcdir)/sbMigrate08pre3To08pre4.js \
+                      $(srcdir)/sbMigrate10To11pre1.js \
+                      $(srcdir)/sbMigrate11pre1To11pre1b.js \
+                      $(srcdir)/sbMigrate11pre1bTo11pre1c.js \
+                      $(srcdir)/sbMigrate11pre1cTo11pre1d.js \
+                      $(srcdir)/sbMigrate11pre1dTo11pre1e.js \
+                      $(srcdir)/sbMigrate11pre1eTo11pre1f.js \
+                      $(srcdir)/sbMigrate12pre1To12pre1b.js \
+                      $(srcdir)/sbMigrate12To13pre.js \
+                      $(srcdir)/sbMigrate13to14.wmaprotected.js \
+                      $(srcdir)/sbMigrate14to15pre0.contentType.js \
+                      $(srcdir)/sbMigrate14to15pre.smartplaylist.js \
+                      $(srcdir)/sbMigrate14to17pre0.smartplaylist.js \
+                      $(NULL)
+                      
+include $(topsrcdir)/build/rules.mk

@@ -1,0 +1,5 @@
+nightingale.jar:
+% content  nightingale  %content/nightingale/
+% # Help out FF extension developers by exposing browser utilities at the familiar URL
+% override chrome://browser/content/utilityOverlay.js chrome://nightingale/content/scripts/browserUtilities.js
+@include_all_to content/nightingale/scripts/

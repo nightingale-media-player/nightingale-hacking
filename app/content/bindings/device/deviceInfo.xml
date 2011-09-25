@@ -1,0 +1,517 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device info widget.
+   *
+   *   This widget displays information about the device.
+   *   The set of information displayed is specified by the CSV "devicespecs"
+   * attribute.  This attribute specifies both the displayed information and the
+   * ordering.
+   *   In addition various elements may be shown such as a device image or an
+   * eject button.  The shown elements are specified by the CSV "showlist"
+   * attribute.
+   *
+   * Device specs:
+   *   model                    Model name.
+   *   capacity                 Model capacity.
+   *   model_capacity           Model name and capacity.
+   *   friendly_name            User set device friendly name.
+   *   serial_number            Serial number.
+   *   vendor                   Vendor name.
+   *   access                   Access compatibility.
+   *   playback_formats         Playback formats.
+   *   battery                  Battery status.
+   *
+   * Show elements:
+   *   image                    Device image.
+   *   name                     Human-readable device name.
+   *   eject                    Eject button.
+   *   moreinfo                 More device info dialog button.
+   *
+   * Attributes:
+   *   enable_context_menu      If true, enable the context menu.
+   *   hidelabels               If true, the labels (e.g. "Product", "Model",
+   *                            etc. are hidden)
+   *
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-info"
+     extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:hbox sbid="device_info_box"
+                align="center"
+                flex="1"
+                oncontextmenu="_onContextMenu(event);">
+
+        <!-- Device image. -->
+        <xul:stack sbid="device_image_stack">
+          <xul:image sbid="device_image"
+                     class="device-image"
+                     showid="image"
+                     alt="&device.info.icon.device;"
+                     hidden="true"/>
+          <xul:image sbid="device_image_ro"
+                     class="device-image-ro"
+                     showid="image"
+                     alt="&device.info.icon.readonly;"
+                     flex="0"
+                     hidden="true"/>
+        </xul:stack>
+
+        <!-- Device info. -->
+        <xul:vbox sbid="summary_box" flex="1">
+
+          <!-- Device name. -->
+          <xul:hbox sbid="name_box" align="center" flex="1">
+            <xul:label sbid="device_name_label"
+                       class="device-name-label"
+                       showid="name"
+                       crop="end"
+                       hidden="true"
+                       flex="1"/>
+          </xul:hbox>
+
+          <!-- Device volume selector. -->
+          <xul:sb-device-volume-selector showid="volume_selector"
+                                         hidden="true"
+                                         flex="1"
+                                         xbl:inherits="device-id"/>
+
+          <!-- Device specs. -->
+          <xul:grid sbid="device_specs_grid" class="device-specs-grid">
+
+            <!-- Grid columns. -->
+            <xul:columns>
+              <xul:column sbid="device_specs_label_column"/>
+              <xul:column sbid="device_specs_value_column" flex="1"/>
+            </xul:columns>
+
+            <!-- Grid rows. -->
+            <xul:rows sbid="device_spec_rows">
+              <!-- Product name/capacity row. -->
+              <xul:row devicespec="product_capacity">
+                <xul:label sbid="product_capacity_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.product.label;"/>
+                <xul:label sbid="product_capacity_value_label"
+                           crop="end"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Model row. -->
+              <xul:row devicespec="model">
+                <xul:label sbid="model_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.model.label;"/>
+                <xul:label sbid="model_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Capacity row. -->
+              <xul:row devicespec="capacity">
+                <xul:label sbid="capacity_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.capacity.label;"/>
+                <xul:label sbid="capacity_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Model/capacity row. -->
+              <xul:row devicespec="model_capacity">
+                <xul:label sbid="model_capacity_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.model.label;"/>
+                <xul:label sbid="model_capacity_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Friendly name row. -->
+              <xul:row devicespec="friendly_name">
+                <xul:label sbid="friendly_name_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.friendly_name.label;"/>
+                <xul:label sbid="friendly_name_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Serial number row. -->
+              <xul:row devicespec="serial_number">
+                <xul:label sbid="serial_number_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.serial_number.label;"/>
+                <xul:label sbid="serial_number_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Vendor row. -->
+              <xul:row devicespec="vendor">
+                <xul:label sbid="vendor_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.vendor.label;"/>
+                <xul:label sbid="vendor_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Access compatibility row. -->
+              <xul:row devicespec="access">
+                <xul:label sbid="access_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.access.label;"/>
+                <xul:label sbid="access_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+              <!-- Playback formats row.  Use a description element  -->
+              <!-- with a single text child node to enable wrapping. -->
+              <xul:row devicespec="playback_formats">
+                <xul:label sbid="playback_formats_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.playback_formats.label;"/>
+                <xul:vbox>
+                  <xul:description sbid="playback_formats_value_label"
+                                   class="device-specs-grid-label">
+                  </xul:description>
+                </xul:vbox>
+              </xul:row>
+
+              <!-- Battery status row. -->
+              <xul:row devicespec="battery" align="center">
+                <xul:label sbid="battery_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.battery.label;"/>
+                <xul:sb-device-battery sbid="battery_status"/>
+              </xul:row>
+
+              <!-- Firmware version row. -->
+              <xul:row devicespec="firmware_version"
+                       class="device-spec-row-hide-no-value">
+                <xul:label sbid="firmware_version_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.firmware_version.label;"/>
+                <xul:label sbid="firmware_version_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
+
+            </xul:rows>
+
+          </xul:grid> <!-- End of "device_specs_grid". -->
+
+        </xul:vbox> <!-- End of "summary_box". -->
+
+        <!-- Context menu popup. -->
+        <xul:menupopup sbid="context_menu_popup"/>
+
+      </xul:hbox> <!-- device_info_box -->
+
+
+      <xul:groupbox orient="horizontal" pack="center" align="center"
+                    sbid="buttons_groupbox" hidden="true">
+        <xul:button sbid="more_info_button"
+                    class="more-info-button"
+                    showid="moreinfo"
+                    hidden="true"/>
+        <xul:sb-device-get-info-command bindelem="prev"
+                                        xbl:inherits="device-id"/>
+
+        <xul:button sbid="eject_button"
+                    class="eject-button"
+                    showid="eject"
+                    hidden="true"/>
+        <xul:sb-device-eject-command bindelem="prev"
+                                     xbl:inherits="device-id"/>
+      </xul:groupbox>
+      
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        /* Import external services. */
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the device info services. */
+        this.DIW.finalize(this);
+      ]]></destructor>
+
+
+      <!--
+       * \brief Handle the context menu event specified by aEvent.
+       *
+       * \param aEvent          Context menu event.
+       -->
+
+      <method name="_onContextMenu">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this.DIW.onContextMenu(aEvent);
+        ]]></body>
+      </method>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device info services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        var                         jsLoader;
+
+        /* Get the Javascript sub-script loader services. */
+        jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService
+                                (Components.interfaces.mozIJSSubScriptLoader);
+
+        /* Import the device info services. */
+        if (typeof(this.DIW) == "undefined") {
+          jsLoader.loadSubScript
+                     ("chrome://nightingale/content/scripts/device/deviceInfo.js",
+                      this);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device info services. */
+        this.DIW.finalize(this);
+        this.DIW.initialize(this);
+      ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the device info services. */
+        this.DIW.finalize(this);
+        this.DIW.initialize(this);
+      ]]></handler>
+    </handlers>
+
+
+  </binding>
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device battery status widget.
+   *
+   *   This widget displays device battery status.  It displays a battery icon
+   * indicating whether the device is running off of battery power or charging
+   * the battery and how much charge the battery has.  It also displays text
+   * indicating the percentage amount of charge in the battery.
+   *
+   * Attributes:
+   *
+   *   status                   Battery status.
+   *     "battery-powered"      Running off of battery power.
+   *     "charged"              Battery fully charged.
+   *     "charging"             Battery charging.
+   *   level                    Percentage level of battery power (0-100).
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-battery">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+      <xul:hbox align="center">
+        <xul:hbox class="device-battery-box">
+          <xul:image class="device-battery-left"/>
+          <xul:box sbid="device_battery_level_box"
+                   class="device-battery-status"
+                   xbl:inherits="status"/>
+          <xul:box sbid="device_battery_empty_box"
+                   class="device-battery-empty"
+                   flex="1"/>
+          <xul:image class="device-battery-right"/>
+        </xul:hbox>
+        <xul:label sbid="device_battery_level_label"
+                   class="device-specs-grid-label"/>
+      </xul:hbox>
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+      /**
+       * \brief Construct the widget.
+       */
+       -->
+
+      <constructor> <![CDATA[
+        // Update the widget.
+        this._update();
+      ]]></constructor>
+
+
+      <!--
+      /**
+       * \brief Update the widget.
+       */
+       -->
+
+      <method name="_update"><body><![CDATA[
+        // Get the battery level.  Ensure it's set to a valid number from 0-100.
+        var level = Number(this.getAttribute("level"));
+        if (level > 100)
+          level = 100;
+        else if (!(level > 0))
+          level = 0;
+
+        // Update the battery level box.
+        var levelBox = this._getElement("device_battery_level_box");
+        levelBox.flex = level;
+
+        // Update the battery empty box.
+        var emptyBox = this._getElement("device_battery_empty_box");
+        emptyBox.flex = 100 - level;
+
+        // Update the battery level label.
+        var levelLabel = this._getElement("device_battery_level_label");
+        levelLabel.value = SBFormattedString("device.info.battery.value",
+                                             [ level ]);
+      ]]></body></method>
+
+
+    <!--
+    /**
+     * \brief Return the XUL element with the ID specified by aElementID.  Use
+     *        the element "sbid" attribute as the ID.
+     *
+     * \param aElementID          ID of element to get.
+     *
+     * \return Element.
+     */
+     -->
+
+    <method name="_getElement">
+      <parameter name="aElementID"/>
+      <body><![CDATA[
+        return document.getAnonymousElementByAttribute(this,
+                                                       "sbid",
+                                                       aElementID);
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+
+      <!--
+      /**
+       * \brief Handle modifications to the DOM attributes.
+       */
+       -->
+
+      <handler event="DOMAttrModified"><![CDATA[
+        // Update the widget on changes to the "level" attribute.
+        if (event.attrName == "level")
+          this._update();
+      ]]></handler>
+
+    </handlers>
+
+  </binding>
+
+</bindings>
+

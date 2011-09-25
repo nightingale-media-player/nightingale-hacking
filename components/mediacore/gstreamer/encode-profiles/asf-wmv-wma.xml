@@ -1,0 +1,35 @@
+<profile>
+  <type>video</type>
+  <id>07ba4919-e983-47b6-910b-29fe872307bf</id>
+  <priority>1500</priority> <!-- Medium priority; widely supported and
+                                 generally acceptable quality -->
+  <priority quality="0">150</priority>
+  <priority quality="1">2500</priority>
+  <description>WMV/WMA video</description>
+  <mimetype>video/x-ms-asf</mimetype>
+  <extension>wmv</extension>
+
+  <container>
+    <type>video/x-ms-asf</type>
+  </container>
+
+  <video>
+    <type>video/x-ms-wmv</type>
+    <attribute name="wmvversion" type="int" value="3" />
+
+    <property name="bitrate" type="int" min="0" max="10000000" default="0"
+              mapping="bitrate"/>
+
+    <quality-property name="bpp" quality="0" value="0.03"/>
+    <quality-property name="bpp" quality="1" value="0.3"/>
+  </video>
+
+  <audio>
+    <type>audio/x-ms-wma</type>
+    <attribute name="wmaversion" type="int" value="2"/>
+
+    <quality-property name="bitrate" quality="0" value="32000"/>
+    <quality-property name="bitrate" quality="0.5" value="128000"/>
+    <quality-property name="bitrate" quality="1" value="256000"/>
+  </audio>
+</profile>

@@ -1,0 +1,62 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Interface description for the media item listener interface.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+#include "nsISupports.idl"
+
+
+/**
+ * \interface sbIMediaItemListener
+ * \brief Interface for media item listeners.
+ */
+
+interface sbIMediaItem;
+
+[scriptable, uuid(4e9fb7a4-c28e-47a4-8bc0-61f83ccfea34)]
+interface sbIMediaItemListener : nsISupports
+{
+  /**
+   * \brief Called when a media item is removed from its library.
+   * \param aMediaItem The removed media item.
+   */
+  void onItemRemoved(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Called when a media item is changed.
+   * \param aMediaItem The item that has changed.
+   */
+  void onItemUpdated(in sbIMediaItem aMediaItem);
+};
+

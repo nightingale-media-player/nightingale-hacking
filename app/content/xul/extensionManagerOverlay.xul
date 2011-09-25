@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://nightingale/skin/preferences/addons.css" type="text/css"?>
+
+<overlay id="extension-manager-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"
+          src="chrome://nightingale/content/scripts/extensionManagerOverlay.js"/>
+
+</overlay>

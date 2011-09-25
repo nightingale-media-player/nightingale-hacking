@@ -1,0 +1,323 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/*
+//------------------------------------------------------------------------------
+// Main window 
+*/
+
+#video_osd_controls_win {
+  background-color: black;
+  width: 320px;
+  height: 70px;
+}
+
+#video_osd_controls_win[transparent] {
+  background-color: transparent;
+}
+
+/*
+//------------------------------------------------------------------------------
+// Borders and main background elements
+*/
+
+#osd_wrapper_hbox {
+}
+
+#osd_wrapper_hbox[fullscreen] {
+  padding-bottom: 60px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#osd_border_left {
+  background-image: url("chrome://nightingale/skin/video/osd-alt-base-l.png");
+  background-repeat: no-repeat;
+  width: 6px;
+  height: 70px;
+}
+
+#video_osd_controls_win[transparent] #osd_border_left {
+  background-image: url("chrome://nightingale/skin/video/osd-base-l.png");
+}
+
+#osd_border_right {
+  background-image: url("chrome://nightingale/skin/video/osd-alt-base-r.png");
+  background-repeat: no-repeat;
+  width: 6px;
+  height: 70px;
+}
+
+#video_osd_controls_win[transparent] #osd_border_right {
+  background-image: url("chrome://nightingale/skin/video/osd-base-r.png");
+}
+
+#osd_controls_hbox {
+  min-width: 290px;
+  max-width: 502px;
+  min-height: 70px;
+  max-height: 70px;
+  background-image: url("chrome://nightingale/skin/video/osd-alt-base-c.png");
+  background-repeat: repeat-x;
+}
+
+#video_osd_controls_win[transparent] #osd_controls_hbox {
+  background-image: url("chrome://nightingale/skin/video/osd-base-c.png");
+}
+
+#osd_controls_top_hbox {
+  max-height: 45px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/*
+//------------------------------------------------------------------------------
+// Player controls
+*/
+
+/** Volume Slider *************************************************************/
+
+#osd_volume_slider {
+  margin-top: 12px !important;
+}
+
+#osd_volume_slider progressmeter.sb-player-volume-slider {
+  min-width: 58px !important;
+  max-width: 58px !important;
+}
+
+#osd_volume_slider .sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+  list-style-image: url("chrome://nightingale/skin/video/osd-volume-icon.png") !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+#osd_volume_slider .sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover {
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+#osd_volume_slider .sb-player-volume-slider[sbid="sb-progress-slider-min"]:active {
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+
+#osd_volume_slider thumb.sb-player-volume-slider {
+  background-image: url("chrome://nightingale/skin/video/osd-volume-grabber.png") !important;
+  background-position: center 0px;
+}
+
+#osd_volume_slider thumb.sb-player-volume-slider:active {
+  background-image: url("chrome://nightingale/skin/video/osd-volume-grabber-press.png") !important;
+  background-position: center 0px;
+}
+
+#osd_volume_slider progressmeter.sb-player-volume-slider > .progress-bar,
+#osd_volume_slider progressmeter.sb-player-volume-slider > .progress-remainder {
+  background-image: url("chrome://nightingale/skin/video/osd-volume-slider.png") !important;
+  background-position: left 0px !important;
+}
+
+/** Play/Pause, Next Back Buttons  ********************************************/
+
+#video_osd_controls_win .sb-player-back-button {
+  width: 43px !important;
+  height: 45px !important;
+}
+
+#video_osd_controls_win .sb-player-playpause-button-pause,
+#video_osd_controls_win .sb-player-playpause-button-play {
+  width: 44px !important;
+  height: 45px !important;
+}
+
+#video_osd_controls .sb-player-forward-button {
+  width: 43px !important;
+  height: 45px !important;
+}
+
+#video_osd_controls_win .sb-player-playpause-button-pause > button {
+  list-style-image: url('chrome://nightingale/skin/video/osd-pause.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+#video_osd_controls_win .sb-player-playpause-button-pause:active > button {
+  list-style-image: url('chrome://nightingale/skin/video/osd-pause-press.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+
+#video_osd_controls_win .sb-player-playpause-button-play > button {
+  list-style-image: url('chrome://nightingale/skin/video/osd-play.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+#video_osd_controls_win .sb-player-playpause-button-play:active > button {
+  list-style-image: url('chrome://nightingale/skin/video/osd-play-press.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+
+#video_osd_controls_win sb-player-back-button {
+  list-style-image: url('chrome://nightingale/skin/video/osd-previous.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+#video_osd_controls_win sb-player-back-button:active {
+  list-style-image: url('chrome://nightingale/skin/video/osd-previous-press.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+
+#video_osd_controls_win sb-player-forward-button {
+  list-style-image: url('chrome://nightingale/skin/video/osd-next.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+#video_osd_controls_win sb-player-forward-button:active {
+  list-style-image: url('chrome://nightingale/skin/video/osd-next-press.png') !important;
+  -moz-image-region: rect(0px 0px 0px 0px) !important;
+}
+
+/** Full Screen Button ********************************************************/
+
+#osd_fullscreen_control_hbox {
+  margin-top: 9px;
+  margin-right: 2px;
+}
+
+#full_screen_button {
+  margin: 0px;
+  padding: 0px;
+  width: 24px !important;
+  height: 25px !important;
+  -moz-appearance: none !important;
+  -moz-background-clip: padding !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  -moz-border-radius: 0 !important;
+  border: none !important;
+  list-style-image: url("chrome://nightingale/skin/video/osd-fullscreen.png") !important;
+}
+
+#full_screen_button[fullscreen] {
+  list-style-image: url("chrome://nightingale/skin/video/osd-escapefull.png") !important;
+}
+
+#full_screen_button:active {
+  list-style-image: url("chrome://nightingale/skin/video/osd-fullscreen-press.png") !important;
+  -moz-appearance: none !important;
+  -moz-background-clip: padding !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  -moz-border-radius: 0 !important;
+  border: none !important;
+}
+
+#full_screen_button[fullscreen]:active {
+  list-style-image: url("chrome://nightingale/skin/video/osd-escapefull-press.png") !important;
+}
+
+#full_screen_button button:focus,
+#full_screen_button:focus {
+  outline: none !important;
+}
+
+#full_screen_button .button-box {
+  margin: 0px;
+  padding: 0px !important;
+}
+
+/** Seek bar Background *******************************************************/
+
+#osd_seekinfo_hbox {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+progressmeter,
+sb-status-progressmeter {
+  min-width: 100px;
+  min-height:17px !important;
+  max-height:17px !important;
+}
+
+#osd_seekbar_stack .faceplate-progressmeter,
+#osd_seekbar_stack .faceplate-seekbar,
+#osd_seekbar_stack slider.sb-player-seek-slider,
+#osd_seekbar_stack progressmeter.sb-player-seek-slider {
+  height: 17px !important;
+}
+
+#osd_seekbar_stack > .hook > .left {
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-l.png');
+  background-repeat:no-repeat;
+  width: 6px !important;
+  background-position:left center;
+}
+
+#osd_seekbar_stack > .hook > .right {
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-r.png');
+  background-repeat:no-repeat;
+  width: 6px !important;
+  background-position:right center;
+}
+
+#osd_seekbar_stack > .hook > .middle {
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-c.png');
+  background-repeat:repeat-x;
+  background-position:left center;
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+}
+
+#osd_seekbar_stack progressmeter.sb-player-seek-slider > .progress-bar {
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-elapsed-c.png') !important;
+  background-repeat:no-repeat;
+  background-position:6px center;
+  margin-right: 6px !important;
+}
+
+/** Thumb *************************************************************/
+
+#osd_seekbar_stack thumb.sb-player-seek-slider {
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-grabber.png');
+  background-repeat: no-repeat;
+  background-position: 0px 0px !important;
+  width: 17px !important;
+  height: 17px !important;
+}
+
+#osd_seekbar_stack thumb.sb-player-seek-slider:hover {
+  background-position: 0px 0px !important;
+}
+
+#osd_seekbar_stack thumb.sb-player-seek-slider:active {
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-grabber-press.png');
+  background-position: 0px 0px !important;
+}
+
+#osd_seekbar_stack thumb.sb-player-seek-slider[disabled="true"] {
+  background-position: 0px 0px !important;
+}
+
+/** Elapsed Time Label ********************************************************/
+
+#osd_controls_bottom_hbox #sb-player-timeelapsed-label > label,
+#osd_controls_bottom_hbox #sb-player-totaltime-label > label {
+  color: rgb(229, 229, 229) !important;
+  font-size: 11px !important;
+  margin-top: 1px !important;
+  margin-left: 3px !important;
+}
+

@@ -1,0 +1,35 @@
+<profile>
+  <type>video</type>
+  <id>072b5104-1dd2-11b2-9313-e80ca3194e4e</id>
+  <priority>3500</priority> <!-- High priority: free codecs are the best choice
+                                 if supported (which will unfortunately be
+                                 rare) -->
+  <priority quality="0">350</priority> <!-- this sucks at low bitrates -->
+  <priority quality="1">4500</priority>
+  <description>Ogg/Theora/Vorbis test profile</description>
+  <mimetype>application/ogg</mimetype>
+  <extension>ogg</extension>
+
+  <container>
+    <type>application/ogg</type>
+  </container>
+
+  <video>
+    <type>video/x-theora</type>
+
+    <property name="bitrate" type="int" min="0" max="16777" default="0"
+              mapping="bitrate" scale="1/1000"/>
+    <quality-property name="bpp" quality="0" value="0.03"/>
+    <quality-property name="bpp" quality="1" value="0.3"/>
+  </video>
+
+  <audio>
+    <type>audio/x-vorbis</type>
+
+    <property name="max-bitrate" type="int" min="0" max="250000" default="0"
+              mapping="bitrate" scale="1/1"/>
+    <quality-property name="bitrate" quality="0" value="32000"/>
+    <quality-property name="bitrate" quality="0.5" value="128000"/>
+    <quality-property name="bitrate" quality="1" value="320000"/>
+  </audio>
+</profile>

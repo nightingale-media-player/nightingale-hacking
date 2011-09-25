@@ -1,0 +1,16 @@
+#content nightingale-system  chrome/content/
+#locale  nightingale-system  en-US  chrome/locale/en-US/
+#skin    nightingale-system  classic/1.0 chrome/skin/
+
+
+# Create a skin for Nightingale
+#skin  nightingale nightingale-system chrome/skin/
+# Include the Nightingale global in order to suppress the
+# standard OS look and feel.
+#skin  global nightingale-system  chrome://nightingale-global/skin/
+
+#skin  mozapps  nightingale-system  chrome://nightingale-mozapps/skin/
+
+override chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png chrome://nightingale/skin/base-elements/icon-generic-addon.png
+style chrome://mozapps/content/xpinstall/xpinstallConfirm.xul chrome://nightingale/skin/feathers.css
+style chrome://global/content/consule.xul chrome://nightingale/skin/feathers.css

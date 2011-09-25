@@ -1,0 +1,61 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+
+interface sbIDevice;
+
+/**
+ * \interface sbIDeviceRegistrar
+ * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(eba35eee-89e8-4d7f-bc54-755cd28a4a57)]
+interface sbIDeviceRegistrar : nsISupports
+{
+  /**
+   * An array of sbIDevices currently registered.
+   * The ordering within the array is undefined, even in consecutive reads.
+   */
+  readonly attribute nsIArray devices;
+
+  /**
+   * Registers an sbIDevice object.
+   */
+  void registerDevice(in sbIDevice aDevice);
+
+  /**
+   * Unregisters an sbIDevice object.
+   */
+  void unregisterDevice(in sbIDevice aDevice);
+
+  /**
+   * Retrieve a registered device.
+   */
+  sbIDevice getDevice(in nsIDPtr aDeviceId);
+};

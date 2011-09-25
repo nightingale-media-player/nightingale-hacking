@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device storage capacity widget.
+   *
+   *   This widget displays the storage capacity of the device.  It displays a
+   * capacity bar showing the total free storage and used storage.  The used
+   * storage is divided into different categories such as music, video, other,
+   * etc.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+   <binding id="sb-device-capacity" 
+     extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox flex="1">
+
+        <!-- Capacity bar. -->
+        <xul:stack sbid="device-capacity-bar" hidden="false"
+                   class="device-capacity-bar-stack"
+                   hideid="bar">
+
+          <!-- Capacity bar boxes. -->
+          <xul:hbox sbid="device-cap-bar-box"
+                    class="device-capacity-bar-box"
+                    flex="1">
+            <xul:hbox sbid="device-cap-bar-music-box"
+                      type="music"
+                      class="device-capacity-music"/>
+            <xul:hbox sbid="device-cap-bar-video-box"
+                      type="video"
+                      class="device-capacity-video"/>
+            <xul:hbox sbid="device-cap-bar-image-box"
+                      type="image"
+                      class="device-capacity-image"/>
+            <xul:hbox type="other" class="device-capacity-other"/>
+            <xul:hbox type="free" class="device-capacity-free"/>
+          </xul:hbox>
+
+          <!-- Capacity bar notches. -->
+          <xul:hbox class="device-capacity-bar-notches"
+                    flex="1"
+                    mousethrough="always">
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+            <xul:hbox flex="1"/>
+          </xul:hbox>
+
+          <xul:hbox class="device-capacity-bar-caps hook" flex="1"
+                    mousethrough="always">
+            <xul:hbox class="left" />
+            <xul:spacer class="middle" flex="1" />
+            <xul:hbox class="right" />
+          </xul:hbox>
+
+        </xul:stack>
+
+        <!-- Capacity legend. -->
+        <xul:hbox sbid="device-cap-legend-box"
+                  class="device-capacity-legend-box"
+                  hidden="false"
+                  hideid="legend">
+          <xul:sb-device-capacity-legend sbid="device-capacity-legend-music"
+                                         type="music"
+                                         class="device-capacity-legend-music"
+                                         label="&device.capacity.music.label;"/>
+          <xul:sb-device-capacity-legend sbid="device-capacity-legend-video"
+                                         type="video"
+                                         class="device-capacity-legend-video"
+                                         label="&device.capacity.video.label;"/>
+          <xul:sb-device-capacity-legend sbid="device-capacity-legend-image"
+                                         type="image"
+                                         class="device-capacity-legend-image"
+                                         label="&device.capacity.image.label;"/>
+          <xul:sb-device-capacity-legend type="other"
+                                         class="device-capacity-legend-other"
+                                         label="&device.capacity.other.label;"/>
+          <xul:sb-device-capacity-legend type="free"
+                                         class="device-capacity-legend-free"
+                                         label="&device.capacity.free.label;"/>
+        </xul:hbox>
+
+      </xul:vbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        /* Import external services. */
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the device capacity services. */
+        this.DCW.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device capacity services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        var                         jsLoader;
+
+        /* Get the Javascript sub-script loader services. */
+        jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService
+                                (Components.interfaces.mozIJSSubScriptLoader);
+
+        /* Import the device capacity services. */
+        if (typeof(this.DCW) == "undefined") {
+          jsLoader.loadSubScript
+            ("chrome://nightingale/content/scripts/device/deviceCapacity.js",
+             this);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device capacity services. */
+        this.DCW.finalize(this);
+        this.DCW.initialize(this);
+        ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the device capacity services. */
+        this.DCW.finalize(this);
+        this.DCW.initialize(this);
+        ]]></handler>
+    </handlers>
+
+
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device storage capacity legend widget.
+   *
+   *   This widget displays a legend for the device storage capacity.  It
+   * displays a capacity color, label, and value.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-capacity-legend">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:hbox>
+
+        <!-- Capacity color box. -->
+        <xul:stack>
+          <xul:hbox class="device-capacity-legend-color-box"
+                    xbl:inherits="type"/>
+          <xul:hbox class="device-capacity-box-overlay"/>
+        </xul:stack>
+
+        <!-- Capacity name and value. -->
+        <xul:vbox class="device-capacity-legend-label-box">
+          <xul:label class="device-capacity-legend-label capacity_header_label"
+                     xbl:inherits="value=label"/>
+          <xul:label class="device-capacity-legend-label capacity_value_label"
+                     xbl:inherits="value"/>
+        </xul:vbox>
+
+      </xul:hbox>
+
+    </content>
+
+  </binding>
+
+</bindings>

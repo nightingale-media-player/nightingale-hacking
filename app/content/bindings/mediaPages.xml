@@ -1,0 +1,534 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+<!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%brandDTD;
+%nightingaleDTD;
+%charsetDTD;
+%browserDTD;
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+
+  <!--
+    A binding that adds mediapages-related menu elements that allows selection of media pages
+  -->
+  <binding 
+    id="mediapages-menuitems" 
+    extends="chrome://nightingale/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
+  >
+    <content/>
+    <implementation type="application/x-javascript">
+      <constructor>
+      <![CDATA[
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+
+        // NOTE: this would be much nicer in the base class but their
+        // constructor fires first!
+        // We need to explicitly call onPopupShowing() here since the first
+        // time this constructor is called it is after the popupshowing event
+        // has fired.
+        this.onPopupShowing();
+      ]]>
+      </constructor>
+
+      <destructor>
+      <![CDATA[
+      ]]>
+      </destructor>
+
+      <!--
+        Called when a child menuitem is selected.  Attempts 
+        to switch media pages based on the properties of the
+        menuitem.
+      -->
+      <method name="onCommand">
+        <parameter name="item"/>
+        <parameter name="event"/>
+        <body>
+        <![CDATA[
+          try {
+            if (item.mediaPage && gBrowser.currentMediaPage) {
+            
+              // Set the given media page as the default for the current list
+              var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
+                                .getService(Ci.sbIMediaPageManager);
+              var LSP = Cc["@getnightingale.com/servicepane/library;1"]
+                          .getService(Ci.sbILibraryServicePaneService);
+              var type = LSP.getNodeContentTypeFromMediaListView(
+                               gBrowser.currentMediaPage.mediaListView);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          item.mediaPage,
+                          type);
+                      
+              // Reload using the new page
+              gBrowser.loadMediaList(
+                gBrowser.currentMediaListView.mediaList,  
+                event,
+                null, 
+                gBrowser.currentMediaListView, 
+                null);
+            }
+            else if (item.hasAttribute("uri")) {
+              gBrowser.loadURI(item.getAttribute("uri"),
+                               null, null, null, "_blank");
+            }
+          } catch (e) { 
+            Components.utils.reportError(e);
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!--
+        Populates the menupopup with a menu allowing selection
+        of compatible media pages
+      -->
+      <!-- 
+        NOTE: this function uses _addToMenu directly instead of returning an
+              array of content either method is fine, and here this one
+              probably makes more sense
+      -->
+      <method name="generateMenuItems">
+        <body>
+        <![CDATA[
+          var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
+                      .getService(Ci.sbIMediaPageManager);
+
+          var mediaPagesLabel = "mediapages.label";
+          try {
+            mediaPagesLabel =
+              this._stringBundle.GetStringFromName(mediaPagesLabel);
+          } catch (e) { 
+          }
+
+          // enable switching if we have a valid media page
+          // or are on a valid media page URL
+          // this prevents broken media pages from being inescapable
+          var pages = mgr.getAvailablePages();
+          var mediaPageURL = false;
+          var currentSpec = gBrowser.selectedBrowser.currentURI.spec;
+          for (var i = 0; i < pages.length; i++) {
+            if (currentSpec == pages[i].contentUrl) {
+              mediaPageURL = true;
+              break;
+            }
+          };
+          
+          if (!gBrowser.currentMediaPage && !mediaPageURL) {
+            var mediaPagesMenu = document.createElement("menu");
+            mediaPagesMenu.setAttribute("label", mediaPagesLabel);
+            mediaPagesMenu.setAttribute("disabled", "true");
+            this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(mediaPagesMenu);
+            return;
+          }
+
+          var view = gBrowser.currentMediaPage.mediaListView;
+          var ml = view.mediaList;
+
+          // these properties are used to customize the menu based on the
+          // space you want to allocate for it
+          var hideTitle = this.getAttribute("hideMediaListTitle");
+          var hideGetMore = this.getAttribute("hideGetMore");
+
+          if (hideTitle != "true") {
+            // Add the 'Media Views' menu
+
+            // create the menu to add to the parent
+            var mediaPagesMenu = document.createElement("menu");
+            mediaPagesMenu.setAttribute("label", mediaPagesLabel);
+
+            // create the popup menu that will hold the mediapage menuitems
+            var mediaPagesPopup = document.createElement("menupopup");
+            mediaPagesMenu.appendChild(mediaPagesPopup);
+
+            // add to the parent
+            this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(mediaPagesMenu);
+          }
+          // the media page manager can use a constraint if we have one
+          var constraint = null;
+          if (view instanceof Components.interfaces.sbIFilterableMediaListView) {
+            constraint = view.filterConstraint;
+          }
+          var pages = mgr.getAvailablePages(ml, constraint);
+          
+          // Trim the media list GUID from the querystring so that we can
+          // match it to the list of pages.  The guid is added by the
+          // tab browser so that each page instance shows up in the history
+          // service. This is unfortunate.   
+          var currentPageURL = gBrowser.currentURI
+                                       .spec.replace(/[\?&]libraryGUID.*$/, "");
+
+          
+          // Attach a menuitem for each compatible layout
+          var foundMediaPages = false;
+          while (pages.hasMoreElements()) {
+            var page = pages.getNext();
+            page.QueryInterface(Components.interfaces.sbIMediaPageInfo);
+
+            // Don't make menu entries for list or filter view since we
+            // have dedicated buttons for those
+            var hideBuiltIn = this.getAttribute("hideBuiltIn");
+            if (hideBuiltIn == "true" &&
+               ((page.contentUrl ==
+                "chrome://nightingale/content/mediapages/playlistPage.xul") ||
+                (page.contentUrl ==
+                "chrome://nightingale/content/mediapages/filtersPage.xul")))
+            {
+              continue;
+            }
+            var item = this._makeMenuItem(page);
+
+            if (page.contentUrl == currentPageURL) {
+              item.setAttribute("checked", "true");
+            }
+            else {
+              item.setAttribute("checked", "false");
+            }
+
+            if ( hideTitle ) { 
+              // we hide the title for the popup menu, so add it directly 
+              this._addToMenu(item);
+            } else {
+              mediaPagesPopup.appendChild(item);
+            }
+            foundMediaPages = true;
+          }
+
+          // If the current window has a browser/servicepane, then add a link
+          // to get more media pages.
+          // NOTE: This is brittle. Please change this once we have a proper API.
+          if (typeof(gBrowser) != "undefined" && hideGetMore != "true") {
+            if (foundMediaPages)
+              this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(this._makeGetMore());
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!-- Return a menuitem element for the given page -->
+      <method name="_makeMenuItem">
+        <parameter name="page"/>
+        <body>
+        <![CDATA[
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", page.contentTitle);
+          item.setAttribute("name", "mediapage.item");
+          item.setAttribute("type", "radio");
+          item.mediaPage = page;
+          return item;
+        ]]>
+        </body>
+      </method>
+      
+      <!-- Adds a "Get More" menu item that links to the addons site -->
+      <method name="_makeGetMore">
+        <body>
+        <![CDATA[
+          var item = document.createElement("menuitem");
+
+          var getMoreText;
+          try {
+            getMoreText = this._stringBundle.GetStringFromName("mediapages.getmore");
+          } catch (e) { 
+            getMoreText="Error";
+            dump("\n\n\nmediaPages.xml:  Error getting menu text from nightingale.properties" +
+                 " bundle\n"+ e + "\n"); 
+          }
+          
+          var formatter = Cc["@mozilla.org/toolkit/URLFormatterService;1"]
+                            .getService(Ci.nsIURLFormatter);
+          var getMoreURL = formatter.formatURLPref("nightingale.url.addons.mediaviews");
+          item.setAttribute("label", getMoreText);
+          item.setAttribute("name", "menu.getmore");
+          item.setAttribute("uri", getMoreURL);
+          return item;
+        ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+  <binding id="mediapages-button">
+    <content>
+      <xul:toolbarbutton id="mediapages-button-listview"
+                         class="toolbarbutton-1 chromeclass-toolbar-additional"
+                         anonid="mediapages-button-listview"
+                         label="&tooltip.browser.mediapages.list;"
+                         tooltiptext="&tooltip.browser.mediapages.list;"
+                         oncommand="switchMediaView('listview')" />
+      <xul:toolbarbutton id="mediapages-button-filterview"
+                         class="toolbarbutton-1 chromeclass-toolbar-additional"
+                         anonid="mediapages-button-filterview"
+                         label="&tooltip.browser.mediapages.filter;"
+                         tooltiptext="&tooltip.browser.mediapages.filter;"
+                         oncommand="switchMediaView('filterview')" />
+      <xul:hbox id="mediapages-other" anonid="mediapages-other" />
+      <xul:toolbarbutton id="mediapages-button"
+                         class="toolbarbutton-1 chromeclass-toolbar-additional"
+                         anonid="mediapages-button"
+                         label="&tooltip.browser.mediapages;"
+                         tooltiptext="&tooltip.browser.mediapages;"
+                         type="menu">
+          <xul:menupopup orient="vertical">
+            <xul:sb-mediapages-menuitems hideMediaListTitle="true"
+                                         hideBuiltIn="true" />
+          </xul:menupopup>
+      </xul:toolbarbutton>
+    </content>
+    <implementation>
+      <constructor><![CDATA[
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+
+        var button = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button");
+        var listButton = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button-listview");
+        var filterButton = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button-filterview");
+        var self = this;
+        this.disabler = function() {
+          
+          // enable switching if we have a valid media page
+          // or are on a valid media page URL
+          // this prevents broken media pages from being inescapable
+          var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
+                      .getService(Ci.sbIMediaPageManager);
+          var pages = mgr.getAvailablePages();
+          var mediaPageURL = false;
+          if (gBrowser.selectedBrowser.currentURI) {
+            var currentSpec = gBrowser.selectedBrowser.currentURI.spec;
+            for (var i = 0; i < pages.length; i++) {
+              if (currentSpec == pages[i].contentUrl) {
+                mediaPageURL = true;
+                break;
+              }
+            };
+          }
+
+          if (gBrowser.loading) {
+            return; // Do nothing until loading is complete.  This avoids flickering.
+          }
+
+          var mediaPage = gBrowser.currentMediaPage;
+          if (!((mediaPage && !mediaPage.isOnlyView) || mediaPageURL)) {
+            self.setButtonToggle();
+          }
+
+          // set the button states for the list & filter view buttons so
+          // they are toggled correctly depending on the view
+          if (gBrowser.currentURI)
+            var currentPageURL = gBrowser.currentURI
+                                      .spec.replace(/[\?&]libraryGUID.*$/, "");
+          switch (currentPageURL) {
+            case "chrome://nightingale/content/mediapages/filtersPage.xul":
+              self.setButtonToggle("filterview");
+              break;
+            case "chrome://nightingale/content/mediapages/playlistPage.xul":
+              self.setButtonToggle("listview");
+              break;
+            default:
+              if (self._pageUrlMapping[currentPageURL]) {
+                self.setButtonToggle(self._pageUrlMapping[currentPageURL]);
+              }
+          }
+
+        };
+        
+        // cache instances to the List & Filter view, and build toolbarbuttons
+        // for our other views
+        var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
+                    .getService(Ci.sbIMediaPageManager);
+        var pages = mgr.getAvailablePages();
+        var mpId = 0;
+        var XULNS =
+            "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        this._pageIdMapping = [];
+        this._pageUrlMapping = [];
+        this._maxPageId = 0;
+
+        while (pages.hasMoreElements()) {
+          var page = pages.getNext().QueryInterface(
+                           Components.interfaces.sbIMediaPageInfo);
+          switch (page.contentUrl) {
+            case "chrome://nightingale/content/mediapages/filtersPage.xul":
+              this.filterView = page;
+              break;
+            case "chrome://nightingale/content/mediapages/playlistPage.xul":
+              this.listView = page;
+              break;
+            default:
+              if (page.contentIcon) {
+                 var pagebutton = document.createElementNS(XULNS,
+                                                           "toolbarbutton");
+                 var thisId = mpId++;
+                 let idSuffix = page.contentUrl.replace(/[^a-z0-9]/gi, "_");
+                 pagebutton.id = "mediapages-button-" + idSuffix;
+                 pagebutton.className = "toolbarbutton-1 " +
+                            "chromeclass-toolbar-additional mp-other";
+                 pagebutton.anonid="mediapages-button-" + idSuffix;
+                 pagebutton.mpId = thisId;
+                 pagebutton.addEventListener("command", function() {
+                     switchMediaView(this.mpId);
+                 }, false);
+                 pagebutton.setAttribute("tooltiptext", page.contentTitle);
+                 pagebutton.setAttribute("style", "list-style-image: url("
+                                                  + page.contentIcon + ");");
+                 this._maxPageId = thisId;
+                 this._pageIdMapping[thisId] = page;
+                 this._pageUrlMapping[page.contentUrl] = thisId;
+
+                 var hbox = document.getAnonymousElementByAttribute(this,
+                                          "anonid", "mediapages-other");
+                 hbox.appendChild(pagebutton);
+              }
+          }
+        }
+
+        gBrowser.addEventListener('TabContentChange', this.disabler, false); 
+      ]]></constructor>
+      
+      <destructor><![CDATA[
+        if (gBrowser) {
+          gBrowser.removeEventListener('TabContentChange', this.disabler, false);
+        }
+      ]]></destructor>
+
+
+      <method name="setButtonToggle">
+        <parameter name="id"/>
+        <body>
+        <![CDATA[
+          // If no parameter was passed, then disable all buttons
+          var mpButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button");
+          var listButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-listview");
+          var filterButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-filterview");
+
+          var pageButtons = ["listview", "filterview"];
+          if (this._pageIdMapping.length > 0)
+            for (var i=0; i<=this._maxPageId; i++) {
+              pageButtons.push(i);
+            }
+
+          if (id == null) {
+            mpButton.setAttribute("disabled", true);
+            for each (var buttonId in pageButtons) {
+              var button = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-" + buttonId);
+              if (!button)
+                button = document.getElementById("mediapages-button-"+buttonId);
+
+              button.setAttribute("disabled", true);
+              button.setAttribute("open", "false");
+            }
+            return;
+          }
+
+          // Remove any disabled attributes
+          mpButton.removeAttribute("disabled");
+          // Make sure we select the right page
+          for each (var buttonId in pageButtons) {
+            var button = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button-" + buttonId);
+            if (!button)
+              button = document.getElementById("mediapages-button-" + buttonId);
+
+            button.removeAttribute("disabled");
+            if (buttonId == id)
+              button.setAttribute("open", "true");
+            else
+              button.setAttribute("open", "false");
+          }
+        ]]>
+        </body>
+      </method>
+
+      <method name="switchMediaView">
+        <parameter name="viewName"/>
+        <body>
+        <![CDATA[
+          var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
+                      .getService(Ci.sbIMediaPageManager);
+          var listButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-listview");
+          var filterButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-filterview");
+          var others = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-other");
+          var LSP = Cc["@getnightingale.com/servicepane/library;1"]
+                      .getService(Ci.sbILibraryServicePaneService);
+          var type = LSP.getNodeContentTypeFromMediaListView(
+                           gBrowser.currentMediaPage.mediaListView);
+          switch (viewName) {
+            case "listview":
+              this.setButtonToggle(viewName);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          this.listView,
+                          type);
+              break;
+            case "filterview":
+              this.setButtonToggle(viewName);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          this.filterView,
+                          type);
+              break;
+            default:
+              this.setButtonToggle(viewName);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          this._pageIdMapping[viewName],
+                          type);
+          }
+
+          // Reload using the new page
+          gBrowser.loadMediaList(gBrowser.currentMediaListView.mediaList,  
+                                 null,
+                                 null, 
+                                 gBrowser.currentMediaListView, 
+                                 null);
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+</bindings>
+
+

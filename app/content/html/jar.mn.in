@@ -1,0 +1,31 @@
+#filter substitution
+nightingale.jar:
+% content  nightingale  %content/nightingale/
+#ifdef SB_USER_ABOUT_FILE
+  content/nightingale/html/about.html        (@SB_USER_ABOUT_FILE@)
+#else
+  content/nightingale/html/about.html        (about.html)
+#endif
+  content/nightingale/html/notConnected.html (notConnected.html)
+#ifdef SB_USER_EULA_FILE
+  content/nightingale/html/eula.html         (@SB_USER_EULA_FILE@)
+#else
+  content/nightingale/html/eula.html         (eula.html)
+#endif
+#ifdef SB_USER_ABOUTCOLON_FILE
+  content/nightingale/html/aboutColon.xhtml  (@SB_USER_ABOUTCOLON_FILE@)
+#else
+  content/nightingale/html/aboutColon.xhtml  (aboutColon.xhtml)
+#endif
+#ifdef SB_USER_ABOUTCREDITS_FILE
+  content/nightingale/html/aboutCredits.xhtml  (@SB_USER_ABOUTCREDITS_FILE@)
+#else
+  content/nightingale/html/aboutCredits.xhtml  (aboutCredits.xhtml)
+#endif
+# Keyboard help
+  content/nightingale/html/keyboardHelp.xhtml (keyboardHelp.xhtml)
+  content/nightingale/html/keyboardHelp.css   (keyboardHelp.css)
+% override chrome://global/content/aboutAbout.html chrome://nightingale/content/html/eula.html
+% override chrome://global/content/about.xhtml chrome://nightingale/content/html/aboutColon.xhtml
+% override chrome://global/content/license.html chrome://nightingale/content/html/eula.html
+

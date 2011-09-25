@@ -1,0 +1,204 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+interface nsISimpleEnumerator;
+
+interface sbIMediaItem;
+interface sbIPlaybackHistoryEntry;
+interface sbIPlaybackHistoryListener;
+interface sbIPropertyArray;
+
+/**
+ * \interface sbIPlaybackHistoryService
+ *
+ * The playback history service stores all entries in _reverse chronological
+ * order_. This means that the _most recent_ entry is always the first when
+ * using sbIPlaybackHistoryService::entries.
+ *
+ * Getter methods assume that index 0 is the most recent entry.
+ */
+[scriptable, uuid(c818767c-7474-436c-8bec-a95ad08cf1e5)]
+interface sbIPlaybackHistoryService : nsISupports
+{
+  /**
+   * \brief Enumerator of all entries in the playback history service.
+   * \note The enumerator will contain sbIPlaybackHistoryEntry objects.
+   */
+  readonly attribute nsISimpleEnumerator entries;
+
+  /** 
+   * \brief Total number of entries in the playback history service.
+   */
+  readonly attribute unsigned long long entryCount;
+
+  /**
+   * \brief Create a playback history entry from a media item and a timestamp.
+   * \param aItem The media item for which you wish to create an entry.
+   * \param aTimestamp The time at which the item was played in UNIX timestamp format.
+   * \param aDuration The duration of playback for the item for this entry.
+   * \param aAnnotations Optional annotations for the entry.
+   */
+  sbIPlaybackHistoryEntry createEntry(in sbIMediaItem aItem, 
+                                      in long long aTimestamp,
+                                      in long long aDuration,
+                                      in sbIPropertyArray aAnnotations);
+
+  /**
+   * \brief Add an entry to the playback history service.
+   * \param aEntry The playback history entry you wish to add.
+   */
+  void addEntry(in sbIPlaybackHistoryEntry aEntry);
+
+  /**
+   * \brief Add entries to the playback history service.
+   * \param aEntries An array of sbIPlaybackHistoryEntry objects.
+   * \throws NS_ERROR_INVALID_ARG when the array does not 
+   *         contain sbIPlaybackHistoryEntry objects.
+   */
+  void addEntries(in nsIArray aEntries);
+
+  /**
+   * \brief Get an entry by index. Negative indexes wrap from the last entry.
+   * \param aIndex
+   */
+  sbIPlaybackHistoryEntry getEntryByIndex(in long long aIndex);
+
+  /**
+   * \brief Get entries from the playback history service using a start index.
+   *        Negative indexes wrap from the last entry.
+   * \param aStartIndex The start index.
+   * \param aCount The number of entries you wish to get.
+   * \note The array will contain sbIPlaybackHistoryEntry objects.
+   */
+  nsIArray getEntriesByIndex(in long long aStartIndex, 
+                             in unsigned long long aCount);
+
+  /**
+   * \brief Get entries between start timestamp and end timestamp. The range is
+   *        inclusive.
+   * \param aStartTimestamp The beginning of the range.
+   * \param aEndTimestamp The end of the range.
+   * \note The timestamps are standard UNIX style timestamps.
+   * \note If aStartTimestamp is greater than aEndTimestamp, the results are
+   *       returned in descending order.
+   */
+  nsIArray getEntriesByTimestamp(in long long aStartTimestamp, 
+                                 in long long aEndTimestamp);
+
+  /**
+   * \brief Remove an entry from the playback history service.
+   * \param aEntry The entry to remove. 
+   */
+  void removeEntry(in sbIPlaybackHistoryEntry aEntry);
+
+  /**
+   * \brief Remove an entry from the playback history service using the entry's
+   *        index. Negative indexes wrap from the last entry.
+   * \param aIndex The index of the entry to remove.
+   */
+  void removeEntryByIndex(in long long aIndex);
+
+  /**
+   * \brief Remove entries from the playback history service using a start index.
+   *        Negative indexes wrap from the last entry.
+   * \param aStartIndex The start index.
+   * \param aCount The number of entries you wish to remove.
+   */
+  void removeEntriesByIndex(in long long aStartIndex, 
+                            in unsigned long long aCount);
+
+  /**
+   * \brief Remove entries from the playback history service.
+   * \param aEntries An array of sbIPlaybackHistoryEntry objects to remove.
+   */
+  void removeEntries(in nsIArray aEntries);
+
+  /**
+   * \brief Get entries by their annotation value.
+   * \param aAnnotationId The annotation id.
+   * \param aAnnotationValue The annotation value.
+   * \param [optional] aCount The maximum number of entries to return.
+   * \note Results are ordered from newest to oldest.
+   */
+  nsIArray getEntriesByAnnotation(in AString aAnnotationId, 
+                                  in AString aAnnotationValue,
+                                  [optional] in unsigned long aCount);
+  
+  /**
+   *
+   */
+  nsIArray getEntriesByAnnotations(in sbIPropertyArray aAnnotations,
+                                   [optional] in unsigned long aCount);
+
+  /**
+   * \brief Clear all entries from the playback history service.
+   */
+  void clear();
+
+  /**
+   * \brief Add a listener.
+   */
+  void addListener(in sbIPlaybackHistoryListener aListener);
+
+  /**
+   * \brief Remove a listener.
+   */
+  void removeListener(in sbIPlaybackHistoryListener aListener);
+
+  /**
+   * \internal
+   */
+  [notxpcom] nsresult addOrUpdateAnnotation(in long long aEntryId,
+                                            in AString aAnnotationId,
+                                            in AString aAnnotationValue);
+
+  /**
+   * \internal
+   */
+  [notxpcom] nsresult removeAnnotation(in long long aEntryId,
+                                       in AString aAnnotationId);
+};
+
+%{C++
+
+#define SB_PLAYBACKHISTORYSERVICE_DESCRIPTION    \
+  "Nightingale Playback History Service"
+#define SB_PLAYBACKHISTORYSERVICE_CONTRACTID     \
+  "@getnightingale.com/Nightingale/PlaybackHistoryService;1"
+#define SB_PLAYBACKHISTORYSERVICE_CLASSNAME      \
+  "sbPlaybackHistoryService"
+#define SB_PLAYBACKHISTORYSERVICE_CID            \
+{ /*{e4f7838e-9672-453e-818d-a0da84e64365}*/     \
+  0xe4f7838e,                                    \
+  0x9672,                                        \
+  0x453e,                                        \
+  { 0x81, 0x8d, 0xa0, 0xda, 0x84, 0xe6, 0x43, 0x65 }  \
+}
+
+%}

@@ -1,0 +1,182 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/**
+ * \file sbIMediaListViewSelection.idl
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface sbIMediaItem;
+
+/**
+ * \interface sbIMediaListViewSelectionListener
+ * \brief Listener interface that gets notified on selection changes
+ */
+[scriptable, uuid(8e4e9f65-9c90-4381-a8ed-b8aa2d1ad028)]
+interface sbIMediaListViewSelectionListener : nsISupports
+{
+  /**
+   * \brief Called when the selection has changed
+   */
+  void onSelectionChanged();
+
+  /**
+   * \brief Called when the current index of has changed
+   * \see sbIMediaListViewSelection::currentIndex
+   */
+  void onCurrentIndexChanged();
+};
+
+/**
+ * \interface sbIMediaListViewSelection
+ * \brief Manage the selection of items within a view.  This interface is a
+ *        subset of nsITreeViewSelection.
+ *        Note that if you are part of the user interface, you probably want
+ *        to be calling nsITreeView.selection instead - otherwise things can
+ *        get subtly out of sync.
+ */
+[scriptable, uuid(134d05d0-68ad-11df-a08a-0800200c9a66)]
+interface sbIMediaListViewSelection : nsISupports
+{
+  /**
+   * \brief The number of selected items
+   */
+  readonly attribute long count;
+
+  /**
+   * \brief The index of the current media item.
+   */
+  attribute long currentIndex;
+
+  /**
+   * \brief The current media item
+   */
+  readonly attribute sbIMediaItem currentMediaItem;
+
+  /**
+   * \brief Indicates whether or not the item at the specified index
+   *        is part of the selection
+   * \param aIndex Index of the item in the view
+   */
+  boolean isIndexSelected(in long aIndex);
+
+  /**
+   * \brief Indicates whether or not any item with the specified content
+   *        type is selected.
+   * \param aContentType Content type of the item
+   */
+  boolean isContentTypeSelected(in AString aContentType);
+
+  /**
+   * \brief Get an enumerator of all the selected media items.  The elements
+   *        contained in the enumerator implement sbIIndexedMediaItem which
+   *        allows the consumer of the enumerator to know the item and the
+   *        index of the item.
+   */
+  readonly attribute nsISimpleEnumerator selectedIndexedMediaItems;
+  
+  /**
+   * \brief Get an enumertaor of all the selected media items.  The elements
+   *        contained in the enumerator implement sbIMediaItem.  This differs
+   *        from selectedIndexedMediaItems in that there is no indices involved.
+   */
+  readonly attribute nsISimpleEnumerator selectedMediaItems;
+
+  /**
+   * \brief Select the item at the given index
+   * \param aIndex Index of the item in the view
+   */
+  void select(in long aIndex);
+
+  /**
+   * \brief Select only the item at the given index, all others will be
+   *        deselected
+   * \param aIndex Index of the item in the view
+   */
+  void selectOnly(in long aIndex);
+
+  /**
+   * \brief Same as selectOnly but notifies listeners after a delay (analogous
+   *        to nsITreeSelection.timedSelect()).
+   * \param aIndex Index of the item in the view
+   * \param aDelay Delay in milliseconds before notification
+   */
+  void timedSelectOnly(in long aIndex, in long aDelay);
+
+  /**
+   * \brief Toggle the selection state of the item at the given index
+   * \param aIndex Index of the item in the view
+   */
+  void toggle(in long aIndex);
+
+  /**
+   * \brief Unselect the item at the given index
+   * \param aIndex Index of the item in the view
+   */
+  void clear(in long aIndex);
+
+  /**
+   * \brief Select the range specified by the indices.
+   * \param aStartIndex Index of the starting item in the view.
+   * \param aEndIndex Index of the ending item in the view.
+   */
+  void selectRange(in long aStartIndex, in long aEndIndex);
+
+  /**
+   * \brief Clear the specified range
+   * \param aStartIndex Index of the starting item in the view
+   * \param aEndIndex Index of the ending item in the view
+   */
+  void clearRange(in long aStartIndex, in long aEndIndex);
+
+  /**
+   * \brief Clears the selection
+   */
+  void selectNone();
+
+  /**
+   * \brief Selects all items
+   */
+  void selectAll();
+
+  /**
+   * \brief Add a listener to the selection.  It will be notified when the
+   *        selection or current index changes
+   * \param aListener The listener to add
+   */
+  void addListener(in sbIMediaListViewSelectionListener aListener);
+
+  /**
+   * \brief Remove a listener from the selection
+   * \param aListener The listener to remove
+   */
+  void removeListener(in sbIMediaListViewSelectionListener aListener);
+
+  /**
+   * \brief When set to true, notifications are not sent to the listeners
+   */
+  attribute boolean selectionNotificationsSuppressed;
+};

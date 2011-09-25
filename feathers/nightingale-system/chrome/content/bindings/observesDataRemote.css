@@ -1,0 +1,53 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+ 
+ 
+
+/** 
+*******************************************************************************
+DATAREMOTE OBSERVER 
+
+See app/bindings/observesDataRemote.xml
+
+By default commands, broadcaster, and observers have display:none, which prevents
+XBL instantiation.  If you are having trouble getting observes to work below
+a node, check to see if display:none is somewhere in the chain.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+commandset,
+command,
+broadcasterset,
+broadcaster,
+observes[type="dataremote"]
+{
+  display: block !important;
+  padding:0px !important;
+  margin:0px !important;
+}

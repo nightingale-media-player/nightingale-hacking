@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+ -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE page SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+
+<!-- Import the standard scripts and overlays for all media pages.
+     Required for the playlist and other widgets to function correctly. -->
+<?xul-overlay href="chrome://nightingale/content/xul/mediaPageOverlay.xul"?>
+
+
+<!--
+ 
+  Playlist Media Page 
+  
+  The default viewer for sbIMediaListViews.  
+  
+  Shows a media list as a plain table using the sb-playlist XBL widget, 
+  and optionally includes year/artist/album filters with the 
+  sb-filterlist widget.
+
+  This page is registered with sbIMediaPageManager and loaded by the
+  sbTabBrowser widget.
+  
+  For more information see http://developer.getnightingale.com/add-on-api/
+  
+  -->
+<page id="sb-playlist-media-page"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      onload="window.mediaPage.onLoad();"
+      onunload="window.mediaPage.onUnload();"
+      windowtype="Nightingale:MediaPage">
+
+  <!-- Nightingale Playlist tree/table widget.
+  
+       Contains:
+         * Playlist commands (keyboard shortcuts, context menus, toolbars)
+         * Filtering UI (Used to manipulate sbIMediaListView.cascadeFilterSets)
+         * A tree widget that displays the contents of the sbIMediaListView
+         * Drag and drop support
+    -->
+  <!-- Playlist Filters -->
+  <vbox id="sb-playlist" flex="1">
+    
+    <hbox id="sb-playlist-filters"
+          class="sb-playlist-filters"
+          hidden="false"/>
+
+    <sb-smart-splitter id="sb-playlist-splitter"
+                       class="playlist-splitter"
+                       state="open"
+                       orient="vertical"
+                       collapse="never"
+                       resizebefore="closest"
+                       resizeafter="closest"
+                       hidden="true"
+                       metricscategory="app"
+                       metricsid="collapse.library"
+                       applydefault="true">
+      <grippy/>
+    </sb-smart-splitter>
+    
+    <sb-playlist id="playlist" 
+                 flex="1"
+                 enableColumnDrag="true"
+                 persist="column-list column-widths"
+                 editable="true"/>
+  </vbox>
+
+  <!-- Playlist Page Controller.
+       Registers a window.mediaPage object implementing the 
+       sbIMediaPage interface.
+    -->
+  <script type="application/x-javascript" 
+          src="chrome://nightingale/content/mediapages/filtersPage.js" />
+
+</page>

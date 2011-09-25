@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 le=unix :miv -->
+<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
+[
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
+]
+>
+<!--
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+-->
+
+<bindings
+  xmlns="http://www.mozilla.org/xbl"
+  xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <binding id="springload-button" display="xul:button"
+           extends="chrome://global/content/bindings/button.xml#button">
+
+<!--
+  - NOTE : this uses the "popupelement" attribute instead of the normal "popup"
+  - because XUL is hard-coded to open that on mouse down, even if this element
+  - is disabled.  Oops.
+  -->
+
+    <handlers>
+      <handler event="mouseover" phase="target">
+        <![CDATA[
+          if (this._springTimer)
+            clearTimeout(this._springTimer);
+          this._springTimer = setTimeout(this.onSpring, this._delay, this);
+          
+          if (this._closeTimer) {
+            clearTimeout(this._closeTimer);
+            this._closeTimer = null;
+          }
+        ]]>
+      </handler>
+      <handler event="mouseout" phase="target">
+        <![CDATA[
+          clearTimeout(this._springTimer);
+          this._springTimer = null;
+          
+          if (this._closeTimer)
+            clearTimeout(this._closeTimer);
+          this._closeTimer = setTimeout(this._onTimeout, this._closedelay, this);
+        ]]>
+      </handler>
+      <handler event="dragenter" phase="target">
+        <![CDATA[
+          if (!this._springTimer)
+            this._springTimer = setTimeout(this.onSpring, this._dragdelay, this);
+          
+          if (this._closeTimer) {
+            clearTimeout(this._closeTimer);
+            this._closeTimer = null;
+          }
+        ]]>
+      </handler>
+      <handler event="spring" phase="target">
+        <!-- need to dispatch the onspring= attribute -->
+        <![CDATA[
+          if (this._springTimer) {
+            clearTimeout(this._springTimer);
+            this._springTimer = null;
+          }
+          if (this.disabled) {
+            return true;
+          }
+          if (this.hasAttribute("onspring")) {
+            var f = new Function("event", this.getAttribute("onspring"));
+            return f.call(this, event);
+          }
+          return true;
+        ]]>
+      </handler>
+    </handlers>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          if (this.hasAttribute("delay")) {
+            this._delay = parseFloat(this.getAttribute("delay"), 10);
+          }
+          if (this.hasAttribute("dragdelay")) {
+            this._dragdelay = parseFloat(this.getAttribute("dragdelay"), 10);
+          }
+          if (this.hasAttribute("closedelay")) {
+            this._closedelay = parseFloat(this.getAttribute("closedelay"), 10);
+          }
+        ]]>
+      </constructor>
+      
+      <property name="springDisabled">
+        <getter>
+          return this.getAttribute("springdisabled") == "true";
+        </getter>
+        <setter>
+          if (val) {
+            this.setAttribute("springdisabled", "true");
+          } else {
+            this.removeAttribute("springdisabled");
+          }
+        </setter>
+      </property>
+      <method name="onSpring">
+        <parameter name="self"/>
+        <body><![CDATA[
+          if (self._springTimer) {
+            clearTimeout(self._springTimer);
+            self._springTimer = null;
+          }
+          if (self.disabled || self.springDisabled) {
+            return;
+          }
+          var event = document.createEvent("Event");
+          event.initEvent("spring", true, true);
+          var doDefault = self.dispatchEvent(event);
+          if (doDefault && self.hasAttribute("popupelement")) {
+            var elem = document.getElementById(self.getAttribute("popupelement"));
+            if (elem && ("openPopup" in elem) && (elem.openPopup instanceof Function)) {
+              elem.openPopup(self, self._popupPosition, 0, 0, false, false);
+              
+              // hook into the element's mouseover / mouseout events, so that
+              // we can keep it open when we go into it
+              function onMouseOver(event) {
+                if (self._closeTimer) {
+                  clearTimeout(self._closeTimer);
+                  self._closeTimer = null;
+                }
+              }
+              elem.addEventListener("mouseover", onMouseOver, false);
+              // dragenter, and only dragenter, needs to be capturing
+              elem.addEventListener("dragenter", onMouseOver, true);
+              
+              function onMouseOut(event) {
+                if (self._closeTimer)
+                  clearTimeout(self._closeTimer);
+                self._closeTimer = setTimeout(self._onTimeout, self._closedelay, self);
+              }
+              elem.addEventListener("mouseout", onMouseOut, false);
+              elem.addEventListener("dragexit", onMouseOut, false);
+              
+              function onPopupHidden(event) {
+                // clean up
+                if (self._closeTimer) {
+                  clearTimeout(self._closeTimer);
+                  self._closeTimer = null;
+                }
+                elem.removeEventListener("mouseover", onMouseOver, false);
+                elem.removeEventListener("dragenter", onMouseOver, true);
+                elem.removeEventListener("mouseout", onMouseOut, false);
+                elem.removeEventListener("dragexit", onMouseOut, false);
+                elem.removeEventListener("popuphidden", onPopupHidden, false);
+              }
+              elem.addEventListener("popuphidden", onPopupHidden, false);
+            }
+          }
+        ]]></body>
+      </method>
+      
+      <!-- cancel the timer -->
+      <method name="cancel">
+        <body><![CDATA[
+          if (this._springTimer) {
+            clearTimeout(this._springTimer);
+            this._springTimer = null;
+          }
+        ]]></body>
+      </method>
+      
+      <!-- triggered n seconds after the user mouses out of the panel -->
+      <method name="_onTimeout">
+        <parameter name="self"/>
+        <body><![CDATA[
+          var elem = document.getElementById(self.getAttribute("popupelement"));
+          if (elem && ("hidePopup" in elem) && (elem.hidePopup instanceof Function)) {
+            elem.hidePopup();
+          }
+          clearTimeout(self._closeTimer);
+          self._closeTimer = null;
+        ]]></body>
+      </method>
+
+      <field name="_springTimer">null</field>
+      <field name="_delay">3000</field>
+      <field name="_dragdelay">this._delay</field>
+      
+      <field name="_closeTimer">null</field>
+      <field name="_closedelay">1000</field>
+      
+      <property name="_popupPosition">
+        <getter>
+          if (this.hasAttribute("position")) {
+            return this.getAttribute("position");
+          }
+          return ""; // default value
+        </getter>
+      </property>
+    </implementation>
+  </binding>
+</bindings>

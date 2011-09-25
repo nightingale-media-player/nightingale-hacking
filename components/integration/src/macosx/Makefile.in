@@ -1,0 +1,81 @@
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ìGPLî).
+#
+# Software distributed under the License is distributed
+# on an ìAS ISî basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
+
+DYNAMIC_LIB = sbIntegration
+
+CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
+                     $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/controller/public \
+                     $(DEPTH)/components/devicesobsolete/manager/public \
+                     $(DEPTH)/components/devicesobsolete/base/public \
+                     $(DEPTH)/components/devicesobsolete/cd/public \
+                     $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(topsrcdir)/components/property/src \
+                     $(topsrcdir)/components/devicesobsolete/base/src \
+                     $(topsrcdir)/components/devicesobsolete/cd/src \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/xultmpl \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/widget \
+                     $(MOZSDK_INCLUDE_DIR)/docshell \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/appshell \
+                     $(MOZSDK_INCLUDE_DIR)/webbrwsr \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
+
+CMM_SRCS = NativeWindowFromNode.mm \
+           sbNativeWindowManager.mm \
+           IntegrationComponent.mm \
+           WindowCloak.mm \
+           sbBaseScreenSaverSuppressor.mm \
+           sbMacAppDelegate.mm \
+           sbMacWindowMoveService.mm \
+           sbScreenSaverSuppressor.mm \
+           $(NULL)
+
+ifdef DEBUG
+   DYNAMIC_LIB_EXTRA_FLAGS = -framework ExceptionHandling
+endif
+
+DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
+                           -framework Cocoa \
+                           -Wl,-syslibroot,$(SB_MACOSX_SDK)
+
+IS_COMPONENT = 1 
+
+include $(topsrcdir)/build/rules.mk

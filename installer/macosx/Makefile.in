@@ -1,0 +1,111 @@
+#
+#=BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#=END NIGHTINGALE GPL
+#
+
+DEPTH = ../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+PKG_STAGING_DIR = pkg-staging
+
+SCRIPTS_COPY_DIR = $(CURDIR)/scripts
+
+# These only need to be defined if we're building a partner .pkg dmg
+ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
+   NIGHTINGALE_PP_DIR = installer.pmdoc
+
+   NIGHTINGALE_PP_RESOURCES = $(srcdir)/index.xml.in \
+                           $(srcdir)/01nightingale.xml.in \
+                           $(NULL)
+
+   RESOURCES_PPFLAGS = -Fsubstitution \
+                       $(NULL)
+
+   PPDEFINES = -DNIGHTINGALE_OBJDIR=$(NIGHTINGALE_OBJDIR) \
+               -DNIGHTINGALE_SRCDIR=$(srcdir) \
+               -DCURDIR=$(CURDIR) \
+               -DMACOSX_APPBUNDLE=$(MACOSX_APPBUNDLE) \
+               -DDISTDIRNAME=$(DISTDIRNAME) \
+               -DNIGHTINGALE_APPBUNDLE=$(NIGHTINGALE_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE) \
+               $(NULL)
+
+   CREATEDIRS += $(PKG_STAGING_DIR) \
+                 $(NULL)
+
+   GARBAGE += $(NIGHTINGALE_PP_DIR) \
+              $(PKG_STAGING_DIR) \
+              $(SCRIPTS_COPY_DIR) \
+              $(NULL)
+
+   MAKE_MACPKG_MANIFEST = $(topsrcdir)/tools/scripts/make-macpkg-manifest.py
+endif
+
+# And these only need to be defined if we're building an installer .dmg
+ifneq (,$(filter dmg,$(SB_INSTALLER_SUFFIXES)))
+   MAC_APPLICATIONS_SYMLINK = $(DEPTH)/dist/Applications
+endif
+
+include $(topsrcdir)/build/rules.mk
+
+$(NIGHTINGALE_PP_DIR)/01nightingale-contents.xml:
+	$(MAKE_MACPKG_MANIFEST) $(NIGHTINGALE_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE) -o $@
+
+$(SCRIPTS_COPY_DIR): FORCE
+	$(MKDIR) $(SCRIPTS_COPY_DIR)
+	$(CP) $(srcdir)/pkg-postinstall.sh $(SCRIPTS_COPY_DIR)/postinstall
+	$(CP) $(srcdir)/pkg-postinstall.sh $(SCRIPTS_COPY_DIR)/postupgrade
+
+$(PKG_STAGING_DIR)/$(SB_INSTALLER_NAME).pkg: $(NIGHTINGALE_PP_DIR)/01nightingale-contents.xml $(SCRIPTS_COPY_DIR)
+	$(MACPKGMAKER) --doc installer.pmdoc --verbose --id com.nightingalenest.nightingale -o $@
+
+# .dmg libs target
+libs::
+ifneq (,$(filter dmg,$(SB_INSTALLER_SUFFIXES)))
+	$(RM) $(SB_INSTALLER_NAME)
+	-test -h $(MAC_APPLICATIONS_SYMLINK) && $(RM) $(MAC_APPLICATIONS_SYMLINK)
+	$(LN) -s /Applications/ $(MAC_APPLICATIONS_SYMLINK)
+	$(srcdir)/make-diskimage \
+    $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME).dmg \
+    $(DEPTH)/dist \
+    $(SB_APPNAME) \
+    -null- \
+    $(srcdir)/nightingale.dsstore \
+    $(srcdir)/background.tiff \
+    $(srcdir)/MacNightingaleDiskImage.icns 
+endif
+
+# Partner .pkg libs target
+libs:: $(if $(filter pkg,$(SB_INSTALLER_SUFFIXES)),$(PKG_STAGING_DIR)/$(SB_INSTALLER_NAME).pkg)
+ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
+	$(srcdir)/make-diskimage \
+   $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME).pkg.dmg \
+   $(PKG_STAGING_DIR) \
+   $(SB_APPNAME) \
+   -null- \
+   '' \
+   '' \
+   $(srcdir)/MacNightingaleDiskImage.icns 
+endif

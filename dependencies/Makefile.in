@@ -1,0 +1,193 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+SUBDIRS = vendor/mozbrowser
+
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   NIGHTINGALE_XR_STUB = $(NIGHTINGALE_XULRUNNERDIR)/nightingale-bin
+else
+   NIGHTINGALE_XR_STUB = $(NIGHTINGALE_XULRUNNERDIR)/nightingale$(BIN_SUFFIX)
+endif
+
+ifeq (windows,$(SB_PLATFORM))
+   # Kinda hacky (mostly because there *could* be other useful things on win32
+   # in the runtime dir, OTHER than the MSVCRTs... there *aren't*, but there 
+   # could be); this is:
+   # if we're windows, but not using jemalloc (so we need the MSVCRT)
+   #   ... add it ...
+   # else if we're not windows
+   #   ... add whatever is in the runtime dir for that platform ...
+
+   ifeq ($(SB_PLATFORM)_$(SB_USE_JEMALLOC),windows_)
+      NIGHTINGALE_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
+
+      # have to put the dlls here too because updater can't copy yet
+      NIGHTINGALE_XULRUNNER += \
+       $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+
+      # MSVC 8 needs the manifest files, but only if we're not jemalloc!
+      ifeq ($(_MSC_VER),1400)
+          NIGHTINGALE_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+          # have to put the manifest here too because updater can't copy yet
+          NIGHTINGALE_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+      endif
+   else
+      #preedTODO fix this
+      ifneq ($(SB_PLATFORM),windows)
+         NIGHTINGALE_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
+         NIGHTINGALE_XULRUNNER += \
+          $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+     endif
+  endif
+   # Copy these immaterial of whether --disable-jemalloc is specified for 
+   # Nightingale proper, because XR needs it.
+   MOZ_WIN32_CUSTOM_CRT = $(NIGHTINGALE_XULRUNNERDIR)/mozcrt19$(DEBUG:%=d).dll
+endif
+
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   NIGHTINGALE_DIST += $(NIGHTINGALE_XULRUNNERDIR)/libjemalloc.so
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+libs::
+	$(MKDIR) $(NIGHTINGALE_MACOS)
+	$(INSTALL_PROG) $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+    $(NIGHTINGALE_MACOS) \
+    $(NULL)
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+   NIGHTINGALE_XR_STUB_DIR = $(NIGHTINGALE_MACOS)
+else
+   NIGHTINGALE_XR_STUB_DIR = $(call normalizepath,$(NIGHTINGALE_DISTDIR))
+endif
+
+ifeq (,$(NIGHTINGALE_OFFICIAL))
+   ICON_FILE = $(topsrcdir)/installer/windows/nightingale_nightly.ico
+else
+   ICON_FILE = $(topsrcdir)/installer/windows/nightingale.ico
+endif
+
+NIGHTINGALE_STUB = $(NIGHTINGALE_XR_STUB_DIR)/$(notdir $(NIGHTINGALE_XR_STUB))
+RESHACKER_BIN = $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
+
+RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(NIGHTINGALE_XR_STUB_DIR)/$(1), $(NIGHTINGALE_XR_STUB_DIR)/$(1), $(ICON_FILE), icongroup, $(2), 1033
+RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" nightingale.rc
+
+# WE have to add manifest information to the few remaining .exes that actually
+# link against the MSVCRT; see bug 10022
+ADD_MANIFEST_EXES = crashreporter.exe \
+                    mangle.exe \
+                    shlibsign.exe \
+                    $(NULL)
+
+
+GARBAGE += $(NIGHTINGALE_XULRUNNERDIR) \
+           $(NIGHTINGALE_XR_EXTENSIONS) \
+           $(NULL)
+
+include $(topsrcdir)/build/rules.mk
+include $(topsrcdir)/$(NIGHTINGALE_BRANDING_DIR)/branding.mk
+
+# Move all known extensions from XULRUNNERDIR/extensions to
+#  NIGHTINGALE_EXTENSIONSDIR
+#
+# We are explicit about which XR extensions we "ship", namely
+#   DOM inspector
+#   venkman
+#
+# We delete all other extensions, and we _ALWAYS_ delete for release builds; 
+# see bug 17874
+#
+
+XULRUNNER_SHIPPED_EXTENSIONS = inspector@mozilla.org \
+                               {f13b157f-b174-47e7-a34d-4815ddfdfeb8} \
+                               $(NULL)
+
+XULRUNNER_EXTENSION_ROOTDIR = $(NIGHTINGALE_XULRUNNERDIR)/extensions
+
+XULRUNNER_EXTENSION_DIRS = $(foreach e, \
+                            $(XULRUNNER_SHIPPED_EXTENSIONS), \
+                            $(XULRUNNER_EXTENSION_ROOTDIR)/$e)
+
+NIGHTINGALE_XR_EXTENSIONS = $(foreach e, \
+                           $(XULRUNNER_SHIPPED_EXTENSIONS), \
+                           $(NIGHTINGALE_EXTENSIONSDIR)/$e)
+
+## See comment above about, re: the specifics of this export::'s logic.
+export::
+	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(NIGHTINGALE_XULRUNNERDIR)
+	$(RM) -r $(NIGHTINGALE_XR_EXTENSIONS)
+ifneq (1,$(NIGHTINGALE_OFFICIAL))
+	$(MV) $(XULRUNNER_EXTENSION_DIRS) $(NIGHTINGALE_EXTENSIONSDIR)
+endif 
+	$(RM) -r $(XULRUNNER_EXTENSION_ROOTDIR)
+
+libs::
+	$(MV) -f $(NIGHTINGALE_XR_STUB) $(NIGHTINGALE_XR_STUB_DIR)
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+	$(INSTALL_PROG) $(topsrcdir)/installer/linux/nightingale.sh $(NIGHTINGALE_DISTDIR)/nightingale
+endif
+ifeq (windows,$(SB_PLATFORM)) #{
+	@for f in $(ADD_MANIFEST_EXES); do \
+      $(call sh_make,$(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(NIGHTINGALE_XULRUNNERDIR))/$$f\;1); \
+   done
+   ifneq (,$(SB_USE_JEMALLOC))
+	   $(MSMANIFEST_TOOL) -NOLOGO -MANIFEST \
+		 "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
+       -OUTPUTRESOURCE:$(NIGHTINGALE_STUB)\;1
+   endif # Not-jemalloc and MSVC with manifest tool
+   # On Win32, the stub requires the custom CRT in the same directory now,
+   # if it's enabled; move that along if we find it too...
+	test -e $(MOZ_WIN32_CUSTOM_CRT) && \
+	 $(INSTALL_PROG) $(MOZ_WIN32_CUSTOM_CRT) $(NIGHTINGALE_XR_STUB_DIR)
+	# Win32 only - munge the stub installer for icons
+	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
+	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)
+	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,32512)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,IDI_APPICON)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,IDI_DOCUMENT)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,32512)
+	# overwrite the VersionInfo fields to say Nightingale
+	$(RESHACKER_BIN) -extract $(NIGHTINGALE_XR_STUB_DIR)/nightingale.exe, nightingale.rc, VersionInfo, 1, 1033
+	$(call RESHACKER_REPLACE_RC,Comments,Nightingale.exe is based on the Mozilla XULRunner stub loader)
+	$(call RESHACKER_REPLACE_RC,CompanyName,$(SB_BRAND_VENDOR_NAME)) 
+	$(call RESHACKER_REPLACE_RC,FileDescription,$(SB_BRAND_FULL_NAME))
+	$(call RESHACKER_REPLACE_RC,ProductName,$(SB_BRAND_SHORT_NAME))
+	$(call RESHACKER_REPLACE_RC,ProductVersion,$(SB_MILESTONE_WINDOWS))
+	$(call RESHACKER_REPLACE_RC,LegalTrademarks,$(SB_BRAND_TRADEMARKS))
+	$(call RESHACKER_REPLACE_RC,BuildID,$(SB_BUILD_NUMBER))
+	#preedTODO autoconf this
+	rc -v -fo nightingale.res nightingale.rc
+	$(RESHACKER_BIN) -addoverwrite $(NIGHTINGALE_XR_STUB_DIR)/nightingale.exe, \
+	 $(NIGHTINGALE_XR_STUB_DIR)/nightingale.exe, nightingale.res, VersionInfo,1,1033
+endif # }windows
+	$(CHMOD) 0755 $(NIGHTINGALE_STUB)

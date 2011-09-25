@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      nightingale.setSiteScope("", "/"); 
+      var siteLib = nightingale.siteLibrary;
+      var mediaList = siteLib.createSimpleMediaList("TestList");
+      nightingale.webPlaylist.mediaList = mediaList;
+		
+      /*nightingale.webPlaylist.clearColumns();*/
+      nightingale.createTextProperty("http://example.com/TextTest", "TextTest", true);
+      nightingale.webPlaylist.appendColumn("http://example.com/TextTest", "200");
+      nightingale.createButtonProperty("http://example.com/ButtonTest", "", "ButtonTest", true);
+      nightingale.webPlaylist.appendColumn("http://example.com/ButtonTest", "200");
+
+      try {
+        var url = "http://soundbites.typepad.com/soundbites/files/08_calvin_harris_vegas.mp3";
+        var mediaItem = siteLib.createMediaItem(url);
+        nightingale.webPlaylist.mediaList.add(mediaItem);
+      } catch (e) {
+        throw "Can't create media item for: " + url + " (" + e + ")";
+      }
+    </script>
+  </head>
+  <body>
+   There should be the default columns followed by a column for
+   TextTest and one for ButtonTest (no display name).
+  </body>
+</html>
+

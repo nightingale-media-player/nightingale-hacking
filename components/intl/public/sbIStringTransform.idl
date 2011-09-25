@@ -1,0 +1,126 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+/**
+ *
+ */
+[scriptable, uuid(4b9a60a0-76e8-47ed-b701-b297d45ab95e)]
+interface sbIStringTransform : nsISupports
+{
+  /**
+   * \brief Unsupported at this time
+   * \warning Not implemented
+   */
+  const unsigned long TRANSFORM_MAP_HIRAGANA = 1;
+  /**
+   * \brief Unsupported at this time
+   * \warning Not implemented
+   */
+  const unsigned long TRANSFORM_MAP_KATAKANA = 1 << 1;
+
+  /**
+   * \brief Transform to lowercase.
+   */
+  const unsigned long TRANSFORM_LOWERCASE = 1 << 4;
+  /**
+   * \brief Transform to uppercase.
+   */
+  const unsigned long TRANSFORM_UPPERCASE = 1 << 5;
+
+  /**
+   * \brief Unsupported at this time
+   * \warning Not implemented
+   */
+  const unsigned long TRANSFORM_SIMPLIFIED_CHINESE = 1 << 6;
+  /**
+   * \brief Unsupported at this time
+   * \warning Not implemented
+   */
+  const unsigned long TRANSFORM_TRADITIONAL_CHINESE = 1 << 7;
+
+  /**
+   * \brief Ignore symbol characters. This includes but is not limited to
+   *        #, $, +, -.
+   */
+  const unsigned long TRANSFORM_IGNORE_SYMBOLS = 1 << 8;
+
+  /**
+   * \brief Ignore non-spacing characters. This includes but is not limited to
+   *        diacritics.
+   */
+  const unsigned long TRANSFORM_IGNORE_NONSPACE = 1 << 9;
+
+  const unsigned long TRANSFORM_REVERSE_BYTES = 1 << 11; 
+
+  /**
+   * \brief Ignore non-alphanumerical characters.
+   */
+  const unsigned long TRANSFORM_IGNORE_NONALPHANUM = 1 << 12;
+  const unsigned long TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE = 1 << 13;
+
+  /**
+   * \brief TRANSFORM_IGNORE_* operates on leading characters and stops as soon
+   *        as a non-ignored character is found, at which point the rest of the
+   *        string is copied as-is.
+   */
+  const unsigned long TRANSFORM_IGNORE_LEADING = 1 << 14;
+
+  /**
+   * \brief TRANSFORM_IGNORE_* keeps number symbols in.
+   */
+  const unsigned long TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS = 1 << 15;
+
+  AString normalizeString(in AString aCharset,
+                          in unsigned long aTransformFlags,
+                          in AString aInput);
+
+  AString convertToCharset(in AString aDestCharset,
+                           in AString aInput);
+
+  AString guessCharset(in AString aInput);
+  
+  AString removeArticles(in AString aInput, [optional] in AString aLanguage);
+};
+
+%{C++
+
+#define SB_STRINGTRANSFORM_DESCRIPTION    \
+  "Nightingale String Transform"
+#define SB_STRINGTRANSFORM_CONTRACTID     \
+  "@getnightingale.com/Nightingale/Intl/StringTransform;1"
+#define SB_STRINGTRANSFORM_CLASSNAME      \
+  "sbStringTransform"
+#define SB_STRINGTRANSFORM_CID            \
+{ /*{0a8d2a48-2947-4ee4-bf36-32e7777358db}*/ \
+  0xa8d2a48,                                 \
+  0x2947,                                    \
+  0x4ee4,                                    \
+  { 0xbf, 0x36, 0x32, 0xe7, 0x77, 0x73, 0x58, 0xdb } \
+}
+
+%}

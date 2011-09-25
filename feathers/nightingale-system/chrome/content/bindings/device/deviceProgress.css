@@ -1,0 +1,197 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/** 
+*******************************************************************************
+DEVICE PROGRESS
+
+See app/content/bindings/device/deviceProgress.xml
+
+Style rules pertaining to the device progress widget.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+/*
+ * Main outer box for the progress widget
+ */
+.device-progress-box {
+  -moz-box-pack: end;
+  -moz-box-align: center;
+}
+
+.device-progress-button {
+  max-height: 25px !important;
+}
+
+ /*
+ * Idle box (shows manual checkbox and sync button)
+ */
+.device-progress-idle-box {
+  -moz-box-pack: end;
+}
+
+.device-progress-manage-separator {
+  margin: 0px 13px 0px 13px !important;
+}
+.content-controls > radiogroup {
+  border:none;
+  padding:0;
+  margin:0;
+}
+
+.device-syncmode-box {
+  -moz-box-align: center;
+}
+.device-syncmode-separator {
+  min-width: 1px !important;
+  max-width: 1px !important;
+  max-height: 21px;
+  min-height: 21px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  background-image: url(chrome://nightingale/skin/device/sync-toggle-separator.png);
+}
+.device-syncmode-manual-button {
+  margin-right: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
+}
+.device-syncmode-auto-button {
+  margin-left: 0;
+  border-left-width: 0;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-bottomleft: 0;
+}
+.device-syncmode-manual-button > .button-box > label,
+.device-syncmode-auto-button > .button-box > label {
+  color: rgb(154,153,160);
+}
+.device-syncmode-manual-button:active > .button-box > label,
+.device-syncmode-auto-button:active > .button-box > label {
+  color: rgb(161,158,171);
+}
+.device-syncmode-manual-button[checked="true"] > .button-box > label,
+.device-syncmode-auto-button[checked="true"] > .button-box > label,
+.device-progress-button[sbid="sync_operation_button"]:hover > .button-box > label,
+.device-syncmode-manual-button:hover > .button-box > label,
+.device-syncmode-auto-button:hover > .button-box > label {
+  color: rgb(255,255,255);
+}
+.device-progress-button[sbid="sync_operation_button"],
+.device-syncmode-manual-button,
+.device-syncmode-auto-button {
+  height: 19px;
+  border: 1px solid rgb(32,31,39);
+  border-bottom: 1px solid rgb(54,51,69);
+  background-image: url(chrome://nightingale/skin/device/sync-toggle-buttons.png);
+  background-position:0px -19px;
+}
+.device-syncmode-manual-button {
+  border-right: none !important;
+}
+.device-syncmode-auto-button {
+  border-left: none !important;
+}
+.device-progress-button[sbid="sync_operation_button"]:hover,
+.device-syncmode-manual-button:hover,
+.device-syncmode-auto-button:hover {
+  background-position:0px -38px;
+}
+.device-progress-button[sbid="sync_operation_button"]:active,
+.device-syncmode-manual-button:active,
+.device-syncmode-auto-button:active {
+  background-position:0px -57px;
+}
+.device-syncmode-manual-button[checked="true"]:hover,
+.device-syncmode-auto-button[checked="true"]:hover,
+.device-syncmode-manual-button[checked="true"],
+.device-syncmode-auto-button[checked="true"] {
+  -moz-user-focus: ignore;
+  background-position:0px 0px;
+}
+.device-progress-button[sbid="sync_operation_button"]:focus,
+.device-syncmode-manual-button:focus,
+.device-syncmode-auto-button:focus {
+  outline: none !important;
+}
+
+/* disabled state to override above rules */
+.device-progress-button[sbid="sync_operation_button"][disabled="true"],
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover,
+.device-syncmode-manual-button[disabled="true"],
+.device-syncmode-manual-button[disabled="true"]:hover,
+.device-syncmode-auto-button[disabled="true"],
+.device-syncmode-auto-button[disabled="true"]:hover {
+  background-position:0px -19px;
+}
+.device-progress-button[sbid="sync_operation_button"][disabled="true"] > .button-box > label,
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover > .button-box > label,
+.device-syncmode-manual-button[disabled="true"] > .button-box > label,
+.device-syncmode-manual-button[disabled="true"]:hover > .button-box > label,
+.device-syncmode-auto-button[disabled="true"]:hover > .button-box > label,
+.device-syncmode-auto-button[disabled="true"] > .button-box > label {
+  color: rgb(154,153,160);
+}
+
+.device-progress-button[sbid="sync_operation_button"] {
+  margin-right: 0px;
+}
+
+/*
+ * Progress information box (shows labels and progress bar)
+ */
+
+.device-progress-information-box {
+  padding: 10px 10px 10px 10px;
+  border: 1px solid rgb(80,78,91);
+  background-color: rgb(51,49,62);
+  -moz-border-radius: 3px;
+  -moz-box-pack: end;
+  -moz-box-align: center;
+  min-width: 284px;
+}
+
+.dev-progress-text-label {
+  /**TODO: fix hack to center the text**/
+  padding-top:1px;
+  padding-bottom:3px;
+}
+.dev-sub-progress-text-label {
+  /**TODO: fix hack to center the text**/
+  padding-top:4px;
+}
+.dev-progress-text-label,
+.dev-sub-progress-text-label {
+  font-size:10px;
+  color: rgb(234,234,235);
+  margin:0px;
+}
+
+.device-progressmeter {
+  min-width: 200px;
+  margin:0px;
+}

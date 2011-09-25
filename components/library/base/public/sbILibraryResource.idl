@@ -1,0 +1,297 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbILibraryResource.idl
+ * \brief Definition of the sbILibraryResource interface
+ */
+
+#include "nsISupports.idl"
+
+interface nsIStringEnumerator;
+interface nsIURI;
+interface sbIPropertyArray;
+
+/**
+* \interface sbILibraryResource
+* \brief General interface to data resources
+*
+* This interface should be implemented by each object of the data model,
+* including libraries, media items, and media lists.
+*
+* \sa sbILibraryPropertiesManager
+*/
+[scriptable, uuid(d0ed8ac0-1a2a-11dd-bd0b-0800200c9a66)]
+interface sbILibraryResource : nsISupports
+{
+  /**
+   * \brief The guid of this resource
+   */
+
+  /*
+  Group: Resource Properties
+  */
+
+  /*
+  Prop: guid
+
+  The global unique identifier of this Library object.
+  
+  Type:
+    String
+
+  Note:
+    <MediaItem>, <MediaList> and <Library> are all Library Objects.
+  */
+  readonly attribute AString guid;
+
+  /**
+   * \brief The creation time of this resource as a unix timestamp
+   */
+
+  /*
+  Prop: created
+
+  The creation time of this Library object.
+
+  Type:
+    Number, in (TODO units???)
+
+  Note:
+    <MediaItem>, <MediaList> and <Library> are all Library Objects.
+  */
+  readonly attribute long long created;
+
+  /**
+   * \brief The last update time of this resource as a unix timestamp
+   */
+
+  /*
+  Prop: updated
+
+  The last update time of this Library object. Changing any property
+  constitutes an update.
+
+  Type:
+    Number, in (TODO units???)
+  
+  Note:
+    <MediaItem>, <MediaList> and <Library> are all Library Objects.
+  */
+  readonly attribute long long updated;
+
+  /**
+   * \brief Returns a string enumerator of the IDs of all the properties
+   *        set on this resource
+   */
+  readonly attribute nsIStringEnumerator propertyIDs;
+  
+  /**
+   * \brief True if users should be allowed to modify the resource.
+   * \sa sbIMediaList.userEditableContent
+   */
+  readonly attribute boolean userEditable;
+
+  /**
+   * \brief Get the value of a property of this resource
+   *
+   * This method will *never* throw. If a value doesn't exist it will return a
+   * special "void" string that behaves just like an empty string except that
+   * the IsVoid() method will return PR_TRUE for those who care.
+   *
+   * \param aID ID of the property to get
+   * \return Value of the requested property
+   */
+
+  /*
+  Group: Resource Methods
+  */
+
+  /*
+  Method: getProperty()
+
+  Get the value of a property for this library object.
+
+  Prototype:
+    String getProperty(String id)
+
+  Parameters:
+    id - The ID property value requested.
+
+  Example:
+    (start code)
+    //This example assumes you already have created 
+    //a mediaitem and assigned it to mediaItem.
+
+    //Get the albumName property from a mediaitem.
+    var albumName = mediaItem.getProperty("http://getnightingale.com/data/1.0#albumName");
+    (end)
+
+  Standard Properties:
+    http://getnightingale.com/data/1.0#albumDetailUrl - A URL with information on the album
+    http://getnightingale.com/data/1.0#albumName - The name of the album
+    http://getnightingale.com/data/1.0#artistDetailUrl - A URL with information on the artist
+    http://getnightingale.com/data/1.0#artistName - The name of the artist
+    http://getnightingale.com/data/1.0#bitRate - The bit rate of the media, in bits per second
+    http://getnightingale.com/data/1.0#bpm - The number of beats per minute
+    http://getnightingale.com/data/1.0#columnSpec - Column display data
+    http://getnightingale.com/data/1.0#composerName - The name of the composer
+    http://getnightingale.com/data/1.0#copyrightURL - A URL with information on the copyright
+    http://getnightingale.com/data/1.0#defaultColumnSpec - Default column display data
+    http://getnightingale.com/data/1.0#disableDownload - Prevent this item from being downloaded
+    http://getnightingale.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
+    http://getnightingale.com/data/1.0#downloadDetails - Download state and progress
+    http://getnightingale.com/data/1.0#duration - The duration of this media, in microseconds
+    http://getnightingale.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
+    http://getnightingale.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
+    http://getnightingale.com/data/1.0#genre - The genre of this media
+    http://getnightingale.com/data/1.0#hidden - Whether this item should be hidden from the user
+    http://getnightingale.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
+    http://getnightingale.com/data/1.0#lastPlayTime - The last time the media was played
+    http://getnightingale.com/data/1.0#lyricistName - The name of the lyricist
+    http://getnightingale.com/data/1.0#lyrics - The lyrics of the media
+    http://getnightingale.com/data/1.0#originPage - The page this media was located on
+    http://getnightingale.com/data/1.0#originPageTitle - The title of the page this media was located on
+    http://getnightingale.com/data/1.0#originURL - The URL this media was retrived from
+    http://getnightingale.com/data/1.0#playCount - The number of times this media has been played
+    http://getnightingale.com/data/1.0#primaryImageURL - The URL of the primary image
+    http://getnightingale.com/data/1.0#producerName - The name of the producer
+    http://getnightingale.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
+    http://getnightingale.com/data/1.0#recordLabelName - The name of the record label
+    http://getnightingale.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
+    http://getnightingale.com/data/1.0#skipCount - The number of times this item was skipped
+    http://getnightingale.com/data/1.0#totalDiscs - The total number of discs in a compilation
+    http://getnightingale.com/data/1.0#totalTracks - The total number of tracks in a compilation
+    http://getnightingale.com/data/1.0#trackName - The name of the track
+    http://getnightingale.com/data/1.0#trackNumber - The track number of this media in a compilation
+    http://getnightingale.com/data/1.0#year - The year the media was released
+
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
+  See Also:
+    <setProperty()>
+  */
+  AString getProperty(in AString aID);
+
+  /**
+   * \brief Set the value of a property on this resource
+   * \param aID ID of the property to set
+   * \param aValue New value for the specified property
+   */
+
+  /*
+  Method: setProperty()
+
+  Set the value of a property for this library object.
+
+  Prototype:
+    setProperty(String id, String value)
+
+  Example:
+    (start code)
+    //This example assumes you already have created 
+    //a mediaitem and assigned it to mediaItem.
+
+    //Set the albumName property from a mediaitem.
+    mediaItem.setProperty("http://getnightingale.com/data/1.0#albumName", "Let Us Play");
+    (end)
+
+  Standard Properties:
+    http://getnightingale.com/data/1.0#albumDetailUrl - A URL with information on the album
+    http://getnightingale.com/data/1.0#albumName - The name of the album
+    http://getnightingale.com/data/1.0#artistDetailUrl - A URL with information on the artist
+    http://getnightingale.com/data/1.0#artistName - The name of the artist
+    http://getnightingale.com/data/1.0#bitRate - The bit rate of the media, in bits per second
+    http://getnightingale.com/data/1.0#bpm - The number of beats per minute
+    http://getnightingale.com/data/1.0#columnSpec - Column display data
+    http://getnightingale.com/data/1.0#composerName - The name of the composer
+    http://getnightingale.com/data/1.0#defaultColumnSpec - Default column display data
+    http://getnightingale.com/data/1.0#disableDownload - Prevent this item from being downloaded
+    http://getnightingale.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
+    http://getnightingale.com/data/1.0#downloadDetails - Download state and progress
+    http://getnightingale.com/data/1.0#duration - The duration of this media, in microseconds
+    http://getnightingale.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
+    http://getnightingale.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
+    http://getnightingale.com/data/1.0#genre - The genre of this media
+    http://getnightingale.com/data/1.0#hidden - Whether this item should be hidden from the user
+    http://getnightingale.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
+    http://getnightingale.com/data/1.0#lyricistName - The name of the lyricist
+    http://getnightingale.com/data/1.0#lyrics - The lyrics of the media
+    http://getnightingale.com/data/1.0#primaryImageURL - The URL of the primary image
+    http://getnightingale.com/data/1.0#producerName - The name of the producer
+    http://getnightingale.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
+    http://getnightingale.com/data/1.0#recordLabelName - The name of the record label
+    http://getnightingale.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
+    http://getnightingale.com/data/1.0#totalDiscs - The total number of discs in a compilation
+    http://getnightingale.com/data/1.0#totalTracks - The total number of tracks in a compilation
+    http://getnightingale.com/data/1.0#trackName - The name of the track
+    http://getnightingale.com/data/1.0#trackNumber - The track number of this media in a compilation
+    http://getnightingale.com/data/1.0#year - The year the media was released
+
+  Note:
+    Metadata for the <MediaItems> may get updated and overwritten during playback.
+    See <Metadata Updates> for more details about cases where metadata may 
+    get updated.
+
+  See Also:
+    <getProperty()>
+  */
+  void setProperty(in AString aID, in AString aValue);
+
+  /**
+   * \brief Get properties from this resource in a property array
+   * \param aPropertyIDs A property array containing the IDs of the
+   *        properties you wish to retrieve.  The values of these properties
+   *        are disregarded.  If this parameter is null or not specified, all
+   *        properties will be returned
+   * \return A property array containing the requested properties and values
+   */
+  sbIPropertyArray getProperties([optional] in sbIPropertyArray aPropertyIDs);
+
+  /**
+   * \brief Sets the properties and values in the supplied property array to
+   *        this resource.  This works as if you called setProperty on each
+   *        property in the array
+   * \param aProperties Properties to set to this resource
+   *
+   * \note Until bug 3694 is fixed, it is possible for this method to throw
+   * NS_ERROR_INVALID_ARG if one of the property values in the array is not
+   * valid.  This will have no side effects -- if an error is thrown, the
+   * resource will not be modified.  This will go away when the bug is fixed
+   * as it will then be impossible to have invalid properties in the array
+   */
+  void setProperties(in sbIPropertyArray aProperties);
+
+  /**
+   * \brief Tests the equality of two library resources.
+   */
+  boolean equals(in sbILibraryResource aOtherLibraryResource);
+};
+
+

@@ -1,0 +1,54 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface sbIMediaListEnumeratorWrapperListener;
+
+/**
+ * \brief nsISimpleEnumerator wrapper which sets downloadStatusTarget
+ *        on the items being enumerated. 
+ *
+ *  This wrapper supports nsISimpleEnumerators that return sbIIndexedMediaItems
+ *  as well as sbIMediaItems.
+ */
+[scriptable, uuid(d7474013-9d2f-4c72-9298-f8fe87c28ff8)]
+interface sbIMediaListEnumeratorWrapper : nsISupports
+{
+  void initialize(in nsISimpleEnumerator aEnumerator,
+                  [optional] in sbIMediaListEnumeratorWrapperListener aListener);
+};
+
+/**
+ * \brief Listener interface for use with sbIMediaListEnumeratorWrapper.
+ */
+[scriptable, function, uuid(f79af76f-243c-48e7-8de8-f73a80c0f5f4)]
+interface sbIMediaListEnumeratorWrapperListener : nsISupports
+{
+  void onHasMoreElements(in nsISimpleEnumerator aEnumerator, 
+                         in boolean aHasMore);
+  void onGetNext(in nsISimpleEnumerator aEnumerator,
+                 in nsISupports aNextElement);
+};

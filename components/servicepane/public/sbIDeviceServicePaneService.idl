@@ -1,0 +1,106 @@
+/* vim: ts=2 sw=2 expandtab
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/**
+ * \file sbIDeviceServicePaneService.idl
+ * \brief Interface to the device service pane provider
+ */
+
+#include "nsISupports.idl"
+
+interface sbIServicePaneNode;
+interface sbIDeviceBase;
+interface sbIDevice;
+interface sbILibrary;
+
+/**
+ * \interface sbIDeviceServicePaneService
+ * \brief Provides information about devices needed by the service pane
+ */
+[scriptable, uuid(5d8f36c8-1dd2-11b2-8836-e909bccda487)]
+interface sbIDeviceServicePaneService : nsISupports {
+  /**
+   * \brief Attempts to create a service pane node for a given device. Will
+   *        group similar devices together in the service pane.
+   *
+   * \param aDevice an sbIDeviceBase.
+   * \param aDeviceIdentifier Device identifier string.
+   * \return a service pane node that represents the given device
+   */
+  sbIServicePaneNode createNodeForDevice (in sbIDeviceBase aDevice,
+                                          in AString aDeviceIdentifier);
+
+  /**
+   * \brief Attempts to create a service pane node for a given device. Will
+   *        group similar devices together in the service pane.
+   *
+   * \param aDevice an sbIDevice.
+   * \param aEjectable whether or not this device can be ejected
+   * \return a service pane node that represents the given device
+   * \note This method is designed for the new Device API.
+   */
+  sbIServicePaneNode createNodeForDevice2 (in sbIDevice aDevice,
+                                           in boolean aEjectable);
+
+  /**
+   * \brief Attempts to create a service pane node for the device library
+   *        specified by aDevice and aLibrary.
+   *
+   * \param aDevice             Device containing library.
+   * \param aLibrary            Library for which to create node.
+   * \return                    Created node.
+   */
+  sbIServicePaneNode createLibraryNodeForDevice(in sbIDevice  aDevice,
+                                                in sbILibrary aLibrary);
+
+  /**
+   * \brief Return the service pane node for the given device.
+   *
+   * \param aDevice an sbIDevice.
+   * \return a service pane node that represents the given device
+   */
+  sbIServicePaneNode getNodeForDevice (in sbIDevice aDevice);
+
+  /**
+   * \brief If aEnabled is true, fill the service pane context menu for the
+   *        device node specified by aNode with a default set of device menu
+   *        items.
+   *
+   * \param aNode               Device node.
+   * \param aEnabled            If true, fill context menu with default items.
+   */
+  void setFillDefaultContextMenu ( in sbIServicePaneNode aNode,
+                                   in boolean            aEnabled);
+
+  /**
+   * \brief Insert the child node underneath the device node and sort by name.
+   *
+   * \param aDevice             The device to insert to.
+   * \param aChildNode          The child node to be inserted.
+   */
+  void insertChildByName ( in sbIDevice          aDevice,
+                           in sbIServicePaneNode aChildNode);
+};
+

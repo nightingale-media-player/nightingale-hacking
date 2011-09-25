@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl"
+      xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Add-on bundle installer widget.
+   *
+   *   This widget installs add-ons from an add-on bundle and displays progress
+   * and errors.  Installation is initiated by calling the "install" method.
+   * Installation may be cancelled by calling the "cancel" method.
+   *   If an installed add-on requires an application restart, the
+   * "restartRequired" property will be set to true.
+   *
+   * Properties:
+   *
+   *   restartRequired          An application restart is required.
+   *   errorCount               Count of the number of add-on installation
+   *                            errors.
+   *
+   * Methods:
+   *
+   *   install                  Initiate installation of add-ons.
+   *   cancel                   Cancel installation of add-ons.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-add-on-bundle-installer">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <xul:vbox anonid="widget_box"
+                class="sb-add-on-bundle-installer-box"
+                flex="1">
+
+        <xul:deck anonid="status_deck">
+
+          <xul:vbox anonid="progress_panel"
+                    class="sb-add-on-bundle-installer-progress-panel">
+
+            <!-- Current add-on box. -->
+            <xul:hbox anonid="current_add_on_box"
+                      class="sb-add-on-bundle-installer-current-add-on-box">
+              <xul:label anonid="current_add_on_label"
+                         class="sb-add-on-bundle-installer-current-add-on-label"/>
+              <xul:label anonid="total_progress_label"
+                         class="sb-add-on-bundle-installer-total-progress-label"/>
+            </xul:hbox>
+
+            <!-- Current add-on progress meter. -->
+            <xul:progressmeter anonid="progressmeter"
+                               class="sb-add-on-bundle-installer-progressmeter"/>
+          </xul:vbox>
+
+          <xul:vbox anonid="error_panel"
+                    class="sb-add-on-bundle-installer-error-panel">
+
+            <!-- Error description. -->
+            <xul:description anonid="error_description_1"/>
+            <xul:description anonid="error_description_2"/>
+
+            <!-- Error list. -->
+            <xul:sb-closable-box
+              anonid="error_box"
+              class="sb-add-on-bundle-installer-error-box"
+              label="&add_on_bundle_installer.error_box.label;">
+              <xul:listbox anonid="error_listbox"
+                           class="sb-add-on-bundle-installer-error-listbox"/>
+            </xul:sb-closable-box>
+
+          </xul:vbox>
+
+        </xul:deck>
+
+      </xul:vbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget properties.
+       -->
+
+      <!-- restartRequired -->
+      <property name="restartRequired" readonly="true">
+        <getter>
+          return this._widgetSvc.restartRequired;
+        </getter>
+      </property>
+
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Add-on bundle installer widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!-- *********************************************************************
+       *
+       * Public methods.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * Start installing the add-on bundle specified by aAddOnBundle.
+       *
+       * \param aAddOnBundle    Add-on bundle to install.
+       -->
+
+      <method name="install">
+        <parameter name="aAddOnBundle"/>
+        <body><![CDATA[
+          this._widgetSvc.install(aAddOnBundle);
+        ]]></body>
+      </method> <!-- install -->
+
+
+      <!--
+       * Cancel the add-on bundle installation.
+       -->
+
+      <method name="cancel"><body><![CDATA[
+        this._widgetSvc.cancel();
+      ]]></body></method>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal methods.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new addOnBundleInstallerSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the add-on bundle installer widget services.
+        if (typeof(addOnBundleSvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+            ("chrome://nightingale/content/scripts/addOnBundleInstaller.js",
+             null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- sb-add-on-bundle-installer -->
+
+</bindings>
+

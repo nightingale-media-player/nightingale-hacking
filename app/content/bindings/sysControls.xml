@@ -1,0 +1,693 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+          
+  <binding id="sb-sys-maximize-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-checkbox-base">
+    <handlers>
+      <!-- Grrr, apparently you use "CheckboxStateChange" instead of "command" from inside an XBL.  Of course.  Obviously. -->
+      <handler event="CheckboxStateChange" action="onMaximize(this.checked);"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.maximize;")
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          var self = this;
+
+          // Mac handles the MAXIMIZED property via a Zoom controller and does not need
+          // notifications about |window.windowState| on resize events.
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") != "Darwin" ) {
+            window.addEventListener("resize", function(aEvent) {
+              const nsIDOMChromeWindow = Components.interfaces.nsIDOMChromeWindow;
+              self.checked = (window.windowState == nsIDOMChromeWindow.STATE_MAXIMIZED);
+            }, false);
+          }
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-minimize-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
+    <handlers>
+      <handler event="command" action="onMinimize();"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.minimize;")
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-close-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
+    <handlers>
+      <!-- Close the window or close the app -->
+      <handler event="command">
+        <![CDATA[
+        // Dialogs get canceled.
+        if (event.target.getAttribute('type') == 'dialog') {
+          document.documentElement.cancelDialog();
+          return;
+        }
+        
+        // Normal windows just get closed.
+        if(this.getAttribute('type') == 'window') {
+          setTimeout(function() { window.close(); }, 0);
+          return;
+        }
+        
+        // Default is to act as the main application title bar close
+        // button. Clicking it causes the application to quit.
+        quitApp();
+        ]]>
+      </handler>
+    </handlers>
+    <implementation>
+      <constructor>
+        if (this.getAttribute("type") == "window") {
+          this.setAttribute("tooltiptext", "&tooltip.close;")
+        }
+        else {
+          this.setAttribute("tooltiptext", "&tooltip.exit;")
+        }
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-hide-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
+    <handlers>
+      <handler event="command" action="onHideButtonClick();"/>
+    </handlers>
+    <implementation>
+      <constructor>
+        this.setAttribute("tooltiptext", "&tooltip.hide;")
+        <![CDATA[
+          if ( this.getAttribute("hidden") != "true" ) // not hidden already
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-buttons">
+    <content>
+      <xul:hbox id="sb-sys-buttons" flex="1">
+        <xul:sb-sys-hide-button id="sb-sys-buttons-hide" sbid="hide" hidden="true"/>
+        <xul:sb-sys-minimize-button id="sb-sys-buttons-mini" sbid="mini"/>
+        <xul:sb-sys-maximize-button id="sb-sys-buttons-maxi" sbid="maxi"/>
+        <xul:sb-sys-close-button id="sb-sys-buttons-close" sbid="close" xbl:inherits="type"/>
+      </xul:hbox>
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            // Hidden on Mac
+            this.setAttribute( "hidden", "true" ); 
+          else if ( this.getAttribute("hidden") != "true" )
+            // Hidden when "Plucked" ("accessibility.enabled" == "1")
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+
+          switch ( this.getAttribute( "type" ) )
+          {
+            case "dialog":
+              // Hidden if we only want to show the close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
+              break;
+            case "hide":
+              // Switch if this box should hide instead of close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'hide').setAttribute( "hidden", "false" );
+              break;
+          }
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-osx-buttons">
+    <content>
+      <xul:hbox id="sb-sys-osx-buttons" flex="1" mousethrough="never" >
+        <xul:sb-sys-hide-button id="sb-sys-osx-buttons-hide" sbid="hide" hidden="true"/>
+        <xul:sb-sys-close-button id="sb-sys-osx-buttons-close" sbid="close" xbl:inherits="type"/>
+        <xul:sb-sys-minimize-button id="sb-sys-osx-buttons-mini" sbid="mini"/>
+        <xul:sb-sys-maximize-button id="sb-sys-osx-buttons-maxi" sbid="maxi"/>
+      </xul:hbox>
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") != "Darwin" )
+            // Hidden on all but Mac
+            this.setAttribute( "hidden", "true" ); 
+          else if ( this.getAttribute("hidden") != "true" ) {
+            // Hidden when "Plucked" ("accessibility.enabled" == "1")
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          }
+          var type = this.getAttribute( "type" );
+          switch ( type )
+          {
+            case "dialog":
+              // Hidden if we only want to show the close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
+              break;
+            case "hide":
+              // Switch if this box should hide instead of close.
+              document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
+              document.getAnonymousElementByAttribute(this, 'sbid', 'hide').setAttribute( "hidden", "false" );
+              break;
+          }
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-icon" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
+    <handlers>
+      <handler event="dblclick" action="( event.target.getAttribute('type') == 'dialog' ) ? document.documentElement.cancelDialog() : ( event.target.getAttribute('type') == 'hide' ) ? onHideButtonClick() : quitApp(); "/>
+    </handlers>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            // Hidden on Mac
+            this.setAttribute( "hidden", "true" ); 
+          else if ( this.getAttribute("hidden") != "true" )
+            // Hidden when "Plucked" ("accessibility.enabled" == "1")
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-title">
+    <content>
+      <xul:hbox id="sb-sys-title" flex="1">
+        <xul:label id="sb-sys-title-title" sbid="title" xbl:inherits="value"/> 
+      </xul:hbox>
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          // Hidden when "Plucked" ("accessibility.enabled" == "1")
+          if ( this.getAttribute("hidden") != "true" )
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          
+          // If there's no value attribute,
+          var value = "" + this.getAttribute( "value" );
+          if ( value.length == 0 )
+          {
+            // Then set us to the title of the window.          
+            document.getAnonymousElementByAttribute(this, 'sbid', 'title').setAttribute( "value", document.title ); 
+            // TODO: Watch the title attribute and reflect it here?
+          }
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+      <property name="value">
+        <setter><![CDATA[
+          document.getAnonymousElementByAttribute(this, 'sbid', 'title').value = val;
+        ]]></setter>
+      </property>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-dialog-titlebar">
+    <content>
+      <xul:sb-draggable sbid="children" class="sb-sys-dialog-titlebar-draggable" flex="1">
+        <xul:stack>
+          <xul:hbox flex="1" class="hook">
+            <xul:hbox class="left"/>
+            <xul:hbox class="middle" flex="1"/>
+            <xul:hbox class="right"/>
+          </xul:hbox>
+          <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
+            <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
+          </xul:hbox>
+          <xul:hbox id="sb-sys-dialog-titlebar" flex="1">
+        	  <xul:hbox id="sb-sys-dialog-titlebar-primary-content" flex="1">
+        	    <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" sbid="left_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
+        	    <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+        	    <!-- TODO: allow external menu? -->
+        	    <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
+        	    <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
+        	  </xul:hbox>
+            <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" sbid="right_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
+          </xul:hbox>
+        </xul:stack>
+      </xul:sb-draggable>
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            // Hidden on Mac
+            document.getAnonymousElementByAttribute(this, 'sbid', 'hide_mac').setAttribute( "hidden", "true" ); 
+          else
+            // Hidden on all but Mac
+            document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" ); 
+          
+          // Hidden when "Plucked" ("accessibility.enabled" == "1")
+          if ( this.getAttribute("hidden") != "true" )
+            this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          
+          /* watch document.title for changes and update our fake title */
+          var self = this;
+          document.watch("title", function(aObject, aOldValue, aNewValue){
+            return self.title = aNewValue;
+          } );
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[
+          document.unwatch("title");
+          if (this._visibilityBinding) {
+            this._visibilityBinding.unbind();
+            this._visibilityBinding = null;
+          }
+        ]]>
+      </destructor>
+            
+      <property name="title">
+        <setter><![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            document.getAnonymousElementByAttribute(this, 'id', 'sb-sys-dialog-titlebar-osx-title-title')
+                    .value = val;
+          else
+            document.getAnonymousElementByAttribute(this, 'id', 'sb-sys-dialog-titlebar-title')
+                    .value = val;
+          return val;
+        ]]></setter>
+      </property>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-titlebar">
+    <content>
+      <xul:sb-draggable sbid="children" class="sb-sys-titlebar-draggable" flex="1" xbl:inherits="context">
+        <xul:stack>
+          <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
+            <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
+          </xul:hbox>
+          <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
+            <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
+              <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
+              <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
+              <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+              <children />
+            </xul:hbox>
+            <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
+          </xul:hbox>
+        </xul:stack>
+      </xul:sb-draggable>
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" ) {
+            // Hidden on Mac
+            document.getAnonymousElementByAttribute(this, 'sbid', 'hide_mac').setAttribute( "hidden", "true" ); 
+          } else {
+            // Hidden on all but Mac
+            document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" );
+					}
+      
+          // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
+        ]]>
+      </constructor>
+      <property name="title">
+        <setter><![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-osx-title-title')
+                    .value = val;
+          else
+            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-title')
+                    .value = val;
+        ]]></setter>
+      </property>
+    </implementation>
+  </binding>
+
+  <binding id="sb-sys-outer-frame">
+    <content>
+      <xul:stack flex="1">
+
+        <xul:vbox flex="1">
+          <xul:hbox>
+              <xul:image sbid="c1" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-topleft"/>
+              <xul:image sbid="c2" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-top" flex="1"/>
+              <xul:image sbid="c3" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-topright"/>
+          </xul:hbox>
+          <xul:hbox flex="1">
+              <xul:image sbid="c4" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-left"/>
+              <xul:spacer flex="1"/>
+              <xul:image sbid="c5" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-right"/>
+          </xul:hbox>
+          <xul:hbox>
+              <xul:image sbid="c6" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomleft"/>
+              <xul:image sbid="c7" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottom" flex="1"/>
+              <xul:image sbid="c8" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomright"/>
+          </xul:hbox>
+        </xul:vbox>
+        
+        <xul:vbox flex="1">
+          <xul:hbox>
+            <xul:resizer hidden="true" sbid="r1" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topleft" dir="topleft" />
+            <xul:spacer hidden="true" sbid="x1" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topleft"/>
+            <xul:resizer hidden="true" sbid="r2" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-top" dir="top" flex="1" />
+            <xul:spacer hidden="true" sbid="x2" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-top" flex="1"/>
+            <xul:resizer hidden="true" sbid="r3" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topright" dir="topright" />
+            <xul:spacer hidden="true" sbid="x3" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-topright"/>
+          </xul:hbox>
+          <xul:hbox flex="1">
+            <xul:vbox>
+              <xul:resizer hidden="true" sbid="r4" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-lefttop" dir="topleft" />
+              <xul:spacer hidden="true" sbid="x4" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-lefttop"/>
+              <xul:resizer hidden="true" sbid="r5" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-left" dir="left" flex="1"/>
+              <xul:spacer hidden="true" sbid="x5" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-left" flex="1"/>
+              <xul:resizer hidden="true" sbid="r6" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-leftbottom" dir="bottomleft" />
+              <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-leftbottom"/>
+            </xul:vbox>
+
+            <xul:vbox flex="1">
+              <children/>
+            </xul:vbox>
+      
+            <xul:vbox>
+              <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop" dir="topright" />
+              <xul:spacer hidden="true" sbid="x7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop"/>
+              <xul:resizer hidden="true" sbid="r8" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-right" dir="right"  flex="1"/>
+              <xul:spacer hidden="true" sbid="x8" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-right" flex="1"/>
+              <xul:resizer hidden="true" sbid="r9" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-rightbottom" dir="bottomright" />
+              <xul:spacer hidden="true" sbid="x9" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-rightbottom"/>
+            </xul:vbox>
+          </xul:hbox>
+          <xul:hbox>
+            <xul:resizer hidden="true" sbid="r10" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomleft" dir="bottomleft" />
+            <xul:spacer hidden="true" sbid="x10" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomleft"/>
+            <xul:resizer hidden="true" sbid="r11" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottom" dir="bottom" flex="1"/>
+            <xul:spacer hidden="true" sbid="x11" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottom" flex="1"/>
+            <xul:resizer hidden="true" sbid="r12" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomright" dir="bottomright" />
+            <xul:spacer hidden="true" sbid="x12" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomright"/>
+          </xul:hbox>
+        </xul:vbox>
+
+        <xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" mousethrough="always" >
+              <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
+        </xul:vbox>
+
+        <xul:vbox flex="1" mousethrough="always" class="inactive-box" />
+
+      </xul:stack>
+    </content>
+              
+   <handlers>
+    <handler event="resize" action="onWindowResizeComplete()"/>
+    <handler event="draggesture" action="//TODO: Drag on spacers, if dragging is allowed."/>
+   </handlers>
+    
+    <implementation>
+      <constructor>
+        <![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+        
+          window.gOuterFrame = this;
+          var sysInfo = Cc["@mozilla.org/system-info;1"]
+                          .getService(Ci.nsIPropertyBag2);
+
+          // we cannot use SBDataGetBoolValue here because that is loaded via an
+          // overlay, but this object is loaded via a binding on dialog, which
+          // is instantiated before the overlay is applied.
+          var plucked = Cc["@getnightingale.com/Nightingale/DataRemote;1"]
+                          .createInstance(Ci.sbIDataRemote);
+          plucked.init("accessibility.enabled", null);
+
+          if ( plucked.boolValue ) {
+            // If plucked, everything stays hidden.
+            hideFrame();
+            // and we show the system chrome
+            showSystemChrome();
+          } else if ( sysInfo.getProperty("name") == "Darwin" ) {
+            // If mac, do magic stuff to just the bottom-right
+            this.enableMac();
+          } else {
+            // Otherwise, fix yer frame, mate!
+            this.enableResizers();
+            if (document.documentElement.hasAttribute('hidechrome') &&
+                ("@getnightingale.com/Nightingale/WindowChromeService;1" in Cc))
+            {
+              // this platform wants custom chrome hiding
+              Cc["@getnightingale.com/Nightingale/WindowChromeService;1"]
+                .getService(Ci.sbIWindowChromeService)
+                .hideChrome(window, true);
+              document.documentElement.setAttribute('sb-show-sys-titlebar', 
+                                                    true);
+              document.documentElement.removeAttribute('hidechrome');
+            }
+          }
+            
+          if ( this.getAttribute("overflow") == "true" )
+            document.getAnonymousElementByAttribute(this, 'sbid', 'children').setAttribute( "style", "" );
+        ]]>
+      </constructor>
+      
+      <destructor>
+        <![CDATA[
+        ]]>
+      </destructor>
+      
+      <method name="hideFrame">
+        <body>
+          <![CDATA[
+            // This is actually the default state, but let's be thorough
+            for ( var i = 1; i <= 12; i++ ) {
+              document.getAnonymousElementByAttribute(this, 'sbid', 'r' + i ).setAttribute( "hidden", "true" ); 
+              document.getAnonymousElementByAttribute(this, 'sbid', 'x' + i ).setAttribute( "hidden", "false" ); 
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="showSystemChrome">
+        <body>
+          <![CDATA[
+            // We need to remove the hidechrome attribute from the window
+            // if one exists
+            if (document.documentElement.hasAttribute('hidechrome')) {
+              document.documentElement.removeAttribute('hidechrome');
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="enableMac">
+        <body>
+          <![CDATA[
+            // We want to disable all but one of the bottom right resizers (#12)
+            this.disableResizers();
+            
+            // And then mess with it, if we need to.
+            var resizers = this.getAttribute( "resizers" );
+            if ( resizers != "none" )
+            {
+              // If we don't have a titlebar the OS won't draw our 
+              // resizer graphic for us...  so show our own image.
+              var plucked = SBDataGetBoolValue( "accessibility.enabled" );
+              if (!plucked) {
+                var macResizeImageBox = document.getAnonymousElementByAttribute( this, 'sbid', 'mac_resize_image_box' ); 
+                macResizeImageBox.setAttribute("hidden", "false");
+              }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="enableResizers">
+        <body>
+          <![CDATA[
+            switch ( this.getAttribute("resizers") ) {
+              case "none":
+                this.disableResizers();
+                break;
+              case "vert":
+                this.disableResizers();
+                this.enableResizer(1);
+                this.enableResizer(2);
+                this.enableResizer(3);
+                this.enableResizer(10);
+                this.enableResizer(11);
+                this.enableResizer(12);
+                break;
+              case "horiz":
+                this.disableResizers();
+                this.enableResizer(4);
+                this.enableResizer(5);
+                this.enableResizer(6);
+                this.enableResizer(7);
+                this.enableResizer(8);
+                this.enableResizer(9);
+                break;
+              default:
+                for ( var i = 1; i <= 12; i++ ) {
+                  this.enableResizer(i);
+                }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="disableResizers">
+        <body>
+          <![CDATA[
+            for ( var i = 1; i <= 12; i++ ) {
+              this.disableResizer(i);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="enableResizer">
+        <parameter name="aIndex"/>
+        <body>
+          <![CDATA[
+            document.getAnonymousElementByAttribute(this, 'sbid', 'r' + aIndex ).setAttribute( "hidden", "false" ); 
+            document.getAnonymousElementByAttribute(this, 'sbid', 'x' + aIndex ).setAttribute( "hidden", "true" ); 
+          ]]>
+        </body>
+      </method>
+
+      <method name="disableResizer">
+        <parameter name="aIndex"/>
+        <body>
+          <![CDATA[
+            document.getAnonymousElementByAttribute(this, 'sbid', 'r' + aIndex ).setAttribute( "hidden", "true" ); 
+            document.getAnonymousElementByAttribute(this, 'sbid', 'x' + aIndex ).setAttribute( "hidden", "false" ); 
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+
+<!-- EOF -->
+</bindings>

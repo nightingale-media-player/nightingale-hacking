@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%brandDTD;
+%nightingaleDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Summary Settings widget.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-summary-settings"
+    extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+      <xul:hbox pack="center" flex="1">
+        <xul:vbox class="device-tab-content"
+                  sbid="device_management_settings_content">
+
+          <!-- Device management settings. -->
+          <xul:sb-device-management
+             sbid="device_management_settings"
+             xbl:inherits="device-id,dev-lib-guid,hide=hideSettings"/>
+
+          <!-- General device settings. -->
+          <xul:sb-device-general-settings sbid="device_general_settings"
+                                          xbl:inherits="device-id"/>
+
+          <!-- will get other settings inserted programatically -->
+
+          <!-- cancel/save button box -->
+          <xul:hbox sbid="device_settings_button_box"
+                    class="device-settings-button-box"
+                    pack="end">
+            <!-- Cancel and save buttons. -->
+            <xul:button sbid="device_settings_button_cancel"
+                        label="&window.cancel;"
+                        oncommand="reset();"/>
+            <xul:button sbid="device_settings_button_save"
+                        label="&window.save;"
+                        oncommand="save();"/>
+          </xul:hbox>
+        </xul:vbox>
+      </xul:hbox>
+    </content>
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+      {
+        /* Import external services. */
+        this.importExternalServices();
+      }
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+      {
+        /* Finalize the sync management services. */
+        this.DeviceSummarySettings.finalize(this);
+      }
+      ]]></destructor>
+
+      <!-- *********************************************************************
+       *
+       * Internal summary settings services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+      {
+        /* Import the device summary settings services. */
+        if (typeof(this.DeviceSummarySettings) == "undefined") {
+          var jsLoader;
+
+          /* Get the Javascript sub-script loader services. */
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+          ("chrome://nightingale/content/scripts/device/deviceSummarySettings.js",
+           this);
+        }
+
+      }
+      ]]></body></method>
+
+      <!--
+       * reset
+       *
+       *   This function resets all the widgets settings to the values set
+       * since last save.
+       -->
+
+      <method name="reset"><body><![CDATA[
+      {
+        this.DeviceSummarySettings.reset();
+      }
+      ]]></body></method>
+
+      <!--
+       * save
+       *
+       *   This function saves all the widgets settings.
+       -->
+
+      <method name="save"><body><![CDATA[
+      {
+        this.DeviceSummarySettings.save();
+      }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device summary settings services. */
+        this.DeviceSummarySettings.finalize(this);
+        this.DeviceSummarySettings.initialize(this);
+        ]]></handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

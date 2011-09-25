@@ -1,0 +1,8 @@
+browser.jar:
+% content browser %content/browser/
+*       content/browser/sanitize.js                   (content/sanitize.js)
+*       content/browser/sanitize.xul                  (content/sanitize.xul)
+*       content/browser/browser-textZoom.js           (content/browser-textZoom.js)
+*       content/browser/pageReportFirstTime.xul       (content/pageReportFirstTime.xul)
+*       content/browser/safeMode.xul                  (content/safeMode.xul)
+*       content/browser/safeMode.js                   (content/safeMode.js)

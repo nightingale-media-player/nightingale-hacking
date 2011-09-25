@@ -1,0 +1,56 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+DISTDIR_MODE = 644
+NIGHTINGALE_DIST = $(topsrcdir)/app/branding/nightingale-512.png \
+                $(NULL)
+
+ifdef NIGHTINGALE_OFFICIAL
+   INSTALLER_STAGE_DIR = Nightingale
+else
+   INSTALLER_STAGE_DIR = Nightingale_build-$(SB_BUILD_NUMBER)
+endif
+
+# Linux only supports one installer suffix, so the plural "suffixes" is
+# misleading
+FULL_INSTALLER_NAME = $(SB_INSTALLER_NAME).$(SB_INSTALLER_SUFFIXES)
+
+include $(topsrcdir)/build/rules.mk
+
+libs::
+	$(RM) -r $(INSTALLER_STAGE_DIR)
+	$(MKDIR_APP) $(INSTALLER_STAGE_DIR)
+	$(RM) $(FULL_INSTALLER_NAME)
+	$(CP) -RLp $(NIGHTINGALE_DISTDIR)/* $(INSTALLER_STAGE_DIR)
+	$(TAR) --owner=0 --group=0 --numeric-owner -c $(INSTALLER_STAGE_DIR) | $(GZIP) -c9 > $(FULL_INSTALLER_NAME)
+	$(MV) $(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)
+	# This is a copy of dist; remove it, since it takes up so much space.
+	$(RM) -r $(INSTALLER_STAGE_DIR)

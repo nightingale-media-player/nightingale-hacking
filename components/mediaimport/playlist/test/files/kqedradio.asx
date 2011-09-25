@@ -1,0 +1,29 @@
+<ASX version = "3.0">
+<TITLE>KQED Radio 88.5 FM</TITLE>
+<MOREINFO href = "http://www.kqed.org/" />
+<AUTHOR>KQED, Inc.</AUTHOR>
+<COPYRIGHT>(c) 2007</COPYRIGHT>
+
+<!--gateway-->
+<ENTRY ClientSkip = "yes">
+	<TITLE>Sponsored by the Asia Foundation</TITLE>
+	<MOREINFO href = "www.asiafoundation.org" />
+	<AUTHOR>Asia Foundation</AUTHOR>
+
+	<REF href = "mms://kqedwm.streamguys.us/wm.kqed/ads/asiaf/asiaf03062007.wma" /> 
+</ENTRY>
+<!--end gateway-->
+
+<ENTRY>
+	<TITLE>KQED Public Radio 88.5 FM</TITLE>
+	<MOREINFO href="http://www.kqed.org/" />
+	<AUTHOR>KQED, Inc.</AUTHOR>
+	<COPYRIGHT>(c) 2007</COPYRIGHT>
+
+	<REF href="http://kqedsc01.streamguys.us:8000/" />
+	<REF href="http://kqedsc01.streamguys.us:80/" />
+
+</ENTRY>
+
+
+</ASX>

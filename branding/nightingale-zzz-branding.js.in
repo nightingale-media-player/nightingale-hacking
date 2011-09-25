@@ -1,0 +1,39 @@
+/* branding preferences */
+#filter substitution
+
+pref("app.update.url", "https://updates.getnightingale.com/update/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/en-US/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
+pref("app.update.url.manual", "http://getnightingale.com/");
+pref("app.update.url.details", "http://www.getnightingale.com/releasenotes/");
+
+pref("extensions.update.url", "https://addon-files.getnightingale.com/updates/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/%ITEM_VERSION%/%ITEM_ID%/update.rdf");
+pref("extensions.getMoreExtensionsURL", "http://addons.getnightingale.com/");
+pref("extensions.getMoreThemesURL", "http://addons.getnightingale.com/tag/feathers");
+
+pref("extensions.blocklist.url", "https://addon-files.getnightingale.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/blocklist.xml");
+pref("extensions.blocklist.detailsURL", "https://addon-files.getnightingale.com/blocklist/3/@SB_APPNAME@/%VERSION%/");
+
+pref("xpinstall.whitelist.add", "addons.getnightingale.com");
+pref("xpinstall.whitelist.add.0", "translate.getnightingale.com");
+
+// Remote API whitelist. Syntax: domain=permission
+pref("nightingale.rapi.whitelist.add", "getnightingale.com=library_write");
+
+pref("nightingale.url.locales", "https://locales.getnightingale.com/bundles/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/locales.xml");
+
+pref("breakpad.reportURL", "http://crashreports.getnightingale.com/report/index/");
+
+// Search engines URL
+pref("browser.search.searchEnginesURL",      "http://addons.getnightingale.com/tag/search");
+
+// Nightingale default urls
+pref("nightingale.url.addons", "http://addons.getnightingale.com/");
+pref("nightingale.url.addons.displaypanes", "http://addons.getnightingale.com/tag/displaypane");
+pref("nightingale.url.addons.feathers", "http://addons.getnightingale.com/tag/feathers");
+pref("nightingale.url.addons.mediaviews", "http://addons.getnightingale.com/tag/mediaview");
+pref("browser.startup.homepage", "http://getnightingale.com/");
+pref("nightingale.url.firstrunpage", "http://getnightingale.com/firstrun");
+pref("nightingale.url.homepage", "http://getnightingale.com/");
+pref("nightingale.url.bugzilla", "http://bugzilla.getnightingale.com/");
+pref("nightingale.url.metrics", "http://metrics.getnightingale.com/post/");
+pref("nightingale.url.subscribe", "http://list-manage.com/subscribe.phtml");
+pref("nightingale.url.support", "http://getnightingale.com/support/");

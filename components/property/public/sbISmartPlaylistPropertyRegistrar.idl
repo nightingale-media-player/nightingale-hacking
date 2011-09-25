@@ -1,0 +1,84 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+/**
+ * \file sbISmartPlaylistPropertyRegistrar.idl
+ * \brief Definition of the sbISmartPlaylistPropertyRegistrar interface
+ */
+
+#include "nsISupports.idl"
+interface nsISimpleEnumerator;
+
+[scriptable, uuid(3813e226-4465-4a4a-90e3-b890e2271e2c)]
+interface sbISmartPlaylistProperty : nsISupports
+{
+  /**
+   * The id of the property
+   */
+  readonly attribute AString propertyID;
+  
+  /**
+   * The default column width in the playlist view
+   */
+  readonly attribute long defaultColumnWidth;
+  
+  /**
+   * The default sort direction for the property column in the playlist view
+   */
+  readonly attribute AString defaultSortDirection; 
+};
+
+/**
+* \interface sbISmartPlaylistPropertyRegistrar
+* \brief Registrar for smart playlists properties
+*
+* Components should register the properties they wish to expose to the
+* smart playlist editor via this service at startup.
+*
+*/
+[scriptable, uuid(177dff4d-c845-4d7d-b1e8-533591908526)]
+interface sbISmartPlaylistPropertyRegistrar : nsISupports
+{
+  /**
+   * \brief Returns an enumerator for all the properties that have been
+   * registered to a particular smart playlist context.
+   * \param aContextID ID of the context
+   * \return Enumerator of sbISmartPlaylistProperty items
+   */
+  nsISimpleEnumerator getPropertiesForContext(in AString aContextID);
+
+  /**
+   * \brief Register a property to the smart playlist editor for a particular
+   * context.
+   * \param aContextID ID of the context
+   * \param aProperty the property to register
+   */
+  void registerPropertyToContext(in AString aContextID, 
+                                 in AString aProperty,
+                                 in long aDefaultColWidth,
+                                 in AString aDefaultSortDirection);
+};
+

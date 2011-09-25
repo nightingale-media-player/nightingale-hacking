@@ -1,0 +1,115 @@
+#
+# BEGIN NIGHTINGALE GPL
+#
+# This file is part of the Nightingale web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.getnightingale.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the GPL).
+#
+# Software distributed under the License is distributed
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END NIGHTINGALE GPL
+#
+
+DEPTH = ../../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
+
+DYNAMIC_LIB = sbDBEngine
+
+CPP_SRCS = DatabaseEngineComponent.cpp \
+           DatabaseEngine.cpp \
+           DatabaseQuery.cpp \
+           DatabasePreparedStatement.cpp \
+           DatabaseResult.cpp \
+           $(NULL)
+
+CPP_EXTRA_INCLUDES = $(srcdir) \
+                     $(DEPTH)/components/dbengine/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/moz/prompter/public \
+                     $(DEPTH)/components/metrics/public \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/intl/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threadpoolservice/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(MOZSDK_INCLUDE_DIR)/appcomps \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/locale \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/xpcom \
+                     $(MOZSDK_IDL_DIR) \
+                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+                     $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+                            
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
+ $(NULL)
+
+ifeq (windows,$(SB_PLATFORM))
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
+    $(NULL)
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_IMPORTS +=  unicharutil_external_s
+endif
+
+ifeq (linux,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver
+   DYNAMIC_LIB_RAW_IMPORTS += $(PTHREAD_LIBS) \
+                              $(GLIB_LIBS) \
+                              $(NULL)
+
+   CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
+                      $(NULL)
+endif
+
+ifeq (solaris,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver
+   DYNAMIC_LIB_RAW_IMPORTS += $(PTHREAD_LIBS) \
+                              $(GLIB_LIBS) \
+                              -lm \
+                              $(NULL)
+   CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
+                      $(NULL)
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
+                              -framework Cocoa \
+                              $(NULL)
+endif
+
+IS_COMPONENT = 1
+
+include $(topsrcdir)/build/rules.mk
