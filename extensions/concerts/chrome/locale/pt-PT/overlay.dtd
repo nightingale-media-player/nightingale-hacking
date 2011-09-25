@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Estamos a verificar que artistas estão em digressão perto de si">
-<!ENTITY concerts.changelocation "Alterar localização">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "Nenhum concerto encontrado para">
-<!ENTITY concerts.timeout.error "Não está ligado à Internet ou a nossa base de dados de concertos não está a funcionar de momento. Tente novamente dentro de alguns minutos.">
-<!ENTITY concerts.timeoutreport.error "Comunicar um problema">

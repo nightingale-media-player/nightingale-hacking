@@ -1,4 +1,0 @@
-<!ENTITY newReleases.loading "We're checking to see which releases are in your area...">
-<!ENTITY newReleases.changelocation "Change Location">
-<!ENTITY newReleases.timeout.error "You're either not connected to the Internet or our new releases database is not working right now.  Please try again in a few minutes.">
-<!ENTITY newReleases.timeoutreport.error "Report a problem">

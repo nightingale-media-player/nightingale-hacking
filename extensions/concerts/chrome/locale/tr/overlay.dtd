@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Size en yakın turnedeki sanatçıları araştırıyoruz...">
-<!ENTITY concerts.changelocation "Konum Değiştir">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "<Location> için konser bulunamadı">
-<!ENTITY concerts.timeout.error "Internet bağlantınız yok ya da konser veritabanımızda bir sorun var. Lütfen birkaç dakika sonra tekrar deneyin.">
-<!ENTITY concerts.timeoutreport.error "Sorun bildirin">

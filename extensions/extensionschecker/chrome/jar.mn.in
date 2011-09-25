@@ -1,6 +1,0 @@
-extensionschecker.jar:
-# chrome registration
-% content       extensionschecker                                               %content/
-% overlay       chrome://songbird/content/xul/layoutWithBrowserOverlay.xul      chrome://extensionschecker/content/menuOverlay.xul
-# packing
-@include_all_to

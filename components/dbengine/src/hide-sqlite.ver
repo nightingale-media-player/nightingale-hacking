@@ -1,4 +1,0 @@
-SB_DBENGINE { 
-  global: NSGetModule;
-  local: *; 
-};

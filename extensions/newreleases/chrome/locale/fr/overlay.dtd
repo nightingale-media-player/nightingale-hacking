@@ -1,4 +1,0 @@
-<!ENTITY newReleases.loading "Nous vérifions quelles sorties ont lieu dans votre région...">
-<!ENTITY newReleases.changelocation "Changer de région">
-<!ENTITY newReleases.timeout.error "Soit vous n'êtes pas connectés à Internet soit notre base de données ne fonctionne pas maintenant. Merci d'essayer à nouveau d'ici quelques minutes.">
-<!ENTITY newReleases.timeoutreport.error "Signaler un problème">
