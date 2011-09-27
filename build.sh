@@ -31,4 +31,7 @@ grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-me
 make -f nightingale.mk clobber
 make -f nightingale.mk
 
+# insert a copy of the above code to the nightingale launcher to locate gstreamer libs so we don't have to symlink anymore
+patch -Np0 -i add_search_for_gst_libs.patch compiled-release-$(arch)/dist/nightingale
+
 echo "Build finished! If nightingale won't play music, you'll need to ln -s /usr/lib/gstreamer0.10/* to the gst-plugins dir!"
