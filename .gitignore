@@ -3,7 +3,8 @@ autom4te.cache
 songbird.config
 vcproj
 configure
-dependencies/linux-i686i*
+dependencies/linux-i686*
+compiled*
 dependencies/linux-x86_64*
 compiled
 .songbirdconfig.mk
