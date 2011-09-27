@@ -46,9 +46,15 @@ static const mozilla::Module::CIDEntry kSongbirdMozPrompterCIDs[] = {
     { NULL }
 };
 
+static const mozilla::Module::ContractIDEntry kSongbirdMozPrompterContracts[] = {
+    { SONGBIRD_PROMPTER_CONTRACTID, &kSB_PROMPTER_CID },
+    { NULL }
+};
+
 static const mozilla::Module kSongbirdMozPrompterModule = {
     mozilla::Module::kVersion,
-    kSongbirdMozPrompterCIDs
+    kSongbirdMozPrompterCIDs,
+    kSongbirdMozPrompterContracts
 };
 
 NSMODULE_DEFN(sbMozPrompterModule) = &kSongbirdMozPrompterModule;
