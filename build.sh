@@ -22,7 +22,7 @@ for dir in /usr/lib64 /usr/lib ; do
 done
 
 # hopefully we have python2 on this system
-export PYTHON="$(which python2 2/dev/null || which python)"
+export PYTHON="$(which python2 2>/dev/null || which python)"
 
 # use our own gstreamer libs
 # comment this out if building on/for Windows or Mac
