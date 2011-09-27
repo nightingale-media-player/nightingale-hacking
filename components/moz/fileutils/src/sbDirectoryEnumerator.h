@@ -26,6 +26,8 @@
 //
 */
 
+#include <mozilla/Mutex.h>
+
 #ifndef __SB_DIRECTORY_ENUMERATOR_H__
 #define __SB_DIRECTORY_ENUMERATOR_H__
 
