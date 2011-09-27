@@ -3,6 +3,9 @@ for dir in /usr/lib64 /usr/lib ; do
   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
     export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
     break
+  elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+	export GST_PLUIN_PATH=${dir}/gstreamer0.10
+	break
   fi
 done
 
