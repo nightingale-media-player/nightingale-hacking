@@ -136,14 +136,14 @@ private:
   // mFilesOnly                 If true, enumerate only files.
   //
 
-  PRBool                        mIsInitialized;
-  PRLock*                       mEnumeratorLock;
+  PRBool                        				mIsInitialized;
+  mozilla::Mutex*                       		mEnumeratorLock;
   nsCOMArray<nsISimpleEnumerator>
-                                mEntriesEnumStack;
-  nsCOMPtr<nsIFile>             mNextFile;
-  PRUint32                      mMaxDepth;
-  PRBool                        mDirectoriesOnly;
-  PRBool                        mFilesOnly;
+												mEntriesEnumStack;
+  nsCOMPtr<nsIFile>             				mNextFile;
+  PRUint32                      				mMaxDepth;
+  PRBool                        				mDirectoriesOnly;
+  PRBool                        				mFilesOnly;
 
 
   //
