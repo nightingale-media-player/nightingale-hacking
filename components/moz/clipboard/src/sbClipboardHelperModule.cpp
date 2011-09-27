@@ -30,11 +30,6 @@
 // Mozilla includes
 #include <mozilla/ModuleUtils.h>
 
-#define SB_CLIPBOARD_HELPER_CLASSNAME "sbClipboardHelper"
-#define SB_CLIPBOARD_HELPER_CID \
-{ 0x6063116b, 0x2b98, 0x44d5, \
-  { 0x8f, 0x6e, 0x0a, 0x70, 0x43, 0xf0, 0x1f, 0xc3 } }
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbClipboardHelper)
 NS_DEFINE_NAMED_CID(SB_CLIPBOARD_HELPER_CID);
 
