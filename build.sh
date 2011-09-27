@@ -1,4 +1,4 @@
-i# break on any error
+# break on any error
 set -e
 
 # Check for the build deps for the system's architecture. If on windows or mac, please use the deps from the songbird SVN
@@ -13,7 +13,7 @@ fi
 # this depends on your system's gstreamer location
 for dir in /usr/lib64 /usr/lib ; do
   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-    export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
+    export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
     break
   elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
 	export GST_PLUIN_PATH=${dir}/gstreamer0.10
@@ -22,11 +22,11 @@ for dir in /usr/lib64 /usr/lib ; do
 done
 
 # hopefully we have python2 on this system
-export PYTHON="$(which python2 2>/dev/null || which python)"
+export PYTHON="$(which python2 2/dev/null || which python)"
 
 # use our own gstreamer libs
 # comment this out if building on/for Windows or Mac
-grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> nightingale.config )
+grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system'  nightingale.config )
 
 make -f nightingale.mk clobber
 make -f nightingale.mk
