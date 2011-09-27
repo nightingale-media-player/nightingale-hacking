@@ -46,7 +46,7 @@ SUBDIRS = strings \
           threadpoolservice \
           threads \
           urlformatter \
-          #variant \
+          variant \
           xpcom \
           errorconsole \
           streams \
