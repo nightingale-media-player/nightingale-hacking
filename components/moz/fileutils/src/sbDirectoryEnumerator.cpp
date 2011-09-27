@@ -49,6 +49,7 @@
 #include "sbDirectoryEnumerator.h"
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
@@ -207,6 +208,9 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
   PRBool   success;
   nsresult rv;
 
+  // Operate under the enumerator lock.
+  nsAutoLock autoLock(mEnumeratorLock);
+
   // Ensure directory exists and is a directory.
   PRBool exists;
   PRBool isDirectory;
@@ -254,6 +258,9 @@ sbDirectoryEnumerator::HasMoreElements(PRBool* aHasMoreElements)
   NS_ENSURE_ARG_POINTER(aHasMoreElements);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
 
+  // Operate under the enumerator lock.
+  nsAutoLock autoLock(mEnumeratorLock);
+
   // Return results.
   *aHasMoreElements = (mEntriesEnumStack.Count() > 0);
 
@@ -276,6 +283,9 @@ sbDirectoryEnumerator::GetNext(nsIFile** aFile)
 
   // Function variables.
   nsresult rv;
+
+  // Operate under the enumerator lock.
+  nsAutoLock autoLock(mEnumeratorLock);
 
   // Return the next file.  Return error if no next file.
   if (mNextFile)
@@ -306,6 +316,7 @@ sbDirectoryEnumerator::GetMaxDepth(PRUint32* aMaxDepth)
 {
   NS_ENSURE_ARG_POINTER(aMaxDepth);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
+  nsAutoLock autoLock(mEnumeratorLock);
   *aMaxDepth = mMaxDepth;
   return NS_OK;
 }
@@ -314,6 +325,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetMaxDepth(PRUint32 aMaxDepth)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
+  nsAutoLock autoLock(mEnumeratorLock);
   mMaxDepth = aMaxDepth;
   return NS_OK;
 }
@@ -328,6 +340,7 @@ sbDirectoryEnumerator::GetDirectoriesOnly(PRBool* aDirectoriesOnly)
 {
   NS_ENSURE_ARG_POINTER(aDirectoriesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
+  nsAutoLock autoLock(mEnumeratorLock);
   *aDirectoriesOnly = mDirectoriesOnly;
   return NS_OK;
 }
@@ -336,6 +349,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetDirectoriesOnly(PRBool aDirectoriesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
+  nsAutoLock autoLock(mEnumeratorLock);
   mDirectoriesOnly = aDirectoriesOnly;
   return NS_OK;
 }
@@ -350,6 +364,7 @@ sbDirectoryEnumerator::GetFilesOnly(PRBool* aFilesOnly)
 {
   NS_ENSURE_ARG_POINTER(aFilesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
+  nsAutoLock autoLock(mEnumeratorLock);
   *aFilesOnly = mFilesOnly;
   return NS_OK;
 }
@@ -358,6 +373,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
+  nsAutoLock autoLock(mEnumeratorLock);
   mFilesOnly = aFilesOnly;
   return NS_OK;
 }
@@ -375,6 +391,7 @@ sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 
 sbDirectoryEnumerator::sbDirectoryEnumerator() :
   mIsInitialized(PR_FALSE),
+  mEnumeratorLock(nsnull),
   mMaxDepth(0),
   mDirectoriesOnly(PR_FALSE),
   mFilesOnly(PR_FALSE)
@@ -402,7 +419,12 @@ sbDirectoryEnumerator::Initialize()
   // Do nothing if already initialized.
   if (mIsInitialized)
     return NS_OK;
-    
+
+  // Create the directory enumerator lock.
+  mEnumeratorLock =
+    nsAutoLock::NewLock("sbDirectoryEnumerator.mEnumeratorLock");
+  NS_ENSURE_TRUE(mEnumeratorLock, NS_ERROR_OUT_OF_MEMORY);
+
   // Indicate that the directory enumerator has been initialized.
   mIsInitialized = PR_TRUE;
 
@@ -419,6 +441,11 @@ sbDirectoryEnumerator::Finalize()
 {
   // Indicate that the directory enumerator is no longer initialized.
   mIsInitialized = PR_FALSE;
+
+  // Dispose of the directory enumerator lock.
+  if (mEnumeratorLock)
+    nsAutoLock::DestroyLock(mEnumeratorLock);
+  mEnumeratorLock = nsnull;
 
   // Clear the directory entries enumeration stack.
   mEntriesEnumStack.Clear();
