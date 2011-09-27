@@ -26,8 +26,6 @@
 //
 */
 
-#include <mozilla/Mutex.h>
-
 #ifndef __SB_DIRECTORY_ENUMERATOR_H__
 #define __SB_DIRECTORY_ENUMERATOR_H__
 
@@ -57,6 +55,7 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsISimpleEnumerator.h>
+#include <mozilla/Mutex.h>
 
 
 //------------------------------------------------------------------------------
@@ -139,7 +138,7 @@ private:
   //
 
   PRBool                        				mIsInitialized;
-  mozilla::Mutex*                       		mEnumeratorLock;
+  mozilla::Mutex                        		mEnumeratorLock;
   nsCOMArray<nsISimpleEnumerator>
 												mEntriesEnumStack;
   nsCOMPtr<nsIFile>             				mNextFile;

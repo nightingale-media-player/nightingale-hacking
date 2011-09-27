@@ -391,7 +391,7 @@ sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 
 sbDirectoryEnumerator::sbDirectoryEnumerator() :
   mIsInitialized(PR_FALSE),
-  mEnumeratorLock(nsnull),
+  mEnumeratorLock("sbDirectoryEnumerator.mEnumeratorLock"),
   mMaxDepth(0),
   mDirectoriesOnly(PR_FALSE),
   mFilesOnly(PR_FALSE)
@@ -419,11 +419,6 @@ sbDirectoryEnumerator::Initialize()
   // Do nothing if already initialized.
   if (mIsInitialized)
     return NS_OK;
-
-  // Create the directory enumerator lock.
-  mozilla::Mutex mEnumeratorLock =
-	mozilla::MutexAutoLock("sbDirectoryEnumerator.mEnumeratorLock");
-  NS_ENSURE_TRUE(mEnumeratorLock, NS_ERROR_OUT_OF_MEMORY);
 
   // Indicate that the directory enumerator has been initialized.
   mIsInitialized = PR_TRUE;
