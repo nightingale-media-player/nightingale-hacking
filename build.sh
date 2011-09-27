@@ -1,4 +1,4 @@
-# break on any error
+i# break on any error
 set -e
 
 # Check for the build deps for the system's architecture. If on windows or mac, please use the deps from the songbird SVN
@@ -15,7 +15,7 @@ for dir in /usr/lib64 /usr/lib ; do
   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
     export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
     break
-  elseif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+  elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
 	export GST_PLUIN_PATH=${dir}/gstreamer0.10
 	break
   fi
