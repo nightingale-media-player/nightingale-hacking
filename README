@@ -33,6 +33,10 @@ Building:
 If on Linux, simply run the build.sh script. It will download the deps
 and build the app for you. 
 
+Ubuntu users should note you'll need:
+libdbus-glib-1-dev
+libgstreamer-plugins-base0.10-dev
+
 If on Mac or Windows, don't use build.sh, 
 instead follow the instructions on the Songbird wiki (you'd be better 
 off running Songbird builds for now anyway, if on Mac or Windows).

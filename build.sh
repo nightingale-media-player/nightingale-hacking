@@ -27,3 +27,5 @@ grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-me
 
 make -f nightingale.mk clobber
 make -f nightingale.mk
+
+echo "Build finished! If nightingale won't play music, you'll need to ln -s /usr/lib/gstreamer0.10/* to the gst-plugins dir!"
