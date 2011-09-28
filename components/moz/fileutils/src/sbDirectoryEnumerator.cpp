@@ -274,7 +274,7 @@ void sbDirectoryEnumeratorHelper::CloseDir()
     mDir = INVALID_HANDLE_VALUE;
   }
 #else
-  if (!mDir) {
+  if (mDir) {
     PR_CloseDir(mDir);
     mDir = nsnull;
   }

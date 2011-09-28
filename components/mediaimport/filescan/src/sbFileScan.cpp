@@ -846,7 +846,14 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
         pEntry->IsDirectory(&bIsDirectory);
         pEntry->IsHidden(&bIsHidden);
 
-        if(!bIsHidden || bSearchHidden)
+        // If it's special, we always want to skip it. This causes files with a
+        // dot prefix to be treated as hidden which they are on Mac and Linux.
+        // Windows will include dot prefixed file as it did before the
+        // file scan reimplementation in bug 24478
+        PRBool isSpecial = PR_FALSE;
+        pEntry->IsSpecial(&isSpecial);
+
+        if(!isSpecial && (!bIsHidden || bSearchHidden))
         {
           if(bIsFile)
           {
