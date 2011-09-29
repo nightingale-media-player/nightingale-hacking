@@ -1,4 +1,4 @@
-# break on any error
+ # break on any error
 set -e
 
 # Check for the build deps for the system's architecture. If on windows or mac, please use the deps from the songbird SVN

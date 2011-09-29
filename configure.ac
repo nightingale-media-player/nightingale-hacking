@@ -934,6 +934,14 @@ case "$SB_PLATFORM" in
     AC_SUBST(DBUS_LIBS)
     #AC_SUBST(HAL_CFLAGS)
     #AC_SUBST(HAL_LIBS)
+    
+	PKG_CHECK_MODULES(TAGLIB, taglib >= 1.5)
+	if ! test -f `pkg-config --variable=prefix taglib`/include/taglib/mp4file.h ; then
+	  TAGLIB_CFLAGS=
+	  TAGLIB_LIBS=
+	fi
+	AC_SUBST(TAGLIB_CFLAGS)
+	AC_SUBST(TAGLIB_LIBS)
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
@@ -996,7 +1004,7 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
     GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-    AC_SUBST(GSTREAMER_LIBS)
+    AC_SUBST(GSTREAMER_LIBS)    
     AC_SUBST(GTK_CFLAGS)
     AC_SUBST(GTK_LIBS)
 

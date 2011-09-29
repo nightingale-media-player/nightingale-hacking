@@ -87,6 +87,13 @@ ifeq (linux,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
 endif
 
+ifeq (,$(TAGLIB_CFLAGS))
+ CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
+                       $(NULL)
+else
+ CPP_EXTRA_INCLUDES += $(TAGLIB_CFLAGS)
+endif
+
 ifeq (solaris,$(SB_PLATFORM))
    # Search in xulrunner directory at runtime for shared libraries.
    DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
