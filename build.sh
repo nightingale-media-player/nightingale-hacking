@@ -5,9 +5,31 @@ set -e
 echo "Checking for the required dependencies..."
 if [ ! -d dependencies/linux-"$(arch)" ] ; then
 	echo "You don't have them...downloading via SVN...note if you're a Mac or Windows user, you should get these from the songbird SVN"
+	
 	cd dependencies
-	svn co http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/linux-"$(arch)"
-	cd ../
+	mkdir -p "linux-$(arch)"/{xulrunner/release,mozilla/release,taglib/release,sqlite/release}
+	
+	svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/linux-$(arch)"	
+	
+	cd "xulrunner/release"
+	svn co $svnroot/xulrunner/release ./
+	
+	cd ../../
+	
+	cd "mozilla/release"
+	svn co $svnroot/mozilla/release ./
+	
+	cd ../../
+	
+	cd "taglib/release"
+	svn co $svnroot/taglib/release ./
+	
+	cd ../../
+	
+	cd "sqlite/release"
+	svn co $svnroot/sqlite/release ./
+	
+	cd ../../../
 fi
 
 # this depends on your system's gstreamer location
