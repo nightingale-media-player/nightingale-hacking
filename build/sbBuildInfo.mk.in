@@ -12,7 +12,7 @@ SB_MILESTONE=1.8.1
 SB_MILESTONE_WINDOWS=1.8.1.0
 SB_BRANCHNAME=Nightingale1.8
 SB_PROFILE_VERSION=2
-SB_MOZILLA_VERSION=
+SB_MOZILLA_VERSION=1.9.2
 
 # These are here to centralize our handling of these versions, since we
 # use them; we make a slight distinction between JS-only and binary extensions
