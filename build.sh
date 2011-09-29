@@ -26,7 +26,7 @@ export PYTHON="$(which python2 2>/dev/null || which python)"
 
 # use our own gstreamer libs
 # comment this out if building on/for Windows or Mac
-grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system'  nightingale.config )
+grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' > nightingale.config )
 
 make -f nightingale.mk clobber
 make -f nightingale.mk
