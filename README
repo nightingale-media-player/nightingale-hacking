@@ -1,3 +1,6 @@
+DO NOT BUILD THE MASTER BRANCH YET! BUILD THE nightingale-1.8 BRANCH
+UNTIL THIS MESSAGE DISAPPEARS FROM THE README!
+
 Nightingale is a community based fork of the Songbird Web/Media player
 distributed under the GNU GPL and portions (xulrunner and mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
