@@ -1,4 +1,6 @@
 # this depends on your system's gstreamer location
+# this should be added to configure.ac and we should
+# make system gstreamer default on linux
 for dir in /usr/lib64 /usr/lib ; do
   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
     export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
@@ -10,12 +12,19 @@ for dir in /usr/lib64 /usr/lib ; do
 done
 
 # hopefully we have python2 on this system
+# we can add this bit to the configure.ac as well
+# and locate in order of preference
+# python2.x python2.x python2 pyton
 export PYTHON="$(which python2 2>/dev/null || which python)"
 
-# fixes a build error, let's add to the main makefiles later
+# fixes a build error
+# add to one of the build files...not sure if it's linux specific or not
 export CXXFLAGS="-std=gnu++0x"
 
 # use our own gstreamer libs
+# this is always necessary for linux builds using system libs
+# unless we make it default, then we'll want to make an inverse rule
+# and remove this one
 grep -sq gstreamer-system songbird.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> songbird.config )
 
 make -f songbird.mk clobber
