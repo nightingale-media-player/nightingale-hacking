@@ -50,6 +50,7 @@
 #include <sbThreadUtils.h>
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
@@ -149,6 +150,9 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
     return NS_OK;
   }
 
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
+
   // Check if window is already available.
   nsCOMPtr<nsIDOMWindow> window;
   rv = GetWindow(aWindowType, getter_AddRefs(window));
@@ -203,6 +207,9 @@ sbWindowWatcher::GetWindow(const nsAString& aWindowType,
 
   // This method may only be called on the main thread.
   NS_ENSURE_TRUE(SB_IsMainThread(mThreadManager), NS_ERROR_UNEXPECTED);
+
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Get an enumerator of all windows of the specified type, sorted from oldest
   // to youngest.
@@ -272,6 +279,9 @@ sbWindowWatcher::WaitForWindow(const nsAString& aWindowType)
 
   // Don't wait if this instance is shutting down.
   {
+    // Check is shutting down within the monitor.
+    nsAutoMonitor autoMonitor(mMonitor);
+    if (mIsShuttingDown)
       return NS_OK;
   }
 
@@ -302,6 +312,9 @@ sbWindowWatcher::GetIsShuttingDown(PRBool* aIsShuttingDown)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aIsShuttingDown);
+
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Return results.
   *aIsShuttingDown = mIsShuttingDown;
@@ -497,6 +510,10 @@ sbWindowWatcher::Init()
   mThreadManager = do_GetService("@mozilla.org/thread-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Create a monitor.
+  mMonitor = nsAutoMonitor::NewMonitor("sbWindowWatcher::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
   // Initialize the window information table.
   mWindowInfoTable.Init();
 
@@ -528,6 +545,11 @@ sbWindowWatcher::Finalize()
   // Remove all windows.
   RemoveAllWindows();
 
+  // Dispose of monitor.
+  if (mMonitor)
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  mMonitor = nsnull;
+
   // Remove object references.
   mWindowWatcher = nsnull;
   mWindowMediator = nsnull;
@@ -556,6 +578,18 @@ sbWindowWatcher::Shutdown()
   // Validate state.
   NS_ASSERTION(SB_IsMainThread(mThreadManager), "not on main thread");
 
+  // Operate within the monitor.
+  {
+    nsAutoMonitor autoMonitor(mMonitor);
+
+    // Do nothing if already shutting down.
+    if (mIsShuttingDown)
+      return;
+
+    // Indicate that this instance is shutting down.
+    mIsShuttingDown = PR_TRUE;
+  }
+
   // Remove quit-application-granted observer.
   mObserverService->RemoveObserver(this, "quit-application-granted");
 
@@ -583,6 +617,9 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   // Function variables.
   PRBool success;
   nsresult rv;
+
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Create the window info object.
   nsAutoPtr<WindowInfo> windowInfo;
@@ -645,6 +682,9 @@ sbWindowWatcher::RemoveWindow(nsIDOMWindow* aWindow)
   PRBool success;
   nsresult rv;
 
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
+
   // Get the removed window information.
   WindowInfo* windowInfo;
   success = mWindowInfoTable.Get(aWindow, &windowInfo);
@@ -676,6 +716,9 @@ sbWindowWatcher::RemoveWindow(nsIDOMWindow* aWindow)
 void
 sbWindowWatcher::RemoveAllWindows()
 {
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
+
   // Remove all of the windows.
   PRInt32 windowCount = mWindowList.Count();
   for (PRInt32 i = windowCount - 1; i >= 0; i--) {
@@ -711,6 +754,19 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
       NS_ENSURE_SUCCESS(rv, /* void */);
       mSentMainWinPresentedNotification = PR_TRUE;
     }
+  }
+
+  // Operate within the monitor.
+  {
+    nsAutoMonitor autoMonitor(mMonitor);
+
+    // Get the window information.  Do nothing if not available.
+    WindowInfo* windowInfo;
+    success = mWindowInfoTable.Get(aWindow, &windowInfo);
+    NS_ENSURE_TRUE(success, /* void */);
+
+    // Indicate that the window is ready.
+    windowInfo->isReady = PR_TRUE;
   }
 
   // Invoke call with window callbacks.
@@ -774,6 +830,9 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
     rv = GetWindowType(aWindow, windowType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Operate within the monitor.
+  nsAutoMonitor autoMonitor(mMonitor);
 
   // Do nothing if the call with window list is already being serviced.
   if (mServicingCallWithWindowList)
