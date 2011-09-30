@@ -28,6 +28,8 @@
 #include <nsIWeakReference.h>
 #include <nsIWeakReferenceUtils.h>
 
+#include <nsAutoLock.h>
+
 class sbWeakReference;
 
 // Set IMETHOD_VISIBILITY to empty so that the class-level NS_COM declaration
@@ -39,7 +41,17 @@ class NS_COM_GLUE sbSupportsWeakReference : public nsISupportsWeakReference
 {
 public:
   sbSupportsWeakReference() 
+<<<<<<< HEAD
     : mProxy(nsnull){};
+=======
+    : mProxy(nsnull)
+    , mProxyLock(nsnull) {
+    mProxyLock = nsAutoLock::NewLock("sbSupportsWeakReference::mProxyLock");
+    NS_WARN_IF_FALSE(mProxyLock, "Failed to create lock.");
+  }
+
+  NS_DECL_NSISUPPORTSWEAKREFERENCE
+>>>>>>> parent of e3528da... remove refs to autolock in sbWeakReference.h
 
 protected:
   inline ~sbSupportsWeakReference();
@@ -48,15 +60,21 @@ private:
   friend class sbWeakReference;
 
   void NoticeProxyDestruction() {
+    NS_ENSURE_TRUE(mProxyLock, /*void*/);
+    nsAutoLock lock(mProxyLock);
     // ...called (only) by an |nsWeakReference| from _its_ dtor.
     mProxy = nsnull;
   }
 
   sbWeakReference* mProxy;
+  // Lock to protect mProxy.
+  PRLock*          mProxyLock;
 
 protected:
   void ClearWeakReferences();
   PRBool HasWeakReferences() const {
+    NS_ENSURE_TRUE(mProxyLock, PR_FALSE);
+    nsAutoLock lock(mProxyLock);
     return mProxy != 0; 
   }
 };
@@ -67,6 +85,10 @@ protected:
 inline
 sbSupportsWeakReference::~sbSupportsWeakReference() {
   ClearWeakReferences();
+  
+  if (mProxyLock) {
+    nsAutoLock::DestroyLock(mProxyLock);
+  }
 }
 
 #endif // __SB_WEAKREFERENCE_H__
