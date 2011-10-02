@@ -1,7 +1,7 @@
 /*
  *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Nightingale web player.
+ * This file is part of the nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.getnightingale.com
@@ -116,14 +116,15 @@ dialog,
 window,
 prefwindow,
 panel {
-  background-color: rgb(43,41,54);
+  background-color: rgb(51,51,51);
 }
+/* fixme */
 page {
-  background-color: rgb(68,68,80);
+  background-color: rgb(51,51,51);
 }
 menupopup, 
 popup {
-  background-color:rgb(94,91,109);
+  background-color:rgb(102,102,102);
   border: 1px solid rgb(28,27,38);
 }
 menuitem > label {
@@ -135,13 +136,13 @@ groupbox,
 radiogroup,
 listbox,
 richlistbox {
-  background-color: rgb(87,86,94);
+  background-color: rgb(91,91,91);
 }
 tree.autocomplete-tree {
   background-color:rgb(94,91,109);
 }
 groupbox caption {
-  background-color: rgb(74,73,79);
+  background-color: rgb(70,70,70);
   height: 28px;
   color: rgb(255,255,255);
 }
@@ -195,7 +196,7 @@ treecol[hidden="true"] + splitter.tree-splitter {
   display: none;
 }
 richlistitem {
-  border-bottom: 1px solid rgb(80,78,91);
+  border-bottom: 1px solid rgb(47,95,130);
 }
 
 /* treecolAutoCompleteComment is document.title in the case of the location bar */
@@ -217,7 +218,7 @@ treechildren::-moz-tree-separator {
 toolbar,
 menubar,
 .generic-bar {
-  background-color: rgb(39,37,49);
+  background-color: rgb(50,50,50);
 }
 toolbar,
 menubar,
@@ -366,7 +367,8 @@ tabpanels {
   background-image: url(chrome://nightingale/skin/base-elements/bg-tabpanel.png);
   background-position: left top;
   background-repeat: repeat-x;
-  border: 1px solid rgb(80,78,91) !important;
+  /* BLUE */
+  border: 1px solid rgb(47,95,130) !important;
   padding: 15px 10px 10px 10px !important;
 }
 tabpanel {
@@ -473,7 +475,7 @@ statusbar {
 #status-bar-box {
   background-color: rgb(43,41,54);
   background-image: url(chrome://nightingale/skin/base-elements/bg-statusbar.png);
-  border-top:1px solid rgb(87,86,100);
+  border-top:1px solid rgb(119,119,119);
   min-height: 25px;
   -moz-box-align: center;
 }
@@ -496,12 +498,12 @@ sb-displaypane-button > button {
 listitem[selected="true"],
 richlistitem[selected="true"],
 treechildren::-moz-tree-row( selected, even ) {
-  /*background-color: rgb(225,225,225);*/
+  /* background-color: rgb(119,119,119); */
   background-image: url(chrome://nightingale/skin/playlist/bg-selected-row-unfocused.png);
 }
 /* alternating rows for trees */
 treechildren::-moz-tree-row( selected, odd ) {
-  /*background-color: rgb(220,220,220);*/
+  /* background-color: rgb(102,102,102); */
   background-image: url(chrome://nightingale/skin/playlist/bg-selected-row-unfocused.png);
 }
 
@@ -540,7 +542,7 @@ treechildren::-moz-tree-cell-text( selected, focus ) {
 menuitem[checked="true"][_moz-menuactive="true"],
 menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
 .menulist-menupopup > menuitem[selected="true"][_moz-menuactive="true"] {
-  background-color: rgb(67,52,111);
+  background-color: rgb(70,118,171); /* BLUE */
 }
 
 /******************************************************************************
@@ -571,21 +573,21 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 ******************************************************************************/
 #sb-sys-title-title {
   font-weight:bold;
-  color: rgb(200,200,202);
+  color: rgb(0,0,0);
 }
 /* used for Linux and Windows only - this is the file menu displayed in the title bar*/
 #main-menubar > menu[_moz-menuactive="true"][open="true"] {
-  background-color: black;
+  background-color: rgb(207,207,207);
 }
 #main-menubar > menu[_moz-menuactive="true"] {
   background-image: none;
-  background-color: rgb(21,21,28);
+  background-color: rgb(80,141,188);
 }
 #main-menubar > menu[_moz-menuactive="true"] > label {
-  color: rgb(243,243,243);
+  color: rgb(255,255,255);
 }
 #main-menubar > menu > label {
-  color: rgb(200,200,202);
+  color: rgb(0,0,0);
 }
 
 
@@ -598,7 +600,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 #servicepane {
-  background-color: rgb(47,43,58);
+  background-color: rgb(102,102,102);
   border-left: 1px solid rgb(43,41,54);
 }
 
@@ -655,10 +657,11 @@ sb-servicepane-group toolbarbutton:active {
 }
 
 sb-servicepane-group description.servicepane-group-label {
-  color: rgb(185,184,188);
+  color: rgb(255,255,255);
   margin: 0px;
-  text-transform: uppercase;
-  margin-left: 4px;
+/*  text-transform: uppercase; */
+  font-weight: bold;
+  margin-left: 10px;
 }
 
 sb-servicepane-group toolbarbutton,
@@ -705,6 +708,7 @@ hbox.servicepane-node-info > stack > hbox > label {
 }
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
   color: white;
+  font-weight: bold;
 }
 sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
   padding-left: 10px;
@@ -988,7 +992,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 }
 #sb-player-timeelapsed-label > label,
 #sb-player-totaltime-label > label {
-  color:rgb(140,140,140);
+  color:rgb(255,255,255);
   font-size:10px;
 }
 
@@ -1031,11 +1035,17 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 .locationbar-textbox {
   cursor: default;
 }
-.locationbar-textbox,
+.locationbar-textbox {
+-moz-border-radius-topright: 10px;
+-moz-border-radius-bottomright: 10px;
+}
 .searchbar-textbox {
   background-color: rgb(230,230,230);
-  border: 1px solid rgb(58,58,62);
-  -moz-border-radius: 3px;
+  border: 1px solid rgb(78,78,78);
+  min-height:22px;
+  -moz-border-radius: 10px;
+  -moz-box-align: center;
+  margin-right:10px; 
 }
 .searchbar-engine-button {
   background-image: none;
@@ -1063,13 +1073,13 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 }
 
 .empty-box {
-  background-color: rgb(36,34,46);
+  background-color: rgb(102,102,102);
 }
 
 .instructions description {
-  color: rgb(190,190,190);
-  background-color: rgb(47,45,58);
-  border: 1px solid rgb(35,34,43);
+  color: rgb(219,219,219);
+  background-color: rgb(110,110,110);
+  border: 1px solid rgb(67,67,67);
   line-height: 16px;
 }
 
@@ -1169,18 +1179,20 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 * SPLITTERS (the non-displaypane variety)
 ******************************************************************************/
 #servicepane_splitter {
-  border-left: 1px solid rgb(19,20,26);
-  border-right: 1px solid rgb(0,0,0);
+  min-width: 6px;
+  background-color: rgb(224,223,222);
+  border-left: 1px solid rgb(153,153,153);
+  border-right: 1px solid rgb(153,153,153);
 }
 #servicepane_box[collapsed="true"] + #servicepane_splitter {
   margin-left: 2px;
 }
 
 #filter_splitter {
-  background-color: rgb(0,0,0);
+  background-color: rgb(102,102,102);
   background-image: none;
-  border-right: 1px solid rgb(43,41,54);
-  border-left: 1px solid rgb(19,20,26);
+  border-right: 1px solid rgb(51,51,51);
+  border-left: 1px solid rgb(51,51,51);
 }
 
 .playlist-splitter,
@@ -1350,7 +1362,7 @@ sb-device-sync tree,
 sb-device-image-sync tree {
   background-image: none;
   background-color: rgb(69,67,78);
-  border: 1px solid rgb(42,42,53);
+  border: 1px solid rgb(48,48,48);
 }
 sb-device-sync tree treecol[type="checkbox"],
 sb-device-image-sync tree treecol[type="checkbox"] {
@@ -1467,8 +1479,8 @@ sb-device-image-sync radiogroup {
 ******************************************************************************/
 /* the box that contains n number of rules */
 .drawer-box {
-  background-color:rgb(64,64,75);
-  border:1px solid rgb(42,42,53);
+  background-color:rgb(70,70,70);
+  border:1px solid rgb(48,48,48);
 }
 
 
@@ -1510,7 +1522,16 @@ scrollbar > slider > thumb {
   border-left: 1px solid rgb(26,26,30);
 }
 
+scrollbar[orient="vertical"] > stack {
+  padding: 0px 0px 0px 0px;
+}
+scrollbar[orient="horizontal"] > stack {
+  padding: 0px 0px 0px 0px;
+}
 
+scrollcorner { 
+  background-color: rgb(51,51,51);
+}
 
 /******************************************************************************
 * WINDOW RESIZERS
@@ -1520,31 +1541,31 @@ scrollbar > slider > thumb {
 * changes made here
 ******************************************************************************/
 .sb-sys-outer-frame-resizer {
-  background-color: rgb(19,20,26);
+  background-color: rgb(224,223,222);
 }
 .sb-sys-outer-frame-resizer-topleft,
 .sb-sys-outer-frame-resizer-bottomleft,
 .sb-sys-outer-frame-resizer-leftbottom,
 .sb-sys-outer-frame-resizer-lefttop,
 .sb-sys-outer-frame-resizer[dir="left"] {
-  border-left: 1px solid rgb(29,30,44);
+  border-left: 1px solid rgb(224,223,222);
 }
 .sb-sys-outer-frame-resizer-topright,
 .sb-sys-outer-frame-resizer-bottomright,
 .sb-sys-outer-frame-resizer-rightbottom,
 .sb-sys-outer-frame-resizer-righttop,
 .sb-sys-outer-frame-resizer[dir="right"] {
-  border-right: 1px solid rgb(29,30,44);
+  border-right: 1px solid rgb(224,223,222
 }
 .sb-sys-outer-frame-resizer-topleft,
 .sb-sys-outer-frame-resizer-topright,
 .sb-sys-outer-frame-resizer[dir="top"] {
-  border-top: 1px solid rgb(29,30,44);
+  border-top: 1px solid rgb(224,223,222);
 }
 .sb-sys-outer-frame-resizer-bottomleft,
 .sb-sys-outer-frame-resizer-bottomright,
 .sb-sys-outer-frame-resizer[dir="bottom"] {
-  border-bottom: 1px solid rgb(29,30,44);
+  border-bottom: 1px solid rgb(224,223,222);
 }
 
 /******************************************************************************
@@ -1586,7 +1607,7 @@ scrollbar > slider > thumb {
 ******************************************************************************/
 /* this dude is really a radiogroup... */
 .paneSelector {
-  background-color: rgb(41,40,48) !important;
+  background-color: rgb(44,44,44) !important;
   -moz-border-right-colors: rgb(32,31,40) rgb(0,0,0) rgb(0,0,0) rgb(32,31,40) !important;
   border-right: 4px solid !important;
   padding-top: 5px !important;
@@ -1630,7 +1651,7 @@ prefpane groupbox {
 /******************************************************************************
 * FIREFOX API
 * 
-* Nightingale does not use the following rules but add-ons ported from Firefox
+* nightingale does not use the following rules but add-ons ported from Firefox
 * might.
 ******************************************************************************/
 html|*.error-text,
@@ -1640,7 +1661,7 @@ html|*.error-text,
 
 /* text that looks like a link */
 .text-link {
-  color: rgb(177,153,255);
+  color: rgb(139,191,221); /* BLUE */
   text-decoration: none;
 }
 .text-link:hover {
@@ -1664,7 +1685,7 @@ deck#sb-albumart-deck > stack.artwork-found {
 }
 /* The color used for when no artwork is found */
 deck#sb-albumart-deck > stack.artwork-none {
-  background-color: rgb(36,34,46);
+  background-color: rgb(102,102,102);
 }
 deck#sb-albumart-deck > stack > vbox > description {
   color: rgb(190,190,190);
@@ -1746,6 +1767,7 @@ domi-panelset label.viewer-title {
 #dialog_desc_box
 {
   background-color: #4b4a57;
-  border: 1px solid #504e5b;
+  /* BLUE */
+  border: 1px solid #2f5f82;
 }
 

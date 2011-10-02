@@ -1,6 +1,6 @@
 /*
 //
-// BEGIN NIGHTINGALE GPL
+// BEGIN Nightingale GPL
 // 
 // This file is part of the Nightingale web player.
 //
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END NIGHTINGALE GPL
+// END Nightingale GPL
 //
  */
 
@@ -29,13 +29,13 @@
 
 GLOBAL STYLES
 
-Whereas nightingale.css is loaded only by Nightingale windows, global.css 
+Whereas nightingale.css is loaded only by nightingale windows, global.css 
 is loaded into all windows and dialogs in the application 
-(provided that the Nightingale global skin is active).
+(provided that the nightingale global skin is active).
 
-When the Nightingale global skin is the active provider for the 
+When the nightingale global skin is the active provider for the 
 chrome://global/skin package, chrome://global/skin/global.css will 
-in turn import this global.css file. The Nightingale global skin, 
+in turn import this global.css file. The nightingale global skin, 
 located at /app/skin/global and chrome://nightingale-global/skin/, 
 is used with feathers that want complete control over thee look and
 feel of the application.
@@ -50,7 +50,7 @@ For more information, visit http://developer.getnightingale.com/
 
 
 
-/* size, positioning, and images for the standard Nightingale elements */
+/* size, positioning, and images for the standard nightingale elements */
 /*
 @import url(chrome://nightingale-bindings/skin/bindings.css); 
 */

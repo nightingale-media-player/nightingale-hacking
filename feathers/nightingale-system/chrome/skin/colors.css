@@ -1,7 +1,7 @@
 /*
  *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Nightingale web player.
+ * This file is part of the nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.getnightingale.com
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END NIGHTINGALE GPL
+ *=END nightingale GPL
  */
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
@@ -195,7 +195,7 @@ treecolpicker > .tree-columnpicker-icon {
   min-width: 11px;
   max-width: 11px;
   width: 11px;
-  margin-left: 2px;
+  margin-left:  0px;
   margin-right: 1px;
 }
 #nav-bar toolbarbutton#mediapages-button dropmarker {
@@ -532,6 +532,14 @@ sb-sys-titlebar {
   -moz-box-align: center;
   min-height:52px;
 }
+/* fixme by adjusting height of volume slider */
+.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+	margin-top: 2px;
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+	margin-top: 2px;
+}
+
 #control_pane {
   padding:0 5px;
 }
@@ -1008,19 +1016,6 @@ richlistitem[selected="true"] .includeUpdate {
   background-color: rgb(39,37,49);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #addonsMsg+vbox {
   padding:0 8px;
 }
@@ -1032,7 +1027,8 @@ richlistitem[selected="true"] .includeUpdate {
 #extensionsView {
   margin:0px;
   /* HIDDEN */
-  border:1px solid rgb(80,78,91);
+  /* BLUE */
+  border:1px solid rgb(47,95,130);
 }
 #viewGroup > radio {
   padding:2px 8px;
@@ -1063,7 +1059,7 @@ template+richlistitem {
   background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
-  background-color: rgb(39,37,49);
+  background-color: rgb(50,50,50);
   margin:0px !important;
 } 
 
@@ -1154,13 +1150,13 @@ treecol[bind="http://getnightingale.com/data/1.0#downloadButton"] {
   min-width: 86px;
   width: 86px;
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-downloadButton ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale-com-data-1-0-downloadButton ) {
   color: rgb(218,217,220);
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-downloadButton cell-hover ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale-com-data-1-0-downloadButton cell-hover ) {
   color: rgb(255,255,255);
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-downloadButton cell-active ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale-com-data-1-0-downloadButton cell-active ) {
   color: rgb(164,163,166);
 }
 

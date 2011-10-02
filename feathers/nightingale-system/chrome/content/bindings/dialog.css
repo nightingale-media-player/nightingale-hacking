@@ -1,6 +1,6 @@
 /*
 //
-// BEGIN NIGHTINGALE GPL
+// BEGIN Nightingale GPL
 //
 // This file is part of the Nightingale web player.
 //
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END NIGHTINGALE GPL
+// END Nightingale GPL
 //
  */
 
@@ -28,7 +28,7 @@
 /** 
 *******************************************************************************
 
-CUSTOM NIGHTINGALE DIALOG STYLES
+CUSTOM nightingale DIALOG STYLES
 
 This file is included directly into <dialog type="nightingale"> elements 
 when using feathers that disable native operating system window chrome 
