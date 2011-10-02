@@ -1,6 +1,6 @@
 /*
 //
-// BEGIN Nightingale GPL
+// BEGIN NIGHTINGALE GPL
 // 
 // This file is part of the Nightingale web player.
 //
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END Nightingale GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -30,7 +30,7 @@
 
 THE SEARCH BOX 
 
-Applies images and layout to the nightingale library and web search widget.
+Applies images and layout to the Nightingale library and web search widget.
 
 Note that this widget inherits from the FireFox binding.
 See dependencies/vendor/mozilla/browser/components/search/content/search.xml

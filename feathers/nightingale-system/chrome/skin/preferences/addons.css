@@ -7,23 +7,22 @@ richlistbox#extensionsView > scrollbox {
 }
 
 richlistbox richlistitem {
-  background-color: rgb(51,51,51);
+  background-color: rgb(51,48,61);
   border-bottom: 1px solid rgb(36,35,41);
 }
 
 richlistbox richlistitem[selected="true"] {
-  background-image: url(chrome://songbird/skin/base-elements/bg-selected-row-big-unfocused.png);
+  background-image: url(chrome://nightingale/skin/base-elements/bg-selected-row-big-unfocused.png);
 }
 
 richlistbox:focus richlistitem[selected="true"] {
-  background-image: url(chrome://songbird/skin/base-elements/bg-selected-row-big.png);
+  background-image: url(chrome://nightingale/skin/base-elements/bg-selected-row-big.png);
 }
 
 #addonsMsg > notification {
-	/* BLUE */
-  border-top: 1px solid rgb(47,95,130);
-  border-left: 1px solid rgb(47,95,130);
-  border-right: 1px solid rgb(47,95,130);
+  border-top: 1px solid rgb(80,78,91);
+  border-left: 1px solid rgb(80,78,91);
+  border-right: 1px solid rgb(80,78,91);
   border-bottom: none;
   margin-bottom: -1px;
   padding: 0px;

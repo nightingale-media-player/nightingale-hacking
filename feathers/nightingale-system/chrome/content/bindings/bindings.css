@@ -1,5 +1,5 @@
 /*
- *=BEGIN Nightingale GPL
+ *=BEGIN NIGHTINGALE GPL
  *
  * This file is part of the Nightingale web player.
  *
@@ -19,28 +19,28 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END Nightingale GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
 *******************************************************************************
 
-nightingale WIDGET STYLES    
+NIGHTINGALE WIDGET STYLES    
 
-Imports styles for all the nightingale XBL widgets. 
+Imports styles for all the Nightingale XBL widgets. 
 
-nightingale widgets, unlike Mozilla's, do not directly include their own 
+Nightingale widgets, unlike Mozilla's, do not directly include their own 
 styles. This allows easier overriding, as it is up to the feather to
 include the styles.
 
 We assume that most feathers will want the same layout, padding, and
-image rules for the nightingale widgets, and have therefore placed these
+image rules for the Nightingale widgets, and have therefore placed these
 styles in a common chrome://nightingale-bindings/skin/ package.  To override
 these rules, supply an alternate provider for this package (using your 
 chrome.manifest), or selectively import the style sheets into your feathers.
 
 For more information, see:
- *  http://developer.getnightingale.com/ - The nightingale developer site
+ *  http://developer.getnightingale.com/ - The Nightingale developer site
  *  http://developer.mozilla.org/en/docs/Chrome_Registration - Chrome.manifest details
 
 *******************************************************************************

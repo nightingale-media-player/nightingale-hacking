@@ -1,6 +1,6 @@
 /*
 //
-// BEGIN Nightingale GPL
+// BEGIN NIGHTINGALE GPL
 // 
 // This file is part of the Nightingale web player.
 //
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END Nightingale GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -31,7 +31,7 @@ FORMS STYLES
 
 In Mozilla, certain things like CSS selection hightlight colors in text boxes
 cannot be modified by document-supplied style sheets.  These "native anonymous"
-elements can only be styled by agent stylesheets. nightingale's feather manager
+elements can only be styled by agent stylesheets. Nightingale's feather manager
 registers this file as a global agent stylesheet to allow for the styling of
 these elements.
 

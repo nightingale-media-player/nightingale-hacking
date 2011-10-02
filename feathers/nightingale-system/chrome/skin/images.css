@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END Nightingale GPL
+ *=END NIGHTINGALE GPL
  */
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
@@ -40,7 +40,7 @@ the existing graphics.  Moving the rules out of the feathers makes maintenance
 simpler, and feather packages less complex.
 
 You can override the default image rules by re-specifying them here.
-Explore the app/skin/ folder in the nightingale subversion repository 
+Explore the app/skin/ folder in the Nightingale subversion repository 
 to find existing rules, or use DOM Inspector to make your own.
 
 *******************************************************************************
@@ -173,7 +173,7 @@ notification[type="critical"],
   background-position:center bottom;
   */
   background-image: none;
-  background-color: rgb(43,43,43);
+  background-color: black;
 }
 #tabstrip-container > tabs#tabstrip {
   border-bottom: 1px solid rgb(43,42,53) !important;
@@ -489,7 +489,7 @@ menubar,
   background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:center top;
-  background-color: rgb(50,50,50);
+  background-color: rgb(39,37,49);
 }
 
 .sb-commands-toolbar {
@@ -539,7 +539,7 @@ treechildren::-moz-tree-twisty(open) {
 #nav_bar_box {
   border:none;
   background-image:none;
-  background-color:rgb(43,43,43);
+  background-color:black;
   border-bottom: 1px solid rgb(43,42,53);
 }
 #nav-bar {
@@ -747,7 +747,6 @@ searchbar:not([empty="true"]) > .searchbar-textbox > .search-go-container > .sea
   width: 22px !important;
   min-width: 22px !important;
   max-width: 22px !important;
-  /* background-color: rgb(224,223,222); */
   background-image: url("chrome://nightingale/skin/splitter/splitter-vertical.png");
   background-repeat: repeat-y;
   background-position: center 0px;
@@ -784,10 +783,10 @@ findbar {
 }
 
 scrollbar[orient="vertical"] {
-  background-color: rgb(51,51,51);
+  background-color: rgb(42,42,53);
 }
 scrollbar[orient="horizontal"] {
-  background-color: rgb(51,51,51);
+  background-color: rgb(42,42,53);
 }
 scrollbar[orient="vertical"] > slider > thumb {
   background-image: url("chrome://nightingale/skin/base-elements/bg-scroll-thumb-vertical.png");
@@ -821,7 +820,7 @@ scrollcorner {
   background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
-  background-color: rgb(50,50,50);
+  background-color: rgb(39,37,49);
 }
 
 

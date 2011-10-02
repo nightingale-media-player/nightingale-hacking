@@ -70,25 +70,8 @@
   <sb-sys-outer-frame flex="1">
 
 
-    <stack id="titlebar_box" flex="1">
-
-      <hbox flex="1" class="hook">
-        <hbox class="left"/>
-        <hbox class="middle" flex="1"/>
-        <hbox class="right"/>
-      </hbox>
-      
-      <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
-      <sb-sys-titlebar context="feathersPopupMenu">
-        <!-- Note: This menu must have the id "main-menubar", as it is the
-             overlay target of layoutWithBrowserOverlay.xul.  This cannot be
-             put inside of a binding as that would break OSX menu handling.  See
-    http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
-          -->
-        <menubar id="main-menubar" hidden="false"
-                 oncommand="onMenu(event.target)" mousethrough="never" />
-      </sb-sys-titlebar>
-    </stack>
+  <menubar id="main-menubar" hidden="false"
+           oncommand="onMenu(event.target)" mousethrough="never" />
 
     <vbox flex="1" id="content_player_wrapper" playercontrols="bottom">
       <hbox id="sp_content_wrapper" flex="1">
@@ -358,7 +341,7 @@
                 <hbox flex="1" id="faceplate-inactive-splash-prince">
                   <observes type="dataremote"
                             id="active-faceplate-prince-observes"
-                            key="purplerain.prince"
+                            key="nightingale-system.prince"
                             attribute="hidden"
                             boolean="true"
                             inverted="true" />
@@ -366,7 +349,7 @@
                 <hbox flex="1" id="faceplate-inactive-splash">
                   <observes type="dataremote"
                             id="inactive-faceplate-prince-observes"
-                            key="purplerain.prince"
+                            key="nightingale-system.prince"
                             attribute="hidden"
                             boolean="true"
                             inverted="false" />
