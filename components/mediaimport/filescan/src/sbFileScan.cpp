@@ -818,7 +818,8 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   if(bFlag)
   {
     sbIDirectoryEnumerator * pDirEntries;
-    sbGetDirectoryEntries(pFile, &pDirEntries);
+    rv = sbGetDirectoryEntries(pFile, &pDirEntries);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool keepRunning = !m_ThreadShouldShutdown;
 
