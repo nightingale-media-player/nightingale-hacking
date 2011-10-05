@@ -854,6 +854,17 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
         PRBool isSpecial = PR_FALSE;
         pEntry->IsSpecial(&isSpecial);
 
+#if XP_MACOSX
+        // If the path begins with a ._ we need to ignore on Mac. The Mac
+        // API's filter out these files as that designates that they are
+        // temporary files.
+        nsString fileName;
+        rv = pEntry->GetLeafName(fileName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        isSpecial |= (fileName.Length() >= 2 &&
+                      fileName[0] == PRUnichar('.') &&
+                      fileName[1] == PRUnichar('_'));
+#endif
         if(!isSpecial && (!bIsHidden || bSearchHidden))
         {
           if(bIsFile)
