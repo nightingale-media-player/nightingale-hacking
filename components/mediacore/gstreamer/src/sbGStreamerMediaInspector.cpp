@@ -44,6 +44,7 @@
 /* Timeout for an inspectMedia() call, in ms */
 #define GST_MEDIA_INSPECTOR_TIMEOUT (2000)
 
+#define GST_TYPE_PROPERTY   "gst_type"
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -969,6 +970,9 @@ sbGStreamerMediaInspector::ProcessContainerProperties (
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
+  rv = writableBag->SetPropertyAsACString(NS_LITERAL_STRING(GST_TYPE_PROPERTY),
+                                          nsCString(name));
+  NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "video/mpeg")) {
     gboolean systemstream;
@@ -1002,6 +1006,9 @@ sbGStreamerMediaInspector::ProcessVideoProperties (
   const gchar *name = gst_structure_get_name (aStructure);
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = writableBag->SetPropertyAsACString(NS_LITERAL_STRING(GST_TYPE_PROPERTY),
+                                          nsCString(name));
   NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "video/mpeg")) {
@@ -1132,6 +1139,9 @@ sbGStreamerMediaInspector::ProcessAudioProperties (
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
+  rv = writableBag->SetPropertyAsACString(NS_LITERAL_STRING(GST_TYPE_PROPERTY),
+                                          nsCString(name));
+  NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "audio/mpeg")) {
     gint mpegversion;
@@ -1180,6 +1190,27 @@ sbGStreamerMediaInspector::ProcessAudioProperties (
       NS_ENSURE_SUCCESS (rv, rv);
     }
   }
+
+  /// @todo There's no need to check the codec type before extracting
+  ///       interesting properties.  The above code here and in
+  ///       ProcessVideoProperties() and ProcessContainerProperties()
+  ///       should be updated to use the following pattern:
+
+  static const gchar * const INTERESTING_AUDIO_PROPS [] = {
+                                // pcm
+                               "width",
+                               "endianness",
+                               "signed",
+
+                               // aac
+                               "codec_data"
+                             };
+
+  rv = SetPropertiesFromGstStructure(writableBag,
+                                     aStructure,
+                                     INTERESTING_AUDIO_PROPS,
+                                     NS_ARRAY_LENGTH(INTERESTING_AUDIO_PROPS));
+  NS_ENSURE_SUCCESS (rv, rv);
 
   rv = aAudioFormat->SetProperties (writableBag);
   NS_ENSURE_SUCCESS (rv, rv);

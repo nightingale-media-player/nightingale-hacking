@@ -38,6 +38,7 @@
 #include <nsIVariant.h>
 #include <nsIPropertyBag.h>
 #include <nsIProperty.h>
+#include <nsIWritablePropertyBag2.h>
 
 #include <sbIPropertyArray.h>
 #include <sbMediacoreError.h>
@@ -157,5 +158,21 @@ enum sbGstCapsMapType {
 GstCaps *
 GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType);
 
+/* Copy fields from aStructure to aPropertyBag.  If aFieldList is supplied,
+   it shall have aFieldCount field names and any fields so named shall be
+   copied to a property of the same name.  Missing fields will be skipped
+   without error.  If aFieldList is not present, all fields in aStructure
+   shall be copied. */
+nsresult
+SetPropertiesFromGstStructure(nsIWritablePropertyBag2 * aPropertyBag,
+                              const GstStructure * aStructure,
+                              const gchar * const aFieldList[] = NULL,
+                              PRUint32 aFieldCount = 0);
+
+/* Copy aValue to aPropertyBag using aFieldName. */
+nsresult
+SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
+                      const nsAString & aProperty,
+                      const GValue * aValue);
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 
