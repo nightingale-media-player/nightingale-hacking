@@ -378,7 +378,17 @@ var SBSessionStore = {
     //   (isInvalidChromeURL says true)
     // - or no saved tabs, not first run, and tab state pref is missing/corrupt.
     if (isFirstTab) {
-      this.loadDefault(aTabBrowser);
+      // if skip_load_default_page has been set then something else is going
+      // to load the media page so that we don't need to, such as the first
+      // run import.
+      var skipDefault = 
+        Application.prefs.getValue("songbird.firstrun.skip_load_default_page", 
+                                   false);
+      if (skipDefault) {
+        Application.prefs.setValue("songbird.firstrun.skip_load_default_page", 
+                                   false);
+        this.loadDefault(aTabBrowser);
+      }
     }
 
     // Select the selected tab from the previous session (or the first one if
