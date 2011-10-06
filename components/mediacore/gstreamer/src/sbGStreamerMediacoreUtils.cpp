@@ -996,7 +996,7 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
         LOG(("Unexpected GType [%u %s] for [%s]",
              unsigned(type),
              typeName,
-             NS_LossyConvertUTF16toASCII(aProperty)));
+             NS_LossyConvertUTF16toASCII(aProperty).get()));
         NS_ENSURE_TRUE(PR_FALSE, NS_ERROR_ILLEGAL_VALUE);
       }
       break;
