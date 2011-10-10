@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -30,7 +30,7 @@
 
 THE SEARCH BOX 
 
-Applies images and layout to the Songbird library and web search widget.
+Applies images and layout to the Nightingale library and web search widget.
 
 Note that this widget inherits from the FireFox binding.
 See dependencies/vendor/mozilla/browser/components/search/content/search.xml
@@ -56,7 +56,7 @@ searchbar
   margin-left: 2px;
 }
 .searchbar-dropmarker-image {
-  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
+  list-style-image: url("chrome://nightingale/skin/menu/dropmarker.png");
   -moz-margin-start: 3px; 
   padding-left: 1px;
   padding-right: 2px;
@@ -67,7 +67,7 @@ searchbar
 /** This rule changes the dropmarker image when new search engines are available.**/
 .searchbar-engine-button[addengines="true"] > stack > hbox > .searchbar-dropmarker-image
 {
-  list-style-image: url("chrome://songbird/skin/search/dropmarker-plus.gif");
+  list-style-image: url("chrome://nightingale/skin/search/dropmarker-plus.gif");
   padding-left: 0px;
   padding-right: 0px;
   padding-top: 0px;
@@ -98,7 +98,7 @@ searchbar
 
 /** Normal go button */
 .search-go-button {
-  list-style-image: url("chrome://songbird/skin/search/search-go-button.png");
+  list-style-image: url("chrome://nightingale/skin/search/search-go-button.png");
   border: 0px !important;
   padding: 0px 5px 0px 0px;
   background-color: transparent !important;  

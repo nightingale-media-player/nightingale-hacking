@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
-# Copyright(c) 2005-2011 POTI, Inc.
-# http://www.songbirdnest.com
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../../..
@@ -29,6 +29,8 @@ VPATH = @srcdir@ \
         @top_srcdir@/components/devices/base/src
 
 include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
 
 CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            sbDeviceDeviceTesterUtils.cpp \
@@ -54,7 +56,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/temporaryfileservice/public \
-                     $(DEPTH)/components/moz/threadservices/public \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/devices/device/src \
@@ -62,7 +63,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(topsrcdir)/components/library/base/src/static \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/localdatabase/src \
-                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/xpcom/src \
@@ -84,7 +84,6 @@ DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/devices/base/src/ \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/devices/device/src/sbDeviceCore \
  components/library/base/src/static/sbLibraryUtils \
- components/moz/errorconsole/src/sbErrorConsole \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
  components/moz/variant/src/static/sbMozVariantUtils \

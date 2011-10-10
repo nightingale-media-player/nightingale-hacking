@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,30 +20,30 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 if (typeof(Sanitizer) != "undefined") {
 
-  var gSongbirdSanitize = {
-    onLoad: function() { gSongbirdSanitize.init(); },
-    onUnload: function(event) { gSongbirdSanitize.reset(); },
+  var gNightingaleSanitize = {
+    onLoad: function() { gNightingaleSanitize.init(); },
+    onUnload: function(event) { gNightingaleSanitize.reset(); },
 
     init: function() {
-      if (document.documentElement.getAttribute("windowtype") == "Songbird:Core") {
+      if (document.documentElement.getAttribute("windowtype") == "Nightingale:Core") {
         this.onSanitizerStartup();
       }
-      window.removeEventListener('load', gSongbirdSanitize.onLoad, false);
-      window.addEventListener('unload', gSongbirdSanitize.onUnload, false);
+      window.removeEventListener('load', gNightingaleSanitize.onLoad, false);
+      window.addEventListener('unload', gNightingaleSanitize.onUnload, false);
       
       var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                             .getService(Components.interfaces.nsIPrefBranch2);
-      var guid = prefs.getComplexValue("songbird.library.web", 
+      var guid = prefs.getComplexValue("nightingale.library.web", 
                                         Components.interfaces.nsISupportsString);
 
       var libraryManager =
-        Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+        Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                   .getService(Components.interfaces.sbILibraryManager);
 
       var webLibrary = libraryManager.getLibrary(guid);
@@ -70,8 +70,8 @@ if (typeof(Sanitizer) != "undefined") {
     },
 
     reset: function() {
-      window.removeEventListener('unload', gSongbirdSanitize.onUnload, false);
-      if (document.documentElement.getAttribute("windowtype") == "Songbird:Core") {
+      window.removeEventListener('unload', gNightingaleSanitize.onUnload, false);
+      if (document.documentElement.getAttribute("windowtype") == "Nightingale:Core") {
         this.onSanitizerShutdown();
       }
     },
@@ -87,6 +87,6 @@ if (typeof(Sanitizer) != "undefined") {
     
   };
 
-  window.addEventListener('load', gSongbirdSanitize.onLoad, false);
+  window.addEventListener('load', gNightingaleSanitize.onLoad, false);
 }
 

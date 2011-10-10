@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,8 +36,7 @@
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
-
-#include <sbWeakReference.h>
+#include <nsWeakReference.h>
 
 #include "sbIDevice.h"
 #include "sbIDeviceController.h"
@@ -49,7 +48,7 @@ class sbDeviceManager : public sbBaseDeviceEventTarget,
                         public sbIDeviceRegistrar,
                         public nsIClassInfo,
                         public nsIObserver,
-                        public sbSupportsWeakReference
+                        public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS
@@ -87,13 +86,13 @@ protected:
   PRBool mHasAllowedShutdown;
 };
 
-#define SONGBIRD_DEVICEMANAGER2_DESCRIPTION                \
-  "Songbird DeviceManager2 Service"
-#define SONGBIRD_DEVICEMANAGER2_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/DeviceManager;2"
-#define SONGBIRD_DEVICEMANAGER2_CLASSNAME                  \
-  "Songbird Device Manager 2"
-#define SONGBIRD_DEVICEMANAGER2_CID                        \
+#define NIGHTINGALE_DEVICEMANAGER2_DESCRIPTION                \
+  "Nightingale DeviceManager2 Service"
+#define NIGHTINGALE_DEVICEMANAGER2_CONTRACTID                 \
+  "@getnightingale.com/Nightingale/DeviceManager;2"
+#define NIGHTINGALE_DEVICEMANAGER2_CLASSNAME                  \
+  "Nightingale Device Manager 2"
+#define NIGHTINGALE_DEVICEMANAGER2_CID                        \
 { /* {F1B2417E-2515-481d-B03A-DA3D5B7F62FA} */             \
   0xf1b2417e, 0x2515, 0x481d,                              \
   { 0xb0, 0x3a, 0xda, 0x3d, 0x5b, 0x7f, 0x62, 0xfa } }

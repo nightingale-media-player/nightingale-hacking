@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,10 +19,10 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
-const SB_NS = 'http://songbirdnest.com/data/1.0#';
+const SB_NS = 'http://getnightingale.com/data/1.0#';
 
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -110,10 +110,6 @@ window.cdripController =
   _device:        null,
   _deviceID:      null,
   _deviceLibrary: null,
-
-  // Closure for device manager events
-  _onDeviceManagerEventClosure: null,
-
   // Transcoding pref branch
   _transcodePrefBranch: null,
 
@@ -154,35 +150,27 @@ window.cdripController =
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
 
-    var self = this;
-    this._onDeviceManagerEventClosure =
-      function cdripController__onDeviceManagerEventClosure(aEvent)
-        { self._onDeviceManagerEvent(aEvent); };
-    var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                             .getService(Ci.sbIDeviceManager2);
-    deviceManagerSvc.addEventListener(this._onDeviceManagerEventClosure);
-
     // Disable player controls & load the playlist
     this._updateRipSettings();
     this._togglePlayerControls(true);
     this._loadPlaylist();
 
     var servicePaneNode =
-      Cc["@songbirdnest.com/servicepane/device;1"]
-        .getService(Ci.sbIDeviceServicePaneService)
-        .getNodeForDevice(this._device);
+      Cc["@getnightingale.com/servicepane/library;1"]
+        .getService(Ci.sbILibraryServicePaneService)
+        .getNodeFromMediaListView(this._mediaListView);
     if (servicePaneNode) {
       document.title = servicePaneNode.displayName;
     }
     else {
-      // failed to find the node, stick with the default node name
-      document.title = SBString("cdrip.service.default.node_name");
+      // failed to find the node, stick with the media list name
+      document.title = this._mediaListView.mediaList.name;
     }
 
     // Listen to transcoding pref changes.
     this._transcodePrefBranch = Cc["@mozilla.org/preferences-service;1"]
                                   .getService(Ci.nsIPrefService)
-                                  .getBranch("songbird.cdrip.transcode_profile.")
+                                  .getBranch("nightingale.cdrip.transcode_profile.")
                                   .QueryInterface(Ci.nsIPrefBranch2);
     this._transcodePrefBranch.addObserver("", this, false);
 
@@ -203,12 +191,6 @@ window.cdripController =
     // Cleanup the medialist listener
     this._mediaListView.mediaList.removeListener(this._libraryListener);
     this._libraryListener = null;
-
-    if (this._onDeviceManagerEventClosure) {
-      var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                               .getService(Ci.sbIDeviceManager2);
-      deviceManagerSvc.removeEventListener(this._onDeviceManagerEventClosure);
-    }
 
     this._togglePlayerControls(false);
     if (this._device) {
@@ -235,6 +217,15 @@ window.cdripController =
       // CD LOOKUP COMPLETE
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
         this._toggleLookupNotification(false);
+        break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+        // Go back to previous page if device removed.
+        var device = aEvent.data.QueryInterface(Ci.sbIDevice);
+        if (device.id.toString() == this._deviceID) {
+          var browser = SBGetBrowser();
+          browser.getTabForDocument(document).backWithDefault();
+        }
         break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
@@ -275,31 +266,14 @@ window.cdripController =
   showCDRipSettings: function cdripController_showCDRipSettings() {
     Cc["@mozilla.org/appshell/window-mediator;1"]
       .getService(Ci.nsIWindowMediator)
-      .getMostRecentWindow("Songbird:Main")
+      .getMostRecentWindow("Nightingale:Main")
       .SBOpenPreferences("paneCDRip");
-  },
-
-  _onDeviceManagerEvent:
-    function cdripController__onDeviceManagerEvent(aEvent) {
-    switch (aEvent.type) {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
-        // Go back to previous page if device removed.
-        var device = aEvent.data.QueryInterface(Ci.sbIDevice);
-        if (device.id.toString() == this._deviceID) {
-          var browser = SBGetBrowser();
-          browser.getTabForDocument(document).backWithDefault();
-        }
-        break;
-
-      default:
-        break;
-    }
   },
 
   _toggleLookupNotification: function
                              cdripController_toggleLookupNotification(show) {
     if (show) {
-      var manager = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+      var manager = Cc["@getnightingale.com/Nightingale/MetadataLookup/manager;1"]
                       .getService(Ci.sbIMetadataLookupManager);
       try {
         var provider = manager.defaultProvider;
@@ -355,7 +329,7 @@ window.cdripController =
       this._showElement(RIP_STATUS_IMAGE_HBOX);
 
       this._setImageSrc(RIP_STATUS_IMAGE,
-                        "chrome://songbird/skin/base-elements/icon-loading-large.png");
+                        "chrome://nightingale/skin/base-elements/icon-loading-large.png");
       this._setLabelValue(RIP_STATUS_LABEL,
                           SBString("cdrip.mediaview.status.lookup"));
 
@@ -394,17 +368,17 @@ window.cdripController =
       switch (status) {
         case FINAL_TRANSCODE_STATUS_SUCCESS:
           statusLabel = "cdrip.mediaview.status.rip_success";
-          statusImageSrc = "chrome://songbird/skin/device/icon-complete.png";
+          statusImageSrc = "chrome://nightingale/skin/device/icon-complete.png";
           break;
 
         case FINAL_TRANSCODE_STATUS_FAILED:
           statusLabel = "cdrip.mediaview.status.rip_failed";
-          statusImageSrc = "chrome://songbird/skin/device/icon-warning.png";
+          statusImageSrc = "chrome://nightingale/skin/device/icon-warning.png";
           break;
 
         case FINAL_TRANSCODE_STATUS_PARTIAL:
           statusLabel = "cdrip.mediaview.status.rip_partial";
-          statusImageSrc = "chrome://songbird/skin/device/icon-warning.png";
+          statusImageSrc = "chrome://nightingale/skin/device/icon-warning.png";
           break;
 
         case FINAL_TRANSCODE_STATUS_ABORT:
@@ -532,7 +506,7 @@ window.cdripController =
     this._supportedProfiles = [];
 
     var transcodeManager =
-        Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
+        Cc["@getnightingale.com/Nightingale/Mediacore/TranscodeManager;1"]
           .getService(Ci.sbITranscodeManager);
     var profiles = transcodeManager.getTranscodeProfiles(
             Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO);
@@ -570,7 +544,7 @@ window.cdripController =
     // disable player controls in faceplate
     var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Ci.nsIWindowMediator)
-                     .getMostRecentWindow("Songbird:Main");
+                     .getMostRecentWindow("Nightingale:Main");
     if (!mainWin) {
       // Shutdown sequence? Don't do anything
       return;
@@ -772,7 +746,7 @@ window.cdripController =
 
     // Set a flag so sb-playlist won't try to writeback metadata to files
     this._mediaListView.mediaList.setProperty(
-      "http://songbirdnest.com/data/1.0#dontWriteMetadata", 1);
+      "http://getnightingale.com/data/1.0#dontWriteMetadata", 1);
 
     // Make sure we can not drag items from the cd to libraries or playlists
     this._playlist.disableDrag = true;
@@ -782,20 +756,20 @@ window.cdripController =
     // Setup our columns for the CD View
     if (!this._mediaListView.mediaList.getProperty(SBProperties.columnSpec)) {
       this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
-        "http://songbirdnest.com/data/1.0#shouldRip 25 " +
-        "http://songbirdnest.com/data/1.0#trackNumber 50 a " +
-        "http://songbirdnest.com/data/1.0#cdRipStatus 75 " +
-        "http://songbirdnest.com/data/1.0#trackName 255 " +
-        "http://songbirdnest.com/data/1.0#duration 70 " +
-        "http://songbirdnest.com/data/1.0#artistName 122 " +
-        "http://songbirdnest.com/data/1.0#albumName 122 " +
-        "http://songbirdnest.com/data/1.0#genre 70");
+        "http://getnightingale.com/data/1.0#shouldRip 25 " +
+        "http://getnightingale.com/data/1.0#trackNumber 50 a " +
+        "http://getnightingale.com/data/1.0#cdRipStatus 75 " +
+        "http://getnightingale.com/data/1.0#trackName 255 " +
+        "http://getnightingale.com/data/1.0#duration 70 " +
+        "http://getnightingale.com/data/1.0#artistName 122 " +
+        "http://getnightingale.com/data/1.0#albumName 122 " +
+        "http://getnightingale.com/data/1.0#genre 70");
     }
 
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
     var mgr =
-      Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+      Components.classes["@getnightingale.com/Nightingale/PlaylistCommandsManager;1"]
                 .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
     var cmds = mgr.request(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY);
 
@@ -851,7 +825,7 @@ window.cdripController =
       return;
     }
 
-    var deviceNeedsLookupPref = "songbird.cdrip." + lib.guid + ".needsLookup";
+    var deviceNeedsLookupPref = "nightingale.cdrip." + lib.guid + ".needsLookup";
     if (Application.prefs.has(deviceNeedsLookupPref)) {
       var shouldLookup = Application.prefs.getValue(deviceNeedsLookupPref, false);
       if (shouldLookup) {
@@ -875,7 +849,7 @@ window.cdripController =
     try {
       // Get all the did not successfully ripped tracks
       var propArray =
-        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
       //tracks with 4|100 were aborted
       propArray.appendProperty(SBProperties.cdRipStatus, "4|100");
@@ -898,7 +872,7 @@ window.cdripController =
     try {
       // Get all the did not successfully ripped tracks
       var propArray =
-        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
       propArray.appendProperty(SBProperties.cdRipStatus, "3|100");
       propArray.appendProperty(SBProperties.shouldRip, "1");
@@ -964,7 +938,7 @@ window.cdripController =
     this._deviceID = queryMap["device-id"];
 
     // Get the device for this media view
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
 
     try {

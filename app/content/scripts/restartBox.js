@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -62,7 +62,7 @@ function sbRestartBox( title, message )
     restartbox_data.playing = state == sbIMediacoreStatus.STATUS_PLAYING || 
                               state == sbIMediacoreStatus.STATUS_BUFFERING;
     restartbox_data.ret = 0;
-    SBOpenModalDialog( "chrome://songbird/content/xul/restartBox.xul", "restartbox", "chrome,centerscreen", restartbox_data ); 
+    SBOpenModalDialog( "chrome://nightingale/content/xul/restartBox.xul", "restartbox", "chrome,centerscreen", restartbox_data ); 
     var restartOnPlaybackEnd = SB_NewDataRemote( "restart.onplaybackend", null );
     switch (restartbox_data.ret)
     {
@@ -87,7 +87,7 @@ function sbRestartBox( title, message )
 }
 
 /**
- * \brief Display a restart message box using strings from the songbird.properties locale file.
+ * \brief Display a restart message box using strings from the nightingale.properties locale file.
  * \param titlestring The title string key.
  * \param msgstring The message string key.
  * \param defaulttitle The default title.

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
  
 /**
@@ -42,14 +42,14 @@ const Cc = Components.classes;
 const Cr = Components.results;
 const Cu = Components.utils;
 
-const CONTRACTID = "@songbirdnest.com/songbird/feathersmanager;1";
-const CLASSNAME = "Songbird Feathers Manager Service Interface";
+const CONTRACTID = "@getnightingale.com/nightingale/feathersmanager;1";
+const CLASSNAME = "Nightingale Feathers Manager Service Interface";
 const CID = Components.ID("{99f24350-a67f-11db-befa-0800200c9a66}");
 const IID = Ci.sbIFeathersManager;
 
 
-const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
-const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
+const RDFURI_ADDON_ROOT               = "urn:nightingale:addon:root" 
+const PREFIX_NS_NIGHTINGALE              = "http://www.getnightingale.com/2007/addon-metadata-rdf#";
 
 const CHROME_PREFIX = "chrome://"
 
@@ -73,7 +73,7 @@ const DATAREMOTE_TESTMODE = "__testmode__";
 //
 // * PREF_DEFAULT_SKIN_LOCALNAME
 //     - The local name of the default feather. This is defined in the install.rdf
-//       of the shipped feather, in the |<songbird:internalName/>| tag.
+//       of the shipped feather, in the |<nightingale:internalName/>| tag.
 //
 // * PREF_DEFAULT_FEATHER_ID
 //     - The ID of the default feathers extension. This is defined in the
@@ -83,22 +83,52 @@ const DATAREMOTE_TESTMODE = "__testmode__";
 // NOTE: Changes to the default layout/skin/feather will be automatically picked up
 //       in the feathers unit test.
 //
-const PREF_DEFAULT_MAIN_LAYOUT       = "songbird.feathers.default_main_layout";
-const PREF_DEFAULT_SECONDARY_LAYOUT  = "songbird.feathers.default_secondary_layout";
-const PREF_DEFAULT_SKIN_INTERNALNAME = "songbird.feathers.default_skin_internalname";
-const PREF_DEFAULT_FEATHER_ID        = "songbird.feathers.default_feather_id";
+const PREF_DEFAULT_MAIN_LAYOUT       = "nightingale.feathers.default_main_layout";
+const PREF_DEFAULT_SECONDARY_LAYOUT  = "nightingale.feathers.default_secondary_layout";
+const PREF_DEFAULT_SKIN_INTERNALNAME = "nightingale.feathers.default_skin_internalname";
+const PREF_DEFAULT_FEATHER_ID        = "nightingale.feathers.default_feather_id";
 
 // Pref to ensure sanity tests are run the first time the feathers manager
 // has started on a profile.
-const PREF_FEATHERS_MANAGER_HAS_STARTED  = "songbird.feathersmanager.hasStarted";
+const PREF_FEATHERS_MANAGER_HAS_STARTED  = "nightingale.feathersmanager.hasStarted";
 
-const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
-const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
+const WINDOWTYPE_NIGHTINGALE_PLAYER      = "Nightingale:Main";
+const WINDOWTYPE_NIGHTINGALE_CORE        = "Nightingale:Core";
 
 Cu.import("resource://app/jsmodules/RDFHelper.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
-Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
-Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
+
+/**
+ * /class ArrayEnumerator
+ * /brief Converts a js array into an nsISimpleEnumerator
+ */
+function ArrayEnumerator(array)
+{
+  this.data = array;
+}
+ArrayEnumerator.prototype = {
+
+  index: 0,
+
+  getNext: function() {
+    return this.data[this.index++];
+  },
+
+  hasMoreElements: function() {
+    if (this.index < this.data.length)
+      return true;
+    else
+      return false;
+  },
+
+  QueryInterface: function(iid)
+  {
+    if (!iid.equals(Ci.nsISimpleEnumerator) &&
+        !iid.equals(Ci.nsISupports))
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    return this;
+  }
+}
 
 /**
  * sbISkinDescription
@@ -173,7 +203,7 @@ AddonMetadataReader.prototype = {
     
     var addons = RDFHelper.help(
       "rdf:addon-metadata",
-      "urn:songbird:addon:root",
+      "urn:nightingale:addon:root",
       RDFHelper.DEFAULT_RDF_NAMESPACES
     );
     
@@ -285,8 +315,8 @@ AddonMetadataReader.prototype = {
           errorList.push("layoutUrl was missing or incorrect.");
           continue;
         }
-
-        var showChrome = (PlatformUtils.platformString == "Darwin");
+  
+        var showChrome = false;
         if (compatibleLayout.showChrome && 
             compatibleLayout.showChrome[0] == "true") {
           showChrome = true;
@@ -592,7 +622,7 @@ FeathersManager.prototype = {
     // Register our agent sheet for form styling
     this._agentSheetURI = Cc["@mozilla.org/network/io-service;1"]
                             .getService(Ci.nsIIOService)
-                            .newURI("chrome://songbird/skin/formsImport.css",
+                            .newURI("chrome://nightingale/skin/formsImport.css",
                                     null, null);
     var styleSheetService = Cc["@mozilla.org/content/style-sheet-service;1"]
                               .getService(Ci.nsIStyleSheetService);
@@ -601,7 +631,7 @@ FeathersManager.prototype = {
 
     // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(
-                  "@songbirdnest.com/Songbird/DataRemote;1",
+                  "@getnightingale.com/Nightingale/DataRemote;1",
                   Ci.sbIDataRemote, "init");
 
     this._layoutDataRemote = createDataRemote("feathers.selectedLayout", null);
@@ -730,7 +760,7 @@ FeathersManager.prototype = {
    */
   getSkinDescriptions: function getSkinDescriptions() {
     // Copy all the descriptions into an array, and then return an enumerator
-    return ArrayConverter.enumerator( [this._skins[key] for (key in this._skins)] );
+    return new ArrayEnumerator( [this._skins[key] for (key in this._skins)] );
   },
 
   /**
@@ -738,7 +768,7 @@ FeathersManager.prototype = {
    */
   getLayoutDescriptions: function getLayoutDescriptions() {
     // Copy all the descriptions into an array, and then return an enumerator
-    return ArrayConverter.enumerator( [this._layouts[key] for (key in this._layouts)] );
+    return new ArrayEnumerator( [this._layouts[key] for (key in this._layouts)] );
   },
   
   
@@ -937,7 +967,7 @@ FeathersManager.prototype = {
             return '_'+(c.charCodeAt(0).toString(16)).toUpperCase()+'_'; });
     }
 
-    var branchName = 'songbird.feather.' +
+    var branchName = 'nightingale.feather.' +
       (internalName?internalName:'null') + '.' +
       (layoutURL?escape_url(layoutURL):'null') + '.';
 
@@ -1000,7 +1030,7 @@ FeathersManager.prototype = {
         }
       }
     }   
-    return ArrayConverter.enumerator( skins );
+    return new ArrayEnumerator( skins );
   },
   
   
@@ -1008,7 +1038,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getLayoutsForSkin: function getLayoutsForSkin(internalName) {
-    return ArrayConverter.enumerator( this._getLayoutsArrayForSkin(internalName) );
+    return new ArrayEnumerator( this._getLayoutsArrayForSkin(internalName) );
   },
 
 
@@ -1052,7 +1082,7 @@ FeathersManager.prototype = {
     try {
       // close the player window *before* changing the skin
       // otherwise Gecko tries to load an image that will go away right after and crashes
-      // (songbird bug 3965)
+      // (nightingale bug 3965)
       this._closePlayerWindow(internalName == this.currentSkinName);
       
       var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
@@ -1115,19 +1145,6 @@ FeathersManager.prototype = {
       return;
     }
 
-    var currentLayoutURL = this.currentLayoutURL;
-    var currentSkinName = this.currentSkinName;
-
-    // check if we're in safe mode
-    var app = Cc["@mozilla.org/xre/app-info;1"]
-                .getService(Ci.nsIXULRuntime);
-    if (app.inSafeMode) {
-      // in safe mode, force using default layout/skin
-      // (but do not persist this choice)
-      currentLayoutURL = this._defaultLayoutURL;
-      currentSkinName = this._defaultSkinName;
-    }
-
     // Check to see if we are in test mode, if so, we don't actually
     // want to open the window as it will break the testing we're 
     // attempting to do.    
@@ -1144,7 +1161,7 @@ FeathersManager.prototype = {
     
     // on windows and mac, centerscreen gets overriden by persisted position.
     // not so for linux.
-    var runtimeInfo = Components.classes["@mozilla.org/xre/runtime;1"]
+    var runtimeInfo = Components.classes["@mozilla.org/xre/app-info;1"]
                                 .getService(Components.interfaces.nsIXULRuntime);
     switch (runtimeInfo.OS) {
       case "WINNT":
@@ -1152,7 +1169,7 @@ FeathersManager.prototype = {
         chromeFeatures += ",centerscreen";
     }
     
-    var showChrome = this.isChromeEnabled(currentLayoutURL, currentSkinName);
+    var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
     if (showChrome) {
        chromeFeatures += ",titlebar=yes";
     } else {
@@ -1161,20 +1178,20 @@ FeathersManager.prototype = {
     
     // Set the global chrome (window border and title) flag
     this._setChromeEnabled(showChrome);
-
+    
     // Open the new player window
     var windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                           .getService(Ci.nsIWindowWatcher);
-
+                          
     var newMainWin = windowWatcher.openWindow(null,
-                                              currentLayoutURL,
-                                              "",
+                                              this.currentLayoutURL, 
+                                              "", 
                                               chromeFeatures,
                                               null);
     newMainWin.focus();
   },
-
-
+  
+  
   /**
    * \sa sbIFeathersManager
    */  

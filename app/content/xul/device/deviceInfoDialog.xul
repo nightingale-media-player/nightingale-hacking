@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,18 +22,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 <!-- Import external definitions. -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 
 <!-- Device info dialog box. -->
 <dialog
@@ -43,7 +43,7 @@
  id="device_info_dialog"
  hidechrome="true"
  flex="1"
- type="songbird"
+ type="nightingale"
  buttons="accept"
  onload="DeviceInfoDlg.onLoad();"
  onunload="DeviceInfoDlg.onUnload();"
@@ -56,7 +56,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Device info. -->
@@ -72,13 +72,13 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->  
+  <!-- Import the Nightingale services. -->  
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
 
   <!-- Device info dialog services. -->
   <script><![CDATA[
@@ -129,7 +129,7 @@
         var deviceID = this._device.id;
 
         // Listen for device events.
-        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+        var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                               .getService(Ci.sbIDeviceManager2);
         deviceManager.addEventListener(this);
 
@@ -156,7 +156,7 @@
 
       onUnload: function DeviceInfoDlg_onUnload() {
         // Remove device event listener.
-        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+        var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                               .getService(Ci.sbIDeviceManager2);
         deviceManager.removeEventListener(this);
       },

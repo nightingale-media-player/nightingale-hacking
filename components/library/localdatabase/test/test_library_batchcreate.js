@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,17 +30,17 @@
 
 function runTest () {
 
-  var SB_NS = "http://songbirdnest.com/data/1.0#";
+  var SB_NS = "http://getnightingale.com/data/1.0#";
   var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
   var databaseGUID = "test_batchcreate";
   var library = createLibrary(databaseGUID);
 
-  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
-  var propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var toAdd = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var propertyArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
-    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+    var props = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
     props.appendProperty(SB_NS + "contentLength", i);
     props.appendProperty(SB_NS + "trackNumber", i);
@@ -68,7 +68,7 @@ function runTest () {
       }
     };
 
-    library.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#contentURL",
+    library.enumerateItemsByProperty("http://getnightingale.com/data/1.0#contentURL",
                                      item.contentSrc.spec,
                                      listener,
                                      Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
@@ -89,11 +89,11 @@ function runTest () {
   libraryListener.reset();
 
   // Do it again with duplcate URLs
-  toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
-  propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  toAdd = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  propertyArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/duplicate.mp3"), false);
-    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+    var props = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
     props.appendProperty(SB_NS + "contentLength", i);
     props.appendProperty(SB_NS + "trackNumber", i);

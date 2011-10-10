@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
-# Copyright(c) 2005-2011 POTI, Inc.
-# http://songbirdnest.com
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,17 +19,18 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/library/base/src/ \
-        @top_srcdir@/components/moz/xpcom/src/
+        @top_srcdir@/components/library/base/src/
 
 include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
 
 DYNAMIC_LIB = sbLocalDatabaseLibrary
 
@@ -52,7 +53,6 @@ XPIDL_EXTRA_FLAGS = \
 
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
-           sbLocalDatabaseGUIDArrayLengthCache.cpp \
            sbLocalDatabaseAsyncGUIDArray.cpp \
            sbLocalDatabaseDynamicMediaList.cpp \
            sbLocalDatabaseDynamicMediaListFactory.cpp \
@@ -86,22 +86,17 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
 # From components/library/base/src/
 CPP_SRCS += sbLibraryChangeset.cpp
 
-# From components/moz/xpcom/src/
-CPP_SRCS += sbWeakReference.cpp
-
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devicesobsolete/base/public \
                      $(DEPTH)/components/job/public \
                      $(DEPTH)/components/library/base/public \
-                     $(DEPTH)/components/library/identity/public \
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediamanager/public \
                      $(DEPTH)/components/metrics/public \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(DEPTH)/components/playlistplayback/public \
-                     $(DEPTH)/components/playqueue/public \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/sqlbuilder/public \
                      $(MOZSDK_IDL_DIR) \
@@ -125,8 +120,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threadpoolservice/src \
                      $(topsrcdir)/components/moz/threads/src \
-                     $(topsrcdir)/components/playqueue/src \
-                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/sqlbuilder/src \
                      $(NULL)
@@ -158,13 +151,13 @@ else
 	 $(NULL)
 endif
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbSmartMediaListsUpdater.js \
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbSmartMediaListsUpdater.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \
                       $(NULL)
 
 IS_COMPONENT = 1
                       
-SONGBIRD_JSMODULES = $(srcdir)/sbLocalDatabaseMigrationUtils.jsm
+NIGHTINGALE_JSMODULES = $(srcdir)/sbLocalDatabaseMigrationUtils.jsm
 
 SUBDIRS = migrationhandlers \
           $(NULL)

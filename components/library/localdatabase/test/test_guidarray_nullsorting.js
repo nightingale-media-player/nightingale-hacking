@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,7 +38,7 @@ function runTest () {
   // and the rest have contents lengths 0 - 9
   var items = [];
 
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
   array.baseTable = "media_items";
@@ -54,20 +54,20 @@ function runTest () {
   for (var i = 0; i < 20; i++) {
     var item = library.createMediaItem(newURI("file://foo/" + i));
     if (i >= 10) {
-      item.setProperty("http://songbirdnest.com/data/1.0#contentLength", i - 10);
+      item.setProperty("http://getnightingale.com/data/1.0#contentLength", i - 10);
     }
     items.push(item.guid);
   }
 
   // We build the array to match an ascending sort, so just test
-  array.addSort("http://songbirdnest.com/data/1.0#contentLength", true);
+  array.addSort("http://getnightingale.com/data/1.0#contentLength", true);
   assertArraySame(array, items);
 
   // Reversing the sort should cause the nulls to go to the bottom (because
   // they are small) but remain in the same order.  The non-null items should
   // move to the top and be reversed.
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#contentLength", false);
+  array.addSort("http://getnightingale.com/data/1.0#contentLength", false);
 
   items = swap(items, 10);
   items = reverseRange(items, 0, 10);
@@ -76,12 +76,12 @@ function runTest () {
 
   // Now test on a new property using different null sort configurations
   library.clear();
-  var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
+  var numberInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Number;1"]
                     .createInstance(Ci.sbINumberPropertyInfo);
-  numberInfo.id = "http://songbirdnest.com/data/1.0#testNumber";
+  numberInfo.id = "http://getnightingale.com/data/1.0#testNumber";
   numberInfo.nullSort = Ci.sbIPropertyInfo.SORT_NULL_SMALL;
 
-  var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  var propMan = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                   .getService(Ci.sbIPropertyManager);
   propMan.addPropertyInfo(numberInfo);
 
@@ -91,20 +91,20 @@ function runTest () {
   for (var i = 0; i < 20; i++) {
     var item = library.createMediaItem(newURI("file://foo/" + i));
     if (i >= 10) {
-      item.setProperty("http://songbirdnest.com/data/1.0#testNumber", i - 10);
+      item.setProperty("http://getnightingale.com/data/1.0#testNumber", i - 10);
     }
     items.push(item.guid);
   }
 
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", true);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", true);
   assertArraySame(array, items);
 
   // Reversing the sort should cause the nulls to go to the bottom (because
   // they are small) but remain in the same order.  The non-null items should
   // move to the top and be reversed.
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", false);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", false);
 
   var sortNullSmall = swap(items, 10);
   sortNullSmall = reverseRange(sortNullSmall, 0, 10);
@@ -115,7 +115,7 @@ function runTest () {
 
   // Now the nulls should be at the bottom
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", true);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", true);
 
   var sortNullBig = swap(items, 10);
   assertArraySame(array, sortNullBig);
@@ -123,7 +123,7 @@ function runTest () {
   // Reversung the sort moves the nulls to the top and reverses the non-null
   // items
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", false);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", false);
 
   sortNullBig = reverseRange(items, 10, 10);
   assertArraySame(array, sortNullBig);
@@ -133,14 +133,14 @@ function runTest () {
 
   // Always sorting nulls first will match our original data
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", true);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", true);
 
   assertArraySame(array, items);
 
   // Reversing the sort should only reverse the non-null items, nulls should
   // stay on top
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", false);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", false);
 
   var sortNullFirst = reverseRange(items, 10, 10);
   assertArraySame(array, sortNullFirst);
@@ -151,14 +151,14 @@ function runTest () {
   // Now the nulls should be at the bottom and the non-null should be in the
   // original order
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", true);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", true);
 
   var sortNullLast = swap(items, 10);
   assertArraySame(array, sortNullLast);
 
   // Reversing the sort should only reverse the non-null items
   array.clearSorts();
-  array.addSort("http://songbirdnest.com/data/1.0#testNumber", false);
+  array.addSort("http://getnightingale.com/data/1.0#testNumber", false);
 
   sortNullLast = reverseRange(sortNullLast, 0, 10);
   assertArraySame(array, sortNullLast);

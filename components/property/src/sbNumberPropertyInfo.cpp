@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,7 +33,7 @@
 #include <sbLockUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
-static inline
+/*static inline*/
 PRBool IsValidRadix(PRUint32 aRadix)
 {
   if(aRadix == 8 ||
@@ -52,7 +52,7 @@ static const char *gsFmtRadix10 = "%lld";
 static const char *gsFmtRadix16 = "%llX";
 static const char *gsFmtFloat = "%lg";
 
-static inline
+/*static inline*/
 const char *GetFmtFromRadix(PRUint32 aRadix)
 {
   const char *fmt = nsnull;
@@ -84,7 +84,7 @@ static const char *gsSortFmtRadix10 = "%+020lld";
 static const char *gsSortFmtRadix16 = "%016llX";
 static const char *gsSortFmtFloat   = "%+046.16lf";
 
-static inline
+/*static inline*/
 const char *GetSortableFmtFromRadix(PRUint32 aRadix)
 {
   const char *fmt = nsnull;
@@ -398,7 +398,7 @@ NS_IMETHODIMP sbNumberPropertyInfo::MakeSearchable(const nsAString & aValue, nsA
     outputLength = PR_snprintf(out, 64, sortableFmt, floatValue);
   }
 
-  if(outputLength == (PRUint32)-1) {
+  if(outputLength == -1) {
     rv = NS_ERROR_FAILURE;
     _retval = EmptyString();
   }

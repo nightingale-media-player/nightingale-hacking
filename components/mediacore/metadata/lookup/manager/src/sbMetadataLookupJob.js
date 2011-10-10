@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -51,9 +51,9 @@ function sbMLJob() {
 sbMLJob.prototype = {
   __proto__: SBJobUtils.JobBase.prototype,
 
-  classDescription : 'Songbird Metadata Lookup Job Implementation',
+  classDescription : 'Nightingale Metadata Lookup Job Implementation',
   classID          : Components.ID("e4fd9496-1dd1-11b2-93ca-d33e8cc507ba"),
-  contractID       : "@songbirdnest.com/Songbird/MetadataLookup/job;1",
+  contractID       : "@getnightingale.com/Nightingale/MetadataLookup/job;1",
   QueryInterface   : XPCOMUtils.generateQI(
       [Ci.sbIMetadataLookupJob, Ci.sbIJobProgress, Ci.sbIJobCancelable, 
        Ci.sbIJobProgressListener, Ci.nsIClassInfo, Ci.nsITimerCallback]),

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -45,9 +45,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode)
 static nsModuleComponentInfo sbFileSystem[] =
 {
   {
-    SONGBIRD_FILESYSTEMWATCHER_CLASSNAME,
-    SONGBIRD_FILESYSTEMWATCHER_CID,
-    SONGBIRD_FILESYSTEMWATCHER_CONTRACTID,
+    NIGHTINGALE_FILESYSTEMWATCHER_CLASSNAME,
+    NIGHTINGALE_FILESYSTEMWATCHER_CID,
+    NIGHTINGALE_FILESYSTEMWATCHER_CONTRACTID,
 #if defined(XP_WIN)
     sbWin32FileSystemWatcherConstructor
 #elif defined(XP_MACOSX)
@@ -58,13 +58,13 @@ static nsModuleComponentInfo sbFileSystem[] =
   },
 
   {
-    SONGBIRD_FILESYSTEMNODE_CLASSNAME,
-    SONGBIRD_FILESYSTEMNODE_CID,
+    NIGHTINGALE_FILESYSTEMNODE_CLASSNAME,
+    NIGHTINGALE_FILESYSTEMNODE_CID,
     nsnull,
     sbFileSystemNodeConstructor
   },
 };
 
 
-NS_IMPL_NSGETMODULE(SongbirdFileSystemComponent, sbFileSystem)
+NS_IMPL_NSGETMODULE(NightingaleFileSystemComponent, sbFileSystem)
 

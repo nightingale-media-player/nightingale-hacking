@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,32 +21,32 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service.
+// Nightingale temporary file service.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbTemporaryFileService.cpp
- * \brief Songbird Temporary File Service Source.
+ * \brief Nightingale Temporary File Service Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service imported services.
+// Nightingale temporary file service imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbTemporaryFileService.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbFileUtils.h>
 
 // Mozilla imports.
@@ -57,7 +57,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service nsISupports implementation.
+// Nightingale temporary file service nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbTemporaryFileService,
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service sbITemporaryFileService implementation.
+// Nightingale temporary file service sbITemporaryFileService implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ sbTemporaryFileService::GetRootTemporaryDirectory
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service nsIObserver implementation.
+// Nightingale temporary file service nsIObserver implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ sbTemporaryFileService::Observe(nsISupports*     aSubject,
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service public services.
+// Nightingale temporary file service public services.
 //
 //------------------------------------------------------------------------------
 
@@ -176,7 +176,7 @@ sbTemporaryFileService::sbTemporaryFileService() :
 
 sbTemporaryFileService::~sbTemporaryFileService()
 {
-  // Finalize the Songbird temporary file service.
+  // Finalize the Nightingale temporary file service.
   Finalize();
 }
 
@@ -226,7 +226,7 @@ sbTemporaryFileService::Initialize()
 
   // Create the root temporary file factory.
   mRootTemporaryFileFactory =
-    do_CreateInstance("@songbirdnest.com/Songbird/TemporaryFileFactory;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/TemporaryFileFactory;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mRootTemporaryFileFactory->SetRootTemporaryDirectory
                                     (rootTemporaryDirectory);

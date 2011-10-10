@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -417,9 +417,6 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   rv = AddBaseTable();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddFilters();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Left join the properties table to the base table includig a null
   // constraint on the obj_sortable column
   nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
@@ -460,6 +457,9 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   rv = mBuilder->AddCriterion(criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = AddFilters();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = AddMultiSorts();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -467,12 +467,6 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-PRBool
-sbLocalDatabaseQuery::GetIsFullLibrary()
-{
-  return mIsFullLibrary;
 }
 
 nsresult
@@ -789,13 +783,16 @@ sbLocalDatabaseQuery::AddFilters()
     if (isEverythingSearch) {
       // Join the all fts table.  The foreign key of this table is the
       // media item id so we can simply join it to _mi
-      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                             PROPERTIES_FTS_ALL_TABLE,
-                             NS_LITERAL_STRING("_fts"),
-                             ROWID_COLUMN,
-                             MEDIAITEMS_ALIAS,
-                             MEDIAITEMID_COLUMN);
+      rv = mBuilder->AddJoinWithIndexHint(sbISQLSelectBuilder::JOIN_INNER,
+                                          PROPERTIES_FTS_ALL_TABLE,
+                                          NS_LITERAL_STRING("_fts"),
+                                          ROWID_COLUMN,
+                                          MEDIAITEMS_ALIAS,
+                                          MEDIAITEMID_COLUMN,
+                                          PR_FALSE,
+                                          PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
+
     }
 
     /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617.

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,13 +28,13 @@
 
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
+#include "sbProxyUtils.h"
 
 #include <sbIMediacore.h>
 #include <sbIMediacoreError.h>
 #include <sbIMediacoreEventListener.h>
 
 #include <sbMediacoreEvent.h>
-#include <sbProxiedComponentManager.h>
 
 /* ctor / dtor */
 sbBaseMediacoreEventTarget::sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget)
@@ -72,10 +72,10 @@ sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                NS_GET_IID(sbIMediacoreEventTarget),
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                sbIMediacoreEventTarget::COMTypeInfo<int>::kIID,
                                 mTarget,
-                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                NS_PROXY_SYNC,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -148,10 +148,10 @@ sbBaseMediacoreEventTarget::AddListener(sbIMediacoreEventListener *aListener)
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                NS_GET_IID(sbIMediacoreEventTarget),
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                sbIMediacoreEventTarget::COMTypeInfo<int>::kIID,
                                 mTarget,
-                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                NS_PROXY_SYNC,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -183,10 +183,10 @@ sbBaseMediacoreEventTarget::RemoveListener(sbIMediacoreEventListener *aListener)
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                NS_GET_IID(sbIMediacoreEventTarget),
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                sbIMediacoreEventTarget::COMTypeInfo<int>::kIID,
                                 mTarget,
-                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                NS_PROXY_SYNC,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }

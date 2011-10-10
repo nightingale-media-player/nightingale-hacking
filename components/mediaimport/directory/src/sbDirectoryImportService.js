@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 const Cc = Components.classes;
@@ -35,13 +35,6 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
-Cu.import("resource://app/jsmodules/DebugUtils.jsm");
-
-/**
- * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbDirectoryImportJob:5
- */
-const LOG = DebugUtils.generateLogFunction("sbDirectoryImportJob");
 
 // used to identify directory import profiling runs
 var gCounter = 0;
@@ -76,15 +69,15 @@ function DirectoryImportJob(aInputArray,
   
   // Initially cancelable
   this._canCancel = true;
-    
+  
   // initialize with an empty array
   this._itemURIStrings = [];
-
-  this._libraryUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  
+  this._libraryUtils = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryUtils);
 
-  if ("@songbirdnest.com/Songbird/TimingService;1" in Cc) {
-    this._timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+  if ("@getnightingale.com/Nightingale/TimingService;1" in Cc) {
+    this._timingService = Cc["@getnightingale.com/Nightingale/TimingService;1"]
                             .getService(Ci.sbITimingService);
     this._timingIdentifier = "DirImport" + gCounter++;
   }
@@ -129,10 +122,8 @@ DirectoryImportJob.prototype = {
   _importService            : null,
   
   // JS Array of URI strings for all found media items
-  _itemURIStrings           : [],
+  _itemURIStrings           : null,
   
-  // Optional JS array of items found to already exist in the main library
-  _itemsInMainLib           : [],
   // Rather than create all the items in one pass, then scan them all,
   // we want to create, read, repeat with small batches.  This avoids
   // wasting/fragmenting memory when importing 10,000+ tracks.
@@ -248,15 +239,15 @@ DirectoryImportJob.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     
-    this._fileScanner = Cc["@songbirdnest.com/Songbird/FileScan;1"]
+    this._fileScanner = Cc["@getnightingale.com/Nightingale/FileScan;1"]
                           .createInstance(Components.interfaces.sbIFileScan);
 
     // Figure out what files we are looking for.
-    var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+    var typeSniffer = Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                         .createInstance(Ci.sbIMediacoreTypeSniffer);
     try {
       var extensions = typeSniffer.mediaFileExtensions;
-      if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)) {
+      if (!Application.prefs.getValue("nightingale.mediascan.enableVideoImporting", true)) {
         // disable video, so scan only audio - see bug 13173
         extensions = typeSniffer.audioFileExtensions;
       }
@@ -277,10 +268,10 @@ DirectoryImportJob.prototype = {
     // NOTE: if the user choose to ignore import warnings, do not bother adding
     //       the filter list here.
     var shouldWarnFlagExtensions = Application.prefs.getValue(
-      "songbird.mediaimport.warn_filtered_exts", true);
+      "nightingale.mediaimport.warn_filtered_exts", true);
     if (shouldWarnFlagExtensions) {
       this._foundFlaggedExtensions =
-        Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+        Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
           .createInstance(Ci.nsIMutableArray);
       this._flaggedFileExtensions = [];
       try {
@@ -342,7 +333,7 @@ DirectoryImportJob.prototype = {
     
     // We use the same _fileScanQuery object for scanning multiple directories.
     if (!this._fileScanQuery) {
-      this._fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+      this._fileScanQuery = Cc["@getnightingale.com/Nightingale/FileScanQuery;1"]
                               .createInstance(Components.interfaces.sbIFileScanQuery);
       var fileScanQuery = this._fileScanQuery;
       this._fileExtensions.forEach(function(ext) { fileScanQuery.addFileExtension(ext) });
@@ -455,85 +446,7 @@ DirectoryImportJob.prototype = {
     // Set total number of items to process
     this._total = this._itemURIStrings.length;
   },
-
-  /**
-   * This filters out items that are either duplicates or already exits in the
-   * main library. The existing items in the main library are put in
-   * aItemsInMainLib array. The remaining items are returned as an array.
-   * The duplicate check only involves the origin URL as the 
-   * batchCreateMediaItemsAsync will perform that check.
-   * 
-   * \param aURIs the list of URI's to filter
-   * \param aItemsInMainLib
-   */ 
-  _filterItems: function(aURIs, aItemsInMainLib) {
-    // If we're copying to another library we need to look in the main library
-    // for items that might have the origin URL the same as our URL's.
-    var targetLib = this.targetMediaList.library;
-    var mainLib = LibraryUtils.mainLibrary;
-    var isMainLib = this.targetMediaList.library.equals(mainLib);
-
-    /**
-     * This function is used by the JS Array filter method to filter
-     * out duplicates. When a matching item is found the main library
-     * the item is added to the aItemsInMainLib array and removed
-     * from the array filterDupes is operating on. When the item
-     * is found in the target library it is just removed from the array
-     * and the dupe count incremented
-     */
-    function filterDupes(uri)
-    {
-      var uriObj = uri.QueryInterface(Ci.nsISupportsString);
-      var uriSpec = uriObj.data;
-
-      LOG("Searching for URI: " + uriSpec);
-
-      // If we're importing to a non-main library the see if it exists in
-      // the main library
-      if (!isMainLib) {
-        var items = [];
-        try {
-          // If we find it in the main library then save the item off and
-          // filter it out of the array
-          items = ArrayConverter.JSArray(
-                             mainLib.getItemsByProperty(SBProperties.contentURL,
-                             uriSpec));
-        }
-        catch (e) {
-          LOG("Exception: " + e);
-          // Exception expected if nothing is found. Just continue
-        }
-        if (items.length > 0) {
-          LOG("  Found in main library");
-          aItemsInMainLib.push(items[0].QueryInterface(Ci.sbIMediaItem));
-          return false;
-        }
-
-      }
-      var items = [];
-      try
-      {
-        // If we find the item by origin URL in the target library then
-        // bump the dupe count and filter it out of the array
-        items = ArrayConverter.JSArray(
-                            targetLib.getItemsByProperty(SBProperties.originURL,
-                            uriSpec));
-      }
-      catch (e) {
-        LOG("Exception: " + e);
-      }
-      if (items.length > 0) {
-        LOG("  Found in target library");
-        ++this.totalDuplicates;
-        return false;
-      }
-      LOG("  Item needs to be created");
-      // Item wasn't found so leave it in the array
-      return true;
-    }
-
-    return aURIs.filter(filterDupes);
-  },
+  
   /** 
    * Begin creating sbIMediaItems for a batch of found media URIs.
    * Does BATCHCREATE_SIZE at a time, looping back after 
@@ -547,41 +460,24 @@ DirectoryImportJob.prototype = {
       this.complete();
       return;
     }
-    
-    var targetLib = this.targetMediaList.library;
-
-    if (this._nextURIIndex >= this._itemURIStrings.length && 
-        this._itemsInMainLib.length === 0) {
-      LOG("Finish creating and adding all items");
+    if (this._nextURIIndex >= this._itemURIStrings.length) {
       this.complete();
       return;
     }
-    // For the items we found in the main library add them to the target library
-    else if (this._itemsInMainLib.length) {
-      LOG("Finish creating all items, now adding items");
-      // Setup listener object so we can mark the items as 
-      var self = this;
-      var addSomeListener = {
-        onProgress: function(aItemsProcessed, aCompleted) {},
-        onItemAdded: function(aMediaItem) {
-          aMediaItem.setProperty(SBProperties.originIsInMainLibrary, "1");
-        },
-        onComplete: function() {
-          LOG("Adding items completed");
-          self._itemsInMainLib = [];
-          self.complete();
-        }
-      }
-      // Now process items we found in the main library
-      targetLib.addMediaItems(ArrayConverter.enumerator(this._itemsInMainLib),
-                              addSomeListener,
-                              true);
-      return;
-    }
+    
     // Update status
-    this._statusText = SBString("media_scan.adding");
+    this._statusText = SBString("media_scan.adding");    
     this.notifyJobProgressListeners();
     
+    // Bug 10228 - this needs to be replaced with an sbIJobProgress interface
+    var thisJob = this;
+    var batchCreateListener = {
+      onProgress: function(aIndex) {},
+      onComplete: function(aMediaItems, aResult) {
+        thisJob._onItemCreation(aMediaItems, aResult);
+      }
+    };
+
     // Process the URIs a slice at a time, since creating all 
     // of them at once may require a very large amount of memory.
     this._currentBatchSize = Math.min(this.BATCHCREATE_SIZE,
@@ -589,31 +485,10 @@ DirectoryImportJob.prototype = {
     var endIndex = this._nextURIIndex + this._currentBatchSize;
     var uris = this._itemURIStrings.slice(this._nextURIIndex, endIndex);
     this._nextURIIndex = endIndex;
-
-    LOG("Creating media items");
-
-    this._itemsInMainLib = [];
-    LOG("Total items=" + uris.length);
-    uris = this._filterItems(uris, this._itemsInMainLib);
-
-    LOG("Items in main library=" + this._itemsInMainLib.length);
-    LOG("Items needing to be created=" + uris.length);
-    // Bug 10228 - this needs to be replaced with an sbIJobProgress interface
-    var thisJob = this;
-    var batchCreateListener = {
-      onProgress: function(aIndex) {},
-      onComplete: function(aMediaItems, aResult) {
-        LOG("Finished creating batch of items");
-        thisJob._onItemCreation(aMediaItems, aResult, uris.length);
-      }
-    };
-
-    // Create items that weren't in the main library or already in the target
-    // library
-    targetLib.batchCreateMediaItemsAsync(batchCreateListener, 
-                                         ArrayConverter.nsIArray(uris), 
-                                         null, 
-                                         false);
+    
+    // BatchCreateMediaItems needs to return an sbIJobProgress
+    this.targetMediaList.library.batchCreateMediaItemsAsync(
+        batchCreateListener, ArrayConverter.nsIArray(uris), null, false);
   },
   
   /** 
@@ -621,22 +496,19 @@ DirectoryImportJob.prototype = {
    * BatchCreateMediaItemsAsync needs to be updated to actually send progress.
    * At the moment it only notifies when the process is over.
    */
-  _onItemCreation: function DirectoryImportJob__onItemCreation(aMediaItems, 
-                                                               aResult, 
-                                                               itemsToCreateCount) {
+  _onItemCreation: function DirectoryImportJob__onItemCreation(aMediaItems, aResult) {
     // Get the completed item array.  Don't use the given item array on error.
     // Use an empty one instead.
-    LOG("batchCreateMediaItemsAsync created " + aMediaItems.length)
     if (Components.isSuccessCode(aResult)) {
-      this.totalDuplicates += (itemsToCreateCount - aMediaItems.length);
       this._currentMediaItems = aMediaItems;
     } else {
       Cu.reportError("DirectoryImportJob__onItemCreation: aResult == " + aResult);
-      this._currentMediaItems = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+      this._currentMediaItems = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                                       .createInstance(Components.interfaces.nsIArray);
     }
     
     this.totalAddedToLibrary += this._currentMediaItems.length;
+    this.totalDuplicates += this._currentBatchSize - this._currentMediaItems.length;
     if (this._currentMediaItems.length > 0) {
       
       // Make sure we have metadata for all the added items
@@ -656,7 +528,7 @@ DirectoryImportJob.prototype = {
   function DirectoryImportJob__startMetadataScan() {
     if (this._currentMediaItems && this._currentMediaItems.length > 0) {
       
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+      var metadataService = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);
       var metadataJob = metadataService.read(this._currentMediaItems);
         
@@ -795,13 +667,7 @@ DirectoryImportJob.prototype = {
       // This isn't useful, and makes a bad first impression,
       // so lets just dump the entire DB cache.
       if (this.totalAddedToLibrary > this.BATCHCREATE_SIZE) {
-        // More performance hackery. We run optimize with the ANALYZE step.
-        // This will ensure that all queries can use the best possible indexes.
-        library.optimize(true);
-
-        // Analyze will load a bunch of stuff into memory so we want to release
-        // after analyze completes.            
-        var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+        var dbEngine = Cc["@getnightingale.com/Nightingale/DatabaseEngine;1"]
                                      .getService(Ci.sbIDatabaseEngine);
         dbEngine.releaseMemory();
       }
@@ -816,15 +682,15 @@ DirectoryImportJob.prototype = {
       this._timingService.stopPerfTimer(this._timingIdentifier);
     }
 
-    // If flagged extensions were found, show the dialog.
+    // If flagged extensions where found, show the dialog.
     if (this._foundFlaggedExtensions &&
         this._foundFlaggedExtensions.length > 0)
     {
       var winMed = Cc["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Ci.nsIWindowMediator);
-      var sbWin = winMed.getMostRecentWindow("Songbird:Main");
+      var sbWin = winMed.getMostRecentWindow("Nightingale:Main");
 
-      var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+      var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
         .getService(Ci.sbIPrompter);
       prompter.waitForWindow = false;
 
@@ -836,7 +702,7 @@ DirectoryImportJob.prototype = {
       
       // Now open the dialog.
       prompter.openDialog(sbWin,
-          "chrome://songbird/content/xul/mediaimportWarningDialog.xul",
+          "chrome://nightingale/content/xul/mediaimportWarningDialog.xul",
           "mediaimportWarningDialog",
           "chrome,centerscreen,modal=yes",
           dialogBlock);
@@ -870,9 +736,9 @@ function DirectoryImportService() {
 }
 
 DirectoryImportService.prototype = {
-  classDescription: "Songbird Directory Import Service",
+  classDescription: "Nightingale Directory Import Service",
   classID:          Components.ID("{6e542f90-44a0-11dd-ae16-0800200c9a66}"),
-  contractID:       "@songbirdnest.com/Songbird/DirectoryImportService;1",
+  contractID:       "@getnightingale.com/Nightingale/DirectoryImportService;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIDirectoryImportService]),
   
   // List of pending jobs.  We only want to allow one to run at a time, 

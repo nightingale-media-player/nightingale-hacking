@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -49,15 +49,32 @@
 #include <nsIThreadPool.h>
 #include <nsNetUtil.h>
 #include <sbILibraryUtils.h>
-#include <sbIDirectoryEnumerator.h>
 #include <sbLockUtils.h>
-#include <sbDebugUtils.h>
 
 
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMediaImportFileScan:5
  */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gMediaImportFileScanLog = nsnull;
+#define TRACE(args) \
+  PR_BEGIN_MACRO \
+  if (!gMediaImportFileScanLog) \
+    gMediaImportFileScanLog = PR_NewLogModule("sbMediaImportFileScan"); \
+  PR_LOG(gMediaImportFileScanLog, PR_LOG_DEBUG, args); \
+  PR_END_MACRO
+#define LOG(args) \
+  PR_BEGIN_MACRO \
+  if (!gMediaImportFileScanLog) \
+    gMediaImportFileScanLog = PR_NewLogModule("sbMediaImportFileScan"); \
+  PR_LOG(gMediaImportFileScanLog, PR_LOG_WARN, args); \
+  PR_END_MACRO
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -132,19 +149,17 @@ void sbFileScanQuery::init()
 
   {
     nsAutoLock lock(m_pExtensionsLock);
-    PRBool SB_UNUSED_IN_RELEASE(success) = m_Extensions.Init();
+    PRBool success = m_Extensions.Init();
     NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
   }
 
   {
     nsAutoLock lock(m_pFlaggedFileExtensionsLock);
 
-    PRBool SB_UNUSED_IN_RELEASE(success) = m_FlaggedExtensions.Init();
+    PRBool success = m_FlaggedExtensions.Init();
     NS_ASSERTION(success,
         "FileScanQuery.m_FlaggedExtensions failed to be initialized!");
   }
-
-  SB_PRLOG_SETUP(sbMediaImportFileScan);
 }
 
 //-----------------------------------------------------------------------------
@@ -192,12 +207,12 @@ NS_IMETHODIMP sbFileScanQuery::SetDirectory(const nsAString &strDirectory)
   nsresult rv;
   if (!m_pFileStack) {
     m_pFileStack =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   if (!m_pFlaggedFileStack) {
     m_pFlaggedFileStack =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -319,7 +334,7 @@ NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
     // no stack, scanning never started
     *_retval = 0;
   }
-  LOG("sbFileScanQuery: reporting %d files\n", *_retval);
+  LOG(("sbFileScanQuery: reporting %d files\n", *_retval));
   return NS_OK;
 } //GetFileCount
 
@@ -336,7 +351,7 @@ NS_IMETHODIMP sbFileScanQuery::GetFlaggedFileCount(PRUint32 *_retval)
     *_retval = 0;
   }
 
-  LOG("sbFileScanQuery: reporting %d flagged files\n", *_retval);
+  LOG(("sbFileScanQuery: reporting %d flagged files\n", *_retval));
   return NS_OK;
 } //GetFileCount
 
@@ -354,8 +369,8 @@ NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
     if (isValidExtension) {
       m_lastSeenExtension = strExtension;
     } else if (!isValidExtension && !isFlagged) {
-      LOG("sbFileScanQuery::AddFilePath, unrecognized extension: (%s) is seen\n",
-           NS_LossyConvertUTF16toASCII(strExtension).get());
+      LOG(("sbFileScanQuery::AddFilePath, unrecognized extension: (%s) is seen\n",
+           NS_LossyConvertUTF16toASCII(strExtension).get()));
       return NS_OK;
     }
   }
@@ -377,8 +392,8 @@ NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  LOG("sbFileScanQuery::AddFilePath(%s)\n",
-       NS_LossyConvertUTF16toASCII(strFilePath).get());
+  LOG(("sbFileScanQuery::AddFilePath(%s)\n",
+       NS_LossyConvertUTF16toASCII(strFilePath).get()));
   return NS_OK;
 } //AddFilePath
 
@@ -508,7 +523,7 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
   } else {
     nsresult rv;
     nsCOMPtr<nsIMutableArray> array =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
 
     for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
       nsCOMPtr<nsISupportsString> uriSpec = do_QueryElementAt(m_pFileStack, i);
@@ -520,13 +535,13 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
 #if PR_LOGGING
       nsAutoString s;
       if (NS_SUCCEEDED(uriSpec->GetData(s)) && !s.IsEmpty()) {
-        LOG("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(s).get());
+        LOG(("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(s).get()));
       }
 #endif /* PR_LOGGING */
     }
     NS_ADDREF(*_retval = array);
   }
-  LOG("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex);
+  LOG(("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex));
 
   return NS_OK;
 }
@@ -677,7 +692,7 @@ NS_IMETHODIMP sbFileScan::SubmitQuery(sbIFileScanQuery *pQuery)
 
   // Start the query processor thread if needed.
   if (!m_ScanQueryProcessorIsRunning) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) = StartProcessScanQueriesProcessor();
+    nsresult rv = StartProcessScanQueriesProcessor();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
         "ERROR: Could not start the query processor thread!");
   }
@@ -701,6 +716,146 @@ NS_IMETHODIMP sbFileScan::Finalize()
 }
 
 //-----------------------------------------------------------------------------
+/* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
+NS_IMETHODIMP
+sbFileScan::ScanDirectory(const nsAString &strDirectory,
+                          PRBool bRecurse,
+                          sbIFileScanCallback *pCallback,
+                          PRInt32 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  dirstack_t dirStack;
+  fileentrystack_t fileEntryStack;
+
+  *_retval = 0;
+
+  nsresult rv;
+  nsCOMPtr<nsILocalFile> pFile =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibraryUtils> pLibraryUtils =
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = pFile->InitWithPath(strDirectory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool bFlag;
+  rv = pFile->IsDirectory(&bFlag);
+
+  if(pCallback)
+    pCallback->OnFileScanStart();
+
+  if(NS_SUCCEEDED(rv) && bFlag)
+  {
+    nsISimpleEnumerator* pDirEntries;
+    rv = pFile->GetDirectoryEntries(&pDirEntries);
+
+    if(NS_SUCCEEDED(rv))
+    {
+      PRBool bHasMore;
+
+      for(;;)
+      {
+        // Must null-check pDirEntries here because we're inside a loop
+        if(pDirEntries &&
+           NS_SUCCEEDED(pDirEntries->HasMoreElements(&bHasMore)) && bHasMore)
+        {
+
+          nsCOMPtr<nsISupports> pDirEntry;
+          rv = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
+
+          if(NS_SUCCEEDED(rv))
+          {
+            nsCOMPtr<nsIFile> pEntry = do_QueryInterface(pDirEntry, &rv);
+
+            if(NS_SUCCEEDED(rv))
+            {
+              PRBool bIsFile, bIsDirectory, bIsHidden;
+
+              // Don't scan hidden things.
+              // Otherwise we wind up in places that can crash the app?
+              if (NS_SUCCEEDED(pEntry->IsHidden(&bIsHidden)) && bIsHidden)
+              {
+                if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
+                {
+                  // Get a library content URI for the file.
+                  NS_ENSURE_SUCCESS(rv, rv);
+                  nsCOMPtr<nsIURI> pURI;
+                  rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                        getter_AddRefs(pURI));
+
+                  if (NS_SUCCEEDED(rv))
+                  {
+                    nsCAutoString u8spec;
+                    rv = pURI->GetSpec(u8spec);
+                    if (NS_SUCCEEDED(rv))
+                    {
+                      LOG(("sbFileScan::ScanDirectory (idl) found spec: %s\n", u8spec.get()));
+                      *_retval += 1;
+
+                      if(pCallback)
+                        pCallback->OnFileScanFile(NS_ConvertUTF8toUTF16(u8spec),
+                                                   *_retval);
+                    }
+                  }
+                }
+                else if(bRecurse &&
+                        NS_SUCCEEDED(pEntry->IsDirectory(&bIsDirectory)) &&
+                        bIsDirectory)
+                {
+                  dirStack.push_back(pDirEntries);
+                  fileEntryStack.push_back(pEntry);
+
+                  rv = pEntry->GetDirectoryEntries(&pDirEntries);
+                  if (NS_FAILED(rv))
+                    pDirEntries = nsnull;
+                }
+              }
+            }
+          }
+        }
+        else
+        {
+          NS_IF_RELEASE(pDirEntries);
+          if(dirStack.size())
+          {
+            pDirEntries = dirStack.back();
+            dirStack.pop_back();
+          }
+          else
+          {
+            if(pCallback)
+            {
+              pCallback->OnFileScanEnd();
+            }
+
+            return NS_OK;
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) &&
+       bFlag &&
+       pCallback)
+    {
+      *_retval = 1;
+      pCallback->OnFileScanFile(strDirectory, *_retval);
+    }
+  }
+
+  if(pCallback)
+    pCallback->OnFileScanEnd();
+
+  return NS_OK;
+} //ScanDirectory
+
+//-----------------------------------------------------------------------------
 nsresult
 sbFileScan::StartProcessScanQueriesProcessor()
 {
@@ -709,7 +864,7 @@ sbFileScan::StartProcessScanQueriesProcessor()
   if (!m_ScanQueryProcessorIsRunning && !m_ThreadShouldShutdown) {
     nsresult rv;
     nsCOMPtr<nsIThreadPool> threadPoolService =
-      do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/ThreadPoolService;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIRunnable> runnable =
@@ -784,9 +939,10 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   PRInt32 nFoundCount = 0;
 
+  nsresult ret = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsILocalFile> pFile = do_CreateInstance("@mozilla.org/file/local;1");
   nsCOMPtr<sbILibraryUtils> pLibraryUtils =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbIFileScanCallback *pCallback = nsnull;
@@ -804,8 +960,8 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   PRBool bWantLibraryContentURIs = PR_TRUE;
   pQuery->GetWantLibraryContentURIs(&bWantLibraryContentURIs);
 
-  rv = pFile->InitWithPath(strTheDirectory);
-  if(NS_FAILED(rv)) return rv;
+  ret = pFile->InitWithPath(strTheDirectory);
+  if(NS_FAILED(ret)) return ret;
 
   PRBool bFlag = PR_FALSE;
   pFile->IsDirectory(&bFlag);
@@ -817,128 +973,129 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   if(bFlag)
   {
-    sbIDirectoryEnumerator * pDirEntries;
-    sbGetDirectoryEntries(pFile, &pDirEntries);
+    nsISimpleEnumerator *pDirEntries = nsnull;
+    pFile->GetDirectoryEntries(&pDirEntries);
 
-    PRBool keepRunning = !m_ThreadShouldShutdown;
-
-    while(keepRunning)
+    if(pDirEntries)
     {
-      // Allow us to get the hell out of here.
-      PRBool cancel = PR_FALSE;
-      pQuery->IsCancelled(&cancel);
+      PRBool keepRunning = !m_ThreadShouldShutdown;
 
-      if (cancel) {
-        break;
-      }
-
-      PRBool bHasMore = PR_FALSE;
-      rv = pDirEntries->HasMoreElements(&bHasMore);
-      nsCOMPtr<nsIFile> pEntry;
-      if(NS_SUCCEEDED(rv) && bHasMore) {
-        rv = pDirEntries->GetNext(getter_AddRefs(pEntry));
-      }
-
-      if(NS_SUCCEEDED(rv) && pEntry)
+      while(keepRunning)
       {
-        PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
-        pEntry->IsFile(&bIsFile);
-        pEntry->IsDirectory(&bIsDirectory);
-        pEntry->IsHidden(&bIsHidden);
+        // Allow us to get the hell out of here.
+        PRBool cancel = PR_FALSE;
+        pQuery->IsCancelled(&cancel);
 
-        if(!bIsHidden || bSearchHidden)
+        if (cancel) {
+          break;
+        }
+
+        PRBool bHasMore = PR_FALSE;
+        ret = pDirEntries->HasMoreElements(&bHasMore);
+
+        nsCOMPtr<nsISupports> pDirEntry;
+        if(NS_SUCCEEDED(rv) && bHasMore) {
+          ret = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
+        }
+
+        if(NS_SUCCEEDED(rv) && pDirEntry)
         {
-          if(bIsFile)
+          nsIID nsIFileIID = NS_IFILE_IID;
+          nsCOMPtr<nsIFile> pEntry;
+          pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
+
+          if(pEntry)
           {
-            // Get a library content URI for the file.
-            nsCOMPtr<nsIURI> pURI;
-            if (bWantLibraryContentURIs) {
-              rv = pLibraryUtils->GetFileContentURI(pEntry,
-                                                    getter_AddRefs(pURI));
-            } else {
-              rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
-            }
+            PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
+            pEntry->IsFile(&bIsFile);
+            pEntry->IsDirectory(&bIsDirectory);
+            pEntry->IsHidden(&bIsHidden);
 
-            // Get the file URI spec.
-            nsCAutoString spec;
-            if (NS_SUCCEEDED(rv)) {
-              rv = pURI->GetSpec(spec);
-              LOG("sbFileScan::ScanDirectory (C++) found spec: %s\n",
-                   spec.get());
-            }
-
-            // Add the file path to the query.
-            if (NS_SUCCEEDED(rv)) {
-              nsString strPath = NS_ConvertUTF8toUTF16(spec);
-              pQuery->AddFilePath(strPath);
-              nFoundCount += 1;
-
-              if(pCallback)
+            if(!bIsHidden || bSearchHidden)
+            {
+              if(bIsFile)
               {
-                pCallback->OnFileScanFile(strPath, nFoundCount);
+                // Get a library content URI for the file.
+                nsCOMPtr<nsIURI> pURI;
+                if (bWantLibraryContentURIs) {
+                  rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                        getter_AddRefs(pURI));
+                } else {
+                  rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
+                }
+
+                // Get the file URI spec.
+                nsCAutoString spec;
+                if (NS_SUCCEEDED(rv)) {
+                  rv = pURI->GetSpec(spec);
+                  LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n",
+                       spec.get()));
+                }
+
+                // Add the file path to the query.
+                if (NS_SUCCEEDED(rv)) {
+                  nsString strPath = NS_ConvertUTF8toUTF16(spec);
+                  pQuery->AddFilePath(strPath);
+                  nFoundCount += 1;
+
+                  if(pCallback)
+                  {
+                    pCallback->OnFileScanFile(strPath, nFoundCount);
+                  }
+                }
+              }
+              else if(bIsDirectory && bRecurse)
+              {
+                nsISimpleEnumerator *pMoreEntries = nsnull;
+                pEntry->GetDirectoryEntries(&pMoreEntries);
+
+                if(pMoreEntries)
+                {
+                  dirStack.push_back(pDirEntries);
+                  fileEntryStack.push_back(pEntry);
+                  entryStack.push_back(pDirEntry);
+
+                  pDirEntries = pMoreEntries;
+                }
               }
             }
           }
-          else if(bIsDirectory && bRecurse)
-          {
-            sbIDirectoryEnumerator * pMoreEntries;
-            rv = CallCreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID,
-                                    &pMoreEntries);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = pMoreEntries->SetFilesOnly(PR_FALSE);
-            NS_ENSURE_SUCCESS(rv, rv);
-            rv = pMoreEntries->SetMaxDepth(1);
-            NS_ENSURE_SUCCESS(rv, rv);
-            rv = pMoreEntries->Enumerate(pEntry);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            if(pMoreEntries)
-            {
-              dirStack.push_back(pDirEntries);
-              fileEntryStack.push_back(pEntry);
-              entryStack.push_back(pEntry);
-
-              pDirEntries = pMoreEntries;
-            }
-          }
-        }
-      }
-      else
-      {
-        if(dirStack.size())
-        {
-          NS_IF_RELEASE(pDirEntries);
-
-          pDirEntries = dirStack.back();
-
-          dirStack.pop_back();
-          fileEntryStack.pop_back();
-          entryStack.pop_back();
         }
         else
         {
-          if(pCallback)
+          if(dirStack.size())
           {
-            pCallback->OnFileScanEnd();
+            NS_IF_RELEASE(pDirEntries);
+
+            pDirEntries = dirStack.back();
+
+            dirStack.pop_back();
+            fileEntryStack.pop_back();
+            entryStack.pop_back();
           }
+          else
+          {
+            if(pCallback)
+            {
+              pCallback->OnFileScanEnd();
+            }
 
-          NS_IF_RELEASE(pCallback);
-          NS_IF_RELEASE(pDirEntries);
+            NS_IF_RELEASE(pCallback);
+            NS_IF_RELEASE(pDirEntries);
 
-          return NS_OK;
+            return NS_OK;
+          }
         }
+
+        // Yield.
+        PR_Sleep(PR_MillisecondsToInterval(0));
+
+        // Check thread shutdown flag since it's possible for our thread
+        // to be in shutdown without the query being cancelled.
+        keepRunning = !m_ThreadShouldShutdown;
       }
-
-      // Yield.
-      PR_Sleep(PR_MillisecondsToInterval(0));
-
-      // Check thread shutdown flag since it's possible for our thread
-      // to be in shutdown without the query being cancelled.
-      keepRunning = !m_ThreadShouldShutdown;
+      NS_IF_RELEASE(pDirEntries);
     }
-    NS_IF_RELEASE(pDirEntries);
-
   }
   else if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && bFlag)
   {

@@ -1,31 +1,33 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -42,16 +44,15 @@
           this._needRefresh = false;
           this._laststateonly = false;
           // Load up the string bundle
-          var src = "chrome://songbird/locale/songbird.properties";
+          var src = "chrome://nightingale/locale/nightingale.properties";
           var stringBundleService =
               Components.classes["@mozilla.org/intl/stringbundle;1"]
               .getService(Components.interfaces.nsIStringBundleService);
           this.stringbundle = stringBundleService.createBundle( src );
-          this._playlistCommandsListener = null;
           var selfbind = this.getAttribute("bind");
           if (selfbind) {
             var libraryManager =
-              Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+              Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                         .getService(Components.interfaces.sbILibraryManager);
             var guids = selfbind.split(';');
             var libraryguid = guids[0];
@@ -75,20 +76,12 @@
         this.destroy();
         ]]>
       </destructor>
-
+      
       <method name="destroy">
         <body>
           <![CDATA[
           if (!this._destroyed) {
             this.removeCommands();
-
-            // remove the listeners for this medialist's playlist commands
-            var playlistCmdsMgr =
-                Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
-                          .getService(Components.interfaces.sbIPlaylistCommandsManager);
-            playlistCmdsMgr.removeListenerForMediaList(this.medialist,
-                                                       this._playlistCommandsListener);
-            this._playlistCommandsListener = null;
             this.emptyCommandsArray();
             this.stringbundle = null;
             this._outerWindow = null;
@@ -101,7 +94,7 @@
             } catch (e) {}
             this._destroyed = true;
           }
-        ]]>
+        ]]>  
         </body>
       </method>
 
@@ -147,7 +140,7 @@
           ]]>
         </setter>
       </property>
-
+      
       <method name="bind">
         <parameter name="medialist"/>
         <parameter name="playlist"/>
@@ -165,34 +158,9 @@
                 this.medialist = outerList;
               }
             }
-
+            
             this.playlist = playlist;
-            this.defaultcommands = commands ? commands.duplicate() : null;
-
-            /* Add a listener to the root commands for this medialist so that
-             * we can rescan the commands should they change.  For example
-             * this causes a rescan when a new command is added for a medialist,
-             * displaying it immediately after its addition */
-            var playlistCmdsMgr =
-                Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
-                          .getService(Components.interfaces.sbIPlaylistCommandsManager);
-            var self = this;
-            var listener = {
-              onCommandAdded: function listener_onCommandAdded(aCommandObject) {
-                self.rescanCommands();
-              },
-              onCommandRemoved: function listener_onCommandRemoved(aCommandObject) {
-                self.rescanCommands();
-              },
-              onCommandChanged: function listener_onCommandChanged(aCommandObject) {
-                self.rescanCommands();
-              },
-              QueryInterface: XPCOMUtils.generateQI
-                                        ([Components.interfaces.sbIPlaylistCommandsListener]),
-            };
-
-            playlistCmdsMgr.addListenerForMediaList(this.medialist, listener);
-            this._playlistCommandsListener = listener;
+            this.defaultcommands = commands ? commands.duplicate() : null; 
             this.rescanCommands();
           } catch (e) {
               Components.utils.reportError( "sbCommands.xml - bind - " + e );
@@ -200,12 +168,16 @@
         ]]>
         </body>
       </method>
-
+      
       <method name="emptyCommandsArray">
         <body>
           <![CDATA[
-            // the creator of the commands should call their shutdown methods
-            // so we only need to make a new array for this
+            if (this.commands) {
+              for (var i in this.commands) {
+                var cmd = this.commands[i];
+                cmd.shutdownCommands();
+              }
+            }
             this.commands = new Array();
           ]]>
         </body>
@@ -216,37 +188,34 @@
             if (this.medialist) {
               //Components.utils.reportError("rescanCommands for " + this.hoststring + " - " + this.medialist.name);
               this.emptyCommandsArray();
-              var source =
-                  Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+              var source = Components.classes["@getnightingale.com/Nightingale/PlaylistCommandsManager;1"]
                                     .getService(Components.interfaces.sbIPlaylistCommandsManager);
-              var rootCommand;
+              var cmds;
               switch (this.commandtype) {
                 case "medialist":
-                  rootCommand = source.getPlaylistCommandsMediaList
-                                       (this.medialist.guid, this.medialist.type);
+                  cmds = source.getPlaylistCommandsMediaList( this.medialist.guid, this.medialist.type );
                   break;
                 // default case
                 case "mediaitem":
                 case "":
                 default:
-                  rootCommand = source.getPlaylistCommandsMediaItem
-                                       (this.medialist.guid, this.medialist.type);
+                  cmds = source.getPlaylistCommandsMediaItem( this.medialist.guid, this.medialist.type );
                   break;
               }
-              if ( rootCommand )
+              if ( cmds )
               {
-                var cmds = rootCommand.getChildrenCommandObjects();
                 while (cmds.hasMoreElements()) {
                   var obj = cmds.getNext();
-
-                  // make sure obj is a sbIPlaylistCommands and add it to our array
-                  if (obj instanceof Components.interfaces.sbIPlaylistCommands) {
+                  // Make sure the object does what we think it does.
+                  obj = obj.QueryInterface( Components.interfaces.sbIPlaylistCommands );
+                  // add it to our array
+                  if (obj) {
                     obj.initCommands(this.hoststring);
                     this.commands.push(obj);
                   }
                 }
               }
-
+              
               // Use the defaults only if allowed and if we didnt get anything so far
               if (this.usedefault && !this.commands.length) {
                 // add the default (generic) command object if specified
@@ -335,11 +304,11 @@
               stateonly = false;
               this._laststateonly = true;
             }
-
+            
             // Convert null to bool.
             if (!stateonly)
               stateonly = false;
-
+              
             // If our internal objects are out of sync, rebuild.
             var forcerebuild = false;
             try {
@@ -371,7 +340,7 @@
                 window: wnd,
                 commands: null,
                 QueryInterface: function(iid) {
-                  if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) ||
+                  if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) || 
                       iid.equals(Components.interfaces.nsISupports))
                     return this;
                   throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -448,7 +417,7 @@
               var metricscategory = this.getAttribute("metricscategory");
               if (!metricscategory) return;
               var library = this.medialist ? this.medialist.library : null;
-              var metricstype = library ? library.getProperty("http://songbirdnest.com/data/1.0#customType") : null;
+              var metricstype = library ? library.getProperty("http://getnightingale.com/data/1.0#customType") : null;
               if (!metricstype) return;
               var p = cmdid.indexOf(":");
               if (p != -1) cmdid = cmdid.slice(0, p);
@@ -466,7 +435,7 @@
 
 
     </implementation>
-
+ 
   </binding>
 
 
@@ -477,8 +446,8 @@
 
 
 
-  <binding id="commands-toolbar" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
-
+  <binding id="commands-toolbar" extends="chrome://nightingale/content/bindings/sbCommands.xml#commands-base">
+  
     <content>
       <xul:hbox id="sb-commands-toolbar-bkg" class="sb-commands-toolbar-bkg" sbid="background" flex="1">
         <xul:hbox id="sb-commands-toolbar" class="sb-commands-toolbar" sbid="parent" flex="1" oncommand="onToolbarCommand( event )">
@@ -495,10 +464,10 @@
     <method name="shouldForceRebuild">
       <body>
         // If our internal objects are out of sync, rebuild.
-        return (this.toolbarbuttons.length == 0);
+        return (this.toolbarbuttons.length == 0); 
       </body>
     </method>
-
+    
     <method name="doRefreshCommands">
       <parameter name="stateonly"/>
       <body>
@@ -509,7 +478,7 @@
             this.hidden = true;
             this.removeCommands();
           }
-
+          
           if ( this.commands )
           {
             for (var i in this.commands) {
@@ -529,7 +498,7 @@
       </body>
     </method>
 
-
+    
     <method name="refreshCommandItems">
       <parameter name="cmdobject"/>
       <parameter name="stateonly"/>
@@ -553,7 +522,7 @@
                 //Components.utils.reportError("toolbar - item " + i + " not visible: " + cmdobject.getCommandId( menu, i, this.hoststring ));
                 continue;
               }
-
+              
               var obj_type;
               toolbarbutton = null;
               if (!stateonly)
@@ -563,21 +532,21 @@
 
                 // What id?
                 var obj_id = cmdobject.getCommandId( menu, i, this.hoststring );
-
+                
                 var toolbarbutton_type;
                 var toolbarbutton_typeattr = null;
                 if (radioitems) toolbarbutton_typeattr = "checkbox";
                 var custom = false;
-
+                
                 var subobject = cmdobject.getCommandSubObject( menu, i, this.hoststring );
                 if (subobject) {
                   this.refreshCommandItems(subobject, stateonly, menu, parentnode, before, depth, false);
                   continue;
                 }
-
+                
                 if (menu && menu != "") {
                   switch (obj_type) {
-                    case "custom":
+                    case "custom": 
                     case "value":
                       // ignore this item
                       toolbarbutton_type = null;
@@ -601,7 +570,7 @@
                   }
                 } else {
                   switch (obj_type) {
-                    case "custom":
+                    case "custom": 
                       custom = true;
                       break;
                     case "separator":
@@ -627,9 +596,9 @@
                       break;
                   }
                 }
-
+              
                 if (!toolbarbutton_type && !custom) continue;
-
+                                
                 // Create a toolbarbutton
                 if (custom) {
                   toolbarbutton = cmdobject.instantiateCustomCommand(menu, i, this.hoststring, obj_id, document);
@@ -641,7 +610,7 @@
                 var topelement = toolbarbutton;
                 toolbarbutton.setAttribute( "id", obj_id );
                 if (toolbarbutton_type == "menuitem") { toolbarbutton.setAttribute( "class", "menuitem-iconic" ); } // Icons are set in the css using the id
-                if (toolbarbutton_typeattr) toolbarbutton.setAttribute( "type", toolbarbutton_typeattr );
+                if (toolbarbutton_typeattr) toolbarbutton.setAttribute( "type", toolbarbutton_typeattr ); 
                 if (toolbarbutton_type == "textbox") {
                   var hbox = document.createElement("hbox");
                   var textlabel = document.createElement("label");
@@ -670,7 +639,7 @@
 
                   var cmd_flex = false;
                   if (toolbarbutton_type != "menu" && toolbarbutton_type != "menuitem") cmd_flex = cmdobject.getCommandFlex( menu, i, this.hoststring );
-
+                  
                   if ( cmd_flex > 0 )
                   {
                     toolbarbutton.setAttribute( "flex", cmd_flex );
@@ -683,12 +652,12 @@
                     tooltip_text = this.translateEntity(tooltip_text);
                     /*
                         This causes the crashy if it's up while updating.  :(
-
+                    
                       toolbarbutton.setAttribute( "tooltiptext", tooltip_text );
                     */
                   }
                 }
-
+                
                 toolbarbutton.commandtype = obj_type;
                 toolbarbutton.commanddepth = depth;
                 toolbarbutton.commandmenu = menu;
@@ -730,7 +699,7 @@
                   else parentnode.insertBefore( topelement, before);
                 }
               }
-
+              
               if (toolbarbutton.commandtype == "flag") {
                 toolbarbutton.setAttribute("checked", cmdobject.getCommandFlag( toolbarbutton.commandmenu, toolbarbutton.commandindex, this.hoststring ));
               }
@@ -772,7 +741,7 @@
             // Delete the toolbar commands
             var command_nodes = this.parent.getElementsByAttribute( 'sbtype', 'command' );
             // command_nodes is a live array, removing children from parent auto removes items from it
-            while ( command_nodes.length > 0 )
+            while ( command_nodes.length > 0 ) 
             {
               var node = command_nodes.item( 0 );
               this.parent.removeChild(node);
@@ -794,14 +763,14 @@
           if ( this.commands )
           {
             if (!this.parentNode) return;
-
+            
             var cmdobject = evt.originalTarget.commandobject;
             if (!cmdobject) return;
 
             this.reportMetrics(evt.originalTarget.id);
 
-            cmdobject.onCommand(evt.originalTarget.commandmenu,
-                                evt.originalTarget.commandindex,
+            cmdobject.onCommand(evt.originalTarget.commandmenu, 
+                                evt.originalTarget.commandindex, 
                                 this.hoststring,
                                 evt.originalTarget.id,
                                 null);
@@ -819,7 +788,7 @@
     </method>
 
     </implementation>
-
+    
     <handlers>
       <handler event="keypress">
         <![CDATA[
@@ -838,8 +807,8 @@
 
             var cmdobject = element.commandobject;
             if (!cmdobject) return;
-            cmdobject.onCommand(element.commandmenu,
-                                element.commandindex,
+            cmdobject.onCommand(element.commandmenu, 
+                                element.commandindex, 
                                 this.hoststring,
                                 element.id,
                                 element.value);
@@ -852,7 +821,7 @@
         ]]>
       </handler>
     </handlers>
-
+ 
   </binding>
 
 
@@ -863,18 +832,18 @@
 
 
 
-  <binding id="commands-menuitems" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
+  <binding id="commands-menuitems" extends="chrome://nightingale/content/bindings/sbCommands.xml#commands-base">
 
     <implementation type="application/x-javascript">
-
+    
     <constructor>
       // hide the binding (this does not hide the items, just the binding)
       this.hidden = true;
     </constructor>
-
+    
     <field name="menuitems">new Array();</field>
     <field name="hoststring">"menu"</field>
-
+    
     <method name="destroy2">
       <body>
         this.resetParentPopup();
@@ -901,7 +870,7 @@
         ]]>
       </body>
     </method>
-
+    
     <method name="resetParentPopup">
       <body>
         if (this.parentpopup) {
@@ -934,19 +903,19 @@
             var popup = this.getParentPopup();
             if (!this.parentpopup) {
               this.parentpopup = popup;
-              this.oncommand = {
-                _that: null,
-                handleEvent: function( event ) { this._that.onMenuCommand(event); }
-              }; this.oncommand._that = this;
+              this.oncommand = { 
+                _that: null, 
+                handleEvent: function( event ) { this._that.onMenuCommand(event); } 
+              }; this.oncommand._that = this; 
               popup.addEventListener("command", this.oncommand, false);
-              this.domnoderemoved = {
-                _that: null,
-                handleEvent: function( event ) { this._that.resetParentPopup(event); }
-              }; this.domnoderemoved._that = this;
+              this.domnoderemoved = { 
+                _that: null, 
+                handleEvent: function( event ) { this._that.resetParentPopup(event); } 
+              }; this.domnoderemoved._that = this; 
               this.addEventListener("DOMNodeRemoved", this.domnoderemoved, false);
             }
             var before = this;
-
+            
             if (popup) {
               for (var i in this.commands) {
                 this.refreshCommandItems(this.commands[i], stateonly, null, popup, before, 0, false);
@@ -961,7 +930,7 @@
         ]]>
       </body>
     </method>
-
+    
     <method name="refreshCommandItems">
       <parameter name="cmdobject"/>
       <parameter name="stateonly"/>
@@ -1001,10 +970,10 @@
                   this.refreshCommandItems(subobject, stateonly, menu, parentnode, before, depth, false);
                   continue;
                 }
-
+                
                 var menuitem_type;
-
-                switch (obj_type) {
+                
+                switch (obj_type) {  
                   case "separator":
                     menuitem_type = "menuseparator";
                     break;
@@ -1023,16 +992,16 @@
                     menuitem_type = "menuitem";
                     break;
                 }
-
+                
                 if (menuitem_type == "") continue;
-
+              
                 // And a menuitem
                 menuitem = document.createElement( menuitem_type );
                 menuitem.setAttribute( "id", obj_id );
                 menuitem.setAttribute( "sbtype", "command" );
                 menuitem.setAttribute( "class", "menuitem-iconic" ); // Icons are set in the css using the id
                 if (obj_type == "flag" || radioitems) menuitem.setAttribute("type", "checkbox");
-
+                
                 // No label unless you have a label
                 var cmd_text = cmdobject.getCommandText( menu, i, this.hoststring );
                 if ( cmd_text.length > 0 )
@@ -1040,6 +1009,7 @@
                   cmd_text = this.translateEntity(cmd_text);
                   menuitem.setAttribute( "label", cmd_text );
                 }
+                //dump("i = " + i + ", n = " + num + ", - " + cmd_text+"\n");
 
                 // No tooltip unless you have a tooltip
                 var tooltip_text = cmdobject.getCommandToolTipText( menu, i, this.hoststring );
@@ -1048,11 +1018,11 @@
                   tooltip_text= this.translateEntity(tooltip_text);
                   /*
                       This causes the crashy if it's up while updating.  :(
-
+                  
                     menuitem.setAttribute( "tooltiptext", tooltip_text );
                   */
                 }
-
+                
                 menuitem.commandtype = obj_type;
                 menuitem.commandmenu = menu;
                 menuitem.commandindex = i;
@@ -1070,14 +1040,14 @@
                 menuitem.setAttribute( "disabled", "false" );
               else
                 menuitem.setAttribute( "disabled", "true" );
-
+                
               if (menuitem.commandtype == "flag") {
                 menuitem.setAttribute("checked", cmdobject.getCommandFlag( menuitem.commandmenu, menuitem.commandindex, this.hoststring ));
               }
               if (menuitem.commandtype == "choiceitem") {
                 menuitem.setAttribute("checked", (menuitem.id == cmdobject.getCommandChoiceItem( menuitem.commandmenu, this.hoststring )));
               }
-
+              
               // Add it to the parent
               if (!stateonly)
               {
@@ -1117,7 +1087,7 @@
             var popup = this.getParentPopup();
             if (popup) {
               var command_nodes = popup.getElementsByAttribute( 'sbtype', 'command' );
-              while ( command_nodes.length > 0 )
+              while ( command_nodes.length > 0 ) 
               {
                 var node = command_nodes.item( 0 );
                 popup.removeChild(node);
@@ -1141,11 +1111,11 @@
           {
             var cmdobject = evt.originalTarget.commandobject;
             if (!cmdobject) return;
-
+            
             this.reportMetrics(evt.originalTarget.id);
 
-            cmdobject.onCommand(evt.originalTarget.commandmenu,
-                                evt.originalTarget.commandindex,
+            cmdobject.onCommand(evt.originalTarget.commandmenu, 
+                                evt.originalTarget.commandindex, 
                                 this.hoststring,
                                 evt.originalTarget.id,
                                 null);
@@ -1163,7 +1133,7 @@
 
 
     </implementation>
-
+ 
   </binding>
 
 
@@ -1174,17 +1144,17 @@
 
 
 
-  <binding id="commands-shortcuts" extends="chrome://songbird/content/bindings/sbCommands.xml#commands-base">
+  <binding id="commands-shortcuts" extends="chrome://nightingale/content/bindings/sbCommands.xml#commands-base">
 
     <content>
       <xul:sb-dynamic-keyset sbid="keyset"/>
     </content>
 
     <implementation type="application/x-javascript">
-
+    
     <constructor>
     </constructor>
-
+    
     <method name="destroy2">
       <body>
       <![CDATA[
@@ -1229,7 +1199,7 @@
         ]]>
       </body>
     </method>
-
+    
     <method name="refreshCommandItems">
       <parameter name="cmdobject"/>
       <parameter name="stateonly"/>
@@ -1269,11 +1239,11 @@
 
                 // What id?
                 var obj_id = cmdobject.getCommandId( menu, i, this.hoststring );
-
+                
                 var makeKey;
                 var skip;
-
-                switch (obj_type) {
+                
+                switch (obj_type) {  
                   case "submenu":
                   case "choice":
                     makeKey = false;
@@ -1293,14 +1263,14 @@
                     skip = false;
                     break;
                 }
-
+                
                 if (skip) continue;
-
+              
                 if (makeKey) {
                   // Add a key
                   var modifiers;
                   var keyname;
-
+                  
                   // No label unless you have a label
                   var modifiers = cmdobject.getCommandShortcutModifiers( menu, i, this.hoststring );
                   var keyname = cmdobject.getCommandShortcutKey( menu, i, this.hoststring );
@@ -1309,10 +1279,10 @@
                   modifiers = this.translateEntity(modifiers);
                   keyname = this.translateEntity(keyname);
                   keycode = this.translateEntity(keycode);
-
-                  if ((!keyname || keyname == "") &&
+                  
+                  if ((!keyname || keyname == "") && 
                       (!keycode || keycode == "")) continue;
-
+                  
                   var keytarget = this.parentNode;
                   if (this.playlist) keytarget = this.playlist.tree;
                   key = this.keyset.addKey( local, obj_id, modifiers, keyname, keycode, this, keytarget );
@@ -1339,7 +1309,7 @@
                   key.setAttribute( "disabled", "true" );
                 }
               }
-
+                
               if (!stateonly)
               {
                 if (key) {
@@ -1383,11 +1353,11 @@
           {
             var cmdobject = evt.originalTarget.commandobject;
             if (!cmdobject) return;
-
+            
             this.reportMetrics(evt.originalTarget.id);
 
-            cmdobject.onCommand(evt.originalTarget.commandmenu,
-                                evt.originalTarget.commandindex,
+            cmdobject.onCommand(evt.originalTarget.commandmenu, 
+                                evt.originalTarget.commandindex, 
                                 this.hoststring,
                                 evt.originalTarget.id,
                                 null);

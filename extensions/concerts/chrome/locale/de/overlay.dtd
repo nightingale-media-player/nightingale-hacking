@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Wir überprüfen, wer in Ihrer Nähe Konzerte gibt …">
-<!ENTITY concerts.changelocation "Ort ändern">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "Keine Konzerte gefunden für">
-<!ENTITY concerts.timeout.error "Entweder haben Sie keine Internetverbindung, oder unsere Konzertdatenbank funktioniert im Moment nicht richtig. Versuchen Sie es in einigen Minuten erneut.">
-<!ENTITY concerts.timeoutreport.error "Problem melden">

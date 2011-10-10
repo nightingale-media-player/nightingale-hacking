@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBDEVICELIBRARYMEDIASYNCSETTINGS_H_
@@ -68,6 +68,14 @@ private:
   void SetSyncSettings(sbDeviceLibrarySyncSettings * aSettings) {
     mSyncSettings = aSettings;
   }
+  void ResetChanged() {
+    mChanged = false;
+  }
+  bool HasChanged() const
+  {
+    return mChanged;
+  }
+  void Changed();
   nsresult GetMgmtTypeNoLock(PRUint32 * aSyncMgmtType);
   nsresult GetSyncPlaylistsNoLock(nsIArray ** aSyncPlaylists);
   nsresult GetSelectedPlaylistsNoLock(nsIArray ** aSelectedPlaylists);
@@ -75,12 +83,11 @@ private:
    * Management type, SYNC_MGMT_NONE, SYNC_MGMT_ALL, SYNC_MGMT_PLAYLISTS
    */
   PRUint32 mSyncMgmtType;
-  PRUint32 mLastActiveSyncMgmtType;
   PRUint32 mMediaType;
   PlaylistSelection mPlaylistsSelection;
   nsString mSyncFolder;
   nsCOMPtr<nsIFile> mSyncFromFolder;
-  bool mImport;
+  bool mChanged;
   PRLock * mLock;
   // Non-owning reference to our owner. We should never live past
   sbDeviceLibrarySyncSettings * mSyncSettings;

@@ -1,25 +1,27 @@
-/*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+ /*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 
 /**
@@ -60,7 +62,6 @@
 
 #include <nsIScriptError.h>
 #include <nsIConsoleService.h>
-#include <nsIConsoleMessage.h>
 
 #include <nsCOMArray.h>
 
@@ -69,7 +70,9 @@
 #include <sbMemoryUtils.h>
 #include <sbStringBundle.h>
 #include <sbProxiedComponentManager.h>
-#include <sbDebugUtils.h>
+
+// The maximum characters to output in a single PR_LOG call
+#define MAX_PRLOG 400
 
 #if defined(_WIN32)
   #include <windows.h>
@@ -101,9 +104,9 @@
 // 
 // Also note that page cache and page size can be specified on a 
 // per db basis with keys like
-//  songbird.dbengine.main@library.songbirdnest.com.cacheSize
+//  nightingale.dbengine.main@library.getnightingale.com.cacheSize
 
-#define PREF_BRANCH_BASE                      "songbird.dbengine."
+#define PREF_BRANCH_BASE                      "nightingale.dbengine."
 #define PREF_DB_PAGE_SIZE                     "pageSize"
 #define PREF_DB_CACHE_SIZE                    "cacheSize"
 #define PREF_DB_PREALLOCCACHE_SIZE            "preAllocCacheSize"
@@ -113,42 +116,27 @@
 // These constants come from sbLocalDatabaseLibraryLoader.cpp
 // Do not change these constants unless you are changing them in 
 // sbLocalDatabaseLibraryLoader.cpp!
-#define PREF_SCAN_COMPLETE                    "songbird.firstrun.scancomplete"
-#define PREF_BRANCH_LIBRARY_LOADER            "songbird.library.loader."
-#define PREF_MAIN_LIBRARY                     "songbird.library.main"
-#define PREF_WEB_LIBRARY                      "songbird.library.web"
-#define PREF_DOWNLOAD_LIST                    "songbird.library.download"
-#define PREF_PLAYQUEUE_LIBRARY                "songbird.library.playqueue"
+#define PREF_SCAN_COMPLETE                    "nightingale.firstrun.scancomplete"
+#define PREF_BRANCH_LIBRARY_LOADER            "nightingale.library.loader."
+#define PREF_MAIN_LIBRARY                     "nightingale.library.main"
+#define PREF_WEB_LIBRARY                      "nightingale.library.web"
+#define PREF_DOWNLOAD_LIST                    "nightingale.library.download"
 
 // These are also from sbLocalDatabaseLibraryLoader.cpp.
 #define PREF_LOADER_DBGUID                    "databaseGUID"
 #define PREF_LOADER_DBLOCATION                "databaseLocation"
 
 // These are also from sbLocalDatabaseLibraryLoader.cpp.
-#define DBENGINE_GUID_MAIN_LIBRARY            "main@library.songbirdnest.com"
-#define DBENGINE_GUID_WEB_LIBRARY             "web@library.songbirdnest.com"
-#define DBENGINE_GUID_PLAYQUEUE_LIBRARY       "playqueue@library.songbirdnest.com"
+#define DBENGINE_GUID_MAIN_LIBRARY            "main@library.getnightingale.com"
+#define DBENGINE_GUID_WEB_LIBRARY             "web@library.getnightingale.com"
 
-// Unless prefs state otherwise, allow 250 Mbytes
+// Unless prefs state otherwise, allow 262144000 bytes
 // of page cache.  WOW!
 #define DEFAULT_PAGE_SIZE             16384
 #define DEFAULT_CACHE_SIZE            16000
 
-// pre-allocated for caching
-#define DEFAULT_PREALLOCCACHE_SIZE    0
-// pre-allocated for scratch memory
-#define DEFAULT_PREALLOCSCRATCH_SIZE  0
-
 #define SQLITE_MAX_RETRIES            666
 #define MAX_BUSY_RETRY_CLOSE_DB       10
-
-// Uncomment or define this to enable perf logging.
-//#define USE_PERF_LOGGING 1
-
-// Idle Service Timeout we use before checking if we should run ANALYZE.
-#define IDLE_SERVICE_TIMEOUT    (5 * 60)
-// Query Count Threshold for running ANALYZE
-#define ANALYZE_QUERY_THRESHOLD (800)
 
 #if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
@@ -157,21 +145,18 @@
   #define HARD_SANITY_CHECK             1
 #endif
 
-#ifdef USE_PERF_LOGGING
+#ifdef PR_LOGGING
+static PRLogModuleInfo* sDatabaseEngineLog = nsnull;
+static PRLogModuleInfo* sDatabaseEnginePerformanceLog = nsnull;
+#define TRACE(args) PR_LOG(sDatabaseEngineLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(sDatabaseEngineLog, PR_LOG_WARN, args)
 
-class sbDatabaseEnginePerformanceLogger
-{
-public:
-  sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
-                                    const nsAString& aGuid);
-  ~sbDatabaseEnginePerformanceLogger();
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
 
-private:
-  nsString mQuery;
-  nsString mGuid;
-  PRTime mStart;
-};
-
+#ifdef PR_LOGGING
 #define BEGIN_PERFORMANCE_LOG(_strQuery, _dbName) \
  sbDatabaseEnginePerformanceLogger _performanceLogger(_strQuery, _dbName)
 #else
@@ -649,9 +634,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseDumpProcessor, nsIRunnable)
 CDatabaseDumpProcessor::CDatabaseDumpProcessor(CDatabaseEngine *aCallback,
                                                QueryProcessorQueue *aQueryProcessorQueue,
                                                nsIFile *aOutputFile)
-: mOutputFile(aOutputFile)
-, mEngineCallback(aCallback)
+: mEngineCallback(aCallback)
 , mQueryProcessorQueue(aQueryProcessorQueue)
+, mOutputFile(aOutputFile)
 {
 }
 
@@ -952,14 +937,18 @@ CDatabaseEngine::CDatabaseEngine()
 , m_MemoryConstraintsSet(PR_FALSE)
 , m_PromptForDelete(PR_FALSE)
 , m_DeleteDatabases(PR_FALSE)
-, m_AddedIdleObserver(PR_FALSE)
 , m_pPageSpace(nsnull)
 , m_pScratchSpace(nsnull)
 #ifdef XP_MACOSX
 , m_Collator(nsnull)
 #endif
 {
-  SB_PRLOG_SETUP(sbDatabaseEngine);
+#ifdef PR_LOGGING
+  if (!sDatabaseEngineLog)
+    sDatabaseEngineLog = PR_NewLogModule("sbDatabaseEngine");
+  if (!sDatabaseEnginePerformanceLog)
+    sDatabaseEnginePerformanceLog = PR_NewLogModule("sbDatabaseEnginePerformance");
+#endif
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -1014,8 +1003,8 @@ CDatabaseEngine* CDatabaseEngine::GetSingleton()
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::Init()
 {
-  LOG("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
-       this, sqlite3_libversion());
+  LOG(("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
+       this, sqlite3_libversion()));
 
   PRBool success = m_QueuePool.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -1083,14 +1072,6 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   rv = m_pThreadPool->SetIdleThreadTimeout(30000);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIIdleService> idleService = 
-    do_GetService("@mozilla.org/widget/idleservice;1", &rv);
-  
-  if(NS_SUCCEEDED(rv)) {
-    rv = idleService->AddIdleObserver(this, IDLE_SERVICE_TIMEOUT);
-    m_AddedIdleObserver = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
-  }
-
   return NS_OK;
 }
 
@@ -1145,16 +1126,6 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
   nsresult rv = m_pThreadPool->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
   
-  if(m_AddedIdleObserver) {
-    nsCOMPtr<nsIIdleService> idleService = 
-      do_GetService("@mozilla.org/widget/idleservice;1", &rv);
-    if(NS_SUCCEEDED(rv)) {
-      rv = idleService->RemoveIdleObserver(this, IDLE_SERVICE_TIMEOUT);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
-                       "Failed to remove idle service observer.");
-    }
-  }
-
 #ifdef XP_MACOSX
   if (m_Collator)
     ::UCDisposeCollator(&m_Collator);
@@ -1225,10 +1196,6 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
     rv = DeleteMarkedDatabases();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to delete bad databases!");
   }
-  else if(!strcmp(aTopic, "idle")) {
-    rv = RunAnalyze();
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to run ANALYZE on Databases.");
-  }
 
   return NS_OK;
 }
@@ -1258,13 +1225,13 @@ nsresult CDatabaseEngine::InitMemoryConstraints()
       NS_FAILED(prefBranch->GetIntPref(PREF_DB_PREALLOCCACHE_SIZE,
                                        &preAllocCache))) {
     NS_WARNING("DBEngine failed to get preAllocCache pref. Using default.");
-    preAllocCache = DEFAULT_PREALLOCCACHE_SIZE; 
+    preAllocCache = 0; 
   }
   if (NS_FAILED(rv) ||
       NS_FAILED(prefBranch->GetIntPref(PREF_DB_PREALLOCSCRATCH_SIZE,
                                        &preAllocScratch))) {
     NS_WARNING("DBEngine failed to get preAllocScratch pref. Using default.");
-    preAllocScratch = DEFAULT_PREALLOCSCRATCH_SIZE; 
+    preAllocScratch = 0; 
   }
   if (NS_FAILED(rv) ||NS_FAILED(prefBranch->GetIntPref(PREF_DB_SOFT_LIMIT,
                                        &softLimit))) {
@@ -1339,7 +1306,7 @@ nsresult CDatabaseEngine::GetDBPrefs(const nsAString &dbGUID,
   }
   
   // Now try for values that are specific to this database guid
-  // e.g. songbird.dbengine.main@library.songbirdnest.com.cacheSize
+  // e.g. nightingale.dbengine.main@library.getnightingale.com.cacheSize
   nsCString dbBranch(PREF_BRANCH_BASE);
   dbBranch.Append(NS_ConvertUTF16toUTF8(dbGUID));
   dbBranch.Append(NS_LITERAL_CSTRING("."));
@@ -1644,6 +1611,7 @@ CDatabaseEngine::DumpDatabase(const nsAString & aDatabaseGUID, nsIFile *aOutFile
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::DumpMemoryStatistics()
 {
+  int status_op  = -1;
   int current    = -1;
   int highwater  = -1;
 
@@ -1695,8 +1663,8 @@ NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
 {
   // Attempt to free a large amount of memory.
   // This will cause SQLite to free as much as it can.
-  int SB_UNUSED_IN_RELEASE(memReleased) = sqlite3_release_memory(500000000);
-  LOG("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased);
+  int memReleased = sqlite3_release_memory(500000000);
+  LOG(("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased));
 
   return NS_OK;
 }
@@ -1785,7 +1753,7 @@ CDatabaseEngine::PromptToDeleteDatabases()
   mon.Exit();
 
   nsCOMPtr<sbIPrompter> promptService =
-    do_GetService(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+    do_GetService(NIGHTINGALE_PROMPTER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 buttons = nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + 
@@ -1823,7 +1791,7 @@ CDatabaseEngine::PromptToDeleteDatabases()
   if (promptResult == 0) { 
     // metric: user chose to delete corrupt library
     nsCOMPtr<sbIMetrics> metrics =
-      do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Metrics;1", &rv);
     
     if(NS_SUCCEEDED(rv)) {
       rv = metrics->MetricsInc(NS_LITERAL_STRING("app"), \
@@ -1915,7 +1883,12 @@ CDatabaseEngine::DeleteMarkedDatabases()
       continue;
     }
 
-    // Should be something like "songbird.library.loader.1.".
+    // Should be something like "1".
+    nsCString keyString(StringHead(pref, keyLength));
+    PRUint32 libraryKey = keyString.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Should be something like "nightingale.library.loader.1.".
     nsCString branchString(PREF_BRANCH_LIBRARY_LOADER);
     branchString += Substring(pref, 0, keyLength + 1);
     if(!StringEndsWith(branchString, NS_LITERAL_CSTRING("."))) {
@@ -1998,79 +1971,11 @@ CDatabaseEngine::DeleteMarkedDatabases()
         rv = prefService->SavePrefFile(nsnull);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      else if(loaderDbGuid.EqualsLiteral(DBENGINE_GUID_PLAYQUEUE_LIBRARY)) {
-        nsCOMPtr<nsIPrefBranch> doomedBranch;
-        rv = prefService->GetBranch(PREF_PLAYQUEUE_LIBRARY,
-                                    getter_AddRefs(doomedBranch));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = doomedBranch->DeleteBranch("");
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = prefService->SavePrefFile(nsnull);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
     }
   }
 
   m_DatabasesToDelete.clear();
   m_DeleteDatabases = PR_FALSE;
-
-  return NS_OK;
-}
-
-template<class T>
-PLDHashOperator CDatabaseEngine::EnumerateIntoArrayStringKey(
-                                   const nsAString& aKey,
-                                   T* aQueue,
-                                   void* aArray)
-{
-  nsTArray<nsString> *stringArray = 
-    reinterpret_cast< nsTArray<nsString>* >(aArray);
-  
-  // No need to lock the queue here since it's access to m_QueuePool is locked
-  // when we are enumerating it.
-
-  if(aQueue->m_AnalyzeCount > ANALYZE_QUERY_THRESHOLD) {
-    aQueue->m_AnalyzeCount = 0;
-    stringArray->AppendElement(aKey);
-  }
-
-  return PL_DHASH_NEXT;
-}
-
-nsresult 
-CDatabaseEngine::RunAnalyze()
-{
-  nsAutoMonitor mon(m_pThreadMonitor);
-  
-  nsTArray<nsString> dbGUIDs;
-  m_QueuePool.EnumerateRead(EnumerateIntoArrayStringKey, &dbGUIDs);
-
-  mon.Exit();
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-
-  PRUint32 current = 0;
-  PRUint32 length  = dbGUIDs.Length();
-
-  for(; current < length; current++) {
-    nsRefPtr<CDatabaseQuery> query;
-    NS_NEWXPCOM(query, CDatabaseQuery);
-    if(!query)
-      continue;
-    rv = query->SetDatabaseGUID(dbGUIDs[current]);
-    if(NS_FAILED(rv))
-      continue;
-    rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
-    if(NS_FAILED(rv))
-      continue;
-    rv = query->SetAsyncQuery(PR_TRUE);
-    if(NS_FAILED(rv))
-      continue;
-    rv = SubmitQueryPrivate(query);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to submit ANALYZE query.");
-  }
 
   return NS_OK;
 }
@@ -2116,7 +2021,6 @@ CDatabaseEngine::RunAnalyze()
       }
 
       pQueue->m_Running = PR_TRUE;
-      pQueue->m_AnalyzeCount++;
     } // Exit Monitor
 
     //The query is now in a running state.
@@ -2124,8 +2028,8 @@ CDatabaseEngine::RunAnalyze()
 
     sqlite3 *pDB = pQueue->m_pHandle;
 
-    LOG("DBE: Process Start, thread 0x%x query 0x%x",
-      PR_GetCurrentThread(), pQuery);
+    LOG(("DBE: Process Start, thread 0x%x query 0x%x",
+      PR_GetCurrentThread(), pQuery));
 
     PRUint32 nQueryCount = 0;
     PRBool bFirstRow = PR_TRUE;
@@ -2154,7 +2058,7 @@ CDatabaseEngine::RunAnalyze()
       nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
       nsresult rv = pQuery->PopQuery(getter_AddRefs(preparedStatement));
       if (NS_FAILED(rv)) {
-        LOG("DBE: Failed to get a prepared statement from the Query object.");
+        LOG(("DBE: Failed to get a prepared statement from the Query object."));
         continue;
       }
       nsString strQuery;
@@ -2167,7 +2071,7 @@ CDatabaseEngine::RunAnalyze()
         actualPreparedStatement->GetStatement(pQueue->m_pHandle);
       
       if (!pStmt) {
-        LOG("DBE: Failed to create a prepared statement from the Query object.");
+        LOG(("DBE: Failed to create a prepared statement from the Query object."));
         continue;
       }
       
@@ -2182,9 +2086,9 @@ CDatabaseEngine::RunAnalyze()
 
       BEGIN_PERFORMANCE_LOG(strQuery, dbName);
 
-      LOG("DBE: '%s' on '%s'\n",
+      LOG(("DBE: '%s' on '%s'\n",
         NS_ConvertUTF16toUTF8(dbName).get(),
-        NS_ConvertUTF16toUTF8(strQuery).get());
+        NS_ConvertUTF16toUTF8(strQuery).get()));
 
       // If we have parameters for this query, bind them
       PRUint32 i = 0; // we need the index as well to know where to bind our values.
@@ -2197,14 +2101,14 @@ CDatabaseEngine::RunAnalyze()
         switch(p.type) {
           case ISNULL:
             sqlite3_bind_null(pStmt, i + 1);
-            LOG("DBE: Parameter %d is 'NULL'", i);
+            LOG(("DBE: Parameter %d is 'NULL'", i));
             break;
           case UTF8STRING:
             sqlite3_bind_text(pStmt, i + 1,
               p.utf8StringValue.get(),
               p.utf8StringValue.Length(),
               SQLITE_TRANSIENT);
-            LOG("DBE: Parameter %d is '%s'", i, p.utf8StringValue.get());
+            LOG(("DBE: Parameter %d is '%s'", i, p.utf8StringValue.get()));
             break;
           case STRING:
           {
@@ -2212,24 +2116,25 @@ CDatabaseEngine::RunAnalyze()
               p.stringValue.get(),
               p.stringValue.Length() * sizeof(PRUnichar),
               SQLITE_TRANSIENT);
-             LOG("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get());
+             LOG(("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get()));
             break;
           }
           case DOUBLE:
             sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
-            LOG("DBE: Parameter %d is '%f'", i, p.doubleValue);
+            LOG(("DBE: Parameter %d is '%f'", i, p.doubleValue));
             break;
           case INTEGER32:
             sqlite3_bind_int(pStmt, i + 1, p.int32Value);
-            LOG("DBE: Parameter %d is '%d'", i, p.int32Value);
+            LOG(("DBE: Parameter %d is '%d'", i, p.int32Value));
             break;
           case INTEGER64:
             sqlite3_bind_int64(pStmt, i + 1, p.int64Value);
-            LOG("DBE: Parameter %d is '%ld'", i, p.int64Value);
+            LOG(("DBE: Parameter %d is '%ld'", i, p.int64Value));
             break;
         }
       }
 
+      PRInt32 nRetryCount = 0;
       PRInt32 totalRows = 0;
 
       PRUint64 rollingSum = 0;
@@ -2274,7 +2179,7 @@ CDatabaseEngine::RunAnalyze()
             std::vector<nsString> vCellValues;
             vCellValues.reserve(nCount);
 
-            TRACE("DBE: Result row %d:", totalRows);
+            TRACE(("DBE: Result row %d:", totalRows));
 
             int k = 0;
             // If this is a rolling limit query, increment the rolling
@@ -2300,8 +2205,8 @@ CDatabaseEngine::RunAnalyze()
                 }
 
                 vCellValues.push_back(strCellValue);
-                TRACE("Column %d: '%s' ", k,
-                  NS_ConvertUTF16toUTF8(strCellValue).get());
+                TRACE(("Column %d: '%s' ", k,
+                  NS_ConvertUTF16toUTF8(strCellValue).get()));
               }
               totalRows++;
 
@@ -2311,7 +2216,7 @@ CDatabaseEngine::RunAnalyze()
               if (rollingLimit > 0) {
                 pQuery->SetRollingLimitResult(rollingRowCount);
                 pQuery->SetLastError(SQLITE_OK);
-                TRACE("Rolling limit query complete, %d rows", totalRows);
+                TRACE(("Rolling limit query complete, %d rows", totalRows));
                 finishEarly = PR_TRUE;
               }
             }
@@ -2321,7 +2226,7 @@ CDatabaseEngine::RunAnalyze()
         case SQLITE_DONE:
           {
             pQuery->SetLastError(SQLITE_OK);
-            TRACE("Query complete, %d rows", totalRows);
+            TRACE(("Query complete, %d rows", totalRows));
           }
         break;
 
@@ -2374,13 +2279,13 @@ CDatabaseEngine::RunAnalyze()
       pQuery->m_IsAborting = PR_FALSE;
     }
 
-    LOG("DBE: Notified query monitor.");
+    LOG(("DBE: Notified query monitor."));
 
     //Fire off the callback if there is one.
     pEngine->DoSimpleCallback(pQuery);
-    LOG("DBE: Simple query listeners have been processed.");
+    LOG(("DBE: Simple query listeners have been processed."));
 
-    LOG("DBE: Process End");
+    LOG(("DBE: Process End"));
 
     mon.NotifyAll();
     mon.Exit();
@@ -2847,7 +2752,7 @@ CDatabaseEngine::GetCurrentCollationLocale(nsCString &aCollationLocale) {
     aCollationLocale = buf;
 
   } else {
-    LOG("Could not retrieve the collation locale identifier");
+    LOG(("Could not retrieve the collation locale identifier"));
   }
 #else
 
@@ -2871,8 +2776,7 @@ NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationID(nsAString &aID) {
   return NS_OK;
 }
 
-#ifdef USE_PERF_LOGGING
-
+#ifdef PR_LOGGING
 sbDatabaseEnginePerformanceLogger::sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
                                                                      const nsAString& aGuid) :
   mQuery(aQuery),
@@ -2885,21 +2789,23 @@ sbDatabaseEnginePerformanceLogger::~sbDatabaseEnginePerformanceLogger()
 {
   PRUint32 total = PR_Now() - mStart;
 
-  nsString consoleMessageStr;
-  consoleMessageStr.AppendLiteral("sbDatabaseEnginePerformanceLogger\n\t");
-  consoleMessageStr.AppendLiteral("DB GUID: ");
-  consoleMessageStr.Append(mGuid);
-  consoleMessageStr.AppendLiteral(" -- Execution Time: ");
-  consoleMessageStr.AppendInt(total / PR_USEC_PER_MSEC);
-  consoleMessageStr.AppendLiteral("ms\nQuery:\n\t");
-  consoleMessageStr.Append(mQuery);
-
-  nsCOMPtr<nsIConsoleService> consoleService = 
-    do_GetService("@mozilla.org/consoleservice;1");
-
-  if(consoleService) {
-    consoleService->LogStringMessage(consoleMessageStr.get());    
+  PRUint32 length = mQuery.Length();
+  for (PRUint32 i = 0; i < (length / MAX_PRLOG) + 1; i++) {
+    nsAutoString q(Substring(mQuery, MAX_PRLOG * i, MAX_PRLOG));
+    if (i == 0) {
+      PR_LOG(sDatabaseEnginePerformanceLog, PR_LOG_DEBUG,
+             ("sbDatabaseEnginePerformanceLogger %s\t%u\t%s",
+              NS_LossyConvertUTF16toASCII(mGuid).get(),
+              total,
+              NS_LossyConvertUTF16toASCII(q).get()));
+    }
+    else {
+      PR_LOG(sDatabaseEnginePerformanceLog, PR_LOG_DEBUG,
+             ("sbDatabaseEnginePerformanceLogger +%s",
+              NS_LossyConvertUTF16toASCII(q).get()));
+    }
   }
 }
 
 #endif
+

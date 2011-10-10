@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
 * \file  DeviceBase.cpp
-* \brief Songbird DeviceBase Component Implementation.
+* \brief Nightingale DeviceBase Component Implementation.
 */
 
 #include "DeviceBase.h"
@@ -76,6 +76,17 @@
 #define SOURCE_COLUMN_NAME          NS_LITERAL_STRING("source")
 #define DESTINATION_COLUMN_NAME     NS_LITERAL_STRING("destination")
 #define INDEX_COLUMN_NAME           NS_LITERAL_STRING("id")
+
+// Copied from nsCRT.h
+#if defined(XP_WIN) || defined(XP_OS2)
+  #define FILE_PATH_SEPARATOR       "\\"
+  #define FILE_ILLEGAL_CHARACTERS   "/:*?\"<>|"
+#elif defined(XP_UNIX) || defined(XP_BEOS)
+  #define FILE_PATH_SEPARATOR       "/"
+  #define FILE_ILLEGAL_CHARACTERS   ""
+#else
+  #error need_to_define_your_file_path_separator_and_illegal_characters
+#endif
 
 /*
  * To log this module, set the following environment variable:
@@ -239,7 +250,7 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   }
 
   nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
@@ -381,7 +392,7 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   }
 
   nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
@@ -460,7 +471,7 @@ sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> items;
-  items = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  items = do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
@@ -604,7 +615,7 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   nsresult rv;
   nsCOMPtr<nsIMutableArray> items;
 
-  items = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  items = do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aSourceItem, PR_FALSE);
@@ -1018,7 +1029,7 @@ sbDeviceBase::RegisterDeviceLibrary(sbILibrary* aDeviceLibrary)
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
   libraryManager = 
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->RegisterLibrary(aDeviceLibrary, PR_FALSE);
@@ -1032,7 +1043,7 @@ sbDeviceBase::UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary)
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
   libraryManager = 
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->UnregisterLibrary(aDeviceLibrary);
@@ -1043,7 +1054,7 @@ sbDeviceBase::CreateTransferQueue(const nsAString &aDeviceIdentifier)
 {
   nsresult rv;
   nsCOMPtr<nsIMutableArray> deviceQueue = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(mDeviceQueues.Put(nsAutoString(aDeviceIdentifier), deviceQueue)) {

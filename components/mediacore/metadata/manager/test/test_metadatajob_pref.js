@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -55,10 +55,10 @@ function runTest() {
   
   var prefSvc = Cc["@mozilla.org/preferences-service;1"]
                 .getService(Ci.nsIPrefBranch);
-  var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
+  var oldWritingEnabledPref = prefSvc.getBoolPref("nightingale.metadata.enableWriting");
   
   // While we're at it, confirm that metadata can only be written when allowed via prefs
-  prefSvc.setBoolPref("songbird.metadata.enableWriting", false);
+  prefSvc.setBoolPref("nightingale.metadata.enableWriting", false);
   try {
     startMetadataWriteJob(items);
     // This line should not be reached, as startMetadataWriteJob should throw NS_ERROR_NOT_AVAILABLE
@@ -69,7 +69,7 @@ function runTest() {
     }
   }
   
-  prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
+  prefSvc.setBoolPref("nightingale.metadata.enableWriting", oldWritingEnabledPref); 
   // We're done, so kill all the temp files
   testFolder.remove(true);
   job = null;
@@ -81,9 +81,9 @@ function runTest() {
  * Get an array of all media files below the given folder
  */
 function getMediaFilesInFolder(folder) {
-  var scan = Cc["@songbirdnest.com/Songbird/FileScan;1"]
+  var scan = Cc["@getnightingale.com/Nightingale/FileScan;1"]
                .createInstance(Ci.sbIFileScan);
-  var query = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+  var query = Cc["@getnightingale.com/Nightingale/FileScanQuery;1"]
                .createInstance(Ci.sbIFileScanQuery);
   query.setDirectory(folder.path);
   query.setRecurse(true);
@@ -127,12 +127,12 @@ function importFilesToLibrary(files, library) {
  * Get a metadata job for the given items
  */
 function startMetadataWriteJob(items) {
-  var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var array = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Components.interfaces.nsIMutableArray);
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  manager = Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                       .getService(Components.interfaces.sbIFileMetadataService);
   return manager.write(array);
 }

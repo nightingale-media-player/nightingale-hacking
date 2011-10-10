@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -29,7 +29,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function runTest()
 {
-  var fsWatcher = Cc["@songbirdnest.com/filesystem/watcher;1"]
+  var fsWatcher = Cc["@getnightingale.com/filesystem/watcher;1"]
                     .createInstance(Ci.sbIFileSystemWatcher);
   if (!fsWatcher.isSupported) {
     return;
@@ -42,7 +42,6 @@ function runTest()
                    .getService(Ci.nsIProperties)
                    .get("ProfD", Ci.nsIFile);
 
-  watchDir.normalize();
   watchDir.append("invalid_watch_dir");
   if (watchDir.exists()) {
     // Ensure that the folder does not exist for this test.

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,24 +34,15 @@ function runTest () {
   
   // Make a test library
   var library = createLibrary("test_library_removalmonitor1");
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                                 .getService(Ci.sbILibraryManager);
   libraryManager.registerLibrary(library, false);
   
-  var batchListener = new BatchEndListener();
-  library.addListener(batchListener,
-                      false,
-                      Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
-                        Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND);
-  batchListener.waitForEndBatch();
  
   // Monitor removal of media lists 
   var callback = {
     expectCallback: false,
     seenCallback: false,
-    onBeforeMediaListRemoved: function() {
-      /* nothing */
-    },
     onMediaListRemoved: function() {
       this.seenCallback = true;
     },
@@ -66,10 +57,8 @@ function runTest () {
   // Make sure list removal works
   var list = library.createMediaList("simple");
   callback.expectCallback = true;
-  batchListener.waitForCompletion(function(){
-    monitor.setMediaList(list);
-    library.remove(list);
-  });
+  monitor.setMediaList(list);
+  library.remove(list);
   callback.verify();
   
   // Make sure unsetting the media list works
@@ -77,16 +66,14 @@ function runTest () {
   monitor.setMediaList(list);
   monitor.setMediaList(null);
   callback.expectCallback = false;
-  batchListener.waitForCompletion(function()
-    library.remove(list));
+  library.remove(list);
   callback.verify();
   
   // Make sure removal by library clear works
   list = library.createMediaList("simple");
   callback.expectCallback = true;
   monitor.setMediaList(list);
-  batchListener.waitForCompletion(function()
-    library.clear());
+  library.clear();
   callback.verify();
   
   // Make sure removal in a batch operation works
@@ -114,8 +101,6 @@ function runTest () {
   monitor.setMediaList(library);
   callback.expectCallback = true;
   libraryManager.unregisterLibrary(library);
-  callback.verify();
-  
-  monitor.setMediaList(null);
+  callback.verify();  
 }
 

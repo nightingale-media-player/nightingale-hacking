@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbLocalDatabaseLibraryLoader.h"
 
@@ -72,6 +74,14 @@
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabaseLibraryLoader:5
  */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
+#define TRACE(args) PR_LOG(sLibraryLoaderLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(sLibraryLoaderLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
 
 #define NS_APPSTARTUP_CATEGORY         "app-startup"
 #define NS_FINAL_UI_STARTUP_CATEGORY   "final-ui-startup"
@@ -85,39 +95,34 @@
 #define PREF_RESOURCE_GUID     "resourceGUID"
 
 // This is the pref for the URL on inaccessible library
-#define PREF_SUPPORT_INACCESSIBLE_LIBRARY "songbird.url.support.inaccessiblelibrary"
+#define PREF_SUPPORT_INACCESSIBLE_LIBRARY "nightingale.url.support.inaccessiblelibrary"
 
 #define MINIMUM_LIBRARY_COUNT 2
 #define LOADERINFO_VALUE_COUNT 4
 
 // XXXAus: If you change these, you must change them in DatabaseEngine.cpp
 //         as well. Failure to do so will break corrupt database recovery!
-#define DBENGINE_GUID_MAIN_LIBRARY      "main@library.songbirdnest.com"
-#define DBENGINE_GUID_WEB_LIBRARY       "web@library.songbirdnest.com"
-#define DBENGINE_GUID_PLAYQUEUE_LIBRARY "playqueue@library.songbirdnest.com"
+#define DBENGINE_GUID_MAIN_LIBRARY     "main@library.getnightingale.com"
+#define DBENGINE_GUID_WEB_LIBRARY      "web@library.getnightingale.com"
 
 // XXXben These should be renamed and standardized somehow.
 #define SB_NAMEKEY_MAIN_LIBRARY                            \
-  "&chrome://songbird/locale/songbird.properties#servicesource.library"
+  "&chrome://nightingale/locale/nightingale.properties#servicesource.library"
 #define SB_NAMEKEY_WEB_LIBRARY                             \
-  "&chrome://songbird/locale/songbird.properties#device.weblibrary"
-#define SB_NAMEKEY_PLAYQUEUE_LIBRARY                       \
-  "&chrome://songbird/locale/songbird.properties#playqueue.library"
+  "&chrome://nightingale/locale/nightingale.properties#device.weblibrary"
 
 #define SB_CUSTOMTYPE_MAIN_LIBRARY                            \
   "local"
 #define SB_CUSTOMTYPE_WEB_LIBRARY                             \
   "web"
-#define SB_CUSTOMTYPE_PLAYQUEUE_LIBRARY                       \
-  "playqueue"
 
 #define DEFAULT_COLUMNSPEC_WEB_LIBRARY \
-  NS_LL("http://songbirdnest.com/data/1.0#trackName 264 ") \
-  NS_LL("http://songbirdnest.com/data/1.0#duration 56 ") \
-  NS_LL("http://songbirdnest.com/data/1.0#artistName 209 ") \
-  NS_LL("http://songbirdnest.com/data/1.0#originPageImage 44 ") \
-  NS_LL("http://songbirdnest.com/data/1.0#created 119 d ") \
-  NS_LL("http://songbirdnest.com/data/1.0#downloadButton 83")
+  NS_LL("http://getnightingale.com/data/1.0#trackName 264 ") \
+  NS_LL("http://getnightingale.com/data/1.0#duration 56 ") \
+  NS_LL("http://getnightingale.com/data/1.0#artistName 209 ") \
+  NS_LL("http://getnightingale.com/data/1.0#originPageImage 44 ") \
+  NS_LL("http://getnightingale.com/data/1.0#created 119 d ") \
+  NS_LL("http://getnightingale.com/data/1.0#downloadButton 83")
 
 
 NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibraryLoader, sbILibraryLoader, nsIObserver)
@@ -125,14 +130,16 @@ sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
 : m_DetectedCorruptLibrary(PR_FALSE)
 , m_DeleteLibrariesAtShutdown(PR_FALSE)
 {
-  SB_PRLOG_SETUP(sbLocalDatabaseLibraryLoader);
-
-  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Created", this);
+#ifdef PR_LOGGING
+  if (!sLibraryLoaderLog)
+    sLibraryLoaderLog = PR_NewLogModule("sbLocalDatabaseLibraryLoader");
+#endif
+  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Created", this));
 }
 
 sbLocalDatabaseLibraryLoader::~sbLocalDatabaseLibraryLoader()
 {
-  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Destroyed", this);
+  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Destroyed", this));
 }
 
 /**
@@ -141,7 +148,7 @@ sbLocalDatabaseLibraryLoader::~sbLocalDatabaseLibraryLoader()
 nsresult
 sbLocalDatabaseLibraryLoader::Init()
 {
-  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - Init", this);
+  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - Init", this));
 
   nsresult rv;
 
@@ -178,7 +185,7 @@ sbLocalDatabaseLibraryLoader::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   for (PRUint32 index = 0; index < libraryKeysCount; index++) {
-    // Should be something like "songbird.library.loader.2.loadAtStartup".
+    // Should be something like "nightingale.library.loader.2.loadAtStartup".
     nsCAutoString pref(libraryKeys[index]);
     NS_ASSERTION(StringBeginsWith(pref, NS_LITERAL_CSTRING(PREFBRANCH_LOADER)),
                  "Bad pref string!");
@@ -196,7 +203,7 @@ sbLocalDatabaseLibraryLoader::Init()
     PRUint32 libraryKey = keyString.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Should be something like "songbird.library.loader.13.".
+    // Should be something like "nightingale.library.loader.13.".
     nsCAutoString branchString(Substring(pref, 0, branchLength + keyLength + 1));
     NS_ASSERTION(StringEndsWith(branchString, NS_LITERAL_CSTRING(".")),
                  "Bad pref string!");
@@ -247,16 +254,6 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
     retval = rv;
   }
 
-  rv = EnsureDefaultLibrary(NS_LITERAL_CSTRING(SB_PREF_PLAYQUEUE_LIBRARY),
-                            NS_LITERAL_STRING(DBENGINE_GUID_PLAYQUEUE_LIBRARY),
-                            NS_LITERAL_STRING(SB_NAMEKEY_PLAYQUEUE_LIBRARY),
-                            NS_LITERAL_STRING(SB_CUSTOMTYPE_PLAYQUEUE_LIBRARY),
-                            EmptyString());
-  if (NS_FAILED(rv)) {
-    databasesOkay = PR_FALSE;
-    retval = rv;
-  }
-
   if (! databasesOkay) {
     // Bad database problem.  Later we'll prompt the user.  Now is so early
     // that they would see the prompt again after a silent restart, like
@@ -266,7 +263,7 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
 
     // metric: corrupt database at startup
     nsCOMPtr<sbIMetrics> metrics =
-      do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Metrics;1", &rv);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
     if (NS_SUCCEEDED(rv)) {
       nsString metricsCategory = NS_LITERAL_STRING("app");
@@ -564,25 +561,22 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
   if (promptResult == 0) { 
     m_DeleteLibrariesAtShutdown = PR_TRUE;
 
-    // metric: user chose to delete corrupt library
-    nsCOMPtr<sbIMetrics> metrics =
-     do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
+     // metric: user chose to delete corrupt library
+     nsCOMPtr<sbIMetrics> metrics =
+       do_CreateInstance("@getnightingale.com/Nightingale/Metrics;1", &rv);
+     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
+     
+     nsString metricsCategory = NS_LITERAL_STRING("app");
+     nsString metricsId = NS_LITERAL_STRING("library.error.reset");
+     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
+     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
 
-    // Metrics may not be available.
-    if (metrics) {
-      nsString metricsCategory = NS_LITERAL_STRING("app");
-      nsString metricsId = NS_LITERAL_STRING("library.error.reset");
-      rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
-    }
-
-    // now attempt to quit/restart.
-    nsCOMPtr<nsIAppStartup> appStartup = 
-     (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
+     // now attempt to quit/restart.
+     nsCOMPtr<nsIAppStartup> appStartup = 
+       (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+     NS_ENSURE_SUCCESS(rv, rv);
+  
+     appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
   }
 
   return NS_OK;
@@ -791,7 +785,7 @@ sbLocalDatabaseLibraryLoader::VerifyEntriesCallback(nsUint32HashKey::KeyType aKe
 NS_IMETHODIMP
 sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLibraryManager)
 {
-  TRACE("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this);
+  TRACE(("sbLocalDatabaseLibraryLoader[0x%x] - LoadLibraries", this));
 
   nsresult rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -977,7 +971,7 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
       }
 
       // We want to prompt the user to rescan on restart.
-      nsCAutoString scancompleteBranch("songbird.firstrun.scancomplete");
+      nsCAutoString scancompleteBranch("nightingale.firstrun.scancomplete");
       sbLocalDatabaseLibraryLoader::RemovePrefBranch(scancompleteBranch);
 
       // And delete all the library prefs, so they get recreated on

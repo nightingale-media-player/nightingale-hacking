@@ -67,22 +67,20 @@ app
 branding
 bindings
 components
-documentation
 extensions
-extras
 feathers
 installer
 locales
 tools
-tools/mochitest
 update
 "
+# Removed tools/mochitest and extras from SCANNED_MAKEFILE_DIRS
 
 echo "allmakefiles.sh: finding makefiles..."
-cd ../
+pushd ../
 # Find all Makefile.in file paths, then strip the leading ./ and the trailing .in
 MAKEFILES_auto=`find $SCANNED_MAKEFILE_DIRS -name .svn -prune -or -name Makefile.in -print | perl -pe "s/^\.\///; s/\.in\n\$/ /;"`
-cd compiled
+popd
 echo "allmakefiles.sh: done"
 
 
@@ -103,6 +101,7 @@ MAKEFILES_dependencies="
 dependencies/Makefile
 dependencies/vendor/mozbrowser/Makefile
 dependencies/vendor/mozbrowser/components/preferences/Makefile
+dependencies/vendor/mozbrowser/exthelper/Makefile
 dependencies/vendor/mozbrowser/fuel/Makefile
 dependencies/vendor/mozbrowser/fuel/public/Makefile
 dependencies/vendor/mozbrowser/fuel/src/Makefile

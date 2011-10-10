@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird strings components module.
+// Nightingale strings components module.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbStringsModule.cpp
- * \brief Songbird Strings Component Factory and Main Entry Point.
+ * \brief Nightingale Strings Component Factory and Main Entry Point.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird strings components module imported services.
+// Nightingale strings components module imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -50,25 +50,83 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
 #include <nsServiceManagerUtils.h>
-#include <mozilla/ModuleUtils.h>
-#include <xpcom-config.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service.
+// Nightingale string bundle service.
 //
 //------------------------------------------------------------------------------
 
 // Construct the sbStringBundleService object and call its Initialize method.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStringBundleService, Initialize)
 
+
+/**
+ * Register the Nightingale string bundle service component.
+ */
+
+static NS_METHOD
+sbStringBundleServiceRegister(nsIComponentManager*         aCompMgr,
+                              nsIFile*                     aPath,
+                              const char*                  aLoaderStr,
+                              const char*                  aType,
+                              const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add self to the profile-after-change category (so that the locales are ready)
+  rv = categoryManager->AddCategoryEntry
+                          ("profile-after-change",
+                           SB_STRINGBUNDLESERVICE_CLASSNAME,
+                           "service," SB_STRINGBUNDLESERVICE_CONTRACTID,
+                           PR_TRUE,
+                           PR_TRUE,
+                           nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * Unregister the Nightingale string bundle service component.
+ */
+
+static NS_METHOD
+sbStringBundleServiceUnregister(nsIComponentManager*         aCompMgr,
+                                nsIFile*                     aPath,
+                                const char*                  aLoaderStr,
+                                const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Delete self from the app-startup category.
+  rv = categoryManager->DeleteCategoryEntry("profile-after-change",
+                                            SB_STRINGBUNDLESERVICE_CLASSNAME,
+                                            PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbStringMap stuff
 //------------------------------------------------------------------------------
-
-NS_DEFINE_NAMED_CID(SB_STRINGBUNDLESERVICE_CID);
 
 #define SB_STRINGMAP_CLASSNAME "sbStringMap"
 #define SB_STRINGMAP_CID \
@@ -76,47 +134,44 @@ NS_DEFINE_NAMED_CID(SB_STRINGBUNDLESERVICE_CID);
   { 0xae, 0x12, 0xef, 0x53, 0x93, 0x5d, 0xcf, 0x3e } }
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbStringMap)
-NS_DEFINE_NAMED_CID(SB_STRINGMAP_CID);
 
-// Songbird charset detect utilities defs.
+// Nightingale charset detect utilities defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbCharsetDetector)
-NS_DEFINE_NAMED_CID(SB_CHARSETDETECTOR_CID);
 
 //------------------------------------------------------------------------------
 //
-// Songbird strings components module registration services.
+// Nightingale strings components module registration services.
 //
 //------------------------------------------------------------------------------
 
-
-static const mozilla::Module::CIDEntry kSongbirdMozStringsCIDs[] = {
-    { &kSB_STRINGBUNDLESERVICE_CID, true, NULL, sbStringBundleServiceConstructor },
-    { &kSB_STRINGMAP_CID, false, NULL, sbStringMapConstructor },
-    { &kSB_CHARSETDETECTOR_CID, false, NULL, sbCharsetDetectorConstructor },
-    { NULL }
+// Module component information.
+static nsModuleComponentInfo sbStringsComponents[] =
+{
+  // String bundle service component info.
+  {
+    SB_STRINGBUNDLESERVICE_CLASSNAME,
+    SB_STRINGBUNDLESERVICE_CID,
+    SB_STRINGBUNDLESERVICE_CONTRACTID,
+    sbStringBundleServiceConstructor,
+    sbStringBundleServiceRegister,
+    sbStringBundleServiceUnregister
+  },
+  // sbStringMap
+  {
+    SB_STRINGMAP_CLASSNAME,
+    SB_STRINGMAP_CID,
+    SB_STRINGMAP_CONTRACTID,
+    sbStringMapConstructor
+  },
+  // Nightingale charset detect utilities component info.
+  {
+    SB_CHARSETDETECTOR_CLASSNAME,
+    SB_CHARSETDETECTOR_CID,
+    SB_CHARSETDETECTOR_CONTRACTID,
+    sbCharsetDetectorConstructor
+  }
 };
 
-
-static const mozilla::Module::ContractIDEntry kSongbirdMozStringsContracts[] = {
-    { SB_STRINGBUNDLESERVICE_CONTRACTID, &kSB_STRINGBUNDLESERVICE_CID },
-    { SB_STRINGMAP_CONTRACTID, &kSB_STRINGMAP_CID },
-    { SB_CHARSETDETECTOR_CONTRACTID, &kSB_CHARSETDETECTOR_CID },
-    { NULL }
-};
-
-
-static const mozilla::Module::CategoryEntry kSongbirdMozStringsCategories[] = {
-    { "profile-after-change", SB_STRINGBUNDLESERVICE_CLASSNAME, SB_STRINGBUNDLESERVICE_CONTRACTID },
-    { NULL }
-};
-
-
-static const mozilla::Module kSongbirdMozStringsModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozStringsCIDs,
-    kSongbirdMozStringsContracts,
-    kSongbirdMozStringsCategories
-};
-
-NSMODULE_DEFN(sbMozStringsModule) = &kSongbirdMozStringsModule;
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbStringsModule, sbStringsComponents)
 

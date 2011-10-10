@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://songbirdnest.com
+# http://getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../..
@@ -29,35 +29,32 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = remoteapi
+NIGHTINGALE_TEST_COMPONENT = remoteapi
 
 
 #
-# According to head.songbird.js - |getTestServerPortNumber()|, the default port
+# According to head.nightingale.js - |getTestServerPortNumber()|, the default port
 # number is 8180, but can be set via the enviroment variable
-# |SONGBIRD_TEST_SERVER_PORT|.
+# |NIGHTINGALE_TEST_SERVER_PORT|.
 #
-ifndef SONGBIRD_TEST_SERVER_PORT
+ifndef NIGHTINGALE_TEST_SERVER_PORT
    PP_TEST_SERVER_PORT = 8180
 else
-   PP_TEST_SERVER_PORT = $(SONGBIRD_TEST_SERVER_PORT)
+   PP_TEST_SERVER_PORT = $(NIGHTINGALE_TEST_SERVER_PORT)
 endif
 
-PPDEFINES = -DSONGBIRD_TEST_SERVER_PORT="$(PP_TEST_SERVER_PORT)" \
+PPDEFINES = -DNIGHTINGALE_TEST_SERVER_PORT="$(PP_TEST_SERVER_PORT)" \
             $(NULL)
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/test_batchCalls_page.html.in \
+NIGHTINGALE_PP_RESOURCES = $(srcdir)/test_batchCalls_page.html.in \
                         $(srcdir)/test_privileged_page.html.in \
+                        $(srcdir)/test_remotedownload_page.html.in \
                         $(srcdir)/test_remotelibrary_page.html.in \
+                        $(srcdir)/test_remotemedialist_add_page.html.in \
                         $(srcdir)/media/remoteLibraryTest.m3u.in \
                         $(NULL)
 
-# TODO: XXX Add these tests back in once they are fixed
-# see bugs 23940-23945
-#                        $(srcdir)/test_remotemedialist_add_page.html.in \
-#                        $(srcdir)/test_remotedownload_page.html.in \
-
-SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
+NIGHTINGALE_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/tail_remoteapi.js \
                  $(srcdir)/test_batchCalls.js \
                  $(DEPTH)/components/remoteapi/test/test_batchCalls_page.html \
@@ -65,6 +62,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_crossLibAdd_page.html \
                  $(srcdir)/test_empty.js \
                  $(srcdir)/test_empty_page.html \
+                 $(srcdir)/test_remotedownload.js \
+                 $(DEPTH)/components/remoteapi/test/test_remotedownload_page.html \
                  $(srcdir)/test_remotelibrary.js \
                  $(DEPTH)/components/remoteapi/test/test_remotelibrary_page.html \
                  $(srcdir)/test_remotelibrary_duplicates.js \
@@ -81,6 +80,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remotemedialist_page.html \
                  $(srcdir)/test_remotemedialist_add2.js \
                  $(srcdir)/test_remotemedialist_add2_page.html \
+                 $(srcdir)/test_remotemedialist_add.js \
+                 $(DEPTH)/components/remoteapi/test/test_remotemedialist_add_page.html \
                  $(srcdir)/test_remoteplayer.js \
                  $(srcdir)/test_remoteplayer_page.html \
                  $(srcdir)/test_remoteplayerlisteners.js \
@@ -117,12 +118,5 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(DEPTH)/components/remoteapi/test/remoteLibraryTest.m3u \
                  $(srcdir)/media/nyx_-_Undercover.mp3 \
                  $(NULL)
-
-# TODO: XXX Add these tests back in once they are fixed
-# see bugs 23940-23945
-#                 $(DEPTH)/components/remoteapi/test/test_remotedownload_page.html \
-#                 $(DEPTH)/components/remoteapi/test/test_remotemedialist_add_page.html \
-#                 $(srcdir)/test_remotedownload.js \
-#                 $(srcdir)/test_remotemedialist_add.js \
 
 include $(topsrcdir)/build/rules.mk

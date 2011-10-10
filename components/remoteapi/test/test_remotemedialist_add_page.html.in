@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -33,8 +33,8 @@
 function runTest(tester) {
   try {
 
-    var dlList = songbird.downloadMediaList;
-    var mainLib = songbird.mainLibrary;
+    var dlList = nightingale.downloadMediaList;
+    var mainLib = nightingale.mainLibrary;
     var mainList = mainLib.createSimpleMediaList("testRemoteMediaList");
 
     dlList.clear();
@@ -47,7 +47,7 @@ function runTest(tester) {
     tester.log("");
 
     tester.log("    With download == true:");
-    mainList.add( "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3", true );
+    mainList.add( "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3", true );
 
     tester.assertEqual(mainList.length, 1);
     tester.log("      mainlist length is correct: " + mainList.length);
@@ -55,7 +55,7 @@ function runTest(tester) {
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With download == false:");
-    mainList.add("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3", false);
+    mainList.add("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3", false);
 
     tester.assertEqual(mainList.length, 2);
     tester.log("      mainlist length is correct: " + mainList.length);
@@ -63,7 +63,7 @@ function runTest(tester) {
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With default download:");
-    mainList.add("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/nyx_-_Undercover.mp3");
+    mainList.add("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/nyx_-_Undercover.mp3");
 
     tester.assertEqual(mainList.length, 3);
     tester.log("      mainlist length is correct: " + mainList.length);
@@ -71,7 +71,7 @@ function runTest(tester) {
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With extra args:");
-    mainList.add("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/absent.mp3", true, "extra");
+    mainList.add("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/absent.mp3", true, "extra");
 
     tester.assertEqual(mainList.length, 4);
     tester.log("      mainlist length is correct: " + mainList.length);
@@ -92,7 +92,7 @@ function runTest(tester) {
     tester.log("");
 
     // Test addition by item with and without downloading
-    var item = mainLib.createMediaItem("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3");
+    var item = mainLib.createMediaItem("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3");
     tester.log("    With download == true:");
     mainList.add(item, true);
 
@@ -101,7 +101,7 @@ function runTest(tester) {
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    item = mainLib.createMediaItem("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3");
+    item = mainLib.createMediaItem("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3");
 
     tester.log("    Without download == false:");
     mainList.add(item, false);
@@ -111,7 +111,7 @@ function runTest(tester) {
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    item = mainLib.createMediaItem("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/nyx_-_Undercover.mp3");
+    item = mainLib.createMediaItem("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/nyx_-_Undercover.mp3");
     tester.log("    With default download:");
     mainList.add(item);
 
@@ -120,7 +120,7 @@ function runTest(tester) {
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    item = mainLib.createMediaItem("http://localhost:@SONGBIRD_TEST_SERVER_PORT@/absent.mp3");
+    item = mainLib.createMediaItem("http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/absent.mp3");
     tester.log("    With extra args:");
     mainList.add(item, true, "extra");
 
@@ -142,10 +142,10 @@ function runTest(tester) {
     tester.log("");
 
     // Test addition by item with and without downloading
-    var urls1 = ["http://localhost:@SONGBIRD_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3"];
-    var urls2 = ["http://localhost:@SONGBIRD_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3"];
-    var urls3 = ["http://localhost:@SONGBIRD_TEST_SERVER_PORT@/nyx_-_Undercover.mp3"];
-    var urls4 = ["http://localhost:@SONGBIRD_TEST_SERVER_PORT@/absent.mp3"];
+    var urls1 = ["http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3"];
+    var urls2 = ["http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3"];
+    var urls3 = ["http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/nyx_-_Undercover.mp3"];
+    var urls4 = ["http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/absent.mp3"];
 
     tester.log("    With download == true:");
     mainList.add(urls1, true);
@@ -202,7 +202,7 @@ function runTest(tester) {
     }
 
     try {
-      mainList.add( "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/nyx_-_Undercover.mp3", item );
+      mainList.add( "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/nyx_-_Undercover.mp3", item );
       tester.failNoThrow("     FAIL: add(string, item) didn't throw.");
     } catch (e) {
       tester.log("    SUCCESS: add(string, item) failed: " + e);

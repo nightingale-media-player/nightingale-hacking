@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,51 +22,65 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/preferences.css"?>
-<?xml-stylesheet href="chrome://songbird/skin/preferences/preferences.css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/preferences.css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
 
 <!DOCTYPE window [
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-%songbirdDTD;
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
+<!ENTITY % nightingalePrefsDTD SYSTEM "chrome://nightingale/locale/preferences-nightingale.dtd">
+%nightingalePrefsDTD;
 ]>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/preferences/mainOverlay.js"/>
+          src="chrome://nightingale/content/scripts/preferences/mainOverlay.js"/>
 
-  <!-- Songbird per-pane overlays that tie in with event listeners -->
+  <!-- Nightingale per-pane overlays that tie in with event listeners -->
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/preferences/mainPaneOverlay.js"/>
+          src="chrome://nightingale/content/scripts/preferences/mainPaneOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/preferences/advancedPaneOverlay.js"/>
+          src="chrome://nightingale/content/scripts/preferences/advancedPaneOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/preferences/contentPaneOverlay.js"/>
+          src="chrome://nightingale/content/scripts/preferences/contentPaneOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/preferences/tabPaneOverlay.js"/>
+          src="chrome://nightingale/content/scripts/preferences/tabPaneOverlay.js"/>
 
   <stringbundleset>
-    <stringbundle id="bundleSongbirdPreferences"
-                  src="chrome://songbird/locale/songbird.properties"/>
+    <stringbundle id="bundleNightingalePreferences"
+                  src="chrome://nightingale/locale/nightingale.properties"/>
   </stringbundleset>
 
  <prefwindow id="BrowserPreferences">
    <preferences id="common_prefs">
+     <preference id="manage_media_pref_library_enable"
+                 name="nightingale.media_management.library.enabled"
+		 type="bool"/>
+     <preference id="manage_media_pref_library_folder"
+                 name="nightingale.media_management.library.folder"
+		 type="file"/>
      <preference id="watch_folder_enable_pref"
-                 name="songbird.watch_folder.enable"
+                 name="nightingale.watch_folder.enable"
                  type="bool"/>
      <preference id="watch_folder_path_pref"
-                 name="songbird.watch_folder.path"
+                 name="nightingale.watch_folder.path"
                  type="unichar"/>
    </preferences>
+
+  <prefpane id="paneManageMedia"
+            label="&prefWindow.manageMedia.label;"
+            insertafter="paneMain"
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/manageMediaPrefs.xul" />
 
   <!-- Hide the Applications panel for the moment -->
   <prefpane id="paneApplications"
@@ -79,38 +93,38 @@
   <prefpane id="paneHotkeys"
             label="&hotkeys.prefpane;"
             insertafter="paneMain"
-            src="chrome://songbird/content/xul/preferences/hotKeys.xul" />
+            src="chrome://nightingale/content/xul/preferences/hotKeys.xul" />
 #endif
   <prefpane id="panePlayback"
             label="&playback.prefpane.label;"
             insertafter="paneContent"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/playbackPrefs.xul" />
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/playbackPrefs.xul" />
   <prefpane id="paneCDRip"
             label="&cdrip.prefpane.label;"
             insertafter="panePlayback"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/cdripOverlay.xul" />
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/cdripOverlay.xul" />
   <prefpane id="paneAlbumArtwork"
             label="&albumartpreferences.prefpane.label;"
             insertafter="paneCDRip"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/albumArtwork.xul" />
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/albumArtwork.xul" />
   <prefpane id="paneAddons"
             label="&prefpane.addons.label;"
             insertafter="paneAdvanced"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/addOns.xul" />
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/addOns.xul" />
   <prefpane id="paneRemoteAPI"
             label="&rapi.prefpane.title;"
             insertafter="paneAddons"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/remoteAPI.xul" />
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/remoteAPI.xul" />
   <prefpane id="paneImportMedia"
             label="&import_media.prefs.title;"
             insertafter="paneRemoteAPI"
-            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
-            src="chrome://songbird/content/xul/preferences/importMediaPrefs.xul" />
+            image="chrome://nightingale/skin/base-elements/icon-generic-addon.png"
+            src="chrome://nightingale/content/xul/preferences/importMediaPrefs.xul" />
  </prefwindow>
 
 </overlay>

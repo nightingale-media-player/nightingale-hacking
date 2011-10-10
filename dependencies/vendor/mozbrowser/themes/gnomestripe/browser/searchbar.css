@@ -42,17 +42,12 @@
   border: 0;
 }
 
-.searchbar-engine-button:hover > .button-box {
-  background-color: rgba(255, 255, 255, .2);
-}
-
-.searchbar-engine-button:hover:active > .button-box,
-.searchbar-engine-button[open="true"] > .button-box {
-  background-color: rgba(0, 0, 0, .1);
-}
-
 .searchbar-engine-button[addengines="true"] {
-  -moz-box-shadow: 0 0 5px Highlight inset, 0 0 20px Highlight inset;
+  background-color: Highlight;
+}
+
+.searchbar-engine-button[addengines="true"] > .button-box {
+  background-color: rgba(230, 230, 230, 0.3);
 }
 
 .searchbar-dropmarker-image {
@@ -69,12 +64,12 @@
 
 .search-go-button {
   padding: 1px;
-  list-style-image: url("chrome://global/skin/icons/Search-glass.png");
+  list-style-image: url("chrome://browser/skin/Search-glass.png");
   cursor: pointer;
 }
 
-.search-go-button:-moz-locale-dir(rtl) {
-  -moz-transform: scaleX(-1);
+.search-go-button[chromedir="rtl"] {
+  list-style-image: url("chrome://browser/skin/Search-glass-rtl.png");
 }
 
 menuitem[cmd="cmd_clearhistory"] {

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(280ea825-00bd-4e02-910b-5fd7291903c2)]
+[scriptable, uuid(2b18300c-1dd2-11b2-9349-8307e80c899c)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -49,7 +49,7 @@ interface sbIDeviceInfoRegistrar : nsISupports
   const PRUint32 NONE = 0;
 
   /**
-   * Songbird provided registrars
+   * Nightingale provided registrars
    */
   const PRUint32 DEFAULT = 1;
 
@@ -76,15 +76,6 @@ interface sbIDeviceInfoRegistrar : nsISupports
                        in sbIDeviceCapabilities aDeviceCapabilities);
 
   /**
-   * \brief Return the default name for the device.
-   *
-   * \param aDevice             Device for which to get default name.
-   *
-   * \return                    Device default name.
-   */
-  AString getDefaultName(in sbIDevice aDevice);
-
-  /**
    * \brief Return the device folder URL for the device and content type
    *        specified by aDevice and aContentType.
    *
@@ -95,19 +86,6 @@ interface sbIDeviceInfoRegistrar : nsISupports
    */
   AString getDeviceFolder(in sbIDevice     aDevice,
                           in unsigned long aContentType);
-
-  /**
-   * \brief Return a list of "rules" to apply to files imported from aDevice.
-   *        Each rule is itself an nsIArray of two nsISupportsStrings: a path
-   *        and an "import type" of files residing (recursively) within that
-   *        path.  The import type is a symbolic value that determines how to
-   *        set the media item properties when importing items of that type
-   *        from aDevice.
-   *
-   * \return  the list of import rules for aDevice.  This array can be stored
-   *          with aDevice under SB_DEVICE_PROPERTY_IMPORT_RULES.
-   */
-  nsIArray getImportRules(in sbIDevice   aDevice);
 
   /**
    * \brief Return the mount timeout value in seconds for the device specified
@@ -162,15 +140,6 @@ interface sbIDeviceInfoRegistrar : nsISupports
   nsIArray getStorageDeviceInfoList(in sbIDevice aDevice);
 
   /**
-   * \brief Return the device icon file URL for the device specified by aDevice.
-   *
-   * \param aDevice             Device for which to get icon file.
-   *
-   * \return                    Device icon file URL.
-   */
-  AString getDeviceIcon(in sbIDevice aDevice);
-
-  /**
    * \brief Determines if the registrar is interested in this device
    * \param aDevice The device to check if the registrar is interested in
    */
@@ -188,7 +157,7 @@ interface sbIDeviceInfoRegistrar : nsISupports
 class nsIFile;
 struct nsModuleComponentInfo;
 
-#define SB_DEVICE_INFO_REGISTRAR_CATEGORY "songbird-device-info-registrar"
+#define SB_DEVICE_INFO_REGISTRAR_CATEGORY "nightingale-device-info-registrar"
 
 /**
  * Put this in your module definition file. Give your class name. Then your

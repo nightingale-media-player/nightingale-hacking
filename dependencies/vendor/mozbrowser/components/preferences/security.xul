@@ -40,10 +40,10 @@
 <!DOCTYPE overlay [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
   <!ENTITY % securityDTD SYSTEM "chrome://browser/locale/preferences/security.dtd">
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   %brandDTD;
   %securityDTD;
-  %songbirdDTD;
+  %nightingaleDTD;
 ]>
 
 <overlay id="SecurityPaneOverlay"
@@ -84,7 +84,7 @@
     <!-- addons, forgery (phishing) UI -->
     <groupbox id="addonsPhishingGroup"
               xmlns:aaa="http://www.w3.org/2005/07/aaa">
-      <caption label="&prefs.security.addons.label;" /><!--XXX Songbird: Added -->
+      <caption label="&prefs.security.addons.label;" /><!--XXX Nightingale: Added -->
       <hbox id="addonInstallBox">
         <checkbox id="warnAddonInstall" flex="1"
                   label="&warnAddonInstall.label;"
@@ -97,15 +97,15 @@
                 oncommand="gSecurityPane.showAddonExceptions();"/>
       </hbox>
 
-      <!-- XXX Songbird: we don't support phishing protection right now
+      <!-- XXX Nightingale: we don't support phishing protection right now
       <separator class="thin"/>
-      <checkbox id="blockAttackSites"
-                label="&blockAttackSites.label;"
-                accesskey="&blockAttackSites.accesskey;"
+      <checkbox id="tellMaybeAttackSite"
+                label="&tellMaybeAttackSite.label;"
+                accesskey="&tellMaybeAttackSite.accesskey;"
                 preference="browser.safebrowsing.malware.enabled" />
-      <checkbox id="blockWebForgeries"
-                label="&blockWebForgeries.label;"
-                accesskey="&blockWebForgeries.accesskey;"
+      <checkbox id="tellMaybeForgery"
+                label="&tellMaybeForgery.label;"
+                accesskey="&tellMaybeForgery.accesskey;"
                 preference="browser.safebrowsing.enabled" />
       -->
     </groupbox>

@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,12 +22,12 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -291,7 +291,7 @@
             QueryInterface: this.XPCOMUtils.generateQI([Components.interfaces.sbIMediaListListener])
           };
 
-          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+          var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                              .getService(Components.interfaces.sbIMediacoreManager);
 
           // Setup a playlist-playback listener to keep this binding in sync
@@ -329,7 +329,7 @@
           this._ratingBinding.removeEventListener("input", this._ratingschange, true);
           this._ratingschange = null;
         
-          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+          var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                              .getService(Components.interfaces.sbIMediacoreManager);
           mm.removeListener(this._playbackListener);
           this._playbackListener = null;
@@ -392,7 +392,7 @@
             // if ratings are disabled
             // Note that it is OK to rate items that cannot be written to
             if (!this._curMediaItem.userEditable ||
-                !Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false)) 
+                !Application.prefs.getValue("nightingale.metadata.ratings.enableWriting", false)) 
             {
               return;
             }

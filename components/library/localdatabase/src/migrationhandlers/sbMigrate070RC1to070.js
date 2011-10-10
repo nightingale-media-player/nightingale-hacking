@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -54,7 +54,7 @@ function sbLocalDatabaseMigrate070RC1to070()
 sbLocalDatabaseMigrate070RC1to070.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
 
-  classDescription: 'Songbird Migration Handler for 0.7.0 RC1 to 0.7.0',
+  classDescription: 'Nightingale Migration Handler for 0.7.0 RC1 to 0.7.0',
   classID: Components.ID("{60e48ff7-13b4-498d-9c2e-a077a34a9ca6}"),
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.7.0 RC1 to 0.7.0",
   
@@ -111,7 +111,7 @@ sbLocalDatabaseMigrate070RC1to070.prototype = {
   },
   
   _createQuery: function sbLDBM070RC1to070_createQuery() {
-    var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    var query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                   .createInstance(Ci.sbIDatabaseQuery);
     query.databaseLocation = this._databaseLocation;
     query.setDatabaseGUID(this._databaseGUID);

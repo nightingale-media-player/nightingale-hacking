@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -363,7 +363,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::MakeSearchable(const nsAString & aValue, n
   }
 
   char out[32] = {0};
-  if(PR_snprintf(out, 32, gsSortFmtRadix10, value) == (PRUint32)-1) {
+  if(PR_snprintf(out, 32, gsSortFmtRadix10, value) == -1) {
     rv = NS_ERROR_FAILURE;
     _retval = EmptyString();
   }

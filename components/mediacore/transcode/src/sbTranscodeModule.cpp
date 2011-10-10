@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
  * \file  sbTranscodeModule.cpp
- * \brief Songbird Transcode Component Factory and Main Entry Point.
+ * \brief Nightingale Transcode Component Factory and Main Entry Point.
  */
 
 #include <nsIGenericFactory.h>
@@ -48,39 +48,39 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodingConfigurator);
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_TRANSCODEMANAGER_CLASSNAME,
-    SONGBIRD_TRANSCODEMANAGER_CID,
-    SONGBIRD_TRANSCODEMANAGER_CONTRACTID,
+    NIGHTINGALE_TRANSCODEMANAGER_CLASSNAME,
+    NIGHTINGALE_TRANSCODEMANAGER_CID,
+    NIGHTINGALE_TRANSCODEMANAGER_CONTRACTID,
     sbTranscodeManagerConstructor
   },
   {
-    SONGBIRD_TRANSCODEALBUMART_CLASSNAME,
-    SONGBIRD_TRANSCODEALBUMART_CID,
-    SONGBIRD_TRANSCODEALBUMART_CONTRACTID,
+    NIGHTINGALE_TRANSCODEALBUMART_CLASSNAME,
+    NIGHTINGALE_TRANSCODEALBUMART_CID,
+    NIGHTINGALE_TRANSCODEALBUMART_CONTRACTID,
     sbTranscodeAlbumArtConstructor
   },
   {
-    SONGBIRD_TRANSCODEERROR_CLASSNAME,
-    SONGBIRD_TRANSCODEERROR_CID,
-    SONGBIRD_TRANSCODEERROR_CONTRACTID,
+    NIGHTINGALE_TRANSCODEERROR_CLASSNAME,
+    NIGHTINGALE_TRANSCODEERROR_CID,
+    NIGHTINGALE_TRANSCODEERROR_CONTRACTID,
     sbTranscodeErrorConstructor
   },
   {
-    SONGBIRD_TRANSCODEPROFILE_CLASSNAME,
-    SONGBIRD_TRANSCODEPROFILE_CID,
-    SONGBIRD_TRANSCODEPROFILE_CONTRACTID,
+    NIGHTINGALE_TRANSCODEPROFILE_CLASSNAME,
+    NIGHTINGALE_TRANSCODEPROFILE_CID,
+    NIGHTINGALE_TRANSCODEPROFILE_CONTRACTID,
     sbTranscodeProfileConstructor
   },
   {
-    SONGBIRD_TRANSCODEPROFILELOADER_CLASSNAME,
-    SONGBIRD_TRANSCODEPROFILELOADER_CID,
-    SONGBIRD_TRANSCODEPROFILELOADER_CONTRACTID,
+    NIGHTINGALE_TRANSCODEPROFILELOADER_CLASSNAME,
+    NIGHTINGALE_TRANSCODEPROFILELOADER_CID,
+    NIGHTINGALE_TRANSCODEPROFILELOADER_CONTRACTID,
     sbTranscodeProfileLoaderConstructor
   },
   {
-    SONGBIRD_TRANSCODINGCONFIGURATOR_CLASSNAME,
-    SONGBIRD_TRANSCODINGCONFIGURATOR_CID,
-    SONGBIRD_TRANSCODINGCONFIGURATOR_CONTRACTID,
+    NIGHTINGALE_TRANSCODINGCONFIGURATOR_CLASSNAME,
+    NIGHTINGALE_TRANSCODINGCONFIGURATOR_CID,
+    NIGHTINGALE_TRANSCODINGCONFIGURATOR_CONTRACTID,
     sbTranscodingConfiguratorConstructor
   }
 };
@@ -91,7 +91,7 @@ DestroyModule(nsIModule* self)
   sbTranscodeManager::DestroySingleton();
 }
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdTranscodeComponent,
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(NightingaleTranscodeComponent,
                                    components,
                                    nsnull,
                                    DestroyModule)

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,7 +34,7 @@
 
 /**
 * \file  SeekableChannel.cpp
-* \brief Songbird seekable channel component implementation.
+* \brief Nightingale seekable channel component implementation.
 */
 
 /*******************************************************************************
@@ -247,13 +247,13 @@ NS_IMETHODIMP sbSeekableChannel::Read(
 
     /* Check if channel is restarting. */
     if (NS_SUCCEEDED(result) && (mRestarting))
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
 
     /* Prevent reading past end of file. */
     if (mPos >= mContentLength)
         result = NS_ERROR_UNEXPECTED;
     if (NS_SUCCEEDED(result) && ((mPos + readLength) > mContentLength))
-        readLength = (PRUint32)(mContentLength - mPos);
+        readLength = mContentLength - mPos;
 
     /* Find a segment containing the data to read. */
     if (NS_SUCCEEDED(result))
@@ -262,7 +262,7 @@ NS_IMETHODIMP sbSeekableChannel::Read(
         findSegment.length = 0;
         dataSetIterator = mChannelData.find(&findSegment);
         if (dataSetIterator == mChannelData.end())
-            result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+            result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
     }
 
     /* Check if data segment contains the requested amount of data. */
@@ -271,7 +271,7 @@ NS_IMETHODIMP sbSeekableChannel::Read(
     {
         pSegment = *dataSetIterator;
         if ((mPos + readLength) > (pSegment->offset + pSegment->length))
-            result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+            result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
     }
 
     /* Copy data to read buffer. */
@@ -284,7 +284,7 @@ NS_IMETHODIMP sbSeekableChannel::Read(
     }
 
     /* Restart channel if needed. */
-    if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
+    if (result == NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART)
     {
         /* If the requested data starts in an available segment, restart     */
         /* from the end of the segment.  Otherwise, restart from the current */
@@ -386,7 +386,7 @@ NS_IMETHODIMP sbSeekableChannel::SetPos(
 
     /* Check if channel is restarting. */
     if (mRestarting)
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
 
     /* Find a segment containing the new position. */
     if (NS_SUCCEEDED(result) && (pos < mContentLength))
@@ -395,11 +395,11 @@ NS_IMETHODIMP sbSeekableChannel::SetPos(
         findSegment.length = 0;
         dataSetIterator = mChannelData.find(&findSegment);
         if (dataSetIterator == mChannelData.end())
-            result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+            result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
     }
 
     /* Restart channel if needed. */
-    if (!mRestarting && (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART))
+    if (!mRestarting && (result == NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART))
         Restart(pos);
 
     /* Set the channel position. */
@@ -487,7 +487,7 @@ NS_IMETHODIMP sbSeekableChannel::OnDataAvailable(
 
     /* Do nothing if channel is restarting. */
     if (mRestarting)
-        return (NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART);
+        return (NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART);
 
     /* Read the base channel data into a data segment. */
     if (numBytes > 0)
@@ -570,7 +570,7 @@ NS_IMETHODIMP sbSeekableChannel::OnStopRequest(
 
     /* Do nothing if channel is restarting. */
     if (mRestarting)
-        return (NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART);
+        return (NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART);
 
     /* Channel reading is complete on error or if no data */
     /* has been received since the request was started.   */
@@ -705,7 +705,7 @@ nsresult sbSeekableChannel::ReadSegment(
 {
     Segment                     *pSegment = NULL;
     char                        *buffer = NULL;
-    PRUint64                    readOffset = mBasePos;
+    PRUint64                    readOffset;
     PRUint32                    bytesRead;
     nsresult                    result = NS_OK;
 
@@ -720,6 +720,7 @@ nsresult sbSeekableChannel::ReadSegment(
         result = pStream->Read(buffer, numBytes, &bytesRead);
         if (NS_SUCCEEDED(result))
         {
+            readOffset = mBasePos;
             mBasePos += bytesRead;
             if (mBasePos > mContentLength)
                 mContentLength = mBasePos;

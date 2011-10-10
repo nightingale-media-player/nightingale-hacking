@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,11 +20,11 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
-var SongbirdAdvancedPaneOverlay = {
+var NightingaleAdvancedPaneOverlay = {
   /**
    * This function sets up our UI in the main preferences dialog.
    */
@@ -36,7 +36,7 @@ var SongbirdAdvancedPaneOverlay = {
      }
 
     window.removeEventListener('paneload',
-                               SongbirdAdvancedPaneOverlay.onPaneLoad,
+                               NightingaleAdvancedPaneOverlay.onPaneLoad,
                                false);
 
     // Load advanced preference pane overlay.
@@ -51,7 +51,7 @@ var SongbirdAdvancedPaneOverlay = {
       }
     }
     window.document.loadOverlay
-      ("chrome://songbird/content/xul/preferences/advancedOverlay.xul",
+      ("chrome://nightingale/content/xul/preferences/advancedOverlay.xul",
        observer);
 
     const startTypingCheck = document.getElementById("searchStartTyping");
@@ -67,5 +67,5 @@ var SongbirdAdvancedPaneOverlay = {
 // document.loadOverlay (see preferences.xml) and the load event may fire before
 // our target pane has been integrated.
 window.addEventListener('paneload',
-                        SongbirdAdvancedPaneOverlay.onPaneLoad,
+                        NightingaleAdvancedPaneOverlay.onPaneLoad,
                         false);

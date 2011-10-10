@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -130,7 +130,7 @@ public:
     if (mShouldScan && length) {
 
       nsCOMPtr<nsIMutableArray> mediaItems =
-        do_CreateInstance( "@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv );
+        do_CreateInstance( "@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv );
       NS_ENSURE_SUCCESS(rv, rv);
 
       for ( PRUint32 index = 0; index < length; index++ ) {
@@ -144,7 +144,7 @@ public:
       }
 
       nsCOMPtr<sbIFileMetadataService> metadataService =
-        do_GetService( "@songbirdnest.com/Songbird/FileMetadataService;1", &rv );
+        do_GetService( "@getnightingale.com/Nightingale/FileMetadataService;1", &rv );
       NS_ENSURE_SUCCESS(rv, rv);
       nsCOMPtr<sbIJobProgress> job;
 
@@ -288,7 +288,7 @@ sbRemoteLibraryBase::SetProperty( const nsAString& aID, const nsAString& aValue 
 
   nsresult rv;
   // rules
-  // 1) Don't allow modification of http://songbird properties for the main library
+  // 1) Don't allow modification of http://nightingale properties for the main library
   // 2) ONLY allow modificatoin of the hidden property for site libraries
 
   // Find out if we are trying to set properties on the main library
@@ -300,10 +300,10 @@ sbRemoteLibraryBase::SetProperty( const nsAString& aID, const nsAString& aValue 
   NS_ENSURE_SUCCESS( rv, rv );
 
   if (isMain) {
-    // are we trying to set a songbird property?
+    // are we trying to set a nightingale property?
     if ( StringBeginsWith( aID,
-                           NS_LITERAL_STRING("http://songbirdnest.com/") ) ) {
-      // don't allow songbird properties to be modified on main library
+                           NS_LITERAL_STRING("http://getnightingale.com/") ) ) {
+      // don't allow nightingale properties to be modified on main library
       LOG_LIB(( "sbRemoteLibraryBase::SetProperty() - DENIED" ));
       return NS_ERROR_FAILURE;
     }
@@ -388,7 +388,7 @@ sbRemoteLibraryBase::ConnectToDefaultLibrary( const nsAString &aLibName )
 
     // See if the library manager has it lying around.
     nsCOMPtr<sbILibraryManager> libManager(
-        do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv ) );
+        do_GetService( "@getnightingale.com/Nightingale/library/Manager;1", &rv ) );
     NS_ENSURE_SUCCESS( rv, rv );
 
     rv = libManager->GetLibrary( guid, getter_AddRefs(mLibrary) );
@@ -440,14 +440,14 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   if (mShouldScan) {
 
     nsCOMPtr<sbIFileMetadataService> metadataService =
-      do_GetService( "@songbirdnest.com/Songbird/FileMetadataService;1", &rv );
+      do_GetService( "@getnightingale.com/Nightingale/FileMetadataService;1", &rv );
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get FileMetadataService!");
 
     if(NS_SUCCEEDED(rv)) {
       LOG_LIB(("sbRemoteLibraryBase::CreateMediaItem() -- doing a MD scan"));
 
       nsCOMPtr<nsIMutableArray> mediaItems = 
-        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+        do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mediaItems->AppendElement(mediaItem, PR_FALSE);
@@ -578,7 +578,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aName,
       ->Action(sbRemoteNotificationManager::eUpdatedWithPlaylists, mLibrary);
 
   nsCOMPtr<sbIPlaylistReaderManager> manager =
-       do_GetService( "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+       do_GetService( "@getnightingale.com/Nightingale/PlaylistReaderManager;1",
                       &rv );
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -597,7 +597,7 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aName,
   }
 
   nsCOMPtr<sbIPlaylistReaderListener> lstnr =
-      do_CreateInstance( "@songbirdnest.com/Songbird/PlaylistReaderListener;1",
+      do_CreateInstance( "@getnightingale.com/Nightingale/PlaylistReaderListener;1",
                          &rv );
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -893,7 +893,7 @@ sbRemoteLibraryBase::GetConstraint(sbILibraryConstraint * *aConstraint)
 {
   nsresult rv;
   nsCOMPtr<sbILibraryConstraintBuilder> builder =
-    do_CreateInstance( "@songbirdnest.com/Songbird/Library/ConstraintBuilder;1",
+    do_CreateInstance( "@getnightingale.com/Nightingale/Library/ConstraintBuilder;1",
                        &rv );
   NS_ENSURE_SUCCESS( rv, rv );
   return builder->Get(aConstraint);
@@ -992,7 +992,7 @@ NS_IMETHODIMP
 sbRemoteLibraryBase::GetClassName( char * *aClassName )
 {
   NS_ENSURE_ARG_POINTER(aClassName);
-  *aClassName = ToNewCString( NS_LITERAL_CSTRING("SongbirdLibrary") );
+  *aClassName = ToNewCString( NS_LITERAL_CSTRING("NightingaleLibrary") );
   NS_ENSURE_TRUE( aClassName, NS_ERROR_OUT_OF_MEMORY );
   return NS_OK;
 }
@@ -1208,9 +1208,9 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
 
   // match the 'magic' strings to the keys for the prefs
   if ( aLibraryID.EqualsLiteral("main") ) {
-    prefKey.AssignLiteral("songbird.library.main");
+    prefKey.AssignLiteral("nightingale.library.main");
   } else if ( aLibraryID.EqualsLiteral("web") ) {
-    prefKey.AssignLiteral("songbird.library.web");
+    prefKey.AssignLiteral("nightingale.library.web");
   }
 
   // right now just bail if it isn't a default
@@ -1219,7 +1219,7 @@ sbRemoteLibraryBase::GetLibraryGUID( const nsAString &aLibraryID,
     // ultimately we need to be able to get the GUID for non-default libraries
     //   if we are going to allow the library manager to manage them.
     // We might want to do the string hashing here and add keys for
-    //   songbird.library.site.hashkey
+    //   nightingale.library.site.hashkey
     return NS_ERROR_FAILURE;
   }
 
@@ -1347,7 +1347,7 @@ sbRemoteLibraryBase::FindMediaItemWithMatchingScope( const nsCOMArray<sbIMediaIt
   NS_ENSURE_TRUE(itemCount, nsnull);
 
   for (PRInt64 setIndex = itemCount - 1; setIndex >= 0; setIndex--) {
-    const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt((PRUint32)setIndex);
+    const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt(setIndex);
 
     nsCString path(set.scopePath);
     rv = sbURIChecker::CheckPath( path, siteScopeURI );

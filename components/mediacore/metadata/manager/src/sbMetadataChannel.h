@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -43,11 +43,11 @@
 #include <map>
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATACHANNEL_CONTRACTID               \
-  "@songbirdnest.com/Songbird/MetadataChannel;1"
-#define SONGBIRD_METADATACHANNEL_CLASSNAME                \
-  "Songbird Metadata Channel Helper"
-#define SONGBIRD_METADATACHANNEL_CID                      \
+#define NIGHTINGALE_METADATACHANNEL_CONTRACTID               \
+  "@getnightingale.com/Nightingale/MetadataChannel;1"
+#define NIGHTINGALE_METADATACHANNEL_CLASSNAME                \
+  "Nightingale Metadata Channel Helper"
+#define NIGHTINGALE_METADATACHANNEL_CID                      \
 { /* 37595d88-f49e-4309-89a1-376749a4b285 */              \
   0x37595d88,                                             \
   0xf49e,                                                 \
@@ -118,7 +118,7 @@ private:
 };
 
 // Now I have a slightly smaller chance of getting screwed.
-#define NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
+#define NS_ERROR_NIGHTINGALE_METADATA_CHANNEL_RESTART NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
 
 #endif // __METADATA_CHANNEL_H__
 

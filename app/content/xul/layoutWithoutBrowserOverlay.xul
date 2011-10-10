@@ -3,12 +3,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -23,7 +23,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -37,20 +37,20 @@
 
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 <!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
 <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 %charsetDTD;
 %browserDTD;
 ]>
 
 <!-- Include the overlay common to all layouts -->
-<?xul-overlay href="chrome://songbird/content/xul/layoutBaseOverlay.xul"?>
+<?xul-overlay href="chrome://nightingale/content/xul/layoutBaseOverlay.xul"?>
 
 <!-- This is only here for backward compatibility, do not target -->
-<?xul-overlay href="chrome://songbird/content/xul/miniScriptsOverlay.xul"?>
+<?xul-overlay href="chrome://nightingale/content/xul/miniScriptsOverlay.xul"?>
 
 <overlay
   id="layoutWithBrowserOverlay"
@@ -126,7 +126,7 @@
   <!-- ********************************************************************* -->
   
   <script type="application/x-javascript"   
-  src="chrome://songbird/content/scripts/miniPlayer.js" />
+  src="chrome://nightingale/content/scripts/miniPlayer.js" />
 
 
   <!-- ********************************************************************* -->

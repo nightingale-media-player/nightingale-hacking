@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -113,7 +113,7 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-bar-notches,
 .device-capacity-box-overlay {
-  background-image: url('chrome://songbird/skin/device/capacity-bar-shadow.png');
+  background-image: url('chrome://nightingale/skin/device/capacity-bar-shadow.png');
   background-repeat: repeat-x;
   background-position: left center;
 }

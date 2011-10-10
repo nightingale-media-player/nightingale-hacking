@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \brief AddOn Panes Unit Test File
@@ -41,7 +43,7 @@ function runTest () {
 
   log("Testing DisplayPanes Service:");
 
-  paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+  paneMgr = Cc["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
               .getService(Ci.sbIDisplayPaneManager);
 
   testDisplayPanesService();
@@ -67,27 +69,17 @@ function testDisplayPanesService() {
   log("Testing registration via install.rdf");
 
   // This content should have been supplied by the test-extension/install.rdf
-  testContent("chrome://songbird-test-display-pane/content/testDisplayPane.html", 
-              "chrome://songbird-test-display-pane/content/testDisplayPane.html", 
+  testContent("chrome://nightingale-test-display-pane/content/testDisplayPane.html", 
+              "chrome://nightingale-test-display-pane/content/testDisplayPane.html", 
               "Display Pane Test", 
-              "http://www.songbirdnest.com/favicon.ico", 180, 50, "test-content-group");
-
-  // This content should have been registered by the component in
-  // ../src/sbTestDisplayPaneProvider.js
-  log("Testing component in display-pane-provider category");
-  testContent("provider_component_contentUrl",
-              "provider_component_contentUrl",
-              "provider_component_contentTitle",
-              "provider_component_contentIcon",
-              220, 340, "provider_component_suggestedContentGroups");
+              "http://www.getnightingale.com/favicon.ico", 180, 50, "test-content-group");
 
   // Be sure to remove any registered panes so we can start with a fresh list,
   // then register them again when we are done so we don't affect other tests.
   var installedList = paneMgr.contentList;
   var paneList = []; // Keep a list of registered panes for after the test.
   while (installedList.hasMoreElements()) {
-    var contentInfo =
-        installedList.getNext().QueryInterface(Ci.sbIDisplayPaneContentInfo);
+    var contentInfo = installedList.getNext();
     paneList[contentInfo.contentUrl] = contentInfo;
   }
 
@@ -219,7 +211,6 @@ function testDisplayPanesService() {
   testInfo(loaded, "url2", "title2", "icon2", 30, 40, "group2");
   assertEquals(group, "group2", "group");
   assertEquals(h2, paneMgr.getInstantiatorForWindow(h2.contentWindow), "instantiator");
-  paneMgr.unregisterContent("url2");
   paneMgr.unregisterInstantiator(h1);
   paneMgr.unregisterInstantiator(h2);
   paneMgr.unregisterInstantiator(h3);

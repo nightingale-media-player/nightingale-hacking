@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -35,8 +35,8 @@
   %wizardDTD;
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
   %brandDTD;
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-  %songbirdDTD;
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+  %nightingaleDTD;
 ]>
 
 <bindings
@@ -47,10 +47,10 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * Songbird wizard dialog.
+   * Nightingale wizard dialog.
    *
-   *   Customized Songbird wizard dialog widget.
-   *   This Songbird wizard provides support for showing pages after the wizard
+   *   Customized Nightingale wizard dialog widget.
+   *   This Nightingale wizard provides support for showing pages after the wizard
    * has finished.  These may be used to show download or installation status
    * after the wizard settings have been committed.  If the wizard is finished,
    * the postFinish property will be true.
@@ -122,7 +122,7 @@
       <!--
        * Private fields.
        *
-       *   _widgetSvc           Songbird wizard widget services object.
+       *   _widgetSvc           Nightingale wizard widget services object.
        -->
 
       <field name="_widgetSvc"/>
@@ -151,7 +151,7 @@
         this._widgetSvc.initialize();
 
         // Handle showChrome=true
-        var plucked = Application.prefs.getValue("songbird.accessibility.enabled", false);
+        var plucked = Application.prefs.getValue("nightingale.accessibility.enabled", false);
         if (plucked) {
           document.documentElement.removeAttribute("hidechrome");
           var header = document.getAnonymousElementByAttribute(this, "anonid", "Header");
@@ -181,14 +181,14 @@
        -->
 
       <method name="_importExternalServices"><body><![CDATA[
-        // Import the Songbird wizard page widget services.
+        // Import the Nightingale wizard page widget services.
         if (typeof(sbWizardSvc) == "undefined") {
           var Cc = Components.classes;
           var Ci = Components.interfaces;
           var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
                            .getService(Ci.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
-                     ("chrome://songbird/content/scripts/wizardService.js",
+                     ("chrome://nightingale/content/scripts/wizardService.js",
                       null);
         }
       ]]></body></method>
@@ -201,12 +201,12 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * Songbird wizard page.
+   * Nightingale wizard page.
    *
-   *   Customized Songbird wizard page widget.
-   *   The Songbird wizard page allows wizard button display to be controlled by
+   *   Customized Nightingale wizard page widget.
+   *   The Nightingale wizard page allows wizard button display to be controlled by
    * the various hide and show button attributes (e.g., "hideback").
-   *   Along with the Songbird wizard widget, the Songbird wizard page provides
+   *   Along with the Nightingale wizard widget, the Nightingale wizard page provides
    * support for post-finish pages.  These may be used for post-finish
    * downloading and installation.  The last regular wizard page (i.e., one with
    * no "next" attribute) may navigate to a post-finish page by specifying a
@@ -262,19 +262,11 @@
       <!--
        * Private fields.
        *
-       *   _widgetSvc           Songbird wizard page widget services object.
+       *   _widgetSvc           Nightingale wizard page widget services object.
        -->
 
-      <field name="_visited"/>
       <field name="_widgetSvc"/>
 
-
-      <property name="visited" onget="return this._visited;">
-        <setter>
-          this._visited = val;
-          return this.visited;
-        </setter>
-      </property>
 
       <!-- *********************************************************************
        *
@@ -318,45 +310,19 @@
        -->
 
       <method name="_importExternalServices"><body><![CDATA[
-        // Import the Songbird wizard page widget services.
+        // Import the Nightingale wizard page widget services.
         if (typeof(sbWizardPageSvc) == "undefined") {
           var Cc = Components.classes;
           var Ci = Components.interfaces;
           var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
                            .getService(Ci.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
-                     ("chrome://songbird/content/scripts/wizardService.js",
+                     ("chrome://nightingale/content/scripts/wizardService.js",
                       null);
         }
       ]]></body></method>
 
     </implementation>
-
-    <!-- ***********************************************************************
-     *
-     * Handlers.
-     *
-     *********************************************************************** -->
-    
-    <handlers>
-     
-      <handler event="pageadvanced">
-        this.visited = true;
-        return true;
-      </handler>
-      
-      <!--
-       * Deal with the optional prev= attribute
-       -->
-      <handler event="pagerewound">
-        this.visited = false;
-        if (this.hasAttribute("prev")) {
-          document.documentElement.goTo(this.getAttribute("prev"));
-          return false;
-        }
-        return true;
-      </handler>
-    </handlers>
 
   </binding> <!-- sb-wizard-page" -->
 
@@ -364,10 +330,10 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * Songbird wizard buttons.
+   * Nightingale wizard buttons.
    *
    *   This binding is used to override the OS dependent wizard buttons to
-   * provide a single Songbird wizard button set for all OS'es.  This binding
+   * provide a single Nightingale wizard button set for all OS'es.  This binding
    * is derived from the Mac OS/X wizard buttons binding.
    *
    *****************************************************************************

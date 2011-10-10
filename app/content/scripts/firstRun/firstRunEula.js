@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -45,7 +45,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
@@ -185,8 +185,8 @@ firstRunEULASvc.prototype = {
     this._domEventListenerSet = new DOMEventListenerSet();
 
     // Get the first-run wizard and wizard page elements.
-    this._wizardPageElem = this._widget;
-    this._wizardElem = this._wizardPageElem.ownerDocument.documentElement;
+    this._wizardPageElem = this._widget.parentNode;
+    this._wizardElem = this._wizardPageElem.parentNode;
 
     // Initialize the locale services.
     this._localeInitialize();
@@ -200,13 +200,6 @@ firstRunEULASvc.prototype = {
     func = function(aEvent) { _this._doPageAdvanced(aEvent); };
     this._domEventListenerSet.add(this._wizardPageElem,
                                   "pageadvanced",
-                                  func,
-                                  false);
-
-    // Attach an event listener to the Quit button.
-    func = function(aEvent) { firstRunWizard.doQuit(aEvent); };
-    this._domEventListenerSet.add(this._wizardPageElem,
-                                  "extra1",
                                   func,
                                   false);
 
@@ -266,7 +259,7 @@ firstRunEULASvc.prototype = {
   _doPageShow: function firstRunEULASvc__doPageShow() {
     // If the EULA has already been accepted or we're perf testing, skip the
     // first-run wizard EULA page.
-    var eulaAccepted = Application.prefs.getValue("songbird.eulacheck", false);
+    var eulaAccepted = Application.prefs.getValue("nightingale.eulacheck", false);
     if (eulaAccepted || this._perfTest) {
       this._advance();
       return;
@@ -274,10 +267,6 @@ firstRunEULASvc.prototype = {
 
     // Dispatch to the locale services.
     this._localeDoPageShow();
-
-    // Set the quit button label.
-    this._wizardElem.getButton("extra1").label =
-      SBString("first_run.quit");
 
     // Update the UI.
     this._update();
@@ -292,7 +281,7 @@ firstRunEULASvc.prototype = {
 
   _doPageAdvanced: function firstRunEULASvc__doPageAdvanced(aEvent) {
     // Don't advance if EULA not accepted.
-    var eulaAccepted = Application.prefs.getValue("songbird.eulacheck", false);
+    var eulaAccepted = Application.prefs.getValue("nightingale.eulacheck", false);
     var acceptCheckboxElem = this._getElement("accept_checkbox");
     if (!eulaAccepted && !acceptCheckboxElem.checked) {
       aEvent.preventDefault();
@@ -300,7 +289,7 @@ firstRunEULASvc.prototype = {
     }
 
     // Set the EULA accepted preference and flush to disk.
-    Application.prefs.setValue("songbird.eulacheck", true);
+    Application.prefs.setValue("nightingale.eulacheck", true);
     var prefService = Cc["@mozilla.org/preferences-service;1"]
                         .getService(Ci.nsIPrefService);
     prefService.savePrefFile(null);
@@ -372,7 +361,7 @@ firstRunEULASvc.prototype = {
     // Get the current locale.
     var chromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"]
                            .getService(Ci.nsIXULChromeRegistry);
-    this._currentLocale = chromeRegistry.getSelectedLocale("songbird");
+    this._currentLocale = chromeRegistry.getSelectedLocale("nightingale");
 
     // Get the system locale.
     var localeService = Cc["@mozilla.org/intl/nslocaleservice;1"]
@@ -485,7 +474,7 @@ firstRunEULASvc.prototype = {
     // Check if locale is already installed.
     var chromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"]
                            .getService(Ci.nsIToolkitChromeRegistry);
-    var installedLocaleEnum = chromeRegistry.getLocalesForPackage("songbird");
+    var installedLocaleEnum = chromeRegistry.getLocalesForPackage("nightingale");
     while (installedLocaleEnum.hasMore()) {
       // Get the next installed locale info.
       var installedLocaleTag = installedLocaleEnum.getNext();
@@ -591,7 +580,7 @@ firstRunEULASvc.prototype = {
     // Get info for all installed locales.
     var chromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"]
                            .getService(Ci.nsIToolkitChromeRegistry);
-    var localeEnum = chromeRegistry.getLocalesForPackage("songbird");
+    var localeEnum = chromeRegistry.getLocalesForPackage("nightingale");
     while (localeEnum.hasMore())
     {
       // Get the locale info.
@@ -808,11 +797,11 @@ firstRunEULASvc.prototype = {
     // Start loading the locale bundle data.
     if (!this._localeBundle) {
       // Set up the locale bundle for loading.
-      this._localeBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
+      this._localeBundle = Cc["@getnightingale.com/Nightingale/Bundle;1"]
                              .createInstance(Ci.sbIBundle);
       this._localeBundle.bundleId = "locales";
       this._localeBundle.bundleURL =
-        Application.prefs.getValue("songbird.url.locales", "default");
+        Application.prefs.getValue("nightingale.url.locales", "default");
       this._localeBundle.addBundleDataListener(this);
 
       // Start loading the locale bundle data.
@@ -865,7 +854,7 @@ firstRunEULASvc.prototype = {
        * Start and stop so we get a timestamp for when the EULA is displayed
        * We only care about the start time to calc from app start to EULA
        */
-      var timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+      var timingService = Cc["@getnightingale.com/Nightingale/TimingService;1"]
                           .getService(Ci.sbITimingService);
       timingService.startPerfTimer("CSPerfEULA");
       timingService.stopPerfTimer("CSPerfEULA");
@@ -899,7 +888,7 @@ firstRunEULASvc.prototype = {
 
     // If the EULA has already been accepted or we're perf testing, skip the
     // first-run wizard EULA page.
-    var eulaAccepted = Application.prefs.getValue("songbird.eulacheck", false);
+    var eulaAccepted = Application.prefs.getValue("nightingale.eulacheck", false);
     if (eulaAccepted || this._perfTest) {
       this._advance();
       return;

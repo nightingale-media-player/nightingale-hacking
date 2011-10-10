@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -33,17 +33,17 @@
       var mainLib;
 
       var init = function init() {
-        mainLib = songbird.libraries("main");
+        mainLib = nightingale.libraries("main");
       }
 
       // Set the site library as the web playlist
       var setMain = function setMain() {
-        songbird.webPlaylist.mediaList = mainLib;
+        nightingale.webPlaylist.mediaList = mainLib;
       }
 
       var countSelection = function countSelection() {
         var myDiv = document.getElementById("output");
-        var enumerator = songbird.webPlaylist.selection;
+        var enumerator = nightingale.webPlaylist.selection;
         var count = 0;
         while (enumerator.hasMoreElements() ) {
           var indexed  = enumerator.getNext();
@@ -51,7 +51,7 @@
           count++;
           myDiv.appendChild(
             document.createTextNode( "selected track is: " +
-                                     item.getProperty("http://songbirdnest.com/data/1.0#trackName") +
+                                     item.getProperty("http://getnightingale.com/data/1.0#trackName") +
                                      " index: " + indexed.index ) );
           myDiv.appendChild(document.createElement("br"));
         }
@@ -66,8 +66,8 @@
     <h1>Excercise the Remote Library API</h1>
     
     <p> Force a web playlist to appear. <br />
-      <a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Loveshadow</a>
-      <a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3">Sawtooth</a>
+      <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Loveshadow</a>
+      <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3">Sawtooth</a>
     <form>
       <input type="button" id="set_main_button" value="Set Main Lib"
              onclick="setMain();" /> 

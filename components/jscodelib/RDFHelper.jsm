@@ -30,10 +30,10 @@
  *   RDFHelper.help:
  *     Accepts URI strings representing a datasource, a resource, and an object containing namespaces.
  *     namespaces look like: { "rdf:/namespace/prefix/whatever": "prefix_", "trimmed-prefix": "" }
- *     EXAMPLE: RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.prototype.DEFAULT_RDF_NAMESPACES);
+ *     EXAMPLE: RDFHelper.help("rdf:addon-metadata", "urn:nightingale:addon:root", RDFHelper.prototype.DEFAULT_RDF_NAMESPACES);
  * 
  *   RDFHelper.DEFAULT_RDF_NAMESPACES{_PREFIXED}:
- *     For convenience, provides rdf, mozilla, and songbird namespace objects that translate namespaces into object property prefixes.
+ *     For convenience, provides rdf, mozilla, and nightingale namespace objects that translate namespaces into object property prefixes.
  *     With _PREFIXED, your properties will begin with rdf_, moz_ or sb_. Without, namespaces will simply be removed.
  *     If you are concerned about collisions, be sure to map only one prefix to "".
  * 
@@ -41,7 +41,7 @@
  * 
  * get the first display pane from the first addon and copy its properties into the "info" object. 
  * 
- * var addons = RDFHelper.help("rdf:addon-metadata", "urn:songbird:addon:root", RDFHelper.prototype.DEFAULT_RDF_NAMESPACES);
+ * var addons = RDFHelper.help("rdf:addon-metadata", "urn:nightingale:addon:root", RDFHelper.prototype.DEFAULT_RDF_NAMESPACES);
  * if (addons[0].displayPanes && addons[0].displayPanes[0].displayPane[0]) {
  *   var pane = addons[0].displayPanes[0].displayPane[0]
  *   var info = {};
@@ -182,11 +182,11 @@ RDFHelper.help = function(datasource, resource, namespaces) {
 RDFHelper.DEFAULT_RDF_NAMESPACES = {
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "",
   "http://www.mozilla.org/2004/em-rdf#": "",
-  "http://www.songbirdnest.com/2007/addon-metadata-rdf#": ""
+  "http://www.getnightingale.com/2007/addon-metadata-rdf#": ""
 };
 
 RDFHelper.DEFAULT_RDF_NAMESPACES_PREFIXED = {
   "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf_",
   "http://www.mozilla.org/2004/em-rdf#": "moz_",
-  "http://www.songbirdnest.com/2007/addon-metadata-rdf#": "sb_"
+  "http://www.getnightingale.com/2007/addon-metadata-rdf#": "sb_"
 };

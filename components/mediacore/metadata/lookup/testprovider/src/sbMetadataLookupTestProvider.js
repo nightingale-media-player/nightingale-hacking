@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -99,20 +99,20 @@ var notIncredibad = [
   ];
 
 var instantJunk = [
-  {artist: "Songbird", title: "No Data"},
+  {artist: "Nightingale", title: "No Data"},
   ];
 
 sbTestProvider.prototype = {
-  classDescription : 'Songbird Test Metadata Lookup Service',
+  classDescription : 'Nightingale Test Metadata Lookup Service',
   classID : Components.ID('9e599632-1dd1-11b2-ab82-e0952e7285ce'),
-  contractID : '@songbirdnest.com/Songbird/MetadataLookup/testProvider;1',
+  contractID : '@getnightingale.com/Nightingale/MetadataLookup/testProvider;1',
   QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupProvider,
                                           Ci.nsITimerCallback]),
 
   name : "TestProvider",
   weight : 9999, // set weight to 1 so it can be overridden by Gracenote
   description : "Test provider.  Unless you like Britney, U2, or Midnight Rock, you probably don't want this.",
-  infoURL : "http://getsongbird.com",
+  infoURL : "http://getnightingale.com",
 
   identifyTOC : function sbTestProvider_identifyTOC(aTOC) {
     if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 15 &&
@@ -139,7 +139,7 @@ sbTestProvider.prototype = {
     var id = this.identifyTOC(aTOC);
     this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     
-    var job = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
+    var job = Cc["@getnightingale.com/Nightingale/MetadataLookup/job;1"]
                 .createInstance(Ci.sbIMetadataLookupJob);
     job.init(Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP,
              Ci.sbIJobProgress.STATUS_RUNNING);
@@ -186,7 +186,7 @@ sbTestProvider.prototype = {
   },
 
   getAlbumDetail: function(album) {
-    var job = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
+    var job = Cc["@getnightingale.com/Nightingale/MetadataLookup/job;1"]
                   .createInstance(Ci.sbIMetadataLookupJob);
     job.init(Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP,
              Ci.sbIJobProgress.STATUS_RUNNING);
@@ -203,7 +203,7 @@ sbTestProvider.prototype = {
     a.QueryInterface = XPCOMUtils.generateQI([Ci.sbIMetadataAlbumDetail]);
     a.tracks = null;
     a.properties =
-        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
            .createInstance(Ci.sbIMutablePropertyArray);
 
     a.properties.appendProperty(SBProperties.genre, genre);
@@ -212,7 +212,7 @@ sbTestProvider.prototype = {
 
     a.tracks = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
     for (var i = 0; i < albumToc.length; i++) {
-      var track = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+      var track = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                     .createInstance(Ci.sbIMutablePropertyArray);
       var trackInfo = albumToc[i];
       track.appendProperty(SBProperties.albumArtistName, artistName);
@@ -257,7 +257,7 @@ sbTestProvider.prototype = {
     } else if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INSTANT_JUNK)
     {
       // return a dummy disc immediately
-      var a = this.makeAlbum(instantJunk, "Songbird", "Instant Junk",
+      var a = this.makeAlbum(instantJunk, "Nightingale", "Instant Junk",
                              "Soundtrack");
 
       // append this result & declare success

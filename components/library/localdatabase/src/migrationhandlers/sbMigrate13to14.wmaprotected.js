@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -56,7 +56,7 @@ function sbLibraryMigration()
 
 sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
-  classDescription: 'Songbird Migration Handler, version ' +
+  classDescription: 'Nightingale Migration Handler, version ' +
                      FROM_VERSION + ' to ' + TO_VERSION,
   classID: Components.ID("{925d55b1-9fed-451b-857b-3cdb08150d8c}"),
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID +
@@ -69,7 +69,7 @@ sbLibraryMigration.prototype = {
   fromVersion: FROM_VERSION,
   toVersion: TO_VERSION,
   migrate: function sbLibraryMigration_migrate(aLibrary) {
-    if (!("@songbirdnest.com/Songbird/MetadataHandler/WMA;1" in Cc)) {
+    if (!("@getnightingale.com/Nightingale/MetadataHandler/WMA;1" in Cc)) {
       // no WMA metadata handler - nothing to do here
       var query = this.createMigrationQuery(aLibrary);
       query.addQuery("commit");
@@ -85,7 +85,7 @@ sbLibraryMigration.prototype = {
       this._databaseLocation = aLibrary.databaseLocation;
 
       // Run a query to figure out the property ID for the new property
-      var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+      var query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                     .createInstance(Ci.sbIDatabaseQuery);
       query.databaseLocation = aLibrary.databaseLocation;
       query.setDatabaseGUID(aLibrary.databaseGuid);
@@ -104,7 +104,7 @@ sbLibraryMigration.prototype = {
       var propertyId = query.getResultObject().getRowCell(0, 0);
 
       // Run a query to look for all m4p files and assume they are protected :(
-      query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+      query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                     .createInstance(Ci.sbIDatabaseQuery);
       query.databaseLocation = aLibrary.databaseLocation;
       query.setDatabaseGUID(aLibrary.databaseGuid);
@@ -122,7 +122,7 @@ sbLibraryMigration.prototype = {
       }
 
       // Run a query to look for all wma files :(
-      query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+      query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                     .createInstance(Ci.sbIDatabaseQuery);
       query.databaseLocation = aLibrary.databaseLocation;
       query.setDatabaseGUID(aLibrary.databaseGuid);
@@ -147,7 +147,7 @@ sbLibraryMigration.prototype = {
       }
 
       // find the guids of the tracks with DRM
-      var handler = Cc["@songbirdnest.com/Songbird/MetadataHandler/WMA;1"]
+      var handler = Cc["@getnightingale.com/Nightingale/MetadataHandler/WMA;1"]
                       .createInstance(Ci.sbIMetadataHandlerWMA);
       var ioService = Cc["@mozilla.org/network/io-service;1"]
                         .getService(Ci.nsIIOService);

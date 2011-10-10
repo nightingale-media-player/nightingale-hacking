@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**       
  * \file sbICommandLineFlagHandler.idl
- * \brief Songbird Commandline Flag Handler Interface file
+ * \brief Nightingale Commandline Flag Handler Interface file
  * This file contains the interface used by the commandline flag handlers, 
  * to receive commandline flags and notifications of new flags
  * coming from remote instances. Handlers registered last have priority
@@ -38,7 +38,7 @@
 
 /**
  * \interface sbICommandLineFlagHandler sbICommandLineFlagHandler.h
- * \brief Songbird Command line flag handler Interface
+ * \brief Nightingale Command line flag handler Interface
  */
 
 [scriptable, uuid(c17916d1-c2a1-47cb-ae87-2eb03c0760db)]

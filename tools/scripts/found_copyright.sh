@@ -2,7 +2,7 @@
 
 # This script is not intended to be run manually, it is called by check_copyright.sh
 
-# $1 = the working directory for the copyright checker (eg. "/c/Projects/Songbird/trunk/tools/scripts")
+# $1 = the working directory for the copyright checker (eg. "/c/Projects/Nightingale/trunk/tools/scripts")
 # $2 = a line of result from the search performed by search_copyright.sh (eg. "<file_name>:<line_number>:<matching_line>")
 
 if test "$1" == ""; then

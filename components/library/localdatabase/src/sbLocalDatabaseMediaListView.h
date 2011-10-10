@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,6 +36,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
+#include <nsWeakReference.h>
 #include <prlock.h>
 #include <sbIFilterableMediaListView.h>
 #include <sbIMediaListListener.h>
@@ -46,7 +47,6 @@
 #include <sbISortableMediaListView.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
-#include <sbWeakReference.h>
 
 #include "sbLocalDatabaseMediaListBase.h"
 
@@ -60,7 +60,7 @@ class sbLocalDatabaseTreeView;
 class sbLocalDatabaseCascadeFilterSet;
 class sbLocalDatabaseMediaListViewSelection;
 
-class sbLocalDatabaseMediaListView : public sbSupportsWeakReference,
+class sbLocalDatabaseMediaListView : public nsSupportsWeakReference,
                                      public sbIMediaListView,
                                      public sbIMediaListListener,
                                      public sbIFilterableMediaListView,
@@ -137,7 +137,7 @@ private:
 
   nsresult CreateQueries();
 
-  nsresult Invalidate(PRBool aInvalidateLength = PR_FALSE);
+  nsresult Invalidate();
 
   nsresult ClonePropertyArray(sbIPropertyArray* aSource,
                               sbIMutablePropertyArray** _retval);

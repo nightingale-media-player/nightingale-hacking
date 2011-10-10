@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2007 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -32,8 +32,8 @@
   <script>
 
 var gMusicURLArray =
-  [ "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3",
-    "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3" ];
+  [ "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/DJBLUE_-_Hear_Me.mp3",
+    "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/jaspertine_-_Introvert.mp3" ];
 
 // These forms aren't getting supported yet.
 /*
@@ -50,16 +50,16 @@ function runBatchCallsTest(tester) {
   // security at the end.
   tester.setAllAccess();
 
-  var siteLib = songbird.siteLibrary;
-  var mainLib = songbird.mainLibrary;
+  var siteLib = nightingale.siteLibrary;
+  var mainLib = nightingale.mainLibrary;
   var siteList = siteLib.createSimpleMediaList("siteList");
   var mainList = mainLib.createSimpleMediaList("mainList");
   var mediaItem = {};
 
 
-  var objs = { mainLib: songbird.mainLibrary,
+  var objs = { mainLib: nightingale.mainLibrary,
                mainList: mainList,
-               siteLib: songbird.siteLibrary,
+               siteLib: nightingale.siteLibrary,
                siteList: siteList };
 
   // length of each object at each point

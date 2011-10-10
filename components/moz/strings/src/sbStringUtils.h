@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SBSTRINGUTILS_H__
@@ -30,7 +30,6 @@
 #include <nsStringAPI.h>
 #include <nsTArray.h>
 #include <prprf.h>
-#include <sbMemoryUtils.h>
 
 class nsIStringEnumerator;
 
@@ -40,11 +39,6 @@ class nsIStringEnumerator;
 class sbAutoString : public nsAutoString
 {
 public:
-  sbAutoString(const char* aValue)
-  {
-    AssignLiteral(aValue);
-  }
-
   sbAutoString(int aValue)
   {
     char valueStr[64];
@@ -53,21 +47,19 @@ public:
     AssignLiteral(valueStr);
   }
 
-  sbAutoString(PRUint32 aValue,
-               PRBool aHex = PR_FALSE,
-               PRBool aHexPrefix = PR_TRUE)
+  sbAutoString(PRUint32 aValue, PRBool aHex = PR_FALSE, PRBool aHexPrefix = PR_TRUE)
   {
     char valueStr[64];
 
     if(!aHex) {
-      PR_snprintf(valueStr, sizeof(valueStr), "%lu", long(aValue));
+      PR_snprintf(valueStr, sizeof(valueStr), "%lu", aValue);
     }
     else {
       if(aHexPrefix) {
-        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", long(aValue));
+        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", aValue);
       }
       else {
-        PR_snprintf(valueStr, sizeof(valueStr), "%lx", long(aValue));
+        PR_snprintf(valueStr, sizeof(valueStr), "%lx", aValue);
       }
     }
 
@@ -89,77 +81,6 @@ public:
     PR_snprintf(valueStr, sizeof(valueStr), "%llu", aValue);
     AssignLiteral(valueStr);
   }
-
-  sbAutoString(nsID* aValue)
-  {
-    char idString[NSID_LENGTH];
-    aValue->ToProvidedString(idString);
-    AssignLiteral(idString);
-  }
-};
-
-/**
- * Class used to create strings from other data types.
- */
-class sbCAutoString : public nsCAutoString
-{
-public:
-  sbCAutoString(const char* aValue)
-  {
-    AssignLiteral(aValue);
-  }
-
-  sbCAutoString(int aValue)
-  {
-    char valueStr[64];
-
-    PR_snprintf(valueStr, sizeof(valueStr), "%d", aValue);
-    AssignLiteral(valueStr);
-  }
-
-  sbCAutoString(PRUint32 aValue,
-                PRBool aHex = PR_FALSE,
-                PRBool aHexPrefix = PR_TRUE)
-  {
-    char valueStr[64];
-
-    if(!aHex) {
-      PR_snprintf(valueStr, sizeof(valueStr), "%lu", long(aValue));
-    }
-    else {
-      if(aHexPrefix) {
-        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", long(aValue));
-      }
-      else {
-        PR_snprintf(valueStr, sizeof(valueStr), "%lx", long(aValue));
-      }
-    }
-
-    AssignLiteral(valueStr);
-  }
-
-  sbCAutoString(PRInt64 aValue)
-  {
-    char valueStr[64];
-
-    PR_snprintf(valueStr, sizeof(valueStr), "%lld", aValue);
-    AssignLiteral(valueStr);
-  }
-
-  sbCAutoString(PRUint64 aValue)
-  {
-    char valueStr[64];
-
-    PR_snprintf(valueStr, sizeof(valueStr), "%llu", aValue);
-    AssignLiteral(valueStr);
-  }
-
-  sbCAutoString(nsID* aValue)
-  {
-    char idString[NSID_LENGTH];
-    aValue->ToProvidedString(idString);
-    AssignLiteral(idString);
-  }
 };
 
 /**
@@ -176,19 +97,6 @@ public:
   }
 };
 
-/**
- * Class used to pass void strings to functions.
- *
- * E.g., SomeFunction(SBVoidCString());
- */
-class SBVoidCString : public nsCString
-{
-public:
-  SBVoidCString()
-  {
-    SetIsVoid(PR_TRUE);
-  }
-};
 /// @see nsString::FindCharInSet
 PRInt32 nsString_FindCharInSet(const nsAString& aString,
                                const char *aPattern,
@@ -199,20 +107,6 @@ void AppendInt(nsAString& str, PRUint64 val);
 PRInt64 nsString_ToInt64(const nsAString& str, nsresult* rv = nsnull);
 
 PRUint64 nsString_ToUint64(const nsAString& str, nsresult* rv = nsnull);
-
-/**
- * Trim whitespace from the beginning and end of a string; then compress
- * remaining runs of whitespace characters to a single space.
- *
- * \param aString               String to compress.
- * \param aLeading              Whether to compress the leading whitespace.
- * \param aTrailing             Whether to compress the trailing whitespace.
- *
- * @see CompressWhitespace in nsStringAPI.
- */
-void SB_CompressWhitespace(nsAString& aString,
-                           PRBool aLeading = PR_TRUE,
-                           PRBool aTrailing = PR_TRUE);
 
 nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                                    nsIStringEnumerator* aRight,
@@ -285,27 +179,10 @@ void nsCString_Split(const nsACString&    aString,
                      const nsACString&    aDelimiter,
                      nsTArray<nsCString>& aSubStringArray);
 
-/**
- * Creates an ISO 8610 formatted time string from the aTime passed in
- * \param aTime The time to create the formatted string
- * \return The time as an ISO 8601 formatted string
- */
-nsString SB_FormatISO8601TimeString(PRTime aTime);
-
-/**
- * Parse the ISO 8601 formatted time string specified by aISO8601TimeString and
- * return the time in aTime.
- *
- * \param aISO8601TimeString    ISO 8601 formatted time string to parse.
- * \param aTime                 Returned time.
- */
-nsresult SB_ParseISO8601TimeString(const nsAString& aISO8601TimeString,
-                                   PRTime*          aTime);
-
 /*
- * Songbird string bundle URL.
+ * Nightingale string bundle URL.
  */
-#define SB_STRING_BUNDLE_URL "chrome://songbird/locale/songbird.properties"
+#define SB_STRING_BUNDLE_URL "chrome://nightingale/locale/nightingale.properties"
 
 /**
  * Get and return in aString the localized string with the key specified by aKey
@@ -313,7 +190,7 @@ nsresult SB_ParseISO8601TimeString(const nsAString& aISO8601TimeString,
  * found, return the default string specified by aDefault; if aDefault is not
  * specified, return aKey.
  *
- * If aStringBundle is not specified, use the main Songbird string bundle.
+ * If aStringBundle is not specified, use the main Nightingale string bundle.
  *
  * \param aString               Returned localized string.
  * \param aKey                  Localized string key.
@@ -511,78 +388,5 @@ sbAppendStringEnumerator(StringType&     aStringArray,
   return NS_OK;
 }
 
-//
-// Auto-disposal class wrappers.
-//
-//   sbAutoSmprintf             Wrapper to auto-free strings created by
-//                              smprintf.
-//
-
-SB_AUTO_NULL_CLASS(sbAutoSmprintf, char*, PR_smprintf_free(mValue));
-
-/**
- * This method escapes strings for use in HTML/XML.documents
- * copied from nsEscape.cpp version of nsEscapeHTML2
- */
-template <class T>
-T sbEscapeXML(T const & aSrc)
-{
-  T result;
-  typename T::char_type const * src;
-  typename T::char_type const * srcEnd;
-  aSrc.BeginReading(&src, &srcEnd);
-
-  typename T::char_type * destStart;
-  typename T::char_type * destEnd;
-  result.BeginWriting(&destStart, &destEnd, (aSrc.Length() * 6 + 1));
-  typename T::char_type * dest = destStart;
-
-  while (src != srcEnd) {
-    const char c = *src++;
-    // Escape the character if needed
-    switch (c) {
-      case '<':
-        *dest++ = '&';
-        *dest++ = 'l';
-        *dest++ = 't';
-        *dest++ = ';';
-      break;
-      case '>':
-        *dest++ = '&';
-        *dest++ = 'g';
-        *dest++ = 't';
-        *dest++ = ';';
-      break;
-      case '&':
-        *dest++ = '&';
-        *dest++ = 'a';
-        *dest++ = 'm';
-        *dest++ = 'p';
-        *dest++ = ';';
-      break;
-      case '"':
-        *dest++ = '&';
-        *dest++ = 'q';
-        *dest++ = 'u';
-        *dest++ = 'o';
-        *dest++ = 't';
-        *dest++ = ';';
-      break;
-      case '\'':
-        *dest++ = '&';
-        *dest++ = '#';
-        *dest++ = '3';
-        *dest++ = '9';
-        *dest++ = ';';
-      break;
-      default:
-        *dest++ = c;
-      break;
-    }
-  }
-
-  result.SetLength(dest - destStart);
-  return result;
-}
-
 #endif /* __SBSTRINGUTILS_H__ */
+

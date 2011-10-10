@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __METADATA_HANDLER_TAGLIB_H__
@@ -35,7 +35,7 @@
 
 /**
 * \file  MetadataHandlerTaglib.h
-* \brief Songbird MetadataHandlerTaglib Component Definition.
+* \brief Nightingale MetadataHandlerTaglib Component Definition.
 */
 
 /* *****************************************************************************
@@ -48,11 +48,11 @@
  * Taglib metadata handler XPCOM component definitions.
  */
 
-#define SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID                              \
-                        "@songbirdnest.com/Songbird/MetadataHandler/Taglib;1"
-#define SONGBIRD_METADATAHANDLERTAGLIB_CLASSNAME                               \
-                                    "Songbird Taglib Metadata Handler Component"
-#define SONGBIRD_METADATAHANDLERTAGLIB_CID                                     \
+#define NIGHTINGALE_METADATAHANDLERTAGLIB_CONTRACTID                              \
+                        "@getnightingale.com/Nightingale/MetadataHandler/Taglib;1"
+#define NIGHTINGALE_METADATAHANDLERTAGLIB_CLASSNAME                               \
+                                    "Nightingale Taglib Metadata Handler Component"
+#define NIGHTINGALE_METADATAHANDLERTAGLIB_CID                                     \
 {                                                                              \
     0x62f2be31,                                                                \
     0x54cf,                                                                    \
@@ -78,7 +78,7 @@
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
 
-/* Songbird imports. */
+/* Nightingale imports. */
 #include <sbIMetadataHandler.h>
 #include <sbISeekableChannel.h>
 #include <sbITagLibChannelFileIOManager.h>

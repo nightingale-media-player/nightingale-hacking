@@ -1,27 +1,29 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbLocalDatabaseSimpleMediaList.h"
 
@@ -55,7 +57,6 @@
 #include <pratom.h>
 #include <sbLocalDatabaseMediaListView.h>
 #include <sbStandardProperties.h>
-#include <sbStringUtils.h>
 #include <sbSQLBuilderCID.h>
 
 #define DEFAULT_SORT_PROPERTY NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)
@@ -115,100 +116,38 @@ static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
     NS_ENSURE_ARG_MAX(_index2, length - 1); \
   SB_ENSURE_INDEX_END
 
-class sbAddSomeEnumListener : public sbIAddMediaItemsListener
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIADDMEDIAITEMSLISTENER
-
-  sbAddSomeEnumListener(
-        nsIArray * aItemsToAdd,
-        nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> & aForeignItems):
-          mItemsToAdd(aItemsToAdd),
-          mForeignItems(aForeignItems),
-          mIndex(0)
-  {
-  }
-private:
-  nsIArray * mItemsToAdd;
-  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> & mForeignItems;
-  PRUint32 mIndex;
-};
-
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbAddSomeEnumListener,
-                              sbIAddMediaItemsListener);
-
-NS_IMETHODIMP
-sbAddSomeEnumListener::OnItemAdded(sbIMediaItem * aMediaItem)
-{
-  nsresult rv;
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-
-  nsCOMPtr<sbIMediaItem> existingItem = do_QueryElementAt(mItemsToAdd,
-                                                          mIndex++,
-                                                          &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ASSERTION(mForeignItems.Get(existingItem, nsnull),
-               "The old item should be in the hashtable!");
-
-  PRBool success = mForeignItems.Put(existingItem, aMediaItem);
-  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbAddSomeEnumListener::OnComplete()
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbAddSomeEnumListener::OnProgress(PRUint32 aItemsCompleted, PRBool aCompleted)
-{
-  return NS_OK;
-}
-
 /**
  * Support class used to run async versions of sbIMediaList methods
  * implemented by the sbLocalDatabaseSimpleMediaList.
  */
-class sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner : public nsIRunnable
+class sbLocalDatabaseSimpleMediaListAsyncRunner : public nsIRunnable
 {
 public:
   NS_DECL_ISUPPORTS
 
-  explicit sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner(
+  explicit sbLocalDatabaseSimpleMediaListAsyncRunner(
     sbLocalDatabaseSimpleMediaList* aLocalDatabaseSimpleMediaList,
     nsISimpleEnumerator* aMediaItems,
-    nsISupports * aListener,
-    PRUint32 aStartingIndex,
-    const nsAString& aStartingOrdinal)
+    sbIMediaListAsyncListener* aListener)
     : mLocalDatabaseSimpleMediaList(aLocalDatabaseSimpleMediaList)
     , mListener(aListener)
-    , mMediaItems(aMediaItems)
-    , mStartingIndex(aStartingIndex)
-    , mStartingOrdinal(aStartingOrdinal) {}
+    , mMediaItems(aMediaItems) {}
+  
   NS_IMETHOD Run() {
     nsresult rv = 
       mLocalDatabaseSimpleMediaList->AddSomeAsyncInternal(mMediaItems, 
-                                                          mListener,
-                                                          mStartingIndex,
-                                                          mStartingOrdinal);
+                                                          mListener);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
 
 private:
   nsRefPtr<sbLocalDatabaseSimpleMediaList> mLocalDatabaseSimpleMediaList;
-  nsCOMPtr<nsISupports>                    mListener;
+  nsCOMPtr<sbIMediaListAsyncListener>      mListener;
   nsCOMPtr<nsISimpleEnumerator>            mMediaItems;
-  PRUint32                                 mStartingIndex;
-  nsString                                 mStartingOrdinal;
 };
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner,
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseSimpleMediaListAsyncRunner,
                               nsIRunnable);
 
 // This class is stack-only but needs to act like an XPCOM object.  Add dummy
@@ -240,7 +179,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* 
   NS_ASSERTION(aMediaList != mFriendList,
                "Can't enumerate our friend media list!");
 
-  PRBool success = mItemsToCreateOrAdd.Init();
+  PRBool success = mItemsToCreate.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mFriendList->GetLibrary(getter_AddRefs(mListLibrary));
@@ -274,38 +213,35 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
   rv = itemLibrary->Equals(mListLibrary, &sameLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const PRBool itemIsInMainLibrary = sbIsMainLibrary(itemLibrary);
-
   nsString listLibGuid;
   rv = mListLibrary->GetGuid(listLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> foundItem;
-
   PRBool success;
   NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
   NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-  if (!sameLibrary && !mItemsToCreateOrAdd.Get(aMediaItem, nsnull)) {
+  if (!sameLibrary && !mItemsToCreate.Get(aMediaItem, nsnull)) {
     // This item comes from another library so we'll need to add it to our
     // library before it can be used.
 
     // but first check if we have an existing item that is close enough
-    // Use the origin guids if present, but not if the item is in the main
-    // library, as they may point back to an item that no longer exists.
     nsString originLibGuid, originItemGuid;
     rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (originLibGuid.IsEmpty() || itemIsInMainLibrary) {
+    if (originLibGuid.IsEmpty()) {
       rv = itemLibrary->GetGuid(originLibGuid);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    // check if we have an item that originated from the same item
     rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (originItemGuid.IsEmpty() || itemIsInMainLibrary) {
+    if (originItemGuid.IsEmpty()) {
       rv = aMediaItem->GetGuid(originItemGuid);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
+    nsCOMPtr<sbIMediaItem> foundItem;
     // if the origin library is this library, just look for the item
     if (listLibGuid.Equals(originLibGuid)) {
       // the origin item was from this library
@@ -336,59 +272,16 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
 
       foundItem = guidCheckHelper->GetItem(); /* null if not found */
     }
-    // At this point we've either found a corresponding media item or not in
-    // which case we'll map to null
-    success = mItemsToCreateOrAdd.Put(aMediaItem, foundItem);
+
+    success = mItemsToCreate.Put(aMediaItem, foundItem);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
 
-  // Capture all the media items we see in the order found so we can
-  // properly add them in the correct order. We need to use the found item if
-  // there is one since that's the one we'll want to add.
-  success = mItemList.AppendObject(foundItem ? foundItem.get() : aMediaItem);
+  // Remember this media item.
+  success = mItemList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
-
-  return NS_OK;
-}
-
-nsresult
-sbSimpleMediaListInsertingEnumerationListener::UpdateItemsInForeignLib(
-    nsIArray * aExistingItems,
-    nsIArray * aNewItems)
-{
-  NS_ENSURE_ARG_POINTER(aExistingItems);
-  NS_ENSURE_ARG_POINTER(aNewItems);
-
-  nsresult rv;
-
-  PRUint32 existingItemsCount;
-  rv = aExistingItems->GetLength(&existingItemsCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 newItemsCount;
-  rv = aNewItems->GetLength(&newItemsCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ASSERTION(existingItemsCount == newItemsCount,
-               "The number of existing items much match the number of new items");
-  // For each new item that was created, update the mItemsInForeignLib
-  for (PRUint32 index = 0; index < existingItemsCount; index++) {
-    nsCOMPtr<sbIMediaItem> existingItem = do_QueryElementAt(aExistingItems,
-                                                            index,
-                                                            &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediaItem> newItem = do_QueryElementAt(aNewItems, index, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ASSERTION(mItemsToCreateOrAdd.Get(existingItem, nsnull),
-                 "The old item should be in the hashtable!");
-
-    PRBool success = mItemsToCreateOrAdd.Put(existingItem, newItem);
-    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-  }
 
   return NS_OK;
 }
@@ -406,7 +299,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   NS_ASSERTION(aMediaList != mFriendList,
                "Can't enumerate our friend media list!");
 
-  const PRUint32 itemCount = mItemList.Count();
+  PRUint32 itemCount = mItemList.Count();
   if (!itemCount) {
     NS_WARNING("OnEnumerationEnd called with no items enumerated");
     return NS_OK;
@@ -414,135 +307,126 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
 
   nsresult rv;
 
-  // This will be the collection of items that will need to be created
-  nsCOMPtr<nsIMutableArray> itemsToAdd =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // This will be the collection of items that will need to be created
-  nsCOMPtr<nsIMutableArray> itemsToCreate =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // This will be the collection of URI's for the itemsToCreate above
-  nsCOMPtr<nsIMutableArray> itemsToCreateURIs =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // This traverses mItemList looking for items that need to be created
-  // meaning there is a corresponding entry in mItemsInForeignLib but the
-  // value is null.
-  PRUint32 numItems = mItemList.Count();
-  for (PRUint32 i = 0; i < numItems; i++) {
-    sbIMediaItem * const item = mItemList[i];
-
-    nsCOMPtr<sbIMediaItem> existing;
-    // See if this item needs to be created or added. There are three cases:
-    // 1. The item is not in mItemsToCreateOrAdd which means it's already in the
-    //    target library
-    // 2. The item is in mItemsToCreateOrAdd but the value is null. This means
-    //    the item needs to be created.
-    // 3. The item is in mItemsToCreateOrAdd and has a value. This means the
-    //    item exists in the main library and needs to be added to the target
-    const PRBool found = mItemsToCreateOrAdd.Get(item,
-                                                getter_AddRefs(existing));
-    if (found) {
-      if (existing) {
-        rv = itemsToAdd->AppendElement(existing, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        nsCOMPtr<nsIURI> uri;
-        rv = item->GetContentSrc(getter_AddRefs(uri));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = itemsToCreate->AppendElement(item, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = itemsToCreateURIs->AppendElement(uri, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-  }
-
-  PRUint32 itemsToCreateCount;
-  rv = itemsToCreate->GetLength(&itemsToCreateCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Skip the following if there are no items to add
+  PRUint32 itemsToCreateCount = mItemsToCreate.Count();
   if (itemsToCreateCount) {
 
-    nsCOMPtr<nsIMutableArray> propertyArrayArray =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    nsCOMPtr<nsIMutableArray> oldItems =
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    for (PRUint32 i = 0; i < itemsToCreateCount; i++) {
-      nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(itemsToCreate, i, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIMutableArray> oldURIs =
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIPropertyArray> properties;
-      rv = item->GetProperties(nsnull, getter_AddRefs(properties));
-      NS_ENSURE_SUCCESS(rv, rv);
+    // Build a list of the items to create.
+    PRUint32 numItems = mItemList.Count();
+    for (PRUint32 i = 0; i < numItems; i++) {
+      nsCOMPtr<sbIMediaItem> existing;
+      mItemsToCreate.Get(mItemList[i], getter_AddRefs(existing));
+      if (!existing) {
+        nsCOMPtr<nsIURI> uri;
+        rv = mItemList[i]->GetContentSrc(getter_AddRefs(uri));
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIPropertyArray> filteredProperties;
-      rv = mFriendList->GetFilteredPropertiesForNewItem(properties,
-                                                        getter_AddRefs(filteredProperties));
-      NS_ENSURE_SUCCESS(rv, rv);
+        rv = oldItems->AppendElement(mItemList[i], PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
-        do_QueryInterface(filteredProperties, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // keep track of the library/item guid that we just copied from
-      rv = mFriendList->GetOriginProperties(item, mutableProperties);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = propertyArrayArray->AppendElement(filteredProperties, PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
+        rv = oldURIs->AppendElement(uri, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
 
-    // Creating the items, we shouldn't have to look for dupes since
-    // that's been done previously.
-    nsCOMPtr<nsIArray> newItems;
-    rv = mListLibrary->BatchCreateMediaItems(itemsToCreateURIs,
-                                             propertyArrayArray,
-                                             PR_TRUE,
-                                             getter_AddRefs(newItems));
+    nsCOMPtr<nsIMutableArray> propertyArrayArray =
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 newItemCount;
-    rv = newItems->GetLength(&newItemCount);
+    PRUint32 oldItemCount;
+    rv = oldItems->GetLength(&oldItemCount);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Skip the following if there are no items to add
+    if (oldItemCount) {
+
+      for (PRUint32 i = 0; i < oldItemCount; i++) {
+        nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(oldItems, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIPropertyArray> properties;
+        rv = item->GetProperties(nsnull, getter_AddRefs(properties));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIPropertyArray> filteredProperties;
+        rv = mFriendList->GetFilteredPropertiesForNewItem(properties,
+                                                          getter_AddRefs(filteredProperties));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
+          do_QueryInterface(filteredProperties, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // keep track of the library/item guid that we just copied from
+        NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+        NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+        nsString existingGuid, sourceGuid;
+
+        rv = filteredProperties->GetPropertyValue(PROP_LIBRARY, existingGuid);
+        if (rv == NS_ERROR_NOT_AVAILABLE) {
+          nsCOMPtr<sbILibrary> oldLibrary;
+          rv = item->GetLibrary(getter_AddRefs(oldLibrary));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = oldLibrary->GetGuid(sourceGuid);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        rv = filteredProperties->GetPropertyValue(PROP_ITEM, existingGuid);
+        if (rv == NS_ERROR_NOT_AVAILABLE) {
+          rv = item->GetGuid(sourceGuid);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        rv = propertyArrayArray->AppendElement(filteredProperties, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      nsCOMPtr<nsIArray> newItems;
+      rv = mListLibrary->BatchCreateMediaItems(oldURIs,
+                                               propertyArrayArray,
+                                               PR_TRUE,
+                                               getter_AddRefs(newItems));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 newItemCount;
+      rv = newItems->GetLength(&newItemCount);
+      NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef DEBUG
-    PRUint32 itemsToCreateCount;
-    rv = itemsToCreateURIs->GetLength(&itemsToCreateCount);
-    NS_ASSERTION(NS_SUCCEEDED(rv) && newItemCount == itemsToCreateCount,
-                 "BatchCreateMediaItems didn't make the right number of items!");
+      NS_ASSERTION(newItemCount == oldItemCount,
+                   "BatchCreateMediaItems didn't make the right number of items!");
 #endif
 
-    rv = UpdateItemsInForeignLib(itemsToCreate, newItems);
-    NS_ENSURE_SUCCESS(rv, rv);
+      for (PRUint32 index = 0; index < newItemCount; index++) {
+        nsCOMPtr<sbIMediaItem> oldItem = do_QueryElementAt(oldItems, index, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
 
+        nsCOMPtr<sbIMediaItem> newItem = do_QueryElementAt(newItems, index, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        NS_ASSERTION(mItemsToCreate.Get(oldItem, nsnull),
+                     "The old item should be in the hashtable!");
+
+        PRBool success = mItemsToCreate.Put(oldItem, newItem);
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+      }
+    }
   }
 
-  PRUint32 itemsToAddCount;
-  rv = itemsToAdd->GetLength(&itemsToAddCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (itemsToAddCount) {
-    nsRefPtr<sbAddSomeEnumListener> addListener =
-      new sbAddSomeEnumListener(itemsToAdd,
-                                mItemsToCreateOrAdd);
-
-    nsCOMPtr<nsISimpleEnumerator> itemsToAddEnumerator;
-    rv = itemsToAdd->Enumerate(getter_AddRefs(itemsToAddEnumerator));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mListLibrary->AddMediaItems(itemsToAddEnumerator,
-                                      addListener,
-                                      PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = mFriendList->MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -552,28 +436,20 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
 
   nsString ordinal = mStartingOrdinal;
 
-  // For each item, new or existing, go through and add the item to the media
-  // list
   for (PRUint32 index = 0; index < itemCount; index++) {
 
     nsCOMPtr<sbIMediaItem> mediaItem = mItemList[index];
 
-    // Use the "value" in mItemsInForeignLib since that is either the item found
-    // in the media list's library or the one previously created in that
-    // library. If there is no entry in mItemsInForeignLib then we can just use
-    // the straight media item that was given
-    nsCOMPtr<sbIMediaItem> newMediaItem;
-    PRBool success = mItemsToCreateOrAdd.Get(mediaItem,
-                                              getter_AddRefs(newMediaItem));
-    if (success) {
+    if (mItemsToCreate.Get(mediaItem, nsnull)) {
+      nsCOMPtr<sbIMediaItem> newMediaItem;
+      PRBool success = mItemsToCreate.Get(mediaItem, getter_AddRefs(newMediaItem));
+      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
       //Call the copy listener for this media list at this time.
       //XXXAus: This could benefit from batching in the future.
       rv = mFriendList->NotifyCopyListener(mediaItem, newMediaItem);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to notify copy listener!");
 
-      // We'll replace the passed in media item with either the one found or
-      // the one that was created. This is so the notification logic later
-      // can just use the mItemList for notification.
       success = mItemList.ReplaceObjectAt(newMediaItem, index);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -610,30 +486,17 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list. Inserting definitely changes length.
-  rv = mFriendList->GetArray()->Invalidate(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFriendList->UpdateLastModifiedTime();
+  // Invalidate the cached list
+  rv = mFriendList->GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners if we have any
   if (mFriendList->ListenerCount() > 0) {
     for (PRUint32 index = 0; index < itemCount; index++) {
-      sbIMediaItem * const item = mItemList[index];
-      if (mAddListener) {
-        rv = mAddListener->OnItemAdded(item);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
       mFriendList->NotifyListenersItemAdded(mFriendList,
-                                            item,
+                                            mItemList[index],
                                             mStartingIndex + index);
     }
-  }
-  
-  if (mAddListener) {
-    rv = mAddListener->OnComplete();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Reset list content type to trigger recalculation.
@@ -755,11 +618,8 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
     NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
   }
 
-  // Invalidate the cached list. Removing definitely changes length.
-  rv = mFriendList->GetArray()->Invalidate(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFriendList->UpdateLastModifiedTime();
+  // Invalidate the cached list
+  rv = mFriendList->GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners after removal if we have any
@@ -858,13 +718,6 @@ sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetArray()->SetPropertyCache(propertyCache);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> lengthCache;
-  rv = mLibrary->GetLengthCache(getter_AddRefs(lengthCache));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetArray()->SetLengthCache(lengthCache);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -1018,8 +871,6 @@ sbLocalDatabaseSimpleMediaList::InsertAllBefore(PRUint32 aIndex,
   rv = GetBeforeOrdinal(aIndex, startingOrdinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  startingOrdinal.AppendLiteral(".0");
-
   sbSimpleMediaListInsertingEnumerationListener listener(this,
                                                          aIndex,
                                                          startingOrdinal);
@@ -1034,121 +885,103 @@ sbLocalDatabaseSimpleMediaList::InsertAllBefore(PRUint32 aIndex,
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
-  return AddMediaItems(aMediaItems, nsnull, PR_FALSE);
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  PRUint32 startingIndex;
+  nsresult rv = GetLength(&startingIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString startingOrdinal;
+  rv = GetNextOrdinal(startingOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbSimpleMediaListInsertingEnumerationListener listener(this,
+                                                         startingIndex,
+                                                         startingOrdinal);
+
+  PRUint16 stepResult;
+  rv = listener.OnEnumerationBegin(nsnull, &stepResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoBatchHelper batchHelper(*this);
+
+  PRBool hasMore;
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = aMediaItems->GetNext(getter_AddRefs(supports));
+    SB_CONTINUE_IF_FAILED(rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnEnumeratedItem failed!");
+  }
+
+  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::AddMediaItems(
-                                           nsISimpleEnumerator* aMediaItems,
-                                           sbIAddMediaItemsListener * aListener,
-                                           PRBool aAsync)
+sbLocalDatabaseSimpleMediaList::AddSomeAsync(nsISimpleEnumerator* aMediaItems, 
+                                             sbIMediaListAsyncListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_ARG_POINTER(aListener);
 
-  if (aAsync)
-  {
-    PRUint32 startingIndex;
-    nsresult rv = GetLength(&startingIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIThread> target;
+  nsresult rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString startingOrdinal;
-    rv = GetNextOrdinal(startingOrdinal);
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaListAsyncListener> proxiedListener;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIMediaListAsyncListener),
+                            aListener,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedListener));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIThread> target;
-    rv = NS_GetMainThread(getter_AddRefs(target));
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsRefPtr<sbLocalDatabaseSimpleMediaListAsyncRunner> runner = 
+    new sbLocalDatabaseSimpleMediaListAsyncRunner(this, aMediaItems, proxiedListener);
+  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
 
-    nsCOMPtr<sbIAddMediaItemsListener> proxiedListener;
-    if (aListener) {
-      rv = do_GetProxyForObject(target,
-                                NS_GET_IID(sbIAddMediaItemsListener),
-                                aListener,
-                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                getter_AddRefs(proxiedListener));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    nsRefPtr<sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner> runner =
-      new sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner(
-        this, aMediaItems, proxiedListener, startingIndex, startingOrdinal);
-    NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@getnightingale.com/Nightingale/ThreadPoolService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIThreadPool> threadPoolService =
-      do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    return NS_OK;
-  }
-  else {
-    SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
-
-    PRUint32 startingIndex;
-    nsresult rv = GetLength(&startingIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString startingOrdinal;
-    rv = GetNextOrdinal(startingOrdinal);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    sbSimpleMediaListInsertingEnumerationListener listener(this,
-                                                           startingIndex,
-                                                           startingOrdinal,
-                                                           aListener);
-
-    PRUint16 stepResult;
-    rv = listener.OnEnumerationBegin(nsnull, &stepResult);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    sbAutoBatchHelper batchHelper(*this);
-
-    PRBool hasMore;
-    while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
-      nsCOMPtr<nsISupports> supports;
-      rv = aMediaItems->GetNext(getter_AddRefs(supports));
-      SB_CONTINUE_IF_FAILED(rv);
-
-      nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
-      SB_CONTINUE_IF_FAILED(rv);
-
-      rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnEnumeratedItem failed!");
-    }
-
-    rv = listener.OnEnumerationEnd(nsnull, NS_OK);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
   return NS_OK;
 }
 
 nsresult
 sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
-                                                     nsISupports * aListener,
-                                                     PRUint32 aStartingIndex,
-                                                     nsAString& aStartingOrdinal)
+                                                     sbIMediaListAsyncListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_ARG_POINTER(aListener);
 
-  nsresult rv;
-
   NS_ASSERTION(!NS_IsMainThread(), 
     "AddSomeAsyncInternal should never be called on the main thread!");
 
-  nsCOMPtr<sbIMediaListAsyncListener> asyncListener;
-  nsCOMPtr<sbIAddMediaItemsListener> addListener;
-  if (aListener) {
-    asyncListener = do_QueryInterface(aListener);
-    addListener = do_QueryInterface(aListener);
-  }
-
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
+  PRUint32 startingIndex;
+  nsresult rv = GetLength(&startingIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString startingOrdinal;
+  rv = GetNextOrdinal(startingOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   sbSimpleMediaListInsertingEnumerationListener listener(this,
-                                                         aStartingIndex,
-                                                         aStartingOrdinal);
+                                                         startingIndex,
+                                                         startingOrdinal);
 
   PRUint16 stepResult;
   rv = listener.OnEnumerationBegin(nsnull, &stepResult);
@@ -1172,17 +1005,11 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMedia
 
     ++itemsProcessed;
 
-    // only send notifications every SB_ASYNC_NOTIFICATION_ITEMS items or
-    // when it's finished if < SB_ASYNC_NOTIFICATION_ITEMS items.
-    if (itemsProcessed % SB_ASYNC_NOTIFICATION_ITEMS == 0) {
-      if (asyncListener) {
-         rv = asyncListener->OnProgress(itemsProcessed, PR_FALSE);
-         NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
-      }
-      else if (addListener) {
-        rv = addListener->OnProgress(itemsProcessed, PR_FALSE);
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call add listener.");
-      }
+    // only send notifications every 50 items or 
+    // when it's finished if < 50 items.
+    if (itemsProcessed % 50 == 0) {
+      rv = aListener->OnProgress(itemsProcessed, PR_FALSE);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
     }
 
     // Yield to other threads.
@@ -1192,14 +1019,9 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMedia
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (asyncListener) {
-    rv = asyncListener->OnProgress(itemsProcessed, PR_TRUE);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
-  }
-  else if (addListener) {
-    rv = addListener->OnProgress(itemsProcessed, PR_TRUE);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call add listener.");
-  }
+  rv = aListener->OnProgress(itemsProcessed, PR_TRUE);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
+
   return NS_OK;
 }
 
@@ -1254,11 +1076,8 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
   rv = UpdateOrdinalByIndex(aFromIndex, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the cached list. Moving items does not invalidate length.
-  rv = GetArray()->Invalidate(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateLastModifiedTime();
+  // Invalidate the cached list
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1299,11 +1118,8 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
   rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the cached list. Moving items does not invalidate length.
-  rv = GetArray()->Invalidate(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateLastModifiedTime();
+  // Invalidate the cached list
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1355,51 +1171,6 @@ sbLocalDatabaseSimpleMediaList::InsertSomeBefore(PRUint32 aIndex,
   }
 
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::InsertSomeBeforeAsync(
-                                  PRUint32 aIndex,
-                                  nsISimpleEnumerator* aMediaItems,
-                                  sbIMediaListAsyncListener* aListener)
-{
-  NS_ENSURE_ARG_POINTER(aMediaItems);
-  NS_ENSURE_ARG_POINTER(aListener);
-  SB_ENSURE_INDEX1(aIndex);
-
-  nsresult rv;
-
-  nsString startingOrdinal;
-  rv = GetBeforeOrdinal(aIndex, startingOrdinal);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  startingOrdinal.AppendLiteral(".0");
-
-  nsCOMPtr<nsIThread> target;
-  rv = NS_GetMainThread(getter_AddRefs(target));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaListAsyncListener> proxiedListener;
-  rv = do_GetProxyForObject(target,
-                            NS_GET_IID(sbIMediaListAsyncListener),
-                            aListener,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(proxiedListener));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsRefPtr<sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner> runner = 
-    new sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner(
-      this, aMediaItems, proxiedListener, aIndex, startingOrdinal);
-  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
-
-  nsCOMPtr<nsIThreadPool> threadPoolService =
-    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1512,9 +1283,6 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
   rv = GetArray()->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateLastModifiedTime();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIMediaList> mediaList =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1535,8 +1303,6 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   sbSimpleMediaListRemovingEnumerationListener listener(this);
-
-  sbAutoBatchHelper batchHelper(*this);
 
   PRUint16 stepResult;
   nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
@@ -1588,11 +1354,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list. Clearing definitely invalidates length.
-  rv = GetArray()->Invalidate(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateLastModifiedTime();
+  // Invalidate the cached list
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList,
@@ -1616,9 +1379,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
 {
-  // Invalidate the cached list. No way to tell if length changes so we have
-  // to invalidate it as well.
-  nsresult rv = GetArray()->Invalidate(PR_TRUE);
+  // Invalidate the cached list
+  nsresult rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset list content type to trigger recalculation.
@@ -1754,9 +1516,9 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::Invalidate(PRBool aInvalidateLength)
+sbLocalDatabaseSimpleMediaList::Invalidate()
 {
-  nsresult rv = GetArray()->Invalidate(aInvalidateLength);
+  nsresult rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset list content type to trigger recalculation.
@@ -1866,18 +1628,6 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersBatchEnd(sbIMediaList* aList)
   NS_ENSURE_ARG_POINTER(aList);
 
   sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(aList);
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseSimpleMediaList::UpdateLastModifiedTime()
-{
-  nsresult rv;
-
-  sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
-  rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -2017,8 +1767,8 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list. Moving items does not invalidate length.
-  rv = GetArray()->Invalidate(PR_FALSE);
+  // Invalidate the cached list
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -2068,8 +1818,31 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
 
   }
 
-  rv = UpdateLastModifiedTime();
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
+{
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mDeleteFirstListItemQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(0, aMediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  // Reset list content type to trigger recalculation.
+  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
 
   return NS_OK;
 }

@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,29 +20,29 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
-var gSongbirdSanitizeOverlay = {
+var gNightingaleSanitizeOverlay = {
   checkBox: null,
   prefs: null,
   webLibrary: null,
   timeout: null,
 
-  onLoad: function() { gSongbirdSanitizeOverlay.init(); },
-  onUnload: function(event) { gSongbirdSanitizeOverlay.reset(); },
-  onCommand: function(event) { gSongbirdSanitizeOverlay.onCheckboxChanged(); },
+  onLoad: function() { gNightingaleSanitizeOverlay.init(); },
+  onUnload: function(event) { gNightingaleSanitizeOverlay.reset(); },
+  onCommand: function(event) { gNightingaleSanitizeOverlay.onCheckboxChanged(); },
 
   init: function() {
-    window.removeEventListener('load', gSongbirdSanitizeOverlay.onLoad, false);
-    window.addEventListener('unload', gSongbirdSanitizeOverlay.onUnload, false);
+    window.removeEventListener('load', gNightingaleSanitizeOverlay.onLoad, false);
+    window.addEventListener('unload', gNightingaleSanitizeOverlay.onUnload, false);
     var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                           .getService(Components.interfaces.nsIPrefBranch2);
-    var guid = prefs.getComplexValue("songbird.library.web", 
+    var guid = prefs.getComplexValue("nightingale.library.web", 
                                       Components.interfaces.nsISupportsString);
 
     var libraryManager =
-      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+      Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                 .getService(Components.interfaces.sbILibraryManager);
 
     this.webLibrary = libraryManager.getLibrary(guid);
@@ -63,7 +63,7 @@ var gSongbirdSanitizeOverlay = {
           this.checkBox.setAttribute("id", "sanitize.mediaHistory");
           this.checkBox.setAttribute("label", SBString("sanitize.mediaHistory.label", "Web Media History"));
           this.checkBox.setAttribute("accesskey", SBString("sanitize.mediaHistory.accesskey", "W"));
-          this.checkBox.setAttribute("oncommand", "gSongbirdSanitizeOverlay.onCommand();");
+          this.checkBox.setAttribute("oncommand", "gNightingaleSanitizeOverlay.onCommand();");
           this.updateDisabled();
           prefpane.insertBefore(this.checkBox, children[i]);
           continue;
@@ -89,7 +89,7 @@ var gSongbirdSanitizeOverlay = {
   reset: function() {
     this.clearUpdateTimeout();
     this.webLibrary.removeListener(this);
-    window.removeEventListener('unload', gSongbirdSanitizeOverlay.onUnload, false);
+    window.removeEventListener('unload', gNightingaleSanitizeOverlay.onUnload, false);
   },
   
   onCheckboxChanged: function() {
@@ -114,15 +114,15 @@ var gSongbirdSanitizeOverlay = {
   },
   
   // mediaListListener
-  onItemAdded: function(aMediaList, aMediaItem, aIndex) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onItemAdded: function(aMediaList, aMediaItem, aIndex) { gNightingaleSanitizeOverlay.onWebHistoryChanged(); return true; },
   onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { return true; },
-  onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { gNightingaleSanitizeOverlay.onWebHistoryChanged(); return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true; },
   onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
   onBeforeListCleared: function(aMediaList, aExcludeLists) { return true; },
-  onListCleared: function(aMediaList, aExcludeLists) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onListCleared: function(aMediaList, aExcludeLists) { gNightingaleSanitizeOverlay.onWebHistoryChanged(); return true; },
   onBatchBegin: function(aMediaList) {},
-  onBatchEnd: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },
+  onBatchEnd: function(aMediaList) { gNightingaleSanitizeOverlay.onWebHistoryChanged(); },
   
   QueryInterface: function (aIID) {
     if (aIID.equals(Components.interfaces.nsISupports) ||
@@ -136,4 +136,4 @@ var gSongbirdSanitizeOverlay = {
   
 };
 
-window.addEventListener('load', gSongbirdSanitizeOverlay.onLoad, false);
+window.addEventListener('load', gNightingaleSanitizeOverlay.onLoad, false);

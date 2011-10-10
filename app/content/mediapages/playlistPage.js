@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
@@ -42,8 +42,8 @@ Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
  *
  * In order to display the contents of a library or list, pages
  * must provide a "window.mediaPage" object implementing
- * the Songbird sbIMediaPage interface. This interface allows
- * the rest of Songbird to talk to the page without knowledge 
+ * the Nightingale sbIMediaPage interface. This interface allows
+ * the rest of Nightingale to talk to the page without knowledge 
  * of what the page looks like.
  *
  * In this particular page most functionality is simply 
@@ -68,7 +68,7 @@ window.mediaPage = {
   
   /** 
    * Set the sbIMediaListView that this page is to display.
-   * Called in the capturing phase of window load by the Songbird browser.
+   * Called in the capturing phase of window load by the Nightingale browser.
    * Note that to simplify page creation mediaListView may only be set once.
    */
   set mediaListView(value)  {
@@ -100,7 +100,7 @@ window.mediaPage = {
     } 
 
     var servicePaneNode =
-      Cc["@songbirdnest.com/servicepane/library;1"]
+      Cc["@getnightingale.com/servicepane/library;1"]
         .getService(Ci.sbILibraryServicePaneService)
         .getNodeFromMediaListView(this._mediaListView);
     if (servicePaneNode) {
@@ -119,7 +119,7 @@ window.mediaPage = {
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
     var mgr =
-      Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+      Components.classes["@getnightingale.com/Nightingale/PlaylistCommandsManager;1"]
                 .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
     var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
     
@@ -152,7 +152,7 @@ window.mediaPage = {
    * Called when something is dragged over the tabbrowser tab for this window
    */
   canDrop: function(aEvent, aSession) {
-    return this._playlist._canDrop(aEvent);
+    return this._playlist.nsDragAndDropObserver.canDrop(aEvent, aSession);
   },
     
   
@@ -161,7 +161,7 @@ window.mediaPage = {
    */
   onDrop: function(aEvent, aSession) {
     return this._playlist.
-        _dropOnTree(-1,
+        _dropOnTree(this._playlist.mediaListView.length,
                     Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
                     aSession);
   },

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -41,15 +41,15 @@ function SmartMediaListsUpdater() {
   // ask for a callback when the library manager is ready
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
-  obs.addObserver(this, 'songbird-library-manager-ready', false); 
+  obs.addObserver(this, 'nightingale-library-manager-ready', false); 
 }
 
 SmartMediaListsUpdater.prototype = {
   // This is us.
   constructor     : SmartMediaListsUpdater,
-  classDescription: "Songbird Smart Medialists Updater Module",
+  classDescription: "Nightingale Smart Medialists Updater Module",
   classID         : Components.ID("{35af253e-c7b0-40d6-a1a2-c747de924639}"),
-  contractID      : "@songbirdnest.com/Songbird/SmartMediaListsUpdater;1",
+  contractID      : "@getnightingale.com/Nightingale/SmartMediaListsUpdater;1",
   
   // medialistlistener batch count
   _batchCount            : 0,
@@ -99,20 +99,20 @@ SmartMediaListsUpdater.prototype = {
     var obs = Cc["@mozilla.org/observer-service;1"]
                 .getService(Ci.nsIObserverService);
 
-    if (topic == "songbird-library-manager-ready") {
+    if (topic == "nightingale-library-manager-ready") {
       // To register on final-ui-startup directly will break the library
       // sort data rebuilding during library migration for unknown reason.
-      // Workaround by registering on songbird-library-manager-ready first.
-      obs.removeObserver(this, "songbird-library-manager-ready");
+      // Workaround by registering on nightingale-library-manager-ready first.
+      obs.removeObserver(this, "nightingale-library-manager-ready");
       obs.addObserver(this, "final-ui-startup", false); 
     } else if (topic == "final-ui-startup") {
       // Smart Playlist Update should happen after rebuild of sortable value.
       // So wait for final-ui-startup to do the real update.
       obs.removeObserver(this, "final-ui-startup");
-      obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
+      obs.addObserver(this, "nightingale-library-manager-before-shutdown", false);
       this.initialize();
-    } else if (topic == "songbird-library-manager-before-shutdown") {
-      obs.removeObserver(this, "songbird-library-manager-before-shutdown");
+    } else if (topic == "nightingale-library-manager-before-shutdown") {
+      obs.removeObserver(this, "nightingale-library-manager-before-shutdown");
       this.shutdown();
     }
   },
@@ -135,10 +135,10 @@ SmartMediaListsUpdater.prototype = {
                                                LibraryUtils.mainLibrary);
 
     // Init the dirty properties db and tables
-    this._dbQuery = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    this._dbQuery = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                       .createInstance(Ci.sbIDatabaseQuery);
     this._dbQuery.setAsyncQuery(false);
-    this._dbQuery.setDatabaseGUID("songbird");
+    this._dbQuery.setDatabaseGUID("nightingale");
 
     // holds the dirty properties
     this._dbQuery.resetQuery();
@@ -392,7 +392,7 @@ SmartMediaListsUpdater.prototype = {
   // --------------------------------------------------------------------------
   updateListConditions: function() {
     var propertyManager =
-      Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+      Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
         .getService(Ci.sbIPropertyManager);
     var typePI = propertyManager.getPropertyInfo(SBProperties.contentType);
 
@@ -458,7 +458,7 @@ SmartMediaListsUpdater.prototype = {
 
     // create a property array so we can specify that we only want items with
     // isList == 1, and hidden == 0
-    var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+    var pa = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                .createInstance(Ci.sbIMutablePropertyArray);
     pa.appendProperty(SBProperties.isList, "1");
     pa.appendProperty(SBProperties.hidden, "0");
@@ -613,7 +613,7 @@ SmartMediaListsUpdater.prototype = {
   // Test whether a condition uses a rule on a dirty playlist
   // --------------------------------------------------------------------------
   isPlaylistConditionMatch: function(prop, value, dirtyprops) {
-    if (prop != "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist")
+    if (prop != "http://getnightingale.com/dummy/smartmedialists/1.0#playlist")
       return false;
     return (value in dirtyprops);
   },
@@ -795,7 +795,7 @@ function postRegister(aCompMgr, aFileSpec, aLocation) {
   XPCOMUtils.categoryManager
             .addCategoryEntry('app-startup',
                               'smartplaylists-updater', 
-                              'service,@songbirdnest.com/Songbird/SmartMediaListsUpdater;1',
+                              'service,@getnightingale.com/Nightingale/SmartMediaListsUpdater;1',
                               true, 
                               true);
 }

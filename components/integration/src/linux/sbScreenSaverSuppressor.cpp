@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,13 +21,13 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird screen saver suppressor services.
+// Nightingale screen saver suppressor services.
 //
 //   For documentation on the Gnome screen saver D-Bus interface, see
 // http://www.gnome.org/~mccann/gnome-screensaver/docs/gnome-screensaver.html
@@ -37,12 +37,12 @@
 
 /**
  * \file  sbScreenSaverSuppressor.cpp
- * \brief Songbird Screen Saver Suppressor Services Source.
+ * \brief Nightingale Screen Saver Suppressor Services Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird screen saver suppressor imported services.
+// Nightingale screen saver suppressor imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird screen saver suppressor nsISupports services.
+// Nightingale screen saver suppressor nsISupports services.
 //
 //------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ NS_IMPL_ISUPPORTS_INHERITED0(sbScreenSaverSuppressor,
 
 //------------------------------------------------------------------------------
 //
-// Songbird screen saver suppressor sbBaseScreenSaverSuppressor services.
+// Nightingale screen saver suppressor sbBaseScreenSaverSuppressor services.
 //
 //------------------------------------------------------------------------------
 
@@ -98,7 +98,7 @@ sbScreenSaverSuppressor::OnSuppress(PRBool aSuppress)
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird screen saver suppressor services.
+// Public Nightingale screen saver suppressor services.
 //
 //------------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ sbScreenSaverSuppressor::~sbScreenSaverSuppressor()
 
 //------------------------------------------------------------------------------
 //
-// Private Songbird screen saver suppressor services.
+// Private Nightingale screen saver suppressor services.
 //
 //------------------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ sbScreenSaverSuppressor::Suppress()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Inhibit the screen saver.
-  static const char* name = "Songbird";
+  static const char* name = "Nightingale";
   static const char* reason = "Playing video";
   nsAutoPtr<sbDBusMessage> reply;
   rv = dBusConnection->InvokeMethod("Inhibit",

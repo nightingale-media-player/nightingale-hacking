@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -35,14 +35,14 @@ function runTest () {
   var databaseGUID = "test_batchcreateifnotexist";
   var library = createLibrary(databaseGUID);
 
-  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var toAdd = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                 .createInstance(Ci.nsIMutableArray);
-  var propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var propertyArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
   for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
     var props =
-          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
             .createInstance(Ci.sbIMutablePropertyArray);
     props.appendProperty(SBProperties.contentLength, i);
     props.appendProperty(SBProperties.trackNumber, i);
@@ -103,14 +103,14 @@ function runTest () {
   libraryListener.reset();
 
   // Do it again with duplcate URLs
-  toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  toAdd = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
             .createInstance(Ci.nsIMutableArray);
-  propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  propertyArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                     .createInstance(Ci.nsIMutableArray);
   for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/duplicate.mp3"), false);
     var props =
-          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
             .createInstance(Ci.sbIMutablePropertyArray);
     props.appendProperty(SBProperties.contentLength, i);
     props.appendProperty(SBProperties.trackNumber, i);

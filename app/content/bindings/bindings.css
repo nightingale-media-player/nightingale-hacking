@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,661 +19,647 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /* Uh... we should maybe have sb- prefices or something. */
 
 sb-progress-slider {
-  -moz-binding: url("chrome://songbird/content/bindings/progressSlider.xml#progress-slider") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/progressSlider.xml#progress-slider") !important;
 }
 
 sb-player-volume-slider {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#volume-slider") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#volume-slider") !important;
 }
 
 sb-player-seek-slider {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#seek-slider") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#seek-slider") !important;
 }
 
 sb-smart-conditions-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/conditions.xml#conditions") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/conditions.xml#conditions") !important;
 }
 
 sb-watch-folders-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/folders.xml#folders") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/folders.xml#folders") !important;
 }
 
 sb-commands-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/sbCommands.xml#commands-menuitems") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sbCommands.xml#commands-menuitems") !important;
 }
 
 sb-commands-toolbar {
-  -moz-binding: url("chrome://songbird/content/bindings/sbCommands.xml#commands-toolbar") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sbCommands.xml#commands-toolbar") !important;
 }
 
 sb-commands-shortcuts {
-  -moz-binding: url("chrome://songbird/content/bindings/sbCommands.xml#commands-shortcuts") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sbCommands.xml#commands-shortcuts") !important;
 }
 
 sb-dynamic-keyset {
-  -moz-binding: url("chrome://songbird/content/bindings/dynKeyset.xml#dynamic-keyset") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/dynKeyset.xml#dynamic-keyset") !important;
 }
 
 sb-local-key {
-  -moz-binding: url("chrome://songbird/content/bindings/localKey.xml#local-key") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/localKey.xml#local-key") !important;
 }
 
 sb-playlist {
-  -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#playlist") !important;
-}
-
-sb-playqueue-playlist {
-  -moz-binding: url("chrome://songbird/content/bindings/playQueuePlaylist.xml#playqueue-playlist") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playlist.xml#playlist") !important;
 }
 
 sb-filterlist {
-  -moz-binding: url("chrome://songbird/content/bindings/filterList.xml#filterlist") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/filterList.xml#filterlist") !important;
 }
 
 .sb-filterlist-tree > treecols > treecolpicker {
-  -moz-binding: url("chrome://songbird/content/bindings/filterList.xml#columnpicker");
+  -moz-binding: url("chrome://nightingale/content/bindings/filterList.xml#columnpicker");
 }
 
 .sb-playlist-tree > treecols > treecolpicker {
-  -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#columnpicker");
+  -moz-binding: url("chrome://nightingale/content/bindings/playlist.xml#columnpicker");
 }
 
 observes[type="dataremote"]
 {
-  -moz-binding: url("chrome://songbird/content/bindings/observesDataRemote.xml#observes") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/observesDataRemote.xml#observes") !important;
 }
 
 /** Must be named searchbar, as the base FireFox searchbar does a .nodeName search **/
 searchbar {
-  -moz-binding: url("chrome://songbird/content/bindings/sbSearch.xml#sb-searchbar") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sbSearch.xml#sb-searchbar") !important;
+}
+
+menupopup[type="search"] {
+  -moz-binding: url("chrome://nightingale/content/bindings/sbSearch.xml#sb-search-menupopup") !important;
 }
 
 sb-windowregionset {
-  -moz-binding: url("chrome://songbird/content/bindings/windowRegion.xml#windowregionset") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/windowRegion.xml#windowregionset") !important;
 }
 
 sb-windowregionrect {
-  -moz-binding: url("chrome://songbird/content/bindings/windowRegion.xml#windowregionrect") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/windowRegion.xml#windowregionrect") !important;
 }
 
 sb-autoscroll {
-  -moz-binding: url("chrome://songbird/content/bindings/autoScroll.xml#autoscroll") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/autoScroll.xml#autoscroll") !important;
 }
 
 sb-servicepane {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#servicepane");
+  -moz-binding: url("chrome://nightingale/content/bindings/servicePane.xml#servicepane");
 }
 
 sb-servicepane-group {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#servicepane-group");
+  -moz-binding: url("chrome://nightingale/content/bindings/servicePane.xml#servicepane-group");
 }
 
 sb-servicepane-node {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#servicepane-node");
+  -moz-binding: url("chrome://nightingale/content/bindings/servicePane.xml#servicepane-node");
 }
 
 sb-servicepane-node-badge {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#servicepane-node-badge");
+  -moz-binding: url("chrome://nightingale/content/bindings/servicePane.xml#servicepane-node-badge");
 }
 
 sb-extensions-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/sbExtensions.xml#sbextensions") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sbExtensions.xml#sbextensions") !important;
 }
 
 sb-remote-label {
-  -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/remoteLabel.xml#remote-label") !important;
 }
 
 sb-remote-multi-label {
-  -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-multi-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/remoteLabel.xml#remote-multi-label") !important;
 }
 
 sb-remote-compound-label {
-  -moz-binding: url("chrome://songbird/content/bindings/remoteLabel.xml#remote-compound-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/remoteLabel.xml#remote-compound-label") !important;
 }
 
 sb-player-mute-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#mute-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#mute-button") !important;
 }
 
 sb-player-forward-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#forward-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#forward-button") !important;
 }
 
 sb-player-back-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#back-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#back-button") !important;
 }
 
 sb-player-repeat-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#repeat-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#repeat-button") !important;
 }
 
 sb-player-shuffle-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#shuffle-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#shuffle-button") !important;
 }
 
 sb-player-timeelapsed-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#timeelapsed-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#timeelapsed-label") !important;
 }
 
 sb-player-totaltime-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#totaltime-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#totaltime-label") !important;
 }
 
 sb-player-play-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#play-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#play-button") !important;
 }
 
 sb-player-playpause-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#playpause-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#playpause-button") !important;
 }
 
 sb-player-pause-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#pause-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#pause-button") !important;
 }
 
 sb-player-stop-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#stop-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#stop-button") !important;
 }
 
 sb-player-control-buttons {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#control-buttons") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#control-buttons") !important;
 }
 
 sb-player-artist-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#artist-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#artist-label") !important;
 }
 
 sb-player-title-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#title-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#title-label") !important;
 }
 
 sb-player-album-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#album-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#album-label") !important;
 }
 
 sb-player-genre-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#genre-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#genre-label") !important;
 }
 
 sb-player-custom-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#custom-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#custom-label") !important;
 }
 
 sb-player-numplaylistitems-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#numplaylistitems-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#numplaylistitems-label") !important;
 }
 
 sb-player-scanning-label {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#scanning-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#scanning-label") !important;
 }
 
 sb-player-curtrack-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#curtrack-button") !important;
 }
 
 sb-player-curtrack-box {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-box") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#curtrack-box") !important;
 }
 
 sb-player-fullscreen-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#fullscreen-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playerControls.xml#fullscreen-button") !important;
 }
 
 sb-mini-player-controls {
-  -moz-binding: url("chrome://songbird/content/bindings/miniPlayer.xml#sb-mini-player-controls") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/miniPlayer.xml#sb-mini-player-controls") !important;
 }
 
 sb-smart-splitter {
-  -moz-binding: url("chrome://songbird/content/bindings/smartSplitter.xml#smart-splitter") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/smartSplitter.xml#smart-splitter") !important;
 }
 sb-displaypane-splitter {
-  -moz-binding: url("chrome://songbird/content/bindings/displayPaneSplitter.xml#displaypane-splitter") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/displayPaneSplitter.xml#displaypane-splitter") !important;
 }
 sb-displaypane-grippy {
-  -moz-binding: url("chrome://songbird/content/bindings/displayPaneGrippy.xml#displaypane-grippy") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/displayPaneGrippy.xml#displaypane-grippy") !important;
 }
 /* CLICK-HOLD BUTTONS */
 
 /* the <sb-clickhold-button/> and <sb-clickhold-toolbarbutton/> tag names are deprecated,
  * use <button type="sb-clickhold"> and <toolbarbutton type="sb-clickhold"/> instead.
- * This matches <button type="menu"/> better.  See songbird bug 10802.
+ * This matches <button type="menu"/> better.  See nightingale bug 10802.
  */
 sb-clickhold-button,
 button[type="sb-clickhold"] {
-  -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-button')
+  -moz-binding: url('chrome://nightingale/content/bindings/clickHoldButton.xml#clickhold-button')
 }
 
 sb-clickhold-toolbarbutton,
 toolbarbutton[type="sb-clickhold"]  {
-   -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-toolbarbutton')
+   -moz-binding: url('chrome://nightingale/content/bindings/clickHoldButton.xml#clickhold-toolbarbutton')
 }
 
 /* SPRING LOADED BUTTON */
 button[type="sb-spring"] {
-  -moz-binding: url("chrome://songbird/content/bindings/springLoadButton.xml#springload-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/springLoadButton.xml#springload-button") !important;
 }
 
 
 sb-feathers-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menuitems") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/feathers.xml#feathers-menuitems") !important;
 }
 
 sb-feathers-toggle-button {
-  -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-togglebutton") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/feathers.xml#feathers-togglebutton") !important;
 }
 
 sb-hotkey-textbox {
-  -moz-binding: url("chrome://songbird/content/bindings/hotKey.xml#hotkey-textbox") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/hotKey.xml#hotkey-textbox") !important;
 }
 
 sb-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#drawer-single") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/drawer.xml#drawer-single") !important;
 }
 
 sb-multi-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/drawer.xml#drawer-multi") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/drawer.xml#drawer-multi") !important;
 }
 
 sb-player-faceplate {
-  -moz-binding: url("chrome://songbird/content/bindings/facePlate.xml#faceplate") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/facePlate.xml#faceplate") !important;
 }
 
 sb-player-cyclefaceplate-button {
-  -moz-binding: url("chrome://songbird/content/bindings/facePlate.xml#cyclefaceplate") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/facePlate.xml#cyclefaceplate") !important;
 }
 
 sb-closable-box {
-  -moz-binding: url("chrome://songbird/content/bindings/closableBox.xml#sb-closable-box") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/closableBox.xml#sb-closable-box") !important;
 }
 
 /* SYSBTNS */
 
 sb-sys-close-button {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-close-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-close-button") !important;
 }
 
 sb-sys-hide-button {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-hide-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-hide-button") !important;
 }
 
 sb-sys-maximize-button {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-maximize-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-maximize-button") !important;
 }
 
 sb-sys-minimize-button {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-minimize-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-minimize-button") !important;
 }
 
 sb-sys-buttons {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-buttons") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-buttons") !important;
 }
 
 sb-sys-osx-buttons {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-osx-buttons") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-osx-buttons") !important;
 }
 
 sb-sys-osx-feathers {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-osx-feathers") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-osx-feathers") !important;
 }
 
 sb-sys-icon {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-icon") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-icon") !important;
 }
 
 sb-sys-title {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-title") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-title") !important;
 }
 
 sb-sys-dialog-titlebar {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-dialog-titlebar") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-dialog-titlebar") !important;
 }
 
 sb-sys-titlebar {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-titlebar") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-titlebar") !important;
 }
 
 sb-sys-outer-frame {
-  -moz-binding: url("chrome://songbird/content/bindings/sysControls.xml#sb-sys-outer-frame") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sysControls.xml#sb-sys-outer-frame") !important;
 }
 
 /* STATUS */
 
 sb-status-label {
-  -moz-binding: url("chrome://songbird/content/bindings/statusBar.xml#sb-status-label") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/statusBar.xml#sb-status-label") !important;
 }
 
 sb-status-progressmeter {
-  -moz-binding: url("chrome://songbird/content/bindings/statusBar.xml#sb-status-progressmeter") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/statusBar.xml#sb-status-progressmeter") !important;
 }
 
 /* BROWSER WIDGET */
 
 tabbrowser {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/tabBrowser.xml#tabbrowser") !important;
 }
 
 arrowscrollbox.tabbrowser-arrowscrollbox {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-arrowscrollbox") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-arrowscrollbox") !important;
 }
 
 tabs.tabbrowser-tabs {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs") !important;
 }
 
 menupopup.tabs-alltabs-popup {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-alltabs-popup") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-alltabs-popup") !important;
 }
 
 toolbarbutton.tab-close-button {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-close-tab-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-close-tab-button") !important;
 }
 
 tab.tabbrowser-tab {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab") !important;
 }
 
 sb-tabbrowser {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowser.xml#sb-tabbrowser") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/sbTabBrowser.xml#sb-tabbrowser") !important;
 }
 
 tabs.tabbrowser-tabs.sb-tabbrowser-tabs,
 sb-tabbrowser tabs.tabbrowser-tabs {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTabStrip.xml#tabbrowser-tabs") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/sbTabBrowserTabStrip.xml#tabbrowser-tabs") !important;
 }
 
 .sb-tabbrowser-tabs tab.tabbrowser-tab,
 sb-tabbrowser tab.tabbrowser-tab {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTab.xml#tabbrowser-tab") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/sbTabBrowserTab.xml#tabbrowser-tab") !important;
 }
 
 sb-tabbrowser > tabbox {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBox.xml#sb-tabbox");
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/sbTabBox.xml#sb-tabbox");
 }
 
 /* LOCATION BAR */
 sb-locationbar-textbox {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-locationbar-textbox") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/browserControls.xml#sb-locationbar-textbox") !important;
 }
 
 /* SPINNER */
 sb-browser-spinner {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-browser-spinner") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/browserControls.xml#sb-browser-spinner") !important;
 }
 
 /* COMBINED STOP/RELOAD BUTTON */
 sb-browser-stopreload-button {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-browser-stopreload-button") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/browser/browserControls.xml#sb-browser-stopreload-button") !important;
 }
 
 /* DRAGGABLE */
 sb-draggable {
-  -moz-binding: url("chrome://songbird/content/bindings/draggable.xml#draggable") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/draggable.xml#draggable") !important;
 }
 
 /* display panes (integration points) */
 sb-displaypane {
-  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane");
+  -moz-binding: url("chrome://nightingale/content/bindings/displayPane.xml#sb-displaypane");
 }
 sb-displaypane-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-menuitems");
+  -moz-binding: url("chrome://nightingale/content/bindings/displayPane.xml#sb-displaypane-menuitems");
 }
 sb-displaypane-content-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-content-menuitems");
+  -moz-binding: url("chrome://nightingale/content/bindings/displayPane.xml#sb-displaypane-content-menuitems");
 }
 sb-displaypane-button {
-  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-button");
+  -moz-binding: url("chrome://nightingale/content/bindings/displayPane.xml#sb-displaypane-button");
 }
 
 /* Media Pages */
 
 sb-mediapages-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/mediaPages.xml#mediapages-menuitems");
+  -moz-binding: url("chrome://nightingale/content/bindings/mediaPages.xml#mediapages-menuitems");
 }
 
 sb-mediapages-button {
-  -moz-binding: url("chrome://songbird/content/bindings/mediaPages.xml#mediapages-button");
+  -moz-binding: url("chrome://nightingale/content/bindings/mediaPages.xml#mediapages-button");
 }
 
 /* Replacement text-link label */
 label.text-link {
-  -moz-binding: url("chrome://songbird/content/bindings/textLink.xml#text-link") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/textLink.xml#text-link") !important;
 }
 
 notification {
-  -moz-binding: url("chrome://songbird/content/bindings/sbNotification.xml#sbNotification") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/sbNotification.xml#sbNotification") !important;
 }
 
 /* dialogs (document element) */
-/* this only applies to plucked; for feathers using the songbird version of global,
+/* this only applies to plucked; for feathers using the nightingale version of global,
    chrome://global/skin/bindings.css overrides this with the draggable hidechrome version */
-dialog[type="songbird"] {
-  -moz-binding: url("chrome://songbird/content/bindings/dialog.xml#platform-dialog");
+dialog[type="nightingale"] {
+  -moz-binding: url("chrome://nightingale/content/bindings/dialog.xml#platform-dialog");
 }
 
 %ifdef XP_UNIX
 %ifndef XP_MACOSX
 /* only use our native resizer on linux */
 resizer {
-  -moz-binding: url("chrome://songbird/content/bindings/resizer.xml#sb-native-resizer");
+  -moz-binding: url("chrome://nightingale/content/bindings/resizer.xml#sb-native-resizer");
 }
 %endif
 %endif
 
 /* playlist menuitems */
 sb-playlist-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/playlistMenuItems.xml#sb-playlist-menuitems") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/playlistMenuItems.xml#sb-playlist-menuitems") !important;
 }
 
 /* Device bindings */
 
 sb-device-control {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control");
 }
 
 sb-device-cancel-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-cancel-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-cancel-command");
 }
 
 sb-device-eject-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-eject-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-eject-command");
 }
 
 sb-device-format-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-format-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-format-command");
 }
 
 sb-device-ignore-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-ignore-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-ignore-command");
 }
 
 sb-device-general-settings {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceGeneralSettings.xml#sb-device-general-settings");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceGeneralSettings.xml#sb-device-general-settings");
 }
 
 sb-device-get-info-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-get-info-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-get-info-command");
 }
 
 sb-device-product-name-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-product-name-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-product-name-command");
 }
 
 sb-device-model-capacity-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-model-capacity-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-model-capacity-command");
 }
 
 sb-device-new-playlist-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-new-playlist-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-new-playlist-command");
 }
 
 sb-device-rename-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rename-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-rename-command");
 }
 
 sb-device-sync-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-sync-command");
 }
 
 sb-device-sync-cancel-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
-}
-
-sb-device-transcode-settings {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceTranscodeSettings.xml#sb-device-transcode-settings");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
 }
 
 sb-device-volume-menuitems {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceVolumeSelector.xml#sb-device-volume-menuitems");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceVolumeSelector.xml#sb-device-volume-menuitems");
 }
 
 sb-device-volume-selector {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceVolumeSelector.xml#sb-device-volume-selector");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceVolumeSelector.xml#sb-device-volume-selector");
 }
 
 /**
  * CD Device Commands
  */
 sb-device-rip-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rip-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-rip-command");
 }
 
 sb-device-stoprip-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-stoprip-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-stoprip-command");
 }
 
 sb-device-rescan-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rescan-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-rescan-command");
 }
 
 sb-device-viewtracks-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-viewtracks-command");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-viewtracks-command");
 }
 
 sb-device-battery {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-battery") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceInfo.xml#sb-device-battery") !important;
 }
 
 sb-device-capacity {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceCapacity.xml#sb-device-capacity");
 }
 
 sb-device-capacity-legend {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity-legend");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceCapacity.xml#sb-device-capacity-legend");
 }
 
 sb-device-capacity-panel {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacityPanel.xml#sb-device-capacity-panel");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceCapacityPanel.xml#sb-device-capacity-panel");
 }
 
 sb-device-info {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-info");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceInfo.xml#sb-device-info");
 }
 
 sb-device-progress {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceProgress.xml#sb-device-progress");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceProgress.xml#sb-device-progress");
 }
 
 sb-device-managetabs {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceMgmtTabs.xml#sb-device-managetabs");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceMgmtTabs.xml#sb-device-managetabs");
 }
 
 sb-device-sync {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceSync.xml#sb-device-sync");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceSync.xml#sb-device-sync");
 }
 
 sb-device-image-sync {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceImageSync.xml#sb-device-image-sync");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceImageSync.xml#sb-device-image-sync");
 }
 
 sb-device-summary-settings {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceSummarySettings.xml#sb-device-summary-settings");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceSummarySettings.xml#sb-device-summary-settings");
 }
 
 sb-device-tools {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceTools.xml#sb-device-tools");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceTools.xml#sb-device-tools");
 }
 
 sb-device-management {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceMediaManagement.xml#sb-device-management");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceMediaManagement.xml#sb-device-management");
 }
 
 sb-device-info-panel {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfoPanel.xml#sb-device-info-panel");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceInfoPanel.xml#sb-device-info-panel");
 }
 
 sb-device-management-toggle {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceMgmtToggle.xml#sb-device-management-toggle");
+  -moz-binding: url("chrome://nightingale/content/bindings/device/deviceMgmtToggle.xml#sb-device-management-toggle");
 }
 
 sb-rating {
-  -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-rating");
+  -moz-binding: url("chrome://nightingale/content/bindings/ratingsControl.xml#sb-rating");
 }
 
 sb-nowplaying-rating {
-  -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-nowplaying-rating");
+  -moz-binding: url("chrome://nightingale/content/bindings/ratingsControl.xml#sb-nowplaying-rating");
 }
 
 treecols[type="sb-contextpicker"] {
-   -moz-binding: url('chrome://songbird/content/bindings/contextTreeCols.xml#treecols-context')
+   -moz-binding: url('chrome://nightingale/content/bindings/contextTreeCols.xml#treecols-context')
 }
 
 /* Information Panels */
 
 sb-info-panelbar {
-  -moz-binding: url('chrome://songbird/content/bindings/infoPanels.xml#infoPanelBar');
+  -moz-binding: url('chrome://nightingale/content/bindings/infoPanels.xml#infoPanelBar');
 }
 
 sb-info-panel {
-  -moz-binding: url('chrome://songbird/content/bindings/infoPanels.xml#infoPanel');
+  -moz-binding: url('chrome://nightingale/content/bindings/infoPanels.xml#infoPanel');
 }
 
 /* Add-on bundle bindings */
 
 sb-add-on-bundle {
-  -moz-binding: url("chrome://songbird/content/bindings/addOnBundle.xml#sb-add-on-bundle");
+  -moz-binding: url("chrome://nightingale/content/bindings/addOnBundle.xml#sb-add-on-bundle");
 }
 
 sb-add-on-bundle-item {
-  -moz-binding: url("chrome://songbird/content/bindings/addOnBundle.xml#sb-add-on-bundle-item");
+  -moz-binding: url("chrome://nightingale/content/bindings/addOnBundle.xml#sb-add-on-bundle-item");
 }
 
 sb-add-on-bundle-installer {
-  -moz-binding: url("chrome://songbird/content/bindings/addOnBundleInstaller.xml#sb-add-on-bundle-installer");
+  -moz-binding: url("chrome://nightingale/content/bindings/addOnBundleInstaller.xml#sb-add-on-bundle-installer");
 }
 
 /* Equalizer bindings */
 sb-eq-band-slider {
-  -moz-binding: url("chrome://songbird/content/bindings/eqBandSlider.xml#eq-band-slider") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/eqBandSlider.xml#eq-band-slider") !important;
 }
 
 /* properties formatter bindings */
 sb-properties-formatter {
-  -moz-binding: url("chrome://songbird/content/bindings/propertiesMenuList.xml#propertiesFormatter");
+  -moz-binding: url("chrome://nightingale/content/bindings/propertiesMenuList.xml#propertiesFormatter");
 }
 
 /* HTML description bindings */
 sb-html-description {
-  -moz-binding: url("chrome://songbird/content/bindings/htmlDescription.xml#sb-html-description") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/htmlDescription.xml#sb-html-description") !important;
 }
 
 /* File Field Binding */
 sb-filefield {
-  -moz-binding: url("chrome://songbird/content/bindings/fileField.xml#sb-filefield") !important;
-}
-
-/* Save folder preference groupbox */
-sb-savefolder-box {
-  -moz-binding: url("chrome://songbird/content/bindings/saveFolderBox.xml#sb-savefolder-box") !important;
-}
-
-/* Login bindings */
-sb-login-panel {
-  -moz-binding: url("chrome://songbird/content/bindings/loginPanel.xml#sb-login-panel") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/fileField.xml#sb-filefield") !important;
 }

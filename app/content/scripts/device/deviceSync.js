@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -98,29 +98,18 @@ var DeviceSyncWidget = {
     var syncAllLabel = this._getElement("content_auto_sync_all_radio");
     syncAllLabel.label = SBString("device.sync.sync_all.label." +
                                   this._mediaType);
-    var importHeaderCheckbox = this._getElement("import_header_checkbox");
-    importHeaderCheckbox.setAttribute("label",
-                                      SBString("device.import.header.label." +
-                                               this._mediaType));
-
-    var syncHeaderCheckbox = this._getElement("sync_header_checkbox");
+    var syncHeaderCheckbox = this._getElement("content_management_checkbox");
     syncHeaderCheckbox.setAttribute("label",
-                                    SBString("device.sync.header.label." +
-                                             this._mediaType));
+                                 SBString("device.sync.header.label." +
+                                          this._mediaType));
 
     // Initialize object fields.
     this._device = this._widget.device;
     this._deviceLibrary = this._widget.devLib;
-
-    /* This initialize call can get made when a device is bound but the
-     * deviceLibrary hasn't been bound yet, so we need to prevent it from
-     * continuing and when the deviceLibrary is bound we'll get called again. */
-    if (!this._deviceLibrary) {
-      return;
-    }
-
-    // Initialize settings and add listeners
-    this._deviceSyncSettings = this._deviceLibrary.syncSettings;
+    // Changes we make to the tempSyncSettings will be sent to any listeners
+    // these will not be applied to the device until the
+    // this._deviceLibrary.applySyncSettings() function has been called.
+    this._deviceSyncSettings = this._deviceLibrary.tempSyncSettings;
     var mediaType = this._getMediaType(this._mediaType);
     this._mediaSyncSettings = this._deviceSyncSettings
                                   .getMediaSettings(mediaType);
@@ -189,13 +178,74 @@ var DeviceSyncWidget = {
     }
     this._widget.removeAttribute("hidden");
 
+    /* Get the management type pref UI elements. */
+    var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
+    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
+    var syncEnabledCheckbox = this._getElement("content_management_checkbox");
+    var manualMessage = this._getElement("manual-mode-descr");
+    var headerBackground =
+        this._getElement("content_management_header_background");
+    var syncGroupbox = this._getElement("content_management_groupbox");
+
+    // If the device is not in manual mode hide the manual mode message
+    var deviceManual = this._deviceSyncSettings.syncMode ==
+                            Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+
+    if (deviceManual) {
+      manualMessage.removeAttribute("collapsed");
+      syncEnabledCheckbox.checked = false;
+      syncEnabledCheckbox.setAttribute("disabled", true);
+      syncPlaylistTree.setAttribute("disabled", true);
+      syncRadioGroup.setAttribute("disabled", true);
+      syncRadioGroup.selectedItem = null;
+      this._widget.setAttribute("disabled", true);
+
+      // In manual mode, this._widget controls opacity.
+      headerBackground.removeAttribute("disabled");
+      syncGroupbox.removeAttribute("disabled");
+    }
+    else {
+      manualMessage.setAttribute("collapsed", true);
+      syncEnabledCheckbox.removeAttribute("disabled");
+      this._widget.removeAttribute("disabled");
+
+      switch (this._mediaSyncSettings.mgmtType) {
+        case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE:
+          syncEnabledCheckbox.checked = false;
+          syncPlaylistTree.setAttribute("disabled", true);
+          syncRadioGroup.setAttribute("disabled", true);
+          headerBackground.setAttribute("disabled", true);
+          syncGroupbox.setAttribute("disabled", true);
+          syncRadioGroup.selectedItem = null;
+          break;
+
+        case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL:
+          syncEnabledCheckbox.checked = true;
+          syncPlaylistTree.setAttribute("disabled", true);
+          syncRadioGroup.removeAttribute("disabled");
+          headerBackground.removeAttribute("disabled");
+          syncGroupbox.removeAttribute("disabled");
+          syncRadioGroup.selectedItem =
+                          this._getElement("content_auto_sync_all_radio");
+          break;
+
+        case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_PLAYLISTS:
+          syncEnabledCheckbox.checked = true;
+          syncPlaylistTree.removeAttribute("disabled");
+          syncRadioGroup.removeAttribute("disabled");
+          headerBackground.removeAttribute("disabled");
+          syncGroupbox.removeAttribute("disabled");
+          syncRadioGroup.selectedItem =
+                          this._getElement("content_auto_sync_selected_radio");
+          break;
+      }
+    }
 
     // If we are busy then disable the widget so the user can not make changes
     if (this._device.isBusy) {
       this._widget.setAttribute("disabled", true);
-    }
-    else {
-      this._widget.removeAttribute("disabled");
+      headerBackground.removeAttribute("disabled");
+      syncGroupbox.removeAttribute("disabled");
     }
 
     // Show the video duration column only for the Video tab.
@@ -204,11 +254,11 @@ var DeviceSyncWidget = {
     syncPlaylistListVideoHeader.hidden = (this._mediaType != "video");
 
     // Set up the playlists
-    var syncPlaylistChildren = this._getElement("content_auto_sync_playlist_children");
+    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_children");
 
     /* Clear the sync playlist tree. */
-    while (syncPlaylistChildren.firstChild)
-        syncPlaylistChildren.removeChild(syncPlaylistChildren.firstChild);
+    while (syncPlaylistTree.firstChild)
+        syncPlaylistTree.removeChild(syncPlaylistTree.firstChild);
 
     // Get an nsIArray of available playlists for this media type
     var syncPlayLists = this._mediaSyncSettings.syncPlaylists;
@@ -225,7 +275,7 @@ var DeviceSyncWidget = {
 
       if (duration >= 0) {
         var durationInfo =
-              Cc["@songbirdnest.com/Songbird/Properties/Info/Duration;1"]
+              Cc["@getnightingale.com/Nightingale/Properties/Info/Duration;1"]
                 .createInstance(Ci.sbIDurationPropertyInfo);
         duration = durationInfo.format(duration);
       }
@@ -274,48 +324,8 @@ var DeviceSyncWidget = {
       treeItem.appendChild(treeRow);
 
       /* Add the row to the tree. */
-      syncPlaylistChildren.appendChild(treeItem);
+      syncPlaylistTree.appendChild(treeItem);
     }
-
-    /* Get the management type pref UI elements. */
-    var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
-    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
-    var importEnabledCheckbox = this._getElement("import_header_checkbox");
-    var syncEnabledCheckbox = this._getElement("sync_header_checkbox");
-    var syncGroupbox = this._getElement("content_management_groupbox");
-
-    /* Make the importEnabledCheckbox reflect whether this mediatype is
-     * currently set to be imported or not */
-    importEnabledCheckbox.checked = this._mediaSyncSettings.import;
-
-    switch (this._mediaSyncSettings.mgmtType) {
-    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE:
-      syncEnabledCheckbox.checked = false;
-      syncPlaylistTree.setAttribute("disabled", true);
-      syncRadioGroup.setAttribute("disabled", true);
-      syncGroupbox.setAttribute("disabled", true);
-      syncRadioGroup.selectedItem = null;
-      break;
-
-    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL:
-      syncEnabledCheckbox.checked = true;
-      syncPlaylistTree.setAttribute("disabled", true);
-      syncRadioGroup.removeAttribute("disabled");
-      syncGroupbox.removeAttribute("disabled");
-      syncRadioGroup.selectedItem = this._getElement
-                                        ("content_auto_sync_all_radio");
-      break;
-
-    case Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_PLAYLISTS:
-      syncEnabledCheckbox.checked = true;
-      syncPlaylistTree.removeAttribute("disabled");
-      syncRadioGroup.removeAttribute("disabled");
-      syncGroupbox.removeAttribute("disabled");
-      syncRadioGroup.selectedItem = this._getElement
-                                        ("content_auto_sync_selected_radio");
-      break;
-    }
-
   },
 
 
@@ -329,49 +339,34 @@ var DeviceSyncWidget = {
    * \brief Update the settings for syncing when the user makes changes.
    */
 
-  onUIPrefChange: function DeviceSyncWidget_onUIPrefChange(aNeedUpdate) {
+  onUIPrefChange: function DeviceSyncWidget_onUIPrefChange() {
     // Ignore user interaction if the widget is disabled.
     if (this._widget.hasAttribute("disabled"))
       return;
-
+    
     // Ensure we do not update in the middle of updating the settings.
     this._ignoreDevicePrefChanges = true;
 
     var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
-    var importEnabledCheckbox = this._getElement("import_header_checkbox");
-    var syncEnabledCheckbox = this._getElement("sync_header_checkbox");
-
-    // Activate or deactivate imporpy from device depending on checkbox setting
-    this._mediaSyncSettings.import = importEnabledCheckbox.checked;
+    var syncEnabledCheckbox = this._getElement("content_management_checkbox");
 
     // First check the managementMode, we need to check the main check box and
     // the radio group
     var oldMgmtType = this._mediaSyncSettings.mgmtType;
     var newMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE;
-
-    // If sync is enabled, figure out the mgmtType between playlists and all
     if (syncEnabledCheckbox.checked) {
-      /* Video only does sync by playlist and if all or playlist sync is
-       * selected we can just go with that one. */
-      if ((this._mediaType == "video") ||
-          (syncRadioGroup.selectedItem ==
-           this._getElement("content_auto_sync_selected_radio"))) {
+      if (syncRadioGroup.selectedItem ==
+            this._getElement("content_auto_sync_selected_radio") ||
+          this._mediaType == "video") {
         newMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_PLAYLISTS;
       }
-      else if (syncRadioGroup.selectedItem ==
-                this._getElement("content_auto_sync_all_radio")) {
-        newMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL;
-      }
       else {
-        /* If nothing is selected then we set the mgmtType to the last
-         * not 'NONE' mgmtType used.  This will default to ALL */
-        newMgmtType = this._mediaSyncSettings.lastActiveMgmtType;
+        newMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL;
       }
     }
 
-    if (oldMgmtType != newMgmtType) {
+    if (oldMgmtType != newMgmtType)
       this._mediaSyncSettings.mgmtType = newMgmtType;
-    }
 
     if (this._mediaSyncSettings.mgmtType ==
           Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_PLAYLISTS) {
@@ -402,15 +397,9 @@ var DeviceSyncWidget = {
       }
     }
 
-    /* Writes the new syncSettings to a device-specific pref so that they can be
-     * recalled between sessions */
-    this._deviceSyncSettings.write(this._device);
-
+    // Finally update to ensure it all applied
     this._ignoreDevicePrefChanges = false;
-    if (aNeedUpdate) {
-      // Finally update to ensure it all applied
-      this.update();
-    }
+    this.update();
   },
 
   //----------------------------------------------------------------------------
@@ -418,6 +407,27 @@ var DeviceSyncWidget = {
   // sbIDeviceLibraryListener
   //
   //----------------------------------------------------------------------------
+
+  // See sbIMediaListListener below for the other functions like onBatchBegin
+  
+  /**
+   * \brief Called when the sync settings for a library have been applied or
+   *  reset or if they have changed.
+   * \param aAction what happend to the sync settings
+   *  (see sbIDeviceLibraryListener).
+   * \param aSyncSettings what the new sync settings are.
+   */
+
+  onSyncSettings: function DeviceSyncWidget_onSyncSettings(aAction,
+                                                           aSyncSettings) {
+    // Re-read the sync settings and media sync settings.
+    this._deviceSyncSettings = this._deviceLibrary.tempSyncSettings;
+    var mediaType = this._getMediaType(this._mediaType);
+    this._mediaSyncSettings = this._deviceSyncSettings
+                                  .getMediaSettings(mediaType);
+
+    this.update();
+  },
 
   // Implementation of sbIDeviceLibraryListener methods that must return true to
   // prevent SB_NOTIFY_LISTENERS_ASK_PERMISSION in sbDeviceLibrary.cpp from
@@ -468,9 +478,11 @@ var DeviceSyncWidget = {
     // Dispatch processing of the event.
     switch(aEvent.type)
     {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED :
+        this.update();
+        break;
+
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
         this.update();
         break;
 
@@ -559,9 +571,10 @@ var DeviceSyncWidget = {
 
   onItemUpdated: function DeviceSyncWidget_onItemUpdated(aMediaList,
                                                          aMediaItem,
+                                                         aIndex,
                                                          aProperties) {
     // Handle playlist changes.
-    if (aMediaItem instanceof Ci.sbIMediaList)
+    if (aMediaItem.getProperty(SBProperties.isList))
       this.update();
 
     return false;

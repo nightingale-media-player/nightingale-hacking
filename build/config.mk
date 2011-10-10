@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 ##############################################################################
@@ -39,12 +39,6 @@ CONFIG_MK_INCLUDED=1
 EXIT_ON_ERROR = set -e; # Shell loops continue past errors without this.
 
 ####
-# check for missing vendor-binaries and mozbrowser dir (common errors)
-#ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
-#   $(error Please check out or build vendor-binaries - \
-#      see https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
-#endif
-
 ifeq (,$(wildcard $(MOZBROWSER_DIR)))
    $(error Missing mozbrowser directory ($(MOZBROWSER_DIR)). Bailing...)
 endif
@@ -54,7 +48,7 @@ BUILDINFO_FILE := $(DEPTH)/build/sbBuildInfo.mk
 ifneq (,$(wildcard $(BUILDINFO_FILE)))
    include $(BUILDINFO_FILE)
 
-   ifeq (,$(SONGBIRD_OFFICIAL)$(SONGBIRD_NIGHTLY))
+   ifeq (,$(NIGHTINGALE_OFFICIAL)$(NIGHTINGALE_NIGHTLY))
       SB_BUILD_NUMBER = 0
    endif
 
@@ -92,8 +86,8 @@ ifdef MAKE_INSTALLER
    PPDEFINES += -DMAKE_INSTALLER="$(MAKE_INSTALLER)"
 endif
 
-ifdef SONGBIRD_OFFICIAL
-   PPDEFINES += -DSONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)"
+ifdef NIGHTINGALE_OFFICIAL
+   PPDEFINES += -DNIGHTINGALE_OFFICIAL="$(NIGHTINGALE_OFFICIAL)"
 endif
 
 ifdef SB_ENABLE_TESTS

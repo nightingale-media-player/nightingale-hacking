@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -186,12 +186,13 @@ protected:
   PRBool               mWritable;
 };
 
-#define SB_VARIANT_CID \
-{ 0xb522c2e8,                                \
+#define NIGHTINGALE_VARIANT_CID \
+{ /*{B522C2E8-826F-477f-86B7-4A143CD1A188}*/ \
+  0xb522c2e8,                                \
   0x826f,                                    \
   0x477f,                                    \
 { 0x86, 0xb7, 0x4a, 0x14, 0x3c, 0xd1, 0xa1, 0x88 }}
 
-#define SB_VARIANT_CLASSNAME "sbVariant"
+#define NIGHTINGALE_VARIANT_CLASSNAME "sbVariant"
 
-#define SB_VARIANT_CONTRACTID "@songbirdnest.com/Songbird/Variant;1"
+#define NIGHTINGALE_VARIANT_CONTRACTID "@getnightingale.com/Nightingale/Variant;1"

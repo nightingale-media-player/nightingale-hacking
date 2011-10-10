@@ -1,16 +1,16 @@
 #
-#=BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
-# Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the ``GPL'').
+# GNU General Public License Version 2 (the GPL).
 #
 # Software distributed under the License is distributed
-# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 # express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../..
@@ -29,19 +29,15 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 DYNAMIC_LIB = sbPlaylistCommands
 
 CPP_SRCS = PlaylistCommandsManager.cpp \
            PlaylistCommandsComponent.cpp \
-           sbPlaylistCommandsHelper.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/playlistcommands/public \
-                     $(DEPTH)/components/library/base/public \
-                     $(DEPTH)/components/property/public \
-                     $(topsrcdir)/components/include \
-                     $(topsrcdir)/components/moz/strings/src \
-                     $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/rdf \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/dom \
@@ -59,16 +55,16 @@ ifeq ($(SB_PLATFORM), macosx)
    DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbPlaylistCommandsBuilder.js \
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbPlaylistCommandsBuilder.js \
                       $(srcdir)/sbPublicPlaylistCommands.js \
                       $(srcdir)/sbAddToPlaylist.jsm \
                       $(srcdir)/kPlaylistCommands.jsm \
                       $(NULL)
-
-IS_COMPONENT = 1
+                     
+IS_COMPONENT = 1 
 
 # TODO: Post 0.5 we need to remove js modules from the line above
-SONGBIRD_JSMODULES =  $(srcdir)/sbAddToPlaylist.jsm \
+NIGHTINGALE_JSMODULES =  $(srcdir)/sbAddToPlaylist.jsm \
                       $(srcdir)/sbAddToDevice.jsm \
                       $(srcdir)/sbAddToLibrary.jsm \
                       $(srcdir)/kPlaylistCommands.jsm \

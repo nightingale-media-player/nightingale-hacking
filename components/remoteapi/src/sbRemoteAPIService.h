@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -37,11 +37,11 @@
 
 #include "sbIDataRemote.h"
 
-#define SONGBIRD_REMOTEAPI_SERVICE_CONTRACTID           \
-  "@songbirdnest.com/remoteapi/remoteapiservice;1"
-#define SONGBIRD_REMOTEAPI_SERVICE_CLASSNAME            \
-  "Songbird RemoteAPI State Service"
-#define SONGBIRD_REMOTEAPI_SERVICE_CID                  \
+#define NIGHTINGALE_REMOTEAPI_SERVICE_CONTRACTID           \
+  "@getnightingale.com/remoteapi/remoteapiservice;1"
+#define NIGHTINGALE_REMOTEAPI_SERVICE_CLASSNAME            \
+  "Nightingale RemoteAPI State Service"
+#define NIGHTINGALE_REMOTEAPI_SERVICE_CID                  \
 { /* 8E380CB6-CFBC-4d80-9E4C-E035253243C9 */            \
   0x8e380cb6,                                           \
   0xcfbc,                                               \

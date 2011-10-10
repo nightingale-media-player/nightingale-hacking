@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -30,9 +30,9 @@
 <!-- Import external definitions. -->
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <bindings
@@ -50,8 +50,7 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-first-run-eula"
-           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+  <binding id="sb-first-run-eula">
 
     <!-- ***********************************************************************
      *
@@ -73,7 +72,7 @@
                        class="sb-first-run-eula-browser"
                        type="content"
                        disablehistory="true"
-                       src="chrome://songbird/content/html/eula.html"/>
+                       src="chrome://nightingale/content/html/eula.html"/>
 
           <!-- Accept EULA checkbox. -->
           <xul:checkbox anonid="accept_checkbox"
@@ -91,22 +90,8 @@
           </xul:menulist>
         </xul:hbox>
 
-        <!-- Options box. -->
-        <xul:vbox anonid="options_box">
-
-          <!-- Metrics collection checkbox. -->
-          <xul:checkbox anonid="metrics_checkbox"
-                        label="&first_run.feedback.metrics.label;"/>
-          <xul:description class="indent sb-first-run-checkbox-description">
-            &first_run.feedback.metrics.description;
-          </xul:description>
-
-        </xul:vbox> <!-- options_box -->
-
       </xul:vbox> <!-- container_box -->
 
-      <xul:box anonid="button_attributes"
-               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
     </content>
 
 
@@ -150,27 +135,8 @@
 
         // Initialize the widget services.
         this._widgetSvc.initialize();
-
-        // set the default value of the metrics collection checkbox
-        var metricsChecked =
-          Application.prefs.getValue("app.metrics.checkedByDefault", true);
-        var metricsCheckbox =
-          document.getAnonymousElementByAttribute(this,
-                                                  "anonid",
-                                                  "metrics_checkbox");
-        metricsCheckbox.checked = metricsChecked;
       ]]></constructor>
 
-
-      <method name="saveSettings"><body><![CDATA[
-        // Save the metrics collection setting.
-        var metricsCheckbox =
-              document.getAnonymousElementByAttribute(this,
-                                                      "anonid",
-                                                      "metrics_checkbox");
-        var metricsEnabled = metricsCheckbox.checked ? "1" : "0";
-        Application.prefs.setValue("app.metrics.enabled", metricsEnabled);
-      ]]></body></method>
 
       <!--
        * destructor
@@ -197,20 +163,12 @@
           var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
                            .getService(Ci.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
-            ("chrome://songbird/content/scripts/firstRun/firstRunEula.js",
+            ("chrome://nightingale/content/scripts/firstRun/firstRunEula.js",
              null);
         }
       ]]></body></method>
 
     </implementation>
-
-    <handlers>
-      <handler event="pageshow">
-        // Set the quit button label.
-       document.documentElement.getButton("extra1").label =
-         SBString("first_run.quit");
-      </handler>
-    </handlers>
 
   </binding>
 

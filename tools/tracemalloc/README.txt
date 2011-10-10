@@ -1,1 +1,1 @@
-See http://wiki.songbirdnest.com/Developer/Articles/Debugging/Using_TraceMalloc_with_Songbird for instructions
+See http://wiki.getnightingale.com/Developer/Articles/Debugging/Using_TraceMalloc_with_Nightingale for instructions

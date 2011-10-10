@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services.
+// Nightingale Windows event logging services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbWindowsEventLog.cpp
- * \brief Songbird Windows Event Logging Services Source.
+ * \brief Nightingale Windows Event Logging Services Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services imported services.
+// Nightingale Windows event logging services imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -58,21 +58,21 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services configuration.
+// Nightingale Windows event logging services configuration.
 //
 //------------------------------------------------------------------------------
 
 //
-// SB_WINDOWS_EVENT_LOG_EVENT_SOURCE_NAME   Name of Songbird logging event
+// SB_WINDOWS_EVENT_LOG_EVENT_SOURCE_NAME   Name of Nightingale logging event
 //                                          source name.
 //
 
-#define SB_WINDOWS_EVENT_LOG_EVENT_SOURCE_NAME "Songbird"
+#define SB_WINDOWS_EVENT_LOG_EVENT_SOURCE_NAME "Nightingale"
 
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird Windows event logging services prototypes.
+// Internal Nightingale Windows event logging services prototypes.
 //
 //------------------------------------------------------------------------------
 
@@ -83,14 +83,14 @@ static void sbWindowsEventLogFinalize();
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services globals.
+// Nightingale Windows event logging services globals.
 //
 //------------------------------------------------------------------------------
 
 //
-// gSBWindowsEventLogInitialized    True if the Songbird Windows event logging
+// gSBWindowsEventLogInitialized    True if the Nightingale Windows event logging
 //                                  services have been initialized.
-// gSBWindowsEventLogEventSource    Event source for Songbird Windows events.
+// gSBWindowsEventLogEventSource    Event source for Nightingale Windows events.
 //
 
 static BOOL gSBWindowsEventLogInitialized = FALSE;
@@ -99,7 +99,7 @@ static HANDLE gSBWindowsEventLogEventSource = NULL;
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services.
+// Nightingale Windows event logging services.
 //
 //------------------------------------------------------------------------------
 
@@ -140,12 +140,12 @@ sbWindowsEventLog(const char* aMsg, ...)
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird Windows event logging services.
+// Internal Nightingale Windows event logging services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * \brief Initialize the Songbird Windows event logging services.
+ * \brief Initialize the Nightingale Windows event logging services.
  */
 
 void
@@ -169,7 +169,7 @@ sbWindowsEventLogInitialize()
 
 
 /**
- * \brief Finalize the Songbird Windows event logging services.
+ * \brief Finalize the Nightingale Windows event logging services.
  */
 
 void

@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -35,11 +35,11 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
-const SONGBIRD_CLH_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
-const SONGBIRD_CLH_CID = Components.ID("{128badd1-aa05-4508-87cc-f3cb3e9b5499}");
-const SONGBIRD_CLH_CLASSNAME = "Songbird Command Line Handler";
+const NIGHTINGALE_CLH_CONTRACTID = "@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale";
+const NIGHTINGALE_CLH_CID = Components.ID("{128badd1-aa05-4508-87cc-f3cb3e9b5499}");
+const NIGHTINGALE_CLH_CLASSNAME = "Nightingale Command Line Handler";
 // "m" for ordinary priority see sbICommandLineHandler.idl
-const SONGBIRD_CLH_CATEGORY= "m-songbird-clh";
+const NIGHTINGALE_CLH_CATEGORY= "m-nightingale-clh";
 
 // Command Line Startup Topic that's used to notify that the application
 // has parsed the command line. This enables the Application Startup Service
@@ -99,7 +99,7 @@ function shouldLoadURI(aURI) {
 }
 
 /**
- * /brief Songbird commandline handler
+ * /brief Nightingale commandline handler
  */
 function sbCommandLineHandler() {
   this.itemHandlers = []; // array of handlers
@@ -168,7 +168,7 @@ sbCommandLineHandler.prototype = {
     if (tests != null || emptyParam) {
       // we're running tests, make sure we don't open a window
       cmdLine.preventDefault = true;
-      var testHarness = Cc["@songbirdnest.com/Songbird/TestHarness;1"].getService(Ci.sbITestHarness);
+      var testHarness = Cc["@getnightingale.com/Nightingale/TestHarness;1"].getService(Ci.sbITestHarness);
 
       var exception;
       try {
@@ -194,7 +194,7 @@ sbCommandLineHandler.prototype = {
       // To fix this problem, we will use a nasty little hack. Open up the a
       // plain window that closes itself after a couple of seconds. This fires
       // the application shutdown procedure just as if we had closed the main
-      // Songbird window.
+      // Nightingale window.
       //
       // Yes - I know this sucks, I hate myself a little more for doing this.
       if (platformStr == "Darwin" ||
@@ -203,7 +203,7 @@ sbCommandLineHandler.prototype = {
                  .getService(Ci.nsIWindowWatcher);
         
         ww.openWindow(null, 
-                      "chrome://songbird/content/xul/unitTestShutdownWin.xul", 
+                      "chrome://nightingale/content/xul/unitTestShutdownWin.xul", 
                       "shutdownwin", "chrome", null);
       }
       else {
@@ -408,23 +408,23 @@ sbCommandLineHandler.prototype = {
 const sbCommandLineHandlerModule = {
   registerSelf : function (compMgr, fileSpec, location, type) {
     compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation(SONGBIRD_CLH_CID,
-                                    SONGBIRD_CLH_CLASSNAME,
-                                    SONGBIRD_CLH_CONTRACTID,
+    compMgr.registerFactoryLocation(NIGHTINGALE_CLH_CID,
+                                    NIGHTINGALE_CLH_CLASSNAME,
+                                    NIGHTINGALE_CLH_CONTRACTID,
                                     fileSpec,
                                     location,
                                     type);
 
     var catMan = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
     catMan.addCategoryEntry("command-line-handler",
-                            SONGBIRD_CLH_CATEGORY,
-                            SONGBIRD_CLH_CONTRACTID,
+                            NIGHTINGALE_CLH_CATEGORY,
+                            NIGHTINGALE_CLH_CONTRACTID,
                             true,
                             true);
   },
 
   getClassObject : function (compMgr, cid, iid) {
-    if (!cid.equals(SONGBIRD_CLH_CID))
+    if (!cid.equals(NIGHTINGALE_CLH_CID))
       throw Cr.NS_ERROR_NO_INTERFACE;
 
     if (!iid.equals(Ci.nsIFactory))
@@ -443,10 +443,10 @@ const sbCommandLineHandlerModule = {
 
   unregisterSelf : function (compMgr, location, type) {
     compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.unregisterFactoryLocation(SONGBIRD_CLH_CID, location);
+    compMgr.unregisterFactoryLocation(NIGHTINGALE_CLH_CID, location);
 
     var catMan = Cc["@mozilla.org/categorymanager;1"].getService(Ci.nsICategoryManager);
-    catMan.deleteCategoryEntry("command-line-handler", SONGBIRD_CLH_CATEGORY);
+    catMan.deleteCategoryEntry("command-line-handler", NIGHTINGALE_CLH_CATEGORY);
   },
 
   canUnload : function (compMgr) {

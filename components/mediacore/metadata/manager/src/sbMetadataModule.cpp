@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
  * \file  sbMetadataModule.cpp
- * \brief Songbird Metadata Component Factory and Main Entry Point.
+ * \brief Nightingale Metadata Component Factory and Main Entry Point.
  */
 
 #include <nsIGenericFactory.h>
@@ -42,23 +42,23 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileMetadataService, Init)
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_METADATAMANAGER_CLASSNAME,
-    SONGBIRD_METADATAMANAGER_CID,
-    SONGBIRD_METADATAMANAGER_CONTRACTID,
+    NIGHTINGALE_METADATAMANAGER_CLASSNAME,
+    NIGHTINGALE_METADATAMANAGER_CID,
+    NIGHTINGALE_METADATAMANAGER_CONTRACTID,
     sbMetadataManagerConstructor
   },
 
   {
-    SONGBIRD_METADATACHANNEL_CLASSNAME,
-    SONGBIRD_METADATACHANNEL_CID,
-    SONGBIRD_METADATACHANNEL_CONTRACTID,
+    NIGHTINGALE_METADATACHANNEL_CLASSNAME,
+    NIGHTINGALE_METADATACHANNEL_CID,
+    NIGHTINGALE_METADATACHANNEL_CONTRACTID,
     sbMetadataChannelConstructor
   },
 
   {
-    SONGBIRD_FILEMETADATASERVICE_CLASSNAME,
-    SONGBIRD_FILEMETADATASERVICE_CID,
-    SONGBIRD_FILEMETADATASERVICE_CONTRACTID,
+    NIGHTINGALE_FILEMETADATASERVICE_CLASSNAME,
+    NIGHTINGALE_FILEMETADATASERVICE_CID,
+    NIGHTINGALE_FILEMETADATASERVICE_CONTRACTID,
     sbFileMetadataServiceConstructor
   }
 };
@@ -82,7 +82,7 @@ DestroyModule(nsIModule* self)
   sbMetadataManager::DestroySingleton();
 }
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataComponent,
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(NightingaleMetadataComponent,
                                    components,
                                    InitMetadata,
                                    DestroyModule)

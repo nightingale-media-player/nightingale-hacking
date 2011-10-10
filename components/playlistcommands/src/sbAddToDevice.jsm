@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
@@ -34,7 +34,7 @@ const Cc = Components.classes;
 const Cr = Components.results;
 
 const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
-  "@songbirdnest.com/Songbird/Library/medialistduplicatefilter;1";
+  "@getnightingale.com/Nightingale/Library/medialistduplicatefilter;1";
 
 const ADDTODEVICE_MENU_TYPE      = "submenu";
 const ADDTODEVICE_MENU_ID        = "library_cmd_addtodevice";
@@ -58,10 +58,10 @@ EXPORTED_SYMBOLS = [ "addToDeviceHelper",
  * \return A new unwrapper helper object.
  */
 function createUnwrapper(aSelection) {
-  var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+  var unwrapper = Cc["@getnightingale.com/Nightingale/Library/EnumeratorWrapper;1"]
                     .createInstance(Ci.sbIMediaListEnumeratorWrapper);
   unwrapper.initialize(aSelection);
-
+  
   return unwrapper;
 }
 
@@ -226,7 +226,7 @@ var SBPlaylistCommand_AddToDevice =
     var cmds = this._getMenu(aSubMenu);
     if (aSubMenu == ADDTODEVICE_MENU_ID) {
       var deviceRegistrar =
-        Components.classes["@songbirdnest.com/Songbird/DeviceManager;2"]
+        Components.classes["@getnightingale.com/Nightingale/DeviceManager;2"]
                   .getService(Components.interfaces.sbIDeviceRegistrar);
 
       var device = deviceRegistrar.getDevice(cmds.m_DeviceIds[aIndex]);
@@ -304,10 +304,8 @@ var SBPlaylistCommand_AddToDevice =
   },
 
   initCommands: function(aHost) {
-    if (!this.m_addToDevice) {
-      this.m_addToDevice = new addToDeviceHelper();
-      this.m_addToDevice.init(this);
-    }
+    this.m_addToDevice = new addToDeviceHelper();
+    this.m_addToDevice.init(this);
   },
 
   shutdownCommands: function() {
@@ -367,10 +365,10 @@ addToDeviceHelper.prototype = {
 
   init: function addToDeviceHelper_init(aCommands) {
     this.m_libraryManager =
-      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+      Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
       .getService(Components.interfaces.sbILibraryManager);
     this.m_deviceManager =
-      Components.classes["@songbirdnest.com/Songbird/DeviceManager;2"]
+      Components.classes["@getnightingale.com/Nightingale/DeviceManager;2"]
       .getService(Components.interfaces.sbIDeviceManager2);
     var eventTarget =
       this.m_deviceManager.QueryInterface(
@@ -451,7 +449,7 @@ addToDeviceHelper.prototype = {
       var accessCompatibility;
       try {
         accessCompatibility = deviceProperties.getPropertyAsAString(
-            "http://songbirdnest.com/device/1.0#accessCompatibility");
+            "http://getnightingale.com/device/1.0#accessCompatibility");
       } catch (ex) {}
       if (accessCompatibility == "ro") {
         continue;
@@ -517,26 +515,6 @@ addToDeviceHelper.prototype = {
     return false;
   },
 
-  _getDeviceLibraryForLibrary: function(aDevice, aLibrary) {
-    var libs = aDevice.content.libraries;
-    for (var i = 0; i < libs.length; i++) {
-      var devLib = libs.queryElementAt(i, Ci.sbIDeviceLibrary);
-      if (devLib.equals(aLibrary))
-        return devLib;
-    }
-
-    return null;
-  },
-
-  _itemsFromEnumerator: function(aItemEnum) {
-    var items = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-
-    while (aItemEnum.hasMoreElements())
-      items.appendElement(aItemEnum.getNext(), false);
-
-    return items;
-  },
-
   // perform the transfer of the selected items to the device library
   addToDevice: function addToDeviceHelper_addToDevice(
                           devicelibraryguid,
@@ -544,35 +522,52 @@ addToDeviceHelper.prototype = {
                           devicename) {
     var library = this.m_libraryManager.getLibrary(devicelibraryguid);
     if (library) {
+      var oldLength = library.length;
       var selection =
         sourceplaylist.mediaListView.selection.selectedMediaItems;
-      var items = this._itemsFromEnumerator(selection);
 
-      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                            .getService(Ci.sbIDeviceManager2);
-      var device = deviceManager.getDeviceForItem(library);
-      var deviceLibrary = this._getDeviceLibraryForLibrary(device, library);
+      // Create an enumerator that wraps the enumerator we were handed since
+      // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+      // 'ol sbIMediaItems
 
-      var differ =
-          Cc["@songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1"]
-            .createInstance(Ci.sbIDeviceLibrarySyncDiff);
-      var changeset = {};
-      var destItems = {};
+      // Create a media item duplicate enumerator filter to count the number of
+      // duplicate items and to remove them from the enumerator if the target is
+      // a library.
+      let dupFilter =
+        Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
+        .createInstance(Ci.sbIMediaListDuplicateFilter);
+      dupFilter.initialize(selection,
+                           library,
+                           true);
+ 
+      // Create a filtered item enumerator.
 
-      differ.generateDropLists(sourceplaylist.library,
-                               library,
-                               null,
-                               items,
-                               destItems,
-                               changeset);
+      // We also want to set the downloadStatusTarget property as we work.
+      var unwrapper = createUnwrapper(dupFilter);
 
-      device.exportToDevice(deviceLibrary, changeset.value);
-
-      DNDUtils.reportAddedTracks(changeset.value.changes.length,
-                                 0, /* no duplicate reporting */
-                                 0, /* no unsupported reporting */
-                                 devicename,
-                                 true);
+      var asyncListener = {
+       _dupFilter: dupFilter,
+       onProgress: function(aItemsProcessed, aComplete) {
+         if (aComplete) {
+           var added = this._dupFilter.totalItems - this._dupFilter.duplicateItems;
+           DNDUtils.reportAddedTracks(added,
+                                      this._dupFilter.duplicateItems,
+                                      0, /* no unsupported reporting */
+                                      devicename,
+                                      true);
+         }
+         else {
+           DNDUtils.reportAddedTracks(aItemsProcessed,
+                                      0, /* no dupe reporting until complete */
+                                      0, /* no unsupported reporting */
+                                      devicename,
+                                      true);
+         }
+       },
+       QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
+      }
+         
+      library.addSomeAsync(unwrapper, asyncListener);
     }
   },
 
@@ -584,35 +579,9 @@ addToDeviceHelper.prototype = {
   _makingList    : false,
 
   refreshCommands: function addToDeviceHelper_refreshCommands() {
-
-    // Bug fixers beware! This code gets called very frequently and can have
-    // difficult-to-debug side effects. Proceed with caution.
-
-    var self = this;
-    function ensureRefreshExists() {
-      // Explicitly return true or false. Otherwise, JS will complain to the
-      // error console if any of the checks finds an undefined property.
-      return (self.m_commands &&
-              self.m_commands.m_Context &&
-              self.m_commands.m_Context.m_Playlist &&
-              self.m_commands.m_Context.m_Playlist.refreshCommands) ?
-              true : false;
-    }
-
-    /* We need to ensure that the context and playlist have been initialized
-     * and are ready to display commands before calling refreshCommands.
-     *
-     * It is possible for an event handler to fire before the binding
-     * is created or after it is destroyed, so it is possible for this to
-     * be triggered before m_Playlist is fully instantiated or after pieces
-     * of it have gone away.  Thus, we need to also check that refreshCommands
-     * is present to ensure the playlist binding is in a good state. */
-
-    if (ensureRefreshExists()) {
-      this.makeListOfDevices();
-      // Check again, as the playlist binding can be destroyed during the
-      // previous function call.
-      if (ensureRefreshExists()) {
+    if (this.m_commands) {
+      if (this.m_commands.m_Context && this.m_commands.m_Context.m_Playlist) {
+        this.makeListOfDevices();
         this.m_commands.m_Context.m_Playlist.refreshCommands();
       }
     }
@@ -629,7 +598,7 @@ addToDeviceHelper.prototype = {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   },
-
+ 
   // trap event for device library added/removed, and refresh the commands
   // we trap the library add/remove (instead of the plain device add/remove)
   // since we check the library count in makeListOfDevices(), so we need to

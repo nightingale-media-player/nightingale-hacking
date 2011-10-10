@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -28,9 +28,7 @@
 
 #include "nsISupports.idl"
 
-interface nsIInputStream;
 interface nsIPropertyBag2;
-interface nsIURI;
 interface nsIVariant;
 
 interface sbIDeviceCapabilities;
@@ -39,32 +37,14 @@ interface sbIDeviceLibrary;
 interface sbIDeviceProperties;
 interface sbIDeviceParameters;
 interface sbIDeviceStatus;
-interface sbILibrary;
-interface sbILibraryChangeset;
 interface sbIMediaItem;
-
-%{C++
-
-#include <nsError.h>
-
-// Device related errors
-#define SB_ERROR_MEDIA_TYPE_NOT_SUPPORTED \
-  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
-#define SB_ERROR_DOWNLOAD_SIZE_UNAVAILABLE \
-  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 2 )
-#define SB_ERROR_DEVICE_DRM_FAILURE \
-  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 3 )
-#define SB_ERROR_DEVICE_DRM_CERT_FAIL \
-  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 4 )
-
-%}
 
 /**
  * \interface sbIDeviceSupportsMediaItemCallback
  *
  * A callback interface for sbIDevice::supportsMediaItem
  */
-[scriptable, function, uuid(cf163566-24b2-4ecd-4b9f-2a69725e22ad)]
+[scriptable, function, uuid(a46d3a7e-1dd1-11b2-a1dd-f531804f18a9)]
 interface sbIDeviceSupportsItemCallback : nsISupports
 {
   void onSupportsMediaItem(in sbIMediaItem aMediaItem, in boolean aIsSupported);
@@ -76,7 +56,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(fd0d4015-20e1-45b1-bd8a-a8f81d2bdfd2)]
+[scriptable, uuid(ba953610-380f-11df-9879-0800200c9a66)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -94,7 +74,7 @@ interface sbIDevice : nsISupports
    * The id of the controller that created the device.
    */
   readonly attribute nsIDPtr controllerId;
-
+  
   /**
    * The id of the device
    */
@@ -151,22 +131,15 @@ interface sbIDevice : nsISupports
   attribute sbIDeviceLibrary defaultLibrary;
 
   /**
-   * The library representing the primary device storage volume.  This is the
-   * volume that stores device configuration and information (e.g., device icon,
-   * .SBSettings.xml file).
-   */
-  readonly attribute sbIDeviceLibrary primaryLibrary;
-
-  /**
    * The parameters with which the device was created
    */
   readonly attribute nsIPropertyBag2 parameters;
-
+ 
   /**
    * The device's properties.
    */
   readonly attribute sbIDeviceProperties properties;
-
+ 
   /**
    * Whether the media item is transcoded to the device directly.
    */
@@ -178,7 +151,7 @@ interface sbIDevice : nsISupports
    * device is busy.
    */
   readonly attribute boolean isBusy;
-
+ 
   /**
    * Whether it is safe to disconnect the device, generally this is when it
    * is not performing a critical operation like copying a file to/from the
@@ -187,7 +160,7 @@ interface sbIDevice : nsISupports
    * the application.
    */
   readonly attribute boolean canDisconnect;
-
+ 
   /**
    * A more detailed state of the device, with information on what item/list it
    * is currently being worked on and includes possible substates for more
@@ -195,7 +168,7 @@ interface sbIDevice : nsISupports
    * @see sbIDeviceStatus
    */
   readonly attribute sbIDeviceStatus currentStatus;
-
+  
   /**
    * Does the implementation of this sbIDevice provide support for
    * reformatting the current device?
@@ -203,18 +176,31 @@ interface sbIDevice : nsISupports
   readonly attribute boolean supportsReformat;
 
   /**
+   * Flag to hold sync requests until we are ready. This is used for when the
+   * user is editing the settings for a device, this way we do not start a sync
+   * in the middle of changes.
+   *
+   * Example:
+   *   (start code)
+   *   this._device.cacheSyncRequests = true;
+   *   // changes are made to settings
+   *   this._device.cacheSyncRequests = false;
+   *   (end)
+   *
+   * Note:
+   *   When cacheSyncRequests is toggled from true to false and there have been
+   *   sync requests we will start a sync.
+   *   By default this attribute is false.
+  */
+  attribute boolean cacheSyncRequests;
+
+  /**
    * Whether the device is busy, idle, syncing, mounting, etc.
-   *
-   * The state attribute is RW so that the sbDeviceRequestThreadQueue
-   * can manage the device's state appropriately should a request be cancelled.
-   * Careful consideration should be made before writing to the device's state
-   * in other areas.
-   *
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_*
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_*
    * @see STATE_*
    */
-  attribute unsigned long state;
+  readonly attribute unsigned long state;
   readonly attribute unsigned long previousState;
 
   const unsigned long STATE_IDLE            = 0;  // Not doing anything
@@ -239,25 +225,20 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_COPY_PREPARING  = 17; // Preparing to copy
   const unsigned long STATE_SYNCING_TYPE    = 18; // Syncing types
   const unsigned long STATE_COPYING_MUSIC   = 19; // Copying music
-  const unsigned long STATE_COPYING_VIDEO   = 20; // Copying video
+  const unsigned long STATE_COPYING_VIDEO   = 20; // Copying video 
   const unsigned long STATE_IMAGESYNC_PREPARING  = 21; // Preparing to sync
   const unsigned long STATE_COPYING_IMAGE        = 22; // Copying image
 
   const unsigned long STATE_USER            = 0x20000000;
 
-  /**
-   * Requests below 0x2000000 are reserved by the sbRequestThreadQueue for
-   * internal use
-   */
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
-  const unsigned long REQUEST_FLAG_READ  = 0x20000000;
 
   /* read requests */
-  const unsigned long REQUEST_MOUNT        = REQUEST_FLAG_READ + 1;
-  const unsigned long REQUEST_READ         = REQUEST_FLAG_READ + 2;
-  const unsigned long REQUEST_EJECT        = REQUEST_FLAG_READ + 3;
-  const unsigned long REQUEST_SUSPEND      = REQUEST_FLAG_READ + 4;
+  const unsigned long REQUEST_MOUNT     = 1;
+  const unsigned long REQUEST_READ      = 2;
+  const unsigned long REQUEST_EJECT     = 3;
+  const unsigned long REQUEST_SUSPEND   = 4;
 
   /* write requests */
   const unsigned long REQUEST_WRITE         = REQUEST_FLAG_WRITE + 1;
@@ -272,29 +253,22 @@ interface sbIDevice : nsISupports
 
   /* reset the device to its factory state */
   const unsigned long REQUEST_FACTORY_RESET = REQUEST_FLAG_WRITE + 8;
-
+  
   /* format the device media */
   const unsigned long REQUEST_FORMAT        = REQUEST_FLAG_WRITE + 9;
 
   /* perform image sync */
   const unsigned long REQUEST_IMAGESYNC     = REQUEST_FLAG_WRITE + 10;
 
-  /* update raw files on the device */
-  const unsigned long REQUEST_WRITE_FILE    = REQUEST_FLAG_WRITE + 11;
-  const unsigned long REQUEST_DELETE_FILE   = REQUEST_FLAG_WRITE + 12;
-
-  /* Request indicating that a sync request has completed */
-  const unsigned long REQUEST_SYNC_COMPLETE = REQUEST_FLAG_WRITE + 13;
-
   /**
-   *
+   * 
    */
   void submitRequest(in unsigned long aRequest, in nsIPropertyBag2 aRequestParameters);
   /**
    * Cancel all current pending requests
    */
   void cancelRequests();
-
+  
   /**
    * Call sync() on all libraries attached to this device
    */
@@ -302,8 +276,8 @@ interface sbIDevice : nsISupports
 
   /**
    * Can this media item be stored on this device?
-   *
-   * A supported file is either
+   * 
+   * A supported file is either 
    *   a) natively supported, or
    *   b) transcodable into one,
    * and is either
@@ -335,41 +309,4 @@ interface sbIDevice : nsISupports
   boolean getWarningDialogEnabled(in AString aWarning);
   /* Reset the enabled state of all warning dialogs */
   void resetWarningDialogs();
-
-  /**
-   * \brief Open an input stream for the URI specified by aURI.  The URI may be
-   *        a generic device URI of the form
-   *        "x-device:///<device-guid>/<device-library-guid>/path/to/file".
-   *        Such URI's specify the target device with <device-guid> and the
-   *        storage volume using the volume's device library with the guid
-   *        <device-library-guid>.  Different device types may also accept
-   *        device type specific URI's.
-   *
-   * \param aURI                URI for which to open input stream.
-   *
-   * \returns                   Opened input stream.
-   * \throws NS_ERROR_NOT_AVAILABLE
-   *                            No file exists for URI.
-   */
-  nsIInputStream openInputStream(in nsIURI aURI);
-
-  /**
-   * Imports changes from the device as specified in aImportChangeset
-   *
-   * \param aImportToLibrary The library to import the changes to
-   * \param aImportChangeset The changes that are to be imported
-   */
-  void importFromDevice(in sbILibrary aImportToLibrary,
-                        in sbILibraryChangeset aImportChangeset);
-
-  /**
-   * Exports the changes to a device as specified in aExportChangeset
-   *
-   * \param aDevLibrary The device library of the device to export changes to
-   * \param aExportChangeset The changes to export
-   */
-  void exportToDevice(in sbIDeviceLibrary aDevLibrary,
-                      in sbILibraryChangeset aExportChangeset);
-
 };
-

@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 #ifndef SBDEVICELIBRARYSYNCSETTINGS_H_
 #define SBDEVICELIBRARYSYNCSETTINGS_H_
@@ -32,7 +32,7 @@
 #include <nsInterfaceHashtable.h>
 #include <nsTArray.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbIDeviceLibrary.h>
 #include <sbIDeviceLibrarySyncSettings.h>
 #include <sbIDeviceLibraryMediaSyncSettings.h>
@@ -52,7 +52,29 @@ public:
   {
     return mLock;
   }
+  /**
+   * Returns true if the settings have changed
+   */
+  bool HasChanged() const;
+  bool HasChangedNoLock() const
+  {
+    return mChanged;
+  }
+  /**
+   * Resets the changed flag, this does not revert the settings themselvves
+   */
+  void ResetChanged();
+  void ResetChangedNoLock();
+  /**
+   * Marks the settings object as modified and notifies the device library
+   * if set to do so
+   */
+  void Changed(PRBool forceNotify = PR_FALSE);
 
+  void NotifyDeviceLibrary()
+  {
+    mNotifyDeviceLibrary = true;
+  }
   /**
    * Reads in the sync management settings and builds out the various objects
    * \param aDevice The device associated with the settings
@@ -62,6 +84,11 @@ public:
   nsresult Read(sbIDevice * aDevice,
                 sbIDeviceLibrary * aDeviceLibrary);
 
+  /**
+   * Writes the sync management settings and builds out the various objects
+   * \param aDevice The device associated with the settings
+   */
+  nsresult Write(sbIDevice * aDevice);
   static  sbDeviceLibrarySyncSettings * New(
                                           nsID const & aDeviceID,
                                           nsAString const & aDeviceLibraryGuid);
@@ -74,21 +101,18 @@ private:
                            PRUint32 aMediaType,
                            sbIDeviceLibraryMediaSyncSettings ** aMediaSettings);
 
+  nsresult GetSyncModePrefKey(nsAString& aPrefKey);
+
   nsresult GetMgmtTypePref(sbIDevice * aDevice,
                            PRUint32 aContentType,
                            PRUint32 & aMgmtTypes);
 
-  /**
-   * Returns the import flag for a given content type that was stored as a pref.
-   * This defaults to not importing if the pref does not exist.
-   * \param aDevice The device used to retrieve the preference from
-   * \param aMediaType The media type to look up the import flag.
-   *                   sbIDeviceLibrary::MEDIATYPE_*
-   * \param aImport The returned import flag
-   */
-  nsresult GetImportPref(sbIDevice * aDevice,
-                         PRUint32 aMediaType,
-                         PRBool & aImport);
+  nsresult ReadLegacySyncMode(sbIDevice * aDevice, PRUint32 & aSyncMode);
+
+  static nsresult ReadPRUint32(sbIDevice * aDevice,
+                               nsAString const & aPrefKey,
+                               PRUint32 & aInt,
+                               PRUint32 aDefault);
 
   static nsresult ReadAString(sbIDevice * aDevice,
                               nsAString const & aPrefKey,
@@ -99,6 +123,8 @@ private:
   nsresult WritePref(sbIDevice * aDevice,
                      nsAString const & aPrefKey,
                      T aValue);
+
+  nsresult ReadSyncMode(sbIDevice * aDevice, PRUint32 & aSyncMode);
 
   nsresult WriteMediaSyncSettings(
                          sbIDevice * aDevice,
@@ -113,15 +139,6 @@ private:
 
   nsresult GetMgmtTypePrefKey(PRUint32 aContentType, nsAString& aPrefKey);
 
-  /**
-   * Returns the preference key for the import flag of media settings
-   * \param aMediaType The media type to get the key
-   *                   sbIDeviceLibrary::MEDIATYPE_*
-   * \param aPrefKey The returned preference key
-   */
-  nsresult GetImportPrefKey(PRUint32 aMediaType,
-                            nsAString& aPrefKey);
-
   nsresult GetSyncListsPrefKey(PRUint32 aContentType, nsAString& aPrefKey);
 
   nsresult GetSyncFromFolderPrefKey(PRUint32 aContentType, nsAString& aPrefKey);
@@ -132,6 +149,9 @@ private:
 
   nsID mDeviceID;
   nsString mDeviceLibraryGuid;
+  PRUint32 mSyncMode;
+  bool mChanged;
+  bool mNotifyDeviceLibrary;
   PRLock * mLock;
 };
 

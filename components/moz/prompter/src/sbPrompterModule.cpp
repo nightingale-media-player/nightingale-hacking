@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,39 +22,35 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
  * \file  sbPrompterModule.cpp
- * \brief Songbird Prompter Module Component Factory and Main Entry Point.
+ * \brief Nightingale Prompter Module Component Factory and Main Entry Point.
  */
 
 // Self imports.
 #include "sbPrompter.h"
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 // Construct the sbPrompter object and call its Init method.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPrompter, Init)
-NS_DEFINE_NAMED_CID(SB_PROMPTER_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdMozPrompterCIDs[] = {
-    { &kSB_PROMPTER_CID, false, NULL, sbPrompterConstructor },
-    { NULL }
+// Module component information.
+static const nsModuleComponentInfo components[] =
+{
+  {
+    NIGHTINGALE_PROMPTER_CLASSNAME,
+    NIGHTINGALE_PROMPTER_CID,
+    NIGHTINGALE_PROMPTER_CONTRACTID,
+    sbPrompterConstructor
+  }
 };
 
-static const mozilla::Module::ContractIDEntry kSongbirdMozPrompterContracts[] = {
-    { SONGBIRD_PROMPTER_CONTRACTID, &kSB_PROMPTER_CID },
-    { NULL }
-};
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbPrompter, components)
 
-static const mozilla::Module kSongbirdMozPrompterModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozPrompterCIDs,
-    kSongbirdMozPrompterContracts
-};
-
-NSMODULE_DEFN(sbMozPrompterModule) = &kSongbirdMozPrompterModule;

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbLocalDatabaseGUIDArray.h"
@@ -28,9 +28,6 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabaseSchemaInfo.h"
-#include "sbLocalDatabaseLibrary.h"
-
-#include <algorithm>
 
 #include <DatabaseQuery.h>
 #include <nsComponentManagerUtils.h>
@@ -48,22 +45,17 @@
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbMemoryUtils.h>
 #include <sbThreadUtils.h>
 
 #define DEFAULT_FETCH_SIZE 20
-
-// Fetch all guids asynchronously, disabled by default.
-//#define FORCE_FETCH_ALL_GUIDS_ASYNC
 
 #define COUNT_COLUMN NS_LITERAL_STRING("count(1)")
 #define GUID_COLUMN NS_LITERAL_STRING("guid")
@@ -79,56 +71,31 @@ static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
 #define TRACE(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
 #define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabaseGUIDArray,
-                              sbILocalDatabaseGUIDArray,
-                              nsISupportsWeakReference)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
 
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
-  mNeedNewKey(PR_FALSE),
   mBaseConstraintValue(0),
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
   mPrimarySortsCount(0),
-  mCacheMonitor(nsnull),
   mIsDistinct(PR_FALSE),
   mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),
   mQueriesValid(PR_FALSE),
   mNullsFirst(PR_FALSE),
-  mPrefetchedRows(PR_FALSE),
-  mIsFullLibrary(PR_FALSE),
-  mSuppress(0)
+  mPrefetchedRows(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {
     gLocalDatabaseGUIDArrayLog = PR_NewLogModule("sbLocalDatabaseGUIDArray");
   }
 #endif
-  mPropIdsLock =
-    nsAutoLock::NewLock("sbLocalDatabaseGUIDArray::mPropIdsLock");
-
-  mCacheMonitor =
-    nsAutoMonitor::NewMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor");
-  NS_WARN_IF_FALSE(mCacheMonitor, "Failed to create mCacheMonitor.");
 }
 
 sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
 {
-  // We need to remove the cached lengths when a guid array is destroyed
-  // because it may have been used as a transient array for enumeration
-  // of items in a medialist or library which will make the cached lengths
-  // invalid.
-  if(mLengthCache && !mCachedLengthKey.IsEmpty()) {
-    mLengthCache->RemoveCachedLength(mCachedLengthKey);
-    mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
-  }
-
-  if(mCacheMonitor) {
-    nsAutoMonitor::DestroyMonitor(mCacheMonitor);
-  }
-
-  if (mPropIdsLock) {
-    nsAutoLock::DestroyLock(mPropIdsLock);
+  if(mPropertyCache) {
+    mPropertyCache->RemoveDependentGUIDArray(this);
   }
 }
 
@@ -145,8 +112,7 @@ sbLocalDatabaseGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
   mDatabaseGUID = aDatabaseGUID;
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -172,8 +138,7 @@ sbLocalDatabaseGUIDArray::SetDatabaseLocation(nsIURI* aDatabaseLocation)
   mDatabaseLocation = aDatabaseLocation;
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -189,8 +154,7 @@ sbLocalDatabaseGUIDArray::SetBaseTable(const nsAString& aBaseTable)
   mBaseTable = aBaseTable;
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -206,8 +170,7 @@ sbLocalDatabaseGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseConstrai
   mBaseConstraintColumn = aBaseConstraintColumn;
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -224,8 +187,7 @@ sbLocalDatabaseGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintValue)
   mBaseConstraintValue = aBaseConstraintValue;
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -255,10 +217,8 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 {
   mIsDistinct = aIsDistinct;
-
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -281,10 +241,8 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetDistinctWithSortableValues(PRBool aDistinctWithSortableValues)
 {
   mDistinctWithSortableValues = aDistinctWithSortableValues;
-
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 
@@ -363,27 +321,6 @@ sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
   }
 
   *aLength = mLength;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SetLengthCache(
-        sbILocalDatabaseGUIDArrayLengthCache *aLengthCache)
-{
-  mLengthCache = aLengthCache;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetLengthCache(
-        sbILocalDatabaseGUIDArrayLengthCache **aLengthCache)
-{
-  NS_ENSURE_ARG_POINTER(aLengthCache);
-
-  NS_IF_ADDREF(*aLengthCache = mLengthCache);
-
   return NS_OK;
 }
 
@@ -426,47 +363,12 @@ nsresult sbLocalDatabaseGUIDArray::ClearSecondarySorts() {
   return NS_OK;
 }
 
-namespace
-{
-  /**
-   * Used to search the property ID array using a binary search algorithm
-   */
-  const PRUint32 * FindPropID(const PRUint32 * aPropIDs,
-                              PRUint32 aCount,
-                              PRUint32 aPropID)
-  {
-    const PRUint32 * result = std::lower_bound(aPropIDs, aPropIDs + aCount, aPropID);
-    if (result != aPropIDs + aCount && *result == aPropID) {
-      return result;
-    }
-    return aPropIDs + aCount;
-  }
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
-                                        PRUint32 aCount)
+nsresult
+sbLocalDatabaseGUIDArray::MayInvalidate(const nsAString &aGUID,
+                                        sbLocalDatabaseResourcePropertyBag *aBag)
 {
   PRUint32 propertyDBID = 0;
   nsresult rv = NS_ERROR_UNEXPECTED;
-
-
-  // First we check to see if we need to remove cached lengths.
-  if (mLengthCache) {
-    nsAutoLock mon(mPropIdsLock);
-    for (PRUint32 index = 0; index < aCount; ++index) {
-      std::set<PRUint32>::iterator itEntry =
-          mPropIdsUsedInCacheKey.find(aDirtyPropIDs[index]);
-      if(itEntry != mPropIdsUsedInCacheKey.end()) {
-        mLengthCache->RemoveCachedLength(mCachedLengthKey);
-        mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
-        break;
-      }
-    }
-  }
-
-  // Calc the end of the collection for iterator purposes
-  const PRUint32 * const dirtyPropIDsEnd = aDirtyPropIDs + aCount;
 
   // Go through the filters and see if we should invalidate
   PRUint32 filterCount = mFilters.Length();
@@ -478,13 +380,9 @@ sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
       continue;
     }
 
-    const PRUint32 * const found = FindPropID(aDirtyPropIDs,
-                                              aCount,
-                                              propertyDBID);
-
-    if (found != dirtyPropIDsEnd) {
+    if(aBag->IsPropertyDirty(propertyDBID)) {
       // Return right away, no use in continuing if we're invalid.
-      return Invalidate(PR_TRUE);
+      return Invalidate();
     }
   }
 
@@ -493,12 +391,9 @@ sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
   for (PRUint32 index = 0; index < sortCount; index++) {
     const SortSpec& sortSpec = mSorts.ElementAt(index);
 
-    const PRUint32 * const found = FindPropID(aDirtyPropIDs,
-                                              aCount,
-                                              sortSpec.propertyId);
-    if (found != dirtyPropIDsEnd) {
+    if(aBag->IsPropertyDirty(sortSpec.propertyId)) {
       // Return right away, no use in continuing if we're invalid.
-      return Invalidate(PR_TRUE);
+      return Invalidate();
     }
   }
 
@@ -576,8 +471,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
   }
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -588,8 +482,7 @@ sbLocalDatabaseGUIDArray::ClearSorts()
   mPrimarySortsCount = 0;
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -650,8 +543,7 @@ sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
   }
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -660,8 +552,7 @@ sbLocalDatabaseGUIDArray::ClearFilters()
   mFilters.Clear();
 
   QueryInvalidate();
-
-  return Invalidate(PR_FALSE);
+  return Invalidate();
 }
 
 NS_IMETHODIMP
@@ -670,14 +561,11 @@ sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  {
-    nsAutoMonitor mon(mCacheMonitor);
-    if (aIndex < mCache.Length()) {
-      ArrayItem* item = mCache[aIndex];
-      if (item) {
-        *_retval = PR_TRUE;
-        return NS_OK;
-      }
+  if (aIndex < mCache.Length()) {
+    ArrayItem* item = mCache[aIndex];
+    if (item) {
+      *_retval = PR_TRUE;
+      return NS_OK;
     }
   }
 
@@ -774,48 +662,11 @@ sbLocalDatabaseGUIDArray::GetRowidByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetViewItemUIDByIndex(PRUint32 aIndex,
-                                                nsAString& _retval)
-{
-  nsresult rv;
-
-  ArrayItem* item;
-  rv = GetByIndexInternal(aIndex, &item);
-  if (rv == NS_ERROR_INVALID_ARG) {
-    return rv;
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // the viewItemUID is just a concatenation of rowid and mediaitemid in the
-  // form: "rowid-mediaitemid"
-  _retval.Truncate();
-  AppendInt(_retval, item->rowid);
-  _retval.Append('-');
-  _retval.AppendInt(item->mediaItemId);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
+sbLocalDatabaseGUIDArray::Invalidate()
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
 
-  // Even if the GUID array is already invalid we'll invalidate the cached
-  // length to ensure that everything is consistent. We need to do this because
-  // certain operations don't invalidate the cached length which causes the array
-  // to be in an invalid state. This same array is later invalidated again but
-  // the length should also be invalidated.
-  if (aInvalidateLength) {
-    if (mLengthCache) {
-      mLengthCache->RemoveCachedLength(mCachedLengthKey);
-      mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
-    }
-
-    // After we've invalidated we're likely to need a new key.
-    mNeedNewKey = PR_TRUE;
-  }
-
-  if (mValid == PR_FALSE || mSuppress > 0) {
+  if (mValid == PR_FALSE) {
     return NS_OK;
   }
   nsresult rv;
@@ -825,24 +676,19 @@ sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (listener) {
-    listener->OnBeforeInvalidate(aInvalidateLength);
+    listener->OnBeforeInvalidate();
   }
 
-  // Scope for monitor.
-  {
-    nsAutoMonitor mon(mCacheMonitor);
+  mCache.Clear();
+  mGuidToFirstIndexMap.Clear();
+  mRowidToIndexMap.Clear();
+  mPrefetchedRows = PR_FALSE;
 
-    mCache.Clear();
-    mGuidToFirstIndexMap.Clear();
-    mViewItemUIDToIndexMap.Clear();
-    mPrefetchedRows = PR_FALSE;
-
-    if (mPrimarySortKeyPositionCache.IsInitialized()) {
-      mPrimarySortKeyPositionCache.Clear();
-    }
-
-    mValid = PR_FALSE;
+  if(mPrimarySortKeyPositionCache.IsInitialized()) {
+    mPrimarySortKeyPositionCache.Clear();
   }
+
+  mValid = PR_FALSE;
 
   rv = GetMTListener(getter_AddRefs(listener));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -866,12 +712,10 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray(newArray);
-  nsresult rv = CloneInto(guidArray);
+  nsresult rv = CloneInto(newArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  guidArray.forget(_retval);
-
+  NS_ADDREF(*_retval = newArray);
   return NS_OK;
 }
 
@@ -932,9 +776,6 @@ sbLocalDatabaseGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = aDest->SetLengthCache(mLengthCache);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -942,8 +783,6 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsresult rv;
-
-  nsAutoMonitor mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -953,21 +792,19 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
   NS_ENSURE_TRUE(aIndex < mLength, NS_ERROR_INVALID_ARG);
 
   // Remove the specified element from the cache
-  {
-    if (aIndex < mCache.Length()) {
-      nsString guid;
-      rv = GetGuidByIndex(aIndex, guid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      mGuidToFirstIndexMap.Remove(guid);
+  if (aIndex < mCache.Length()) {
 
-      nsString viewItemUID;
-      rv = GetViewItemUIDByIndex(aIndex, viewItemUID);
-      NS_ENSURE_SUCCESS(rv, rv);
+    nsString guid;
+    rv = GetGuidByIndex(aIndex, guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mGuidToFirstIndexMap.Remove(guid);
 
-      mViewItemUIDToIndexMap.Remove(viewItemUID);
+    PRUint64 rowid;
+    rv = GetRowidByIndex(aIndex, &rowid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mRowidToIndexMap.Remove(rowid);
 
-      mCache.RemoveElementAt(aIndex);
-    }
+    mCache.RemoveElementAt(aIndex);
   }
 
   // Adjust the null length of the array.  Made sure we decrement the non
@@ -985,12 +822,6 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
 
   // Finally, adjust the size of the full array
   mLength--;
-
-  // Remove Cached Lengths
-  if (mLengthCache) {
-    mLengthCache->RemoveCachedLength(mCachedLengthKey);
-    mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
-  }
 
   return NS_OK;
 }
@@ -1010,7 +841,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
   }
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(mPrefixSearchStatement, getter_AddRefs(query));
+  rv = MakeQuery(mPrefixSearchQuery, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindStringParameter(0, aValue);
@@ -1069,8 +900,6 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
-
-  nsAutoMonitor mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1154,11 +983,8 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-/* aViewItemUID is a concatenation of a mediaitems rowid and mediaitemid from
- * it's entry in the library's database of the form "rowid-mediaitemid" */
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
-                          (const nsAString& aViewItemUID,
+sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
                                           PRUint32* _retval)
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - GetIndexByRowid", this));
@@ -1166,22 +992,19 @@ sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
 
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
-
   if (mValid == PR_FALSE) {
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // First check to see if we have this in cache
-  if (mViewItemUIDToIndexMap.Get(aViewItemUID, _retval)) {
+  if (mRowidToIndexMap.Get(aRowid, _retval)) {
     return NS_OK;
   }
 
-  PRUint32 firstUncached = 0;
-
   // If no, we need to cache the entire guid array.  Find the first uncached
   // row so we can trigger the load
+  PRUint32 firstUncached = 0;
   PRBool found = PR_FALSE;
   for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
     if (!mCache[i]) {
@@ -1197,10 +1020,11 @@ sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
 
   rv = FetchRows(firstUncached, mLength);
   NS_ENSURE_SUCCESS(rv, rv);
+
   NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
 
   // Either the guid is in the map or it just not in our array
-  if (mViewItemUIDToIndexMap.Get(aViewItemUID, _retval)) {
+  if (mRowidToIndexMap.Get(aRowid, _retval)) {
     return NS_OK;
   }
 
@@ -1214,8 +1038,6 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - ContainsGuid", this));
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
-
-  nsAutoMonitor mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1233,7 +1055,6 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
     return NS_OK;
   }
 
-  PRUint32 firstUncached = 0;
   // If we are fully cached and the guid was not found, then we know that
   // it does not exist in this array
   if (mCache.Length() == mLength) {
@@ -1243,6 +1064,7 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
 
   // If it wasn't found, we need to find the first uncached row
   PRBool found = PR_FALSE;
+  PRUint32 firstUncached = 0;
   for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
     if (!mCache[i]) {
       firstUncached = i;
@@ -1261,31 +1083,11 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   // array and search it
   rv = FetchRows(firstUncached, mLength);
   NS_ENSURE_SUCCESS(rv, rv);
+
   NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
 
   // Either the guid is in the map or it is just not in our array
   *_retval = mGuidToFirstIndexMap.Get(aGuid, &index);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SuppressInvalidation(PRBool aSuppress)
-{
-  if(aSuppress) {
-    mSuppress++;
-  }
-  else if(--mSuppress <= 0) {
-    mSuppress = 0;
-
-    // We don't need to invalidate the lengths here because the only
-    // time suppress invalidation is used is when the cascade filters
-    // are being rebuilt. This means no new property values will show
-    // up and no new items will be created in the library associated
-    // with the GUID array.
-    nsresult rv = Invalidate(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   return NS_OK;
 }
 
@@ -1295,7 +1097,7 @@ sbLocalDatabaseGUIDArray::Initialize()
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Initialize", this));
   NS_ASSERTION(mPropertyCache, "No property cache!");
 
-  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsresult rv;
 
   // Make sure we have a database and a base table
   if (mDatabaseGUID.IsEmpty() || mBaseTable.IsEmpty()) {
@@ -1312,15 +1114,13 @@ sbLocalDatabaseGUIDArray::Initialize()
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
-  if (!mViewItemUIDToIndexMap.IsInitialized()) {
-    PRBool success = mViewItemUIDToIndexMap.Init();
+  if (!mRowidToIndexMap.IsInitialized()) {
+    PRBool success = mRowidToIndexMap.Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   if (mValid == PR_TRUE) {
-    // There's no cached length information associated with the array
-    // when it's being initialized (or re-initialized).
-    rv = Invalidate(PR_FALSE);
+    rv = Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1329,6 +1129,7 @@ sbLocalDatabaseGUIDArray::Initialize()
 
   rv = UpdateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
+
 
   rv = UpdateLength();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1366,13 +1167,13 @@ sbLocalDatabaseGUIDArray::Initialize()
   }
 
   if (mNullsFirst) {
-    mStatementX  = mNullGuidRangeStatement;
-    mStatementY  = mFullGuidRangeStatement;
+    mQueryX  = mNullGuidRangeQuery;
+    mQueryY  = mFullGuidRangeQuery;
     mLengthX = mLength - mNonNullLength;
   }
   else {
-    mStatementX  = mFullGuidRangeStatement;
-    mStatementY  = mNullGuidRangeStatement;
+    mQueryX  = mFullGuidRangeQuery;
+    mQueryY  = mNullGuidRangeQuery;
     mLengthX = mNonNullLength;
   }
 
@@ -1403,8 +1204,6 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 {
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
-
   // If we have a fetch size of 0 or PR_UINT32_MAX it means
   // we're supposed to fetch everything.  If this is
   // the case, and we don't have to worry about the
@@ -1413,57 +1212,23 @@ sbLocalDatabaseGUIDArray::UpdateLength()
   if ((mFetchSize == PR_UINT32_MAX || mFetchSize == 0) &&
       mNonNullCountQuery.IsEmpty() && mNullGuidRangeQuery.IsEmpty())
   {
-    rv = ReadRowRange(mFullGuidRangeStatement,
+    rv = ReadRowRange(mFullGuidRangeQuery,
                       0,
                       PR_UINT32_MAX,
                       0,
                       PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-
     mLength = mCache.Length();
     mNonNullLength = mLength;
   }
   else {
-    // Try and get the cached length first.
-    if (mCachedLengthKey.IsEmpty() || mNeedNewKey) {
-      GenerateCachedLengthKey();
-      mNeedNewKey = PR_FALSE;
-    }
-    if (mLengthCache) {
-      rv = mLengthCache->GetCachedLength(mCachedLengthKey, &mLength);
-      // Not in cache, run the query.
-      if(NS_FAILED(rv)) {
-        // Otherwise, use separate queries to establish the length.
-        rv = RunLengthQuery(mFullCountStatement, &mLength);
-        NS_ENSURE_SUCCESS(rv, rv);
+    // Otherwise, use separate queries to establish the length
+    rv = RunLengthQuery(mFullCountQuery, &mLength);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = mLengthCache->AddCachedLength(mCachedLengthKey, mLength);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    else {
-      rv = RunLengthQuery(mFullCountStatement, &mLength);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // We need to get the non-null count separately.
     if (!mNonNullCountQuery.IsEmpty()) {
-      if (mLengthCache) {
-        rv = mLengthCache->GetCachedNonNullLength(mCachedLengthKey,
-                                                  &mNonNullLength);
-        // Not in cache, run the query.
-        if(NS_FAILED(rv)) {
-          rv = RunLengthQuery(mNonNullCountStatement, &mNonNullLength);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = mLengthCache->AddCachedNonNullLength(mCachedLengthKey, mLength);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-      else {
-        rv = RunLengthQuery(mNonNullCountStatement, &mNonNullLength);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      rv = RunLengthQuery(mNonNullCountQuery, &mNonNullLength);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
       mNonNullLength = mLength;
@@ -1474,14 +1239,14 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::RunLengthQuery(sbIDatabasePreparedStatement *aStatement,
+sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
                                          PRUint32* _retval)
 {
   nsresult rv;
   PRInt32 dbOk;
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(aStatement, getter_AddRefs(query));
+  rv = MakeQuery(aSql, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Execute the length query
@@ -1524,22 +1289,6 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   nsresult rv;
 
   /*
-   * We're going to use this query to prepare the sql statements.
-   * This speeds things up _significantly_
-   */
-  nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(mDatabaseGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mDatabaseLocation) {
-    rv = query->SetDatabaseLocation(mDatabaseLocation);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  /*
    * We need four different queries to do the magic here:
    *
    * mFullCountQuery - A query that returns the count of the full dataset
@@ -1563,44 +1312,17 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                                  mDistinctWithSortableValues,
                                  mPropertyCache);
 
-  // Full Count Query
   rv = ldq->GetFullCountQuery(mFullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->PrepareQuery(mFullCountQuery,
-                           getter_AddRefs(mFullCountStatement));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Full Guid Range Query
   rv = ldq->GetFullGuidRangeQuery(mFullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->PrepareQuery(mFullGuidRangeQuery,
-                           getter_AddRefs(mFullGuidRangeStatement));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Non Null Count Query
   rv = ldq->GetNonNullCountQuery(mNonNullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->PrepareQuery(mNonNullCountQuery,
-                           getter_AddRefs(mNonNullCountStatement));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Null Guid Range Query
   rv = ldq->GetNullGuidRangeQuery(mNullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->PrepareQuery(mNullGuidRangeQuery,
-                           getter_AddRefs(mNullGuidRangeStatement));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Prefix Search Query
+  // This query is used for the prefix search
   rv = ldq->GetPrefixSearchQuery(mPrefixSearchQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->PrepareQuery(mPrefixSearchQuery,
-                           getter_AddRefs(mPrefixSearchStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
@@ -1614,15 +1336,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = ldq->GetResortQuery(mResortQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = query->PrepareQuery(mResortQuery,
-                             getter_AddRefs(mResortStatement));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = ldq->GetNullResortQuery(mNullResortQuery);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = query->PrepareQuery(mNullResortQuery,
-                             getter_AddRefs(mNullResortStatement));
     NS_ENSURE_SUCCESS(rv, rv);
 
     /*
@@ -1630,42 +1344,24 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
      */
     rv = ldq->GetPrefixSearchQuery(mPrimarySortKeyPositionQuery);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = query->PrepareQuery(mPrimarySortKeyPositionQuery,
-                             getter_AddRefs(mPrimarySortKeyPositionStatement));
-    NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  mIsFullLibrary = ldq->GetIsFullLibrary();
-
   mQueriesValid = PR_TRUE;
-
-  // If we're updating queries, it's likely we'll need to update the key
-  // we're using so re-generate now.
-  GenerateCachedLengthKey();
-
   return NS_OK;
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::MakeQuery(sbIDatabasePreparedStatement *aStatement,
+sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
                                     sbIDatabaseQuery** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
+  LOG(("sbLocalDatabaseGUIDArray[0x%.8x] -  MakeQuery: %s",
+       this, NS_ConvertUTF16toUTF8(aSql).get()));
+
   nsresult rv;
 
-#ifdef PR_LOGGING
-  nsString queryString;
-  rv = aStatement->GetQueryString(queryString);
-  if (NS_SUCCEEDED(rv)) {
-    LOG(("sbLocalDatabaseGUIDArray[0x%.8x] -  MakeQuery: %s",
-         this, NS_ConvertUTF16toUTF8(queryString).get()));
-  }
-#endif
-
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->SetDatabaseGUID(mDatabaseGUID);
@@ -1676,7 +1372,7 @@ sbLocalDatabaseGUIDArray::MakeQuery(sbIDatabasePreparedStatement *aStatement,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = query->AddPreparedStatement(aStatement);
+  rv = query->AddQuery(aSql);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = query);
@@ -1688,9 +1384,6 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
                                     PRUint32 aFetchSize)
 {
   nsresult rv;
-
-  // FetchRows always gets called with mCacheMonitor already acquired!
-  // No need to acquire the lock in this method.
 
   /*
    * Nothing to fetch if not valid
@@ -1754,7 +1447,7 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
    * If DE lies entirely within [A, B - 1], use query X to return the data
    */
   if (indexE < indexB) {
-    rv = ReadRowRange(mStatementX,
+    rv = ReadRowRange(mQueryX,
                       indexD,
                       lengthDE,
                       indexD,
@@ -1766,7 +1459,7 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
      * If DE lies entirely within [B, C], use query Y to return the data
      */
     if (indexD >= indexB) {
-      rv = ReadRowRange(mStatementY,
+      rv = ReadRowRange(mQueryY,
                         indexD - indexB,
                         lengthDE,
                         indexD,
@@ -1778,14 +1471,14 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
        * If DE lies in both [A, B - 1] and [B, C], use query X to return the
        * data in [A, B - 1] and Y to return data in[B, C]
        */
-      rv = ReadRowRange(mStatementX,
+      rv = ReadRowRange(mQueryX,
                         indexD,
                         indexB - indexD,
                         indexD,
                         mNullsFirst);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = ReadRowRange(mStatementY,
+      rv = ReadRowRange(mQueryY,
                         0,
                         indexE - indexB + 1,
                         indexB,
@@ -1813,7 +1506,7 @@ return NS_OK;
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
+sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
                                        PRUint32 aStartIndex,
                                        PRUint32 aCount,
                                        PRUint32 aDestIndexOffset,
@@ -1832,14 +1525,11 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
             aDestIndexOffset,
             aIsNull));
 
-  // ReadRowRange always gets called with mCacheMonitor acquired!
-  // No need to acquire this lock in this method.
-
   /*
    * Set up the query with limit and offset parameters and run it
    */
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(aStatement, getter_AddRefs(query));
+  rv = MakeQuery(aSql, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt64Parameter(0, aCount);
@@ -1971,7 +1661,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
     PRUint32 index = i + aDestIndexOffset;
 
     ArrayItem* item = mCache[index];
-    NS_ASSERTION(item, "Null item in cache?");
+    NS_ASSERTION(item, "Null item in cahce?");
 
     // Add the new guid to the guid to first index map.
     PRUint32 firstGuidIndex;
@@ -1981,15 +1671,10 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    // Add the concatenated rowid and mediaitemid (a viewItemUID)
-    // as a key mapping to index so that we readily recover that index
-    nsAutoString viewItemUID;
-    AppendInt(viewItemUID, item->rowid);
-    viewItemUID.Append('-');
-    viewItemUID.AppendInt(item->mediaItemId);
-
-    PRBool added = mViewItemUIDToIndexMap.Put(viewItemUID, index);
+    // Add the new rowid to the rowid to index map.
+    PRBool added = mRowidToIndexMap.Put(item->rowid, index);
     NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
   }
 
   /*
@@ -2089,9 +1774,6 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
             aIsOnly,
             aIsNull));
 
-  // SortRows always gets called with mCacheMonitor already acquired!
-  // No need to acquire this lock in this method.
-
   /*
    * If this is only one row and it is not the first, last, and only row in the
    * window, we don't need to sort it
@@ -2111,6 +1793,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   // value, the rows with this value is not the first or last row in the
   // chunk.  It also is not the only value in the chunk.
   if (mHasActiveSearch && !aIsFirst && !aIsLast && !aIsOnly && mPropertyCache) {
+
     nsTArray<const PRUnichar*> guids(rangeLength);
     for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
       const PRUnichar** appended =
@@ -2176,11 +1859,11 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   nsCOMPtr<sbIDatabaseQuery> query;
   if(aIsNull) {
-    rv = MakeQuery(mNullResortStatement, getter_AddRefs(query));
+    rv = MakeQuery(mNullResortQuery, getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = MakeQuery(mResortStatement, getter_AddRefs(query));
+    rv = MakeQuery(mResortQuery, getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->BindStringParameter(0, aKey);
@@ -2304,8 +1987,7 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
     PRInt32 dbOk;
 
     nsCOMPtr<sbIDatabaseQuery> query;
-    rv = MakeQuery(mPrimarySortKeyPositionStatement,
-                   getter_AddRefs(query));
+    rv = MakeQuery(mPrimarySortKeyPositionQuery, getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->BindStringParameter(0, aValue);
@@ -2347,8 +2029,6 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 
   TRACE(("GetByIndexInternal %d %d", aIndex, mLength));
 
-  nsAutoMonitor mon(mCacheMonitor);
-
   if (mValid == PR_FALSE) {
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2370,7 +2050,6 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 
   TRACE(("MISS"));
 
-#if defined(FORCE_FETCH_ALL_GUIDS_ASYNC)
   /*
    * Cache miss
    */
@@ -2390,14 +2069,6 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
                                static_cast<PRUint32>(0),
                                static_cast<PRUint32>(0));
   }
-#else
-  /*
-   * Cache miss, cache all GUIDs. FetchRows takes care of it's own locking.
-   */
-  rv = FetchRows(0, 0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(aIndex < mCache.Length(), NS_ERROR_FAILURE);
-#endif
 
   *_retval = mCache[aIndex];
 
@@ -2457,83 +2128,6 @@ sbLocalDatabaseGUIDArray::GetMTListener(
 
   listener.forget(aListener);
   return NS_OK;
-}
-
-void
-sbLocalDatabaseGUIDArray::GenerateCachedLengthKey()
-{
-  nsAutoLock mon(mPropIdsLock);
-
-  // Clear all the old property IDs from this set, and remove the cache
-  // entries on the old key.
-  mPropIdsUsedInCacheKey.clear();
-
-  if(mLengthCache && !mCachedLengthKey.IsEmpty()) {
-    mLengthCache->RemoveCachedLength(mCachedLengthKey);
-    mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
-  }
-
-  // Try and avoid resizing the string a bunch of times.
-  mCachedLengthKey.SetLength(2048);
-
-  // Clear the key.
-  mCachedLengthKey.Truncate();
-
-  // Add Database GUID
-  mCachedLengthKey.Append(mDatabaseGUID);
-
-  // Add Base Table
-  mCachedLengthKey.Append(mBaseTable);
-
-  // Add Base Constraint Column
-  mCachedLengthKey.Append(mBaseConstraintColumn);
-
-  // Add Base Constraint Value
-  mCachedLengthKey.AppendInt(mBaseConstraintValue);
-
-  // Add Is Distinct
-  mCachedLengthKey.AppendInt(mIsDistinct);
-
-  // Add Distinct with Sortable
-  mCachedLengthKey.AppendInt(mDistinctWithSortableValues);
-
-  // Add Is Full Library
-  mCachedLengthKey.AppendInt(mIsFullLibrary);
-
-  // We'll save off the property ids so we can associate them with the
-  // keys generated so we can invalidate cached lengths later.
-
-  // Go through the filters and add them to the key.
-  PRUint32 filterCount = mFilters.Length();
-  for (PRUint32 index = 0; index < filterCount; index++) {
-    const FilterSpec& refSpec = mFilters.ElementAt(index);
-
-    mCachedLengthKey.Append(refSpec.property);
-
-    PRUint32 propId = 0;
-    if(NS_SUCCEEDED(mPropertyCache->GetPropertyDBID(refSpec.property,
-                                                    &propId))) {
-      mPropIdsUsedInCacheKey.insert(propId);
-    }
-
-    mCachedLengthKey.AppendInt(refSpec.isSearch);
-
-    PRUint32 valueCount = refSpec.values.Length();
-    for(PRUint32 valueIndex = 0; valueIndex < valueCount; valueIndex++) {
-      mCachedLengthKey.Append(refSpec.values.ElementAt(valueIndex));
-    }
-  }
-
-  // Go through the properties we use to sort and add them to the key.
-  PRUint32 sortCount = mSorts.Length();
-  for (PRUint32 index = 0; index < sortCount; index++) {
-    const SortSpec& sortSpec = mSorts.ElementAt(index);
-    mCachedLengthKey.AppendInt(sortSpec.propertyId);
-    mPropIdsUsedInCacheKey.insert(sortSpec.propertyId);
-
-    mCachedLengthKey.AppendInt(sortSpec.ascending);
-    mCachedLengthKey.AppendInt(sortSpec.secondary);
-  }
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)

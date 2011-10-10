@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -31,10 +31,10 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const SONGBIRD_PLAYLISTREADERLISTENER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderListener;1";
-const SONGBIRD_PLAYLISTREADERLISTENER_CLASSNAME = "Songbird Playlist Reader Listener"
-const SONGBIRD_PLAYLISTREADERLISTENER_IID = Components.interfaces.sbIPlaylistReaderListener;
-const SONGBIRD_PLAYLISTREADERLISTENER_CID = Components.ID("{b4fac7ab-7d23-47c5-98e0-7e59266e2a28}");
+const NIGHTINGALE_PLAYLISTREADERLISTENER_CONTRACTID = "@getnightingale.com/Nightingale/PlaylistReaderListener;1";
+const NIGHTINGALE_PLAYLISTREADERLISTENER_CLASSNAME = "Nightingale Playlist Reader Listener"
+const NIGHTINGALE_PLAYLISTREADERLISTENER_IID = Components.interfaces.sbIPlaylistReaderListener;
+const NIGHTINGALE_PLAYLISTREADERLISTENER_CID = Components.ID("{b4fac7ab-7d23-47c5-98e0-7e59266e2a28}");
 
 function CPlaylistReaderListener()
 {
@@ -71,9 +71,9 @@ CPlaylistReaderListener.prototype =
       // mark ourself as finished so the PlaylistReaderManager can remove us.
       this.state = "STATE_STOP";
 
-      var playlistReaderMngr = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+      var playlistReaderMngr = Cc["@getnightingale.com/Nightingale/PlaylistReaderManager;1"]
                                  .getService(Ci.sbIPlaylistReaderManager);
-      var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+      var mm = Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                  .getService(Ci.sbIMediacoreManager);
 
       var strContentType = "";
@@ -144,9 +144,9 @@ var sbPlaylistReaderListenerModule =
   registerSelf: function(compMgr, fileSpec, location, type)
   {
       compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-      compMgr.registerFactoryLocation(SONGBIRD_PLAYLISTREADERLISTENER_CID,
-                                      SONGBIRD_PLAYLISTREADERLISTENER_CLASSNAME,
-                                      SONGBIRD_PLAYLISTREADERLISTENER_CONTRACTID,
+      compMgr.registerFactoryLocation(NIGHTINGALE_PLAYLISTREADERLISTENER_CID,
+                                      NIGHTINGALE_PLAYLISTREADERLISTENER_CLASSNAME,
+                                      NIGHTINGALE_PLAYLISTREADERLISTENER_CONTRACTID,
                                       fileSpec,
                                       location,
                                       type);
@@ -154,7 +154,7 @@ var sbPlaylistReaderListenerModule =
 
   getClassObject: function(compMgr, cid, iid)
   {
-      if (!cid.equals(SONGBIRD_PLAYLISTREADERLISTENER_CID))
+      if (!cid.equals(NIGHTINGALE_PLAYLISTREADERLISTENER_CID))
           throw Components.results.NS_ERROR_NO_INTERFACE;
 
       if (!iid.equals(Components.interfaces.nsIFactory))
@@ -180,7 +180,7 @@ var sbPlaylistReaderListenerFactory =
         if (outer != null)
             throw Components.results.NS_ERROR_NO_AGGREGATION;
 
-        if (!iid.equals(SONGBIRD_PLAYLISTREADERLISTENER_IID) &&
+        if (!iid.equals(NIGHTINGALE_PLAYLISTREADERLISTENER_IID) &&
             !iid.equals(Components.interfaces.nsIWebProgressListener) &&
             !iid.equals(Components.interfaces.nsISupportsWeakReference) &&
             !iid.equals(Components.interfaces.nsISupports))

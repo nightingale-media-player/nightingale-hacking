@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -145,7 +145,7 @@ sb-rating {
   max-height:14px !important;
   max-width:7px !important;
 
-  background-image:url('chrome://songbird/skin/menu/dropmarker.png');
+  background-image:url('chrome://nightingale/skin/menu/dropmarker.png');
   background-position:center center;
   background-repeat:no-repeat;
 }
@@ -159,26 +159,26 @@ sb-rating {
 
 #conditionplaylist > menupopup > menuitem[properties~="library"]
 {
-  list-style-image: url(chrome://songbird/skin/service-pane/icon-library.png) ;
+  list-style-image: url(chrome://nightingale/skin/service-pane/icon-library.png) ;
 }
 
 #conditionplaylist > menupopup > menuitem[properties~="medialist"]
 {
-  list-style-image: url(chrome://songbird/skin/service-pane/icon-playlist.png) ;
+  list-style-image: url(chrome://nightingale/skin/service-pane/icon-playlist.png) ;
 }
 
 #conditionplaylist > menupopup > menuitem[properties~="medialisttype-smart"]
 {
-  list-style-image: url(chrome://songbird/skin/service-pane/icon-smartplaylist.png) ;
+  list-style-image: url(chrome://nightingale/skin/service-pane/icon-smartplaylist.png) ;
 }
 
 #conditionplaylist > menupopup > menuitem[properties~="medialisttype-dynamic"]
 {
-  list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
+  list-style-image: url(chrome://nightingale/skin/service-pane/icon-subscription.png) ;
 }
 
 #conditionplaylist > menupopup > menuitem[properties~="podcast"]
 {
-  list-style-image: url(chrome://songbird/skin/service-pane/icon-podcast.png) ;
+  list-style-image: url(chrome://nightingale/skin/service-pane/icon-podcast.png) ;
 }
 

@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
 #
@@ -18,7 +18,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../..
@@ -28,20 +28,20 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef SONGBIRD_OFFICIAL
-   SONGBIRD_DIST += $(srcdir)/songbird.ico \
-                    $(srcdir)/songbird_installer.ico \
-                    $(srcdir)/songbird_uninstaller.ico \
-                    $(srcdir)/songbird_vista.ico \
+ifdef NIGHTINGALE_OFFICIAL
+   NIGHTINGALE_DIST += $(srcdir)/nightingale.ico \
+                    $(srcdir)/nightingale_installer.ico \
+                    $(srcdir)/nightingale_uninstaller.ico \
+                    $(srcdir)/nightingale_vista.ico \
                     $(NULL)
-   export ICON_FILE = songbird.ico
+   export ICON_FILE = nightingale.ico
 else
-   SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
+   NIGHTINGALE_DIST += $(srcdir)/nightingale_nightly.ico \
                     $(NULL)
-   export ICON_FILE = songbird_nightly.ico
+   export ICON_FILE = nightingale_nightly.ico
 endif
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
+NIGHTINGALE_PP_RESOURCES = $(srcdir)/defines.nsi.in \
                         $(NULL)
 
 # Win32 only supports a single installer suffix, so the pluralized suffixes
@@ -59,6 +59,7 @@ GARBAGE += $(CURDIR)/nsis-install-manifest.txt \
            $(CURDIR)/nsis-uninstall-manifest.txt \
            $(NULL)
 
+include $(topsrcdir)/$(NIGHTINGALE_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
 
 # We copy the added-files list here because win32 is the only platform right
@@ -73,32 +74,12 @@ include $(topsrcdir)/build/rules.mk
 # Boo.
 #
 
-#
-# Packaging the installer will also rebase the dlls. The base address used is 
-# meant to leave enough room for the bootstrapping exes to load.
-#
-# We exclude 'extensions' because they are never part of a release mode 
-# installer _but_ we still want developers to be able to generate 
-# installers without errors.
-#
-# 'drivers' is excluded because it contains signed dlls which cannot be rebased
-# (which causes errors, which makes the build fail)
-#
-# 'msvc*' is excluded because it's pointless to rebase the Microsoft CRT and 
-# C++RT when we are not using mozcrt.
-#
-
 libs::
-	cd $(SONGBIRD_DISTDIR) && \
-	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
-	    sort -o rebase.txt && \
-	  $(REBASE) -v -b 62000000 @rebase.txt && \
-	  $(RM) rebase.txt
-	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
-	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/README.txt
-	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
-	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
-	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
+	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(NIGHTINGALE_DISTDIR)/added-files
+	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(NIGHTINGALE_DISTDIR)/README.txt
+	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(NIGHTINGALE_DISTDIR)/TRADEMARK.txt
+	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(NIGHTINGALE_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
+	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(NIGHTINGALE_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-filelist.nsi.in > $(CURDIR)/sb-filelist.nsi
-	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
-	$(MV) $(SONGBIRD_DISTDIR)/$(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(FULL_INSTALLER_NAME)
+	cd $(NIGHTINGALE_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/nightingale.nsi
+	$(MV) $(NIGHTINGALE_DISTDIR)/$(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(FULL_INSTALLER_NAME)

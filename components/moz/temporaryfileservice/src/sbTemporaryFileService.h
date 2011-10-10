@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_TEMPORARY_FILE_SERVICE_H_
@@ -30,23 +30,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service defs.
+// Nightingale temporary file service defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbTemporaryFileService.h
- * \brief Songbird Temporary File Service Definitions.
+ * \brief Nightingale Temporary File Service Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service imported services.
+// Nightingale temporary file service imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbITemporaryFileFactory.h>
 #include <sbITemporaryFileService.h>
 
@@ -58,16 +58,16 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service definitions.
+// Nightingale temporary file service definitions.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird temporary file service XPCOM component definitions.
+// Nightingale temporary file service XPCOM component definitions.
 //
 
 #define SB_TEMPORARYFILESERVICE_CLASSNAME "sbTemporaryFileService"
-#define SB_TEMPORARYFILESERVICE_DESCRIPTION "Songbird Temporary File Service"
+#define SB_TEMPORARYFILESERVICE_DESCRIPTION "Nightingale Temporary File Service"
 #define SB_TEMPORARYFILESERVICE_CID                                            \
 {                                                                              \
   0xa73256d2,                                                                  \
@@ -78,7 +78,7 @@
 
 
 //
-// Songbird temporary file service configuration.
+// Nightingale temporary file service configuration.
 //
 //   SB_TEMPORARY_FILE_SERVICE_DIR_NAME
 //                              Name of temporary file service root directory.
@@ -89,7 +89,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file service classes.
+// Nightingale temporary file service classes.
 //
 //------------------------------------------------------------------------------
 
@@ -122,22 +122,22 @@ public:
   //
 
   /**
-   * Construct a Songbird temporary file service object.
+   * Construct a Nightingale temporary file service object.
    */
   sbTemporaryFileService();
 
   /**
-   * Destroy a Songbird temporary file service object.
+   * Destroy a Nightingale temporary file service object.
    */
   virtual ~sbTemporaryFileService();
 
   /**
-   * Initialize the Songbird temporary file service.
+   * Initialize the Nightingale temporary file service.
    */
   nsresult Initialize();
 
   /**
-   * Finalize the Songbird temporary file service.
+   * Finalize the Nightingale temporary file service.
    */
   void Finalize();
 

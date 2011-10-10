@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -52,7 +52,7 @@ interface sbILibraryImporterListener : nsISupports
      * contents of the import library change.
      *
      * \param aLibFilePath File path to external library that changed.
-     * \param aGUID GUID of Songbird library into which external library was
+     * \param aGUID GUID of Nightingale library into which external library was
      * imported.
      */
 
@@ -85,7 +85,7 @@ interface sbILibraryImporterListener : nsISupports
 
     /**
      * \brief Handle unsupported media events.  These events occur whenever an
-     * attempt is made to import media that is not supported by Songbird.
+     * attempt is made to import media that is not supported by Nightingale.
      */
 
     void onUnsupportedMedia();
@@ -93,10 +93,10 @@ interface sbILibraryImporterListener : nsISupports
 
     /**
      * \brief Handle dirty playlist events.  These events occur when an imported
-     * library playlist has been modified in Songbird.  This method returns the
-     * action to take, "keep" to keep the Songbird playlist unmodified, "merge"
-     * to merge the import library playlist into the Songbird playlist, and
-     * "replace" to replace the Songbird playlist.
+     * library playlist has been modified in Nightingale.  This method returns the
+     * action to take, "keep" to keep the Nightingale playlist unmodified, "merge"
+     * to merge the import library playlist into the Nightingale playlist, and
+     * "replace" to replace the Nightingale playlist.
      * This method also returns whether to apply the action to all dirty
      * playlists.
      *
@@ -115,7 +115,7 @@ interface sbILibraryImporterListener : nsISupports
 * \interface sbILibraryImporter
 * \brief Interface for importing external libraries.
 *
-* This interface is used for importing external libraries into Songbird.
+* This interface is used for importing external libraries into Nightingale.
 */
 
 interface sbIJobProgress;
@@ -164,7 +164,7 @@ interface sbILibraryImporter : nsISupports
      * \brief Initiate external library importing.
      *
      * \param aLibFilePath File path to external library to import.
-     * \param aGUID GUID of Songbird library into which to import.
+     * \param aGUID GUID of Nightingale library into which to import.
      * \param aCheckForChanges If true, check for changes in external library
      * before importing.
      *
@@ -196,7 +196,7 @@ interface sbILibraryImporter : nsISupports
  *
  * Implementations:
  *
- *   "@songbirdnest.com/Songbird/LibraryImporterManager;1"
+ *   "@getnightingale.com/Nightingale/LibraryImporterManager;1"
  *   Use get service with this component.
  */
 

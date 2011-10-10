@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbTextPropertyInfo.h"
 
@@ -32,7 +34,6 @@
 #include <sbIStringTransform.h>
 
 #include <sbLockUtils.h>
-#include <sbStringUtils.h>
 
 #include <locale>     // for collation
 #include <prmem.h>
@@ -81,7 +82,7 @@ sbTextPropertyInfo::~sbTextPropertyInfo()
   if(mEnforceLowercaseLock) {
     PR_DestroyLock(mEnforceLowercaseLock);
   }
-
+  
   if(mNoCompressWhitespaceLock) {
     PR_DestroyLock(mNoCompressWhitespaceLock);
   }
@@ -196,18 +197,16 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
 {
   nsresult rv;
   PRBool valid = PR_FALSE;
-  PRBool isTrim = PR_FALSE;
 
   _retval = aValue;
 
-  //Don't compress/strip the leading whitespace if requested
+  //Don't compress/strip the whitespace if requested
   {
     sbSimpleAutoLock lock(mNoCompressWhitespaceLock);
     if (!mNoCompressWhitespace) {
-      isTrim = PR_TRUE;
+      CompressWhitespace(_retval);
     }
   }
-  SB_CompressWhitespace(_retval, isTrim, PR_TRUE);
 
   PRUint32 len = aValue.Length();
 
@@ -259,8 +258,8 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   ToLowerCase(val);
 
   nsresult rv;
-
-  nsCOMPtr<sbIStringTransform> stringTransform =
+  
+  nsCOMPtr<sbIStringTransform> stringTransform = 
     do_CreateInstance(SB_STRINGTRANSFORM_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -273,14 +272,14 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   // is that we do not want to remove the "," in "Beatles, The", or it will not
   // be recognized by the articles removal code since the pattern is "*, The".
   rv = stringTransform->
-         NormalizeString(EmptyString(),
+         NormalizeString(EmptyString(), 
                          sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
                          sbIStringTransform::TRANSFORM_IGNORE_LEADING |
-                         sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS,
+                         sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS, 
                          val,
                          outVal);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   // don't allow normalization to produce an empty sortable string
   if (!outVal.IsEmpty()) {
     val = outVal;
@@ -290,7 +289,7 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   NS_ENSURE_SUCCESS(rv, rv);
 
   _retval = outVal;
-
+  
   // all done
   return NS_OK;
 }
@@ -301,15 +300,16 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSearchable(const nsAString & aValue, nsASt
   PRBool valid = PR_FALSE;
 
   _retval = aValue;
+
   CompressWhitespace(_retval);
   ToLowerCase(_retval);
 
-  nsCOMPtr<sbIStringTransform> stringTransform =
+  nsCOMPtr<sbIStringTransform> stringTransform = 
     do_CreateInstance(SB_STRINGTRANSFORM_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString outVal;
-  rv = stringTransform->NormalizeString(EmptyString(),
+  rv = stringTransform->NormalizeString(EmptyString(), 
                                         sbIStringTransform::TRANSFORM_IGNORE_NONSPACE,
                                         _retval, outVal);
   NS_ENSURE_SUCCESS(rv, rv);

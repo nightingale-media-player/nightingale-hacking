@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,11 +21,11 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -61,6 +61,7 @@
             flex="3"
             editable="true"
             oncontextmenu="_onPlaylistContextMenu(event);"
+            onblur="_onPlaylistBlur(event);"
           >
             <treecols sbid="treecols" type="sb-contextpicker"/>
             <treechildren
@@ -84,7 +85,6 @@
               id="sb-playlist-popup"
               sbid="sb-playlist-popup"
               class="sb-playlist-popup"
-              onpopupshowing="onPopupShowing( event );"
               onpopupshown="onPopupShown( event );"
               onpopuphidden="onPopupHidden( event );"
             >
@@ -111,7 +111,6 @@
   Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
   Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
   Components.utils.import("resource://app/jsmodules/sbMetadataUtils.jsm");
-  Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
   // Attach event handler closures
   var self = this;
@@ -132,6 +131,13 @@
   // Install our special keyNavigate function. The signature must match the
   // keyNavigate method in tree.xml.
   this.tree._keyNavigate = this._treeKeyNavigate;
+
+  // Load the drag and drop helper, if needed
+  if (typeof(nsDragAndDrop) == "undefined") {
+    var jsLoader = this._Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(this._Ci.mozIJSSubScriptLoader);
+    jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", null);
+  }
 
   // Add a capturing listener so we can swallow command events
   // in cases such as column restoreNaturalOrder.
@@ -419,7 +425,7 @@
       <!-- Maximum time in milliseconds between two clicks to consider them a
            double-click -->
       <field name="_maxDoubleClickTime">
-        parseInt(Application.prefs.getValue("songbird.playlist.doubleclickspeed", 500));
+        parseInt(Application.prefs.getValue("nightingale.playlist.doubleclickspeed", 500));
       </field>
 
       <!-- Time of last click, used to determine whether double-clicks should be
@@ -430,7 +436,7 @@
            double-click and need to start playback instead -->
       <field name="_startEditingTimer">null</field>
 
-      <!-- Shortcuts for various anonymous elements -->
+      <!-- Sortcuts for various anonymous elements -->
       <field name="_context_popup" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-popup");
       </field>
@@ -453,7 +459,7 @@
       <field name="_toolbarbuttons">new Array();</field>
       <field name="_menuitems">new Array();</field>
 
-      <!-- Cached reference to the Songbird string bundle -->
+      <!-- Cached reference to the Nightingale string bundle -->
       <field name="_stringbundle">null;</field>
 
       <!-- Internal and external storage of the given commands? -->
@@ -508,7 +514,7 @@
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       </field>
       <field name="_pm"     readonly="true">
-        this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+        this._Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
         .getService(this._Ci.sbIPropertyManager)
       </field>
 
@@ -558,19 +564,19 @@
       function columnSpecWatcher_onItemUpdated(aMediaList,
                                                aMediaItem,
                                                aProperties) {
-      // ignore notifications that we caused
-      if (this.playlist.ignoreColumnSpecUpdate)
-        return true;
-
       // ignore notifications that are not about our medialist
       if (aMediaItem != this.medialist)
         return false;
-
-      // since we only receive notifications when columnSpec changed
-      // we don't need to check to ensure that that specific property
-      // has changed.
-      this.playlist._setupColumns();
-
+      // ignore notifications that we caused
+      if (this.playlist.ignoreColumnSpecUpdate)
+        return true;
+      // if the udpate is on the columnspec, reload columns
+      for (var i=0; i<aProperties.length; i++) {
+        var property = aProperties.getPropertyAt(i);
+        if (property.id == SBProperties.columnSpec) {
+          this.playlist._setupColumns();
+        }
+      }
       return false;
     },
     QueryInterface: function columnSpecWatcher_QI(aIID) {
@@ -581,20 +587,12 @@
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
   }
-  // only listen to changes to columnSpec
-  var watchedProperties =
-    this._Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-        .createInstance(this._Ci.sbIMutablePropertyArray);
-  watchedProperties.strict = false;
-  watchedProperties.appendProperty(SBProperties.columnSpec, '');
-
   // begin watching changes to column specs
   mediaListView.mediaList
                .library
                .addListener(this.columnSpecWatcher,
                             false,
-                            this._Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED,
-                            watchedProperties);
+                            this._Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
 
   // Make sure we save the column spec
   // for the existing view
@@ -726,22 +724,33 @@
         const STRINGROOT_BTN = "playlist.button.";
         const STRINGROOT_TYPE = "playlist.type.";
 
-        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+        var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                               .getService(Ci.sbIDeviceManager2);
         var selectedDevice =
               deviceManager.getDeviceForItem(this.mediaListView.mediaList);
 
-        // We have two paths here, one is with libraries other than the
-        // main library (web libraries, device libraries, etc.), and one for
-        // the main library only.
+        // We have two paths here, one is with either libraries other than the
+        // main library or if media management is turned off. The other is when
+        // we are on the main library and media management is on.
         // For the first path we display the normal "don't show me again" check
         // box, for the second we display the "also delete files" check box.
+        // Also if we are managed then we always display this dialog even if
+        // the user checked do not show again.
+        var isManaged = false;
+
+        var mediaMgrService = Cc["@getnightingale.com/Nightingale/media-manager-service;1"]
+                                .getService(Ci.sbIMediaManagementService);
+        if (this.mediaListView.mediaList == LibraryUtils.mainLibrary &&
+            mediaMgrService.isEnabled)
+        {
+          isManaged = true;
+        }
 
         var disableDialog = false;
         if (selectedDevice) {
           disableDialog =
             !selectedDevice.getWarningDialogEnabled("remove_tracks");
-        } else {
+        } else if (!isManaged) {
           disableDialog = SBDataGetBoolValue(BYPASSKEY);
         }
 
@@ -753,21 +762,21 @@
           var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                         .getService(Components.interfaces.nsIPromptService);
           var isLibrary = this.mediaListView.mediaList instanceof Ci.sbILibrary;
-          var check = { value: false };
+          check = { value: false };
 
           var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
                               .getService(Components.interfaces.nsIStringBundleService);
-          var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-          var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
+          var nightingaleStrings = sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
+          var strTitle = nightingaleStrings.GetStringFromName(STRINGROOT + "title");
 
           if (isLibrary && selectedDevice) {
             var strContext =
-                  songbirdStrings.formatStringFromName("playlist.type.device",
+                  nightingaleStrings.formatStringFromName("playlist.type.device",
                                                        [selectedDevice.name],
                                                        1);
           } else {
             var contextKey = isLibrary ? "library" : "playlist";
-            var strContext = songbirdStrings.GetStringFromName
+            var strContext = nightingaleStrings.GetStringFromName
                                                ("playlist.type." + contextKey);
           }
 
@@ -781,14 +790,26 @@
             removedItemsInfo = numSelected;
           }
 
-          var strMsg = songbirdStrings.formatStringFromName
+          var strMsg = nightingaleStrings.formatStringFromName
                                          (STRINGROOT + "message",
                                           [removedItemsInfo, strContext],
                                           2);
 
-          var strCheck =  songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
-          var removeStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "remove");
-          var cancelStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
+          var strCheck;
+          if (isManaged) {
+            strCheck = nightingaleStrings.GetStringFromName("mediamanager.dialog.confirm.delete");
+            check.value = SBDataGetBoolValue(DELETEFILEKEY);
+          } else {
+            strCheck = nightingaleStrings.GetStringFromName("dialog.confirm.dontaskme");
+          }
+          var removeStr = nightingaleStrings.GetStringFromName(STRINGROOT_BTN + "remove");
+          var cancelStr = nightingaleStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
+
+          if (isLibrary &&
+              !selectedDevice &&
+              (deviceManager.marshalls.length > 0)) {
+            strMsg += "\n\n" + nightingaleStrings.GetStringFromName("playlist.confirmremoveitem.devicewarning");
+          }
 
           var btnFlags =
             (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_0) +  // remove
@@ -809,14 +830,27 @@
                                     null,
                                     strCheck,
                                     check);
-          if (check.value == true) {
-            if (selectedDevice) {
-              selectedDevice.setWarningDialogEnabled("remove_tracks", false);
-            } else {
-              SBDataSetBoolValue(BYPASSKEY, true);
+          if (isManaged) {
+            SBDataSetBoolValue(DELETEFILEKEY, check.value);
+            if (check.value == true) {
+              // Flag all these items to be deleted by the media manager.
+              var selectedEnum = this.mediaListView.selection.selectedMediaItems;
+              while (selectedEnum.hasMoreElements()) {
+                var curItem = selectedEnum.getNext()
+                                          .QueryInterface(Ci.sbIMediaItem);
+                curItem.setProperty("http://getnightingale.com/data/1.0#deleteFromDisk",
+                                    "1");
+              }
+            }
+          } else {
+            if (check.value == true) {
+              if (selectedDevice) {
+                selectedDevice.setWarningDialogEnabled("remove_tracks", false);
+              } else {
+                SBDataSetBoolValue(BYPASSKEY, true);
+              }
             }
           }
-
           if (retval == 1) { // 1 = cancel/X, 0 = remove
             return;
           }
@@ -962,14 +996,14 @@
 
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
-  // show them. Also, if pref "songbird.columnpicker.allowSecondaryProperties"
+  // show them. Also, if pref "nightingale.columnpicker.allowSecondaryProperties"
   // is true, do a second pass with everything that has not yet been added, and
   // set the secondary attribute to true, so we can use it later to sort the
   // additional properties below the primary ones
   var enableAll = Application.prefs.getValue(
-                 "songbird.columnpicker.allowSecondaryProperties", false);
+                 "nightingale.columnpicker.allowSecondaryProperties", false);
   var alsoUnlocalized = Application.prefs.getValue(
-                 "songbird.columnpicker.allowUnlocalizedSecondaryProperties",
+                 "nightingale.columnpicker.allowUnlocalizedSecondaryProperties",
                  false);
   for (var i=0;i<2;i++) {
     var isSecondary = (i == 1);
@@ -1610,7 +1644,7 @@
            // initiate playback manually.
            if (notHandled) {
              var mm =
-               Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+               Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                          .getService(Components.interfaces.sbIMediacoreManager);
              mm.sequencer.playView(this.mediaListView,
                 Math.max(this.mediaListView.selection.currentIndex, 0));
@@ -1714,9 +1748,9 @@
                   while ( items.hasMoreElements() ) {
                     var item = items.getNext().mediaItem;
                     if (item) {
-                      val += item.getProperty("http://songbirdnest.com/data/1.0#artistName") + ", ";
-                      val += item.getProperty("http://songbirdnest.com/data/1.0#albumName") + ", ";
-                      val += item.getProperty("http://songbirdnest.com/data/1.0#trackName") + "\n";
+                      val += item.getProperty("http://getnightingale.com/data/1.0#artistName") + ", ";
+                      val += item.getProperty("http://getnightingale.com/data/1.0#albumName") + ", ";
+                      val += item.getProperty("http://getnightingale.com/data/1.0#trackName") + "\n";
                     }
                   }
                 }
@@ -1736,6 +1770,18 @@
                   this._self.removeSelectedTracks();
                 }
                 break;
+              case "cmd_find":
+                var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                               .getService(Components.interfaces.nsIWindowMediator);
+                var nightingaleWindow = windowMediator.getMostRecentWindow("Nightingale:Main");
+                if (nightingaleWindow && nightingaleWindow.gSearchHandler) {
+                  var searchBar = nightingaleWindow.gSearchHandler.getSearchBar();
+                  if (searchBar) {
+                    searchBar.select();
+                    searchBar.focus();
+                  }
+                }
+                break;
             }
           },
           supportsCommand: function(aCommand) {
@@ -1743,6 +1789,7 @@
               case "cmd_selectAll":
               case "cmd_delete":
               case "cmd_copy":
+              case "cmd_find":
                 return true;
             }
             return false;
@@ -1750,6 +1797,7 @@
           isCommandEnabled: function(aCommand) {
             switch (aCommand) {
               case "cmd_selectAll":
+              case "cmd_find":
                 return true;
               case "cmd_delete":
                 var list = this._self._getOuterList();
@@ -1924,12 +1972,6 @@
             return;
           }
 
-          var handled = clickable.onClick(item, evt, this);
-          if (handled) {
-            // event handler has dealt with it
-            return;
-          }
-
           // XXXben Remove these special cases. Fire the event and add handlers
           // to catch them elsewhere.
 
@@ -1971,9 +2013,9 @@
               } else {
                 SBBrowserOpenURLInNewWindow(uri);
               }
-              evt.stopPropagation();
-              return;
             }
+            evt.stopPropagation();
+            return;
           }
 
           // Only assign the new value if userEditable
@@ -2035,6 +2077,21 @@
   {
     alert( "playlist.xml - onPlaylistClick - " + err );
   }
+]]>
+      </body>
+    </method>
+
+    <method name="_onPlaylistBlur">
+      <parameter name="evt"/>
+      <body>
+<![CDATA[
+        // Check to make sure we are losing focus on the tree and nothing else inside.
+        // We do this so that when the user selects a track then clicks some where else
+        // they don't get the edit box appearing when they click back onto the track.
+        if (evt.originalTarget == this.tree) {
+          this._lastClickIndex = -1;
+          this._cancelEditTimer();
+        }
 ]]>
       </body>
     </method>
@@ -2337,24 +2394,6 @@
       </body>
     </method>
 
-    <method name="onPopupShowing">
-      <parameter name="evt"/>
-      <body>
-        <![CDATA[
-          try
-          {
-            /* refresh the playlist commands before we show the context menu
-             * so we know it will show the proper commands */
-            this._commandmenuitems.refreshCommands(false);
-          }
-          catch( err )
-          {
-            alert( "playlist.xml - onPopupShowing - " + err );
-          }
-        ]]>
-      </body>
-    </method>
-
     <method name="onPopupShown">
       <parameter name="evt"/>
       <body>
@@ -2405,97 +2444,155 @@
       </body>
     </method>
 
-    <!-- Given a view, row, and insert orientation, determine the row to
-         insert at in the underlying list.
-         May return -1 to indicate un-ordered insertion.
-      -->
-    <method name="_getRowToInsert">
-      <parameter name="view"/>
-      <parameter name="row"/>
-      <parameter name="orientation"/>
-      <body>
-<![CDATA[
-  var list = view.mediaList;
-  var oldLength = list.length;
-
-  // For unorderable lists, empty lists, or where we don't have a destination
-  // row to begin with, return -1 for unordered insertion.
-  var isOrderable = list instanceof this._Ci.sbIOrderableMediaList;
-  if (!isOrderable || oldLength == 0 || row < 0)
-    return -1;
-
-  var sort = view.currentSort;
-  var isAscending = sort.getPropertyAt(0).value == "a";
-
-  // If this is a descending sort, we need to flip around the
-  // orientation because the underlying media list we are modifying always has
-  // an ascending sort.
-  if (!isAscending) {
-    if (orientation ==
-        this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
-      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
-    }
-    else if (orientation ==
-             this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
-      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
-    }
-  }
-
-  // Get the row in the underlying list corresponding to this row in the
-  // current view.
-  row = view.getUnfilteredIndex(row);
-
-  // If we're dropping after the specified item, increment one. If the resulting
-  // index points past the end of the list, return -1.
-  if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER)
-    row++;
-
-  if (row >= oldLength)
-    return -1;
-
-  return row;
-]]>
-      </body>
-    </method>
-
-    <method name="_moveItemsInList">
-      <parameter name="indicesEnumerator"/>
+    <method name="_addAllItems">
+      <parameter name="source"/>
+      <parameter name="item"/>
       <parameter name="row"/>
       <parameter name="orientation"/>
       <body>
 <![CDATA[
   var ml = this.mediaListView.mediaList;
-  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
-  if (!isOrderable) {
-    // Drag/dropping within a list that is not orderable has no effect.
-    return;
-  }
+  var oldLength = ml.length;
 
   var sort = this.mediaListView.currentSort;
   var isAscending = sort.getPropertyAt(0).value == "a";
 
-  row = this._getRowToInsert(this.mediaListView, row, orientation);
-
-  // Find the indices of all the selected rows
-  var indices = [];
-  var viewLength = this.mediaListView.length;
-  while (indicesEnumerator.hasMoreElements()) {
-    var index = indicesEnumerator.getNext().index;
-    if (!isAscending) {
-      index = viewLength - (index + 1);
-    }
-    indices.push(index);
-  }
-
+  // If this is a descending sort, we need to flip around the row and the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
   if (!isAscending) {
-    indices.reverse();
+    row = this.mediaListView.length - (row + 1);
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
   }
 
-  if (row >= 0) {
-    ml.moveSomeBefore(indices, indices.length, row);
+  // If this media lists supports ordering, insert the item where it was
+  // dropped
+  var doInsert = false;
+  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
+  if (isOrderable && oldLength > 0 && row >= 0 ) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      doInsert = true;
+    }
+    else {
+      if (row + 1 < oldLength) {
+        row++;
+        doInsert = true;
+      }
+    }
+  }
+
+  if (item.equals(ml)) {
+    return;
   }
   else {
-    ml.moveSomeLast(indices, indices.length);
+    item.setProperty(SBProperties.downloadStatusTarget,
+                     item.library.guid + "," + item.guid);
+    if (doInsert) {
+      ml.insertAllBefore(row, item);
+    }
+    else {
+      ml.addAll(item);
+    }
+
+    var added = ml.length - oldLength;
+    DNDUtils.reportAddedTracks(added,
+                               1 - added,
+                               0,
+                               this.mediaList.name);
+  }
+]]>
+      </body>
+    </method>
+
+    <method name="_addItems">
+      <parameter name="source"/>
+      <parameter name="enumerator"/>
+      <parameter name="indicesEnumerator"/>
+      <parameter name="count"/>
+      <parameter name="row"/>
+      <parameter name="orientation"/>
+      <body>
+<![CDATA[
+  var ml = this.mediaListView.mediaList;
+  var oldLength = ml.length;
+
+  var sort = this.mediaListView.currentSort;
+  var isAscending = sort.getPropertyAt(0).value == "a";
+
+  // If this is a descending sort, we need to flip around the row and the
+  // orientation because the underlying media list we are modifying always has
+  // an ascending sort.
+  if (!isAscending) {
+    row = this.mediaListView.length - (row + 1);
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER;
+    }
+    else if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER) {
+      orientation = this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE;
+    }
+  }
+
+  // If this media lists supports ordering, insert the item where it was
+  // dropped
+  var doInsert = false;
+  var isOrderable = ml instanceof this._Ci.sbIOrderableMediaList;
+  if (isOrderable && oldLength > 0 && row >= 0 ) {
+    if (orientation == this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
+      doInsert = true;
+    }
+    else {
+      if (row + 1 < oldLength) {
+        row++;
+        doInsert = true;
+      }
+    }
+  }
+
+  if (source.equals(ml)) {
+    // Find the indices of all the selected rows
+    var indices = [];
+    var viewLength = this.mediaListView.length;
+    while (indicesEnumerator.hasMoreElements()) {
+      var index = indicesEnumerator.getNext().index;
+      if (!isAscending) {
+        index = viewLength - (index + 1);
+      }
+      indices.push(index);
+    }
+
+    if (!isAscending) {
+      indices.reverse();
+    }
+
+    if (doInsert) {
+      ml.moveSomeBefore(indices, indices.length, row);
+    }
+    else {
+      // Moving items within a list that is not orderable does nothing
+      if (isOrderable) {
+        ml.moveSomeLast(indices, indices.length);
+      }
+    }
+  }
+  else {
+    var self = this;
+    if (doInsert) {
+      ml.insertSomeBefore(row, enumerator);
+    }
+    else {
+      ml.addSome(enumerator);
+    }
+
+    var added = ml.length - oldLength;
+    DNDUtils.reportAddedTracks(added,
+                               count - added,
+                               0,
+                               this.mediaList.name);
   }
 ]]>
       </body>
@@ -2544,7 +2641,7 @@
         <body>
 <![CDATA[
   if (!this._stringbundle) {
-    var src = "chrome://songbird/locale/songbird.properties";
+    var src = "chrome://nightingale/locale/nightingale.properties";
     var stringBundleService = this._Cc["@mozilla.org/intl/stringbundle;1"]
                                   .getService(this._Ci.nsIStringBundleService);
     this._stringbundle = stringBundleService.createBundle(src);
@@ -2564,7 +2661,7 @@
         <parameter name="item"/>
         <body>
 <![CDATA[
-  var ddh = this._Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+  var ddh = this._Cc["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
                     .getService(this._Ci.sbIDownloadDeviceHelper);
   ddh.downloadItem(item);
 ]]>
@@ -2604,7 +2701,7 @@
       getInternalTransferDataForFlavour(aDragSession,
                                         this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
                                         Ci.sbIMediaItemsTransferContext);
-
+ 
     var items = context.items;
     // we must remember to reset the context before we exit, so that when we
     // actually need the items in onDrop we can get them again!
@@ -2629,118 +2726,45 @@
         </body>
       </method>
 
-      <!-- Called by _onDragOver for the playlist (not the tree observer,
-           which calls canDrop()) -->
-      <method name="_canDrop">
-        <parameter name="event"/>
-        <body>
-        <![CDATA[
+      <field name="nsDragAndDropObserver">
+        <![CDATA[({
+        _self: this,
 
-          // This method determines whether or not a drop should be permitted.
-          // canDrop() (no underscore) provides extra logic to determine
-          // whether or not drops should be permitted at specified insertion
-          // points before/after individual rows.
+        // the function calling onDragStart was rewritten
+        // but we have left this husk here to satisfy nsDragAndDrop.js
+        onDragStart: function(event, transferData, dragAction) {},
 
-          var list = this.mediaList,
-              session = null,
-              source = null,
-              dragService,
-              dnd;
+        // whether we can accept the drop or not
+        canDrop: function(event, session) {
+          // XXX Alfred: same hack as we did for bug 4760 to do special
+          // handling for the download playlist.
+          var list = this._self.mediaList;
+          var customType = list.getProperty(SBProperties.customType);
+          if (customType == "download") {
+            return this._self._canDownloadDrop(session);
+          }
 
-          // First, make sure the target playlist is willing to accept a drop.
-          if (this._disableDrop ||
-              !list.userEditable ||
-              !list.userEditableContent)
-          {
+          // this is a playlist for a readonly library, can't drop
+          if (!list.userEditable || !list.userEditableContent) {
             return false;
           }
+          return (InternalDropHandler.isSupported(session) ||
+                  ExternalDropHandler.isSupported(session));
+        },
 
-          // Get the current drag session. We retain the session as an internal
-          // property because the drag service does not retain the session on
-          // Linux, and the session is needed during drop handling.
-          dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                                .getService(this._Ci.nsIDragService);
-          session = dragService.getCurrentSession();
+        // expose the flavours we support
+        getSupportedFlavours: function() {
+          var flavours = new FlavourSet();
+          InternalDropHandler.addFlavours(flavours);
+          ExternalDropHandler.addFlavours(flavours);
+          return flavours;
+        },
 
-          if (session && session instanceof this._Ci.nsIDragSession) {
-            this._dragSession = session;
-          }
+        // this method is only here to keep nsDragAndDrop.js happy
+        onDragOver: function(event, flavor, session) {
+        }
 
-          // There is no intersection between supported External flavors and
-          // supported Internal flavors. There are no additional checks for
-          // External drops, so we can return true here if the External
-          // handler supports the drop.
-          if (ExternalDropHandler.isSupported(session)) {
-            return true;
-          }
-
-          // Everything from this point on deals with internal drops, so bail
-          // here if the session is not supported by the internal handler.
-          if (!InternalDropHandler.isSupported(session)) {
-            return false;
-          }
-
-          // Special handling for the download playlist. A hack that has lived
-          // ever since bug 4760.
-          if ("download" == list.getProperty(SBProperties.customType)) {
-            return this._canDownloadDrop(session);
-          }
-
-          dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-                        .getService(this._Ci.sbIDndSourceTracker);
-
-          // Get the drop source.
-          [{
-             flavour: this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
-             implements: this._Ci.sbIMediaListTransferContext
-          }, {
-             flavour: this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-             implements: this._Ci.sbIMediaItemsTransferContext
-          }].forEach(function (transfer) {
-            var data, context;
-            if (!source) {
-              data = DNDUtils.getTransferDataForFlavour(transfer.flavour,
-                                                        session);
-              if (data) {
-                context = dnd.getSourceSupports(data);
-                if (context instanceof transfer.implements) {
-                  source = context.source;
-                }
-              }
-            }
-          });
-
-          // We accept the drop if we have a source and either:
-          // - The source is not the target and the target accepts the source.
-          // - The source is the target, the target is not a library, and the
-          //   target is ordinally sorted (i.e. a re-order is allowed).
-
-          if (!source) {
-            return false;
-          }
-
-          if (source.equals(list)) {
-            return (!(list instanceof this._Ci.sbILibrary) &&
-                    this.isOrdinalSort());
-          } else {
-            return this.acceptDropSource(source);
-          }
-
-        ]]>
-        </body>
-      </method>
-
-      <method name="acceptDropSource">
-        <parameter name = "aMediaList"/>
-        <body>
-          <![CDATA[
-            // The base playlist binding accepts drops from any source list.
-            // Override this method in a child binding if particular sources
-            // need to be disallowed.
-            return true;
-          ]]>
-        </body>
-      </method>
+      })]]></field>
 
       <!-- Items are dragged from the list -->
       <method name="_onDragGesture">
@@ -2765,9 +2789,15 @@
       return; // Nothing selected to drag.
     }
 
-    this._prepareTransferArray(view, event.dataTransfer);
-    var icon = this._prepareDragIcon();
-    event.dataTransfer.setDragImage(icon, 0, 0);
+    var transArray = this._prepareTransferArray(view);
+    var dragAction = Ci.nsIDragService.DRAGDROP_ACTION_COPY;
+    var icon       = this._prepareDragIcon();
+
+    var dragService = Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(Ci.nsIDragService);
+    dragService.invokeDragSessionWithImage(event.target, transArray,
+                                           null, dragAction,
+                                           icon, 0, 0, event);
 
     // Mouse events will be handled by drag-and-drop, so clear the mouse down
     // state
@@ -2776,26 +2806,30 @@
     this._onMouseDownObject = null;
     this._mouseIsDown = false;
     this._isHandlingClickableContent= false;
+
+    event.stopPropagation();
 ]]>
         </body>
       </method>
 
       <method name="_prepareTransferArray">
         <parameter name="view"/>
-        <parameter name="aDataTransfer"/>
         <body>
 <![CDATA[
-    var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+    var dnd = this._Cc["@getnightingale.com/Nightingale/DndSourceTracker;1"]
                       .getService(this._Ci.sbIDndSourceTracker);
     dnd.reset();
+
+    var transferData = new TransferData();
+    // Create a context which describes the media items being moved.
     var context = new DNDUtils.MediaListViewSelectionTransferContext(view);
     var handle = dnd.registerSource(context);
-    aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
+    transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
 
     // add a second flavour for a single media item so it can be recognized by
     // drop targets that only accept a single media item
     if (view.selection.count == 1) {
-      aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+      transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
 
       // for single media lists, we'll add another special flavor
       var item = view.selection.currentMediaItem;
@@ -2804,7 +2838,7 @@
 
         context.QueryInterface(this._Ci.sbIMediaItemsTransferContext);
         var handle = dnd.registerSource(context);
-        aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
+        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
       }
     }
 
@@ -2815,9 +2849,40 @@
       if (!item) continue; // WTF?
       if (item.getProperty(SBProperties.disableDownload) == '1') {
         // one of the items has download disabled, we need to disable the command
-        aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD, '');
+        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD, '');
       }
     }
+
+
+    var transArray = Cc["@mozilla.org/supports-array;1"]
+                       .createInstance(Ci.nsISupportsArray);
+
+    var trans = Cc["@mozilla.org/widget/transferable;1"]
+                  .createInstance(Ci.nsITransferable);
+    for (var i = 0; i < transferData.dataList.length; ++i)  {
+      var currData = transferData.dataList[i];
+      var currFlavour = currData.flavour.contentType;
+      trans.addDataFlavor(currFlavour);
+      var supports = null; // nsISupports data
+      var length = 0;
+      if (currData.flavour.dataIIDKey == "nsISupportsString") {
+        supports = Components.classes["@mozilla.org/supports-string;1"]
+                             .createInstance(Components.interfaces.nsISupportsString);
+
+        supports.data = currData.supports;
+        length = supports.data.length;
+      }
+      else {
+        // non-string data.
+        supports = currData.supports;
+        length = this._Ci.nsITransferable.kFlavorHasDataProvider;
+      }
+      // length * 2 is because of sizeof(PRUnichar) and pure evil
+      trans.setTransferData(currFlavour, supports, length * 2);
+    }
+    transArray.AppendElement(trans);
+
+    return transArray;
 ]]>
         </body>
       </method>
@@ -2844,12 +2909,7 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
-    if(this._canDrop(event)) {
-      event.preventDefault();
-    } else {
-      event.dataTransfer.effectAllowed = "none";
-    }
-    event.stopPropagation();
+    nsDragAndDrop.dragOver(event, this.nsDragAndDropObserver);
 ]]>
         </body>
       </method>
@@ -2881,62 +2941,28 @@
   this._dragSession = session;
 
   // Note that this is called by our tree observer
-  var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+  var dnd = this._Cc["@getnightingale.com/Nightingale/DndSourceTracker;1"]
                     .getService(this._Ci.sbIDndSourceTracker);
 
-  // handle media list drops
-  var data = DNDUtils.getTransferDataForFlavour(
-          this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
-          session);
+  // handle mediaitem drops
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                                session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaListTransferContext);
-    var listRow = this._getRowToInsert(this.mediaListView, row, orientation);
-    dump("Computed row "+listRow+"from view row "+row+", calling DropHandler\n");
-    InternalDropHandler.dropOnList(window,
-                                   session,
-                                   this.mediaListView.mediaList,
-                                   listRow,
-                                   null);
+    this._addAllItems(context.source, context.list, row, orientation);
     return;
   }
 
-  data = DNDUtils.getTransferDataForFlavour(
-          this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-          session);
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                            session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
-    if (context.source == this.mediaListView.mediaList) {
-      // This is a drop operation _within_ a playlist (i.e. moving items, not
-      // adding them). 
-      this._moveItemsInList(context.indexedItems, row, orientation);
-    }
-    else {
-      var listRow = this._getRowToInsert(this.mediaListView, row, orientation);
-      InternalDropHandler.dropOnList(window,
-                                     session,
-                                     this.mediaListView.mediaList,
-                                     listRow,
-                                     null);
-    }
+    this._addItems(context.source, context.items, context.indexedItems, context.count, row, orientation);
     return;
   }
 
-  // Otherwise, we're having something else dropped on us: probably a file or
-  // files - treat this as coming from outside the app and use the
-  // ExternalDropHandler.
-  return this._externalDropOnTree(row, orientation, session);
-]]>
-        </body>
-      </method>
-
-      <method name="_externalDropOnTree">
-        <parameter name="row"/>
-        <parameter name="orientation"/>
-        <parameter name="session"/>
-        <body>
-<![CDATA[
   // figure out where the track insertion should occur
   var position = row;
   if (orientation != this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
@@ -2946,9 +2972,8 @@
     position = -1;
   }
 
-  // if we are using the reverse ordinal sort, we need to reverse the drop
-  // position and if we are sorted in any other way, we'll just drop at the
-  // end of the list
+  // if we are using the reverse ordinal sort, we need to reverse the drop position
+  // and if we are sorted in any other way, we'll just drop at the end of the list
 
   var sort = this.mediaListView.currentSort;
   if (sort && sort.length == 1) {
@@ -3114,20 +3139,94 @@
         <body>
 <![CDATA[
 
-  // This method determines whether or not a drop should be accepted at a
-  // particular insertion point before/after rows in the playlist tree. It also
-  // controls the painting of the inter-row drop indicator (the indicator is
-  // painted if this method returns true).
-  //
-  // Note that drops will still succeed if _canDrop returns false and this
-  // method returns true. Thus, we need to check _canDrop before applying
-  // additional logic to determine drop acceptance at particular insertion
-  // points. We don't actually care about the index or orientation here; we
-  // only need to check that the list is ordinally sorted. Drops at specific
-  // insertion points only make sense in the context of an ordinally sorted
-  // playlist.
+  // Our tree observer callback does not get the drag session as a parameter,
+  // that is fine on windows, but on linux, the dragservice does not hold on
+  // to the session after the drop completes, so we cannot ask it for the
+  // session that just got dropped. Because of this, we need to remember the
+  // session during the drag over event, and reuse it later in the drop event.
+  // Note that canDrop is also called before calling the drop event, so in that
+  // case on linux, getCurrentSession will fail, we need to test if we got
+  // something and only record it if we did.
 
-  return this._canDrop() && this.isOrdinalSort();
+  // Special flag we use to disable dropping items to a playlist, this allows
+  // the playlist to still be editable but stop drag and drop.
+  if (this._disableDrop) {
+    return false;
+  }
+
+  var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(this._Ci.nsIDragService);
+  var session = dragService.getCurrentSession();
+  if (session != null)
+    this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
+
+  // XXX Alfred: same hack as we did for bug 4760 to do special handling
+  // for the download playlist.
+  var customType = this.mediaList.getProperty(SBProperties.customType);
+  if (customType == "download") {
+    return this._canDownloadDrop(this._dragSession);
+  }
+
+  // this is a playlist for a readonly library, can't drop
+  if (!this.mediaList.userEditable ||
+      !this.mediaList.userEditableContent) {
+    return false;
+  }
+
+  // look for the source of the dnd, if it is ourselves, we need to test whether
+  // we are a sorted playlist, or a library (cannot reorder tracks in a library),
+  // in which case we disallow dropping, because it does not make sense.
+
+  var dnd = this._Cc["@getnightingale.com/Nightingale/DndSourceTracker;1"]
+                    .getService(this._Ci.sbIDndSourceTracker);
+
+  var context;
+
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                                this._dragSession);
+  if (data) {
+    context = dnd.getSourceSupports(data)
+                .QueryInterface(this._Ci.sbIMediaListTransferContext);
+  }
+  else {
+    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                              this._dragSession);
+    if (data) {
+      context = dnd.getSourceSupports(data)
+                   .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
+    } else {
+      // the dnd does not contain nightingale mediaitems, it cannot have
+      // been made by ourselves, only accept the drop if it is a supported
+      // flavour
+      if (!ExternalDropHandler.isSupported(this._dragSession))
+        return false;
+
+      // we want to accept the drop, but ideally, we would test this.isOrdinalSort()
+      // and make it so the drop target cue is not shown. Unfortunately, returning
+      // false here, with an external drag and drop session, will prevent us from
+      // dropping entirely :/
+      return true;
+    }
+  }
+
+  if (context.source != this.mediaList) {
+    // the drop source is not ourselves, always accept the drop
+    return true;
+  }
+
+  // the source is ourselves, so this is a track reordering operation, only
+  // allow it if we are not sorted
+
+  // is this a library ? libraries cannot have their tracks reordered
+  if (this.mediaList == this.library)
+    return false;
+
+  // if we are sorted on anything else than the ordinal property, refuse reordering
+  if (!this.isOrdinalSort())
+    return false;
+
+  // looks like it is safe to perform a track reordering, so go for it!
+  return true;
 ]]>
         </body>
       </method>
@@ -3166,7 +3265,7 @@
             // if ratings are disabled
             // Note that it is OK to rate items that cannot be written to
             if ((aPropertyName == SBProperties.rating && (!aItem.userEditable ||
-                 !Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false)))) {
+                 !Application.prefs.getValue("nightingale.metadata.ratings.enableWriting", false)))) {
               return;
             }
 
@@ -3220,11 +3319,11 @@
           var windowMediator =
             Components.classes["@mozilla.org/appshell/window-mediator;1"]
                       .getService(Components.interfaces.nsIWindowMediator);
-          var songbirdWindow =
-            windowMediator.getMostRecentWindow("Songbird:Main");
+          var nightingaleWindow =
+            windowMediator.getMostRecentWindow("Nightingale:Main");
 
           var controller =
-            songbirdWindow.controllers.getControllerForCommand(aCommand);
+            nightingaleWindow.controllers.getControllerForCommand(aCommand);
 
           if (controller) {
             controller.doCommand(aCommand);
@@ -3296,7 +3395,7 @@
             return;
           }
           var mm =
-            Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+            Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                       .getService(Components.interfaces.sbIMediacoreManager);
           var primaryCore = mm.primaryCore;
           var status = mm.status;
@@ -3345,7 +3444,7 @@
             // possibly an event from the inline metadata editing textbox
             return;
           }
-          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+          var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                              .getService(Components.interfaces.sbIMediacoreManager);
           var status = mm.status;
 
@@ -3363,7 +3462,7 @@
             // possibly an event from the inline metadata editing textbox
             return;
           }
-          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+          var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                              .getService(Components.interfaces.sbIMediacoreManager);
           var status = mm.status;
 

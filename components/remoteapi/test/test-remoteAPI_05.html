@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -44,11 +44,11 @@
         }
 
         // Bind it to the value of the dataremote
-        songbird.addListener("metadata.artist", obs);
+        nightingale.addListener("metadata.artist", obs);
       }
 
       function unload() {
-        songbird.removeListener("metadata.artist", obs);
+        nightingale.removeListener("metadata.artist", obs);
       }
 
     </script>
@@ -59,26 +59,26 @@
         some artist metadata to show success of the playback calls.  </p>
     <p> The following tracks should be in the web playlist</p>
     <ul>
-      <li><a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Loveshadow_-_Today.mp3"></a>Loveshadow - Today</li>
-      <li><a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3"></a>nyx - Undercover</li>
-      <li><a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/stefsax_-_I_like_it_like_Thats.thaens.mp3"></a>stefsax_-_I_like_it_like_Thats.thaens</li>
+      <li><a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Loveshadow_-_Today.mp3"></a>Loveshadow - Today</li>
+      <li><a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3"></a>nyx - Undercover</li>
+      <li><a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/stefsax_-_I_like_it_like_Thats.thaens.mp3"></a>stefsax_-_I_like_it_like_Thats.thaens</li>
     </ul>
     Now Playing: <span id="now_playing"> </span>
 
     <p>Use these buttons to begin playback and skip through the plyalist below</p>    
     <form>
-      <input type="button" id="play_button" value="play" onclick="songbird.play();" /> 
+      <input type="button" id="play_button" value="play" onclick="nightingale.play();" /> 
       |
-      <input type="button" id="stop_button" value="stop" onclick="songbird.stop();" /> 
+      <input type="button" id="stop_button" value="stop" onclick="nightingale.stop();" /> 
       |
-      <input type="button" id="pause_button" value="pause" onclick="songbird.pause();" /> 
+      <input type="button" id="pause_button" value="pause" onclick="nightingale.pause();" /> 
       |
-      <input type="button" id="previous_button" value="prev" onclick="songbird.previous();" /> 
+      <input type="button" id="previous_button" value="prev" onclick="nightingale.previous();" /> 
       |
-      <input type="button" id="next_button" value="next" onclick="songbird.next();" /> 
+      <input type="button" id="next_button" value="next" onclick="nightingale.next();" /> 
       |
       <input type="button" id="playURL_button" value="playURL"
-             onclick="songbird.playURL('http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3')" /> (ominvista - Celebrity...)
+             onclick="nightingale.playURL('http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3')" /> (ominvista - Celebrity...)
     </form>
   </body>
 </html>

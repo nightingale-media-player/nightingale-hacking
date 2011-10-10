@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -58,20 +58,20 @@
 #include <nsIRunnable.h>
 
 // DEFINES ====================================================================
-#define SONGBIRD_FILESCAN_CONTRACTID                     \
-  "@songbirdnest.com/Songbird/FileScan;1"
-#define SONGBIRD_FILESCAN_CLASSNAME                      \
-  "Songbird Media Scan Interface"
+#define NIGHTINGALE_FILESCAN_CONTRACTID                     \
+  "@getnightingale.com/Nightingale/FileScan;1"
+#define NIGHTINGALE_FILESCAN_CLASSNAME                      \
+  "Nightingale Media Scan Interface"
 // {411DD545-EAD0-41c4-8BA1-697DBE5C67EA}
-#define SONGBIRD_FILESCAN_CID                            \
+#define NIGHTINGALE_FILESCAN_CID                            \
 { 0x411dd545, 0xead0, 0x41c4, { 0x8b, 0xa1, 0x69, 0x7d, 0xbe, 0x5c, 0x67, 0xea } }
 
-#define SONGBIRD_FILESCANQUERY_CONTRACTID                \
-  "@songbirdnest.com/Songbird/FileScanQuery;1"
-#define SONGBIRD_FILESCANQUERY_CLASSNAME                 \
-  "Songbird Media Scan Query Interface"
+#define NIGHTINGALE_FILESCANQUERY_CONTRACTID                \
+  "@getnightingale.com/Nightingale/FileScanQuery;1"
+#define NIGHTINGALE_FILESCANQUERY_CLASSNAME                 \
+  "Nightingale Media Scan Query Interface"
 // {7BB22470-E03D-4220-AC93-AC70700AF6AB}
-#define SONGBIRD_FILESCANQUERY_CID                       \
+#define NIGHTINGALE_FILESCANQUERY_CID                       \
 { 0x7bb22470, 0xe03d, 0x4220, { 0xac, 0x93, 0xac, 0x70, 0x70, 0xa, 0xf6, 0xab } }
 
 // CLASSES ====================================================================
@@ -132,7 +132,6 @@ protected:
   PRBool m_bCancel;
 };
 
-class sbIDirectoryEnumerator;
 
 /**
  * \class sbFileScan
@@ -165,9 +164,9 @@ protected:
 
   // Typedefs
   typedef std::deque<sbIFileScanQuery *>      queryqueue_t;
-  typedef std::deque<sbIDirectoryEnumerator *>   dirstack_t;
+  typedef std::deque<nsISimpleEnumerator *>   dirstack_t;
   typedef std::deque<nsCOMPtr<nsIFile> >      fileentrystack_t;
-  typedef std::deque<nsCOMPtr<nsIFile> >  entrystack_t;
+  typedef std::deque<nsCOMPtr<nsISupports> >  entrystack_t;
 
   nsresult Shutdown();
 

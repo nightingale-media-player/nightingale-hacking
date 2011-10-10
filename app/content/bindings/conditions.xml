@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,11 +21,11 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE bindings SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -229,7 +229,7 @@
         }
         // Load property manager
         this._pm = 
-          this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+          this._Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
               .getService(this._Ci.sbIPropertyManager);
 
         // Scan the metadata and fill the metadata popup with appropriate items
@@ -331,7 +331,7 @@
       
       <!-- Create items for a menu based on a name/value array, and perform
            localization of partial entities. Note that the stringBundleUrl
-           parameter is optional, the default songbird stringbundle will
+           parameter is optional, the default nightingale stringbundle will
            be used if none was provided. -->
       <method name="_generateMenuPopup">
         <parameter name="aParent"/>
@@ -433,7 +433,7 @@
           // get the smart playlist property registrar
           var registrar = 
             this.
-              _Cc["@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1"]
+              _Cc["@getnightingale.com/Nightingale/SmartPlaylistPropertyRegistrar;1"]
                  .getService(Components.interfaces
                                        .sbISmartPlaylistPropertyRegistrar);
           
@@ -449,7 +449,7 @@
 
           // see if the user has asked to see all the properties
           var enableAll = Application.prefs.getValue(
-                         "songbird.smartplaylisteditor.enableAllProperties", false);
+                         "nightingale.smartplaylisteditor.enableAllProperties", false);
 
           if (enableAll) {
             // and if he has, insert all the remaining props here, use the
@@ -562,7 +562,7 @@
           var list = [];
 
           var enableAll = Application.prefs.getValue(
-                         "songbird.smartplaylisteditor.enableAllOperators", false);
+                         "nightingale.smartplaylisteditor.enableAllOperators", false);
 
           while (ops.hasMoreElements()) {
             var op = ops.getNext()
@@ -803,7 +803,7 @@
         <body>
         <![CDATA[
           var libraryManager =
-            this._Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+            this._Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                 .getService(this._Ci.sbILibraryManager);
 
           var library = libraryManager.mainLibrary;
@@ -2004,7 +2004,7 @@
           <![CDATA[
             for each (var prop in SBProperties) {
               if (metadata == prop) return true;
-              if (metadata == "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist")
+              if (metadata == "http://getnightingale.com/dummy/smartmedialists/1.0#playlist")
                 return true;
             }
             return false;

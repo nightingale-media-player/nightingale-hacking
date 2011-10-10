@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBDEVICETRANSCODING_H_
@@ -31,13 +31,13 @@
 // Mozilla includes
 #include <nsIArray.h>
 
-// Songbird interfaces
+// Nightingale interfaces
 #include <sbIMediaItem.h>
 #include <sbITranscodeManager.h>
 #include <sbITranscodeJob.h>
 #include <sbITranscodeProfile.h>
 
-// Songbird local includes
+// Nightingale local includes
 #include "sbBaseDevice.h"
 
 class sbIMediaInspector;

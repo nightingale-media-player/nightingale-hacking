@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,11 +28,11 @@
 
 
 //
-// @brief This IDL file defines the media-export service for Songbird.
+// @brief This IDL file defines the media-export service for Nightingale.
 //        This service listens for changes in the main library and writes
 //        a task file of all the changed data to the profile directory.
 //
-//        The export operation is normally done at Songbird shutdown,
+//        The export operation is normally done at Nightingale shutdown,
 //        depending on if the service has been activated 
 //        (see "sbMediaExportDefines.h") by the users prefs. However, a method
 //        is provided on the interface to manually invoke the export data.
@@ -44,9 +44,9 @@
 %{C++
 
 #define SB_MEDIAEXPORTSERVICE_CONTRACTID  \
-  "@songbirdnest.com/media-export-service;1"
+  "@getnightingale.com/media-export-service;1"
 #define SB_MEDIAEXPORTSERVICE_CLASSNAME        \
-  "Songbird Media Export Agent Service" 
+  "Nightingale Media Export Agent Service" 
 %}
 
 [scriptable, uuid(dfbec368-1dd1-11b2-b467-921fa5b0a7d4)]
@@ -62,6 +62,6 @@ interface sbIMediaExportService : nsISupports
   // @brief Manually invoke the media export service. This method will perform
   //        the tasks that the export service normally does at shutdown.
   //
-  void exportSongbirdData();
+  void exportNightingaleData();
 };
 

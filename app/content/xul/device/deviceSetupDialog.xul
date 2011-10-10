@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
@@ -29,17 +29,17 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceSetup.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/deviceSetup.css"
                  type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- ***************************************************************************
@@ -51,6 +51,7 @@
  *   A single dialog box argument of type sbIDevice is passed in.
  *
  *************************************************************************** -->
+
 <!-- Device setup dialog box. -->
 <dialog
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -59,7 +60,7 @@
   id="device_setup_dialog"
   hidechrome="true"
   flex="1"
-  type="songbird"
+  type="nightingale"
   title="&device.dialog.setup.title;"
   buttons="accept"
   ondialogaccept="if (deviceSetupDialog.onAccept()) onExit();"
@@ -72,7 +73,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Place notification box in its own box so that the dialog window can
@@ -99,11 +100,18 @@
         <!-- Device volume selector. -->
         <sb-device-volume-selector id="device_setup_volume_selector"
                                    class="indent"/>
-        <separator id="selectorSeparator"/>
       </vbox>
+
+      <checkbox id="setup_sync_checkbox" checked="false"
+                label="&device.dialog.setup.sync.checkbox.label;"
+                oncommand="deviceSetupDialog.toggleSync();"/>
+      <description id="setup_sync_description" class="indent">
+        &device.dialog.setup.sync.checkbox.description;
+      </description>
     </vbox>
 
     <vbox id="ignoreContainer" hidden="true">
+      <separator id="ignoreSeparator"/>
       <checkbox id="setup_ignore_checkbox" checked="false"
                 label="&device.dialog.setup.ignore.checkbox.label;"
                 oncommand="deviceSetupDialog.toggleIgnore(event);"/>
@@ -121,13 +129,13 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->
+  <!-- Import the Nightingale services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
 
   <!-- Device setup dialog services. -->
   <script><![CDATA[
@@ -145,7 +153,7 @@
       var Cu = Components.utils;
 
 
-    // Songbird imports.
+    // Nightingale imports.
     Cu.import("resource://app/jsmodules/StringUtils.jsm");
     Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
@@ -190,19 +198,9 @@
         // Set the default device name textbox value.
         var setupNameTextboxElem =
               document.getElementById("setup_name_textbox");
-        var defaultName;
-
-        try {
-          defaultName = this._device.properties.defaultName;
-        } catch (ex) {
-          Cu.reportError(ex);
-        }
-
-        if (!defaultName)
-          defaultName = this._device.name;
-
-        if (defaultName) {
-          setupNameTextboxElem.value = defaultName;
+        var friendlyName = this._device.properties.friendlyName;
+        if (friendlyName) {
+          setupNameTextboxElem.value = friendlyName;
         }
         else {
           try { productName = this._device.productName; } catch (ex) {}
@@ -250,20 +248,22 @@
       onAccept: function deviceSetupDialog_onAccept() {
         var ignoreCheckboxElem =
               document.getElementById("setup_ignore_checkbox");
+        var syncCheckboxElem =
+              document.getElementById("setup_sync_checkbox");
         var ignoreContainerElem = document.getElementById("ignoreContainer");
 
         if (!ignoreContainerElem.hidden && ignoreCheckboxElem.checked) {
           var ignoreList = Application.prefs.getValue(
-                                            "songbird.device.ignorelist", "");
+                                            "nightingale.device.ignorelist", "");
           // Append a separator if necessary.
           if (ignoreList != "") {
             ignoreList += ";";
           }
           ignoreList += this._device.id;
-          Application.prefs.setValue("songbird.device.ignorelist", ignoreList);
+          Application.prefs.setValue("nightingale.device.ignorelist", ignoreList);
 
           // Remove the device.
-          var manager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+          var manager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
           var controller = manager.getController(this._device.controllerId);
           var marshall = manager.getMarshallByID(controller.marshallId);
@@ -275,9 +275,46 @@
           var setupNameTextboxElem =
                 document.getElementById("setup_name_textbox");
           this._device.properties.friendlyName = setupNameTextboxElem.value;
+
+          // Set the sync preference.
+          var deviceLibrary = this._device.defaultLibrary;
+          if (deviceLibrary) {
+            var syncMode = syncCheckboxElem.checked ?
+                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO :
+                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+            var syncSettings = deviceLibrary.syncSettings;
+            syncSettings.syncMode = syncMode;
+            deviceLibrary.syncSettings = syncSettings;
+            if (syncMode == Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO)
+              deviceLibrary.sync();
+          }
         }
 
         return true;
+      },
+
+      /**
+       * Handle sync checkbox click event.
+       */
+
+      toggleSync: function deviceSetupDialog_toggleSync() {
+        var syncCheckboxElem = document.getElementById("setup_sync_checkbox");
+        var dialogElem = document.getElementById("device_setup_dialog");
+        var acceptButton = dialogElem.getButton("accept");
+
+        // Add the notification hat and update the button label
+        if (syncCheckboxElem.checked) {
+          acceptButton.label =
+            SBString("device.dialog.setup.button.sync.label");
+          this.showErrorNotification(
+                 SBString("device.dialog.setup.sync.message"),
+                 "PRIORITY_WARNING_HIGH");
+        }
+        else {
+          acceptButton.label =
+            SBString("device.dialog.setup.button.default.label");
+          this.removeErrorNotifications();
+        }
       },
 
       /**
@@ -288,6 +325,7 @@
         var ignoreCheckboxElem =
               document.getElementById("setup_ignore_checkbox");
         var nameTextboxElem = document.getElementById("setup_name_textbox");
+        var syncCheckboxElem = document.getElementById("setup_sync_checkbox");
         var syncContainerElem = document.getElementById("syncContainer");
         var dialogElem = document.getElementById("device_setup_dialog");
         var acceptButton = dialogElem.getButton("accept");
@@ -299,6 +337,8 @@
             SBString("device.dialog.setup.button.ignore.label");
           syncContainerElem.setAttribute("disabled", true);
           nameTextboxElem.setAttribute("disabled", true);
+          syncCheckboxElem.setAttribute("disabled", true);
+          syncCheckboxElem.checked = false;
 
           var key = "device.dialog.setup.ignoreDevice.message";
           if (getPlatformString() == "Darwin")
@@ -310,6 +350,7 @@
             SBString("device.dialog.setup.button.default.label");
           syncContainerElem.removeAttribute("disabled");
           nameTextboxElem.removeAttribute("disabled");
+          syncCheckboxElem.removeAttribute("disabled");
           this.removeErrorNotifications();
         }
 

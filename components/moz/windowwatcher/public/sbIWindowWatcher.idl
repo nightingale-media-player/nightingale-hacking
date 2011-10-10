@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -42,7 +42,7 @@ interface nsIDOMWindow;
  *   Non-main thread code may use waitForWindow to wait until a window is ready.
  * This code may then dispatch to the main thread to get and use the window.
  *
- * "@songbirdnest.com/Songbird/window-watcher;1"
+ * "@getnightingale.com/Nightingale/window-watcher;1"
  * Use get service with this component.
  */
 
@@ -133,6 +133,6 @@ interface sbICallWithWindowCallback : nsISupports
 
 %{C++
 #define SB_WINDOWWATCHER_CONTRACTID \
-          "@songbirdnest.com/Songbird/window-watcher;1"
+          "@getnightingale.com/Nightingale/window-watcher;1"
 %}C++
 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,7 +37,7 @@
 
 /**
 * \file  TagLibChannelFileIOManager.h
-* \brief Songbird TagLib sbISeekableChannel file IO manager component.
+* \brief Nightingale TagLib sbISeekableChannel file IO manager component.
 */
 
 /*******************************************************************************
@@ -50,11 +50,11 @@
  * TagLib sbISeekableChannel file IO manager XPCOM component definitions.
  */
 
-#define SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CONTRACTID                         \
-                    "@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1"
-#define SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CLASSNAME                          \
-                "Songbird TagLib sbISeekableChannel file IO Manager Component"
-#define SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CID                                \
+#define NIGHTINGALE_TAGLIBCHANNELFILEIOMANAGER_CONTRACTID                         \
+                    "@getnightingale.com/Nightingale/sbTagLibChannelFileIOManager;1"
+#define NIGHTINGALE_TAGLIBCHANNELFILEIOMANAGER_CLASSNAME                          \
+                "Nightingale TagLib sbISeekableChannel file IO Manager Component"
+#define NIGHTINGALE_TAGLIBCHANNELFILEIOMANAGER_CID                                \
 {                                                                              \
     0xED17756D,                                                                \
     0xDEAF,                                                                    \
@@ -73,7 +73,7 @@
 #include <TaglibChannelFileIO.h>
 #include <sbITagLibChannelFileIOManager.h>
 
-/* Songbird imports. */
+/* Nightingale imports. */
 #include <nsClassHashtable.h>
 #include <sbISeekableChannel.h>
 

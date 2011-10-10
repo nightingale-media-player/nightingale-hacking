@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,17 +19,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \file  sbWinINIString.cpp
- * \brief Songbird Windows INI String Source.
+ * \brief Nightingale Windows INI String Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows INI string imported services.
+// Nightingale Windows INI string imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows INI string services prototypes.
+// Nightingale Windows INI string services prototypes.
 //
 //------------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ static void sbApplyINISubstitutions(tstring& aINIString,
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows INI string services template functions.
+// Nightingale Windows INI string services template functions.
 //
 //------------------------------------------------------------------------------
 
@@ -125,7 +125,7 @@ sbWinGetINIString(tstring& aINIString,
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows INI string public services.
+// Nightingale Windows INI string public services.
 //
 //------------------------------------------------------------------------------
 
@@ -159,7 +159,7 @@ sbWinINIString::sbWinINIString(LPCWSTR aSection,
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird Windows INI string services.
+// Internal Nightingale Windows INI string services.
 //
 //------------------------------------------------------------------------------
 

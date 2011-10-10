@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -317,8 +317,8 @@ var DCW = {
 
       // Update the capacity legend.
       if (value) {
-        let storageConverter =
-          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+        storageConverter =
+          Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
             .createInstance(Ci.sbIPropertyUnitConverter);
         child.setAttribute("value", storageConverter.autoFormat(value, -1, 1));
         child.hidden = false;
@@ -369,15 +369,15 @@ var DCW = {
   _getDeviceCapacity: function DCW__getDeviceCapacity() {
     // Get the storage statistics from the device.
     var freeSpace = parseInt(this._getDevLibProperty
-      ("http://songbirdnest.com/device/1.0#freeSpace", 0));
+      ("http://getnightingale.com/device/1.0#freeSpace", 0));
     var musicSpace = parseInt(this._getDevLibProperty
-      ("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
+      ("http://getnightingale.com/device/1.0#musicUsedSpace", 0));
     var videoSpace = parseInt(this._getDevLibProperty
-      ("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
+      ("http://getnightingale.com/device/1.0#videoUsedSpace", 0));
     var imageSpace = parseInt(this._getDevLibProperty
-      ("http://songbirdnest.com/device/1.0#imageUsedSpace", 0));
+      ("http://getnightingale.com/device/1.0#imageUsedSpace", 0));
     var usedSpace = parseInt(this._getDevLibProperty
-      ("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
+      ("http://getnightingale.com/device/1.0#totalUsedSpace", 0));
     var totalSpace = usedSpace + freeSpace;
     var otherSpace = usedSpace - musicSpace - videoSpace - imageSpace;
 

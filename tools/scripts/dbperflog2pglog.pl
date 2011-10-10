@@ -12,7 +12,7 @@
 # $ export NSPR_LOG_MODULES=sbDatabaseEnginePerformance:5
 # $ export NSPR_LOG_FILE=nsprlog.txt
 #
-# Then run songbird to generate some output.  Once you've quit songbird, filter
+# Then run nightingale to generate some output.  Once you've quit nightingale, filter
 # the log file to throw away any extra stuff that was captured
 #
 # $ grep sbDatabaseEnginePerformance nsprlog.log > dbperf.log

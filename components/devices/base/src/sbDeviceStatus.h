@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -68,13 +68,13 @@ private:
 
 };
 
-#define SONGBIRD_DEVICESTATUS_DESCRIPTION             \
-  "Songbird Device Status Component"
-#define SONGBIRD_DEVICESTATUS_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/DeviceStatus;1"
-#define SONGBIRD_DEVICESTATUS_CLASSNAME               \
-  "Songbird Device Status"
-#define SONGBIRD_DEVICESTATUS_CID                     \
+#define NIGHTINGALE_DEVICESTATUS_DESCRIPTION             \
+  "Nightingale Device Status Component"
+#define NIGHTINGALE_DEVICESTATUS_CONTRACTID              \
+  "@getnightingale.com/Nightingale/Device/DeviceStatus;1"
+#define NIGHTINGALE_DEVICESTATUS_CLASSNAME               \
+  "Nightingale Device Status"
+#define NIGHTINGALE_DEVICESTATUS_CID                     \
 { /* 7b2026c4-9193-4cbd-818a-0d 07 ab ae c8 54 */              \
   0x7b2026c4,                                             \
   0x9193,                                                 \

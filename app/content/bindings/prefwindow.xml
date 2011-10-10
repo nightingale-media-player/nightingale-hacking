@@ -2,12 +2,12 @@
 <!-- vim: set sw=2 : -->
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -22,13 +22,13 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!DOCTYPE bindings [
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd" >
-%songbirdDTD;
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
+%nightingaleDTD;
 <!ENTITY % preferencesDTD SYSTEM "chrome://global/locale/preferences.dtd" >
 %preferencesDTD;
 ]>
@@ -85,45 +85,6 @@
           function(){ return docElem.showPane.apply(docElem, arguments); }
       </constructor>
     </implementation>
-  </binding>
-  
-  <!--
-    - Binding to make the deck resize to the selected panel for 
-    - http://bugzilla.songbirdnest.com/show_bug.cgi?id=21401
-    -->
-  <binding id="sb-deck"
-           extends="chrome://global/content/bindings/general.xml#deck">
-    
-    <!-- handle the deck's select event -->
-    <handlers>
-      <handler event="select" action="onSelect()"/>
-    </handlers>
-    
-    <implementation>
-    
-      <!-- hide unselected panes on construction -->
-      <constructor>
-        this.onSelect();
-      </constructor>
-      
-      <!-- hide unselected panes on construction -->
-      <method name="onSelect">
-        <body>
-        <![CDATA[
-          // Show the selected panel, hide others.
-          for (var i = 0; i < this.childNodes.length; i++) {
-            if (this.childNodes[i] == this.selectedPanel) {
-              this.childNodes[i].removeAttribute("collapsed");
-            } else {
-              this.childNodes[i].setAttribute("collapsed", "true");
-            }
-          }
-        ]]>
-        </body>
-      </method>
-      
-    </implementation>
-      
   </binding>
 
 </bindings>

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -40,49 +40,49 @@ Additional styles imported directly by notification popup balloons.
 }
 
 .balloontip-frame-nw {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(18px 27px 28px 9px);
   background-color: transparent;
 }
 
 .balloontip-frame-n {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(18px 70px 28px 53px);
   background-color: transparent;
 }
 
 .balloontip-frame-ne {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(18px 114px 28px 104px);
   background-color: transparent;
 }
 
 .balloontip-frame-w {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(28px 27px 40px 9px);
   background-color: transparent;
 }
 
 .balloontip-frame-e {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(28px 114px 40px 104px);
   background-color: transparent;
 }
 
 .balloontip-frame-sw {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(40px 27px 50px 9px);
   background-color: transparent;
 }
 
 .balloontip-frame-s {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(40px 70px 50px 53px);
   background-color: transparent;
 }
 
 .balloontip-frame-se {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(40px 114px 50px 104px);
   background-color: transparent;
 }
@@ -120,43 +120,43 @@ Additional styles imported directly by notification popup balloons.
   min-width: 0px !important;
   min-height: 0px !important;
   border-width: 0px !important;
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(0px 9px 9px 0px);
   background-color: transparent;
 }
 
 .balloontip-close-button:hover {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(9px 9px 18px 0px);
   background-color: transparent;
 }
 
 .balloontip-close-button:active {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(18px 9px 27px 0px);
   background-color: transparent;
 }
 
 .balloontip-arrow-nw {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(0px 53px 28px 19px);
   background-color: transparent;
 }
 
 .balloontip-arrow-ne {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(0px 104px 28px 70px);
   background-color: transparent;
 }
 
 .balloontip-arrow-sw {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(40px 53px 67px 19px);
   background-color: transparent;
 }
 
 .balloontip-arrow-se {
-  list-style-image: url(chrome://songbird/skin/balloon/balloon.png);
+  list-style-image: url(chrome://nightingale/skin/balloon/balloon.png);
   -moz-image-region: rect(40px 104px 67px 70px);
   background-color: transparent;
 }
@@ -171,8 +171,8 @@ Additional styles imported directly by notification popup balloons.
   color: black;
 }
 
-.balloon-icon-songbird {
-  list-style-image: url(chrome://songbird-branding/skin/logo_16.png);
+.balloon-icon-nightingale {
+  list-style-image: url(chrome://nightingale-branding/skin/logo_16.png);
   background-color: transparent !important;
 }
 

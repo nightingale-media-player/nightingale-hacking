@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -64,31 +64,31 @@
 
         // on failure, make it REALLY OBVIOUS
         try {
-          songbird.addListener("metadata.artist", obs);
+          nightingale.addListener("metadata.artist", obs);
         } catch (exc) {
           var btn = document.getElementById("test_button1");
           btn["value"] = "FAILED";
         }
         try {
-          songbird.addListener("metadata.album", obs);
+          nightingale.addListener("metadata.album", obs);
         } catch (exc) {
           var btn = document.getElementById("test_button2");
           btn["value"] = "FAILED";
         }
         try {
-          songbird.addListener("metadata.title", obs);
+          nightingale.addListener("metadata.title", obs);
         } catch (exc) {
           var btn = document.getElementById("test_button3");
           btn["value"] = "FAILED";
         }
         try {
-          songbird.addListener("metadata.composer", obs);
+          nightingale.addListener("metadata.composer", obs);
         } catch (exc) {
           var btn = document.getElementById("test_button4");
           btn["value"] = "FAILED";
         }
         try {
-          songbird.addListener("metadata.foobar", obs);
+          nightingale.addListener("metadata.foobar", obs);
         } catch (exc) {
           var btn = document.getElementById("test_button5");
           btn["value"] = "FAILED";
@@ -96,10 +96,10 @@
       }
 
       function unload() {
-        songbird.removeListener("metadata.artist", obs);
-        songbird.removeListener("metadata.album", obs);
-        songbird.removeListener("metadata.title", obs);
-        songbird.removeListener("metadata.composer", obs);
+        nightingale.removeListener("metadata.artist", obs);
+        nightingale.removeListener("metadata.album", obs);
+        nightingale.removeListener("metadata.title", obs);
+        nightingale.removeListener("metadata.composer", obs);
       }
     </script>
   </head>
@@ -110,7 +110,7 @@
     <p> Bind the value of a button to the playing artist, by attribute;
         playing album by property; playing composer by property. Skip tracks
 	to see the data change. The composer should currently (4/2/7) fail as
-	it is not a key supported for access by the songbird object.</p>
+	it is not a key supported for access by the nightingale object.</p>
     <br />
     <form>
       <input type="button" id="test_button1" value="metadata.artist" /> - this should have artist

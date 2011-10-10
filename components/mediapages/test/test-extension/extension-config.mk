@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2009 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the ``GPL'').
@@ -19,16 +19,16 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 
 EXTENSION_NAME = mediapage-test-stub
 
-EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_UUID = $(EXTENSION_NAME)@getnightingale.com
 
-EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/components/mediapages/test/test-extension
+EXTENSION_DIR  = $(NIGHTINGALE_OBJDIR)/components/mediapages/test/test-extension
 
-EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/components/mediapages/test/test-extension/.xpistage
+EXTENSION_STAGE_DIR = $(NIGHTINGALE_OBJDIR)/components/mediapages/test/test-extension/.xpistage
 
 EXTENSION_NO_BINARY_COMPONENTS = 1
 

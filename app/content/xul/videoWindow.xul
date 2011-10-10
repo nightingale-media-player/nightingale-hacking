@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!-- 
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,22 +21,22 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/videoWin.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/videoWin.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css" title="Skin"?>
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 <window id="video_window"
         onload="videoWindowController._initialize();" 
         onunload="videoWindowController._shutdown();" 
         hidechrome="true"
         title="&videowindow.title;"
-        windowtype="Songbird:Core"
+        windowtype="Nightingale:Core"
         minwidth="320"
         minheight="240"
         sb-no-close-on-layout-switch="true"
@@ -49,13 +49,13 @@
   </keyset>
   
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js"/>
+          src="chrome://nightingale/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/videoWindow.js"/>
+          src="chrome://nightingale/content/scripts/videoWindow.js"/>
 
-  <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+  <stringbundle id="nightingale_strings" src="chrome://nightingale/locale/nightingale.properties"/>
 
   <menupopup id="video-context-menu">
     <menuitem label="&videowindow.actualsize;" id="actualsize"

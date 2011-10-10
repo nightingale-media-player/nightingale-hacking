@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -36,17 +36,17 @@ const BROWSER_SUGGEST_PREF = "browser.search.suggest.enabled";
 const XPCOM_SHUTDOWN_TOPIC              = "xpcom-shutdown";
 const NS_PREFBRANCH_PREFCHANGE_TOPIC_ID = "nsPref:changed";
 
-const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
+const NIGHTINGALE_DATAREMOTE_CONTRACTID = "@getnightingale.com/Nightingale/DataRemote;1";
 const sbIDataRemote            = Components.interfaces.sbIDataRemote;
 
 
 const SEARCH_SUGGEST_CONTRACTID =
-  "@mozilla.org/autocomplete/search;1?name=songbird-autocomplete";
-const SEARCH_SUGGEST_CLASSNAME = "Songbird Search Suggestions";
+  "@mozilla.org/autocomplete/search;1?name=nightingale-autocomplete";
+const SEARCH_SUGGEST_CLASSNAME = "Nightingale Search Suggestions";
 const SEARCH_SUGGEST_CLASSID =
   Components.ID("{0be64502-ee00-11db-8314-0800200c9a66}");
 
-const SEARCH_BUNDLE = "chrome://songbird/locale/songbird.properties";
+const SEARCH_BUNDLE = "chrome://nightingale/locale/nightingale.properties";
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -218,9 +218,9 @@ AutoCompleteResult.prototype = {
 
 /**
  * Implements nsIAutoCompleteSearch to provide suggestions based 
- * on Songbird's state.
+ * on Nightingale's state.
  *
- * To access this suggester set autocompletesearch="songbird-autocomplete"
+ * To access this suggester set autocompletesearch="nightingale-autocomplete"
  * on an autocomplete textbox.  See the search.xml binding for details.
  *
  * @constructor
@@ -256,7 +256,7 @@ SearchSuggester.prototype = {
   },
   _suggestEnabled: null,
 
-  // Metadata for the current playing track in Songbird
+  // Metadata for the current playing track in Nightingale
   _metadataTitle:  null,
   _metadataArtist: null,
   _metadataAlbum:  null,
@@ -268,7 +268,7 @@ SearchSuggester.prototype = {
   
     // TODO: Is this an issue?  Should I be waiting for profile load before doing this?
     var createDataRemote = new Components.Constructor( 
-                SONGBIRD_DATAREMOTE_CONTRACTID, sbIDataRemote, "init");
+                NIGHTINGALE_DATAREMOTE_CONTRACTID, sbIDataRemote, "init");
     this._metadataTitle   = createDataRemote("metadata.title", null);
     this._metadataArtist  = createDataRemote("metadata.artist", null);
     this._metadataAlbum   = createDataRemote("metadata.album", null);

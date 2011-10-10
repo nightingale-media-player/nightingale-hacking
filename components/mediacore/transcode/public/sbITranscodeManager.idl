@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -64,11 +64,11 @@ interface sbITranscodeManager : nsISupports
 
 %{C++
 
-#define SONGBIRD_TRANSCODEMANAGER_CONTRACTID               \
-  "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"
-#define SONGBIRD_TRANSCODEMANAGER_CLASSNAME                \
-  "Songbird Transcode Manager Interface"
-#define SONGBIRD_TRANSCODEMANAGER_CID                      \
+#define NIGHTINGALE_TRANSCODEMANAGER_CONTRACTID               \
+  "@getnightingale.com/Nightingale/Mediacore/TranscodeManager;1"
+#define NIGHTINGALE_TRANSCODEMANAGER_CLASSNAME                \
+  "Nightingale Transcode Manager Interface"
+#define NIGHTINGALE_TRANSCODEMANAGER_CID                      \
 { /* 5aa13c5f-2ee9-45f4-95ea-53d985693baf */               \
   0x5aa13c5f,                                              \
   0x2ee9,                                                  \

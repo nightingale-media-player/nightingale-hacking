@@ -1,11 +1,11 @@
 /* vim: set sw=2 */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /* class definition includes */
@@ -32,7 +32,7 @@
 #include <nsIObserverService.h>
 #include <nsIProperties.h>
 
-/* Songbird interface includes */
+/* Nightingale interface includes */
 
 /* Mozilla header includes */
 #include <nsCOMPtr.h>
@@ -43,7 +43,7 @@
 #include <nsXPCOMCID.h>
 #include <prio.h>
 
-/* Songbird header includes */
+/* Nightingale header includes */
 
 /* Other includes */
 #if defined(XP_WIN)

@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,23 +32,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird process services defs.
+// Nightingale process services defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbProcess.h
- * \brief Songbird Process Services Definitions.
+ * \brief Nightingale Process Services Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird process imported services.
+// Nightingale process imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbMemoryUtils.h>
 
 // Mozilla imports.
@@ -62,12 +62,12 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird process services classes.
+// Nightingale process services classes.
 //
 //------------------------------------------------------------------------------
 
 /**
- * This class implements a Songbird process.
+ * This class implements a Nightingale process.
  *
  * XXXeps TODO: Make this a full-blown component so JS can use it.
  * XXXeps TODO: Add support for providing a done callback as well as a monitor
@@ -143,16 +143,16 @@ public :
   nsresult SetPipeStdoutString(PRBool aPipeStdoutString);
 
   /**
-   * Monitor to apply to the Songbird process done flag.  The monitor will be
+   * Monitor to apply to the Nightingale process done flag.  The monitor will be
    * notified when the done condition changes.
    */
   nsresult GetDoneMonitor(PRMonitor** aDoneMonitor);
   nsresult SetDoneMonitor(PRMonitor* aDoneMonitor);
 
   /**
-   *   If true, the Songbird process is done.  The Songbird process is done when
+   *   If true, the Nightingale process is done.  The Nightingale process is done when
    * either the underlying process has exited or after an internal error occurs.
-   *   If the Songbird process finishes due to process exit, the done result
+   *   If the Nightingale process finishes due to process exit, the done result
    * will be NS_OK, and the process exit code will be valid.
    *   If an internal error occurs, it will be set in the done result and the
    * process exit code will not be valid.
@@ -160,7 +160,7 @@ public :
   nsresult GetIsDone(PRBool* aIsDone);
 
   /**
-   * Songbird process object end result when done.  Only valid when done is
+   * Nightingale process object end result when done.  Only valid when done is
    * true.
    */
   nsresult GetDoneResult(nsresult* aDoneResult);
@@ -248,7 +248,7 @@ private:
 //
 //   sbAutoPRProcessAttr        Wrapper to auto-destroy process attributes.
 //   sbAutoPRFileDesc           Wrapper to auto-close an NSPR file descriptor.
-//   sbAutoKillProcess          Wrapper to auto-kill a Songbird process.
+//   sbAutoKillProcess          Wrapper to auto-kill a Nightingale process.
 //
 
 SB_AUTO_NULL_CLASS(sbAutoPRProcessAttr,
@@ -264,7 +264,7 @@ SB_AUTO_NULL_CLASS(sbAutoKillProcess,
 
 //------------------------------------------------------------------------------
 //
-// Songbird process services.
+// Nightingale process services.
 //
 //------------------------------------------------------------------------------
 

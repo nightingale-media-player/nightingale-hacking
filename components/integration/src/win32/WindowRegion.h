@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  WindowRegion.h
-* \brief Songbird Window Region Object Definition.
+* \brief Nightingale Window Region Object Definition.
 */
 
 #ifndef __WINDOW_REGION_H__
@@ -49,11 +49,11 @@ namespace std
 #include "../NativeWindowFromNode.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWREGION_CONTRACTID                  \
-  "@songbirdnest.com/Songbird/WindowRegion;1"
-#define SONGBIRD_WINDOWREGION_CLASSNAME                   \
-  "Songbird Window Region Interface"
-#define SONGBIRD_WINDOWREGION_CID                         \
+#define NIGHTINGALE_WINDOWREGION_CONTRACTID                  \
+  "@getnightingale.com/Nightingale/WindowRegion;1"
+#define NIGHTINGALE_WINDOWREGION_CLASSNAME                   \
+  "Nightingale Window Region Interface"
+#define NIGHTINGALE_WINDOWREGION_CID                         \
 { /* 3aec3cbb-cba8-4a51-a028-4b28a4719bff */              \
   0x3aec3cbb,                                             \
   0xcba8,                                                 \

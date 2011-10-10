@@ -4,7 +4,7 @@ notice() {
   echo $* 1>&2
 }
 
-rootdir="/var/www/sites/developer.songbirdnest.com/nightly/"
+rootdir="/var/www/sites/developer.getnightingale.com/nightly/"
 deps_snapshotsdir=${rootdir}dependency_snapshots
 snapshotsdir=${rootdir}snapshots
 currenttimestamp=`date +%s`

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,14 +20,12 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 #include "sbMediaExportITunesAgentService.h"
 
-#include <nsAppDirectoryServiceDefs.h>
-#include <nsDirectoryServiceUtils.h>
 #include <nsIProcess.h>
 #include <nsIFileURL.h>
 #include <nsNetUtil.h>
@@ -167,21 +165,10 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   rv = parentFolderFileURL->GetFile(getter_AddRefs(agentFile));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIFile> appRegD;
-  rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR,
-                              getter_AddRefs(appRegD));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString leafName;
-  rv = appRegD->GetLeafName(leafName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ConvertUTF16toUTF8 profile(leafName);
-
 #ifdef XP_MACOSX
   // OS X is a little trickier since the agent needs to be started using
   // LaunchServices and not using the path to the binary.
-  rv = agentFile->Append(NS_LITERAL_STRING("songbirditunesagent.app"));
+  rv = agentFile->Append(NS_LITERAL_STRING("nightingaleitunesagent.app"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsILocalFileMac> agentMacFile = 
@@ -191,10 +178,10 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   FSRef agentFSRef;
   rv = agentMacFile->GetFSRef(&agentFSRef);
 
-  CFArrayRef argv = nsnull;
-  // Sadly, argv is a |CFArrayRef| so push the args into a
-  // CoreFoundation array.
+  CFArrayRef argv;
   if (aShouldUnregister) {
+    // Sadly, argv is a |CFArrayRef| so push the "--unregister" arg into
+    // a CoreFoundation array.
     CFStringRef arg[1];
     arg[0] = CFStringCreateWithCString(kCFAllocatorDefault,
                                        "--unregister",
@@ -202,18 +189,6 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
     argv = CFArrayCreate(kCFAllocatorDefault,
                          (const void **)arg,
                          1,
-                         NULL);  // callback
-  } else {
-    CFStringRef arg[2];
-    arg[0] = CFStringCreateWithCString(kCFAllocatorDefault,
-                                       "--profile",
-                                       kCFStringEncodingUTF8);
-    arg[1] = CFStringCreateWithCString(kCFAllocatorDefault,
-                                       NS_ConvertUTF16toUTF8(profile).get(),
-                                       kCFStringEncodingUTF8);
-    argv = CFArrayCreate(kCFAllocatorDefault,
-                         (const void **)arg,
-                         2,
                          NULL);  // callback
   }
 
@@ -223,7 +198,7 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
     &agentFSRef,        // app FSRef
     nsnull,             // asyncLaunchRefCon
     nsnull,             // enviroment variables
-    argv,               // argv CFArrayRef
+    (aShouldUnregister ? argv : nsnull),
     nsnull,             // initial apple event
   };
 
@@ -231,29 +206,35 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   OSStatus err = LSOpenApplication(&appParams, &outPSN);
   NS_ENSURE_TRUE(err == noErr, NS_ERROR_FAILURE);
 
-  CFRelease(argv);
+  if (aShouldUnregister) {
+    CFRelease(argv);
+  }
 
 #elif XP_WIN
   // Windows is simple, simply append the name of the agent + '.exe'
-  rv = agentFile->Append(NS_LITERAL_STRING("songbirditunesagent.exe"));
+  rv = agentFile->Append(NS_LITERAL_STRING("nightingaleitunesagent.exe"));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIProcess> agentProcess =
+  
+  nsCOMPtr<nsIProcess> agentProcess = 
     do_CreateInstance(NS_PROCESS_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = agentProcess->Init(agentFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCString args;
   if (aShouldUnregister) {
-    const char* args[] = { "--unregister" };
-    rv = agentProcess->Run(PR_TRUE, args, 1); // only block for '--unregister'
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    const char* args[] = { "--profile", profile.get() };
-    rv = agentProcess->Run(PR_FALSE, args, 2);
-    NS_ENSURE_SUCCESS(rv, rv);
+    args.AppendLiteral("--unregister");
   }
+  
+  const char *argStr = args.get();
+  PRUint32 pid;
+  rv = agentProcess->Run(aShouldUnregister,  // only block for '--unregister' 
+                         &argStr, 
+                         (aShouldUnregister ? 1 : 0), 
+                         &pid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
 #else
   LOG(("%s: ERROR: Tried to start the export agent on a non-supported OS",
         __FUNCTION__));
@@ -270,13 +251,13 @@ sbMediaExportITunesAgentService::GetIsAgentRunning(PRBool *aIsRunning)
 
 #ifdef XP_MACOSX
   sbPIDVector processes;
-  nsresult rv = GetActiveProcessesByName("songbirditunesagent", processes);
+  nsresult rv = GetActiveProcessesByName("nightingaleitunesagent", processes);
   *aIsRunning = NS_SUCCEEDED(rv) && processes.size() > 0;
 #elif XP_WIN
   // The windows agent uses a mutex handle to prevent duplicate agents 
   // from running. Simply check for the mutex to find out if the agent
   // is currently running.
-  HANDLE hMutex = OpenMutex(SYNCHRONIZE, PR_TRUE, L"songbirditunesagent");
+  HANDLE hMutex = OpenMutex(SYNCHRONIZE, PR_TRUE, L"nightingaleitunesagent");
   *aIsRunning = hMutex != nsnull;
   if (hMutex) {
     CloseHandle(hMutex);
@@ -315,7 +296,7 @@ sbMediaExportITunesAgentService::KillActiveAgents()
   rv = agentFile->GetPath(agentPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  agentPath.AppendLiteral("/songbirditunesagent.app/Contents/MacOS/songbirditunesagent");
+  agentPath.AppendLiteral("/nightingaleitunesagent.app/Contents/MacOS/nightingaleitunesagent");
 
   nsCOMPtr<nsILocalFileMac> macAgentFileSpec =
     do_CreateInstance("@mozilla.org/file/local;1", &rv);
@@ -328,7 +309,7 @@ sbMediaExportITunesAgentService::KillActiveAgents()
   NS_ENSURE_SUCCESS(rv, rv);
 #elif XP_WIN
   // Windows is simple, simply append the name of the agent + '.exe'
-  rv = agentFile->Append(NS_LITERAL_STRING("songbirditunesagent.exe"));
+  rv = agentFile->Append(NS_LITERAL_STRING("nightingaleitunesagent.exe"));
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
 
@@ -343,9 +324,10 @@ sbMediaExportITunesAgentService::KillActiveAgents()
 
   nsCString args("--kill");
   const char *argsStr = args.get();
+  PRUint32 pid;
   
   // Run the agent with blocking turned on
-  rv = killProcess->Run(PR_TRUE, &argsStr, 1);
+  rv = killProcess->Run(PR_TRUE, &argsStr, 1, &pid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

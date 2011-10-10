@@ -1,27 +1,29 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 
 /**
@@ -43,7 +45,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 
@@ -145,7 +147,7 @@ var firstRunWizard = {
     // Indicate that the first-run checks have been made.
     if (this._markFirstRunComplete) {
       // Set the first-run check preference and flush to disk.
-      Application.prefs.setValue("songbird.firstrun.check.0.3", true);
+      Application.prefs.setValue("nightingale.firstrun.check.0.3", true);
       var prefService = Cc["@mozilla.org/preferences-service;1"]
                           .getService(Ci.nsIPrefService);
       prefService.savePrefFile(null);
@@ -170,7 +172,7 @@ var firstRunWizard = {
   doFinish: function firstRunWizard_doFinish() {
     // Record our time startup pref
     try {
-        var timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+        var timingService = Cc["@getnightingale.com/Nightingale/TimingService;1"]
                               .getService(Ci.sbITimingService);
         timingService.startPerfTimer("CSPerfEndEULA");
         timingService.stopPerfTimer("CSPerfEndEULA");
@@ -197,11 +199,8 @@ var firstRunWizard = {
    */
 
   doQuit: function firstRunWizard_doQuit() {
-    // Defer invocation of quitApp to outside this even handler so that this
-    // window may be immediately closed by quitApp.  If this window doesn't
-    // close, it will prevent the application from quitting.
-    // See "http://bugzilla.songbirdnest.com/show_bug.cgi?id=21890".
-    SBUtils.deferFunction(quitApp);
+    // Quit application.
+    quitApp();
   },
 
 
@@ -246,7 +245,7 @@ var firstRunWizard = {
    */
   
   _tryNextProxyImport: function firstRunWizard_tryNextProxyImport() {
-    var proxyImport = Cc["@songbirdnest.com/Songbird/NetworkProxyImport;1"]
+    var proxyImport = Cc["@getnightingale.com/Nightingale/NetworkProxyImport;1"]
                         .getService(Ci.sbINetworkProxyImport);
     var lastImportId = this._lastProxyImport;
     var importId;
@@ -369,25 +368,6 @@ var firstRunWizard = {
     }
   },
 
-  /**
-   * Open a URL in an external window
-   * @param aURL: the URL to open
-   */
-  
-  openURL: function firstRunWizard_openURL(aURL) {
-    var uri = null;
-    if (aURL instanceof Ci.nsIURI) {
-      uri = aURL;
-    }
-    else {
-      uri = Cc["@mozilla.org/network/io-service;1"]
-              .getService(Ci.nsIIOService)
-              .newURI(aURL, null, null);
-    }
-    Cc["@mozilla.org/uriloader/external-protocol-service;1"]
-      .getService(Ci.nsIExternalProtocolService)
-      .loadURI(uri);
-  },
 
   //----------------------------------------------------------------------------
   //
@@ -410,6 +390,16 @@ var firstRunWizard = {
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
 
+    // Set the quit button label.
+    var quitButton = this.wizardElem.getButton("extra1");
+    quitButton.label = SBString("first_run.quit");
+
+    // Listen for quit button events.  These don't bubble to attribute based
+    // handlers.
+    var _this = this;
+    var func = function(aEvent) { return _this.doQuit(aEvent); }
+    this._domEventListenerSet.add(this.wizardElem, "extra1", func, false);
+
     // Grap the param block
     var dialogPB = 
       window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
@@ -423,13 +413,6 @@ var firstRunWizard = {
 
     // Services are now initialized.
     this._initialized = true;
-
-    var skipToPage = Application.prefs.getValue("songbird.firstrun.goto", null);
-    if (skipToPage) {
-      Application.prefs.get("songbird.firstrun.goto").reset();
-      this.wizardElem.advance(skipToPage);
-      return;
-    }
   },
 
 

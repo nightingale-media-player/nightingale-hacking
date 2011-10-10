@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -39,19 +39,19 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockDevice);
 static nsModuleComponentInfo sbDeviceDeviceTesterComponents[] =
 {
   {
-    "Songbird Device Device Tester - Utils",
+    "Nightingale Device Device Tester - Utils",
       { 0x524f2420, 0xf979, 0x44ee,
         { 0xbc, 0x77, 0xba, 0x4e, 0x11, 0xae, 0xfc, 0x62 } },
-    "@songbirdnest.com/Songbird/Device/DeviceTester/Utils;1",
+    "@getnightingale.com/Nightingale/Device/DeviceTester/Utils;1",
     sbDeviceDeviceTesterUtilsConstructor
   },
   {
-    "Songbird Device Device Tester - Mock Device",
+    "Nightingale Device Device Tester - Mock Device",
       { 0x3f023adc, 0x11ef, 0x4f63,
         { 0xa9, 0x69, 0xed, 0x55, 0x4d, 0xc9, 0x73, 0x6a } },
-    "@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1",
+    "@getnightingale.com/Nightingale/Device/DeviceTester/MockDevice;1",
     sbMockDeviceConstructor
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceDeviceTests, sbDeviceDeviceTesterComponents)
+NS_IMPL_NSGETMODULE(NightingaleDeviceDeviceTests, sbDeviceDeviceTesterComponents)

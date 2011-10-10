@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -41,34 +41,34 @@ function runTest(tester) {
   try {
 
     // access to libraries
-    var siteLib = songbird.siteLibrary;
-    var mainLib = songbird.libraries("main");
-    var webLib = songbird.libraries("web");
-    mainLib = songbird.mainLibrary;
-    webLib = songbird.webLibrary;
+    var siteLib = nightingale.siteLibrary;
+    var mainLib = nightingale.libraries("main");
+    var webLib = nightingale.libraries("web");
+    mainLib = nightingale.mainLibrary;
+    webLib = nightingale.webLibrary;
 
     // Need the mainpage UI for this one
-    //var webpl = songbird.webPlaylist;
+    //var webpl = nightingale.webPlaylist;
 
     // this causes a command refresh which doesn't work without UI
-    //var cmnds = songbird.commands;
+    //var cmnds = nightingale.commands;
 
     // api version tests
-    var apiVersionMajor = songbird.apiVersionMajor;
+    var apiVersionMajor = nightingale.apiVersionMajor;
     
     if(apiVersionMajor != RAPI_VERSION_MAJOR) {
       tester.fail("Major API version doesn't match! Expecting " + 
                   RAPI_VERSION_MAJOR + " but got " + apiVersionMajor);
     }
     
-    var apiVersionMinor = songbird.apiVersionMinor;
+    var apiVersionMinor = nightingale.apiVersionMinor;
     
     if(apiVersionMinor != RAPI_VERSION_MINOR) {
       tester.fail("Minor API version doesn't match! Expecting " +
                   RAPI_VERSION_MINOR + " but got " + apiVersionMinor);
     }
     
-    var supported = songbird.supportsVersion(RAPI_VERSION_STRING);
+    var supported = nightingale.supportsVersion(RAPI_VERSION_STRING);
     if(!supported) {
       tester.fail("supportsVersion failed, should support version " + 
                   RAPI_VERSION_STRING + " but claims it doesn't!");
@@ -77,7 +77,7 @@ function runTest(tester) {
     var badVersion = RAPI_VERSION_MAJOR + 1;
     badVersion += "." + RAPI_VERSION_MINOR;
     
-    supported = songbird.supportsVersion(badVersion);
+    supported = nightingale.supportsVersion(badVersion);
     if(supported) {
       tester.fail("supportsVersion says we support version " + 
                   badVersion + " but actual maximum version supported is " + 
@@ -85,7 +85,7 @@ function runTest(tester) {
     }
     
     badVersion = RAPI_VERSION_MAJOR + "." + (RAPI_VERSION_MINOR + 1);
-    supported = songbird.supportsVersion(badVersion);
+    supported = nightingale.supportsVersion(badVersion);
     
     if(supported) {
       tester.fail("supportsVersion says we support version " + 
@@ -94,17 +94,17 @@ function runTest(tester) {
     }
 
     // readable properties
-    var junk = songbird.name;
-    junk = songbird.currentArtist;
-    junk = songbird.currentAlbum;
-    junk = songbird.currentTrack;
-    junk = songbird.playing;
-    junk = songbird.paused;
-    junk = songbird.repeat;
-    junk = songbird.shuffle;
-    junk = songbird.position;
-    junk = songbird.volume;
-    junk = songbird.mute;
+    var junk = nightingale.name;
+    junk = nightingale.currentArtist;
+    junk = nightingale.currentAlbum;
+    junk = nightingale.currentTrack;
+    junk = nightingale.playing;
+    junk = nightingale.paused;
+    junk = nightingale.repeat;
+    junk = nightingale.shuffle;
+    junk = nightingale.position;
+    junk = nightingale.volume;
+    junk = nightingale.mute;
 
     // listeners
     var listener = {
@@ -113,48 +113,48 @@ function runTest(tester) {
     }
 
     // valid string should work
-    songbird.addListener("faceplate.playing", listener);
-    songbird.removeListener("faceplate.playing", listener);
+    nightingale.addListener("faceplate.playing", listener);
+    nightingale.removeListener("faceplate.playing", listener);
 
     // invalid string should throw
     try {
-      songbird.addListener("foo.bar", listener);
+      nightingale.addListener("foo.bar", listener);
       tester.fail("did not throw: addListener('foo.bar')");
     }
     catch (e) {}
 
-    songbird.removeListener("foo.bar", listener);
+    nightingale.removeListener("foo.bar", listener);
 
     // downloading - set in test_ file to go to tmpD/remoteapi_test/
     var item = siteLib.createMediaItem("http://example.com/track.mp3");
     var list = siteLib.createSimpleMediaList("testRemotePlayer1");
     list.add(item);
 
-    songbird.downloadItem(item);
-    songbird.downloadList(list);
+    nightingale.downloadItem(item);
+    nightingale.downloadList(list);
 
     // Need the mainpage UI for this one
     // requires a webplaylist
-    //songbird.downloadSelected(webpl);
+    //nightingale.downloadSelected(webpl);
 
     // controls - these need a core to be spun up, or a fake core added.
     // Need the mainpage UI for this one
-    //songbird.play();
-    //songbird.playURL("http://example.com/track2.mp3");
-    //songbird.pause();
-    //songbird.stop();
-    //songbird.next();
-    //songbird.previous();
+    //nightingale.play();
+    //nightingale.playURL("http://example.com/track2.mp3");
+    //nightingale.pause();
+    //nightingale.stop();
+    //nightingale.next();
+    //nightingale.previous();
 
     // Test the adding of properties
-    songbird.createTextProperty("Test_1_Text", "Test_Text", true, true, 0);
-    songbird.createDateTimeProperty("Test_1_DateTime", "Test_DateTime", true, true, 0);
-    songbird.createURIProperty("Test_1_URI", "Test_URI", true, true, 0);
-    songbird.createNumberProperty("Test_1_Number", "Test_Number", true, true, 0);
-    songbird.createImageProperty("Test_1_Image", "Test_Image", true, true, 0);
-    songbird.createRatingsProperty("Test_1_Rating", "Test_Rating", true, true, 0);
-    songbird.createButtonProperty("Test_1_Button", "Test_Button", "Test", true, true, 0);
-    songbird.createDownloadButtonProperty("Test_1_DownloadButton", "Test_DownloadButton", "Test", true, true, 0);
+    nightingale.createTextProperty("Test_1_Text", "Test_Text", true, true, 0);
+    nightingale.createDateTimeProperty("Test_1_DateTime", "Test_DateTime", true, true, 0);
+    nightingale.createURIProperty("Test_1_URI", "Test_URI", true, true, 0);
+    nightingale.createNumberProperty("Test_1_Number", "Test_Number", true, true, 0);
+    nightingale.createImageProperty("Test_1_Image", "Test_Image", true, true, 0);
+    nightingale.createRatingsProperty("Test_1_Rating", "Test_Rating", true, true, 0);
+    nightingale.createButtonProperty("Test_1_Button", "Test_Button", "Test", true, true, 0);
+    nightingale.createDownloadButtonProperty("Test_1_DownloadButton", "Test_DownloadButton", "Test", true, true, 0);
 
     // We need to do this to give the web browser persists component a chance
     // to tidy up, otherwise it will leak

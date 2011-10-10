@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -35,14 +35,14 @@ function runTest () {
 
 function startTesting() {
 
-  var factory = Cc["@songbirdnest.com/remoteapi/remoteplayer-factory;1"]
+  var factory = Cc["@getnightingale.com/remoteapi/remoteplayer-factory;1"]
                   .getService(Ci.sbIRemotePlayerFactory);
 
   var port = getTestServerPortNumber();
   var uriSpec = "http://127.0.0.1:" + port + "/test_privileged_page.html";
   var uri = newURI(uriSpec);
 
-  var songbird = factory.createPrivileged(uri, testBrowserWindow);
-  testBrowserWindow.songbird = songbird;
+  var nightingale = factory.createPrivileged(uri, testBrowserWindow);
+  testBrowserWindow.nightingale = nightingale;
   testBrowserWindow.runPageTest(this);
 }

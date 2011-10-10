@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -63,9 +63,9 @@ function runTest () {
   // A simulation of an everything search, artist, album cascase
   cfs.appendSearch(["*"], 1);
 
-  cfs.appendFilter("http://songbirdnest.com/data/1.0#artistName", false);
+  cfs.appendFilter("http://getnightingale.com/data/1.0#artistName", false);
 
-  cfs.appendFilter("http://songbirdnest.com/data/1.0#albumName", false);
+  cfs.appendFilter("http://getnightingale.com/data/1.0#albumName", false);
 
   // With no filtering applied, we should have 8 artists and 8 albums
   assertEqual(cfs.getValueCount(1), 8);
@@ -141,11 +141,11 @@ function runTest () {
 
   cfs.remove(0);
   cfs.remove(0);
-  cfs.appendFilter("http://songbirdnest.com/data/1.0#genre", false);
+  cfs.appendFilter("http://getnightingale.com/data/1.0#genre", false);
   assertEqual(cfs.getValueCount(0), 2);
-  cfs.changeFilter(0, "http://songbirdnest.com/data/1.0#artistName");
+  cfs.changeFilter(0, "http://getnightingale.com/data/1.0#artistName");
   assertEqual(cfs.getValueCount(0), 8);
-  cfs.changeFilter(0, "http://songbirdnest.com/data/1.0#genre");
+  cfs.changeFilter(0, "http://getnightingale.com/data/1.0#genre");
   assertEqual(cfs.getValueCount(0), 2);
 
   cfs.removeListener(listener);

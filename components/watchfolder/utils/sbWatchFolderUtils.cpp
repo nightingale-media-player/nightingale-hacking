@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbWatchFolderUtils.h"
@@ -29,7 +29,6 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
-#include <sbDebugUtils.h>
 
 //==============================================================================
 // sbAutoIgnoreWatchFolderPath implementation
@@ -48,7 +47,7 @@ sbAutoIgnoreWatchFolderPath::~sbAutoIgnoreWatchFolderPath()
   // If the path was watched, it is now time to clean up and stop ignoring
   // the watch path.
   if (mIsIgnoring) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) = mWFService->RemoveIgnorePath(mWatchPath);
+    nsresult rv = mWFService->RemoveIgnorePath(mWatchPath);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
         "Could not remove a file path from the watchfolders ignore list!");
   }
@@ -60,7 +59,7 @@ sbAutoIgnoreWatchFolderPath::Init(nsAString const & aWatchPath)
   mWatchPath = aWatchPath;
 
   nsresult rv;
-  mWFService = do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+  mWFService = do_GetService("@getnightingale.com/watch-folder-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isRunning = PR_FALSE;

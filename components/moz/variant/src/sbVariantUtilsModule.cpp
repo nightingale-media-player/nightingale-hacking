@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,24 +20,26 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 #include "sbVariant.h"
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbVariant)
-NS_DEFINE_NAMED_CID(SB_VARIANT_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdMozVariantCIDs[] = {
-    { &kSB_VARIANT_CID, true, NULL, sbVariantConstructor },
-    { NULL }
+// fill out data struct to register with component system
+static const nsModuleComponentInfo components[] =
+{
+  {
+    NIGHTINGALE_VARIANT_CLASSNAME,
+    NIGHTINGALE_VARIANT_CID,
+    NIGHTINGALE_VARIANT_CONTRACTID,
+    sbVariantConstructor
+  }
 };
 
-static const mozilla::Module kSongbirdMozVariantModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozVariantCIDs
-};
+// create the module info struct that is used to regsiter
+NS_IMPL_NSGETMODULE(NightingaleVariantUtilities, components)
 
-NSMODULE_DEFN(SongbirdVariantUtilities) = &kSongbirdMozVariantModule;

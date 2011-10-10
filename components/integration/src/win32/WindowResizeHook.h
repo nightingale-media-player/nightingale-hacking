@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -50,11 +50,11 @@ namespace std
 #include <list>
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWRESIZEHOOK_CONTRACTID              \
-  "@songbirdnest.com/Songbird/WindowResizeHook;1"
-#define SONGBIRD_WINDOWRESIZEHOOK_CLASSNAME               \
-  "Songbird Window Resize Hook Interface"
-#define SONGBIRD_WINDOWRESIZEHOOK_CID                     \
+#define NIGHTINGALE_WINDOWRESIZEHOOK_CONTRACTID              \
+  "@getnightingale.com/Nightingale/WindowResizeHook;1"
+#define NIGHTINGALE_WINDOWRESIZEHOOK_CLASSNAME               \
+  "Nightingale Window Resize Hook Interface"
+#define NIGHTINGALE_WINDOWRESIZEHOOK_CID                     \
 { /* 147cfe40-cbbf-43e9-9225-b5caf9fe2955 */              \
   0x147cfe40,                                             \
   0xcbbf,                                                 \

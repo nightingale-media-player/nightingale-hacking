@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -37,9 +37,9 @@ function JobProgressService() {
 JobProgressService.prototype = {
   QueryInterface          : XPCOMUtils.generateQI(
       [Ci.sbIJobProgressService, Ci.nsIClassInfo]),
-  classDescription        : 'Songbird Job Progress Service Implementation',
+  classDescription        : 'Nightingale Job Progress Service Implementation',
   classID                 : Components.ID("{afef6b00-90d5-11dd-ad8b-0800200c9a66}"),
-  contractID              : "@songbirdnest.com/Songbird/JobProgressService;1",
+  contractID              : "@getnightingale.com/Nightingale/JobProgressService;1",
   flags                   : Ci.nsIClassInfo.MAIN_THREAD_ONLY,
   implementationLanguage  : Ci.nsIProgrammingLanguage.JAVASCRIPT,
   getHelperForLanguage    : function(aLanguage) { return null; },

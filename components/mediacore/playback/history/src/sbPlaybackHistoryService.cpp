@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -57,7 +57,6 @@
 #include <sbIMediaList.h>
 #include <sbIPlaybackHistoryEntry.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 
@@ -69,16 +68,15 @@
 #include <sbProxiedComponentManager.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
-#include <sbDebugUtils.h>
 
 #define NS_APPSTARTUP_CATEGORY           "app-startup"
 #define NS_APPSTARTUP_TOPIC              "app-startup"
 
 #define CONVERTER_BUFFER_SIZE 8192
 
-#define PLAYBACKHISTORY_DB_GUID "playbackhistory@songbirdnest.com"
+#define PLAYBACKHISTORY_DB_GUID "playbackhistory@getnightingale.com"
 #define SCHEMA_URL \
-  "chrome://songbird/content/mediacore/playback/history/playbackhistoryservice.sql"
+  "chrome://nightingale/content/mediacore/playback/history/playbackhistoryservice.sql"
 
 #define PLAYBACKHISTORY_ENTRIES_TABLE     "playback_history_entries"
 #define PLAYBACKHISTORY_ANNOTATIONS_TABLE "playback_history_entry_annotations"
@@ -241,7 +239,7 @@ sbPlaybackHistoryService::Init()
   rv = eventTarget->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mMetrics = do_ProxiedCreateInstance("@songbirdnest.com/Songbird/Metrics;1", 
+  mMetrics = do_ProxiedCreateInstance("@getnightingale.com/Nightingale/Metrics;1", 
                                       &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -757,7 +755,7 @@ sbPlaybackHistoryService::CreateDefaultQuery(sbIDatabaseQuery **aQuery)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIDatabaseQuery> query = 
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->SetAsyncQuery(PR_FALSE);
@@ -956,7 +954,7 @@ sbPlaybackHistoryService::EnsureHistoryDatabaseAvailable()
   }
 
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->SetDatabaseGUID(NS_LITERAL_STRING(PLAYBACKHISTORY_DB_GUID));
@@ -1227,7 +1225,7 @@ sbPlaybackHistoryService::GetItem(const nsAString &aLibraryGuid,
   nsCOMPtr<sbILibrary> library;
   if(!mLibraries.Get(aLibraryGuid, getter_AddRefs(library))) {
     nsCOMPtr<sbILibraryManager> libraryManager = 
-      do_GetService(SONGBIRD_LIBRARYMANAGER_CONTRACTID, &rv);
+      do_GetService(NIGHTINGALE_LIBRARYMANAGER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = libraryManager->GetLibrary(aLibraryGuid, getter_AddRefs(library));
@@ -1381,7 +1379,7 @@ sbPlaybackHistoryService::DoEntryAddedCallback(sbIPlaybackHistoryEntry *aEntry)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = array->AppendElement(aEntry, PR_FALSE);
@@ -1410,8 +1408,7 @@ sbPlaybackHistoryService::DoEntriesAddedCallback(nsIArray *aEntries)
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) =
-        listeners[current]->OnEntriesAdded(aEntries);
+    nsresult rv = listeners[current]->OnEntriesAdded(aEntries);
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1434,7 +1431,7 @@ sbPlaybackHistoryService::DoEntryUpdatedCallback(sbIPlaybackHistoryEntry *aEntry
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = array->AppendElement(aEntry, PR_FALSE);
@@ -1463,8 +1460,7 @@ sbPlaybackHistoryService::DoEntriesUpdatedCallback(nsIArray *aEntries)
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) =
-        listeners[current]->OnEntriesUpdated(aEntries);
+    nsresult rv = listeners[current]->OnEntriesUpdated(aEntries);
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1487,7 +1483,7 @@ sbPlaybackHistoryService::DoEntryRemovedCallback(sbIPlaybackHistoryEntry *aEntry
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = array->AppendElement(aEntry, PR_FALSE);
@@ -1516,8 +1512,7 @@ sbPlaybackHistoryService::DoEntriesRemovedCallback(nsIArray *aEntries)
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) =
-        listeners[current]->OnEntriesRemoved(aEntries);
+    nsresult rv = listeners[current]->OnEntriesRemoved(aEntries);
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1539,8 +1534,7 @@ sbPlaybackHistoryService::DoEntriesClearedCallback()
   PRInt32 count = listeners.Count();
 
   for(PRInt32 current = 0; current < count; ++current) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) =
-        listeners[current]->OnEntriesCleared();
+    nsresult rv = listeners[current]->OnEntriesCleared();
 
 #if defined(DEBUG)
     NS_ENSURE_SUCCESS(rv, rv);

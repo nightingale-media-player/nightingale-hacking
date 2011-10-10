@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,7 +38,6 @@
 #include <nsXPCOMCIDInternal.h>
 #include <prlog.h>
 
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
@@ -49,7 +48,13 @@
 #include "sbLocalDatabaseSQL.h"
 #include <sbTArrayStringEnumerator.h>
 #include <sbStringUtils.h>
-#include <sbDebugUtils.h>
+
+#ifdef PR_LOGGING
+extern PRLogModuleInfo *gLocalDatabasePropertyCacheLog;
+#endif
+
+#define TRACE(args) PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_WARN, args)
 
 PRUint32 const BAG_HASHTABLE_SIZE = 20;
 
@@ -64,7 +69,6 @@ sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDa
 , mGuid(aGuid)
 , mMediaItemId(aMediaItemId)
 {
-  SB_PRLOG_SETUP(sbLocalDatabaseResourcePropertyBag);
 }
 
 sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
@@ -83,10 +87,6 @@ sbLocalDatabaseResourcePropertyBag::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mIdService =
-    do_GetService("@songbirdnest.com/Songbird/IdentityService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -269,9 +269,9 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
 #if defined(PR_LOGGING)
   if(NS_UNLIKELY(!valid)) {
-    LOG("Failed to set property id %s with value %s",
-        NS_ConvertUTF16toUTF8(aPropertyID).get(),
-        NS_ConvertUTF16toUTF8(aValue).get());
+    LOG(("Failed to set property id %s with value %s",
+         NS_ConvertUTF16toUTF8(aPropertyID).get(),
+         NS_ConvertUTF16toUTF8(aValue).get()));
   }
 #endif
 
@@ -298,8 +298,6 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
     // Mark the property that changed as dirty
     mDirty.PutEntry(propertyDBID);
-    // Mark the property that changed as dirty for invalidation of guid arrays.
-    mDirtyForInvalidation.insert(propertyDBID);
 
     // Also mark as dirty any properties that use
     // the changed property in their secondary sort values
@@ -315,9 +313,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
           NS_ASSERTION(NS_SUCCEEDED(rv),
             "Property cache failed to update dependent properties!");
           if (NS_SUCCEEDED(rv)) {
-            PRUint32 depPropDBID = mCache->GetPropertyDBIDInternal(propertyID);
-            mDirty.PutEntry(depPropDBID);
-            mDirtyForInvalidation.insert(depPropDBID);
+            mDirty.PutEntry(mCache->GetPropertyDBIDInternal(propertyID));
           }
         }
       }
@@ -348,29 +344,6 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 #endif
     sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
     rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // If this property is one that may be used in the metadata
-  // hash identity and it was set, then we need to recalculate
-  // the identity for this item.
-  PRBool usedInIdentity = PR_FALSE;
-  rv = propertyInfo->GetUsedInIdentity(&usedInIdentity);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (usedInIdentity) {
-    // The propertybag has all the information we need to calculate the
-    // identity. Give it to the identity service to get an identity
-    nsString identity;
-    rv = mIdService->CalculateIdentityForBag(this, identity);
-    // If hash isn't available for this item, then just return.
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      return NS_OK;
-    }
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // save that identity
-    rv = mIdService->SaveIdentityToBag(this, identity);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -434,15 +407,3 @@ sbLocalDatabaseResourcePropertyBag::ClearDirty()
   return NS_OK;
 }
 
-nsresult
-sbLocalDatabaseResourcePropertyBag::GetDirtyForInvalidation(std::set<PRUint32> &aDirty)
-{
-  aDirty.clear();
-
-  if(!mDirtyForInvalidation.empty()) {
-    aDirty = mDirtyForInvalidation;
-    mDirtyForInvalidation.clear();
-  }
-
-  return NS_OK;
-}

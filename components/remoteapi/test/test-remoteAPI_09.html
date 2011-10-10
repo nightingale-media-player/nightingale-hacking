@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -48,22 +48,22 @@
         myDiv = document.getElementById("output");
 
         // always have access to the siteLibrary
-        siteLib = songbird.siteLibrary;
+        siteLib = nightingale.siteLibrary;
 
         try {
-          mainLib = songbird.mainLibrary;
+          mainLib = nightingale.mainLibrary;
         } catch (e) {
           dump("XXXredfive - no access to main library\n");
         }
 
         try {
-          webLib = songbird.webLibrary;
+          webLib = nightingale.webLibrary;
         } catch (e) {
           dump("XXXredfive - no access to web library\n");
         }
 
         try {
-          originalWeb = songbird.webPlaylist.mediaList;
+          originalWeb = nightingale.webPlaylist.mediaList;
         } catch (e) {
           dump("XXXredfive - no medialist yet\n");
         }
@@ -87,9 +87,9 @@
         if (!aMediaList)
           return;
         if (!originalWeb)
-          originalWeb = songbird.webPlaylist.mediaList;
+          originalWeb = nightingale.webPlaylist.mediaList;
 
-        songbird.webPlaylist.mediaList = aMediaList;
+        nightingale.webPlaylist.mediaList = aMediaList;
       }
 
       // toggle between web and empty playlist
@@ -137,7 +137,7 @@
         if (!m3uMediaList) {
           siteLib.scanMediaOnCreation = false;
           siteLib.createMediaListFromURL("remoteList1",
-                                         "http://sandbox.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                         "http://sandbox.getnightingale.com/~redfive/test_files/remoteLibraryTest.m3u",
                                          callback,
                                          "test9-remoteList1" );
         }
@@ -155,7 +155,7 @@
         if (!m3uMediaList) {
           siteLib.scanMediaOnCreation = true;
           siteLib.createMediaListFromURL("remoteList2",
-                                         "http://sandbox.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                         "http://sandbox.getnightingale.com/~redfive/test_files/remoteLibraryTest.m3u",
                                          callback,
                                          "test9-remoteList2" );
         }
@@ -210,8 +210,8 @@
   <body onload="load();" onunload="unload();">
     <h1>Creation of MediaList from a Library and setting as webplaylist</h1>
     <p> Force a web playlist to appear. <br />
-      <a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Loveshadow</a>
-      <a href="http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3">Sawtooth</a>
+      <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Loveshadow_-_The_Acorns._Seedin_Time_in_The_Oak_Room..mp3">Loveshadow</a>
+      <a href="http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3">Sawtooth</a>
     <form>
       <input type="button" id="toggle_button" value="Toggle"
              onclick="togglePlaylist();" /> 

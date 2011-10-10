@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,11 +20,11 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
-#define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
+#define SB_STRING_BUNDLE_CHROME_URL "chrome://nightingale/locale/nightingale.properties"
 
 #include "sbDownloadButtonPropertyInfo.h"
 #include "sbStandardOperators.h"
@@ -144,6 +144,14 @@ sbDownloadButtonPropertyInfo::GetCellValue(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
+sbDownloadButtonPropertyInfo::GetColumnProperties(const nsAString& aValue,
+                                                  nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDownloadButtonPropertyInfo::GetRowProperties(const nsAString& aValue,
                                                nsAString& _retval)
 {
@@ -226,20 +234,6 @@ sbDownloadButtonPropertyInfo::HitTest(const nsAString& aCurrentValue,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = aPart.EqualsLiteral("text");
-  return NS_OK;
-}
-
-/* boolean onClick (in sbIMediaItem aItem,
-                    [optional] in nsISupports aEvent,
-                    [optional] in nsISupports aContext); */
-NS_IMETHODIMP
-sbDownloadButtonPropertyInfo::OnClick(sbIMediaItem *aItem,
-                                      nsISupports *aEvent,
-                                      nsISupports *aContext,
-                                      PRBool *_retval NS_OUTPARAM)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_FALSE;
   return NS_OK;
 }
 

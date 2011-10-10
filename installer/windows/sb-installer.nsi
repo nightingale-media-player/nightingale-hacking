@@ -1,11 +1,11 @@
 
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 # 
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://songbirdnest.com
+# http://getnightingale.com
 # 
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 # or write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -82,8 +82,6 @@ Section "-Application" Section1
       ${EndIf}
 
       Call InstallCdrip
-      ; Disabled for now; see bug 22964
-      ; Call InstallRDSConfig
    ${EndIf}
 
    IfRebootFlag 0 noReboot
@@ -143,7 +141,7 @@ Function InstallAppRegistryKeys
    WriteRegStr HKLM "$0" "Path" "$INSTDIR"
    WriteRegStr HKLM "$0" "" "$INSTDIR\${FileMainEXE}"
 
-   ; Add XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+   ; Add XULRunner and Nightingale to the Windows Media Player Shim Inclusion List.
    WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}" "" ""
    WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
 FunctionEnd
@@ -179,7 +177,7 @@ Function InstallBrandingRegistryKeys
    WriteRegStr HKLM $RootAppRegistryKey "${MuiStartmenupageRegName}" $R0
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 
-   ; Install Songbird AutoPlay services.
+   ; Install Nightingale AutoPlay services.
    ExecWait '"$INSTDIR\sbAutoPlayUtil" -Install'
 
 FunctionEnd
@@ -254,23 +252,6 @@ CdripHelperOut:
    Pop $0
 FunctionEnd
 
-Function InstallRDSConfig
-   ExecWait '"$INSTDIR\${RDSConfigEXE}" install' $0
-   
-   IfErrors RDSConfigErrors
-
-   ${If} $0 != 0
-      RDSConfigErrors:
-      SetErrors
-      DetailPrint "$INSTDIR\${RDSConfigEXE} install failed: $0"
-
-      ${If} $InstallerMode == "debug"
-         MessageBox MB_OK "$INSTDIR\${RDSConfigEXE} install failed: $0"
-      ${EndIf}
-   ${EndIf}
-FunctionEnd
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -317,10 +298,10 @@ Function GetAncientVersionLocation
 
    StrCpy $0 ""
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding112}"
+   StrCpy $R1 "Software\Nightingale\${AncientRegKeyBranding112}"
    ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp112}"
+      StrCpy $R1 "Software\Nightingale\${AncientRegKeyApp112}"
       ReadRegStr $R0 HKLM $R1 "InstallDir"
       ${If} $R0 != ""
          StrCpy $0 $R1
@@ -328,10 +309,10 @@ Function GetAncientVersionLocation
       ${EndIf}
    ${EndIf}
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding111}"
+   StrCpy $R1 "Software\Nightingale\${AncientRegKeyBranding111}"
    ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp111}"
+      StrCpy $R1 "Software\Nightingale\${AncientRegKeyApp111}"
       ReadRegStr $R0 HKLM $R1 "InstallDir"
       ${If} $R0 != ""
          StrCpy $0 $R1
@@ -339,10 +320,10 @@ Function GetAncientVersionLocation
       ${EndIf}
    ${EndIf}
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding100}"
+   StrCpy $R1 "Software\Nightingale\${AncientRegKeyBranding100}"
    ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp100}"
+      StrCpy $R1 "Software\Nightingale\${AncientRegKeyApp100}"
       ReadRegStr $R0 HKLM $R1 "InstallDir"
       ${If} $R0 != ""
          StrCpy $0 $R1
@@ -455,10 +436,10 @@ recheck:
 
       ${If} $R2 == ${TRUE}
          DeleteRegKey HKLM $R1
-         ; This is hardcoded as "Songbird" and not "${BrandNameShort}" because
+         ; This is hardcoded as "Nightingale" and not "${BrandNameShort}" because
          ; while they _should_ be the same thing, we don't want to mess with
          ; any other keys, in case they weren't.
-         DeleteRegKey /ifempty HKLM "Software\Songbird"
+         DeleteRegKey /ifempty HKLM "Software\Nightingale"
       ${EndIf}
 
       Goto recheck

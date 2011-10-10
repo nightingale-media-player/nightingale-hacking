@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,32 +21,32 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher.
+// Nightingale window watcher.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbWindowWatcher.cpp
- * \brief Songbird Window Watcher Source.
+ * \brief Nightingale Window Watcher Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher imported services.
+// Nightingale window watcher imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbWindowWatcher.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbThreadUtils.h>
 
 // Mozilla imports.
@@ -74,13 +74,13 @@ static PRLogModuleInfo* gWindowWatcherLog = nsnull;
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher preprocessor definitions.
+// Nightingale window watcher preprocessor definitions.
 //
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher nsISupports implementation.
+// Nightingale window watcher nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbWindowWatcher,
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher sbIWindowWatcher implementation.
+// Nightingale window watcher sbIWindowWatcher implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -325,7 +325,7 @@ sbWindowWatcher::GetIsShuttingDown(PRBool* aIsShuttingDown)
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher nsIObserver implementation.
+// Nightingale window watcher nsIObserver implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -442,7 +442,7 @@ sbWindowWatcher::OnQuitApplicationGranted()
   // Validate state.
   NS_ASSERTION(SB_IsMainThread(mThreadManager), "not on main thread");
 
-  // Shutdown the Songbird window watcher services.
+  // Shutdown the Nightingale window watcher services.
   Shutdown();
 
   return NS_OK;
@@ -451,7 +451,7 @@ sbWindowWatcher::OnQuitApplicationGranted()
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher services.
+// Nightingale window watcher services.
 //
 //------------------------------------------------------------------------------
 
@@ -561,12 +561,12 @@ sbWindowWatcher::Finalize()
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird window watcher services.
+// Internal Nightingale window watcher services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Shut down the Songbird window watcher services.  The window watcher will stop
+ * Shut down the Nightingale window watcher services.  The window watcher will stop
  * watching windows and will return a null window for all waiting method calls
  * and callbacks.  The window watcher will still be usable but will no longer
  * wait for windows.
@@ -656,7 +656,7 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   // _last_ of a combination of events to occur (but the first instance of each)
   const char* DOM_WINDOW_READY_EVENT_TYPES[] = {  "resize", "sb-overlay-load" };
 
-  for (unsigned int i = 0; i < NS_ARRAY_LENGTH(DOM_WINDOW_READY_EVENT_TYPES); ++i) {
+  for (int i = 0; i < NS_ARRAY_LENGTH(DOM_WINDOW_READY_EVENT_TYPES); ++i) {
     rv = eventListener->AddEventListener(DOM_WINDOW_READY_EVENT_TYPES[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -743,14 +743,14 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
   PRBool   success;
   nsresult rv;
 
-  // If window is the main Songbird window, notify observers.
+  // If window is the main Nightingale window, notify observers.
   if (!mSentMainWinPresentedNotification) {
     nsAutoString windowType;
     rv = GetWindowType(aWindow, windowType);
     NS_ENSURE_SUCCESS(rv, /* void */);
-    if (windowType.EqualsLiteral("Songbird:Main")) {
+    if (windowType.EqualsLiteral("Nightingale:Main")) {
       rv = mObserverService->NotifyObservers(aWindow,
-                                             "songbird-main-window-presented",
+                                             "nightingale-main-window-presented",
                                              nsnull);
       NS_ENSURE_SUCCESS(rv, /* void */);
       mSentMainWinPresentedNotification = PR_TRUE;
@@ -899,14 +899,14 @@ sbWindowWatcher::GetProxiedWindowWatcher(sbIWindowWatcher** aWindowWatcher)
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher event listener class.
+// Nightingale window watcher event listener class.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher event listener nsISupports implementation.
+// Nightingale window watcher event listener nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -916,7 +916,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbWindowWatcherEventListener,
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher event listener nsIDOMEventListener implementation.
+// Nightingale window watcher event listener nsIDOMEventListener implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -973,7 +973,7 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
            __FUNCTION__,
            NS_ConvertUTF16toUTF8(eventType).get(),
            this,
-           target.get()));
+           target));
     if (mOutstandingEvents.IsEmpty()) {
       mSBWindowWatcher->OnWindowReady(mWindow);
     }
@@ -985,18 +985,18 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher event listener implementation.
+// Nightingale window watcher event listener implementation.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Create a new instance of a Songbird window watcher event listener and return
- * it in aListener.  The Songbird window watcher object is specified by
+ * Create a new instance of a Nightingale window watcher event listener and return
+ * it in aListener.  The Nightingale window watcher object is specified by
  * aSBWindowWatcher and the window for which events are being listened is
  * specified by aWindow.
  *
- * \param aListener             Songbird window watcher event listener .
- * \param aSBWindowWatcher      Songbird window watcher object.
+ * \param aListener             Nightingale window watcher event listener .
+ * \param aSBWindowWatcher      Nightingale window watcher object.
  * \param aWindow               Window for which to listen for events.
  */
 
@@ -1029,12 +1029,12 @@ sbWindowWatcherEventListener::New
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird window watcher event listener implementation.
+// Internal Nightingale window watcher event listener implementation.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Initialize the Songbird window watcher event listener.
+ * Initialize the Nightingale window watcher event listener.
  */
 
 nsresult
@@ -1087,7 +1087,7 @@ sbWindowWatcherEventListener::AddEventListener(const char* aEventName)
          __FUNCTION__,
          aEventName,
          this,
-         mEventTarget.get()));
+         mEventTarget));
 
   return NS_OK;
 }
@@ -1104,7 +1104,7 @@ sbWindowWatcherEventListener::ClearEventListeners()
   TRACE(("%s: clearing %p from %p",
          __FUNCTION__,
          this,
-         mEventTarget.get()));
+         mEventTarget));
 
   NS_ENSURE_TRUE(mEventTarget, NS_ERROR_NOT_INITIALIZED);
 
@@ -1113,7 +1113,7 @@ sbWindowWatcherEventListener::ClearEventListeners()
            __FUNCTION__,
            NS_ConvertUTF16toUTF8(mOutstandingEvents[i]).get(),
            this,
-           mEventTarget.get()));
+           mEventTarget));
     rv = mEventTarget->RemoveEventListener(mOutstandingEvents[i],
                                            this,
                                            PR_TRUE);
@@ -1128,14 +1128,14 @@ sbWindowWatcherEventListener::ClearEventListeners()
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher wait for window class.
+// Nightingale window watcher wait for window class.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher wait for window nsISupports implementation.
+// Nightingale window watcher wait for window nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -1145,7 +1145,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbWindowWatcherWaitForWindow,
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher wait for window sbICallWithWindowCallback
+// Nightingale window watcher wait for window sbICallWithWindowCallback
 // implementation.
 //
 //------------------------------------------------------------------------------
@@ -1166,13 +1166,16 @@ sbWindowWatcherWaitForWindow::HandleWindowCallback(nsIDOMWindow* aWindow)
   mWindow = aWindow;
   mReady = PR_TRUE;
 
+  // Send notification that the window is ready.
+  autoReadyMonitor.Notify();
+
   return NS_OK;
 }
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher wait for window implementation.
+// Nightingale window watcher wait for window implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -1242,8 +1245,6 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   rv = mSBWindowWatcher->CallWithWindow(aWindowType, this, false);
   NS_ENSURE_SUCCESS(rv, rv);
 
-<<<<<<< HEAD
-=======
   // Operate under the ready monitor.
   nsAutoMonitor autoReadyMonitor(mReadyMonitor);
 
@@ -1253,14 +1254,13 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
->>>>>>> parent of 8e46d13... remove MORE autolock references
   return NS_OK;
 }
 
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird window watcher wait for window implementation.
+// Internal Nightingale window watcher wait for window implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -1284,9 +1284,9 @@ sbWindowWatcherWaitForWindow::Initialize()
 {
   nsresult rv;
 
-  // Get the Songbird window watcher service.
+  // Get the Nightingale window watcher service.
   mSBWindowWatcher =
-    do_GetService("@songbirdnest.com/Songbird/window-watcher;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/window-watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a monitor.

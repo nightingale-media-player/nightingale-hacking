@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,32 +21,32 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher.
+// Nightingale local file album art fetcher.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbFileAlbumArtFetcher.cpp
- * \brief Songbird Local File Album Art Fetcher Source.
+ * \brief Nightingale Local File Album Art Fetcher Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher imported services.
+// Nightingale local file album art fetcher imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbFileAlbumArtFetcher.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
 #include <sbProxiedComponentManager.h>
@@ -155,7 +155,7 @@ sbFileAlbumArtFetcher::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
     // We need to wrap this item in an array since the OnSearchComplete
     // expects it.
     nsCOMPtr<nsIMutableArray> items =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = items->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
                               PR_FALSE);
@@ -202,7 +202,7 @@ NS_IMETHODIMP
 sbFileAlbumArtFetcher::GetName(nsAString& aName)
 {
   sbStringBundle stringBundle;
-  aName.Assign(stringBundle.Get("songbird.albumart.file.name"));
+  aName.Assign(stringBundle.Get("nightingale.albumart.file.name"));
   return NS_OK;
 }
 
@@ -216,7 +216,7 @@ NS_IMETHODIMP
 sbFileAlbumArtFetcher::GetDescription(nsAString& aDescription)
 {
   sbStringBundle stringBundle;
-  aDescription.Assign(stringBundle.Get("songbird.albumart.file.description"));
+  aDescription.Assign(stringBundle.Get("nightingale.albumart.file.description"));
   return NS_OK;
 }
 
@@ -243,7 +243,7 @@ sbFileAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   NS_ENSURE_STATE(mPrefService);
   
-  nsresult rv = mPrefService->GetBoolPref("songbird.albumart.file.enabled",
+  nsresult rv = mPrefService->GetBoolPref("nightingale.albumart.file.enabled",
                                           aIsEnabled);
   if (NS_FAILED(rv)) {
     *aIsEnabled = PR_FALSE;
@@ -256,7 +256,7 @@ NS_IMETHODIMP
 sbFileAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
   NS_ENSURE_STATE(mPrefService);
-  return mPrefService->SetBoolPref("songbird.albumart.file.enabled",
+  return mPrefService->SetBoolPref("nightingale.albumart.file.enabled",
                                    aIsEnabled);
 }
 
@@ -270,7 +270,7 @@ sbFileAlbumArtFetcher::GetPriority(PRInt32* aPriority)
   NS_ENSURE_ARG_POINTER(aPriority);
   NS_ENSURE_STATE(mPrefService);
   
-  nsresult rv = mPrefService->GetIntPref("songbird.albumart.file.priority",
+  nsresult rv = mPrefService->GetIntPref("nightingale.albumart.file.priority",
                                          aPriority);
   if (NS_FAILED(rv)) {
     // Default to appending
@@ -284,7 +284,7 @@ NS_IMETHODIMP
 sbFileAlbumArtFetcher::SetPriority(PRInt32 aPriority)
 {
   NS_ENSURE_STATE(mPrefService);
-  return mPrefService->SetIntPref("songbird.albumart.file.priority",
+  return mPrefService->SetIntPref("nightingale.albumart.file.priority",
                                   aPriority);
 }
 
@@ -364,7 +364,7 @@ sbFileAlbumArtFetcher::Initialize()
 
   // Read the album art file extension list.
   nsCString fileExtensions;
-  rv = mPrefService->GetCharPref("songbird.albumart.file.extensions",
+  rv = mPrefService->GetCharPref("nightingale.albumart.file.extensions",
                                  getter_Copies(fileExtensions));
   NS_ENSURE_SUCCESS(rv, rv);
   nsString_Split(NS_ConvertUTF8toUTF16(fileExtensions),
@@ -373,7 +373,7 @@ sbFileAlbumArtFetcher::Initialize()
 
   // Read the album art file base name list.
   nsCString fileBaseNames;
-  rv = mPrefService->GetCharPref("songbird.albumart.file.base_names",
+  rv = mPrefService->GetCharPref("nightingale.albumart.file.base_names",
                                  getter_Copies(fileBaseNames));
   NS_ENSURE_SUCCESS(rv, rv);
   nsString_Split(NS_ConvertUTF8toUTF16(fileBaseNames),
@@ -472,11 +472,6 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   // Set default result.
   *aAlbumArtFile = nsnull;
 
-  // Get the max file size preference
-  PRInt32 maxFileSize;
-  rv = mPrefService->GetIntPref("songbird.albumart.maxsize", &maxFileSize);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Figure out what album we're looking for
   nsString artistName;
   nsString albumName;
@@ -497,21 +492,14 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   nsCOMPtr<nsISupports> cacheData = nsnull;
   rv = mAlbumArtService->RetrieveTemporaryData(cacheKeyFile,
                                                getter_AddRefs(cacheData));
-
+  
   // Try to get the file from the cache data
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<nsIFile> file = do_QueryInterface(cacheData, &rv);
     if (NS_SUCCEEDED(rv)) {
-      // Ensure the size of the file is less than the max file size preference
-      PRInt64 fileSize;
-      rv = file->GetFileSize(&fileSize);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (fileSize <= maxFileSize) { 
-        // We got a cached file for this so return the result
-        file.forget(aAlbumArtFile);
-        return NS_OK;
-      }
+      // We got a cached file for this so return the result
+      file.forget(aAlbumArtFile);
+      return NS_OK;
     }
   }
 
@@ -553,7 +541,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     
     // Create an array to cache the image entries we find
     entriesToBeCached = 
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -576,7 +564,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     if (!isFile)
       continue;
-      
+
     // Get the file leaf name in lower case.
     nsString leafName;
     rv = file->GetLeafName(leafName);
@@ -601,13 +589,6 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     if (!fileExtensionMatched)
       continue;
 
-    // Ensure the size of the file is less than the max file size preference
-    PRInt64 fileSize;
-    rv = file->GetFileSize(&fileSize);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (fileSize > maxFileSize)
-      continue;
-    
     // This is an image file.  If we are building
     // a new cache list, add it now
     if (entriesToBeCached) {

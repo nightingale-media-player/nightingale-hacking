@@ -1,31 +1,31 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
 //
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
-//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this
+// You should have received a copy of the GPL along with this 
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
+// or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
+// 
+// END NIGHTINGALE GPL
 //
  */
 
 
-/**
+/** 
 *******************************************************************************
 THE PLAYLIST
 
@@ -33,7 +33,7 @@ Applies images and layout to playlist.xml and sbPlaylistPage.xul.
 Imported by bindings.css or directly into feathers.
 
 *******************************************************************************
-*/
+*/ 
 
 
 
@@ -72,14 +72,14 @@ sb-playlist > stack > vbox,
 
 .sb-playlist-tree > treechildren::-moz-tree-drop-feedback
 {
-  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png);
+  background-image: url(chrome://nightingale/skin/backgrounds/drop-target.png);
   margin: 0;
   /* the width must use absolute number of units here, no percentages */
   width: 63360in;
 }
 
 
-/**
+/** 
 *******************************************************************************
 Tree Progress Meter
 *******************************************************************************
@@ -109,14 +109,14 @@ Tree Progress Meter
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating )
 {
   background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/playlist/ratings.png);
+  background-image: url(chrome://nightingale/skin/playlist/ratings.png);
 }
 
 
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating )
 {
   background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/playlist/ratings-readonly.png);
+  background-image: url(chrome://nightingale/skin/playlist/ratings-readonly.png);
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
@@ -190,7 +190,7 @@ Tree Progress Meter
 }
 
 
-/**
+/** 
 *******************************************************************************
 In-cell Buttons
 *******************************************************************************
@@ -199,14 +199,14 @@ In-cell Buttons
 /* button default state and baseline */
 .sb-playlist-tree > treechildren::-moz-tree-cell( button )
 {
-       background-image: url(chrome://songbird/skin/playlist/button/button_left.png);
+       background-image: url(chrome://nightingale/skin/playlist/button/button_left.png);
        background-position:0px -36px;
        background-repeat:no-repeat;
        padding:0 0 0 0 ! important;
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button )
 {
-       background-image: url(chrome://songbird/skin/playlist/button/button_right.png);
+       background-image: url(chrome://nightingale/skin/playlist/button/button_right.png);
        background-position:100% -36px;
        background-repeat:no-repeat;
        margin:0 0 0 13px ! important;
@@ -249,7 +249,7 @@ In-cell Buttons
 }
 
 
-/**
+/** 
 *******************************************************************************
 In-cell Clickable Images
 *******************************************************************************
@@ -274,7 +274,7 @@ In-cell Clickable Images
 }
 
 
-/**
+/** 
 *******************************************************************************
 In-cell Download Buttons
 *******************************************************************************
@@ -287,7 +287,7 @@ In-cell Download Buttons
 }
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
-       background-image:url(chrome://songbird/skin/playlist/download/remain.png);
+       background-image:url(chrome://nightingale/skin/playlist/download/remain.png);
        border: none !important;
        background-color: transparent !important;
        padding:0 ! important;
@@ -295,7 +295,7 @@ In-cell Download Buttons
 }
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressNotStarted)
 {
-       background: url(chrome://songbird/skin/playlist/download/not-started.png);
+       background: url(chrome://nightingale/skin/playlist/download/not-started.png);
        background-position:left center;
        background-repeat:repeat-x;
 }
@@ -305,104 +305,82 @@ In-cell Download Buttons
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressCompleted )
 {
-       background: url(chrome://songbird/skin/playlist/download/done.png);
+       background: url(chrome://nightingale/skin/playlist/download/done.png);
        background-position:center center;
        background-repeat:no-repeat;
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell( button downloadbutton progressFailed )
 {
-       background-image: url(chrome://songbird/skin/playlist/button/button_left-error.png);
+       background-image: url(chrome://nightingale/skin/playlist/button/button_left-error.png);
        padding:0 0 0 16px ! important;
 }
 
-/**
+/** 
 *******************************************************************************
 In-cell Origin Page Image (Source Column)
 *******************************************************************************
 */
-.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-originPageImage, image webOrigin )
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-originPageImage, image webOrigin )
 {
-  list-style-image: url(chrome://songbird/skin/icons/small-globe-sunken.png);
+  list-style-image: url(chrome://nightingale/skin/icons/small-globe-sunken.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-originPageImage, image unknownOrigin )
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-originPageImage, image unknownOrigin )
 {
 }
 
-/**
+/** 
 *******************************************************************************
 In-cell Artist detail image
 *******************************************************************************
 */
-.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-artistDetailImage, image link )
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-artistDetailImage, image link )
 {
-  list-style-image: url(chrome://songbird/skin/icons/small-globe-sunken.png);
+  list-style-image: url(chrome://nightingale/skin/icons/small-globe-sunken.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-artistDetailImage, image noLink )
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-artistDetailImage, image noLink )
 {
 }
 
-/**
+/** 
 *******************************************************************************
 In-cell Album detail image
 *******************************************************************************
 */
-.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-albumDetailImage, image link )
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-albumDetailImage, image link )
 {
-  list-style-image: url(chrome://songbird/skin/icons/small-globe-sunken.png);
+  list-style-image: url(chrome://nightingale/skin/icons/small-globe-sunken.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-albumDetailImage, image noLink )
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-albumDetailImage, image noLink )
 {
 }
 
-/**
-*******************************************************************************
-OriginNotInMainLibrary Indicator for Device Track
-*******************************************************************************
-*/
-
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, originNotInMainLibrary )
-{
-  background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/playlist/originnotinmainlibrary.png);
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, originNotInMainLibrary, selected )
-{
-  background-position: 0% -18px;
-}
-
-/**
+/** 
 *******************************************************************************
 Playing track indicator
 *******************************************************************************
 */
-.sb-playlist-tree > treecols > treecol[bind = 'http://songbirdnest.com/data/1.0#trackName']
+.sb-playlist-tree > treecols > treecol[bind = 'http://getnightingale.com/data/1.0#trackName']
 {
   padding-left: 18px !important;
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName )
 {
   padding-left: 18px !important;
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName, playing )
 {
   background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/playlist/playing.png);
+  background-image: url(chrome://nightingale/skin/playlist/playing.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing, selected )
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName, playing, selected )
 {
   background-position: 0% -18px;
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled )
-{
-  color: rgb(146,144,153);
 }
 
 /**
@@ -410,26 +388,26 @@ Playing track indicator
 Right align Track No, Time/Duration, Size, and Sample Rate
 *******************************************************************************
 */
-treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"],
-treecol[bind="http://songbirdnest.com/data/1.0#duration"],
-treecol[bind="http://songbirdnest.com/data/1.0#sampleRate"],
-treecol[bind="http://songbirdnest.com/data/1.0#contentLength"]
+treecol[bind="http://getnightingale.com/data/1.0#trackNumber"],
+treecol[bind="http://getnightingale.com/data/1.0#duration"],
+treecol[bind="http://getnightingale.com/data/1.0#sampleRate"],
+treecol[bind="http://getnightingale.com/data/1.0#contentLength"]
 {
   text-align:right;
 }
-treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-trackNumber ),
-treecol[bind="http://songbirdnest.com/data/1.0#duration"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-duration ),
-treecol[bind="http://songbirdnest.com/data/1.0#sampleRate"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-sampleRate ),
-treecol[bind="http://songbirdnest.com/data/1.0#contentLength"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-contentLength )
+treecol[bind="http://getnightingale.com/data/1.0#trackNumber"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-trackNumber ),
+treecol[bind="http://getnightingale.com/data/1.0#duration"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-duration ),
+treecol[bind="http://getnightingale.com/data/1.0#sampleRate"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-sampleRate ),
+treecol[bind="http://getnightingale.com/data/1.0#contentLength"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-contentLength )
 {
   padding-right:5px;
 }
 
-/**
+/** 
 *******************************************************************************
 Playlist Commands
 *******************************************************************************
@@ -448,14 +426,14 @@ Playlist Commands
   min-width: 160px !important;
 }
 
-/**
+/** 
 *******************************************************************************
 Drag and drop Icon
 *******************************************************************************
 */
 
 .sb-playlist-drag-image {
-  list-style-image: url(chrome://songbird/skin/icons/drag-document-icon.png);
+  list-style-image: url(chrome://nightingale/skin/icons/drag-document-icon.png);
 }
 
 .sb-playlist-drag-badge[value="1"] {

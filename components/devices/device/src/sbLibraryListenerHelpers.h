@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,8 +36,7 @@
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
-
-#include <sbWeakReference.h>
+#include <nsWeakReference.h>
 
 class sbIDevice;
 class sbBaseDevice;
@@ -88,7 +87,7 @@ private:
 };
 
 class sbBaseDeviceLibraryListener : public sbIDeviceLibraryListener,
-                                    public sbSupportsWeakReference,
+                                    public nsSupportsWeakReference,
                                     public sbBaseIgnore
 {
 public:
@@ -99,8 +98,6 @@ public:
   virtual ~sbBaseDeviceLibraryListener();
 
   nsresult Init(sbBaseDevice* aDevice);
-
-  void Destroy();
 
 protected:
   // The device owns the listener, so use a non-owning reference here

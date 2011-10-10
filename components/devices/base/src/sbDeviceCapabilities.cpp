@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDeviceCapabilities.h"
@@ -1110,6 +1110,52 @@ sbDevCapVideoStream::~sbDevCapVideoStream()
 {
 }
 
+static nsresult
+CopyAndParseToFractions(const char ** aStrings,
+                        PRUint32 aStringCount,
+                        nsTArray<sbFraction> & aFractions)
+{
+  nsresult rv;
+
+  for (PRUint32 index = 0; index < aStringCount; ++index)
+  {
+    sbFraction fraction;
+    rv = sbFractionFromString(NS_ConvertASCIItoUTF16(aStrings[index]),
+                              fraction);
+    if (NS_SUCCEEDED(rv)) {
+      aFractions.AppendElement(fraction);
+    }
+    else {
+      nsCString msg("CopyAndParseToFractions: Unable to parse fraction ");
+      msg.Append(aStrings[index]);
+      NS_WARNING(msg.BeginReading());
+    }
+  }
+  return NS_OK;
+}
+
+static nsresult
+CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
+                          PRUint32 aStringCount,
+                          char ** &aStrings)
+{
+  aStrings = reinterpret_cast<char**>(NS_Alloc(aStringCount * sizeof(char*)));
+  NS_ENSURE_TRUE(aStrings, NS_ERROR_OUT_OF_MEMORY);
+
+  for (PRUint32 index = 0; index < aStringCount; ++index)
+  {
+    nsString string = sbFractionToString(aFractions[index]);
+    aStrings[index] = ToNewCString(NS_ConvertUTF16toUTF8(string));
+    if (!aStrings[index]) {
+      // allocation failure
+      NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(index, aStrings);
+      return NS_ERROR_OUT_OF_MEMORY;
+    }
+  }
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
                                               nsIArray *aExplicitSizes,
                                               sbIDevCapRange *aWidths,
@@ -1147,11 +1193,11 @@ NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
     if (!aSupportPARs) {
       // no PARs given, default to 1/1
       nsCOMPtr<sbIDevCapFraction> parFraction =
-          do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+          do_CreateInstance("@getnightingale.com/Nightingale/Device/sbfraction;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIMutableArray> parArray =
-          do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+          do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = parFraction->Initialize(1, 1);

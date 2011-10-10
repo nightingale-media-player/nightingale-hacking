@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus services.
+// Nightingale D-Bus services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbDBus.cpp
- * \brief Songbird D-Bus Services Source.
+ * \brief Nightingale D-Bus Services Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus imported services.
+// Nightingale D-Bus imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus message services.
+// Nightingale D-Bus message services.
 //
 //------------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ sbDBusMessage::NewMethodCall(sbDBusMessage** aMessage,
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMessage);
 
-  // Create a Songbird D-Bus message.
+  // Create a Nightingale D-Bus message.
   nsAutoPtr<sbDBusMessage> message(new sbDBusMessage());
   NS_ENSURE_TRUE(message, NS_ERROR_OUT_OF_MEMORY);
 
@@ -144,7 +144,7 @@ sbDBusMessage::~sbDBusMessage()
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus connection services.
+// Nightingale D-Bus connection services.
 //
 //------------------------------------------------------------------------------
 
@@ -252,7 +252,7 @@ sbDBusConnection::InvokeMethod(const char*     aMethod,
 
   // Send message and get reply if requested.
   if (aReply) {
-    // Create a Songbird D-Bus message for the reply.
+    // Create a Nightingale D-Bus message for the reply.
     nsAutoPtr<sbDBusMessage> reply(new sbDBusMessage());
     NS_ENSURE_TRUE(reply, NS_ERROR_OUT_OF_MEMORY);
 
@@ -304,7 +304,7 @@ sbDBusConnection::~sbDBusConnection()
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus error services.
+// Nightingale D-Bus error services.
 //
 //------------------------------------------------------------------------------
 

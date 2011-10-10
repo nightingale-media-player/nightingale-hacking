@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,19 +28,16 @@
 #define __SBIMMUTABLEPROPERTYINFO_H__
 
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
+#include <sbIPropertyManager.h>
 
 #include <nsIStringBundle.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
-
+#include <nsWeakReference.h>
 #include "sbPropertyUnitConverter.h"
 
-#include <sbWeakReference.h>
-
-class sbImmutablePropertyInfo : public sbIPropertyInfo, 
-                                public sbSupportsWeakReference
+class sbImmutablePropertyInfo : public sbIPropertyInfo, public nsSupportsWeakReference
 {
 public:
 
@@ -65,7 +62,6 @@ protected:
   PRBool mUserEditable;
   PRBool mRemoteReadable;
   PRBool mRemoteWritable;
-  PRBool mUsedInIdentity;
   nsCOMPtr<nsIStringBundle> mBundle;
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;

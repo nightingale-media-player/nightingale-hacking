@@ -1,4 +1,4 @@
-songbird.jar:
-% content  songbird  %content/songbird/
-  content/songbird/scripts/sbDataRemoteUtils.js       (sbDataRemoteUtils.js)
+nightingale.jar:
+% content  nightingale  %content/nightingale/
+  content/nightingale/scripts/sbDataRemoteUtils.js       (sbDataRemoteUtils.js)
 

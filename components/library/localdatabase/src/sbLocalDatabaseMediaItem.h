@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,7 +33,7 @@
 #include <sbIMediaItem.h>
 #include <nsIClassInfo.h>
 #include <nsIRequestObserver.h>
-#include <sbWeakReference.h>
+#include <nsWeakReference.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -44,7 +44,7 @@ class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
 class sbLocalDatabaseLibrary;
 
-class sbLocalDatabaseMediaItem : public sbSupportsWeakReference,
+class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
                                  public nsIClassInfo,
                                  public nsIRequestObserver,
                                  public sbILocalDatabaseMediaItem,
@@ -88,11 +88,6 @@ protected:
   // item is not yet ready for notification (e.g. during the middle of creation)
   // and when it's already been deleted.
   PRBool mSuppressNotifications;
-  
-  // A reference to the mediaItemController for this item
-  nsCOMPtr<sbIMediaItemController> mItemController;
-  // A boolean to remember if we already tried to fetch the controller
-  PRBool mItemControllerFetched;
 
 private:
   PRLock* mPropertyBagLock;

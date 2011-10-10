@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -56,7 +56,7 @@ function sbLibraryMigration()
 
 sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
-  classDescription: 'Songbird Migration Handler, version 17 to 18',
+  classDescription: 'Nightingale Migration Handler, version 17 to 18',
   classID: Components.ID("{2cba8c55-029a-4313-b7a3-492f6fc765b2}"),
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + ' 17 to 18',
 
@@ -79,7 +79,7 @@ sbLibraryMigration.prototype = {
       // at this point in startup the property cache does not exist yet.
       var prefs = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefBranch);
-      prefs.setBoolPref("songbird.propertycache." + 
+      prefs.setBoolPref("nightingale.propertycache." + 
             this._databaseGUID + ".invalidSortData", true);
       prefs.QueryInterface(Ci.nsIPrefService).savePrefFile(null);
     }

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,13 +32,13 @@
 //   - Test caching functionality 
 //   - Test enabled/disabled extension functionality
 
-const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root"
-const PREFIX_ADDON_URI                = "urn:songbird:addon:";
+const RDFURI_ADDON_ROOT               = "urn:nightingale:addon:root"
+const PREFIX_ADDON_URI                = "urn:nightingale:addon:";
 const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
-const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
+const PREFIX_NS_NIGHTINGALE              = "http://www.getnightingale.com/2007/addon-metadata-rdf#";
 
-function SONGBIRD_NS(property) {
-  return PREFIX_NS_SONGBIRD + property;
+function NIGHTINGALE_NS(property) {
+  return PREFIX_NS_NIGHTINGALE + property;
 }
 
 function EM_NS(property) {
@@ -83,7 +83,7 @@ function dumpDS(prefix, ds) {
 
 /**
  * Minimal sanity check for the AddonMetadata Datasource.
- * Assumes that purplerain will be installed.
+ * Assumes that nightingale-system will be installed.
  */
 function runTest () {
 
@@ -93,8 +93,8 @@ function runTest () {
     
   // dumpDS("AddonMetadataTest DataSource: ", datasource);
   
-  // Find purplerain in the item container
-  var purplerain = null;
+  // Find nightingale-system in the item container
+  var nightingale-system = null;
   var itemRoot = rdfService.GetResource(RDFURI_ADDON_ROOT);    
   var cu = Components.classes["@mozilla.org/rdf/container-utils;1"]
                      .getService(Components.interfaces.nsIRDFContainerUtils);
@@ -103,17 +103,17 @@ function runTest () {
 
   while (addons.hasMoreElements()) {
     var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-    if (addon.Value == ADDON_NS("purplerain@songbirdnest.com")) {
-      purplerain = addon;
+    if (addon.Value == ADDON_NS("nightingale-system@getnightingale.com")) {
+      nightingale-system = addon;
       break;
     }
   }
   
-  // Did we find purplerain in the list?
-  assertEqual(purplerain != null, true);
+  // Did we find nightingale-system in the list?
+  assertEqual(nightingale-system != null, true);
   
   // Does it have a description?
-  assertEqual(datasource.hasArcOut(purplerain, 
+  assertEqual(datasource.hasArcOut(nightingale-system, 
       rdfService.GetResource(EM_NS("description"))), true); 
       
       

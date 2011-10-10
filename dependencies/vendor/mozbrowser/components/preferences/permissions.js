@@ -82,10 +82,7 @@ var gPermissionManager = {
     cycleHeader: function(column) {},
     getRowProperties: function(row,prop){},
     getColumnProperties: function(column,prop){},
-    getCellProperties: function(row,column,prop){
-      if (column.element.getAttribute("id") == "siteCol")
-        prop.AppendElement(this._ltrAtom);
-    }
+    getCellProperties: function(row,column,prop){}
   },
   
   _getCapabilityString: function (aCapability)
@@ -217,10 +214,6 @@ var gPermissionManager = {
     this._loadPermissions();
     
     urlField.focus();
-
-    this._ltrAtom = Components.classes["@mozilla.org/atom-service;1"]
-                              .getService(Components.interfaces.nsIAtomService)
-                              .getAtom("ltr");
   },
   
   uninit: function ()
@@ -371,7 +364,7 @@ var gPermissionManager = {
       var pbi = Components.classes["@mozilla.org/preferences-service;1"]
                           .getService(Components.interfaces.nsIPrefBranch2);
       var prefList = [["xpinstall.whitelist.add", nsIPermissionManager.ALLOW_ACTION],
-                      ["xpinstall.whitelist.add.36", nsIPermissionManager.ALLOW_ACTION],
+                      ["xpinstall.whitelist.add.103", nsIPermissionManager.ALLOW_ACTION],
                       ["xpinstall.blacklist.add", nsIPermissionManager.DENY_ACTION]];
 
       for (var i = 0; i < prefList.length; ++i) {

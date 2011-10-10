@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,26 +21,26 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities.
+// Nightingale file utilities.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbFileUtils.cpp
- * \brief Songbird File Utilities Source.
+ * \brief Nightingale File Utilities Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities imported services.
+// Nightingale file utilities imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -48,7 +48,6 @@
 #include "sbFileUtils.h"
 
 // Mozilla imports.
-#include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsILocalFile.h>
 #include <nsMemory.h>
@@ -68,7 +67,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities defs.
+// Nightingale file utilities defs.
 //
 //------------------------------------------------------------------------------
 
@@ -93,7 +92,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities nsISupports implementation.
+// Nightingale file utilities nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -102,7 +101,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileUtils, sbIFileUtils)
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities sbIFileUtils implementation.
+// Nightingale file utilities sbIFileUtils implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -176,58 +175,15 @@ sbFileUtils::SetCurrentDir(nsIFile* aCurrentDir)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbFileUtils::GetExactPath(const nsAString& aFilePath, nsAString& aExactPath)
-{
-  // Default to an empty string
-  aExactPath.Truncate();
-
-#ifdef XP_WIN
-  long length = 0;
-  nsAutoArrayPtr<WCHAR> shortPath = NULL;
-  nsAutoArrayPtr<WCHAR> longPath = NULL;
-  // First obtain the size needed by passing NULL and 0.
-  length = ::GetShortPathNameW(aFilePath.BeginReading(),
-                               NULL,
-                               0);
-  if (length == 0) return NS_OK;
-
-  // Dynamically allocate the correct size
-  shortPath = new WCHAR[length];
-  length = ::GetShortPathNameW(aFilePath.BeginReading(),
-                               shortPath,
-                               length);
-  if (length == 0) return NS_OK;
-
-  length = 0;
-  // First obtain the size needed by passing NULL and 0.
-  length = ::GetLongPathNameW(shortPath,
-                              NULL,
-                              0);
-  if (length == 0) return NS_OK;
-
-
-  // Dynamically allocate the correct size
-  longPath = new WCHAR[length];
-  length = ::GetLongPathNameW(shortPath,
-                              longPath,
-                              length);
-  if (length == 0) return NS_OK;
-
-  aExactPath.Assign(longPath);
-#endif
-
-  return NS_OK;
-}
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities public services.
+// Nightingale file utilities public services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird file utilities object.
+ * Construct a Nightingale file utilities object.
  */
 
 sbFileUtils::sbFileUtils()
@@ -236,7 +192,7 @@ sbFileUtils::sbFileUtils()
 
 
 /**
- * Destroy a Songbird file utilities object.
+ * Destroy a Nightingale file utilities object.
  */
 
 sbFileUtils::~sbFileUtils()

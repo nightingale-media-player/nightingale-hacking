@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -49,7 +49,7 @@ class nsIArray;
 class nsIIOService;
 class nsIInputStream;
 
-// Songbird forwards
+// Nightingale forwards
 class sbIAlbumArtFetcherSet;
 class sbILibrary;
 class sbILocalDatabaseLibrary;
@@ -63,7 +63,7 @@ class sbPrefBranch;
 
 // Component constants
 #define SBITUNESIMPORTER_CONTRACTID                     \
-  "@songbirdnest.com/Songbird/ITunesImporter;1"
+  "@getnightingale.com/Nightingale/ITunesImporter;1"
 #define SBITUNESIMPORTER_CLASSNAME                      \
   "iTunes Library Importer"
 // {56202248-E7AB-4e45-BFF3-F296844688C4}
@@ -154,7 +154,6 @@ private:
     iTunesTrack();
     ~iTunesTrack();
     nsresult Initialize(sbIStringMap * aProperties);
-    nsString GetContentType(sbIStringMap *aProperties);
     nsresult GetPropertyArray(sbIPropertyArray ** aPropertyArray);
     nsresult GetTrackURI(sbiTunesImporter::OSType aOSType, 
                          nsIIOService * aIOService,
@@ -218,7 +217,7 @@ private:
    */
   sbILocalDatabaseLibraryPtr mLDBLibrary;
   /**
-   * The Songbird main library
+   * The Nightingale main library
    */
   sbILibraryPtr mLibrary;
   /**
@@ -250,9 +249,9 @@ private:
    */
   nsString mPlaylistBlacklist;
   /**
-   * The is the iTunes persistent ID of the special Songbird Folder
+   * The is the iTunes persistent ID of the special Nightingale Folder
    */
-  nsString mSongbirdFolderID;
+  nsString mNightingaleFolderID;
   /**
    * Our status updating object
    */
@@ -276,7 +275,7 @@ private:
    */
   TrackBatch mTrackBatch;
   /**
-   * Mapping of the iTunes ID to the songbird ID
+   * Mapping of the iTunes ID to the nightingale ID
    */
   TrackIDMap mTrackIDMap;
   /**
@@ -321,7 +320,7 @@ private:
    * \param aProperties the collection of properties found in the iTunes db
    * \param aTrackIds array of iTunes Track ID's for the playlist
    * \param aTrackIdsCount the number of ID's in aTrackIds array
-   * \param aMediaList the Songbird media list to add the tracks to 
+   * \param aMediaList the Nightingale media list to add the tracks to 
    */
   nsresult ImportPlaylist(sbIStringMap *aProperties, 
                           PRInt32 *aTrackIds, 
@@ -343,9 +342,9 @@ private:
   nsresult ProcessNewItems(TracksByID & aTrackMap,
                            nsIArray ** aNewItems);
   /**
-   * This handles adding the tracks to the songbird playlist. 
+   * This handles adding the tracks to the nightingale playlist. 
    * Used by ImportPlaylist
-   * \param aMediaList The songbird playlist to update
+   * \param aMediaList The nightingale playlist to update
    * \param aTrackIds the array of iTunes track ID's to add
    * \param aTrackIdsCount the number of ID's in aTrackIds
    */

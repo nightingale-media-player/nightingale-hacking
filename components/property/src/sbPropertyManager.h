@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #ifndef __SBPROPERTYMANAGER_H__
 #define __SBPROPERTYMANAGER_H__
@@ -96,34 +98,17 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
-  // Register a property for the sbIPropertyInfo interface. Use this
-  // registration for:
-  //   1. Text properties in the top-level media items table
-  //   2. Any text-based property where the collation transforms provided
-  //      by sbITextPropertyInfo are not desired.
-  nsresult RegisterBlob(const nsAString& aPropertyID,
-                        const nsAString& aDisplayKey,
-                        nsIStringBundle* aStringBundle,
-                        PRBool aUserViewable,
-                        PRBool aUserEditable,
-                        PRBool aUsedInIdentity,
-                        PRUint32 aNullSort,
-                        PRBool aHasNullSort,
-                        PRBool aRemoteReadable,
-                        PRBool aRemoteWritable);
-
   nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
                         PRBool aUserViewable,
                         PRBool aUserEditable,
-                        PRBool aUsedInIdentity,
                         PRUint32 aNullSort,
                         PRBool aHasNullSort,
                         PRBool aRemoteReadable,
                         PRBool aRemoteWritable,
-                        PRBool aCompressWhitespace = PR_TRUE,
-                        sbIPropertyArray* aSecondarySort = nsnull);
+                        sbIPropertyArray* aSecondarySort = nsnull,
+                        PRBool aNoCompressWhitespace = PR_FALSE);
 
   nsresult RegisterURI(const nsAString& aPropertyID,
                        const nsAString& aDisplayKey,
@@ -157,16 +142,7 @@ private:
                              PRBool aUserEditable,
                              PRBool aRemoteReadable,
                              PRBool aRemoteWritable,
-                             const nsAString &aUrlPropertyID);
-
-  nsresult RegisterTrackTypeImageLabel(const nsAString& aPropertyID,
-                                       const nsAString& aDisplayKey,
-                                       nsIStringBundle* aStringBundle,
-                                       PRBool aUserViewable,
-                                       PRBool aUserEditable,
-                                       PRBool aRemoteReadable,
-                                       PRBool aRemoteWritable,
-                                       const nsAString &aUrlPropertyID);
+                             const nsAString &aUriPropertyID);
 
   nsresult RegisterDummy(sbDummyPropertyInfo *aDummyProperty,
                          const nsAString &aPropertyID,
@@ -178,7 +154,7 @@ private:
                            PRBool aRemoteWritable);
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
-
+  
   // Maps property ID to all properties that depend on that ID in some way
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyArray> mPropDependencyMap;
 

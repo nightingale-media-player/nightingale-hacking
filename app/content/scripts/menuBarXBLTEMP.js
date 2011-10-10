@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 // This is a temporary file to house methods that need to roll into
@@ -166,7 +166,7 @@ function doMenu( command, event ) {
     }
     break;
     case "services.browse":
-      var addonsURL = Application.prefs.get("songbird.url.addons").value;
+      var addonsURL = Application.prefs.get("nightingale.url.addons").value;
       gBrowser.loadURI(addonsURL);
     break;
 

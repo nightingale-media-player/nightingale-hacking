@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
-# Copyright(c) 2005-2011 POTI, Inc.
-# http://www.songbirdnest.com
+# Copyright(c) 2005-2010 POTI, Inc.
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the ``GPL'').
@@ -19,17 +19,18 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/library/base/src/ \
         @top_srcdir@/components/moz/strings/src/
 
 include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
 
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDefaultBaseDeviceInfoRegistrar.cpp \
@@ -42,16 +43,12 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceLibrary.cpp \
            sbDeviceLibraryHelpers.cpp \
            sbDeviceLibraryMediaSyncSettings.cpp \
-           sbDeviceLibrarySyncDiff.cpp \
            sbDeviceLibrarySyncSettings.cpp \
            sbDeviceProperties.cpp \
            sbDeviceCapabilities.cpp \
            sbDeviceStatus.cpp \
            sbDeviceCapabilitiesUtils.cpp \
            $(NULL)
-
-# From components/library/base/src/
-CPP_SRCS += sbLibraryChangeset.cpp
 
 # From /components/moz/strings/src/
 CPP_SRCS += sbTArrayStringEnumerator.cpp
@@ -62,11 +59,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/transcode/public \
-                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/strings/src \
                      $(DEPTH)/components/moz/temporaryfileservice/public \
-                     $(DEPTH)/components/moz/threadservices/public \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/library/base/src/static \
@@ -94,7 +89,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/devices/device/src/sbDeviceCore \
  components/library/base/src/static/sbLibraryUtils \
- components/moz/errorconsole/src/sbErrorConsole \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
  components/moz/variant/src/static/sbMozVariantUtils \

@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -64,7 +64,6 @@
 #include <sbLocalDatabaseLibrary.h>
 #include <sbILocalDatabaseMediaItem.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -88,9 +87,6 @@
 // Queue up 50 job items in mProcessedBackgroundThreadItems
 // before calling BatchCompleteItems on the main thread
 const PRUint32 NUM_BACKGROUND_ITEMS_BEFORE_FLUSH = 50;
-
-// Number of items that need to be added for us to run ANALYZE automatically.
-const PRUint32 NUM_ITEMS_PROCESSED_THRESHOLD = 1000;
 
 typedef sbStringSet::iterator sbStringSetIter;
 
@@ -224,9 +220,9 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
     nsCOMPtr<nsIPrefBranch> prefService =
         do_GetService("@mozilla.org/preferences-service;1", &rv);
     NS_ENSURE_SUCCESS( rv, rv);
-    prefService->GetBoolPref("songbird.metadata.ratings.enableWriting", 
+    prefService->GetBoolPref("nightingale.metadata.ratings.enableWriting", 
                              &enableRatingWrite);
-    prefService->GetBoolPref("songbird.metadata.artwork.enableWriting", 
+    prefService->GetBoolPref("nightingale.metadata.artwork.enableWriting", 
                              &enableArtworkWrite);
 
     if (!enableRatingWrite) {
@@ -297,7 +293,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
   PRBool shouldIgnorePaths = PR_FALSE;
   nsCOMPtr<sbIWatchFolderService> wfService;
   if (mJobType == TYPE_WRITE) {
-    wfService = do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+    wfService = do_GetService("@getnightingale.com/watch-folder-service;1", &rv);
     if (NS_SUCCEEDED(rv) && wfService) {
       rv = wfService->GetIsRunning(&shouldIgnorePaths);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
@@ -469,7 +465,7 @@ sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
   
   // Now see if we can find a handler for this URL
   nsCOMPtr<sbIMetadataManager> metadataManager =
-    do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/MetadataManager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbIMetadataHandler> handler;
   rv = metadataManager->GetHandlerForMediaURL(stringURL,
@@ -940,7 +936,7 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
 
   if (!mArtFetcher) {
     mArtFetcher =
-      do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/album-art-fetcher-set;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mArtFetcher->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_LOCAL);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -948,7 +944,7 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   
   // Recycle the existing handler to avoid re-reading the file
   nsCOMPtr<nsIMutableArray> sources =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbIMetadataHandler> handler;
   rv = aJobItem->GetHandler(getter_AddRefs(handler));
@@ -995,7 +991,7 @@ nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem,
     // i could have my conditional check at the beginning without an extra if().
     while (NS_SUCCEEDED(rv)) {
       nsCOMPtr<sbIMetadataManager> metadataManager =
-        do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/MetadataManager;1", &rv);
       if (NS_FAILED(rv)) {
         break;
       }
@@ -1032,7 +1028,7 @@ nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem,
         // forever waiting for the main thread or background thread processors
         // to process it.
         nsCOMPtr<sbIFileMetadataService> fileMetadataService = 
-          do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+          do_GetService("@getnightingale.com/Nightingale/FileMetadataService;1", &rv);
         if (NS_FAILED(rv)) {
           break;
         }
@@ -1204,6 +1200,12 @@ nsresult sbMetadataJob::BeginLibraryBatch()
     "sbMetadataJob::BeginLibraryBatch is main thread only!");
   nsresult rv = NS_OK;
   
+  // Only start a batch for read jobs.  Other jobs may get delayed (e.g., write
+  // job to an item that's being played), resulting in a batch that doesn't end
+  // for a very long time (see bug 20750).
+  if (mJobType != TYPE_READ)
+    return NS_OK;
+
   if (mInLibraryBatch) {
     // Already in a batch
     return NS_OK;
@@ -1278,7 +1280,7 @@ nsresult sbMetadataJob::OnJobProgress()
     // watchfolders ignore whitelist.
     if (mIgnoredContentPaths.size() > 0) {
       nsCOMPtr<sbIWatchFolderService> wfService =
-        do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+        do_GetService("@getnightingale.com/watch-folder-service;1", &rv);
       NS_ASSERTION(NS_SUCCEEDED(rv),
           "Could not get the watch folder service!");
       if (NS_SUCCEEDED(rv) && wfService) {
@@ -1300,19 +1302,6 @@ nsresult sbMetadataJob::OnJobProgress()
     rv = mLibrary->Flush();
     NS_ASSERTION(NS_SUCCEEDED(rv), 
       "sbMetadataJob::OnJobProgress failed to flush library!");
-
-    //
-    // If we've added a significant amount of items, running analyze
-    // will ensure performance remains as good as can be. For example
-    // adding 65,000 tracks will cause guid array queries to get all the
-    // GUIDs to take up to 3000ms and after running analyze this same 
-    // query will run in about 600ms.
-    //    
-    if (mCompletedItemCount > NUM_ITEMS_PROCESSED_THRESHOLD) {
-      rv = mLibrary->Optimize(PR_TRUE);
-      NS_ASSERTION(NS_SUCCEEDED(rv),
-        "sbMetadataJob::onJobProgress failed to optimize library!");
-    }
   }
   return NS_OK;
 }
@@ -1328,33 +1317,7 @@ nsresult sbMetadataJob::GetType(JobType* aJobType)
 nsresult sbMetadataJob::SetBlocked(PRBool aBlocked)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
-  
-  nsresult rv = NS_ERROR_UNEXPECTED;
-
-  // Need to save previous state to check if we need to
-  // begin or end the library batch.
-  PRBool wasBlocked = mBlocked;
-  
   mBlocked = aBlocked;
-
-  // We may begin or end the library batch when changing blocked
-  // states to enable other batched and non-batched operations in 
-  // the library to proceed normally. Only WRITE jobs may block.
-  // For a particular use case why this is necessary see bug 20750.
-
-  // If we were blocked and we are no longer blocked, we should
-  // begin the library batch.
-  if(wasBlocked && !aBlocked) {
-    rv = BeginLibraryBatch();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  // If we were not blocked and we are now blocked, we should
-  // end the library batch.
-  else if(!wasBlocked && aBlocked) {
-    rv = EndLibraryBatch();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   return NS_OK;
 }
 
@@ -1678,7 +1641,7 @@ nsresult sbMetadataJob::CreateDefaultItemName(sbIMediaItem* aItem,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbILibraryUtils> libraryUtils =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = libraryUtils->GetCanonicalPath(sourceFile,
@@ -1791,7 +1754,7 @@ sbMetadataJob::LocalizeString(const nsAString& aName, nsAString& aValue)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = StringBundleService->CreateBundle(
-         "chrome://songbird/locale/songbird.properties",
+         "chrome://nightingale/locale/nightingale.properties",
          getter_AddRefs(mStringBundle));
     NS_ENSURE_SUCCESS(rv, rv);
   }

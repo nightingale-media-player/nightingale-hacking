@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,17 +21,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \file  SBDataRemoteUtils.jsm
- * \brief Javascript source for the Songbird data remote utility services.
+ * \brief Javascript source for the Nightingale data remote utility services.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird data remote utility JSM configuration.
+// Nightingale data remote utility JSM configuration.
 //
 //------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ EXPORTED_SYMBOLS =
 
 //------------------------------------------------------------------------------
 //
-// Songbird data remote utility defs.
+// Nightingale data remote utility defs.
 //
 //------------------------------------------------------------------------------
 
@@ -115,7 +115,7 @@ if (typeof(Cu) == "undefined")
 
 function SB_NewDataRemote( aKey, aRoot )
 {
-  var dataRemote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+  var dataRemote = Cc["@getnightingale.com/Nightingale/DataRemote;1"]
                      .createInstance(Ci.sbIDataRemote);
   dataRemote.init( aKey, aRoot );
   return dataRemote;

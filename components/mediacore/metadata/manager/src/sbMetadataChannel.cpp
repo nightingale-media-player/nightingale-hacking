@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -176,7 +176,7 @@ NS_IMETHODIMP sbMetadataChannel::SetPos(PRUint64 pos)
     m_BufDeadZoneEnd = m_Buf = pos;
 
     // Tell the code to abort this time and start over when new data comes in.
-    return NS_ERROR_SONGBIRD_METADATA_CHANNEL_RESTART;
+    return NS_ERROR_NIGHTINGALE_METADATA_CHANNEL_RESTART;
     // Hopefully none of those functions up there return error abort.
   }
 
@@ -249,7 +249,7 @@ NS_IMETHODIMP sbMetadataChannel::Read(char * out_buf, PRUint32 len, PRUint32 *_r
 
   *_retval = 0;
   // Write <len> bytes of data to the output buffer, from possibly more than one block.
-  for ( PRUint32 remaining = len, count = (PRUint32)-1; remaining && count; remaining -= count, m_Pos += count, out_buf += count, *_retval += count )
+  for ( PRUint32 remaining = len, count = -1; remaining && count; remaining -= count, m_Pos += count, out_buf += count, *_retval += count )
   {
     // Either to the end of the incoming read or the end of the current block.
     PRUint32 left = (PRUint32)( BLOCK_SIZE - POS(m_Pos) );
@@ -355,7 +355,7 @@ sbMetadataChannel::OnDataAvailable(nsIRequest *aRequest,
     return NS_ERROR_UNEXPECTED;
 
   // Read <count> bytes of data from the input stream, into possibly more than one block.
-  for ( PRUint32 remaining = count, read = (PRUint32)-1; remaining && read; remaining -= read, m_Buf += read )
+  for ( PRUint32 remaining = count, read = -1; remaining && read; remaining -= read, m_Buf += read )
   {
     // Either to the end of the incoming read or the end of the current block.
     PRUint32 left = (PRUint32)( BLOCK_SIZE - POS(m_Buf) );

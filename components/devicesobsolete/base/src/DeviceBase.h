@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
 * \file  DeviceBase.h
-* \brief Songbird DeviceBase Component Definition.
+* \brief Nightingale DeviceBase Component Definition.
 */
 
 #ifndef __DEVICE_BASE_H__
@@ -55,11 +55,11 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-#define SONGBIRD_DeviceBase_CONTRACTID                    \
-  "@songbirdnest.com/Songbird/Device/DeviceBase;1"
-#define SONGBIRD_DeviceBase_CLASSNAME                     \
-  "Songbird Device Base"
-#define SONGBIRD_DeviceBase_CID                           \
+#define NIGHTINGALE_DeviceBase_CONTRACTID                    \
+  "@getnightingale.com/Nightingale/Device/DeviceBase;1"
+#define NIGHTINGALE_DeviceBase_CLASSNAME                     \
+  "Nightingale Device Base"
+#define NIGHTINGALE_DeviceBase_CID                           \
 { /* 937d0ae7-9ba1-475d-82fd-609ff5f78508 */              \
   0x937d0ae7,                                             \
   0x9ba1,                                                 \

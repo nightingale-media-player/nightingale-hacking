@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
  * \file  sbLibraryManager.h
- * \brief Songbird Library Manager Definition.
+ * \brief Nightingale Library Manager Definition.
  */
 
 #ifndef __SB_LIBRARYMANAGER_H__
@@ -32,6 +32,7 @@
 
 #include <nsIObserver.h>
 #include <nsIThreadManager.h>
+#include <nsWeakReference.h>
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryUtils.h>
@@ -45,13 +46,10 @@
 #include <prlock.h>
 #include <sbILibraryLoader.h>
 
-#include <sbWeakReference.h>
+#define SB_PREFBRANCH_LIBRARY    "nightingale.library."
 
-#define SB_PREFBRANCH_LIBRARY    "songbird.library."
-
-#define SB_PREF_MAIN_LIBRARY      SB_PREFBRANCH_LIBRARY "main"
-#define SB_PREF_WEB_LIBRARY       SB_PREFBRANCH_LIBRARY "web"
-#define SB_PREF_PLAYQUEUE_LIBRARY SB_PREFBRANCH_LIBRARY "playqueue"
+#define SB_PREF_MAIN_LIBRARY     SB_PREFBRANCH_LIBRARY "main"
+#define SB_PREF_WEB_LIBRARY      SB_PREFBRANCH_LIBRARY "web"
 
 class nsIComponentManager;
 class nsIFile;
@@ -65,7 +63,7 @@ struct nsModuleComponentInfo;
 class sbLibraryManager : public sbILibraryManager,
                          public sbILibraryUtils,
                          public nsIObserver,
-                         public sbSupportsWeakReference
+                         public nsSupportsWeakReference
 {
   struct sbLibraryInfo {
     sbLibraryInfo(PRBool aLoadAtStartup = PR_FALSE)

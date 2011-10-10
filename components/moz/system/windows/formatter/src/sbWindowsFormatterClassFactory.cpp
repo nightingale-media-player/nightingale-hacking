@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,17 +21,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \file  sbWindowsFormatterClassFactory.cpp
- * \brief Songbird Windows Formatter Class Factory Source.
+ * \brief Nightingale Windows Formatter Class Factory Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter class factory imported services.
+// Nightingale Windows formatter class factory imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -42,13 +42,13 @@
 #include "sbWindowsFormatter.h"
 #include "sbWindowsFormatterServer.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbWindowsUtils.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter class factory IUnknown implementation.
+// Nightingale Windows formatter class factory IUnknown implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -126,7 +126,7 @@ sbWindowsFormatterClassFactory::QueryInterface(REFIID aIID,
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter class factory IClassFactory implementation.
+// Nightingale Windows formatter class factory IClassFactory implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -160,7 +160,7 @@ sbWindowsFormatterClassFactory::CreateInstance(IUnknown* aOuter,
   // Set result to NULL.
   *aInstance = NULL;
 
-  // Create a new addref'ed Songbird Windows format object and set it up for
+  // Create a new addref'ed Nightingale Windows format object and set it up for
   // auto-release.
   sbWindowsFormatter* windowsFormatter;
   result = sbWindowsFormatter::New(&windowsFormatter);
@@ -198,12 +198,12 @@ sbWindowsFormatterClassFactory::LockServer(BOOL aLock)
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird Windows formatter class factory services.
+// Public Nightingale Windows formatter class factory services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Create an instance of a Songbird Windows formatter class factory.
+ * Create an instance of a Nightingale Windows formatter class factory.
  */
 
 sbWindowsFormatterClassFactory::sbWindowsFormatterClassFactory() :
@@ -215,7 +215,7 @@ sbWindowsFormatterClassFactory::sbWindowsFormatterClassFactory() :
 
 
 /**
- * Destroy an instance of a Songbird Windows formatter class factory.
+ * Destroy an instance of a Nightingale Windows formatter class factory.
  */
 
 sbWindowsFormatterClassFactory::~sbWindowsFormatterClassFactory()

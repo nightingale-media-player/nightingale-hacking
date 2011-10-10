@@ -1,27 +1,29 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbMediacoreManager.h"
 
@@ -80,7 +82,7 @@
 
 /* default base instance name */
 #define SB_CORE_BASE_NAME   "mediacore"
-#define SB_CORE_NAME_SUFFIX "@core.songbirdnest.com"
+#define SB_CORE_NAME_SUFFIX "@core.getnightingale.com"
 
 #define SB_EQUALIZER_DEFAULT_BAND_COUNT \
   sbBaseMediacoreMultibandEqualizer::EQUALIZER_BAND_COUNT_DEFAULT
@@ -91,7 +93,7 @@
 #define SB_EQUALIZER_DEFAULT_BAND_GAIN  (0.0)
 
 /* primary video window chrome url */
-#define SB_PVW_CHROME_URL "chrome://songbird/content/xul/videoWindow.xul"
+#define SB_PVW_CHROME_URL "chrome://nightingale/content/xul/videoWindow.xul"
 /* primary video window name, this doesn't need to be localizable */
 #define SB_PVW_NAME "VideoWindow"
 /* primary video window element id */
@@ -141,11 +143,11 @@ NS_IMPL_THREADSAFE_CI(sbMediacoreManager)
 sbMediacoreManager::sbMediacoreManager()
 : mMonitor(nsnull)
 , mLastCore(0)
+, mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
 , mFullscreen(PR_FALSE)
 , mVideoWindowMonitor(nsnull)
 , mLastVideoWindow(0)
 {
-  mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
   // mBaseEventTarget being null is handled on access
   NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
 
@@ -222,7 +224,7 @@ sbMediacoreManager::Init()
   mMonitor = nsAutoMonitor::NewMonitor("sbMediacoreManager::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  mVideoWindowMonitor =
+  mVideoWindowMonitor = 
     nsAutoMonitor::NewMonitor("sbMediacoreManager::mVideoWindowMonitor");
   NS_ENSURE_TRUE(mVideoWindowMonitor, NS_ERROR_OUT_OF_MEMORY);
 
@@ -339,7 +341,7 @@ sbMediacoreManager::Shutdown()
 
   nsresult rv;
   if (mSequencer) {
-    rv = mSequencer->Stop(PR_TRUE);
+    rv = mSequencer->Stop();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to stop sequencer.");
     mSequencer = nsnull;
   }
@@ -365,7 +367,7 @@ sbMediacoreManager::Shutdown()
   }
 
   nsCOMPtr<nsIMutableArray> mutableArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mDataRemoteEqualizerBands.IsInitialized()) {
@@ -445,10 +447,11 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
   nsresult rv = votingChain->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIArray> instances;
+  nsAutoMonitor mon(mMonitor);
 
   // First go through the active instances to see if one of them
   // can handle what we wish to play.
+  nsCOMPtr<nsIArray> instances;
   rv = GetInstances(getter_AddRefs(instances));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -554,7 +557,7 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 // sbBaseMediacoreMultibandEqualizer overrides
 // ----------------------------------------------------------------------------
 
-/*virtual*/ nsresult
+/*virtual*/ nsresult 
 sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
@@ -566,7 +569,7 @@ sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mDataRemoteEqualizerEnabled =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteEqualizerEnabled->Init(
@@ -598,11 +601,11 @@ sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
     rv = GetBand(i, getter_AddRefs(band));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
+  
   return NS_OK;
 }
 
-/*virtual*/ nsresult
+/*virtual*/ nsresult 
 sbMediacoreManager::OnSetEqEnabled(PRBool aEqEnabled)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -640,7 +643,7 @@ sbMediacoreManager::OnSetEqEnabled(PRBool aEqEnabled)
   return NS_OK;
 }
 
-/*virtual*/ nsresult
+/*virtual*/ nsresult 
 sbMediacoreManager::OnGetBandCount(PRUint32 *aBandCount)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -666,7 +669,7 @@ sbMediacoreManager::OnGetBandCount(PRUint32 *aBandCount)
   return NS_OK;
 }
 
-/*virtual*/ nsresult
+/*virtual*/ nsresult 
 sbMediacoreManager::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand)
 {
   NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
@@ -710,7 +713,7 @@ sbMediacoreManager::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aB
     if((PR_sscanf(gainStr.BeginReading(), "%lg", &gain) != 1) ||
        (gain > 1.0 || gain < -1.0)) {
       gain = SB_EQUALIZER_DEFAULT_BAND_GAIN;
-      SB_ConvertFloatEqGainToJSStringValue(SB_EQUALIZER_DEFAULT_BAND_GAIN,
+      SB_ConvertFloatEqGainToJSStringValue(SB_EQUALIZER_DEFAULT_BAND_GAIN, 
                                            gainStr);
       rv = bandRemote->SetStringValue(NS_ConvertUTF8toUTF16(gainStr));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -723,7 +726,7 @@ sbMediacoreManager::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aB
   return NS_OK;
 }
 
-/*virtual*/ nsresult
+/*virtual*/ nsresult 
 sbMediacoreManager::OnSetBand(sbIMediacoreEqualizerBand *aBand)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -752,7 +755,7 @@ sbMediacoreManager::OnSetBand(sbIMediacoreEqualizerBand *aBand)
 }
 
 nsresult
-sbMediacoreManager::GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex,
+sbMediacoreManager::GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex, 
                                                     sbIDataRemote **aRemote)
 {
   NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
@@ -773,7 +776,7 @@ sbMediacoreManager::GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex,
   return NS_OK;
 }
 
-nsresult
+nsresult 
 sbMediacoreManager::SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *aBand)
 {
   NS_ENSURE_ARG_POINTER(aBand);
@@ -787,7 +790,7 @@ sbMediacoreManager::SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *a
 
   nsCOMPtr<sbIDataRemote> bandRemote;
   PRBool success = mDataRemoteEqualizerBands.Get(bandIndex, getter_AddRefs(bandRemote));
-
+  
   if(!success) {
     rv = CreateDataRemoteForEqualizerBand(bandIndex, getter_AddRefs(bandRemote));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -804,7 +807,7 @@ sbMediacoreManager::SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *a
 }
 
 nsresult
-sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex,
+sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex, 
                                                      sbIDataRemote **aRemote)
 {
   NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
@@ -816,8 +819,8 @@ sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex,
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
 
-  nsCOMPtr<sbIDataRemote> bandRemote =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  nsCOMPtr<sbIDataRemote> bandRemote = 
+    do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString bandRemoteName(NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_EQ_BAND_PREFIX));
@@ -838,12 +841,12 @@ nsresult
 sbMediacoreManager::InitVideoDataRemotes()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
-
+  
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
 
-  mDataRemoteVideoFullscreen =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  mDataRemoteVideoFullscreen = 
+    do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteVideoFullscreen->Init(
@@ -856,7 +859,7 @@ sbMediacoreManager::InitVideoDataRemotes()
   return NS_OK;
 }
 
-nsresult
+nsresult 
 sbMediacoreManager::VideoWindowUnloaded()
 {
   nsAutoMonitor mon(mVideoWindowMonitor);
@@ -876,7 +879,7 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   mDataRemoteFaceplateVolume =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteFaceplateVolume->Init(
@@ -905,7 +908,7 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
   NS_ENSURE_SUCCESS(rv, rv);
 
   mDataRemoteFaceplateMute =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteFaceplateMute->Init(
@@ -1083,7 +1086,7 @@ sbMediacoreManager::GetEqualizer(
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
+  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer = 
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1217,9 +1220,9 @@ sbMediacoreManager::SetSequencer(
 }
 
 NS_IMETHODIMP
-sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
-                                          PRUint32 aWidthHint,
-                                          PRUint32 aHeightHint,
+sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate, 
+                                          PRUint32 aWidthHint, 
+                                          PRUint32 aHeightHint, 
                                           sbIMediacoreVideoWindow **aVideo)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
@@ -1252,27 +1255,27 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     }
   }
 
-  nsCOMPtr<sbIPrompter> prompter =
-    do_GetService(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  nsCOMPtr<sbIPrompter> prompter = 
+    do_GetService(NIGHTINGALE_PROMPTER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = prompter->SetParentWindowType(NS_LITERAL_STRING("Songbird:Main"));
+  rv = prompter->SetParentWindowType(NS_LITERAL_STRING("Nightingale:Main"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Make a unique window name. This circumvents race conditions that can
-  // occur while a window is requested and the video window is currently
+  // Make a unique window name. This circumvents race conditions that can 
+  // occur while a window is requested and the video window is currently 
   // closing by avoiding reuse of the closing window.
   nsString windowName;
   windowName.AssignLiteral(SB_PVW_NAME);
   windowName.AppendInt(mLastVideoWindow++);
 
   nsCOMPtr<nsIDOMWindow> domWindow;
-  rv = prompter->OpenWindow(nsnull,
-                            NS_LITERAL_STRING(SB_PVW_CHROME_URL),
-                            windowName,
+  rv = prompter->OpenWindow(nsnull, 
+                            NS_LITERAL_STRING(SB_PVW_CHROME_URL), 
+                            windowName, 
                             NS_LITERAL_STRING("chrome,centerscreen,resizable"),
                             nsnull,
                             getter_AddRefs(domWindow));
@@ -1282,7 +1285,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   // to quite a few objects.
   PRBool mainThread = NS_IsMainThread();
   nsCOMPtr<nsIThread> target;
-
+  
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1290,13 +1293,13 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   // continue. If we don't let it finish loading we will never be
   // able to find the correct element in the window.
   if(!mainThread) {
-    // If we're not on the main thread we can use the songbird window
-    // watcher to wait for a window of type "Songbird:Core" to come up.
-    nsCOMPtr<sbIWindowWatcher> windowWatcher =
+    // If we're not on the main thread we can use the nightingale window
+    // watcher to wait for a window of type "Nightingale:Core" to come up.
+    nsCOMPtr<sbIWindowWatcher> windowWatcher = 
       do_GetService(SB_WINDOWWATCHER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = windowWatcher->WaitForWindow(NS_LITERAL_STRING("Songbird:Core"));
+    rv = windowWatcher->WaitForWindow(NS_LITERAL_STRING("Nightingale:Core"));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIDOMWindow> grip;
@@ -1305,7 +1308,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIDOMWindow),
                               grip,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              NS_PROXY_SYNC,
                               getter_AddRefs(domWindow));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1316,7 +1319,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = do_GetProxyForObject(target, 
                               NS_GET_IID(nsIDOMEventTarget), 
                               domTarget, 
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS, 
+                              NS_PROXY_SYNC, 
                               getter_AddRefs(proxiedDomTarget));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1327,13 +1330,13 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = videoWindowListener->Init(this, domTarget);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = proxiedDomTarget->AddEventListener(NS_LITERAL_STRING("unload"),
-                                            videoWindowListener,
+    rv = proxiedDomTarget->AddEventListener(NS_LITERAL_STRING("unload"), 
+                                            videoWindowListener, 
                                             PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    // On the main thread, we'll have to add a listener to the window
+    // On the main thread, we'll have to add a listener to the window 
     // and process events on the main thread while we wait for the video
     // window to finish loading.
     nsRefPtr<sbMediacoreVideoWindowListener> videoWindowListener;
@@ -1346,8 +1349,8 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = videoWindowListener->Init(this, domTarget);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = domTarget->AddEventListener(NS_LITERAL_STRING("resize"),
-                                     videoWindowListener,
+    rv = domTarget->AddEventListener(NS_LITERAL_STRING("resize"), 
+                                     videoWindowListener, 
                                      PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1365,8 +1368,8 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     // If the window isn't ready yet, error out.
     NS_ENSURE_TRUE(videoWindowListener->IsWindowReady(), NS_ERROR_FAILURE);
 
-    rv = domTarget->AddEventListener(NS_LITERAL_STRING("unload"),
-                                     videoWindowListener,
+    rv = domTarget->AddEventListener(NS_LITERAL_STRING("unload"), 
+                                     videoWindowListener, 
                                      PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1383,7 +1386,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIDOMDocument),
                               grip,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              NS_PROXY_SYNC,
                               getter_AddRefs(domDoc));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1395,7 +1398,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
 
   NS_ENSURE_TRUE(domElement, NS_ERROR_UNEXPECTED);
 
-  nsCOMPtr<nsIDOMXULElement> domXulElement =
+  nsCOMPtr<nsIDOMXULElement> domXulElement = 
     do_QueryInterface(domElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1409,7 +1412,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   NS_ENSURE_SUCCESS(rv, rv);
 
   videoWindow.forget(aVideo);
-
+  
   return NS_OK;
 }
 
@@ -1428,13 +1431,13 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
   mPrimaryCore = aPrimaryCore;
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-
+  
   nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // No equalizer interface on the primary core is not a fatal error.
-  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
+  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer = 
     do_QueryInterface(mPrimaryCore, &rv);
   if(NS_FAILED(rv)) {
     equalizer = nsnull;
@@ -1487,7 +1490,7 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<nsIMutableArray> mutableArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
@@ -1520,7 +1523,7 @@ sbMediacoreManager::GetInstances(nsIArray * *aInstances)
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<nsIMutableArray> mutableArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
@@ -1780,8 +1783,11 @@ sbMediacoreManager::VoteWithURI(nsIURI *aURI,
                                 sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithURI", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = VoteWithURIOrChannel(aURI, nsnull, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1794,8 +1800,11 @@ sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel,
                                     sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithChannel", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aChannel);
   NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = VoteWithURIOrChannel(nsnull, aChannel, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1929,7 +1938,7 @@ sbMediacoreManager::RemoveListener(sbIMediacoreEventListener *aListener)
 }
 
 //-----------------------------------------------------------------------------
-// sbMediacoreVideoWindowListener class
+// sbMediacoreVideoWindowListener class 
 //-----------------------------------------------------------------------------
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreVideoWindowListener)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreVideoWindowListener)
@@ -1945,8 +1954,8 @@ sbMediacoreVideoWindowListener::~sbMediacoreVideoWindowListener()
 {
 }
 
-nsresult
-sbMediacoreVideoWindowListener::Init(sbMediacoreManager *aManager,
+nsresult 
+sbMediacoreVideoWindowListener::Init(sbMediacoreManager *aManager, 
                                      nsIDOMEventTarget *aTarget)
 {
   NS_ENSURE_ARG_POINTER(aManager);
@@ -1975,16 +1984,16 @@ sbMediacoreVideoWindowListener::HandleEvent(nsIDOMEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIDOMEventListener> grip(this);
-    rv = mTarget->RemoveEventListener(NS_LITERAL_STRING("unload"),
-                                      this,
+    rv = mTarget->RemoveEventListener(NS_LITERAL_STRING("unload"), 
+                                      this, 
                                       PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
+  
   return NS_OK;
 }
 
-PRBool
+PRBool 
 sbMediacoreVideoWindowListener::IsWindowReady()
 {
   return mWindowReady;

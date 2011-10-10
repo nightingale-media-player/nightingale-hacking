@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -33,9 +33,9 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
   <binding id="dialog" extends="chrome://global/content/bindings/dialog.xml#dialog">
-    <!-- we want to eventually extend all dialogs, not just type="songbird" -->
+    <!-- we want to eventually extend all dialogs, not just type="nightingale" -->
     <resources>
-      <stylesheet src="chrome://songbird-bindings/skin/dialog.css"/>
+      <stylesheet src="chrome://nightingale-bindings/skin/dialog.css"/>
     </resources>
     <content flex="1">
       <sb-sys-outer-frame resizers="none" flex="1" id="dialog-outer-frame"

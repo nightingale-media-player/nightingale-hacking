@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBMEDIALISTDUPLICATEFILTER_H_
@@ -35,7 +35,7 @@
 #include <nsTArray.h>
 #include <nsTHashtable.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbIMediaListDuplicateFilter.h>
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
@@ -78,9 +78,6 @@ private:
   // Monitor for thread-safety
   PRMonitor* mMonitor;
 
-  // Have we run enumerate items yet?
-  PRBool mInitialized;
-
   // Contains a combination origin ID and URL's
   nsTHashtable<nsStringHashKey> mKeys;
 
@@ -95,9 +92,6 @@ private:
 
   // The enumerate for the source
   nsCOMPtr<nsISimpleEnumerator> mSource;
-
-  // The destionation
-  nsCOMPtr<sbIMediaList> mDest;
 
   // Current item in the enumeration
   nsCOMPtr<sbIMediaItem> mCurrentItem;

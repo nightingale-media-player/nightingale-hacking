@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,18 +22,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
  * \file  sbLocalDatabaseDynamicMediaList.cpp
- * \brief Songbird Local Database Dynamic Media List Source.
+ * \brief Nightingale Local Database Dynamic Media List Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list imported services.
+// Nightingale dynamic media list imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@
 // Local imports.
 #include "sbLocalDatabaseCID.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIDynamicPlaylistService.h>
 #include <sbIMediaListFactory.h>
 #include <sbStandardProperties.h>
@@ -58,7 +58,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list logging services.
+// Nightingale dynamic media list logging services.
 //
 //------------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ static PRLogModuleInfo* gLocalDatabaseDynamicMediaListLog = nsnull;
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list nsISupports and nsIClassInfo implementation.
+// Nightingale dynamic media list nsISupports and nsIClassInfo implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ NS_IMPL_THREADSAFE_CI(sbLocalDatabaseDynamicMediaList)
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list sbIDynamicMediaList implementation.
+// Nightingale dynamic media list sbIDynamicMediaList implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ sbLocalDatabaseDynamicMediaList::Update()
 
   // Update the list.
   nsCOMPtr<sbIDynamicPlaylistService> dynamicPlaylistService =
-    do_GetService("@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1",
+    do_GetService("@getnightingale.com/Nightingale/Library/DynamicPlaylistService;1",
                   &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = dynamicPlaylistService->UpdateNow(this);
@@ -139,7 +139,7 @@ sbLocalDatabaseDynamicMediaList::Update()
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list sbIMediaList implementation.
+// Nightingale dynamic media list sbIMediaList implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ sbLocalDatabaseDynamicMediaList::GetType(nsAString& aType)
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird dynamic media list services.
+// Public Nightingale dynamic media list services.
 //
 //------------------------------------------------------------------------------
 
@@ -206,7 +206,7 @@ sbLocalDatabaseDynamicMediaList::~sbLocalDatabaseDynamicMediaList()
 
 //------------------------------------------------------------------------------
 //
-// Private Songbird dynamic media list services.
+// Private Nightingale dynamic media list services.
 //
 //------------------------------------------------------------------------------
 

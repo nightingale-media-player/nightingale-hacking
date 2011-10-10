@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,15 +19,15 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /*
  This file is forced into the common dialog (/toolkit/content/commonDialog.xul)
 */
 
-@import url("chrome://songbird/skin/songbird.css");
-@import url("chrome://songbird/content/bindings/bindings.css");
+@import url("chrome://nightingale/skin/nightingale.css");
+@import url("chrome://nightingale/content/bindings/bindings.css");
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
@@ -41,19 +41,6 @@
   padding: 0;
 }
 
-grid,
-grid > rows > row
-{
-  -moz-box-flex: 1;
-}
-
-/* Anchors checkbox to bottom of commonDialog. Done to maintain an absolute
-   position relative to the bottom button container. */
-#checkboxContainer
-{
-  max-height: 20px;
-}
-
 .dialog-content-inner
 {
   -moz-box-pack: start;
@@ -61,7 +48,7 @@ grid > rows > row
 
 /* This counteracts the "contents preservation" overflow logic for
    prompt-style dialogs. */
-dialog[type="songbird"] .dialog-content-box
+dialog[type="nightingale"] .dialog-content-box
 {
     overflow: visible !important;
 }
@@ -69,6 +56,6 @@ dialog[type="songbird"] .dialog-content-box
 /* Allow for HTML in the dialog body. */
 .sb-html-description
 {
-  -moz-binding: url("chrome://songbird/content/bindings/htmlDescription.xml#sb-html-description") !important;
+  -moz-binding: url("chrome://nightingale/content/bindings/htmlDescription.xml#sb-html-description") !important;
 }
 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,12 +30,10 @@
 #include <nsCOMPtr.h>
 #include <nsThreadUtils.h>
 #include <nsComponentManagerUtils.h>
-
+#include <sbProxyUtils.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
-
-#include <sbProxiedComponentManager.h>
 
 /**
  * Helper class for preferences to make the syntax a bit easier on the eyes
@@ -73,7 +71,7 @@ public:
     PRBool const isMainThread = NS_IsMainThread();
     if (!isMainThread) {
       nsCOMPtr<nsIPrefService> proxy;
-      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(nsIPrefService),
                                 prefService,
                                 nsIProxyObjectManager::INVOKE_SYNC,
@@ -94,7 +92,7 @@ public:
     // then we need a proxy to the prefBranch too
     if (!isMainThread && aRoot) {
       nsCOMPtr<nsIPrefBranch> proxy;
-      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(nsIPrefBranch),
                                 mPrefBranch,
                                 nsIProxyObjectManager::INVOKE_SYNC,
@@ -185,7 +183,7 @@ public:
 
     // create a writable variant
     nsCOMPtr<nsIWritableVariant> writableVariant =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // get the value of our pref

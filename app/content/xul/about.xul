@@ -2,12 +2,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,18 +22,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <dialog
@@ -46,7 +46,7 @@
  width="480"
  height="360"
  hidechrome="true"
- type="songbird"
+ type="nightingale"
  onload="return doInit();"
  ondialogaccept="return doOK();"
  buttonlabelextra1="&about.buttons.credits;"
@@ -55,15 +55,15 @@
 
   <vbox flex="1">
     <textbox value="&about.version;" id="version_number" class="plain" clickSelectsAll="true" readonly="true" tabindex="2" />
-    <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
+    <browser id="about_browser" src="chrome://nightingale/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
   </vbox>
 
   <!-- And intrepid instructions! -->
   <script type="application/x-javascript" 
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script>
   <![CDATA[
     function doInit() {
@@ -84,7 +84,7 @@
       var mainWin =
            Components.classes["@mozilla.org/appshell/window-mediator;1"]
            .getService(Components.interfaces.nsIWindowMediator)
-		   .getMostRecentWindow("Songbird:Main");
+		   .getMostRecentWindow("Nightingale:Main");
       if (!mainWin || !mainWin.gBrowser)
         document.documentElement.getButton("extra1").disabled = true;
 
@@ -105,7 +105,7 @@
       var browser =
         Components.classes["@mozilla.org/appshell/window-mediator;1"]
         .getService(Components.interfaces.nsIWindowMediator)
-        .getMostRecentWindow("Songbird:Main").gBrowser;
+        .getMostRecentWindow("Nightingale:Main").gBrowser;
       browser.loadOneTab("about:credits");
       window.close();
       return true;

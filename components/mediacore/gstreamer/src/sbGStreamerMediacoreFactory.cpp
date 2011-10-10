@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -68,9 +68,9 @@ static PRLogModuleInfo* gGStreamerMediacoreFactory =
 
 #endif /* PR_LOGGING */
 
-#define BLACKLIST_EXTENSIONS_PREF "songbird.mediacore.gstreamer.blacklistExtensions"
-#define VIDEO_EXTENSIONS_PREF "songbird.mediacore.gstreamer.videoExtensions"
-#define VIDEO_DISABLED_PREF "songbird.mediacore.gstreamer.disablevideo"
+#define BLACKLIST_EXTENSIONS_PREF "nightingale.mediacore.gstreamer.blacklistExtensions"
+#define VIDEO_EXTENSIONS_PREF "nightingale.mediacore.gstreamer.videoExtensions"
+#define VIDEO_DISABLED_PREF "nightingale.mediacore.gstreamer.disablevideo"
 
 NS_IMPL_ISUPPORTS_INHERITED2(sbGStreamerMediacoreFactory,
                              sbBaseMediacoreFactory,
@@ -352,7 +352,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
     PRBool videoDisabled = PR_FALSE;
     rv = rootPrefBranch->GetBoolPref(
-                                    "songbird.mediacore.gstreamer.disablevideo",
+                                    "nightingale.mediacore.gstreamer.disablevideo",
                                     &videoDisabled);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!videoDisabled) {

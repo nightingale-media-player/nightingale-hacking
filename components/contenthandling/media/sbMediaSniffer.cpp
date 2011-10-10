@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -164,8 +164,8 @@ sbMediaSniffer::Register(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = catman->AddCategoryEntry(NS_CONTENT_SNIFFER_CATEGORY,
-                                SONGBIRD_MEDIASNIFFER_DESCRIPTION, 
-                                SONGBIRD_MEDIASNIFFER_CONTRACTID,
+                                NIGHTINGALE_MEDIASNIFFER_DESCRIPTION, 
+                                NIGHTINGALE_MEDIASNIFFER_CONTRACTID,
                                 PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -184,7 +184,7 @@ sbMediaSniffer::Unregister(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = catman->DeleteCategoryEntry(NS_CONTENT_SNIFFER_CATEGORY,
-                                   SONGBIRD_MEDIASNIFFER_DESCRIPTION, 
+                                   NIGHTINGALE_MEDIASNIFFER_DESCRIPTION, 
                                    PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 

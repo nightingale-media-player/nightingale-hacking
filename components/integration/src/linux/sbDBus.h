@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_DBUS_H_
@@ -30,7 +30,7 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus service defs.
+// Nightingale D-Bus service defs.
 //
 //   For D-Bus API documentation, see
 // http://dbus.freedesktop.org/doc/api/html/index.html.
@@ -40,12 +40,12 @@
 
 /**
  * \file  sbDBus.h
- * \brief Songbird D-Bus Service Definitions.
+ * \brief Nightingale D-Bus Service Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus imported services.
+// Nightingale D-Bus imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus service classes.
+// Nightingale D-Bus service classes.
 //
 //------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ class sbDBusMessage
 public:
 
   /**
-   * Create and return in aMessage a new Songbird D-Bus method call message
+   * Create and return in aMessage a new Nightingale D-Bus method call message
    * object with the destination, path, interface, and method specified by
    * aDestination, aPath, aInterface, and aMethod.
    *
@@ -103,7 +103,7 @@ public:
                    ...);
 
   /**
-   * Assign the base D-Bus message specified by aMessage to the Songbird D-Bus
+   * Assign the base D-Bus message specified by aMessage to the Nightingale D-Bus
    * message object.  Unreference any base D-Bus message currently assigned.
    *
    * \param aMessage            Base D-Bus message to assign.
@@ -121,13 +121,13 @@ public:
   }
 
   /**
-   * Construct a Songbird D-Bus message object using the base D-Bus data record
+   * Construct a Nightingale D-Bus message object using the base D-Bus data record
    * specified by aMessage.
    */
   sbDBusMessage(DBusMessage* aMessage = NULL) : mBaseMessage(aMessage) {}
 
   /**
-   * Destroy the Songbird D-Bus message object.
+   * Destroy the Nightingale D-Bus message object.
    */
   virtual ~sbDBusMessage();
 
@@ -163,7 +163,7 @@ class sbDBusConnection
 public:
 
   /**
-   * Create and return in aConnection a new Songbird D-Bus bus connection of
+   * Create and return in aConnection a new Nightingale D-Bus bus connection of
    * the type specified by aBusType.  For messages sent via this connection,
    * use the destination, path, and interface specified by aDestination, aPath,
    * and a Interface.
@@ -208,7 +208,7 @@ public:
   }
 
   /**
-   * Destroy the Songbird D-Bus connection object.
+   * Destroy the Nightingale D-Bus connection object.
    */
   virtual ~sbDBusConnection();
 
@@ -246,7 +246,7 @@ private:
   nsCString                     mInterface;
 
   /**
-   * Initialize the Songbird D-Bus connection with the bus type specified by
+   * Initialize the Nightingale D-Bus connection with the bus type specified by
    * aBusType and message destination, path, and interface specified by
    * aDestination, aPath, and aInterface.
    *
@@ -261,7 +261,7 @@ private:
                       const char* aInterface);
 
   /**
-   * Construct a Songbird D-Bus connection object.
+   * Construct a Nightingale D-Bus connection object.
    */
   sbDBusConnection();
 };
@@ -283,7 +283,7 @@ public:
 
 //------------------------------------------------------------------------------
 //
-// Songbird D-Bus service macros.
+// Nightingale D-Bus service macros.
 //
 //------------------------------------------------------------------------------
 

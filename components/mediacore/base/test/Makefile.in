@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://songbirdnest.com
+# http://getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
@@ -29,7 +29,9 @@ VPATH = @srcdir@ @top_srcdir@/components/mediacore/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = mediacorebase
+DISABLE_DEADLY_WARNINGS = 1
+
+NIGHTINGALE_TEST_COMPONENT = mediacorebase
 
 XPIDL_SRCS = sbITestMediacoreEventCreator.idl \
              $(NULL)
@@ -55,7 +57,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/manager/public \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/mediacore/base/src \
-                     $(topsrcdir)/components/moz/threads/src \
                      $(NULL)
                
 DYNAMIC_LIB = sbTestMediacoreBase
@@ -63,11 +64,9 @@ DYNAMIC_LIB = sbTestMediacoreBase
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-DYNAMIC_LIB_STATIC_IMPORTS += components/moz/threads/src/sbMozThreads
-
 IS_COMPONENT = 1
 
-SONGBIRD_TESTS = $(srcdir)/test_BaseMediacoreEventTarget.js \
+NIGHTINGALE_TESTS = $(srcdir)/test_BaseMediacoreEventTarget.js \
                  $(srcdir)/test_BaseMediacoreEventTargetThreaded.js \
                  $(NULL)
 

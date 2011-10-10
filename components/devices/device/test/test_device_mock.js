@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,192 +20,76 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
-const TEST_RUNNING = 0;
-const TEST_COMPLETED = 1;
-const TEST_FAILED = 2;
 
-var testStatus = TEST_RUNNING;
-var testFailMessage = "";
-
- 
 /**
  * \brief Device tests - Mock device
  */
 
-function checkPropertyBag(aBag, aParams) {
-  for (var name in aParams) {
-    var val;
-    try {
-      val = aBag.getProperty(name);
-    } catch (e) {
-      log('Failed to get property "' + name + '"');
-      throw(e);
-    }
-    assertTrue(val, 'Cannot find property "' + name + '"');
-    if (typeof(aParams[name]) == "object" && "wrappedJSObject" in aParams[name])
-      val = val.wrappedJSObject;
-    assertEqual(aParams[name],
-                val,
-                'property "' + name + '" not equal');
-    log('"' + name + '" is ' + val);
-  }
-}
-
 function runTest () {
-  let device = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
+  var device = Components.classes["@getnightingale.com/Nightingale/Device/DeviceTester/MockDevice;1"]
                          .createInstance(Components.interfaces.sbIDevice);
-  // Check basic device properties
   assertEqual(device.name, "Bob's Mock Device");
   assertEqual(device.productName, "Mock Device");
   
   assertEqual("" + device.id, "" + device.id, "device ID not equal");
   assertEqual("" + device.controllerId, "" + device.controllerId, "controller ID not equal");
   
-  // Make sure device is initialized and disconnected on creation
   assertFalse(device.connected);
   
-  // Check connect
   device.connect();
   assertTrue(device.connected);
-  
-  // Attempt a reconnect, this is expected to throw, if it doesn't then that
-  // is a failure
   try {
     device.connect();
     fail("Re-connected device");
+  } catch(e){
+    /* expected to throw */
+  }
+  assertTrue(device.connected);
+
+  device.disconnect();
+  assertFalse(device.connected);
+  try {
+    device.disconnect();
+    fail("Re-disconnected device");
   } catch(e) {
     /* expected to throw */
   }
+  assertFalse(device.connected);
   
-  // Make sure the device is still connected
-  assertTrue(device.connected);
-
-  // For the rest of these tests we need to hook up a listener.
-  // If we shutdown before the device disconnects (disconnect is asynchronous)
-  // then we'll get a crash in GC land.
-  // This event handler checks testStatus to see if the test is currenly running
-  // or has failed or is completed. It is at the failed or completed state that
-  // the handler terminates the unit test.
-  device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
-  var handler = function handler(event) { 
-    if (event.type == Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED) {
-    
-      // Check the current test status and end it if the test is done
-      switch (testStatus) {
-        case TEST_COMPLETED:
-          device.removeEventListener(handler);
-          doTimeout(500, function() {
-            testFinished();
-            return;
-          });
-          return;
-        case TEST_FAILED:
-          device.removeEventListener(handler);
-          doTimeout(500, function() {
-            fail(testFailMessage);
-            return;
-          });
-          return;
-        case TEST_RUNNING:
-          // Continue and perform remaining tests
-        break;
-        default:
-          fail("Unexpected testStatus value: " + testStatus);
-          return;
-      }
-        
-      log("Device removed event fired");
-      try {
-        // Device was disconnected, continue on testing
-        assertFalse(device.connected);
-
-        // Mock device is now threaded.
-        assertFalse(device.threaded);
-
-        log("Reconnecting");
-        device.connect();
-
-        test_prefs(device);
-
-        /* TODO: device.capabilities */
-
-        /* TODO: device.content */
-
-        /* TODO: device.parameters */
-
-        test_properties(device);
-
-        test_event(device);
-
-        /**
-         * This is used as a callback for the request test because it needs
-         * to asynchronously continue
-         */
-        function continueTest()
-        {
-          // Make sure we're connected
-          if (!device.connected)
-            device.connect();
-         
-          // Perform library and sync settings tests
-          try {
-            var operation = "test_library";
-            test_library(device);
-            operation = "test_sync_settings";
-            test_sync_settings(device);
-            testStatus = TEST_COMPLETED;
-          }
-          catch (e) {
-            testFailMessage = operation + " failed with exception: " + e;
-            log(testFailMessage);
-            testStatus = TEST_FAILED;
-            // stop a circular reference
-            if (device.connected)
-              device.disconnect();
-          }
-          finally {
-            if (testStatus != TEST_FAILED) {
-              testStatus = TEST_COMPLETED;
-            }
-            // stop a circular reference
-            if (device.connected)
-              device.disconnect();
-          }
-        }
-        test_request(device, continueTest);
-        return;
-      }
-      catch (e) {
-        testFailMessage = "test_request failed with exception: " + e;
-        log(testFailMessage);
-        testStatus = TEST_FAILED;
-        // stop a circular reference
-        if (device.connected) {
-           device.disconnect();
-        }
-        else {
-          fail();
-          return;
-        }
-      }    
-    }
-  }
-  device.addEventListener(handler);
-
-  device.disconnect();
+  assertFalse(device.threaded);
+  
+  test_prefs(device);
+  
+  /* TODO: device.capabilities */
+  
+  /* TODO: device.content */
+  
+  /* TODO: device.parameters */
+  
+  test_properties(device);
+  
+  test_event(device);
+  
+  test_request(device);
+  
+  if (!device.connected)
+    device.connect();
   try {
-    device.disconnect();
-  } catch(e) {
-    fail("Re-disconnected device should not fail");
+    test_library(device);
+ 
+    test_sync_settings(device);
   }
-  testPending();
+  finally {
+    // stop a circular reference
+    if (device.connected)
+      device.disconnect();
+  }    
 }
 
 function test_prefs(device) {
-  log("test_prefs");
   assertTrue(typeof(device.getPreference("hello")) == "undefined");
   
   device.setPreference("world", 3);
@@ -245,14 +129,13 @@ function test_prefs(device) {
 }
 
 function test_event(device) {
-  log("test_event");
   /* test as a event target */
   // I didn't bother with CI on the mock device
   device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
   var wasFired = false;
   var handler = function handler() { wasFired = true; }
   device.addEventListener(handler);
-  var event = Components.classes["@songbirdnest.com/Songbird/DeviceManager;2"]
+  var event = Components.classes["@getnightingale.com/Nightingale/DeviceManager;2"]
                         .getService(Components.interfaces.sbIDeviceManager2)
                         .createEvent(0);
   device.dispatchEvent(event);
@@ -261,10 +144,32 @@ function test_event(device) {
   device.removeEventListener(handler);
 }
 
-function test_request(device, continueAction) {
-  log("test_request");
+function test_request(device) {
   /* test as sbIMockDevice (request push/pop) */
   device.QueryInterface(Ci.sbIMockDevice);
+  
+  // simple index-only
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 10}));
+  checkPropertyBag(device.popRequest(), {index: 10});
+  
+  // priority
+  const MAXINT = (-1) >>> 1; // max signed int (to test that we're not allocating)
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: MAXINT, priority: MAXINT}));
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 99, priority: 99}));
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 100}));
+  checkPropertyBag(device.popRequest(), {index: 99, priority: 99});
+  checkPropertyBag(device.popRequest(), {index: 100}); /* default */
+  checkPropertyBag(device.popRequest(), {index: MAXINT, priority: MAXINT});
+  
+  // peek
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 42}));
+  checkPropertyBag(device.peekRequest(), {index: 42});
+  checkPropertyBag(device.popRequest(), {index: 42});
   
   // test the properties
   var item = { QueryInterface:function(){return this} };
@@ -277,60 +182,55 @@ function test_request(device, continueAction) {
                  list: list,
                  data: data,
                  index: 999,
-                 otherIndex: 1024 };
-  var retryCount = 0;
-  device.submitRequest(0x201dbeef, createPropertyBag(params));
-  // Wait for a request to come in using a timeout
-  function requestCheck() {
-    let request = null;
-    try {
-      request = device.popRequest();
-    }
-    catch (e)
-    {
-      // exception expected, fall through with request being null
-    }
-    if (request) {
-      // Skip the thread start request and any other built in request
-      if (request.getProperty("requestType") >= 0x20000000) {
-        checkPropertyBag(request, params);
-        log("item transfer ID: " + request.getProperty("itemTransferID"));
-        assertTrue(request.getProperty("itemTransferID") > 3,
-                     "Obviously bad item transfer ID");
-
-        request = null; /* unleak */
-        continueAction();
-        return;
-      }      
-    }
-    // Limit retries to 6 seconds
-    if (++retryCount > 60) {
-      fail("Failed in waiting for request");
-    }
-    // No request, continue to wait
-    doTimeout(100, requestCheck);
-    return;
-  }
-  doTimeout(100, requestCheck);
+                 otherIndex: 1024,
+                 priority: 37};
+  device.submitRequest(0x01dbeef, createPropertyBag(params));
+  var request = device.popRequest();
+  checkPropertyBag(request, params);
+  log("item transfer ID: " + request.getProperty("itemTransferID"));
+  assertTrue(request.getProperty("itemTransferID") > 3,
+             "Obviously bad item transfer ID");
+  
+  request = null; /* unleak */
 }
 
 function test_library(device) {
-  log("test_library");
-  assertEqual(
-        device,
-        device.content.libraries.queryElementAt(0, Ci.sbIDeviceLibrary).device);
-  assertTrue(device.defaultLibrary.equals(
-               device.content.libraries.queryElementAt(0, Ci.sbIDeviceLibrary)));
+  assertEqual(device,
+              device.content
+                    .libraries
+                    .queryElementAt(0, Ci.sbIDeviceLibrary)
+                    .device);
+  assertEqual(device.defaultLibrary,
+              device.content
+                    .libraries
+                    .queryElementAt(0, Ci.sbIDeviceLibrary));
 }
 
-function test_set_and_verify(device, audio, video, image)
-{
+function test_sync_settings(device) {
+  log("Testing initial mode");
   let syncSettings = device.defaultLibrary.syncSettings;
-
-  log("Changing management types to " + audio + ", " + video + ", " + image);
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+  device.defaultLibrary.syncSettings = syncSettings;
   
-  // Get all the media settings
+  log("Changing to SYNC_MODE_AUTO without applying");
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
   syncSettings = device.defaultLibrary.syncSettings;
+  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
+  
+  log("Changing to SYNC_MODE_AUTO with applying");
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
+  device.defaultLibrary.syncSettings = syncSettings;
+  syncSettings = device.defaultLibrary.syncSettings;
+  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO);
+  
+  log("Changing to SYNC_MODE_MANUAL with applying");
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+  device.defaultLibrary.syncSettings = syncSettings;
+  assertEqual(device.defaultLibrary.syncSettings.syncMode,
+              Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
+  
+  log("Changing management type to all");
+  syncSettings = device.defaultLibrary.tempSyncSettings;
   
   let audioSyncSettings = syncSettings.getMediaSettings(
                                            Ci.sbIDeviceLibrary.MEDIATYPE_AUDIO);
@@ -338,45 +238,37 @@ function test_set_and_verify(device, audio, video, image)
                                            Ci.sbIDeviceLibrary.MEDIATYPE_VIDEO);
   let imageSyncSettings = syncSettings.getMediaSettings(
                                            Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE);
-                                           
-  // Set the management types and verify
-  audioSyncSettings.mgmtType = audio;                             
-  assertEqual(audioSyncSettings.mgmtType, audio);
-  videoSyncSettings.mgmtType = video;
-  assertEqual(videoSyncSettings.mgmtType, video);
-  imageSyncSettings.mgmtType = image;
-  assertEqual(imageSyncSettings.mgmtType, image);
-
-  device.defaultLibrary.syncSettings = syncSettings;
-
-  // Now retrieve the media settings again and verify them  
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
+  audioSyncSettings.mgmtType = 
+                             Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL;                             
+  assertEqual(audioSyncSettings.mgmtType, 
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL);
+  videoSyncSettings.mgmtType = 
+                             Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL;
+  assertEqual(videoSyncSettings.mgmtType, 
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL);
+  imageSyncSettings.mgmtType = 
+                            Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE;
+  assertEqual(imageSyncSettings.mgmtType, 
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
+  log("Applying changes");
+  device.defaultLibrary.applySyncSettings();
   syncSettings = device.defaultLibrary.syncSettings;
+  log("Checking syncMode");
+  assertEqual(syncSettings.syncMode, 
+              Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO);
+  log("Checking audio management setting");              
   assertEqual(syncSettings.getMediaSettings(
                                   Ci.sbIDeviceLibrary.MEDIATYPE_AUDIO).mgmtType,
-              audio);
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL);
+  log("Checking video management setting");              
   assertEqual(syncSettings.getMediaSettings(
                                   Ci.sbIDeviceLibrary.MEDIATYPE_VIDEO).mgmtType,
-              video);
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL);
+  log("Checking image management setting");              
   assertEqual(syncSettings.getMediaSettings(
                                   Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE).mgmtType,
-              image);
-}
-
-function test_sync_settings(device) {
-  log("Testing initial mode");
-  let syncSettings = device.defaultLibrary.syncSettings;
-
-  log("Changing management type to all");
-  
-  test_set_and_verify(device,
-                      Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL,
-                      Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL,
-                      Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_ALL);
-
-  test_set_and_verify(device,
-                      Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,
-                      Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,
-                      Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
 }
 
 function test_properties(device) {
@@ -404,4 +296,22 @@ function createPropertyBag(aParams) {
     bag.setProperty(name, aParams[name]);
   }
   return bag;
+}
+
+function checkPropertyBag(aBag, aParams) {
+  for (var name in  aParams) {
+    try {
+      var val = aBag.getProperty(name);
+    } catch (e) {
+      log('Failed to get property "' + name + '"');
+      throw(e);
+    }
+    assertTrue(val, 'Cannot find property "' + name + '"');
+    if (typeof(aParams[name]) == "object" && "wrappedJSObject" in aParams[name])
+      val = val.wrappedJSObject;
+    assertEqual(aParams[name],
+                val,
+                'property "' + name + '" not equal');
+    log('"' + name + '" is ' + val);
+  }
 }

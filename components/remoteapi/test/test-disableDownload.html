@@ -4,21 +4,21 @@
     <script>
       function onload(event) {
         var baseurl = window.location.href.replace(/[^/]+$/, '');
-        songbird.setSiteScope('', '/');
-        var library = songbird.siteLibrary;
+        nightingale.setSiteScope('', '/');
+        var library = nightingale.siteLibrary;
         library.scanMediaOnCreation = false;
         var list = library.createSimpleMediaList('Disable Download Test', 
             'disableDownloadTest');
         list.clear();
-        var test01 = library.createMediaItem("http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3");
-        var test02 = library.createMediaItem("http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3");
+        var test01 = library.createMediaItem("http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3");
+        var test02 = library.createMediaItem("http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3");
         // disable download of test02
-        test02.setProperty('http://songbirdnest.com/data/1.0#disableDownload', '1');
+        test02.setProperty('http://getnightingale.com/data/1.0#disableDownload', '1');
         list.add(test01);
         list.add(test02);
-        songbird.webPlaylist.mediaList = list;
-        test01.setProperty('http://songbirdnest.com/data/1.0#trackName', 'Downloadable');
-        test02.setProperty('http://songbirdnest.com/data/1.0#trackName', 'Not Downloadable');
+        nightingale.webPlaylist.mediaList = list;
+        test01.setProperty('http://getnightingale.com/data/1.0#trackName', 'Downloadable');
+        test02.setProperty('http://getnightingale.com/data/1.0#trackName', 'Not Downloadable');
       }
     </script>
     <style>

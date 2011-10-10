@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDirectoryProvider.h"
@@ -32,7 +32,7 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDirectoryProvider, Init)
 
 /**
- * Register the Songbird directory service provider component.
+ * Register the Nightingale directory service provider component.
  */
 
 static NS_METHOD
@@ -53,8 +53,8 @@ sbDirectoryProviderRegister(nsIComponentManager*         aCompMgr,
   // Add self to the app-startup category.
   rv = categoryManager->AddCategoryEntry
                           ("app-startup",
-                           SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME,
-                           "service," SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID,
+                           NIGHTINGALE_DIRECTORY_PROVIDER_CLASSNAME,
+                           "service," NIGHTINGALE_DIRECTORY_PROVIDER_CONTRACTID,
                            PR_TRUE,
                            PR_TRUE,
                            nsnull);
@@ -65,7 +65,7 @@ sbDirectoryProviderRegister(nsIComponentManager*         aCompMgr,
 
 
 /**
- * Unregister the Songbird directory service provider component.
+ * Unregister the Nightingale directory service provider component.
  */
 
 static NS_METHOD
@@ -84,7 +84,7 @@ sbDirectoryProviderUnregister(nsIComponentManager*         aCompMgr,
 
   // Delete self from the app-startup category.
   rv = categoryManager->DeleteCategoryEntry("app-startup",
-                                            SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME,
+                                            NIGHTINGALE_DIRECTORY_PROVIDER_CLASSNAME,
                                             PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -95,9 +95,9 @@ sbDirectoryProviderUnregister(nsIComponentManager*         aCompMgr,
 static const nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME,
-    SONGBIRD_DIRECTORY_PROVIDER_CID,
-    SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID,
+    NIGHTINGALE_DIRECTORY_PROVIDER_CLASSNAME,
+    NIGHTINGALE_DIRECTORY_PROVIDER_CID,
+    NIGHTINGALE_DIRECTORY_PROVIDER_CONTRACTID,
     sbDirectoryProviderConstructor,
     sbDirectoryProviderRegister,
     sbDirectoryProviderUnregister

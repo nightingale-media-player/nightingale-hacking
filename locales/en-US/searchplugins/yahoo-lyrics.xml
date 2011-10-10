@@ -8,5 +8,5 @@
   <Param name="m" value="lyrics"/>
 </Url>
 <SearchForm>http://music.yahoo.com/lyrics</SearchForm>
-<Tags>songbird:hidden lyrics</Tags>
+<Tags>nightingale:hidden lyrics</Tags>
 </SearchPlugin>

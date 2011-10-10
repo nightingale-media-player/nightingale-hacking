@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
 * \file  MetadataHandlerWMAComponent.cpp
-* \brief Songbird WMA Metadata Handler Component Factory and Main Entry Point.
+* \brief Nightingale WMA Metadata Handler Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
@@ -38,12 +38,12 @@ static nsModuleComponentInfo sbMetadataHandlerWMAComponent[] =
 {
 
   {
-    SONGBIRD_METADATAHANDLERWMA_CLASSNAME,
-    SONGBIRD_METADATAHANDLERWMA_CID,
-    SONGBIRD_METADATAHANDLERWMA_CONTRACTID,
+    NIGHTINGALE_METADATAHANDLERWMA_CLASSNAME,
+    NIGHTINGALE_METADATAHANDLERWMA_CID,
+    NIGHTINGALE_METADATAHANDLERWMA_CONTRACTID,
     sbMetadataHandlerWMAConstructor
   },
 
 };
 
-NS_IMPL_NSGETMODULE("SongbirdMetadataHandlerWMAComponent", sbMetadataHandlerWMAComponent)
+NS_IMPL_NSGETMODULE("NightingaleMetadataHandlerWMAComponent", sbMetadataHandlerWMAComponent)

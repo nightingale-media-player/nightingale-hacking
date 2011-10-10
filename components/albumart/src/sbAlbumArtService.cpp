@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,33 +22,33 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art service.
+// Nightingale album art service.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtService.cpp
- * \brief Songbird Album Art Service Source.
+ * \brief Nightingale Album Art Service Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service imported services.
+// Nightingale album art service imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbAlbumArtService.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbIAlbumArtFetcherSet.h>
@@ -78,7 +78,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service configuration.
+// Nightingale album art service configuration.
 //
 //------------------------------------------------------------------------------
 
@@ -168,7 +168,7 @@ sbAlbumArtService::GetFetcherList(PRUint32 aType,
   // Create the fetcher list array.
   nsCOMPtr<nsIMutableArray>
     fetcherList = do_CreateInstance
-                    ("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+                    ("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add each fetcher contract ID to fetcher list.
@@ -448,23 +448,9 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   nsresult rv;
 
   // Dispatch processing of event.
-  if (!strcmp(aTopic, "app-startup")) {
-    // Add observers for other events.
-    nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
-            "@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add observers.
-    rv = obsSvc->AddObserver(this,
-                             "profile-after-change",
-                             PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = obsSvc->AddObserver(this,
-                             SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
-                             PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(aTopic, "profile-after-change")) {
-    // Initialize, now that we're able to read our preferences/etc.
+  if (!strcmp(aTopic, "profile-after-change")) {
+    // Mark preferences as available and continue with initialization.
+    mPrefsAvailable = PR_TRUE;
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
@@ -499,6 +485,7 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
 
 sbAlbumArtService::sbAlbumArtService() :
   mInitialized(PR_FALSE),
+  mPrefsAvailable(PR_FALSE),
   mCacheFlushTimer(nsnull)
 {
 #ifdef PR_LOGGING
@@ -531,6 +518,27 @@ sbAlbumArtService::Initialize()
 
   // Do nothing if already initialized.
   if (mInitialized)
+    return NS_OK;
+
+  // Add observers.
+  if (!mObserverService) {
+    // Get the observer service.
+    mObserverService = do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add observers.
+    rv = mObserverService->AddObserver(this,
+                                       "profile-after-change",
+                                       PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mObserverService->AddObserver(this,
+                                       SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                       PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Do nothing more if preferences are not available.
+  if (!mPrefsAvailable)
     return NS_OK;
 
   // Get the I/O service
@@ -623,10 +631,12 @@ sbAlbumArtService::Finalize()
   mTemporaryCache.Clear();
 
   // Remove observers.
-  nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
-          "@mozilla.org/observer-service;1", &rv);
-  obsSvc->RemoveObserver(this, "profile-after-change");
-  obsSvc->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+  if (mObserverService) {
+    mObserverService->RemoveObserver(this, "profile-after-change");
+    mObserverService->RemoveObserver(this, 
+                                     SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+    mObserverService = nsnull;
+  }
 
   if (mCacheFlushTimer) {
     rv = mCacheFlushTimer->Cancel();

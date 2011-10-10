@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDeviceFirmwareDownloader.h"
@@ -54,12 +54,9 @@
 
 #include "sbDeviceFirmwareUpdate.h"
 
-#define FIRMWARE_FILE_PREF                    "firmware.cache.file"
-#define FIRMWARE_VERSION_PREF                 "firmware.cache.version"
-#define FIRMWARE_READABLE_PREF                "firmware.cache.readableVersion"
-#define FIRMWARE_CACHE_ROOT_NAME              "firmware_cache"
-#define FIRMWARE_CACHE_LAYOUT_VERSION_2_NAME  "v2"
-#define FIRMWARE_CACHE_CURRENT_VERSION_NAME   FIRMWARE_CACHE_LAYOUT_VERSION_2_NAME
+#define FIRMWARE_FILE_PREF      "firmware.cache.file"
+#define FIRMWARE_VERSION_PREF   "firmware.cache.version"
+#define FIRMWARE_READABLE_PREF  "firmware.cache.readableVersion"
 
 static PRInt32
 codetovalue( unsigned char c )
@@ -508,66 +505,42 @@ sbDeviceFirmwareDownloader::CreateCacheRoot(nsIFile **aCacheRoot)
   rv = localDataDir->Clone(getter_AddRefs(cacheDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING(firmwareCacheName, FIRMWARE_CACHE_ROOT_NAME);
+  NS_NAMED_LITERAL_STRING(firmwareCacheName, "firmware_cache");
   rv = cacheDir->Append(firmwareCacheName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  // The cache root directory should contain a subdirectory whose
-  // name is the current cache version.  If the subdirectory exists,
-  // then the cache is arranged in the structure that this code
-  // recognizes.  Otherwise, the cache either does not exist or it
-  // uses an unknown structure.
-  nsCOMPtr<nsIFile> cacheVersionDir;
-  rv = cacheDir->Clone(getter_AddRefs(cacheVersionDir));
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING(versionName, FIRMWARE_CACHE_CURRENT_VERSION_NAME);
-  rv = cacheVersionDir->Append(versionName);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // Check whether the desired cache version directory exists:
   PRBool exists = PR_FALSE;
   PRBool isDirectory = PR_FALSE;
 
-  rv = cacheVersionDir->Exists(&exists);
+  rv = cacheDir->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(exists) {
-    rv = cacheVersionDir->IsDirectory(&isDirectory);
+  if(!exists) {
+    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
-  // If the desired version directory does not exist, delete the entire
-  // firmware cache root directory to expel any unknown versions, and
-  // then create the desired version directory.  Another approach would
-  // be to migrate data from older cache versions to the current version,
-  // but any unrecognized cache content should normally be deleted to
-  // reclaim its space.
+
+  rv = cacheDir->IsDirectory(&isDirectory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if(!isDirectory) {
-    rv = cacheDir->Exists(&exists);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (exists) {
-      rv = cacheDir->Remove(PR_TRUE); // PR_TRUE = recursive
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    
-    rv = cacheVersionDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
+    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
   PRBool isReadable = PR_FALSE;
   PRBool isWritable = PR_FALSE;
 
-  rv = cacheVersionDir->IsReadable(&isReadable);
+  rv = cacheDir->IsReadable(&isReadable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = cacheVersionDir->IsWritable(&isWritable);
+  rv = cacheDir->IsWritable(&isWritable);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_TRUE(isReadable, NS_ERROR_FAILURE);
   NS_ENSURE_TRUE(isWritable, NS_ERROR_FAILURE);
 
-  cacheVersionDir.forget(aCacheRoot);
+  cacheDir.forget(aCacheRoot);
 
   return NS_OK;
 }
@@ -1230,7 +1203,7 @@ sbDeviceFirmwareDownloader::CreateDeviceEvent(PRUint32 aType,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIDeviceManager2> deviceManager =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deviceManager->CreateEvent(aType,

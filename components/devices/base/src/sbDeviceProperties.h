@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -59,13 +59,13 @@ protected:
   nsCOMPtr<nsIURI> mDeviceIcon;
 };
 
-#define SONGBIRD_DEVICEPROPERTIES_DESCRIPTION             \
-  "Songbird Device Properties Component"
-#define SONGBIRD_DEVICEPROPERTIES_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/DeviceProperties;1"
-#define SONGBIRD_DEVICEPROPERTIES_CLASSNAME               \
-  "Songbird Device Properties"
-#define SONGBIRD_DEVICEPROPERTIES_CID                     \
+#define NIGHTINGALE_DEVICEPROPERTIES_DESCRIPTION             \
+  "Nightingale Device Properties Component"
+#define NIGHTINGALE_DEVICEPROPERTIES_CONTRACTID              \
+  "@getnightingale.com/Nightingale/Device/DeviceProperties;1"
+#define NIGHTINGALE_DEVICEPROPERTIES_CLASSNAME               \
+  "Nightingale Device Properties"
+#define NIGHTINGALE_DEVICEPROPERTIES_CID                     \
 { /* 1b7449fe-86d1-4668-85fb-9d75591e48cd */              \
   0x1b7449fe,                                             \
   0x86d1,                                                 \

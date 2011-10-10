@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -131,7 +131,7 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
 
 // given an existing item, create either a wrapped list
 // or wrapped item, handing it back as an item
-static inline nsresult
+static nsresult
 SB_WrapMediaItem( sbRemotePlayer *aRemotePlayer,
                   sbIMediaItem *aMediaItem,
                   sbIMediaItem **aRemoteMediaItem )
@@ -182,10 +182,10 @@ SB_WrapMediaItem( sbRemotePlayer *aRemotePlayer,
   return NS_OK;
 }
 
-// given an existing list, create a view and hand back a wrapped
+// given an exiting list, create a view and hand back a wrapped
 // list. This is merely just a wrapper around the other method to QI
 // to a sbIRemoteMediaList
-static inline nsresult
+static nsresult
 SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
                   sbIMediaList *aMediaList,
                   sbIRemoteMediaList **aRemoteMediaList )
@@ -212,7 +212,7 @@ SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
 
 // given an existing view, walk back in to the list and
 // hand back the wrapped list
-static inline nsresult
+static nsresult
 SB_WrapMediaList( sbRemotePlayer *aRemotePlayer,
                   sbIMediaListView *aMediaListView,
                   sbIRemoteMediaList **aRemoteMediaList )

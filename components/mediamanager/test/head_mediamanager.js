@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -40,29 +40,35 @@ Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
 /**
  * \brief Some globally useful stuff for the tests
  */
-var SB_NS = "http://songbirdnest.com/data/1.0#";
-var SB_MEDIAFILEMANAGER = "@songbirdnest.com/Songbird/media-manager/file;1";
+var SB_NS = "http://getnightingale.com/data/1.0#";
+var SB_MEDIAFILEMANAGER = "@getnightingale.com/Nightingale/media-manager/file;1";
+var SB_MEDIAMANAGERJOB = "@getnightingale.com/Nightingale/media-manager/job;1";
 
-var SB_MM_PROP_FOLDER = "media-folder";
-var SB_MM_PROP_FMTFILE = "file-format";
-var SB_MM_PROP_FMTDIR = "dir-format";
-
+// Media manager preferences
+var SB_MM_PREF_FOLDER = "nightingale.media_management.library.folder";
+var SB_MM_PREF_ENABLED = "nightingale.media_management.library.enabled";
+var SB_MM_PREF_COPY = "nightingale.media_management.library.copy";
+var SB_MM_PREF_MOVE = "nightingale.media_management.library.move";
+var SB_MM_PREF_RENAME = "nightingale.media_management.library.rename";
+var SB_MM_PREF_FMTDIR = "nightingale.media_management.library.format.dir";
+var SB_MM_PREF_FMTFILE = "nightingale.media_management.library.format.file";
+var SB_MM_PADTRACKNUM = "nightingale.media_management.library.pad_track_num";
 
 // An array of what our test results should be
 var gResultInformation = [
   { originalFileName: "TestFile1.mp3",
     expectedFileName: "1 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedFolder:   "Managed/Nightingale/Unit Test Classics",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
   { originalFileName: "TestFile2.mp3",
     expectedFileName: "2 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedFolder:   "Managed/Nightingale/Unit Test Classics",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
   { originalFileName: "TestFile3.mp3",
     expectedFileName: "3 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedFolder:   "Managed/Nightingale/Unit Test Classics",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
 
@@ -74,7 +80,7 @@ var gResultInformation = [
 
   { originalFileName: "TestFile5.mp3",
     expectedFileName: "1 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unknown Album",
+    expectedFolder:   "Managed/Nightingale/Unknown Album",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
 
@@ -86,17 +92,19 @@ var gResultInformation = [
 
   { originalFileName: "TestFile7.mp3",
     expectedFileName: "01 - Sample7.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedFolder:   "Managed/Nightingale/Unit Test Classics",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
 
   { originalFileName: "TestFile8.mp3",
     expectedFileName: "11 - Sample8.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedFolder:   "Managed/Nightingale/Unit Test Classics",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_MOVE |
                       Ci.sbIMediaFileManager.MANAGE_RENAME }
 ];
 
+// Keep a copy of the original prefs so we don't screw anything up
+var gOriginalPrefs = null;
 // Test library to use.
 var gTestLibrary;
 // Items we add to the library to test our file management
@@ -106,10 +114,83 @@ var gFileLocation = "testharness/mediamanager/files/";
 
 
 /**
- * Get a property bag containing all the configuration properties we want for
- * these tests.
+ * Save the Media Manager preferences.
  */
-function getMediaManagerProperties () {
+function saveMediaManagerPreferences () {
+  // Setup some defaults
+  gOriginalPrefs = {
+    folder: null,
+    copy: false,
+    move: false,
+    rename: false,
+    formatDir: "",
+    formatFile: "",
+    enabled: false,
+    padTrackNum: false
+  };
+
+  var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                     .getService(Ci.nsIPrefBranch2);
+
+  // Store the current preferences so we can restore them later
+  if (Application.prefs.has(SB_MM_PREF_FOLDER)) {
+    try {
+      gOriginalPrefs.folder = prefBranch.getComplexValue(SB_MM_PREF_FOLDER,
+                                                         Ci.nsILocalFile);
+    } catch (err) {
+      log("Unable to save folder preference: " + err);
+    }
+  }
+
+  gOriginalPrefs.enabled = Application.prefs.getValue(SB_MM_PREF_ENABLED, false);
+  gOriginalPrefs.copy = Application.prefs.getValue(SB_MM_PREF_COPY, false);
+  gOriginalPrefs.move = Application.prefs.getValue(SB_MM_PREF_MOVE, false);
+  gOriginalPrefs.rename = Application.prefs.getValue(SB_MM_PREF_RENAME, false);
+  gOriginalPrefs.formatDir = Application.prefs.getValue(SB_MM_PREF_FMTDIR, "");
+  gOriginalPrefs.formatFile = Application.prefs.getValue(SB_MM_PREF_FMTFILE, "");
+  gOriginalPrefs.padTrackNum = Application.prefs.getValue(SB_MM_PADTRACKNUM, false);
+}
+
+/**
+ * Restore the Media Manager preferences.
+ * Called in tail_metadatamanager.js
+ */
+function restoreMediaManagerPreferences() {
+  // Don't do anything if we didn't save the prefs
+  if (gOriginalPrefs == null) {
+    log("Not restoring prefs!!!");
+    return;
+  }
+
+  var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                     .getService(Ci.nsIPrefBranch2);
+
+  if (gOriginalPrefs.folder) {
+    prefBranch.setComplexValue(SB_MM_PREF_FOLDER,
+                               Ci.nsILocalFile,
+                               gOriginalPrefs.folder);
+  }
+  prefBranch.setBoolPref(SB_MM_PREF_ENABLED, gOriginalPrefs.enabled);
+  prefBranch.setBoolPref(SB_MM_PREF_COPY, gOriginalPrefs.copy);
+  prefBranch.setBoolPref(SB_MM_PREF_MOVE, gOriginalPrefs.move);
+  prefBranch.setBoolPref(SB_MM_PREF_RENAME, gOriginalPrefs.rename);
+  prefBranch.setCharPref(SB_MM_PREF_FMTDIR, gOriginalPrefs.formatDir);
+  prefBranch.setCharPref(SB_MM_PREF_FMTFILE, gOriginalPrefs.formatFile);
+  prefBranch.setBoolPref(SB_MM_PADTRACKNUM, gOriginalPrefs.padTrackNum);
+}
+
+/**
+ * Set up what we want the preferences to be, we need to do this since the
+ * Media Manager depends on the preferences to organize.
+ */
+function setupMediaManagerPreferences () {
+  // First thing is to save them if they have not already been saved
+  if (gOriginalPrefs == null) {
+    saveMediaManagerPreferences();
+  }
+
+  var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                     .getService(Ci.nsIPrefBranch2);
 
   var separator = "/";
   if (getPlatform() == "Windows_NT") {
@@ -120,20 +201,20 @@ function getMediaManagerProperties () {
   // Create the folder
   managedFolder.create(Ci.nsIFile.DIRECTORY_TYPE, 0777);
 
-  var properties = Cc["@mozilla.org/hash-property-bag;1"]
-                     .createInstance(Ci.nsIWritablePropertyBag2);;
-
-  properties.setPropertyAsInterface(SB_MM_PROP_FOLDER, managedFolder);
-  properties.setPropertyAsAString(SB_MM_PROP_FMTFILE, 
-                         SB_NS + "trackNumber," +
-                         " - ," +
-                         SB_NS + "trackName");
-  properties.setPropertyAsAString(SB_MM_PROP_FMTDIR,
+  prefBranch.setComplexValue(SB_MM_PREF_FOLDER, Ci.nsILocalFile, managedFolder);
+  prefBranch.setBoolPref(SB_MM_PREF_ENABLED, false);
+  prefBranch.setBoolPref(SB_MM_PREF_COPY, true);
+  prefBranch.setBoolPref(SB_MM_PREF_MOVE, true);
+  prefBranch.setBoolPref(SB_MM_PREF_RENAME, true);
+  prefBranch.setBoolPref(SB_MM_PADTRACKNUM, true);
+  prefBranch.setCharPref(SB_MM_PREF_FMTDIR,
                          SB_NS + "artistName," +
                          separator + "," +
                          SB_NS + "albumName");
-
-  return properties;
+  prefBranch.setCharPref(SB_MM_PREF_FMTFILE,
+                         SB_NS + "trackNumber," +
+                         " - ," +
+                         SB_NS + "trackName");
 }
 
 /**
@@ -141,9 +222,9 @@ function getMediaManagerProperties () {
  * since the MediaFileManager uses the property information to organize.
  */
 function addItemsToLibrary(aLibrary) {
-  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var toAdd = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                 .createInstance(Ci.nsIMutableArray);
-  var propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var propertyArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
   var ioService = Cc["@mozilla.org/network/io-service;1"]
                     .getService(Ci.nsIIOService);
@@ -155,7 +236,7 @@ function addItemsToLibrary(aLibrary) {
     toAdd.appendElement(ioService.newFileURI(newFile), false);
 
     // Setup default properties for this item
-    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+    var props = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
     props.appendProperty(SB_NS + "contentLength", i + 1);
     props.appendProperty(SB_NS + "trackNumber", i + 1);
@@ -231,7 +312,7 @@ function checkDeletedItem(aMediaItem) {
  * A test Media List Listener to watch for additions to the library
  */
 function TestMediaListListener() {
-  this._added = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  this._added = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                           .createInstance(Components.interfaces.nsIMutableArray);
 }
 TestMediaListListener.prototype = {
@@ -316,7 +397,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_mediamanager_tests.tmp");
+  gTempFolder.append("nightingale_mediamanager_tests.tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }
@@ -337,7 +418,7 @@ function removeTempFolder() {
  * Get rid of any test librarys we have created
  */
 function removeTestLibraries() {
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"].
                        getService(Ci.sbILibraryManager);
 
   // Since unregisterLibrary does not clear or delete the library we have

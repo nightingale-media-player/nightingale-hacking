@@ -1,27 +1,29 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 
 /**
@@ -55,7 +57,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
@@ -76,7 +78,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 var sbFileDownloaderCfg= {
   classDescription: "File Downloader",
   classID: Components.ID("{f93a67e4-d97d-4607-971e-00ae2bf8ef8f}"),
-  contractID: "@songbirdnest.com/Songbird/FileDownloader;1",
+  contractID: "@getnightingale.com/Nightingale/FileDownloader;1",
   ifList: [ Ci.sbIFileDownloader, Ci.nsIWebProgressListener ],
   _xpcom_categories: []
 };
@@ -206,13 +208,6 @@ sbFileDownloader.prototype = {
 
 
   /**
-   * \brief Temporary file factory to use for any temporary files.
-   */
-
-  temporaryFileFactory: null,
-
-
-  /**
    * \brief Start file download from source URI to destination file.  If source
    *        URI is not specified, use source URI spec.  If destination file is
    *        not specified, create a temporary one.
@@ -244,21 +239,13 @@ sbFileDownloader.prototype = {
     //XXXeps if destination file is provided, should create a temporary one and
     //XXXeps move to destination when complete.
     if (!this.destinationFile) {
-      if (this.temporaryFileFactory) {
-        this.destinationFile =
-          this.temporaryFileFactory.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
-                                               null,
-                                               this.destinationFileExtension);
-      }
-      else {
-        var temporaryFileService =
-              Cc["@songbirdnest.com/Songbird/TemporaryFileService;1"]
-                .getService(Ci.sbITemporaryFileService);
-        this.destinationFile =
-               temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
-                                               null,
-                                               this.destinationFileExtension);
-      }
+      var temporaryFileService =
+            Cc["@getnightingale.com/Nightingale/TemporaryFileService;1"]
+              .getService(Ci.sbITemporaryFileService);
+      this.destinationFile =
+             temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
+                                             null,
+                                             this.destinationFileExtension);
     }
 
     // Start the file download.
@@ -280,7 +267,7 @@ sbFileDownloader.prototype = {
     this._webBrowserPersist.cancelSave();
     this.request = null;
   },
-
+  
   /**
    * \brief The request used during the transfer.
    */
@@ -323,29 +310,15 @@ sbFileDownloader.prototype = {
     if (!this.request) {
       this.request = aRequest;
     }
-
+                                                         
     // Check for completion.
     if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
       // Mark completion.
       this.complete = true;
 
-      // Check for HTTP channel failure.
-      var httpChannelFailed = false;
-      try {
-        var httpChannel = aRequest.QueryInterface(Ci.nsIHttpChannel);
-        httpChannelFailed = (httpChannel.requestSucceeded ? false : true);
-      }
-      catch (ex) {}
-
-      // Mark success if aStatus is NS_OK and the HTTP channel did not fail.
-      if ((aStatus == Cr.NS_OK) && !httpChannelFailed)
+      // Mark success if aStatus is NS_OK.
+      if (aStatus == Cr.NS_OK)
         this.succeeded = true;
-
-      // The destination file may have been overwritten.  This can cause the
-      // destination file object to be invalid.  Clone it to get a usable
-      // object.
-      if (this.destinationFile)
-        this.destinationFile = this.destinationFile.clone();
 
       // Delete destination file on failure.
       if (!this.succeeded) {

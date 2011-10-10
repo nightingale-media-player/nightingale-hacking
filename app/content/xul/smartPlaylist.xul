@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,30 +21,30 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/smartPlaylist.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/smartPlaylist.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
 
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
- windowtype="Songbird:SmartPlaylistEditor"
+ windowtype="Nightingale:SmartPlaylistEditor"
  id="smart_playlist"
  title="&smart.window;"
- type="songbird"
+ type="nightingale"
  onload="doLoad();"
  onunload="doUnLoad();"
  ondialogaccept="return doOK();"
@@ -122,13 +122,13 @@
 
   <!-- SCRIPTS -->
   <script type="application/x-javascript"
-    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+    src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript"
     src="chrome://global/content/globalOverlay.js"/> 
   <script type="application/x-javascript"
-    src="chrome://songbird/content/scripts/windowUtils.js" />
+    src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
-    src="chrome://songbird/content/scripts/smartPlaylist.js" />
+    src="chrome://nightingale/content/scripts/smartPlaylist.js" />
 
 </dialog>
 

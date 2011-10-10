@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,14 +20,12 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 #include "sbSQLBuilderCriterion.h"
 #include "sbSQLBuilderBase.h"
-
-#include "prprf.h"
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbSQLBuilderCriterionBase,
                               sbISQLBuilderCriterion)
@@ -212,33 +210,6 @@ sbSQLBuilderCriterionLong::ToString(nsAString& _retval)
   nsAutoString stringValue;
   stringValue.AppendInt(mValue);
   _retval.Append(stringValue);
-  return NS_OK;
-}
-
-// sbSQLBuilderCriterionLongLong
-NS_IMPL_ISUPPORTS_INHERITED0(sbSQLBuilderCriterionLongLong,
-                             sbSQLBuilderCriterionBase)
-
-sbSQLBuilderCriterionLongLong::sbSQLBuilderCriterionLongLong(const nsAString& aTableName,
-                                                     const nsAString& aColumnName,
-                                                     PRUint32 aMatchType,
-                                                     PRInt64 aValue) :
-  sbSQLBuilderCriterionBase(aTableName, aColumnName, aMatchType, nsnull, nsnull),
-  mValue(aValue)
-{
-}
-
-NS_IMETHODIMP
-sbSQLBuilderCriterionLongLong::ToString(nsAString& _retval)
-{
-  AppendTableColumnTo(_retval);
-
-  AppendMatchTo(_retval);
-
-  // Unfortunately nsAString has no AppendInt64...
-  char out[32] = {0};
-  PR_snprintf(out, 32, "%lld", mValue);
-  _retval.Append(NS_ConvertUTF8toUTF16(out));
   return NS_OK;
 }
 

@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,7 +36,7 @@
 
 /**
  * \file  sbMediaItemWatcher.cpp
- * \brief Songbird Media Item Watcher Source.
+ * \brief Nightingale Media Item Watcher Source.
  */
 
 //------------------------------------------------------------------------------
@@ -48,13 +48,9 @@
 // Self imports.
 #include "sbMediaItemWatcher.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbILibrary.h>
 #include <sbIPropertyArray.h>
-
-#include <sbStandardProperties.h>
-
-#include <sbDebugUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -91,7 +87,6 @@ sbMediaItemWatcher::Watch(sbIMediaItem*         aMediaItem,
                           sbIMediaItemListener* aListener,
                           sbIPropertyArray*     aPropertyIDs)
 {
-  TRACE_FUNCTION("");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aListener);
@@ -137,7 +132,6 @@ sbMediaItemWatcher::Watch(sbIMediaItem*         aMediaItem,
 NS_IMETHODIMP
 sbMediaItemWatcher::Cancel()
 {
-  TRACE_FUNCTION("mBatchLevel=%i", mBatchLevel);
   NS_WARN_IF_FALSE(mBatchLevel > 0,
                    "sbMediaItemWatcher::Cancel called during a batch");
   // Stop listening to library.
@@ -176,7 +170,6 @@ sbMediaItemWatcher::OnItemAdded(sbIMediaList* aMediaList,
                                 PRUint32      aIndex,
                                 PRBool*       _retval)
 {
-  TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
   return NS_OK;
@@ -199,7 +192,6 @@ sbMediaItemWatcher::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                         PRUint32      aIndex,
                                         PRBool*       _retval)
 {
-  TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
   return NS_OK;
@@ -222,7 +214,6 @@ sbMediaItemWatcher::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                        PRUint32      aIndex,
                                        PRBool*       _retval)
 {
-  TRACE_FUNCTION("");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -261,7 +252,6 @@ sbMediaItemWatcher::OnItemUpdated(sbIMediaList*     aMediaList,
                                   sbIPropertyArray* aProperties,
                                   PRBool*           _retval)
 {
-  TRACE_FUNCTION("");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -269,23 +259,8 @@ sbMediaItemWatcher::OnItemUpdated(sbIMediaList*     aMediaList,
   // Function variables.
   nsresult rv;
 
-  #if PR_LOGGING
-  {
-    nsString props, src;
-    rv = aProperties->ToString(props);
-    if (NS_FAILED(rv)) props.AssignLiteral("<ERROR>");
-    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                 src);
-    if (NS_FAILED(rv)) src.AssignLiteral("<ERROR>");
-    TRACE("item %s updated: %s",
-          NS_ConvertUTF16toUTF8(src).get(),
-          NS_ConvertUTF16toUTF8(props).get());
-  }
-  #endif /* PR_LOGGING */
-
   // Do nothing if in a batch.
   if (mBatchLevel > 0) {
-    TRACE("In a batch, skipping");
     *_retval = PR_TRUE;
     return NS_OK;
   }
@@ -293,7 +268,6 @@ sbMediaItemWatcher::OnItemUpdated(sbIMediaList*     aMediaList,
   // Handle item updated events.
   if (aMediaItem == mWatchedMediaItem) {
     rv = DoItemUpdated();
-    TRACE("called: %08x", rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -320,7 +294,6 @@ sbMediaItemWatcher::OnItemMoved(sbIMediaList* aMediaList,
                                 PRUint32      aToIndex,
                                 PRBool*       _retval)
 {
-  TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
   return NS_OK;
@@ -342,7 +315,6 @@ sbMediaItemWatcher::OnBeforeListCleared(sbIMediaList* aMediaList,
                                         PRBool        aExcludeLists,
                                         PRBool*       _retval)
 {
-  TRACE_FUNCTION("");
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
   return NS_OK;
@@ -364,7 +336,6 @@ sbMediaItemWatcher::OnListCleared(sbIMediaList* aMediaList,
                                   PRBool        aExcludeLists,
                                   PRBool*       _retval)
 {
-  TRACE_FUNCTION("");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -400,7 +371,6 @@ sbMediaItemWatcher::OnListCleared(sbIMediaList* aMediaList,
 NS_IMETHODIMP
 sbMediaItemWatcher::OnBatchBegin(sbIMediaList* aMediaList)
 {
-  TRACE_FUNCTION("");
   // Increment the batch level.
   mBatchLevel++;
 
@@ -422,7 +392,6 @@ sbMediaItemWatcher::OnBatchBegin(sbIMediaList* aMediaList)
 NS_IMETHODIMP
 sbMediaItemWatcher::OnBatchEnd(sbIMediaList* aMediaList)
 {
-  TRACE_FUNCTION("");
   nsresult rv;
 
   // Decrement the batch level.  Do nothing more if still in a batch.
@@ -470,8 +439,6 @@ sbMediaItemWatcher::OnBatchEnd(sbIMediaList* aMediaList)
 sbMediaItemWatcher::sbMediaItemWatcher() :
   mBatchLevel(0)
 {
-  SB_PRLOG_SETUP(sbMediaItemWatcher);
-  TRACE_FUNCTION("");
 }
 
 
@@ -481,7 +448,6 @@ sbMediaItemWatcher::sbMediaItemWatcher() :
 
 sbMediaItemWatcher::~sbMediaItemWatcher()
 {
-  TRACE_FUNCTION("");
   // Ensure the watcher is cancelled.
   Cancel();
 }

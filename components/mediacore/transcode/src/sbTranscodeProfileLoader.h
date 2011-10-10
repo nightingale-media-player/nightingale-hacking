@@ -1,12 +1,12 @@
 /* vim: set sw=2 : */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -118,13 +118,13 @@ protected:
   nsresult mResult;
 };
 
-#define SONGBIRD_TRANSCODEPROFILELOADER_CLASSNAME \
-  "Songbird transcoding profile loader service"
-#define SONGBIRD_TRANSCODEPROFILELOADER_CID \
+#define NIGHTINGALE_TRANSCODEPROFILELOADER_CLASSNAME \
+  "Nightingale transcoding profile loader service"
+#define NIGHTINGALE_TRANSCODEPROFILELOADER_CID \
   /* {C64F3BC9-263F-4c2a-8E4C-C6BFBD9AE1F0} */ \
   { 0xc64f3bc9, 0x263f, 0x4c2a, \
   { 0x8e, 0x4c, 0xc6, 0xbf, 0xbd, 0x9a, 0xe1, 0xf0 } }
-#define SONGBIRD_TRANSCODEPROFILELOADER_CONTRACTID \
-  "@songbirdnest.com/Songbird/Transcode/ProfileLoader;1"
+#define NIGHTINGALE_TRANSCODEPROFILELOADER_CONTRACTID \
+  "@getnightingale.com/Nightingale/Transcode/ProfileLoader;1"
 
 #endif /* __SB_TRANSCODEPROFILELOADER_H__ */

@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -47,7 +47,6 @@
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyManager.h>
-#include <sbIMediaItemController.h>
 
 #include <vector>
 #include <map>
@@ -59,7 +58,6 @@ class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreStatus,
                              public sbIMediaListListener,
                              public sbIMediaListViewListener,
-                             public sbIMediaItemControllerListener,
                              public nsIClassInfo,
                              public nsITimerCallback
 {
@@ -71,7 +69,6 @@ public:
   NS_DECL_SBIMEDIACORESTATUS
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBIMEDIALISTVIEWLISTENER
-  NS_DECL_SBIMEDIAITEMCONTROLLERLISTENER
   NS_DECL_NSICLASSINFO
   NS_DECL_NSITIMERCALLBACK
 
@@ -109,14 +106,10 @@ public:
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
   nsresult SetMetadataDataRemote(const nsAString &aId,
                                  const nsAString &aValue);
-  nsresult SetMetadataDataRemotesFromItem(
-          sbIMediaItem *aItem,
-          sbIPropertyArray *aPropertiesChanged = nsnull);
+  nsresult SetMetadataDataRemotesFromItem(sbIMediaItem *aItem);
   nsresult ResetMetadataDataRemotes();
 
   nsresult UpdateCurrentItemDuration(PRUint64 aDuration);
-
-  nsresult ResetPlayerControlDataRemotes();
 
   // Error Event
   nsresult HandleErrorEvent(sbIMediacoreEvent *aEvent);
@@ -159,10 +152,6 @@ protected:
 
   PRBool   CheckPropertiesInfluenceView(sbIPropertyArray *aProperties);
 
-  PRBool IsPropertyInPropertyArray(sbIPropertyArray *aPropArray,
-                                   const nsAString &aPropName);
-
-
   /**
    * Update the "lastPosition" property on the item, to support resuming
    * playback from where things left off
@@ -180,15 +169,6 @@ protected:
    * when this function is called.
    */
   nsresult StopPlaybackHelper(nsAutoMonitor& aMonitor);
-
-  /**
-   * Checks for a mediaitemcontroller for the current item, and
-   * return true or false depending on whether the item should
-   * be skipped by the sequencer
-   */
-  nsresult ValidateMediaItemControllerPlayback(PRBool aFromUserAction, 
-                                               PRInt32 aOnHoldStatus,
-                                               PRBool *_proceed);
 
 protected:
   PRMonitor *mMonitor;
@@ -255,11 +235,6 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffle;
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;
 
-  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffleDisabled;
-  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeatDisabled;
-  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistPreviousDisabled;
-  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistNextDisabled;
-
   nsCOMPtr<nsITimer> mSequenceProcessorTimer;
 
   // MediaListListener and ViewListener data.
@@ -281,16 +256,6 @@ protected:
   PRPackedBool mNeedsRecalculate;
   PRPackedBool mWatchingView;
   PRPackedBool mResumePlaybackPosition;
-  PRPackedBool mValidationComplete;
-  PRUint32     mOnHoldStatus;
-  enum {
-    ONHOLD_NOTONHOLD = 0,
-    ONHOLD_PLAYVIEW,
-    ONHOLD_NEXT,
-    ONHOLD_PREVIOUS
-  };
-  nsCOMPtr<sbIMediaItem> mValidatingItem;
-  PRBool mValidationFromUserAction;
 };
 
 class sbScopedBoolToggle

@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -35,10 +35,7 @@
 //
 //------------------------------------------------------------------------------
 
-EXPORTED_SYMBOLS = [ "DOMUtils",
-                     "sbDOMHighlighter",
-                     "DOMEventListenerSet",
-                     "sbColorUtils" ];
+EXPORTED_SYMBOLS = [ "DOMUtils", "sbDOMHighlighter", "DOMEventListenerSet" ];
 
 
 //------------------------------------------------------------------------------
@@ -247,25 +244,6 @@ var DOMUtils = {
     var encodedXMLText = domSerializer.serializeToString(xmlTextNode);
 
     return encodedXMLText;
-  },
-
-
-  /**
-   * Rebind the XBL for the element specified by aElem.  This may be required if
-   * a change to the element causes its XBL binding to change (e.g., changing
-   * the element class attribute).
-   *
-   * Prior to xulrunner 1.9.2, XBL rebinding happened automatically.  However,
-   * this is no longer the case with 1.9.2, and the element must be explicitly
-   * rebound.  See "https://bugzilla.mozilla.org/show_bug.cgi?id=533905#c1".
-   *
-   * \param aElem               Element for which to rebind XBL.
-   */
-
-  rebindXBL: function DOMUtils_rebindXBL(aElem) {
-    // Clone the node to force a rebinding.  The clone is not needed.
-    //XXXeps there may be a better way to do this, but this works for now
-    aElem.cloneNode(false);
   },
 
 
@@ -796,9 +774,6 @@ DOMEventListenerSet.prototype = {
    * \param aListener           Listener function.
    * \param aUseCapture         True if event capture should be used.
    * \param aOneShot            True if listener is a one-shot listener.
-   * \param aWantsUntrusted     True if event can be triggered by untrusted
-   *                            content. non-standerd and Mozilla only. false
-   *                            by default to avoid security problems.
    *
    * \return                    Event listener ID.
    */
@@ -807,8 +782,7 @@ DOMEventListenerSet.prototype = {
                                         aType,
                                         aListener,
                                         aUseCapture,
-                                        aOneShot,
-                                        aWantsUntrusted) {
+                                        aOneShot) {
     // Create the event listener object.
     var eventListener = {};
     eventListener.id = this._nextEventListenerID++;
@@ -817,7 +791,6 @@ DOMEventListenerSet.prototype = {
     eventListener.listener = aListener;
     eventListener.useCapture = aUseCapture;
     eventListener.oneShot = aOneShot;
-    eventListener.wantsUntrusted = aWantsUntrusted == true ? true : false;
 
     // Use one-shot function if listener is a one-shot listener.
     var listenerFunc = eventListener.listener;
@@ -831,8 +804,7 @@ DOMEventListenerSet.prototype = {
     // Add the event listener.
     eventListener.element.addEventListener(eventListener.type,
                                            eventListener.addedListener,
-                                           eventListener.useCapture,
-                                           eventListener.wantsUntrusted);
+                                           eventListener.useCapture);
     this._eventListenerList[eventListener.id] = eventListener;
 
     return (eventListener.id);
@@ -893,87 +865,6 @@ DOMEventListenerSet.prototype = {
 
     // Dispatch event to listener.
     return aEventListener.listener(aEvent);
-  }
-};
-
-
-//------------------------------------------------------------------------------
-//
-// Color utility services.
-//
-//   These utilities provide services for handling colors specified in DOM
-// attributes or in CSS.
-//   These utilities make use of color objects with the following fields:
-//
-//     red                      Number from 0.0 to 1.0.
-//     green                    Number from 0.0 to 1.0.
-//     blue                     Number from 0.0 to 1.0.
-//     alpha                    Number from 0.0 to 1.0.
-//
-//------------------------------------------------------------------------------
-
-var sbColorUtils = {
-  /**
-   * Return the color object for the CSS color string specified by aCSSColor.
-   *
-   * \param aCSSColor           CSS color string.
-   *
-   * \return                    Color object.
-   *
-   *XXXeps would be nice to also support #xxxxxx format.
-   */
-
-  getColorFromCSSColor: function sbColorUtils_getCSSColor(aCSSColor) {
-    // Parse out the color components substring from the CSS color string.
-    var rgba = aCSSColor.match(/^rgba?\((.*)\)/)
-    if (!rgba || (rgba.length < 2))
-      return null;
-    rgba = rgba[1];
-
-    // Split the color components substring into an array.
-    rgba = rgba.split(",");
-    if (rgba.length < 3)
-      return null;
-
-    // Parse the color components into a color object.
-    var color = {
-      red:   parseFloat(rgba[0]) / 255.0,
-      green: parseFloat(rgba[1]) / 255.0,
-      blue:  parseFloat(rgba[2]) / 255.0
-    };
-    if (rgba.length > 3)
-      color.alpha = parseFloat(rgba[3])
-    else
-      color.alpha = 1.0;
-
-    return color;
-  },
-
-
-  /**
-   * Return the DOM attribute color string for the color object specified by
-   * aColor.
-   *
-   * \param aColor              Color object.
-   *
-   * \return                    DOM attribute color string.
-   */
-
-  getDOMColorString: function sbColorUtils_getDOMColorString(aColor) {
-    // Convert the colors to integer values from 0 to 255.
-    var red = Math.round(aColor.red * 255.0);
-    var green = Math.round(aColor.green * 255.0);
-    var blue = Math.round(aColor.blue * 255.0);
-
-    // Combine the individual color values into a single 32-bit rgb value.
-    var colorValue = (red << 16) | (green << 8) | blue;
-
-    // Convert the 32-bit rgb value to the form "#xxxxxx", adding leading zeros
-    // to ensure there are 6 digits.
-    var colorString = (0x01000000 + colorValue).toString(16);
-    colorString = "#" + colorString.slice(1);
-
-    return colorString;
   }
 };
 

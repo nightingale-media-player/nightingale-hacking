@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,7 +34,7 @@ var PORT_NUMBER = getTestServerPortNumber();
 var gRemoteURLPrefix = "http://localhost:" + PORT_NUMBER + "/";
 
 var gDefaultMetadata = {};
-gDefaultMetadata[SBProperties.artistName] = "Songbird";
+gDefaultMetadata[SBProperties.artistName] = "Nightingale";
 gDefaultMetadata[SBProperties.albumName]  = "Unit Test Classics";
 gDefaultMetadata[SBProperties.trackName]  = "Sample";
 
@@ -78,7 +78,7 @@ var gServer;
 function runTest () {
    
   var gTestLibrary = createNewLibrary( "test_metadatajob" );
-  var gTestMediaItems = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var gTestMediaItems = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                                   .createInstance(Components.interfaces.nsIMutableArray);
 
   // Make a copy of everything in the test file folder
@@ -128,7 +128,7 @@ function runTest () {
   }
   
   // Request metadata for both local and remote urls at the same time.  Woo!
-  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  gFileMetadataService = Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                                 .getService(Components.interfaces.sbIFileMetadataService);
   var job = gFileMetadataService.read( gTestMediaItems);
   

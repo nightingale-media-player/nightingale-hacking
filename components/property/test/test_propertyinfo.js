@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -29,7 +29,7 @@
  */
 
 function testTextInfo() {
-  var textInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Text;1"]
+  var textInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Text;1"]
                   .createInstance(Ci.sbITextPropertyInfo);
 
   assertEqual(textInfo.id, "");
@@ -93,7 +93,7 @@ function testTextInfo() {
 }
 
 function testNumberInfo() {
-  var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
+  var numberInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Number;1"]
                     .createInstance(Ci.sbINumberPropertyInfo);
   
   numberInfo.id = "NumberInfo";
@@ -152,7 +152,7 @@ function testNumberInfo() {
 }
 
 function testNumberInfoFloatingPoint() {
-var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
+var numberInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Number;1"]
                     .createInstance(Ci.sbINumberPropertyInfo);
   
   numberInfo.id = "FloatingInfo";
@@ -168,58 +168,45 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   catch(err) {
     assertEqual(err.result, Cr.NS_ERROR_INVALID_ARG);
   }
-  
-  /* The replace(",", ".") in the following lines prevents
-   * the test from failing if the machine has set the comma
-   * as decimal separator. So in the following test
-   * numberInfo.format(sample) will return "20,99" on such
-   * a machine. With the replacement it changes to "20.99"
-   * and is valid again. To make this visible this is also
-   * used in all log-calls.
-   */
 
   sample = "20.99";
   assertEqual(numberInfo.validate(sample), true);
 
-  var formatted_sample = numberInfo.format(sample).replace(",", ".");
-  var searchable_sample = numberInfo.makeSearchable(sample).replace(",", ".");
-  log(formatted_sample);
-  log(searchable_sample);
+  log(numberInfo.format(sample));
+  log(numberInfo.makeSearchable(sample));
   
-  assertEqual(formatted_sample, "20.99");
+  assertEqual(numberInfo.format(sample), "20.99");
+  
+  var sortable = numberInfo.makeSearchable(sample);
 
   var eps = 1e-10; // nearly zero, because floating points don't compare well.
 
-  var delta = Math.abs(searchable_sample - sample);
+  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
   assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "0.99";
   assertEqual(numberInfo.validate(sample), true);
   
-  formatted_sample = numberInfo.format(sample).replace(",", ".");
-  searchable_sample = numberInfo.makeSearchable(sample).replace(",", ".");
-  log(formatted_sample);
-  log(searchable_sample);
+  log(numberInfo.format(sample));
+  log(numberInfo.makeSearchable(sample));
   
-  assertEqual(formatted_sample, "0.99");
-  var delta = Math.abs(searchable_sample - sample);
+  assertEqual(numberInfo.format(sample), "0.99");
+  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
   assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "12347120349029834.1234341235";
   assertEqual(numberInfo.validate(sample), true);
 
-  formatted_sample = numberInfo.format(sample).replace(",", ".");
-  searchable_sample = numberInfo.makeSearchable(sample).replace(",", ".");
-  log(formatted_sample);
-  log(searchable_sample);
+  log(numberInfo.format(sample));
+  log(numberInfo.makeSearchable(sample));
   
-  assertEqual(parseFloat(formatted_sample), 1.23471e+016);
-  var delta = Math.abs(searchable_sample - sample);
+  assertEqual(parseFloat(numberInfo.format(sample)), 1.23471e+016);
+  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
   assertTrue(delta < eps, true, "make sortable doesn't perturb the value");
 }
 
 function testUriInfo() {
-  var uriInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/URI;1"]
+  var uriInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/URI;1"]
                   .createInstance(Ci.sbIURIPropertyInfo);
   
   uriInfo.id = "URIInfo";
@@ -231,7 +218,7 @@ function testUriInfo() {
   sample = "choohooo://vaguely valid/";
   assertEqual(uriInfo.validate(sample), true);
 
-  sample = "http://songbirdnest.com/aus/blog";
+  sample = "http://getnightingale.com/aus/blog";
   assertEqual(uriInfo.validate(sample), true);
   
   sample = "file:///Users/Me/Music";
@@ -246,7 +233,7 @@ function testUriInfo() {
 }
 
 function testDatetimeInfo() {
-  var datetimeInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
+  var datetimeInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Datetime;1"]
                       .createInstance(Ci.sbIDatetimePropertyInfo);
                       
   datetimeInfo.id = "DatetimeInfo";
@@ -264,7 +251,7 @@ function testDatetimeInfo() {
 }
 
 function testDurationInfo() {
-  var durationInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Duration;1"]
+  var durationInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Duration;1"]
                       .createInstance(Ci.sbIDurationPropertyInfo);
                       
   durationInfo.id = "DurationInfo";
@@ -284,7 +271,7 @@ function testDurationInfo() {
 }
 
 function testBooleanInfo() {
-  var booleanInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Boolean;1"]
+  var booleanInfo = Cc["@getnightingale.com/Nightingale/Properties/Info/Boolean;1"]
                     .createInstance(Ci.sbIBooleanPropertyInfo);
   
   booleanInfo.id = "BooleanInfo";

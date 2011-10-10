@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -47,11 +47,6 @@ struct sbStaticProperty {
 const PRUint32 SB_COLUMN_TYPE_TEXT    = 0;
 const PRUint32 SB_COLUMN_TYPE_INTEGER = 1;
 
-// Top-level media item properties should not be registered using
-// sbITextPropertyInfo, as the media_items table does not contain
-// obj_searchable and obj_sortable columns with the transformed
-// strings expected when searching for and sorting on entries in
-// the resource_properties table.
 static sbStaticProperty sStaticProperties[] = {
   {
     SB_PROPERTY_GUID,
@@ -113,17 +108,11 @@ static sbStaticProperty sStaticProperties[] = {
     SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 9,
   },
-  {
-    SB_PROPERTY_METADATA_HASH_IDENTITY,
-    "metadata_hash_identity",
-    SB_COLUMN_TYPE_TEXT,
-    PR_UINT32_MAX - 10,
-  },
 };
 
-static const PRUint32 sStaticPropertyCount = 11;
+static const PRUint32 sStaticPropertyCount = 10;
 
-static inline PRBool
+static PRBool
 SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
@@ -133,7 +122,7 @@ SB_IsTopLevelProperty(PRUint32 aPropertyDBID)
   return PR_FALSE;
 }
 
-static inline PRBool
+static PRBool
 SB_IsTopLevelProperty(const nsAString& aProperty)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
@@ -143,7 +132,7 @@ SB_IsTopLevelProperty(const nsAString& aProperty)
   return PR_FALSE;
 }
 
-static inline nsresult
+static nsresult
 SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
                              nsAString& aColumnName)
 {
@@ -156,7 +145,7 @@ SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static inline nsresult
+static nsresult
 SB_GetTopLevelPropertyColumnType(const nsAString& aProperty,
                                  PRUint32 &aColumnType)
 {
@@ -169,7 +158,7 @@ SB_GetTopLevelPropertyColumnType(const nsAString& aProperty,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static inline nsresult
+static nsresult
 SB_GetTopLevelPropertyColumnType(const PRUint32 aPropertyDBID,
                                  PRUint32 &aColumnType)
 {
@@ -182,7 +171,7 @@ SB_GetTopLevelPropertyColumnType(const PRUint32 aPropertyDBID,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static inline nsresult
+static nsresult
 SB_GetTopLevelPropertyColumn(const PRUint32 aPropertyDBID,
                              nsAString& aColumnName)
 {
@@ -195,7 +184,7 @@ SB_GetTopLevelPropertyColumn(const PRUint32 aPropertyDBID,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-static inline PRInt32
+static PRInt32
 SB_GetPropertyId(const nsAString& aProperty,
                  sbILocalDatabasePropertyCache* aPropertyCache)
 {

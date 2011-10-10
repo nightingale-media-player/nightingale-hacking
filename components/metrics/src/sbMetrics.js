@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,19 +20,19 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const SONGBIRD_METRICS_CONTRACTID = "@songbirdnest.com/Songbird/Metrics;1";
-const SONGBIRD_METRICS_CLASSNAME = "Songbird Metrics Service Interface";
-const SONGBIRD_METRICS_CID = Components.ID("{1066527d-b135-4e0c-9ea4-f6109ae97d02}");
-const SONGBIRD_METRICS_IID = Components.interfaces.sbIMetrics;
+const NIGHTINGALE_METRICS_CONTRACTID = "@getnightingale.com/Nightingale/Metrics;1";
+const NIGHTINGALE_METRICS_CLASSNAME = "Nightingale Metrics Service Interface";
+const NIGHTINGALE_METRICS_CID = Components.ID("{1066527d-b135-4e0c-9ea4-f6109ae97d02}");
+const NIGHTINGALE_METRICS_IID = Components.interfaces.sbIMetrics;
 
-const SONGBIRD_POSTMETRICS_PREFKEY = "songbird.url.metrics";
+const NIGHTINGALE_POSTMETRICS_PREFKEY = "nightingale.url.metrics";
 
-const SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS = 1; // every day
+const NIGHTINGALE_UPLOAD_METRICS_EVERY_NDAYS = 1; // every day
 
 function Metrics() {
     this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -40,11 +40,11 @@ function Metrics() {
 }
 
 Metrics.prototype = {
-  classDescription: SONGBIRD_METRICS_CLASSNAME,
-  classID:          SONGBIRD_METRICS_CID,
-  contractID:       SONGBIRD_METRICS_CONTRACTID,
+  classDescription: NIGHTINGALE_METRICS_CLASSNAME,
+  classID:          NIGHTINGALE_METRICS_CID,
+  contractID:       NIGHTINGALE_METRICS_CONTRACTID,
   QueryInterface:   XPCOMUtils.generateQI([
-    SONGBIRD_METRICS_IID,
+    NIGHTINGALE_METRICS_IID,
     Components.interfaces.nsIWebProgressListener,
     Components.interfaces.nsISupportsWeakReference
   ]),
@@ -83,7 +83,7 @@ Metrics.prototype = {
   {
     var user_install_uuid = this._getPlayerUUID();
     
-    var xulRuntime = Components.classes["@mozilla.org/xre/runtime;1"].getService(Components.interfaces.nsIXULRuntime);    
+    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);    
     var user_os = xulRuntime.OS;
 
     
@@ -182,7 +182,7 @@ Metrics.prototype = {
     };
     onposterror._that = this;
 
-    var postURL = this.prefs.getCharPref(SONGBIRD_POSTMETRICS_PREFKEY);
+    var postURL = this.prefs.getCharPref(NIGHTINGALE_POSTMETRICS_PREFKEY);
     
     this._postreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
     this._postreq.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest).addEventListener("load", onpostload, false);
@@ -246,7 +246,7 @@ Metrics.prototype = {
   
   
   /**
-   * Return true if SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS days have passed
+   * Return true if NIGHTINGALE_UPLOAD_METRICS_EVERY_NDAYS days have passed
    * since last submission
    */
   _isWaitPeriodUp: function() { 
@@ -267,7 +267,7 @@ Metrics.prototype = {
     
     var diff = now - last;
     
-    return (diff > (1000 /*one second*/ * 60 /*one minute*/ * 60 /*one hour*/ * 24 /*one day*/ * SONGBIRD_UPLOAD_METRICS_EVERY_NDAYS))
+    return (diff > (1000 /*one second*/ * 60 /*one minute*/ * 60 /*one hour*/ * 24 /*one day*/ * NIGHTINGALE_UPLOAD_METRICS_EVERY_NDAYS))
   },
 
 
@@ -383,7 +383,7 @@ Metrics.prototype = {
   
   _initDB: function() {
     if (!this._dbquery) {
-      this._dbquery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"].
+      this._dbquery = Components.classes["@getnightingale.com/Nightingale/DatabaseQuery;1"].
                                  createInstance(Components.interfaces.sbIDatabaseQuery);
       this._dbquery.setAsyncQuery(false);
       this._dbquery.setDatabaseGUID("metrics");

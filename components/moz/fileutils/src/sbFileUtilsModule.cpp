@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,53 +21,82 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities module services.
+// Nightingale file utilities module services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbFileUtilsModule.cpp
- * \brief Songbird File Utilities Component Factory and Main Entry Point.
+ * \brief Nightingale File Utilities Component Factory and Main Entry Point.
  */
- 
+
+//------------------------------------------------------------------------------
+//
+// Nightingale file utilities module imported services.
+//
+//------------------------------------------------------------------------------
+
 // Local imports.
 #include "sbDirectoryEnumerator.h"
 #include "sbFileUtils.h"
 
 // Mozilla imports.
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
+
+//------------------------------------------------------------------------------
+//
+// Nightingale file utilities module directory enumerator services.
+//
+//------------------------------------------------------------------------------
+
+// Nightingale directory enumerator defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDirectoryEnumerator, Initialize)
 
+
+//------------------------------------------------------------------------------
+//
+// Nightingale file utilities module file utilities services.
+//
+//------------------------------------------------------------------------------
+
+// Nightingale file utilities defs.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileUtils)
-NS_DEFINE_NAMED_CID(SB_FILEUTILS_CID);
 
-NS_DEFINE_NAMED_CID(SB_DIRECTORYENUMERATOR_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdMozFileUtilsCIDs[] = {
-    { &kSB_DIRECTORYENUMERATOR_CID, false, NULL, sbDirectoryEnumeratorConstructor },
-    { &kSB_FILEUTILS_CID, false, NULL, sbFileUtilsConstructor },
-    { NULL }
+//------------------------------------------------------------------------------
+//
+// Nightingale file utilities module registration services.
+//
+//------------------------------------------------------------------------------
+
+// Module component information.
+static nsModuleComponentInfo sbFileUtilsComponents[] =
+{
+  // Nightingale directory enumerator component info.
+  {
+    SB_DIRECTORYENUMERATOR_CLASSNAME,
+    SB_DIRECTORYENUMERATOR_CID,
+    SB_DIRECTORYENUMERATOR_CONTRACTID,
+    sbDirectoryEnumeratorConstructor
+  },
+
+  // Nightingale file utilities component info.
+  {
+    SB_FILEUTILS_CLASSNAME,
+    SB_FILEUTILS_CID,
+    SB_FILEUTILS_CONTRACTID,
+    sbFileUtilsConstructor
+  }
 };
 
-static const mozilla::Module::ContractIDEntry kSongbirdMozFileUtilsContracts[] = {
-    { SB_DIRECTORYENUMERATOR_CONTRACTID, &kSB_DIRECTORYENUMERATOR_CID },
-    { SB_FILEUTILS_CONTRACTID, &kSB_FILEUTILS_CID },
-    { NULL }
-};
-
-static const mozilla::Module kSongbirdMozFileUtilsModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozFileUtilsCIDs,
-    kSongbirdMozFileUtilsContracts
-};
-
-NSMODULE_DEFN(sbMozFileUtilsModule) = &kSongbirdMozFileUtilsModule;
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbFileUtilsModule, sbFileUtilsComponents)
 

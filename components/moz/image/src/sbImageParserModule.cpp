@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
  * \file  sbImageParserModule.cpp
- * \brief Songbird Image parser Module Component Factory and Main Entry Point.
+ * \brief Nightingale Image parser Module Component Factory and Main Entry Point.
  */
 
 // Self imports.
@@ -40,9 +40,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageParser)
 static const nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_IMAGEPARSER_CLASSNAME,
-    SONGBIRD_IMAGEPARSER_CID,
-    SONGBIRD_IMAGEPARSER_CONTRACTID,
+    NIGHTINGALE_IMAGEPARSER_CLASSNAME,
+    NIGHTINGALE_IMAGEPARSER_CID,
+    NIGHTINGALE_IMAGEPARSER_CONTRACTID,
     sbImageParserConstructor
   }
 };

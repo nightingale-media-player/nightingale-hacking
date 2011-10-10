@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -29,13 +29,13 @@
  */
 
 function runTest () {
-  var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+  var mediacoreManager = Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                            .getService(Ci.sbIMediacoreManager);
 
   var factories = mediacoreManager.factories;
   log("Number of factories found: " + factories.length);
 
-  var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+  var typeSniffer = Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                       .createInstance(Ci.sbIMediacoreTypeSniffer);
 
   var uri = newURI("file:///path/to/a/file.mp3");

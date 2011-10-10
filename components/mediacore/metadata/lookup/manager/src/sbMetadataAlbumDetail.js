@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -34,18 +34,18 @@ Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
 function sbMLAlbumDetail() {
-  this._tracks = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  this._tracks = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                    .createInstance(Ci.nsIMutableArray);
 
   this._properties =
-    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+    Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
     .createInstance(Ci.sbIMutablePropertyArray);
 }
 
 sbMLAlbumDetail.prototype = {
-  classDescription : 'Songbird Metadata Lookup Album Detail',
+  classDescription : 'Nightingale Metadata Lookup Album Detail',
   classID          : Components.ID("84dd6e90-1dd2-11b2-bad9-c6f63b798098"),
-  contractID       : "@songbirdnest.com/Songbird/MetadataLookup/albumdetail;1",
+  contractID       : "@getnightingale.com/Nightingale/MetadataLookup/albumdetail;1",
   QueryInterface   : XPCOMUtils.generateQI([Ci.sbIMetadataAlbumDetail]),
 
   /** sbIMetadataAlbumDetail **/

@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -33,12 +33,12 @@
 #include <nsComponentManagerUtils.h>
 #include <nsThreadUtils.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbIDatabasePreparedStatement.h>
 
-#define SB_DBQUERY_CONTRACTID "@songbirdnest.com/Songbird/DatabaseQuery;1"
+#define SB_DBQUERY_CONTRACTID "@getnightingale.com/Nightingale/DatabaseQuery;1"
 
 sbiTunesDatabaseServices::sbiTunesDatabaseServices() : mResetPending(PR_FALSE) {
 }
@@ -56,13 +56,13 @@ sbiTunesDatabaseServices::Initialize() {
   rv = mDBQuery->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird"));
+  rv = mDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("nightingale"));
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsString sql;
   sql.AppendLiteral("CREATE TABLE IF NOT EXISTS itunes_id_map "
                     "(itunes_id TEXT UNIQUE NOT NULL, "
-                    "songbird_id TEXT UNIQUE NOT NULL)"); 
+                    "nightingale_id TEXT UNIQUE NOT NULL)"); 
   rv = mDBQuery->AddQuery(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -72,17 +72,17 @@ sbiTunesDatabaseServices::Initialize() {
   NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
 
   NS_NAMED_LITERAL_STRING(INSERT_SQL, 
-                          "INSERT OR REPLACE INTO itunes_id_map (itunes_id, songbird_id) VALUES (?, ?)");
+                          "INSERT OR REPLACE INTO itunes_id_map (itunes_id, nightingale_id) VALUES (?, ?)");
   rv = mDBQuery->PrepareQuery(INSERT_SQL, getter_AddRefs(mInsertMapID));
   NS_ENSURE_SUCCESS(rv, rv);
   
   NS_NAMED_LITERAL_STRING(SELECT_SQL, 
-                          "SELECT songbird_id FROM itunes_id_map WHERE itunes_id = ?");
+                          "SELECT nightingale_id FROM itunes_id_map WHERE itunes_id = ?");
   rv = mDBQuery->PrepareQuery(SELECT_SQL, getter_AddRefs(mSelectMapID));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING(DELETE_SQL, 
-                          "DELETE FROM itunes_id_map WHERE songbird_id = ?");
+                          "DELETE FROM itunes_id_map WHERE nightingale_id = ?");
 
   rv = mDBQuery->PrepareQuery(SELECT_SQL, getter_AddRefs(mDeleteMapID));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -93,7 +93,7 @@ sbiTunesDatabaseServices::Initialize() {
 nsresult 
 sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
                                 nsAString const & aiTunesID,
-                                nsAString const & aSongbirdID) {
+                                nsAString const & aNightingaleID) {
   
   nsresult rv = mDBQuery->AddPreparedStatement(mInsertMapID);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -103,7 +103,7 @@ sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
   rv = mDBQuery->BindStringParameter(0, compositeID);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mDBQuery->BindStringParameter(1, aSongbirdID);
+  rv = mDBQuery->BindStringParameter(1, aNightingaleID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool dbOK;
@@ -117,7 +117,7 @@ sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
 nsresult
 sbiTunesDatabaseServices::GetSBIDFromITID(nsAString const & aiTunesLibID,
                                           nsAString const & aiTunesID,
-                                          nsAString & aSongbirdID) {
+                                          nsAString & aNightingaleID) {
 
   nsresult rv = mDBQuery->AddPreparedStatement(mSelectMapID);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -137,19 +137,19 @@ sbiTunesDatabaseServices::GetSBIDFromITID(nsAString const & aiTunesLibID,
   rv = mDBQuery->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
   
-  rv = result->GetRowCell(0, 0, aSongbirdID);
+  rv = result->GetRowCell(0, 0, aNightingaleID);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
 }
 
 nsresult
-sbiTunesDatabaseServices::RemoveSBIDEntry(nsAString const & aSongbirdID) {
+sbiTunesDatabaseServices::RemoveSBIDEntry(nsAString const & aNightingaleID) {
 
   nsresult rv = mDBQuery->AddPreparedStatement(mDeleteMapID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDBQuery->BindStringParameter(0, aSongbirdID);
+  rv = mDBQuery->BindStringParameter(0, aNightingaleID);
   NS_ENSURE_SUCCESS(rv, rv);
    
   PRBool dbOK;

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -247,7 +247,7 @@ sbGStreamerTranscode::AddImageToTagList(GstTagList *aTags,
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbGStreamerTranscode::BuildPipeline()
 {
   NS_ENSURE_STATE (mProfile);
@@ -405,7 +405,7 @@ sbGStreamerTranscode::GetRemainingTime(PRUint32 *aRemainingTime)
       elapsed == GST_CLOCK_TIME_NONE)
   {
     /* Unknown, so set to -1 */
-    *aRemainingTime = (PRUint32)-1;
+    *aRemainingTime = -1;
   }
   else {
     GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,
@@ -855,7 +855,7 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
 {
   nsCString cont = NS_ConvertUTF16toUTF8 (container);
 
-  for (unsigned int i = 0;
+  for (int i = 0;
        i < sizeof (SupportedContainers)/sizeof(*SupportedContainers);
        i++) 
   {
@@ -897,7 +897,7 @@ sbGStreamerTranscode::GetAudioCodec(nsAString &aCodec, nsIArray *properties,
   nsresult rv;
   nsCString codec = NS_ConvertUTF16toUTF8 (aCodec);
 
-  for (unsigned int i = 0;
+  for (int i = 0;
        i < sizeof (SupportedAudioCodecs)/sizeof(*SupportedAudioCodecs);
        i++) 
   {
@@ -978,11 +978,11 @@ sbGStreamerTranscode::GetAvailableProfiles(nsIArray * *aAvailableProfiles)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> array =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbITranscodeProfileLoader> profileLoader = 
-      do_CreateInstance("@songbirdnest.com/Songbird/Transcode/ProfileLoader;1",
+      do_CreateInstance("@getnightingale.com/Nightingale/Transcode/ProfileLoader;1",
               &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 

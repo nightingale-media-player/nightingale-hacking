@@ -1,27 +1,29 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \file sbMetadataCrashTracker.cpp
@@ -143,7 +145,7 @@ nsresult sbMetadataCrashTracker::Init()
       do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS( rv, rv);
   // Get the value. We don't care if this fails.
-  prefService->GetCharPref("songbird.metadata.simulate.crash.url", 
+  prefService->GetCharPref("nightingale.metadata.simulate.crash.url", 
                            getter_Copies(mSimulateCrashURL));
   return NS_OK;
 }
@@ -250,7 +252,7 @@ sbMetadataCrashTracker::LogURLEnd(const nsACString& aURL)
   nsAutoLock lock(mLock);
   
   // Look up the index of this URL
-  PRUint32 index = 0;
+  PRUint32 index;
   PRBool success = mURLToIndexMap.Get(aURL, &index);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   mURLToIndexMap.Remove(aURL);
@@ -277,21 +279,6 @@ sbMetadataCrashTracker::IsURLBlacklisted(const nsACString& aURL,
   // Look up the URL in the hash table.
   // No need to lock, since we only update mURLBlacklist on Init.
   *aIsBlackListed = mURLBlacklist.Get(aURL, nsnull);
-  return NS_OK;
-}
-
-nsresult
-sbMetadataCrashTracker::AddBlacklistURL(const nsACString& aURL)
-{
-  /**
-   * NOTE
-   * This method is not threadsafe by design; it only exists to be used in the
-   * unit test.  This should not be called by production code.
-   */
-  NS_ASSERTION(NS_IsMainThread(),
-               "sbMetadataCrashTracker::AddBlacklistURL"
-               " Unexpectedly called off main thread");
-  mURLBlacklist.Put(aURL, PR_TRUE);
   return NS_OK;
 }
 
@@ -504,7 +491,7 @@ sbMetadataCrashTracker::WriteBlacklist()
 
   // Add an explanatory message on the first line
   nsCString output("# URLs listed in this file are suspected of " \
-                   "crashing Songbird, and will be ignored.\n"); 
+                   "crashing Nightingale, and will be ignored.\n"); 
 
   PRUint32 bytesWritten;
   rv = outputStream->Write(output.BeginReading(), 

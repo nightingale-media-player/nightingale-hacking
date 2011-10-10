@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbBaseDeviceFirmwareHandler.h"
@@ -40,6 +40,7 @@
 #include <sbIDeviceEventTarget.h>
 
 #include <sbProxiedComponentManager.h>
+#include <sbProxyUtils.h>
 
 #include "sbDeviceFirmwareSupport.h"
 #include "sbDeviceFirmwareUpdate.h"
@@ -115,14 +116,14 @@ sbBaseDeviceFirmwareHandler::Init()
   rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mXMLHttpRequest->Init(principal, nsnull, nsnull, nsnull);
+  rv = mXMLHttpRequest->Init(principal, nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mXMLHttpRequest->SetMozBackgroundRequest(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mSupportedDevices = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mRecoveryModeKeyCombination.Truncate();
@@ -333,7 +334,7 @@ sbBaseDeviceFirmwareHandler::CreateDeviceEvent(PRUint32 aType,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceManager2> deviceManager =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deviceManager->CreateEvent(aType,
@@ -370,7 +371,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIDeviceEventListener> proxiedListener;
-      rv = do_GetProxyForObject(mainThread,
+      rv = SB_GetProxyForObject(mainThread,
                                 NS_GET_IID(sbIDeviceEventListener),
                                 listener,
                                 NS_PROXY_ALWAYS | NS_PROXY_ASYNC,
@@ -599,37 +600,6 @@ sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnBeginRecoveryModeSwitch(
-                             PRUint32 aDeviceVendorID,
-                             PRUint32 aDeviceProductID)
-{
-  TRACE(("[%s]", __FUNCTION__));
-  /**
-   * This is called when the application expects a device with the
-   * specified NORMAL MODE baseband IDs to connect in recovery mode.
-   * The handler should expect a device with ANY corresponding recovery
-   * mode IDs to connect.  If aDeviceVendorID is zero, then expect the
-   * currently bound device to reconnect in recovery mode.
-   */
-  return NS_OK;
-}
-
-/*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnEndRecoveryModeSwitch()
-{
-  TRACE(("[%s]", __FUNCTION__));
-  /**
-   * The application calls this function when it determines that the
-   * handler should not expect a recovery mode connection.  Reverse
-   * the effects, if any, of OnBeginRecoveryModeSwitch().
-   *
-   * Calls to OnBeginRecoveryModeSwitch() and OnEndRecoveryModeSwitch()
-   * are not necessarily balanced.
-   */
-  return NS_OK;
 }
 
 /*virtual*/ nsresult
@@ -1170,6 +1140,7 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoMonitor mon(mMonitor);
@@ -1178,25 +1149,6 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
                             aDeviceVendorID, 
                             aDeviceProductID, 
                             _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbBaseDeviceFirmwareHandler::InitiateRecoveryModeSwitch(
-                             PRUint32 aDeviceVendorID,
-                             PRUint32 aDeviceProductID)
-{
-  TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsresult rv;
-
-  nsAutoMonitor mon(mMonitor);
-
-  rv = OnBeginRecoveryModeSwitch(aDeviceVendorID,
-                                 aDeviceProductID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1217,9 +1169,6 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
 
   mDevice = aDevice;
   mListener = aListener;
-
-  nsresult rv = OnEndRecoveryModeSwitch();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

@@ -54,9 +54,6 @@ const NS_INSTALL_LOCATION_APPPROFILE = "app-profile";
 const XULAPPINFO_CONTRACTID = "@mozilla.org/xre/app-info;1";
 const XULAPPINFO_CID = Components.ID("{c763b610-9d49-455a-bbd2-ede71682a1ac}");
 
-const XULRUNTIME_CONTRACTID = "@mozilla.org/xre/runtime;1";
-const XULRUNTIME_CID = Components.ID("{b96e56dc-1dd1-11b2-91a1-96a45c3e4adf}");
-
 var gEM = null;
 var gRDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
                      .getService(Components.interfaces.nsIRDFService);
@@ -203,8 +200,6 @@ function createAppInfo(id, name, version, platformVersion)
   var registrar = Components.manager.QueryInterface(Components.interfaces.nsIComponentRegistrar);
   registrar.registerFactory(XULAPPINFO_CID, "XULAppInfo",
                             XULAPPINFO_CONTRACTID, XULAppInfoFactory);
-  registrar.registerFactory(XULRUNTIME_CID, "XULAppInfo",
-                            XULRUNTIME_CONTRACTID, XULAppInfoFactory);
 }
 
 /**

@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,26 +22,26 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird process services.
+// Nightingale process services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbProcess.cpp
- * \brief Songbird Process Services Source.
+ * \brief Nightingale Process Services Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird process imported services.
+// Nightingale process imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -57,14 +57,14 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird process class.
+// Nightingale process class.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Songbird process nsISupports implementation.
+// Nightingale process nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -461,9 +461,9 @@ sbProcess::SetDoneMonitor(PRMonitor* aDoneMonitor)
 
 
 /**
- *   If true, the Songbird process is done.  The Songbird process is done when
+ *   If true, the Nightingale process is done.  The Nightingale process is done when
  * either the underlying process has exited or after an internal error occurs.
- *   If the Songbird process finishes due to process exit, the done result
+ *   If the Nightingale process finishes due to process exit, the done result
  * will be NS_OK, and the process exit code will be valid.
  *   If an internal error occurs, it will be set in the done result and the
  * process exit code will not be valid.
@@ -651,7 +651,7 @@ sbProcess::HandleDone()
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird process services.
+// Nightingale process services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -682,12 +682,12 @@ nsresult SB_RunProcess(sbProcess**         aProcess,
 {
   nsresult rv;
 
-  // Create a Songbird process.
+  // Create a Nightingale process.
   nsRefPtr<sbProcess> process;
   rv = sbProcess::New(getter_AddRefs(process));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set up the Songbird process.
+  // Set up the Nightingale process.
   rv = process->SetArgList(aArgList);
   NS_ENSURE_SUCCESS(rv, rv);
   if (aStdin) {

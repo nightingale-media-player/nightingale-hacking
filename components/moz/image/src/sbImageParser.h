@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_IMAGEPARSER_H__
@@ -28,17 +28,17 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird image parser.
+// Nightingale image parser.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /** 
  * \file  sbImageParser.h
- * \brief Songbird Image Parser Definitions.
+ * \brief Nightingale Image Parser Definitions.
  */
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIImageParser.h>
 
 // Mozilla imports.
@@ -48,7 +48,7 @@
 
 
 /**
- * This class implements the Songbird image parser interface.
+ * This class implements the Nightingale image parser interface.
  */
 
 class sbImageParser : public sbIImageParser
@@ -70,7 +70,7 @@ public:
 
 
   //
-  // Songbird image parser services.
+  // Nightingale image parser services.
   //
 
   sbImageParser();
@@ -94,12 +94,12 @@ private:
 
 
 //
-// Songbird image parser component defs.
+// Nightingale image parser component defs.
 //
 
 // contract ID defined in sbIImageParser.idl
-#define SONGBIRD_IMAGEPARSER_CLASSNAME "Songbird Image Parser"
-#define SONGBIRD_IMAGEPARSER_CID \
+#define NIGHTINGALE_IMAGEPARSER_CLASSNAME "Nightingale Image Parser"
+#define NIGHTINGALE_IMAGEPARSER_CID \
   /* {39dd2e7c-1dd2-11b2-b8c2-b50253bd2e17} */ \
   /* {fa7ec5bd-7cab-4a63-a970-7bc4e83ee891} */ \
   { \

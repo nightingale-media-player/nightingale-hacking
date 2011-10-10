@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Megkeressük, ki turnézik az Ön közelében...">
-<!ENTITY concerts.changelocation "Hely módosítása">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "Nincs koncerttalálat itt:">
-<!ENTITY concerts.timeout.error "Nincs internetkapcsolat, vagy koncertadatbázisunk jelenleg nem működik. Próbálja újra néhány perc múlva.">
-<!ENTITY concerts.timeoutreport.error "Probléma jelentése">

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -51,11 +51,11 @@
 #endif
 
 // DEFINES ====================================================================
-#define SONGBIRD_GLOBALHOTKEYS_CONTRACTID  "@songbirdnest.com/Songbird/GlobalHotkeys;1"
-#define SONGBIRD_GLOBALHOTKEYS_CLASSNAME   "Songbird Global Hotkeys Manager"
+#define NIGHTINGALE_GLOBALHOTKEYS_CONTRACTID  "@getnightingale.com/Nightingale/GlobalHotkeys;1"
+#define NIGHTINGALE_GLOBALHOTKEYS_CLASSNAME   "Nightingale Global Hotkeys Manager"
 
 // {284E14BF-5CE4-4434-A733-4379D27D799E}
-#define SONGBIRD_GLOBALHOTKEYS_CID { 0x284e14bf, 0x5ce4, 0x4434, { 0xa7, 0x33, 0x43, 0x79, 0xd2, 0x7d, 0x79, 0x9e } }
+#define NIGHTINGALE_GLOBALHOTKEYS_CID { 0x284e14bf, 0x5ce4, 0x4434, { 0xa7, 0x33, 0x43, 0x79, 0xd2, 0x7d, 0x79, 0x9e } }
 
 // CLASSES ====================================================================
 

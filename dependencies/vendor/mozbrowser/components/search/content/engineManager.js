@@ -38,7 +38,7 @@
 # the terms of any one of the MPL, the GPL or the LGPL.
 #
 # ***** END LICENSE BLOCK *****
-*/
+ */
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
@@ -170,20 +170,29 @@ var gEngineManagerDialog = {
       var eduplicate = false;
 
       if (alias.value != "") {
-        try {
-          let bmserv = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].
-                       getService(Ci.nsINavBookmarksService);
-          if (bmserv.getURIForKeyword(alias.value))
-            bduplicate = true;
-        } catch(ex) {}
+        var searchService = Cc["@mozilla.org/browser/search-service;1"].
+                            getService(Ci.nsIBrowserSearchService);
+        var engine = searchService.getEngineByAlias(alias.value);
 
-        // Check for duplicates in changes we haven't committed yet
-        let engines = gEngineView._engineStore.engines;
-        for each (let engine in engines) {
-          if (engine.alias == alias.value && 
-              engine.name != selectedEngine.name) {
+        if (engine) {
+          if (engine.name != selectedEngine.name)
             eduplicate = true;
-            break;
+        } else {
+          try {
+            var bmserv = Cc["@mozilla.org/browser/nav-bookmarks-service;1"].
+                         getService(Ci.nsINavBookmarksService);
+            if (bmserv.getURIForKeyword(alias.value))
+              bduplicate = true;
+          } catch(ex) {}
+
+          // Check for duplicates in changes we haven't committed yet
+          var engines = gEngineView._engineStore.engines;
+          for each (var engine in engines) {
+            if (engine.alias == alias.value && 
+                engine.name != selectedEngine.name) {
+              eduplicate = true;
+              break;
+            }
           }
         }
       }
@@ -211,13 +220,14 @@ var gEngineManagerDialog = {
                          (gEngineView.lastIndex == 0);
     var lastSelected = (gEngineView.selectedIndex == gEngineView.lastIndex);
     var firstSelected = (gEngineView.selectedIndex == 0);
+
+    // Nightingale: do not allow removal of the nightingale internal search engine
+    var isNightingaleEngine = (gEngineView.selectedEngine.alias == "nightingale-internal-search");
+
     var noSelection = (gEngineView.selectedIndex == -1);
 
-    // Songbird: do not allow removal of the songbird internal search engine
-    var isSongbirdEngine = (gEngineView.selectedEngine.alias == "songbird-internal-search");
-
     document.getElementById("cmd_remove").setAttribute("disabled",
-                                                       disableButtons || isSongbirdEngine);
+                                                       disableButtons || isNightingaleEngine);
 
     document.getElementById("cmd_moveup").setAttribute("disabled",
                                             disableButtons || firstSelected);
@@ -229,13 +239,22 @@ var gEngineManagerDialog = {
   }
 };
 
-function onDragEngineStart(event) {
-  var selectedIndex = gEngineView.selectedIndex;
-  if (selectedIndex > 0) {
-    event.dataTransfer.setData(ENGINE_FLAVOR, selectedIndex.toString());
-    event.dataTransfer.effectAllowed = "move";
-  }
-}
+var gDragObserver = {
+  onDragStart: function (aEvent, aXferData, aDragAction) {
+    var selectedIndex = gEngineView.selectedIndex;
+    if (selectedIndex == -1)
+      return;
+
+    aXferData.data = new TransferData();
+    aXferData.data.addDataForFlavour(ENGINE_FLAVOR, selectedIndex.toString());
+
+    aDragAction.action = Ci.nsIDragService.DRAGDROP_ACTION_MOVE;
+  },
+  onDrop: function (aEvent, aXferData, aDragSession) { },
+  onDragExit: function (aEvent, aDragSession) { },
+  onDragOver: function (aEvent, aFlavour, aDragSession) { },
+  getSupportedFlavours: function() { return null; }
+};
 
 // "Operation" objects
 function EngineMoveOp(aEngineClone, aNewIndex) {

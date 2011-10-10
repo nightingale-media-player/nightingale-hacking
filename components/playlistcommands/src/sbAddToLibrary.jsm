@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -33,7 +33,7 @@ const Ci = Components.interfaces;
 const Cc = Components.classes;
 
 const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
-  "@songbirdnest.com/Songbird/Library/medialistduplicatefilter;1";
+  "@getnightingale.com/Nightingale/Library/medialistduplicatefilter;1";
 
 const ADDTOLIBRARY_MENU_TYPE      = "menuitem";
 const ADDTOLIBRARY_MENU_ID        = "library_cmd_addtolibrary";
@@ -198,10 +198,8 @@ var SBPlaylistCommand_AddToLibrary =
   },
 
   initCommands: function(aHost) {
-    if (!this.addToLibrary) {
-      this.addToLibrary = new addToLibraryHelper();
-      this.addToLibrary.init(this);
-    }
+    this.addToLibrary = new addToLibraryHelper();
+    this.addToLibrary.init(this);
   },
 
   shutdownCommands: function() {
@@ -251,10 +249,10 @@ addToLibraryHelper.prototype = {
 
   init: function addToLibraryHelper_init(aCommands) {
     this.libraryManager =
-      Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      Cc["@getnightingale.com/Nightingale/library/Manager;1"]
       .getService(Ci.sbILibraryManager);
     this.deviceManager =
-      Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+      Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
       .getService(Ci.sbIDeviceManager2);
   },
 
@@ -263,68 +261,57 @@ addToLibraryHelper.prototype = {
     this.libraryManager = null;
   },
 
-  _getDeviceLibraryForLibrary: function(aDevice, aLibrary) {
-    var libs = aDevice.content.libraries;
-    for (var i = 0; i < libs.length; i++) {
-      var devLib = libs.queryElementAt(i, Ci.sbIDeviceLibrary);
-      if (devLib.equals(aLibrary))
-        return devLib;
-    }
-
-    return null;
-  },
-
-  _itemsFromEnumerator: function(aItemEnum) {
-    var items = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-
-    while (aItemEnum.hasMoreElements())
-      items.appendElement(aItemEnum.getNext(), false);
-
-    return items;
-  },
-
-  // handle click on a command item (device library or play queue, etc.)
+  // handle click on a device command item
   handleCommand: function addToLibraryHelper_handleCommand(id, context) {
     try {
       if ( id == ADDTOLIBRARY_COMMAND_ID) {
-        var destLibrary = this.libraryManager.mainLibrary;
-        if (destLibrary) {
+        var library = this.libraryManager.mainLibrary;
+        if (library) {
+          var oldLength = library.length;
           var selection = context.playlist.mediaListView
                                  .selection.selectedMediaItems;
-          var sourceLibrary = context.playlist.mediaListView.mediaList.library;
-
-          var device = this.deviceManager.getDeviceForItem(sourceLibrary);
-          if (device) {
-            var items = this._itemsFromEnumerator(selection);
-
-            var deviceLibrary = this._getDeviceLibraryForLibrary(
-                    device, sourceLibrary);
-
-            var differ =
-                Cc["@songbirdnest.com/Songbird/Device/DeviceLibrarySyncDiff;1"]
-                  .createInstance(Ci.sbIDeviceLibrarySyncDiff);
-            var changeset = {};
-            var destItems = {};
-
-            differ.generateDropLists(sourceLibrary,
-                                     destLibrary,
-                                     null,
-                                     items,
-                                     destItems,
-                                     changeset);
-
-            device.importFromDevice(destLibrary, changeset.value);
- 
-            DNDUtils.reportAddedTracks(changeset.value.changes.length,
-                                       0,
-                                       0,
-                                       destLibrary.name,
-                                       true);
-          } 
-          else {
-            destLibrary.addSome(selected);
+          // Create an enumerator that wraps the enumerator we were handed since
+          // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+          // 'ol sbIMediaItems
+    
+          // Create a media item duplicate enumerator filter to count the number of
+          // duplicate items and to remove them from the enumerator if the target is
+          // a library.
+          let dupFilter = 
+            Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
+              .createInstance(Ci.sbIMediaListDuplicateFilter);
+          dupFilter.initialize(selection, 
+                               library, 
+                               true);
+              
+          // We also want to set the downloadStatusTarget property as we work.
+          var unwrapper = {
+            enumerator: dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
+    
+            hasMoreElements : function() {
+              return this.enumerator.hasMoreElements();
+            },
+            getNext : function() {
+              var item = this.enumerator.getNext();
+              item.setProperty(SBProperties.downloadStatusTarget,
+                               item.library.guid + "," + item.guid);
+              return item;
+            },
+            QueryInterface : function(iid) {
+              if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+                  iid.equals(Components.interfaces.nsISupports))
+                return this;
+              throw Components.results.NS_NOINTERFACE;
+            }
           }
+          library.addSome(unwrapper);
         }
+        var added = library.length - oldLength;
+        DNDUtils.reportAddedTracks(
+                            dupFilter.mediaItemCount - dupFilter.duplicateCount,
+                            dupFilter.duplicateCount,
+                            0, 
+                            library.name);
         return true;
       }
     } catch (e) {

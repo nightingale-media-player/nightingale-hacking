@@ -3,6 +3,6 @@
 #filter substitution
 <firmware>
   <version value="1.0.0.1"/>
-  <location value="http://localhost:@SONGBIRD_TEST_SERVER_PORT@/files/1_0_0_1.bin"/>
+  <location value="http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/files/1_0_0_1.bin"/>
 </firmware>
 

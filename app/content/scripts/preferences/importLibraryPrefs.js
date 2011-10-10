@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -45,7 +45,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
@@ -235,7 +235,7 @@ var importLibraryPrefsUI = {
 
   /**
    * Handle the import command event specified by aEvent.
-   * Manually import a library into Songbird.
+   * Manually import a library into Nightingale.
    *
    * \param aEvent              Import Library command event.
    */
@@ -246,14 +246,14 @@ var importLibraryPrefsUI = {
 
     // Get the default library importer.  Do nothing if none available.
     var libraryImporterManager =
-          Cc["@songbirdnest.com/Songbird/LibraryImporterManager;1"]
+          Cc["@getnightingale.com/Nightingale/LibraryImporterManager;1"]
             .getService(Ci.sbILibraryImporterManager);
     var libraryImporter = libraryImporterManager.defaultLibraryImporter;
 
     // Import the library as user directs.
     var libraryFilePath = this._getPrefElem("library_file_path_pref").value;
 
-    var job = libraryImporter.import(libraryFilePath, "songbird", false);
+    var job = libraryImporter.import(libraryFilePath, "nightingale", false);
 
     // Pass a timeout of 0 so the dialog opens immediately, and don't make
     // it modal so it won't block the dirty playlist dialog

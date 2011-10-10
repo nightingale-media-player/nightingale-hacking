@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -47,7 +47,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_metadata_tests.tmp");
+  gTempFolder.append("nightingale_metadata_tests.tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }
@@ -83,7 +83,7 @@ function runTest () {
   jsHttpServer.registerDirectory("/", testFolder.clone()); 
   
   // Set the remote URL's for the firmware files via the JS HTTP server.
-  var handlerURLService = Cc["@songbirdnest.com/mock-firmware-url-handler;1"]
+  var handlerURLService = Cc["@getnightingale.com/mock-firmware-url-handler;1"]
                             .getService(Ci.sbPIMockFirmwareHandlerURLService);
 
   handlerURLService.firmwareURL = REMOTE_FILE_PREFIX + "firmware.xml";
@@ -92,11 +92,11 @@ function runTest () {
   handlerURLService.supportURL = REMOTE_FILE_PREFIX + "support.html";
   handlerURLService.registerURL = REMOTE_FILE_PREFIX + "register.html";
   
-  var device = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
+  var device = Components.classes["@getnightingale.com/Nightingale/Device/DeviceTester/MockDevice;1"]
                          .createInstance(Components.interfaces.sbIDevice);
   assertEqual(device.name, "Bob's Mock Device");
   
-  var updater = Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+  var updater = Components.classes["@getnightingale.com/Nightingale/Device/Firmware/Updater;1"]
                           .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
   assertTrue(updater.hasHandler(device, 0, 0));
 
@@ -107,17 +107,7 @@ function runTest () {
     op: "", 
     firmwareUpdate: null,
     onDeviceEvent: function(aEvent) {
-      
-      function eventTypeToString(aType) {
-        for (let type in Ci.sbIDeviceEvent) {
-          if (Ci.sbIDeviceEvent[type] === aType)
-            return type;
-        }
-        return "0x" + (Array(8).join("0") + (type>>>0).toString(16)).substr(-8);
-      }
-      
-      log("event operation: " + this.op);
-      log("event type: " + eventTypeToString(aEvent.type));
+      log("event type: " + aEvent.type);
       log("event origin: " + aEvent.origin);
       log("event target: " + aEvent.target);
       
@@ -203,6 +193,6 @@ function runTest () {
     eventTarget.removeEventListener(listener);
   }
 
-  jsHttpServer.stop(testFinished);
-  testPending();
+  jsHttpServer.stop();
+  return;
 }

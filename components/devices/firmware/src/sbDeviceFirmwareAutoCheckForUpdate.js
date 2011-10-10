@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -37,11 +37,11 @@ const Cu = Components.utils;
 const NS_QUIT_APPLICATION_GRANTED_TOPIC = "quit-application-granted";
 const NS_TIMER_CALLBACK_TOPIC           = "timer-callback";
 const SB_FINAL_UI_STARTUP_TOPIC         = "final-ui-startup";
-const SB_TIMER_MANAGER_PREFIX           = "songbird-device-firmware-update-";
+const SB_TIMER_MANAGER_PREFIX           = "nightingale-device-firmware-update-";
 
 const FIRMWARE_WIZARD_ACTIVE_DATAREMOTE = "firmware.wizard.active";
 
-const FIRMWARE_UPDATE_INTERVAL = "songbird.firmware.update.defaultInterval";
+const FIRMWARE_UPDATE_INTERVAL = "nightingale.firmware.update.defaultInterval";
 
 function DEBUG(msg) {
   return;
@@ -119,11 +119,11 @@ sbDeviceFirmwareAutoCheckForUpdate.prototype._timer = null;
 sbDeviceFirmwareAutoCheckForUpdate.prototype._timerManager = null;
 
 sbDeviceFirmwareAutoCheckForUpdate.prototype.classDescription =
-    'Songbird Device Firmware Auto Check For Update';
+    'Nightingale Device Firmware Auto Check For Update';
 sbDeviceFirmwareAutoCheckForUpdate.prototype.classID =
     Components.ID("{2137a87f-2ade-448b-a093-bad4f6649fa3}");
 sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID =
-    '@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1';
+    '@getnightingale.com/Nightingale/Device/Firmware/AutoCheckForUpdate;1';
 sbDeviceFirmwareAutoCheckForUpdate.prototype.flags = Ci.nsIClassInfo.SINGLETON;
 sbDeviceFirmwareAutoCheckForUpdate.prototype.interfaces =
     [Ci.nsISupports, Ci.nsIClassInfo, Ci.nsIObserver, Ci.sbIDeviceEventListener];
@@ -149,11 +149,11 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
     obs.addObserver(this, NS_QUIT_APPLICATION_GRANTED_TOPIC, false);
 
     this._deviceFirmwareUpdater = 
-      Cc['@songbirdnest.com/Songbird/Device/Firmware/Updater;1']
+      Cc['@getnightingale.com/Nightingale/Device/Firmware/Updater;1']
         .getService(Ci.sbIDeviceFirmwareUpdater);
         
     this._deviceManager =
-      Cc['@songbirdnest.com/Songbird/DeviceManager;2']
+      Cc['@getnightingale.com/Nightingale/DeviceManager;2']
         .getService(Ci.sbIDeviceManager2);
         
     this._deviceManager.addEventListener(this);
@@ -209,11 +209,11 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
       
       let wm = Cc["@mozilla.org/appshell/window-mediator;1"]
                  .getService(Ci.nsIWindowMediator);
-      let parent = wm.getMostRecentWindow("Songbird:Main");
+      let parent = wm.getMostRecentWindow("Nightingale:Main");
 
       WindowUtils.openModalDialog
         (parent,
-         "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+         "chrome://nightingale/content/xul/device/deviceFirmwareWizard.xul",
          "device_firmware_dialog",
          "",
          ["", "defaultDevice=false", this._queueItem ],
@@ -437,19 +437,19 @@ sbDeviceFirmwareAutoCheckForUpdate.prototype._promptForRepair =
 function sbDeviceFirmwareAutoCheckForUpdate__promptForRepair(aDevice) {
   var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                          .getService(Ci.nsIWindowMediator);
-  var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");  
+  var nightingaleWindow = windowMediator.getMostRecentWindow("Nightingale:Main");  
 
-  var prompter = Cc['@songbirdnest.com/Songbird/Prompter;1']
+  var prompter = Cc['@getnightingale.com/Nightingale/Prompter;1']
                    .getService(Components.interfaces.sbIPrompter);
   var confirmed = 
-    prompter.confirm(songbirdWindow,
+    prompter.confirm(nightingaleWindow,
                      SBString('device.firmware.corrupt.title'),
                      SBFormattedString('device.firmware.corrupt.message',
                      [aDevice.name]));
   if (confirmed) {
     WindowUtils.openModalDialog
-                (songbirdWindow,
-                 "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+                (nightingaleWindow,
+                 "chrome://nightingale/content/xul/device/deviceFirmwareWizard.xul",
                  "device_firmware_dialog",
                  "",
                  [ "mode=repair", "defaultDevice=false", aDevice ],

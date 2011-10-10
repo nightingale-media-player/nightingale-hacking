@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
@@ -37,10 +37,10 @@
 // Mozilla interfaces
 #include <nsIMutableArray.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbMemoryUtils.h>
 
-// Songbird interfaces
+// Nightingale interfaces
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 
@@ -157,15 +157,13 @@ public:
   static nsresult GetOriginItem(/* in */ sbIMediaItem*   aItem,
                                 /* out */ sbIMediaItem** _retval);
   /**
-   * Attempt to get the content length of the media item.  If the content length
-   * property is not set, attempt to determine the content legnth from the
-   * content source and update the content length property.
+   * Attempt to get the content length of the media item
    *
    * \param aItem    The item to look up
    * \return         The content length of the item (or throw an exception)
    */
   static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
-                                   /* out */ PRInt64      * _retval = nsnull);
+                                   /* out */ PRInt64      * _retval);
 
   /**
    * Set the content length of the media item
@@ -179,7 +177,7 @@ public:
   /**
    * \brief Return a library content URI for the URI specified by aURI.
    *        A library content URI is a specially formatted URI for use within
-   *        Songbird libraries and is formatted to facilitate searching for
+   *        Nightingale libraries and is formatted to facilitate searching for
    *        equivalent URI's (e.g., "file:" URI's are all lower case on
    *        Windows).
    *        URI's provided to createMediaItem and related methods must be
@@ -251,10 +249,7 @@ public:
                     /* in  */ nsAString const & aListName,
                     /* out */ nsAString & aName);
   /**
-   * \brief Links a copy to its original. It will take into account the
-   * libraries the items belong to. It will only link from main library to
-   * non-main library. And if necessary if the copy is in the main library 
-   * it will link the original to the copy
+   * \brief Links a copy to its original
    * \param aOriginal The original to link aCopy to
    * \param aCopy The copy to be linked
    */
@@ -269,32 +264,11 @@ inline
 nsresult GetMainLibrary(sbILibrary ** aMainLibrary) {
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libManager =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibrary> mainLibrary;
   return libManager->GetMainLibrary(aMainLibrary);
-}
-
-/**
- * Tests whether the library passed is the main library
- */
-inline
-PRBool sbIsMainLibrary(sbILibrary * aLibrary)
-{
-  NS_ENSURE_ARG_POINTER(aLibrary);
-
-  nsresult rv;
-
-  nsCOMPtr<sbILibrary> mainLibrary;
-  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
-
-  PRBool isEqual;
-  rv = mainLibrary->Equals(aLibrary, &isEqual);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
-
-  return isEqual;
 }
 
 /**

@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Stiamo cercando gli artisti in tour nella tua zona…">
-<!ENTITY concerts.changelocation "Cambia località">
-<!ENTITY concerts.easteregg.fail "FAIL">
-<!ENTITY concerts.easteregg.fail.2 "Nessun concerto trovato a">
-<!ENTITY concerts.timeout.error "La tua connessione a Internet è al momento non disponibile o si è verificato un problema con il nostro database. Riprovare più tardi.">
-<!ENTITY concerts.timeoutreport.error "Segnala un problema">

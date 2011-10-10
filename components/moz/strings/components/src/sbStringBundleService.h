@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,23 +32,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service.
+// Nightingale string bundle service.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbStringBundleService.h
- * \brief Songbird String Bundle Service Definitions.
+ * \brief Nightingale String Bundle Service Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service imported services.
+// Nightingale string bundle service imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIStringBundleService.h>
 
 // Mozilla imports.
@@ -60,12 +60,12 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service defs.
+// Nightingale string bundle service defs.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird string bundle service component defs.
+// Nightingale string bundle service component defs.
 //
 
 #define SB_STRINGBUNDLESERVICE_CLASSNAME "sbStringBundleService"
@@ -81,13 +81,13 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service classes.
+// Nightingale string bundle service classes.
 //
 //------------------------------------------------------------------------------
 
 /**
- * This class implements the Songbird string bundle service component.  This
- * service is provided so that Songbird string bundles can be created.
+ * This class implements the Nightingale string bundle service component.  This
+ * service is provided so that Nightingale string bundles can be created.
  */
 
 class sbStringBundleService : public nsIStringBundleService,
@@ -134,8 +134,8 @@ private:
 
   //
   // mBaseStringBundleService   Base string bundle service.
-  // mBundle                    Main Songbird string bundle.
-  // mBrandBundle               Main Songbird brand string bundle.
+  // mBundle                    Main Nightingale string bundle.
+  // mBrandBundle               Main Nightingale brand string bundle.
   //
 
   nsCOMPtr<nsIStringBundleService>
@@ -146,15 +146,15 @@ private:
 
 
 /**
- * This class implements the Songbird string bundle.
+ * This class implements the Nightingale string bundle.
  *
- *   The Songbird string bundle provides an enhanced set of string bundle
+ *   The Nightingale string bundle provides an enhanced set of string bundle
  * services.  In particular, this class allows string bundles to include other
  * string bundles and to include bundle strings in other bundle strings.
  *   To include one or more string bundles in a top-level string bundle, define
  * the string "include_bundle_list" in the top-level bundle.  This string should
  * consist of a comma separated list of included string bundle URI's.  When
- * the Songbird string bundle object looks up a string, it will look in the
+ * the Nightingale string bundle object looks up a string, it will look in the
  * top-level string bundle and all included string bundles.  The included string
  * bundles can include additional string bundles too.
  *   Note that circular string bundle includes will lead to errors or hangs.

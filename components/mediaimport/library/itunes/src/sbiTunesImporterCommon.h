@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -33,14 +33,11 @@
 #include <sbILibrary.h>
 #include <sbIDataRemote.h>
 
-/* Observer service topic sent when an import operation completes. */
-#define SB_LIBRARY_IMPORT_ITUNES_COMPLETE "sb-library-import-itunes-complete"
-
 // Common Mozilla contract ID's
 #define NS_LOCALFILE_CONTRACTID "@mozilla.org/file/local;1"
 
-// Common Songbird contract ID's
-#define SB_DATAREMOTE_CONTRACTID "@songbirdnest.com/Songbird/DataRemote;1"
+// Common Nightingale contract ID's
+#define SB_DATAREMOTE_CONTRACTID "@getnightingale.com/Nightingale/DataRemote;1"
 
 class sbIDatabaseQuery;
 class sbILibrary;

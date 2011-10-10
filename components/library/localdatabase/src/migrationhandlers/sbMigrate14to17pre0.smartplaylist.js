@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -51,7 +51,7 @@ function sbLibraryMigration()
 
 sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
-  classDescription: 'Songbird Migration Handler, version ' +
+  classDescription: 'Nightingale Migration Handler, version ' +
                      FROM_VERSION + ' to ' + TO_VERSION,
   classID: Components.ID("{6f74cb1d-49b5-4475-99ca-63ebb3696a40}"),
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID +
@@ -66,7 +66,7 @@ sbLibraryMigration.prototype = {
       this._databaseLocation = aLibrary.databaseLocation;
 
       // Get all the smart playlists
-      var dbQuery = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+      var dbQuery = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                     .createInstance(Ci.sbIDatabaseQuery);
       dbQuery.databaseLocation = aLibrary.databaseLocation;
       dbQuery.setDatabaseGUID(aLibrary.databaseGuid);
@@ -96,10 +96,10 @@ sbLibraryMigration.prototype = {
       }
 
       // Init the dirty db
-      var smartListQuery = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+      var smartListQuery = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                            .createInstance(Ci.sbIDatabaseQuery);
       smartListQuery.setAsyncQuery(false);
-      smartListQuery.setDatabaseGUID("songbird");
+      smartListQuery.setDatabaseGUID("nightingale");
       smartListQuery.addQuery(
           "CREATE TABLE IF NOT EXISTS smartplupd_update_video_lists " +
           "(listguid TEXT UNIQUE NOT NULL)");

@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,12 +21,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -42,7 +42,7 @@
    ************************************************************************* -->
 
   <binding id="sb-device-image-sync"
-     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+     extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
 
     <!-- ***********************************************************************
      *
@@ -137,7 +137,7 @@
       <!-- _ignoreFolderChanges defaults to true to ignore the select event
            during widget construction -->
       <field name="_ignoreFolderChanges">true</field>
-      <field name="_fileScanner">Cc["@songbirdnest.com/Songbird/FileScan;1"]
+      <field name="_fileScanner">Cc["@getnightingale.com/Nightingale/FileScan;1"]
                                    .createInstance(Ci.sbIFileScan);</field>
       <field name="_fileScanQuery">null</field>
       <field name="_fileScanTimer">null</field>
@@ -183,9 +183,9 @@
           }
 
           // The file extension list that device supports.
-          let fileExtensions = capabilities.getSupportedFileExtensions(
-                                              this.device,
-                                              sbIDC.CONTENT_IMAGE);
+          fileExtensions = capabilities.getSupportedFileExtensions(
+                                          this.device,
+                                          sbIDC.CONTENT_IMAGE);
 
           let extensions = "";
           while (fileExtensions.hasMore()) {
@@ -220,17 +220,8 @@
           if (this.devLib) {
             this.devLib.addDeviceLibraryListener(this);
             this._imageSettings =
-              this.devLib.syncSettings.getMediaSettings(this._mediaType);
+              this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
           }
-
-          /* Set the imagesync enabled checkbox to reflect whether
-           * imagesync is on */
-          let syncImagesCheckBox =
-            this._getElement("content_management_checkbox");
-
-          syncImagesCheckBox.checked =
-            (this._imageSettings &&
-             this._imageSettings.mgmtType != this._CIDM.SYNC_MGMT_NONE);
 
           // Read preferences and update UI
           this._syncPrefsRead();
@@ -345,7 +336,7 @@
           if (!this._imageSettings) {
             this.devLib.addDeviceLibraryListener(this);
             this._imageSettings =
-              this.devLib.syncSettings.getMediaSettings(this._mediaType);
+              this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
           }
 
           // Enable/disable radio buttons
@@ -399,13 +390,7 @@
             rootFolderElement.removeAttribute("disabled");
             syncAllRadio.removeAttribute("disabled");
             syncSelectedRadio.removeAttribute("disabled");
-            if (syncEnabled && this._imageSettings.mgmtType ==
-                               this._CIDM.SYNC_MGMT_PLAYLISTS) {
-              syncFolderTree.removeAttribute("disabled");
-            }
-            else {
-              syncFolderTree.setAttribute("disabled", true);
-            }
+            syncFolderTree.removeAttribute("disabled");
             headerBackground.removeAttribute("disabled");
           }
 
@@ -426,7 +411,7 @@
             var displayLabelText = this._syncFromFolder.leafName;
             if(this.PlatformUtils.platformString == "Windows_NT") {
               displayLabelText =
-                Cc["@songbirdnest.com/Songbird/KnownFolderManager;1"]
+                Cc["@getnightingale.com/Nightingale/KnownFolderManager;1"]
                   .createInstance(Ci.sbIKnownFolderManager)
                   .getDisplayNameFromPath(this._syncFromFolder.path);
             }
@@ -548,7 +533,6 @@
             this._syncFoldersList = {};
           }
 
-          this._syncFolderListWrite();
           this._updateUI();
         }
         ]]></body>
@@ -561,13 +545,62 @@
         <parameter name="aEnable"/>
         <body><![CDATA[
         {
-          if (aEnable) {
-            this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_ALL;
+          var shouldUpdatePrefs = true;
+
+          var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
+                           .createInstance(Ci.sbIPrompter);
+          var buttonFlags =
+            Ci.nsIPromptService.BUTTON_POS_1 *
+            Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
+            Ci.nsIPromptService.BUTTON_POS_0 *
+            Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
+
+          // Prompt the user if they are about to turn on photo syncing.
+          if (this._getElement("content_management_checkbox").checked) {
+            var buttonPressed = prompter.confirmEx(
+              null,
+              SBString("device.dialog.sync_images_confirmation.title"),
+              SBFormattedString("device.dialog.sync_images_confirmation.msg",
+                                [this.device.name]),
+              buttonFlags,
+              SBString("device.dialog.sync_images_confirmation.sync_button"),
+              SBString("device.dialog.sync_images_confirmation.no_button"),
+              null,
+              null,
+              {});
+
+            if (buttonPressed != 0) {
+              // The user did not choose to sync, clear the checkbox state.
+              this._getElement("content_management_checkbox").checked = false;
+              shouldUpdatePrefs = false;
+            }
           }
           else {
-            this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_NONE;
+            var buttonPressed = prompter.confirmEx(
+              null,
+              SBString("device.dialog.sync_images_confirmation.title"),
+              SBFormattedString("device.dialog.remove_images_confirmation.msg",
+                                [this.device.name]),
+              buttonFlags,
+              SBString("device.dialog.remove_images_confirmation.sync_button"),
+              SBString("device.dialog.remove_images_confirmation.no_button"),
+              null,
+              null,
+              {});
+
+            if (buttonPressed != 0) {
+              // The user did not accept unsync, restore the checkbox state.
+              this._getElement("content_management_checkbox").checked = true;
+              shouldUpdatePrefs = false;
+            }
           }
-          this._updateUI();
+
+          if (shouldUpdatePrefs) {
+            this._imageSettings.mgmtType =
+                                  (aEnable ? this._CIDM.SYNC_MGMT_ALL :
+                                             this._CIDM.SYNC_MGMT_NONE);
+            this._updateUI();
+          }
         }
         ]]></body>
       </method>
@@ -614,7 +647,6 @@
               this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_PLAYLISTS;
             }
           }
-          this._syncFolderListWrite();
         }
         ]]></body>
       </method>
@@ -629,7 +661,7 @@
           this.stopDirScan();
 
           // Initialize file scan query
-          this._fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+          this._fileScanQuery = Cc["@getnightingale.com/Nightingale/FileScanQuery;1"]
                                   .createInstance(Ci.sbIFileScanQuery);
 
           let capabilities = this.device.capabilities;
@@ -706,7 +738,7 @@
 
           let ioService = Cc["@mozilla.org/network/io-service;1"]
                             .getService(Ci.nsIIOService);
-          let libUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+          let libUtils = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                            .getService(Ci.sbILibraryUtils);
 
           // Count number of files for the subdirectories
@@ -853,6 +885,34 @@
       </method>
       <method name="onBeforeClear">
         <body>{ return true; }</body>
+      </method>
+
+      <method name="onSyncSettings">
+        <parameter name="aAction"/>
+        <parameter name="aSyncSettings"/>
+        <body><![CDATA[
+        {
+          switch (aAction) {
+            // Reset and apply could change the image settings. Re-read
+            // to get the updated settings.
+            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_RESET:
+              this._imageSettings =
+                this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+              // Reset displayed preferences
+              this._syncPrefsRead();
+              this._updateUI();
+              break;
+            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED:
+              this._updateUI();
+              break;
+            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_APPLIED:
+              this._imageSettings =
+                this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+              this._syncFolderListWrite();
+              break;
+          }
+        }
+        ]]></body>
       </method>
 
       <!--

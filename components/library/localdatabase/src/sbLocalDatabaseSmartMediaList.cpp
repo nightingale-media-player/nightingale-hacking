@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbLocalDatabaseSmartMediaList.h"
@@ -35,7 +35,6 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbLocalDatabaseSchemaInfo.h>
@@ -45,7 +44,6 @@
 #include <sbStandardProperties.h>
 #include <sbILibraryManager.h>
 #include <sbDummyProperties.h>
-#include <sbStringUtils.h>
 #include <nsAutoPtr.h>
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
@@ -72,7 +70,7 @@
 
 static const char *gsFmtRadix10 = "%lld";
 
-static char const LIBRARY_MANAGER_BEFORE_SHUTDOWN[] = "songbird-library-manager-before-shutdown";
+static char const LIBRARY_MANAGER_BEFORE_SHUTDOWN[] = "nightingale-library-manager-before-shutdown";
 static char const OBSERVER_SERVICE_CONTRACT_ID[] = "@mozilla.org/observer-service;1";
 
 /*
@@ -88,45 +86,7 @@ static PRLogModuleInfo* gLocalDatabaseSmartMediaListLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-static nsresult
-ParseAndAddChunk(const nsAString& aString,
-                 sbStringMap& aMap)
-{
-  nsresult rv;
-  nsCOMPtr<nsINetUtil> netUtil = do_GetService(NS_IOSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  static const PRUnichar sEquals = '=';
-
-  PRInt32 length = aString.Length();
-
-  if (length == 0) {
-    return NS_OK;
-  }
-
-  PRInt32 pos = aString.FindChar(sEquals);
-  if (pos > 1) {
-    nsAutoString name(nsDependentSubstring(aString, 0, pos));
-    nsCAutoString unescapedNameUtf8;
-    rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(name), 0, unescapedNameUtf8);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString value(nsDependentSubstring(aString, pos + 1, length - pos));
-    nsCAutoString unescapedValueUtf8;
-    if (pos < length - 1) {
-      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value), 0, unescapedValueUtf8);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    PRBool success = aMap.Put(NS_ConvertUTF8toUTF16(unescapedNameUtf8),
-                              NS_ConvertUTF8toUTF16(unescapedValueUtf8));
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  return NS_OK;
-}
-
-static nsresult ParseQueryStringIntoHashtable(const nsAString& aString,
+nsresult ParseQueryStringIntoHashtable(const nsAString& aString,
                                        sbStringMap& aMap)
 {
   nsresult rv;
@@ -168,6 +128,45 @@ static nsresult ParseQueryStringIntoHashtable(const nsAString& aString,
   return NS_OK;
 }
 
+nsresult
+ParseAndAddChunk(const nsAString& aString,
+                 sbStringMap& aMap)
+{
+  nsresult rv;
+  nsCOMPtr<nsINetUtil> netUtil = do_GetService(NS_IOSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  static const PRUnichar sEquals = '=';
+
+  const PRUnichar *start, *end;
+  PRInt32 length = aString.BeginReading(&start, &end);
+
+  if (length == 0) {
+    return NS_OK;
+  }
+
+  PRInt32 pos = aString.FindChar(sEquals);
+  if (pos > 1) {
+    nsAutoString name(nsDependentSubstring(aString, 0, pos));
+    nsCAutoString unescapedNameUtf8;
+    rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(name), 0, unescapedNameUtf8);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString value(nsDependentSubstring(aString, pos + 1, length - pos));
+    nsCAutoString unescapedValueUtf8;
+    if (pos < length - 1) {
+      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value), 0, unescapedValueUtf8);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    PRBool success = aMap.Put(NS_ConvertUTF8toUTF16(unescapedNameUtf8),
+                              NS_ConvertUTF8toUTF16(unescapedValueUtf8));
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
 PLDHashOperator PR_CALLBACK
 JoinStringMapCallback(nsStringHashKey::KeyType aKey,
                       nsString aEntry,
@@ -203,7 +202,7 @@ JoinStringMapCallback(nsStringHashKey::KeyType aKey,
   return PL_DHASH_NEXT;
 }
 
-static nsresult
+nsresult
 JoinStringMapIntoQueryString(sbStringMap& aMap,
                              nsAString &aString)
 {
@@ -378,6 +377,8 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSmartMediaList,
 sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 : mInnerMonitor(nsnull)
 , mConditionsMonitor(nsnull)
+, mListenersMonitor(nsnull)
+, mSourceMonitor(nsnull)
 , mMatchType(sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY)
 , mLimitType(sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE)
 , mLimit(0)
@@ -386,8 +387,6 @@ sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 , mAutoUpdateMonitor(nsnull)
 , mAutoUpdate(false)
 , mNotExistsMode(sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO)
-, mListenersMonitor(nsnull)
-, mSourceMonitor(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseSmartMediaListLog) {
@@ -1523,6 +1522,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   NS_NAMED_LITERAL_STRING(kMediaLists,         "simple_media_lists");
   NS_NAMED_LITERAL_STRING(kMediaItemsAlias,    "_mi");
   NS_NAMED_LITERAL_STRING(kMediaListTypeId,    "media_list_type_id");
+  NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
   NS_NAMED_LITERAL_STRING(kPropertyId,         "property_id");
   NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
 
@@ -1661,7 +1661,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       rv = MediaListGuidToDB(ruleCondition->mLeftValue, longVal);
       NS_ENSURE_SUCCESS(rv, rv);
       
-      if (longVal == (PRUint32)-1) 
+      if (longVal == -1) 
         return NS_ERROR_UNEXPECTED;
       
       colId = kMediaItemId;
@@ -1771,7 +1771,7 @@ void
 sbLocalDatabaseSmartMediaList::SPrintfInt64(nsAString &aString, 
                                             PRInt64 aValue) {
   char out[32] = {0};
-  if (PR_snprintf(out, 32, gsFmtRadix10, aValue) == (PRUint32)-1) {
+  if (PR_snprintf(out, 32, gsFmtRadix10, aValue) == -1) {
     aString = NS_LITERAL_STRING("0");
   }
   NS_ConvertUTF8toUTF16 wide(out);
@@ -1798,7 +1798,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   NS_ENSURE_ARG_POINTER(aInfo);
 
   NS_NAMED_LITERAL_STRING(kConditionAlias, "_c");
-  NS_NAMED_LITERAL_STRING(kObjSearchable,  "obj_searchable");
+  NS_NAMED_LITERAL_STRING(kObjSortable,    "obj_sortable");
   NS_NAMED_LITERAL_STRING(kMediaItem,      "media_item_id");
 
   nsresult rv;
@@ -1816,7 +1816,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    columnName.Assign(kObjSearchable);
+    columnName.Assign(kObjSortable);
   }
 
   nsCOMPtr<sbIPropertyOperator> opObj;
@@ -1851,7 +1851,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     
     PRTime now = PR_Now()/PR_USEC_PER_MSEC;
     PRTime when = now - timeValue;
-    if(PR_snprintf(out, 32, gsFmtRadix10, when) == (PRUint32)-1) {
+    if(PR_snprintf(out, 32, gsFmtRadix10, when) == -1) {
       return NS_ERROR_FAILURE;
     }
     NS_ConvertUTF8toUTF16 wide(out);
@@ -1923,10 +1923,10 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   }
   
   if (!leftValue.IsEmpty()) {
-    rv = aInfo->MakeSearchable(leftValue, value);
-    // MakeSearchable may fail if the value fails to validate, but since a smart
+    rv = aInfo->MakeSortable(leftValue, value);
+    // MakeSortable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
-    // fatal to fail to make searchable, when that fails we just use the value
+    // fatal to fail to make sortable, when that fails we just use the value
     // that we were given as is and escape it properly.
     if (NS_FAILED(rv)) {
       nsCOMPtr<nsINetUtil> netUtil =
@@ -1946,36 +1946,31 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   // If this is a between operator, construct two conditions for it
   if (op.EqualsLiteral(SB_OPERATOR_BETWEEN)) {
     nsCOMPtr<sbISQLBuilderCriterion> left;
-    PRUint32 matchType;
-    if (invertRange)
-      matchType = sbISQLBuilder::MATCH_LESS;
-    else
-      matchType = sbISQLBuilder::MATCH_GREATEREQUAL;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              matchType,
+                                              invertRange ?
+                                                sbISQLBuilder::MATCH_LESS :
+                                                sbISQLBuilder::MATCH_GREATEREQUAL,
                                               value,
                                               getter_AddRefs(left));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString rvalue;
-    rv = aInfo->MakeSearchable(rightValue, rvalue);
-    // MakeSearchable may fail if the value fails to validate, but since a smart
+    rv = aInfo->MakeSortable(rightValue, rvalue);
+    // MakeSortable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
-    // fatal to fail to make searchable, when that fails we just use the value
+    // fatal to fail to make sortable, when that fails we just use the value
     // that we were given as is.
     if (NS_FAILED(rv)) {
       rvalue = rightValue;
     }
 
     nsCOMPtr<sbISQLBuilderCriterion> right;
-    if (invertRange)
-      matchType = sbISQLBuilder::MATCH_GREATER;
-    else
-      matchType = sbISQLBuilder::MATCH_LESSEQUAL;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              matchType,
+                                              invertRange ?
+                                                sbISQLBuilder::MATCH_GREATER :
+                                                sbISQLBuilder::MATCH_LESSEQUAL,
                                               rvalue,
                                               getter_AddRefs(right));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2054,11 +2049,11 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
       PRInt64 numericValue;
       rv = ScanfInt64(value, &numericValue);
       NS_ENSURE_SUCCESS(rv, rv);
-      rv = aBuilder->CreateMatchCriterionLongLong(kConditionAlias,
-                                                  columnName,
-                                                  matchType,
-                                                  numericValue,
-                                                  getter_AddRefs(criterion));
+      rv = aBuilder->CreateMatchCriterionLong(kConditionAlias,
+                                              columnName,
+                                              matchType,
+                                              numericValue,
+                                              getter_AddRefs(criterion));
     } else {
       rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                                 columnName,
@@ -2167,7 +2162,7 @@ nsresult sbLocalDatabaseSmartMediaList::MediaListGuidToDB(nsAString &val, PRUint
   guid = val;
   
   libraryManager = 
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<sbILibrary> library;
@@ -2181,7 +2176,7 @@ nsresult sbLocalDatabaseSmartMediaList::MediaListGuidToDB(nsAString &val, PRUint
   nsCOMPtr<sbIMediaItem> item;
   rv = library->GetMediaItem(val, getter_AddRefs(item));
   if (rv != NS_OK) {
-    v = (PRUint32)-1;
+    v = -1;
   } else {
     nsAutoString storageGuid;
     rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
@@ -2252,10 +2247,10 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   nsAutoString leftValue, value;
   leftValue = aCondition->mLeftValue;
   if (!leftValue.IsEmpty()) {
-    rv = aInfo->MakeSearchable(leftValue, value);
-    // MakeSearchable may fail if the value fails to validate, but since a smart
+    rv = aInfo->MakeSortable(leftValue, value);
+    // MakeSortable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
-    // fatal to fail to make searchable, when that fails we just use the value
+    // fatal to fail to make sortable, when that fails we just use the value
     // that we were given as is.
     if (NS_FAILED(rv)) {
       value = leftValue;
@@ -3008,14 +3003,6 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
                           state);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set the 'last updated' property when the smart media list rules have been
-  // changed - this is more in line with the semantics than simply when the
-  // contents of the list have changed (due to it being recomputed, for example)
-  sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
-  rv = mItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED),
-                          now);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -3196,7 +3183,7 @@ sbLocalDatabaseSmartMediaList::SetName(const nsAString& aName)
   // inner list to the outer one.
   rv = mLocalDatabaseLibrary->NotifyListenersItemUpdated(this, properties);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   return NS_OK;
 }
 
@@ -3313,7 +3300,7 @@ sbLocalDatabaseSmartMediaList::GetSourceLibraryGuid(nsAString &retVal) {
     nsresult rv;
     
     libraryManager = 
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsCOMPtr<sbILibrary> mainLib;

@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_TEMPORARYMEDIAITEM_H_
@@ -37,7 +37,7 @@
 
 /**
  * \file  sbTemporaryMediaItem.h
- * \brief Songbird Temporary Media Item Definitions.
+ * \brief Nightingale Temporary Media Item Definitions.
  */
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIMediaItem.h>
 
 // Mozilla imports.
@@ -64,10 +64,10 @@
 // Temporary media item component defs.
 //
 
-#define SONGBIRD_TEMPORARYMEDIAITEM_CONTRACTID \
-          "@songbirdnest.com/Songbird/Library/TemporaryMediaItem;1"
-#define SONGBIRD_TEMPORARYMEDIAITEM_CLASSNAME "sbTemporaryMediaItem"
-#define SONGBIRD_TEMPORARYMEDIAITEM_CID                                        \
+#define NIGHTINGALE_TEMPORARYMEDIAITEM_CONTRACTID \
+          "@getnightingale.com/Nightingale/Library/TemporaryMediaItem;1"
+#define NIGHTINGALE_TEMPORARYMEDIAITEM_CLASSNAME "sbTemporaryMediaItem"
+#define NIGHTINGALE_TEMPORARYMEDIAITEM_CID                                        \
   /* {f1ea940e-1dd1-11b2-a9a6-cbcc44d9500d} */                                 \
   { 0xf1ea940e,                                                                \
     0x1dd1,                                                                    \

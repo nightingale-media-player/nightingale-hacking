@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
  * \file  DeviceManager.h
- * \brief Songbird WMDevice Component Definition.
+ * \brief Nightingale WMDevice Component Definition.
  */
 
 #ifndef __SB_DEVICEMANAGER_H__
@@ -40,13 +40,13 @@
 #include <prlock.h>
 
 // DEFINES ====================================================================
-#define SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION       \
-  "Songbird Obsolete DeviceManager Service"
-#define SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID         \
-  "@songbirdnest.com/Songbird/DeviceManager;1"
-#define SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME          \
-  "Songbird Obsolete Device Manager"
-#define SONGBIRD_OBSOLETE_DEVICEMANAGER_CID                \
+#define NIGHTINGALE_OBSOLETE_DEVICEMANAGER_DESCRIPTION       \
+  "Nightingale Obsolete DeviceManager Service"
+#define NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CONTRACTID         \
+  "@getnightingale.com/Nightingale/DeviceManager;1"
+#define NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CLASSNAME          \
+  "Nightingale Obsolete Device Manager"
+#define NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CID                \
 { /* d0b017c4-f388-4e78-abf3-5f48ca616a94 */               \
   0xd0b017c4,                                              \
   0xf388,                                                  \

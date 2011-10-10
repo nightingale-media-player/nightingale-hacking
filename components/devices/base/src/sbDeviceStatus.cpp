@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -134,7 +134,7 @@ sbDeviceStatus::GetProgress(double *aProgress)
 NS_IMETHODIMP
 sbDeviceStatus::SetProgress(double aProgress)
 {
-  PRInt64 const newProgress = (PRUint64)(aProgress * 100.00 + 0.5);
+  PRInt64 const newProgress = aProgress * 100.00 + 0.5;
   if (newProgress != mCurrentProgress) {
     mCurrentProgress = newProgress;
     return mProgressRemote->SetIntValue(newProgress);
@@ -219,7 +219,7 @@ sbDeviceStatus::SetMediaList(sbIMediaList * aMediaList)
 NS_IMETHODIMP sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
 {
   NS_ENSURE_ARG_POINTER(aElapsedTime);
-  *aElapsedTime = PR_IntervalToMilliseconds((PRIntervalTime)(PR_IntervalNow() - mTimestamp));
+  *aElapsedTime = PR_IntervalToMilliseconds(PR_IntervalNow() - mTimestamp);
   return NS_OK;
 }
 
@@ -315,7 +315,7 @@ nsresult sbDeviceStatus::GetDataRemote(nsIProxyObjectManager* aProxyObjectManage
   fullDataRemoteName.Append(aDataRemoteName);
 
   /* Get the data remote. */
-  pDataRemote = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1",
+  pDataRemote = do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1",
                                   &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = pDataRemote->Init(fullDataRemoteName, nullString);

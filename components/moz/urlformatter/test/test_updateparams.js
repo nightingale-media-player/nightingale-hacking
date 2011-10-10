@@ -40,7 +40,7 @@
  * Original test file pulled from the mozilla source:
  * mozilla/toolkit/mozapps/extensions/test/unit/test_bug384052.js
  * and modified by:
- *   John Gaunt <redfive@songbirdnest.com>
+ *   John Gaunt <redfive@getnightingale.com>
  */
 
 //const Cc = Components.classes;
@@ -48,7 +48,7 @@
 
 const CLASS_ID = Components.ID("{12345678-1234-1234-1234-123456789abc}");
 //const CONTRACT_ID = "@mozilla.org/test-parameter-source;1";
-const CONTRACT_ID = "@songbirdnest.com/moz/sburlformatter;1";
+const CONTRACT_ID = "@getnightingale.com/moz/sburlformatter;1";
 
 var gTestURL = "http://127.0.0.1:4444/?itemID=%ITEM_ID%&custom1=%CUSTOM1%&custom2=%CUSTOM2%";
 var gExpectedURL = null;

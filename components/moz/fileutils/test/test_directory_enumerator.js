@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -233,7 +233,7 @@ var testDirectoryEnumerator = {
     var directoryEnumerator;
     try {
       directoryEnumerator =
-        Cc["@songbirdnest.com/Songbird/DirectoryEnumerator;1"]
+        Cc["@getnightingale.com/Nightingale/DirectoryEnumerator;1"]
           .createInstance(Ci.sbIDirectoryEnumerator);
     } catch (ex) {}
     assertTrue(directoryEnumerator,
@@ -260,7 +260,7 @@ var testDirectoryEnumerator = {
 
     // Create a directory enumerator.
     var directoryEnumerator =
-          Cc["@songbirdnest.com/Songbird/DirectoryEnumerator;1"]
+          Cc["@getnightingale.com/Nightingale/DirectoryEnumerator;1"]
             .createInstance(Ci.sbIDirectoryEnumerator);
 
     // Configure the directory enumerator.
@@ -299,7 +299,7 @@ var testDirectoryEnumerator = {
     function testDirectoryEnumerator__createTestDir(aTestDirStruct) {
     // Create a temporary test directory.
     var temporaryFileService =
-          Cc["@songbirdnest.com/Songbird/TemporaryFileService;1"]
+          Cc["@getnightingale.com/Nightingale/TemporaryFileService;1"]
             .getService(Ci.sbITemporaryFileService);
     var testDir = temporaryFileService.createFile(Ci.nsIFile.DIRECTORY_TYPE);
 

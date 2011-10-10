@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect utility.
+// Nightingale charset detect utility.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbCharsetDetector.cpp
- * \brief Songbird Charset Detector Source.
+ * \brief Nightingale Charset Detector Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect utility imported services.
+// Nightingale charset detect utility imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsICharsetDetector.h>
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbStringUtils.h>
 
 /* Windows Specific */
@@ -60,7 +60,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect utilities nsISupports implementation.
+// Nightingale charset detect utilities nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbCharsetDetector,
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect utilities sbICharsetDetector implementation.
+// Nightingale charset detect utilities sbICharsetDetector implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -177,7 +177,7 @@ sbCharsetDetector::Finish(nsACString& _retval)
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect nsICharsetDetectionObserver implementation.
+// Nightingale charset detect nsICharsetDetectionObserver implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -191,12 +191,12 @@ sbCharsetDetector::Notify(const char *aCharset, nsDetectionConfident aConf)
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect utilities public services.
+// Nightingale charset detect utilities public services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird charset detect utilities object.
+ * Construct a Nightingale charset detect utilities object.
  */
 
 sbCharsetDetector::sbCharsetDetector()
@@ -208,7 +208,7 @@ sbCharsetDetector::sbCharsetDetector()
 
 
 /**
- * Destroy a Songbird charset detect utilities object.
+ * Destroy a Nightingale charset detect utilities object.
  */
 
 sbCharsetDetector::~sbCharsetDetector()
@@ -217,7 +217,7 @@ sbCharsetDetector::~sbCharsetDetector()
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detect utilities private methods.
+// Nightingale charset detect utilities private methods.
 //
 //------------------------------------------------------------------------------
 

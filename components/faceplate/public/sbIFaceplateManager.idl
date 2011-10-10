@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -52,7 +52,7 @@ interface nsISimpleEnumerator;
  * open a window, or use the status bar area for the time being.
  *
  * Please submit any suggestions/feedback as bug reports to
- * http://bugzilla.songbirdnest.com
+ * http://bugzilla.getnightingale.com
  *
  * WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
  *
@@ -60,10 +60,10 @@ interface nsISimpleEnumerator;
  * To use the generic progress display faceplate:
  * \Example
  * \code
- *         var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
+ *         var manager =  Components.classes["@getnightingale.com/faceplate/manager;1"]
  *                           .getService(Components.interfaces.sbIFaceplateManager);  
  *         var pane = manager.createPane("test", "test", 
- *                      "chrome://songbird/content/bindings/facePlate.xml#progress-pane");
+ *                      "chrome://nightingale/content/bindings/facePlate.xml#progress-pane");
  *         pane.setData("label1", "This is a demo of the");
  *         pane.setData("label2", "progress faceplate");
  *         pane.setData("progress-mode", "determined"); 

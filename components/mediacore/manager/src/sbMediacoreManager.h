@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,6 +36,7 @@
 #include <nsIObserver.h>
 
 #include <nsHashKeys.h>
+#include <nsWeakReference.h>
 #include <prmon.h>
 
 // Interfaces
@@ -47,8 +48,6 @@
 
 #include <sbBaseMediacoreMultibandEqualizer.h>
 #include <sbBaseMediacoreVolumeControl.h>
-
-#include <sbWeakReference.h>
 
 // Forward declared classes
 class sbBaseMediacoreEventTarget;
@@ -63,7 +62,7 @@ class sbMediacoreManager : public sbBaseMediacoreMultibandEqualizer,
                            public sbIMediacoreVoting,
                            public nsIClassInfo,
                            public nsIObserver,
-                           public sbSupportsWeakReference
+                           public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //
@@ -66,9 +66,9 @@ function sbPlaylistWriterManager()
 
 sbPlaylistWriterManager.prototype.constructor = sbPlaylistWriterManager;
 sbPlaylistWriterManager.prototype = {
-  classDescription: "Songbird Playlist Writer Manager Interface",
+  classDescription: "Nightingale Playlist Writer Manager Interface",
   classID:          Components.ID("{9d66cb86-951e-49f4-bef8-26a578891275}"),
-  contractID:       "@songbirdnest.com/Songbird/PlaylistWriterManager;1",
+  contractID:       "@getnightingale.com/Nightingale/PlaylistWriterManager;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIPlaylistWriterManager]),
 
   _writers: null,

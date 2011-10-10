@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -42,11 +42,11 @@
 #include <nsStringGlue.h>
 #include <nsCOMPtr.h>
 
-#define SONGBIRD_SECURITYEVENT_CONTRACTID                 \
-  "@songbirdnest.com/remoteapi/security-event;1"
-#define SONGBIRD_SECURITYEVENT_CLASSNAME                  \
-  "Songbird Remote Security Event"
-#define SONGBIRD_SECURITYEVENT_CID                        \
+#define NIGHTINGALE_SECURITYEVENT_CONTRACTID                 \
+  "@getnightingale.com/remoteapi/security-event;1"
+#define NIGHTINGALE_SECURITYEVENT_CLASSNAME                  \
+  "Nightingale Remote Security Event"
+#define NIGHTINGALE_SECURITYEVENT_CID                        \
 { /* 17097f88-2b36-4bbc-a74b-a3199a3e8c43 */              \
   0x17097f88,                                             \
   0x2b36,                                                 \
@@ -81,8 +81,11 @@ public:
 /** nsIPrivateDOMEvent - this is non-XPCOM so no forward macro **/
   NS_IMETHOD DuplicatePrivateData();
   NS_IMETHOD SetTarget(nsIDOMEventTarget* aTarget);
-  NS_IMETHOD_(PRBool) IsDispatchStopped();
-  NS_IMETHOD_(nsEvent*) GetInternalNSEvent();
+  NS_IMETHOD SetCurrentTarget(nsIDOMEventTarget* aTarget);
+  NS_IMETHOD SetOriginalTarget(nsIDOMEventTarget* aTarget);
+  NS_IMETHOD IsDispatchStopped(PRBool* aIsDispatchPrevented);
+  NS_IMETHOD GetInternalNSEvent(nsEvent** aNSEvent);
+  NS_IMETHOD HasOriginalTarget(PRBool* aResult);
   NS_IMETHOD SetTrusted(PRBool aTrusted);
 
 public:

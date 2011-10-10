@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -209,9 +209,8 @@ ConvertPropertyArrayToTagList(sbIPropertyArray *properties)
       nsCOMPtr<sbIProperty> property(do_QueryInterface(next));
 
       converted = ConvertSinglePropertyToTag (property, tags);
-      if (!converted) {
+      if (!converted)
         LOG(("Failed to convert property to tag"));
-      }
     }
   }
 
@@ -267,7 +266,7 @@ ConvertTagListToPropertyArray(GstTagList *taglist,
 {
   nsresult rv;
   nsCOMPtr<sbIMutablePropertyArray> proparray = do_CreateInstance(
-          "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1", &rv);
+          "@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
   gst_tag_list_foreach (taglist, ConvertSingleTag, proparray);
@@ -771,7 +770,6 @@ static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
   { "audio/aac",         "audio/mpeg", SB_GST_CAPS_MAP_AUDIO },
 
   { "video/x-ms-wmv",    "video/x-wmv", SB_GST_CAPS_MAP_VIDEO },
-  { "video/h264",        "video/x-h264", SB_GST_CAPS_MAP_VIDEO },
 
   // The remaining ones have NONE type; they should ONLY be used for mapping
   // a GST type to a mime type, not the other way around. It's ok for duplicate

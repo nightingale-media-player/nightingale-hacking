@@ -23,7 +23,7 @@ add_result()
 }
 
 echo ""
-echo -n "Songbird copyright updater script"
+echo -n "Nightingale copyright updater script"
 
 if test "$1" == "check"; then
   echo " - CHECK mode."
@@ -105,7 +105,7 @@ grep -n -r Copyright * | \
 # although we do have a few files of ours there.
 
 add_result dependencies/Makefile.in
-add_result dependencies/vendor/mp4/README_SONGBIRD
+add_result dependencies/vendor/mp4/README_NIGHTINGALE
 add_result dependencies/vendor/mozilla/Makefile.in
 add_result documentation/Makefile.in
 

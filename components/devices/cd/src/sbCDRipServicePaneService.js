@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 if (typeof(Cc) == "undefined")
@@ -37,17 +37,17 @@ Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
-const CDRIPNS = 'http://songbirdnest.com/rdf/servicepane/cdrip#';
-const SPNS = 'http://songbirdnest.com/rdf/servicepane#';
+const CDRIPNS = 'http://getnightingale.com/rdf/servicepane/cdrip#';
+const SPNS = 'http://getnightingale.com/rdf/servicepane#';
 
 // For some device events we need to check if they are from the CD Device
 // marshall and not others.
 const CDDEVICEMARSHALLNAME = "sbCDDeviceMarshall";
 
 var sbCDRipServicePaneServiceConfig = {
-  className:      "Songbird CD Rip Device Support Module",
+  className:      "Nightingale CD Rip Device Support Module",
   cid:            Components.ID("{9925b565-5c19-4feb-87a8-413d86570cd9}"),
-  contractID:     "@songbirdnest.com/servicepane/cdDevice;1",
+  contractID:     "@getnightingale.com/servicepane/cdDevice;1",
   
   ifList: [ Ci.sbIServicePaneModule,
             Ci.nsIObserver ],
@@ -64,7 +64,7 @@ var sbCDRipServicePaneServiceConfig = {
 
   appQuitTopic:   "quit-application",
 
-  devMgrURL:      "chrome://songbird/content/mediapages/cdripMediaView.xul"
+  devMgrURL:      "chrome://nightingale/content/mediapages/cdripMediaView.xul"
 };
 if ("sbIWindowsAutoPlayActionHandler" in Ci) {
   sbCDRipServicePaneServiceConfig.ifList.push(Ci.sbIWindowsAutoPlayActionHandler);
@@ -149,7 +149,7 @@ sbCDRipServicePaneService.prototype = {
   },
   
   onDragGesture: function sbCDRipServicePaneService_onDragGesture(aNode, 
-                                                              aDataTransfer) {
+                                                              aTransferable) {
     // Currently no drag and drop allowed
   },
 
@@ -198,10 +198,10 @@ sbCDRipServicePaneService.prototype = {
     
     this._observerSvc.addObserver(this, this._cfg.appQuitTopic, false);
 
-    this._deviceServicePaneSvc = Cc["@songbirdnest.com/servicepane/device;1"]
+    this._deviceServicePaneSvc = Cc["@getnightingale.com/servicepane/device;1"]
                                    .getService(Ci.sbIDeviceServicePaneService);
 
-    this._deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    this._deviceManagerSvc = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                                .getService(Ci.sbIDeviceManager2);
  
     // Add a listener for CDDevice Events
@@ -219,7 +219,7 @@ sbCDRipServicePaneService.prototype = {
     // load the cd-device context menu document
     this._deviceContextMenuDoc =
           DOMUtils.loadDocument
-            ("chrome://songbird/content/xul/device/deviceContextMenu.xul");
+            ("chrome://nightingale/content/xul/device/deviceContextMenu.xul");
 
     if (PlatformUtils.platformString == "Windows_NT") {
       // Register autoplay handler
@@ -235,7 +235,7 @@ sbCDRipServicePaneService.prototype = {
 
       this._autoPlayActionHandler = autoPlayActionHandler;
       var windowsAutoPlayService =
-            Cc["@songbirdnest.com/Songbird/WindowsAutoPlayService;1"]
+            Cc["@getnightingale.com/Nightingale/WindowsAutoPlayService;1"]
               .getService(Ci.sbIWindowsAutoPlayService);
       windowsAutoPlayService.addActionHandler
         (autoPlayActionHandler,
@@ -255,7 +255,7 @@ sbCDRipServicePaneService.prototype = {
     if (PlatformUtils.platformString == "Windows_NT") {
       // Unregister autoplay handler
       var windowsAutoPlayService =
-            Cc["@songbirdnest.com/Songbird/WindowsAutoPlayService;1"]
+            Cc["@getnightingale.com/Nightingale/WindowsAutoPlayService;1"]
               .getService(Ci.sbIWindowsAutoPlayService);
       windowsAutoPlayService.removeActionHandler
         (this._autoPlayActionHandler,
@@ -346,7 +346,7 @@ sbCDRipServicePaneService.prototype = {
         if (deviceNode) {
           Cc['@mozilla.org/appshell/window-mediator;1']
             .getService(Ci.nsIWindowMediator)
-            .getMostRecentWindow('Songbird:Main').gBrowser
+            .getMostRecentWindow('Nightingale:Main').gBrowser
             .loadURI(deviceNode.url, null, null, null, "_media");
         }
         else {
@@ -377,7 +377,7 @@ sbCDRipServicePaneService.prototype = {
     var url = this._cfg.devMgrURL + "?device-id=" + device.id;
     Cc['@mozilla.org/appshell/window-mediator;1']
       .getService(Ci.nsIWindowMediator)
-      .getMostRecentWindow('Songbird:Main').gBrowser
+      .getMostRecentWindow('Nightingale:Main').gBrowser
       .loadURI(url, null, null, null, "_media");
   },
 
@@ -432,11 +432,9 @@ sbCDRipServicePaneService.prototype = {
           if (lastState == Ci.sbIDevice.STATE_TRANSCODE) {
             if (this._checkErrors(device)) {
               devProperties.push("unsuccessful");
-            } else if (this._checkSuccess(device)){
+            } else {
               devProperties.push("successful");
             }
-            //if neither _checkErrors nor _checkSuccess is true, then the user
-            //cancelled before any successes or fails.  Go back to idle image.
           }
         }
       }
@@ -497,7 +495,7 @@ sbCDRipServicePaneService.prototype = {
     try {
       // Get all the did not successfully ripped tracks
       var propArray =
-        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
       propArray.appendProperty(SBProperties.cdRipStatus, "3|100");
       propArray.appendProperty(SBProperties.shouldRip, "1");
@@ -507,45 +505,13 @@ sbCDRipServicePaneService.prototype = {
     }
     catch (err if err.result == Cr.NS_ERROR_NOT_AVAILABLE) {
       // deviceLibrary.getItemsByProperties() will throw NS_ERROR_NOT_AVAILABLE
-      // if there are no failed rips in the list, thus no errors.
-      return false;
+      // if there are no failed rips in the list.  Ignore this error.
     }
     catch (err) {
       Cu.reportError("ERROR GETTING TRANSCODE ERROR COUNT " + err);
     }
     
     return (errorCount > 0);
-  },
-  
-  /**
-   * Check if any tracks successfully ripped
-   * \param aDevice - Device to check
-   * \return True if at least one track was ripped, false otherwise
-   */
-  _checkSuccess: function sbCDRipServicePaneService__checkErrors(aDevice) {
-    // Check if any tracks were successfully ripped
-    var deviceLibrary = this._getDeviceLibrary(aDevice);
-    var successCount = 0;
-
-    try {
-      var propArray = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-          .createInstance(Ci.sbIMutablePropertyArray);
-      propArray.appendProperty(SBProperties.cdRipStatus, "2|100");
-      propArray.appendProperty(SBProperties.shouldRip, "1");
-
-      var rippedItems = deviceLibrary.getItemsByProperties(propArray);
-      successCount = rippedItems.length;
-    }
-    catch (err if err.result == Cr.NS_ERROR_NOT_AVAILABLE) {
-      // deviceLibrary.getItemsByProperties() will throw NS_ERROR_NOT_AVAILABLE
-      // if there are no successful rips in the list.
-      return false;
-    }
-    catch (err) {
-      Cu.reportError("ERROR GETTING TRANSCODE SUCCESS COUNT " + err);
-    }
-
-    return (successCount > 0);
   },
   
   /**

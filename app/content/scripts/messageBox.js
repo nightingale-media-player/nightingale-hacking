@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -37,7 +37,7 @@ function sbMessageBox( title, message, wantcancel, notmodal )
     messagebox_data.title = title;
     messagebox_data.message = message;
     messagebox_data.wantcancel = wantcancel;
-    window.openDialog( "chrome://songbird/content/xul/messageBox.xul", "messagebox", "chrome,titlebar=yes,resizable=no,modal="+modal+", centerscreen", messagebox_data );
+    window.openDialog( "chrome://nightingale/content/xul/messageBox.xul", "messagebox", "chrome,titlebar=yes,resizable=no,modal="+modal+", centerscreen", messagebox_data );
     return messagebox_data.result;
   }
   catch ( err )
@@ -50,12 +50,12 @@ function sbMessageBox( title, message, wantcancel, notmodal )
 function sbMessageBox_strings(titlestring, msgstring, deftitle, defmsg, wantcancel, notmodal)
 {
   var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+  var nightingaleStrings = sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
   var msg = defmsg;
   var title = deftitle;
   try {
-    msg = songbirdStrings.GetStringFromName(msgstring);
-    title = songbirdStrings.GetStringFromName(titlestring);
+    msg = nightingaleStrings.GetStringFromName(msgstring);
+    title = nightingaleStrings.GetStringFromName(titlestring);
   } catch (e) {}
   return sbMessageBox(title, msg, wantcancel, notmodal);
 }

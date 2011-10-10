@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,67 +21,55 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird device XML info.
+// Nightingale device XML info.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbDeviceXMLInfo.cpp
- * \brief Songbird Device XML Info Source.
+ * \brief Nightingale Device XML Info Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird device XML info imported services.
+// Nightingale device XML info imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbDeviceXMLInfo.h"
 
-// Local imports
-#include "sbDeviceUtils.h"
-
-// Songbird imports.
-#include <sbErrorConsole.h>
-#include <sbFileUtils.h>
+// Nightingale imports.
 #include <sbIDeviceProperties.h>
-#include <sbIDirectoryEnumerator.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStringUtils.h>
-#include <sbURIUtils.h>
 #include <sbVariantUtils.h>
 #include <sbVariantUtilsLib.h>
 
 // Mozilla imports.
 #include <nsIDOMNamedNodeMap.h>
 #include <nsIDOMNodeList.h>
-#include <nsIDOMParser.h>
-#include <nsIDOMSerializer.h>
 #include <nsIMutableArray.h>
 #include <nsIPropertyBag2.h>
 #include <nsIScriptSecurityManager.h>
-#include <nsISupportsPrimitives.h>
 #include <nsIWritablePropertyBag.h>
 #include <nsIXMLHttpRequest.h>
 #include <nsMemory.h>
-#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>
-#include <nsVersionComparator.h>
-#include <prprf.h>
+
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird device XML info services.
+// Public Nightingale device XML info services.
 //
 //------------------------------------------------------------------------------
 
@@ -90,226 +78,49 @@
 // Read
 //
 
-nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpecList,
-                               const char* aExtensionsList)
+nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpec)
 {
-  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoSpecList);
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoSpec);
 
+  // Function variables.
   nsresult rv;
 
-  Log("URI list:\n%s", aDeviceXMLInfoSpecList);
-
-  // aDeviceXMLInfoSpecList is a space-delimited list of URI strings.
-  // Split it out into an array:
-  nsTArray<nsCString> uris;
-  nsCString_Split(nsDependentCString(aDeviceXMLInfoSpecList),
-                  NS_LITERAL_CSTRING(" "),
-                  uris);
-
-  if (!aExtensionsList) {
-    aExtensionsList = "";
-  }
-
-  // Iterate over the strings and convert each one to a URI to
-  // load device XML info from:
-  const PRUint32 COUNT = uris.Length();
-  for (PRUint32 i = 0; i < COUNT; i++) {
-    const nsCString & uriStr = uris[i];
-
-    // Skip empty strings:
-    if (uriStr.IsEmpty()) {
-      continue;
-    }
-
-    // Create an nsIURI:
-    nsCOMPtr<nsIURI> uri;
-    rv = SB_NewURI(getter_AddRefs(uri), uriStr);
-    LogIfFailed(rv, "Invalid URI\n%s", uriStr.get());
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Scan the specified file or directory:
-    rv = Read(uri, NS_ConvertUTF8toUTF16(nsDependentCString(aExtensionsList)));
-    LogIfFailed(rv, "while reading device info from\n%s", uriStr.get());
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-//-------------------------------------
-//
-// Read
-//
-
-nsresult sbDeviceXMLInfo::Read(nsIURI *           aDeviceXMLInfoURI,
-                               const nsAString &  aExtensionsList)
-{
-  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoURI);
-
-  nsresult rv;
-
-  nsCString spec;
-  rv = aDeviceXMLInfoURI->GetSpec(spec);
-  Log("Reading %s", spec.BeginReading());
-
-  // If the URI is a file URL, pass it to the nsIFile variant of
-  // this function, which has logic to scan directories:
-  nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(aDeviceXMLInfoURI);
-  if (fileUrl) {
-    nsCOMPtr<nsIFile> file;
-    rv = fileUrl->GetFile(getter_AddRefs(file));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = Read(file, aExtensionsList);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
-
-  // Open a stream to parse:
-  nsCOMPtr<nsIInputStream> inputStream;
-  rv = NS_OpenURI(getter_AddRefs(inputStream), aDeviceXMLInfoURI);
+  // Create an XMLHttpRequest object.
+  nsCOMPtr<nsIXMLHttpRequest>
+    xmlHttpRequest = do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIScriptSecurityManager> ssm =
+    do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrincipal> principal;
+  rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->Init(principal, nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Parse the stream and close it:
-  rv = Read(inputStream);
-  inputStream->Close();
+  // Read the device info file.
+  rv = xmlHttpRequest->OpenRequest(NS_LITERAL_CSTRING("GET"),
+                                   nsDependentCString(aDeviceXMLInfoSpec),
+                                   PR_FALSE,                  // async
+                                   SBVoidString(),            // user
+                                   SBVoidString());           // password
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->Send(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the device info document.
+  nsCOMPtr<nsIDOMDocument> deviceInfoDocument;
+  rv = xmlHttpRequest->GetResponseXML(getter_AddRefs(deviceInfoDocument));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the device info.
+  rv = Read(deviceInfoDocument);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-
-//-------------------------------------
-//
-// Read
-//
-
-nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
-                               const nsAString &  aExtensionsList)
-{
-  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoFile);
-
-  nsresult rv;
-
-  nsString path;
-  rv = aDeviceXMLInfoFile->GetPath(path);
-  if (NS_FAILED(rv)) {
-    path = NS_LITERAL_STRING("Unknown path");
-  }
-
-  // If aDeviceXMLInfoFile is a directory, scan it recursively for
-  // device XML info files:
-  PRBool isDir = PR_FALSE;
-  rv = aDeviceXMLInfoFile->IsDirectory(&isDir);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (isDir) {
-    Log("Searching directory %s",
-        NS_LossyConvertUTF16toASCII(path).BeginReading());
-    // aExtensionsList is a space-delimited list of extensions
-    // (e.g., "ex1 ex2 ex3").  Trim any surrounding spaces and
-    // don't scan the directory if the result is empty:
-    nsString acceptExts(aExtensionsList);
-    acceptExts.Trim(" ");
-    Log("Extension List: %s",
-        NS_LossyConvertUTF16toASCII(acceptExts).BeginReading());
-    if (acceptExts.IsEmpty()) {
-      return NS_OK;
-    }
-
-    // Normalize the extensions list for the comparison logic below.
-    // That is, lower case with spaces before the first extension and
-    // after the last:
-    ToLowerCase(acceptExts);
-    acceptExts.Insert(' ', 0);
-    acceptExts.Append(' ');
-
-    // Prepare to recursively enumerate all files in the directory:
-    nsCOMPtr<sbIDirectoryEnumerator> scanner =
-      do_CreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = scanner->SetFilesOnly(PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = scanner->Enumerate(aDeviceXMLInfoFile);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Enumerate files and filter by extension:
-    PRBool more = PR_FALSE;
-    while(NS_SUCCEEDED(rv = scanner->HasMoreElements(&more)) && more)
-    {
-      // Get the next file:
-      nsCOMPtr<nsIFile> child;
-      rv = scanner->GetNext(getter_AddRefs(child));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Get its extension and normalize it for comparison:
-      nsString extension;
-      rv = child->GetLeafName(extension);
-      NS_ENSURE_SUCCESS(rv, rv);
-      extension.Cut(0, extension.RFindChar('.') + 1);
-      ToLowerCase(extension);
-      extension.Insert(' ', 0);
-      extension.Append(' ');
-
-      // Read the file if its extension is on the accept list.
-      // Warn about errors, but keep looping:
-      if (acceptExts.Find(extension) != -1) {
-        rv = Read(child, aExtensionsList);
-        NS_WARN_IF_FALSE(
-          NS_SUCCEEDED(rv),
-          "Could not read device XML info from file in search directory");
-      }
-    }
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
-
-  // Open a stream to parse:
-  nsCOMPtr<nsIInputStream> inputStream;
-  rv = sbOpenInputStream(aDeviceXMLInfoFile, getter_AddRefs(inputStream));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  Log("Parsing file %s",
-      NS_LossyConvertUTF16toASCII(path).BeginReading());
-  // Parse the stream and close it:
-  rv = Read(inputStream);
-  inputStream->Close();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-//-------------------------------------
-//
-// Read
-//
-
-nsresult sbDeviceXMLInfo::Read(nsIInputStream* aDeviceXMLInfoStream)
-{
-  NS_ENSURE_ARG_POINTER(aDeviceXMLInfoStream);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIDOMParser> parser = 
-    do_CreateInstance(NS_DOMPARSER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 streamSize = 0;
-  rv = aDeviceXMLInfoStream->Available(&streamSize);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIDOMDocument> document;
-  rv = parser->ParseFromStream(aDeviceXMLInfoStream, 
-                               nsnull, 
-                               streamSize, 
-                               "text/xml",
-                               getter_AddRefs(document));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = Read(document);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
 
 //-------------------------------------
 //
@@ -342,77 +153,14 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
     rv = nodeList->Item(i, getter_AddRefs(node));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Use device info node if it matches target device and is
-    // newer than any previous match
-    nsString foundVersion;
-    nsCOMPtr<nsIDOMNode> deviceNode;
-    rv = DeviceMatchesDeviceInfoNode(node,
-                                     foundVersion,
-                                     getter_AddRefs(deviceNode));
+    // Use device info node if it matches target device.
+    PRBool deviceMatches;
+    rv = DeviceMatchesDeviceInfoNode(node, &deviceMatches);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (foundVersion.IsEmpty()) {
-      // Not a match
-      continue;
-    }
-
-    if (mDeviceInfoVersion.IsEmpty() ||
-        NS_CompareVersions(
-          NS_LossyConvertUTF16toASCII(foundVersion).get(),
-          NS_LossyConvertUTF16toASCII(mDeviceInfoVersion).get()) > 0)
-    {
-      // Found version is greater than current version, if any.  Keep this
-      // node and replace any previously found node
-
-      // Log the found device info if logging enabled
-      if (mLogDeviceInfo) {
-        nsCOMPtr<nsIDOMSerializer> serializer =
-            do_CreateInstance("@mozilla.org/xmlextras/xmlserializer;1");
-
-        // Translate the found deviceinfo element to XML
-        nsString fullXml(NS_LITERAL_STRING("<ERROR PRINTING deviceinfo NODE>"));
-        if (serializer) {
-          serializer->SerializeToString(node, fullXml);
-        }
-
-        // Translate the device element matching this device to XML, if any
-        nsString deviceXml(NS_LITERAL_STRING("<ERROR PRINTING device NODE>"));
-        if (deviceNode && serializer) {
-          serializer->SerializeToString(deviceNode, deviceXml);
-        }
-
-        nsCAutoString curVersUtf8 = NS_ConvertUTF16toUTF8(mDeviceInfoVersion);
-        nsCAutoString foundVersUtf8 = NS_ConvertUTF16toUTF8(foundVersion);
-
-        // Log the device info and version.  The first line has two
-        // alternate forms, depending on whether the existing device
-        // info is being replaced:
-        //
-        //  FOUND    deviceinfo version                        <found version>:
-        // - OR -
-        //  REPLACED deviceinfo version <current version> with <found version>:
-
-        Log("%s deviceinfo version %s%s%s:\n%s%s%s",
-            mDeviceInfoElement ?      "REPLACED"       :   "FOUND",
-            curVersUtf8.get(),    //  current version  OR  blank
-            mDeviceInfoElement ?      " with "         :   "",
-            foundVersUtf8.get(),  //  found version    OR  found version
-
-            NS_ConvertUTF16toUTF8(fullXml).get(),
-
-            deviceNode ? "\n\nMATCHING device element:\n" : "",
-            deviceNode ? NS_ConvertUTF16toUTF8(deviceXml).get() : "");
-      }
-
-      mDeviceInfoVersion.Assign(foundVersion);
+    if (deviceMatches) {
       mDeviceInfoElement = do_QueryInterface(node, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-      if (deviceNode) {
-        mDeviceElement = do_QueryInterface(deviceNode, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        mDeviceElement = nsnull;
-      }
+      break;
     }
   }
 
@@ -454,44 +202,6 @@ sbDeviceXMLInfo::GetDeviceInfoElement(nsIDOMElement** aDeviceInfoElement)
   return NS_OK;
 }
 
-//-------------------------------------
-//
-// GetDefaultName
-//
-
-nsresult
-sbDeviceXMLInfo::GetDefaultName(nsAString& aDefaultName)
-{
-  nsresult rv;
-
-  aDefaultName.SetIsVoid(PR_TRUE);
-
-  // Do nothing more if no device info element.
-  if (!mDeviceInfoElement)
-    return NS_OK;
-
-  nsTArray< nsCOMPtr<nsIDOMNode> > deviceNameNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("name"),
-                          deviceNameNodeList);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // See if there is at least one node.
-  PRUint32 nodeCount = deviceNameNodeList.Length();
-
-  if (nodeCount > 0) {
-    // Only process the first node value.
-    nsCOMPtr<nsIDOMElement> deviceNameElement =
-      do_QueryInterface(deviceNameNodeList[0], &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Read the value
-    rv = deviceNameElement->GetAttribute(NS_LITERAL_STRING("value"),
-                                         aDefaultName);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
 
 //-------------------------------------
 //
@@ -512,16 +222,24 @@ sbDeviceXMLInfo::GetDeviceFolder(const nsAString& aFolderType,
     return NS_OK;
 
   // Get the list of folder nodes.
-  nsTArray< nsCOMPtr<nsIDOMNode> > folderNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("folder"), folderNodeList);
+  nsCOMPtr<nsIDOMNodeList> folderNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("folder"),
+                              getter_AddRefs(folderNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Search for a matching folder element.
-  PRUint32 nodeCount = folderNodeList.Length();
+  PRUint32 nodeCount;
+  rv = folderNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < nodeCount; i++) {
     // Get the next folder element.
     nsCOMPtr<nsIDOMElement> folderElement;
-    folderElement = do_QueryInterface(folderNodeList[i], &rv);
+    nsCOMPtr<nsIDOMNode>    folderNode;
+    rv = folderNodeList->Item(i, getter_AddRefs(folderNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    folderElement = do_QueryInterface(folderNode, &rv);
     if (NS_FAILED(rv))
       continue;
 
@@ -586,103 +304,6 @@ sbDeviceXMLInfo::GetDeviceFolder(PRUint32   aContentType,
 
 //-------------------------------------
 //
-// GetImportRules
-//
-
-nsresult
-sbDeviceXMLInfo::GetImportRules(nsIArray ** aImportRules)
-{
-  NS_ENSURE_ARG_POINTER(aImportRules);
-
-  nsresult rv;
-
-  // Default to no rules:
-  *aImportRules = NULL;
-
-  // Do nothing more if no device info element.
-  if (!mDeviceInfoElement) {
-    return NS_OK;
-  }
-
-  // Each import rule is defined by an element of the form
-  //
-  //    <import  url="..."  type="..." />
-  //
-  // Get the list of import nodes:
-  nsTArray< nsCOMPtr<nsIDOMNode> > importNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("import"), importNodeList);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create the result array.  The result will be an array of import
-  // rules, where each rule is itself an array of two strings: a path
-  // and the import type of files residing (recursively) within that
-  // path:
-  nsCOMPtr<nsIMutableArray> rules =
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Iterate through the import nodes and assemble the result array:
-  PRUint32 nodeCount = importNodeList.Length();
-  for (PRUint32 i = 0; i < nodeCount; i++) {
-    // Get the next import element:
-    nsCOMPtr<nsIDOMElement> importElement;
-    importElement = do_QueryInterface(importNodeList[i], &rv);
-    if (NS_FAILED(rv))
-      continue;
-
-    // Get the folder path from the url attribute.  Skip if
-    // empty or unavailable:
-    nsAutoString urlAttr;
-    rv = importElement->GetAttribute(NS_LITERAL_STRING("url"), urlAttr);
-    if (NS_FAILED(rv))
-      continue;
-    if (urlAttr.IsEmpty())
-      continue;
-
-    // Get the import type.  Skip if empty or unavailable:
-    nsAutoString typeAttr;
-    rv = importElement->GetAttribute(NS_LITERAL_STRING("type"), typeAttr);
-    if (NS_FAILED(rv))
-      continue;
-    if (typeAttr.IsEmpty())
-      continue;
-
-    // Create an array for this import rule:
-    nsCOMPtr<nsIMutableArray> rule =
-      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Append the folder path as the first element of the rule:
-    nsCOMPtr<nsISupportsString> folder =
-      do_CreateInstance("@mozilla.org/supports-string;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = folder->SetData(urlAttr);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = rule->AppendElement(folder, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Append the import type as the second element of the rule:
-    nsCOMPtr<nsISupportsString> importType =
-      do_CreateInstance("@mozilla.org/supports-string;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = importType->SetData(typeAttr);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = rule->AppendElement(importType, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Append this rule to the result:
-    rv = rules->AppendElement(rule, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Return the result array:
-  NS_ADDREF(*aImportRules = rules.get());
-
-  return NS_OK;
-}
-
-//-------------------------------------
-//
 // GetExcludedFolders
 //
 nsresult
@@ -697,46 +318,32 @@ sbDeviceXMLInfo::GetExcludedFolders(nsAString & aExcludedFolders)
     return NS_OK;
 
   // Get the list of exclude folder nodes.
-  nsTArray< nsCOMPtr<nsIDOMNode> > excludeNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("excludefolder"), excludeNodeList);
+  nsCOMPtr<nsIDOMNodeList> excludeNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("excludefolder"),
+                              getter_AddRefs(excludeNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get all excluded folders.
-  PRUint32 nodeCount = excludeNodeList.Length();
-  const char * delimiter = "";
+  PRUint32 nodeCount;
+  rv = excludeNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < nodeCount; i++) {
     // Get the next exclude folder element.
     nsCOMPtr<nsIDOMElement> excludeElement;
-    excludeElement = do_QueryInterface(excludeNodeList[i], &rv);
+    nsCOMPtr<nsIDOMNode>    excludeNode;
+    rv = excludeNodeList->Item(i, getter_AddRefs(excludeNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    excludeElement = do_QueryInterface(excludeNode, &rv);
     if (NS_SUCCEEDED(rv)) {
-      nsString excludeStr;
-
-      // The url attribute, if present, will contain a literal path.
-      // Remove any leading slash to distinguish literal paths from
-      // patterns
-      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("url"), excludeStr);
+      nsString excludeURL;
+      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("url"), excludeURL);
       NS_ENSURE_SUCCESS(rv, rv);
-      if (excludeStr.Length() > 0 && excludeStr[0] == L'/') {
-        excludeStr.Cut(0, 1);
+      if (!aExcludedFolders.IsEmpty()) {
+        aExcludedFolders.AppendLiteral(",");
       }
-      if (!excludeStr.IsEmpty()) {
-        aExcludedFolders.AppendLiteral(delimiter);
-        aExcludedFolders.Append(excludeStr);
-        delimiter = ",";
-      }
-
-      // The match attribute, if present, will contain a folder name pattern.
-      // Add a leading and trailing slash to distinguish patterns from literal
-      // paths.  The pattern itself may not contain any slashes
-      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("match"), excludeStr);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (!excludeStr.IsEmpty() && excludeStr.Find("/") == -1) {
-        aExcludedFolders.AppendLiteral(delimiter);
-        aExcludedFolders.AppendLiteral("/");
-        aExcludedFolders.Append(excludeStr);
-        aExcludedFolders.AppendLiteral("/");
-        delimiter = ",";
-      }
+      aExcludedFolders.Append(excludeURL);
     }
   }
   return NS_OK;
@@ -762,19 +369,26 @@ sbDeviceXMLInfo::GetMountTimeout(PRUint32* aMountTimeout)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Get the list of mount timeout nodes.
-  nsTArray< nsCOMPtr<nsIDOMNode> > mountTimeoutNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("mounttimeout"),
-                          mountTimeoutNodeList);
+  nsCOMPtr<nsIDOMNodeList> mountTimeoutNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("mounttimeout"),
+                              getter_AddRefs(mountTimeoutNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if any mount timeout nodes are available.
-  PRUint32 nodeCount = mountTimeoutNodeList.Length();
+  PRUint32 nodeCount;
+  rv = mountTimeoutNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
   if (!nodeCount)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Get the first mount timeout element.
   nsCOMPtr<nsIDOMElement> mountTimeoutElement;
-  mountTimeoutElement = do_QueryInterface(mountTimeoutNodeList[0], &rv);
+  nsCOMPtr<nsIDOMNode>    mountTimeoutNode;
+  rv = mountTimeoutNodeList->Item(0, getter_AddRefs(mountTimeoutNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+  mountTimeoutElement = do_QueryInterface(mountTimeoutNode, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the mount timeout value.
@@ -802,24 +416,32 @@ nsresult
 sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
 {
   NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
-  *aOutSupportsReformat = PR_FALSE;
+  *aOutSupportsReformat = PR_TRUE;
 
   // Check if a device info element is available.
   NS_ENSURE_TRUE(mDeviceInfoElement, NS_ERROR_NOT_AVAILABLE);
 
   nsresult rv;
-  nsTArray< nsCOMPtr<nsIDOMNode> > supportsFormatNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("supportsreformat"),
-                          supportsFormatNodeList);
+  nsCOMPtr<nsIDOMNodeList> supportsFormatNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS(
+      NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+      NS_LITERAL_STRING("supportsreformat"),
+      getter_AddRefs(supportsFormatNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // See if there is at least one node.
-  PRUint32 nodeCount = supportsFormatNodeList.Length();
+  PRUint32 nodeCount;
+  rv = supportsFormatNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (nodeCount > 0) {
     // Only process the first node value.
+    nsCOMPtr<nsIDOMNode> supportsFormatNode;
+    rv = supportsFormatNodeList->Item(0, getter_AddRefs(supportsFormatNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<nsIDOMElement> supportsFormatElement =
-      do_QueryInterface(supportsFormatNodeList[0], &rv);
+      do_QueryInterface(supportsFormatNode, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Read the value
@@ -828,9 +450,9 @@ sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
                                              supportsFormatValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (supportsFormatValue.Equals(NS_LITERAL_STRING("true"),
+    if (supportsFormatValue.Equals(NS_LITERAL_STRING("false"),
                                    CaseInsensitiveCompare)) {
-      *aOutSupportsReformat = PR_TRUE;
+      *aOutSupportsReformat = PR_FALSE;
     }
   }
 
@@ -862,20 +484,28 @@ sbDeviceXMLInfo::GetOnlyMountMediaFolders(PRBool* aOnlyMountMediaFolders)
     return NS_OK;
 
   // Get the list of "onlymountmediafolders" nodes.
-  nsTArray< nsCOMPtr<nsIDOMNode> > onlyMountMediaFoldersNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("onlymountmediafolders"),
-                          onlyMountMediaFoldersNodeList);
+  nsCOMPtr<nsIDOMNodeList> onlyMountMediaFoldersNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("onlymountmediafolders"),
+                              getter_AddRefs(onlyMountMediaFoldersNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if any "onlymountmediafolders" nodes are available.
-  PRUint32 nodeCount = onlyMountMediaFoldersNodeList.Length();
+  PRUint32 nodeCount;
+  rv = onlyMountMediaFoldersNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
   if (!nodeCount)
     return NS_OK;
 
   // Get the first "onlymountmediafolders" element.
   nsCOMPtr<nsIDOMElement> onlyMountMediaFoldersElement;
-  onlyMountMediaFoldersElement =
-    do_QueryInterface(onlyMountMediaFoldersNodeList[0], &rv);
+  nsCOMPtr<nsIDOMNode>    onlyMountMediaFoldersNode;
+  rv = onlyMountMediaFoldersNodeList->Item
+         (0, getter_AddRefs(onlyMountMediaFoldersNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+  onlyMountMediaFoldersElement = do_QueryInterface(onlyMountMediaFoldersNode,
+                                                   &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the "onlymountmediafolders" value.
@@ -913,20 +543,29 @@ sbDeviceXMLInfo::GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Get the list of storage nodes.
-  nsTArray< nsCOMPtr<nsIDOMNode> > storageNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("storage"), storageNodeList);
+  nsCOMPtr<nsIDOMNodeList> storageNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("storage"),
+                              getter_AddRefs(storageNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if any storage nodes are available.
+  PRUint32 nodeCount;
+  rv = storageNodeList->GetLength(&nodeCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create the storage device info list.
   nsCOMPtr<nsIMutableArray> storageDeviceInfoList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the storage device info.
-  PRUint32 nodeCount = storageNodeList.Length();
   for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
     // Get the storage device node.
-    nsCOMPtr<nsIDOMNode> storageDeviceNode = storageNodeList[nodeIndex];
+    nsCOMPtr<nsIDOMNode> storageDeviceNode;
+    rv = storageNodeList->Item(nodeIndex, getter_AddRefs(storageDeviceNode));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // Get the storage device attributes.
     nsCOMPtr<nsIDOMNamedNodeMap> attributes;
@@ -981,54 +620,11 @@ sbDeviceXMLInfo::GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList)
 
 //-------------------------------------
 //
-// GetDeviceIcon
-//
-
-nsresult
-sbDeviceXMLInfo::GetDeviceIcon(nsAString& aDeviceIconURL)
-{
-  nsresult rv;
-
-  // Default to no device icon.
-  aDeviceIconURL.SetIsVoid(PR_TRUE);
-
-  // Check if a device info element is available.
-  if (!mDeviceInfoElement)
-    return NS_OK;
-
-  // Get the list of device icon nodes.
-  nsTArray< nsCOMPtr<nsIDOMNode> > deviceIconNodeList;
-  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("deviceicon"),
-                          deviceIconNodeList);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Check if any device icon nodes are available.
-  PRUint32 nodeCount = deviceIconNodeList.Length();
-  if (!nodeCount)
-    return NS_OK;
-
-  // Get the first device icon element.
-  nsCOMPtr<nsIDOMElement> deviceIconElement;
-  deviceIconElement = do_QueryInterface(deviceIconNodeList[0], &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Read the device icon URL value.
-  rv = deviceIconElement->GetAttribute(NS_LITERAL_STRING("url"),
-                                       aDeviceIconURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-//-------------------------------------
-//
 // sbDeviceXMLInfo
 //
 
 sbDeviceXMLInfo::sbDeviceXMLInfo(sbIDevice* aDevice) :
-  mDevice(aDevice),
-  mLogDeviceInfo(sbDeviceUtils::ShouldLogDeviceInfo())
+  mDevice(aDevice)
 {
 }
 
@@ -1045,7 +641,7 @@ sbDeviceXMLInfo::~sbDeviceXMLInfo()
 
 //------------------------------------------------------------------------------
 //
-// Private Songbird device XML info services.
+// Private Nightingale device XML info services.
 //
 //------------------------------------------------------------------------------
 
@@ -1055,20 +651,16 @@ sbDeviceXMLInfo::~sbDeviceXMLInfo()
 //
 
 nsresult
-sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
-                                             nsAString &  aFoundVersion,
-                                             nsIDOMNode** aDeviceNode)
+sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode* aDeviceInfoNode,
+                                             PRBool*     aDeviceMatches)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDeviceInfoNode);
+  NS_ENSURE_ARG_POINTER(aDeviceMatches);
 
   // Function variables.
   PRUint32 nodeCount;
   nsresult rv;
-
-  // Default to no matching device node.
-  if (aDeviceNode)
-    *aDeviceNode = nsnull;
 
   // Get the devices node.  Device matches by default if no devices node is
   // specified.
@@ -1085,8 +677,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
   rv = devicesNodeList->GetLength(&nodeCount);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!nodeCount) {
-    rv = GetDeviceInfoVersion(deviceInfoElement, aFoundVersion);
-    NS_ENSURE_SUCCESS(rv, rv);
+    *aDeviceMatches = PR_TRUE;
     return NS_OK;
   }
   rv = devicesNodeList->Item(0, getter_AddRefs(devicesNode));
@@ -1094,8 +685,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
 
   // If no device was specified, the device doesn't match.
   if (!mDevice) {
-    // Return an empty version string to indicate no match
-    aFoundVersion.Truncate();
+    *aDeviceMatches = PR_FALSE;
     return NS_OK;
   }
 
@@ -1112,8 +702,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
   rv = devicesNode->GetChildNodes(getter_AddRefs(childNodeList));
   NS_ENSURE_SUCCESS(rv, rv);
   if (!childNodeList) {
-    // Return an empty version string to indicate no match
-    aFoundVersion.Truncate();
+    *aDeviceMatches = PR_FALSE;
     return NS_OK;
   }
 
@@ -1139,62 +728,17 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
     rv = DeviceMatchesDeviceNode(childNode, properties, &matches);
     NS_ENSURE_SUCCESS(rv, rv);
     if (matches) {
-      rv = GetDeviceInfoVersion(deviceInfoElement, aFoundVersion);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (aDeviceNode)
-        childNode.forget(aDeviceNode);
+      *aDeviceMatches = PR_TRUE;
       return NS_OK;
     }
   }
 
-  // No match found.  Return an empty version string
-  aFoundVersion.Truncate();
+  // No match found.
+  *aDeviceMatches = PR_FALSE;
 
   return NS_OK;
 }
 
-//-------------------------------------
-//
-// GetDeviceInfoVersion
-//
-
-nsresult sbDeviceXMLInfo::GetDeviceInfoVersion(
-                            nsIDOMElement * aDeviceInfoElement,
-                            nsAString &     aVersion)
-{
-  NS_ENSURE_ARG_POINTER(aDeviceInfoElement);
-
-  nsresult rv;
-
-  NS_NAMED_LITERAL_STRING(VERSION_ATTR, "version");
-
-  // The version attr is optional.  Ignore errors and check
-  // for empty string instead
-  aVersion.Truncate();
-  aDeviceInfoElement->GetAttribute(VERSION_ATTR, aVersion);
-  if (!aVersion.IsEmpty())
-  {
-    return NS_OK;
-  }
-
-  // No version attr on the <deviceinfo> element.  Try its parent
-  nsCOMPtr<nsIDOMNode> parentNode;
-  rv = aDeviceInfoElement->GetParentNode(getter_AddRefs(parentNode));
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIDOMElement> parent =
-    do_QueryInterface(parentNode, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  parent->GetAttribute(VERSION_ATTR, aVersion);
-  if (!aVersion.IsEmpty())
-  {
-    return NS_OK;
-  }
-
-  // No version attr defined.  Default to "0"
-  aVersion.AssignLiteral("0");
-  return NS_OK;
-}
 
 //-------------------------------------
 //
@@ -1276,190 +820,3 @@ sbDeviceXMLInfo::DeviceMatchesDeviceNode(nsIDOMNode*      aDeviceNode,
 }
 
 
-//-------------------------------------
-//
-// GetDeviceInfoNodes
-//
-
-nsresult
-sbDeviceXMLInfo::GetDeviceInfoNodes
-                   (const nsAString&                  aNameSpace,
-                    const nsAString&                  aTagName,
-                    nsTArray< nsCOMPtr<nsIDOMNode> >& aNodeList)
-{
-  PRBool   success;
-  nsresult rv;
-
-  // Start with an empty node list.
-  aNodeList.Clear();
-
-  // Check for nodes that descend from the device node.
-  nsCOMPtr<nsIDOMNodeList> nodeList;
-  PRUint32                 nodeCount = 0;
-  PRBool                   areDeviceNodeDescendants = PR_TRUE;
-  if (mDeviceElement) {
-    rv = mDeviceElement->GetElementsByTagNameNS(aNameSpace,
-                                                aTagName,
-                                                getter_AddRefs(nodeList));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = nodeList->GetLength(&nodeCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // If no nodes descend from the device node, get them from the device info
-  // container element.  This list may contain nodes descending from
-  // non-matching device nodes; these will be filtered out later.
-  if (mDeviceInfoElement && (!nodeList || !nodeCount)) {
-    areDeviceNodeDescendants = PR_FALSE;
-    rv = mDeviceInfoElement->GetElementsByTagNameNS(aNameSpace,
-                                                    aTagName,
-                                                    getter_AddRefs(nodeList));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = nodeList->GetLength(&nodeCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Get the list of specified device info nodes.
-  success = aNodeList.SetCapacity(nodeCount);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  for (PRUint32 i = 0; i < nodeCount; ++i) {
-    // Get the next node.
-    nsCOMPtr<nsIDOMNode> node;
-    rv = nodeList->Item(i, getter_AddRefs(node));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If nodes didn't come from a device node, skip all that do.
-    if (!areDeviceNodeDescendants) {
-      PRBool isDeviceNodeDescendant;
-      rv = IsDeviceNodeDescendant(node, &isDeviceNodeDescendant);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (isDeviceNodeDescendant)
-        continue;
-    }
-
-    // Add node to the list.
-    NS_ENSURE_TRUE(aNodeList.AppendElement(node), NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  return NS_OK;
-}
-
-
-//-------------------------------------
-//
-// GetDeviceInfoNodes
-//
-
-nsresult
-sbDeviceXMLInfo::GetDeviceInfoNodes(const nsAString&                  aTagName,
-                                    nsTArray< nsCOMPtr<nsIDOMNode> >& aNodeList)
-{
-  return GetDeviceInfoNodes(NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
-                            aTagName,
-                            aNodeList);
-}
-
-
-//-------------------------------------
-//
-// IsDeviceNodeDescendant
-//
-
-nsresult
-sbDeviceXMLInfo::IsDeviceNodeDescendant(nsIDOMNode* aNode,
-                                        PRBool*     aIsDeviceNodeDescendant)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aNode);
-  NS_ENSURE_ARG_POINTER(aIsDeviceNodeDescendant);
-
-  // Function variables.
-  nsresult rv;
-
-  // Default to not being a descendant of a device node.
-  *aIsDeviceNodeDescendant = PR_FALSE;
-
-  // Search node ancestry for a device node.
-  nsCOMPtr<nsIDOMNode> node = aNode;
-  while (node && (node != mDeviceInfoElement)) {
-    // Get the node namespace and local name.
-    nsAutoString namespaceURI;
-    nsAutoString localName;
-    rv = node->GetNamespaceURI(namespaceURI);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = node->GetLocalName(localName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If node is a device node, return that starting node is a device node
-    // descendant.
-    if (namespaceURI.Equals(NS_LITERAL_STRING(SB_DEVICE_INFO_NS)) &&
-        localName.Equals(NS_LITERAL_STRING("device"))) {
-      *aIsDeviceNodeDescendant = PR_TRUE;
-      return NS_OK;
-    }
-
-    // Check parent node.
-    nsCOMPtr<nsIDOMNode> parentNode;
-    rv = node->GetParentNode(getter_AddRefs(parentNode));
-    NS_ENSURE_SUCCESS(rv, rv);
-    node = parentNode.forget();
-  }
-
-  return NS_OK;
-}
-
-
-void sbDeviceXMLInfo::Log(const char * aFmt, ...)
-{
-  if (mLogDeviceInfo) {
-    va_list args;
-    va_start(args, aFmt);
-    LogArgs(aFmt, args);
-    va_end(args);
-  }
-}
-
-void sbDeviceXMLInfo::LogIfFailed(nsresult aRV, const char * aPrintf, ...)
-{
-  // Do nothing if no failure
-  if (NS_SUCCEEDED(aRV)) {
-    return;
-  }
-
-  // Check logging pref:
-  if (!mLogDeviceInfo) {
-    return;
-  }
-
-  // Resolve the args to a string
-  va_list etc;
-  va_start(etc, aPrintf);
-  char *why =
-    PR_vsmprintf(aPrintf ? aPrintf : "while loading device info", etc);
-  va_end(etc);
-
-  // Compose the error message
-  nsString msg(NS_LITERAL_STRING("sbDeviceXMLInfo "));
-  msg.AppendLiteral(
-    sbDeviceUtils::GetDeviceIdentifier(mDevice).BeginReading());
-  msg.AppendLiteral(":\nERROR [0x");
-  msg.AppendInt(aRV, 16);
-  msg.AppendLiteral("]\n");
-  msg.Append(NS_ConvertUTF8toUTF16(why));
-  PR_smprintf_free(why);
-
-  // Log the error message
-  sbErrorConsole::Error("sbDeviceXMLInfo", msg);
-}
-
-
-void sbDeviceXMLInfo::LogArgs(const char * aFmt,
-                              va_list aArgs)
-{
-  char *msg = PR_vsmprintf(aFmt, aArgs);
-  sbErrorConsole::Message(
-                     "sbDeviceXMLInfo %s:\n%s",
-                     sbDeviceUtils::GetDeviceIdentifier(mDevice).BeginReading(),
-                     msg);
-  PR_smprintf_free(msg);
-}

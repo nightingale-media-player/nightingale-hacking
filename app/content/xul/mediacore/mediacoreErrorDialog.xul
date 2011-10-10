@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/mediacoreErrorDialog.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/mediacoreErrorDialog.css"
                  type="text/css"?>
 
 <!-- Import external definitions. -->
 <!DOCTYPE overlay [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
   %brandDTD;
-  %songbirdDTD;
+  %nightingaleDTD;
   %textcontextDTD;
 ]>
 
@@ -49,7 +49,7 @@
  id="mediacore_error"
  title="&mediacore.error.title;"
  buttons="accept"
- type="songbird"
+ type="nightingale"
  hidechrome="true"
  minwidth="650"
  minheight="200"
@@ -61,7 +61,7 @@
   <script type="application/x-javascript" 
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
 
   <commandset id="selectEditMenuItems">
     <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
@@ -108,9 +108,9 @@
     <spacer height="5" />
   </vbox>
 
-  <!-- Import the Songbird services code. -->
+  <!-- Import the Nightingale services code. -->
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
 
   <script>
   <![CDATA[
@@ -130,8 +130,8 @@
             errorMsg.hidden = false;
 
             var label = document.getElementById("codec_not_found_link");
-            var url = Application.prefs.getValue("songbird.url.codec_not_found",
-                "http://wiki.songbirdnest.com/Docs/Video_Codec_Support");
+            var url = Application.prefs.getValue("nightingale.url.codec_not_found",
+                "http://wiki.getnightingale.com/Docs/Video_Codec_Support");
             label.setAttribute("value", url);
             label.setAttribute("onclick", "openLink('" + url + "');");
           }
@@ -157,15 +157,15 @@
         const prefs = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication)
                         .prefs;
-        prefs.setValue("songbird.mediacore.error.dontshowme", true);
+        prefs.setValue("nightingale.mediacore.error.dontshowme", true);
       }
     }
 
     function openLink(url) {
-      // Open it in the Songbird browser
+      // Open it in the Nightingale browser
       Cc["@mozilla.org/appshell/window-mediator;1"]
         .getService(Ci.nsIWindowMediator)
-        .getMostRecentWindow("Songbird:Main").gBrowser.loadOneTab(url);
+        .getMostRecentWindow("Nightingale:Main").gBrowser.loadOneTab(url);
     }
   ]]>
   </script>

@@ -3,7 +3,7 @@
 }
 
 .throbber {
-  list-style-image: url("chrome://songbird/skin/icons/spinner-spin.png");
+  list-style-image: url("chrome://nightingale/skin/icons/spinner-spin.png");
   width: 16px;
   height: 16px;
   margin-top: 5px;

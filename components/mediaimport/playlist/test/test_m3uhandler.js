@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -52,13 +52,13 @@ function runTest () {
         result: "absolute_remote_result.xml"
       },
       {
-        originalURI: null,
-        file: "win_utf8.m3u",
-        result: "win_utf8_result.xml"
+        originalURI: "file:///c:/Documents%20and%20Settings/steve/Desktop/blah.mp3",
+        file: "win_relative_local.m3u",
+        result: "win_relative_local_result.xml"
       },
       {
         originalURI: null,
-        file: "win_utf8.m3u8",
+        file: "win_utf8.m3u",
         result: "win_utf8_result.xml"
       }
     ];
@@ -80,37 +80,23 @@ function runTest () {
         result: "absolute_remote_result.xml"
       },
       {
+        originalURI: "file:///home/steve/blah.m3u",
+        file: "maclin_relative_local.m3u",
+        result: "maclin_relative_local_result.xml"
+      },
+      {
         originalURI: null,
         file: "maclin_utf8.m3u",
         result: "maclin_utf8_result.xml"
-      },
-      {
-        originalURI: null,
-        file: "maclin_utf8.m3u8",
-        result: "maclin_utf8_result.xml"
-      },
-      {
-        enabled: platform == "Darwin",
-        originalURI: null,
-        file: "maclin_unf.m3u",
-        result: "maclin_unf_nfd_result.xml"
-      },
-      {
-        enabled: platform != "Darwin",
-        originalURI: null,
-        file: "maclin_unf.m3u",
-        result: "maclin_unf_nfc_result.xml"
       }
     ];
   }
 
   for (var i = 0; i < tests.length; i++) {
     var t = tests[i];
-    if (("enabled" in t) && !t.enabled)
-      continue;
     log("testing file " + t.file);
     library.clear();
-    var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/M3U;1"]
+    var handler = Cc["@getnightingale.com/Nightingale/Playlist/Reader/M3U;1"]
                     .createInstance(Ci.sbIPlaylistReader);
 
     var file = getFile(t.file);
@@ -121,46 +107,10 @@ function runTest () {
     assertMediaList(library, getFile(t.result));
   }
 
-  // test local playlists (should only import files that exist on disk)
-  library.clear();
-  var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/M3U;1"]
-                  .createInstance(Ci.sbIPlaylistReader);
-
-  var fileName = "";
-  if (platform == "Windows_NT") {
-    fileName = "win_relative_local.m3u";
-  } else {
-    fileName = "maclin_relative_local.m3u";
-  }
-  log("testing file " + fileName);
-  var file = getFile(fileName);
-  handler.originalURI = newFileURI(file);
-  handler.read(file, library, false);
-
-  var mp3dir = getFile("mp3");
-  var file1 = mp3dir.clone();
-  file1.append("file1.mp3");
-  var file2 = mp3dir.clone();
-  file2.append("file2.mp3");
-  var musicdir = getFile("music");
-  var file3 = musicdir.clone();
-  file3.append("file3.mp3");
-  var files = [file1, file2, file3];
-  
-  var prop = "http://songbirdnest.com/data/1.0#contentURL";
-  for (var i in files) {
-    var result = newFileURI(files[i]).spec;
-    var item = getFirstItemByProperty(library, prop, result);
-    if (!item) {
-      fail("item with property '" + prop + "' equal to '" + result + "' not found");
-    }
-  }
-  assertEqual(library.length, 3);
-
   // Test duplicates
   library.clear();
   var mediaList = library.createMediaList("simple");
-  var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/M3U;1"]
+  var handler = Cc["@getnightingale.com/Nightingale/Playlist/Reader/M3U;1"]
                   .createInstance(Ci.sbIPlaylistReader);
 
   var file = getFile("relative_remote.m3u");

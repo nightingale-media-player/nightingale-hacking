@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -37,7 +37,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
@@ -297,9 +297,9 @@ var watchFolderPrefsPane = {
 
     // Set the watch folder hidden if the watch folder services are not
     // available.
-    var watchFolderSupported = ("@songbirdnest.com/watch-folder-service;1" in Cc);
+    var watchFolderSupported = ("@getnightingale.com/watch-folder-service;1" in Cc);
     if (watchFolderSupported) {
-      watchFolderSupported = Cc["@songbirdnest.com/watch-folder-service;1"]
+      watchFolderSupported = Cc["@getnightingale.com/watch-folder-service;1"]
                                .getService(Ci.sbIWatchFolderService)
                                .isSupported;
     }
@@ -358,6 +358,17 @@ var watchFolderPrefsPane = {
       return false;
     }
 
+    if (document.getElementById("manage_media_pref_library_enable").value)
+    {
+      var managed = document.getElementById("manage_media_pref_library_folder").value;
+
+      if (dir.equals(managed) || dir.contains(managed, true) || managed.contains(dir, true))
+      {
+        showErrorNotification(SBString("prefs.watch_folder.error.contains_managed"));
+        return false;
+      }
+    }
+
     // The path seems legit, if this script is supposed to set the WF path pref
     // do that now.
     if (this.shouldSetWFPathPref) {
@@ -393,7 +404,7 @@ var watchFolderPrefsPane = {
                                          null, 
                                          checkState);
     if(result == 0) {
-      var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+      var importer = Cc['@getnightingale.com/Nightingale/DirectoryImportService;1']
                        .getService(Ci.sbIDirectoryImportService);
       var directoryArray = ArrayConverter.nsIArray([aFile]);
       

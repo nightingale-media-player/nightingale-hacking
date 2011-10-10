@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_PROMPTER_H__
@@ -30,17 +30,17 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird prompter.
+// Nightingale prompter.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbPrompter.h
- * \brief Songbird Prompter Definitions.
+ * \brief Nightingale Prompter Definitions.
  */
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIPrompter.h>
 #include <sbIWindowWatcher.h>
 
@@ -53,7 +53,7 @@
 
 
 /**
- * This class implements the Songbird prompter interface.
+ * This class implements the Nightingale prompter interface.
  */
 
 class sbPrompter : public sbIPrompter,
@@ -78,7 +78,7 @@ public:
 
 
   //
-  // Songbird prompter services.
+  // Nightingale prompter services.
   //
 
   sbPrompter();
@@ -99,7 +99,7 @@ private:
   //
   // mPrompterLock               Prompter lock.
   // mWindowWatcher              Window watcher service.
-  // mSBWindowWatcher            Songbird window watcher service.
+  // mSBWindowWatcher            Nightingale window watcher service.
   // mPromptService              Prompt service.
   // mParentWindowType           Parent window type.
   // mWaitForWindow              If true, wait for parent window type.
@@ -123,7 +123,7 @@ private:
 
 
   //
-  // Internal Songbird prompter services.
+  // Internal Nightingale prompter services.
   //
 
   nsresult InitOnMainThread();
@@ -138,12 +138,12 @@ private:
 
 
 //
-// Songbird prompter component defs.
+// Nightingale prompter component defs.
 //
 
 // contract ID defined in sbIPrompter.idl
-#define SB_PROMPTER_CLASSNAME "Songbird Prompter"
-#define SB_PROMPTER_CID \
+#define NIGHTINGALE_PROMPTER_CLASSNAME "Nightingale Prompter"
+#define NIGHTINGALE_PROMPTER_CID \
   /* {fa7ec5bd-7cab-4a63-a970-7bc4e83ee891} */ \
   { \
     0xfa7ec5bd, \

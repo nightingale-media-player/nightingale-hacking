@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -33,11 +33,11 @@
 function runTest(tester) {
   try {
     // access to libraries
-    var siteLib = songbird.siteLibrary;
-    var mainLib = songbird.libraries("main");
-    var webLib = songbird.libraries("web");
-    mainLib = songbird.mainLibrary;
-    webLib = songbird.webLibrary;
+    var siteLib = nightingale.siteLibrary;
+    var mainLib = nightingale.libraries("main");
+    var webLib = nightingale.libraries("web");
+    mainLib = nightingale.mainLibrary;
+    webLib = nightingale.webLibrary;
 
     // access within the mainLibrary
     mainLib.name;
@@ -60,7 +60,7 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library - should succeed");
     mainLib.createMediaListFromURL("funTestList",
-                                   "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/remoteLibraryTest.m3u",
+                                   "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/remoteLibraryTest.m3u",
                                    function (mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -79,7 +79,7 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library to bogus URL - should create 0 length list");
     mainLib.createMediaListFromURL("funTestList2",
-                                   "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/dummy.m3u",
+                                   "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/dummy.m3u",
                                    function (mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -96,7 +96,7 @@ function runTest(tester) {
 
     mainLib.createSimpleMediaList("testRemoteLibrary1");
     mainLib.createMediaItem(
-              "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/nyx_-_Undercover.mp3");
+              "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/nyx_-_Undercover.mp3");
 
     // property access/modification in the mainLibrary
     var testValue = "Test Value";
@@ -137,7 +137,7 @@ function runTest(tester) {
     tester.log("Creating MediaList from Web Library - should fail");
     try {
       webLib.createMediaListFromURL("funTestList4",
-                                    "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/remoteLibraryTest.m3u",
+                                    "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/remoteLibraryTest.m3u",
                                     function(mediaList) {
                                       var test = tester;
                                       list = mediaList;
@@ -170,7 +170,7 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Site Library - should succeed");
     siteLib.createMediaListFromURL("funTestList5",
-                                   "http://localhost:@SONGBIRD_TEST_SERVER_PORT@/remoteLibraryTest.m3u",
+                                   "http://localhost:@NIGHTINGALE_TEST_SERVER_PORT@/remoteLibraryTest.m3u",
                                    function(mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -192,9 +192,9 @@ function runTest(tester) {
   tester.setNoAccess();
 
   try {
-    var siteLib = songbird.siteLibrary;
-    var mainLib = songbird.mainLibrary;
-    var webLib = songbird.webLibrary;
+    var siteLib = nightingale.siteLibrary;
+    var mainLib = nightingale.mainLibrary;
+    var webLib = nightingale.webLibrary;
   } catch (e) {
     tester.endRemoteAPITest(e);
   }

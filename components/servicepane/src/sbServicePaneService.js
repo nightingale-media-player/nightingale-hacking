@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -40,7 +40,7 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
-const SP="http://songbirdnest.com/rdf/servicepane#";
+const SP="http://getnightingale.com/rdf/servicepane#";
 
 const LOG = DebugUtils.generateLogFunction("sbServicePaneService");
 
@@ -111,7 +111,7 @@ ServicePaneNode.prototype = {
                        "may be removed in future. Consider using " +
                        "sbIServicePaneNode.className instead.");
     return this.className;
-
+    
   },
   set properties(aValue) {
     deprecationWarning("sbIServicePaneNode.properties is deprecated and " +
@@ -129,7 +129,7 @@ ServicePaneNode.prototype = {
     // Cache the string bundle so that we don't retrieve it more than once
     if (!this._stringBundle) {
       let stringbundleURI = this.stringbundle;
-
+  
       if (!stringbundleURI)  {
         // Try module's stringbundle
         let contractid = this.contractid;
@@ -143,7 +143,7 @@ ServicePaneNode.prototype = {
           }
         }
       }
-
+  
       try {
         this._stringBundle = new SBStringBundle(stringbundleURI);
         this._stringBundleURI = stringbundleURI;
@@ -176,7 +176,7 @@ ServicePaneNode.prototype = {
 
     // Update service pane data
     let notificationMethod = (aValue ? "_registerNode" : "_unregisterNode");
-    for each (let attr in ["id", "url", "contentPrefix"])
+    for each (let attr in ["id", "url"])
       if (attr in this._attributes)
         this._servicePane[notificationMethod](attr, this._attributes[attr], this);
 
@@ -195,7 +195,7 @@ ServicePaneNode.prototype = {
   },
 
   setAttribute: function(aName, aValue) {
-    if (this.isInTree && (aName == "id" || aName == "url" || aName == "contentPrefix")) {
+    if (this.isInTree && (aName == "id" || aName == "url")) {
       if (aName in this._attributes)
         this._servicePane._unregisterNode(aName, this._attributes[aName], this);
       if (aValue !== null)
@@ -223,7 +223,7 @@ ServicePaneNode.prototype = {
   },
 
   removeAttribute: function(aName) {
-    if (this.isInTree && (aName == "id" || aName == "url" || aName == "contentPrefix") &&
+    if (this.isInTree && (aName == "id" || aName == "url") &&
                           aName in this._attributes) {
       this._servicePane._unregisterNode(aName, this._attributes[aName], this);
     }
@@ -329,7 +329,7 @@ ServicePaneNode.prototype = {
       // use it anyway in that case.
       if (!this._comparisonFunction && aBefore && aBefore._parentNode != this)
         throw Ce("Cannot insert before a node that isn't a child");
-
+  
       for (let parent = this; parent; parent = parent._parentNode)
         if (parent == aChild)
           throw Ce("Cannot insert/append a node to its child");
@@ -534,8 +534,6 @@ ServicePaneNode.prototype = {
   set className(aValue) this.setAttribute("class", aValue),
   get url() this.getAttribute("url"),
   set url(aValue) this.setAttribute("url", aValue),
-  get contentPrefix() this.getAttribute("contentPrefix"),
-  set contentPrefix(aValue) this.setAttribute("contentPrefix", aValue),
   get image() this.getAttribute("image"),
   set image(aValue) this.setAttribute("image", aValue),
   get name() this.getAttribute("name"),
@@ -552,8 +550,6 @@ ServicePaneNode.prototype = {
   set isOpen(aValue) this.setAttribute("isOpen", aValue ? "true" : "false"),
   get contractid() this.getAttribute("contractid"),
   set contractid(aValue) this.setAttribute("contractid", aValue),
-  get searchtype() { return this.getAttribute("searchtype") || "internal"; },
-  set searchtype(aValue) this.setAttribute("searchtype", aValue),
   get stringbundle() this.getAttribute("stringbundle"),
   set stringbundle(aValue) this.setAttribute("stringbundle", aValue),
   get dndDragTypes() this.getAttribute("dndDragTypes"),
@@ -594,7 +590,6 @@ function ServicePaneService () {
 
   this._nodesById = {__proto__: null};
   this._nodesByUrl = {__proto__: null};
-  this._nodesByContentPrefix = {__proto__: null};
   this._root = new ServicePaneNode(this, function(aNode1, aNode2) {
     // Nodes with lower weight go first
     let weight1 = parseInt(aNode1.getAttributeNS(SP, 'Weight')) || 0;
@@ -642,8 +637,8 @@ function ServicePaneService () {
 ServicePaneService.prototype = {
   // XPCOM component info
   classID: Components.ID("{eb5c665a-bfe2-49f1-a747-cd3554e55606}"),
-  classDescription: "Songbird Service Pane Service",
-  contractID: "@songbirdnest.com/servicepane/service;1",
+  classDescription: "Nightingale Service Pane Service",
+  contractID: "@getnightingale.com/servicepane/service;1",
 
   _modules: null,
   _modulesByContractId: null,
@@ -719,7 +714,7 @@ ServicePaneService.prototype = {
     deprecationWarning("sbIServicePaneService.init() is deprecated, you no " +
                        "longer need to call it.");
   },
-
+  
   _clearNodeListeners: function ServicePaneService__clearNodeListeners(aNode) {
     if (aNode._eventListeners) {
       delete aNode._eventListeners;
@@ -759,19 +754,12 @@ ServicePaneService.prototype = {
   _registerNode: function ServicePaneService__registerNode(
                                                       aAttr, aValue, aNode) {
     let table;
-    switch (aAttr) {
-      case "id":
-        table = this._nodesById;
-        break;
-      case "url":
-        table = this._nodesByUrl;
-        break;
-      case "contentPrefix":
-        table = this._nodesByContentPrefix;
-        break;
-      default:
-        return;
-    }
+    if (aAttr == "id")
+      table = this._nodesById;
+    else if (aAttr == "url")
+      table = this._nodesByUrl;
+    else
+      return;
 
     if (!(aValue in table))
       table[aValue] = [];
@@ -782,19 +770,12 @@ ServicePaneService.prototype = {
   _unregisterNode: function ServicePaneService__unregisterNode(
                                                       aAttr, aValue, aNode) {
     let table;
-    switch (aAttr) {
-      case "id":
-        table = this._nodesById;
-        break;
-      case "url":
-        table = this._nodesByUrl;
-        break;
-      case "contentPrefix":
-        table = this._nodesByContentPrefix;
-        break;
-      default:
-        return;
-    }
+    if (aAttr == "id")
+      table = this._nodesById;
+    else if (aAttr == "url")
+      table = this._nodesByUrl;
+    else
+      return;
 
     if (aValue in table)
     {
@@ -834,38 +815,11 @@ ServicePaneService.prototype = {
       return null;
   },
 
-  getNodeForURL: function ServicePaneService_getNodeForURL(aUrl, aMatchLevel) {
-
-    // Check to see if aUrl (a string url spec) begins with a node's
-    // contentPrefix. Only do this if the caller specifically requests a
-    // prefix match.
-    var prefixMatch = null;
-    if (!(typeof(aMatchLevel) == 'undefined') &&
-        aMatchLevel == Ci.sbIServicePaneService.URL_MATCH_PREFIX)
-    {
-      for (let prefix in this._nodesByContentPrefix) {
-        if (aUrl.indexOf(prefix) == 0 &&
-            this._nodesByContentPrefix[prefix].length)
-        {
-          prefixMatch = this._nodesByContentPrefix[prefix][0];
-        }
-      }
-    }
-
-    // Check for an exact url match. This is done for both URL_MATCH_PREFIX and
-    // URL_MATCH_EXACT intentionally so that calls using URL_MATCH_PREFIX will
-    // still find a node if the url attribute is an exact match (even in the
-    // absence of a contentPrefix attribute)
-    if (aUrl in this._nodesByUrl && this._nodesByUrl[aUrl].length) {
-      // We prefer exact matches to prefix matches
+  getNodeForURL: function ServicePaneService_getNodeForURL(aUrl) {
+    if (aUrl in this._nodesByUrl && this._nodesByUrl[aUrl].length)
       return this._nodesByUrl[aUrl][0];
-    }
-    else {
-      // We didn't find an exact match. Return a prefix match if we found one.
-      // prefixMatch will always be null if the caller didn't pass in
-      // aMatchLevel or they passed URL_MATCH_EXACT
-      return prefixMatch;
-    }
+    else
+      return null;
   },
 
   getNodesByAttributeNS: function ServicePaneService_getNodesByAttributeNS(
@@ -944,7 +898,7 @@ ServicePaneService.prototype = {
   onBeforeRename: function ServicePaneService_onBeforeRename(aNode) {
     if (!aNode || !aNode.editable)
       return;
-
+  
     // Pass the message on to the node owner
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
@@ -959,7 +913,7 @@ ServicePaneService.prototype = {
   onRename: function ServicePaneService_onRename(aNode, aNewName) {
     if (!aNode || !aNode.editable)
       return;
-
+  
     // Pass the message on to the node owner
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
@@ -1018,7 +972,7 @@ ServicePaneService.prototype = {
     if (!aNode) {
       return false;
     }
-
+  
     LOG("canDrop(" + aNode.id + ")");
 
     // let the module that owns this node handle this
@@ -1044,38 +998,50 @@ ServicePaneService.prototype = {
     }
   },
 
-  onDragGesture: function ServicePaneService_onDragGesture(aNode, aDataTransfer) {
+  onDragGesture: function ServicePaneService_onDragGesture(aNode, aTransferable) {
     if (!aNode) {
       return false;
     }
 
     LOG("onDragGesture(" + aNode.id + ")");
-
+  
     if (!aNode.id) {
       Cu.reportError(new Exception("Cannot drag a service pane node without ID"));
       return false;
     }
-
+  
     let success = false;
-
+  
+    // create a transferable
+    let transferable = Cc["@mozilla.org/widget/transferable;1"]
+                         .createInstance(Ci.nsITransferable);
+  
     // get drag types from the node data
     if (aNode.dndDragTypes) {
       let types = aNode.dndDragTypes.split(',');
       for each (let type in types) {
-        aDataTransfer.setData(type, aNode.id);
+        let text = Components.classes["@mozilla.org/supports-string;1"].
+           createInstance(Components.interfaces.nsISupportsString);
+        text.data = aNode.id;
+        // double the length - it's unicode - this is stupid
+        transferable.setTransferData(type, text, text.data.length * 2);
         success = true;
       }
     }
-
+  
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
-      if (module.onDragGesture(aNode, aDataTransfer)) {
+      if (module.onDragGesture(aNode, transferable)) {
         success = true;
       }
     }
-
+  
+    if (success) {
+      aTransferable.value = transferable;
+    }
+  
     LOG(" success=" + success);
-
+  
     return success;
   }
 };

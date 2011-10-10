@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,14 +22,14 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <window
   id="sb-library-page"
@@ -38,7 +38,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   onload="window.mediaPage.onLoad();"
   onunload="window.mediaPage.onUnload();"
-  windowtype="Songbird:Library"
+  windowtype="Nightingale:Library"
 >
 <script><![CDATA[
 
@@ -78,7 +78,7 @@ window.mediaPage = {
     }
   
     // TODO: Get cmds that are appropriate for the list    
-    var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+    var mgr = Cc["@getnightingale.com/Nightingale/PlaylistCommandsManager;1"]
                       .getService(Ci.sbIPlaylistCommandsManager);
     var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
 
@@ -111,8 +111,8 @@ window.mediaPage = {
 
     <description>
       This is an Add-On Media Page. To learn more about how to make your own 
-      <html:a href="https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Building_Media_Views">Media Pages</html:a>, 
-      go <html:a href="https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Building_Media_Views">here</html:a>.
+      <html:a href="https://wiki.getnightingale.com/Developer/Articles/Getting_Started/Building_Media_Views">Media Pages</html:a>, 
+      go <html:a href="https://wiki.getnightingale.com/Developer/Articles/Getting_Started/Building_Media_Views">here</html:a>.
     </description>
 
 </window>

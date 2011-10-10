@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,14 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \brief Some globally useful stuff for the local database library tests
  */
 
-var SB_NS = "http://songbirdnest.com/data/1.0#";
+var SB_NS = "http://getnightingale.com/data/1.0#";
 
 function StringArrayEnumerator(aArray) {
   this._array = aArray;
@@ -70,7 +70,7 @@ SimpleArrayEnumerator.prototype.QueryInterface = function(iid) {
 
 function makeArray(library) {
   var ldl = library.QueryInterface(Ci.sbILocalDatabaseLibrary);
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = ldl.databaseGuid;
   array.propertyCache = ldl.propertyCache;
@@ -420,14 +420,14 @@ function loadMockDatabase() {
   var a = data.split("\n");
 
   var sp = [
-    "http://songbirdnest.com/data/1.0#GUID",
-    "http://songbirdnest.com/data/1.0#created",
-    "http://songbirdnest.com/data/1.0#updated",
-    "http://songbirdnest.com/data/1.0#contentURL",
-    "http://songbirdnest.com/data/1.0#contentType",
-    "http://songbirdnest.com/data/1.0#contentLength",
-    "http://songbirdnest.com/data/1.0#hidden",
-    "http://songbirdnest.com/data/1.0#isList"
+    "http://getnightingale.com/data/1.0#GUID",
+    "http://getnightingale.com/data/1.0#created",
+    "http://getnightingale.com/data/1.0#updated",
+    "http://getnightingale.com/data/1.0#contentURL",
+    "http://getnightingale.com/data/1.0#contentType",
+    "http://getnightingale.com/data/1.0#contentLength",
+    "http://getnightingale.com/data/1.0#hidden",
+    "http://getnightingale.com/data/1.0#isList"
   ];
 
   var db = {};
@@ -441,13 +441,13 @@ function loadMockDatabase() {
     }
 
     for(var j = 0; j < sp.length; j++) {
-      if (sp[j] == "http://songbirdnest.com/data/1.0#isList") {
+      if (sp[j] == "http://getnightingale.com/data/1.0#isList") {
         if (!b[j + 1] || b[j + 1] == "0") {
           item[sp[j]] = "0";
         }
         else {
           item[sp[j]] = "1";
-          item["http://songbirdnest.com/data/1.0#listType"] = "1";
+          item["http://getnightingale.com/data/1.0#listType"] = "1";
         }
       }
       else {
@@ -457,20 +457,20 @@ function loadMockDatabase() {
   }
 
   var props = [
-    "http://songbirdnest.com/data/1.0#trackName",
-    "http://songbirdnest.com/data/1.0#albumName",
-    "http://songbirdnest.com/data/1.0#artistName",
-    "http://songbirdnest.com/data/1.0#duration",
-    "http://songbirdnest.com/data/1.0#genre",
-    "http://songbirdnest.com/data/1.0#trackNumber",
-    "http://songbirdnest.com/data/1.0#year",
-    "http://songbirdnest.com/data/1.0#discNumber",
-    "http://songbirdnest.com/data/1.0#totalDiscs",
-    "http://songbirdnest.com/data/1.0#totalTracks",
-    "http://songbirdnest.com/data/1.0#lastPlayTime",
-    "http://songbirdnest.com/data/1.0#playCount",
-    "http://songbirdnest.com/data/1.0#customType",
-    "http://songbirdnest.com/data/1.0#isSortable"
+    "http://getnightingale.com/data/1.0#trackName",
+    "http://getnightingale.com/data/1.0#albumName",
+    "http://getnightingale.com/data/1.0#artistName",
+    "http://getnightingale.com/data/1.0#duration",
+    "http://getnightingale.com/data/1.0#genre",
+    "http://getnightingale.com/data/1.0#trackNumber",
+    "http://getnightingale.com/data/1.0#year",
+    "http://getnightingale.com/data/1.0#discNumber",
+    "http://getnightingale.com/data/1.0#totalDiscs",
+    "http://getnightingale.com/data/1.0#totalTracks",
+    "http://getnightingale.com/data/1.0#lastPlayTime",
+    "http://getnightingale.com/data/1.0#playCount",
+    "http://getnightingale.com/data/1.0#customType",
+    "http://getnightingale.com/data/1.0#isSortable"
   ];
 
   data = readFile("resource_properties.txt");
@@ -497,7 +497,7 @@ function getFile(fileName) {
 
 function execQuery(databaseGuid, sql) {
 
-  var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+  var dbq = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
               .createInstance(Ci.sbIDatabaseQuery);
 
   dbq.setDatabaseGUID(databaseGuid);

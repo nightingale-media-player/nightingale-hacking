@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -31,7 +31,7 @@
 function runTest () {
   var url = "data:application/vnd.mozilla.xul+xml," +
             "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" +
-            "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +
+            "<?xml-stylesheet href='chrome://nightingale/content/bindings/bindings.css' type='text/css'?>" +
             "<window xmlns='http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'/>";
 
   beginWindowTest(url, setupPlaylist);
@@ -119,7 +119,7 @@ function testSelectSomeScrolled(library, playlist) {
 }
 
 function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+  return Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
            .createInstance(Ci.sbIMutablePropertyArray);
 }
 

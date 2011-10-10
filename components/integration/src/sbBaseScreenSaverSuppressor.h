@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_BASE_SCREEN_SAVER_SUPPRESSOR_H__
@@ -67,11 +67,11 @@ protected:
 };
 
 #define SB_BASE_SCREEN_SAVER_SUPPRESSOR_DESC \
-  "Songbird Screen Saver Suppressor Service"
+  "Nightingale Screen Saver Suppressor Service"
 #define SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME \
   "sbScreenSaverSuppressor"
 #define SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID \
-  "@songbirdnest.com/Songbird/ScreenSaverSuppressor;1"
+  "@getnightingale.com/Nightingale/ScreenSaverSuppressor;1"
 #define SB_BASE_SCREEN_SAVER_SUPPRESSOR_CID \
 { 0xe3247f9, 0xa111, 0x4d2a, { 0x86, 0x9a, 0x4, 0x39, 0x66, 0x10, 0x8d, 0x98 } }
 

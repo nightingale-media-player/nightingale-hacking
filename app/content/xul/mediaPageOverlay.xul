@@ -3,12 +3,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -23,7 +23,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -34,11 +34,11 @@
   a media list views), and supplies common functionality needed for
   elements like the sb-playlist widget.
 
-  See app/content/mediapages and http://developer.songbirdnest.com
+  See app/content/mediapages and http://developer.getnightingale.com
   
 -->
 
-<!DOCTYPE overlay SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE overlay SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 <overlay
   id="mediaPageOverlay"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -46,14 +46,14 @@
 >
 
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/overlayLoader.js" />
+   src="chrome://nightingale/content/scripts/overlayLoader.js" />
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+   src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/metrics.js"/>
+   src="chrome://nightingale/content/scripts/metrics.js"/>
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/windowUtils.js"/> 
+   src="chrome://nightingale/content/scripts/windowUtils.js"/> 
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/playerOpen.js"/> 
+   src="chrome://nightingale/content/scripts/playerOpen.js"/> 
 
 </overlay>

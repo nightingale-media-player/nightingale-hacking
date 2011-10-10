@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -39,7 +39,7 @@ function runTest () {
 
 function testHiddenProperty(library) {
 
-  var PROP_HIDDEN = "http://songbirdnest.com/data/1.0#hidden";
+  var PROP_HIDDEN = "http://getnightingale.com/data/1.0#hidden";
 
   library.clear();
   var items = [];
@@ -80,7 +80,7 @@ function testHiddenProperty(library) {
 
 function testIsListProperty(library) {
 
-  var PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
+  var PROP_ISLIST = "http://getnightingale.com/data/1.0#isList";
 
   library.clear();
   for (var i = 0; i < 11; i++) {
@@ -120,8 +120,8 @@ function testIsListProperty(library) {
 
 function testBoth(library) {
 
-  var PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
-  var PROP_HIDDEN = "http://songbirdnest.com/data/1.0#hidden";
+  var PROP_ISLIST = "http://getnightingale.com/data/1.0#isList";
+  var PROP_HIDDEN = "http://getnightingale.com/data/1.0#hidden";
 
   library.clear();
   for (var i = 0; i < 20; i++) {
@@ -184,7 +184,7 @@ function testBoth(library) {
 }
 
 function createPropertyArray() {
-  var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+  var pa = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
              .createInstance(Ci.sbIMutablePropertyArray);
   return pa;
 }

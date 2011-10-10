@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,26 +22,26 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator.
+// Nightingale directory enumerator.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbDirectoryEnumerator.cpp
- * \brief Songbird Directory Enumerator Source.
+ * \brief Nightingale Directory Enumerator Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator imported services.
+// Nightingale directory enumerator imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -49,17 +49,13 @@
 #include "sbDirectoryEnumerator.h"
 
 // Mozilla imports.
-#include <mozilla/Mutex.h>
-#include <nsAutoPtr.h>
-#include <nsComponentManagerUtils.h>
+#include <nsAutoLock.h>
 #include <nsIFile.h>
-#include <nsILocalFile.h>
-#include <prerr.h>
-#include <prerror.h>
+
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator nsISupports implementation.
+// Nightingale directory enumerator nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -68,128 +64,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDirectoryEnumerator, sbIDirectoryEnumerator)
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator sbIDirectoryEnumerator implementation.
+// Nightingale directory enumerator sbIDirectoryEnumerator implementation.
 //
 //------------------------------------------------------------------------------
-
-/**
- * Enumerates a given directory specified by an nsIFile object.
- * This is a class to get around bug 24478 in the least invasive manner.
- * At some point this needs to be cleaned up. Latest version of XULRunner this
- * shouldn't be an issue. If we need a proper fix before then using the
- * NSPR routines directly should be fine.
- */
-class sbDirectoryEnumeratorHelper : public nsISimpleEnumerator
-{
-public:
-  /**
-   * Initializes simple data members
-   */
-  sbDirectoryEnumeratorHelper();
-
-  /**
-   * Closes the directory if opened
-   */
-  virtual ~sbDirectoryEnumeratorHelper();
-
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISIMPLEENUMERATOR
-
-  /**
-   * Initializes the directory pointer
-   * \param aDirectory the directory to enumerate
-   */
-  nsresult Init(nsIFile * aDirectory);
-private:
-  PRDir * mDir;
-  nsCOMPtr<nsIFile> mDirectory;
-  PRDirEntry * mEntry;
-};
-
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDirectoryEnumeratorHelper, nsISimpleEnumerator)
-
-sbDirectoryEnumeratorHelper::sbDirectoryEnumeratorHelper() :
-  mDir(nsnull),
-  mEntry(nsnull)
-{
-}
-
-sbDirectoryEnumeratorHelper::~sbDirectoryEnumeratorHelper()
-{
-  if (mDir) {
-    PR_CloseDir(mDir);
-  }
-}
-nsresult sbDirectoryEnumeratorHelper::Init(nsIFile * aDirectory)
-{
-  NS_ENSURE_ARG_POINTER(aDirectory);
-
-  nsresult rv;
-
-  mDirectory = aDirectory;
-
-  nsString path;
-  rv = aDirectory->GetPath(path);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mDir = PR_OpenDir(NS_ConvertUTF16toUTF8(path).BeginReading());
-  NS_ENSURE_TRUE(mDir, NS_ERROR_FILE_NOT_FOUND);
-
-  // Preload the first entry, so HasMoreElements knows there is an entry
-  // waiting or not.
-  mEntry = PR_ReadDir(mDir, PR_SKIP_BOTH);
-  if (!mEntry) {
-    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
-                   NS_ERROR_UNEXPECTED);
-  }
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDirectoryEnumeratorHelper::HasMoreElements(PRBool *_retval NS_OUTPARAM)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  *_retval = mEntry ? PR_TRUE : PR_FALSE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDirectoryEnumeratorHelper::GetNext(nsISupports ** aEntry NS_OUTPARAM)
-{
-  NS_ENSURE_ARG_POINTER(aEntry);
-
-  if (!mEntry) {
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-
-  nsresult rv;
-
-  nsCOMPtr<nsILocalFile> file =
-    do_CreateInstance("@mozilla.org/file/local;1", &rv);
-
-  nsString path;
-  rv = mDirectory->GetPath(path);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = file->InitWithPath(path);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = file->AppendNative(nsCString(mEntry->name));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *aEntry = file.get();
-  file.forget();
-
-  // Prefetch the next entry if any, skipping . and ..
-  mEntry = PR_ReadDir(mDir, PR_SKIP_BOTH);
-  if (!mEntry) {
-    NS_ENSURE_TRUE(PR_GetError() == PR_NO_MORE_FILES_ERROR,
-                   NS_ERROR_UNEXPECTED);
-  }
-
-  return NS_OK;
-}
 
 /**
  * \brief Enumerate the directory specified by aDirectory.
@@ -209,7 +86,7 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
   nsresult rv;
 
   // Operate under the enumerator lock.
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
 
   // Ensure directory exists and is a directory.
   PRBool exists;
@@ -223,17 +100,17 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
 
   // Get the entries in the directory.  If file not found is returned, the
   // directory is empty.
-  nsRefPtr<sbDirectoryEnumeratorHelper> dirEnumerator =
-    new sbDirectoryEnumeratorHelper();
-  NS_ENSURE_TRUE(dirEnumerator, NS_ERROR_OUT_OF_MEMORY);
-  rv = dirEnumerator->Init(aDirectory);
+  nsCOMPtr<nsISimpleEnumerator> entriesEnum;
+  rv = aDirectory->GetDirectoryEntries(getter_AddRefs(entriesEnum));
+  if (rv == NS_ERROR_FILE_NOT_FOUND)
+    entriesEnum = nsnull;
+  else
+    NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the entries enumeration stack.
   mEntriesEnumStack.Clear();
-
-  if (rv != NS_ERROR_FILE_NOT_FOUND) {
-    NS_ENSURE_SUCCESS(rv, rv);
-    success = mEntriesEnumStack.AppendObject(dirEnumerator);
+  if (entriesEnum) {
+    success = mEntriesEnumStack.AppendObject(entriesEnum);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -259,7 +136,7 @@ sbDirectoryEnumerator::HasMoreElements(PRBool* aHasMoreElements)
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
 
   // Operate under the enumerator lock.
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
 
   // Return results.
   *aHasMoreElements = (mEntriesEnumStack.Count() > 0);
@@ -285,7 +162,7 @@ sbDirectoryEnumerator::GetNext(nsIFile** aFile)
   nsresult rv;
 
   // Operate under the enumerator lock.
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
 
   // Return the next file.  Return error if no next file.
   if (mNextFile)
@@ -316,7 +193,7 @@ sbDirectoryEnumerator::GetMaxDepth(PRUint32* aMaxDepth)
 {
   NS_ENSURE_ARG_POINTER(aMaxDepth);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
   *aMaxDepth = mMaxDepth;
   return NS_OK;
 }
@@ -325,7 +202,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetMaxDepth(PRUint32 aMaxDepth)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
   mMaxDepth = aMaxDepth;
   return NS_OK;
 }
@@ -340,7 +217,7 @@ sbDirectoryEnumerator::GetDirectoriesOnly(PRBool* aDirectoriesOnly)
 {
   NS_ENSURE_ARG_POINTER(aDirectoriesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
   *aDirectoriesOnly = mDirectoriesOnly;
   return NS_OK;
 }
@@ -349,7 +226,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetDirectoriesOnly(PRBool aDirectoriesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
   mDirectoriesOnly = aDirectoriesOnly;
   return NS_OK;
 }
@@ -364,7 +241,7 @@ sbDirectoryEnumerator::GetFilesOnly(PRBool* aFilesOnly)
 {
   NS_ENSURE_ARG_POINTER(aFilesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
   *aFilesOnly = mFilesOnly;
   return NS_OK;
 }
@@ -373,7 +250,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  mozilla::MutexAutoLock autoLock(mEnumeratorLock);
+  nsAutoLock autoLock(mEnumeratorLock);
   mFilesOnly = aFilesOnly;
   return NS_OK;
 }
@@ -381,17 +258,17 @@ sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator public services.
+// Nightingale directory enumerator public services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird directory enumerator object.
+ * Construct a Nightingale directory enumerator object.
  */
 
 sbDirectoryEnumerator::sbDirectoryEnumerator() :
   mIsInitialized(PR_FALSE),
-  mEnumeratorLock("sbDirectoryEnumerator.mEnumeratorLock"),
+  mEnumeratorLock(nsnull),
   mMaxDepth(0),
   mDirectoriesOnly(PR_FALSE),
   mFilesOnly(PR_FALSE)
@@ -399,18 +276,18 @@ sbDirectoryEnumerator::sbDirectoryEnumerator() :
 }
 
 /**
- * Destroy a Songbird directory enumerator object.
+ * Destroy a Nightingale directory enumerator object.
  */
 
 sbDirectoryEnumerator::~sbDirectoryEnumerator()
 {
-  // Finalize the Songbird directory enumerator.
+  // Finalize the Nightingale directory enumerator.
   Finalize();
 }
 
 
 /**
- * Initialize the Songbird directory enumerator.
+ * Initialize the Nightingale directory enumerator.
  */
 
 nsresult
@@ -420,6 +297,11 @@ sbDirectoryEnumerator::Initialize()
   if (mIsInitialized)
     return NS_OK;
 
+  // Create the directory enumerator lock.
+  mEnumeratorLock =
+    nsAutoLock::NewLock("sbDirectoryEnumerator.mEnumeratorLock");
+  NS_ENSURE_TRUE(mEnumeratorLock, NS_ERROR_OUT_OF_MEMORY);
+
   // Indicate that the directory enumerator has been initialized.
   mIsInitialized = PR_TRUE;
 
@@ -428,7 +310,7 @@ sbDirectoryEnumerator::Initialize()
 
 
 /**
- * Finalize the Songbird directory enumerator.
+ * Finalize the Nightingale directory enumerator.
  */
 
 void
@@ -436,6 +318,11 @@ sbDirectoryEnumerator::Finalize()
 {
   // Indicate that the directory enumerator is no longer initialized.
   mIsInitialized = PR_FALSE;
+
+  // Dispose of the directory enumerator lock.
+  if (mEnumeratorLock)
+    nsAutoLock::DestroyLock(mEnumeratorLock);
+  mEnumeratorLock = nsnull;
 
   // Clear the directory entries enumeration stack.
   mEntriesEnumStack.Clear();
@@ -447,7 +334,7 @@ sbDirectoryEnumerator::Finalize()
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator private services.
+// Nightingale directory enumerator private services.
 //
 //------------------------------------------------------------------------------
 
@@ -514,18 +401,11 @@ sbDirectoryEnumerator::ScanForNextFile()
     if (isDirectory && !((mMaxDepth > 0) && (depth >= mMaxDepth))) {
       // Get the directory entries.  If file not found is returned, the
       // directory is empty.
-      nsRefPtr<sbDirectoryEnumeratorHelper> dirEnumeratorAdapter =
-        new sbDirectoryEnumeratorHelper();
-      NS_ENSURE_TRUE(dirEnumeratorAdapter, NS_ERROR_OUT_OF_MEMORY);
-      rv = dirEnumeratorAdapter->Init(file);
-      nsCOMPtr<nsISimpleEnumerator> dirEntryEnumerator;
-      if (rv != NS_ERROR_FILE_NOT_FOUND) {
+      rv = file->GetDirectoryEntries(getter_AddRefs(entriesEnum));
+      if (rv != NS_ERROR_FILE_NOT_FOUND)
         NS_ENSURE_SUCCESS(rv, rv);
-        dirEntryEnumerator = do_QueryInterface(dirEnumeratorAdapter, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      if (dirEntryEnumerator) {
-        success = mEntriesEnumStack.AppendObject(dirEntryEnumerator);
+      if (NS_SUCCEEDED(rv)) {
+        success = mEntriesEnumStack.AppendObject(entriesEnum);
         NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
       }
     }
@@ -533,3 +413,5 @@ sbDirectoryEnumerator::ScanForNextFile()
 
   return NS_OK;
 }
+
+

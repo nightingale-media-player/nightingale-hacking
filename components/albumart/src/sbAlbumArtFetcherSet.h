@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_ALBUMARTFETCHERSET_H__
@@ -30,23 +30,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set.
+// Nightingale album art fetcher set.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtFetcherSet.h
- * \brief Songbird Album Art Fetcher Set Definitions.
+ * \brief Nightingale Album Art Fetcher Set Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set imported services.
+// Nightingale album art fetcher set imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIAlbumArtFetcherSet.h>
 #include <sbIAlbumArtService.h>
 #include <sbIAlbumArtListener.h>
@@ -63,12 +63,12 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set defs.
+// Nightingale album art fetcher set defs.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird album art fetcher set component defs.
+// Nightingale album art fetcher set component defs.
 //
 
 #define SB_ALBUMARTFETCHERSET_CLASSNAME "sbAlbumArtFetcherSet"
@@ -85,12 +85,12 @@
 #define ALBUMART_SCANNER_TIMEOUT  10000
 
 // Preference keys
-#define PREF_ALBUMART_SCANNER_BRANCH    "songbird.albumart.scanner."
+#define PREF_ALBUMART_SCANNER_BRANCH    "nightingale.albumart.scanner."
 #define PREF_ALBUMART_SCANNER_TIMEOUT   "timeout"
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set classes.
+// Nightingale album art fetcher set classes.
 //
 //------------------------------------------------------------------------------
 

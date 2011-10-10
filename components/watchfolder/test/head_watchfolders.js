@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -44,11 +44,11 @@ var Application = Cc["@mozilla.org/fuel/application;1"]
 function setWatchFolder(file) {
   if (file) {
     dump("WF is watching " + file.path + "\n");
-    Application.prefs.setValue("songbird.watch_folder.path", file.path);
+    Application.prefs.setValue("nightingale.watch_folder.path", file.path);
   }
-  Application.prefs.setValue("songbird.watch_folder.enable", !!file);
+  Application.prefs.setValue("nightingale.watch_folder.enable", !!file);
   if (!file) {
-    Application.prefs.get("songbird.watch_folder.sessionguid").reset();
+    Application.prefs.get("nightingale.watch_folder.sessionguid").reset();
   }
 }
 
@@ -109,7 +109,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_watchfolder_tests" + Math.random() + ".tmp");
+  gTempFolder.append("nightingale_watchfolder_tests" + Math.random() + ".tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }

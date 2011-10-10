@@ -1,28 +1,30 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 
-// For Songbird properties.
+// For Nightingale properties.
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
@@ -36,6 +38,16 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 try
 {
+  function _SBShowMainLibrary()
+  {
+    // Make sure the main library is viewed
+    var browser = SBGetBrowser();
+    if (!browser) {
+      Components.utils.reportError("_SBShowMainLibrary - Cannot view the main library without a browser object");
+    }
+    browser.loadMediaList(LibraryUtils.mainLibrary);
+  }
+    
   function _SBGetCurrentView()
   {
     var browser = SBGetBrowser();
@@ -60,16 +72,16 @@ try
             .createInstance(nsIFilePicker);
 
     // Get some text for the filepicker window.
-    var sel = SBString("faceplate.select", "Select", theSongbirdStrings);
+    var sel = SBString("faceplate.select", "Select", theNightingaleStrings);
 
     // Initialize the filepicker with our text, a parent and the mode.
     fp.init(window, sel, nsIFilePicker.modeOpen);
 
-    var mediafiles = SBString("open.mediafiles", "Media Files", theSongbirdStrings);
+    var mediafiles = SBString("open.mediafiles", "Media Files", theNightingaleStrings);
 
     // ask the playback core for supported extensions
     var extensions = gTypeSniffer.mediaFileExtensions;
-    if (!Application.prefs.getValue("songbird.mediascan.enableVideo", false)) {
+    if (!Application.prefs.getValue("nightingale.mediascan.enableVideo", false)) {
       // disable video, so scan only audio - see bug 13173
       extensions = gTypeSniffer.audioFileExtensions;
     }
@@ -102,7 +114,7 @@ try
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
-
+      
       // Linux specific hack to be able to read badly named files (bug 6227)
       // nsIIOService::newFileURI actually forces to be valid UTF8 - which isn't
       // correct if the file on disk manages to have an incorrect name
@@ -134,36 +146,27 @@ try
         SBDataSetStringValue("metadata.artist", "");
         SBDataSetStringValue("metadata.album", "");
 
+        // Display the main library
+        _SBShowMainLibrary();
+                
+        // Import the item.
+        var view = _SBGetCurrentView();
+        
         var item = SBImportURLIntoMainLibrary(uri);
-
-        if (!gServicePane)
-          return;
-
-        var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
-                           .getService(Ci.sbILibraryServicePaneService);
-        var node = librarySPS.getNodeForLibraryResource(
-                     LibraryUtils.mainLibrary,
-                     item.getProperty(SBProperties.contentType));
-
-        gServicePane.activateAndLoadNode(node, null, null);
-
         // Wait for the item to show up in the view before trying to play it
         // and give it time to sort (given 10 tracks per millisecond)
         var interval = setInterval(function() {
           // If the view has been updated then we're good to go
           var index;
-          var view;
           try {
-            view = _SBGetCurrentView();
             index = view.getIndexForItem(item);
           }
-          catch (e if Components.lastResult == Cr.NS_ERROR_NOT_AVAILABLE) {
-            // It's not there so wait for the next interval
-            return;
-          }
           catch (e) {
-            // If we get anything but not available then that's bad and we need
-            // to bail
+            // If we get anything but not available then that's bad and we need to bail
+            if (Components.lastResult == Components.results.NS_ERROR_NOT_AVAILABLE) {
+              // It's not there so wait for the next interval
+              return;
+            }
             // Unexpected error, cancel the interval and rethrow
             clearInterval(interval);
             throw e;
@@ -200,13 +203,13 @@ try
   function MediaUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
   {
     if (!Components.isSuccessCode(aStatusCode)) {
-      var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                              .getService(Ci.sbILibraryManager);
 
       library = libraryManager.mainLibrary;
       var mediaItem =
             getFirstItemByProperty(library,
-                                   "http://songbirdnest.com/data/1.0#contentURL",
+                                   "http://getnightingale.com/data/1.0#contentURL",
                                    this._uri.spec);
       if (mediaItem)
         library.remove(mediaItem);
@@ -224,7 +227,7 @@ try
     url_open_data.URL = SBDataGetStringValue("faceplate.play.url");
     url_open_data.retval = "";
     // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow );
+    SBOpenModalDialog( "chrome://nightingale/content/xul/openURL.xul", "open_url", "chrome,centerscreen", url_open_data, parentWindow );
     if ( url_open_data.retval == "ok" )
     {
       var library = LibraryUtils.webLibrary;
@@ -288,49 +291,33 @@ try
         if (uri.scheme != "file")
           item = SBImportURLIntoWebLibrary(uri);
 
+        // Display the main library
+        _SBShowMainLibrary();
+
+        var view = _SBGetCurrentView();
+        var targetLength = view.length + 1;
+
         // Import the item.
         item = SBImportURLIntoMainLibrary(uri);
-
-        if (!gServicePane)
-          return;
-
-        var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
-                           .getService(Ci.sbILibraryServicePaneService);
-        var node = librarySPS.getNodeForLibraryResource(
-                     LibraryUtils.mainLibrary,
-                     item.getProperty(SBProperties.contentType));
-
-        gServicePane.activateAndLoadNode(node, null, null);
 
         // Wait for the item to show up in the view before trying to play it
         // and give it time to sort (given 10 tracks per millisecond)
         var interval = setInterval(function() {
           // If the view has been updated then we're good to go
-          var index;
-          var view;
-          try {
-            view = _SBGetCurrentView();
-            index = view.getIndexForItem(item);
-          }
-          catch (e if Components.lastResult == Cr.NS_ERROR_NOT_AVAILABLE) {
-            // It's not there so wait for the next interval
-            return;
-          }
-          catch (e) {
-            // If we get anything but not available then that's bad and we need
-            // to bail
-            // Unexpected error, cancel the interval and rethrow
+          if (view.length == targetLength) {
             clearInterval(interval);
-            throw e;
+            
+            // show the view and play
+            var index = view.getIndexForItem(item);
+        
+            // If we have a browser, try to show the view
+            if (window.gBrowser) {
+              gBrowser.showIndexInView(view, index);
+            }
+        
+            // Play the item
+            gMM.sequencer.playView(view, index);
           }
-          clearInterval(interval);
-          // If we have a browser, try to show the view
-          if (window.gBrowser) {
-            gBrowser.showIndexInView(view, index);
-          }
-          index = view.getIndexForItem(item);
-          // Play the item
-          gMM.sequencer.playView(view, index);
         }, 500);
       }
       else
@@ -347,7 +334,7 @@ try
     try
     {
       var aPlaylistReaderManager =
-        Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+        Components.classes["@getnightingale.com/Nightingale/PlaylistReaderManager;1"]
                   .getService(Components.interfaces.sbIPlaylistReaderManager);
 
       // Make a filepicker thingie.
@@ -357,13 +344,13 @@ try
 
       // Get some text for the filepicker window.
       var sel = SBString("faceplate.open.playlist", "Open Playlist",
-                         theSongbirdStrings);
+                         theNightingaleStrings);
 
       // Initialize the filepicker with our text, a parent and the mode.
       fp.init(window, sel, nsIFilePicker.modeOpenMultiple);
 
       var playlistfiles = SBString("open.playlistfiles", "Playlist Files",
-                                   theSongbirdStrings);
+                                   theNightingaleStrings);
 
       var ext;
       var exts = new Array();
@@ -389,7 +376,7 @@ try
       var filetype;
       for (i in exts)
       {
-        filetype = SBFormattedString("open.filetype",
+        filetype = SBFormattedString("open.filetype", 
                                      [exts[i].toUpperCase(), filters[i]]);
         fp.appendFilter(filetype, filters[i]);
       }
@@ -404,17 +391,7 @@ try
         while(allFiles.hasMoreElements()) {
           aFile = allFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
           aURI = ioService.newFileURI(aFile);
-
-          // Remove the file extension if exist 
-          var name = aFile.leafName;
-          var p = name.lastIndexOf(".");
-          if (p != -1) {
-            ext = name.slice(p + 1, name.length);
-            if (exts.indexOf(ext) > -1) {
-              name = name.slice(0, p);
-            }
-          }
-          SBOpenPlaylistURI(aURI, name);
+          SBOpenPlaylistURI(aURI, aFile.leafName);
         }
       }
     }
@@ -423,7 +400,7 @@ try
       alert(err);
     }
   }
-
+  
   function SBOpenPlaylistURI(aURI, aName) {
     var uri = aURI;
     if(!(aURI instanceof Components.interfaces.nsIURI)) {
@@ -438,32 +415,32 @@ try
       if (p != -1) name = name.slice(p+1);
     }
     var aPlaylistReaderManager =
-      Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+      Components.classes["@getnightingale.com/Nightingale/PlaylistReaderManager;1"]
                 .getService(Components.interfaces.sbIPlaylistReaderManager);
 
-    var library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+    var library = Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                             .getService(Components.interfaces.sbILibraryManager).mainLibrary;
 
     // Create the media list
     var mediaList = library.createMediaList("simple");
     mediaList.name = name;
-    mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
+    mediaList.setProperty("http://getnightingale.com/data/1.0#originURL", uri.spec);
 
     aPlaylistReaderManager.originalURI = uri;
     var success = aPlaylistReaderManager.loadPlaylist(uri, mediaList, null, false, null);
     if (success == 1 &&
         mediaList.length) {
-      var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+      var array = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                             .createInstance(Components.interfaces.nsIMutableArray);
       for (var i = 0; i < mediaList.length; i++) {
         array.appendElement(mediaList.getItemByIndex(i), false);
       }
-
-      var metadataService =
-         Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+      
+      var metadataService = 
+         Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                    .getService(Components.interfaces.sbIFileMetadataService);
       var metadataJob = metadataService.read(array);
-
+      
 
       // Give the new media list focus
       if (typeof gBrowser != 'undefined') {
@@ -480,16 +457,16 @@ try
   {
     // Get the default library importer.  Do nothing if none available.
     var libraryImporterManager =
-          Cc["@songbirdnest.com/Songbird/LibraryImporterManager;1"]
+          Cc["@getnightingale.com/Nightingale/LibraryImporterManager;1"]
             .getService(Ci.sbILibraryImporterManager);
     var libraryImporter = libraryImporterManager.defaultLibraryImporter;
     if (!libraryImporter)
       return null;
 
     var importTracks = Application.prefs.getValue(
-          "songbird.library_importer.import_tracks", false);
+          "nightingale.library_importer.import_tracks", false);
     var importPlaylists = Application.prefs.getValue(
-          "songbird.library_importer.import_playlists", false);
+          "nightingale.library_importer.import_playlists", false);
     if (!importTracks && !importPlaylists)
       return null;
 
@@ -499,7 +476,7 @@ try
       doImport = {};
       WindowUtils.openModalDialog
                     (parentWindow,
-                     "chrome://songbird/content/xul/importLibrary.xul",
+                     "chrome://nightingale/content/xul/importLibrary.xul",
                      "",
                      "chrome,centerscreen",
                      [ "manual" ],
@@ -513,9 +490,9 @@ try
     var job = null;
     if (doImport) {
       var libraryFilePath = Application.prefs.getValue
-                              ("songbird.library_importer.library_file_path",
+                              ("nightingale.library_importer.library_file_path",
                                "");
-      job = libraryImporter.import(libraryFilePath, "songbird", false);
+      job = libraryImporter.import(libraryFilePath, "nightingale", false);
       SBJobUtils.showProgressDialog(job, window, 0, true);
     }
     return job;
@@ -528,16 +505,16 @@ try
     consoleService.logStringMessage( str );
   }
 
-  // This function should be called when we need to open a URL but gBrowser is
-  // not available. Eventually this should be replaced by code that opens a new
-  // Songbird window, when we are able to do that, but for now, open in the
+  // This function should be called when we need to open a URL but gBrowser is 
+  // not available. Eventually this should be replaced by code that opens a new 
+  // Nightingale window, when we are able to do that, but for now, open in the 
   // default external browser.
   // If what you want to do is ALWAYS open in the default external browser,
   // use SBOpenURLInDefaultBrowser directly!
   function SBBrowserOpenURLInNewWindow( the_url ) {
     SBOpenURLInDefaultBrowser(the_url);
   }
-
+  
   // This function opens a URL externally, in the default web browser for the system
   function SBOpenURLInDefaultBrowser( the_url ) {
     var externalLoader = (Components
@@ -557,15 +534,10 @@ function onHelp()
   onMenu(helpitem);
 }
 
-function SBOpenEqualizer()
+function SBOpenEqualizer() 
 {
-  // Only open the equalizer UI if the control is enabled.
-  var equalizerControl = document.getElementById("menu_equalizer");
-  if (equalizerControl.getAttribute("disabled"))
-    return;
-
   var features = "chrome,titlebar,toolbar,centerscreen,resizable=no";
-  SBOpenWindow( "chrome://songbird/content/xul/mediacore/mediacoreEqualizer.xul", "Equalizer", features);
+  SBOpenWindow( "chrome://nightingale/content/xul/mediacore/mediacoreEqualizer.xul", "Equalizer", features);
 }
 
 function SBOpenPreferences(paneID, parentWindow)
@@ -602,22 +574,18 @@ function SBOpenPreferences(paneID, parentWindow)
 
 function SBOpenDownloadManager()
 {
-  var dlmgr = Cc['@mozilla.org/download-manager;1'].getService();
-  dlmgr = dlmgr.QueryInterface(Ci.nsIDownloadManager);
+  var dlmgr = Components.classes['@mozilla.org/download-manager;1'].getService();
+  dlmgr = dlmgr.QueryInterface(Components.interfaces.nsIDownloadManager);
 
-  var windowMediator = Cc['@mozilla.org/appshell/window-mediator;1']
-                         .getService();
-  windowMediator = windowMediator.QueryInterface(Ci.nsIWindowMediator);
+  var windowMediator = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService();
+  windowMediator = windowMediator.QueryInterface(Components.interfaces.nsIWindowMediator);
 
   var dlmgrWindow = windowMediator.getMostRecentWindow("Download:Manager");
   if (dlmgrWindow) {
     dlmgrWindow.focus();
   }
   else {
-    window.openDialog("chrome://mozapps/content/downloads/downloads.xul",
-                      "Download:Manager",
-                      "chrome,centerscreen,dialog=no,resizable",
-                      null);
+    window.open("chrome://mozapps/content/downloads/downloads.xul", "Download:Manager", "chrome,centerscreen,dialog=no,resizable", null);
   }
 }
 
@@ -629,7 +597,7 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     const nsIFilePicker = Components.interfaces.nsIFilePicker;
     const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
     var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
-    var scan = SBString("faceplate.scan", "Scan", theSongbirdStrings);
+    var scan = SBString("faceplate.scan", "Scan", theNightingaleStrings);
     fp.init( window, scan, nsIFilePicker.modeGetFolder );
     if (getPlatformString() == "Darwin") {
       var defaultDirectory =
@@ -658,14 +626,14 @@ function SBScanMedia( aParentWindow, aScanDirectory )
 
   if ( scanDirectory )
   {
-    var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+    var importer = Cc['@getnightingale.com/Nightingale/DirectoryImportService;1']
                      .getService(Ci.sbIDirectoryImportService);
     if (typeof(ArrayConverter) == "undefined") {
       Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
     }
     if (typeof(SBJobUtils) == "undefined") {
       Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-    }
+    }  
     var directoryArray = ArrayConverter.nsIArray([scanDirectory]);
     var job = importer.import(directoryArray);
     SBJobUtils.showProgressDialog(job, window, /* no delay */ 0);
@@ -677,6 +645,13 @@ function SBScanMedia( aParentWindow, aScanDirectory )
 /** Legacy function **/
 function SBNewPlaylist(aEnumerator, aAllowDevicePlaylist)
 {
+  // if the servicepane's Playlists group is hidden, then expose it
+  if (gServicePane) {
+    let playlistsGroup = gServicePane.getDOMNode("SB:Playlists");
+    if (!playlistsGroup.visible)
+      playlistsGroup.visible = true;
+  }
+
   var playlist = makeNewPlaylist("simple", aAllowDevicePlaylist);
   if (aEnumerator) {
     // make playlist from selected items
@@ -687,14 +662,21 @@ function SBNewPlaylist(aEnumerator, aAllowDevicePlaylist)
 
 function SBNewSmartPlaylist(aAllowDevicePlaylist)
 {
+  // if the servicepane's Playlists group is hidden, then expose it
+  if (gServicePane) {
+    let playlistsGroup = gServicePane.getDOMNode("SB:Playlists");
+    if (!playlistsGroup.visible)
+      playlistsGroup.visible = true;
+  }
+
   var obj = { newSmartPlaylist: null,
               newPlaylistFunction: function() {
                 return makeNewPlaylist("smart", aAllowDevicePlaylist);
               }
             };
 
-  SBOpenModalDialog("chrome://songbird/content/xul/smartPlaylist.xul",
-                    "Songbird:SmartPlaylist",
+  SBOpenModalDialog("chrome://nightingale/content/xul/smartPlaylist.xul",
+                    "Nightingale:SmartPlaylist",
                     "chrome,dialog=yes,centerscreen,modal,titlebar=no",
                     obj);
 
@@ -712,15 +694,15 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   var servicePane = null;
   if (typeof gServicePane != 'undefined') servicePane = gServicePane;
 
-  var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
-                     .getService(Ci.sbILibraryServicePaneService);
-  if (allowDevicePlaylist) {
-    // Try to find the currently selected service pane node
-    var selectedNode = null;
-    if (servicePane) {
-      selectedNode = servicePane.activeNode;
-    }
+  // Try to find the currently selected service pane node
+  var selectedNode;
+  if (servicePane) {
+    selectedNode = servicePane.getActiveNode();
+  }
 
+  var librarySPS = Components.classes['@getnightingale.com/servicepane/library;1']
+                             .getService(Components.interfaces.sbILibraryServicePaneService);
+  if (allowDevicePlaylist) {
     // Ask the library service pane provider to suggest where
     // a new playlist should be created
     var library = librarySPS.suggestLibraryForNewList(mediaListType,
@@ -733,36 +715,28 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   if (!library) {
     throw("Could not find a library supporting lists of type " + mediaListType);
   }
-
+  
   // Make sure the library is user editable, if it is not, use the main
   // library instead of the currently selected library.
   if (!library.userEditable ||
       !library.userEditableContent) {
-    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                           .getService(Ci.sbILibraryManager);
-
+    var libraryManager = 
+      Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
+                .getService(Components.interfaces.sbILibraryManager);
+    
     library = libraryManager.mainLibrary;
   }
 
   // Create the playlist
-  var name = librarySPS.suggestNameForNewPlaylist(library);
-  var properties =
-        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-          .createInstance(Ci.sbIMutablePropertyArray);
-  properties.appendProperty(SBProperties.mediaListName, name);
-
-  var mediaList = library.createMediaList(mediaListType, properties);
+  var mediaList = library.createMediaList(mediaListType);
+  mediaList.name = librarySPS.suggestNameForNewPlaylist(library);
 
   // If we have a servicetree, tell it to make the new playlist node editable
   if (servicePane) {
     // Find the servicepane node for our new medialist
     var node = librarySPS.getNodeForLibraryResource(mediaList);
-    if (node) {
-      // Make the new node visible
-      for (let parent = node.parentNode; parent; parent = parent.parentNode)
-        if (!parent.isOpen)
-          parent.isOpen = true;
 
+    if (node) {
       // Ask the service pane to start editing our new node
       // so that the user can give it a name
       servicePane.startEditingNode(node);
@@ -772,8 +746,8 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
 
   // Otherwise pop up a dialog and ask for playlist name
   } else {
-    var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"  ]
-                          .getService(Ci.nsIPromptService);
+    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
+                                  .getService(Components.interfaces.nsIPromptService);
 
     var input = {value: mediaList.name};
     var title = SBString("newPlaylist.title", "Create New Playlist");
@@ -784,10 +758,11 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
     }
   }
 
-  var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
-                  .createInstance(Ci.sbIMetrics);
+  var metrics =
+    Components.classes["@getnightingale.com/Nightingale/Metrics;1"]
+              .createInstance(Components.interfaces.sbIMetrics);
   metrics.metricsInc("medialist", "create", mediaListType);
-
+  
   return mediaList;
 }
 
@@ -803,7 +778,7 @@ function SBDeleteMediaList(aMediaList)
   }
   // if this list is the storage for an outer list, the outer list is the one
   // that should be deleted
-  var outerListGuid =
+  var outerListGuid = 
     mediaList.getProperty(SBProperties.outerGUID);
   if (outerListGuid)
     mediaList = mediaList.library.getMediaItem(outerListGuid);
@@ -811,7 +786,7 @@ function SBDeleteMediaList(aMediaList)
   // them based on their parent library user-editable flag. Also don't delete
   // libraries or the download node.
   var listType = mediaList.getProperty(SBProperties.customType);
-  if (mediaList.userEditable &&
+  if (mediaList.userEditable && 
       listType != "download" &&
       !(mediaList instanceof Ci.sbILibrary)) {
     const BYPASSKEY = "playlist.deletewarning.bypass";
@@ -820,23 +795,32 @@ function SBDeleteMediaList(aMediaList)
       var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
                             .getService(Ci.nsIPromptService);
       var check = { value: false };
-
+      
       var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
                   .getService(Ci.nsIStringBundleService);
-      var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+      var nightingaleStrings = sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
       var strTitle = SBString(STRINGROOT + "title");
       var strMsg = SBFormattedString(STRINGROOT + "message", [mediaList.name]);
 
-      var strCheck = SBString(STRINGROOT + "check");
+      var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      var selectedDevice =
+        deviceManager.getDeviceForItem(mediaList);
+      if (!selectedDevice &&
+          (deviceManager.marshalls.length > 0)) {
+        strMsg += "\n\n" + nightingaleStrings.GetStringFromName("playlist.confirmremoveitem.devicewarning");
+      }
 
-      var r = promptService.confirmEx(window,
-                              strTitle,
-                              strMsg,
-                              Ci.nsIPromptService.STD_YES_NO_BUTTONS,
-                              null,
-                              null,
-                              null,
-                              strCheck,
+      var strCheck = SBString(STRINGROOT + "check");
+      
+      var r = promptService.confirmEx(window, 
+                              strTitle, 
+                              strMsg, 
+                              Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
+                              null, 
+                              null, 
+                              null, 
+                              strCheck, 
                               check);
       if (check.value == true) {
         SBDataSetBoolValue(BYPASSKEY, true);
@@ -875,7 +859,7 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
   if (!parentWindow)
     parentWindow = window;
   var browser;
-  if (typeof SBGetBrowser == 'function')
+  if (typeof SBGetBrowser == 'function') 
     browser = SBGetBrowser();
   if (browser) {
     if (browser.currentMediaPage) {
@@ -889,22 +873,22 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
             var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                           .getService(Components.interfaces.nsIPromptService);
             var check = { value: false };
-
+            
             var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                 .getService(Components.interfaces.nsIStringBundleService);
-            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-            var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
-            var strMsg = songbirdStrings.formatStringFromName(STRINGROOT + "message", [numSelected], 1);
-            var strCheck = songbirdStrings.GetStringFromName(STRINGROOT + "check");
-
-            var r = promptService.confirmEx(window,
-                                    strTitle,
-                                    strMsg,
-                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS,
-                                    null,
-                                    null,
-                                    null,
-                                    strCheck,
+            var nightingaleStrings = sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
+            var strTitle = nightingaleStrings.GetStringFromName(STRINGROOT + "title");
+            var strMsg = nightingaleStrings.formatStringFromName(STRINGROOT + "message", [numSelected], 1);
+            var strCheck = nightingaleStrings.GetStringFromName(STRINGROOT + "check");
+            
+            var r = promptService.confirmEx(window, 
+                                    strTitle, 
+                                    strMsg, 
+                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
+                                    null, 
+                                    null, 
+                                    null, 
+                                    strCheck, 
                                     check);
             if (check.value == true) {
               SBDataSetBoolValue(BYPASSKEY, true);
@@ -919,9 +903,9 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
         }
 
         var isVideo = view.selection.currentMediaItem.getProperty(SBProperties.contentType) == "video";
-        SBOpenModalDialog((isVideo ? "chrome://songbird/content/xul/trackEditorVideo.xul"
-                                   : "chrome://songbird/content/xul/trackEditor.xul"),
-                          "Songbird:TrackEditor", "chrome,centerscreen",
+        SBOpenModalDialog((isVideo ? "chrome://nightingale/content/xul/trackEditorVideo.xul"
+                                   : "chrome://nightingale/content/xul/trackEditor.xul"),
+                          "Nightingale:TrackEditor", "chrome,centerscreen", 
                           initialTab, parentWindow);
       }
     }
@@ -934,14 +918,14 @@ function SBGetArtworkOpen() {
   if (browser && browser.currentMediaPage) {
     view = browser.currentMediaPage.mediaListView;
   }
-
+  
   if (!view)
     return;
 
-  var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
+  var artworkScanner = Cc["@getnightingale.com/Nightingale/album-art/scanner;1"]
                          .createInstance(Ci.sbIAlbumArtScanner);
   artworkScanner.scanListForArtwork(view.mediaList);
-  SBJobUtils.showProgressDialog(artworkScanner, window, 0);
+  SBJobUtils.showProgressDialog(artworkScanner, window, 0);  
 }
 
 function SBRevealFile( initialTab, parentWindow ) {
@@ -949,22 +933,22 @@ function SBRevealFile( initialTab, parentWindow ) {
   var browser;
   var view = _SBGetCurrentView();
   if (!view) { return; }
-
+  
   var numSelected = view.selection.count;
   if (numSelected != 1) { return; }
-
+  
   var item = null;
   var selection = view.selection.selectedIndexedMediaItems;
   item = selection.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
-
+  
   if (!item) {
     Cu.reportError("Failed to get media item to reveal.")
     return;
   }
-
+  
   var uri = item.contentSrc;
   if (!uri || uri.scheme != "file") { return; }
-
+  
   let f = uri.QueryInterface(Ci.nsIFileURL).file;
   try {
     // Show the directory containing the file and select the file
@@ -976,7 +960,7 @@ function SBRevealFile( initialTab, parentWindow ) {
     let parent = f.parent.QueryInterface(Ci.nsILocalFile);
     if (!parent)
       return;
-
+  
     try {
       // "Double click" the parent directory to show where the file should be
       parent.launch();
@@ -1001,7 +985,7 @@ function SBSubscribe(mediaList, defaultUrl, parentWindow)
       throw Components.results.NS_ERROR_INVALID_ARG;
 
     var isSubscription =
-      mediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription");
+      mediaList.getProperty("http://getnightingale.com/data/1.0#isSubscription");
     if (isSubscription != "1")
       throw Components.results.NS_ERROR_INVALID_ARG;
   }
@@ -1009,13 +993,13 @@ function SBSubscribe(mediaList, defaultUrl, parentWindow)
   if (defaultUrl && !(defaultUrl instanceof Components.interfaces.nsIURI))
     throw Components.results.NS_ERROR_INVALID_ARG;
 
-  var params = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var params = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                          .createInstance(Components.interfaces.nsIMutableArray);
   params.appendElement(mediaList, false);
   params.appendElement(defaultUrl, false);
 
   // Open the window
-  SBOpenModalDialog("chrome://songbird/content/xul/subscribe.xul",
+  SBOpenModalDialog("chrome://nightingale/content/xul/subscribe.xul",
                     "",
                     "chrome,centerscreen",
                     params,
@@ -1026,7 +1010,7 @@ function SBNewPodcast()
 {
   WindowUtils.openModalDialog
     (window,
-     "chrome://songbird/content/xul/podcast/podcastCreationDialog.xul",
+     "chrome://nightingale/content/xul/podcast/podcastCreationDialog.xul",
      "",
      "chrome,centerscreen");
 }
@@ -1038,7 +1022,7 @@ function About( parentWindow )
   var about_data = new Object();
   about_data.retval = "";
   // Open the modal dialog
-  SBOpenModalDialog( "chrome://songbird/content/xul/about.xul", "about", "chrome,centerscreen", about_data, parentWindow );
+  SBOpenModalDialog( "chrome://nightingale/content/xul/about.xul", "about", "chrome,centerscreen", about_data, parentWindow );
   if ( about_data.retval == "ok" )
   {
   }
@@ -1082,7 +1066,7 @@ function buildHelpMenu()
   if (!canUpdate)
     return;
 
-  var strings = document.getElementById("songbird_strings");
+  var strings = document.getElementById("nightingale_strings");
   var activeUpdate = um.activeUpdate;
 
   // If there's an active update, substitute its name into the label
@@ -1113,53 +1097,16 @@ function buildHelpMenu()
   checkForUpdates.label = getStringWithUpdateName("updateCmd_" + key);
 }
 
-function buildFileMenu() {
-  var closeTabItem = document.getElementById("menuitem_file_closetab");
-
-  // Disable "Close Tab" menu item if media tab is selected.
-  if (gBrowser.mediaTab == gBrowser.selectedTab) {
-    closeTabItem.setAttribute("disabled", "true");
-  } else {
-    closeTabItem.removeAttribute("disabled");
-  }
-}
-
-function buildControlsMenu() {
-  var equalizerControl = document.getElementById("menu_equalizer");
-  var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-             .getService(Ci.sbIMediacoreManager);
-  var equalizerEnabled = false;
-
-  try {
-    // Enable equalizer menu item if playback is stopped or the media core
-    // has equalizer interface.
-    if (!mm.primaryCore ||
-        mm.primaryCore.QueryInterface(Ci.sbIMediacoreMultibandEqualizer))
-    {
-      equalizerEnabled = true;
-    }
-  }
-  catch (e) {
-  }
-
-  // Disable the equalizer menu item if equalizer is not supported.
-  if (!equalizerEnabled) {
-    equalizerControl.setAttribute("disabled", "true");
-  } else {
-    equalizerControl.removeAttribute("disabled");
-  }
-}
-
 function buildViewMenu() {
   var disabled = !SBDataGetBoolValue("faceplate.playingvideo");
   var fullscreen = SBDataGetBoolValue("video.fullscreen");
-
+  
   var fullscreenItem = document.getElementById("menuitem-video-fullscreen");
   if(fullscreenItem) {
     fullscreenItem.setAttribute("checked", !disabled && fullscreen);
     fullscreenItem.setAttribute("disabled", disabled);
   }
-
+  
   var videoToFrontItem = document.getElementById("menuitem-video-to-front");
   if(videoToFrontItem) {
     videoToFrontItem.setAttribute("disabled", disabled);
@@ -1197,7 +1144,7 @@ function installXPIArray(aXPIArray)
  * \retval null Error during creation of item.
  */
 function SBImportURLIntoMainLibrary(url) {
-  var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                                   .getService(Components.interfaces.sbILibraryManager);
 
   var library = libraryManager.mainLibrary;
@@ -1228,7 +1175,7 @@ function SBImportURLIntoMainLibrary(url) {
   }
 
   // skip import of the item if it already exists
-  var mediaItem = getFirstItemByProperty(library, "http://songbirdnest.com/data/1.0#contentURL", url);
+  var mediaItem = getFirstItemByProperty(library, "http://getnightingale.com/data/1.0#contentURL", url);
   if (mediaItem)
     return mediaItem;
 
@@ -1244,13 +1191,13 @@ function SBImportURLIntoMainLibrary(url) {
     return null;
   }
 
-  var items = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var items = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
 
   items.appendElement(mediaItem, false);
 
-  var metadataService =
-     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  var metadataService = 
+     Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                .getService(Components.interfaces.sbIFileMetadataService);
   var metadataJob = metadataService.read(items);
 
@@ -1293,13 +1240,13 @@ function SBImportURLIntoWebLibrary(url) {
     return null;
   }
 
-  var items = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var items = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
 
   items.appendElement(mediaItem, false);
 
-  var metadataService =
-     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  var metadataService = 
+     Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                .getService(Components.interfaces.sbIFileMetadataService);
   var metadataJob = metadataService.read(items);
 
@@ -1335,8 +1282,8 @@ function toggleFullscreenVideo() {
 function bringVideoWindowToFront() {
   var wm = Cc["@mozilla.org/appshell/window-mediator;1"]
              .getService(Ci.nsIWindowMediator);
-
-  var coreEnum = wm.getEnumerator("Songbird:Core");
+             
+  var coreEnum = wm.getEnumerator("Nightingale:Core");
   while(coreEnum.hasMoreElements()) {
     let win = coreEnum.getNext();
     if(win.document.documentElement.getAttribute("id") == "video_window") {

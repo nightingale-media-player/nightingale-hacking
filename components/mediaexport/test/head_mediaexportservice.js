@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,7 +30,7 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 // Export data file constants
 // NOTE: When changing these constants, be sure to update the file
 //       'sbMediaExportDefines.h' as welll!
-var TASKFILE_NAME                     = "songbird_export.task";
+var TASKFILE_NAME                     = "nightingale_export.task";
 var TASKFILE_SCHEMAVERSION            = "2"
 var TASKFILE_SCHEMAVERSION_HEADER     = "schema-version";
 var TASKFILE_ADDEDMEDIALISTS_HEADER   = "added-medialists";
@@ -40,17 +40,17 @@ var TASKFILE_UPDATEDMEDIAITEMS_HEADER = "updated-mediaitems";
 
 // Media exporter prefs.
 var PREF_IMPORTEXPORT_ONSHUTDOWN =
-           "songbird.library_importexport.autoshutdown";
+           "nightingale.library_importexport.autoshutdown";
 var PREF_IMPORTEXPORT_ONSTARTUP =
-           "songbird.library_importexport.autostartup";
+           "nightingale.library_importexport.autostartup";
 var PREF_EXPORT_TRACKS =
-           "songbird.library_exporter.export_tracks";
+           "nightingale.library_exporter.export_tracks";
 var PREF_EXPORT_PLAYLISTS =
-           "songbird.library_exporter.export_playlists";
+           "nightingale.library_exporter.export_playlists";
 var PREF_EXPORT_SMARTPLAYLISTS =
-           "songbird.library_exporter.export_smartplaylists";
+           "nightingale.library_exporter.export_smartplaylists";
 var PREF_EXPORT_STARTAGENT =
-           "songbird.library_exporter.start_agent"
+           "nightingale.library_exporter.start_agent"
 
 var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
                  .getService(Ci.fuelIApplication).prefs;

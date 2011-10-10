@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #ifndef __SBLOCALDATABASESIMPLEMEDIALIST_H__
 #define __SBLOCALDATABASESIMPLEMEDIALIST_H__
@@ -40,11 +42,11 @@
 
 class nsIMutableArray;
 class nsISimpleEnumerator;
-class sbIDatabaseQuery;
 class sbILocalDatabaseLibrary;
 class sbIMediaItem;
 class sbIMediaList;
 class sbIMediaListView;
+class sbIDatabaseQuery;
 class sbSimpleMediaListInsertingEnumerationListener;
 class sbSimpleMediaListRemovingEnumerationListener;
 
@@ -75,7 +77,7 @@ public:
   NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync);
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);
@@ -85,14 +87,9 @@ public:
 
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty);
 
-  nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems,
-                                nsISupports *aListener,
-                                PRUint32 aStartingIndex,
-                                nsAString& aStartingOrdinal);
+  nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener);
 
 private:
-  nsresult UpdateLastModifiedTime();
-
   nsresult ExecuteAggregateQuery(const nsAString& aQuery, nsAString& aValue);
 
   nsresult UpdateOrdinalByIndex(PRUint32 aIndex, const nsAString& aOrdinal);
@@ -101,6 +98,8 @@ private:
                             PRUint32 aFromIndexArrayCount,
                             PRUint32 aToIndex,
                             const nsAString& aOrdinalRoot);
+
+  nsresult DeleteItemByMediaItemId(PRUint32 aMediaItemId);
 
   nsresult GetNextOrdinal(nsAString& aValue);
 
@@ -148,13 +147,6 @@ private:
   nsTHashtable<nsStringHashKey> mShouldNotifyAfterRemove;
 };
 
-/**
- * This enumerator is used to add items to a media list. For each item it
- * determines if the item exists in the media list's library, a copy already
- * exists, or a new item must be created. After the enumeration is complete
- * it then creates any items that need to be created and updates the database
- * so the media list now contains the list of items enumerated.
- */
 class sbSimpleMediaListInsertingEnumerationListener : public sbIMediaListEnumerationListener
 {
 public:
@@ -163,16 +155,12 @@ public:
 
   sbSimpleMediaListInsertingEnumerationListener(sbLocalDatabaseSimpleMediaList* aList,
                                                 PRUint32 aStartingIndex,
-                                                const nsAString& aStartingOrdinal,
-                                                nsISupports * aListener = nsnull)
+                                                const nsAString& aStartingOrdinal)
   : mFriendList(aList),
     mStartingIndex(aStartingIndex),
     mStartingOrdinal(aStartingOrdinal)
   {
-    if (aListener) {
-      mAsyncListener = do_QueryInterface(aListener);
-      mAddListener = do_QueryInterface(aListener);
-    }
+    NS_ASSERTION(mFriendList, "Null pointer!");
   }
 
 private:
@@ -184,29 +172,9 @@ private:
   sbLocalDatabaseSimpleMediaList* mFriendList;
   PRUint32 mStartingIndex;
   nsString mStartingOrdinal;
-  /**
-   * This is list of media items we'll be adding to media list in the order
-   * desired. There may be duplicates, some of these items may exist in a
-   * different database than the media list they're being added to.
-   */
   nsCOMArray<sbIMediaItem> mItemList;
-  /**
-   * This holds items that do not exist in the library that the media list
-   * belongs to. Some of these items may have corresponding items in the
-   * media list's library and so may not need to be created. For those items
-   * the hash entry will be the matching media item.
-   */
-  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreateOrAdd;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIMediaItem> mItemsToCreate;
   nsCOMPtr<sbILibrary> mListLibrary;
-  nsCOMPtr<sbIAddMediaItemsListener> mAddListener;
-  nsCOMPtr<sbIMediaListAsyncListener> mAsyncListener;
-
-  /**
-   * This function takes a list of existing items and updates the foreign
-   * item list with the newly created item
-   */
-  nsresult UpdateItemsInForeignLib(nsIArray * aExistingItems,
-                                   nsIArray * aNewItems);
 };
 
 class sbSimpleMediaListRemovingEnumerationListener : public sbIMediaListEnumerationListener

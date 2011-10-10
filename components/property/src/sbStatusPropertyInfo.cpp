@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
@@ -105,7 +105,6 @@ sbStatusPropertyInfo::GetProgressMode(const nsAString& aValue,
     case sbStatusPropertyValue::eNone:
     case sbStatusPropertyValue::eComplete:
     case sbStatusPropertyValue::eFailed:
-    case sbStatusPropertyValue::eAborted:
       *retval = nsITreeView::PROGRESS_NONE;
       break;
     case sbStatusPropertyValue::eRipping:
@@ -131,6 +130,14 @@ sbStatusPropertyInfo::GetCellValue(const nsAString& aValue,
     retval.AppendInt(value.GetCurrent());
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbStatusPropertyInfo::GetColumnProperties(const nsAString& aValue,
+                                          nsAString& retval)
+{
+  retval.Truncate();
   return NS_OK;
 }
 

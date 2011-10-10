@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SB_WINDOWS_UTILS_H_
@@ -28,21 +28,21 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird Windows utilities services defs.
+// Nightingale Windows utilities services defs.
 //
-//   The Songbird Windows utilities do not depend upon any Mozilla libraries.
+//   The Nightingale Windows utilities do not depend upon any Mozilla libraries.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbWindowsUtils.h
- * \brief Songbird Windows Utilities Definitions.
+ * \brief Nightingale Windows Utilities Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows utilities compile warning work-arounds.
+// Nightingale Windows utilities compile warning work-arounds.
 //
 //------------------------------------------------------------------------------
 
@@ -70,21 +70,20 @@
 #undef S_OK
 #undef SUCCEEDED
 #undef FAILED
-#undef ERROR
 #include <tchar.h>
 #include <strsafe.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows utilities imported services.
+// Nightingale Windows utilities imported services.
 //
 //------------------------------------------------------------------------------
 
 // Local imports.
 #include "sbWindowsEventLog.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbMemoryUtils.h>
 
 // Windows imports.
@@ -99,7 +98,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird tstring services.
+// Nightingale tstring services.
 //
 //------------------------------------------------------------------------------
 
@@ -169,7 +168,7 @@ public:
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows debug services macros.
+// Nightingale Windows debug services macros.
 //
 //------------------------------------------------------------------------------
 
@@ -280,7 +279,7 @@ public:
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows auto-disposal services macros.
+// Nightingale Windows auto-disposal services macros.
 //
 //------------------------------------------------------------------------------
 
@@ -296,8 +295,6 @@ public:
 //                              object.
 //   sbAutoLocalFree            Wrapper to automatically free a local memory
 //                              object.
-//   sbAutoCoTaskMem            Wrapper to auto-free COM task memory.
-//   sbAutoBSTR                 Wrapper to auto-free a BSTR.
 //
 
 template<typename T> SB_AUTO_NULL_CLASS(sbAutoPtr, T*, delete mValue);
@@ -309,15 +306,11 @@ SB_AUTO_CLASS(sbAutoHANDLE,
 SB_AUTO_NULL_CLASS(sbAutoRegKey, HKEY, RegCloseKey(mValue));
 SB_AUTO_NULL_CLASS(sbAutoIUnknown, IUnknown*, mValue->Release());
 SB_AUTO_NULL_CLASS(sbAutoLocalFree, HLOCAL, LocalFree(mValue));
-template<typename T> SB_AUTO_NULL_CLASS(sbAutoCoTaskMem,
-                                        T*,
-                                        CoTaskMemFree(mValue));
-SB_AUTO_NULL_CLASS(sbAutoBSTR, BSTR, SysFreeString(mValue));
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows registry services.
+// Nightingale Windows registry services.
 //
 //------------------------------------------------------------------------------
 
@@ -361,7 +354,7 @@ HRESULT sbWinDeleteRegValue(HKEY           aKey,
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows environment services.
+// Nightingale Windows environment services.
 //
 //------------------------------------------------------------------------------
 
@@ -391,7 +384,7 @@ public:
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows utilities.
+// Nightingale Windows utilities.
 //
 //------------------------------------------------------------------------------
 

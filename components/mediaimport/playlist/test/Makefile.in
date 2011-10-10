@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 # 
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 # 
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
@@ -29,9 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = playlistreader
+NIGHTINGALE_TEST_COMPONENT = playlistreader
 
-SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
+NIGHTINGALE_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/test_m3uhandler.js \
                  $(srcdir)/test_plshandler.js \
                  $(srcdir)/test_feedhandler.js \
@@ -52,12 +52,8 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/maclin_parsepls_result.xml \
                  $(srcdir)/files/maclin_relative_local.m3u \
                  $(srcdir)/files/maclin_relative_local.pls \
-                 $(srcdir)/files/maclin_unf.m3u \
-                 $(srcdir)/files/maclin_unf.pls \
-                 $(srcdir)/files/maclin_unf_nfc_result.xml \
-                 $(srcdir)/files/maclin_unf_nfd_result.xml \
+                 $(srcdir)/files/maclin_relative_local_result.xml \
                  $(srcdir)/files/maclin_utf8.m3u \
-                 $(srcdir)/files/maclin_utf8.m3u8 \
                  $(srcdir)/files/maclin_utf8.pls \
                  $(srcdir)/files/maclin_utf8_result.xml \
                  $(srcdir)/files/win_parse.m3u \
@@ -66,8 +62,8 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/win_parsepls_result.xml \
                  $(srcdir)/files/win_relative_local.pls \
                  $(srcdir)/files/win_relative_local.m3u \
+                 $(srcdir)/files/win_relative_local_result.xml \
                  $(srcdir)/files/win_utf8.m3u \
-                 $(srcdir)/files/win_utf8.m3u8 \
                  $(srcdir)/files/win_utf8.pls \
                  $(srcdir)/files/win_utf8_result.xml \
                  $(srcdir)/files/twit.rss \
@@ -78,15 +74,5 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/kqedradio_result.xml \
                  $(NULL)
 
-PLAYLISTREADER_TESTDIR = $(SONGBIRD_TESTSDIR)/playlistreader
-
-PLAYLISTREADER_TEST_FILE_ROOT = $(srcdir)/files
-
-PLAYLISTREADER_TEST_FILES := $(shell cd $(PLAYLISTREADER_TEST_FILE_ROOT) && \
- $(FIND) . -type f \
- -name '*.mp3')
-
 include $(topsrcdir)/build/rules.mk
 
-export::
-	cd $(PLAYLISTREADER_TEST_FILE_ROOT) && $(CP) -P -f -p --parents $(PLAYLISTREADER_TEST_FILES) $(PLAYLISTREADER_TESTDIR)

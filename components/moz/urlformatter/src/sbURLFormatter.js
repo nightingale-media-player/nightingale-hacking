@@ -38,8 +38,8 @@
 */
 
 /**
- * Original code from Mozilla with Songbird modifications
- *   John Gaunt <redfive@songbirdnest.com>
+ * Original code from Mozilla with Nightingale modifications
+ *   John Gaunt <redfive@getnightingale.com>
  */
 
 /**
@@ -70,8 +70,8 @@ function sbURLFormatterService() {
 }
 
 sbURLFormatterService.prototype = {
-  classDescription: "Songbird URL Formatter Service",
-  contractID: "@songbirdnest.com/moz/sburlformatter;1",
+  classDescription: "Nightingale URL Formatter Service",
+  contractID: "@getnightingale.com/moz/sburlformatter;1",
   classID: Components.ID("{4dc7da1b-89d1-48b5-8582-64c98bfb3410}"),
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIURLFormatter,
                                          Ci.nsIPropertyBag2]),
@@ -101,7 +101,7 @@ sbURLFormatterService.prototype = {
   _defaults: {
     get appInfo() {
       if (!this._appInfo)
-        this._appInfo = Cc["@mozilla.org/xre/runtime;1"].
+        this._appInfo = Cc["@mozilla.org/xre/app-info;1"].
                         getService(Ci.nsIXULAppInfo).
                         QueryInterface(Ci.nsIXULRuntime);
       return this._appInfo;

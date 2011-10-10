@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,7 +36,7 @@ Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
 var SBLocalDatabaseMigrationUtils = {
-  baseHandlerContractID: "@songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/"
+  baseHandlerContractID: "@getnightingale.com/Nightingale/Library/LocalDatabase/Migration/Handler/"
 }
 
 /**
@@ -55,7 +55,7 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
 
   /** nsIClassInfo, so callers don't have to QI from JS **/
   
-  classDescription        : 'Songbird Base Local Database Migration Class',
+  classDescription        : 'Nightingale Base Local Database Migration Class',
   classID                 : null,
   contractID              : null,
   flags                   : Ci.nsIClassInfo.MAIN_THREAD_ONLY,
@@ -169,7 +169,7 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
   // Create a query including an open transaction that
   // will start by setting the new library version  
   createMigrationQuery: function sbLibraryMigration_createMigrationQuery(aLibrary) {
-    var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    var query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                   .createInstance(Ci.sbIDatabaseQuery);
     query.databaseLocation = aLibrary.databaseLocation;
     query.setDatabaseGUID(aLibrary.databaseGuid);

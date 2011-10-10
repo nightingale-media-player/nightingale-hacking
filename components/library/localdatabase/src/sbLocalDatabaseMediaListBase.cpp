@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbLocalDatabaseMediaListBase.h"
@@ -33,8 +33,6 @@
 #include <sbICascadeFilterSet.h>
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
-#include <sbIDevice.h>
-#include <sbIDeviceManager.h>
 #include <sbIFilterableMediaListView.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseGUIDArray.h>
@@ -43,7 +41,6 @@
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISearchableMediaListView.h>
 #include <sbISortableMediaListView.h>
@@ -69,21 +66,26 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalMediaListBaseEnumerationListener.h"
 
-#define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
+#define DEFAULT_PROPERTIES_URL "chrome://nightingale/locale/nightingale.properties"
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseMediaItem,
+                             sbILocalDatabaseGUIDArrayListener,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
-  mListContentType(sbIMediaList::CONTENTTYPE_NONE),
-  mLockedEnumerationActive(PR_FALSE)
+  mLockedEnumerationActive(PR_FALSE),
+  mPreviousListener(PR_FALSE),
+  mListContentType(sbIMediaList::CONTENTTYPE_NONE)
 {
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 {
+  if (mPreviousListener && mFullArray) {
+    mFullArray->SetListener(nsnull);
+  }
   if (mFullArrayMonitor) {
     nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
   }
@@ -137,6 +139,12 @@ sbLocalDatabaseMediaListBase::GetNativeLibrary()
 
 void sbLocalDatabaseMediaListBase::SetArray(sbILocalDatabaseGUIDArray * aArray)
 {
+  if (mFullArray) {
+    mFullArray->SetListener(nsnull);
+    mPreviousListener = PR_FALSE;
+    ClearCachedPartialArray();
+  }
+
   mFullArray = aArray;
 }
 
@@ -196,6 +204,9 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
                                                                nsIStringEnumerator* aValueEnum,
                                                                sbIMediaListEnumerationListener* aEnumerationListener)
 {
+  // We should always be null, but just in case we're not
+  mCachedPartialArray = nsnull;
+
   // Make a new GUID array to talk to the database.
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
   nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
@@ -209,8 +220,30 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
   rv = guidArray->AddFilter(aID, aValueEnum, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // We need to listen for invalidates so our partial cached array can be
+  // invalidated
+  if (!mPreviousListener) {
+    mPreviousListener = PR_TRUE;
+    mFullArray->SetListener(this);
+  }
+
+  // Save off the guid array in case we need it.
+  mCachedPartialArray = guidArray;
+
   // And make an enumerator to return the filtered items.
   sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
+
+  return EnumerateItemsInternal(&enumerator, aEnumerationListener);
+}
+
+/**
+ * Internal method that may be inside the monitor.
+ */
+nsresult
+sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(sbIMediaListEnumerationListener* aEnumerationListener)
+{
+  // And make an enumerator to return the filtered items.
+  sbGUIDArrayEnumerator enumerator(mLibrary, mCachedPartialArray);
 
   return EnumerateItemsInternal(&enumerator, aEnumerationListener);
 }
@@ -250,7 +283,7 @@ sbLocalDatabaseMediaListBase::MakeStandardQuery(sbIDatabaseQuery** _retval)
 {
   nsresult rv;
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString databaseGuid;
@@ -288,10 +321,6 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> library;
-  rv = GetLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRBool hasContentType = PR_FALSE;
   PRUint32 length;
   rv = aProperties->GetLength(&length);
@@ -306,7 +335,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // We never want these properties to be copied to a new item.
+    // We never want these properties to be copied to a new item
     if (mFilteredProperties.GetEntry(id)) {
       continue;
     }
@@ -330,192 +359,6 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
   }
 
   NS_ADDREF(*_retval = mutableArray);
-  return NS_OK;
-}
-
-/* static */ nsresult
-sbLocalDatabaseMediaListBase::GetOriginProperties(
-                              sbIMediaItem *             aSourceItem,
-                              sbIMutablePropertyArray *  aProperties)
-{
-  NS_ENSURE_ARG_POINTER(aSourceItem);
-  NS_ENSURE_ARG_POINTER(aProperties);
-
-  nsresult rv;
-
-  // Determine whether the target list belongs to a device:
-  nsCOMPtr<sbIDeviceManager2> deviceMgr =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDevice> targetDev;
-  rv = deviceMgr->GetDeviceForItem(static_cast<sbIMediaList *>(this),
-                                   getter_AddRefs(targetDev));
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetDeviceForItem() failed");
-
-  // We only set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY where it is maintained
-  // and currently there are only main library listeners in place to update the
-  // property in device libraries, so set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY
-  // only if the the target list belongs to a device.
-  PRBool targetIsDevice = (NS_SUCCEEDED(rv) && (targetDev != NULL));
-
-  // Get the origin library:
-  nsCOMPtr<sbILibrary> originLib;
-  rv = aSourceItem->GetLibrary(getter_AddRefs(originLib));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the main library:
-  nsCOMPtr<sbILibrary> mainLib;
-  rv = GetMainLibrary(getter_AddRefs(mainLib));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Ensure there is no conflicting value for
-  // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY:
-  rv = RemoveProperty(
-          aProperties,
-          NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY and remove any existing
-  // origin guids if the origin library is the main library.  This will
-  // force the code below to regenerate the origin guids whenever an
-  // item is copied from the main library:
-  if (originLib == mainLib) {
-    // Remove SB_PROPERTY_ORIGINLIBRARYGUID:
-    rv = RemoveProperty(aProperties,
-                        NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Remove SB_PROPERTY_ORIGINITEMGUID:
-    rv = RemoveProperty(aProperties,
-                        NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if the target is a
-    // device library:
-    if (targetIsDevice) {
-      rv = aProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-        NS_LITERAL_STRING("1"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else if (targetIsDevice) {
-    // The source library is not the main library, but our target is a device.
-    // We need to verify SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY by checking if
-    // an item with a guid matching this item's originItemGuid is in the main
-    // library.
-    rv = sbLibraryUtils::FindOriginalsByID(aSourceItem,
-                                           mainLib,
-                                           nsnull);
-    if (NS_SUCCEEDED(rv)) {
-      // We found the original item in the main library, set the
-      // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY flag to true
-      rv = aProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-        NS_LITERAL_STRING("1"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      // We could not find the original item in the main library, set the
-      // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY flag to false
-      rv = aProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-        NS_LITERAL_STRING("0"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  nsCOMPtr<sbILibrary> thisLibrary;
-  rv = GetLibrary(getter_AddRefs(thisLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool copyingToMainLibrary;
-  rv = thisLibrary->Equals(mainLib, &copyingToMainLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // If we're not copying to the main library set the origin guids
-  if (!copyingToMainLibrary) {
-    // Set SB_PROPERTY_ORIGINLIBRARYGUID if it is not already set:
-    nsAutoString originLibGuid;
-    rv = aProperties->GetPropertyValue(
-      NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-      originLibGuid);
-    if (rv == NS_ERROR_NOT_AVAILABLE || originLibGuid.IsEmpty()) {
-      rv = originLib->GetGuid(originLibGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = aProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-        originLibGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // Set SB_PROPERTY_ORIGINITEMGUID if it is not already set:
-    nsAutoString originItemGuid;
-    rv = aProperties->GetPropertyValue(
-      NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-      originItemGuid);
-    if (rv == NS_ERROR_NOT_AVAILABLE || originItemGuid.IsEmpty()) {
-      rv = aSourceItem->GetGuid(originItemGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = aProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-        originItemGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  return NS_OK;
-}
-
-/* static */ nsresult
-sbLocalDatabaseMediaListBase::RemoveProperty(
-                              sbIMutablePropertyArray * aPropertyArray,
-                              const nsAString &         aProperty)
-{
-  NS_ENSURE_ARG_POINTER(aPropertyArray);
-
-  nsresult rv;
-
-  // Get the nsIMutableArray for access to RemoveElementAt():
-  nsCOMPtr<nsIMutableArray> mutableArray =
-    do_QueryInterface(aPropertyArray, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 length;
-  rv = aPropertyArray->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Iterate over the array and remove any elements with the
-  // given property id:
-  PRUint32 i = 0;
-  while (i < length) {
-    nsCOMPtr<sbIProperty> prop;
-    rv = aPropertyArray->GetPropertyAt(i, getter_AddRefs(prop));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString id;
-    rv = prop->GetId(id);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If the property ID matches the given ID, remove it.  The index
-    // does not advance in this case, but the length decreases.
-    // Otherwise, advance to the next element:
-    if (id == aProperty) {
-      rv = mutableArray->RemoveElementAt(i);
-      NS_ENSURE_SUCCESS(rv, rv);
-      --length;
-    }
-    else {
-      i++;
-    }
-  }
-
   return NS_OK;
 }
 
@@ -575,7 +418,7 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
   // See if this string should be localized. The basic format we're looking for
   // is:
   //
-  //   &[chrome://songbird/songbird.properties#]library.name
+  //   &[chrome://nightingale/nightingale.properties#]library.name
   //
   // The url (followed by '#') is optional.
 
@@ -859,6 +702,9 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
+  // If our cached array is invalid, toss it.
+  ClearCachedPartialArray();
+
   // A property id must be specified.
   NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
@@ -900,8 +746,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
       if (NS_SUCCEEDED(rv)) {
         if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
-          rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
-                                                aEnumerationListener);
+          if (mCachedPartialArray)
+            rv = EnumerateItemsByPropertyInternal(aEnumerationListener);
+          else
+            rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
+                                                  aEnumerationListener);
         }
         else {
           // The user cancelled the enumeration.
@@ -919,8 +768,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
       if (NS_SUCCEEDED(rv)) {
         if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
-          rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
-                                                aEnumerationListener);
+          if (mCachedPartialArray)
+            rv = EnumerateItemsByPropertyInternal(aEnumerationListener);
+          else
+            rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
+                                                  aEnumerationListener);
         }
         else {
           // The user cancelled the enumeration.
@@ -949,6 +801,9 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
 {
   NS_ENSURE_ARG_POINTER(aProperties);
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
+
+  // This isn't a single value so we can't use the previous single value cached
+  ClearCachedPartialArray();
 
   PRUint32 propertyCount;
   nsresult rv = aProperties->GetLength(&propertyCount);
@@ -1295,9 +1150,8 @@ sbLocalDatabaseMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
-                                            sbIAddMediaItemsListener * aListener,
-                                            PRBool aAsync)
+sbLocalDatabaseMediaListBase::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
+                                           sbIMediaListAsyncListener *aListener)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -1396,6 +1250,27 @@ sbLocalDatabaseMediaListBase::RunInBatchMode(sbIMediaListBatchCallback* aCallbac
   return aCallback->RunBatched(aUserData);
 }
 
+void sbLocalDatabaseMediaListBase::ClearCachedPartialArray()
+{
+  mLastID.Truncate();
+  mLastValue.Truncate();
+  mCachedPartialArray = nsnull;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::OnBeforeInvalidate()
+{
+  if (mCachedPartialArray) {
+    mCachedPartialArray->Invalidate();
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::OnAfterInvalidate()
+{
+  return NS_OK;
+}
 NS_IMPL_ISUPPORTS1(sbGUIDArrayValueEnumerator, nsIStringEnumerator)
 
 sbGUIDArrayValueEnumerator::sbGUIDArrayValueEnumerator(sbILocalDatabaseGUIDArray* aArray) :

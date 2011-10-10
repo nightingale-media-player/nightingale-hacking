@@ -2,12 +2,12 @@
 <!-- vim: set sw=2 :miv -->
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -22,16 +22,16 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!-- Import external definitions. -->
 <!DOCTYPE window [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   %brandDTD;
-  %songbirdDTD;
+  %nightingaleDTD;
 ]>
 
 <bindings
@@ -50,10 +50,10 @@
    ************************************************************************* -->
 
   <binding id="sb-device-management"
-           extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+           extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
 
     <resources>
-      <stylesheet src="chrome://songbird-bindings/skin/device/deviceMediaManagement.css"/>
+      <stylesheet src="chrome://nightingale-bindings/skin/device/deviceMediaManagement.css"/>
     </resources>
 
     <!-- ***********************************************************************
@@ -71,29 +71,36 @@
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
           <xul:caption label="&device.settings.music.transcoding.label;"/>
-          <xul:deck sbid="transcoding_settings_deck">
-            <xul:description sbid="no_encoders_available_description">
-              &device.settings.music.transcoding.no_encoders.description;
-            </xul:description>
+          <!-- Transcoding preferences. -->
+          <xul:vbox class="content-controls"
+                    oncommand="DeviceMediaManagementServices.onUIPrefChange();">
 
-            <xul:vbox sbid="transcoding_preferences"
-                      class="content-controls"
-                      oncommand="DeviceMediaManagementServices.onUIPrefChange();">
+            <!-- Transcoding mode radio group. -->
+            <xul:radiogroup sbid="transcoding_mode_radio_group" flex="1">
 
-              <!-- Transcoding mode radio group. -->
-              <xul:radiogroup sbid="transcoding_mode_radio_group" flex="1">
+              <xul:radio sbid="transcoding-mode-auto"
+                         xbl:inherits="disabled"
+                         label="&device.settings.music.transcoding.mode.auto.label;"/>
+              <xul:radio sbid="transcoding-mode-manual"
+                         xbl:inherits="disabled"
+                         label="&device.settings.music.transcoding.mode.manual.label;"/>
+              <xul:vbox sbid="transcoding-mode-details" class="indent">
+                <xul:hbox>
+                  <xul:label value="&device.settings.music.transcoding.format.label;"/>
+                  <xul:menulist sbid="encoding-format-menu">
+                    <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
+                  </xul:menulist>
+                </xul:hbox>
+                <xul:hbox sbid="transcoding-bitrate" xbl:inherits="disabled">
+                  <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
+                  <xul:textbox sbid="transcoding-bitrate-kbps" type="number" 
+                               increment="32"/>
+                  <xul:label value="&device.settings.music.transcoding.bitrate.units;"/>
+                </xul:hbox>
+              </xul:vbox>
+            </xul:radiogroup>
 
-                <xul:radio sbid="transcoding-mode-auto"
-                           xbl:inherits="disabled"
-                           label="&device.settings.music.transcoding.mode.auto.label;"/>
-                <xul:radio sbid="transcoding-mode-manual"
-                           xbl:inherits="disabled"
-                           label="&device.settings.music.transcoding.mode.manual.label;"/>
-                <xul:sb-device-transcode-settings sbid="transcode-settings" class="indent"/>
-              </xul:radiogroup>
-
-            </xul:vbox>
-          </xul:deck>
+          </xul:vbox>
         </xul:groupbox>
         <xul:groupbox flex="1"
                       setting="diskmgmt"
@@ -136,6 +143,20 @@
 
             <xul:spacer height="10" flex="1"/>
           </xul:vbox>
+          <xul:vbox>
+            <xul:checkbox sbid="mgmt_enable"
+                          xbl:inherits="disabled"
+                          oncommand="onMgmtEnableChange();"
+                          label="&device.settings.disk.management.label;"/>
+            <xul:hbox class="indent">
+              <xul:sb-properties-formatter sbid="mgmt_dir_format"
+                  maxProperties="3" trailingSeparator="true"
+                  propertyCategory="nightingale-media-manager-directory-name-properties">
+                <xul:label value="&device.settings.disk.management.filename;"/>
+              </xul:sb-properties-formatter>
+              <xul:spacer flex="1"/>
+            </xul:hbox>
+          </xul:vbox>
         </xul:groupbox>
       </xul:vbox>
     </content>
@@ -151,7 +172,7 @@
 
       <property name="_prefRoot" readonly="true">
         <getter>
-          return "songbird.device." +
+          return "nightingale.device." +
                  this.deviceID +
                  ".preferences.library." +
                  this.devLibGUID;
@@ -160,6 +181,23 @@
       <property name="_devicePrefRoot" readonly="true">
         <getter>
           return "library." + this.devLibGUID;
+        </getter>
+      </property>
+      <property name="_formatDirPrefName" readonly="true">
+        <getter>
+          return "nightingale.device." +
+                 this.deviceID +
+                 ".preferences.library." +
+                 this.devLibGUID +
+                 ".media_management.library.format.dir";
+        </getter>
+      </property>
+
+      <property name="_formatter" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         "mgmt_dir_format");
         </getter>
       </property>
 
@@ -282,7 +320,7 @@
                                .getService
                                   (Components.interfaces.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
-                  ("chrome://songbird/content/scripts/device/deviceMediaManagement.js",
+                  ("chrome://nightingale/content/scripts/device/deviceMediaManagement.js",
                    null);
         }
       }
@@ -291,6 +329,15 @@
 
       <method name="save">
         <body> <![CDATA[
+          this.device.setPreference(this._devicePrefRoot + 
+                                      ".media_management.library.format.dir", 
+                                    this._formatter.value);
+          var enabledCheckbox =
+            document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable");
+          this.device.setPreference(this._devicePrefRoot +
+                                      ".media_management.library.enabled",
+                                    enabledCheckbox.checked);
+
           // Save the device's storage settings
           this._saveStorageScaleSetting();
 
@@ -300,6 +347,27 @@
 
       <method name="reset">
         <body> <![CDATA[
+          var enabledPrefName = this._prefRoot + ".media_management.library.enabled";
+          document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable")
+                  .checked =
+                    Application.prefs.getValue(enabledPrefName, false);
+          var defaultValue =
+            Application.prefs.getValue("nightingale.media_management.library.format.dir",
+                                       "");
+          // need to wait for the element to be constructed :|
+          var formatDirPrefName =
+            this._prefRoot + ".media_management.library.format.dir";
+          setTimeout(function(self){
+            self._formatter.value = Application.prefs.getValue(formatDirPrefName,
+                                                               defaultValue);
+            var mgmtEnableCheckbox =
+                  document.getAnonymousElementByAttribute(self,
+                                                          "sbid",
+                                                          "mgmt_enable");
+            self._formatter.disableAll = !mgmtEnableCheckbox.checked ||
+                                         (self.device && self.device.isBusy);
+          }, 0, this);
+
           // Set the scale to the device's current value.
           var self = this;
           setTimeout(function() { self._resetStorageScale(); }, 100);
@@ -321,7 +389,7 @@
           var capacity = 0;
           try {
             capacity = this.devLib.getProperty
-                         ("http://songbirdnest.com/device/1.0#capacity");
+                         ("http://getnightingale.com/device/1.0#capacity");
             capacity = parseInt(capacity);
           } catch (ex) {};
 
@@ -330,8 +398,8 @@
             capacity = ((capacity * limitPercentage) / 100);
           }
 
-          var storageConverter =
-            Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          storageConverter =
+            Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
               .createInstance(Ci.sbIPropertyUnitConverter);
           capacity = storageConverter.autoFormat(capacity, -1, 1);
 
@@ -339,6 +407,16 @@
             SBFormattedString("device.settings.limit_disk_space",
                               [this._scale.getAttribute("value"),
                                capacity]);
+        ]]></body>
+      </method>
+
+      <method name="onMgmtEnableChange">
+        <body><![CDATA[
+          var mgmtEnableCheckbox =
+                document.getAnonymousElementByAttribute(this,
+                                                        "sbid",
+                                                        "mgmt_enable");
+          this._formatter.disableAll = !mgmtEnableCheckbox.checked;
         ]]></body>
       </method>
 

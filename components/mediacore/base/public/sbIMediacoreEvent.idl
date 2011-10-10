@@ -1,25 +1,27 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+ //
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
  */
 
 #include "nsISupports.idl"
@@ -34,7 +36,7 @@ interface sbIMediacoreEventTarget;
  * \interface sbIMediacoreEvent
  * \brief Definition of the sbIMediacoreEvent interface.
  */
-[scriptable, uuid(c5f679e0-d695-11df-937b-0800200c9a66)]
+[scriptable, uuid(6d5f11f3-51aa-41c2-bcd9-85355c364df5)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -102,7 +104,7 @@ interface sbIMediacoreEvent : nsISupports
    */
   const unsigned long SEQUENCE_CHANGE     = 0x00001505;
   /**
-   * \brief Sequence end.
+   * \brief Sequence end. 
    *
    * This event will be fired by the sequencer when it runs
    * out of items to play from it's sequence. This event will
@@ -117,7 +119,7 @@ interface sbIMediacoreEvent : nsISupports
   /**
    * \brief Explicit call to next or previous.
    *
-   * Triggered by user or code that is actively attempting to change to the
+   * Triggered by user or code that is actively attempting to change to the 
    * next track. This event is _not_ fired when the sequencer goes to the next
    * track because the previous track has finished playing in its entirety.
    *
@@ -140,7 +142,7 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null.
    */
   const unsigned long STREAM_HAS_VIDEO  = 0x00002001;
-
+  
   /**
    * \brief Buffering.
    * \note data is the buffering progress as a double (from 0 to 1).
@@ -206,17 +208,6 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null.
    */
   const unsigned long STREAM_STOP         = 0x00004006;
-  /**
-   * \brief Explicit call to stop the playback.
-   *
-   * Triggered by user or code that is actively attempting to stop the playback.
-   * This event is _not_ fired when the sequencer goes to the end and no next
-   * track for playback.
-   *
-   * \note data is null.
-   * \note STREAM_BEFORE_STOP and STREAM_STOP are still fired.
-   */
-  const unsigned long EXPLICIT_STOP       = 0x00004007;
 
   // Video specific events
 
@@ -272,12 +263,12 @@ interface sbIMediacoreEvent : nsISupports
 %{C++
 
 #define SB_MEDIACORE_EVENT_DESCRIPTION    \
-  "Songbird Mediacore Event"
+  "Nightingale Mediacore Event"
 #define SB_MEDIACORE_EVENT_CONTRACTID     \
-  "@songbirdnest.com/Songbird/Mediacore/event;1"
+  "@getnightingale.com/Nightingale/Mediacore/event;1"
 #define SB_MEDIACORE_EVENT_CLASSNAME      \
   "sbMediacoreEvent"
 #define SB_MEDIACORE_EVENT_CID          \
   {0xedf0959d, 0x21bf, 0x411f, {0x8d, 0x3d, 0x85, 0x9a, 0x76, 0xe7, 0x14, 0x12}}
-
+  
 %};

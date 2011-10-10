@@ -1,12 +1,12 @@
 /* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -33,7 +33,7 @@
  * temporary files and directories.  These files and directories are deleted
  * when the temporary file factory is destroyed.
  *
- * "@songbirdnest.com/Songbird/TemporaryFileFactory;1"
+ * "@getnightingale.com/Nightingale/TemporaryFileFactory;1"
  * Use create instance with this component.
  *
  *   This component creates its own temporary directory which it uses as the
@@ -84,6 +84,6 @@ interface sbITemporaryFileFactory : nsISupports
 
 %{C++
 #define SB_TEMPORARYFILEFACTORY_CONTRACTID \
-          "@songbirdnest.com/Songbird/TemporaryFileFactory;1"
+          "@getnightingale.com/Nightingale/TemporaryFileFactory;1"
 %}C++
 

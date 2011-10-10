@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -59,7 +59,7 @@ function readCPPProps() {
   do {
     var line = {};
     var hasMore = istream.readLine(line);
-    var result = line.value.match(/"http:\/\/songbirdnest.com\/data\/1.0#([^"]+)"/);
+    var result = line.value.match(/"http:\/\/getnightingale.com\/data\/1.0#([^"]+)"/);
     if (result) {
       gProps[result[1]] = true;
     }
@@ -77,7 +77,7 @@ function checkJSMProps() {
     if (SBProperties[i].length <= SBProperties.base.length) {
       continue;
     }
-    var prop = SBProperties[i].match(/http:\/\/songbirdnest.com\/data\/1.0#(\w+)/)[1];
+    var prop = SBProperties[i].match(/http:\/\/getnightingale.com\/data\/1.0#(\w+)/)[1];
     assertTrue(prop in gProps, "property " + prop + " is only in sbProperties.jsm");
     props[prop] = true;
   }

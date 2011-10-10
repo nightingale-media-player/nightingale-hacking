@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -33,7 +33,7 @@
  *
  *  property;libraryguid;defaultvalues;unit
  *
- *  - 'property' is a property id, such as http://songbirdnest.com/data/1.0#artistName
+ *  - 'property' is a property id, such as http://getnightingale.com/data/1.0#artistName
  *  - 'libraryguid' is the guid of a library from which to get distinct values,
  *    or no value to get from all libraries
  *  - 'defaultvalues' is a comma separated list of additional default values
@@ -52,7 +52,7 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 
 const CONTRACTID = "@mozilla.org/autocomplete/search;1?name=library-distinct-properties";
-const DESCRIPTION = "Songbird Library Search Suggestions";
+const DESCRIPTION = "Nightingale Library Search Suggestions";
 const CID = Components.ID("{1ed101bc-a11c-4e03-83af-514672bd3a70}");
 
 const XPCOM_SHUTDOWN_TOPIC              = "xpcom-shutdown";
@@ -229,7 +229,7 @@ AutoCompleteResult.prototype = {
 
 /**
  * Implements nsIAutoCompleteSearch to provide suggestions based 
- * on Songbird's state.
+ * on Nightingale's state.
  *
  * To access this suggester set autocompletesearch="library-distinct-properties"
  * on an autocomplete textbox.  See the search.xml binding for details.
@@ -328,7 +328,7 @@ LibrarySearchSuggester.prototype = {
       // get the library manager if needed
       if (!this._libraryManager) {
         this._libraryManager = 
-          Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+          Cc["@getnightingale.com/Nightingale/library/Manager;1"]
             .getService(Ci.sbILibraryManager);
       }
 
@@ -418,7 +418,7 @@ LibrarySearchSuggester.prototype = {
       var converter = null;
       if (this._conversionUnit && this._conversionUnit != "") {
         var propertyManager = 
-          Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
             .getService(Ci.sbIPropertyManager);
         var info = propertyManager.getPropertyInfo(this._prop);
         converter = info.unitConverter;

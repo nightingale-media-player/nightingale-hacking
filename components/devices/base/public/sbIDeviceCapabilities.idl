@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -48,11 +48,11 @@ interface sbIImageSize : nsISupports
 
 %{C++
 #define SB_IMAGESIZE_DESCRIPTION             \
-  "Songbird Device Capabilities Image Size Component"
+  "Nightingale Device Capabilities Image Size Component"
 #define SB_IMAGESIZE_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbimagesize;1"
+  "@getnightingale.com/Nightingale/Device/sbimagesize;1"
 #define SB_IMAGESIZE_CLASSNAME               \
-  "Songbird Device Capabilities Image Size"
+  "Nightingale Device Capabilities Image Size"
 #define SB_IMAGESIZE_CID                     \
 { 0xf2915d0, 0xf43, 0x46fd, { 0x90, 0xbd, 0x84, 0x22, 0x48, 0x43, 0xb, 0xf } }
 %}
@@ -108,11 +108,11 @@ interface sbIDevCapRange : nsISupports
 
 %{C++
 #define SB_IDEVCAPRANGE_DESCRIPTION             \
-  "Songbird Device Capabilities Range Component"
+  "Nightingale Device Capabilities Range Component"
 #define SB_IDEVCAPRANGE_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbrange;1"
+  "@getnightingale.com/Nightingale/Device/sbrange;1"
 #define SB_IDEVCAPRANGE_CLASSNAME               \
-  "Songbird Device Capabilities Range"
+  "Nightingale Device Capabilities Range"
 #define SB_IDEVCAPRANGE_CID                     \
 { 0x491604ba, 0x51e1, 0x45e4, { 0x9d, 0x11, 0xce, 0x1e, 0xc6, 0x3d, 0xe, 0xae } }
 %}
@@ -133,11 +133,11 @@ interface sbIDevCapFraction : nsISupports
 
 %{C++
 #define SB_IDEVCAPFRACTION_DESCRIPTION             \
-  "Songbird Device Capabilities Fraction Component"
+  "Nightingale Device Capabilities Fraction Component"
 #define SB_IDEVCAPFRACTION_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbfraction;1"
+  "@getnightingale.com/Nightingale/Device/sbfraction;1"
 #define SB_IDEVCAPFRACTION_CLASSNAME               \
-  "Songbird Device Capabilities Fraction"
+  "Nightingale Device Capabilities Fraction"
 #define SB_IDEVCAPFRACTION_CID                     \
 {0xb8b158a2, 0x1dd1, 0x11b2, {0x9f, 0x1d, 0xb9, 0x56, 0x08, 0x79, 0x0a, 0xb8}}
 %}
@@ -165,11 +165,11 @@ interface sbIFormatTypeConstraint : nsISupports
 
 %{C++
 #define SB_IFORMATTYPECONSTRAINT_DESCRIPTION             \
-  "Songbird Device Capabilities Format Type Constraint Component"
+  "Nightingale Device Capabilities Format Type Constraint Component"
 #define SB_IFORMATTYPECONSTRAINT_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbformattypeconstraint;1"
+  "@getnightingale.com/Nightingale/Device/sbformattypeconstraint;1"
 #define SB_IFORMATTYPECONSTRAINT_CLASSNAME               \
-  "Songbird Device Capabilities Format Type Constraint"
+  "Nightingale Device Capabilities Format Type Constraint"
 #define SB_IFORMATTYPECONSTRAINT_CID                     \
 { 0x5d73ba28, 0xf460, 0x48bd, { 0x92, 0x3b, 0x68, 0xd4, 0xa8, 0x8e, 0x92, 0xda } }
 %}
@@ -216,11 +216,11 @@ interface sbIImageFormatType : nsISupports
 
 %{C++
 #define SB_IIMAGEFORMATTYPE_DESCRIPTION             \
-  "Songbird Device Capabilities Image Format Type Component"
+  "Nightingale Device Capabilities Image Format Type Component"
 #define SB_IIMAGEFORMATTYPE_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbimageformattype;1"
+  "@getnightingale.com/Nightingale/Device/sbimageformattype;1"
 #define SB_IIMAGEFORMATTYPE_CLASSNAME               \
-  "Songbird Device Capabilities Image Format Type"
+  "Nightingale Device Capabilities Image Format Type"
 #define SB_IIMAGEFORMATTYPE_CID                     \
 { 0x496881cb, 0xed03, 0x435f, { 0x9d, 0xa5, 0xdf, 0x99, 0x63, 0x6f, 0x9e, 0xe3 } }
 %}
@@ -273,11 +273,11 @@ interface sbIAudioFormatType : nsISupports
 
 %{C++
 #define SB_IAUDIOFORMATTYPE_DESCRIPTION             \
-  "Songbird Device Capabilities Audio Format Type Component"
+  "Nightingale Device Capabilities Audio Format Type Component"
 #define SB_IAUDIOFORMATTYPE_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbaudioformattype;1"
+  "@getnightingale.com/Nightingale/Device/sbaudioformattype;1"
 #define SB_IAUDIOFORMATTYPE_CLASSNAME               \
-  "Songbird Device Capabilities Audio Format Type"
+  "Nightingale Device Capabilities Audio Format Type"
 #define SB_IAUDIOFORMATTYPE_CID                     \
 { 0xfbfadb32, 0xb95b, 0x49cb, { 0xb5, 0xf0, 0x8, 0xf9, 0xa8, 0x70, 0x57, 0xe5 } }
 %}
@@ -393,11 +393,11 @@ interface sbIDevCapVideoStream : nsISupports
 
 %{C++
 #define SB_IDEVCAPVIDEOSTREAM_DESCRIPTION             \
-  "Songbird Device Capabilities Video Stream Component"
+  "Nightingale Device Capabilities Video Stream Component"
 #define SB_IDEVCAPVIDEOSTREAM_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbdevcapvideostream;1"
+  "@getnightingale.com/Nightingale/Device/sbdevcapvideostream;1"
 #define SB_IDEVCAPVIDEOSTREAM_CLASSNAME               \
-  "Songbird Device Capabilities Video Stream"
+  "Nightingale Device Capabilities Video Stream"
 #define SB_IDEVCAPVIDEOSTREAM_CID                     \
   {0x1eb66418, 0x11bd, 0x493c, {0x93, 0x29, 0x29, 0x0d, 0x0e, 0x4f, 0xb7, 0x8a}}
 %}
@@ -408,7 +408,7 @@ interface sbIDevCapAudioStream : nsISupports
   /**
    * Initializes the audio stream object
    *
-   * \param aType The audio stream type. This is a Songbird defined value.
+   * \param aType The audio stream type. This is a Nightingale defined value.
    * \param aBitRates A range of bit rates supported
    * \param aSampleRates A range of sample rates supported
    * \param aChannels The audio channels supported
@@ -440,11 +440,11 @@ interface sbIDevCapAudioStream : nsISupports
 
 %{C++
 #define SB_IDEVCAPAUDIOSTREAM_DESCRIPTION             \
-  "Songbird Device Capabilities Audio Stream Component"
+  "Nightingale Device Capabilities Audio Stream Component"
 #define SB_IDEVCAPAUDIOSTREAM_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1"
+  "@getnightingale.com/Nightingale/Device/sbdevcapaudiostream;1"
 #define SB_IDEVCAPAUDIOSTREAM_CLASSNAME               \
-  "Songbird Device Capabilities Audio Stream"
+  "Nightingale Device Capabilities Audio Stream"
 #define SB_IDEVCAPAUDIOSTREAM_CID                     \
   {0xa8e9d2f7, 0x6640, 0x41a1, {0x9b, 0xd7, 0xb6, 0xce, 0xf2, 0x84, 0xb9, 0x47}}
 %}
@@ -463,7 +463,7 @@ interface sbIVideoFormatType : nsISupports
                   in sbIDevCapVideoStream aVideoStream,
                   in sbIDevCapAudioStream aAudioStream);
   /**
-   * Container format, this may be a mime type or a songbird defined string
+   * Container format, this may be a mime type or a nightingale defined string
    */
   readonly attribute ACString containerType;
   
@@ -480,11 +480,11 @@ interface sbIVideoFormatType : nsISupports
 
 %{C++
 #define SB_IVIDEOORMATTYPE_DESCRIPTION             \
-  "Songbird Device Capabilities Video Format Type Component"
+  "Nightingale Device Capabilities Video Format Type Component"
 #define SB_IVIDEOFORMATTYPE_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/sbvideoformattype;1"
+  "@getnightingale.com/Nightingale/Device/sbvideoformattype;1"
 #define SB_IVIDEOFORMATTYPE_CLASSNAME               \
-  "Songbird Device Capabilities Video Format Type"
+  "Nightingale Device Capabilities Video Format Type"
 #define SB_IVIDEOFORMATTYPE_CID                     \
   {0x87cced11, 0x258e, 0x4131, {0xae, 0x51, 0xa5, 0x2a, 0xf7, 0x6d, 0xaa, 0xbc}}
 %}
@@ -509,11 +509,11 @@ interface sbIPlaylistFormatType : nsISupports
 
 %{C++
 #define SB_IPLAYLISTFORMATTYPE_DESCRIPTION         \
-  "Songbird Device Capabilities Playlist Format Type Component"
+  "Nightingale Device Capabilities Playlist Format Type Component"
 #define SB_IPLAYLISTFORMATTYPE_CONTRACTID          \
-  "@songbirdnest.com/Songbird/Device/sbplaylistformattype;1"
+  "@getnightingale.com/Nightingale/Device/sbplaylistformattype;1"
 #define SB_IPLAYLISTFORMATTYPE_CLASSNAME           \
-  "Songbird Device Capabilities Playlist Format Type"
+  "Nightingale Device Capabilities Playlist Format Type"
 #define SB_IPLAYLISTFORMATTYPE_CID                 \
   {0xdc2b0702, 0xb8d7, 0x4ef5, {0x83, 0xb6, 0x64, 0x85, 0xe5, 0xef, 0xd5, 0xf1}}
 %}
@@ -726,13 +726,13 @@ interface sbIDeviceCapabilities : nsISupports
 };
 
 %{C++
-#define SONGBIRD_DEVICECAPABILITIES_DESCRIPTION             \
-  "Songbird Device Capabilities Component"
-#define SONGBIRD_DEVICECAPABILITIES_CONTRACTID              \
-  "@songbirdnest.com/Songbird/Device/DeviceCapabilities;1"
-#define SONGBIRD_DEVICECAPABILITIES_CLASSNAME               \
-  "Songbird Device Capabilities"
-#define SONGBIRD_DEVICECAPABILITIES_CID                     \
+#define NIGHTINGALE_DEVICECAPABILITIES_DESCRIPTION             \
+  "Nightingale Device Capabilities Component"
+#define NIGHTINGALE_DEVICECAPABILITIES_CONTRACTID              \
+  "@getnightingale.com/Nightingale/Device/DeviceCapabilities;1"
+#define NIGHTINGALE_DEVICECAPABILITIES_CLASSNAME               \
+  "Nightingale Device Capabilities"
+#define NIGHTINGALE_DEVICECAPABILITIES_CID                     \
 { /* 54d42a87-9031-4928-991e-e66f4916a90b */              \
   0x54d42a87,                                             \
   0x9031,                                                 \
@@ -746,25 +746,25 @@ interface sbIDeviceCapabilities : nsISupports
  * \brief Temporary interface to allow us to access the mime-type ->
  *        file extension mappings in sbDeviceUtils
  */
-[scriptable, uuid(9e1f9988-1dd1-11b2-a7fc-80bbd1fa9089)]
+[scriptable, uuid(c20c7dfa-1dd1-11b2-a4a6-b98bb9a0aa47)]
 interface sbIDeviceCapabilitiesUtils : nsISupports
 {
   /**
-   * Returns an enumerator of file extensions for the given mimeType & contentType
+   * Returns a file extension for the given mimeType & contentType
    */
-  nsIStringEnumerator mapContentTypeToFileExtensions(in AString aMimeType,
-                                                     in PRUint32 aContentType);
+  AString mapContentTypeToFileExtension(in AString aMimeType,
+	                                   in PRUint32 aContentType);
 };
 
 %{C++
-#define SONGBIRD_DEVICECAPABILITIESUTILS_DESCRIPTION \
-  "Songbird Device Capabilities Utils Component"
-#define SONGBIRD_DEVICECAPABILITIESUTILS_CONTRACTID \
-  "@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"
-#define SONGBIRD_DEVICECAPABILITIESUTILS_CLASSNAME \
-  "Songbird Device Capabilities Utils"
-#define SONGBIRD_DEVICECAPABILITIESUTILS_CID \
-{ /* 9e1f9988-1dd1-11b2-a7fc-80bbd1fa9089 */ \
+#define NIGHTINGALE_DEVICECAPABILITIESUTILS_DESCRIPTION \
+  "Nightingale Device Capabilities Utils Component"
+#define NIGHTINGALE_DEVICECAPABILITIESUTILS_CONTRACTID \
+  "@getnightingale.com/Nightingale/Device/DeviceCapabilitiesUtils;1"
+#define NIGHTINGALE_DEVICECAPABILITIESUTILS_CLASSNAME \
+  "Nightingale Device Capabilities Utils"
+#define NIGHTINGALE_DEVICECAPABILITIESUTILS_CID \
+{ /* c20c7dfa-1dd1-11b2-a4a6-b98bb9a0aa47 */ \
   0xc20c7dfa, \
   0x1dd1,     \
   0x11b2,     \

@@ -1,11 +1,11 @@
 /** vim: ts=2 sw=2 expandtab ai
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -34,8 +34,8 @@ function DBG(s) { log('DBG:test_servicepane: '+s); }
 
 var testModule = {
   classId: Components.ID("{0da5eace-1dd2-11b2-a64a-eb82fc5ef0c3}"),
-  classDescription: "Songbird Test Service Pane Module",
-  contractId: "@songbirdnest.com/servicepane/test-module;1",
+  classDescription: "Nightingale Test Service Pane Module",
+  contractId: "@getnightingale.com/servicepane/test-module;1",
 
   _registered: false,
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
@@ -229,7 +229,7 @@ function testAttributes(aNode) {
   // Now test the properties defined for some string attributes
   let stringProps = ["id", "className", "url", "image", "name", "tooltip",
                      "contractid", "stringbundle", "dndDragTypes",
-                     "dndAcceptNear", "dndAcceptIn", "contentPrefix"];
+                     "dndAcceptNear", "dndAcceptIn"];
   for each (let prop in stringProps) {
     DBG("Testing node property " + prop);
 
@@ -1114,90 +1114,9 @@ function testListeners (SPS, aRoot) {
   aRoot.removeChild(node3);
 }
 
-function testContentPrefix(SPS, aRoot)
-{
-  var node = SPS.createNode();
-
-  var prefix = "prefix/";
-  node.url = prefix + "node";
-  node.contentPrefix = prefix;
-
-  // Nothing has been added, so we shouldn't return nodes yet
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_EXACT),null,
-      "getNodeForURL should return null when the node has not been added");
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_PREFIX), null,
-      "getNodeForURL should return null when the node has not been added");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_EXACT), null,
-      "getNodeForURL should return null when the node has not been added");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_PREFIX), null,
-      "getNodeForURL should return null when the node has not been added");
-  assertEqual(SPS.getNodeForURL("other/other", SPS.URL_MATCH_PREFIX), null,
-      "getNodeForURL should return null when the node has not been added");
-
-  // Add the node.
-  aRoot.appendChild(node);
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_EXACT), node,
-      "an exact match for a node's url should return the node");
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_PREFIX), node,
-      "prefix matches for exact urls should return a node");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_EXACT), null,
-      "exact matches for the wrong url should return null");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_PREFIX), node,
-      "prefix matches for urls with the right prefix should return a node");
-  assertEqual(SPS.getNodeForURL("other/other", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches for urls with the wrong prefix should return null");
-
-  // We should still get prefix matches if we remove the url attribute;
-  node.url = null;
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_EXACT), null,
-      "exact matches should return null if nodes don't have url attributes");
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_PREFIX), node,
-      "prefix matches should return a node when the node has the right prefix");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_EXACT), null,
-      "exact matches should return null if nodes don't have url attributes");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_PREFIX), node,
-      "prefix matches for urls with the right prefix should return a node");
-  assertEqual(SPS.getNodeForURL("other/other", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches for urls with the wrong prefix should return null");
-
-  // Add back the url, remove the contentPrefix
-  node.url = prefix + "node";
-  node.contentPrefix = null;
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_EXACT), node,
-      "exact matches for the right url should return a node");
-  // URL_MATCH_PREFIX should still return exact url matches, even if there
-  // is no contentPrefix set. The matching is designed this way purposefully
-  // for backwards compatibility (i.e. an existing getNodeForURL call in the
-  // codebase can be changed to SPS.URL_MATCH_PREFIX without changing the
-  // behavior for nodes that don't set a contentPrefix)
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_PREFIX), node,
-      "prefix matches should succeed if the url match is exact");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_EXACT), null,
-      "exact matches should return null when no node has the right url");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches should return null when no node has the right url or prefix");
-  assertEqual(SPS.getNodeForURL("other/other", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches should return null when no node has the right url or prefix");
-
-  // Remove the node
-  SPS.removeNode(node);
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_EXACT), null,
-      "exact matches should return null when there are no nodes");
-  assertEqual(SPS.getNodeForURL("prefix/node", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches should return null when there are no nodes");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_EXACT), null,
-      "exact matches should return null when there are no nodes");
-  assertEqual(SPS.getNodeForURL("prefix/other", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches should return null when there are no nodes");
-  assertEqual(SPS.getNodeForURL("other/other", SPS.URL_MATCH_PREFIX), null,
-      "prefix matches should return null when there are no nodes");
-
-  // Root node should still have no children after the test
-  assertEqual(serializeTree(aRoot), '[node/]');
-}
 
 function runTest() {
-  let SPS = Cc["@songbirdnest.com/servicepane/service;1"]
+  let SPS = Cc["@getnightingale.com/servicepane/service;1"]
               .getService(Ci.sbIServicePaneService);
   
   // okay, did we get it?
@@ -1250,9 +1169,6 @@ function runTest() {
 
   // Test listeners
   testListeners(SPS, testRoot);
-
-  // Test getting nodes by contentPrefix
-  testContentPrefix(SPS, testRoot);
 
   // Clean up
   SPS.root.removeChild(testRoot);

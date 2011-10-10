@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -35,26 +35,20 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 var gDefaultMainLayoutURL = "";
 var gDefaultSecondaryLayoutURL = "";
 var gDefaultSkinName = "";
-var gBundledSkins = []; // Empty, will get filled in testAddonMetadataReader
-var gBundledLayouts = []; // Empty, will get filled in testAddonMetadataReader
+var gBundledSkins = ["nightingale-system"];
 
-// These skins / Layouts are required to be registered
-var gRequiredSkinInternalNames = [ "purplerain" ];
-var gRequiredLayoutURLs = [ "chrome://purplerain/content/xul/mainplayer.xul",
-                            "chrome://purplerain/content/xul/miniplayer.xul" ];
+// Gonzo alternate layouts
+const GONZO_MAIN_LAYOUT = "chrome://gonzo/content/xul/mainplayer.xul";
+const GONZO_SECONDARY_LAYOUT = "chrome://gonzo/content/xul/miniplayer.xul";
 
 // Preference constants for default layout/skin/feather
 // @see sbFeathersManager.js for information about each pref.
-const PREF_DEFAULT_MAIN_LAYOUT       = "songbird.feathers.default_main_layout";
-const PREF_DEFAULT_SECONDARY_LAYOUT  = "songbird.feathers.default_secondary_layout";
-const PREF_DEFAULT_SKIN_INTERNALNAME = "songbird.feathers.default_skin_internalname";
+const PREF_DEFAULT_MAIN_LAYOUT       = "nightingale.feathers.default_main_layout";
+const PREF_DEFAULT_SECONDARY_LAYOUT  = "nightingale.feathers.default_secondary_layout";
+const PREF_DEFAULT_SKIN_INTERNALNAME = "nightingale.feathers.default_skin_internalname";
 
-var feathersManager =  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+var feathersManager =  Components.classes['@getnightingale.com/nightingale/feathersmanager;1']
                                  .getService(Components.interfaces.sbIFeathersManager);
-
-// Needed to collect all feather-AddOns
-Components.utils.import("resource://app/jsmodules/RDFHelper.jsm");
-
 
 // List of skin descriptions used in the test cases
 var skins = [];
@@ -65,7 +59,7 @@ var layouts = [];
 
 // Make dataremotes to tweak feathers settings
 var createDataRemote =  new Components.Constructor(
-              "@songbirdnest.com/Songbird/DataRemote;1",
+              "@getnightingale.com/Nightingale/DataRemote;1",
               Components.interfaces.sbIDataRemote, "init");
 
 var layoutDataRemote = createDataRemote("feathers.selectedLayout", null);
@@ -200,63 +194,22 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 /** 
  * Make sure that the addon metadata reader is populating
  * the feathers manager.
+ *
+ * Note: This section will need to be updated to reflect
+ * changes to our feathers install.rdf files.
  */
 function testAddonMetadataReader()
 {
-  // Get all AddOns
-  var addons = RDFHelper.help(
-      "rdf:addon-metadata",
-      "urn:songbird:addon:root",
-      RDFHelper.DEFAULT_RDF_NAMESPACES
-    );
-  
-  // Go through all AddOns and search for feathers and layouts,
-  // push them into gBundledSkins and gBundledLayouts
-  var deprecatedLayouts = []; // Will hold Gonzo layouts
-  for (var i = 0; i < addons.length; i++) {
-    var addon = addons[i];
-    if (addon.skin) {
-      log("FeatherAddon found: " + addon.id);
-      var skins = addon.skin;
-      for (var j = 0; j < skins.length; j++){
-        log(" > Feather: " + skins[j].name + " (" + skins[j].internalName + ")");
-        if (addon.id == "gonzo@songbirdnest.com"){
-          log("   ignored, it is the Gonzo feather");
-          continue; // Do not include Gonzo, it doesn't provide a feather
-        }
-        // Push the found feather into the Array of Feathers we will use
-        gBundledSkins.push(skins[j].internalName.toString());
-      }
-      var layouts = addon.layout;
-      for (var j = 0; j < layouts.length; j++){
-        log(" > Layout: " + layouts[j].name + " (" + layouts[j].url + ")");
-        // Push the found layout into the Array of layouts we will use
-        // Gonzo gets another array, which will get joined with the other
-        // in the end, so a valid feather with two connected layouts are
-        // first in list
-        if (addon.id == "gonzo@songbirdnest.com") {
-          deprecatedLayouts.push(layouts[j].url.toString());
-        } else {
-          gBundledLayouts.push(layouts[j].url.toString());
-        }
-      }
-    }
-  }
-  // Add Gonzo layouts to the array, so the length is correct but they can't
-  // be first
-  gBundledLayouts = gBundledLayouts.concat(deprecatedLayouts);
-  
   // Verify all skins added properly
   var skinNames = gBundledSkins;
-  
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify all layouts added properly
-  var layoutURLs = gBundledLayouts;
-  
+  var layoutURLs = [ gDefaultMainLayoutURL, gDefaultSecondaryLayoutURL,
+                     GONZO_MAIN_LAYOUT, GONZO_SECONDARY_LAYOUT ];
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
@@ -282,13 +235,6 @@ function testAddonMetadataReader()
   // Verify onTop
   assertEqual( feathersManager.isOnTop(layoutURLs[0], skinNames[0]), false);
   assertEqual( feathersManager.isOnTop(layoutURLs[1], skinNames[0]), false);
-  
-  // Verify we have the PurpleRain skin and the two PurpleRain layouts
-  var thing;
-  for each (thing in gRequiredSkinInternalNames)
-    assertTrue( feathersManager.getSkinDescription(thing) );
-  for each (thing in gRequiredLayoutURLs)
-    assertTrue( feathersManager.getLayoutDescription(thing) );
 }
 
 

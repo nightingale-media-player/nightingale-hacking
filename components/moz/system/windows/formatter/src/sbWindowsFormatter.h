@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_WINDOWS_FORMATTER_H__
@@ -30,19 +30,19 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter services defs.
+// Nightingale Windows formatter services defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbWindowsFormatter.h
- * \brief Songbird Windows Formatter Definitions.
+ * \brief Nightingale Windows Formatter Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter imported services.
+// Nightingale Windows formatter imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -54,11 +54,10 @@
 
 #include <vds.h>
 
-#include <sbautoCOMInitializer.h>
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter classes.
+// Nightingale Windows formatter classes.
 //
 //------------------------------------------------------------------------------
 
@@ -107,7 +106,7 @@ public:
   //
 
   /**
-   * Create a new Songbird Windows formatter object and return it in
+   * Create a new Nightingale Windows formatter object and return it in
    * aWindowsFormatter.
    *
    * \param aWindowsFormatter  Returned created Windows formatter object.
@@ -115,7 +114,7 @@ public:
   static HRESULT New(sbWindowsFormatter** aWindowsFormatter);
 
   /**
-   * Destroy an instance of a Songbird Windows formatter object.
+   * Destroy an instance of a Nightingale Windows formatter object.
    */
   virtual ~sbWindowsFormatter();
 
@@ -135,19 +134,19 @@ private:
 
   ULONG                         mRefCount;
   IVdsService*                  mVdsService;
-  sbAutoCOMInitializer          mAutoCOMInitializer;
+
 
   //
   // Private services.
   //
 
   /**
-   * Create an instance of a Songbird Windows formatter object.
+   * Create an instance of a Nightingale Windows formatter object.
    */
   sbWindowsFormatter();
 
   /**
-   * Initialize the Songbird Windows formatter object.
+   * Initialize the Nightingale Windows formatter object.
    */
   HRESULT Initialize();
 

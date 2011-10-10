@@ -1,12 +1,12 @@
 // vim: set sw=2 :
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -105,9 +105,9 @@ protected:
 #define SB_GSTREAMER_METADATA_HANDLER_CLASSNAME \
   "sbGStreamerMetadataHandler"
 #define SB_GSTREAMER_METADATA_HANDLER_DESCRIPTION \
-  "Songbird GStreamer Metadata Handler"
+  "Nightingale GStreamer Metadata Handler"
 #define SB_GSTREAMER_METADATA_HANDLER_CONTRACTID \
-  "@songbirdnest.com/Songbird/MetadataHandler/GStreamer;1"
+  "@getnightingale.com/Nightingale/MetadataHandler/GStreamer;1"
 #define SB_GSTREAMER_METADATA_HANDLER_CID \
   {0x58cc7fbd, 0xdfa3, 0x4e36, {0x95, 0xd6, 0xb3, 0x6d, 0x67, 0x7a, 0x6e, 0xab}}
 

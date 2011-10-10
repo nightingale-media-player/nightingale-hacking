@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,7 +34,7 @@
 
 /**
 * \file  TagLibChannelFileIO.cpp
-* \brief Songbird TagLib sbISeekableChannel file I/O implementation.
+* \brief Nightingale TagLib sbISeekableChannel file I/O implementation.
 */
 
 /* *****************************************************************************
@@ -46,7 +46,7 @@
 /* Local imports. */
 #include <TaglibChannelFileIO.h>
 
-/* Songbird imports. */
+/* Nightingale imports. */
 #include <nsServiceManagerUtils.h>
 #include <SeekableChannel.h>
 
@@ -107,7 +107,7 @@ ByteVector TagLibChannelFileIO::readBlock(
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
 
     /* Read the file data. */
     if (NS_SUCCEEDED(result))
@@ -120,7 +120,7 @@ ByteVector TagLibChannelFileIO::readBlock(
         byteVector.resize(bytesRead);
 
     /* Check for channel restart. */
-    if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
+    if (result == NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART)
     {
         nsresult                    _result = NS_OK;
 
@@ -212,7 +212,7 @@ bool TagLibChannelFileIO::isOpen() const
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
 
     /* File I/O is open if a metadata channel is available. */
     if (NS_SUCCEEDED(result) && mpSeekableChannel)
@@ -262,7 +262,7 @@ int TagLibChannelFileIO::seek(
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
 
     /* Compute new channel position. */
     if (NS_SUCCEEDED(result))
@@ -291,7 +291,7 @@ int TagLibChannelFileIO::seek(
         result = mpSeekableChannel->SetPos(channelPosition);
 
     /* Check for channel restart. */
-    if (result == NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART)
+    if (result == NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART)
     {
         mpTagLibChannelFileIOManager->SetChannelRestart(mChannelID, PR_TRUE);
         mChannelRestart = PR_TRUE;
@@ -323,7 +323,7 @@ long TagLibChannelFileIO::tell() const
 
     /* Fail if restarting channel. */
     if (mChannelRestart)
-        result = NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART;
+        result = NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART;
 
     /* Get the current channel position. */
     if (NS_SUCCEEDED(result))
@@ -331,7 +331,7 @@ long TagLibChannelFileIO::tell() const
 
     /* Get results. */
     if (NS_SUCCEEDED(result))
-        position = (long)channelPosition;
+        position = channelPosition;
 
     return (position);
 }
@@ -433,7 +433,7 @@ nsresult TagLibChannelFileIO::Initialize()
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =
             do_GetService
-                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                ("@getnightingale.com/Nightingale/sbTagLibChannelFileIOManager;1",
                  &result);
 
     /* Initialize the channel restart status. */
@@ -450,7 +450,7 @@ nsresult TagLibChannelFileIO::Initialize()
                                                               &channelSize);
     }
     if (NS_SUCCEEDED(result))
-        mChannelSize = (PRUint32)channelSize;
+        mChannelSize = channelSize;
 
     return (result);
 }

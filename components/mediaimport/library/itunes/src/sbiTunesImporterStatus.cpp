@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,14 +20,13 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 #include "sbiTunesImporterStatus.h"
 
 #include <nsIProxyObjectManager.h>
-#include <nsIObserverService.h>
 
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
@@ -106,7 +105,7 @@ nsresult sbiTunesImporterStatus::Reset() {
 }
 
 void sbiTunesImporterStatus::SetProgress(PRInt64 aProgress) {
-  mProgress = (PRUint32)((aProgress * 100L) / mProgressMax);
+  mProgress = (aProgress * 100L) / mProgressMax; 
   Update();
 }
 
@@ -146,19 +145,6 @@ nsresult sbiTunesImporterStatus::Update() {
     }
     if (mDone) {
       rv = mJobProgress->SetStatus(sbIJobProgress::STATUS_SUCCEEDED);
-
-      // Also send an observer notification with the job progress object in
-      // case anyone is interested.
-      nsCOMPtr<nsIObserverService> obsSvc = do_GetService(
-              NS_OBSERVERSERVICE_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsISupports> job = NS_ISUPPORTS_CAST(sbIJobProgress*, mJobProgress);
-      rv = obsSvc->NotifyObservers(job,
-                                   SB_LIBRARY_IMPORT_ITUNES_COMPLETE,
-                                   nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
-
     }
     mLastProgress = mProgress;
     mLastStatusText = mStatusText;

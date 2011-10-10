@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../..
@@ -29,14 +29,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_DIST = $(topsrcdir)/app/branding/songbird-512.png \
-                $(topsrcdir)/installer/common/songbird.desktop \
+NIGHTINGALE_DIST = $(topsrcdir)/app/branding/nightingale-512.png \
+                $(topsrcdir)/installer/common/nightingale.desktop \
                 $(NULL)
 
-ifdef SONGBIRD_OFFICIAL
-   INSTALLER_STAGE_DIR = Songbird
+ifdef NIGHTINGALE_OFFICIAL
+   INSTALLER_STAGE_DIR = Nightingale
 else
-   INSTALLER_STAGE_DIR = Songbird_build-$(SB_BUILD_NUMBER)
+   INSTALLER_STAGE_DIR = Nightingale_build-$(SB_BUILD_NUMBER)
 endif
 
 include $(topsrcdir)/build/rules.mk
@@ -45,7 +45,7 @@ libs::
 	$(RM) -rf $(INSTALLER_STAGE_DIR)
 	$(MKDIR) $(INSTALLER_STAGE_DIR)
 	$(RM) -f $(SB_INSTALLER_NAME)
-	$(CP) -RLp $(SONGBIRD_DISTDIR)/* $(INSTALLER_STAGE_DIR)
+	$(CP) -RLp $(NIGHTINGALE_DISTDIR)/* $(INSTALLER_STAGE_DIR)
 	$(TAR) --owner=0 --group=0 --numeric-owner -c $(INSTALLER_STAGE_DIR) | $(GZIP) -c9 > $(SB_INSTALLER_NAME)
 	$(MV) $(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)
 	# This is a copy of dist; remove it, since it takes up so much space.

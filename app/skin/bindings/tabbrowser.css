@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -41,12 +41,12 @@ Imported by bindings.css or directly into feathers.
 .tab-icon-image {
   max-width: 16px;
   max-height: 16px;
-  list-style-image: url("chrome://songbird/skin/icons/small-globe-sunken.png");
+  list-style-image: url("chrome://nightingale/skin/icons/small-globe-sunken.png");
 }
 
 .tabbrowser-tab[busy] > .tab-icon-image,
 .tabbrowser-tab[busy] > .tab-image-middle > .tab-icon > .tab-icon-image {
- list-style-image: url("chrome://songbird/skin/icons/spinner-spin.png") !important; 
+ list-style-image: url("chrome://nightingale/skin/icons/spinner-spin.png") !important; 
 }
 
 

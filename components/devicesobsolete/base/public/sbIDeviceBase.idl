@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -120,7 +120,7 @@ interface sbIDeviceBaseCallback : nsISupports
  *
  * "Device Category" is used in identifying device class instances (using
  * sbIDeviceManager) and "Device String" is for identifying a device. For
- * instance "Songbird CD Device" is the Device Category and "D:\" is the Device
+ * instance "Nightingale CD Device" is the Device Category and "D:\" is the Device
  * String.
  */
 [scriptable, uuid(2964c3bf-18d6-4a72-8ccf-f08b732b4bab)]

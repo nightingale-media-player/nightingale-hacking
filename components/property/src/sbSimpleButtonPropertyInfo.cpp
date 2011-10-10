@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -101,6 +101,14 @@ sbSimpleButtonPropertyInfo::GetProgressMode(const nsAString& aValue,
 NS_IMETHODIMP
 sbSimpleButtonPropertyInfo::GetCellValue(const nsAString& aValue,
                                          nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSimpleButtonPropertyInfo::GetColumnProperties(const nsAString& aValue,
+                                                nsAString& _retval)
 {
   _retval.Truncate();
   return NS_OK;
@@ -196,20 +204,6 @@ sbSimpleButtonPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
                                              nsAString& _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* boolean onClick (in sbIMediaItem aItem,
-                    [optional] in nsISupports aEvent,
-                    [optional] in nsISupports aContext); */
-NS_IMETHODIMP
-sbSimpleButtonPropertyInfo::OnClick(sbIMediaItem *aItem,
-                                    nsISupports *aEvent,
-                                    nsISupports *aContext,
-                                    PRBool *_retval NS_OUTPARAM)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_FALSE;
-  return NS_OK;
 }
 
 // sbIPropertyInfo

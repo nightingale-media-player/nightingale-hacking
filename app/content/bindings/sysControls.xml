@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,18 +21,18 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
 
           
-  <binding id="sb-sys-maximize-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-checkbox-base">
+  <binding id="sb-sys-maximize-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-checkbox-base">
     <handlers>
       <!-- Grrr, apparently you use "CheckboxStateChange" instead of "command" from inside an XBL.  Of course.  Obviously. -->
       <handler event="CheckboxStateChange" action="onMaximize(this.checked);"/>
@@ -52,17 +52,7 @@
           if ( sysInfo.getProperty("name") != "Darwin" ) {
             window.addEventListener("resize", function(aEvent) {
               const nsIDOMChromeWindow = Components.interfaces.nsIDOMChromeWindow;
-              switch (window.windowState) {
-                case nsIDOMChromeWindow.STATE_MINIMIZED:
-                  // don't do anything here, it's not visible anyway
-                  return;
-                case nsIDOMChromeWindow.STATE_MAXIMIZED:
-                  self.checked = true;
-                  break;
-                default:
-                  self.checked = false;
-                  break;
-              }
+              self.checked = (window.windowState == nsIDOMChromeWindow.STATE_MAXIMIZED);
             }, false);
           }
         ]]>
@@ -78,7 +68,7 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-minimize-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
+  <binding id="sb-sys-minimize-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <handler event="command" action="onMinimize();"/>
     </handlers>
@@ -101,7 +91,7 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-close-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
+  <binding id="sb-sys-close-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <!-- Close the window or close the app -->
       <handler event="command">
@@ -148,7 +138,7 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-hide-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
+  <binding id="sb-sys-hide-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <handler event="command" action="onHideButtonClick();"/>
     </handlers>
@@ -266,7 +256,7 @@
     </implementation>
   </binding>
 
-  <binding id="sb-sys-icon" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
+  <binding id="sb-sys-icon" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <handler event="dblclick" action="( event.target.getAttribute('type') == 'dialog' ) ? document.documentElement.cancelDialog() : ( event.target.getAttribute('type') == 'hide' ) ? onHideButtonClick() : quitApp(); "/>
     </handlers>
@@ -306,52 +296,7 @@
           // Hidden when "Plucked" ("accessibility.enabled" == "1")
           if ( this.getAttribute("hidden") != "true" )
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
-
-          // Import DOM utils.
-          Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
-
-          // Get the titlebar text colors from the title element CSS colors.
-          var titleElem = document.getAnonymousElementByAttribute(this,
-                                                                  "sbid",
-                                                                  "title");
-
-          var cssColor;
-          var activeTitlebarTextColor;
-          var inactiveTitlebarTextColor;
-          var colorString;
-
-          // Get the inactive titlebar text color.
-          titleElem.setAttribute("inactive", "true");
-          cssColor = window.getComputedStyle(titleElem, "").color;
-          inactiveTitlebarTextColor =
-            sbColorUtils.getColorFromCSSColor(cssColor);
-
-          // Get the active titlebar text color.
-          titleElem.removeAttribute("inactive");
-          cssColor = window.getComputedStyle(titleElem, "").color;
-          activeTitlebarTextColor = sbColorUtils.getColorFromCSSColor(cssColor);
-
-          // If no inactive titlebar text color is set, use the active titlebar
-          // text color for the inactive titlebar text color.
-          if (!inactiveTitlebarTextColor)
-            inactiveTitlebarTextColor = activeTitlebarTextColor;
-
-          // Set the active titlebar text color.
-          if (activeTitlebarTextColor) {
-            colorString = sbColorUtils.getDOMColorString
-                                         (activeTitlebarTextColor);
-            document.documentElement.setAttribute("activetitlebartextcolor",
-                                                  colorString);
-          }
-
-          // Set the inactive titlebar text color.
-          if (inactiveTitlebarTextColor) {
-            colorString = sbColorUtils.getDOMColorString
-                                         (inactiveTitlebarTextColor);
-            document.documentElement.setAttribute("inactivetitlebartextcolor",
-                                                  colorString);
-          }
-
+          
           // If there's no value attribute,
           var value = "" + this.getAttribute( "value" );
           if ( value.length == 0 )
@@ -463,7 +408,7 @@
             <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
               <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
               <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
-              <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value=title"/> 
+              <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
               <children />
             </xul:hbox>
             <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
@@ -474,99 +419,6 @@
     <implementation>
       <constructor>
         <![CDATA[
-          // Import.
-          Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
-          Components.utils.import("resource://app/jsmodules/PlatformUtils.jsm");
-
-          // Set the titlebar platform.
-          this.setAttribute("platform", PlatformUtils.platformString);
-
-          var activeTitlebarImageURL;
-          var inactiveTitlebarImageURL;
-          var activeTitlebarColor;
-          var inactiveTitlebarColor;
-          var cssImageURL;
-          var cssColor;
-          var colorString;
-
-          // Get the inactive titlebar styles.
-          this.setAttribute("inactive", "true");
-
-          // Get the inactive titlebar image.
-          cssImageURL = window.getComputedStyle(this, "")
-                              .getPropertyValue("background-image");
-          if (cssImageURL) {
-            cssImageURL = cssImageURL.match(/url\("(.*)"\)/);
-            if (cssImageURL && cssImageURL.length > 1)
-              inactiveTitlebarImageURL = cssImageURL[1];
-          }
-
-          // Get the inactive titlebar color.
-          cssColor = window.getComputedStyle(this, "")
-                           .getPropertyValue("background-color");
-          inactiveTitlebarColor = sbColorUtils.getColorFromCSSColor(cssColor);
-
-          // Get the active titlebar styles.
-          this.removeAttribute("inactive");
-
-          // Get the active titlebar image.
-          cssImageURL = window.getComputedStyle(this, "")
-                              .getPropertyValue("background-image");
-          if (cssImageURL) {
-            cssImageURL = cssImageURL.match(/url\("(.*)"\)/);
-            if (cssImageURL && cssImageURL.length > 1)
-              activeTitlebarImageURL = cssImageURL[1];
-          }
-
-          // Get the active titlebar color.
-          cssColor = window.getComputedStyle(this, "")
-                           .getPropertyValue("background-color");
-          activeTitlebarColor = sbColorUtils.getColorFromCSSColor(cssColor);
-
-          // If no inactive titlebar image is set, use the active titlebar image
-          // for the inactive titlebar image.
-          if (!inactiveTitlebarImageURL)
-            inactiveTitlebarImageURL = activeTitlebarImageURL;
-
-          // If no active titlebar color is set, use the window background
-          // color for the active titlebar color.
-          if (!activeTitlebarColor) {
-            cssColor = window.getComputedStyle(document.documentElement, "")
-                             .getPropertyValue("background-color");
-            activeTitlebarColor = sbColorUtils.getColorFromCSSColor(cssColor);
-          }
-
-          // If no inactive titlebar color is set, use the active titlebar color
-          // for the inactive titlebar color.
-          if (!inactiveTitlebarColor)
-            inactiveTitlebarColor = activeTitlebarColor;
-
-          // Set the active titlebar image.
-          if (activeTitlebarImageURL) {
-            document.documentElement.setAttribute("activetitlebarimage",
-                                                  activeTitlebarImageURL);
-          }
-
-          // Set the inactive titlebar image.
-          if (activeTitlebarImageURL) {
-            document.documentElement.setAttribute("inactivetitlebarimage",
-                                                  inactiveTitlebarImageURL);
-          }
-
-          // Set the active titlebar color.
-          if (activeTitlebarColor) {
-            colorString = sbColorUtils.getDOMColorString(activeTitlebarColor);
-            document.documentElement.setAttribute("activetitlebarcolor",
-                                                  colorString);
-          }
-
-          // Set the inactive titlebar color.
-          if (inactiveTitlebarColor) {
-            colorString = sbColorUtils.getDOMColorString(inactiveTitlebarColor);
-            document.documentElement.setAttribute("inactivetitlebarcolor",
-                                                  colorString);
-          }
-
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           if ( sysInfo.getProperty("name") == "Darwin" ) {
@@ -578,33 +430,19 @@
 					}
       
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
-          
-          // Reflect document.title to sb-sys-titlebar's title property:
-          this.title = document.title;
-          var target = this;
-          document.watch("title", function(aObject, aOldValue, aNewValue){
-            return target.title = aNewValue;
-          } );
         ]]>
       </constructor>
-      <destructor>
-        <![CDATA[
-          document.unwatch("title");
-        ]]>
-      </destructor>
       <property name="title">
-        <!-- Reflect the title attribute to a JavaScript property of the same name -->
-        <setter>
-          <![CDATA[
-            this.setAttribute("title", val);
-            return val;
-          ]]>
-        </setter>
-        <getter>
-          <![CDATA[
-            return this.getAttribute("title");
-          ]]>
-        </getter>
+        <setter><![CDATA[
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") == "Darwin" )
+            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-osx-title-title')
+                    .value = val;
+          else
+            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-title')
+                    .value = val;
+        ]]></setter>
       </property>
     </implementation>
   </binding>
@@ -700,7 +538,7 @@
           // we cannot use SBDataGetBoolValue here because that is loaded via an
           // overlay, but this object is loaded via a binding on dialog, which
           // is instantiated before the overlay is applied.
-          var plucked = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+          var plucked = Cc["@getnightingale.com/Nightingale/DataRemote;1"]
                           .createInstance(Ci.sbIDataRemote);
           plucked.init("accessibility.enabled", null);
 
@@ -716,16 +554,15 @@
             // Otherwise, fix yer frame, mate!
             this.enableResizers();
             if (document.documentElement.hasAttribute('hidechrome') &&
-                ("@songbirdnest.com/Songbird/WindowChromeService;1" in Cc))
+                ("@getnightingale.com/Nightingale/WindowChromeService;1" in Cc))
             {
               // this platform wants custom chrome hiding
-              Cc["@songbirdnest.com/Songbird/WindowChromeService;1"]
+              Cc["@getnightingale.com/Nightingale/WindowChromeService;1"]
                 .getService(Ci.sbIWindowChromeService)
                 .hideChrome(window, true);
-              let docElem = document.documentElement;
-              docElem.setAttribute('sb-show-sys-titlebar', true);
-              docElem.setAttribute('sb-native-hidechrome', true);
-              docElem.removeAttribute('hidechrome');
+              document.documentElement.setAttribute('sb-show-sys-titlebar', 
+                                                    true);
+              document.documentElement.removeAttribute('hidechrome');
             }
           }
             

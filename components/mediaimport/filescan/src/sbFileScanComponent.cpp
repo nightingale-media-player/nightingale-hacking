@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  FileScanComponent.cpp
-* \brief Songbird FileScan Component Factory and Main Entry Point.
+* \brief Nightingale FileScan Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
@@ -39,19 +39,19 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScanQuery)
 static nsModuleComponentInfo sbFileScan[] =
 {
   {
-    SONGBIRD_FILESCAN_CLASSNAME,
-    SONGBIRD_FILESCAN_CID,
-    SONGBIRD_FILESCAN_CONTRACTID,
+    NIGHTINGALE_FILESCAN_CLASSNAME,
+    NIGHTINGALE_FILESCAN_CID,
+    NIGHTINGALE_FILESCAN_CONTRACTID,
     sbFileScanConstructor
   },
 
   {
-    SONGBIRD_FILESCANQUERY_CLASSNAME,
-    SONGBIRD_FILESCANQUERY_CID,
-    SONGBIRD_FILESCANQUERY_CONTRACTID,
+    NIGHTINGALE_FILESCANQUERY_CLASSNAME,
+    NIGHTINGALE_FILESCANQUERY_CID,
+    NIGHTINGALE_FILESCANQUERY_CONTRACTID,
     sbFileScanQueryConstructor
   },
   
 };
 
-NS_IMPL_NSGETMODULE(SongbirdFileScanComponent, sbFileScan)
+NS_IMPL_NSGETMODULE(NightingaleFileScanComponent, sbFileScan)

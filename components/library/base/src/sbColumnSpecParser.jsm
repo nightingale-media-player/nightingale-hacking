@@ -1,27 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
-
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 EXPORTED_SYMBOLS = ["ColumnSpecParser"];
@@ -171,19 +172,17 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.duration, 45,
                                    SBProperties.genre, 101,
                                    SBProperties.year, 45,
-                                   SBProperties.rating, 90,
+                                   SBProperties.rating, 78,
                                    SBProperties.comment, 291,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
-      // Show the source column by default except for video
       default:
         return self._getColumnMap([SBProperties.trackName, 229,
                                    SBProperties.duration, 45,
                                    SBProperties.artistName, 137, "a",
                                    SBProperties.albumName, 210,
                                    SBProperties.genre, 90,
-                                   SBProperties.rating, 90,
-                                   SBProperties.trackType, 78,
+                                   SBProperties.rating, 78,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
     }
@@ -317,12 +316,12 @@ ColumnSpecParser.parseColumnSpec = function(spec) {
 /**
  * The playlist columns are no longer locked to 100% of the screen width,
  * so we often need to resize all columns when appending new ones.
- *
+ * 
  * \param aColumnsArray Array of column objects produced by parseColumnSpec
  * \param aNeededWidth Amount of room to free up in the column array
  */
-ColumnSpecParser.reduceWidthsProportionally = function(aColumnsArray,
-                                                       aNeededWidth)
+ColumnSpecParser.reduceWidthsProportionally = function(aColumnsArray, 
+                                                       aNeededWidth) 
 {
   var fullWidth = 0;
   for each (var col in aColumnsArray) {

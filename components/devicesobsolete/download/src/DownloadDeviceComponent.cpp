@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  DownloadDeviceComponent.cpp
-* \brief Songbird DeviceBase Component Factory and Main Entry Point.
+* \brief Nightingale DeviceBase Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
@@ -37,12 +37,12 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbDownloadDevice)
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_DownloadDevice_CLASSNAME, 
-    SONGBIRD_DownloadDevice_CID,
-    SONGBIRD_DownloadDevice_CONTRACTID,
+    NIGHTINGALE_DownloadDevice_CLASSNAME, 
+    NIGHTINGALE_DownloadDevice_CID,
+    NIGHTINGALE_DownloadDevice_CONTRACTID,
     sbDownloadDeviceConstructor,
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDownloadDeviceComponent, components)
+NS_IMPL_NSGETMODULE(NightingaleDownloadDeviceComponent, components)
 

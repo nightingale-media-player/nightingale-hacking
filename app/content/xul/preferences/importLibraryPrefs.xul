@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -30,9 +30,9 @@
 <!-- Import external definitions. -->
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- Import library prefs overlay. -->
@@ -52,7 +52,7 @@
     <preference
       id="library_file_path_pref"
       prefid="library_file_path_pref"
-      name="songbird.library_importer.library_file_path"
+      name="nightingale.library_importer.library_file_path"
       type="unichar"
       onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
     
@@ -60,7 +60,7 @@
     <preference
       id="unsupported_media_alert_pref"
       prefid="unsupported_media_alert_pref"
-      name="songbird.library_importer.unsupported_media_alert.enabled"
+      name="nightingale.library_importer.unsupported_media_alert.enabled"
       type="bool"
       onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
 
@@ -68,7 +68,7 @@
     <preference 
       id="import_tracks_itunes_pref"
       prefid="import_tracks_itunes_pref"
-      name="songbird.library_importer.import_tracks"
+      name="nightingale.library_importer.import_tracks"
       type="bool"
       onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
 
@@ -76,7 +76,7 @@
     <preference
       id="import_playlists_itunes_pref"
       prefid="import_playlists_itunes_pref"
-      name="songbird.library_importer.import_playlists"
+      name="nightingale.library_importer.import_playlists"
       type="bool"
       onchange=""/>
 
@@ -84,7 +84,7 @@
     <preference
       id="export_tracks_itunes_pref"
       prefid="export_tracks_itunes_pref"
-      name="songbird.library_exporter.export_tracks"
+      name="nightingale.library_exporter.export_tracks"
       type="bool"
       onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
 
@@ -92,7 +92,7 @@
     <preference
       id="export_playlists_itunes_pref"
       prefid="export_playlists_itunes_pref"
-      name="songbird.library_exporter.export_playlists"
+      name="nightingale.library_exporter.export_playlists"
       type="bool"
       onchange=""/>
 
@@ -100,7 +100,7 @@
     <preference
       id="export_smartplaylists_itunes_pref"
       prefid="export_smartplaylists_itunes_pref"
-      name="songbird.library_exporter.export_smartplaylists"
+      name="nightingale.library_exporter.export_smartplaylists"
       type="bool"
       onchange=""/>
 
@@ -108,7 +108,7 @@
     <preference
       id="importexport_show_notifications_pref"
       prefid="importexport_show_notifications_pref"
-      name="songbird.library_importexport.show_notifications"
+      name="nightingale.library_importexport.show_notifications"
       type="bool"
       onchange=""/>
   
@@ -227,7 +227,7 @@
   <!-- Import the import library preferences panel services. -->
   <script
     type="application/x-javascript"
-    src="chrome://songbird/content/scripts/preferences/importLibraryPrefs.js"/>
+    src="chrome://nightingale/content/scripts/preferences/importLibraryPrefs.js"/>
 
 </overlay>
 

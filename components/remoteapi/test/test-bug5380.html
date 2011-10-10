@@ -1,21 +1,21 @@
 <html>
   <head>
     <script type="text/javascript">
-      songbird.setSiteScope("", "/"); 
-      var siteLib = songbird.siteLibrary;
+      nightingale.setSiteScope("", "/"); 
+      var siteLib = nightingale.siteLibrary;
       var mediaList = siteLib.createSimpleMediaList("TestList");
-      songbird.webPlaylist.mediaList = mediaList;
+      nightingale.webPlaylist.mediaList = mediaList;
 		
-      /*songbird.webPlaylist.clearColumns();*/
-      songbird.createTextProperty("http://example.com/TextTest", "TextTest", true);
-      songbird.webPlaylist.appendColumn("http://example.com/TextTest", "200");
-      songbird.createButtonProperty("http://example.com/ButtonTest", "", "ButtonTest", true);
-      songbird.webPlaylist.appendColumn("http://example.com/ButtonTest", "200");
+      /*nightingale.webPlaylist.clearColumns();*/
+      nightingale.createTextProperty("http://example.com/TextTest", "TextTest", true);
+      nightingale.webPlaylist.appendColumn("http://example.com/TextTest", "200");
+      nightingale.createButtonProperty("http://example.com/ButtonTest", "", "ButtonTest", true);
+      nightingale.webPlaylist.appendColumn("http://example.com/ButtonTest", "200");
 
       try {
         var url = "http://soundbites.typepad.com/soundbites/files/08_calvin_harris_vegas.mp3";
         var mediaItem = siteLib.createMediaItem(url);
-        songbird.webPlaylist.mediaList.add(mediaItem);
+        nightingale.webPlaylist.mediaList.add(mediaItem);
       } catch (e) {
         throw "Can't create media item for: " + url + " (" + e + ")";
       }

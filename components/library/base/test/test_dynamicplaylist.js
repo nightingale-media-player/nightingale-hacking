@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -31,8 +31,6 @@
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 function runTest () {
-  // disabled for now, see bug 20531
-  return;
   testRegistration();
   testUpdate();
   testPodcast();
@@ -54,9 +52,9 @@ http://localhost:{PORT_NUMBER}/test3.mp3
 
 function testRegistration() {
 
-  var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+  var dps = Cc["@getnightingale.com/Nightingale/Library/DynamicPlaylistService;1"]
               .getService(Ci.sbIDynamicPlaylistService);
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
   var library1 = createLibrary("test_dynamicplaylist1", null, false);
   library1.clear();
@@ -101,7 +99,7 @@ function testRegistration() {
 
 function testUpdate() {
 
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
   var library1 = createLibrary("test_dynamicplaylist1", null, false);
   library1.clear();
@@ -117,7 +115,7 @@ function testUpdate() {
     server.start(PORT_NUMBER);
     server.registerDirectory("/", getFile("."));
 
-    var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+    var dps = Cc["@getnightingale.com/Nightingale/Library/DynamicPlaylistService;1"]
                 .getService(Ci.sbIDynamicPlaylistService);
 
     var dest = Cc["@mozilla.org/file/directory_service;1"]
@@ -190,14 +188,14 @@ function testUpdate() {
 
 function testPodcast() {
   // Create a test library.
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
   var library1 = createLibrary("test_dynamicplaylist1", null, false);
   library1.clear();
   libraryManager.registerLibrary(library1, false);
 
   // Create and validate a podcast.
-  var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+  var dps = Cc["@getnightingale.com/Nightingale/Library/DynamicPlaylistService;1"]
               .getService(Ci.sbIDynamicPlaylistService);
   var uri = newURI("http://foo.com");
   var podcast = dps.createPodcast(library1, uri);

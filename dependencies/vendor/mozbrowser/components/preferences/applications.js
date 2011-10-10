@@ -111,17 +111,7 @@ const PREF_AUDIO_FEED_SELECTED_READER = "browser.audioFeeds.handler.default";
 // identifying the "use plugin" action, so we use this constant instead.
 const kActionUsePlugin = 5;
 
-/*
-#ifdef MOZ_WIDGET_GTK2
-*/
-const ICON_URL_APP      = "moz-icon://dummy.exe?size=16";
-/*
-#else
-*/
 const ICON_URL_APP      = "chrome://browser/skin/preferences/application.png";
-/*
-#endif
-*/
 
 // For CSS. Can be one of "ask", "save", "plugin" or "feed". If absent, the icon URL
 // was set by us to a custom handler icon and CSS should not try to override it.
@@ -1612,7 +1602,36 @@ var gApplicationsPane = {
    * Filter the list when the user enters a filter term into the filter field.
    */
   filter: function() {
+    if (this._filter.value == "") {
+      this.clearFilter();
+      return;
+    }
+
     this._rebuildView();
+
+    document.getElementById("clearFilter").disabled = false;
+  },
+
+  _filterTimeout: null,
+
+  onFilterInput: function() {
+    if (this._filterTimeout)
+      clearTimeout(this._filterTimeout);
+   
+    this._filterTimeout = setTimeout("gApplicationsPane.filter()", 500);
+  },
+
+  onFilterKeyPress: function(aEvent) {
+    if (aEvent.keyCode == KeyEvent.DOM_VK_ESCAPE)
+      this.clearFilter();
+  },
+  
+  clearFilter: function() {
+    this._filter.value = "";
+    this._rebuildView();
+
+    this._filter.focus();
+    document.getElementById("clearFilter").disabled = true;
   },
 
   focusFilterBox: function() {
@@ -1875,7 +1894,7 @@ var gApplicationsPane = {
     // they'll only visit URLs derived from that template (i.e. with %s
     // in the template replaced by the URL of the content being handled).
 
-    if (/^https?/.test(uri.scheme) && this._prefSvc.getBoolPref("browser.chrome.favicons"))
+    if (/^https?/.test(uri.scheme))
       return uri.prePath + "/favicon.ico";
 
     return "";

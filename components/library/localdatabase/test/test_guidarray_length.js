@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -35,7 +35,7 @@ function runTest () {
   var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary).getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
   var a;
 
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
   array.propertyCache =
@@ -44,56 +44,56 @@ function runTest () {
   // Length checks, use the same sort for all of these since it does not
   // matter
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
+  array.addSort("http://getnightingale.com/data/1.0#albumName", true);
 
   // Full library, unfiltered
   assertEqual(array.length, 101);
 
   // Full library, property filtered
-  array.addFilter("http://songbirdnest.com/data/1.0#albumName",
+  array.addFilter("http://getnightingale.com/data/1.0#albumName",
                   new StringArrayEnumerator(["back in black"]),
                   false);
   assertEqual(array.length, 10);
   // Add another filter level
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac/dc"]),
                   false);
   assertEqual(array.length, 10);
   // And another
-  array.addFilter("http://songbirdnest.com/data/1.0#trackName",
+  array.addFilter("http://getnightingale.com/data/1.0#trackName",
                   new StringArrayEnumerator(["hells bells"]),
                   false);
   assertEqual(array.length, 1);
   array.clearFilters();
 
   // Full library, top level filter
-  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
+  array.addFilter("http://getnightingale.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/That%20Jim.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3"]),
                   false);
   assertEqual(array.length, 3);
   // Add another filter level
-  array.addFilter("http://songbirdnest.com/data/1.0#contentLength",
+  array.addFilter("http://getnightingale.com/data/1.0#contentLength",
                   new StringArrayEnumerator(["3300", "840"]),
                   false);
   assertEqual(array.length, 2);
   array.clearFilters();
 
   // Full library, mixed filtered
-  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
+  array.addFilter("http://getnightingale.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/That%20Jim.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3"]),
                   false);
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac/dc"]),
                   false);
   assertEqual(array.length, 2);
   array.clearFilters();
 
   // Full library, property search
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac"]),
                   true);
   assertEqual(array.length, 47);
@@ -101,10 +101,10 @@ function runTest () {
   array.clearFilters();
 
   // Full library, mixed property filter and search
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac/dc"]),
                   false);
-  array.addFilter("http://songbirdnest.com/data/1.0#trackName",
+  array.addFilter("http://getnightingale.com/data/1.0#trackName",
                   new StringArrayEnumerator(["hell"]),
                   true);
   assertEqual(array.length, 1);
@@ -119,19 +119,19 @@ function runTest () {
   assertEqual(array.length, 20);
 
   // Simple media list, property filtered
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac/dc"]),
                   false);
   assertEqual(array.length, 10);
   // Add a filter
-  array.addFilter("http://songbirdnest.com/data/1.0#albumName",
+  array.addFilter("http://getnightingale.com/data/1.0#albumName",
                   new StringArrayEnumerator(["back in black"]),
                   false);
   assertEqual(array.length, 10);
   array.clearFilters();
 
   // Simple media list, top level filter
-  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
+  array.addFilter("http://getnightingale.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/Take%20on%20Me.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3",
@@ -139,43 +139,43 @@ function runTest () {
                   false);
   assertEqual(array.length, 4);
   // Add another filter
-  array.addFilter("http://songbirdnest.com/data/1.0#contentLength",
+  array.addFilter("http://getnightingale.com/data/1.0#contentLength",
                   new StringArrayEnumerator(["2760", "660"]),
                   false);
   assertEqual(array.length, 2);
   array.clearFilters();
 
   // Simple media list, mixed filtered
-  array.addFilter("http://songbirdnest.com/data/1.0#contentURL",
+  array.addFilter("http://getnightingale.com/data/1.0#contentURL",
                   new StringArrayEnumerator(["file:///home/steve/Shoot%20to%20Thrill.mp3",
                                              "file:///home/steve/Take%20on%20Me.mp3",
                                              "file:///home/steve/You%20Shook%20Me%20All%20Night%20Long.mp3",
                                              "file:///home/steve/Train%20of%20Thought.mp3"]),
                   false);
-  array.addFilter("http://songbirdnest.com/data/1.0#albumName",
+  array.addFilter("http://getnightingale.com/data/1.0#albumName",
                   new StringArrayEnumerator(["back in black"]),
                   false);
   assertEqual(array.length, 2);
   array.clearFilters();
 
   // Simple media list, property search
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac"]),
                   true);
   assertEqual(array.length, 10);
 
   // Add another search
-  array.addFilter("http://songbirdnest.com/data/1.0#albumName",
+  array.addFilter("http://getnightingale.com/data/1.0#albumName",
                   new StringArrayEnumerator(["back"]),
                   true);
   assertEqual(array.length, 10);
   array.clearFilters();
 
   // Simple media list, mixed property filter and search
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["ac/dc"]),
                   false);
-  array.addFilter("http://songbirdnest.com/data/1.0#trackName",
+  array.addFilter("http://getnightingale.com/data/1.0#trackName",
                   new StringArrayEnumerator(["hell"]),
                   true);
   assertEqual(array.length, 1);

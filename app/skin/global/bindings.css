@@ -43,20 +43,20 @@
   ======================================================================= */
 
 /* dialogs (document element) */
-dialog[type="songbird"] {
-  -moz-binding: url("chrome://songbird/content/bindings/dialog.xml#dialog") !important;
+dialog[type="nightingale"] {
+  -moz-binding: url("chrome://nightingale/content/bindings/dialog.xml#dialog") !important;
 }
 
 /* wizard dialogs */
-wizard[type="songbird"] {
-  -moz-binding: url("chrome://songbird/content/bindings/wizard.xml#wizard") !important;
+wizard[type="nightingale"] {
+  -moz-binding: url("chrome://nightingale/content/bindings/wizard.xml#wizard") !important;
 }
 
-wizard[type="songbird"] > wizardpage {
-  -moz-binding: url("chrome://songbird/content/bindings/wizard.xml#sb-wizard-page");
+wizard[type="nightingale"] > wizardpage {
+  -moz-binding: url("chrome://nightingale/content/bindings/wizard.xml#sb-wizard-page") !important;
 }
 
-wizard[type="songbird"] > .wizard-buttons {
-  -moz-binding: url("chrome://songbird/content/bindings/wizard.xml#sb-wizard-buttons") !important;
+wizard[type="nightingale"] > .wizard-buttons {
+  -moz-binding: url("chrome://nightingale/content/bindings/wizard.xml#sb-wizard-buttons") !important;
 }
 

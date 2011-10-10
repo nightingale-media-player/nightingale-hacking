@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,7 +33,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const SB_NS = "http://songbirdnest.com/data/1.0#";
+const SB_NS = "http://getnightingale.com/data/1.0#";
 const SB_PROP_ISSUBSCRIPTION       = SB_NS + "isSubscription";
 const SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
 const SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
@@ -41,9 +41,9 @@ const SB_PROP_SUBSCRIPTIONNEXTRUN  = SB_NS + "subscriptionNextRun";
 const SB_PROP_DESTINATION          = SB_NS + "destination"
 
 const SB_FINAL_UI_STARTUP_TOPIC = "final-ui-startup";
-const SB_DEVICE_MANAGER_READY_TOPIC = "songbird-device-manager-ready";
-const SB_LIBRARY_MANAGER_READY_TOPIC = "songbird-library-manager-ready";
-const SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC = "songbird-library-manager-before-shutdown";
+const SB_DEVICE_MANAGER_READY_TOPIC = "nightingale-device-manager-ready";
+const SB_LIBRARY_MANAGER_READY_TOPIC = "nightingale-library-manager-ready";
+const SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC = "nightingale-library-manager-before-shutdown";
 
 const UPDATE_INTERVAL = 60 * 1000;
 
@@ -84,7 +84,7 @@ function sbDynamicPlaylistService()
 sbDynamicPlaylistService.prototype = {
   classDescription: "Dynamic Playlist Service",
   classID:    Components.ID("{10a07ef5-8ab6-4728-9172-4e609f65b4a2}"),
-  contractID: "@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"
+  contractID: "@getnightingale.com/Nightingale/Library/DynamicPlaylistService;1"
 }
 
 sbDynamicPlaylistService.prototype.QueryInterface =
@@ -109,10 +109,10 @@ function sbDynamicPlaylistService__startup()
   }
 
   // Register properties
-  var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  var propMan = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                   .getService(Ci.sbIPropertyManager);
 
-  var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Boolean;1"]
+  var prop = Cc["@getnightingale.com/Nightingale/Properties/Info/Boolean;1"]
                .createInstance(Ci.sbIBooleanPropertyInfo);
   prop.id = SB_PROP_ISSUBSCRIPTION;
   prop.userViewable = false;
@@ -121,7 +121,7 @@ function sbDynamicPlaylistService__startup()
   prop.remoteWritable = true;
   propMan.addPropertyInfo(prop);
 
-  prop = Cc["@songbirdnest.com/Songbird/Properties/Info/URI;1"]
+  prop = Cc["@getnightingale.com/Nightingale/Properties/Info/URI;1"]
            .createInstance(Ci.sbIURIPropertyInfo);
   prop.id = SB_PROP_SUBSCRIPTIONURL;
   prop.userViewable = false;
@@ -130,7 +130,7 @@ function sbDynamicPlaylistService__startup()
   prop.remoteWritable = true;
   propMan.addPropertyInfo(prop);
 
-  var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
+  var prop = Cc["@getnightingale.com/Nightingale/Properties/Info/Number;1"]
                .createInstance(Ci.sbINumberPropertyInfo);
   prop.id = SB_PROP_SUBSCRIPTIONINTERVAL;
   prop.userViewable = false;
@@ -140,7 +140,7 @@ function sbDynamicPlaylistService__startup()
   prop.minValue = 0;
   propMan.addPropertyInfo(prop);
 
-  var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
+  var prop = Cc["@getnightingale.com/Nightingale/Properties/Info/Number;1"]
                .createInstance(Ci.sbINumberPropertyInfo);
   prop.id = SB_PROP_SUBSCRIPTIONNEXTRUN;
   prop.userViewable = false;
@@ -157,7 +157,7 @@ function sbDynamicPlaylistService__startup()
                                Ci.nsITimer.TYPE_REPEATING_SLACK);
 
   // Attach an observer so we can track library additions / removals
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
   libraryManager.addListener(this);
 
@@ -189,7 +189,7 @@ function sbDynamicPlaylistService__shutdown()
     this._timer = null;
 
     // Stop listening to the library manager
-    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+    var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                            .getService(Ci.sbILibraryManager);
     libraryManager.removeListener(this);
 
@@ -219,7 +219,7 @@ function sbDynamicPlaylistService__scheduleLibrary(aLibrary)
     }
   };
 
-  var pa = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+  var pa = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
              .createInstance(Ci.sbIMutablePropertyArray);
   pa.appendProperty(SB_NS + "isList", "1");
   pa.appendProperty(SB_PROP_ISSUBSCRIPTION, "1");
@@ -276,9 +276,9 @@ sbDynamicPlaylistService.prototype._updateList =
 function sbDynamicPlaylistService__updateList(aList)
 {
   // Get the playlist reader and load the tracks from this url
-  var manager = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+  var manager = Cc["@getnightingale.com/Nightingale/PlaylistReaderManager;1"]
                   .getService(Ci.sbIPlaylistReaderManager);
-  var listener = Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
+  var listener = Cc["@getnightingale.com/Nightingale/PlaylistReaderListener;1"]
                    .createInstance(Ci.sbIPlaylistReaderListener);
 
   var ioService = Cc["@mozilla.org/network/io-service;1"]
@@ -369,7 +369,7 @@ function sbDynamicPlaylistService_createPodcast(aLibrary,
 
     // Make a deep mutable copy of any properties.
     var properties =
-          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
             .createInstance(Ci.sbIMutablePropertyArray);
     if (aProperties) {
       var propertyCount = aProperties.length;
@@ -479,13 +479,12 @@ sbDynamicPlaylistService.prototype.onLibraryUnregistered =
 function sbDynamicPlaylistService_onLibraryUnregistered(aLibrary)
 {
   TRACE("sbDynamicPlaylistService::onLibraryUnregistered");
-  // Remove all the lists that are in this library
-  if (aLibrary instanceof Ci.sbILibrary) {
-    this._removeListsFromLibrary(aLibrary);
 
-    // Remove our listener from this library
-    aLibrary.removeListener(this);
-  }
+  // Remove all the lists that are in this library
+  this._removeListsFromLibrary(aLibrary);
+
+  // Remove our listener from this library
+  aLibrary.removeListener(this);
 }
 
 // sbIMediaListListener
@@ -677,7 +676,7 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
 
   // Start a metadata job for the newly added items.  If there is a custom
   // destination, update each new item with it
-  var array = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var array = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = this._oldLength; i < this._list.length; i++) {
     var item = this._list.getItemByIndex(i);
     if (destinationDir) {
@@ -694,13 +693,13 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
     array.appendElement(item, false);
   }
   
-  var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  var metadataService = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
                           .getService(Ci.sbIFileMetadataService);
   var metadataJob = metadataService.read(array);
   
   // Download the new items
   var ddh =
-    Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+    Cc["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
       .getService(Ci.sbIDownloadDeviceHelper);
   ddh.downloadSome(array.enumerate());
 }

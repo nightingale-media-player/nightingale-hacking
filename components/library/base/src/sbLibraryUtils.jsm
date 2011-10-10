@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
@@ -30,7 +30,6 @@ EXPORTED_SYMBOLS = ["LibraryUtils"];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
-const Cr = Components.results;
 
 /**
  * \class LibraryUtils
@@ -39,7 +38,7 @@ const Cr = Components.results;
 var LibraryUtils = {
 
   get manager() {
-    var manager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+    var manager = Cc["@getnightingale.com/Nightingale/library/Manager;1"].
                   getService(Ci.sbILibraryManager);
     if (manager) {
       // Succeeded in getting the library manager, don't do this again.
@@ -57,7 +56,7 @@ var LibraryUtils = {
   get webLibrary() {
     var webLibraryGUID = Cc["@mozilla.org/preferences-service;1"].
                          getService(Ci.nsIPrefBranch).
-                         getCharPref("songbird.library.web");
+                         getCharPref("nightingale.library.web");
     var webLibrary = this.manager.getLibrary(webLibraryGUID);
     delete webLibraryGUID;
 
@@ -70,7 +69,7 @@ var LibraryUtils = {
 
     return webLibrary;
   },
-
+  
   getMediaListByGUID: function(aLibraryGUID, aMediaListGUID) {
     var mediaList = (aLibraryGUID instanceof Ci.sbILibrary) ?
                     aLibraryGUID :
@@ -78,7 +77,7 @@ var LibraryUtils = {
 
     // Are we loading the root library or a media list within it?
     if (aMediaListGUID && aLibraryGUID != aMediaListGUID) {
-      mediaList = mediaList.getMediaItem( aMediaListGUID );
+      mediaList = mediaList.getMediaItem( aMediaListGUID );  
     }
     return mediaList;
   },
@@ -99,7 +98,7 @@ var LibraryUtils = {
   },
 
   createConstraint: function(aObject) {
-    var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+    var builder = Cc["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
                     .createInstance(Ci.sbILibraryConstraintBuilder);
     aObject.forEach(function(aGroup, aIndex) {
       aGroup.forEach(function(aPair) {
@@ -125,9 +124,9 @@ var LibraryUtils = {
   },
 
   createStandardSearchConstraint: function(aSearchString) {
-    if (aSearchString == "" || !aSearchString)
+    if (aSearchString == "" || !aSearchString) 
       return null;
-    var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+    var builder = Cc["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
                     .createInstance(Ci.sbILibraryConstraintBuilder);
     var a = aSearchString.split(" ");
     var first = true;
@@ -145,24 +144,6 @@ var LibraryUtils = {
     return builder.get();
   },
 
-  /**
-   * \brief Create a new view for the param medialist.  This is most often the
-   *        function you want for making views.  mediaList.createView() can be
-   *        used directly, but then the mediaListView.filterConstraint should be
-   *        carefully considered and likely set manually.
-   *
-   * \param aMediaList - The medialist for which the view should be created
-   * \param aSearchString - OPTIONAL - If present this string contains the
-   *                        values used to constrain the filter. aSearchString
-   *                        will be split, space-delimited, into an array
-   *                        of values passed to the new view's filter.
-   *                        A text search filter will only be constrained by
-   *                        the first item in this array, however.
-   *
-   * \return - A medialist view for aMediaList with any special sorting the
-   *           list may have and the standard filter constraints, which can be
-   *           further refined by aSearchString.
-   */
   createStandardMediaListView: function(aMediaList, aSearchString) {
     var mediaList = aMediaList.QueryInterface(Ci.sbIMediaList);
     var mediaListView = mediaList.createView();
@@ -173,28 +154,28 @@ var LibraryUtils = {
     var parser = new ColumnSpecParser(aMediaList, null);
     if (parser.sortID) {
       var propertyArray =
-        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+        Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"].
         createInstance(Ci.sbIMutablePropertyArray);
       propertyArray.strict = false;
-      propertyArray.appendProperty(parser.sortID,
+      propertyArray.appendProperty(parser.sortID, 
           (parser.sortIsAscending ? "a" : "d"));
       mediaListView.setSort(propertyArray);
     }
-
-    // By default, we never want to show lists and hidden
+    
+    // By default, we never want to show lists and hidden 
     // things in the playlist
     mediaListView.filterConstraint = LibraryUtils.standardFilterConstraint;
-
-    // Set up a standard search filter.
+    
+    // Set up a standard search filter.  
     // It can always be replaced later.
     var filter = mediaListView.cascadeFilterSet;
     filter.appendSearch(["*"], 1);
-
+   
     if (aSearchString) {
-      // Set the search
+      // Set the search 
       var searchArray = aSearchString.split(" ");
       filter.set(0, searchArray, searchArray.length);
-    } else {
+    } else { 
       // Or not.
       filter.set(0, [], 0);
     }
@@ -210,7 +191,7 @@ var LibraryUtils = {
     // Take the existing filter constraint and intersect it with the
     // additional constraint we're about to apply
     var constraintBuilder =
-          Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+          Cc["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
             .createInstance(Ci.sbILibraryConstraintBuilder);
     constraintBuilder.includeConstraint(mediaListView.filterConstraint);
     constraintBuilder.intersect();
@@ -242,45 +223,20 @@ var LibraryUtils = {
       // not chrome
       return false;
     }
-
-    const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
-    const Application = Cc["@mozilla.org/fuel/application;1"].getService();
-    var firstRunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
+    const PREF_FIRSTRUN_URL = "nightingale.url.firstrunpage";
+    var firstRunURL = Cc["@mozilla.org/preferences-service;1"].
+                        getService(Ci.nsIPrefBranch).
+                        getCharPref(PREF_FIRSTRUN_URL);
     if (url == firstRunURL) {
       // first run url, sure this can be a media tab
       return true;
     }
     var service =
-      Components.classes['@songbirdnest.com/servicepane/service;1']
+      Components.classes['@getnightingale.com/servicepane/service;1']
       .getService(Components.interfaces.sbIServicePaneService);
-    var node = service.getNodeForURL(url,
-                                     Ci.sbIServicePaneService.URL_MATCH_PREFIX);
+    var node = service.getNodeForURL(url);
     if (!node) return false;
     return true;
-  },
-
-  /**
-   * \brief Find an item in the main library whose guid matches the
-   *        originItemGuid of the param aMediaItem and return it, or null if
-   *        not found.
-   * \param aMediaItem Retrieve an item from the mainLibrary whose guid
-   *                   matches the originItemGuid of this mediaitem
-   * \return The mediaitem from the mainLibrary whose guid matches the
-   *         originItemGuid of aMediaItem.  null if none was found.
-   */
-  getMainLibraryOriginItem: function(aMediaItem) {
-    var originGUID = aMediaItem.getProperty(SBProperties.originItemGuid);
-    if (!originGUID) {
-      return null;
-    }
-    try {
-      var foundItem = this.mainLibrary.getMediaItem(originGUID);
-      return foundItem;
-    }
-    catch (e) {
-      // item couldn't be found, return null
-      return null;
-    }
   }
 
 }
@@ -289,7 +245,7 @@ var LibraryUtils = {
 
 /**
  * \class LibraryUtils.BatchHelper
- * \brief Helper object for monitoring the state of
+ * \brief Helper object for monitoring the state of 
  *        batch library operations.
  */
 LibraryUtils.BatchHelper = function() {
@@ -327,7 +283,7 @@ function BatchHelper_isActive()
 
 /**
  * \class LibraryUtils.MultiBatchHelper
- * \brief Helper object for monitoring the state of
+ * \brief Helper object for monitoring the state of 
  *        batch operations in multiple libraries
  */
 LibraryUtils.MultiBatchHelper = function() {
@@ -383,7 +339,7 @@ function MultiBatchHelper_isActive(aLibrary)
  */
 LibraryUtils.RemovalMonitor = function(aCallback) {
   //dump("RemovalMonitor: RemovalMonitor()\n");
-
+    
   if (!aCallback || !aCallback.onMediaListRemoved) {
     throw new Error("RemovalMonitor() requires a callback object");
   }
@@ -395,21 +351,21 @@ LibraryUtils.RemovalMonitor.prototype = {
 
   // An object with an onMediaListRemoved function
   _callback: null,
-
+ 
   // MediaList GUID to monitor for removal
   _targetGUID: null,
-
+  
   // Library that owns the target MediaList
   _library: null,
-
+  
   _libraryManager: null,
   _batchHelper: null,
-
+  
   // Flag to indicate that the target item
   // was deleted in a batch operation
   _removedInBatch: false,
-
-
+ 
+ 
   /**
    * Watch for removal of the given sbIMediaList.
    * Pass null to stop listening.
@@ -417,18 +373,18 @@ LibraryUtils.RemovalMonitor.prototype = {
   setMediaList:  function RemovalMonitor_setMediaList(aMediaList) {
     //dump("RemovalMonitor: RemovalMonitor.setMediaList()\n");
     this._removedInBatch = false;
-
+  
     // If passed a medialist, hook up listeners
     if (aMediaList instanceof Ci.sbIMediaList) {
-
+      
       // Listen to the library if we aren't doing so already
       if (aMediaList.library != this._library) {
         if (this._library && this._library.guid != this._targetGUID) {
           this._library.removeListener(this);
         }
-
+        
         this._library = aMediaList.library
-
+      
         // If this is a list within a library, then
         // we need to listen for clear/remove in the
         // library
@@ -440,35 +396,35 @@ LibraryUtils.RemovalMonitor.prototype = {
                       Ci.sbIMediaList.LISTENER_FLAGS_BEFOREITEMREMOVED |
                       Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
                       Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED;
-
+                      
           this._library.addListener(this, false, flags, null);
         }
       }
-
+      
       if (!this._libraryManager) {
-        this._libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+        this._libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                                 .getService(Ci.sbILibraryManager);
-        this._libraryManager.addListener(this);
+        this._libraryManager.addListener(this);            
       }
-
+        
       // Remember which medialist we are supposed to watch
       this._targetGUID = aMediaList.guid;
-
-
+    
+    
     // If set to null, shut down any listeners
     } else {
       if (this._libraryManager) {
         this._libraryManager.removeListener(this);
         this._libraryManager = null;
       }
-
+      
       if (this._library) {
         this._library.removeListener(this);
         this._library = null;
       }
       this._batchHelper = null;
       this._targetGUID = null;
-    }
+    } 
   },
 
 
@@ -483,15 +439,15 @@ LibraryUtils.RemovalMonitor.prototype = {
 
 
   /**
-   * Notifies the listener that the list has been removed,
+   * Notifies the listener that the list has been removed, 
    * and then stops monitoring
    */
   _onMediaListRemoved: function RemovalMonitor_onMediaListRemoved() {
     //dump("RemovalMonitor: RemovalMonitor.onMediaListRemoved()\n");
-
+    
     // Our list has been removed. Stop tracking.
     this.setMediaList(null);
-
+    
     // Notify
     this._callback.onMediaListRemoved();
   },
@@ -524,7 +480,7 @@ LibraryUtils.RemovalMonitor.prototype = {
                                                                  aIndex)
   {
     //dump("RemovalMonitor: RemovalMonitor.onAfterItemRemoved()\n");
-
+    
     // Do no more if in a batch
     if (this._batchHelper.isActive()) {
       if (aMediaItem.guid == this._targetGUID) {
@@ -564,7 +520,7 @@ LibraryUtils.RemovalMonitor.prototype = {
 
     return false;
   },
-
+  
   onBatchBegin: function RemovalMonitor_onBatchBegin(aMediaList)
   {
     this._batchHelper.begin();
@@ -572,7 +528,7 @@ LibraryUtils.RemovalMonitor.prototype = {
   onBatchEnd: function RemovalMonitor_onBatchEnd(aMediaList)
   {
     //dump("RemovalMonitor: RemovalMonitor.onBatchEnd()\n");
-
+    
     this._batchHelper.end();
     // If the batch is still in progress do nothing
     if (this._batchHelper.isActive()) {
@@ -580,11 +536,11 @@ LibraryUtils.RemovalMonitor.prototype = {
     }
 
     var removed = false;
-
+    
     // If we know our target was removed during the batch, notify
     if (this._removedInBatch) {
       removed = true;
-
+      
     // If we don't know for sure, we need to check
     } else if (this._targetGUID != this._library.guid) {
 
@@ -598,8 +554,8 @@ LibraryUtils.RemovalMonitor.prototype = {
 
     this._removedInBatch = false;
 
-    if (removed) {
-      this._onMediaListRemoved();
+    if (removed) { 
+      this._onMediaListRemoved();    
     }
   },
 
@@ -612,7 +568,7 @@ LibraryUtils.RemovalMonitor.prototype = {
     //dump("RemovalMonitor: RemovalMonitor.onLibraryUnregistered()\n");
     // If the current library was unregistered, notify
     if (this._library && this._library.equals(aLibrary)) {
-      this._onMediaListRemoved();
+      this._onMediaListRemoved(); 
     }
   },
 
@@ -694,29 +650,29 @@ LibraryUtils.MediaListEnumeratorToArray.prototype = {
 /**
  * \class LibraryUtils.GlobalMediaListListener
  * \brief Attaches a listener to all currently existing libraries
- *        and lists in the system, and monitors the new playlists
+ *        and lists in the system, and monitors the new playlists 
  *        and libraries in order to automatically attach the
  *        listener whenever they are created.
  *        You may also specify a library to restrict the listeners
  *        to that library and its playlists' events instead of
  *        listening for all events in all libraries and lists.
  */
-LibraryUtils.GlobalMediaListListener = function(aListener,
-                                                aOwnsWeak,
-                                                aFlags,
-                                                aPropFilter,
+LibraryUtils.GlobalMediaListListener = function(aListener, 
+                                                aOwnsWeak, 
+                                                aFlags, 
+                                                aPropFilter, 
                                                 aOnlyThisLibrary) {
   if (aFlags === undefined) {
     aFlags = Components.interfaces.sbIMediaList.LISTENER_FLAGS_ALL;
   }
-
+  
   this.listener = aListener;
   this.ownsWeak = aOwnsWeak;
   this.propFilter = aPropFilter;
   this.listenerFlags = aFlags;
-
+  
   this.libraryManager =
-    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+    Cc["@getnightingale.com/Nightingale/library/Manager;1"]
       .getService(Ci.sbILibraryManager);
 
   this.listListener = {
@@ -726,21 +682,21 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
     onafteritemremoved_skipbatch : false,
     onafteritemremoved_stack     : [],
     batchcount : 0,
-    onItemAdded: function(aMediaList, aMediaItem, aIndex) {
+    onItemAdded: function(aMediaList, aMediaItem, aIndex) { 
       if (aMediaItem instanceof Ci.sbIMediaList)
-        this.cb.addMediaListListener(aMediaItem);
+        this.cb.addMediaListListener(aMediaItem);  
       if (this.batchcount > 0 && this.onitemadded_skipbatch)
         return Ci.sbIMediaListEnumerationListener.CONTINUE;
       if (this.cb.listener.onItemAdded(aMediaList, aMediaItem, aIndex) !=
           Ci.sbIMediaListEnumerationListener.CONTINUE) {
         this.onitemadded_skipbatch = true;
       }
-      return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      return Ci.sbIMediaListEnumerationListener.CONTINUE; 
     },
-    onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+    onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { 
       return this.cb.listener.onBeforeItemRemoved(aMediaList, aMediaItem, aIndex);
     },
-    onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+    onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { 
       if (aMediaItem instanceof Ci.sbIMediaList)
         this.cb.removeMediaListListener(aMediaItem);
       if (this.onafteritemremoved_skipbatch)
@@ -749,13 +705,13 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
         Ci.sbIMediaListEnumerationListener.CONTINUE) {
         this.onafteritemremoved_skipbatch = true;
       }
-      return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      return Ci.sbIMediaListEnumerationListener.CONTINUE; 
     },
-    onItemUpdated: function(aMediaList, aMediaItem, aProperties) {
-      return this.cb.listener.onItemUpdated(aMediaList, aMediaItem, aProperties);
+    onItemUpdated: function(aMediaList, aMediaItem, aProperties) { 
+      return this.cb.listener.onItemUpdated(aMediaList, aMediaItem, aProperties); 
     },
-    onItemMoved: function(aMediaList, aFromIndex, aToIndex) {
-      return this.cb.listener.onItemMoved(aMediaList, aFromIndex, aToIndex);
+    onItemMoved: function(aMediaList, aFromIndex, aToIndex) { 
+      return this.cb.listener.onItemMoved(aMediaList, aFromIndex, aToIndex); 
     },
     onBeforeListCleared: function(aMediaList, aExcludeLists) {
       return this.cb.listener.onBeforeListCleared(aMediaList, aExcludeLists);
@@ -769,16 +725,16 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
       this.onitemadded_skipbatch = false;
       this.onafteritemremoved_stack.push(this.onafteritemremoved_skipbatch);
       this.onafteritemremoved_skipbatch = false;
-      return this.cb.listener.onBatchBegin(aMediaList);
+      return this.cb.listener.onBatchBegin(aMediaList); 
     },
     onBatchEnd: function(aMediaList) {
       --this.batchcount;
       this.onitemadded_skipbatch = this.onitemadded_stack.pop();
       this.onafteritemremoved_skipbatch = this.onafteritemremoved_stack.pop();
-      return this.cb.listener.onBatchEnd(aMediaList);
+      return this.cb.listener.onBatchEnd(aMediaList); 
     },
     QueryInterface: function(iid) {
-      if (iid.equals(Components.interfaces.sbIMediaListListener) ||
+      if (iid.equals(Components.interfaces.sbIMediaListListener) || 
           iid.equals(Components.interfaces.nsISupports))
         return this;
       throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -795,7 +751,7 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
       return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
     },
     QueryInterface: function(iid) {
-      if (iid.equals(Components.interfaces.sbIMediaListEnumerationListener) ||
+      if (iid.equals(Components.interfaces.sbIMediaListEnumerationListener) || 
           iid.equals(Components.interfaces.nsISupports))
         return this;
       throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -811,12 +767,12 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
     enumListener.onEnumeratedItem(library, library);
     library.
       enumerateItemsByProperty(
-        SBProperties.isList,
+        SBProperties.isList, 
         "1",
-        enumListener,
+        enumListener, 
         Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
   }
-
+  
   if (!aOnlyThisLibrary) {
     this.managerListener = {
       cb: this,
@@ -830,13 +786,13 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
         this.cb.listener.onAfterItemRemoved(null, aLibrary, 0);
       },
       QueryInterface: function(iid) {
-        if (iid.equals(Components.interfaces.sbILibraryManagerListener) ||
+        if (iid.equals(Components.interfaces.sbILibraryManagerListener) || 
             iid.equals(Components.interfaces.nsISupports))
           return this;
         throw Components.results.NS_ERROR_NO_INTERFACE;
       }
     };
-
+  
     this.libraryManager.addListener(this.managerListener);
   }
 }
@@ -849,9 +805,9 @@ LibraryUtils.GlobalMediaListListener.prototype = {
   ownsWeak        : null,
   propFilter      : null,
   listenerFlags   : 0,
-
+  
   shutdown: function() {
-    for (var i=0;i<this.listento.length;i++)
+    for (var i=0;i<this.listento.length;i++) 
       this.listento[i].removeListener(this.listListener);
 
     this.listento = [];
@@ -863,20 +819,20 @@ LibraryUtils.GlobalMediaListListener.prototype = {
     if (this.managerListener)
       this.libraryManager.removeListener(this.managerListener);
     this.managerListener = null;
-
+    
     this.libraryManager = null;
   },
-
+  
   addMediaListListener: function(aList) {
-    if (this.listento.indexOf(aList) >= 0)
+    if (this.listento.indexOf(aList) >= 0) 
       return;
-    aList.addListener(this.listListener,
-                      this.ownsWeak,
+    aList.addListener(this.listListener, 
+                      this.ownsWeak, 
                       this.listenerFlags,
                       this.propFilter);
     this.listento.push(aList);
   },
-
+  
   removeMediaListListener: function(aList) {
     aList.removeListener(this.listListener);
     var p = this.listento.indexOf(aList);
@@ -895,7 +851,7 @@ LibraryUtils.GlobalMediaListListener.prototype = {
  */
 LibraryUtils.canEditMetadata = function (aItem) {
   var editable = aItem.userEditable;
-  if (editable) {
+  if (editable) { 
     try {
       var contentSrc = aItem.contentSrc;
       if (contentSrc.scheme == "x-mtp")

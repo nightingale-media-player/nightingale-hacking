@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /*******************************************************************************
@@ -32,7 +32,7 @@
 
 /**
 * \file  MetadataHandlerTaglib.cpp
-* \brief Songbird MetadataHandlerTaglib implementation.
+* \brief Nightingale MetadataHandlerTaglib implementation.
 */
 
 /*******************************************************************************
@@ -47,13 +47,12 @@
 /* Local module imports. */
 #include "TaglibChannelFileIO.h"
 
-/* Songbird utility classes */
+/* Nightingale utility classes */
 #include "sbStringUtils.h"
 #include "sbMemoryUtils.h"
-#include <sbILibraryUtils.h>
 #include <sbProxiedComponentManager.h>
 
-/* Songbird interfaces */
+/* Nightingale interfaces */
 #include "sbStandardProperties.h"
 #include "sbIPropertyArray.h"
 #include "sbPropertiesCID.h"
@@ -147,9 +146,6 @@
 #define SB_GN_PROP_EXTENDEDDATA "http://gracenote.com/pos/1.0#extendedData"
 #define SB_GN_PROP_TAGID        "http://gracenote.com/pos/1.0#tagId"
 
-// Define image maximum sizes for the tags
-#define MAX_MPEG_IMAGE_SIZE 16777216  // MPEG (ID3v2)
-
 /*******************************************************************************
  *
  * Taglib metadata handler logging services.
@@ -180,7 +176,7 @@ PRLock* sbMetadataHandlerTaglib::sTaglibLock = nsnull;
  *
  ******************************************************************************/
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataHandlerTaglib,
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataHandlerTaglib, 
                               sbIMetadataHandler,
                               sbISeekableChannelListener,
                               nsICharsetDetectionObserver)
@@ -194,7 +190,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataHandlerTaglib,
 
 NS_IMETHODIMP sbMetadataHandlerTaglib::GetContractID(nsACString &aContractID)
 {
-  aContractID.AssignLiteral(SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID);
+  aContractID.AssignLiteral(NIGHTINGALE_METADATAHANDLERTAGLIB_CONTRACTID);
   return NS_OK;
 }
 
@@ -253,7 +249,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
     {
         vote = -1;
     }
-
+    
     /* we can only handle things with mozilla protocol handlers */
     if (vote >= 0) {
         nsresult rv;
@@ -261,7 +257,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         NS_ENSURE_SUCCESS(rv, rv);
         nsCOMPtr<nsIProtocolHandler> protocolHandler;
         nsCString scheme;
-
+        
         rv = ios->ExtractScheme(NS_ConvertUTF16toUTF8(_url), scheme);
         if (NS_SUCCEEDED(rv)) {
             rv = ios->GetProtocolHandler(scheme.BeginReading(),
@@ -288,11 +284,11 @@ sbMetadataHandlerTaglib::GetRequiresMainThread(PRBool *_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_STATE(mpChannel);
   nsresult rv;
-
+  
   nsCOMPtr<nsIURI> uri;
   rv = mpChannel->GetURI(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   PRBool isFileURI = PR_FALSE;
   rv = uri->SchemeIs( "file" , &isFileURI );
   NS_ENSURE_SUCCESS(rv, rv);
@@ -323,13 +319,13 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
   nsAutoLock lock(sTaglibLock);
 
   // Attempt to avoid crashes.  This may only work on windows.
-  try {
-    rv = ReadInternal(pReadCount);
-  } catch(...) {
+  try { 
+    rv = ReadInternal(pReadCount); 
+  } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::Read caught an exception!");
     rv = NS_ERROR_FAILURE;
   }
-
+  
   return rv;
 }
 
@@ -345,20 +341,20 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     PRUint32                    unsignedReadCount = 0;
     PRInt32                     readCount = 0;
     nsresult                    result = NS_OK;
-
+    
     // Starting a new operation, so clear the completion flag
     mCompleted = PR_FALSE;
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =
             do_GetService
-                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                ("@getnightingale.com/Nightingale/sbTagLibChannelFileIOManager;1",
                  &result);
 
     /* Initialize the metadata values. */
     if (NS_SUCCEEDED(result))
     {
-        mpMetadataPropertyArray =
+        mpMetadataPropertyArray = 
           do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &result);
 
         result = mpMetadataPropertyArray->SetStrict(PR_FALSE);
@@ -373,7 +369,7 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
         result = mpURL->GetSpec(urlSpec);
     if (NS_SUCCEEDED(result))
         result = mpURL->GetScheme(urlScheme);
-
+    
     LOG(("sbMetadataHandlerTaglib::ReadInternal - spec is %s\n",
          urlSpec.BeginReading()));
 
@@ -465,7 +461,7 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     {
         /* Create a metadata channel. */
         mpSeekableChannel =
-            do_CreateInstance("@songbirdnest.com/Songbird/SeekableChannel;1",
+            do_CreateInstance("@getnightingale.com/Nightingale/SeekableChannel;1",
                               &result);
 
         /* Add the metadata channel for use with the */
@@ -535,9 +531,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
   nsresult rv = NS_ERROR_FAILURE;
   nsAutoLock lock(sTaglibLock);
   // Attempt to avoid crashes.  This may only work on windows.
-  try {
+  try { 
     rv = WriteInternal(pWriteCount);
-  } catch(...) {
+  } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::Write caught an exception!");
   }
 
@@ -554,17 +550,17 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     nsCString                   urlScheme;
     nsAutoString                filePath;
     nsresult                    result = NS_OK;
-
+  
     // Starting a new operation, so clear the completion flag
     mCompleted = PR_FALSE;
-
+  
     // Must ensure metadata is set before writing
     NS_ENSURE_TRUE(mpMetadataPropertyArray, NS_ERROR_NOT_INITIALIZED);
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =
             do_GetService
-                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                ("@getnightingale.com/Nightingale/sbTagLibChannelFileIOManager;1",
                  &result);
 
     /* Get the channel URL info. */
@@ -579,12 +575,12 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       LOG(("%s: can't write to scheme %s", __FUNCTION__, urlScheme.get()));
       return NS_ERROR_NOT_IMPLEMENTED;
     }
-
+     
     /* Get the metadata local file path. */
     if (NS_SUCCEEDED(result))
     {
       result = mpFileProtocolHandler->GetFileFromURLSpec(
-        urlSpec,
+        urlSpec, 
         getter_AddRefs(pFile)
       );
     }
@@ -593,16 +589,6 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       #if XP_UNIX && !XP_MACOSX
         result = pFile->GetNativePath(mMetadataPath);
       #else
-        nsCOMPtr<sbILibraryUtils> libUtils =
-          do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &result);
-        NS_ENSURE_SUCCESS(result, result);
-        nsCOMPtr<nsIFile> canonicalFile;
-        result = libUtils->GetCanonicalPath(pFile,
-                                            getter_AddRefs(canonicalFile));
-        NS_ENSURE_SUCCESS(result, result);
-
-        canonicalFile.forget(getter_AddRefs(pFile));
-
         nsString metadataPathU16;
         result = pFile->GetPath(metadataPathU16);
         if (NS_SUCCEEDED(result)) {
@@ -646,7 +632,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       NS_ENSURE_TRUE(f.file(), NS_ERROR_FAILURE);
       NS_ENSURE_TRUE(f.file()->isOpen(), NS_ERROR_FAILURE);
       NS_ENSURE_TRUE(f.file()->isValid(), NS_ERROR_FAILURE);
-
+      
       nsAutoString propertyValue;
 
       // WRITE_PROPERTY is a natty macro
@@ -674,7 +660,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_DISCNUMBER, Disc);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALDISCS, TotalDiscs);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_BPM, Bpm);
-      WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY_ISPARTOFCOMPILATION,
+      WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY_ISPARTOFCOMPILATION, 
               IsCompilation);
       // todo: Tests!
 
@@ -682,7 +668,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       // TODO: write other files' metadata.
       if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
         TagLib::MPEG::File* MPEGFile = static_cast<TagLib::MPEG::File*>(f.file());
-
+        
         // Write Image Data
         nsAutoString imageSpec;
         result = mpMetadataPropertyArray->GetPropertyValue(
@@ -693,7 +679,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteMP3Image(MPEGFile, imageType, imageSpec);
         }
-
+        
         // Look up the origins of this file.
         /* bug 10933: description of a URL is not currently implemented in taglib
         nsAutoString title;
@@ -713,12 +699,12 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
               NS_ConvertUTF16toUTF8(title).BeginReading(),
               TagLib::String::UTF8
             );*/
-
+            
             TagLib::String taglibURL = TagLib::String(
               NS_ConvertUTF16toUTF8(url).BeginReading(),
               TagLib::String::UTF8
             );
-
+            
             // TODO: bug 10932 -- fix WCOP to be like this in TL
             TagLib::ID3v2::Tag* tag = MPEGFile->ID3v2Tag();
             if(taglibURL.isEmpty()) {
@@ -798,22 +784,42 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteMP4Image(mp4File, imageType, imageSpec);
         }
-      }
+      } else if (fileExt.EqualsLiteral("asf") ||
+                 fileExt.EqualsLiteral("wmv") ||
+                 fileExt.EqualsLiteral("wma")) {
+          LOG(("Writing ASF specific metadata"));
+          // Write MP4 specific metadata
+          TagLib::ASF::File* asfFile = static_cast<TagLib::ASF::File*>(f.file());
 
+/*          // Write Image Data
+          nsAutoString imageSpec;
+          result = mpMetadataPropertyArray->GetPropertyValue(
+            NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+            imageSpec
+          );
+          if (NS_SUCCEEDED(result)) {
+            PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
+            WriteMP4Image(oggFile, imageType, imageSpec);
+          }*/
+        }
+
+      
+      
+      
       // Attempt to save the metadata
       if (f.save()) {
         result = NS_OK;
       } else {
         LOG(("%s: failed to save!", __FUNCTION__));
-        result = NS_ERROR_FAILURE;
+        result = NS_ERROR_FAILURE;      
       }
     }
-
+    
     // TODO need to set pWriteCount
 
     // Indicate that the operation is complete
     mCompleted = PR_TRUE;
-
+  
     return result;
 }
 
@@ -948,7 +954,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
 {
   nsresult rv;
   NS_ENSURE_ARG_POINTER(aData);
-
+  
   LOG(("sbMetadataHandlerTaglib::GetImageData\n"));
 
   // First check to see if we have cached art for
@@ -961,7 +967,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
     NS_ENSURE_TRUE(cachedArt, NS_ERROR_UNEXPECTED);
     if (cachedArt->type == aType) {
       LOG(("sbMetadataHandlerTaglib::GetImageData - found cached image\n"));
-
+  
       aMimeType.Assign(cachedArt->mimeType);
       *aDataLen = cachedArt->dataLen;
       *aData = cachedArt->data;
@@ -976,9 +982,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
     }
   }
 
-  // If read has already been run, then we can assume
+  // If read has already been run, then we can assume 
   // that all images should have been in the cache.
-  // Since we didn't find any in the cache, just go
+  // Since we didn't find any in the cache, just go 
   // ahead and return null.
   if (mCompleted) {
     *aDataLen = 0;
@@ -990,9 +996,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
   // and read the data out manually.
 
   nsAutoLock lock(sTaglibLock);
-  try {
+  try { 
     rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
-  } catch(...) {
+  } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::GetImageData caught an exception!");
     rv = NS_ERROR_FAILURE;
   }
@@ -1027,7 +1033,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     result = mpURL->GetFileExtension(fileExt);
     NS_ENSURE_SUCCESS(result, result);
     ToLowerCase(fileExt);
-
+  
     isMP3 = fileExt.Equals(NS_LITERAL_CSTRING("mp3"));
     isM4A = fileExt.Equals(NS_LITERAL_CSTRING("m4a"));
     isOGG = fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
@@ -1035,13 +1041,13 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     if (!isMP3 && !isM4A && !isOGG) {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
-
+   
     /* Get the metadata local file path. */
     result = mpFileProtocolHandler->GetFileFromURLSpec
                                                 (urlSpec,
                                                  getter_AddRefs(pFile));
     NS_ENSURE_SUCCESS(result, result);
-
+  
 #if XP_WIN
     nsString filePath;
     result = pFile->GetPath(filePath);
@@ -1105,9 +1111,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetImageData(
   LOG(("sbMetadataHandlerTaglib::SetImageData\n"));
   nsAutoLock lock(sTaglibLock);
 
-  try {
+  try { 
     rv = SetImageDataInternal(aType, aURL);
-  } catch(...) {
+  } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::SetImageData caught an exception!");
     rv = NS_ERROR_FAILURE;
   }
@@ -1129,12 +1135,12 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
 
   NS_ENSURE_STATE(mpURL);
 
-  LOG(("%s(%s)", __FUNCTION__, NS_ConvertUTF16toUTF8(aURL).get()));
+  LOG(("SetImageDataInternal()"));
   // TODO: write other files' metadata.
   // First check if we support this file
   result = mpURL->GetFileExtension(fileExt);
   NS_ENSURE_SUCCESS(result, result);
-
+  
   ToLowerCase(fileExt);
   isMP3 = fileExt.EqualsLiteral("mp3");
   isOGG = fileExt.EqualsLiteral("ogg") ||
@@ -1142,7 +1148,6 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   isMP4 = fileExt.EqualsLiteral("mp4") ||
           fileExt.EqualsLiteral("m4a");
   if (!isMP3 && !isOGG && !isMP4) {
-    LOG(("%s: file format not supported", __FUNCTION__));
     return NS_ERROR_NOT_IMPLEMENTED;
   }
 
@@ -1158,7 +1163,7 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
                                                 (urlSpec,
                                                  getter_AddRefs(pFile));
     NS_ENSURE_SUCCESS(result, result);
-
+  
 #if XP_WIN
     nsString filePath;
     result = pFile->GetPath(filePath);
@@ -1196,15 +1201,13 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
       if (f.save()) {
         result = NS_OK;
       } else {
-        LOG(("%s: Failed to save", __FUNCTION__));
         result = NS_ERROR_FAILURE;
-      }
+      } 
     }
   } else {
-    LOG(("%s: scheme not supported", __FUNCTION__));
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
-
+  
   return result;
 }
 
@@ -1236,7 +1239,7 @@ nsresult sbMetadataHandlerTaglib::RemoveAllImagesMP3(
       }
     }
   }
-
+  
   return NS_OK;
 }
 
@@ -1371,7 +1374,7 @@ nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
                                              const nsAString &imageSpec)
 {
   nsresult rv;
-
+  
   if (!aMPEGFile->ID3v2Tag()) {
     // Not ID3v2 tag then abort
     return NS_ERROR_FAILURE;
@@ -1388,17 +1391,6 @@ nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
     // Read the image file contents
     rv = ReadImageFile(imageSpec, imageData, imageDataSize, imageMimeType);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // We need to check a few things to ensure we are not adding an image that
-    // does not meet the requirements of the ID3v2 tag format.
-    // MaxSize = 16Mb | 16777216b
-    // type >= 0x00 | <= 0x14
-    if (imageDataSize > MAX_MPEG_IMAGE_SIZE)
-      return NS_ERROR_FAILURE;
-
-    if (imageType < METADATA_IMAGE_TYPE_OTHER ||
-        imageType > METADATA_IMAGE_TYPE_FRONTCOVER)
-      return NS_ERROR_FAILURE;
 
     // Create the picture frame, and set mimetype, image type (e.g. front cover)
     // and then fill in the data.
@@ -1470,7 +1462,7 @@ nsresult sbMetadataHandlerTaglib::WriteOGGImage(
     LOG(("WriteOGGImage():: Setting the artwork"));
     aOGGFile->tag()->addArtwork(*pic);
   }
-
+  
   return rv;
 }
 
@@ -1494,7 +1486,7 @@ nsresult sbMetadataHandlerTaglib::WriteMP4Image(
   NS_ENSURE_TRUE(aMP4File->tag(), NS_ERROR_FAILURE);
   NS_ENSURE_TRUE(imageType == METADATA_IMAGE_TYPE_FRONTCOVER,
                  NS_ERROR_NOT_IMPLEMENTED);
-
+  
   TagLib::ByteVector data;
 
   if (imageSpec.IsEmpty()) {
@@ -1522,7 +1514,7 @@ nsresult sbMetadataHandlerTaglib::WriteMP4Image(
   tag->itemListMap()["covr"] = coverArtList;
 
   tag->save();
-
+    
   return NS_OK;
 }
 
@@ -1543,12 +1535,12 @@ nsresult sbMetadataHandlerTaglib::ReadImageID3v2(TagLib::ID3v2::Tag  *aTag,
   NS_ENSURE_ARG_POINTER(aTag);
   NS_ENSURE_ARG_POINTER(aData);
   nsresult rv = NS_OK;
-
+  
   if (!aTag) {
     // Not ID3v2 tag then abort
     return NS_ERROR_FAILURE;
   }
-
+  
   /*
    * Extract the requested image from the metadata
    */
@@ -1565,7 +1557,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageID3v2(TagLib::ID3v2::Tag  *aTag,
         // Store the mimeType acquired from the image data
         // these can sometimes be in a format like "PNG"
         aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
-
+        
         // Copy the data over to a mozilla memory chunk so we don't break
         // Things :).
         *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
@@ -1575,7 +1567,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageID3v2(TagLib::ID3v2::Tag  *aTag,
       }
     }
   }
-
+  
   return rv;
 }
 
@@ -1594,21 +1586,21 @@ nsresult sbMetadataHandlerTaglib::ReadImageITunes(TagLib::MP4::Tag  *aTag,
    * Extract the requested image from the metadata
    */
   MP4::ItemListMap::Iterator itr = aTag->itemListMap().begin();
-
+        
   if (aTag->itemListMap().contains("covr")) {
     MP4::CoverArtList coverArtList = aTag->itemListMap()["covr"].toCoverArtList();
 
     if (coverArtList.size() == 0) {
       return NS_OK;
-    }
-
+    }    
+    
     MP4::CoverArt ca = coverArtList[0];
-
+    
     *aDataLen = coverArtList[0].data().size();
 
     sbAutoNSTypePtr<PRUint8> data =
       static_cast<PRUint8 *>(nsMemory::Clone(coverArtList[0].data().data(), *aDataLen));
-    NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY);
+    NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY); 
 
     { // Scope for unlock
 
@@ -1694,7 +1686,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
 {
     /* Throw away cached album art */
     mCachedAlbumArt.Clear();
-
+    
     /* If a metadata channel is being used, remove it from */
     /* use with the TagLib nsIChannel file I/O services.   */
     if (!mMetadataChannelID.IsEmpty())
@@ -1768,7 +1760,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetChannel(
       mpURL = do_QueryInterface(pURI, &result);
       NS_ENSURE_SUCCESS(result, result);
     }
-
+    
     return (NS_OK);
 }
 
@@ -1941,7 +1933,7 @@ PRUint32 sbMetadataHandlerTaglib::sNextChannelID = 0;
  ******************************************************************************/
 
 /*
- * ID3v2Map                     Map of ID3v2 tag names to Songbird metadata
+ * ID3v2Map                     Map of ID3v2 tag names to Nightingale metadata
  *                              names.
  */
 
@@ -2010,22 +2002,22 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
     TagLib::ID3v2::UrlLinkFrame* woaf =
       static_cast<TagLib::ID3v2::UrlLinkFrame*>(frameList.front());
     TagLib::String taglibURL = woaf->url();
-
+    
     AddMetadataValue(SB_PROPERTY_ORIGINPAGE, taglibURL, aCharset);
     /* bug 10933 -- UrlLinkFrame does not support setText appropriately
     TagLib::String taglibTitle = woaf->text();
     AddMetadataValue(SB_PROPERTY_ORIGINPAGETITLE, taglibTitle, aCharset);*/
   }
-
-  // If this is a local file, cache common album art in order to speed
+  
+  // If this is a local file, cache common album art in order to speed 
   // up any subsequent calls to GetImageData.
   nsCString urlScheme;
   nsresult result = mpURL->GetScheme(urlScheme);
   NS_ENSURE_SUCCESS(result,/*void*/);
-
-  if (urlScheme.Equals(NS_LITERAL_CSTRING("file"))) {
+  
+  if (urlScheme.Equals(NS_LITERAL_CSTRING("file"))) { 
     sbAlbumArt *art = new sbAlbumArt();
-    NS_ENSURE_TRUE(art,/*void*/);
+    NS_ENSURE_TRUE(art,/*void*/);  
     result = ReadImageID3v2(pTag,
                             sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
                             art->mimeType, &(art->dataLen), &(art->data));
@@ -2034,9 +2026,9 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
     nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
     NS_ENSURE_TRUE(cacheSlot,/*void*/);
     *cacheSlot = art;
-
+  
     art = new sbAlbumArt();
-    NS_ENSURE_TRUE(art,/*void*/);
+    NS_ENSURE_TRUE(art,/*void*/);  
     result = ReadImageID3v2(pTag, sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
                             art->mimeType, &(art->dataLen), &(art->data));
     NS_ENSURE_SUCCESS(result,/*void*/);
@@ -2045,7 +2037,7 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
     NS_ENSURE_TRUE(cacheSlot,/*void*/);
     *cacheSlot = art;
   }
-
+  
   return;
 }
 
@@ -2057,7 +2049,7 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
  ******************************************************************************/
 
 /*
- * APEMap                     Map of APE tag names to Songbird metadata
+ * APEMap                     Map of APE tag names to Nightingale metadata
  *                            names.
  */
 
@@ -2229,7 +2221,7 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
     if (NS_SUCCEEDED(result))
     {
         decodedFileExt = PR_TRUE;
-        if (fileExt.Equals(NS_LITERAL_CSTRING("flac"))) {
+        if (fileExt.Equals(NS_LITERAL_CSTRING("flac"))) {            
             isValid = ReadFLACFile();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("mpc"))) {
             isValid = ReadMPCFile();
@@ -2331,7 +2323,7 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
   if (!pTagFile || !pTagFile->isValid()) {
     return false; // not valid!
   }
-
+  
   pTag = pTagFile->tag();
   if (pTag) {
     // yay random charset guessing!
@@ -2362,17 +2354,17 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     AddMetadataValue(SB_PROPERTY_CONTENTTYPE,     NS_LITERAL_STRING("audio"));
     AddMetadataValue(SB_PROPERTY_ISPARTOFCOMPILATION, pTag->isCompilation());
   }
-
+  
   pAudioProperties = pTagFile->audioProperties();
   if (pAudioProperties)
   {
       AddMetadataValue(SB_PROPERTY_BITRATE, (PRUint64)pAudioProperties->bitrate());
       AddMetadataValue(SB_PROPERTY_SAMPLERATE, (PRUint64)pAudioProperties->sampleRate());
-      AddMetadataValue(SB_PROPERTY_DURATION,
+      AddMetadataValue(SB_PROPERTY_DURATION, 
               (PRUint64)pAudioProperties->length() * 1000000);
       AddMetadataValue(SB_PROPERTY_CHANNELS, (PRUint64)pAudioProperties->channels());
   }
-
+  
   return true; // file was valid
 }
 
@@ -2416,7 +2408,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
     if (stringPiece.shouldGuessCharacterSet()) {
         tagString += stringPiece;
     }
-
+    
     if (tagString.isEmpty()) {
         // nothing needs guessing
         _retval.AssignLiteral("UTF-8");
@@ -2441,13 +2433,13 @@ void sbMetadataHandlerTaglib::GuessCharset(
       nsCOMPtr<nsINetUtil> netUtil =
         do_GetService("@mozilla.org/network/util;1", &rv);
       NS_ENSURE_SUCCESS(rv, /* void */);
-
+      
       nsCString escaped;
       rv = netUtil->EscapeString(NS_ConvertUTF16toUTF8(expandedData),
                                  nsINetUtil::ESCAPE_ALL,
                                  escaped);
       NS_ENSURE_SUCCESS(rv, /* void */);
-
+      
       LOG(("sbMetadataHandlerTaglib::GuessCharset: guessing with data %s",
            escaped.BeginReading()));
     }
@@ -2495,15 +2487,15 @@ void sbMetadataHandlerTaglib::GuessCharset(
                  _retval.BeginReading()));
 
             // Bug 8394 - The universal charset detector likes to treat cp1251
-            // as MacUkranian, so in this case run the specific Ukranian
+            // as MacUkranian, so in this case run the specific Ukranian 
             // detector since it does a better job.
             if (mLastCharset.EqualsLiteral("x-mac-cyrillic")) {
                 detector = do_CreateInstance(
                     NS_CHARSET_DETECTOR_CONTRACTID_BASE "ukprob");
                 rv = RunCharsetDetector(detector, tagString);
                 if (NS_SUCCEEDED(rv)) {
-                    if (eSureAnswer == mLastConfidence ||
-                        eBestAnswer == mLastConfidence)
+                    if (eSureAnswer == mLastConfidence || 
+                        eBestAnswer == mLastConfidence) 
                     {
                         _retval.Assign(mLastCharset);
                     }
@@ -2538,7 +2530,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
 /*
  * RunCharsetDetector
  *
- *   Run the given nsICharsetDetector.  Results will be available in
+ *   Run the given nsICharsetDetector.  Results will be available in 
  *   mLastConfidence and mLastCharset.
  */
 
@@ -2548,7 +2540,7 @@ nsresult sbMetadataHandlerTaglib::RunCharsetDetector(
 {
     NS_ENSURE_ARG_POINTER(aDetector);
     nsresult rv = NS_OK;
-
+    
     mLastConfidence = eNoAnswerYet;
 
     nsCOMPtr<nsICharsetDetectionObserver> observer =
@@ -2599,13 +2591,13 @@ void sbMetadataHandlerTaglib::ConvertCharset(
 {
     aResult.Truncate();
 
-    // If UTF16 or ASCII, or we have no idea,
+    // If UTF16 or ASCII, or we have no idea, 
     // just leave the string as-is
     if (!aCharset || !*aCharset ||
         !aString.shouldGuessCharacterSet() ||
         !strcmp("UTF-8", aCharset) ||
         !strcmp("us-ascii", aCharset))
-
+        
     {
         LOG(("sbMetadataHandlerTaglib::ConvertCharset: not converting to \"%s\" (guess? %i)",
              aCharset ? aCharset : "(null)",
@@ -2768,7 +2760,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile()
     nsAutoPtr<TagLib::MPEG::File>   pTagFile;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
+    
     pTagFile = new TagLib::MPEG::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
@@ -2786,7 +2778,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile()
         LOG(("sbMetadataHandlerTaglib::ReadMPEGFile: Guessed charset: %s",
              charset.BeginReading()));
     }
-
+    
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile, charset.BeginReading());
@@ -2830,7 +2822,7 @@ PRBool sbMetadataHandlerTaglib::ReadASFFile()
         pTagFile->read();
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
-
+    
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile, "");
@@ -2855,7 +2847,7 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
     nsAutoPtr<TagLib::MP4::File>    pTagFile;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
+    
     pTagFile = new TagLib::MP4::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
@@ -2871,7 +2863,7 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
         isValid = ReadFile(pTagFile);
 
     if (NS_SUCCEEDED(result) && isValid) {
-      // If this is a local file, cache common album art in order to speed
+      // If this is a local file, cache common album art in order to speed 
       // up any subsequent calls to GetImageData.
       PRBool isFileURI;
       result = mpURL->SchemeIs("file", &isFileURI);
@@ -2925,7 +2917,7 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile()
     nsAutoPtr<TagLib::Vorbis::File> pTagFile;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
+    
     pTagFile = new TagLib::Vorbis::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
@@ -2997,7 +2989,7 @@ PRBool sbMetadataHandlerTaglib::ReadOGAFile()
     nsAutoPtr<TagLib::Ogg::FLAC::File> pTagFile;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
+    
     pTagFile = new TagLib::Ogg::FLAC::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
@@ -3077,7 +3069,7 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
       return result;
     }
 
-    /* Convert the integer value into a string. */
+    /* Convert the integer value into a string. */    
     sbAutoString valueString(value);
 
     /* Add the metadata value. */
@@ -3121,7 +3113,7 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
 }
 
 nsresult sbMetadataHandlerTaglib::AddMetadataValue(
-    const char                   *name,
+    const char                   *name, 
     const nsAString             &value)
 {
   nsresult                       result = NS_OK;

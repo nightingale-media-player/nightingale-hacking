@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \file sbIPropertyBuilder.idl
@@ -30,7 +32,6 @@
 
 #include "nsISupports.idl"
 
-interface sbIClickablePropertyCallback;
 interface sbIPropertyArray;
 interface sbIPropertyInfo;
 interface nsIStringBundle;
@@ -75,10 +76,14 @@ interface sbISimpleButtonPropertyBuilder : sbIPropertyBuilder
 * \interface sbIDownloadButtonPropertyBuilder
 * \sa sbIPropertyBuilder
 */
-[scriptable, uuid(c9a7b8b0-1dd1-11b2-ac2e-8a4754dfaf6f)]
-interface sbIDownloadButtonPropertyBuilder : sbISimpleButtonPropertyBuilder
+[scriptable, uuid(9ab2e249-e8ef-477b-88a4-790c08a47a54)]
+interface sbIDownloadButtonPropertyBuilder : sbIPropertyBuilder
 {
+  attribute AString label;
+  
   attribute AString retryLabel;
+
+  attribute AString labelKey;
   
   attribute AString retryLabelKey;
 };
@@ -89,12 +94,16 @@ interface sbIDownloadButtonPropertyBuilder : sbISimpleButtonPropertyBuilder
 * \sa sbIPropertyBuilder
 * used for unit testing
 */
-[scriptable, uuid(d7a2ee4e-1dd1-11b2-a6bb-cc3a9b2b6557)]
-interface sbIStatusPropertyBuilder : sbISimpleButtonPropertyBuilder
+[scriptable, uuid(6c5495d2-5b26-45f0-9117-b9f775502bae)]
+interface sbIStatusPropertyBuilder : sbIPropertyBuilder
 {
+  attribute AString label;
+  
   attribute AString completedLabel;
   
   attribute AString failedLabel;
+
+  attribute AString labelKey;
 
   attribute AString completedLabelKey;
     
@@ -119,48 +128,3 @@ interface sbIRatingPropertyBuilder : sbIPropertyBuilder
 {
 };
 
-/**
- * \interface sbIImageLabelLinkPropertyBuilder
- * \sa sbIPropertyBuilder
- */
-[scriptable, uuid(1495976a-1dd2-11b2-800f-c53b05574f38)]
-interface sbIImageLabelLinkPropertyBuilder : sbIPropertyBuilder
-{
-  /**
-   * Add an image mapping - items with the key as the property value will use
-   * the image URL given.  If aKey is null, the image URL will be used as the
-   * fallback for items with no mapping.
-   */
-  void addImage(in ACString aKey, in ACString aImageUrl);
-
-  /**
-   * Look up an existing image mapping
-   */
-  ACString getImage(in ACString aKey);
-
-  /**
-   * Add a label mapping - itmes with the key as the property value will use
-   * the label string given.  If aKey is null, the label will be used as the
-   * fallback for items with no mapping.
-   */
-  void addLabel(in ACString aKey, in AString aLabel);
-  
-  /**
-   * Look up an existing label mapping
-   */
-  AString getLabel(in ACString aKey);
-};
-
-/**
- * \interface sbIClickablePropertyBuilder
- * An interface to allow a property builder to build property info objects
- * which allow custom actions on click
- * \sa sbIPropertyBuilder
- * \sa sbIClickablePropertyCallback
- */
-[scriptable, uuid(758e51ee-1dd2-11b2-bd29-dc5de14cfdc1)]
-interface sbIClickablePropertyBuilder : sbIPropertyBuilder
-{
-  void addClickHandler(in sbIClickablePropertyCallback aCallback);
-  void removeClickHandler(in sbIClickablePropertyCallback aCallback);
-};

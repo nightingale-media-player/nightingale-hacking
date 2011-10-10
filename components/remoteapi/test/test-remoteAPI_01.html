@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -31,9 +31,9 @@
     <title>Remote API Test: 01</title>
   </head>
   <body onunload="document.removeEventListener('remoteapi', onRemoteAPI, true);">
-    <h1>Songbird Global object creation property access</h1>
+    <h1>Nightingale Global object creation property access</h1>
     <ol>
-      <li> Request the current artist, album and track title from the songbird
+      <li> Request the current artist, album and track title from the nightingale
         object.
       </li>
       <li> Attempt to set the value of current artist, it should fail. Because
@@ -60,23 +60,23 @@
 
       // Property Access
       document.writeln("<br />Using the media player:<br />");
-      document.writeln(songbird.name);
+      document.writeln(nightingale.name);
       document.writeln("<br />");
       document.writeln("<br />The currently playing artist is:<br />");
-      document.writeln(songbird.currentArtist);
+      document.writeln(nightingale.currentArtist);
       document.writeln("<br />");
       document.writeln("<br />The currently playing track is:<br />");
-      document.writeln(songbird.currentTrack);
+      document.writeln(nightingale.currentTrack);
       document.writeln("<br />");
       document.writeln("<br />The currently playing album is:<br />");
-      document.writeln(songbird.currentAlbum);
+      document.writeln(nightingale.currentAlbum);
       document.writeln("<br />");
       document.writeln("<br />");
 
       // Property Modification
       document.writeln("Try setting the artist (should fail - check jsconsole for output ). <br />");
       try {
-        songbird.currentArtist = "This is a test.";
+        nightingale.currentArtist = "This is a test.";
       }
       catch (err) {
         document.writeln("Setting currentArtist threw an error: " + err + "<br />");
@@ -84,63 +84,63 @@
 
       // get the property again
       document.writeln("The currently playing artist is (should be the same as above):<br />");
-      document.writeln(songbird.currentArtist);
+      document.writeln(nightingale.currentArtist);
       document.writeln("<br />");
 
      
       document.writeln("Try to get the webplaylist<br/>");
       try {
-        var webpl = songbird.webPlaylist
+        var webpl = nightingale.webPlaylist
       } catch (e) {
         document.writeln("DOH!, couldn't get the web playlist: " + e);
       }
       document.writeln("<br />");
 
       try {
-        document.writeln("Playing is: " + songbird.playing + "<br/>");
+        document.writeln("Playing is: " + nightingale.playing + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read playing: " + e);
       }
       
       try {
-        document.writeln("Paused is: " + songbird.paused + "<br/>");
+        document.writeln("Paused is: " + nightingale.paused + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read paused: " + e);
       }
 
       try {
-        document.writeln("Repeat is: " + songbird.repeat + "<br/>");
+        document.writeln("Repeat is: " + nightingale.repeat + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read repeat: " + e);
       }
 
       try {
-        document.writeln("Shuffle is: " + songbird.shuffle + "<br/>");
+        document.writeln("Shuffle is: " + nightingale.shuffle + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read shuffle: " + e);
       }
 
       try {
-        document.writeln("Position is: " + songbird.position + " -- ");
-        document.writeln("<a href='javascript:void(0)' onclick='javascript:songbird.position = songbird.position + 5000;'>Seek +5s</a><br/>");
+        document.writeln("Position is: " + nightingale.position + " -- ");
+        document.writeln("<a href='javascript:void(0)' onclick='javascript:nightingale.position = nightingale.position + 5000;'>Seek +5s</a><br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read position: " + e);
       }
 
       try {
-        document.writeln("Duration is: " + songbird.duration + "<br/>");
+        document.writeln("Duration is: " + nightingale.duration + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read duration: " + e);
       }
 
       try {
-        document.writeln("Volume is: " + songbird.volume + "<br/>");
+        document.writeln("Volume is: " + nightingale.volume + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read volume: " + e);
       }
 
       try {
-        document.writeln("Mute is: " + songbird.mute + "<br/>");
+        document.writeln("Mute is: " + nightingale.mute + "<br/>");
       } catch (e) {
         document.writeln("DOH!, couldn't read mute: " + e);
       }

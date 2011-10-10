@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,7 +30,6 @@
 #include "sbSelectionListUtils.h"
 
 #include <nsIClassInfo.h>
-#include <nsIObserver.h>
 #include <nsITreeView.h>
 #include <nsITreeSelection.h>
 #include <nsIWeakReference.h>
@@ -41,7 +40,6 @@
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediaListViewTreeView.h>
 #include <sbIMediaListViewSelection.h>
-#include <sbIPlayQueueService.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -50,9 +48,8 @@
 #include <nsClassHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsWeakReference.h>
 #include <nsTObserverArray.h>
-
-#include <sbWeakReference.h>
 
 class nsIObjectInputStream;
 class nsIObjectOutputStream;
@@ -76,15 +73,13 @@ class sbFilterTreeSelection;
 class sbPlaylistTreeSelection;
 class sbLocalDatabaseTreeViewState;
 
-class sbLocalDatabaseTreeView : public sbSupportsWeakReference,
+class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public nsIClassInfo,
-                                public nsIObserver,
                                 public sbILocalDatabaseGUIDArrayListener,
                                 public sbIMediaListViewTreeView,
                                 public sbILocalDatabaseTreeView,
                                 public sbIMediacoreEventListener,
-                                public sbIMediaListViewSelectionListener,
-                                public sbIPlayQueueServiceListener
+                                public sbIMediaListViewSelectionListener
 
 {
   friend class sbFilterTreeSelection;
@@ -96,14 +91,12 @@ class sbLocalDatabaseTreeView : public sbSupportsWeakReference,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
-  NS_DECL_NSIOBSERVER
   NS_DECL_NSITREEVIEW
   NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALISTVIEWTREEVIEW
   NS_DECL_SBILOCALDATABASETREEVIEW
   NS_DECL_SBIMEDIACOREEVENTLISTENER
   NS_DECL_SBIMEDIALISTVIEWSELECTIONLISTENER
-  NS_DECL_SBIPLAYQUEUESERVICELISTENER
 
   sbLocalDatabaseTreeView();
 
@@ -212,15 +205,6 @@ private:
   nsresult GetPlayingProperty(PRUint32 aIndex,
                               nsISupportsArray* properties);
 
-  nsresult GetOriginNotInMainLibraryProperty(PRUint32 aIndex,
-                                               nsISupportsArray* properties);
-
-  nsresult GetItemDisabledStatus(PRUint32 aIndex,
-                                 nsISupportsArray* properties);
-
-  nsresult GetPlayQueueStatus(PRUint32 aIndex,
-                              nsISupportsArray* properties);
-
   nsresult GetIsListReadOnly(PRBool *aOutIsReadOnly);
 
   nsresult GetBag(PRUint32 aIndex,
@@ -231,9 +215,6 @@ private:
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
-
-  // Indicates if we are currently viewing content that is on a device
-  PRBool mViewingDeviceContent;
 
   // Type of media list this tree view is of
   MediaListType mListType;
@@ -305,13 +286,6 @@ private:
 
   PRInt32 mFirstCachedRow;
   PRInt32 mLastCachedRow;
-
-  // Cached reference to play queue service
-  nsCOMPtr<sbIPlayQueueService> mPlayQueueService;
-
-  // Cached play queue index
-  PRUint32 mPlayQueueIndex;
-
   /**
    * Nested class used to hold guid strings so that we can efficiently pass it
    * off to a function. This is used for the tree views and the number of items

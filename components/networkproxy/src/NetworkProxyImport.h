@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
  * \file  NetworkProxyImport.h
- * \brief Songbird NetworkProxyImport Component Definition.
+ * \brief Nightingale NetworkProxyImport Component Definition.
  */
 
 #ifndef __NETWORKPROXYIMPORT_H__
@@ -39,11 +39,11 @@ class nsIPrefBranch;
 #error
 #endif
 // DEFINES ====================================================================
-#define SONGBIRD_NetworkProxyImport_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/NetworkProxyImport;1"
-#define SONGBIRD_NetworkProxyImport_CLASSNAME                  \
-  "Songbird NetworkProxy Import Component"
-#define SONGBIRD_NetworkProxyImport_CID                        \
+#define NIGHTINGALE_NetworkProxyImport_CONTRACTID                 \
+  "@getnightingale.com/Nightingale/NetworkProxyImport;1"
+#define NIGHTINGALE_NetworkProxyImport_CLASSNAME                  \
+  "Nightingale NetworkProxy Import Component"
+#define NIGHTINGALE_NetworkProxyImport_CID                        \
 { /* caece57b-6634-491e-a858-9c99ab873dc4 */              \
   0xcaece57b, 0x6634, 0x491e,                             \
   { 0xa8, 0x58, 0x9c, 0x99, 0xab, 0x87, 0x3d, 0xc4 }      \

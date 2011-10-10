@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,23 +28,23 @@
   { 0x588687d7, 0x3123, 0x418a, \
   { 0xb6, 0xba, 0xcc, 0x54, 0xb1, 0x06, 0x6c, 0x8a } }
 #define SB_SQLBUILDER_SELECT_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Select;1"
+  "@getnightingale.com/Nightingale/SQLBuilder/Select;1"
 
 #define SB_SQLBUILDER_INSERT_CID \
   { 0x8d744125, 0x903b, 0x42bc, \
   { 0x8b, 0x2f, 0x21, 0xf6, 0xb9, 0x1c, 0x47, 0xe9 } }
 #define SB_SQLBUILDER_INSERT_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Insert;1"
+  "@getnightingale.com/Nightingale/SQLBuilder/Insert;1"
 
 #define SB_SQLBUILDER_UPDATE_CID \
   { 0xdbaf00cb, 0xbb40, 0x47a1, \
   { 0xa7, 0xa9, 0xaa, 0x88, 0xd4, 0x50, 0x6e, 0x9e } }
 #define SB_SQLBUILDER_UPDATE_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Update;1"
+  "@getnightingale.com/Nightingale/SQLBuilder/Update;1"
 
 #define SB_SQLBUILDER_DELETE_CID \
   { 0x908dd5de, 0xd31b, 0x469d, \
   { 0xa0, 0x1a, 0xbf, 0xba, 0x69, 0xe7, 0x75, 0xaf } }
 #define SB_SQLBUILDER_DELETE_CONTRACTID \
-  "@songbirdnest.com/Songbird/SQLBuilder/Delete;1"
+  "@getnightingale.com/Nightingale/SQLBuilder/Delete;1"
 

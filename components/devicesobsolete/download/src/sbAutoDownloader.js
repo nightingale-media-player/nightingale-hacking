@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -88,7 +88,7 @@ function sbAutoDownloader() {
 
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
-  obs.addObserver(this, 'songbird-library-manager-ready', false);
+  obs.addObserver(this, 'nightingale-library-manager-ready', false);
 }
 sbAutoDownloader.prototype._libraryManager = null;
 sbAutoDownloader.prototype._library = null;
@@ -100,10 +100,10 @@ sbAutoDownloader.prototype._timer = null;
  // XPCOM //
 ///////////
 sbAutoDownloader.prototype.classDescription =
-    'Songbird Auto Downloader Service';
+    'Nightingale Auto Downloader Service';
 sbAutoDownloader.prototype.classID =
     Components.ID("{a3d7426b-0b22-4f07-b72c-e44bab0759f7}");
-sbAutoDownloader.prototype.contractID = '@songbirdnest.com/autodownloader;1';
+sbAutoDownloader.prototype.contractID = '@getnightingale.com/autodownloader;1';
 sbAutoDownloader.prototype.flags = Ci.nsIClassInfo.SINGLETON;
 sbAutoDownloader.prototype.interfaces =
     [Ci.nsISupports, Ci.nsIClassInfo, Ci.nsIObserver, Ci.sbIMediaListListener];
@@ -127,12 +127,12 @@ function sbAutoDownloader_observe(subject, topic, data) {
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
 
-  if (topic == "songbird-library-manager-ready") {
-    obs.removeObserver(this, "songbird-library-manager-ready");
-    obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
+  if (topic == "nightingale-library-manager-ready") {
+    obs.removeObserver(this, "nightingale-library-manager-ready");
+    obs.addObserver(this, "nightingale-library-manager-before-shutdown", false);
 
     // get the library manager
-    this._libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
+    this._libraryManager = Cc['@getnightingale.com/Nightingale/library/Manager;1']
                              .getService(Ci.sbILibraryManager);
 
     // get the main library
@@ -142,11 +142,11 @@ function sbAutoDownloader_observe(subject, topic, data) {
     this._library.addListener(this, false,
         Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED);
 
-    this._helper = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+    this._helper = Cc["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
                      .getService(Ci.sbIDownloadDeviceHelper);
 
-  } else if (topic == "songbird-library-manager-before-shutdown") {
-    obs.removeObserver(this, "songbird-library-manager-before-shutdown");
+  } else if (topic == "nightingale-library-manager-before-shutdown") {
+    obs.removeObserver(this, "nightingale-library-manager-before-shutdown");
 
     if (this._library) {
       this._library.removeListener(this);

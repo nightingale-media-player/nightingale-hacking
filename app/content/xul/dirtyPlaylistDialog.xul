@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,22 +22,22 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 <!-- Import external definitions. -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- ***************************************************************************
@@ -45,11 +45,11 @@
  * Dirty playlist dialog box.
  *
  *   If a user imports a playlist from an external library and later modifies it
- * in Songbird, it's considered "dirty."  If the user then re-imports from the
+ * in Nightingale, it's considered "dirty."  If the user then re-imports from the
  * external library, the dirty playlist dialog is used to query what action to
- * take.  The possible actions are to keep the Songbird playlist without any
- * modifications, merge the Songbird playlist with the external library
- * playlist, or replace the Songbird playlist with the external library
+ * take.  The possible actions are to keep the Nightingale playlist without any
+ * modifications, merge the Nightingale playlist with the external library
+ * playlist, or replace the Nightingale playlist with the external library
  * playlist.
  *
  *************************************************************************** -->
@@ -61,7 +61,7 @@
   id="dirty_playlist_dialog"
   hidechrome="true"
   flex="1"
-  type="songbird"
+  type="nightingale"
   title="&import_library.dirty_playlist_dialog.title;"
   buttons="accept"
   onload="dirtyPlaylistDialog.onLoad();"
@@ -74,7 +74,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Dialog box description. -->
@@ -116,13 +116,13 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->
+  <!-- Import the Nightingale services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
 
   <!-- Dirty playlist dialog services. -->
   <script><![CDATA[

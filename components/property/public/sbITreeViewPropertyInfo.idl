@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \file sbITreeViewPropertyInfo.idl
@@ -34,48 +36,21 @@
 * \interface sbITreeViewPropertyInfo
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(d3f05e8e-1dd1-11b2-b90d-a163d7ed50b9)]
+[scriptable, uuid(c846f7ce-fcac-4d6a-a1d7-615d63c04c5e)]
 interface sbITreeViewPropertyInfo : nsISupports
 {
-  /**
-   * The type of the column; for example, might be "progressmeter" or "checkbox"
-   */
   readonly attribute AString columnType;
 
-  /**
-   * Get the image path for a cell with a given value
-   * @see nsITreeView::getImageSrc
-   */
   AString getImageSrc(in AString aValue);
 
-  /**
-   * Get the progress mode for a cell with a given value
-   * @see nsITreeView::getProgressMode
-   */
   long getProgressMode(in AString aValue);
 
-  /**
-   * Get the value for a cell with a given value
-   * @note This must not invalidate the tree (or change the item).
-   * @see nsITreeView::getCellValue
-   */
   AString getCellValue(in AString aValue);
 
-  /**
-   * Get the row properties for items with the given property value
-   * @param aValue the property value for this property for the item
-   * @return the row properties
-   * @see nsITreeView::getRowProperties
-   */
+  AString getColumnProperties(in AString aValue);
+
   AString getRowProperties(in AString aValue);
 
-  /**
-   * Get the cell properties for items with the given property value
-   * @param aValue the property value for the given item
-   * @return the cell properties
-   * @note This must not invalidate the tree (or change the item).
-   * @see nsITreeView::getCellProperties
-   */
   AString getCellProperties(in AString aValue);
 };
 

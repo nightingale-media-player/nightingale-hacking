@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -43,8 +43,8 @@
           onEnumerationBegin: function() {
           },
           onEnumeratedItem: function(list, item) {
-            var artistName = item.getProperty("http://songbirdnest.com/data/1.0#artistName");
-            var trackName = item.getProperty("http://songbirdnest.com/data/1.0#trackName");
+            var artistName = item.getProperty("http://getnightingale.com/data/1.0#artistName");
+            var trackName = item.getProperty("http://getnightingale.com/data/1.0#trackName");
             
             //I love this track.
             var msg = "I love this song, it's by " + 
@@ -64,7 +64,7 @@
         };
         
         // Attempt to enumerate all items
-        songbird.mainLibrary.enumerateAllItems(listener, 0);
+        nightingale.mainLibrary.enumerateAllItems(listener, 0);
       }
 
       function unload() {
@@ -74,7 +74,7 @@
 
       function handleEvent(aEvent) {
         if ( aEvent.type == 'RemoteAPIPermissionDenied' ) {
-          msg = "You have opted to not configure Songbird so our webpage can interact " +
+          msg = "You have opted to not configure Nightingale so our webpage can interact " +
                 "with it at it's fullest. Please open tools->options and configure the " +
                 "RemoteAPI preferences to allow us XYZ permissions. " + 
                 "Below are the permissions that were requested.";

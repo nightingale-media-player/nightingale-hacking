@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -47,8 +47,8 @@ EXPORTED_SYMBOLS = [ "AddOnBundleLoader" ];
 //
 
 var AddOnUtilsCfg = {
-  addOnBundleURLPref: "songbird.url.firstrun",
-  addOnBundleBlacklistPref: "songbird.recommended_addons.update.blacklist",
+  addOnBundleURLPref: "nightingale.url.firstrun",
+  addOnBundleBlacklistPref: "nightingale.recommended_addons.update.blacklist",
   addOnBundleDataLoadTimeout: 15000,
   addOnBundleCacheFileName: "recommendedAddOnBundle.xml"
 };
@@ -103,7 +103,7 @@ AddOnBundleLoader.addInstalledAddOnsToBlacklist =
   function AddOnBundleLoader_addInstalledAddOnsToBlacklist() {
   // Get the list of installed add-ons.
   var installedAddOnList = RDFHelper.help("rdf:addon-metadata",
-                                          "urn:songbird:addon:root",
+                                          "urn:nightingale:addon:root",
                                           RDFHelper.DEFAULT_RDF_NAMESPACES);
 
   // Add each installed add-on to the blacklist.
@@ -275,7 +275,7 @@ AddOnBundleLoader.prototype = {
     // Start loading the add-on bundle data.
     if (!this.addOnBundle) {
       // Set up the add-on bundle for loading.
-      this.addOnBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
+      this.addOnBundle = Cc["@getnightingale.com/Nightingale/Bundle;1"]
                            .createInstance(Ci.sbIBundle);
       this.addOnBundle.bundleId = "firstrun";
 
@@ -431,7 +431,7 @@ AddOnBundleLoader.prototype = {
   _removeInstalledAddOns: function AddOnBundleLoader__removeInstalledAddOns() {
     // Get the list of installed add-ons.
     var installedAddOnList = RDFHelper.help("rdf:addon-metadata",
-                                            "urn:songbird:addon:root",
+                                            "urn:nightingale:addon:root",
                                             RDFHelper.DEFAULT_RDF_NAMESPACES);
 
     // Create a table of installed add-ons, indexed by add-on ID.

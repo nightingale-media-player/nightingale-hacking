@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -52,16 +52,16 @@ const OSD_PADDING      = 18;  // 9 on each side.
 
 function sbOSDControlService()
 {
-  this._cloakService = Cc["@songbirdnest.com/Songbird/WindowCloak;1"]
+  this._cloakService = Cc["@getnightingale.com/Nightingale/WindowCloak;1"]
                          .getService(Ci.sbIWindowCloak);
   this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
 
   // Ask the window chrome service (if available) if it supports window
   // composition to enable transparent graphics for the OSD.
   this._useTransparentGraphics = true;
-  if ("@songbirdnest.com/Songbird/WindowChromeService;1" in Cc) {
+  if ("@getnightingale.com/Nightingale/WindowChromeService;1" in Cc) {
     var winChromeService =
-      Cc["@songbirdnest.com/Songbird/WindowChromeService;1"]
+      Cc["@getnightingale.com/Nightingale/WindowChromeService;1"]
         .getService(Ci.sbIWindowChromeService);
     this._useTransparentGraphics = winChromeService.isCompositionEnabled;
   }
@@ -119,8 +119,8 @@ sbOSDControlService.prototype =
 
     // Create a OSD overlay window.
     this._osdWindow = this._videoWindow.openDialog(
-        "chrome://songbird/content/xul/videoWindowControls.xul",
-        "Songbird OSD Control Window",
+        "chrome://nightingale/content/xul/videoWindowControls.xul",
+        "Nightingale OSD Control Window",
         "chrome,dependent,modal=no,titlebar=no",
         null);
     this._osdWindow.QueryInterface(Ci.nsIDOMWindowInternal);
@@ -131,7 +131,7 @@ sbOSDControlService.prototype =
     try {
       // Not all platforms have this service.
       var winMoveService =
-        Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
+        Cc["@getnightingale.com/integration/window-move-resize-service;1"]
         .getService(Ci.sbIWindowMoveService);
 
       winMoveService.startWatchingWindow(this._videoWindow, this);
@@ -200,7 +200,7 @@ sbOSDControlService.prototype =
     try {
       // Not all platforms have this service.
       var winMoveService =
-        Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
+        Cc["@getnightingale.com/integration/window-move-resize-service;1"]
         .getService(Ci.sbIWindowMoveService);
 
       winMoveService.stopWatchingWindow(this._videoWindow, this);
@@ -325,11 +325,8 @@ sbOSDControlService.prototype =
                                  Ci.nsITimer.TYPE_ONE_SHOT);
 
     // if the osd is already visible, then all we need to do is reset the timer
-    // and make sure the controls are focused.
-    if (this._osdControlsShowing) {
-      this._osdWindow.focus();
+    if (this._osdControlsShowing)
       return;
-    }
     
     // Controls are showing
     this._osdControlsShowing = true;
@@ -352,7 +349,7 @@ sbOSDControlService.prototype =
 
       default:
         Components.utils.reportError(
-            "Invalid transition type passed into showOSDControls()!");
+            "Invalid transition type passed into hideOSDControls()!");
 
         // Just fall back to show instantly.
         transition = this._showInstantly;
@@ -500,13 +497,13 @@ sbOSDControlService.prototype =
 // XPCOM Registration
 
 sbOSDControlService.prototype.classDescription =
-  "Songbird OSD Control Service";
+  "Nightingale OSD Control Service";
 sbOSDControlService.prototype.className =
   "sbOSDControlService";
 sbOSDControlService.prototype.classID =
   Components.ID("{03F78779-FCB7-4442-9A0C-E8547B4F1368}");
 sbOSDControlService.prototype.contractID =
-  "@songbirdnest.com/mediacore/osd-control-service;1";
+  "@getnightingale.com/mediacore/osd-control-service;1";
 sbOSDControlService.prototype.QueryInterface =
   XPCOMUtils.generateQI([Ci.sbIOSDControlService,
                          Ci.sbIWindowMoveListener,

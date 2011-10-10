@@ -1,11 +1,11 @@
 /*
  //
- // BEGIN SONGBIRD GPL
+ // BEGIN NIGHTINGALE GPL
  //
- // This file is part of the Songbird web player.
+ // This file is part of the Nightingale web player.
  //
  // Copyright(c) 2005-2008 POTI, Inc.
- // http://songbirdnest.com
+ // http://getnightingale.com
  //
  // This file may be licensed under the terms of of the
  // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
  // or write to the Free Software Foundation, Inc.,
  // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  //
- // END SONGBIRD GPL
+ // END NIGHTINGALE GPL
  //
  */
 
@@ -47,13 +47,11 @@
 #include <sbIMediaListListener.h>
 #include <nsITimer.h>
 
-#include <sbWeakReference.h>
-
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbFixedInterfaceCache.h"
 #include "sbLocalDatabaseSQL.h"
 
-#include <map>
+#include <set>
 
 struct PRLock;
 struct PRMonitor;
@@ -116,8 +114,6 @@ private:
 
   nsresult AddDirty(const nsAString &aGuid,
       sbLocalDatabaseResourcePropertyBag * aBag);
-
-  nsresult InvalidateGUIDArrays();
 
   PRUint32 GetPropertyDBIDInternal(const nsAString& aPropertyID);
 
@@ -183,11 +179,10 @@ private:
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
-  // Depedent GUID Array map and protecting monitor
+  // Depedent GUID Array set and protecting monitor
   PRMonitor* mDependentGUIDArrayMonitor;
-  typedef std::map<nsISupports *,
-                   nsCOMPtr<nsIWeakReference> > DependentGUIDArrays_t;
-  DependentGUIDArrays_t mDependentGUIDArrays;
+  typedef std::set<sbLocalDatabaseGUIDArray *> guidarrayptr_set_t;
+  guidarrayptr_set_t mDependentGUIDArraySet;
   
   // Used to protect the cache and all of the resource property bags
   PRMonitor* mMonitor;
@@ -197,9 +192,6 @@ private:
 
   // Dirty GUIDs
   nsInterfaceHashtable<nsStringHashKey, sbLocalDatabaseResourcePropertyBag> mDirty;
-
-  // Dirty Property IDs for use with invalidation of GUID arrays
-  std::set<PRUint32> mDirtyForInvalidation;
 
   // flushing on a background thread
   struct FlushQueryData {
@@ -218,9 +210,6 @@ private:
   // Cache Flush Interval Timer
   nsCOMPtr<nsITimer> mFlushTimer;
   nsCOMPtr<nsIThreadPool> mThreadPoolService;
-
-  // GUID Array Invalidation Timer
-  nsCOMPtr<nsITimer> mInvalidateTimer;
 
   // Backstage pass to our parent library. Can't use an nsRefPtr because the
   // library owns us and that would create a cycle.

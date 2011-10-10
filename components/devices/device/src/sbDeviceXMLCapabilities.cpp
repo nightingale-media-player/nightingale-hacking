@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,12 +20,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDeviceXMLCapabilities.h"
 
-// Songbird includes
+// Nightingale includes
 #include <sbIDeviceCapabilities.h>
 #include <sbIDeviceProperties.h>
 #include <sbMemoryUtils.h>
@@ -52,7 +52,7 @@
 #include <nsThreadUtils.h>
 
 #define SB_DEVICE_CAPS_ELEMENT "devicecaps"
-#define SB_DEVICE_CAPS_NS "http://songbirdnest.com/devicecaps/1.0"
+#define SB_DEVICE_CAPS_NS "http://getnightingale.com/devicecaps/1.0"
 
 sbDeviceXMLCapabilities::sbDeviceXMLCapabilities(nsIDOMElement* aRootElement,
                                                  sbIDevice*     aDevice) :
@@ -157,7 +157,7 @@ sbDeviceXMLCapabilities::GetCapabilities
 
   // Read the device capabilities for the device.
   nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
-    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DEVICECAPABILITIES_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceCapabilities->Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -202,7 +202,7 @@ sbDeviceXMLCapabilities::AddCapabilities
   nsCOMPtr<nsIPrincipal> principal;
   rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = xmlHttpRequest->Init(principal, nsnull, nsnull, nsnull);
+  rv = xmlHttpRequest->Init(principal, nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the device capabilities file.
@@ -585,7 +585,7 @@ GetFractionRangeValues(nsIDOMNode * aDOMNode,
   }
 
   nsCOMPtr<nsIMutableArray> fractionArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString minValue, maxValue;
@@ -622,7 +622,7 @@ GetFractionRangeValues(nsIDOMNode * aDOMNode,
   PRUint32 numerator, denominator;
   if (!minValue.Equals(EmptyString()) || !maxValue.Equals(EmptyString())) {
     nsCOMPtr<sbIDevCapFraction> minCapFraction =
-      do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Device/sbfraction;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = GetStringFractionValues(minValue, &numerator, &denominator);
@@ -632,7 +632,7 @@ GetFractionRangeValues(nsIDOMNode * aDOMNode,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIDevCapFraction> maxCapFraction =
-      do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Device/sbfraction;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = GetStringFractionValues(maxValue, &numerator, &denominator);
@@ -662,7 +662,7 @@ GetFractionRangeValues(nsIDOMNode * aDOMNode,
       }
 
       nsCOMPtr<sbIDevCapFraction> curFraction =
-        do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+        do_CreateInstance("@getnightingale.com/Nightingale/Device/sbfraction;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = curFraction->Initialize(numerator, denominator);
@@ -849,14 +849,14 @@ sbDeviceXMLCapabilities::ProcessImageSizes(
       do_CreateInstance(SB_IMAGESIZE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRInt32 width = 0;
+    PRInt32 width;
     rv = attributes.GetValue(WIDTH, width);
     if (NS_FAILED(rv)) {
       NS_WARNING("Invalid width found in device settings file");
       continue;
     }
 
-    PRInt32 height = 0;
+    PRInt32 height;
     rv = attributes.GetValue(HEIGHT, height);
     if (NS_FAILED(rv)) {
       continue;
@@ -917,7 +917,7 @@ sbDeviceXMLCapabilities::ProcessImage(nsIDOMNode * aImageNode)
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIMutableArray> imageSizes =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1",
                         &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1008,7 +1008,7 @@ sbDeviceXMLCapabilities::ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
   attributes.GetValue(NS_LITERAL_STRING("type"), type);
 
   nsCOMPtr<nsIMutableArray> sizes =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1",
                       &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbIDevCapRange> widths;
@@ -1514,7 +1514,7 @@ sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
 
 nsresult
 sbDeviceXMLCapabilities::GetFirstChildByTagName(nsIDOMNode*  aNode,
-                                                const char*        aTagName,
+                                                char*        aTagName,
                                                 nsIDOMNode** aChildNode)
 {
   NS_ENSURE_ARG_POINTER(aTagName);

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,24 +33,24 @@ const NS_BINDING_ABORTED = 0x804b0002;
 
 const DESCRIPTION = "sbMediaContentListener";
 const CID         = "2803c9e8-b0b6-4dfe-8333-53430128f7e7";
-const CONTRACTID  = "@songbirdnest.com/contentlistener/media;1";
+const CONTRACTID  = "@getnightingale.com/contentlistener/media;1";
 
-const CONTRACTID_ARRAY              = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
-const CONTRACTID_LIBRARYMANAGER     = "@songbirdnest.com/Songbird/library/Manager;1";
+const CONTRACTID_ARRAY              = "@getnightingale.com/moz/xpcom/threadsafe-array;1";
+const CONTRACTID_LIBRARYMANAGER     = "@getnightingale.com/Nightingale/library/Manager;1";
 const CONTRACTID_OBSERVERSERVICE    = "@mozilla.org/observer-service;1";
 const CONTRACTID_PREFSERVICE        = "@mozilla.org/preferences-service;1";
 
 const CATEGORY_CONTENT_LISTENER = "external-uricontentlisteners";
 
-const PREF_WEBLIBRARY_GUID = "songbird.library.web";
+const PREF_WEBLIBRARY_GUID = "nightingale.library.web";
 
-const TYPE_MAYBE_MEDIA = "application/vnd.songbird.maybe.media";
-const TYPE_MAYBE_PLAYLIST = "application/vnd.songbird.maybe.playlist";
+const TYPE_MAYBE_MEDIA = "application/vnd.nightingale.maybe.media";
+const TYPE_MAYBE_PLAYLIST = "application/vnd.nightingale.maybe.playlist";
 
 // For XPCOM boilerplate.
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-// For Songbird properties.
+// For Nightingale properties.
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
@@ -64,9 +64,9 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
  * listeners will be able to support the MIME type except for this component.
  */
 function sbMediaContentListener() {
-  this._typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+  this._typeSniffer = Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                         .createInstance(Ci.sbIMediacoreTypeSniffer);
-  this._mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+  this._mm = Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                .getService(Ci.sbIMediacoreManager);
 }
 sbMediaContentListener.prototype = {
@@ -127,7 +127,7 @@ sbMediaContentListener.prototype = {
       var scanArray = Cc[CONTRACTID_ARRAY].createInstance(Ci.nsIMutableArray);
       scanArray.appendElement(mediaItem, false);
       
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+      var metadataService = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);
       var job = metadataService.read(scanArray);
     }
@@ -144,7 +144,7 @@ sbMediaContentListener.prototype = {
   },
 
   _handlePlaylistURI: function _handlePlaylistURI(aURI) {
-    var app = Cc["@songbirdnest.com/Songbird/ApplicationController;1"]
+    var app = Cc["@getnightingale.com/Nightingale/ApplicationController;1"]
                 .getService(Ci.sbIApplicationController);
     var window = app.activeMainWindow;
     if (window) {

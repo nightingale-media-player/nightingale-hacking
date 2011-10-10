@@ -1,11 +1,11 @@
 /* vim: set sw=2 */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_H_
@@ -32,7 +32,7 @@
     { 0xa2, 0x5b, 0xc7, 0xd6, 0x7a, 0x6b, 0x52, 0x92 } }
 
 #define SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_CONTRACTID \
-    "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"
+    "@getnightingale.com/Nightingale/Mediacore/Transcode/Configurator/Device/GStreamer;1"
 #define SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_CLASSNAME  \
     "GStreamerTranscodeDeviceConfigurator"
 
@@ -210,6 +210,11 @@ protected:
    * The quality setting to use
    */
   double mQuality;
+  /**
+   * The video quality setting to use, in case this deviates from the overall
+   * quality setting (due to bitrate adjustments)
+   */
+  double mVideoQuality;
   /**
    * The device to transcode to
    */

@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = .
@@ -55,13 +55,13 @@ ifdef MAKE_INSTALLER
    TIERS += installer
 endif
 
-ifdef SONGBIRD_OFFICIAL
+ifdef NIGHTINGALE_OFFICIAL
    TIERS += update
 endif
 
 ifdef SB_ENABLE_BREAKPAD
-   BREAKPAD_SYMBOL_PATH = $(SONGBIRD_OBJDIR)/breakpad-symbols
-   BREAKPAD_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
+   BREAKPAD_SYMBOL_PATH = $(NIGHTINGALE_OBJDIR)/breakpad-symbols
+   BREAKPAD_ARCHIVE_PATH = $(NIGHTINGALE_OBJDIR)
    BREAKPAD_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).zip
    MAKE_SYM_STORE_ARGS = --vcs-info
    DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms$(BIN_SUFFIX)
@@ -83,18 +83,18 @@ ifdef SB_ENABLE_BREAKPAD
       endif
 
       MAKE_SYM_STORE_ARGS += -a $(BREAKPAD_ARCH)
-      MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/Songbird.app/Contents/Resources/components
+      MAKE_SYM_STORE_PATH = $(NIGHTINGALE_OBJDIR)/dist/Nightingale.app/Contents/Resources/components
    endif
 
    ifeq ($(SB_PLATFORM),linux)
-      MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/components
+      MAKE_SYM_STORE_PATH = $(NIGHTINGALE_OBJDIR)/dist/components
    endif
 endif #SB_ENABLE_BREAKPAD
 
 include $(topsrcdir)/build/rules.mk
 
 # We have both stripsymbols and do_stripsymbols because in the common case,
-# where we do a |make -f songbird.mk clobber && make -f songbird.mk|,
+# where we do a |make -f nightingale.mk clobber && make -f nightingale.mk|,
 # sbBuildInfo.ini won't be pre-processed yet. This means that things like
 # SB_BUILD_APP and SB_BUILD_ID, taken from that file in build/config.mk
 # will get filled with empty values (it uses := in the assignment for perf
@@ -115,10 +115,10 @@ ifdef MAKE_INSTALLER
    ifneq (windows,$(SB_PLATFORM))
 	   @echo "Stripping package directory..."
       ifeq (macosx,$(SB_PLATFORM))
-	      $(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.dylib" \
+	      $(FIND) $(NIGHTINGALE_DISTDIR) -type f -name "*.dylib" \
           -exec $(STRIP) $(STRIP_FLAGS) {} \; 
       endif
-	   $(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.so" \
+	   $(FIND) $(NIGHTINGALE_DISTDIR) -type f -name "*.so" \
        -exec $(STRIP) $(STRIP_FLAGS) {} \; 
    endif
 endif
@@ -148,7 +148,7 @@ uploadsymbols:
 	$(MAKE) -f $(THISMAKEFILE) do_uploadsymbols
 
 do_uploadsymbols:
-ifneq (,$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
+ifneq (,$(NIGHTINGALE_NIGHTLY)$(NIGHTINGALE_OFFICIAL))
    ifdef SB_ENABLE_BREAKPAD
 	   $(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh \
       $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) \
@@ -164,7 +164,7 @@ ifneq (,$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    endif
 endif
 
-GARBAGE += $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
+GARBAGE += $(NIGHTINGALE_OBJDIR)/$(DISTDIR_MANIFEST)
 
 # Set the LANG variable, since that impacts how sort works, but only if we're
 # doing distdir_manifest stuff...
@@ -173,17 +173,17 @@ ifneq (,$(filter %distdir_manifest, $(MAKECMDGOALS)))
 endif
 
 test_distdir_manifest:
-	@cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
-	@if test -z "$$($(DIFF) -q $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST))"; then \
+	@cd $(NIGHTINGALE_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(NIGHTINGALE_OBJDIR)/$(DISTDIR_MANIFEST)
+	@if test -z "$$($(DIFF) -q $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(NIGHTINGALE_OBJDIR)/$(DISTDIR_MANIFEST))"; then \
       echo Distdir manifests are OK. No added or deleted files detected.; \
    else \
       echo Distdir manifests DO NOT MATCH. Differences: ; \
-      $(DIFF) -u $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST); \
+      $(DIFF) -u $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(NIGHTINGALE_OBJDIR)/$(DISTDIR_MANIFEST); \
       exit -1; \
    fi
 
 distdir_manifest:
 	@echo Making distdir manifest in $(topsrcdir)/update...
-	cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
+	cd $(NIGHTINGALE_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
 
 .PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols test_distdir_manifest distdir_manifest

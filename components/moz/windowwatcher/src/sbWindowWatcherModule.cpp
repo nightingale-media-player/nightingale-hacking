@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,18 +22,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
  * \file  sbWindowWatcherModule.cpp
- * \brief Songbird Window Watcher Module Component Factory and Main Entry Point.
+ * \brief Nightingale Window Watcher Module Component Factory and Main Entry Point.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher module imported services.
+// Nightingale window watcher module imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -42,42 +42,93 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 #include <nsServiceManagerUtils.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher module services.
+// Nightingale window watcher module services.
 //
 //------------------------------------------------------------------------------
 
+// Construct the sbWindowWatcher object and call its Init method.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowWatcher, Init)
-NS_DEFINE_NAMED_CID(SB_WINDOWWATCHER_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdMozWindowWatcherCIDs[] = {
-    { &kSB_WINDOWWATCHER_CID, false, NULL, sbWindowWatcherConstructor },
-    { NULL }
+
+/**
+ * \brief Register the Nightingale window watcher component.
+ */
+
+static NS_METHOD
+sbWindowWatcherRegister(nsIComponentManager*         aCompMgr,
+                        nsIFile*                     aPath,
+                        const char*                  aLoaderStr,
+                        const char*                  aType,
+                        const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add self to the device marshall category.
+  rv = categoryManager->AddCategoryEntry("app-startup",
+                                         SB_WINDOWWATCHER_CLASSNAME,
+                                         "service," SB_WINDOWWATCHER_CONTRACTID,
+                                         PR_TRUE,
+                                         PR_TRUE,
+                                         nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * \brief Unregister the Nightingale window watcher component.
+ */
+
+static NS_METHOD
+sbWindowWatcherUnregister(nsIComponentManager*         aCompMgr,
+                          nsIFile*                     aPath,
+                          const char*                  aLoaderStr,
+                          const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Delete self from the device marshall category.
+  rv = categoryManager->DeleteCategoryEntry("app-startup",
+                                            SB_WINDOWWATCHER_CLASSNAME,
+                                            PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+// Module component information.
+static const nsModuleComponentInfo components[] =
+{
+  {
+    SB_WINDOWWATCHER_CLASSNAME,
+    SB_WINDOWWATCHER_CID,
+    SB_WINDOWWATCHER_CONTRACTID,
+    sbWindowWatcherConstructor,
+    sbWindowWatcherRegister,
+    sbWindowWatcherUnregister
+  }
 };
 
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbWindowWatcher, components)
 
-static const mozilla::Module::ContractIDEntry kSongbirdMozWindowWatcherContracts[] = {
-    { SB_WINDOWWATCHER_CONTRACTID, &kSB_WINDOWWATCHER_CID },
-    { NULL }
-};
-
-
-static const mozilla::Module::CategoryEntry kSongbirdMozWindowWatcherCategories[] = {
-    { "app-startup", SB_WINDOWWATCHER_CLASSNAME, SB_WINDOWWATCHER_CONTRACTID },
-    { NULL }
-};
-
-
-static const mozilla::Module kSongbirdMozWindowWatcherModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozWindowWatcherCIDs,
-    kSongbirdMozWindowWatcherContracts,
-    kSongbirdMozWindowWatcherCategories
-};
-
-NSMODULE_DEFN(sbWindowWatcher) = &kSongbirdMozWindowWatcherModule;

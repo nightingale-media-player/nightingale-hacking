@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 #include "sbDeviceLibraryMediaSyncSettings.h"
 
@@ -30,7 +30,7 @@
 #include <nsAutoPtr.h>
 #include <nsIProperties.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbDeviceUtils.h>
 #include <sbDeviceLibrarySyncSettings.h>
 #include <sbIDeviceLibrary.h>
@@ -78,10 +78,8 @@ sbDeviceLibraryMediaSyncSettings::sbDeviceLibraryMediaSyncSettings(
                                     sbDeviceLibrarySyncSettings * aSyncSettings,
                                     PRUint32 aMediaType,
                                     PRLock * aLock) :
-  mSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE),
-  mLastActiveSyncMgmtType(sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL),
+  mSyncMgmtType(sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL),
   mMediaType(aMediaType),
-  mImport(false),
   mLock(aLock),
   mSyncSettings(aSyncSettings)
 {
@@ -107,7 +105,6 @@ sbDeviceLibraryMediaSyncSettings::Assign(
 
   mSyncMgmtType = aSettings->mSyncMgmtType;
   mMediaType = aSettings->mMediaType;
-  mImport = aSettings->mImport;
 
   rv = sbCopyHashtable<PlaylistHashtableTraits>(
                                                aSettings->mPlaylistsSelection,
@@ -117,9 +114,16 @@ sbDeviceLibraryMediaSyncSettings::Assign(
   rv = aSettings->mSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mChanged = false;
   mLock = aSettings->mLock;
 
   return NS_OK;
+}
+
+void sbDeviceLibraryMediaSyncSettings::Changed()
+{
+  mChanged = true;
+  mSyncSettings->Changed();
 }
 
 nsresult
@@ -138,8 +142,6 @@ sbDeviceLibraryMediaSyncSettings::CreateCopy(
                                               mPlaylistsSelection,
                                               newSettings->mPlaylistsSelection);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  newSettings->mImport = mImport;
 
   newSettings->mSyncFolder = mSyncFolder;
   if (mSyncFromFolder) {
@@ -172,19 +174,6 @@ sbDeviceLibraryMediaSyncSettings::GetMgmtType(PRUint32 *aSyncMgmtType)
   return NS_OK;
 }
 
-
-NS_IMETHODIMP
-sbDeviceLibraryMediaSyncSettings::GetLastActiveMgmtType
-                                  (PRUint32 *aLastActiveSyncMgmtType)
-{
-  NS_ENSURE_ARG_POINTER(aLastActiveSyncMgmtType);
-  // jhawk do I actually need to lock this?
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
-  *aLastActiveSyncMgmtType = mLastActiveSyncMgmtType;
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
 {
@@ -192,35 +181,11 @@ sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
 
   {
     nsAutoLock lock(mLock);
-    if (mSyncMgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
-      mLastActiveSyncMgmtType = mSyncMgmtType;
-    }
     mSyncMgmtType = aSyncMgmtType;
   }
 
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibraryMediaSyncSettings::GetImport(PRBool *aImport)
-{
-  NS_ENSURE_ARG_POINTER(aImport);
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
-  *aImport = mImport ? PR_TRUE : PR_FALSE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibraryMediaSyncSettings::SetImport(PRBool aImport)
-{
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-
-  {
-    nsAutoLock lock(mLock);
-    mImport = aImport == PR_TRUE;
-  }
-
+  // Release the lock before dispatching sync settings change event
+  Changed();
   return NS_OK;
 }
 
@@ -232,7 +197,7 @@ sbDeviceLibraryMediaSyncSettings::GetSelectedPlaylistsNoLock(
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> selected =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
 
   mPlaylistsSelection.EnumerateRead(ArrayBuilder, selected.get());
 
@@ -285,6 +250,8 @@ sbDeviceLibraryMediaSyncSettings::SetSelectedPlaylists(
     }
   }
 
+  // Release the lock before dispatching sync settings change event
+  Changed();
   return NS_OK;
 }
 
@@ -300,6 +267,8 @@ sbDeviceLibraryMediaSyncSettings::SetPlaylistSelected(sbIMediaList *aPlaylist,
     mPlaylistsSelection.Put(supports, aSelected);
   }
 
+  // Release the lock before dispatching sync settings change event
+  Changed();
   return NS_OK;
 }
 
@@ -328,6 +297,9 @@ sbDeviceLibraryMediaSyncSettings::ClearSelectedPlaylists()
     mPlaylistsSelection.Enumerate(ResetSelection, nsnull);
   }
 
+  // Release the lock before dispatching sync settings change event
+  Changed();
+
   return NS_OK;
 }
 
@@ -351,6 +323,9 @@ sbDeviceLibraryMediaSyncSettings::SetSyncFolder(const nsAString & aSyncFolder)
     nsAutoLock lock(mLock);
     mSyncFolder = aSyncFolder;
   }
+
+  // Release the lock before dispatching sync settings change event
+  Changed();
 
   return NS_OK;
 }
@@ -401,6 +376,9 @@ sbDeviceLibraryMediaSyncSettings::SetSyncFromFolder(
     nsresult rv = aSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Release the lock before dispatching sync settings change event
+  Changed();
 
   return NS_OK;
 }

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -176,7 +176,7 @@ sbRemoteMediaListBase::GetClassName( char **aClassName )
 {
   LOG_LIST(("sbRemoteMediaListBase::GetClassName()"));
   NS_ENSURE_ARG_POINTER(aClassName);
-  *aClassName = ToNewCString( NS_LITERAL_CSTRING("SongbirdMediaList") );
+  *aClassName = ToNewCString( NS_LITERAL_CSTRING("NightingaleMediaList") );
   NS_ENSURE_TRUE( aClassName, NS_ERROR_OUT_OF_MEMORY );
   return NS_OK;
 }
@@ -781,25 +781,13 @@ sbRemoteMediaListBase::AddAll(sbIMediaList *aMediaList)
 NS_IMETHODIMP
 sbRemoteMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 {
-  return AddMediaItems(aMediaItems, nsnull, PR_FALSE);
-}
-
-NS_IMETHODIMP
-sbRemoteMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
-                                     sbIAddMediaItemsListener * aListener,
-                                     PRBool aAsync)
-{
   NS_ENSURE_ARG_POINTER(aMediaItems);
-
-  // We don't do async, though we might be able to. Since it wasn't implemented
-  // before in AddSomeAsync, I elected not allow it for now.
-  NS_ENSURE_FALSE(aAsync, NS_ERROR_NOT_IMPLEMENTED);
 
   nsRefPtr<sbUnwrappingSimpleEnumerator> wrapper(
     new sbUnwrappingSimpleEnumerator(aMediaItems));
   NS_ENSURE_TRUE(wrapper, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = mMediaList->AddMediaItems(wrapper, aListener, aAsync);
+  nsresult rv = mMediaList->AddSome(wrapper);
   if (NS_SUCCEEDED(rv)) {
     mRemotePlayer->GetNotificationManager()
       ->Action(sbRemoteNotificationManager::eEditedPlaylist, mLibrary);
@@ -807,6 +795,13 @@ sbRemoteMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::AddSomeAsync(nsISimpleEnumerator* aMediaItems, 
+                                    sbIMediaListAsyncListener* aListener)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP

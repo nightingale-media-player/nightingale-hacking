@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,17 +21,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 <!ENTITY % charsetDTD SYSTEM "chrome://global/locale/charsetOverlay.dtd" >
 <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 %charsetDTD;
 %browserDTD;
 ]>
@@ -46,7 +46,7 @@
   -->
   <binding 
     id="mediapages-menuitems" 
-    extends="chrome://songbird/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
+    extends="chrome://nightingale/content/bindings/generatedMenuItems.xml#generated-menuitems-base"
   >
     <content/>
     <implementation type="application/x-javascript">
@@ -83,9 +83,9 @@
             if (item.mediaPage && gBrowser.currentMediaPage) {
             
               // Set the given media page as the default for the current list
-              var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+              var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                                 .getService(Ci.sbIMediaPageManager);
-              var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+              var LSP = Cc["@getnightingale.com/servicepane/library;1"]
                           .getService(Ci.sbILibraryServicePaneService);
               var type = LSP.getNodeContentTypeFromMediaListView(
                                gBrowser.currentMediaPage.mediaListView);
@@ -124,7 +124,7 @@
       <method name="generateMenuItems">
         <body>
         <![CDATA[
-          var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+          var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                       .getService(Ci.sbIMediaPageManager);
 
           var mediaPagesLabel = "mediapages.label";
@@ -205,9 +205,9 @@
             var hideBuiltIn = this.getAttribute("hideBuiltIn");
             if (hideBuiltIn == "true" &&
                ((page.contentUrl ==
-                "chrome://songbird/content/mediapages/playlistPage.xul") ||
+                "chrome://nightingale/content/mediapages/playlistPage.xul") ||
                 (page.contentUrl ==
-                "chrome://songbird/content/mediapages/filtersPage.xul")))
+                "chrome://nightingale/content/mediapages/filtersPage.xul")))
             {
               continue;
             }
@@ -267,13 +267,13 @@
             getMoreText = this._stringBundle.GetStringFromName("mediapages.getmore");
           } catch (e) { 
             getMoreText="Error";
-            dump("\n\n\nmediaPages.xml:  Error getting menu text from songbird.properties" +
+            dump("\n\n\nmediaPages.xml:  Error getting menu text from nightingale.properties" +
                  " bundle\n"+ e + "\n"); 
           }
           
           var formatter = Cc["@mozilla.org/toolkit/URLFormatterService;1"]
                             .getService(Ci.nsIURLFormatter);
-          var getMoreURL = formatter.formatURLPref("songbird.url.addons.mediaviews");
+          var getMoreURL = formatter.formatURLPref("nightingale.url.addons.mediaviews");
           item.setAttribute("label", getMoreText);
           item.setAttribute("name", "menu.getmore");
           item.setAttribute("uri", getMoreURL);
@@ -327,7 +327,7 @@
           // enable switching if we have a valid media page
           // or are on a valid media page URL
           // this prevents broken media pages from being inescapable
-          var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+          var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                       .getService(Ci.sbIMediaPageManager);
           var pages = mgr.getAvailablePages();
           var mediaPageURL = false;
@@ -341,6 +341,10 @@
             };
           }
 
+          if (gBrowser.loading) {
+            return; // Do nothing until loading is complete.  This avoids flickering.
+          }
+
           var mediaPage = gBrowser.currentMediaPage;
           if (!((mediaPage && !mediaPage.isOnlyView) || mediaPageURL)) {
             self.setButtonToggle();
@@ -352,10 +356,10 @@
             var currentPageURL = gBrowser.currentURI
                                       .spec.replace(/[\?&]libraryGUID.*$/, "");
           switch (currentPageURL) {
-            case "chrome://songbird/content/mediapages/filtersPage.xul":
+            case "chrome://nightingale/content/mediapages/filtersPage.xul":
               self.setButtonToggle("filterview");
               break;
-            case "chrome://songbird/content/mediapages/playlistPage.xul":
+            case "chrome://nightingale/content/mediapages/playlistPage.xul":
               self.setButtonToggle("listview");
               break;
             default:
@@ -368,42 +372,46 @@
         
         // cache instances to the List & Filter view, and build toolbarbuttons
         // for our other views
-        var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+        var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                     .getService(Ci.sbIMediaPageManager);
         var pages = mgr.getAvailablePages();
+        var mpId = 0;
         var XULNS =
             "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-        this._pageIdMapping = {};
-        this._pageUrlMapping = {};
+        this._pageIdMapping = [];
+        this._pageUrlMapping = [];
+        this._maxPageId = 0;
 
         while (pages.hasMoreElements()) {
           var page = pages.getNext().QueryInterface(
                            Components.interfaces.sbIMediaPageInfo);
           switch (page.contentUrl) {
-            case "chrome://songbird/content/mediapages/filtersPage.xul":
+            case "chrome://nightingale/content/mediapages/filtersPage.xul":
               this.filterView = page;
               break;
-            case "chrome://songbird/content/mediapages/playlistPage.xul":
+            case "chrome://nightingale/content/mediapages/playlistPage.xul":
               this.listView = page;
               break;
             default:
-              let idSuffix = page.contentUrl.replace(/[^a-z0-9]/gi, "_");
-              this._pageIdMapping[idSuffix] = page;
-              this._pageUrlMapping[page.contentUrl] = idSuffix;
               if (page.contentIcon) {
                  var pagebutton = document.createElementNS(XULNS,
                                                            "toolbarbutton");
+                 var thisId = mpId++;
+                 let idSuffix = page.contentUrl.replace(/[^a-z0-9]/gi, "_");
                  pagebutton.id = "mediapages-button-" + idSuffix;
                  pagebutton.className = "toolbarbutton-1 " +
                             "chromeclass-toolbar-additional mp-other";
                  pagebutton.anonid="mediapages-button-" + idSuffix;
-                 pagebutton.mpId = idSuffix;
+                 pagebutton.mpId = thisId;
                  pagebutton.addEventListener("command", function() {
                      switchMediaView(this.mpId);
                  }, false);
                  pagebutton.setAttribute("tooltiptext", page.contentTitle);
                  pagebutton.setAttribute("style", "list-style-image: url("
                                                   + page.contentIcon + ");");
+                 this._maxPageId = thisId;
+                 this._pageIdMapping[thisId] = page;
+                 this._pageUrlMapping[page.contentUrl] = thisId;
 
                  var hbox = document.getAnonymousElementByAttribute(this,
                                           "anonid", "mediapages-other");
@@ -435,24 +443,21 @@
                                     "anonid", "mediapages-button-filterview");
 
           var pageButtons = ["listview", "filterview"];
-          pageButtons =
-              pageButtons.concat([pageId for (pageId in this._pageIdMapping)]);
+          if (this._pageIdMapping.length > 0)
+            for (var i=0; i<=this._maxPageId; i++) {
+              pageButtons.push(i);
+            }
 
           if (id == null) {
             mpButton.setAttribute("disabled", true);
-            for (let i = 0; i < pageButtons.length; ++i) {
-              let buttonId = pageButtons[i];
-              let button = document.getAnonymousElementByAttribute(this,
+            for each (var buttonId in pageButtons) {
+              var button = document.getAnonymousElementByAttribute(this,
                                     "anonid", "mediapages-button-" + buttonId);
               if (!button)
                 button = document.getElementById("mediapages-button-"+buttonId);
 
-              // Make sure we have a button, because a Media Page doesn't have
-              // to have one.
-              if (button) {
-                button.setAttribute("disabled", true);
-                button.setAttribute("open", "false");
-              }
+              button.setAttribute("disabled", true);
+              button.setAttribute("open", "false");
             }
             return;
           }
@@ -460,22 +465,17 @@
           // Remove any disabled attributes
           mpButton.removeAttribute("disabled");
           // Make sure we select the right page
-          for (let i = 0; i < pageButtons.length; ++i) {
-            let buttonId = pageButtons[i];
-            let button = document.getAnonymousElementByAttribute(this,
+          for each (var buttonId in pageButtons) {
+            var button = document.getAnonymousElementByAttribute(this,
                                   "anonid", "mediapages-button-" + buttonId);
             if (!button)
               button = document.getElementById("mediapages-button-" + buttonId);
 
-            // Make sure we have a button, because a Media Page doesn't have to
-            // have one.
-            if (button) {
-              button.removeAttribute("disabled");
-              if (buttonId == id)
-                button.setAttribute("open", "true");
-              else
-                button.setAttribute("open", "false");
-            }
+            button.removeAttribute("disabled");
+            if (buttonId == id)
+              button.setAttribute("open", "true");
+            else
+              button.setAttribute("open", "false");
           }
         ]]>
         </body>
@@ -485,7 +485,7 @@
         <parameter name="viewName"/>
         <body>
         <![CDATA[
-          var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+          var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                       .getService(Ci.sbIMediaPageManager);
           var listButton = document.getAnonymousElementByAttribute(this,
                                     "anonid", "mediapages-button-listview");
@@ -493,7 +493,7 @@
                                     "anonid", "mediapages-button-filterview");
           var others = document.getAnonymousElementByAttribute(this,
                                     "anonid", "mediapages-other");
-          var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+          var LSP = Cc["@getnightingale.com/servicepane/library;1"]
                       .getService(Ci.sbILibraryServicePaneService);
           var type = LSP.getNodeContentTypeFromMediaListView(
                            gBrowser.currentMediaPage.mediaListView);

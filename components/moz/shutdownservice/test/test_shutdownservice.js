@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -61,7 +61,7 @@ sbShutdownTestController.prototype = {
     this._listeners.push(new sbTestTask("Test Task 3"));
 
     // Listen to the shutdown service via |sbIJobProgressListener|.
-    var shutdownService = Cc["@songbirdnest.com/shutdown-service;1"]
+    var shutdownService = Cc["@getnightingale.com/shutdown-service;1"]
                             .getService(Ci.sbIJobProgress);
     shutdownService.addJobProgressListener(this);
 
@@ -86,7 +86,7 @@ sbShutdownTestController.prototype = {
       LOG("The shutdown service has successfully completed");
 
       // Remove ourselves as a job listener
-      var shutdownService = Cc["@songbirdnest.com/shutdown-service;1"]
+      var shutdownService = Cc["@getnightingale.com/shutdown-service;1"]
                               .getService(Ci.sbIJobProgress);
       shutdownService.removeJobProgressListener(this);
       
@@ -109,7 +109,7 @@ function sbTestTask(aTitleText)
 
   var observerService = Cc["@mozilla.org/observer-service;1"]
                           .getService(Ci.nsIObserverService);
-  observerService.addObserver(this, "songbird-shutdown", false);
+  observerService.addObserver(this, "nightingale-shutdown", false);
 }
 
 sbTestTask.prototype = 
@@ -168,7 +168,7 @@ sbTestTask.prototype =
     // Cleanup with the observer service
     var observerService = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
-    observerService.removeObserver(this, "songbird-shutdown");
+    observerService.removeObserver(this, "nightingale-shutdown");
 
     this.status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._jobListener.onJobProgress(this);

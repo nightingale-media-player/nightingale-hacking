@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbMacWindowMoveService.h"
@@ -156,11 +156,11 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 @interface SBWinMoveListenerContext : NSObject
 {
   SBISupportsOwner *mListener;       // strong
-  NSView           *mWatchedView;    // strong
+  NSWindow         *mWatchedWindow;  // strong
 }
 
 - (id)initWithListener:(sbIWindowMoveListener *)aListener
-                  view:(NSView *)aView;
+                window:(NSWindow *)aWindow;
 
 - (void)onWindowWillMove;
 - (void)onWindowDidStopMoving:(NSNotification *)aNotification;
@@ -171,11 +171,11 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 @implementation SBWinMoveListenerContext
 
 - (id)initWithListener:(sbIWindowMoveListener *)aListener
-                  view:(NSView *)aView
+                window:(NSWindow *)aWindow
 {
   if ((self = [super init])) {
     mListener = [[SBISupportsOwner alloc] initWithValue:aListener];
-    mWatchedView = [aView retain];
+    mWatchedWindow = [aWindow retain];
   }
 
   return self;
@@ -184,7 +184,7 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 - (void)dealloc
 {
   [mListener release];
-  [mWatchedView release];
+  [mWatchedWindow release];
   [super dealloc];
 }
 
@@ -201,7 +201,7 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
   // |mouseUp:| event handler for the window class. This can be avoided by
   // patching XR to post an event when this event happens in the |NSWindow|
   // subclasses in the cocoa widget stuff.
-  MethodSwizzle([[mWatchedView window] class],
+  MethodSwizzle([mWatchedWindow class],
                 @selector(sendEvent:),
                 @selector(swizzledSendEvent:));
 
@@ -277,26 +277,20 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
     [self startListening];
   }
 
-  // The NSWindow goes away when we go fullscreen.  Retain the contentView
-  // instead since that persists.
-  NSView *contentView = [aWindow contentView];
-
   SBWinMoveListenerContext *listenerContext =
     [[SBWinMoveListenerContext alloc] initWithListener:aListener
-                                                  view:contentView];
+                                                window:aWindow];
 
   [mListenerWinDict setObject:listenerContext
-                       forKey:[NSNumber numberWithInt:[contentView hash]]];
+                       forKey:[NSNumber numberWithInt:[aWindow hash]]];
 }
 
 - (void)stopObservingWindow:(NSWindow *)aWindow
                 forListener:(sbIWindowMoveListener *)aListener
 {
-  NSView *contentView = [aWindow contentView];
-
   // If this was the last window in the watch list, stop listening.
-  NSNumber *viewHash = [NSNumber numberWithInt:[contentView hash]];
-  [mListenerWinDict removeObjectForKey:viewHash];
+  NSNumber *winHash = [NSNumber numberWithInt:[aWindow hash]];
+  [mListenerWinDict removeObjectForKey:winHash];
 
   // If this was the last listener in the dictionary, stop listening to window
   // events for the app.
@@ -335,11 +329,9 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 {
   NSWindow *eventWindow = (NSWindow *)[aNotification object];
 
-  NSView *contentView = [eventWindow contentView];
-
   SBWinMoveListenerContext *listenerContext =
     (SBWinMoveListenerContext *)[mListenerWinDict objectForKey:
-      [NSNumber numberWithInt:[contentView hash]]];
+      [NSNumber numberWithInt:[eventWindow hash]]];
   if (listenerContext) {
     [listenerContext onWindowWillMove];
   }

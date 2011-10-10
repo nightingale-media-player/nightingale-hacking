@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /*
@@ -52,25 +52,25 @@
 }
 
 #osd_border_left {
-  background-image: url("chrome://songbird/skin/video/osd-alt-base-l.png");
+  background-image: url("chrome://nightingale/skin/video/osd-alt-base-l.png");
   background-repeat: no-repeat;
   width: 6px;
   height: 70px;
 }
 
 #video_osd_controls_win[transparent] #osd_border_left {
-  background-image: url("chrome://songbird/skin/video/osd-base-l.png");
+  background-image: url("chrome://nightingale/skin/video/osd-base-l.png");
 }
 
 #osd_border_right {
-  background-image: url("chrome://songbird/skin/video/osd-alt-base-r.png");
+  background-image: url("chrome://nightingale/skin/video/osd-alt-base-r.png");
   background-repeat: no-repeat;
   width: 6px;
   height: 70px;
 }
 
 #video_osd_controls_win[transparent] #osd_border_right {
-  background-image: url("chrome://songbird/skin/video/osd-base-r.png");
+  background-image: url("chrome://nightingale/skin/video/osd-base-r.png");
 }
 
 #osd_controls_hbox {
@@ -78,12 +78,12 @@
   max-width: 502px;
   min-height: 70px;
   max-height: 70px;
-  background-image: url("chrome://songbird/skin/video/osd-alt-base-c.png");
+  background-image: url("chrome://nightingale/skin/video/osd-alt-base-c.png");
   background-repeat: repeat-x;
 }
 
 #video_osd_controls_win[transparent] #osd_controls_hbox {
-  background-image: url("chrome://songbird/skin/video/osd-base-c.png");
+  background-image: url("chrome://nightingale/skin/video/osd-base-c.png");
 }
 
 #osd_controls_top_hbox {
@@ -109,7 +109,7 @@
 }
 
 #osd_volume_slider .sb-player-volume-slider[sbid="sb-progress-slider-min"] {
-  list-style-image: url("chrome://songbird/skin/video/osd-volume-icon.png") !important;
+  list-style-image: url("chrome://nightingale/skin/video/osd-volume-icon.png") !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 #osd_volume_slider .sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover {
@@ -120,18 +120,18 @@
 }
 
 #osd_volume_slider thumb.sb-player-volume-slider {
-  background-image: url("chrome://songbird/skin/video/osd-volume-grabber.png") !important;
+  background-image: url("chrome://nightingale/skin/video/osd-volume-grabber.png") !important;
   background-position: center 0px;
 }
 
 #osd_volume_slider thumb.sb-player-volume-slider:active {
-  background-image: url("chrome://songbird/skin/video/osd-volume-grabber-press.png") !important;
+  background-image: url("chrome://nightingale/skin/video/osd-volume-grabber-press.png") !important;
   background-position: center 0px;
 }
 
 #osd_volume_slider progressmeter.sb-player-volume-slider > .progress-bar,
 #osd_volume_slider progressmeter.sb-player-volume-slider > .progress-remainder {
-  background-image: url("chrome://songbird/skin/video/osd-volume-slider.png") !important;
+  background-image: url("chrome://nightingale/skin/video/osd-volume-slider.png") !important;
   background-position: left 0px !important;
 }
 
@@ -154,38 +154,38 @@
 }
 
 #video_osd_controls_win .sb-player-playpause-button-pause > button {
-  list-style-image: url('chrome://songbird/skin/video/osd-pause.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-pause.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 #video_osd_controls_win .sb-player-playpause-button-pause:active > button {
-  list-style-image: url('chrome://songbird/skin/video/osd-pause-press.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-pause-press.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 
 #video_osd_controls_win .sb-player-playpause-button-play > button {
-  list-style-image: url('chrome://songbird/skin/video/osd-play.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-play.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 #video_osd_controls_win .sb-player-playpause-button-play:active > button {
-  list-style-image: url('chrome://songbird/skin/video/osd-play-press.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-play-press.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 
 #video_osd_controls_win sb-player-back-button {
-  list-style-image: url('chrome://songbird/skin/video/osd-previous.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-previous.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 #video_osd_controls_win sb-player-back-button:active {
-  list-style-image: url('chrome://songbird/skin/video/osd-previous-press.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-previous-press.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 
 #video_osd_controls_win sb-player-forward-button {
-  list-style-image: url('chrome://songbird/skin/video/osd-next.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-next.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 #video_osd_controls_win sb-player-forward-button:active {
-  list-style-image: url('chrome://songbird/skin/video/osd-next-press.png') !important;
+  list-style-image: url('chrome://nightingale/skin/video/osd-next-press.png') !important;
   -moz-image-region: rect(0px 0px 0px 0px) !important;
 }
 
@@ -207,15 +207,15 @@
   background-image: none !important;
   -moz-border-radius: 0 !important;
   border: none !important;
-  list-style-image: url("chrome://songbird/skin/video/osd-fullscreen.png") !important;
+  list-style-image: url("chrome://nightingale/skin/video/osd-fullscreen.png") !important;
 }
 
 #full_screen_button[fullscreen] {
-  list-style-image: url("chrome://songbird/skin/video/osd-escapefull.png") !important;
+  list-style-image: url("chrome://nightingale/skin/video/osd-escapefull.png") !important;
 }
 
 #full_screen_button:active {
-  list-style-image: url("chrome://songbird/skin/video/osd-fullscreen-press.png") !important;
+  list-style-image: url("chrome://nightingale/skin/video/osd-fullscreen-press.png") !important;
   -moz-appearance: none !important;
   -moz-background-clip: padding !important;
   background-color: transparent !important;
@@ -225,7 +225,7 @@
 }
 
 #full_screen_button[fullscreen]:active {
-  list-style-image: url("chrome://songbird/skin/video/osd-escapefull-press.png") !important;
+  list-style-image: url("chrome://nightingale/skin/video/osd-escapefull-press.png") !important;
 }
 
 #full_screen_button button:focus,
@@ -260,21 +260,21 @@ sb-status-progressmeter {
 }
 
 #osd_seekbar_stack > .hook > .left {
-  background-image: url('chrome://songbird/skin/video/osd-scrubber-l.png');
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-l.png');
   background-repeat:no-repeat;
   width: 6px !important;
   background-position:left center;
 }
 
 #osd_seekbar_stack > .hook > .right {
-  background-image: url('chrome://songbird/skin/video/osd-scrubber-r.png');
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-r.png');
   background-repeat:no-repeat;
   width: 6px !important;
   background-position:right center;
 }
 
 #osd_seekbar_stack > .hook > .middle {
-  background-image: url('chrome://songbird/skin/video/osd-scrubber-c.png');
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-c.png');
   background-repeat:repeat-x;
   background-position:left center;
   padding-left: 3px !important;
@@ -282,7 +282,7 @@ sb-status-progressmeter {
 }
 
 #osd_seekbar_stack progressmeter.sb-player-seek-slider > .progress-bar {
-  background-image: url('chrome://songbird/skin/video/osd-scrubber-elapsed-c.png') !important;
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-elapsed-c.png') !important;
   background-repeat:no-repeat;
   background-position:6px center;
   margin-right: 6px !important;
@@ -291,7 +291,7 @@ sb-status-progressmeter {
 /** Thumb *************************************************************/
 
 #osd_seekbar_stack thumb.sb-player-seek-slider {
-  background-image: url('chrome://songbird/skin/video/osd-scrubber-grabber.png');
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-grabber.png');
   background-repeat: no-repeat;
   background-position: 0px 0px !important;
   width: 17px !important;
@@ -303,7 +303,7 @@ sb-status-progressmeter {
 }
 
 #osd_seekbar_stack thumb.sb-player-seek-slider:active {
-  background-image: url('chrome://songbird/skin/video/osd-scrubber-grabber-press.png');
+  background-image: url('chrome://nightingale/skin/video/osd-scrubber-grabber-press.png');
   background-position: 0px 0px !important;
 }
 

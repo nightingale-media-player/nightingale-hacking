@@ -45,7 +45,9 @@ ifdef MOZ_EXTENSIONS
 tier_app_dirs += extensions
 endif
 
+ifdef MOZ_BRANDING_DIRECTORY
 tier_app_dirs += $(MOZ_BRANDING_DIRECTORY)
+endif
 
 tier_app_dirs += browser
 
@@ -57,27 +59,3 @@ package:
 
 install::
 	@$(MAKE) -C browser/installer install
-
-clean::
-	@$(MAKE) -C browser/installer clean
-
-distclean::
-	@$(MAKE) -C browser/installer distclean
-
-source-package::
-	@$(MAKE) -C browser/installer source-package
-
-upload::
-	@$(MAKE) -C browser/installer upload
-
-ifdef ENABLE_TESTS
-# Implemented in testing/testsuite-targets.mk
-
-mochitest-browser-chrome:
-	$(RUN_MOCHITEST) --browser-chrome
-	$(CHECK_TEST_ERROR)
-
-mochitest:: mochitest-browser-chrome
-
-.PHONY: mochitest-browser-chrome
-endif

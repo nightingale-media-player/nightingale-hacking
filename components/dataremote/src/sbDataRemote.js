@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -38,13 +38,13 @@ var Ci = Components.interfaces;
 var Cc = Components.classes;
 
 // This object should not be instantiated by user code.  Instead, use 
-// the original contract id "@songbirdnest.com/Songbird/DataRemote;1"
+// the original contract id "@getnightingale.com/Nightingale/DataRemote;1"
 // which will give a wrapper around this object.  See sbPIDataRemote2
 // and sbDataRemoteWrapper for details.
-const SONGBIRD_DATAREMOTE_CONTRACTID = null;
-const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Instance";
-const SONGBIRD_DATAREMOTE_CID = Components.ID("{e0990420-e9c0-11dd-ba2f-0800200c9a66}");
-const SONGBIRD_DATAREMOTE_IID = Ci.sbPIDataRemote2;
+const NIGHTINGALE_DATAREMOTE_CONTRACTID = null;
+const NIGHTINGALE_DATAREMOTE_CLASSNAME = "Nightingale Data Remote Instance";
+const NIGHTINGALE_DATAREMOTE_CID = Components.ID("{e0990420-e9c0-11dd-ba2f-0800200c9a66}");
+const NIGHTINGALE_DATAREMOTE_IID = Ci.sbPIDataRemote2;
 
 function DataRemote() {
   // Nothing here...
@@ -76,7 +76,7 @@ DataRemote.prototype = {
       // The prefapi hashes fully qualified prefs, so using a simple root does not
       //   hurt us. Callbacks are in a (BIG) linked-list (ew), which sucks. Having
       //   a shorter root saves some strncmp() time.
-      this._root = "songbird.";
+      this._root = "nightingale.";
       this._key = aKey;
     } else {
       // If a root is specified use that.
@@ -402,7 +402,7 @@ DataRemote.prototype = {
 
   // nsIClassInfo
   getInterfaces: function( count ) {
-     var ifaces = [ SONGBIRD_DATAREMOTE_IID,
+     var ifaces = [ NIGHTINGALE_DATAREMOTE_IID,
                     Ci.nsIClassInfo,
                     Ci.nsIObserver,
                     Ci.nsISecurityCheckedComponent,
@@ -413,15 +413,15 @@ DataRemote.prototype = {
   },
  
   get classDescription() {
-      return SONGBIRD_DATAREMOTE_CLASSNAME;
+      return NIGHTINGALE_DATAREMOTE_CLASSNAME;
   },
 
   get contractID() {
-      return SONGBIRD_DATAREMOTE_CONTRACTID;
+      return NIGHTINGALE_DATAREMOTE_CONTRACTID;
   },
 
   get classID() {
-      return SONGBIRD_DATAREMOTE_CID;
+      return NIGHTINGALE_DATAREMOTE_CID;
   },
 
   getHelperForLanguage: function( language ) { return null; },
@@ -456,10 +456,10 @@ DataRemote.prototype = {
                        Ci.nsIClassInfo,
                        Ci.nsIObserver,
                        Ci.nsISecurityCheckedComponent,
-                       SONGBIRD_DATAREMOTE_IID ],
+                       NIGHTINGALE_DATAREMOTE_IID ],
 
   _initSCC: function() {
-    this._securityMixin = Cc["@songbirdnest.com/remoteapi/security-mixin;1"]
+    this._securityMixin = Cc["@getnightingale.com/remoteapi/security-mixin;1"]
                          .createInstance(Ci.nsISecurityCheckedComponent);
 
     // initialize the security mixin with the cleared methods and props
@@ -496,7 +496,7 @@ DataRemote.prototype = {
 
   // nsISupports
   QueryInterface: function(iid) {
-    if (!iid.equals(SONGBIRD_DATAREMOTE_IID) &&
+    if (!iid.equals(NIGHTINGALE_DATAREMOTE_IID) &&
         !iid.equals(Ci.nsIClassInfo) && 
         !iid.equals(Ci.nsIObserver) && 
         !iid.equals(Ci.nsISecurityCheckedComponent) &&
@@ -581,9 +581,9 @@ if (DEBUG_DATAREMOTES) {
 const gDataRemoteModule = {
   registerSelf: function(compMgr, fileSpec, location, type) {
     compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation(SONGBIRD_DATAREMOTE_CID,
-                                    SONGBIRD_DATAREMOTE_CLASSNAME,
-                                    SONGBIRD_DATAREMOTE_CONTRACTID,
+    compMgr.registerFactoryLocation(NIGHTINGALE_DATAREMOTE_CID,
+                                    NIGHTINGALE_DATAREMOTE_CLASSNAME,
+                                    NIGHTINGALE_DATAREMOTE_CONTRACTID,
                                     fileSpec,
                                     location,
                                     type);
@@ -591,11 +591,11 @@ const gDataRemoteModule = {
 
   unregisterSelf : function (compMgr, location, type) {
     compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.unregisterFactoryLocation(SONGBIRD_DATAREMOTE_CID, location);
+    compMgr.unregisterFactoryLocation(NIGHTINGALE_DATAREMOTE_CID, location);
   },
 
   getClassObject : function (compMgr, cid, iid) {
-    if (!cid.equals(SONGBIRD_DATAREMOTE_CID))
+    if (!cid.equals(NIGHTINGALE_DATAREMOTE_CID))
       throw Cr.NS_ERROR_NO_INTERFACE;
 
     if (!iid.equals(Ci.nsIFactory))

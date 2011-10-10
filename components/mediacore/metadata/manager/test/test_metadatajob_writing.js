@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -65,8 +65,8 @@ function runTest() {
   
   var prefSvc = Cc["@mozilla.org/preferences-service;1"]
                 .getService(Ci.nsIPrefBranch);
-  var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
-  prefSvc.setBoolPref("songbird.metadata.enableWriting", true);
+  var oldWritingEnabledPref = prefSvc.getBoolPref("nightingale.metadata.enableWriting");
+  prefSvc.setBoolPref("nightingale.metadata.enableWriting", true);
 
   // Now find all the media files in our testing directory
   var urls = getMediaFilesInFolder(testFolder);
@@ -240,7 +240,7 @@ function runTest() {
         }
         assertEqual(failedFiles, 0, "Some files failed to write correctly.");
         
-        prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
+        prefSvc.setBoolPref("nightingale.metadata.enableWriting", oldWritingEnabledPref); 
         // We're done, so kill all the temp files
         testFolder.remove(true);
         job = null;
@@ -256,9 +256,9 @@ function runTest() {
  * Get an array of all media files below the given folder
  */
 function getMediaFilesInFolder(folder) {
-  var scan = Cc["@songbirdnest.com/Songbird/FileScan;1"]
+  var scan = Cc["@getnightingale.com/Nightingale/FileScan;1"]
                .createInstance(Ci.sbIFileScan);
-  var query = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+  var query = Cc["@getnightingale.com/Nightingale/FileScanQuery;1"]
                .createInstance(Ci.sbIFileScanQuery);
   query.setDirectory(folder.path);
   query.setRecurse(true);
@@ -302,12 +302,12 @@ function importFilesToLibrary(files, library) {
  * Get a metadata job for the given items
  */
 function startMetadataJob(items, type, writeProperties) {
-  var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var array = Components.classes["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Components.interfaces.nsIMutableArray);
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  manager = Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                       .getService(Components.interfaces.sbIFileMetadataService);
                       
   var job;

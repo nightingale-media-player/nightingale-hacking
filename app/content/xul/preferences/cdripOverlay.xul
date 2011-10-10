@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<!--
+<!-- 
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,16 +21,16 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!-- Import external definitions. -->
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- Import media prefs overlay. -->
@@ -38,7 +38,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/preferences/cdripPrefs.js"/>
+          src="chrome://nightingale/content/scripts/preferences/cdripPrefs.js"/>
 
 
   <prefpane id="paneCDRip"
@@ -47,22 +47,22 @@
     <preferences>
       <preference id="rip_format_pref"
                   prefid="rip_format_pref"
-                  name="songbird.cdrip.transcode_profile.profile_id"
+                  name="nightingale.cdrip.transcode_profile.profile_id"
                   type="string" />
 
       <preference id="rip_quality_pref"
                   prefid="rip_quality_pref"
-                  name="songbird.cdrip.transcode_profile.audio_properties.bitrate"
+                  name="nightingale.cdrip.transcode_profile.audio_properties.bitrate"
                   type="string" />
 
       <preference id="rip_oncomplete_autoeject_pref"
                   prefid="rip_oncomplete_autoeject_pref"
-                  name="songbird.cdrip.oncomplete.autoeject"
+                  name="nightingale.cdrip.oncomplete.autoeject"
                   type="bool" />
 
       <preference id="rip_oncomplete_notifysound"
                   prefid="rip_oncomplete_notifysound"
-                  name="songbird.cdrip.oncomplete.notifysound"
+                  name="nightingale.cdrip.oncomplete.notifysound"
                   type="bool" />
 
       <preference id="rip_cdlookup_provider"
@@ -75,11 +75,30 @@
 
       <groupbox>
 
-        <!-- Transcode options -->
-        <vbox id="cdrip-transcode-prefs"
-              oncommand="CDRipPrefsPane.onUIPrefChanged();">
-          <sb-device-transcode-settings id="cd-transcode-settings"
-                                        showDesc="true" />
+        <!-- Format -->
+        <vbox>
+          <label value="&cdrip.prefpane.format;" />
+          <hbox>
+            <menulist id="rip-format-menulist"
+                      preference="rip_format_pref">
+              <menupopup flex="1" id="rip-format-list"
+                         oncommand="CDRipPrefsPane.formatChanged(event);">
+              </menupopup>
+            </menulist>
+          </hbox>
+        </vbox>
+
+        <!-- Quality -->
+        <vbox id="transcoding-bitrate-settings">
+          <label value="&cdrip.prefpane.quality;" />
+          <hbox>
+            <textbox id="transcoding-bitrate-kbps"
+                     type="number"
+                     onchange="CDRipPrefsPane.updateBitratePref();"
+                     increment="32"/>
+            <label value="&cdrip.prefpane.quality.units.kbps;"/>
+          </hbox>
+          <label value="&cdrip.prefpane.quality_desc;" />
         </vbox>
 
         <vbox>
@@ -117,6 +136,7 @@
         </hbox>
       </groupbox>
 
+    
     </notificationbox>
 
   </prefpane>

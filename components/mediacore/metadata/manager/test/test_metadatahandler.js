@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -31,7 +31,7 @@
 var gFileMetadataService;
 
 function runTest () {
-  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
+  gFileMetadataService = Components.classes["@getnightingale.com/Nightingale/MetadataManager;1"]
                                 .getService(Components.interfaces.sbIMetadataManager);
                               
   var file = newAppRelativeFile("testharness/metadatamanager/files/MP3_ID3v23.mp3");
@@ -49,7 +49,7 @@ function runTest () {
   
   // Verify that initially all properties are X
   var expectedProperties = {};
-  expectedProperties[SBProperties.artistName] = "Songbird";
+  expectedProperties[SBProperties.artistName] = "Nightingale";
   expectedProperties[SBProperties.albumName] = "Unit Test Classics";
   expectedProperties[SBProperties.trackName] = "Sample";
   

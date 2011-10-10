@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,12 +20,12 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
-const SONGBIRD_PARSERERRORHANDLER_CONTRACTID = "@songbirdnest.com/Songbird/ParserErrorHandler;1";
-const SONGBIRD_PARSERERRORHANDLER_CLASSNAME = "Songbird Parser Error Handler";
-const SONGBIRD_PARSERERRORHANDLER_CID = Components.ID("{213a0ebb-12b3-492f-bc4c-f472f8f24d2c}");
+const NIGHTINGALE_PARSERERRORHANDLER_CONTRACTID = "@getnightingale.com/Nightingale/ParserErrorHandler;1";
+const NIGHTINGALE_PARSERERRORHANDLER_CLASSNAME = "Nightingale Parser Error Handler";
+const NIGHTINGALE_PARSERERRORHANDLER_CID = Components.ID("{213a0ebb-12b3-492f-bc4c-f472f8f24d2c}");
 
 const MSG_ERROR_UNDEFINEDENTITY = '[JavaScript Error: "undefined entity"';
 const MSG_ERROR_ENTITYPROCESSING = '[JavaScript Error: "error in processing external entity reference"';
@@ -56,10 +56,10 @@ var consoleListener = {
                                    .getService(Components.interfaces.nsIWindowWatcher);
           var wMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                     .getService(Components.interfaces.nsIWindowMediator);
-          var mainWindow = wMediator.getMostRecentWindow("Songbird:Main");
+          var mainWindow = wMediator.getMostRecentWindow("Nightingale:Main");
 
           wWatcher.openWindow(mainWindow,
-                    "chrome://songbird/content/xul/parserError.xul",
+                    "chrome://nightingale/content/xul/parserError.xul",
                     "_blank",
                     "chrome,modal=yes,centerscreen,resizable=no",
                     msg);
@@ -190,9 +190,9 @@ var gModule = {
   
   _objects: {
     // The ParserError Component
-    parsererrorhandler:     { CID        : SONGBIRD_PARSERERRORHANDLER_CID,
-                              contractID : SONGBIRD_PARSERERRORHANDLER_CONTRACTID,
-                              className  : SONGBIRD_PARSERERRORHANDLER_CLASSNAME,
+    parsererrorhandler:     { CID        : NIGHTINGALE_PARSERERRORHANDLER_CID,
+                              contractID : NIGHTINGALE_PARSERERRORHANDLER_CONTRACTID,
+                              className  : NIGHTINGALE_PARSERERRORHANDLER_CLASSNAME,
                               factory    : #1#(ParserErrorHandler)
                             },
   },

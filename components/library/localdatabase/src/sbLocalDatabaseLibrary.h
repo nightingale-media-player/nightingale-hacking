@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -61,7 +61,6 @@ class sbAutoBatchHelper;
 class sbIBatchCreateMediaItemsListener;
 class sbILibraryFactory;
 class sbILocalDatabasePropertyCache;
-class sbILocalDatabaseGUIDArrayLengthCache;
 class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
 class sbLocalDatabaseMediaListView;
@@ -87,9 +86,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD AddItem(sbIMediaItem* aMediaItem, sbIMediaItem ** aNewMediaItem);      \
   NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                      \
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                             \
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems,                        \
-                           sbIAddMediaItemsListener *aListener,                     \
-                           PRBool aAsync);                                          \
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator* aMediaItems, sbIMediaListAsyncListener* aListener);\
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                      \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                        \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                          \
@@ -104,7 +101,6 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
 #define SB_FORWARD_SBIMEDIAITEM(_to) \
   NS_IMETHOD GetLibrary(sbILibrary * *aLibrary) { return _to GetLibrary(aLibrary); } \
   NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return _to GetIsMutable(aIsMutable); } \
-  NS_IMETHOD GetItemController(sbIMediaItemController **aMediaItemController) { return _to GetItemController(aMediaItemController); } \
   NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return _to GetMediaCreated(aMediaCreated); } \
   NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return _to SetMediaCreated(aMediaCreated); } \
   NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return _to GetMediaUpdated(aMediaUpdated); } \
@@ -114,7 +110,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return _to SetContentLength(aContentLength); } \
   NS_IMETHOD GetContentType(nsAString & aContentType) { return _to GetContentType(aContentType); } \
   NS_IMETHOD SetContentType(const nsAString & aContentType) { return _to SetContentType(aContentType); } \
-  NS_IMETHOD TestIsURIAvailable(nsIObserver *aObserver) { return _to TestIsURIAvailable(aObserver); } \
+  NS_IMETHOD TestIsAvailable(nsIObserver *aObserver) { return _to TestIsAvailable(aObserver); } \
   NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return _to OpenInputStreamAsync(aListener, aContext, _retval); } \
   NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return _to OpenInputStream(_retval); } \
   NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return _to OpenOutputStream(_retval); } \
@@ -142,6 +138,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return _to GetDistinctValuesForProperty(aPropertyID, _retval); }
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
+                               public sbIDatabaseSimpleQueryCallback,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary,
                                public nsIObserver,
@@ -168,14 +165,10 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   };
 
   struct sbMediaItemInfo {
-    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE,
-                    PRPackedBool aHasAudioType = PR_FALSE,
-                    PRPackedBool aHasVideoType = PR_FALSE)
+    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE)
     : itemID(0),
-      hasItemID(PR_FALSE),
-      hasListType(aHasListType),
-      hasAudioType(aHasAudioType),
-      hasVideoType(aHasVideoType) {
+      hasItemID(PR_FALSE) {
+      hasListType = aHasListType;
     }
 
     PRUint32 itemID;
@@ -183,8 +176,6 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<nsIWeakReference> weakRef;
     PRPackedBool hasItemID;
     PRPackedBool hasListType;
-    PRPackedBool hasAudioType;
-    PRPackedBool hasVideoType;
   };
 
   struct sbMediaItemPair {
@@ -220,6 +211,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
 
 public:
   NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_SBIDATABASESIMPLEQUERYCALLBACK
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO
@@ -257,9 +249,7 @@ public:
    * Internal methods for async operations on sbIMediaList
    */
   nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems,
-                                sbIAddMediaItemsListener *aListener);
-
-  nsresult GetLengthCache(sbILocalDatabaseGUIDArrayLengthCache **aLengthCache);
+                                sbIMediaListAsyncListener *aListener);
 
 private:
   nsresult CreateQueries();
@@ -277,8 +267,7 @@ private:
    * sending notifications.
    */
   nsresult SetDefaultItemProperties(sbIMediaItem* aItem,
-                                    sbIPropertyArray* aProperties,
-                                    sbMediaItemInfo* aItemInfo);
+                                    sbIPropertyArray* aProperties);
 
   nsresult GetTypeForGUID(const nsAString& aGUID,
                           nsAString& _retval);
@@ -323,11 +312,6 @@ private:
   static PLDHashOperator PR_CALLBACK
     EntriesToMediaListArray(nsISupportsHashKey* aEntry,
                             void* aUserData);
-
-  static PLDHashOperator PR_CALLBACK
-    RemoveIfNotList(nsStringHashKey::KeyType aKey,
-                    nsAutoPtr<sbMediaItemInfo> &aEntry,
-                    void *aUserData);
 
   nsresult RegisterDefaultMediaListFactories();
 
@@ -376,8 +360,7 @@ private:
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
 
-  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE,
-                         const nsAString &aContentType = EmptyString());
+  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE);
 
   /* Migration related methods */
   nsresult NeedsMigration(PRBool *aNeedsMigration,
@@ -401,17 +384,13 @@ private:
   // lives in the default DBEngine database store.
   nsCOMPtr<nsIURI> mDatabaseLocation;
 
-  // A dummy uri that holds a special 'songbird-library://' url.
+  // A dummy uri that holds a special 'nightingale-library://' url.
   nsCOMPtr<nsIURI> mContentSrc;
 
   nsCOMPtr<sbIDatabasePreparedStatement> mCreateMediaItemPreparedStatement;
   nsCOMPtr<sbIDatabasePreparedStatement> mGetTypeForGUID;
-  nsCOMPtr<sbIDatabasePreparedStatement> mGetCountForIdentity;
-  nsCOMPtr<sbIDatabasePreparedStatement> mGetGUIDForIdentity;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
-
-  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> mLengthCache;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
   sbMediaItemInfoTable mMediaItemTable;
@@ -458,13 +437,10 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
-  sbLibraryInsertingEnumerationListener(
-                                  sbLocalDatabaseLibrary* aLibrary,
-                                  sbIAddMediaItemsListener * aListener = nsnull)
+  sbLibraryInsertingEnumerationListener(sbLocalDatabaseLibrary* aLibrary)
   : mFriendLibrary(aLibrary),
     mShouldInvalidate(PR_FALSE),
-    mLength(0),
-    mListener(aListener)
+    mLength(0)
   {
     NS_ASSERTION(mFriendLibrary, "Null pointer!");
   }
@@ -481,8 +457,6 @@ private:
   sbMediaItemArray mOriginalItemList;
 
   PRUint32 mLength;
-
-  nsCOMPtr<sbIAddMediaItemsListener> mListener;
 };
 
 /**

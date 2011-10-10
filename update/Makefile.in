@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the “GPL”).
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ..
@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = test
-
 #
 # These scripts have problems with absolute paths, so use $(DEPTH) instead
 #
@@ -39,23 +37,23 @@ ifndef STAGE_DIR
    STAGE_DIR = $(DEPTH)/_built_installer
 endif
 
-SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
+SERVER_BASE = http://download.getnightingale.com/nightingale/$(SB_UPDATE_CHANNEL)
 SERVER_PATH = $(SERVER_BASE)/$(SB_PLATFORM)-$(SB_ARCH)/$(SB_BRANCHNAME)
 
 UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=.debug)
 
 #
-# On OS X we need to diff from the 'Songbird.app' subdir.
+# On OS X we need to diff from the 'Nightingale.app' subdir.
 #
 ifeq (macosx,$(SB_PLATFORM))
-   UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
+   UPD_TARGET_DIR = $(NIGHTINGALE_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
 endif
 ifeq (windows,$(SB_PLATFORM))
    # windows needs relative paths, all others need the full path
    UPD_TARGET_DIR = $(DEPTH)/$(DISTDIRNAME)
 endif
 ifeq (linux,$(SB_PLATFORM))
-   UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
+   UPD_TARGET_DIR = $(NIGHTINGALE_OBJDIR)/$(DISTDIRNAME)
 endif
 
 #

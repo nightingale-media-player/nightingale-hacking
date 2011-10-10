@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,14 +22,14 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Interface description for the Songbird string bundle service interface.
+// Interface description for the Nightingale string bundle service interface.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -39,10 +39,10 @@
 
 /**
  * \interface sbIStringBundleService
- * \brief Interface for the Songbird string bundle service.  Instantiate as a
+ * \brief Interface for the Nightingale string bundle service.  Instantiate as a
  *        component service.
  *
- * "@songbirdnest.com/Songbird/stringbundle;1"
+ * "@getnightingale.com/Nightingale/stringbundle;1"
  */
 
 interface nsIStringBundle;
@@ -51,14 +51,14 @@ interface nsIStringBundle;
 interface sbIStringBundleService : nsISupports
 {
   /**
-   * \brief Main Songbird string bundle.  Thread-safe.
+   * \brief Main Nightingale string bundle.  Thread-safe.
    */
 
   readonly attribute nsIStringBundle bundle;
 
 
   /**
-   * \brief Main Songbird brand string bundle.  Thread-safe.
+   * \brief Main Nightingale brand string bundle.  Thread-safe.
    */
 
   readonly attribute nsIStringBundle brandBundle;
@@ -71,6 +71,6 @@ interface sbIStringBundleService : nsISupports
 
 %{C++
 #define SB_STRINGBUNDLESERVICE_CONTRACTID \
-          "@songbirdnest.com/Songbird/stringbundle;1"
+          "@getnightingale.com/Nightingale/stringbundle;1"
 %}C++
 

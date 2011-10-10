@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -30,14 +30,14 @@
 <!-- Import external definitions. -->
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- Overlay import media preference tabs. -->
-<?xul-overlay href="chrome://songbird/content/xul/preferences/importLibraryPrefs.xul"?>
-<?xul-overlay href="chrome://songbird/content/xul/preferences/watchFolderPrefs.xul"?>
+<?xul-overlay href="chrome://nightingale/content/xul/preferences/importLibraryPrefs.xul"?>
+<?xul-overlay href="chrome://nightingale/content/xul/preferences/watchFolderPrefs.xul"?>
 
 <!-- Import media prefs overlay. -->
 <overlay id="import_media_prefpane_overlay"
@@ -79,7 +79,7 @@
   <!-- Import the import media preferences panel services. -->
   <script
     type="application/x-javascript"
-    src="chrome://songbird/content/scripts/preferences/importMediaPrefs.js"/>
+    src="chrome://nightingale/content/scripts/preferences/importMediaPrefs.js"/>
 
 </overlay>
 

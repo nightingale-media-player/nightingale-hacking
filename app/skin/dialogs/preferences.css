@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -30,7 +30,7 @@
 
 PREFERENCES DIALOG
 
-Extra styles for Songbird additions to the Firefox preferences dialog
+Extra styles for Nightingale additions to the Firefox preferences dialog
 
 *******************************************************************************
 */ 
@@ -43,7 +43,7 @@ Extra styles for Songbird additions to the Firefox preferences dialog
 
 radio[pane=paneHotkeys] 
 {
-  list-style-image: url("chrome://songbird/skin/preferences/options.png") !important; 
+  list-style-image: url("chrome://nightingale/skin/preferences/options.png") !important; 
 	-moz-image-region: rect(0px, 32px,  32px, 0px)
 }
 radio[pane=paneHotkeys]:hover, 
@@ -109,6 +109,52 @@ listheader
   -moz-box-flex: 1;
 }
 
+
+/* media management tab */
+#manage_media_format_box {
+  margin: 4px;
+  display: -moz-groupbox;
+}
+
+#manage_media_format_dir_file .fileFieldLabel,
+#manage_media_format_dir_formatter > hbox > vbox > textbox {
+  background: none;
+  border: none;
+}
+#manage_media_format_file_formatter > hbox > vbox > textbox:hover > hbox > input,
+#manage_media_format_file_formatter > hbox > vbox > textbox > hbox > input:focus {
+  text-decoration: underline;
+}
+#manage_media_format_dir_file .fileFieldLabel > .textbox-input-box,
+#manage_media_format_dir_formatter > hbox > vbox > textbox > .textbox-input-box,
+#manage_media_format_file_formatter > hbox > vbox > textbox > .textbox-input-box {
+  width: 1em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > menulist,
+#manage_media_format_file_formatter > hbox > vbox > menulist {
+  min-width: 10em;
+}
+#manage_media_format_dir_container > label,
+#manage_media_format_file_container > label,
+label#manage_media_format_dir_suffix_label,
+label#manage_media_format_file_suffix_label {
+  min-height: 2em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > label.text-link,
+#manage_media_format_file_formatter > hbox > vbox  > label.text-link {
+  /* the add/remove/etc links */
+  font-size: 0.8em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > label[disabled],
+#manage_media_format_file_formatter > hbox > vbox  > label[disabled],
+#manage_media_format_dir_formatter > hbox > vbox > label[disabled]:hover,
+#manage_media_format_file_formatter > hbox > vbox  > label[disabled]:hover {
+  /* the add/remove/etc links, disabled */
+  color: GrayText;
+  cursor: default !important;
+  text-decoration: none;
+}
+
 .header
 {
   font-weight: bold;
@@ -119,15 +165,11 @@ listheader
   font-weight: bold;
 }
 
-/* Inline Link */
+#manage_media_library_file {
+  margin-left: 1em;
+}
 
-.inline-link {
-  text-decoration: none;
-}
-.inline-link:hover {
-  text-decoration: underline;
-}
-.inline-link[disabled]:hover {
-  text-decoration: none;
-  cursor: default;
+/* the nightingale theme ought to handle this, really */
+#manage_media_global_cmd .checkbox-label-box {
+  margin-left: 4px;
 }

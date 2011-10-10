@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,17 +19,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \file  sbBrandString.cpp
- * \brief Songbird Brand String Source.
+ * \brief Nightingale Brand String Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string imported services.
+// Nightingale brand string imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string public services.
+// Nightingale brand string public services.
 //
 //------------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ sbBrandString::sbBrandString(LPCWSTR aKey,
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string private services.
+// Nightingale brand string private services.
 //
 //------------------------------------------------------------------------------
 
@@ -107,7 +107,7 @@ sbBrandString::Initialize(const tstring& aKey,
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string private class services.
+// Nightingale brand string private class services.
 //
 //------------------------------------------------------------------------------
 

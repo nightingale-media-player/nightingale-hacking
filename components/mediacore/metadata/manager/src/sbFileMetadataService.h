@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \file sbFileMetadataService.h
@@ -45,22 +47,21 @@
 #include <sbIMediacoreManager.h>
 
 #include "sbIFileMetadataService.h"
-#include "sbPIFileMetadataService.h"
 #include "sbMetadataJob.h"
 
 
 // DEFINES ====================================================================
-#define SONGBIRD_FILEMETADATASERVICE_CONTRACTID \
-"@songbirdnest.com/Songbird/FileMetadataService;1"
+#define NIGHTINGALE_FILEMETADATASERVICE_CONTRACTID \
+"@getnightingale.com/Nightingale/FileMetadataService;1"
 
-#define SONGBIRD_FILEMETADATASERVICE_CLASSNAME \
-"Songbird File Metadata Service"
+#define NIGHTINGALE_FILEMETADATASERVICE_CLASSNAME \
+"Nightingale File Metadata Service"
 
-#define SONGBIRD_FILEMETADATASERVICE_DESCRIPTION \
-"Songbird File Metadata Service - Reads and writes media file metadata"
+#define NIGHTINGALE_FILEMETADATASERVICE_DESCRIPTION \
+"Nightingale File Metadata Service - Reads and writes media file metadata"
 
 // {183C63A5-8195-4294-8D41-A21FE16A0D7C}
-#define SONGBIRD_FILEMETADATASERVICE_CID \
+#define NIGHTINGALE_FILEMETADATASERVICE_CID \
 {0x183C63A5, 0x8195, 0x4294, {0x8D, 0x41, 0xA2, 0x1F, 0xE1, 0x6A, 0x0D, 0x7C}}
 
 
@@ -124,15 +125,12 @@ class sbMetadataCrashTracker;
  *
  * \sa sbIJobProgress, sbIFileMetadataService
  */
-class sbFileMetadataService : public sbIFileMetadataService,
-                              public sbPIFileMetadataService,
-                              public nsIObserver
+class sbFileMetadataService : public sbIFileMetadataService, public nsIObserver
 {
 public:
   
   NS_DECL_ISUPPORTS
   NS_DECL_SBIFILEMETADATASERVICE
-  NS_DECL_SBPIFILEMETADATASERVICE
   NS_DECL_NSIOBSERVER
 
   sbFileMetadataService();

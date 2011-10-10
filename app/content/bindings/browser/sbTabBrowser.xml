@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
 [
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-%songbirdDTD;
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
 ]
 >
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -27,7 +27,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
@@ -37,7 +37,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/browser/tabBrowserCompat.xml#tabbrowser-compat">
+  <binding id="sb-tabbrowser" extends="chrome://nightingale/content/bindings/browser/tabBrowserCompat.xml#tabbrowser-compat">
     <implementation implements="sbITabBrowser">
       <constructor>
           <![CDATA[
@@ -67,7 +67,7 @@
         if (this.hasAttribute("tabstrip")) {
           this.mStrip = document.getElementById(this.getAttribute("tabstrip"));
         }
-
+        
         /* load the tab progress listener object
          * this is used to trigger notifyTabContentChange() / saveTabState()
          * and to set various data remotes on location change, such as toolbar
@@ -76,16 +76,16 @@
         var subscriptLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
                                 .getService(Ci.mozIJSSubScriptLoader);
         var scope = {};
-        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBTabProgressListener.js", scope);
+        subscriptLoader.loadSubScript("chrome://nightingale/content/bindings/browser/SBTabProgressListener.js", scope);
         this.webProgressListener = new scope.SBTabProgressListener(this);
         this.addProgressListener(this.webProgressListener,
                                  Ci.nsIWebProgress.NOTIFY_LOCATION |
                                  Ci.nsIWebProgress.NOTIFY_STATE_ALL);
 
         this.loading = false;
-
+        
         scope = {};
-        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBSessionStore.js", scope);
+        subscriptLoader.loadSubScript("chrome://nightingale/content/bindings/browser/SBSessionStore.js", scope);
         this._sessionStore = scope.SBSessionStore;
 
         /* we want to know when the window has finished opening so we can
@@ -98,12 +98,12 @@
             if (event.target != this.document) {
               return;
             }
-
+            
             // Initialize the zoom manager
             FullZoom.init();
-
+            
             this.tabbrowser._sessionStore.restoreTabState(this.tabbrowser);
-
+            
             // *****************************
             // BUG 8097 - the tab strip is cut off when restoring with tabs
             var strip = this.tabbrowser.mStrip;
@@ -111,7 +111,7 @@
               strip._arrowscrollbox.ensureElementIsVisible(strip._firstTab);
             }
             // *****************************
-
+            
             // session restore has completed; focus the desired tab to select,
             // and dispatch an event notifying the end of the whole session
             // restore process.  However, since sbTabBrowser::loadURI will use
@@ -129,7 +129,7 @@
           }
         }
         window.addEventListener('load', this.windowLoadEventListener, true);
-
+        
         this.windowUnloadEventListener = {
           tabbrowser: this,
           document: document,
@@ -137,20 +137,20 @@
             if (event.target != this.document) {
               return;
             }
-
+            
             // Shutdown the zoom manager
             FullZoom.destroy();
-
+            
             // If we're stopped, then we need to stash whatever the user is looking at
             // so that the next view to load will use the same thing.
-            if (this.tabbrowser.mm.status.state ==
+            if (this.tabbrowser.mm.status.state == 
                 Ci.sbIMediacoreStatus.STATUS_STOPPED) {
-
+            
               // If the current tab has a view then stash that.
-              if (this.tabbrowser.mCurrentTab.mediaListView &&
+              if (this.tabbrowser.mCurrentTab.mediaListView && 
                   this.tabbrowser.mCurrentTab.mediaListView.length > 0) {
                 this.tabbrowser.mm.sequencer.view = this.tabbrowser.mCurrentTab.mediaListView;
-
+              
               // Otherwise, use whatever is in the media tab (if we have one)
               } else if (this.tabbrowser.mediaTab &&
                          this.tabbrowser.mediaTab.mediaListView &&
@@ -158,7 +158,7 @@
                 this.tabbrowser.mm.sequencer.view = this.tabbrowser.mediaTab.mediaListView;
               }
             }
-          }
+          }          
         }
         window.addEventListener('unload', this.windowUnloadEventListener, true);
 
@@ -169,13 +169,13 @@
          * box)
          */
         scope = {};
-        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBRemoteAPIHandler.js", scope);
+        subscriptLoader.loadSubScript("chrome://nightingale/content/bindings/browser/SBRemoteAPIHandler.js", scope);
         this.onRemoteAPI = scope.onRemoteAPI;
         window.addEventListener("remoteapi", this.onRemoteAPI, true);
 
         // tell appshell how to open new tabs (sb bug 3757)
         scope = {};
-        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/BrowserDOMWindow.js", scope);
+        subscriptLoader.loadSubScript("chrome://nightingale/content/bindings/browser/BrowserDOMWindow.js", scope);
         window.QueryInterface(Ci.nsIDOMChromeWindow).browserDOMWindow =
           new scope.BrowserDOMWindow(this);
 
@@ -188,8 +188,8 @@
         // for example, if a playlist is renamed, if there are open tabs for that playlist
         // they should be retitled.
         var self = this;
-        this._servicePaneService =
-              Cc['@songbirdnest.com/servicepane/service;1']
+        this._servicePaneService = 
+              Cc['@getnightingale.com/servicepane/service;1']
                 .getService(Ci.sbIServicePaneService);
         this._servicePaneListener = {
           attrModified: function(aNode, aAttrName, aNamespace, aOldVal, aNewVal) {
@@ -217,12 +217,12 @@
           QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneMutationListener])
         }
         this._servicePaneService.root.addMutationListener(this._servicePaneListener);
-
-        this.mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        
+        this.mm = Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Ci.sbIMediacoreManager);
-
-        this.typeSniffer =
-              Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                    
+        this.typeSniffer = 
+              Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                 .createInstance(Ci.sbIMediacoreTypeSniffer);
 
         // Add a observer to listen for shutdown to save tab state.
@@ -247,8 +247,8 @@
       ]]></constructor>
       <destructor>
         <![CDATA[
-
-        // remove service pane listener
+        
+        // remove service pane listener        
         this._servicePaneService.root.removeMutationListener(this._servicePaneListener);
         this._servicePaneService = null;
 
@@ -260,7 +260,7 @@
         window.removeEventListener("remoteapi", this.onRemoteAPI, true);
         window.QueryInterface(Ci.nsIDOMChromeWindow)
               .browserDOMWindow = null;
-
+              
         this.mm = null;
         this.typeSniffer = null;
       ]]></destructor>
@@ -268,11 +268,11 @@
       <field name="_sessionStore">null</field>
       <field name="_servicePaneService">null</field>
       <field name="_servicePaneListener">null</field>
-
+      
       <property name="tabStrip" readonly="true">
         <getter>return this.mStrip;</getter>
       </property>
-
+      
       <!-- Override tabBrowser.setTabTitle in order to support
            service pane icons and titles for chrome URLs -->
       <method name="setTabTitle">
@@ -317,164 +317,13 @@
         </body>
       </method>
 
-      <!-- Override tabBrowser.updateCurrentBrowser to set focus correctly
-        (http://bugzilla.songbirdnest.com/show_bug.cgi?id=21236) -->
-      <method name="updateCurrentBrowser">
-        <body>
-          <![CDATA[
-            var newBrowser = this.getBrowserAtIndex(this.mTabContainer.selectedIndex);
-            if (this.mCurrentBrowser == newBrowser)
-              return;
-
-            if (this.mCurrentBrowser) {
-              // Only save the focused element if it is in our content window
-              // or in an ancestor window.
-              var focusedWindow = document.commandDispatcher.focusedWindow;
-              var saveFocus = false;
-
-              if (focusedWindow && focusedWindow.top == window.content) {
-                saveFocus = true;
-              } else {
-                var contentWindow = window;
-
-                while (contentWindow) {
-                  if (contentWindow == focusedWindow) {
-                    saveFocus = true;
-                    break;
-                  }
-
-                  if (contentWindow.parent == contentWindow) {
-                    break;
-                  }
-
-                  contentWindow = contentWindow.parent;
-                }
-              }
-
-              if (saveFocus) {
-                // Preserve the currently-focused element or DOM window for
-                // this tab.
-
-                this.mCurrentBrowser.focusedWindow = focusedWindow;
-                this.mCurrentBrowser.focusedElement = document.commandDispatcher.focusedElement;
-              }
-
-              if (this.mCurrentBrowser.focusedElement) {
-                // Clear focus outline before we draw on top of it
-                this.mCurrentBrowser.focusedElement.blur();
-              }
-              this.mCurrentBrowser.setAttribute("type", "content-targetable");
-            }
-
-            var updatePageReport = false;
-            if ((this.mCurrentBrowser.pageReport && !newBrowser.pageReport) ||
-                (!this.mCurrentBrowser.pageReport && newBrowser.pageReport))
-              updatePageReport = true;
-
-            newBrowser.setAttribute("type", "content-primary");
-            this.mCurrentBrowser = newBrowser;
-            this.mCurrentTab = this.selectedTab;
-
-            if (updatePageReport)
-              this.mCurrentBrowser.updatePageReport();
-
-            // Update the URL bar.
-            var loc = this.mCurrentBrowser.currentURI;
-
-            // Update the busy state before notifying progress listeners.
-            var prevIsBusy = this.mIsBusy;
-            this.mIsBusy = this.mCurrentTab.hasAttribute("busy");
-
-            var webProgress = this.mCurrentBrowser.webProgress;
-            var securityUI = this.mCurrentBrowser.securityUI;
-
-            var i, p;
-            for (i = 0; i < this.mProgressListeners.length; i++) {
-              p = this.mProgressListeners[i];
-              if (p) {
-                p.onLocationChange(webProgress, null, loc);
-                if ('onLinkIconAvailable' in p)
-                  p.onLinkIconAvailable(this.mCurrentBrowser);
-                if (securityUI)
-                  p.onSecurityChange(webProgress, null, securityUI.state);
-
-                // make sure that all status indicators are properly updated
-                if ("onUpdateCurrentBrowser" in p) {
-                  var listener = this.mTabListeners[this.mTabContainer.selectedIndex] || null;
-                  if (listener && listener.mStateFlags)
-                    p.onUpdateCurrentBrowser(listener.mStateFlags, listener.mStatus,
-                                             listener.mMessage, listener.mTotalProgress);
-                }
-              }
-            }
-
-            this._fastFind.setDocShell(this.mCurrentBrowser.docShell);
-
-            // Update the window title.
-            this.updateTitlebar();
-
-            // If the new tab is busy, and our previous state was not busy, then
-            // we need to fire a start to all progress listeners.
-            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            if (this.mCurrentTab.hasAttribute("busy") && !prevIsBusy) {
-              webProgress = this.mCurrentBrowser.webProgress;
-              for (i = 0; i < this.mProgressListeners.length; i++) {
-                p = this.mProgressListeners[i];
-                if (p)
-                  p.onStateChange(webProgress, null, nsIWebProgressListener.STATE_START | nsIWebProgressListener.STATE_IS_NETWORK, 0);
-              }
-            }
-
-            // If the new tab is not busy, and our previous state was busy, then
-            // we need to fire a stop to all progress listeners.
-            if (!this.mCurrentTab.hasAttribute("busy") && prevIsBusy) {
-              webProgress = this.mCurrentBrowser.webProgress;
-              for (i = 0; i < this.mProgressListeners.length; i++) {
-                p = this.mProgressListeners[i];
-                if (p)
-                  p.onStateChange(webProgress, null, nsIWebProgressListener.STATE_STOP | nsIWebProgressListener.STATE_IS_NETWORK, 0);
-              }
-            }
-
-            // We've selected the new tab, so go ahead and notify listeners.
-            var event = document.createEvent("Events");
-            event.initEvent("TabSelect", true, false);
-            this.mCurrentTab.dispatchEvent(event);
-
-            if (document.commandDispatcher.focusedElement &&
-                document.commandDispatcher.focusedElement.parentNode ==
-                this.mCurrentTab.parentNode) {
-              // The focus is on a tab in the same tab panel
-              return;  // If focus was on a tab, switching tabs focuses the new tab
-            }
-
-            var whatToFocus = window.content;
-            // The original code in tabBrowser.xml had some code to focus the previously focused
-            // element or window, which isn't what we want for Songbird.  See bug 21236.
-
-            var cmdDispatcher = document.commandDispatcher;
-
-            if (whatToFocus instanceof Window) {
-              cmdDispatcher.focusedWindow = whatToFocus;
-              cmdDispatcher.focusedElement = null;
-            } else {
-              cmdDispatcher.focusedWindow = whatToFocus.ownerDocument.defaultView;
-              cmdDispatcher.focusedElement = whatToFocus;
-            }
-
-            // Removed setTimeout based on
-            // http://bonsai.mozilla.org/cvsblame.cgi?file=mozilla/browser/base/content/tabbrowser.xml&rev=1.271#847
-          ]]>
-        </body>
-      </method>
-
       <method name="_checkTarget">
         <parameter name="aTarget"/>
         <parameter name="aEvent"/>
         <body>
           <![CDATA[
             var returnValue = aTarget;
-
+            
             if ("_media" == aTarget) {
               if (this.mediaTab) {
                 // force media things in the media tab
@@ -484,7 +333,7 @@
                 returnValue = "_top";
               }
             }
-
+            
             if (aEvent) {
               // if an event as supplied infer where we want to load this URI
               //
@@ -512,7 +361,7 @@
           ]]>
         </body>
       </method>
-
+      
       <!-- the public interface for loading URLs.
            this overrides the implementation in tabBrowser.xml#tabbrowser
            it takes the existing aURI, aReferrerURI and aCharset arguments
@@ -530,29 +379,29 @@
         <parameter name="aMediaListView"/>
         <body>
           <![CDATA[
-
+          
             // If this is a request for the old sbLibaryPage
-            // redirect it to the new page showing the main library
+            // redirect it to the new page showing the main library 
             // TODO delete this post 0.5
             if (aURI && aURI.indexOf &&
-                aURI.indexOf("chrome://songbird/content/xul/sbLibraryPage.xul") == 0)
+                aURI.indexOf("chrome://nightingale/content/xul/sbLibraryPage.xul") == 0)
             {
               Cu.reportError("TabBrowser.loadURI was called for" +
                     " sbLibraryPage.xul! Use gBrowser.loadMediaList instead.");
-
-              this.loadMediaList(LibraryUtils.mainLibrary, aEvent,
+                    
+              this.loadMediaList(LibraryUtils.mainLibrary, aEvent, 
                     aDefaultLocation);
               return;
             }
 
-
+          
             var retval = null;
             var defaultLocation = aDefaultLocation;
             if (!defaultLocation) {
               defaultLocation = "_top";
             }
             var where = this._checkTarget(defaultLocation, aEvent);
-
+            
 
             // make sure the referrer is an nsIURI
             if (aReferrerURI == '') {
@@ -605,7 +454,7 @@
           ]]>
         </body>
       </method>
-
+      
       <!-- Load a media list view with flags -->
       <method name="loadMediaListViewWithFlags">
         <parameter name="aMediaListView"/>
@@ -680,7 +529,7 @@
           ]]>
         </body>
       </method>
-
+      
       <!-- Get the media page URL for a media list
            @param aMediaListView the media list View to look up
            @param aPageURL       [optional] a suggested URL
@@ -693,9 +542,9 @@
         <parameter name="aConstraints"/>
         <body>
           <![CDATA[
-            var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+            var mgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                         .getService(Ci.sbIMediaPageManager);
-
+            
             var pageURL = null;
             var mediaList = null;
             if (aMediaListView instanceof Ci.sbIMediaListView) {
@@ -719,7 +568,7 @@
               }
             }
 
-            var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+            var LSP = Cc["@getnightingale.com/servicepane/library;1"]
                         .getService(Ci.sbILibraryServicePaneService);
             var type = LSP.getNodeContentTypeFromMediaListView(aMediaListView);
 
@@ -728,10 +577,10 @@
               var page = mgr.getPage(mediaList, aConstraints, type);
               pageURL = page.contentUrl;
             }
-
-            // If not already present, attach the guids to the querystring
-            // so that the page gets a unique browser history entry.
-            // I would have preferred to use a # instead of a querystring,
+            
+            // If not already present, attach the guids to the querystring 
+            // so that the page gets a unique browser history entry.  
+            // I would have preferred to use a # instead of a querystring, 
             // but anchors are ignored in loadURI.
             if (pageURL.indexOf("libraryGUID=") == -1) {
               if (pageURL.indexOf("?") != -1) {
@@ -747,7 +596,7 @@
           ]]>
         </body>
       </method>
-
+      
       <!-- override <tabbrowser>::removeTab to prevent the media tab from being
            removed
            -->
@@ -770,7 +619,7 @@
       </method>
 
       <!-- Use a Media Page to display the given list and
-           (optional) view.
+           (optional) view. 
         -->
       <method name="loadMediaList">
         <parameter name="aMediaList"/>
@@ -798,12 +647,12 @@
             if (!defaultLocation && this.mediaTab)
               defaultLocation = "_media";
 
-            return this.loadURI(aPageURL, null, null, aEvent,
+            return this.loadURI(aPageURL, null, null, aEvent, 
                                 defaultLocation, aMediaListView);
           ]]>
         </body>
       </method>
-
+      
 
       <!-- Reveal the given index in the given sbIMediaListView  -->
       <method name="showIndexInView">
@@ -815,9 +664,9 @@
                 !(aHighlightIndex >= 0)) {
               throw new Error("showIndexInView requires a media list view and index");
             }
-
+              
             // If we already have a tab for this view, show it there
-            var tab = this.getTabForView(aMediaListView);
+            var tab = this.getTabForView(aMediaListView);          
             if (tab) {
               this.selectedTab = tab;
               if (tab.mediaPage) {
@@ -827,7 +676,7 @@
                 tree.treeBoxObject.ensureRowIsVisible(aHighlightIndex);
                 tree.view.selection.select(aHighlightIndex);
               }
-
+            
             // Not already visible.  Load and highlight.
             } else {
               // If the view is for a web media list, load the origin page.
@@ -841,15 +690,15 @@
                 tab = this.loadURI(originPage, null, null, null, null,
                                    aMediaListView);
               } else {
-                aMediaListView.selection.selectOnly(aHighlightIndex);
-                tab = this.loadMediaList(aMediaListView.mediaList, null,
+                tab = this.loadMediaList(aMediaListView.mediaList, null, 
                                          null, aMediaListView);
+                tab._highlightViewIndexOnLoad = aHighlightIndex;
               }
             }
           ]]>
         </body>
       </method>
-
+      
 
       <!-- Get the web playlist for the current tab -->
       <property name="currentOuterPlaylist" readonly="true"
@@ -871,7 +720,7 @@
 
       <method name="getTabForView">
         <parameter name="aView" />
-        <body><![CDATA[
+        <body><![CDATA[        
           // Search open tabs for an sbIMediaListView that is showing the given view
           var tabs = this.mTabs;
           var tab;
@@ -885,18 +734,18 @@
         ]]></body>
       </method>
 
-      <!-- Sends a "TabContentChange" event from the current tab.
+      <!-- Sends a "TabContentChange" event from the current tab. 
            Called when the user switches tabs, and before and after
            a new page is loaded in the current tab.
-
+           
            Use this event if you want to track what the user is
            viewing in the tab browser.
-
+           
            This event is needed because:
-             * nsIWebProgressListener does not provide access to
+             * nsIWebProgressListener does not provide access to 
                the changing tab
              * "load" is dispatched only for tab favicons
-             * "TabSelect" is dispatched only on tab change, not on
+             * "TabSelect" is dispatched only on tab change, not on 
                 new content
        -->
       <method name="notifyTabContentChange">
@@ -904,25 +753,25 @@
         <![CDATA[
           // Update the loading status of the web-toolbar items:
           this.loading = this.mIsBusy;
-
+          
           var event = document.createEvent("Events");
           event.initEvent("TabContentChange", true, false);
           this.dispatchEvent(event);
-
+          
           this._updateFindbarState();
-
+                    
           document.commandDispatcher.updateCommands("tabchange");
-
+          
           // Update the edit menu since the content has changed in the tab:
           document.commandDispatcher.updateCommands("focus");
         ]]></body>
       </method>
-
+      
       <method name="_updateFindbarState">
         <body>
           <![CDATA[
-            // If we are about to show a media page, let's supress the findbar.
-            if (this.shouldDisableFindAgainForSelectedTab() &&
+            // If we are about to show a media page, let's supress the findbar. 
+            if (this.shouldDisableFindForSelectedTab() &&
                 !this.isFindbarHidden)
             {
               // Calling |closeFindbar()| simply hides the findbar from
@@ -930,7 +779,7 @@
               this.closeFindbar();
               this._mFindbarIsSuppressed = true;
             }
-            else if (!this.shouldDisableFindAgainForSelectedTab() &&
+            else if (!this.shouldDisableFindForSelectedTab() &&
                      this._mFindbarIsSuppressed)
             {
               // Now the tab content that we are switching to is not a media page
@@ -941,22 +790,8 @@
           ]]>
         </body>
       </method>
-
-      <!-- Whether "Find" should be disabled for the selected tab -->
+      
       <method name="shouldDisableFindForSelectedTab">
-        <body>
-          <![CDATA[
-            if (this.mediaTab &&
-                this.selectedTab == this.mediaTab &&
-                this.selectedTab.mediaPage == null) {
-              return true;
-            }
-          ]]>
-        </body>
-      </method>
-
-      <!-- Whether "Find Again" should be disabled for the selected tab -->
-      <method name="shouldDisableFindAgainForSelectedTab">
         <body>
           <![CDATA[
             if (this.mediaTab && this.selectedTab == this.mediaTab) {
@@ -967,13 +802,13 @@
           ]]>
         </body>
       </method>
-
-      <!-- a bunch of methods from browser_xbl_temp.js / songbird_hack.js.
+      
+      <!-- a bunch of methods from browser_xbl_temp.js / nightingale_hack.js.
            I'm not convinced they belong here, but till we refactor a couple
            more things there's nowhere better for them to go. -->
-
+           
       <!-- Handles playing the given URL by adding it to the web
-           library, and if possible playing it from the current
+           library, and if possible playing it from the current 
            web playlist.
         -->
       <method name="_playExternalUrl">
@@ -989,7 +824,7 @@
           if (aTryWeb && currentPlaylist)
           {
             var currentView = currentPlaylist.getListView();
-
+            
             // Try to see if we've already found and scanned this url
             var listener = {
               foundItem: null,
@@ -1010,31 +845,31 @@
             };
 
             var currentMediaList = currentView.mediaList;
-
+            
             currentMediaList.enumerateItemsByProperty(SBProperties.originURL, aURL, listener );
             currentMediaList.enumerateItemsByProperty(SBProperties.contentURL, aURL, listener );
 
             if (listener.foundItem) {
-              sequencer.playView(currentView,
+              sequencer.playView(currentView, 
                                  currentView.getIndexForItem(listener.foundItem));
               return;
             }
-          }
-
-          // otherwise, play the url as external (added to the db,
+          } 
+          
+          // otherwise, play the url as external (added to the db, 
           // plays the library from that point on)
           // if the url is already in the lib, it is not added twice
           var item = SBImportURLIntoWebLibrary(aURL);
-
+          
           var view = LibraryUtils.createStandardMediaListView(LibraryUtils.webLibrary);
 
           var index = view.getIndexForItem(item);
-
+          
           // If we have a browser, try to show the view
           if (window.gBrowser) {
             gBrowser.showIndexInView(view, index);
           }
-
+          
           // Play the item
           sequencer.playView(view, index);
         ]]></body>
@@ -1042,7 +877,7 @@
 
 
       <!-- Called when the user clicks on a media URL in a web page.
-           Handles playing from the web playlist, opening as a playlist, etc.
+           Handles playing from the web playlist, opening as a playlist, etc. 
         -->
       <method name="handleMediaURL">
         <parameter name="aURL" />
@@ -1076,13 +911,13 @@
                 library = LibraryUtils.webLibrary;
               }
               else {
-                library = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                library = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                             .getService(Ci.sbILibraryManager).mainLibrary;
               }
 
               // Check to see if this playlist already exists
               var propertyArray =
-                Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
               propertyArray.appendProperty(SBProperties.isList, "1");
               propertyArray.appendProperty(SBProperties.originURL, uri.spec);
@@ -1103,17 +938,17 @@
                                                  getFirstListener );
 
               // If we found a matching list, clear it, otherwise create it
-              var mediaList = null;
+              var mediaList = null;;
               var mediaListView = null;
               if (getFirstListener.item) {
                 mediaList = getFirstListener.item;
                 mediaList.clear();
               }
               else {
-                if ( scheme == "http" ) {
+                if ( scheme == "http" ){
                   mediaList = tab.outerPlaylist.mediaList;
                   mediaListView = tab.outerPlaylist.getListView();
-
+                  
                   if (mediaList) {
                     mediaList.clear();
                     tab.outerPlaylistShowing = true;
@@ -1121,47 +956,47 @@
                     locationBar.uri = aURL;
                   }
                 }
-
+                
                 if (!mediaList) {
                   mediaList = library.createMediaList("simple");
-
+                  
                   mediaList.name = URLUtils.convertURLToDisplayName(aURL);
-
-                  mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
+                  
+                  mediaList.setProperty("http://getnightingale.com/data/1.0#originURL", uri.spec);
                 }
               }
 
               var playlistReaderManager =
-                Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                Cc["@getnightingale.com/Nightingale/PlaylistReaderManager;1"]
                   .getService(Ci.sbIPlaylistReaderManager);
               var playlistReaderListener =
-                Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
+                Cc["@getnightingale.com/Nightingale/PlaylistReaderListener;1"]
                   .createInstance(Ci.sbIPlaylistReaderListener);
 
               // Create this closure here to prevent this object from getting garbage
               // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
               // component that does _not_ addref this listener :(
               var self = this;
-
+              
               var playlist_observer = {
                 mm: self.mm,
                 observe: function ( aSubject, aTopic, aData ) {
                   if (aTopic.indexOf("error") != -1) {
-                    // If we get an error parsing a page we thought was a
+                    // If we get an error parsing a page we thought was a 
                     // playlist then we probably misidentified the content.
                     Cu.reportError("Failed to parse playlist at " + aURL);
                   }
                   else {
                     var array =
-                      Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                      Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
                     for (var i = 0; i < mediaList.length; i++) {
                       array.appendElement(mediaList.getItemByIndex(i), false);
                     }
 
                     // Send the items in the new media list to the metadata scanner
-                    var metadataService =
-                      Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                    var metadataService = 
+                      Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
                         .getService(Ci.sbIFileMetadataService);
                     metadataService.read(array);
 
@@ -1197,7 +1032,7 @@
           return retval;
         ]]></body>
       </method>
-
+      
       <!--
         Show a notification message.  If the given notification already exists
         (but not necessarily shown), show it with an updated message.  Note that
@@ -1233,7 +1068,7 @@
           if (!browser) {
             throw Ci.NS_ERROR_INVALID_ARG;
           }
-
+          
           var notificationBox = this.getNotificationBox(browser);
           var notification = notificationBox
                                    .getNotificationWithValue(aNotificationName);
@@ -1282,13 +1117,13 @@
           return this.mStrip.lastSelectedTab;
         </getter>
       </property>
-
+      
       <field name="_popupShowing">false</field>
       <method name="onContextPopupShowing">
         <parameter name="popup" />
         <parameter name="event" />
         <body><![CDATA[
-          window.gContextMenu = new ContentAreaContextMenu(popup, window.getBrowser());
+          window.gContextMenu = new ContentAreaContextMenu(popup, window.getBrowser()); 
           this._popupShowing = gContextMenu.shouldDisplay;
           return this._popupShowing;
         ]]></body>
@@ -1298,7 +1133,7 @@
         <parameter name="popup"/>
         <body>
           <![CDATA[
-          window.gContextMenu = null;
+          window.gContextMenu = null; 
           this._popupShowing = false;
         ]]></body>
       </method>
@@ -1318,7 +1153,7 @@
           this.loadURI(this.homePage, null, null);
         ]]></body>
       </method>
-
+      
       <!-- Override tabBrowser.xul to support moving the tab strip outside -->
       <method name="onTitleChanged">
         <parameter name="evt"/>
@@ -1357,7 +1192,7 @@
               gBrowser.addToMissedIconCache(this.getAttribute('image'));
               this.setIcon(null);
             }
-
+            
             if (!val) {
               throw Cr.NS_ERROR_INVALID_ARG;
             }
@@ -1467,7 +1302,7 @@
         var wrapper = null;
         var href = null;
         var target = null;
-
+        
         if (linkNode) {
           href = linkNode.href;
           if (linkNode.hasAttribute('target')) {

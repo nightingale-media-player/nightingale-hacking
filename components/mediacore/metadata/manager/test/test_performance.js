@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,13 +38,13 @@ function runTest () {
 
   var library = createNewLibrary("test_metadatajob_performance");
 
-  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  gFileMetadataService = Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                                 .getService(Components.interfaces.sbIFileMetadataService);
 
-  var scan = Cc["@songbirdnest.com/Songbird/FileScan;1"]
+  var scan = Cc["@getnightingale.com/Nightingale/FileScan;1"]
                .createInstance(Ci.sbIFileScan);
 
-  var query = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+  var query = Cc["@getnightingale.com/Nightingale/FileScanQuery;1"]
                .createInstance(Ci.sbIFileScanQuery);
   query.setDirectory("/media/sdb1/steve/old/steve/fakemp3s");
   query.setRecurse(true);
@@ -71,7 +71,7 @@ function runTest () {
   log("jobs = " + jobs);
   var index = 0;
   for (var i = 0; i < jobs; i++) {
-    var a = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+    var a = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
     for (var j = 0; j < ITEMS_PER_JOB; j++) {
       if (index >= items.length) {
         break;

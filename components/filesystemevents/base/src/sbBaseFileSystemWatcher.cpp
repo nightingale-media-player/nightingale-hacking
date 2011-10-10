@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,19 +30,32 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
-#include <sbDebugUtils.h>
-
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbBaseFSWatcher:5
  */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gBaseFSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gBaseFSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gBaseFSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseFileSystemWatcher, sbIFileSystemWatcher)
 
 sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()
 {
-  SB_PRLOG_SETUP(sbBaseFSWatcher);
-
+#ifdef PR_LOGGING
+  if (!gBaseFSWatcherLog) {
+    gBaseFSWatcherLog = PR_NewLogModule("sbBaseFSWatcher");
+  }
+#endif
   mIsRecursive = PR_TRUE;
   mIsWatching = PR_FALSE;
   mIsSupported = PR_TRUE;
@@ -53,7 +66,7 @@ sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()
 sbBaseFileSystemWatcher::~sbBaseFileSystemWatcher()
 {
   if (mTree) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) = mTree->ClearListener();
+    nsresult rv = mTree->ClearListener();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Error could not clear tree listener!");
   }
 }
@@ -68,9 +81,9 @@ sbBaseFileSystemWatcher::Init(sbIFileSystemListener *aListener,
 {
   NS_ENSURE_ARG_POINTER(aListener);
   
-  TRACE("%s: initing, will watch [%s]",
+  TRACE(("%s: initing, will watch [%s]",
          __FUNCTION__,
-         NS_ConvertUTF16toUTF8(aRootPath).get());
+         NS_ConvertUTF16toUTF8(aRootPath).get()));
 
   mListener = aListener;
   mWatchPath.Assign(aRootPath);
@@ -119,9 +132,9 @@ sbBaseFileSystemWatcher::StartWatching()
     return NS_OK;
   }
   
-  TRACE("%s: starting to watch [%s]",
+  TRACE(("%s: starting to watch [%s]",
          __FUNCTION__,
-         NS_ConvertUTF16toUTF8(mWatchPath).get());
+         NS_ConvertUTF16toUTF8(mWatchPath).get()));
 
   // Init the tree
   mTree = new sbFileSystemTree();
@@ -217,13 +230,13 @@ sbBaseFileSystemWatcher::OnChangeFound(const nsAString & aChangePath,
 {
   nsresult rv;
   
-  TRACE("%s: Found change in %s of type %s",
+  TRACE(("%s: Found change in %s of type %s",
          __FUNCTION__,
          NS_ConvertUTF16toUTF8(aChangePath).get(),
          (aChangeType == eChanged) ? "change" :
          (aChangeType == eAdded)   ? "add" :
          (aChangeType == eRemoved) ? "removed" :
-         "unknown");
+         "unknown"));
   switch (aChangeType) {
     case eChanged:
       rv = mListener->OnFileSystemChanged(aChangePath);

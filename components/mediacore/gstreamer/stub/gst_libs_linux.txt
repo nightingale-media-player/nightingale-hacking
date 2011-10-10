@@ -23,4 +23,3 @@
 @lib/libgstrtsp-0.10.so
 @lib/libgstsdp-0.10.so
 @lib/libgstvideo-0.10.so
-@lib/libgstapp-0.10.so

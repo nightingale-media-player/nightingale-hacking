@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,7 +37,7 @@
 
 /**
 * \file  DownloadDevice.h
-* \brief Songbird DownloadDevice Component Definition.
+* \brief Nightingale DownloadDevice Component Definition.
 */
 
 /* *****************************************************************************
@@ -50,10 +50,10 @@
  * Download device XPCOM component definitions.
  */
 
-#define SONGBIRD_DownloadDevice_CONTRACTID                                     \
-                    "@songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1"
-#define SONGBIRD_DownloadDevice_CLASSNAME "Songbird Download Device"
-#define SONGBIRD_DownloadDevice_CID                                            \
+#define NIGHTINGALE_DownloadDevice_CONTRACTID                                     \
+                    "@getnightingale.com/Nightingale/OldDeviceImpl/DownloadDevice;1"
+#define NIGHTINGALE_DownloadDevice_CLASSNAME "Nightingale Download Device"
+#define NIGHTINGALE_DownloadDevice_CID                                            \
 {                                                                              \
     0x961DA3F4,                                                                \
     0x5EF1,                                                                    \
@@ -85,7 +85,7 @@
 #include <nsIThreadPool.h>
 #include <prmon.h>
 
-/* Songbird imports. */
+/* Nightingale imports. */
 #include <sbDownloadButtonPropertyInfo.h>
 #include <sbIDataRemote.h>
 #include <sbILibrary.h>
@@ -159,7 +159,7 @@ class sbDownloadDevice : public nsIObserver,
 
     /*
      * mpDownloadMediaList      Download device medialist.
-     * mpDeviceLibraryListener  Songbird device library listener.
+     * mpDeviceLibraryListener  Nightingale device library listener.
      * mpMainLibrary            Main library.
      * mpWebLibrary             Web library.
      * mpPrefBranch             Preference branch.

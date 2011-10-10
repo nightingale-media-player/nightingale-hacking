@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -50,7 +50,6 @@
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
-#include <sbIPropertyInfo.h>
 #include <sbISQLBuilder.h>
 #include <sbIMediaList.h>
 #include <sbLibraryCID.h>
@@ -71,31 +70,6 @@
 #include "sbLocalDatabaseSchemaInfo.h"
 
 #define DEFAULT_FETCH_SIZE 300
-
-/**
- * Utility class to suppress invalidation of GUID array
- * and reset the selection.
- */
-class sbSuppressArrayInvalidationView
-{
-public:
-  explicit
-  sbSuppressArrayInvalidationView(sbILocalDatabaseGUIDArray *aArray,
-                                  sbLocalDatabaseMediaListViewSelection *aSelection)
-  : mArray(aArray)
-  , mSelection(aSelection) {
-    mArray->SuppressInvalidation(PR_TRUE);
-  }
-
-  virtual ~sbSuppressArrayInvalidationView() {
-    mArray->SuppressInvalidation(PR_FALSE);
-    mSelection->ConfigurationChanged();
-  }
-private:
-  nsCOMPtr<sbILocalDatabaseGUIDArray>             mArray;
-  nsRefPtr<sbLocalDatabaseMediaListViewSelection> mSelection;
-};
-
 
 NS_IMPL_ISUPPORTS7(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
@@ -287,6 +261,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mArray = do_CreateInstance(SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString databaseGuid;
   rv = mLibrary->GetDatabaseGuid(databaseGuid);
@@ -325,13 +300,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     rv = mArray->SetBaseConstraintValue(mMediaListId);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> lengthCache;
-  rv = mLibrary->GetLengthCache(getter_AddRefs(lengthCache));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mArray->SetLengthCache(lengthCache);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -375,7 +343,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   rv = SetSortInternal(sort);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mSelection->ConfigurationChanged();
+  rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Restore cfs and tree state
@@ -593,15 +561,8 @@ sbLocalDatabaseMediaListView::GetViewItemUIDForIndex(PRUint32 aIndex,
   rv = mArray->GetRowidByIndex(aIndex, &rowid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 mediaItemid;
-  rv = mArray->GetMediaItemIdByIndex(aIndex, &mediaItemid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // the ViewItemUID is a concatenation of the mediaitemid and rowid
   _retval.Truncate();
   AppendInt(_retval, rowid);
-  _retval.Append('-');
-  _retval.AppendInt(mediaItemid);
 
   return NS_OK;
 }
@@ -614,7 +575,10 @@ sbLocalDatabaseMediaListView::GetIndexForViewItemUID(const nsAString& aViewItemU
 
   nsresult rv;
 
-  rv = mArray->GetIndexByViewItemUID(aViewItemUID, _retval);
+  PRUint64 rowid = nsString_ToUint64(aViewItemUID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mArray->GetIndexByRowid(rowid, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -792,8 +756,6 @@ sbLocalDatabaseMediaListView::GetSelection(sbIMediaListViewSelection** aSelectio
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
 {
-  nsString viewContentType;
-
   PRUint32 viewLength = 0;
   nsresult rv = GetLength(&viewLength);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -810,79 +772,33 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
     // Check to see if the only filters are 'hidden' and 'is_list'.
     // If that is the case, we can pretend like there are no filters.
     if(filterCount) {
-      nsCOMPtr<sbILibraryConstraintBuilder> audioViewBuilder =
-        do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+      nsCOMPtr<sbILibraryConstraintBuilder> builder =
+        do_CreateInstance(NIGHTINGALE_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = audioViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                     NS_LITERAL_STRING("0"),
-                                     nsnull);
+      rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                        NS_LITERAL_STRING("0"),
+                        nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = audioViewBuilder->Intersect(nsnull);
+      rv = builder->Intersect(nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = audioViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                     NS_LITERAL_STRING("0"),
-                                     nsnull);
+      rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                            NS_LITERAL_STRING("0"),
+                            nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = audioViewBuilder->Intersect(nsnull);
+      nsCOMPtr<sbILibraryConstraint> constraint;
+      rv = builder->Get(getter_AddRefs(constraint));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = audioViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-                                     NS_LITERAL_STRING("audio"),
-                                     nsnull);
+      PRBool isEqual = PR_FALSE;
+      rv = mViewFilter->Equals(constraint, &isEqual);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbILibraryConstraintBuilder> videoViewBuilder =
-        do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = videoViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                     NS_LITERAL_STRING("0"),
-                                     nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = videoViewBuilder->Intersect(nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = videoViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                     NS_LITERAL_STRING("0"),
-                                     nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = videoViewBuilder->Intersect(nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = videoViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-                                     NS_LITERAL_STRING("video"),
-                                     nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<sbILibraryConstraint> audioViewConstraint;
-      rv = audioViewBuilder->Get(getter_AddRefs(audioViewConstraint));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<sbILibraryConstraint> videoViewConstraint;
-      rv = videoViewBuilder->Get(getter_AddRefs(videoViewConstraint));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool isEqualToAudioView = PR_FALSE;
-      rv = mViewFilter->Equals(audioViewConstraint, &isEqualToAudioView);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool isEqualToVideoView = PR_FALSE;
-      rv = mViewFilter->Equals(videoViewConstraint, &isEqualToVideoView);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if(isEqualToAudioView) {
+      if(isEqual) {
         filterCount = 0;
-        viewContentType = NS_LITERAL_STRING("audio");
-      }
-      else if(isEqualToVideoView) {
-        filterCount = 0;
-        viewContentType = NS_LITERAL_STRING("video");
       }
     }
   }
@@ -902,7 +818,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
 
     for(PRUint16 current = 0; current < cfsCount; ++current) {
       nsCOMPtr<nsIArray> filterConfig;
-
+      
       rv = mCascadeFilterSet->Get(current, getter_AddRefs(filterConfig));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -925,16 +841,16 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
   rv = mSelection->IsIndexSelected(currentIndex, &isSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // The user is removing all of the tracks from the view,
+  // The user is removing all of the tracks from the view, 
   // use clear instead. It's very important to check for filter
   // and search counts here otherwise we may clear the library
   // because the user has selected everything in the view when
   // it's in a filtered or has a search applied!
-  if((PRInt32(viewLength) == selectionLength) && !filterCount && !searchCount && !cfsIsFiltering) {
+  if((viewLength == selectionLength) && !filterCount && !searchCount && !cfsIsFiltering) {
     // If it's a library, call clear items instead. We do this so
     // that all playlists the user has are preserved.
     if(mMediaListId == 0) {
-      rv = mLibrary->ClearItemsByType(viewContentType);
+      rv = mLibrary->ClearItems();
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -1239,7 +1155,7 @@ sbLocalDatabaseMediaListView::GetViewConstraint(sbILibraryConstraint** aFilterCo
 
   if (mViewFilter) {
     nsCOMPtr<sbILibraryConstraintBuilder> builder =
-      do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+      do_CreateInstance(NIGHTINGALE_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = builder->IncludeConstraint(mViewFilter, nsnull);
@@ -1267,7 +1183,7 @@ sbLocalDatabaseMediaListView::GetFilterConstraint(sbILibraryConstraint** aFilter
   nsresult rv;
 
   nsCOMPtr<sbILibraryConstraintBuilder> builder =
-    do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mViewFilter) {
@@ -1358,7 +1274,7 @@ sbLocalDatabaseMediaListView::GetSearchConstraint(sbILibraryConstraint** aSearch
   nsresult rv;
 
   nsCOMPtr<sbILibraryConstraintBuilder> builder =
-    do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mViewSearch) {
@@ -1477,9 +1393,12 @@ sbLocalDatabaseMediaListView::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 nsresult
 sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
 {
-  nsresult rv = SetSortInternal(aSort);
+  nsresult rv;
+  rv = SetSortInternal(aSort);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Invalidate the view array
+  rv = Invalidate();
   return rv;
 }
 
@@ -1567,8 +1486,8 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array. Adding an item definitely invalidates length.
-  nsresult rv = Invalidate(PR_TRUE);
+  // Invalidate the view array
+  nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1607,8 +1526,8 @@ sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array. Removing items invalidates length.
-  nsresult rv = Invalidate(PR_TRUE);
+  // Invalidate the view array
+  nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1652,9 +1571,8 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
   }
 
   if (shouldInvalidate) {
-    // Invalidate the view array. Properties changed significantly.
-    // We need to invalidate length as well in this case.
-    nsresult rv = Invalidate(PR_TRUE);
+    // Invalidate the view array
+    nsresult rv = Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -1689,8 +1607,8 @@ sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array. Moving doesn't invalidate length.
-  nsresult rv = Invalidate(PR_FALSE);
+  // Invalidate the view array
+  nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1725,8 +1643,8 @@ sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array. Clearing totally invalidates length.
-  nsresult rv = Invalidate(PR_TRUE);
+  // Invalidate the view array
+  nsresult rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1751,22 +1669,15 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
   mBatchHelper.End();
 
   if (!mBatchHelper.IsActive()) {
+    if (mTreeView) {
+      mTreeView->SetShouldPreventRebuild(PR_FALSE);
+    }
     if (mInvalidatePending) {
-      // Invalidate the view array. No way to tell accurately in batches
-      // if the length is invalidated or not so we always invalidate.
-      nsresult rv = Invalidate(PR_TRUE);
+      // Invalidate the view array
+      nsresult rv = Invalidate();
       NS_ENSURE_SUCCESS(rv, rv);
 
       mInvalidatePending = PR_FALSE;
-    }
-
-    // We have to rebuild the tree manually here because there is
-    // no guarantee that the tree will be invalidated at the correct
-    // time. If the tree is invalidated after the view invalidates
-    // it will _never_ get its callback telling it to rebuild :(
-    if (mTreeView) {
-      mTreeView->SetShouldPreventRebuild(PR_FALSE);
-      mTreeView->Rebuild();
     }
   }
 
@@ -1777,8 +1688,6 @@ nsresult
 sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSelection)
 {
   nsresult rv;
-
-  sbSuppressArrayInvalidationView suppressInvaliation(mArray, mSelection);
 
   rv = mArray->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1948,6 +1857,10 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Invalidate the view array
+  rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1956,7 +1869,7 @@ sbLocalDatabaseMediaListView::MakeStandardQuery(sbIDatabaseQuery** _retval)
 {
   nsresult rv;
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString databaseGuid;
@@ -2095,18 +2008,32 @@ sbLocalDatabaseMediaListView::CreateQueries()
 }
 
 nsresult
-sbLocalDatabaseMediaListView::Invalidate(PRBool aInvalidateLength)
+sbLocalDatabaseMediaListView::Invalidate()
 {
   LOG(("sbLocalDatabaseMediaListView[0x%.8x] - Invalidate", this));
   nsresult rv;
 
+  // Invalidating the GUID array might rebuild the tree as well. To avoid
+  // rebuilding the tree twice, simply prevent the tree from rebuilding.
+  if (mTreeView) {
+    mTreeView->SetShouldPreventRebuild(PR_TRUE);
+  }
+
   // Invalidate the view array.
-  rv = mArray->Invalidate(aInvalidateLength);
+  rv = mArray->Invalidate();
+  if (mTreeView) {
+    mTreeView->SetShouldPreventRebuild(PR_FALSE);
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our selection that things have changed
   rv = mSelection->ConfigurationChanged();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mTreeView) {
+    rv = mTreeView->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

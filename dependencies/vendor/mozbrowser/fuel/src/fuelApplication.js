@@ -142,21 +142,27 @@ Window.prototype = {
    * Helper event callback used to redirect events made on the XBL element
    */
   _event : function win_event(aEvent) {
-    this._events.dispatch(aEvent.type, new BrowserTab(this, aEvent.originalTarget.linkedBrowser));
+    this._events.dispatch(aEvent.type, "");
   },
+
   get tabs() {
     var tabs = [];
     var browsers = this._tabbrowser.browsers;
+
     for (var i=0; i<browsers.length; i++)
-      tabs.push(new BrowserTab(this, browsers[i]));
+      tabs.push(new BrowserTab(this._window, browsers[i]));
+
     return tabs;
   },
+
   get activeTab() {
-    return new BrowserTab(this, this._tabbrowser.selectedBrowser);
+    return new BrowserTab(this._window, this._tabbrowser.selectedBrowser);
   },
+
   open : function win_open(aURI) {
-    return new BrowserTab(this, this._tabbrowser.addTab(aURI.spec).linkedBrowser);
+    return new BrowserTab(this._window, this._tabbrowser.addTab(aURI.spec).linkedBrowser);
   },
+
   _shutdown : function win_shutdown() {
     for (var type in this._cleanup)
       this._tabbrowser.removeEventListener(type, this._cleanup[type], true);
@@ -170,11 +176,12 @@ Window.prototype = {
   QueryInterface : XPCOMUtils.generateQI([Ci.fuelIWindow])
 };
 
+
 //=================================================
 // BrowserTab implementation
-function BrowserTab(aFUELWindow, aBrowser) {
-  this._window = aFUELWindow;
-  this._tabbrowser = aFUELWindow._tabbrowser;
+function BrowserTab(aWindow, aBrowser) {
+  this._window = aWindow;
+  this._tabbrowser = aWindow.getBrowser();
   this._browser = aBrowser;
   this._events = new Events();
   this._cleanup = {};
@@ -226,15 +233,17 @@ BrowserTab.prototype = {
    */
   _event : function bt_event(aEvent) {
     if (aEvent.type == "load") {
-      if (!(aEvent.originalTarget instanceof Ci.nsIDOMDocument))
+      if (!(aEvent.originalTarget instanceof Ci.nsIDOMHTMLDocument))
         return;
 
       if (aEvent.originalTarget.defaultView instanceof Ci.nsIDOMWindowInternal &&
           aEvent.originalTarget.defaultView.frameElement)
         return;
     }
-    this._events.dispatch(aEvent.type, this);
+
+    this._events.dispatch(aEvent.type, "");
   },
+
   /*
    * Helper used to determine the index offset of the browsertab
    */
@@ -408,9 +417,6 @@ Bookmark.prototype = {
     // bookmark object doesn't exist at this point
   },
 
-  onBeforeItemRemoved : function bm_obir(aId) {
-  },
-
   onItemRemoved : function bm_oir(aId, aFolder, aIndex) {
     if (this._id == aId)
       this._events.dispatch("remove", aId);
@@ -547,7 +553,7 @@ BookmarkFolder.prototype = {
   },
 
   remove : function bmf_remove() {
-    Utilities.bookmarks.removeItem(this._id);
+    Utilities.bookmarks.removeFolder(this._id);
   },
 
   // observer
@@ -565,9 +571,6 @@ BookmarkFolder.prototype = {
     // handle this folder events
     if (this._id == aFolder)
       this._events.dispatch("addchild", aId);
-  },
-
-  onBeforeItemRemoved : function bmf_oir(aId) {
   },
 
   onItemRemoved : function bmf_oir(aId, aFolder, aIndex) {
@@ -734,4 +737,4 @@ function NSGetModule(aCompMgr, aFileSpec) {
   return XPCOMUtils.generateModule([Application]);
 }
 
-#include ../../../mozexthelper/extApplication.js
+#include ../../exthelper/extApplication.js

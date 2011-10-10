@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_WINDOWWATCHER_H__
@@ -29,10 +29,10 @@
 
 /**
  * \file  sbWindowWatcher.h
- * \brief Songbird Window Watcher Definitions.
+ * \brief Nightingale Window Watcher Definitions.
  */
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIWindowWatcher.h>
 
 // Mozilla imports.
@@ -47,12 +47,12 @@
 #include <nsIWindowMediator.h>
 #include <nsIWindowWatcher.h>
 #include <nsTArray.h>
+#include <nsWeakReference.h>
 #include <prmon.h>
 
-#include <sbWeakReference.h>
 
 /**
- * This class implements the Songbird window watcher interface.  This class
+ * This class implements the Nightingale window watcher interface.  This class
  * watches for windows to become available and ready.  A window is considered
  * read after all of its overlays have loaded.
  */
@@ -61,7 +61,7 @@ class sbWindowWatcherEventListener;
 
 class sbWindowWatcher : public sbIWindowWatcher,
                         public nsIObserver,
-                        public sbSupportsWeakReference
+                        public nsSupportsWeakReference
 {
   //----------------------------------------------------------------------------
   //
@@ -90,7 +90,7 @@ public:
 
 
   //
-  // Songbird window watcher services.
+  // Nightingale window watcher services.
   //
 
   sbWindowWatcher();
@@ -178,7 +178,7 @@ private:
 
 
   //
-  // Internal Songbird window watcher nsIObserver services.
+  // Internal Nightingale window watcher nsIObserver services.
   //
 
   nsresult OnDOMWindowOpened(nsISupports*     aSubject,
@@ -191,7 +191,7 @@ private:
 
 
   //
-  // Internal Songbird window watcher services.
+  // Internal Nightingale window watcher services.
   //
 
   void Shutdown();
@@ -214,7 +214,7 @@ private:
 
 
 //
-// Songbird window watcher component defs.
+// Nightingale window watcher component defs.
 //
 
 #define SB_WINDOWWATCHER_CLASSNAME "sbWindowWatcher"
@@ -231,13 +231,13 @@ private:
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher event listener class.
+// Nightingale window watcher event listener class.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
- * This class handles window events for the Songbird window watcher.
+ * This class handles window events for the Nightingale window watcher.
  */
 
 class sbWindowWatcherEventListener : public nsIDOMEventListener
@@ -285,8 +285,8 @@ public:
 private:
 
   //
-  // mWeakSBWindowWatcher       Weak Songbird window watcher reference.
-  // mSBWindowWatcher           Songbird window watcher.
+  // mWeakSBWindowWatcher       Weak Nightingale window watcher reference.
+  // mSBWindowWatcher           Nightingale window watcher.
   // mWindow                    Window for which to handle events.
   // mEventTarget               The event target to listen to
   // mOutstandingEvents         The names of events that still have to occur
@@ -317,7 +317,7 @@ private:
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher wait for window class.
+// Nightingale window watcher wait for window class.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -367,7 +367,7 @@ private:
   //
   // Internal wait for window fields.
   //
-  //   mSBWindowWatcher         Songbird window watcher service.
+  //   mSBWindowWatcher         Nightingale window watcher service.
   //   mReadyMonitor            Window ready monitor.
   //   mWindow                  Window to return.
   //   mReady                   True when window is ready.

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -84,11 +84,11 @@ var SBJobUtils = {
       if (!aWindow || aWindow.closed) {
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                            .getService(Components.interfaces.nsIWindowMediator);
-        aWindow = wm.getMostRecentWindow("Songbird:Main");
+        aWindow = wm.getMostRecentWindow("Nightingale:Main");
       }
       WindowUtils.openDialog(
         aWindow,
-         "chrome://songbird/content/xul/jobProgress.xul",
+         "chrome://nightingale/content/xul/jobProgress.xul",
          "job_progress_dialog",
          "chrome,centerscreen",
          !aNonModal,
@@ -136,7 +136,7 @@ SBJobUtils.JobBase.prototype = {
 
   /** nsIClassInfo, so callers don't have to QI from JS **/
   
-  classDescription        : 'Songbird Job Progress Implementation',
+  classDescription        : 'Nightingale Job Progress Implementation',
   classID                 : null,
   contractID              : null,
   flags                   : Ci.nsIClassInfo.MAIN_THREAD_ONLY,

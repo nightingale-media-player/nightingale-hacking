@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -52,14 +52,13 @@
 
 #include <sbIPrompter.h>
 #include <sbILibraryManager.h>
-#include <sbIServiceManager.h>
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
 #define NS_QUIT_APPLICATION_REQUESTED_OBSERVER_ID "quit-application-requested"
 #define NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID "quit-application-granted"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
-#define SB_MAIN_LIBRARY_READY_OBSERVER_ID       "songbird-main-library-ready"
+#define SB_MAINWIN_PRESENTED_OBSERVER_ID        "nightingale-main-window-presented"
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
 NS_IMPL_THREADSAFE_RELEASE(sbDeviceManager)
@@ -123,7 +122,7 @@ NS_IMETHODIMP sbDeviceManager::GetMarshalls(nsIArray * *aMarshalls)
   }
 
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;
@@ -264,7 +263,7 @@ NS_IMETHODIMP sbDeviceManager::GetControllers(nsIArray * *aControllers)
   }
 
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;
@@ -365,7 +364,7 @@ NS_IMETHODIMP sbDeviceManager::GetDevices(nsIArray * *aDevices)
   }
 
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;
@@ -475,7 +474,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->AddObserver(observer,
-                             SB_MAIN_LIBRARY_READY_OBSERVER_ID,
+                             SB_MAINWIN_PRESENTED_OBSERVER_ID,
                              PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -495,8 +494,8 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     // Called after the profile has been loaded, so prefs and such are available
     rv = this->Init();
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(SB_MAIN_LIBRARY_READY_OBSERVER_ID, aTopic)) {
-    // Called after the main Songbird window is presented in case device
+  } else if (!strcmp(SB_MAINWIN_PRESENTED_OBSERVER_ID, aTopic)) {
+    // Called after the main Nightingale window is presented in case device
     // enumeration hangs.
     rv = BeginMarshallMonitoring();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -557,7 +556,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->RemoveObserver(observer, SB_MAIN_LIBRARY_READY_OBSERVER_ID);
+    rv = obsSvc->RemoveObserver(observer, SB_MAINWIN_PRESENTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->RemoveObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
@@ -597,7 +596,7 @@ nsresult sbDeviceManager::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISimpleEnumerator> enumerator;
-  rv = catMgr->EnumerateCategory("songbird-device-marshall",
+  rv = catMgr->EnumerateCategory("nightingale-device-marshall",
                                  getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -618,7 +617,7 @@ nsresult sbDeviceManager::Init()
     NS_ENSURE_SUCCESS(rv, rv);
 
     char * contractId;
-    rv = catMgr->GetCategoryEntry("songbird-device-marshall", entryName.get(), &contractId);
+    rv = catMgr->GetCategoryEntry("nightingale-device-marshall", entryName.get(), &contractId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIDeviceMarshall> marshall =
@@ -649,14 +648,6 @@ nsresult sbDeviceManager::Init()
   // connect all the devices
   //rv = this->UpdateDevices();
   //NS_ENSURE_SUCCESS(rv, rv);
-
-  // Indicate that the device manager services are ready.
-  nsCOMPtr<sbIServiceManager>
-    serviceManager = do_GetService(SB_SERVICE_MANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = serviceManager->SetServiceReady(SONGBIRD_DEVICEMANAGER2_CONTRACTID,
-                                       PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -753,7 +744,7 @@ nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
   if (!canDisconnect) {
     // one of our devices doesn't want to be disconnected
     nsCOMPtr<nsIPromptService> prompter =
-      do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Prompter;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     sbStringBundle bundle;
@@ -814,7 +805,7 @@ nsresult sbDeviceManager::QuitApplicationGranted()
     if (!canDisconnect) {
       // one of our devices doesn't want to be disconnected
       nsCOMPtr<sbIPrompter> prompter =
-        do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+        do_CreateInstance("@getnightingale.com/Nightingale/Prompter;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       // This will hold up a dialog, we do not continue
@@ -823,7 +814,7 @@ nsresult sbDeviceManager::QuitApplicationGranted()
       nsCOMPtr<nsIDOMWindow> dialogWindow;
       prompter->OpenDialog
         (nsnull,
-         NS_LITERAL_STRING("chrome://songbird/content/xul/waitForCompletion.xul"),
+         NS_LITERAL_STRING("chrome://nightingale/content/xul/waitForCompletion.xul"),
          NS_LITERAL_STRING("waitForCompletion"),
          NS_LITERAL_STRING(""),
          nsnull,
@@ -843,14 +834,6 @@ nsresult sbDeviceManager::PrepareShutdown()
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   nsAutoMonitor mon(mMonitor);
-
-  // Indicate that the device manager services are no longer ready.
-  nsCOMPtr<sbIServiceManager>
-    serviceManager = do_GetService(SB_SERVICE_MANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = serviceManager->SetServiceReady(SONGBIRD_DEVICEMANAGER2_CONTRACTID,
-                                       PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // disconnect all the marshalls (i.e. stop watching for new devices)
   nsCOMPtr<nsIArray> marshalls;

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,15 +19,14 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
-#include "sbDeviceCapabilitiesUtils.h"
+#include "sbDeviceUtils.h"
 
-#include <sbDeviceUtils.h>
 #include <sbIDeviceCapabilities.h>
-#include <sbTArrayStringEnumerator.h>
 
+#include <sbDeviceCapabilitiesUtils.h>
 
 NS_IMPL_ISUPPORTS1(sbDeviceCapabilitiesUtils,
                    sbIDeviceCapabilitiesUtils)
@@ -40,13 +39,11 @@ sbDeviceCapabilitiesUtils::~sbDeviceCapabilitiesUtils()
 }
 
 NS_IMETHODIMP
-sbDeviceCapabilitiesUtils::MapContentTypeToFileExtensions(
+sbDeviceCapabilitiesUtils::MapContentTypeToFileExtension(
                                              const nsAString &aMimeType,
                                              PRUint32 aContentType,
-                                             nsIStringEnumerator **_retval)
+                                             nsAString &_retval)
 {
-  nsTArray<nsCString> fileExtensions;
-
   for (PRUint32 index = 0;
        index < MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH;
        ++index)
@@ -57,15 +54,9 @@ sbDeviceCapabilitiesUtils::MapContentTypeToFileExtensions(
     if (aMimeType.EqualsLiteral(entry.MimeType) &&
         aContentType == entry.ContentType)
     {
-      fileExtensions.AppendElement(entry.Extension);
+      _retval.AssignLiteral(entry.Extension);
     }
   }
-
-  nsCOMPtr<nsIStringEnumerator> fileExtensionEnum =
-    new sbTArrayStringEnumerator(&fileExtensions);
-  NS_ENSURE_TRUE(fileExtensionEnum, NS_ERROR_OUT_OF_MEMORY);
-
-  fileExtensionEnum.forget(_retval);
 
   return NS_OK;
 }

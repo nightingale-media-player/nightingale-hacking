@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include <nsArrayUtils.h>
@@ -79,16 +79,19 @@ sbDeviceImages::sbDeviceImages(sbBaseDevice * aBaseDevice) :
 
 // Compute the difference between the images present locally and
 // those provided in the device image array. You must provide a list
-// of supported extensions. Upon return, the copy array is filled with
-// sbIDeviceImage items which the device implementation should act upon.
+// of supported extensions. Upon return, the copy and delete arrays are
+// filled with sbIDeviceImage items which the device implementation should
+// act upon.
 nsresult
-sbDeviceImages::ComputeImageSyncArray
+sbDeviceImages::ComputeImageSyncArrays
                   (sbIDeviceLibrary *aLibrary,
                    nsIArray *aDeviceImageArray,
                    const nsTArray<nsString> &aFileExtensionList,
-                   nsIArray **retCopyArray)
+                   nsIArray **retCopyArray,
+                   nsIArray **retDeleteArray)
 {
   NS_ENSURE_ARG_POINTER(retCopyArray);
+  NS_ENSURE_ARG_POINTER(retDeleteArray);
   nsresult rv;
 
   nsCOMPtr<nsIFile> baseDir;
@@ -102,7 +105,12 @@ sbDeviceImages::ComputeImageSyncArray
 
   // Create the array of files to copy
   nsCOMPtr<nsIMutableArray> syncCopyArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the array of files to delete
+  nsCOMPtr<nsIMutableArray> syncDeleteArray =
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // turn the device image array into a binary searchable array
@@ -122,7 +130,7 @@ sbDeviceImages::ComputeImageSyncArray
 
   // Create the array of local files
   nsCOMPtr<nsIMutableArray> localImagesArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Scan local files
@@ -143,11 +151,28 @@ sbDeviceImages::ComputeImageSyncArray
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // turn the local image array into a binary searchable array
+  rv = localImagesArray->GetLength(&len);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsTArray< sbIDeviceImage* > searchableLocalImageArray;
+  for (PRUint32 i=0; i<len; i++) {
+    nsCOMPtr<sbIDeviceImage> image =
+      do_QueryElementAt(localImagesArray, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    searchableLocalImageArray.AppendElement(image);
+  }
+  searchableLocalImageArray.Sort(comp);
+
   // add any local image missing from the device to the copy array
   DiffImages(syncCopyArray, searchableDeviceImageArray, localImagesArray);
+  // add any device image missing locally to the delete array
+  DiffImages(syncDeleteArray, searchableLocalImageArray, aDeviceImageArray);
 
-  // return sync array
+  // return sync arrays
   rv = CallQueryInterface(syncCopyArray, retCopyArray);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = CallQueryInterface(syncDeleteArray, retDeleteArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -191,12 +216,12 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
 
   // Create a list of sbIDeviceImage found at the scan location
   nsCOMPtr<nsIMutableArray> imageArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < fileCount; i++) {
     // Check for abort.
-    NS_ENSURE_FALSE(mBaseDevice->IsRequestAborted(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(mBaseDevice->ReqAbortActive(), NS_ERROR_ABORT);
 
     // Get the next file URI spec.
     nsAutoString fileURISpec;
@@ -303,7 +328,7 @@ sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage*   aImage,
   // Create a temporary media item.
   nsCOMPtr<sbIMediaItem>
     item = do_CreateInstance
-             ("@songbirdnest.com/Songbird/Library/TemporaryMediaItem;1", &rv);
+             ("@getnightingale.com/Nightingale/Library/TemporaryMediaItem;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set up the temporary media item.
@@ -462,7 +487,7 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
 
   // Create a file scan query object to search the device.
   nsCOMPtr<sbIFileScanQuery> fileScanQuery =
-    do_CreateInstance("@songbirdnest.com/Songbird/FileScanQuery;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/FileScanQuery;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFileURL> _url = do_QueryInterface(aImageFilesPath, &rv);
@@ -496,7 +521,7 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
 
   // Create a file scan engine and submit the query.
   nsCOMPtr<sbIFileScan>
-    fileScan = do_CreateInstance("@songbirdnest.com/Songbird/FileScan;1", &rv);
+    fileScan = do_CreateInstance("@getnightingale.com/Nightingale/FileScan;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = fileScan->SubmitQuery(fileScanQuery);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -507,7 +532,7 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
   PRBool isScanning = PR_TRUE;
   while (isScanning) {
     // Check for abort.
-    NS_ENSURE_FALSE(mBaseDevice->IsRequestAborted(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(mBaseDevice->ReqAbortActive(), NS_ERROR_ABORT);
 
     // Check if the file scan query is still scanning.
     rv = fileScanQuery->IsScanning(&isScanning);

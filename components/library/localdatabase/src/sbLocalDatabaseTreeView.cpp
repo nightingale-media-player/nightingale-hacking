@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,7 +34,6 @@
 #include <nsIDOMElement.h>
 #include <nsIObjectOutputStream.h>
 #include <nsIObjectInputStream.h>
-#include <nsIObserverService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
@@ -46,8 +45,6 @@
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILibrary.h>
 #include <sbILibraryConstraints.h>
-#include <sbIDevice.h>
-#include <sbIDeviceManager.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreManager.h>
@@ -56,9 +53,7 @@
 #include <sbIMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
-#include <sbIMediaItemController.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbIPropertyUnitConverter.h>
 #include <sbISortableMediaListView.h>
@@ -102,7 +97,7 @@ static PRLogModuleInfo* gLocalDatabaseTreeViewLog = nsnull;
 #define PROGRESS_VALUE_UNSET -1
 #define PROGRESS_VALUE_COMPLETE 101
 
-#define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
+#define SB_STRING_BUNDLE_CHROME_URL "chrome://nightingale/locale/nightingale.properties"
 
 #define BAD_CSS_CHARS "/.:# !@$%^&*(),?;'\"<>~=+`\\|[]{}"
 
@@ -145,22 +140,6 @@ private:
   nsITreeBoxObject* mTreeBoxObject;
 };
 
-class sbAutoSuppressArrayInvalidation
-{
-public:
-  explicit
-  sbAutoSuppressArrayInvalidation(sbILocalDatabaseGUIDArray *aArray)
-  : mArray(aArray) {
-    mArray->SuppressInvalidation(PR_TRUE);
-  }
-
-  virtual ~sbAutoSuppressArrayInvalidation() {
-    mArray->SuppressInvalidation(PR_FALSE);
-  }
-private:
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
-};
-
 /* static */ nsresult PR_CALLBACK
 sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aIndex,
                                                                const nsAString& aId,
@@ -196,28 +175,24 @@ sbLocalDatabaseTreeView::SelectionListGuidsEnumeratorCallback(PRUint32 aIndex,
   return NS_OK;
 }
 
-NS_IMPL_THREADSAFE_ISUPPORTS10(sbLocalDatabaseTreeView,
-                               nsIClassInfo,
-                               nsIObserver,
-                               nsISupportsWeakReference,
-                               nsITreeView,
-                               sbILocalDatabaseGUIDArrayListener,
-                               sbILocalDatabaseTreeView,
-                               sbIMediaListViewTreeView,
-                               sbIMediacoreEventListener,
-                               sbIMediaListViewSelectionListener,
-                               sbIPlayQueueServiceListener)
+NS_IMPL_ISUPPORTS8(sbLocalDatabaseTreeView,
+                   nsIClassInfo,
+                   nsISupportsWeakReference,
+                   nsITreeView,
+                   sbILocalDatabaseGUIDArrayListener,
+                   sbILocalDatabaseTreeView,
+                   sbIMediaListViewTreeView,
+                   sbIMediacoreEventListener,
+                   sbIMediaListViewSelectionListener)
 
-NS_IMPL_CI_INTERFACE_GETTER9(sbLocalDatabaseTreeView,
+NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseTreeView,
                              nsIClassInfo,
-                             nsIObserver,
                              nsITreeView,
                              sbILocalDatabaseGUIDArrayListener,
                              sbILocalDatabaseTreeView,
                              sbIMediaListViewTreeView,
                              sbIMediacoreEventListener,
-                             sbIMediaListViewSelectionListener,
-                             sbIPlayQueueServiceListener)
+                             sbIMediaListViewSelectionListener)
 
 sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mListType(eLibrary),
@@ -233,8 +208,7 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mIsListeningToPlayback(PR_FALSE),
  mShouldPreventRebuild(PR_FALSE),
  mFirstCachedRow(NOT_SET),
- mLastCachedRow(NOT_SET),
- mPlayQueueIndex(0)
+ mLastCachedRow(NOT_SET)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -247,30 +221,12 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 {
   nsresult rv;
 
-  if (mPlayQueueService) {
-
-    nsCOMPtr<sbIPlayQueueServiceListener> playQueueServiceListener =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this),
-                        &rv);
-    if (NS_SUCCEEDED(rv)) {
-      mPlayQueueService->RemoveListener(playQueueServiceListener);
-    }
-  }
-
   if (mViewSelection) {
     nsCOMPtr<sbIMediaListViewSelectionListener> selectionListener =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this),
                         &rv);
     if (NS_SUCCEEDED(rv))
       mViewSelection->RemoveListener(selectionListener);
-  }
-
-  // Remove observer for treeview invalidations
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-
-  if (NS_SUCCEEDED(rv)) {
-    observerService->RemoveObserver(this, SB_INVALIDATE_ALL_TREEVIEWS_TOPIC);
   }
 
   NS_ASSERTION(!mIsListeningToPlayback, "Still listening when dtor called");
@@ -434,72 +390,12 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   // changes.  This listener should be set up in SetTree.
   if (mListType != eDistinct) {
     nsCOMPtr<nsISupportsWeakReference> weakRef =
-      do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = weakRef->GetWeakReference(getter_AddRefs(mMediacoreManager));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  // If this is a view of the play queue, keep a reference to the queue service.
-  mPlayQueueService =
-      do_GetService("@songbirdnest.com/Songbird/playqueue/service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> queueList;
-  rv = mPlayQueueService->GetMediaList(getter_AddRefs(queueList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> viewList;
-  rv = mMediaListView->GetMediaList(getter_AddRefs(viewList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool isViewOfQueue;
-  rv = queueList->Equals(viewList, &isViewOfQueue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isViewOfQueue) {
-    rv = mPlayQueueService->GetIndex(&mPlayQueueIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // add listener
-    nsCOMPtr<sbIPlayQueueServiceListener> playQueueServiceListener =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mPlayQueueService->AddListener(playQueueServiceListener);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    // If this isn't a view of the queue, set mPlayQueueService to null so we
-    // don't attempt to set play queue status properties
-    mPlayQueueService = nsnull;
-  }
-
-  // Attempt to get a device for the list we are currently viewing
-  nsCOMPtr<sbIDeviceManager2> deviceManager =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDevice> device;
-  rv = deviceManager->GetDeviceForItem(viewList, getter_AddRefs(device));
-  if (NS_FAILED(rv) || !device) {
-    // Couldn't find a device so must not be viewing device content
-    mViewingDeviceContent = PR_FALSE;
-  }
-  else {
-    // Found a device for this medialist, must be viewing device content
-    mViewingDeviceContent = PR_TRUE;
-  }
-
-  // Add observer for treeview invalidations
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = observerService->AddObserver(this,
-                                    SB_INVALIDATE_ALL_TREEVIEWS_TOPIC,
-                                    PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -647,7 +543,7 @@ sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
 
     // Make an atom
     nsCOMPtr<nsIAtom> atom;
-    rv = atomService->GetAtom(token, getter_AddRefs(atom));
+    rv = atomService->GetAtom(token.get(), getter_AddRefs(atom));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Don't encourage people to step on each other's toes.
@@ -1101,7 +997,7 @@ sbLocalDatabaseTreeView::GetState(sbLocalDatabaseTreeViewState** aState)
   rv = state->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  state->mSort = do_CreateInstance(SONGBIRD_LIBRARYSORT_CONTRACTID, &rv);
+  state->mSort = do_CreateInstance(NIGHTINGALE_LIBRARYSORT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = state->mSort->Init(mCurrentSortProperty,
@@ -1188,16 +1084,16 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    // Suppress invalidation of the underlying GUID array.
-    sbAutoSuppressArrayInvalidation suppress(mArray);
-
     rv = mArray->ClearSorts();
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mArray->AddSort(sortProperty, aDirection);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mArray->Invalidate(PR_FALSE);
+    rv = mArray->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1349,7 +1245,7 @@ sbLocalDatabaseTreeView::GetSelectedValues(nsIStringEnumerator** aValues)
 
 // sbILocalDatabaseGUIDArrayListener
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnBeforeInvalidate(PRBool aInvalidateLength)
+sbLocalDatabaseTreeView::OnBeforeInvalidate()
 {
   // array modified so reset everything
   mGuidWorkArray.Reset();
@@ -1497,130 +1393,6 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
       rv = TokenizeProperties(NS_LITERAL_STRING("playing"), properties);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-  }
-
-  return NS_OK;
-}
-
-/* This property lets us know if device content is not represented in the main
- * library.  If it's set for an item on a device, we display an icon
- * to indicate that we think that content is only on the device */
-nsresult
-sbLocalDatabaseTreeView::GetOriginNotInMainLibraryProperty
-                        (PRUint32 aIndex, nsISupportsArray* properties)
-{
-  NS_ASSERTION(properties, "properties is null");
-
-  nsresult rv;
-
-  //////////////////////////////////////////////////////////////////////////
-  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
-  // cause events to be fired, or use synchronous proxies, as you risk    //
-  // crashing in recursive painting/frame construction.                   //
-  //////////////////////////////////////////////////////////////////////////
-
-  if (!mViewingDeviceContent) {
-    /* We only care about originNotInMainLibrary for things on a device.
-     * We aren't viewing a device now, so we can stop checking. */
-     return NS_OK;
-  }
-
-  nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-  rv = GetBag(aIndex, getter_AddRefs(bag));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString originInMainLibrary;
-  rv = bag->GetProperty
-            (NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-             originInMainLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // We indicate the tracks that are _not_ in the main library
-  if (!originInMainLibrary.EqualsLiteral("1")) {
-    rv = TokenizeProperties(NS_LITERAL_STRING("originNotInMainLibrary"), properties);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex,
-                                               nsISupportsArray* properties)
-{
-  NS_ASSERTION(properties, "properties is null");
-
-  // Ideally we could just use the row properties to indicate that a row is
-  // 'unavailable', however if we do that then we can only use the
-  // -moz-tree-row pseudoelement and change the background and border of a row,
-  // and not the text style. In order to select on -moz-tree-cell-text, all of
-  // the cells must have the 'unavailable' css property. This method adds the
-  // css property to the array if the item at the index has the 'unavailable'
-  // library property.
-
-  nsresult rv;
-
-  //////////////////////////////////////////////////////////////////////////
-  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
-  // cause events to be fired, or use synchronous proxies, as you risk    //
-  // crashing in recursive painting/frame construction.                   //
-  //////////////////////////////////////////////////////////////////////////
-
-  nsString guid;
-  rv = mArray->GetGuidByIndex(aIndex, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> mediaList;
-  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibrary> library;
-  rv = mediaList->GetLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = library->GetMediaItem(guid, getter_AddRefs(mediaItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaItemController> mediaItemController;
-  rv = mediaItem->GetItemController(getter_AddRefs(mediaItemController));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!mediaItemController)
-    return NS_OK;
-
-  PRBool itemDisabled;
-  rv = mediaItemController->IsItemDisabled(mediaItem, &itemDisabled);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (itemDisabled) {
-    rv = TokenizeProperties(NS_LITERAL_STRING("disabled"), properties);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbLocalDatabaseTreeView::GetPlayQueueStatus(PRUint32 aIndex,
-                                            nsISupportsArray* properties)
-{
-  NS_ASSERTION(properties, "properties is null");
-
-  nsresult rv;
-
-  //////////////////////////////////////////////////////////////////////////
-  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
-  // cause events to be fired, or use synchronous proxies, as you risk    //
-  // crashing in recursive painting/frame construction.                   //
-  //////////////////////////////////////////////////////////////////////////
-
-  if (aIndex < mPlayQueueIndex) {
-    rv = TokenizeProperties(NS_LITERAL_STRING("playqueue-history"), properties);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else if (aIndex == mPlayQueueIndex) {
-    rv = TokenizeProperties(NS_LITERAL_STRING("playqueue-current"), properties);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1875,17 +1647,6 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   rv = GetPlayingProperty(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetOriginNotInMainLibraryProperty(index, properties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetItemDisabledStatus(index, properties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mPlayQueueService) {
-    rv = GetPlayQueueStatus(index, properties);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   rv = GetBag(index, getter_AddRefs(bag));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1967,21 +1728,8 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
     }
   }
 
-  PRUint32 index = TreeToArray(row);
-
-  rv = GetPlayingProperty(index, properties);
+  rv = GetPlayingProperty(TreeToArray(row), properties);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetOriginNotInMainLibraryProperty(index, properties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetItemDisabledStatus(index, properties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mPlayQueueService) {
-    rv = GetPlayQueueStatus(index, properties);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   nsCOMPtr<sbIPropertyInfo> pi;
   nsString value;
@@ -2036,11 +1784,11 @@ sbLocalDatabaseTreeView::GetColumnProperties(nsITreeColumn* col,
 
   // Turn the property name into something that CSS can handle.  For example
   //
-  //   http://songbirdnest.com/data/1.0#rating
+  //   http://getnightingale.com/data/1.0#rating
   //
   // becomes:
   //
-  //   http-songbirdnest-com-data-1-0-rating
+  //   http-getnightingale.com-data-1-0-rating
 
   NS_NAMED_LITERAL_STRING(badChars, BAD_CSS_CHARS);
   static const PRUnichar kHyphenChar = '-';
@@ -2126,7 +1874,6 @@ sbLocalDatabaseTreeView::IsSorted(PRBool* _retval)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
                                  PRInt32 orientation,
-                                 nsIDOMDataTransfer* dataTransfer,
                                  PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -2141,7 +1888,6 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
     if (observer) {
       nsresult rv = observer->CanDrop(TreeToArray(row),
                                       orientation,
-                                      dataTransfer,
                                       _retval);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -2154,9 +1900,7 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::Drop(PRInt32 row,
-                              PRInt32 orientation,
-                              nsIDOMDataTransfer* dataTransfer)
+sbLocalDatabaseTreeView::Drop(PRInt32 row, PRInt32 orientation)
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Drop(%d, %d)", this,
          row, orientation));
@@ -2166,7 +1910,7 @@ sbLocalDatabaseTreeView::Drop(PRInt32 row,
     nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
       do_QueryReferent(mObserver);
     if (observer) {
-      nsresult rv = observer->Drop(TreeToArray(row), orientation, dataTransfer);
+      nsresult rv = observer->Drop(TreeToArray(row), orientation);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -2838,63 +2582,6 @@ sbLocalDatabaseTreeView::OnCurrentIndexChanged()
       rv = mRealSelection->SetCurrentIndex(currentIndex);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-  }
-
-  return NS_OK;
-}
-
-// sbIPlayQueueServiceListener
-NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnIndexUpdated(PRUint32 aToIndex)
-{
-  nsresult rv;
-
-
-  // xxx slloyd The play queue index is an index into the unfiltered
-  // medialist. Applying style properties using this index only works if there
-  // are no filters applied to the list. We have no plans for UI that allows
-  // users to filter lists, but if an add-on developer filters a view of the
-  // queue the visual styling will be off. See Bug 21878.
-  PRUint32 oldIndex = mPlayQueueIndex;
-  mPlayQueueIndex = aToIndex;
-
-  // Invalidate rows between the old index and the new index.
-  if (mTreeBoxObject) {
-    if (oldIndex < mPlayQueueIndex) {
-      rv = mTreeBoxObject->InvalidateRange(oldIndex, mPlayQueueIndex);
-      NS_ENSURE_SUCCESS(rv, rv);
-    } else {
-      rv = mTreeBoxObject->InvalidateRange(mPlayQueueIndex, oldIndex);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnQueueOperationStarted()
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnQueueOperationCompleted()
-{
-  return NS_OK;
-}
-
-// nsIObserver
-NS_IMETHODIMP
-sbLocalDatabaseTreeView::Observe(nsISupports* aSubject,
-                                 const char* aTopic,
-                                 const PRUnichar* aData)
-{
-  NS_ENSURE_ARG_POINTER(aTopic);
-  nsresult rv;
-
-  if (mTreeBoxObject && !strcmp(SB_INVALIDATE_ALL_TREEVIEWS_TOPIC, aTopic)) {
-    rv = mTreeBoxObject->Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

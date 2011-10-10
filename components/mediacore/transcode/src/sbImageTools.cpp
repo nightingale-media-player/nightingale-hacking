@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbImageTools.h"
@@ -109,22 +109,22 @@ HelperLoader::OnStartContainer(imgIRequest *aRequest, imgIContainer
 
 /* Implement imgIDecoderObserver::onStartFrame() */
 NS_IMETHODIMP
-HelperLoader::OnStartFrame(imgIRequest *aRequest, PRUint32 aFrame)
+HelperLoader::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
 {
   return NS_OK;
 }
 
 /* Implement imgIDecoderObserver::onDataAvailable() */
 NS_IMETHODIMP
-HelperLoader::OnDataAvailable(imgIRequest *aRequest, PRBool aCurrentFrame,
-                              const nsIntRect * aRect)
+HelperLoader::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame
+*aFrame, const nsIntRect * aRect)
 {
   return NS_OK;
 }
 
 /* Implement imgIDecoderObserver::onStopFrame() */
 NS_IMETHODIMP
-HelperLoader::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
+HelperLoader::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
 {
   return NS_OK;
 }
@@ -155,7 +155,7 @@ HelperLoader::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
 /* implement imgIContainerObserver::frameChanged() */
 NS_IMETHODIMP
 HelperLoader::FrameChanged(imgIContainer *aContainer,
-                           nsIntRect * aDirtyRect)
+                           gfxIImageFrame *aFrame, nsIntRect * aDirtyRect)
 {
   return NS_OK;
 }

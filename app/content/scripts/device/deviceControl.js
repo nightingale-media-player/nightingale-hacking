@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -43,7 +43,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
@@ -103,7 +103,7 @@ deviceControlWidget.prototype = {
   //   _deviceListenerAdded     True if a device listener has been added.
   //   _currentState            Current device operational state.
   //   _currentReadOnly         Current device read only state.
-  //   _currentImageMgmtType    Current device image sync management type.
+  //   _currentMgmtType         Current device management type array.
   //
 
   _widget: null,
@@ -114,7 +114,7 @@ deviceControlWidget.prototype = {
   _deviceListenerAdded: false,
   _currentState: Ci.sbIDevice.STATE_IDLE,
   _currentReadOnly: false,
-  _currentImageMgmtType: Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,
+  _currentMgmtType: Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL,
 
 
   //----------------------------------------------------------------------------
@@ -140,7 +140,7 @@ deviceControlWidget.prototype = {
         return;
 
       // Get the device library.
-      let libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      let libMgr = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                      .getService(Ci.sbILibraryManager);
       devLib = libMgr.getLibrary(devLibGUID);
 
@@ -158,7 +158,7 @@ deviceControlWidget.prototype = {
         return;
 
       // Get the device object.
-      let deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+      let deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                             .getService(Ci.sbIDeviceManager2);
       device = deviceManager.getDevice(Components.ID(deviceID));
 
@@ -236,7 +236,7 @@ deviceControlWidget.prototype = {
       var prefs = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefBranch);
 
-      var syncPlaylistPrefKey = "songbird.device." + this._widget.deviceID +
+      var syncPlaylistPrefKey = "nightingale.device." + this._widget.deviceID +
                                 ".preferences.library." + this._deviceLibrary.guid +
                                 ".sync.playlists"
 
@@ -381,7 +381,7 @@ deviceControlWidget.prototype = {
    */
 
   _createPlaylist: function deviceControlWidget__createPlaylist() {
-    var libSPS = Cc["@songbirdnest.com/servicepane/library;1"]
+    var libSPS = Cc["@getnightingale.com/servicepane/library;1"]
                    .getService(Ci.sbILibraryServicePaneService);
 
     // Create the playlist.
@@ -390,7 +390,7 @@ deviceControlWidget.prototype = {
 
     // Edit the playlist service pane node.
     if (gServicePane) {
-      var libDSPS = Cc["@songbirdnest.com/servicepane/device;1"]
+      var libDSPS = Cc["@getnightingale.com/servicepane/device;1"]
                      .getService(Ci.sbIDeviceServicePaneService);
       var node = libSPS.getNodeForLibraryResource(mediaList);
       var deviceNode = libDSPS.getNodeForDevice(this._device);
@@ -472,16 +472,16 @@ deviceControlWidget.prototype = {
     acceptedBlacklist = (buttonPressed == 0);
     if (acceptedBlacklist) {
       var ignoreList = Application.prefs
-                                  .getValue("songbird.device.ignorelist", "");
+                                  .getValue("nightingale.device.ignorelist", "");
       // Append a separator if necessary.
       if (ignoreList != "") {
         ignoreList += ";";
       }
       ignoreList += this._device.id;
-      Application.prefs.setValue("songbird.device.ignorelist", ignoreList);
+      Application.prefs.setValue("nightingale.device.ignorelist", ignoreList);
 
       // Remove the device from the application
-      var manager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+      var manager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                       .getService(Ci.sbIDeviceManager2);
       var controller = manager.getController(this._device.controllerId);
       controller.releaseDevice(this._device);
@@ -497,7 +497,7 @@ deviceControlWidget.prototype = {
     // Show the device info dialog.
     WindowUtils.openModalDialog
       (window,
-       "chrome://songbird/content/xul/device/deviceInfoDialog.xul",
+       "chrome://nightingale/content/xul/device/deviceInfoDialog.xul",
        "",
        "chrome,centerscreen",
        [ this._device ],
@@ -576,10 +576,10 @@ deviceControlWidget.prototype = {
     if (this._deviceLibrary) {
       try {
         storageConverter =
-          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
             .createInstance(Ci.sbIPropertyUnitConverter);
         capacity = this._deviceLibrary.getProperty
-                     ("http://songbirdnest.com/device/1.0#capacity");
+                     ("http://getnightingale.com/device/1.0#capacity");
         capacity = storageConverter.autoFormat(capacity, -1, 1);
       } catch (ex) {};
     }
@@ -603,7 +603,7 @@ deviceControlWidget.prototype = {
     var deviceProperties = this._device.properties.properties;
     try {
       accessCompatibility =
-        deviceProperties.getPropertyAsAString("http://songbirdnest.com/" +
+        deviceProperties.getPropertyAsAString("http://getnightingale.com/" +
                                               "device/1.0#accessCompatibility");
     } catch (ex) {}
     if (accessCompatibility == "ro")
@@ -656,17 +656,13 @@ deviceControlWidget.prototype = {
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
-    var imagesMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE;
-    if (this._deviceLibrary) {
-      let currSettings = this._deviceLibrary.syncSettings;
-      imagesMgmtType =
-        currSettings.getMediaSettings(this._deviceLibrary.MEDIATYPE_IMAGE)
-                    .mgmtType;
-    }
+    var mgmtType = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+    if (this._deviceLibrary)
+      mgmtType = this._deviceLibrary.tempSyncSettings.syncMode;
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
-        (this._currentImageMgmtType == imagesMgmtType) &&
+        (this._currentMgmtType == mgmtType) &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
         (this._currentSupportsReformat == supportsReformat) &&
@@ -676,7 +672,7 @@ deviceControlWidget.prototype = {
     }
 
     // Update the current state.
-    this._currentImageMgmtType = imagesMgmtType;
+    this._currentMgmtType = mgmtType;
     this._currentState = state;
     this._currentReadOnly = readOnly;
     this._currentSupportsReformat = supportsReformat;
@@ -760,6 +756,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
+    else if (this._deviceLibrary && !(this._deviceLibrary.isManualSyncMode) &&
+             this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._deviceLibrary && this._canTriggerSync() &&
              this._getStateAttribute(attrVal, aAttrName, "can_trigger_sync")) {}
     else if (this._currentSupportsReformat &&
@@ -921,7 +919,7 @@ deviceControlWidget.prototype = {
       return null;
 
     // Get the service pane node.
-    var servicePaneService = Cc["@songbirdnest.com/servicepane/service;1"]
+    var servicePaneService = Cc["@getnightingale.com/servicepane/service;1"]
                                .getService(Ci.sbIServicePaneService);
     servicePaneNode = servicePaneService.getNode(servicePaneNodeID);
 
@@ -933,8 +931,12 @@ deviceControlWidget.prototype = {
     if (!this._deviceLibrary)
       return false;
 
+    // user can trigger sync if management is not manual.
+    if (!(this._deviceLibrary.isManualSyncMode))
+      return true;
+
     // Check photo sync settings since they are separate from the other types
-    let syncSettings = this._deviceLibrary.syncSettings;
+    let syncSettings = this._deviceLibrary.tempSyncSettings;
 
     // Can not sync if there are no settings.
     if (!syncSettings)

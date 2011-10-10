@@ -62,10 +62,6 @@ html {
   padding-left: 3.7em;
 }
 
-#chooseApplicationMenuItem {
-  list-style-image: url("chrome://browser/skin/preferences/application.png");
-}
-
 /* Don't print subscription UI */
 @media print {
   #feedHeaderContainer {

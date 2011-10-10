@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,16 +20,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 #include "sbClipboardHelper.h"
 
+#include <gfxIImageFrame.h>
 #include <imgIContainer.h>
 #include <imgITools.h>
 #include <nsIBinaryInputStream.h>
 #include <nsIClipboard.h>
+#include <nsIImage.h>
 #include <nsIInputStream.h>
 #include <nsIInterfaceRequestor.h>
 #include <nsIInterfaceRequestorUtils.h>
@@ -222,8 +224,17 @@ sbClipboardHelper::PasteImageToClipboard(const nsACString &aMimeType,
   stream->ShareData(reinterpret_cast<const char*>(aData), aDataLen);
 
   // decode image
-  nsCOMPtr<imgIContainer> image;
-  rv = imgtool->DecodeImageData(stream, aMimeType, getter_AddRefs(image));
+  nsCOMPtr<imgIContainer> container;
+  rv = imgtool->DecodeImageData(stream, aMimeType, getter_AddRefs(container));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Grab first frame of the image
+  nsCOMPtr<gfxIImageFrame> imgFrame;
+  rv = container->GetCurrentFrame(getter_AddRefs(imgFrame));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Change to nsIImage so we can pass to the clipboard
+  nsCOMPtr<nsIImage> image(do_GetInterface(imgFrame, &rv));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Now create a Transferable so we can copy to the clipboard

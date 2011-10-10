@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbMediaListEnumeratorWrapper.h"
@@ -34,12 +34,11 @@
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
-#include <sbLocalDatabaseMediaItem.h>
 
-// Songbird interfaces
+// Nightingale interfaces
 #include <sbILibrary.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
@@ -162,17 +161,10 @@ sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
   propertyValue += NS_LITERAL_STRING(",");
   propertyValue += itemGuid;
 
-  // Do not send notification when the item is updated.
-  nsCOMPtr<sbILocalDatabaseMediaItem> item =
-    do_QueryInterface(mediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  item->SetSuppressNotifications(PR_TRUE);
   rv = 
     mediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
                            propertyValue);
   NS_ENSURE_SUCCESS(rv, rv);
-  item->SetSuppressNotifications(PR_FALSE);
 
   NS_ADDREF(*aItem = mediaItem);
 

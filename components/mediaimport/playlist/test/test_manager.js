@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,7 +32,7 @@ function runTest () {
 
   var library = createLibrary("test_playlistmanager");
 
-  var manager = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+  var manager = Cc["@getnightingale.com/Nightingale/PlaylistReaderManager;1"]
                   .getService(Ci.sbIPlaylistReaderManager);
   var platform = getPlatform();
 
@@ -49,7 +49,7 @@ function runTest () {
   // Test extensions
   var extCount = {};
   var exts = manager.supportedFileExtensions(extCount);
-  expected = ["pls", "m3u", "m3u8", "html", "htm", "php", "php3", "", "atom", "rss", "asx"];
+  expected = ["pls", "m3u", "html", "htm", "php", "php3", "", "atom", "rss", "asx"];
   assertEqual(extCount.value, expected.length);
   for (var i = 0; i < extCount.value; i++) {
     expected = removeFromArray(expected, exts[i]);

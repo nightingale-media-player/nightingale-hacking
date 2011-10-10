@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  DatabaseResult.h
-* \brief Songbird Database Object Definition.
+* \brief Nightingale Database Object Definition.
 */
 
 #ifndef __DATABASE_RESULT_H__
@@ -45,11 +45,11 @@
 #include <nsStringGlue.h>
 
 // DEFINES ====================================================================
-#define SONGBIRD_DATABASERESULT_CONTRACTID                \
-  "@songbirdnest.com/Songbird/DatabaseResult;1"
-#define SONGBIRD_DATABASERESULT_CLASSNAME                 \
-  "Songbird Database Result Interface"
-#define SONGBIRD_DATABASERESULT_CID                       \
+#define NIGHTINGALE_DATABASERESULT_CONTRACTID                \
+  "@getnightingale.com/Nightingale/DatabaseResult;1"
+#define NIGHTINGALE_DATABASERESULT_CLASSNAME                 \
+  "Nightingale Database Result Interface"
+#define NIGHTINGALE_DATABASERESULT_CID                       \
 { /* 9079e1b1-01e9-4cb8-9f2a-08fdf69597cf */              \
   0x9079e1b1,                                             \
   0x1e9,                                                  \

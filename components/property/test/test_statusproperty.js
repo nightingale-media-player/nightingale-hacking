@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,15 +19,15 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 function runTest() {
 
-  var prop = "http://songbirdnest.com/data/1.0#cdRipStatus";
+  var prop = "http://getnightingale.com/data/1.0#cdRipStatus";
 
   var builder =
-    Cc["@songbirdnest.com/Songbird/Properties/Builder/StatusProperty;1"]
+    Cc["@getnightingale.com/Nightingale/Properties/Builder/StatusProperty;1"]
       .createInstance(Ci.sbIStatusPropertyBuilder);
 
   builder.propertyID = prop;

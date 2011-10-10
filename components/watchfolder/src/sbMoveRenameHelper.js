@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 const Cc = Components.classes;
@@ -251,7 +251,7 @@ MoveRenameJob.prototype = {
     if (newPaths.length > 0) {
       //LOG("adding " + newPaths.length + " new items");
       // Add them as new media items
-      var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+      var importer = Cc['@getnightingale.com/Nightingale/DirectoryImportService;1']
                        .getService(Ci.sbIDirectoryImportService);
       var importJob = importer.import(ArrayConverter.nsIArray(newPaths));
       this.delegateJobProgress(importJob);
@@ -364,9 +364,9 @@ function MoveRenameHelper() {
 }
 
 MoveRenameHelper.prototype = {
-  classDescription: "Songbird Watch Folder Move/Rename Helper Service",
+  classDescription: "Nightingale Watch Folder Move/Rename Helper Service",
   classID:          Components.ID("{02ba1ba0-fee5-11dd-87af-0800200c9a66}"),
-  contractID:       "@songbirdnest.com/Songbird/MoveRenameHelper;1",
+  contractID:       "@getnightingale.com/Nightingale/MoveRenameHelper;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIWFMoveRenameHelper9000]),
   
   // List of pending jobs.  We only want to allow one to run at a time, 

@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,18 +22,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
  * \file  SBUtils.jsm
- * \brief Javascript source for the general Songbird utilities.
+ * \brief Javascript source for the general Nightingale utilities.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird utilities configuration.
+// Nightingale utilities configuration.
 //
 //------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ EXPORTED_SYMBOLS = [ "SBUtils", "SBFilteredEnumerator" ];
 
 //------------------------------------------------------------------------------
 //
-// Songbird utilities defs.
+// Nightingale utilities defs.
 //
 //------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ const Cu = Components.utils;
 
 //------------------------------------------------------------------------------
 //
-// Songbird utilities imports.
+// Nightingale utilities imports.
 //
 //------------------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 //------------------------------------------------------------------------------
 //
-// Songbird utility services.
+// Nightingale utility services.
 //
 //------------------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ var SBUtils = {
     // Read the first-run has completed preference.
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
-    var hasCompleted = Application.prefs.getValue("songbird.firstrun.check.0.3",
+    var hasCompleted = Application.prefs.getValue("nightingale.firstrun.check.0.3",
                                                   false);
 
     return hasCompleted;

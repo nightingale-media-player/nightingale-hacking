@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbLocalDatabaseMediaListViewSelection.h"
@@ -816,10 +816,8 @@ sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRUint32 aIndex,
 {
   nsresult rv;
 
-  /* For regular lists, the unique identifer is composed of the lists' guid
-   * appended to the item's guid and viewItemUID (rowid-mediaitemid)
-   * Thus the UniqueId is of the form:
-   *   "listGUID|itemGUID|rowid-mediaitemid" */
+  // For regular lists, the unique identifer is composed of the lists' guid
+  // appended to the item's guid appeneded to the item's database rowid.
   aId.Assign(mListGUID);
   aId.Append('|');
 
@@ -829,11 +827,10 @@ sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRUint32 aIndex,
   aId.Append(guid);
   aId.Append('|');
 
-  // get the viewItemUID which is "rowid-mediaitemid" and append to the UniqueId
-  nsString viewItemUID;
-  rv = mArray->GetViewItemUIDByIndex(aIndex, viewItemUID);
+  PRUint64 rowid;
+  rv = mArray->GetRowidByIndex(aIndex, &rowid);
   NS_ENSURE_SUCCESS(rv, rv);
-  aId.Append(viewItemUID);
+  AppendInt(aId, rowid);
 
   return NS_OK;
 }
@@ -862,12 +859,12 @@ sbLocalDatabaseMediaListViewSelection::GetIndexForUniqueId
   if (idComponentList.Length() < 3)
     return NS_ERROR_NOT_AVAILABLE;
 
-  /* use the unique id to get the viewItemUID which can help us get
-   * the index of the item */
-  nsString viewItemUID = idComponentList[2];
+  // Get the row ID.
+  PRUint64 rowid = nsString_ToUint64(idComponentList[2], &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the index from the rowid and mediaitemid.
-  rv = mArray->GetIndexByViewItemUID(viewItemUID, aIndex);
+  // Get the index from the row ID.
+  rv = mArray->GetIndexByRowid(rowid, aIndex);
   if (rv == NS_ERROR_NOT_AVAILABLE)
     return NS_ERROR_NOT_AVAILABLE;
   NS_ENSURE_SUCCESS(rv, rv);

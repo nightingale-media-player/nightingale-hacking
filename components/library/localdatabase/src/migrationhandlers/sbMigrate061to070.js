@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -49,7 +49,7 @@ function sbLocalDatabaseMigrate061to070()
   this._propertyNames = {};
   this._resourceProperties = [];
   
-  this._propertyManager = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  this._propertyManager = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                             .getService(Ci.sbIPropertyManager);
 }
 
@@ -60,7 +60,7 @@ function sbLocalDatabaseMigrate061to070()
 sbLocalDatabaseMigrate061to070.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
 
-  classDescription: 'Songbird Migration Handler for 0.6.1 to 0.7.0',
+  classDescription: 'Nightingale Migration Handler for 0.6.1 to 0.7.0',
   classID: Components.ID("{54A1D507-D085-4bfe-B729-1FFA13291C24}"),
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.6.1 to 0.7.0",
   
@@ -150,7 +150,7 @@ sbLocalDatabaseMigrate061to070.prototype = {
   },
   
   _createQuery: function sbLDBM061to070_createQuery() {
-    var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    var query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                   .createInstance(Ci.sbIDatabaseQuery);
     query.databaseLocation = this._databaseLocation;
     query.setDatabaseGUID(this._databaseGUID);

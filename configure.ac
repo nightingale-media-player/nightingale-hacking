@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 
 #
@@ -33,10 +33,10 @@ AC_CANONICAL_SYSTEM
 
 #
 # We're going to hardcode our obj and dist directory names for the moment.
-# These MUST match the vars in songbird.mk or bad things will happen!
+# These MUST match the vars in nightingale.mk or bad things will happen!
+# The obj is now moved down so that it can take advantage of using the arch and build type.
 #
 
-OBJDIRNAME="compiled"
 DISTDIRNAME="dist"
 
 #
@@ -87,15 +87,15 @@ AC_SUBST(PREVENT_JARS)
 #  Check for --enable-official
 #
 
-SONGBIRD_BRANDING_DIR='branding'
+NIGHTINGALE_BRANDING_DIR='branding'
 AC_ARG_ENABLE(official,
               [  --enable-official       create an official build (default=no)])
 if test "$enable_official" == "yes"; then
-  SONGBIRD_OFFICIAL=1
-  SONGBIRD_BRANDING_DIR='branding'
+  NIGHTINGALE_OFFICIAL=1
+  NIGHTINGALE_BRANDING_DIR='branding'
 fi
-AC_SUBST(SONGBIRD_OFFICIAL)
-AC_SUBST(SONGBIRD_BRANDING_DIR)
+AC_SUBST(NIGHTINGALE_OFFICIAL)
+AC_SUBST(NIGHTINGALE_BRANDING_DIR)
 
 #
 #  Check for --enable-nightly
@@ -104,10 +104,10 @@ AC_SUBST(SONGBIRD_BRANDING_DIR)
 AC_ARG_ENABLE(nightly,
               [  --enable-nightly        create a nightly build (default=no)])
 if test "$enable_nightly" == "yes"; then
-  SONGBIRD_NIGHTLY=1
+  NIGHTINGALE_NIGHTLY=1
   SB_ENABLE_TEST_HARNESS=1
 fi
-AC_SUBST(SONGBIRD_NIGHTLY)
+AC_SUBST(NIGHTINGALE_NIGHTLY)
 
 #
 #  Check for --enable-tests
@@ -171,7 +171,7 @@ SB_WITH_DEADLY_WARNINGS=
 AC_ARG_WITH(deadly-warnings,
             [  --with-deadly-warnings=<debug,release,all,none,force>,conditions under which compiler warnings are considered build failures (default=release)],
             [ SB_WITH_DEADLY_WARNINGS=$withval ],
-            [ SB_WITH_DEADLY_WARNINGS=all])
+            [ SB_WITH_DEADLY_WARNINGS=release])
 
 case "$SB_WITH_DEADLY_WARNINGS" in
   debug|release|all|none|force)
@@ -184,13 +184,13 @@ esac
 AC_SUBST(SB_WITH_DEADLY_WARNINGS)
 
 #
-# Check for --with-songbird-extensions
+# Check for --with-nightingale-extensions
 #
 
 SB_BIRD_EXTENSIONS=default
 
-AC_ARG_WITH(songbird-extensions,
-            [  --with-songbird-extensions=<list of songbird extensions>,list of songbird extensions to build (default=platform dependent)],
+AC_ARG_WITH(nightingale-extensions,
+            [  --with-nightingale-extensions=<list of nightingale extensions>,list of nightingale extensions to build (default=platform dependent)],
             [ SB_BIRD_EXTENSIONS=$withval ],
             [ SB_BIRD_EXTENSIONS=default])
 AC_SUBST(SB_BIRD_EXTENSIONS)
@@ -247,7 +247,7 @@ case "$target" in
         # no cygwin wrapper for mingw
       ;;
       *)
-        AC_MSG_ERROR(Songbird must be built using MozillaBuild/MSYS)
+        AC_MSG_ERROR(Nightingale must be built using MozillaBuild/MSYS)
       ;;
     esac
   ;;
@@ -309,20 +309,11 @@ esac
 AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
 
+OBJDIRNAME="compiled-$SB_CONFIGURATION-$SB_ARCH"
+
 #
 #  Check for --enable-installer
 #
-
-# Always set SB_INSTALLER_SUFFIXES so that the installer can be built
-# manually as expected. These are the defaults.
-
-case $SB_PLATFORM in
-  windows) SB_INSTALLER_SUFFIXES=exe;;
-  macosx)  SB_INSTALLER_SUFFIXES=dmg;;
-  *)       SB_INSTALLER_SUFFIXES=tar.gz;;
-esac
-
-# Now process --enable-installer options.
 
 AC_ARG_ENABLE(installer,
               [  --enable-installer=TYPE create installer (default=no, use "nsis", "dmg", "pkg", "tar". "yes" will build default installer type.)],
@@ -330,6 +321,12 @@ AC_ARG_ENABLE(installer,
 case $enable_installer in
   yes)
     MAKE_INSTALLER=1
+    dnl default installer types
+    case $SB_PLATFORM in
+      windows) SB_INSTALLER_SUFFIXES=exe;;
+      macosx)  SB_INSTALLER_SUFFIXES=dmg;;
+      *)       SB_INSTALLER_SUFFIXES=tar.gz;;
+    esac
     ;;
   no)
     AS_UNSET(MAKE_INSTALLER)
@@ -402,7 +399,7 @@ AC_ARG_WITH(macosx-sdk,
 AC_ARG_ENABLE(breakpad,
               [  --enable-breakpad       enable breakpad (default=yes in official builds)])
 # off by default in non-official builds
-if test -n "$SONGBIRD_OFFICIAL"; then
+if test -n "$NIGHTINGALE_OFFICIAL"; then
   SB_ENABLE_BREAKPAD=1
 fi
 
@@ -533,8 +530,6 @@ if test -z "$PYTHON"; then AC_MSG_ERROR(Python not found); fi
 AC_CHECK_PROG(RM, rm, rm)
 if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 
-AC_CHECK_PROGS(SED, ${SED} gsed sed, "")
-
 AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 AC_CHECK_PROGS(SORT, ${SORT} sort, "")
@@ -569,8 +564,6 @@ case "$SB_PLATFORM" in
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
     AC_CHECK_PROG(MIDL, midl, midl)
     if test -z "$MIDL"; then AC_MSG_ERROR(Midl not found); fi
-    AC_CHECK_PROG(REBASE, rebase, rebase)
-    if test -z "$REBASE"; then AC_MSG_ERROR(Rebase not found); fi
 
     # Check midl version
     changequote(,)
@@ -589,7 +582,7 @@ case "$SB_PLATFORM" in
         if test \( "$_MIDL_MAJOR_VERSION" = "7" -a "$_MIDL_MINOR_VERSION" = "00" -a "$_MIDL_REV_VERSION" = "0499" \); then
             # MIDL version 7.00.0499 defaults /env win64 on x64 platforms.
             # MIDL version 7.00.0500 or later has no problem.
-            DEFAULT_MIDL_FLAGS="${MIDL_FLAGS} -env win32 -Oicf -robust"
+            MIDL_FLAGS="${MIDL_FLAGS} -env win32"
             AC_MSG_RESULT([need -env win32])
         else
             AC_MSG_RESULT([none needed])
@@ -725,7 +718,7 @@ case "$SB_PLATFORM" in
 
     if test "$_CC_MAJOR_VERSION" != "$_CXX_MAJOR_VERSION"; then
         if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
-            AC_MSG_WARN([The major versions of \$CC and \$CXX do not match. Songbird Bugzilla reports should not be filed against builds produced using them.])
+            AC_MSG_WARN([The major versions of \$CC and \$CXX do not match. Nightingale Bugzilla reports should not be filed against builds produced using them.])
         else
             AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
         fi
@@ -741,7 +734,7 @@ case "$SB_PLATFORM" in
                 if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
                     AC_MSG_WARN([Visual Studio 8 (2005) without Service Pack 1 detected; your build may not complete.])
                 else
-                    AC_MSG_ERROR([Visual Studio 8 (2005) requires Service Pack 1 to build Songbird. Please install KB926601.])
+                    AC_MSG_ERROR([Visual Studio 8 (2005) requires Service Pack 1 to build Nightingale. Please install KB926601.])
                 fi
             fi
             ;;
@@ -751,7 +744,7 @@ case "$SB_PLATFORM" in
     esac
     if test "$_CC_MAJOR_VERSION" -ne "$_CC_SUPPORTED_MAJOR_VERSION"; then
         if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
-            AC_MSG_WARN([This version of the MSVC compiler, $CC_VERSION, is unsupported. Songbird Bugzilla reports should not be filed against builds produced using it.])
+            AC_MSG_WARN([This version of the MSVC compiler, $CC_VERSION, is unsupported. Nightingale Bugzilla reports should not be filed against builds produced using it.])
         else
             AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION, is unsupported.])
         fi
@@ -831,9 +824,7 @@ case "$SB_PLATFORM" in
     CFLAGS_PREPROCESS="-P"
     CFLAGS_ASSEMBLER="-FAs"
     # Always disable warning 4624, because the XPCOM elicits this warning.
-    # Also disable warning 4800, it isn't useful, and using nsString with
-    # std::map causes it
-    CFLAGS_WARNING_IS_ERROR="-WX -wd4624 -wd4800"
+    CFLAGS_WARNING_IS_ERROR="-WX -wd4624"
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL $MSVC_DLL_LINKER_FLAGS"
     LDFLAGS_BIN=""
@@ -865,13 +856,13 @@ case "$SB_PLATFORM" in
       SB_MACOSX_SDK_10_5=
     fi
 
-    MACOSX_APPBUNDLE="Songbird.app"
+    MACOSX_APPBUNDLE="Nightingale.app"
     MACOSX_CONTENTS="/$MACOSX_APPBUNDLE/Contents"
     MACOSX_RESOURCES="$MACOSX_CONTENTS/Resources"
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -pipe"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -fshort-wchar -pipe"
     GCC_CPP_COMPILER_FLAGS="-Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -fno-rtti"
 
     if test "$enable_debug" = "yes"; then
@@ -927,10 +918,6 @@ case "$SB_PLATFORM" in
     AC_SEARCH_LIBS([pthread_create], [pthread])
     AC_SUBST(PTHREAD_LIBS, $LIBS)
     LIBS=$_SAVE_LIBS
-    
-    PKG_CHECK_MODULES(NSPR, nspr)
-    AC_SUBST(NSPR_CFLAGS)
-    AC_SUBST(NSPR_LIBS)
 
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GTK_CFLAGS)
@@ -941,17 +928,24 @@ case "$SB_PLATFORM" in
     AC_SUBST(GLIB_LIBS)
 
     # The iPod support needs dbus and hal.
-    # hal is deprecated
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     #PKG_CHECK_MODULES(HAL, hal)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
     #AC_SUBST(HAL_CFLAGS)
     #AC_SUBST(HAL_LIBS)
+    
+	PKG_CHECK_MODULES(TAGLIB, taglib >= 1.5)
+	if ! test -f `pkg-config --variable=prefix taglib`/include/taglib/mp4file.h ; then
+	  TAGLIB_CFLAGS=
+	  TAGLIB_LIBS=
+	fi
+	AC_SUBST(TAGLIB_CFLAGS)
+	AC_SUBST(TAGLIB_LIBS)
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
-    GCC_COMPILER_FLAGS="-c -fPIC -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
+    GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
@@ -1010,7 +1004,7 @@ case "$SB_PLATFORM" in
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
     AC_SUBST(GSTREAMER_CFLAGS)
     GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-    AC_SUBST(GSTREAMER_LIBS)
+    AC_SUBST(GSTREAMER_LIBS)    
     AC_SUBST(GTK_CFLAGS)
     AC_SUBST(GTK_LIBS)
 
@@ -1019,7 +1013,6 @@ case "$SB_PLATFORM" in
     AC_SUBST(GLIB_LIBS)
 
     # The iPod support needs dbus and hal.
-    # hal is deprecated
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     #PKG_CHECK_MODULES(HAL, hal)
     AC_SUBST(DBUS_CFLAGS)
@@ -1081,7 +1074,7 @@ AC_SUBST(ARFLAGS_LIB)
 AC_SUBST(CFLAGS_INCLUDE_PREFIX)
 AC_SUBST(CFLAGS_INCLUDE_SUFFIX)
 AC_SUBST(_MSC_VER)
-AC_SUBST(DEFAULT_MIDL_FLAGS)
+AC_SUBST(MIDL_FLAGS)
 AC_SUBST(MSMANIFEST_TOOL)
 AC_SUBST(LDFLAGS_DLL)
 AC_SUBST(LDFLAGS_BIN)
@@ -1155,33 +1148,25 @@ AC_SUBST(SB_DEPENDENCIES_DIR)
 #
 
 MEDIA_CORE_WMP=
-MEDIA_CORE_GST=
 MEDIA_CORE_GST_SYSTEM=
 MEDIA_CORE_QT=
 
 AC_ARG_WITH(media-core,
-            [  --with-media-core=windowsmedia,gstreamer,gstreamer-system,qt,default,none  Media cores to enable],
+            [  --with-media-core=windowsmedia,gstreamer-system,qt,default,none  Media cores to enable],
             [ SB_MEDIA_CORES=$withval ],
             [ SB_MEDIA_CORES=default ])
 for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     if test "$option" = "default"; then
          case "$SB_PLATFORM" in
             windows)
-                MEDIA_CORE_GST=1
                 MEDIA_CORE_WMP=1
                 MEDIA_CORE_QT=1
             ;;
             macosx)
-                # Enable GST only on x86 (we don't have PPC binaries)
-                case "$SB_ARCH" in
-                    *86)
-                        MEDIA_CORE_GST=1
-                    ;;
-                esac
                 MEDIA_CORE_QT=1
             ;;
             linux|solaris)
-                MEDIA_CORE_GST=1
+                MEDIA_CORE_GST_SYSTEM=1
             ;;
             *)
                 AC_MSG_ERROR([No platform default media cores found; please manually specify --with-media-core=])
@@ -1192,8 +1177,6 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
         true
     elif test "$option" = "windowsmedia"; then
         MEDIA_CORE_WMP=1
-    elif test "$option" = "gstreamer"; then
-        MEDIA_CORE_GST=1
     elif test "$option" = "gstreamer-system"; then
         MEDIA_CORE_GST_SYSTEM=1
     elif test "$option" = "qt"; then
@@ -1202,12 +1185,8 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
         AC_MSG_ERROR([Unknown --with-media-core option $option])
     fi
 
-    if test "$MEDIA_CORE_GST" = "1" -a "$MEDIA_CORE_GST_SYSTEM" = "1"; then
-        AC_MSG_ERROR([You can not build the gstreamer and gstreamer-system media cores at the same time])
-    fi
 done
 AC_SUBST(MEDIA_CORE_WMP)
-AC_SUBST(MEDIA_CORE_GST)
 AC_SUBST(MEDIA_CORE_GST_SYSTEM)
 AC_SUBST(MEDIA_CORE_QT)
 
@@ -1254,20 +1233,6 @@ if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
 
 fi
 
-# Check for libtag
-#
-PKG_CHECK_MODULES(TAGLIB, taglib >= 1.5)
-if ! test -f `pkg-config --variable=prefix taglib`/include/taglib/mp4file.h ; then
-  # Songbird ships a taglib claiming to be 1.5 but it's from SVN with a lot of
-  # improvements since plain 1.5
-  TAGLIB_CFLAGS=
-  TAGLIB_LIBS=
-fi
-AC_SUBST(TAGLIB_CFLAGS)
-AC_SUBST(TAGLIB_LIBS)
-
-#
-
 #
 # Check for --with-searchplugins
 #
@@ -1280,15 +1245,6 @@ AC_ARG_WITH(searchplugins,
             [ SB_SEARCHPLUGINS=default ])
 AC_SUBST(SB_SEARCHPLUGINS)
 
-# If our media core is gstreamer, and we're on linux, we may or may not
-# have this file. Warn if we expect it but don't find it.
-if test "$MEDIA_CORE_GST" = "1" -a "$SB_PLATFORM" = "linux"; then
-  AC_CHECK_FILE(/usr/lib/gstreamer-0.10/libgstflumpegdemux.so,
-      [HAVE_FLUENDO_MP3=1],
-      [AC_MSG_WARN([Linux MP3 decoder not present so build will not play mp3.])]
-  )
-fi
-AC_SUBST(HAVE_FLUENDO_MP3)
 
 #
 # Checks for libraries.
@@ -1304,7 +1260,7 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla-6.0.2/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
+echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -29,9 +29,9 @@ const Cr = Components.results;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const SONGBIRD_HOTKEYACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyActions;1";
-const SONGBIRD_HOTKEYACTIONS_CLASSNAME = "Songbird Hotkey Actions Service Interface";
-const SONGBIRD_HOTKEYACTIONS_CID = Components.ID("{0BB80965-77C8-4212-866C-F22677F75A2C}");
+const NIGHTINGALE_HOTKEYACTIONS_CONTRACTID = "@getnightingale.com/Nightingale/HotkeyActions;1";
+const NIGHTINGALE_HOTKEYACTIONS_CLASSNAME = "Nightingale Hotkey Actions Service Interface";
+const NIGHTINGALE_HOTKEYACTIONS_CID = Components.ID("{0BB80965-77C8-4212-866C-F22677F75A2C}");
 
 function HotkeyActions() {
   this._bundles = new Array();
@@ -83,9 +83,9 @@ HotkeyActions.prototype = {
                                          Ci.nsIObserver,
                                          Ci.nsISupportsWeakReference]),
   
-  classDescription: SONGBIRD_HOTKEYACTIONS_CLASSNAME,
-  classID: SONGBIRD_HOTKEYACTIONS_CID,
-  contractID: SONGBIRD_HOTKEYACTIONS_CONTRACTID
+  classDescription: NIGHTINGALE_HOTKEYACTIONS_CLASSNAME,
+  classID: NIGHTINGALE_HOTKEYACTIONS_CID,
+  contractID: NIGHTINGALE_HOTKEYACTIONS_CONTRACTID
 }; // HotkeyActions.prototype
 
 var NSGetModule = XPCOMUtils.generateNSGetModule([HotkeyActions]);

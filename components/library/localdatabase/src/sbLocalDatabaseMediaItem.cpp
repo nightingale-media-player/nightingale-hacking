@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,7 +28,6 @@
 
 #include <nsIProgrammingLanguage.h>
 #include <sbILibrary.h>
-#include <sbIMediaItemController.h>
 #include <sbILibraryUtils.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseResourcePropertyBag.h>
@@ -81,8 +80,6 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
   mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
   mSuppressNotifications(PR_TRUE),
-  mItemController(nsnull),
-  mItemControllerFetched(PR_FALSE),
   mPropertyBagLock(nsnull)
 {
 }
@@ -439,10 +436,6 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
     NS_WARNING("Attempt to set a read-only property!");
     return NS_ERROR_INVALID_ARG;
   }
-  if (aID.EqualsLiteral(SB_PROPERTY_TRACKTYPE)) {
-    mItemController.forget();
-    mItemControllerFetched = PR_FALSE;
-  }
 
   // Create a property array to hold the changed properties and their old
   // values
@@ -491,6 +484,8 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   rv = aProperties->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // XXXsk Don't let the GUID property to be set.  We shouldn't need this
+  // if it were a read only property, so remvoe this when bug 3099 is fixed.
   for (PRUint32 i = 0; i < propertyCount; i++) {
     nsCOMPtr<sbIProperty> property;
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
@@ -500,15 +495,9 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
     rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // XXXsk Don't let the GUID property to be set.  We shouldn't need this
-    // if it were a read only property, so remvoe this when bug 3099 is fixed.
     if (propertyID.EqualsLiteral(SB_PROPERTY_GUID)) {
       NS_WARNING("Attempt to set a read-only property!");
       return NS_ERROR_INVALID_ARG;
-    }
-    if (propertyID.EqualsLiteral(SB_PROPERTY_TRACKTYPE)) {
-      mItemController.forget();
-      mItemControllerFetched = PR_FALSE;
     }
   }
 
@@ -718,40 +707,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
 {
   *aIsMutable = PR_TRUE;
-  return NS_OK;
-}
-
-/**
- * See sbIMediaItem
- */
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetItemController(sbIMediaItemController **aMediaItemController)
-{
-  NS_ENSURE_ARG_POINTER(aMediaItemController);
-
-  if (!mItemControllerFetched) {
-    mItemControllerFetched = PR_TRUE;
-    // Use the trackType property of the item as a contractid to find the
-    // controller service.
-    nsString trackType;
-    nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE), trackType);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (!trackType.IsEmpty()) {
-      // If there is a type, construct the contractid for the controller
-      nsCString cTrackType;
-      cTrackType = NS_ConvertUTF16toUTF8(trackType);
-      ToLowerCase(cTrackType);
-      nsCString cContractID;
-      cContractID = 
-        NS_LITERAL_CSTRING(SB_MEDIAITEMCONTROLLER_PARTIALCONTRACTID);
-      cContractID.Append(cTrackType);
-      // fetch the service, ignore the return value because the service
-      // might not be there.
-      mItemController = do_GetService(cContractID.get(), &rv);
-    }
-  }
-
-  NS_IF_ADDREF(*aMediaItemController = mItemController);
   return NS_OK;
 }
 
@@ -1016,7 +971,7 @@ sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
   NS_ENSURE_SUCCESS(rv, rv);
   if (exists) {
     nsCOMPtr<sbILibraryUtils> libUtils =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<nsIFile> canonicalFile;
     rv = libUtils->GetCanonicalPath(file,
@@ -1051,7 +1006,7 @@ sbLocalDatabaseMediaItem::ToString(nsAString& _retval)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::TestIsURIAvailable(nsIObserver* aObserver)
+sbLocalDatabaseMediaItem::TestIsAvailable(nsIObserver* aObserver)
 {
   // Create a URI Checker interface
   nsresult rv;

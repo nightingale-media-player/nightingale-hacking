@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include <sbArrayUtils.h>
@@ -456,7 +456,7 @@ SB_MakeMidnightRock(sbICDTOC **aOutTOC)
 
   nsresult rv;
   nsCOMPtr<sbIMockCDTOC> toc =
-    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/MockCDTOC;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = toc->Initialize(1, 15, 285675);
@@ -505,7 +505,7 @@ SB_MakeBabyOneMoreTime(sbICDTOC **aOutTOC)
 
   nsresult rv;
   nsCOMPtr<sbIMockCDTOC> toc =
-    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/MockCDTOC;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = toc->Initialize(1, 12, 260335);
@@ -549,7 +549,7 @@ SB_MakeAllThatYouCantLeaveBehind(sbICDTOC **aOutTOC)
 
   nsresult rv;
   nsCOMPtr<sbIMockCDTOC> toc =
-    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/MockCDTOC;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = toc->Initialize(1, 11, 225562);
@@ -591,7 +591,7 @@ SB_MakeIncredibad(sbICDTOC **aOutTOC)
 
   nsresult rv;
   nsCOMPtr<sbIMockCDTOC> toc =
-    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/MockCDTOC;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = toc->Initialize(1, 19, 190565);
@@ -686,11 +686,11 @@ sbMockCDService::Init()
   // Create two mock cd devices.
   nsresult rv;
   nsCOMPtr<sbIMockCDDevice> device1 =
-    do_CreateInstance("@songbirdnest.com/Songbird/MockCDDevice;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/MockCDDevice;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = device1->Initialize(
-      NS_LITERAL_STRING("Songbird MockCD Device 8000"),
+      NS_LITERAL_STRING("Nightingale MockCD Device 8000"),
       PR_TRUE,   // readable
       PR_FALSE,  // writable
       PR_FALSE,  // is disc inserted
@@ -699,11 +699,11 @@ sbMockCDService::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMockCDDevice> device2 =
-    do_CreateInstance("@songbirdnest.com/Songbird/MockCDDevice;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/MockCDDevice;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = device2->Initialize(
-      NS_LITERAL_STRING("Songbird MockCD Device 7000"),
+      NS_LITERAL_STRING("Nightingale MockCD Device 7000"),
       PR_TRUE,   // readable
       PR_FALSE,  // writable
       PR_FALSE,  // is disc inserted
@@ -932,4 +932,4 @@ static nsModuleComponentInfo sbMockCDDevice[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdMockCDDevice, sbMockCDDevice)
+NS_IMPL_NSGETMODULE(NightingaleMockCDDevice, sbMockCDDevice)

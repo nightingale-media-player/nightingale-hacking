@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -73,15 +73,15 @@ var videoControlsController = {
   
   _initialize: function vcc__initialize() {
     this._mediacoreManager =
-           Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+           Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
              .getService(Ci.sbIMediacoreManager);
     this._videoFullscreenDataRemote =
            SBNewDataRemote(this.VIDEO_FULLSCREEN_DR_KEY);
 
     var useTransparentGraphics = true;
-    if ("@songbirdnest.com/Songbird/WindowChromeService;1" in Cc) {
+    if ("@getnightingale.com/Nightingale/WindowChromeService;1" in Cc) {
       var winChromeService =
-        Cc["@songbirdnest.com/Songbird/WindowChromeService;1"]
+        Cc["@getnightingale.com/Nightingale/WindowChromeService;1"]
           .getService(Ci.sbIWindowChromeService);
       useTransparentGraphics = winChromeService.isCompositionEnabled;
     }

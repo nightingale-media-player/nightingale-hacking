@@ -2,12 +2,12 @@
 <!-- vim: set sw=2 : -->
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -22,11 +22,11 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE bindings SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:html="http://www.w3.org/1999/xhtml"
@@ -34,14 +34,14 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
 
-
-
+  
+  
   <!-- VOLUME CONTROL -->
 
-
-
-
-  <binding id="volume-slider" extends="chrome://songbird/content/bindings/progressSlider.xml#progress-slider">
+  
+  
+  
+  <binding id="volume-slider" extends="chrome://nightingale/content/bindings/progressSlider.xml#progress-slider">
 
     <handlers>
       <handler event="progressSliderChange" action="this.onTrackVolume();"/>
@@ -56,29 +56,29 @@
       <![CDATA[
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
         this.className += " sb-player-volume-slider";
-
+      
         // Then do the rest of your crap
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // data remotes
-        const on_remote_volume_change = {
-          _that: this,
+        const on_remote_volume_change = { 
+          _that: this, 
           observe: function volumeSlider_onChange( aSubject, aTopic, aData ) {
             this._that.onRemoteVolumeChange();
-          }
+          } 
         };
         this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
         this.remote_volume.bindObserver(on_remote_volume_change, true);
 
         this.remote_lastVolume = SB_NewDataRemote("faceplate.volume.last", null );
-
-        const on_remote_mute = {
-          _that: this,
+        
+        const on_remote_mute = { 
+          _that: this, 
           observe: function volumeSlider_onChange( aSubject, aTopic, aData ) {
             this._that.onRemoteMute(aData);
-          }
+          } 
         };
         this.remote_mute = SB_NewDataRemote( "faceplate.mute", null );
         this.remote_mute.bindObserver(on_remote_mute, true);
@@ -86,7 +86,7 @@
         this.sliderScale = 10000;
         this.maxpos = this.sliderScale;
         this.trackingVolume = false;
-
+        
         // The slider value cannot be set correctly until the boxObject
         // dimensions are set.
         var self = this;
@@ -113,22 +113,11 @@
           this.remote_mute.unbind();
           this.remote_mute = null;
         }
-
+        
         this.mm = null;
       ]]>
     </destructor>
-
-    <!-- Override to make mute/unmute behaviour sane -->
-    <method name="snapToMin">
-      <body>
-        <![CDATA[
-          if (this.disabled)
-            return;
-          this.mm.volumeControl.mute = !this.mm.volumeControl.mute;
-        ]]>
-      </body>
-    </method>
-
+    
     <method name="onTrackVolume">
       <body>
         <![CDATA[
@@ -136,7 +125,7 @@
             return;
           // prevent this volume control from being updated while it is being
           // moved (but other volume controls are updated with our motion)
-          this.trackingVolume = true;
+          this.trackingVolume = true; 
           var scaledValue = this.value / this.sliderScale;
           this.mm.volumeControl.volume = scaledValue;
 
@@ -182,7 +171,8 @@
             if (this.value != 0) {
               this.lastValue = this.value;
             }
-            this.mm.volumeControl.volume = 0;
+            this.remote_volume.intValue = 0;
+            this.value = 0;
           } else {
             var volume;
             if (this.value == 0) {
@@ -194,12 +184,12 @@
               volume = this.value / this.sliderScale;
               this.lastValue = this.value;
             }
-            this.mm.volumeControl.volume = volume;
+            this.mm.volumeControl.volume = volume; 
           }
         ]]>
       </body>
     </method>
-
+    
     <!-- override the values in the progress slider to make it track the volume -->
     <property name="lastValue">
       <getter>
@@ -211,20 +201,18 @@
     </property>
 
    </implementation>
-
+ 
   </binding>
 
 
 
 
   <!-- MUTE CONTROL -->
-  <!-- NOTE: This is no longer used anywhere in the application. All the current
-       mute controls are in the volume-slider elements -->
 
 
 
   <binding id="mute-button">
-
+  
     <content>
       <xul:hbox id="sb-player-mute-button" oncommand="onMute();" flex="1">
         <xul:button type="sb-clickhold"
@@ -235,16 +223,16 @@
                     tooltiptext="&tooltip.control.mute;"
                     xbl:inherits="label,position">
           <xul:observes type="dataremote"
-                    key="faceplate.mute"
-                    attribute="hidden"
+                    key="faceplate.mute" 
+                    attribute="hidden" 
                     boolean="true"
                     inverted="false" />
           <xul:menupopup xbl:inherits="popupanchor,popupalign">
-            <xul:menuitem id="sb-player-mute-menu-muteoff"
-                          autocheck="false"
-                          checked="false"
-                          class="menuitem-iconic"
-                          type="radio"
+            <xul:menuitem id="sb-player-mute-menu-muteoff" 
+                          autocheck="false" 
+                          checked="false" 
+                          class="menuitem-iconic" 
+                          type="radio" 
                           label="&tooltip.control.mute;"/>
           </xul:menupopup>
         </xul:button>
@@ -255,16 +243,16 @@
                     sbid="mute-on" tooltiptext="&tooltip.control.mute;"
                     xbl:inherits="label,position">
           <xul:observes type="dataremote"
-                    key="faceplate.mute"
-                    attribute="hidden"
+                    key="faceplate.mute" 
+                    attribute="hidden" 
                     boolean="true"
-                    inverted="true" />
+                    inverted="true" />  
           <xul:menupopup xbl:inherits="popupanchor,popupalign">
-            <xul:menuitem id="sb-player-mute-menu-muteon"
-                          autocheck="false"
-                          checked="true"
-                          class="menuitem-iconic"
-                          type="radio"
+            <xul:menuitem id="sb-player-mute-menu-muteon" 
+                          autocheck="false" 
+                          checked="true" 
+                          class="menuitem-iconic" 
+                          type="radio" 
                           label="&tooltip.control.mute;"/>
           </xul:menupopup>
         </xul:button>
@@ -275,19 +263,19 @@
 
     <constructor>
       <![CDATA[
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind the data remotes
         this.remote_mute = SB_NewDataRemote( "faceplate.mute", null );
 
-        // observer for DataRemote
-        const on_remote_mute = {
-          _that: this,
+        // observer for DataRemote 
+        const on_remote_mute = { 
+          _that: this, 
           observe: function dr_onMuteToggle( aSubject, aTopic, aData ) {
             this._that.onRemoteMute();
-          }
+          } 
         };
         this.remote_mute.bindObserver(on_remote_mute, true);
       ]]>
@@ -337,9 +325,9 @@
           var newmute = this.mm.volumeControl.mute;
           if (!newmute) {
             // restore last volume when coming back from mute state
-            this.mm.volumeControl.volume =
+            this.mm.volumeControl.volume = 
               parseFloat(this.remote_lastVolume.stringValue);
-          }
+          } 
           else {
             if (parseFloat(this.remote_volume.stringValue) != 0) {
               this.remote_lastVolume.stringValue = this.remote_volume.stringValue;
@@ -351,18 +339,18 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
-
-  <!-- BASECLASS BINDINGS FOR SONGBIRD OVERLAY TRICKS
-
+  
+  <!-- BASECLASS BINDINGS FOR NIGHTINGALE OVERLAY TRICKS
+  
   These bindings will set some magic values inside of the objects we inherit from xpfe.
-
+  
   It places the nodename as the id on the inner hbox for XBL Overlay and adds a class
   value that may be used in the CSS.
-
+  
   -->
   <binding id="sb-button-base" extends="chrome://global/content/bindings/button.xml#button">
     <implementation>
@@ -370,15 +358,15 @@
       <![CDATA[
         // ENFORCE CLICKABILITY!  (why do I have to do this?)
         this.setAttribute("mousethrough","never");
-
+        
         // Get the nodename (without the namespace)
         var nameArray = this.nodeName.split(":");
         var nodeName = ( nameArray.length > 1 ) ? nameArray[ 1 ] : nameArray[ 0 ];
-
+        
         // OVERLAY TARGET ID MATCHES ELEMENT NAME
         var box = document.getAnonymousElementByAttribute(this, "class", "box-inherit button-box");
         box.setAttribute( 'id', nodeName );
-
+        
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
         this.setAttribute("class", this.getAttribute("class") + " sb-player-button " + nodeName);
       ]]>
@@ -392,15 +380,15 @@
       <![CDATA[
         // ENFORCE CLICKABILITY!  (why do I have to do this?)
         this.setAttribute("mousethrough","never");
-
+        
         // Get the nodename (without the namespace)
         var nameArray = this.nodeName.split(":");
         var nodeName = ( nameArray.length > 1 ) ? nameArray[ 1 ] : nameArray[ 0 ];
-
+        
         // OVERLAY TARGET ID MATCHES ELEMENT NAME
         var box = document.getAnonymousElementByAttribute(this, "class", "checkbox-label-box");
         box.setAttribute( 'id', nodeName );
-
+        
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
         this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
       ]]>
@@ -411,105 +399,124 @@
 
   <!-- FORWARD BUTTON-->
 
-
-
-
-  <binding id="forward-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
+  
+  
+  
+  <binding id="forward-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
 
   <handlers>
-    <handler event="mousedown" button="0">
-      <![CDATA[
-        if (this.disabled)
-          return;
-        var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
-        this.seen_skip = false;
-        if ( this.mm.status.state == sbIMediacoreStatus.STATUS_PLAYING) {
-          this.skip = true;
-          if ( ! this.skip_interval ) {
-            this.skip_interval = setInterval( this.skipLoop, 1000, this );
-          }
-        }
-      ]]>
-    </handler>
-    <handler event="mouseup" button="0">
-      <![CDATA[
-        this.skip = false;
-      ]]>
-    </handler>
-    <handler event="command">
-      <![CDATA[
-        if ( !this.seen_skip ) {
-          this.mm.sequencer.next();
-        }
-        this.skip = false;
-      ]]>
-    </handler>
-    <handler event="mouseout">
-      <![CDATA[
-        if (this.disabled)
-          return;
-        if (this.skip_interval) {
-          clearInterval( this.skip_interval );
-          this.skip_interval = null;
-        }
-      ]]>
-    </handler>
-    <handler event="mouseover">
-      <![CDATA[
-        if (this.disabled)
-          return;
-        if (this.skip && !this.skip_interval ) {
-          this.skip_interval = setInterval( this.skipLoop, 1000, this );
-        }
-      ]]>
-    </handler>
+    <handler event="mousedown" button="0" action="this.onFwdMouseDown();"/>
+    <handler event="mouseup" button="0" action="this.onFwdMouseUp();"/>
+    <handler event="mouseout" action="this.onFwdMouseOut();"/>
+    <handler event="mouseover" action="this.onFwdMouseOver();"/>
   </handlers>
 
   <implementation>
-    <field name="seen_skip">false</field>
-    <field name="skip">false</field>
-    <field name="skip_interval">null</field>
 
     <constructor>
         this.setAttribute("tooltiptext", "&tooltip.control.fwd;")
       <![CDATA[
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
-        this.remote_next_disabled =
-          SBDataBindElementProperty("playlist.next.disabled",
-                                    this,
-                                    "disabled",
-                                    true );
+        this.seen_skip = false;
+        this.skip = false;
+        this.skip_interval = null;
       ]]>
     </constructor>
 
     <destructor>
       <![CDATA[
-        if(this.remote_next_disabled) {
-          this.remote_next_disabled.unbind();
-          this.remote_next_disabled = null;
-        }
-
         this.mm = null;
       ]]>
     </destructor>
-
-    <method name="skipLoop">
-      <parameter name="_this"/>
+    
+    <method name="onFwdMouseDown">
       <body>
         <![CDATA[
-          if ( _this.skip ) {
+          if (this.disabled)
+            return;
+          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+          this.seen_skip = false;
+          if ( this.mm.status.state == sbIMediacoreStatus.STATUS_PLAYING)
+          {
+            this.skip = true;
+            if ( ! this.skip_interval )
+            {
+              document.__SKIPLOOPOBJECT__ = this;
+              this.skip_interval = setInterval( this.skipLoop, 1000 );
+            }
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdMouseOut">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          if (this.skip_interval) {
+            clearInterval( this.skip_interval );
+            this.skip_interval = null;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdMouseOver">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          if (this.skip && !this.skip_interval ) {
+             document.__SKIPLOOPOBJECT__ = this;
+             this.skip_interval = setInterval( this.skipLoop, 1000 );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdMouseUp">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.skip = false;
+          this.onFwdCommand();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onFwdCommand">
+      <body>
+        <![CDATA[
+          if ( !this.seen_skip )
+          {
+            this.mm.sequencer.next();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="skipLoop">
+      <body>
+        <![CDATA[
+          var _this = document.__SKIPLOOPOBJECT__;
+          if ( _this.skip )
+          {
             // If we're allowed to skip
-            if ( _this.mm.playbackControl.duration > 0 ) {
+            if ( _this.mm.playbackControl.duration > 0 )
+            {
               _this.seen_skip = true;
               var target = _this.mm.playbackControl.position + 15000;
               var max = _this.mm.playbackControl.duration - 1000;
               _this.mm.playbackControl.position = ( max < target ) ? max : target;
             }
           }
-          else {
+          else
+          {
             clearInterval( _this.skip_interval );
             _this.skip_interval = null;
           }
@@ -518,112 +525,129 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
-
-
+  
+  
   <!-- BACK BUTTON-->
 
+  
+  
+  
+  <binding id="back-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
 
-
-
-  <binding id="back-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
-
-  <handlers>
-    <handler event="mousedown" button="0">
-      <![CDATA[
-        if (this.disabled)
-          return;
-        var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
-        this.seen_skip = false;
-        if ( this.mm.status.state == sbIMediacoreStatus.STATUS_PLAYING) {
-          this.skip = true;
-          if ( ! this.skip_interval ) {
-            this.skip_interval = setInterval( this.skipLoop, 1000, this );
-          }
-        }
-      ]]>
-    </handler>
-    <handler event="mouseup" button="0">
-      <![CDATA[
-        this.skip = false;
-      ]]>
-    </handler>
-    <handler event="command">
-      <![CDATA[
-        if ( !this.seen_skip ) {
-          this.mm.sequencer.previous();
-        }
-        this.skip = false;
-      ]]>
-    </handler>
-    <handler event="mouseout">
-      <![CDATA[
-        if (this.disabled)
-          return;
-        if (this.skip_interval) {
-          clearInterval( this.skip_interval );
-          this.skip_interval = null;
-        }
-      ]]>
-    </handler>
-    <handler event="mouseover">
-      <![CDATA[
-        if (this.disabled)
-          return;
-        if (this.skip && !this.skip_interval ) {
-          this.skip_interval = setInterval( this.skipLoop, 1000, this );
-        }
-      ]]>
-    </handler>
-  </handlers>
+   <handlers>
+     <handler event="mousedown" button="0" action="this.onBackMouseDown();"/>
+     <handler event="mouseup" button="0" action="this.onBackMouseUp();"/>
+     <handler event="mouseout" action="this.onBackMouseOut();"/>
+     <handler event="mouseover" action="this.onBackMouseOver();"/>
+   </handlers>
 
   <implementation>
-    <field name="seen_skip">false</field>
-    <field name="skip">false</field>
-    <field name="skip_interval">null</field>
 
     <constructor>
         this.setAttribute("tooltiptext", "&tooltip.control.back;")
       <![CDATA[
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
-        this.remote_previous_disabled =
-          SBDataBindElementProperty("playlist.previous.disabled",
-                                    this,
-                                    "disabled",
-                                    true);
+        this.seen_skip = false;
+        this.skip = false;
+        this.skip_interval = null;
       ]]>
     </constructor>
 
     <destructor>
       <![CDATA[
-        if(this.remote_previous_disabled) {
-          this.remote_previous_disabled.unbind();
-          this.remote_previous_disabled = null;
-        }
-
         this.mm = null;
       ]]>
     </destructor>
-
-    <method name="skipLoop">
-      <parameter name="_this"/>
+    
+    <method name="onBackMouseDown">
       <body>
         <![CDATA[
-          if ( _this.skip ) {
-            // If we're allowed to skip
-            if ( _this.mm.playbackControl.duration > 0 ) {
-              _this.seen_skip = true;
-              var target = _this.mm.playbackControl.position - 15000;
-              _this.mm.playbackControl.position = ( target > 1 ) ? target : 1;
+          if (this.disabled)
+            return;
+          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+          this.seen_skip = false;
+          var status = this.mm.status;
+          if ( status.state == sbIMediacoreStatus.STATUS_PLAYING)
+          {
+            this.skip = true;
+            if ( ! this.skip_interval )
+            {
+              document.__SKIPLOOPOBJECT__ = this;
+              this.skip_interval = setInterval( this.skipLoop, 1000 );
             }
           }
-          else {
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackMouseUp">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.skip = false;
+          this.onBackCommand();
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackMouseOut">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          if (this.skip_interval) {
+            clearInterval( this.skip_interval );
+            this.skip_interval = null;
+           }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackMouseOver">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          if (this.skip && !this.skip_interval ) {
+             document.__SKIPLOOPOBJECT__ = this;
+             this.skip_interval = setInterval( this.skipLoop, 1000 );
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onBackCommand">
+      <body>
+        <![CDATA[
+          if ( !this.seen_skip )
+          {
+            this.mm.sequencer.previous();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="skipLoop">
+      <body>
+        <![CDATA[
+          var _this = document.__SKIPLOOPOBJECT__;
+          var playbackControl = _this.mm.playbackControl;
+          if ( _this.skip )
+          {
+            _this.seen_skip = true;
+            var target = playbackControl.position - 15000;
+            playbackControl.position = ( target > 1 ) ? target : 1;
+          }
+          else
+          {
             clearInterval( _this.skip_interval );
             _this.skip_interval = null;
           }
@@ -632,19 +656,19 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
-
-
-
+  
+  
+  
   <!-- REPEAT CONTROL -->
 
 
 
 
   <binding id="repeat-button">
-
+  
    <content>
      <xul:stack id="sb-player-repeat-button" xbl:inherits="class=class" >
        <xul:button id="repeat_none"
@@ -653,8 +677,8 @@
                    tooltiptext="&menu.control.repx;"
                    xbl:inherits="label,position">
          <xul:observes type="dataremote"
-                   key="playlist.repeat"
-                   attribute="hidden"
+                   key="playlist.repeat" 
+                   attribute="hidden" 
                    onchange="return parseInt( value ) != 0" />
        </xul:button>
        <xul:button id="repeat_1"
@@ -663,8 +687,8 @@
                    tooltiptext="&menu.control.rep1;"
                    xbl:inherits="label,position">
          <xul:observes type="dataremote"
-                   key="playlist.repeat"
-                   attribute="hidden"
+                   key="playlist.repeat" 
+                   attribute="hidden" 
                    onchange="return parseInt( value ) != 1" />
        </xul:button>
        <xul:button id="repeat_all"
@@ -673,8 +697,8 @@
                    tooltiptext="&menu.control.repa;"
                    xbl:inherits="label,position">
          <xul:observes type="dataremote"
-                   key="playlist.repeat"
-                   attribute="hidden"
+                   key="playlist.repeat" 
+                   attribute="hidden" 
                    onchange="return parseInt( value ) != 2" />
        </xul:button>
      </xul:stack>
@@ -689,17 +713,11 @@
 
     <constructor>
       <![CDATA[
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
-        this.remote_repeat_disabled = 
-          SBDataBindElementProperty("playlist.repeat.disabled",
-                                    this,
-                                    "disabled",
-                                    true );
-
         this.remote_repeat = SB_NewDataRemote( "playlist.repeat", null );
       ]]>
     </constructor>
@@ -710,12 +728,7 @@
           this.remote_repeat.unbind();
           this.remote_repeat = null;
         }
-
-        if(this.remote_repeat_disabled) {
-          this.remote_repeat_disabled.unbind();
-          this.remote_repeat_disabled = null;
-        }
-
+        
         if(this.mm) {
           this.mm = null;
         }
@@ -735,10 +748,10 @@
           var value = 0;
           switch( target.id )
           {
-            case "menu_repeat_none":
+            case "menu_repeat_none": 
               value = 0;
               break;
-            case "menu_repeat_1":
+            case "menu_repeat_1": 
               value = 1;
               break;
             case "menu_repeat_all":
@@ -759,26 +772,26 @@
               }
               break;
           }
-
+          
           this.mm.sequencer.repeatMode = value;
         ]]>
       </body>
     </method>
 
    </implementation>
-
+ 
   </binding>
 
-
-
-
+  
+  
+  
   <!-- SHUFFLE CONTROL -->
 
 
 
 
   <binding id="shuffle-button">
-
+  
    <content>
      <xul:stack id="sb-player-shuffle-button" xbl:inherits="class=class" oncommand="onShuffle( );">
        <xul:button id="sb-player-shuffle-button-off"
@@ -787,9 +800,9 @@
                    tooltiptext="&tooltip.control.shuf_off;"
                    xbl:inherits="label,position">
          <xul:observes type="dataremote"
-                   key="playlist.shuffle"
-                   attribute="hidden"
-                   onchange="return parseInt( value ) != 0" />
+                   key="playlist.shuffle" 
+                   attribute="hidden" 
+                   onchange="return parseInt( value ) != 0" />  
        </xul:button>
        <xul:button id="sb-player-shuffle-button-on"
                    sbid="shuffle_on"
@@ -797,8 +810,8 @@
                    tooltiptext="&tooltip.control.shuffle;"
                    xbl:inherits="label,position">
          <xul:observes type="dataremote"
-                   key="playlist.shuffle"
-                   attribute="hidden"
+                   key="playlist.shuffle" 
+                   attribute="hidden" 
                    onchange="return parseInt( value ) != 1" />
        </xul:button>
      </xul:stack>
@@ -813,17 +826,11 @@
 
     <constructor>
       <![CDATA[
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
-        this.remote_shuffle_disabled = 
-          SBDataBindElementProperty("playlist.shuffle.disabled",
-                                    this,
-                                    "disabled",
-                                    true );
-
         this.remote_shuffle = SB_NewDataRemote( "playlist.shuffle", null );
       ]]>
     </constructor>
@@ -834,12 +841,7 @@
           this.remote_shuffle.unbind();
           this.remote_shuffle = null;
         }
-
-        if(this.remote_shuffle_disabled) {
-          this.remote_shuffle_disabled.unbind();
-          this.remote_shuffle_disabled = null;
-        }
-
+        
         if(this.mm) {
           this.mm = null;
         }
@@ -848,32 +850,32 @@
 
     <field name="shuffle_off">document.getAnonymousElementByAttribute(this, 'sbid', 'shuffle_off');</field>
     <field name="shuffle_on">document.getAnonymousElementByAttribute(this, 'sbid', 'shuffle_on');</field>
-
+    
     <method name="onShuffle">
       <body>
         <![CDATA[
           if (this.disabled)
             return;
-          this.mm.sequencer.mode =
-            !this.remote_shuffle.boolValue ?
-            this.mm.sequencer.MODE_SHUFFLE :
+          this.mm.sequencer.mode = 
+            !this.remote_shuffle.boolValue ? 
+            this.mm.sequencer.MODE_SHUFFLE : 
             this.mm.sequencer.MODE_FORWARD;
         ]]>
       </body>
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
-
-
+  
+  
   <!-- SEEK CONTROL -->
 
-
-
-
+  
+  
+  
   <binding id="seek-slider">
    <!-- forked from progressSlider.xml by stevel -->
    <handlers>
@@ -893,9 +895,9 @@
                      pageincrement="0" flex="1"
                      onmousedown="slidermousedown(event)"
                      onmouseup="slidermouseup(event)"
-                     onmousemove="slidermousemove(event)" mousethrough="never">
+                     onmousemove="slidermousemove(event)" mousethrough="never"> 
            <xul:thumb sbid="sb-progress-slider-thumb" class="sb-progress-slider"
-                      xbl:inherits="class"/>
+                      xbl:inherits="class"/>  
          </xul:slider>
        </xul:stack>
        <children/>
@@ -915,14 +917,14 @@
       // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
       this.setAttribute("class", this.getAttribute("class") + " sb-player-seek-slider");
 
-      this.mm =
-        Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+      this.mm = 
+        Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                   .getService(Components.interfaces.sbIMediacoreManager);
 
-      // observer for DataRemote
-      const on_remote_position_change = {
-        _that: null,
-        observe: function( aSubject, aTopic, aData ) { this._that.onRemotePositionChange(); }
+      // observer for DataRemote 
+      const on_remote_position_change = { 
+        _that: null, 
+        observe: function( aSubject, aTopic, aData ) { this._that.onRemotePositionChange(); } 
       };
       on_remote_position_change._that = this;
 
@@ -930,7 +932,7 @@
       this.remote_position = SB_NewDataRemote( "metadata.position", null );
       this.remote_position.bindObserver(on_remote_position_change, true);
       this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
-
+     
       this.trackingPosition = 0;
       this.scrubbingPosition = false;
       this.seekInProgress = false;
@@ -964,7 +966,7 @@
           this.remote_length.unbind();
           this.remote_length = null;
         }
-
+        
         this.mm.removeListener(this.eventListener);
         this.mm = null;
       ]]>
@@ -1041,14 +1043,16 @@
     <property name="is_tracking_data">
       <getter>
         var data_str = this.getAttribute('data_tracking');
-        if ( data_str.length ) {
+        if ( data_str.length )
+        {
           return SBDataGetBoolValue( data_str );
         }
         return "";
       </getter>
       <setter>
         var data_str = this.getAttribute('data_tracking');
-        if ( data_str.length ) {
+        if ( data_str.length )
+        {
           return SBDataSetBoolValue( data_str, val );
         }
         return "";
@@ -1089,15 +1093,19 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (event.button == this._TRACKING_NONE ) {
-            if (this.mouseonthumb(event.screenX, event.screenY)) {
-              this._tracking = this._TRACKING_THUMB;
-            }
-            else {
+          if (event.button == this._TRACKING_NONE ) 
+          {
+            if (this.mouseonthumb(event.screenX, event.screenY)) 
+            { 
+              this._tracking = this._TRACKING_THUMB; 
+            } 
+            else 
+            {
               this._tracking = this._TRACKING_SLIDER;
               this.handlemouse(event);
             }
-            if ( this._tracking != this._TRACKING_NONE ) {
+            if ( this._tracking != this._TRACKING_NONE )
+            {
               // Report if requested
               this.is_tracking_data = true;
             }
@@ -1111,9 +1119,9 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (this._tracking == this._TRACKING_NONE)
+          if (this._tracking == this._TRACKING_NONE) 
             return;
-
+          
           this._tracking = this._TRACKING_NONE;
           this.is_tracking_data = false;
           this.sendReleaseEvent();
@@ -1142,16 +1150,16 @@
       <body>
         <![CDATA[
           var m = this.maxpos;
-          var x = event.screenX - this.slider.boxObject.screenX;
+          var x = event.screenX - this.slider.boxObject.screenX; 
           var y = event.screenY - this.slider.boxObject.screenY;
-
+          
           var v = 0;
-          v = (x - this.thumb.boxObject.width/2) /
+          v = (x - this.thumb.boxObject.width/2) / 
               (this.slider.boxObject.width - this.thumb.boxObject.width) * m;
           if (v < 0) v = 0; else if (v > m) v = m;
           if (this.getAttribute("dir") == "reverse") v = m - v;
           this.slider.setAttribute('curpos', ''+v);
-
+          
           var offset = this.thumb.boxObject.width /
                        this.slider.boxObject.width * this.maxpos;
           //this.progress_value = v;
@@ -1159,7 +1167,7 @@
         ]]>
       </body>
     </method>
-
+    
     <method name="snapToValue">
       <parameter name="val"/>
       <body>
@@ -1168,7 +1176,7 @@
             val = this.lastValue;
           }
           this.value = val;
-
+          
           // send the event to any listeners
           this.is_tracking_data = true;
           this.sendChangeEvent();
@@ -1227,6 +1235,7 @@
             if (this.wasPlayingBeforeSeek) {
               this.mm.playbackControl.play();
             }
+
           }
         }
         catch(e) {
@@ -1241,9 +1250,9 @@
       <body>
         <![CDATA[
           // if we are the control changing the position, ignore this callback
-          if (this.trackingPosition)
-            return;
-
+          if (this.trackingPosition) 
+            return; 
+            
           this.value = this.remote_position.intValue;
         ]]>
       </body>
@@ -1266,13 +1275,13 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
-
-
-
-
+  
+  
+  
+ 
   <!-- PLAYPAUSE/PLAY/PAUSE/STOP CONTROLS -->
 
 
@@ -1287,9 +1296,10 @@
           if (!ColumnSpecParser)
             throw new Error("Import of sbColumnSpecParser module failed");
         }
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
+                    
         ]]>
       </constructor>
       <destructor>
@@ -1297,7 +1307,7 @@
           this.mm = null;
         ]]>
       </destructor>
-
+                     
       <method name="playbackPlay">
         <parameter name="nopause"/>
         <body>
@@ -1307,10 +1317,10 @@
             var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
             if (status.state == sbIMediacoreStatus.STATUS_PAUSED || nopause) {
               this.mm.playbackControl.play();
-            } else if(status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+            } else if(status.state == sbIMediacoreStatus.STATUS_PLAYING || 
                       status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
               this.mm.playbackControl.pause();
-
+            
             // Otherwise dispatch a play event.  Someone should catch this
             // and intelligently initiate playback.  If not, just have
             // the playback service play the default.
@@ -1321,7 +1331,7 @@
               if (notHandled) {
                 // If we have no context, initiate playback
                 // via the root application controller
-                var app = Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"]
+                var app = Components.classes["@getnightingale.com/Nightingale/ApplicationController;1"]
                                     .getService(Components.interfaces.sbIApplicationController);
                 app.playDefault();
               }
@@ -1345,18 +1355,18 @@
           ]]>
         </body>
       </method>
-
+      
     </implementation>
   </binding>
 
 
   <!-- a play button, always enabled because it is legitimate to restart playback in the middle of playback -->
 
-  <binding id="play-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
-
+  <binding id="play-button" extends="chrome://nightingale/content/bindings/playerControls.xml#play-control-base">
+  
     <content>
       <xul:hbox id="sb-player-play-button" flex="1" xbl:inherits="hidden,class">
-
+      
         <xul:button type="sb-clickhold"
                     id="sb-player-play-button-play"
                     sbid="play"
@@ -1366,7 +1376,7 @@
                     xbl:inherits="label,position">
           <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
         </xul:button>
-
+          
       </xul:hbox>
     </content>
 
@@ -1379,18 +1389,18 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
   <!-- a pause/restore button -->
 
-  <binding id="pause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
-
+  <binding id="pause-button" extends="chrome://nightingale/content/bindings/playerControls.xml#play-control-base">
+  
     <content>
       <xul:hbox id="sb-player-pause-button" flex="1" xbl:inherits="hidden,class">
         <xul:stack xbl:inherits="class=class" >
-
+        
           <xul:button type="sb-clickhold"
                       id="sb-player-pause-button-pause"
                       sbid="pause"
@@ -1398,42 +1408,42 @@
                       onmousedown="onPause();"
                       tooltiptext="&tooltip.control.pause;"
                       xbl:inherits="label,position">
-
+            
             <xul:observes type="dataremote"
-                      key="faceplate.playing"
-                      attribute="disabled"
+                      key="faceplate.playing" 
+                      attribute="disabled" 
                       boolean="true"
-                      inverted="true"/>
+                      inverted="true"/>  
             <xul:observes type="dataremote"
-                      key="faceplate.paused"
-                      attribute="hidden"
+                      key="faceplate.paused" 
+                      attribute="hidden" 
                       boolean="true"
                       inverted="false"/>
-
-            <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
+                      
+            <xul:menupopup xbl:inherits="popupanchor,popupalign"/>  
           </xul:button>
-
+          
           <xul:button type="sb-clickhold"
-                      id="sb-player-pause-button-resume"
-                      sbid="resume"
-                      class="sb-player-pause-button-resume sb-player-button"
-                      oncommand="onPlay();"
-                      tooltiptext="&tooltip.control.resume;"
+                      id="sb-player-pause-button-resume" 
+                      sbid="resume" 
+                      class="sb-player-pause-button-resume sb-player-button" 
+                      oncommand="onPlay();" 
+                      tooltiptext="&tooltip.control.resume;" 
                       xbl:inherits="label,position">
-
+            
             <xul:observes type="dataremote"
-                      key="faceplate.playing"
-                      attribute="disabled"
+                      key="faceplate.playing" 
+                      attribute="disabled" 
                       boolean="true"
-                      inverted="true"/>
+                      inverted="true"/>  
             <xul:observes type="dataremote"
-                      key="faceplate.paused"
-                      attribute="hidden"
+                      key="faceplate.paused" 
+                      attribute="hidden" 
                       boolean="true"
-                      inverted="true"/>
+                      inverted="true"/>  
             <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
           </xul:button>
-
+          
         </xul:stack>
       </xul:hbox>
     </content>
@@ -1473,16 +1483,16 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
   <!-- a stop button that enables itself when the core is playing, and disables itself when the core is stopped -->
 
-  <binding id="stop-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
-
+  <binding id="stop-button" extends="chrome://nightingale/content/bindings/playerControls.xml#play-control-base">
+  
     <content>
       <xul:hbox id="sb-player-stop-button" flex="1" xbl:inherits="hidden,class">
-
+      
         <xul:button type="sb-clickhold"
 	            id="sb-player-stop-button-stop"
 	            sbid="stop"
@@ -1490,15 +1500,15 @@
 	            oncommand="onStop();"
 	            tooltiptext="&tooltip.control.stop;"
 	            xbl:inherits="label,position">
-
+          
           <xul:observes type="dataremote"
-		                    key="faceplate.playing"
-		                    attribute="disabled"
+		                    key="faceplate.playing" 
+		                    attribute="disabled" 
 		                    boolean="true"
 		                    inverted="true" />
          <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
         </xul:button>
-
+        
       </xul:hbox>
     </content>
 
@@ -1526,22 +1536,21 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
 
-  <binding id="playpause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
-
+  <binding id="playpause-button" extends="chrome://nightingale/content/bindings/playerControls.xml#play-control-base">
+  
     <content>
       <xul:hbox id="sb-player-playpause-button" flex="1" xbl:inherits="hidden,class,disabled">
-
+      
         <xul:button type="sb-clickhold"
                     id="sb-player-playpause-button-play"
                     sbid="play"
                     class="sb-player-playpause-button-play sb-player-button"
                     oncommand="onPlayPause(event.target);"
-                    delayDuration="2000"
                     tooltiptext="&tooltip.control.play;"
                     xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
@@ -1551,13 +1560,12 @@
             <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
           </xul:menupopup>
         </xul:button>
-
+        
         <xul:button type="sb-clickhold"
 		    id="sb-player-playpause-button-pause"
 		    sbid="pause"
                     class="sb-player-playpause-button-pause sb-player-button"
                     oncommand="onPlayPause(event.target);"
-                    delayDuration="2000"
                     tooltiptext="&tooltip.control.pause;"
                     xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
@@ -1567,7 +1575,7 @@
 	          <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
 	        </xul:menupopup>
         </xul:button>
-
+        
       </xul:hbox>
     </content>
 
@@ -1575,10 +1583,10 @@
 
     <constructor>
       <![CDATA[
-        // observer for DataRemote
-        this.on_state_change = {
-          _that: null,
-          observe: function( aSubject, aTopic, aData ) { this._that.onStateChanged(); }
+        // observer for DataRemote 
+        this.on_state_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that.onStateChanged(); } 
         };
         this.on_state_change._that = this;
         this.remote_playing = SB_NewDataRemote("faceplate.playing", null);
@@ -1600,24 +1608,24 @@
     <method name="onStateChanged">
       <body>
         <![CDATA[
-          if (this.remote_playing.boolValue && !this.remote_paused.boolValue) {
-            this.play.hidden = true;
-            this.pause.hidden = false;
-          } else {
-            this.play.hidden = false;
-            this.pause.hidden = true;
+          if (this.remote_playing.boolValue && !this.remote_paused.boolValue) { 
+            this.play.hidden = true; 
+            this.pause.hidden = false; 
+          } else { 
+            this.play.hidden = false; 
+            this.pause.hidden = true; 
           }
         ]]>
       </body>
     </method>
-
+    
     <method name="syncMenus">
       <body>
         this.syncMenu(this.play);
         this.syncMenu(this.pause);
       </body>
     </method>
-
+    
     <method name="syncMenu">
       <parameter name="parent"/>
       <body>
@@ -1655,7 +1663,7 @@
         ]]>
       </body>
     </method>
-
+    
     <method name="onPause">
       <body>
         <![CDATA[
@@ -1675,7 +1683,7 @@
         ]]>
       </body>
     </method>
-
+    
     <method name="onPlayPause">
       <parameter name="target"/>
       <body>
@@ -1687,7 +1695,7 @@
           else if (sbid == "pause") this.onPause();
           else {
             switch (target.id) {
-              case "menu_play": this.onPlay(); break;
+              case "menu_play": this.onPlay(); break; 
               case "menu_pause": this.onPause(); break;
               case "menu_stop": this.onStop(); break;
             }
@@ -1697,7 +1705,7 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1715,15 +1723,15 @@
           <xul:sb-player-stop-button id="sb-player-control-buttons-stop" popupanchor="topleft" popupalign="bottomleft"/>
         -->
         <xul:sb-player-playpause-button id="sb-player-control-buttons-playpause" class="sb-player-button" xbl:inherits="class" popupanchor="topleft" popupalign="bottomleft"/>
-        <xul:sb-player-forward-button id="sb-player-control-buttons-forward" class="sb-player-button" xbl:inherits="class"/>
+        <xul:sb-player-forward-button id="sb-player-control-buttons-forward" class="sb-player-button" xbl:inherits="class"/> 
       </xul:hbox>
     </content>
-
+  
     <implementation>
       <constructor>
       </constructor>
     </implementation>
-
+ 
   </binding>
 
 
@@ -1731,13 +1739,13 @@
   <!-- TOTALTIME DISPLAY -->
 
   <binding id="totaltime-label">
-
+  
     <content>
       <xul:hbox id="sb-player-totaltime-label" flex="1" xbl:inherits="class,align,crop,disabled,flex">
         <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" mousethrough="never">
           <xul:observes type="dataremote"
-                        key="metadata.length.str"
-                        attribute="value"/>
+                        key="metadata.length.str" 
+                        attribute="value"/>  
         </xul:label>
       </xul:hbox>
     </content>
@@ -1751,8 +1759,8 @@
 
     <constructor>
       <![CDATA[
-        this.mm =
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        this.mm = 
+          Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remote
@@ -1763,7 +1771,7 @@
       <![CDATA[
         //SB_LOG("playerControls.js", "totaltime binding destructor");
         this.remote_showRemaining = null;
-
+        
         this.mm = null;
       ]]>
     </destructor>
@@ -1782,7 +1790,7 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1790,8 +1798,8 @@
   <!-- ARTIST DISPLAY -->
 
 
-  <binding id="artist-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="artist-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
     <implementation>
 
       <constructor>
@@ -1799,7 +1807,7 @@
       </constructor>
 
     </implementation>
-
+ 
   </binding>
 
 
@@ -1807,8 +1815,8 @@
   <!-- TITLE DISPLAY -->
 
 
-  <binding id="title-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="title-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
   <implementation>
 
     <constructor>
@@ -1816,15 +1824,15 @@
         this.data  = "metadata.title";
         this.autotip = this.getAttribute("autotip");
         if (this.autotip) {
-          // observer for DataRemote
-          this.on_remote_artist_album_change = {
-            _that: null,
-            observe: function( aSubject, aTopic, aData ) {
+          // observer for DataRemote 
+          this.on_remote_artist_album_change = { 
+            _that: null, 
+            observe: function( aSubject, aTopic, aData ) { 
               try {
-                this._that.rebuildTip();
+                this._that.rebuildTip(); 
               }
               catch(e) {}
-            }
+            } 
           };
           this.on_remote_artist_album_change._that = this;
 
@@ -1876,7 +1884,7 @@
     </method>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1884,8 +1892,8 @@
   <!-- ALBUM DISPLAY -->
 
 
-  <binding id="album-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="album-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
   <implementation>
 
     <constructor>
@@ -1893,7 +1901,7 @@
     </constructor>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1904,8 +1912,8 @@
 
 
 
-  <binding id="timeelapsed-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="timeelapsed-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
   <implementation>
 
     <constructor>
@@ -1913,7 +1921,7 @@
     </constructor>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1924,8 +1932,8 @@
 
 
 
-  <binding id="genre-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="genre-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
   <implementation>
 
     <constructor>
@@ -1933,7 +1941,7 @@
     </constructor>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1943,21 +1951,21 @@
 
 
 
-  <binding id="custom-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-compound-label">
-
+  <binding id="custom-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-compound-label">
+  
   <implementation>
 
     <constructor>
-
+      
       // this is a special version of a remote compound label, it takes its value from the preferences
       // and can be configured by the user from a preference pane
-
+      
       this.setAttribute("value", SBDataGetStringValue("custom.display"));
-
+    
     </constructor>
 
    </implementation>
-
+ 
   </binding>
 
 
@@ -1968,11 +1976,11 @@
 
 
 
-  <binding id="numplaylistitems-label" xextends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="numplaylistitems-label" xextends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
     <content>
       <xul:hbox id="sb-player-numplaylistitems-label" flex="1" xbl:inherits="class">
-        <xul:label id="sb-player-numplaylistitems-label-label" sbid="label" xbl:inherits="class,value,align,crop,disabled,flex"/>
+        <xul:label id="sb-player-numplaylistitems-label-label" sbid="label" xbl:inherits="class,value,align,crop,disabled,flex"/> 
       </xul:hbox>
     </content>
 
@@ -2066,7 +2074,7 @@
               var percent = Math.round(browser.mCurrentTab.scanProgress*100);
               displayValue = mediafound + ': ' + percent + '%';
             } else if (browser.currentMediaListView != null) {
-              var mediaListView = browser.currentMediaListView;
+              var mediaListView = browser.currentMediaListView; 
               // HOORAY!!  It's okay for mediaListView.length to throw!
               var length = 0;
               try {
@@ -2088,7 +2096,7 @@
 
       <field name="previousMediaListView">null</field>
       <field name="previousDevice">null</field>
-      <field name="deviceManager">Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+      <field name="deviceManager">Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                                     .getService(Ci.sbIDeviceManager2)</field>
       <field name="deviceEventTarget">null</field>
 
@@ -2154,7 +2162,7 @@
         <parameter name="changedView"/>
         <body>
           <![CDATA[
-            this.updateDisplay();
+            this.updateDisplayAsync();
           ]]>
         </body>
       </method>
@@ -2162,7 +2170,7 @@
         <parameter name="changedView"/>
         <body>
           <![CDATA[
-            this.updateDisplay();
+            this.updateDisplayAsync();
           ]]>
         </body>
       </method>
@@ -2179,7 +2187,6 @@
             switch (aEvent.type) {
               case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
               case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
-              case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_END:
                this.updateDisplayAsync();
                break;
             }
@@ -2225,7 +2232,7 @@
         </body>
       </method>
     </implementation>
-
+ 
   </binding>
 
 
@@ -2236,8 +2243,8 @@
 
 
 
-  <binding id="scanning-label" extends="chrome://songbird/content/bindings/remoteLabel.xml#remote-label">
-
+  <binding id="scanning-label" extends="chrome://nightingale/content/bindings/remoteLabel.xml#remote-label">
+  
   <implementation>
 
     <constructor>
@@ -2245,9 +2252,9 @@
         this.setAttribute( "hidden", "true" );
         this.data = "backscan.status";
 
-        this.on_value_change = {
-          _that: null,
-          observe: function( aSubject, aTopic, aData ) { this._that.onValue( aData ); }
+        this.on_value_change = { 
+          _that: null, 
+          observe: function( aSubject, aTopic, aData ) { this._that.onValue( aData ); } 
         };
         this.on_value_change._that = this;
         this.bindvalue = SB_NewDataRemote("backscan.concurrent", null);
@@ -2262,42 +2269,44 @@
         }
       ]]>
     </destructor>
-
+    
     <method name="onValue">
       <parameter name="aData"/>
       <body>
         <![CDATA[
-          if ( parseInt( aData ) > 0  ) {
+          if ( parseInt( aData ) > 0  )
+          {
             this.setAttribute( "hidden", "false" );
           }
-          else {
+          else
+          {
             this.setAttribute( "hidden", "true" );
           }
         ]]>
       </body>
     </method>
-
+    
    </implementation>
-
+ 
   </binding>
-
-
-
+  
+  
+  
   <!-- JUMP TO CURRENT TRACK BUTTON -->
-
+  
   <binding id="curtrack-base">
-
+    
     <implementation>
-
+      
       <method name="getBrowser">
         <body>
           <![CDATA[
             var retval = null;
             try {
               // Dig through the parent chain to find a happy gBrowser.
-              for ( var win = window;
-                    win != null && win != win.parent &&
-                    typeof win.gBrowser == 'undefined';
+              for ( var win = window; 
+                    win != null && win != win.parent && 
+                    typeof win.gBrowser == 'undefined'; 
                     win = win.parent ) ; // Yes, it is there on purpose.
               if ( win ) {
                 retval = win.gBrowser;
@@ -2307,7 +2316,7 @@
           ]]>
         </body>
       </method>
-
+          
       <method name="onCurrentTrack">
         <body>
           <![CDATA[
@@ -2318,8 +2327,8 @@
     </implementation>
   </binding>
 
-  <binding id="curtrack-button" extends="chrome://songbird/content/bindings/playerControls.xml#curtrack-base">
-
+  <binding id="curtrack-button" extends="chrome://nightingale/content/bindings/playerControls.xml#curtrack-base">
+    
     <content>
       <xul:hbox id="sb-player-curtrack-button" flex="1" xbl:inherits="hidden,class">
         <xul:button type="sb-clickhold"
@@ -2334,14 +2343,14 @@
     </content>
 
   </binding>
-
-  <binding id="curtrack-box" extends="chrome://songbird/content/bindings/playerControls.xml#curtrack-base">
-
+  
+  <binding id="curtrack-box" extends="chrome://nightingale/content/bindings/playerControls.xml#curtrack-base">
+    
     <content>
-      <xul:box id="sb-player-curtrack-box"
-                orient="horizontal"
-                mousethrough="never"
-                onclick="if (event.button == 0) onCurrentTrack();"
+      <xul:box id="sb-player-curtrack-box" 
+                orient="horizontal" 
+                mousethrough="never" 
+                onclick="if (event.button == 0) onCurrentTrack();" 
                 xbl:inherits="hidden,class,flex,pack,orient">
         <children/>
       </xul:box>
@@ -2351,18 +2360,18 @@
 
 
   <!-- ENTER FULLSCREEN MODE (WHEN PLAYING VIDEO) -->
-
-  <binding id="fullscreen-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
-
+  
+  <binding id="fullscreen-button" extends="chrome://nightingale/content/bindings/playerControls.xml#sb-button-base">
+    
     <handlers>
       <handler event="command" action="this.onCommand();"/>
     </handlers>
-
+    
     <implementation>
-
+    
       <constructor>
         this.setAttribute("tooltiptext", "&tooltip.fullscreen;");
-
+        
         // Mac fullscreen coming soon.
         var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                                 .getService(Components.interfaces.nsIPropertyBag2);
@@ -2370,7 +2379,7 @@
           this.setAttribute("hidden", "true");
         }
       </constructor>
-
+      
       <method name="onCommand">
         <body>
           <![CDATA[
@@ -2379,12 +2388,12 @@
           ]]>
         </body>
       </method>
-
+      
     </implementation>
   </binding>
+  
 
-
-
-
+  
+  
   <!-- EOF -->
 </bindings>

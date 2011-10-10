@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -39,7 +39,7 @@
 
 /**
  * \file  sbMediaItemWatcher.h
- * \brief Songbird Media Item Watcher Definitions.
+ * \brief Nightingale Media Item Watcher Definitions.
  */
 
 //------------------------------------------------------------------------------
@@ -48,7 +48,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIMediaItemListener.h>
 #include <sbIMediaItemWatcher.h>
 #include <sbIMediaListListener.h>
@@ -68,8 +68,8 @@
 // Media item watcher component defs.
 //
 
-#define SONGBIRD_MEDIAITEMWATCHER_CLASSNAME "sbMediaItemWatcher"
-#define SONGBIRD_MEDIAITEMWATCHER_CID                                          \
+#define NIGHTINGALE_MEDIAITEMWATCHER_CLASSNAME "sbMediaItemWatcher"
+#define NIGHTINGALE_MEDIAITEMWATCHER_CID                                          \
   /* {3452f193-9bdc-45d4-a626-d8d7d4605035} */                                 \
   {                                                                            \
     0x3452f193,                                                                \
@@ -81,7 +81,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service classes.
+// Nightingale album art service classes.
 //
 //------------------------------------------------------------------------------
 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -68,10 +68,10 @@ try {
    */
   function initLocalesBundle() {
     try {
-      var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
+      var sbIBundle = new Components.Constructor("@getnightingale.com/Nightingale/Bundle;1", "sbIBundle");
       menubar_locales_bundle = new sbIBundle();
       menubar_locales_bundle.bundleId = "locales";
-      menubar_locales_bundle.bundleURL = Application.prefs.getValue("songbird.url.locales", "default");
+      menubar_locales_bundle.bundleURL = Application.prefs.getValue("nightingale.url.locales", "default");
       menubar_locales_bundle.addBundleDataListener(menubarLocalesBundleCB);
       menubar_locales_bundle.retrieveBundleData(MENUBAR_LOCALESBUNDLE_TIMEOUT);
     } catch ( err ) {
@@ -211,7 +211,7 @@ try {
       if (locale != curLocale) {
         prefs.setCharPref("general.useragent.locale", locale);
         if (wantmessagebox) {
-          sbRestartBox_strings("message.localization", "message.needrestart", "Localization", "This setting will take effect after you restart Songbird");
+          sbRestartBox_strings("message.localization", "message.needrestart", "Localization", "This setting will take effect after you restart Nightingale");
         }
       }
     }
@@ -254,7 +254,7 @@ try {
         menu.removeChild(children[i - 1]);
       }
 
-      var locales = cr.getLocalesForPackage("songbird");
+      var locales = cr.getLocalesForPackage("nightingale");
       var elements = Array();
       
       while (locales.hasMore()) {

@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -30,8 +30,8 @@
 
 <!-- Import external definitions. -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <!-- Set up dialog box window. -->
 <dialog xmlns:html="http://www.w3.org/1999/xhtml"
@@ -45,18 +45,18 @@
         onunload="gWaitForCompletion.onUnload();"
         buttonlabelaccept="&device.dialog.wait_for_completion.quit;">
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Dialog box description. -->
   <description value="&device.dialog.wait_for_completion.msg;"/>
 
-  <!-- Import the Songbird services code. -->  
+  <!-- Import the Nightingale services code. -->  
   <script type="application/x-javascript" 
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
 
   <!-- Import the dialog box Javascript code. -->  
   <script type="application/x-javascript" 
-          src="chrome://songbird/content/scripts/waitForCompletion.js"/>
+          src="chrome://nightingale/content/scripts/waitForCompletion.js"/>
 
 </dialog>

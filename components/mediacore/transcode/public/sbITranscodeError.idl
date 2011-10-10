@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -30,14 +30,14 @@ interface sbIMediaItem;
 [scriptable, uuid(1bc8ee84-1dd2-11b2-a317-cb97cfde203c)]
 interface sbITranscodeError : nsISupports {
   /**
-   * The string key in songbird.properties for the error message, for when the
+   * The string key in nightingale.properties for the error message, for when the
    * media item is available.  If the localized string contains the substring
    * "%(item)", that substring will be replaced with the title of the media item.
    */
   readonly attribute AString messageWithItem;
   
   /**
-   * The string key in songbird.properties for the error message, for when the
+   * The string key in nightingale.properties for the error message, for when the
    * media item is not available.  If the localized string contains the
    * substring "%(item)", that substring will be replaced with the url of the
    * media item.
@@ -88,7 +88,7 @@ interface sbITranscodeErrorListener : nsISupports {
 
 %{C++
 
-#define SONGBIRD_TRANSCODEERROR_CONTRACTID               \
-  "@songbirdnest.com/Songbird/Mediacore/TranscodeError;1"
+#define NIGHTINGALE_TRANSCODEERROR_CONTRACTID               \
+  "@getnightingale.com/Nightingale/Mediacore/TranscodeError;1"
 
 %}C++

@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -165,14 +165,14 @@ deviceGeneralSettingsSvc.prototype = {
   _getSupportedSettings:
     function deviceGeneralSettingsSvc__getSupportedSettings() {
     // Determine whether the device supports application auto-launch.
-    var propertyName = "http://songbirdnest.com/device/1.0#supportsAutoLaunch";
+    var propertyName = "http://getnightingale.com/device/1.0#supportsAutoLaunch";
     if (this._device.properties.properties.hasKey(propertyName)) {
       this._autoLaunchSupported =
         this._device.properties.properties.getProperty(propertyName);
     }
 
     // Determine whether the device supports auto-firmware update checks.
-    var updater = Cc['@songbirdnest.com/Songbird/Device/Firmware/Updater;1']
+    var updater = Cc['@getnightingale.com/Nightingale/Device/Firmware/Updater;1']
                     .getService(Ci.sbIDeviceFirmwareUpdater);
     this._autoFirmwareCheckSupported = updater.hasHandler(this._device, 0, 0);
   },

@@ -1,11 +1,11 @@
 /* vim: set sw=2 : */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #if defined(XP_WIN)
@@ -41,7 +41,7 @@
 #include <nsIWritablePropertyBag.h>
 #include <nsIWritablePropertyBag2.h>
 
-///// Songbird interface includes
+///// Nightingale interface includes
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIMediaFormatMutable.h>
@@ -56,7 +56,7 @@
 #include <nsNetUtil.h>
 #include <prlog.h>
 
-///// Songbird header includes
+///// Nightingale header includes
 #include <sbArrayUtils.h>
 #include <sbMemoryUtils.h>
 #include <sbStringUtils.h>
@@ -761,7 +761,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
   }
   if (!mAudioEncoderProperties) {
     mAudioEncoderProperties =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1269,7 +1269,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetVideoProperties()
 
   if (!mVideoEncoderProperties) {
     mVideoEncoderProperties =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1357,7 +1357,7 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
         NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
       }
       else if (mapping.Equals("video-quality", CaseInsensitiveCompare)) {
-        value = sbNewVariant(mQuality);
+        value = sbNewVariant(mVideoQuality);
         NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
       }
       else {
@@ -1459,11 +1459,11 @@ sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvaila
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> array =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbITranscodeProfileLoader> profileLoader =
-      do_CreateInstance("@songbirdnest.com/Songbird/Transcode/ProfileLoader;1",
+      do_CreateInstance("@getnightingale.com/Nightingale/Transcode/ProfileLoader;1",
               &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 

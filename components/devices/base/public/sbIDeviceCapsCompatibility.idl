@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -62,13 +62,13 @@ interface sbIDeviceCapsCompatibility : nsISupports
 };
 
 %{C++
-#define SONGBIRD_DEVICECAPSCOMPATIBILITY_DESCRIPTION      \
-  "Songbird Device Capabilities Compatibility Component"
-#define SONGBIRD_DEVICECAPSCOMPATIBILITY_CONTRACTID       \
-  "@songbirdnest.com/Songbird/Device/DeviceCapsCompatibility;1"
-#define SONGBIRD_DEVICECAPSCOMPATIBILITY_CLASSNAME        \
-  "Songbird Device Capabilities"
-#define SONGBIRD_DEVICECAPSCOMPATIBILITY_CID              \
+#define NIGHTINGALE_DEVICECAPSCOMPATIBILITY_DESCRIPTION      \
+  "Nightingale Device Capabilities Compatibility Component"
+#define NIGHTINGALE_DEVICECAPSCOMPATIBILITY_CONTRACTID       \
+  "@getnightingale.com/Nightingale/Device/DeviceCapsCompatibility;1"
+#define NIGHTINGALE_DEVICECAPSCOMPATIBILITY_CLASSNAME        \
+  "Nightingale Device Capabilities"
+#define NIGHTINGALE_DEVICECAPSCOMPATIBILITY_CID              \
 { /* e8717123-1bb2-4ca5-a442-7e8424fbdb49 */              \
   0xe8717123,                                             \
   0x1bb2,                                                 \

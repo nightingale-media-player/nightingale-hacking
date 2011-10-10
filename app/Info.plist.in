@@ -137,7 +137,6 @@
       <key>CFBundleTypeExtensions</key>
       <array>
         <string>m3u</string>
-        <string>m3u8</string>
       </array>
       <key>CFBundleTypeIconFile</key>
       <string>m3u.icns</string>
@@ -677,13 +676,13 @@
     </dict>
   </array>
   <key>CFBundleExecutable</key>
-  <string>songbird</string>
+  <string>nighingale</string>
   <key>CFBundleGetInfoString</key>
-  <string>@SB_APPNAME@ @SB_MILESTONE@ (build @SB_BUILD_NUMBER@) For Mac, © 2005-2010 Pioneers of the Inevitable</string>
+  <string>@SB_APPNAME@ @SB_MILESTONE@ (build @SB_BUILD_NUMBER@) For Mac, © 2010-2011 Nighingale.com</string>
   <key>CFBundleIconFile</key>
-  <string>songbird.icns</string>
+  <string>nighingale.icns</string>
   <key>CFBundleIdentifier</key>
-  <string>@SB_APP_BUNDLE_BASENAME@.songbird</string>
+  <string>@SB_APP_BUNDLE_BASENAME@.nighingale</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
@@ -726,10 +725,10 @@
     </dict>
     <dict>
       <key>CFBundleURLName</key>
-      <string>songbird URL</string>
+      <string>nighingale URL</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>songbird</string>
+        <string>nighingale</string>
       </array>
     </dict>
   </array>

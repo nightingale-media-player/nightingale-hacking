@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,24 +20,22 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 #include "sbArray.h"
 #include "sbPropertyBag.h"
-#include "sbServiceManager.h"
 #include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyBag, Init)
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
 
 #define SB_PROPERTYBAG_CLASSNAME "sbPropertyBag"
 #define SB_PROPERTYBAG_CID \
    {0x135c8890, 0xd9da, 0x4a1c, \
      {0xb3, 0x45, 0x3b, 0xb2, 0xfe, 0xe8, 0xfa, 0xb5}}
-#define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
+#define SB_PROPERTYBAG_CONTRACTID "@getnightingale.com/moz/xpcom/sbpropertybag;1"
 // fill out data struct to register with component system
 static const nsModuleComponentInfo components[] =
 {
@@ -52,15 +50,9 @@ static const nsModuleComponentInfo components[] =
     SB_PROPERTYBAG_CID,
     SB_PROPERTYBAG_CONTRACTID,
     sbPropertyBagConstructor
-  },
-  {
-    SB_SERVICE_MANAGER_CLASSNAME,
-    SB_SERVICE_MANAGER_CID,
-    SB_SERVICE_MANAGER_CONTRACTID,
-    sbServiceManagerConstructor
   }
 };
 
 // create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdXPCOMLib, components)
+NS_IMPL_NSGETMODULE(NightingaleXPCOMLib, components)
 

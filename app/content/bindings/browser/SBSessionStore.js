@@ -1,27 +1,27 @@
 // vim: set sw=2 :miv
-/*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
 
 /**
  * Session Store
@@ -44,32 +44,28 @@ const Ci = Components.interfaces;
 const Application = Cc["@mozilla.org/fuel/application;1"].getService();
 const JSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 
-const PREF_TAB_STATE = "songbird.browser.tab_state";
-const PREF_FIRSTRUN = "songbird.firstrun.tabs.restore";
-const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
-const PLACEHOLDER_URL = "chrome://songbird/content/mediapages/firstrun.xul";
+const PREF_TAB_STATE = "nightingale.browser.tab_state";
+const PREF_FIRSTRUN = "nightingale.firstrun.tabs.restore";
+const PREF_FIRSTRUN_URL = "nightingale.url.firstrunpage";
+const PLACEHOLDER_URL = "chrome://nightingale/content/mediapages/firstrun.xul";
 // this pref marks the current session as being firstrun.  Used to cooperate
 // with things like file scan.
-const PREF_FIRSTRUN_SESSION = "songbird.firstrun.is_session";
+const PREF_FIRSTRUN_SESSION = "nightingale.firstrun.is_session";
 
 function LOG(str) {
-  // var environment = Cc["@mozilla.org/process/environment;1"]
-  //                     .createInstance(Ci.nsIEnvironment);
-  // var level = ("," + environment.get("NSPR_LOG_MODULES") + ",")
-  //             .match(/,(?:sbSessionStore|all):(\d+),/);
-  // if (!level || level[1] < 3) {
-  //   // don't log
-  //   return;
-  // }
-  // var file = (new Error).stack.split("\n").reverse()[1];
-  // dump(file + "" + str + "\n");
-
-  // dump("\n\n\n");
-  // dump(str);
-  // dump("\n\n\n");
-  // var consoleService = Cc['@mozilla.org/consoleservice;1']
-  //                        .getService(Ci.nsIConsoleService);
-  // consoleService.logStringMessage(str);
+  var environment = Cc["@mozilla.org/process/environment;1"]
+                      .createInstance(Ci.nsIEnvironment);
+  var level = ("," + environment.get("NSPR_LOG_MODULES") + ",")
+              .match(/,(?:sbSessionStore|all):(\d+),/);
+  if (!level || level[1] < 3) {
+    // don't log
+    return;
+  }
+  var file = (new Error).stack.split("\n").reverse()[1];
+  dump(file + "" + str + "\n");
+  var consoleService = Cc['@mozilla.org/consoleservice;1']
+                         .getService(Ci.nsIConsoleService);
+  consoleService.logStringMessage(str);
 }
 
 __defineGetter__("_tabState", function() {
@@ -139,47 +135,31 @@ var SBSessionStore = {
           }
         // For all other pages, just keep the URI
         } else {
-          // Check to see if the url has a prefix that matches a service pane
-          // node, and store the node url instead of the actual loaded page.
-          // This allows service pane nodes to direct session restore to a
-          // useful page instead of something we don't want to restore like
-          // an error page.
-          let url = tab.linkedBrowser.currentURI.spec;
-          let sps = Cc["@songbirdnest.com/servicepane/service;1"]
-                      .getService(Ci.sbIServicePaneService);
-          let node =
-              sps.getNodeForURL(url, Ci.sbIServicePaneService.URL_MATCH_PREFIX);
-
-          // Set the node url if we found a node. Otherwise just use url of the
-          // page that loaded.
-          if (node) {
-            url = node.url;
-          }
-          urls.push(url);
+          urls.push(tab.linkedBrowser.currentURI.spec);
         }
-      } catch (e) {
+      } catch (e) { 
         Components.utils.reportError(e);
       }
       tab = tab.nextSibling;
     }
-
+    
     _tabState = {
                   selectedTabIndex: aTabBrowser.tabContainer.selectedIndex,
                   urlList: urls
                 };
   },
-
+  
   restoreTabState: function restoreTabState(aTabBrowser)
   {
     var tabObject = _tabState;
     var tabs = [];
     var selectedIndex = 0, selectedTab;
-
+    
     LOG("restoring tab state");
-
+    
     if (Application.prefs.has(PREF_FIRSTRUN_SESSION))
       Application.prefs.get(PREF_FIRSTRUN_SESSION).reset();
-
+    
     if (tabObject && "urlList" in tabObject) {
       // v2 of the tab state object (with selectedTabIndex)
       tabs = tabObject.urlList;
@@ -188,34 +168,39 @@ var SBSessionStore = {
       // v1 of the tab state object (no selected tab index, only urls)
       tabs = tabObject;
     }
-
-    var isFirstTab = true;
-    if ( !tabs || !tabs.length ) {
+    
+    if ( !tabs ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
         LOG("no saved tabs, first run - using defaults");
         // First run, load the dummy page in the first tab, and the welcome
         // page in the second.  The dummy page will get replaced in mainWinInit.js
         // when media scan is done / skipped.
         aTabBrowser.loadURI(PLACEHOLDER_URL, null, null, null, '_media');
-
+        
         var loadMLInBackground =
-          Application.prefs.getValue("songbird.firstrun.load_ml_in_background",
+          Application.prefs.getValue("nightingale.firstrun.load_ml_in_background",
                                      false);
-        var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
-        LOG(PREF_FIRSTRUN_URL + ": " + firstrunURL);
-        if (firstrunURL) {
-          // If the pref to load the medialist in the background is true, then
-          // we want to load the firstrun page in the foreground
-          selectedTab = aTabBrowser.loadOneTab(firstrunURL, null, null, null,
-                                               !loadMLInBackground);
-          isFirstTab = false;
-        }
+        var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL,
+                                                     "about:blank");
+        // If the pref to load the medialist in the background is true, then
+        // we want to load the firstrun page in the foreground
+        selectedTab = aTabBrowser.loadOneTab(firstrunURL, null, null, null,
+                                             !loadMLInBackground);
+
         Application.prefs.setValue(PREF_FIRSTRUN, true);
         Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);
+      } else {
+        LOG("no saved tabs, not first run - just main library");
+        // tab state pref missing/corrupt.
+        // let's just go to the main library
+        var libMgr = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
+                       .getService(Ci.sbILibraryManager);
+        var mainLib = libMgr.mainLibrary;
+        aTabBrowser.loadMediaList(mainLib);
       }
     } else {
       LOG("saved tabs found: " + uneval(tabs));
-
+  
       // check if this is an invalid chrome url
       var chromeReg = Cc['@mozilla.org/chrome/chrome-registry;1']
                         .getService(Ci.nsIChromeRegistry);
@@ -249,8 +234,9 @@ var SBSessionStore = {
         // ok - things look fine
         return false;
       }
-
+  
       // Otherwise, just restore whatever was there, previously.
+      var isFirstTab = true;
       var tab, location;
       for (var i = 0; i < tabs.length; i++) {
         tab = tabs[i];
@@ -274,19 +260,19 @@ var SBSessionStore = {
           // the XUL cache.  This is a work around for the following bugs:
           //
           // Bug 7896   - Media pages do not initialize when loaded from tab restore
-          // BMO 420815 - XUL Cache interferes with onload when loading multiple
+          // BMO 420815 - XUL Cache interferes with onload when loading multiple 
           //              instances of the same XUL file
           if (url.indexOf("&bypassXULCache") == -1) {
             url += "&bypassXULCache="+ Math.random();
           }
-
+          
           if (isFirstTab) {
             // restore the first tab into the media tab, if available
             location = "_media";
           } else {
             location = "_blank";
           }
-
+          
           try {
             var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
                                                        tab.listGUID);
@@ -323,8 +309,11 @@ var SBSessionStore = {
                 LOG(<>not a media-esque tab ({firstrunURL} vs {url}: {(firstrunURL == url)})</>);
                 // this is the first tab, but this is unsuitable for the media tab
                 location = "_top";
-                // Load the default page
-                newTab = this.loadDefault(aTabBrowser);
+                // load the library page to fill up the media tab
+                libMgr = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
+                           .getService(Ci.sbILibraryManager);
+                mainLib = libMgr.mainLibrary;
+                newTab = aTabBrowser.loadMediaList(mainLib);
               }
             } else {
               // no media tab, but this is the first tab
@@ -343,15 +332,18 @@ var SBSessionStore = {
             if (deviceId) {
               deviceId = deviceId[1];
 
-              var deviceMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+              var deviceMgr = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                               .getService(Ci.sbIDeviceManager2);
               try {
                 deviceMgr.getDevice(Components.ID(deviceId));
                 // It's a valid device, so go ahead and open up the chrome page
                 newTab = aTabBrowser.loadURI(url, null, null, null, location);
               } catch (e) {
-                // This is an invalid device -- load the default
-                newTab = this.loadDefault(aTabBrowser);
+                // This is an invalid device, just load the main library view.
+                var libMgr = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
+                               .getService(Ci.sbILibraryManager);
+                var mainLib = libMgr.mainLibrary;
+                aTabBrowser.loadMediaList(mainLib);
               }
             }
           } else {
@@ -360,10 +352,10 @@ var SBSessionStore = {
           }
         }
 
-        // Load the first url into the current tab and subsequent
-        // urls into new tabs
+        // Load the first url into the current tab and subsequent 
+        // urls into new tabs 
         isFirstTab = false;
-
+        
         if (i == selectedIndex) {
           // note that this might not match the actual tab index, if there are
           // any saved tabs that are now at an invalid chrome URL.  That's fine,
@@ -371,14 +363,6 @@ var SBSessionStore = {
           selectedTab = newTab;
         }
       }
-    }
-
-    // Let's just go to the main library when:
-    // - there was only one tab and that tab is an invalid chrome url
-    //   (isInvalidChromeURL says true)
-    // - or no saved tabs, not first run, and tab state pref is missing/corrupt.
-    if (isFirstTab) {
-      this.loadDefault(aTabBrowser);
     }
 
     // Select the selected tab from the previous session (or the first one if
@@ -391,22 +375,12 @@ var SBSessionStore = {
     aTabBrowser.delayedSelectTab(selectedTab);
 
     this.tabStateRestored = true;
-
+    
     // tell the tab browser we switched tabs so it can update state correctly
     var selectEvent = document.createEvent("Events");
     selectEvent.initEvent("select", true, true);
     aTabBrowser.tabStrip.dispatchEvent(selectEvent);
   },
-
-  loadDefault: function(aTabBrowser) {
-    var mainLib = LibraryUtils.mainLibrary;
-    var view = LibraryUtils.createStandardMediaListView(mainLib);
-    var constraints = [[["http://songbirdnest.com/data/1.0#isList",["0"]]],
-                       [["http://songbirdnest.com/data/1.0#hidden",["0"]]],
-                       [["http://songbirdnest.com/data/1.0#contentType",["audio"]]]]
-    view.filterConstraint = LibraryUtils.createConstraint(constraints);
-    return aTabBrowser.loadMediaList(mainLib, null, "_media", view, null, false);
-  },
-
+  
   tabStateRestored: false
 };

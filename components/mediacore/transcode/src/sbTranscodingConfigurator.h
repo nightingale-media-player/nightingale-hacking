@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,14 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
 #ifndef __SB_TRANSCODINGCONFIGURATOR_H__
 #define __SB_TRANSCODINGCONFIGURATOR_H__
 
-// Songbird Includes
+// Nightingale Includes
 #include <sbIMediaInspector.h>
 #include <sbITranscodingConfigurator.h>
 
@@ -37,11 +37,11 @@
 
 class nsIWritablePropertyBag2;
 
-#define SONGBIRD_TRANSCODINGCONFIGURATOR_CONTRACTID        \
-  "@songbirdnest.com/Songbird/Mediacore/TranscodingConfigurator;1"
-#define SONGBIRD_TRANSCODINGCONFIGURATOR_CLASSNAME         \
-  "Songbird Transcoding Configurator Interface"
-#define SONGBIRD_TRANSCODINGCONFIGURATOR_CID               \
+#define NIGHTINGALE_TRANSCODINGCONFIGURATOR_CONTRACTID        \
+  "@getnightingale.com/Nightingale/Mediacore/TranscodingConfigurator;1"
+#define NIGHTINGALE_TRANSCODINGCONFIGURATOR_CLASSNAME         \
+  "Nightingale Transcoding Configurator Interface"
+#define NIGHTINGALE_TRANSCODINGCONFIGURATOR_CID               \
   { /* f40ea6ad-4a39-464f-9e94-9f240e0a05ee */             \
     0xf40ea6ad,                                            \
     0x4a39,                                                \

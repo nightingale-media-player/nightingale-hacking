@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -49,7 +49,23 @@
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
 #include <prlog.h>
-#include <sbDebugUtils.h>
+
+//
+// To log this module, set the following environment variable:
+//   NSPR_LOG_MODULES=sbCDDevice:5
+//
+
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gCDDeviceLog = nsnull;
+#define TRACE(args) PR_LOG(gCDDeviceLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gCDDeviceLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbCDDeviceMarshall, SB_CDDEVICE_MARSHALL_IID)
 
@@ -70,6 +86,12 @@ sbCDDeviceMarshall::sbCDDeviceMarshall()
   : sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY))
   , mKnownDevicesLock(nsAutoMonitor::NewMonitor("sbCDDeviceMarshall::mKnownDevicesLock"))
 {
+#ifdef PR_LOGGING
+  if (!gCDDeviceLog) {
+    gCDDeviceLog = PR_NewLogModule("sbCDDevice");
+  }
+#endif
+
   mKnownDevices.Init(8);
 }
 
@@ -86,7 +108,7 @@ sbCDDeviceMarshall::Init()
 {
   nsresult rv;
   nsCOMPtr<sbIDeviceManager2> deviceMgr =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mCDDeviceService = nsnull;
@@ -160,7 +182,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIWritableVariant> deviceType =
-    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deviceType->SetAsAString(NS_LITERAL_STRING("CD"));
@@ -175,7 +197,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
 
   // Stash the device with the property bag.
   nsCOMPtr<nsIWritableVariant> deviceVar =
-    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deviceVar->SetAsISupports(aCDDevice);
@@ -204,7 +226,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   }
 
   nsCOMPtr<sbIDeviceManager2> deviceManager =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
@@ -262,11 +284,11 @@ sbCDDeviceMarshall::RemoveDevice(sbIDevice* aDevice) {
   }
 
   nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceControllerRegistrar> deviceControllerRegistrar =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the device controller for this device.
@@ -367,7 +389,7 @@ sbCDDeviceMarshall::DiscoverDevices()
   NS_ENSURE_STATE(mCDDeviceService);
 
   nsCOMPtr<nsIThreadPool> threadPoolService =
-    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThreadManager> threadMgr =
@@ -463,7 +485,7 @@ sbCDDeviceMarshall::CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
 
   // Get the device manager.
   nsCOMPtr<sbIDeviceManager2> manager =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Use the device manager as the event target.

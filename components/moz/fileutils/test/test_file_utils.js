@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -50,7 +50,7 @@ function runTest() {
   var fileUtils;
   try {
     fileUtils =
-      Cc["@songbirdnest.com/Songbird/FileUtils;1"].getService(Ci.sbIFileUtils);
+      Cc["@getnightingale.com/Nightingale/FileUtils;1"].getService(Ci.sbIFileUtils);
   } catch (ex) {}
   assertTrue(fileUtils,
              "File utilities component is not available.");
@@ -65,7 +65,7 @@ function runTest() {
 
   // Create a test working directory.
   var temporaryFileService =
-        Cc["@songbirdnest.com/Songbird/TemporaryFileService;1"]
+        Cc["@getnightingale.com/Nightingale/TemporaryFileService;1"]
           .getService(Ci.sbITemporaryFileService);
   var testCurrentDir =
         temporaryFileService.createFile(Ci.nsIFile.DIRECTORY_TYPE);

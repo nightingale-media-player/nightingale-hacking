@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,7 +37,7 @@ function runTest () {
   var outValues;
   var outValuesCount = {};
 
-  var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+  var builder = Cc["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
                   .createInstance(Ci.sbILibraryConstraintBuilder);
 
   try {
@@ -66,7 +66,7 @@ function runTest () {
     assertEqual(e.result, Cr.NS_ERROR_UNEXPECTED);
   }
 
-  builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+  builder = Cc["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
               .createInstance(Ci.sbILibraryConstraintBuilder);
 
   var c = builder.include(SBProperties.artistName, "The Beatles").get();
@@ -142,7 +142,7 @@ function runTest () {
   var newC2 = writeAndRead(c2);
   assertTrue(c2.equals(newC2));
 
-  var sort = Cc["@songbirdnest.com/Songbird/Library/Sort;1"]
+  var sort = Cc["@getnightingale.com/Nightingale/Library/Sort;1"]
                .createInstance(Ci.sbILibrarySort);
 
   try {

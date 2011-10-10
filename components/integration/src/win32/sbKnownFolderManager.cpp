@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbKnownFolderManager.h"
@@ -47,32 +47,31 @@ NS_IMPL_ISUPPORTS1(sbKnownFolderManager,
                    sbIKnownFolderManager);
 
 sbKnownFolderManager::sbKnownFolderManager()
+: mCOMInitialized(E_UNEXPECTED)
 {
 }
 
 sbKnownFolderManager::~sbKnownFolderManager()
 {
+  if(SUCCEEDED(mCOMInitialized)) {
+    CoUninitialize();
+  }
 }
 
 nsresult
 sbKnownFolderManager::Init()
 {
-  // Warn, don't fail, on RPC_E_CHANGED_MODE
-  HRESULT hr = mCOMInit.Initialize(COINIT_MULTITHREADED);
-  NS_ENSURE_TRUE(SUCCEEDED(hr) || hr == RPC_E_CHANGED_MODE, NS_ERROR_FAILURE);
-  NS_WARN_IF_FALSE(SUCCEEDED(hr), "RPC_E_CHANGED_MODE on COM initialization");
-
+  mCOMInitialized = CoInitialize(NULL);
+  
   nsRefPtr<IKnownFolderManager> knownFolderManager;
-  hr = ::CoCreateInstance(CLSID_KnownFolderManager, 
-                          NULL,
-                          CLSCTX_INPROC_SERVER,
-                          IID_IKnownFolderManager,
-                          getter_AddRefs(knownFolderManager));
+  HRESULT hr = ::CoCreateInstance(CLSID_KnownFolderManager, 
+                                  NULL, 
+                                  CLSCTX_INPROC_SERVER, 
+                                  IID_IKnownFolderManager, 
+                                  getter_AddRefs(knownFolderManager));
   SB_WIN_ENSURE_SUCCESS(hr, NS_OK);
 
   knownFolderManager.swap(mKnownFolderManager);
-
-  return NS_OK;
 }
 
 nsresult 

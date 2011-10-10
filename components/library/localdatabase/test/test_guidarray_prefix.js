@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -35,14 +35,14 @@ function runTest () {
   var listId = library.QueryInterface(Ci.sbILocalDatabaseLibrary)
                       .getMediaItemIdForGuid("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
 
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
   array.propertyCache =
     library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
 
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
+  array.addSort("http://getnightingale.com/data/1.0#albumName", true);
 
   var tests = [
     "A",
@@ -70,7 +70,7 @@ function runTest () {
     }
   }
 
-  array.addFilter("http://songbirdnest.com/data/1.0#genre",
+  array.addFilter("http://getnightingale.com/data/1.0#genre",
                   new StringArrayEnumerator(["rock"]),
                   false);
 
@@ -91,7 +91,7 @@ function runTest () {
   }
 
   // Test on a simple media list
-  array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+  array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = databaseGUID;
   array.propertyCache =
@@ -101,7 +101,7 @@ function runTest () {
   array.baseConstraintColumn = "media_item_id";
   array.baseConstraintValue = listId;
 
-  array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
+  array.addSort("http://getnightingale.com/data/1.0#albumName", true);
 
   var tests = [
     "A",
@@ -129,7 +129,7 @@ function runTest () {
     }
   }
 
-  array.addFilter("http://songbirdnest.com/data/1.0#genre",
+  array.addFilter("http://getnightingale.com/data/1.0#genre",
                   new StringArrayEnumerator(["rock"]),
                   false);
 
@@ -153,7 +153,7 @@ function runTest () {
   array.clearFilters();
 
   // Special test when sorted by ordinal
-  array.addSort("http://songbirdnest.com/data/1.0#ordinal", true);
+  array.addSort("http://getnightingale.com/data/1.0#ordinal", true);
 
   // The ordinals of the freshly loaded data start as equal to the index
   // number, so test with that
@@ -161,7 +161,7 @@ function runTest () {
     assertEqual(i, array.getFirstIndexByPrefix(i));
   }
 
-  array.addFilter("http://songbirdnest.com/data/1.0#artistName",
+  array.addFilter("http://getnightingale.com/data/1.0#artistName",
                   new StringArrayEnumerator(["a-ha"]),
                   false);
 

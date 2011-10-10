@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,34 +22,34 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle services.
+// Nightingale string bundle services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbStringBundle.cpp
- * \brief Songbird String Bundle Source.
+ * \brief Nightingale String Bundle Source.
  */
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle imported services.
+// Nightingale string bundle imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbStringBundle.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIStringBundleService.h>
 
 // Mozilla imports.
@@ -78,14 +78,14 @@ static PRLogModuleInfo* gStringBundleLog = nsnull;
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle constructors/destructors.
+// Nightingale string bundle constructors/destructors.
 //
 //------------------------------------------------------------------------------
 
 /**
- *   Construct a Songbird string bundle with the string bundle URI specified by
- * aURI.  If aURI is not specified, use the default Songbird string bundle.
- *   Upon any failure, ensure that use of the Songbird string bundle is safe.
+ *   Construct a Nightingale string bundle with the string bundle URI specified by
+ * aURI.  If aURI is not specified, use the default Nightingale string bundle.
+ *   Upon any failure, ensure that use of the Nightingale string bundle is safe.
  *
  * \param aURI                  URI of string bundle.
  */
@@ -102,7 +102,7 @@ sbStringBundle::sbStringBundle(const char* aURI)
 
   TRACE(("%s[%8.x] - %s", __FUNCTION__, this, aURI));
 
-  // Get the Songbird string bundle service.
+  // Get the Nightingale string bundle service.
   mStringBundleService = do_GetService(SB_STRINGBUNDLESERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
@@ -122,9 +122,9 @@ sbStringBundle::sbStringBundle(const char* aURI)
 
 
 /**
- *   Construct a Songbird string bundle with the string bundle specified by
+ *   Construct a Nightingale string bundle with the string bundle specified by
  * aBundle.
- *   Upon any failure, ensure that use of the Songbird string bundle is safe.
+ *   Upon any failure, ensure that use of the Nightingale string bundle is safe.
  *
  * \param aBundle               String bundle object.
  */
@@ -141,7 +141,7 @@ sbStringBundle::sbStringBundle(nsIStringBundle* aBundle)
 
   TRACE(("%s[%8.x] - (existing bundle %.08x)", __FUNCTION__, this, aBundle));
 
-  // Get the Songbird string bundle service.
+  // Get the Nightingale string bundle service.
   mStringBundleService = do_GetService(SB_STRINGBUNDLESERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
@@ -153,7 +153,7 @@ sbStringBundle::sbStringBundle(nsIStringBundle* aBundle)
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird string bundle services.
+// Public Nightingale string bundle services.
 //
 //------------------------------------------------------------------------------
 
@@ -343,7 +343,7 @@ sbStringBundle::Format(const char*         aKey,
          __FUNCTION__,
          this,
          aKey,
-         NS_ConvertUTF16toUTF8(aParam).BeginReading(),
+         aParam,
          aDefault));
 
   nsTArray<nsString> params(1);
@@ -353,7 +353,7 @@ sbStringBundle::Format(const char*         aKey,
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird string bundle services.
+// Internal Nightingale string bundle services.
 //
 //------------------------------------------------------------------------------
 

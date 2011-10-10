@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -47,7 +47,7 @@ function runTest() {
   // Test that the importer component is available.
   var importer;
   try {
-    importer = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
+    importer = Cc["@getnightingale.com/Nightingale/ITunesImporter;1"]
                  .getService(Ci.sbILibraryImporter);
   } catch (ex) {}
   assertTrue(importer, "iTunes importer component is not available.");

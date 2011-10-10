@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 if (typeof(Ci) == "undefined")
@@ -54,6 +54,7 @@ var gMiniplayer = {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
 
     window.focus();
+    window.dockDistance = 10;
 
     // Note, most listeners are hardcoded in miniplayer.xul
 
@@ -72,44 +73,33 @@ var gMiniplayer = {
     var windowElement = document.getElementsByTagName("window")[0];
     windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
 
+    windowPlacementSanityChecks();
     initializeDocumentPlatformAttribute();
+    
+    // so, right now the height is correct but something somewhere after this
+    // is going to go and screw it right up. we don't know why, or how, but on
+    // windows it ends up being 100px instead of 23px and this setTimeout
+    // makes it okay again.
+    setTimeout( function() {
+      if (parseInt(windowElement.height)) {
+        window.resizeTo(windowElement.width, windowElement.height);
+      }
+    }, 0); // bump to back of current queue
 
     // Add resizer listeners
     this._miniPlayerMinWidth = parseInt(getComputedStyle(
                                         document.documentElement, "").minWidth);
-    this._miniPlayerMinHeight = parseInt(getComputedStyle(
-                                         document.documentElement, "").minHeight);
-
-    // Set to initialized to properly resize on load.
-    this._initialized = false;
     var resizer = document.getElementById("miniplayer_resizer_right");
     resizer.addEventListener("mousemove", gMiniplayer.resizeHandler, false);
-
   },
 
   resizeHandler: function miniPlayer_resizeHandler(e) {
-    var windowElement = document.getElementsByTagName("window")[0],
-        width = windowElement.boxObject.width;
-
-    // Opening a window with hidechrome=true does not initially size the window
-    // properly. The result is residual whitespace in place of chrome, titlebar.
-    // For reference, see https://bugzilla.mozilla.org/show_bug.cgi?id=392509.
-    // In order to circumvent the issue, when opened, the window resize handler
-    // will be triggered, sizing the window to its respective width and minimum
-    // height.
-    if (!this._initialized) {
-      this._initialized = true;
-      window.resizeTo(width,
-                      gMiniplayer._miniPlayerMinHeight);
-    }
-
     if (e.type == "mousemove") {
       if (!gMiniplayer._mouseDown || (gMiniplayer._mouseDown == false) ||
           e.clientX < gMiniplayer._miniPlayerMinWidth)
       {
         if (e.clientX < gMiniplayer._miniPlayerMinWidth)
-          window.resizeTo(gMiniplayer._miniPlayerMinWidth,
-                          gMiniplayer._miniPlayerMinHeight);
+          window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -120,10 +110,11 @@ var gMiniplayer = {
       e.stopPropagation();
       return;
     }
+    var windowElement = document.getElementsByTagName("window")[0];
+    var width = windowElement.boxObject.width;
     if (width < gMiniplayer._miniPlayerMinWidth) {
       setTimeout(function() {
-        window.resizeTo(gMiniplayer._miniPlayerMinWidth,
-                        gMiniplayer._miniPlayerMinHeight);
+        window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
       }, 0);
     }
 
@@ -155,15 +146,13 @@ var gMiniplayer = {
     var resizerBoundaryPassed = (e.type == "mousemove" && e.clientX > 308);
     if (width < 308 && !resizerBoundaryPassed) {
       setTimeout(function() {
-        window.resizeTo(gMiniplayer._miniPlayerMinWidth,
-                        gMiniplayer._miniPlayerMinHeight);
+        window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
       }, 0);
     } else {
       gMiniplayer._cancelResize = true;
       if (width < gMiniplayer._miniPlayerMinWidth && resizerBoundaryPassed) {
         setTimeout(function() {
-          window.resizeTo(gMiniplayer._miniPlayerMinWidth,
-                          gMiniplayer._miniPlayerMinHeight);
+          window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
         }, 0);
       }
     }
@@ -216,7 +205,7 @@ var gMiniplayer = {
         else
           // If we have no context, initiate playback
           // via the root application controller
-          var app = Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"]
+          var app = Components.classes["@getnightingale.com/Nightingale/ApplicationController;1"]
                               .getService(Components.interfaces.sbIApplicationController);
           app.playDefault();
         break;
@@ -254,7 +243,7 @@ var gMiniplayer = {
   {
     // Attempt to switch to the next layout available for the current skin
     try {
-      var feathersMgr = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+      var feathersMgr = Cc['@getnightingale.com/nightingale/feathersmanager;1']
                            .getService(Ci.sbIFeathersManager);
       var skinName = feathersMgr.currentSkinName;
       var layoutURL = feathersMgr.currentLayoutURL;
@@ -274,7 +263,7 @@ var gMiniplayer = {
 
   _getNextLayout: function getNextLayout()
   {
-    var feathersMgr = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+    var feathersMgr = Cc['@getnightingale.com/nightingale/feathersmanager;1']
                          .getService(Ci.sbIFeathersManager);
     var skinName = feathersMgr.currentSkinName;
     var layoutURL = feathersMgr.currentLayoutURL;
@@ -369,14 +358,14 @@ var gMiniplayer = {
     try {
 
       if (platform == "Windows_NT") {
-        var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+        var windowMinMax = Components.classes["@getnightingale.com/Nightingale/WindowMinMax;1"];
         var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
 
         service.setCallback(document, this._minMaxHandler);
         return;
       } else if (platform == "Darwin") {
         var nativeWinMgr = 
-                Cc["@songbirdnest.com/integration/native-window-manager;1"]
+                Cc["@getnightingale.com/integration/native-window-manager;1"]
                   .getService(Ci.sbINativeWindowManager);
         if (nativeWinMgr.supportsMinimumWindowSize) {
           var minWidth = this._minMaxHandler.GetMinWidth();
@@ -390,7 +379,7 @@ var gMiniplayer = {
     }
     catch (err) {
       // No component
-      dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
+      dump("Error. nightingale_hack.js:setMinMaxCallback() \n " + err + "\n");
     }
     return;
   },
@@ -402,7 +391,7 @@ var gMiniplayer = {
     try
     {
       if (platform == "Windows_NT") {
-        var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+        var windowMinMax = Components.classes["@getnightingale.com/Nightingale/WindowMinMax;1"];
         var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
         service.resetCallback(document);
 
@@ -411,7 +400,7 @@ var gMiniplayer = {
 
     }
     catch(err) {
-      dump("Error. songbird_hack.js: SBUnitialize() \n" + err + "\n");
+      dump("Error. nightingale_hack.js: SBUnitialize() \n" + err + "\n");
     }
 
     return;

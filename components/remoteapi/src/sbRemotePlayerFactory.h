@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,11 +32,11 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-#define SONGBIRD_REMOTEPLAYERFACTORY_CONTRACTID         \
-  "@songbirdnest.com/remoteapi/remoteplayer-factory;1"
-#define SONGBIRD_REMOTEPLAYERFACTORY_CLASSNAME          \
-  "Songbird Remote Player Factory"
-#define SONGBIRD_REMOTEPLAYERFACTORY_CID                \
+#define NIGHTINGALE_REMOTEPLAYERFACTORY_CONTRACTID         \
+  "@getnightingale.com/remoteapi/remoteplayer-factory;1"
+#define NIGHTINGALE_REMOTEPLAYERFACTORY_CLASSNAME          \
+  "Nightingale Remote Player Factory"
+#define NIGHTINGALE_REMOTEPLAYERFACTORY_CID                \
 { /* df5f2b39-66b1-44ff-bb03-6bb7636d593b */            \
   0xdf5f2b39,                                           \
   0x66b1,                                               \

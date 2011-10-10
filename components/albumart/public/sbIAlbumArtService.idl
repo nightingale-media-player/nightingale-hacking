@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -45,7 +45,7 @@ interface nsIURI;
  * \brief Interface for the album art service.  Instantiate as a component
  *        service.
  *
- * "@songbirdnest.com/Songbird/album-art-service;1"
+ * "@getnightingale.com/Nightingale/album-art-service;1"
  */
 [scriptable, uuid(dcb6dd07-36a2-44e6-9ee2-8b22577204bf)]
 interface sbIAlbumArtService : nsISupports
@@ -134,6 +134,6 @@ interface sbIAlbumArtService : nsISupports
 
 %{C++
 #define SB_ALBUMARTSERVICE_CONTRACTID \
-          "@songbirdnest.com/Songbird/album-art-service;1"
+          "@getnightingale.com/Nightingale/album-art-service;1"
 %}C++
 

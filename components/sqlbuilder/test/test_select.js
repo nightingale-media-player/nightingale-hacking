@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -107,23 +107,12 @@ function runTest () {
   sql = "select name from bbc where name like '%United%' ESCAPE '\\'";
   assertEqual(sql, q.toString());
 
-  // An additional test not taken from the same source, for > 32 bit values
-  q = newQuery();
-  q.baseTableName = "bbc"
-  q.addColumn(null, "name");
-  c = q.createMatchCriterionLongLong(null, "population",
-                                     Ci.sbISQLBuilder.MATCH_GREATEREQUAL,
-                                     20000000000);
-  q.addCriterion(c);
-  sql = "select name from bbc where population >= 20000000000";
-  assertEqual(sql, q.toString());
-
   return Components.results.NS_OK;
 
 }
 
 function newQuery() {
-  return Cc["@songbirdnest.com/Songbird/SQLBuilder/Select;1"]
+  return Cc["@getnightingale.com/Nightingale/SQLBuilder/Select;1"]
            .createInstance(Ci.sbISQLSelectBuilder);
 }
 

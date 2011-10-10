@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,44 +32,43 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator defs.
+// Nightingale directory enumerator defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbDirectoryEnumerator.h
- * \brief Songbird Directory Enumerator Definitions.
+ * \brief Nightingale Directory Enumerator Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator imported services.
+// Nightingale directory enumerator imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIDirectoryEnumerator.h>
 
 // Mozilla imports.
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsISimpleEnumerator.h>
-#include <mozilla/Mutex.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator definitions.
+// Nightingale directory enumerator definitions.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird directory enumerator XPCOM component definitions.
+// Nightingale directory enumerator XPCOM component definitions.
 //
 
 #define SB_DIRECTORYENUMERATOR_CLASSNAME "sbDirectoryEnumerator"
-#define SB_DIRECTORYENUMERATOR_DESCRIPTION "Songbird Directory Enumerator"
+#define SB_DIRECTORYENUMERATOR_DESCRIPTION "Nightingale Directory Enumerator"
 #define SB_DIRECTORYENUMERATOR_CID                                             \
 {                                                                              \
   0x7065ab15,                                                                  \
@@ -78,9 +77,10 @@
   { 0x96, 0x5e, 0xcf, 0x49, 0x9b, 0xd9, 0xca, 0x3a }                           \
 }
 
+
 //------------------------------------------------------------------------------
 //
-// Songbird directory enumerator classes.
+// Nightingale directory enumerator classes.
 //
 //------------------------------------------------------------------------------
 
@@ -137,14 +137,14 @@ private:
   // mFilesOnly                 If true, enumerate only files.
   //
 
-  PRBool                        				mIsInitialized;
-  mozilla::Mutex                        		mEnumeratorLock;
+  PRBool                        mIsInitialized;
+  PRLock*                       mEnumeratorLock;
   nsCOMArray<nsISimpleEnumerator>
-												mEntriesEnumStack;
-  nsCOMPtr<nsIFile>             				mNextFile;
-  PRUint32                      				mMaxDepth;
-  PRBool                        				mDirectoriesOnly;
-  PRBool                        				mFilesOnly;
+                                mEntriesEnumStack;
+  nsCOMPtr<nsIFile>             mNextFile;
+  PRUint32                      mMaxDepth;
+  PRBool                        mDirectoriesOnly;
+  PRBool                        mFilesOnly;
 
 
   //

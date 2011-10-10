@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -35,7 +35,7 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 // This test relies on the sample files used in the metadata test cases
 var gDirectories = ArrayConverter.nsIArray([newAppRelativeFile("testharness/metadatamanager/files/")]);
 
-var gDirectoryImporter = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+var gDirectoryImporter = Cc['@getnightingale.com/Nightingale/DirectoryImportService;1']
                             .getService(Ci.sbIDirectoryImportService);
 var gLibrary;
 var gMediaList;
@@ -50,7 +50,7 @@ function runTest () {
   gLibrary = createLibrary("test_directoryimport", null, false);
   gLibrary.clear();
 
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"].
                           getService(Ci.sbILibraryManager);
   libraryManager.registerLibrary(gLibrary, false);
 

@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,26 +22,26 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service.
+// Nightingale string bundle service.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbStringBundleService.cpp
- * \brief Songbird String Bundle Service Source.
+ * \brief Nightingale String Bundle Service Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle service imported services.
+// Nightingale string bundle service imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -53,6 +53,9 @@
 
 // Local imports.
 #include "sbStringUtils.h"
+
+// Nightingale imports.
+#include <sbProxyUtils.h>
 
 // Mozilla imports.
 #include <nsAutoPtr.h>
@@ -83,7 +86,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbStringBundleService,
 //
 
 /**
- * \brief Main Songbird string bundle.  Thread-safe.
+ * \brief Main Nightingale string bundle.  Thread-safe.
  */
 
 NS_IMETHODIMP
@@ -96,7 +99,7 @@ sbStringBundleService::GetBundle(nsIStringBundle** _retval)
 
 
 /**
- * \brief Main Songbird brand string bundle.  Thread-safe.
+ * \brief Main Nightingale brand string bundle.  Thread-safe.
  */
 
 NS_IMETHODIMP
@@ -140,7 +143,7 @@ sbStringBundleService::CreateBundle(const char*       aURLSpec,
                                               getter_AddRefs(baseStringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create the Songbird string bundle.
+  // Create the Nightingale string bundle.
   nsRefPtr<sbStringBundle> stringBundle;
   rv = sbStringBundle::New(baseStringBundle, getter_AddRefs(stringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -178,7 +181,7 @@ sbStringBundleService::CreateExtensibleBundle(const char      *aRegistryKey,
                                     getter_AddRefs(baseStringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create the Songbird string bundle.
+  // Create the Nightingale string bundle.
   nsRefPtr<sbStringBundle> stringBundle;
   rv = sbStringBundle::New(baseStringBundle, getter_AddRefs(stringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -264,7 +267,7 @@ sbStringBundleService::Observe(nsISupports *aSubject,
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird string bundle service instance.
+ * Construct a Nightingale string bundle service instance.
  */
 
 sbStringBundleService::sbStringBundleService()
@@ -273,7 +276,7 @@ sbStringBundleService::sbStringBundleService()
 
 
 /**
- * Destroy a Songbird string bundle service instance.
+ * Destroy a Nightingale string bundle service instance.
  */
 
 sbStringBundleService::~sbStringBundleService()
@@ -282,7 +285,7 @@ sbStringBundleService::~sbStringBundleService()
 
 
 /**
- * Initialize the Songbird string bundle service.
+ * Initialize the Nightingale string bundle service.
  */
 nsresult
 sbStringBundleService::Initialize()
@@ -317,12 +320,12 @@ sbStringBundleService::ReloadBundles()
   mBaseStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the main Songbird string bundle.
-  rv = CreateBundle("chrome://songbird/locale/songbird.properties",
+  // Get the main Nightingale string bundle.
+  rv = CreateBundle("chrome://nightingale/locale/nightingale.properties",
                     getter_AddRefs(mBundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the main Songbird string bundle.
+  // Get the main Nightingale string bundle.
   rv = CreateBundle("chrome://branding/locale/brand.properties",
                     getter_AddRefs(mBrandBundle));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -334,14 +337,14 @@ sbStringBundleService::ReloadBundles()
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle class implementation.
+// Nightingale string bundle class implementation.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle nsISupports implementation.
+// Nightingale string bundle nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -351,7 +354,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbStringBundle,
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle nsIStringBundle implementation.
+// Nightingale string bundle nsIStringBundle implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -552,17 +555,17 @@ sbStringBundle::GetSimpleEnumeration(nsISimpleEnumerator **_retval)
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird string bundle services.
+// Public Nightingale string bundle services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Create a new instance of a Songbird string bundle using the base string
- * bundle specified by aBaseStringBundle.  Return the Songbird string bundle in
+ * Create a new instance of a Nightingale string bundle using the base string
+ * bundle specified by aBaseStringBundle.  Return the Nightingale string bundle in
  * aStringBundle.
  *
  * \param aBaseStringBundle     Base string bundle.
- * \param aStringBundle         Returned created Songbird string bundle.
+ * \param aStringBundle         Returned created Nightingale string bundle.
  */
 
 /* static */ nsresult
@@ -592,7 +595,7 @@ sbStringBundle::New(nsIStringBundle* aBaseStringBundle,
 
 
 /**
- * Destroy a Songbird string bundle instance.
+ * Destroy a Nightingale string bundle instance.
  */
 
 sbStringBundle::~sbStringBundle()
@@ -602,12 +605,12 @@ sbStringBundle::~sbStringBundle()
 
 //------------------------------------------------------------------------------
 //
-// Private Songbird string bundle services.
+// Private Nightingale string bundle services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Construct a new instance of a Songbird string bundle using the base string
+ * Construct a new instance of a Nightingale string bundle using the base string
  * bundle specified by aBaseStringBundle.
  *
  * \param aBaseStringBundle     Base string bundle.
@@ -620,7 +623,7 @@ sbStringBundle::sbStringBundle(nsIStringBundle* aBaseStringBundle) :
 
 
 /**
- * Initialize the Songbird string bundle.
+ * Initialize the Nightingale string bundle.
  */
 
 nsresult

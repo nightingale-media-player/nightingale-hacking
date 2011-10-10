@@ -13,8 +13,8 @@ export SB_ENABLE_JARS=1
 export SB_ENABLE_INSTALLER=1
 
 cd ${DEPTH}
-make -f songbird.mk clobber
-make -f songbird.mk
+make -f nightingale.mk clobber
+make -f nightingale.mk
 make -C compiled/update complete
 
 unset SB_ENABLE_BREAKPAD

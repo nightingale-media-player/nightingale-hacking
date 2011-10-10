@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -83,16 +83,16 @@ function SmartPlaylistPropertyRegistrar() {
   }
   
   this.registerPropertyToContext(context,
-                                 "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist",
+                                 "http://getnightingale.com/dummy/smartmedialists/1.0#playlist",
                                  0,
                                  "");
 }
 
 SmartPlaylistPropertyRegistrar.prototype = {
   constructor     : SmartPlaylistPropertyRegistrar,
-  classDescription: "Songbird SmartPlaylist Property Registrar Interface",
+  classDescription: "Nightingale SmartPlaylist Property Registrar Interface",
   classID         : Components.ID("{4b6a6c23-e247-419e-b629-3c2ef5f5876d}"),
-  contractID      : "@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1",
+  contractID      : "@getnightingale.com/Nightingale/SmartPlaylistPropertyRegistrar;1",
 
   /**
    * Returns an enumerator to all properties for a particular smart
@@ -134,7 +134,7 @@ function postRegister(aCompMgr, aFileSpec, aLocation) {
   XPCOMUtils.categoryManager
             .addCategoryEntry('app-startup',
                               'smartplaylist-property-registrar', 
-                              'service,@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1',
+                              'service,@getnightingale.com/Nightingale/SmartPlaylistPropertyRegistrar;1',
                               true, 
                               true);
 }

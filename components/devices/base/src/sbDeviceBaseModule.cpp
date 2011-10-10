@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,13 +21,13 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
 * \file  sbDeviceManagerModule.cpp
-* \brief Songbird Device Manager Component Factory and Main Entry Point.
+* \brief Nightingale Device Manager Component Factory and Main Entry Point.
 */
 
 #include <nsCOMPtr.h>
@@ -40,7 +40,6 @@
 #include "sbDeviceCapabilities.h"
 #include "sbDeviceCapabilitiesUtils.h"
 #include "sbDeviceCapsCompatibility.h"
-#include "sbDeviceLibrarySyncDiff.h"
 #include "sbDeviceStatus.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbAudioFormatType);
@@ -48,7 +47,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbVideoFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilitiesUtils);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapsCompatibility);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceLibrarySyncDiff);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceStatus);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFormatTypeConstraint);
@@ -63,44 +61,37 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbDevCapFraction);
 static nsModuleComponentInfo sbDeviceBaseComponents[] =
 {
   {
-    SONGBIRD_DEVICEPROPERTIES_CLASSNAME,
-    SONGBIRD_DEVICEPROPERTIES_CID,
-    SONGBIRD_DEVICEPROPERTIES_CONTRACTID,
+    NIGHTINGALE_DEVICEPROPERTIES_CLASSNAME,
+    NIGHTINGALE_DEVICEPROPERTIES_CID,
+    NIGHTINGALE_DEVICEPROPERTIES_CONTRACTID,
     sbDevicePropertiesConstructor
   },
 
   {
-    SONGBIRD_DEVICECAPABILITIES_CLASSNAME,
-    SONGBIRD_DEVICECAPABILITIES_CID,
-    SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
+    NIGHTINGALE_DEVICECAPABILITIES_CLASSNAME,
+    NIGHTINGALE_DEVICECAPABILITIES_CID,
+    NIGHTINGALE_DEVICECAPABILITIES_CONTRACTID,
     sbDeviceCapabilitiesConstructor
   },
 
   {
-    SONGBIRD_DEVICECAPABILITIESUTILS_CLASSNAME,
-    SONGBIRD_DEVICECAPABILITIESUTILS_CID,
-    SONGBIRD_DEVICECAPABILITIESUTILS_CONTRACTID,
+    NIGHTINGALE_DEVICECAPABILITIESUTILS_CLASSNAME,
+    NIGHTINGALE_DEVICECAPABILITIESUTILS_CID,
+    NIGHTINGALE_DEVICECAPABILITIESUTILS_CONTRACTID,
     sbDeviceCapabilitiesUtilsConstructor
   },
 
   {
-    SONGBIRD_DEVICECAPSCOMPATIBILITY_DESCRIPTION,
-    SONGBIRD_DEVICECAPSCOMPATIBILITY_CID,
-    SONGBIRD_DEVICECAPSCOMPATIBILITY_CONTRACTID,
+    NIGHTINGALE_DEVICECAPSCOMPATIBILITY_DESCRIPTION,
+    NIGHTINGALE_DEVICECAPSCOMPATIBILITY_CID,
+    NIGHTINGALE_DEVICECAPSCOMPATIBILITY_CONTRACTID,
     sbDeviceCapsCompatibilityConstructor
   },
 
   {
-    SONGBIRD_DEVICELIBRARYSYNCDIFF_DESCRIPTION,
-    SONGBIRD_DEVICELIBRARYSYNCDIFF_CID,
-    SONGBIRD_DEVICELIBRARYSYNCDIFF_CONTRACTID,
-    sbDeviceLibrarySyncDiffConstructor
-  },
-
-  {
-    SONGBIRD_DEVICESTATUS_CLASSNAME,
-    SONGBIRD_DEVICESTATUS_CID,
-    SONGBIRD_DEVICESTATUS_CONTRACTID,
+    NIGHTINGALE_DEVICESTATUS_CLASSNAME,
+    NIGHTINGALE_DEVICESTATUS_CID,
+    NIGHTINGALE_DEVICESTATUS_CONTRACTID,
     sbDeviceStatusConstructor
   },
 
@@ -183,5 +174,5 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
 
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceBaseComps, sbDeviceBaseComponents)
+NS_IMPL_NSGETMODULE(NightingaleDeviceBaseComps, sbDeviceBaseComponents)
 

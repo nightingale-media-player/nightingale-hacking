@@ -2,34 +2,34 @@
 /* vim: set sw=2 :miv */
 /*
  *
- *=BEGIN SONGBIRD LICENSE
+ *=BEGIN NIGHTINGALE LICENSE
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * For information about the licensing and copyright of this Add-On please
- * contact POTI, Inc. at customer@songbirdnest.com.
+ * contact POTI, Inc. at customer@getnightingale.com.
  *
- *=END SONGBIRD LICENSE
+ *=END NIGHTINGALE LICENSE
  *
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner.
+// Nightingale album art scanner.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtScanner.cpp
- * \brief Songbird Album Art Scanner Source.
+ * \brief Nightingale Album Art Scanner Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner imported services.
+// Nightingale album art scanner imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@
 #include <nsStringGlue.h>
 #include <nsThreadUtils.h>
 
-// Songbird imports
+// Nightingale imports
 #include <sbICascadeFilterSet.h>
 #include <sbIFilterableMediaListView.h>
 #include <sbILibraryManager.h>
@@ -133,7 +133,7 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
   // TODO: Should we make a copy?
   if (aMediaList == nsnull) {
     nsCOMPtr<sbILibraryManager> libManager =
-        do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbILibrary> mLibrary;
@@ -161,7 +161,7 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibraryConstraintBuilder> builder =
-    do_CreateInstance("@songbirdnest.com/Songbird/Library/ConstraintBuilder;1",
+    do_CreateInstance("@getnightingale.com/Nightingale/Library/ConstraintBuilder;1",
                       &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -721,14 +721,14 @@ sbAlbumArtScanner::Initialize()
 
   // Create our fetcher set
   mFetcherSet =
-    do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/album-art-fetcher-set;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mFetcherSet->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_ALL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create an array for items in an album
   mCurrentAlbumItemList =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Grab our string bundle
@@ -737,7 +737,7 @@ sbAlbumArtScanner::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = StringBundleService->CreateBundle(
-         "chrome://songbird/locale/songbird.properties",
+         "chrome://nightingale/locale/nightingale.properties",
          getter_AddRefs(mStringBundle));
   NS_ENSURE_SUCCESS(rv, rv);
 

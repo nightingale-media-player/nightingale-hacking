@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,13 +38,13 @@ SB_DEVICE_FIRMWARE_HANDLER_REGISTERSELF(sbMockDeviceFirmwareHandler);
 static nsModuleComponentInfo sbDeviceFirmwareTesterComponents[] =
 {
   {
-    "Songbird Device Firmware Tester - Mock Device Firmware Handler",
+    "Nightingale Device Firmware Tester - Mock Device Firmware Handler",
     { 0x5b100d2b, 0x486a, 0x4f3a, { 0x9b, 0x60, 0x14, 0x64, 0xb, 0xcb, 0xa6, 0x8e } },
-    "@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1",
+    "@getnightingale.com/Nightingale/Device/Firmware/Handler/MockDevice;1",
     sbMockDeviceFirmwareHandlerConstructor,
     sbMockDeviceFirmwareHandlerRegisterSelf,
     sbMockDeviceFirmwareHandlerUnregisterSelf
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceFirmwareTests, sbDeviceFirmwareTesterComponents)
+NS_IMPL_NSGETMODULE(NightingaleDeviceFirmwareTests, sbDeviceFirmwareTesterComponents)

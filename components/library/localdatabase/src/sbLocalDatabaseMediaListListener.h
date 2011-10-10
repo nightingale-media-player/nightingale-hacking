@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,7 +38,6 @@
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
 
-class nsIProxyObjectManager;
 class nsIWeakReference;
 class nsIWeakReference;
 class sbIMediaItem;
@@ -52,13 +51,11 @@ public:
   sbListenerInfo();
   ~sbListenerInfo();
 
-  nsresult Init(nsIProxyObjectManager *aProxyObjMgr,
-                sbIMediaListListener* aListener,
+  nsresult Init(sbIMediaListListener* aListener,
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
-  nsresult Init(nsIProxyObjectManager *aProxyObjMgr,
-                nsIWeakReference* aWeakListener,
+  nsresult Init(nsIWeakReference* aWeakListener,
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);

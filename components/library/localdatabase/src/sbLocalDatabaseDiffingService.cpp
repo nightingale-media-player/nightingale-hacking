@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbLocalDatabaseDiffingService.h"
@@ -632,7 +632,7 @@ sbLocalDatabaseDiffingService::CreateChanges(sbIMediaList * aSrcList,
 
   LOG(("Creating changes"));
   nsCOMPtr<nsIMutableArray> libraryChanges =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> srcItem;
@@ -830,8 +830,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangeFromItems(
                                      0,
                                      aSourceItem,
                                      aDestinationItem,
-                                     propertyChanges,
-                                     nsnull);
+                                     propertyChanges);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(libraryChange.get(), aLibraryChange);
@@ -854,7 +853,7 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> propertyChanges =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 propertyCount = 0;
@@ -899,8 +898,7 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
                                      0,
                                      aSourceItem,
                                      nsnull,
-                                     propertyChanges,
-                                     nsnull);
+                                     propertyChanges);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(libraryChange.get(), aLibraryChange);
@@ -921,7 +919,7 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
   NS_ENSURE_TRUE(libraryChange, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIMutableArray> propertyChanges =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbPropertyChange> propertyChange;
@@ -949,8 +947,7 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
                                      0,
                                      aSourceItem,
                                      nsnull,
-                                     propertyChanges,
-                                     nsnull);
+                                     propertyChanges);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(libraryChange.get(), aLibraryChange);
@@ -971,7 +968,6 @@ sbLocalDatabaseDiffingService::CreateItemDeletedLibraryChange(sbIMediaItem *aDes
                                               0,
                                               nsnull,
                                               aDestinationItem,
-                                              nsnull,
                                               nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -990,7 +986,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> propertyChanges =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 sourceLength;
@@ -1111,12 +1107,9 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
             nsString_ToUint64(propertyDestinationValue, &rv);
           // If the duration was parsed and the difference less than a second
           // then treat it as unchanged
-          if (NS_SUCCEEDED(rv)) {
-            // MSVC has no llabs(), so do it this way.
-            PRInt64 durationDiff = sourceDuration - destDuration;
-            if ((durationDiff < 0 && -durationDiff < PR_USEC_PER_SEC) ||
-                durationDiff < PR_USEC_PER_SEC)
-              continue;
+          if (NS_SUCCEEDED(rv)
+              && labs(sourceDuration - destDuration) < PR_USEC_PER_SEC) {
+            continue;
           }
         }
       }
@@ -1266,7 +1259,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
 
   // That's it, we should have a valid changeset.
   nsCOMPtr<nsIMutableArray> sources =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sources->AppendElement(aSourceList, PR_FALSE);
@@ -1326,7 +1319,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
 
   // That's it, we should have a valid changeset.
   nsCOMPtr<nsIMutableArray> sources =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sources->AppendElement(aSourceLibrary, PR_FALSE);
@@ -1410,15 +1403,6 @@ sbLocalDatabaseDiffingService::Enumerator(nsIDHashKey* aEntry, void* userArg)
     }
   }
   if (destinationItem) {
-    // Do not update playlist
-    nsString isList;
-    rv = sourceItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                 isList);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
-
-    if (isList.EqualsLiteral("1"))
-      return PL_DHASH_NEXT;
-
     LogMediaItem("Source Item", sourceItem);
     LogMediaItem("Destination item", destinationItem);
     rv = args->mDiffService->CreateLibraryChangeFromItems(
@@ -1530,7 +1514,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
   NS_ENSURE_TRUE(libraryChangeset, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIMutableArray> libraryChanges =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbLDBDSEnumerator> destinationEnum;

@@ -3,7 +3,7 @@
 
 /*
   Originally from /browser/base/content/nsContextMenu.js
-  Forked on April 10, 2008 to accomodate for Songbird's needs
+  Forked on April 10, 2008 to accomodate for Nightingale's needs
 */
 
 /*
@@ -1169,7 +1169,7 @@ ContentAreaContextMenu.prototype = {
 
     uri = uri.replace(/%LOCALE%/, escape(locale)).replace(/%VERSION%/, version);
 
-    //xxxlone no new window in songbird, force new tab
+    //xxxlone no new window in nightingale, force new tab
     //var newWindowPref = gPrefService.getIntPref("browser.link.open_newwindow");
     //var where = newWindowPref == 3 ? "tab" : "window";
     var where = "tab";
@@ -1193,7 +1193,7 @@ ContentAreaContextMenu.prototype = {
     while (elements.length > 0) {
       popup.removeChild(elements[0]);
     }
-    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+    var libraryManager = Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Components.interfaces.sbILibraryManager);
     var libs = libraryManager.getLibraries();
     var nadded = 0;
@@ -1219,20 +1219,20 @@ ContentAreaContextMenu.prototype = {
       _downloadListGUID: null,
       _libraryServicePane: null,
       onEnumerationBegin: function() {
-        var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+        var ddh = Components.classes["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
                             .getService(Components.interfaces.sbIDownloadDeviceHelper);
         var downloadMediaList = ddh.getDownloadMediaList();
         if (downloadMediaList)
           this._downloadListGUID = downloadMediaList.guid;
 
         this._libraryServicePane = 
-          Components.classes['@songbirdnest.com/servicepane/library;1']
+          Components.classes['@getnightingale.com/servicepane/library;1']
           .getService(Components.interfaces.sbILibraryServicePaneService);
       },
       onEnumerationEnd: function() { },
       onEnumeratedItem: function(list, item) {
         // discard hidden and non-simple playlists
-        var hidden = item.getProperty("http://songbirdnest.com/data/1.0#hidden");
+        var hidden = item.getProperty("http://getnightingale.com/data/1.0#hidden");
         if (hidden == "1" ||
             item.type != "simple") {
           return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
@@ -1265,8 +1265,8 @@ ContentAreaContextMenu.prototype = {
         menuitem.setAttribute("playlist", item.guid);
         if (!item.name ||
              item.name == "") {
-          songbird_bundle = document.getElementById("songbird_strings");
-          menuitem.setAttribute("label", songbird_bundle.getString("addMediaToPlaylistCmd.unnamedPlaylist"));
+          nightingale_bundle = document.getElementById("nightingale_strings");
+          menuitem.setAttribute("label", nightingale_bundle.getString("addMediaToPlaylistCmd.unnamedPlaylist"));
         } else {
           menuitem.setAttribute("label", item.name);
         }
@@ -1282,7 +1282,7 @@ ContentAreaContextMenu.prototype = {
     };
 
     // start the enumeration
-    aLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1",
+    aLibrary.enumerateItemsByProperty("http://getnightingale.com/data/1.0#isList", "1",
                                         listener );
     
     // return the number of items we created
@@ -1295,7 +1295,7 @@ ContentAreaContextMenu.prototype = {
     var libraryguid = aEvent.target.getAttribute("library");
     var playlistguid = aEvent.target.getAttribute("playlist");
 
-    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+    var libraryManager = Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Components.interfaces.sbILibraryManager);
     var library = libraryManager.getLibrary(libraryguid);
     if (library) {
@@ -1333,12 +1333,12 @@ ContentAreaContextMenu.prototype = {
     // the scraper.
     var item = 
       getFirstItemByProperty(LibraryUtils.webLibrary, 
-                             "http://songbirdnest.com/data/1.0#contentURL", 
+                             "http://getnightingale.com/data/1.0#contentURL", 
                              this.linkURL);
     if (!item)                         
       item = 
         getFirstItemByProperty(LibraryUtils.webLibrary, 
-                               "http://songbirdnest.com/data/1.0#originURL", 
+                               "http://getnightingale.com/data/1.0#originURL", 
                                this.linkURL);
     // still, it's possible to right click on a media url without having a corresponding 
     // item in the web library, because maybe the user has disabled the scraper somehow, 
@@ -1362,7 +1362,7 @@ ContentAreaContextMenu.prototype = {
       // we only gave a single item, it'll be dropped synchronously.
       // look for the item again
       item = getFirstItemByProperty(LibraryUtils.webLibrary, 
-                                    "http://songbirdnest.com/data/1.0#contentURL", 
+                                    "http://getnightingale.com/data/1.0#contentURL", 
                                     this.linkURL);
       if (!item) {
         throw new Error("Failed to find media item after dropping it in the web library");
@@ -1370,7 +1370,7 @@ ContentAreaContextMenu.prototype = {
     }
     
     // start downloading the item
-    var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+    var ddh = Components.classes["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
                                 .getService(Components.interfaces.sbIDownloadDeviceHelper);
     ddh.downloadItem(item);
   },

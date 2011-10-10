@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_DEVICEFIRMWAREUPDATE_H__
@@ -56,11 +56,11 @@ protected:
 };
 
 #define SB_DEVICEFIRMWAREUPDATE_DESCRIPTION                \
-  "Songbird Device Firmware Update"
+  "Nightingale Device Firmware Update"
 #define SB_DEVICEFIRMWAREUPDATE_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/Device/Firmware/Update;1"
+  "@getnightingale.com/Nightingale/Device/Firmware/Update;1"
 #define SB_DEVICEFIRMWAREUPDATE_CLASSNAME                  \
-  "Songbird Device Firmware Update"
+  "Nightingale Device Firmware Update"
 #define SB_DEVICEFIRMWAREUPDATE_CID                        \
 { /* {c5dc91bb-1b27-431e-8f93-0112022a9548} */             \
   0xc5dc91bb, 0x1b27, 0x431e,                              \

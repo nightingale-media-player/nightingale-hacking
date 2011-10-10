@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -296,7 +296,7 @@ private:
   nsresult GetFileSize(sbIMediaItem* aMediaItem, PRInt64* aFileSize);
   
   /**
-   * Helper to get a string from the Songbird string bundle
+   * Helper to get a string from the Nightingale string bundle
    */
   nsresult LocalizeString(const nsAString& aName, nsAString& aValue);
   
@@ -304,8 +304,8 @@ private:
   // sbIJobProgress variables
   PRUint16                                 mStatus;
   PRBool                                   mBlocked;
-  PRUint32                                 mCompletedItemCount;
-  PRUint32                                 mTotalItemCount;
+  PRInt32                                  mCompletedItemCount;
+  PRInt32                                  mTotalItemCount;
   nsTArray<nsString>                       mErrorMessages;
   nsString                                 mTitleText;
   nsString                                 mStatusText;

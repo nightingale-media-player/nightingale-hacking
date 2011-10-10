@@ -1,12 +1,12 @@
 /* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 import "objidl.idl";
@@ -30,7 +30,7 @@ import "objidl.idl";
  * \interface sbIWindowsFormatter
  *
  *   This interface provides support for formatting volumes on Windows.  It is
- * implemented by the Songbird Windows formatter component.  Songbird creates
+ * implemented by the Nightingale Windows formatter component.  Nightingale creates
  * and elevates this component so that it may use the volume formatting API's
  * provided by Vista.
  */
@@ -84,7 +84,7 @@ interface sbIWindowsFormatter : IUnknown
 
 
 /**
- * Songbird Windows formatter type library.
+ * Nightingale Windows formatter type library.
  */
 
 [uuid(04f68803-5cb3-42c9-8c27-41c7500cb733), version(1.0)]

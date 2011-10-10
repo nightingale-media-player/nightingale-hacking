@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,35 +32,36 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list defs.
+// Nightingale dynamic media list defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbLocalDatabaseDynamicMediaList.h
- * \brief Songbird Local Database Dynamic Media List Definitions.
+ * \brief Nightingale Local Database Dynamic Media List Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list imported services.
+// Nightingale dynamic media list imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbILocalDatabaseMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIDynamicMediaList.h>
-#include <sbWeakReference.h>
 
 // Mozilla imports.
 #include <nsIClassInfo.h>
 #include <nsStringGlue.h>
+#include <nsWeakReference.h>
+
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list macros.
+// Nightingale dynamic media list macros.
 //
 //------------------------------------------------------------------------------
 
@@ -87,7 +88,7 @@
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddItem(aMediaItem, aNewMediaItem); } \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddAll(aMediaList); } \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSome(aMediaItems); } \
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddMediaItems(aMediaItems, aListener, aAsync); } \
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSomeAsync(aMediaItems, aListener); } \
   NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveByIndex(aIndex); } \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveSome(aMediaItems); } \
@@ -108,7 +109,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list classes.
+// Nightingale dynamic media list classes.
 //
 //------------------------------------------------------------------------------
 
@@ -117,7 +118,7 @@
  */
 
 class sbLocalDatabaseDynamicMediaList : public nsIClassInfo,
-                                        public sbSupportsWeakReference,
+                                        public nsSupportsWeakReference,
                                         public sbIMediaList,
                                         public sbIDynamicMediaList,
                                         public sbILocalDatabaseMediaItem

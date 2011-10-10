@@ -42,7 +42,7 @@
 @import url("chrome://global/skin/");
 
 /* View buttons */
-#viewGroup > radio {
+#viewGroup radio {
   list-style-image: url("chrome://browser/skin/pageInfo.png");
   -moz-box-orient: vertical;
   -moz-box-align: center;
@@ -50,17 +50,12 @@
   min-width: 4.5em;
   margin: 0;
   padding: 3px;
-  color: -moz-FieldText;
 }
 
-#viewGroup > radio[selected="true"] {
-  background-color: Highlight;
-  color: HighlightText; 
-}
-
-#topBar {
+.viewSelector {
   -moz-appearance: listbox;
-  margin: 8px 8px 0;
+  margin: 8px 8px 0 8px;
+  padding: 0;
 }
 
 #generalTab {
@@ -131,6 +126,10 @@ textbox[disabled] {
 #generalPanel > #titletext {
   -moz-margin-start: 5px;
 }
+#metaTags > .groupbox-body {
+  -moz-margin-start: 5px;
+  -moz-margin-end: 1px;
+}
 
 groupbox.collapsable caption .caption-icon { 
   width: 9px;
@@ -156,8 +155,6 @@ groupbox tree {
 }
 
 groupbox.treebox .groupbox-body { 
-  -moz-margin-start: 5px;
-  -moz-margin-end: 1px;
   padding-top: 0;
 }
 
@@ -215,7 +212,6 @@ treechildren::-moz-tree-cell-text(broken) {
   -moz-padding-end: 7px;
   min-height: 25px;
   border-bottom: 1px dotted #C0C0C0;
-  color: -moz-FieldText;
 }
 
 #feedListbox richlistitem[selected="true"] {
@@ -252,10 +248,9 @@ treechildren::-moz-tree-cell-text(broken) {
   -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
   -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
   background-color: -moz-field;
-  color: -moz-FieldText;
 }
 
-.permission {
+#permList > vbox {
   padding-top: 6px;
   padding-bottom: 6px;
   -moz-padding-start: 7px;
@@ -264,13 +259,12 @@ treechildren::-moz-tree-cell-text(broken) {
   border-bottom: 1px dotted #C0C0C0;
 }
 
-.permissionLabel {
+#permList > vbox > label {
   font-weight: bold;
 }
 
-.permission:hover {
+#permList > vbox:hover {
   background-color: -moz-dialog;
-  color: -moz-DialogText;
 }
 
 /* Security Tab */

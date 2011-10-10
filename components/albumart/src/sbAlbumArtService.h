@@ -1,28 +1,30 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #ifndef __SB_ALBUMARTSERVICE_H__
 #define __SB_ALBUMARTSERVICE_H__
@@ -30,23 +32,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art service.
+// Nightingale album art service.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtService.h
- * \brief Songbird Album Art Service Definitions.
+ * \brief Nightingale Album Art Service Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service imported services.
+// Nightingale album art service imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIAlbumArtFetcher.h>
 #include <sbIAlbumArtService.h>
 #include <sbMemoryUtils.h>
@@ -67,12 +69,12 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service defs.
+// Nightingale album art service defs.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird album art service component defs.
+// Nightingale album art service component defs.
 //
 
 #define SB_ALBUMARTSERVICE_CLASSNAME "sbAlbumArtService"
@@ -87,7 +89,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service classes.
+// Nightingale album art service classes.
 //
 //------------------------------------------------------------------------------
 
@@ -151,13 +153,11 @@ private:
     PRBool                          enabled;
     PRBool                          local;
 
-    // Defined for the Sort function on nsTArray. Overload "less then" operator
-    // with "<=" to make sure Sort returns the same result when priorities are
-    // the same.
+    // Defined for the Sort function on nsTArray
     PRBool operator<(const FetcherInfo& right) const {
-      return (priority <= right.priority);
+      return (priority < right.priority);
     };
-
+    
     // This has to be defined for Sort as well, but is used for Searching.
     PRBool operator==(const FetcherInfo& right) const {
       return contractID.Equals(right.contractID);
@@ -165,6 +165,7 @@ private:
   };
 
   //
+  // mObserverService           Observer service.
   // mIOService                 I/O service.
   // mMIMEService               MIME service.
   // mAlbumArtCacheDir          Album art cache directory.
@@ -176,6 +177,7 @@ private:
   // mCacheFlushTimer           Timer used to empty the temporary cache
   //
 
+  nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIIOService>        mIOService;
   nsCOMPtr<nsIMIMEService>      mMIMEService;
   nsCOMPtr<nsIFile>             mAlbumArtCacheDir;
@@ -183,17 +185,17 @@ private:
   PRBool                        mPrefsAvailable;
   nsTArray<FetcherInfo>         mFetcherInfoList;
   nsTArray<nsCString>           mValidExtensionList;
-  nsInterfaceHashtable<nsStringHashKey, nsISupports>
+  nsInterfaceHashtable<nsStringHashKey, nsISupports> 
                                 mTemporaryCache;
   nsCOMPtr<nsITimer>            mCacheFlushTimer;
-
+  
   //
   // Internal services.
   //
 
   //
   // InitializeLibraryWatch
-  //
+  // 
 
   nsresult InitializeLibraryWatch();
 

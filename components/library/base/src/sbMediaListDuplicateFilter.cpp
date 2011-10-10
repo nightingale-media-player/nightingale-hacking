@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbMediaListDuplicateFilter.h"
@@ -34,11 +34,11 @@
 // Mozilla interfaces
 #include <nsISimpleEnumerator.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 
-// Songbird interfaces
+// Nightingale interfaces
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
@@ -55,12 +55,11 @@ static char const * const DUPLICATE_PROPERTIES[] = {
 };
 
 sbMediaListDuplicateFilter::sbMediaListDuplicateFilter() :
-  mInitialized(PR_FALSE),
   mSBPropKeysLength(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mSBPropKeys(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mDuplicateItems(0),
   mTotalItems(0),
-  mRemoveDuplicates(PR_FALSE)
+  mRemoveDuplicates(false)
 {
   mKeys.Init();
 }
@@ -106,7 +105,9 @@ sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
 
   mRemoveDuplicates = aRemoveDuplicates;
   mSource = aSource;
-  mDest = aDest;
+
+  rv = aDest->EnumerateAllItems(this, sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -263,16 +264,6 @@ sbMediaListDuplicateFilter::Advance()
 
   nsAutoMonitor mon(mMonitor);
 
-  if (!mInitialized) {
-    // Only enumerate if we need to check for duplicates.
-    if (mRemoveDuplicates) {
-      rv = mDest->EnumerateAllItems(this, sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    // Always consider ourselves initialized past this point.
-    mInitialized = PR_TRUE;
-  }
-
   PRBool more;
   rv = mSource->HasMoreElements(&more);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -284,14 +275,14 @@ sbMediaListDuplicateFilter::Advance()
     NS_ENSURE_SUCCESS(rv, rv);
     mCurrentItem = do_QueryInterface(supports);
 
+    bool isDuplicate = false;
     if (mCurrentItem) {
-      if (mRemoveDuplicates) {
-        bool isDuplicate = false;
-        rv = IsDuplicate(mCurrentItem, isDuplicate);
-        NS_ENSURE_SUCCESS(rv, rv);
-        if (isDuplicate) {
-          ++mDuplicateItems;
-          // Skipping duplicates then continue enumerating
+      rv = IsDuplicate(mCurrentItem, isDuplicate);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (isDuplicate) {
+        ++mDuplicateItems;
+        // If we're skipping duplicates then continue enumerating
+        if (mRemoveDuplicates) {
           mCurrentItem = nsnull;
         }
       }

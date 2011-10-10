@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,13 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerVideoTranscode.h"
 
 #include <sbIGStreamerService.h>
 
-#include <sbFileUtils.h>
 #include <sbStringUtils.h>
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -300,7 +299,7 @@ sbGStreamerVideoTranscoder::Vote(sbIMediaItem *aMediaItem, PRInt32 *aVote)
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::BuildPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -426,7 +425,7 @@ sbGStreamerVideoTranscoder::GetRemainingTime(PRUint32 *aRemainingTime)
       elapsed == GST_CLOCK_TIME_NONE)
   {
     /* Unknown, so set to -1 */
-    *aRemainingTime = (PRUint32)-1;
+    *aRemainingTime = -1;
   }
   else {
     GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,
@@ -1202,7 +1201,7 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
     LOG(("No encoder %s available",
                 NS_ConvertUTF16toUTF8(encoderName).BeginReading()));
     TranscodingFatalError(
-            "songbird.transcode.error.video_encoder_unavailable");
+            "nightingale.transcode.error.video_encoder_unavailable");
     rv = NS_ERROR_FAILURE;
     goto failed;
   }
@@ -1425,7 +1424,7 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
       LOG(("No encoder %s available",
                   NS_ConvertUTF16toUTF8(encoderName).BeginReading()));
       TranscodingFatalError(
-              "songbird.transcode.error.audio_encoder_unavailable");
+              "nightingale.transcode.error.audio_encoder_unavailable");
       rv = NS_ERROR_FAILURE;
       goto failed;
     }
@@ -1546,7 +1545,7 @@ sbGStreamerVideoTranscoder::AddAudioBin(GstPad *inputAudioSrcPad,
 
   GstPadLinkReturn linkret = gst_pad_link (inputAudioSrcPad, audioBinSinkPad);
   if (linkret != GST_PAD_LINK_OK) {
-    TranscodingFatalError("songbird.transcode.error.audio_incompatible");
+    TranscodingFatalError("nightingale.transcode.error.audio_incompatible");
     rv = NS_ERROR_FAILURE;
     goto failed;
   }
@@ -1595,7 +1594,7 @@ sbGStreamerVideoTranscoder::AddVideoBin(GstPad *inputVideoSrcPad,
 
   GstPadLinkReturn linkret = gst_pad_link (inputVideoSrcPad, videoBinSinkPad);
   if (linkret != GST_PAD_LINK_OK) {
-    TranscodingFatalError("songbird.transcode.error.video_incompatible");
+    TranscodingFatalError("nightingale.transcode.error.video_incompatible");
     rv = NS_ERROR_FAILURE;
     goto failed;
   }
@@ -1708,7 +1707,7 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
   if (!muxer) {
     LOG(("No muxer %s available",
           NS_ConvertUTF16toUTF8 (muxerName).BeginReading()));
-    TranscodingFatalError("songbird.transcode.error.muxer_unavailable");
+    TranscodingFatalError("nightingale.transcode.error.muxer_unavailable");
     return NS_ERROR_FAILURE;
   }
 
@@ -1720,14 +1719,14 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
   if (audioPad) {
     sinkpad = GetCompatiblePad (muxer, audioPad);
     if (!sinkpad) {
-      TranscodingFatalError("songbird.transcode.error.audio_not_muxable");
+      TranscodingFatalError("nightingale.transcode.error.audio_not_muxable");
       return NS_ERROR_FAILURE;
     }
 
     GstPadLinkReturn linkret = gst_pad_link (audioPad, sinkpad);
     if (linkret != GST_PAD_LINK_OK) {
       g_object_unref (sinkpad);
-      TranscodingFatalError("songbird.transcode.error.audio_not_muxable");
+      TranscodingFatalError("nightingale.transcode.error.audio_not_muxable");
       return NS_ERROR_FAILURE;
     }
 
@@ -1737,14 +1736,14 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
   if (videoPad) {
     sinkpad = GetCompatiblePad (muxer, videoPad);
     if (!sinkpad) {
-      TranscodingFatalError("songbird.transcode.error.video_not_muxable");
+      TranscodingFatalError("nightingale.transcode.error.video_not_muxable");
       return NS_ERROR_FAILURE;
     }
 
     GstPadLinkReturn linkret = gst_pad_link (videoPad, sinkpad);
     if (linkret != GST_PAD_LINK_OK) {
       g_object_unref (sinkpad);
-      TranscodingFatalError("songbird.transcode.error.video_not_muxable");
+      TranscodingFatalError("nightingale.transcode.error.video_not_muxable");
       return NS_ERROR_FAILURE;
     }
 
@@ -1781,7 +1780,7 @@ sbGStreamerVideoTranscoder::CreateSink (GstElement **aSink)
   }
 
   if (!sink) {
-    TranscodingFatalError("songbird.transcode.error.no_sink");
+    TranscodingFatalError("nightingale.transcode.error.no_sink");
     return NS_ERROR_FAILURE;
   }
 
@@ -1805,7 +1804,7 @@ sbGStreamerVideoTranscoder::AddSink (GstPad *muxerSrcPad)
 
   GstPadLinkReturn linkret = gst_pad_link (muxerSrcPad, sinkpad);
   if (linkret != GST_PAD_LINK_OK) {
-    TranscodingFatalError("songbird.transcode.error.sink_incompatible");
+    TranscodingFatalError("nightingale.transcode.error.sink_incompatible");
     return NS_ERROR_FAILURE;
   }
 
@@ -1949,7 +1948,7 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
 
   rv = mConfigurator->Configurate();
   if (NS_FAILED (rv)) {
-    TranscodingFatalError("songbird.transcode.error.failed_configuration");
+    TranscodingFatalError("nightingale.transcode.error.failed_configuration");
     NS_ENSURE_SUCCESS (rv, rv);
   }
 
@@ -1975,25 +1974,6 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
       if (!curFileExt.Equals(configFileExt, CaseInsensitiveCompare)) {
         rv = fixedDestFileURI->SetFileExtension(configFileExt);
         NS_ENSURE_SUCCESS(rv, rv);
-
-        // Check if the destination file already exists
-        nsCOMPtr<nsIFile> destFile;
-        rv = fixedDestFileURI->GetFile(getter_AddRefs(destFile));
-
-        PRBool exists;
-        rv = destFile->Exists(&exists);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Create a unique file if destination file already exists.
-        if (exists) {
-          rv = destFile->CreateUnique(nsIFile::NORMAL_FILE_TYPE,
-                                      SB_DEFAULT_FILE_PERMISSIONS);
-          NS_ENSURE_SUCCESS(rv, rv);
-          rv = NS_NewFileURI(getter_AddRefs(fixedDestURI), destFile);
-          NS_ENSURE_SUCCESS(rv, rv);
-          fixedDestFileURI = do_QueryInterface(fixedDestURI, &rv);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
 
         nsCString fixedSpec;
         rv = fixedDestFileURI->GetSpec(fixedSpec);
@@ -2026,7 +2006,7 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
   NS_ENSURE_SUCCESS(rv, rv);
 
   /* If we're not using a muxer, we must have ONLY one codec */
-  if (!mUseMuxer && (mUseAudio && mUseVideo))
+  if (!mUseMuxer && (mUseAudio && mUseAudio))
     return NS_ERROR_UNEXPECTED;
 
   return NS_OK;
@@ -2039,7 +2019,7 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
 
   if (!mAudioSrc && !mVideoSrc) {
     // We have neither audio nor video. That's not very good!
-    TranscodingFatalError("songbird.transcode.error.no_streams");
+    TranscodingFatalError("nightingale.transcode.error.no_streams");
     return NS_ERROR_FAILURE;
   }
 
@@ -2320,7 +2300,7 @@ sbGStreamerVideoTranscoder::BuildTranscodePipeline(const gchar *aPipelineName)
   // [-------------------------------------------------------------------------]
 
   mPipeline = gst_pipeline_new (aPipelineName);
-  NS_ENSURE_TRUE (mPipeline, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE (mPipeline, NULL);
 
   GstElement *uridecodebin = gst_element_factory_make("uridecodebin",
           "transcode-decoder");

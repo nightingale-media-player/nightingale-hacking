@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -33,7 +33,7 @@
 
   
   <!-- Replacement for the toolkit <label class="text-link"/> binding.  
-       Text links in Songbird need to be launched via gBrowser
+       Text links in Nightingale need to be launched via gBrowser
        or the OS default handler.
     -->
   <binding id="text-link" extends="chrome://global/content/bindings/text.xml#text-link">
@@ -78,16 +78,16 @@
             var protocolSvc = Components.classes[cID].getService(nsIEPS);
 
             // If this is an exposed internal protocol, try 
-            // to use the Songbird browser window to open it
+            // to use the Nightingale browser window to open it
             if (protocolSvc.isExposedProtocol(uri.scheme)) {
 
               var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                              .getService(Components.interfaces.nsIWindowMediator);
 
-              var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");  
+              var nightingaleWindow = windowMediator.getMostRecentWindow("Nightingale:Main");  
               
-              if (songbirdWindow && songbirdWindow.gBrowser) {
-                songbirdWindow.gBrowser.loadURI(uri.spec);
+              if (nightingaleWindow && nightingaleWindow.gBrowser) {
+                nightingaleWindow.gBrowser.loadURI(uri.spec);
                 aEvent.preventDefault()
                 return;
               }
@@ -104,7 +104,7 @@
             dump(ex);
           }
 
-          Components.utils.reportError("The Songbird text-link binding was " + 
+          Components.utils.reportError("The Nightingale text-link binding was " + 
                                        "unable to open " + href);
 
           aEvent.preventDefault();

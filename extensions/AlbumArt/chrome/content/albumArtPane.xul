@@ -2,12 +2,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,17 +22,17 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/feathers.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/feathers.css" type="text/css"?>
 <?xml-stylesheet href="chrome://albumart/skin/albumArt.css" type="text/css"?>
 
 <!DOCTYPE window [
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-%songbirdDTD;
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
 ]>
 
 <window xmlns:html="http://www.w3.org/1999/xhtml"
@@ -97,9 +97,7 @@
       <vbox id="sb-albumart-not-selected"
             contextmenu="nowSelectedMenu"
             class="albumArtNotSelectedContainer">
-        <description class="empty-message">
-          &albumart.displaypane.not_selected_message;
-        </description>
+        <description class="empty-message" value="&albumart.displaypane.not_selected_message;" />
       </vbox>
     </stack>
 
@@ -126,17 +124,15 @@
       <vbox id="sb-albumart-not-playing"
             contextmenu="nowSelectedMenu"
             class="albumArtNotPlayingContainer">
-        <description class="empty-message">
-          &albumart.displaypane.not_playing_message;
-        </description>
+        <description class="empty-message" value="&albumart.displaypane.not_playing_message;" />
       </vbox>
     </stack>
   </deck>
   
   <script type="application/x-javascript" 
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"  
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
           src="chrome://albumart/content/albumArtPane.js" />
   <script src="chrome://global/content/nsDragAndDrop.js"/>

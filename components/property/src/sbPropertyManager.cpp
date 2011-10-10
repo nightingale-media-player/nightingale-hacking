@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,30 +19,27 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbPropertyManager.h"
 #include "sbPropertiesCID.h"
 
+#include <nsAutoLock.h>
+#include <nsMemory.h>
+#include <nsICategoryManager.h>
+#include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
-#include <nsIObserverService.h>
-#include <nsIStringBundle.h>
-
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
-#include <nsComponentManagerUtils.h>
-#include <nsMemory.h>
-#include <nsServiceManagerUtils.h>
-
+#include <nsIStringBundle.h>
 #include "sbBooleanPropertyInfo.h"
 #include "sbDatetimePropertyInfo.h"
 #include "sbDurationPropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
 #include "sbStandardProperties.h"
 #include "sbDummyProperties.h"
-#include "sbTrackTypeImageLabelPropertyInfo.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
 #include "sbImagePropertyInfo.h"
@@ -82,7 +79,7 @@ static PRLogModuleInfo* gPropManLog = nsnull;
 
 
 #if !defined(SB_STRING_BUNDLE_CHROME_URL)
-  #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
+  #define SB_STRING_BUNDLE_CHROME_URL "chrome://nightingale/locale/nightingale.properties"
 #endif
 
 
@@ -147,18 +144,6 @@ NS_METHOD sbPropertyManager::Init()
 
   rv = RegisterFilterListPickerProperties();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIObserverService> obs =
-    do_GetService("@mozilla.org/observer-service;1");
-  if (obs) {
-    obs->NotifyObservers(nsnull, SB_PROPERTY_MANAGER_READY_CATEGORY, nsnull);
-  }
-
-  nsCOMPtr<nsIObserver> startupNotifier =
-    do_CreateInstance("@mozilla.org/embedcomp/appstartup-notifier;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  startupNotifier->Observe(nsnull, SB_PROPERTY_MANAGER_READY_CATEGORY, nsnull);
 
   return NS_OK;
 }
@@ -389,21 +374,21 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Guid (internal use only)
-  rv = RegisterBlob(NS_LITERAL_STRING(SB_PROPERTY_GUID), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Storage Guid (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Outer Guid - the reverse of storage guid (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //List Type
@@ -472,17 +457,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                      stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /* we label contentType as used in the identity because the identity
-   * calculation formula depends on the contentType, so if the contentType
-   * changes we need to recompute the identity using the new type's formula */
-  nsCOMPtr<sbIPropertyInfo> contentTypePropInfo;
-  rv = GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-                       getter_AddRefs(contentTypePropInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = contentTypePropInfo->SetUsedInIdentity(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   //Content Length (-1, can't determine.)
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
                       NS_LITERAL_STRING("property.content_length"),
@@ -497,35 +471,20 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Hash (empty string if can't determine or cannot generate).
-  rv = RegisterBlob(NS_LITERAL_STRING(SB_PROPERTY_HASH),
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_HASH),
                     NS_LITERAL_STRING("property.content_hash"),
                     stringBundle,
                     PR_FALSE,
                     PR_FALSE,
-                    PR_FALSE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Metadata Hash Identity (empty string if can't determine or cannot generate).
-  rv = RegisterBlob(NS_LITERAL_STRING(SB_PROPERTY_METADATA_HASH_IDENTITY),
-                    NS_LITERAL_STRING("property.metadata_hash_identity"),
-                    stringBundle,
-                    PR_FALSE,
-                    PR_FALSE,
-                    PR_FALSE,
-                    sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   //Track name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                     NS_LITERAL_STRING("property.track_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
-                    PR_TRUE, // this property is used in identity calculations
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
+                    PR_TRUE, PR_TRUE);
 
   //Album name
   nsCOMPtr<sbIMutablePropertyArray> albumSecondarySort =
@@ -536,28 +495,23 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by album will sort by album->disc no->track no->track name
-  rv = albumSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                             NS_LITERAL_STRING("a"));
+  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                             NS_LITERAL_STRING("a"));
+  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                             NS_LITERAL_STRING("a"));
+  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                     NS_LITERAL_STRING("property.album_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
-                    PR_TRUE, // this property is used in identity calculations
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, PR_FALSE, albumSecondarySort);
-  NS_ENSURE_SUCCESS(rv, rv);
+                    PR_TRUE, PR_TRUE, albumSecondarySort);
 
   //Artist name
   nsCOMPtr<sbIMutablePropertyArray> artistSecondarySort =
@@ -568,40 +522,27 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by artist will sort by artist->album->disc no->track no->track name
-  rv = artistSecondarySort->AppendProperty(
-                              NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                              NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSecondarySort->AppendProperty(
-                              NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                              NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+    NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSecondarySort->AppendProperty(
-                              NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                              NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSecondarySort->AppendProperty(
-                              NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                              NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                     NS_LITERAL_STRING("property.artist_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
-                    PR_TRUE, // this property is used in identity calculations
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, PR_FALSE, artistSecondarySort);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  //Track source
-  rv = RegisterTrackTypeImageLabel(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE),
-                                   NS_LITERAL_STRING("property.track_source"),
-                                   stringBundle, PR_TRUE, PR_TRUE,
-                                   PR_TRUE, PR_TRUE, nsString());
-  NS_ENSURE_SUCCESS(rv, rv);
+                    PR_TRUE, PR_TRUE, artistSecondarySort);
 
   //Duration (in usecs)
   rv = RegisterDuration(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
@@ -619,37 +560,30 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by genre will sort by genre->artist->album->disc no->track no->track name
-  rv = genreSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                             NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                             NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                             NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                             NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(
-                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                             NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GENRE),
                     NS_LITERAL_STRING("property.genre"),
-                    stringBundle, PR_TRUE, PR_TRUE,
-                    PR_TRUE, // this property is used in identity calculations
-                    0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE, genreSecondarySort);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE, genreSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Year
@@ -663,29 +597,24 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   //Sorting by year will sort by year->artist->album->disc no->track no->track name
 
-  rv = yearSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                            NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                            NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                            NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                            NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                            NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
@@ -695,68 +624,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track number
-  nsCOMPtr<sbIMutablePropertyArray> trackSecondarySort =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackSecondarySort->SetStrict(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  //Sorting by track number will sort by track no->artist->album->disc no
-  rv = trackSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                            NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                            NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackSecondarySort->AppendProperty(
-                            NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                            NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                       NS_LITERAL_STRING("property.track_no"),
                       stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 9999, PR_TRUE,
-                      PR_TRUE, PR_TRUE, NULL, trackSecondarySort);
+                      PR_TRUE, PR_TRUE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Disc Number
-   nsCOMPtr<sbIMutablePropertyArray> discSecondarySort =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = discSecondarySort->SetStrict(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Sorting by disc number will sort by disc no->artist->album->track no->track name
-  rv = discSecondarySort->AppendProperty(
-                           NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                           NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = discSecondarySort->AppendProperty(
-                           NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                           NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = discSecondarySort->AppendProperty(
-                           NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                           NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = discSecondarySort->AppendProperty(
-                           NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                           NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                       NS_LITERAL_STRING("property.disc_no"),
                       stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
-                      PR_TRUE, PR_TRUE, NULL, discSecondarySort);
+                      PR_TRUE, PR_TRUE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Total Discs
@@ -783,50 +661,50 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Producer(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_PRODUCERNAME),
                     NS_LITERAL_STRING("property.producer"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Composer(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME),
                     NS_LITERAL_STRING("property.composer"),
-                    stringBundle, PR_TRUE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Conductor(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONDUCTORNAME),
                     NS_LITERAL_STRING("property.conductor"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Lyricist(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICISTNAME),
                     NS_LITERAL_STRING("property.lyricist"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Lyrics
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICS),
                     NS_LITERAL_STRING("property.lyrics"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Record Label
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_RECORDLABELNAME),
                     NS_LITERAL_STRING("property.record_label_name"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Primary image url, see bug #11618 for an explanation as to why this
   //property is not user viewable.
   rv = RegisterImage(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                      NS_LITERAL_STRING("property.primary_image_url"),
-                     stringBundle, PR_FALSE, PR_TRUE, PR_TRUE, PR_TRUE);
+                     stringBundle, PR_FALSE, PR_FALSE, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Last played time
@@ -864,17 +742,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_TRUE, PR_FALSE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Denotes the media item on the device is "new" wasn't copied from the main
-  // library
-  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-                       EmptyString(),
-                       stringBundle,
-                       PR_FALSE,   // User editable
-                       PR_FALSE,   // Remote readable
-                       PR_FALSE,   // Remote writable
-                       PR_FALSE);  // shouldSupress
-  NS_ENSURE_SUCCESS(rv, rv);
-
   //Bitrate
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
                       NS_LITERAL_STRING("property.bitrate"),
@@ -906,29 +773,29 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Key
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_KEY),
                     NS_LITERAL_STRING("property.key"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Language
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LANGUAGE),
                     NS_LITERAL_STRING("property.language"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Comment
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMMENT),
                     NS_LITERAL_STRING("property.comment"),
-                    stringBundle, PR_TRUE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Copyright
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHT),
                     NS_LITERAL_STRING("property.copyright"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Copyright URL
@@ -940,22 +807,22 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Subtitle
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SUBTITLE),
                     NS_LITERAL_STRING("property.subtitle"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Metadata UUID
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_METADATAUUID),
                     NS_LITERAL_STRING("property.metadata_uuid"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //SoftwareVendor
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SOFTWAREVENDOR),
                     NS_LITERAL_STRING("property.vendor"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Origin URL
@@ -966,20 +833,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   //Origin Library Guid (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Origin Item Guid (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  //Import Type (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_IMPORTTYPE), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Download destination
@@ -991,7 +852,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Download Status Target (internal use only)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
                     EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE,
                     0, PR_TRUE, PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1005,22 +866,22 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Display columns
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COLUMNSPEC),
                     NS_LITERAL_STRING("property.column_spec"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Display column widths
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
                     NS_LITERAL_STRING("property.default_column_spec"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Origin page
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
                     NS_LITERAL_STRING("property.origin_page"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_FALSE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Artist detail uri
@@ -1038,14 +899,14 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Origin page title
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGETITLE),
                     NS_LITERAL_STRING("property.origin_pagetitle"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_FALSE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Custom type (used for css and metrics reporting)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_FALSE, PR_FALSE);
+    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+    PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Is sortable (for lists)
@@ -1063,6 +924,18 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   dbBuilder->SetUserViewable(PR_FALSE);
 
+  rv = dbBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.download_button"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetLabelKey(NS_LITERAL_STRING("property.download_button"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbBuilder->SetRetryLabelKey(NS_LITERAL_STRING("property.download_button_retry"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = dbBuilder->SetRemoteReadable(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1079,8 +952,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Download details
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
                     NS_LITERAL_STRING("property.download_details"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Rating
@@ -1113,7 +986,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Status Property
   nsRefPtr<sbStatusPropertyBuilder> statusBuilder =
     new sbStatusPropertyBuilder();
-  NS_ENSURE_TRUE(statusBuilder, NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(dbBuilder, NS_ERROR_OUT_OF_MEMORY);
 
   rv = statusBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1151,7 +1024,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
                     EmptyString(),
                     stringBundle,
-                    PR_FALSE,
                     PR_FALSE,
                     PR_FALSE,
                     0,
@@ -1213,15 +1085,15 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Remote API SiteID
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_RAPISITEID),
                     NS_LITERAL_STRING("property.rapi_site_id"),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // MediaListName
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
                     NS_LITERAL_STRING("property.media_list_name"),
-                    stringBundle, PR_FALSE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Disable downloading
@@ -1247,7 +1119,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Transfer policy
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRANSFER_POLICY),
                     EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1278,64 +1150,49 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by album/artist will sort by album/artist->album->disc no->track no->track name
-  rv = albumArtistSecondarySort->AppendProperty(
-                                   NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                   NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumArtistSecondarySort->AppendProperty(
-                                   NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                                   NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumArtistSecondarySort->AppendProperty(
-                                   NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                   NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumArtistSecondarySort->AppendProperty(
-                                   NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                                   NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
                     NS_LITERAL_STRING("property.albumartistname"),
-                    stringBundle, PR_TRUE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE, albumArtistSecondarySort);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE, albumArtistSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Peristent ID of the object on the device (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID),
-                    EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Playcount when last sync'd (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_PLAYCOUNT),
-                    EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_PLAYCOUNT), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Skip count when last sync'd (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_SKIPCOUNT),
-                    EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Last sync time (internal use only)
-  rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_TIME),
-                        EmptyString(),
-                        sbIDatetimePropertyInfo::TIMETYPE_TIMESTAMP,
-                        stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_SKIPCOUNT), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Smart medialist state (internal use)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SMARTMEDIALIST_STATE),
-                    EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SMARTMEDIALIST_STATE), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1352,30 +1209,22 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Download media list Guid (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID),
-                    EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Play queue media list Guid (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_PLAYQUEUE_MEDIALIST_GUID),
-                    EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Denote that the library is a device library (internal use)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
                     EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // iTunes Guid (for import/export from/to iTunes)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
                     EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1406,32 +1255,27 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // video properties
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_KEYWORDS),
                     NS_LITERAL_STRING("property.keywords"),
-                    stringBundle, PR_TRUE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DESCRIPTION),
                     NS_LITERAL_STRING("property.description"),
-                    stringBundle, PR_TRUE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SHOWNAME),
                     NS_LITERAL_STRING("property.showName"),
-                    stringBundle, PR_TRUE, PR_TRUE, PR_FALSE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE, PR_FALSE);
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_EPISODENUMBER),
                       NS_LITERAL_STRING("property.episodeNumber"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0,
-                      PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SEASONNUMBER),
                       NS_LITERAL_STRING("property.seasonNumber"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0,
-                      PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Playlist URL
@@ -1481,80 +1325,17 @@ sbPropertyManager::RegisterFilterListPickerProperties()
 }
 
 nsresult
-sbPropertyManager::RegisterBlob(const nsAString& aPropertyID,
-                                const nsAString& aDisplayKey,
-                                nsIStringBundle* aStringBundle,
-                                PRBool aUserViewable,
-                                PRBool aUserEditable,
-                                PRBool aUsedInIdentity,
-                                PRUint32 aNullSort,
-                                PRBool aHasNullSort,
-                                PRBool aRemoteReadable,
-                                PRBool aRemoteWritable)
-{
-  NS_ASSERTION(aStringBundle, "aStringBundle is null");
-
-  nsRefPtr<sbPropertyInfo> blobProperty(new sbPropertyInfo());
-  NS_ENSURE_TRUE(blobProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = blobProperty->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = blobProperty->SetId(aPropertyID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!aDisplayKey.IsEmpty()) {
-    nsAutoString displayValue;
-    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
-    if(NS_SUCCEEDED(rv)) {
-      rv = blobProperty->SetDisplayName(displayValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    rv = blobProperty->SetLocalizationKey(aDisplayKey);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (aHasNullSort) {
-    rv = blobProperty->SetNullSort(aNullSort);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = blobProperty->SetUserViewable(aUserViewable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = blobProperty->SetUserEditable(aUserEditable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = blobProperty->SetUsedInIdentity(aUsedInIdentity);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbIPropertyInfo*, blobProperty), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AddPropertyInfo(propInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
 sbPropertyManager::RegisterText(const nsAString& aPropertyID,
                                 const nsAString& aDisplayKey,
                                 nsIStringBundle* aStringBundle,
                                 PRBool aUserViewable,
                                 PRBool aUserEditable,
-                                PRBool aUsedInIdentity,
                                 PRUint32 aNullSort,
                                 PRBool aHasNullSort,
                                 PRBool aRemoteReadable,
                                 PRBool aRemoteWritable,
-                                PRBool aCompressWhitespace,
-                                sbIPropertyArray* aSecondarySort)
+                                sbIPropertyArray* aSecondarySort,
+                                PRBool aNoCompressWhitespace)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1568,8 +1349,12 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
+    nsCOMPtr<nsIStringBundle> stringBundle;
+    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsAutoString displayValue;
-    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
     if(NS_SUCCEEDED(rv)) {
       rv = textProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1590,16 +1375,13 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
   rv = textProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = textProperty->SetUsedInIdentity(aUsedInIdentity);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   if (aSecondarySort) {
     rv = textProperty->SetSecondarySort(aSecondarySort);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (!aCompressWhitespace) {
-    rv = textProperty->SetNoCompressWhitespace(!aCompressWhitespace);
+  if (aNoCompressWhitespace) {
+    rv = textProperty->SetNoCompressWhitespace(aNoCompressWhitespace);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1613,58 +1395,6 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
-
-nsresult
-sbPropertyManager::RegisterTrackTypeImageLabel(const nsAString& aPropertyID,
-                                               const nsAString& aDisplayKey,
-                                               nsIStringBundle* aStringBundle,
-                                               PRBool aUserViewable,
-                                               PRBool aUserEditable,
-                                               PRBool aRemoteReadable,
-                                               PRBool aRemoteWritable,
-                                               const nsAString& aUrlPropertyID)
-{
-  NS_ASSERTION(aStringBundle, "aStringBundle is null");
-  nsresult rv;
-
-  nsRefPtr<sbTrackTypeImageLabelPropertyInfo> trackTypeProperty(
-      new sbTrackTypeImageLabelPropertyInfo());
-  NS_ENSURE_TRUE(trackTypeProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = trackTypeProperty->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackTypeProperty->SetPropertyID(aPropertyID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!aDisplayKey.IsEmpty()) {
-    nsAutoString displayValue;
-    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
-    if(NS_SUCCEEDED(rv)) {
-      rv = trackTypeProperty->SetDisplayName(displayValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    rv = trackTypeProperty->SetLocalizationKey(aDisplayKey);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = trackTypeProperty->SetUserViewable(aUserViewable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackTypeProperty->SetUserEditable(aUserEditable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackTypeProperty->SetRemoteReadable(aRemoteReadable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = trackTypeProperty->SetRemoteWritable(aRemoteWritable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = AddPropertyInfo(trackTypeProperty);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

@@ -1,11 +1,11 @@
-/* vim: set ts=2 sw=2 expandtab : */
+/* vim: ts=2 sw=2 expandtab */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -39,7 +39,7 @@ interface nsIDOMWindow;
 interface nsISimpleEnumerator;
 interface nsIStringEnumerator;
 interface nsIDragSession;
-interface nsIDOMDataTransfer;
+interface nsITransferable;
 interface nsIStringBundle;
 interface sbIServicePaneMutationListener;
 interface sbIServicePaneNodeListener;
@@ -48,27 +48,19 @@ interface sbIServicePaneNodeListener;
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(7515c2f0-17cf-480e-bf15-8eb1f168783b)]
+[scriptable, uuid(d4c3c2d2-1dd1-11b2-932e-8eafb1847891)]
 interface sbIServicePaneNode : nsISupports
 {
   /* \brief the uri of this node as a string */
   attribute AString id;
-
+  
   /* \deprecated All nodes are potential containers now, don't use this */
   readonly attribute boolean isContainer;
-
+  
   /* \brief class name of the node */
   attribute AString className;
   /* \brief the URL to load when the node is clicked on in the tree */
   attribute AString url;
-
-  /**
-   * \brief A prefix for URLs associated with this node. This prefix is used to
-   *        test urls when sbIServicePaneService.URL_MATCH_PREFIX is used with
-   *        sbIServicePaneService.getNodeForURL.
-   */
-  attribute AString contentPrefix;
-
   /* \brief the URL of the image to display in the tree */
   attribute AString image;
   /* \brief the unlocalized text for the name of the node */
@@ -85,9 +77,7 @@ interface sbIServicePaneNode : nsISupports
   attribute boolean isOpen;
   /* \brief the contract id of the service that owns the node */
   attribute AString contractid;
-  /* \brief the corresponding search engine type (if available) of the node */
-  attribute AString searchtype;
-
+  
   /* drag and drop reordering helper attributes */
   /* \brief a comma separated list of drag types to offer for reordering */
   attribute AString dndDragTypes;
@@ -95,7 +85,7 @@ interface sbIServicePaneNode : nsISupports
   attribute AString dndAcceptNear;
   /* \brief a comma separated list of drag types to allow dropping into */
   attribute AString dndAcceptIn;
-
+  
   /* \brief the uri of a stringbundle to use to translate the properties of this node */
   attribute AString stringbundle;
 
@@ -118,7 +108,7 @@ interface sbIServicePaneNode : nsISupports
    * \param aListener listener to be added
    */
   void addMutationListener (in sbIServicePaneMutationListener aListener);
-
+  
   /**
    * \brief Removes a previously added mutation listener.
    *
@@ -127,7 +117,7 @@ interface sbIServicePaneNode : nsISupports
   void removeMutationListener (in sbIServicePaneMutationListener aListener);
 
   // here's a subset of the W3C DOM Level 1 Core
-
+  
   boolean hasAttribute(in AString aName);
   AString getAttribute(in AString aName);
   AString setAttribute(in AString aName,
@@ -143,7 +133,7 @@ interface sbIServicePaneNode : nsISupports
                          in AString aValue);
   void removeAttributeNS(in AString aNamespace,
                          in AString aName);
-
+  
   /** \brief enumerator returning names of node attributes */
   readonly attribute nsIStringEnumerator attributes;
   /** \brief enumerator returning node's child nodes */
@@ -153,7 +143,7 @@ interface sbIServicePaneNode : nsISupports
   readonly attribute sbIServicePaneNode nextSibling;
   readonly attribute sbIServicePaneNode previousSibling;
   readonly attribute sbIServicePaneNode parentNode;
-
+  
   sbIServicePaneNode appendChild (in sbIServicePaneNode aChild);
   sbIServicePaneNode insertBefore (in sbIServicePaneNode aNewNode,
                                    in sbIServicePaneNode aAdjacentNode);
@@ -233,7 +223,7 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(47704d11-ee27-458f-8baf-adc644e629d4)]
+[scriptable, uuid(967fbd86-1dd1-11b2-8a02-c4a50bae17e2)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -258,7 +248,7 @@ interface sbIServicePaneService : nsISupports
   sbIServicePaneNode addNode(in AString aId,
                              in sbIServicePaneNode aParent,
                              in boolean aContainer);
-
+  
   /* \deprecated The proper way to remove a node is calling
    *             node.parentNode.removeChild(node).
    */
@@ -270,30 +260,11 @@ interface sbIServicePaneService : nsISupports
    */
   sbIServicePaneNode getNode(in AString aId);
 
-
   /* \brief Get the first node object for the given url
    * \param aURL the url of the desired node
-   * \param aMatchLevel the desired level to test url matches. This may be set
-   *                    to URL_MATCH_EXACT or URL_MATCH_PREFIX. The
-   *                    default value is URL_MATCH_EXACT. See comments below for
-   *                    usage.
    * \return node object, or null if it couldn't be found
    */
-  sbIServicePaneNode getNodeForURL(in AString aURL,
-                                   [optional] in unsigned long aMatchLevel);
-
-  /**
-   * URL_MATCH_EXACT only matches a service pane node if its url atribute is an
-   *                 exact string match with the string url spec passed into
-   *                 getNodeForURL.
-   *
-   * URL_MATCH_PREFIX is less restrictive than URL_MATCH_EXACT. It matches a
-   *                  service pane node if aUrl begins with the node's
-   *                  contentPrefix attribute OR if the node's url attribute
-   *                  matches aUrl exactly.
-   */
-  const unsigned long URL_MATCH_EXACT = 0;
-  const unsigned long URL_MATCH_PREFIX = 1;
+  sbIServicePaneNode getNodeForURL(in AString aURL);
 
   /* \brief Get all nodes with the given attribute value
    * \param aNamespace the attribute namespace
@@ -323,7 +294,7 @@ interface sbIServicePaneService : nsISupports
   void fillContextMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
-
+  
   /* \brief Fill a menu with menuitems to create new tree nodes
    * \param aNode the node or null for the click and hold menu
    * \param aContextMenu the menu we're trying to fill
@@ -332,7 +303,7 @@ interface sbIServicePaneService : nsISupports
   void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
-
+  
   /* \brief Selection changes notification
    * \param aNode node that is now selected
    * \param aContainer The container object that implements the selection
@@ -341,20 +312,20 @@ interface sbIServicePaneService : nsISupports
   void onSelectionChanged(in sbIServicePaneNode aNode,
                           in nsIDOMNode aContainer,
                           in nsIDOMWindow aParentWindow);
-
+  
   /* drag and drop support */
   PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
                  in PRInt32 aOrientation,
                  in nsIDOMWindow aWindow);
-
+                 
   void onDrop(in sbIServicePaneNode aNode,
               in nsIDragSession aDragSession,
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
-
+              
   PRBool onDragGesture(in sbIServicePaneNode aNode,
-                       in nsIDOMDataTransfer aDataTransfer);
+                       out nsITransferable aTransferable);
 
   /* \brief Called before a user starts to rename a node.
    * \param aNode the node about to be renamed
@@ -396,7 +367,7 @@ interface sbIServicePaneModule : nsISupports
    * \param aServicePaneService the service pane service instance
    */
   void servicePaneInit(in sbIServicePaneService aServicePaneService);
-
+  
   /* \brief Fill the context menu for the given node
    * \param aNode the node that was context-clicked on
    * \param aContextMenu the menu we're trying to fill
@@ -405,7 +376,7 @@ interface sbIServicePaneModule : nsISupports
   void fillContextMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
-
+  
   void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
@@ -427,7 +398,7 @@ interface sbIServicePaneModule : nsISupports
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
   PRBool onDragGesture(in sbIServicePaneNode aNode,
-                       in nsIDOMDataTransfer aDataTransfer);
+                       in nsITransferable aTransferable);
 
   /* \brief Called before a user starts to rename a node.
    * \param aNode the node that is about to be renamed
@@ -443,13 +414,13 @@ interface sbIServicePaneModule : nsISupports
    */
   void onRename(in sbIServicePaneNode aNode,
                 in AString aNewName);
-
+  
   /* \brief optional URI of stringbundle to use to localize names of nodes
     associated with this module */
   readonly attribute AString stringbundle;
 
-  /* \brief Called when service pane service is shutting down
-   */
+  /* \brief Called when service pane service is shutting down 
+   */ 
   void shutdown();
 };
 

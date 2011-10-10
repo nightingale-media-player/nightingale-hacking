@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird prompter.
+// Nightingale prompter.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbPrompter.cpp
- * \brief Songbird Prompter Source.
+ * \brief Nightingale Prompter Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter imported services.
+// Nightingale prompter imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -47,6 +47,7 @@
 #include "sbPrompter.h"
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIDOMWindowInternal.h>
 #include <nsIProxyObjectManager.h>
@@ -57,7 +58,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter defs.
+// Nightingale prompter defs.
 //
 //------------------------------------------------------------------------------
 
@@ -69,7 +70,7 @@ static const char kAlertIconClass[] = "alert-icon";
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter nsISupports implementation.
+// Nightingale prompter nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -81,7 +82,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbPrompter,
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter sbIPrompter implementation.
+// Nightingale prompter sbIPrompter implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -297,6 +298,7 @@ sbPrompter::Cancel()
 NS_IMETHODIMP
 sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 {
+  nsAutoLock autoLock(mPrompterLock);
   aParentWindowType.Assign(mParentWindowType);
   return NS_OK;
 }
@@ -304,6 +306,7 @@ sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 NS_IMETHODIMP
 sbPrompter::SetParentWindowType(const nsAString& aParentWindowType)
 {
+  nsAutoLock autoLock(mPrompterLock);
   mParentWindowType.Assign(aParentWindowType);
   return NS_OK;
 }
@@ -318,6 +321,7 @@ NS_IMETHODIMP
 sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
 {
   NS_ENSURE_ARG_POINTER(aWaitForWindow);
+  nsAutoLock autoLock(mPrompterLock);
   *aWaitForWindow = mWaitForWindow;
   return NS_OK;
 }
@@ -325,6 +329,7 @@ sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
 NS_IMETHODIMP
 sbPrompter::SetWaitForWindow(PRBool aWaitForWindow)
 {
+  nsAutoLock autoLock(mPrompterLock);
   mWaitForWindow = aWaitForWindow;
   return NS_OK;
 }
@@ -338,6 +343,7 @@ NS_IMETHODIMP
 sbPrompter::GetRenderHTML(PRBool* aRenderHTML)
 {
   NS_ENSURE_ARG_POINTER(aRenderHTML);
+  nsAutoLock autoLock(mPrompterLock);
   *aRenderHTML = mRenderHTML;
   return NS_OK;
 }
@@ -345,6 +351,7 @@ sbPrompter::GetRenderHTML(PRBool* aRenderHTML)
 NS_IMETHODIMP
 sbPrompter::SetRenderHTML(PRBool aRenderHTML)
 {
+  nsAutoLock autoLock(mPrompterLock);
   mRenderHTML = aRenderHTML;
   return NS_OK;
 }
@@ -352,7 +359,7 @@ sbPrompter::SetRenderHTML(PRBool aRenderHTML)
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter nsIPromptService implementation.
+// Nightingale prompter nsIPromptService implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -1086,7 +1093,7 @@ sbPrompter::Select(nsIDOMWindow*     aParent,
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter nsIObserver implementation.
+// Nightingale prompter nsIObserver implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -1127,12 +1134,12 @@ sbPrompter::Observe(nsISupports*     aSubject,
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter services.
+// Nightingale prompter services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird prompter object.
+ * Construct a Nightingale prompter object.
  */
 
 sbPrompter::sbPrompter() :
@@ -1142,11 +1149,15 @@ sbPrompter::sbPrompter() :
 
 
 /**
- * Destroy a Songbird prompter object.
+ * Destroy a Nightingale prompter object.
  */
 
 sbPrompter::~sbPrompter()
 {
+  // Dispose of prompter lock.
+  if (mPrompterLock)
+    nsAutoLock::DestroyLock(mPrompterLock);
+  mPrompterLock = nsnull;
 }
 
 
@@ -1159,8 +1170,13 @@ sbPrompter::Init()
 {
   nsresult rv;
 
+  // Create a lock for the prompter.
+  mPrompterLock = nsAutoLock::NewLock("sbPrompter::mPrompterLock");
+  NS_ENSURE_TRUE(mPrompterLock, NS_ERROR_OUT_OF_MEMORY);
+
   // Set defaults.
   {
+    nsAutoLock autoLock(mPrompterLock);
     mWaitForWindow = PR_FALSE;
   }
 
@@ -1193,7 +1209,7 @@ sbPrompter::Init()
 
 //------------------------------------------------------------------------------
 //
-// Internal Songbird prompter services.
+// Internal Nightingale prompter services.
 //
 //------------------------------------------------------------------------------
 
@@ -1211,9 +1227,9 @@ sbPrompter::InitOnMainThread()
                                  &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the Songbird window watcher service.
+  // Get the Nightingale window watcher service.
   mSBWindowWatcher =
-    do_GetService("@songbirdnest.com/Songbird/window-watcher;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/window-watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the prompt service.
@@ -1238,7 +1254,10 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   nsCOMPtr<nsIDOMWindow> parent;
   nsresult rv;
 
-  // If the Songbird window watcher is shutting down, don't wait for a window.
+  // Operate under lock.
+  nsAutoLock autoLock(mPrompterLock);
+
+  // If the Nightingale window watcher is shutting down, don't wait for a window.
   {
     PRBool isShuttingDown;
     rv = mSBWindowWatcher->GetIsShuttingDown(&isShuttingDown);

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -51,7 +51,6 @@
 #include <nsCOMArray.h>
 #include <nsRefPtrHashtable.h>
 #include <nsServiceManagerUtils.h>
-#include <nsIIdleService.h>
 #include <nsIThread.h>
 #include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
@@ -64,11 +63,11 @@
 #include "sbLeadingNumbers.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_DATABASEENGINE_CONTRACTID                \
-  "@songbirdnest.com/Songbird/DatabaseEngine;1"
-#define SONGBIRD_DATABASEENGINE_CLASSNAME                 \
-  "Songbird Database Engine Interface"
-#define SONGBIRD_DATABASEENGINE_CID                       \
+#define NIGHTINGALE_DATABASEENGINE_CONTRACTID                \
+  "@getnightingale.com/Nightingale/DatabaseEngine;1"
+#define NIGHTINGALE_DATABASEENGINE_CLASSNAME                 \
+  "Nightingale Database Engine Interface"
+#define NIGHTINGALE_DATABASEENGINE_CID                       \
 { /* 67d9edfd-9a76-4d60-9d76-59181801e193 */              \
   0x67d9edfd,                                             \
   0x9a76,                                                 \
@@ -162,8 +161,6 @@ private:
   nsresult PromptToDeleteDatabases();
   nsresult DeleteMarkedDatabases();
 
-  nsresult RunAnalyze();
-
 private:
   typedef std::map<sqlite3 *, collationBuffers *> collationMap_t;
   collationMap_t m_CollationBuffersMap;
@@ -173,12 +170,6 @@ private:
 
   //[database guid / thread]
   nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorQueue> m_QueuePool;
-  // enum function for queue processor hashtable.
-  template<class T>
-    static NS_HIDDEN_(PLDHashOperator)
-      EnumerateIntoArrayStringKey(const nsAString& aKey,
-                                  T* aData,
-                                  void* aArray);
 
   PRMonitor* m_pThreadMonitor;
   PRMonitor* m_CollationBuffersMapMonitor;
@@ -197,9 +188,6 @@ private:
   nsCOMPtr<nsITimer> m_PromptForDeleteTimer;
 
   nsCOMPtr<nsIThreadPool> m_pThreadPool;
-
-  // Tracks if we've successfully added an idle observer.
-  PRPackedBool m_AddedIdleObserver;
 
   // Pre-allocated memory for sqlite page cache and scratch.
   // Created in InitMemoryConstraints and destroyed in Shutdown.
@@ -226,13 +214,12 @@ public:
   NS_DECL_ISUPPORTS
 
   QueryProcessorQueue()
-  : m_pEngine(nsnull)
-  , m_Shutdown(PR_FALSE)
+  : m_Shutdown(PR_FALSE)
   , m_Running(PR_FALSE)
+  , m_pQueueMonitor(nsnull)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)
-  , m_pQueueMonitor(nsnull)
-  , m_AnalyzeCount(0) {
+  , m_pEngine(nsnull) {
     MOZ_COUNT_CTOR(QueryProcessorQueue);
   }
 
@@ -390,8 +377,6 @@ protected:
 
   PRMonitor *   m_pQueueMonitor;
   queryqueue_t  m_Queue;
-
-  PRUint32      m_AnalyzeCount;
 };
 
 // These classes are used for time-critical string copy during the collation
@@ -458,4 +443,20 @@ public:
   fastString substringExtractionBuffer2;
 };
 
+
+#ifdef PR_LOGGING
+class sbDatabaseEnginePerformanceLogger
+{
+public:
+  sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
+                                    const nsAString& aGuid);
+  ~sbDatabaseEnginePerformanceLogger();
+private:
+  nsString mQuery;
+  nsString mGuid;
+  PRTime mStart;
+};
+#endif
+
 #endif // __DATABASE_ENGINE_H__
+

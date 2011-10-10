@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -61,7 +61,7 @@ EXPORTED_SYMBOLS = [ "addToPlaylistHelper",
  * \return A new unwrapper helper object.
  */
 function createUnwrapper(aSelection) {
-  var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+  var unwrapper = Cc["@getnightingale.com/Nightingale/Library/EnumeratorWrapper;1"]
                     .createInstance(Ci.sbIMediaListEnumeratorWrapper);
   unwrapper.initialize(aSelection);
 
@@ -289,10 +289,8 @@ var SBPlaylistCommand_AddToPlaylist =
   },
 
   initCommands: function(aHost) {
-    if (!this.m_addToPlaylist) {
-      this.m_addToPlaylist = new addToPlaylistHelper();
-      this.m_addToPlaylist.init(this);
-    }
+    this.m_addToPlaylist = new addToPlaylistHelper();
+    this.m_addToPlaylist.init(this);
   },
 
   shutdownCommands: function() {
@@ -402,7 +400,7 @@ addToPlaylistHelper.prototype = {
     consoleService.logStringMessage(str);
   },
   init: function(aCommands) {
-    this.m_libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+    this.m_libraryManager = Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
                             .getService(Components.interfaces.sbILibraryManager);
     this.m_libraryManager.addListener(this);
     this.m_commands = aCommands;
@@ -492,19 +490,19 @@ addToPlaylistHelper.prototype = {
       _downloadListGUID: null,
       onEnumerationBegin: function() {
         var ddh =
-          Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+          Components.classes["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"]
                     .getService(Components.interfaces.sbIDownloadDeviceHelper);
         var downloadMediaList = ddh.getDownloadMediaList();
         if (downloadMediaList)
           this._downloadListGUID = downloadMediaList.guid;
 
-        this._libraryServicePane =
-          Components.classes['@songbirdnest.com/servicepane/library;1']
+        this._libraryServicePane = 
+          Components.classes['@getnightingale.com/servicepane/library;1']
           .getService(Components.interfaces.sbILibraryServicePaneService);
       },
       onEnumerationEnd: function() { },
       onEnumeratedItem: function(list, item) {
-        var hidden = item.getProperty("http://songbirdnest.com/data/1.0#hidden");
+        var hidden = item.getProperty("http://getnightingale.com/data/1.0#hidden");
         if (hidden == "1") {
           return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
         }
@@ -526,13 +524,13 @@ addToPlaylistHelper.prototype = {
         if (item.guid == this._downloadListGUID) {
           return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
         }
-
+        
         // XXXlone also prevent playlists that do not have a corresponding node in
         // the service pane from appearing (or those whose node, or parent nodes are
-        // hidden). This filters out remote playlists, as well as 'utility' extension
-        // playlists. This should be a fairly good test for discriminating which
-        // playlists are useful as sento targets, since it mirror the user's ability
-        // to drag and drop to them. Eventually this should be fixed by testing the
+        // hidden). This filters out remote playlists, as well as 'utility' extension 
+        // playlists. This should be a fairly good test for discriminating which 
+        // playlists are useful as sento targets, since it mirror the user's ability 
+        // to drag and drop to them. Eventually this should be fixed by testing the 
         // policy on the playlist once we close bug 4017.
         function isHidden(node) {
           while (node) {
@@ -563,7 +561,7 @@ addToPlaylistHelper.prototype = {
     try {
 
       // Enumerate all lists in this library
-      aLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1",
+      aLibrary.enumerateItemsByProperty("http://getnightingale.com/data/1.0#isList", "1",
                                         listener );
     } catch (e) {
       // this may happen if a playlist was leaked, and is still there
@@ -628,20 +626,18 @@ addToPlaylistHelper.prototype = {
       // the enumerator we get hands back sbIIndexedMediaItem, not just plain
       // 'ol sbIMediaItems
       var unwrapper = createUnwrapper(selection);
-
+            
       var asyncListener = {
         onProgress: function(aItemsProcessed, aComplete) {
-          DNDUtils.reportAddedTracks(aItemsProcessed,
+          DNDUtils.reportAddedTracks(aItemsProcessed, 
                                      0, /* no duplicate reporting */
                                      0, /* no unsupported reporting */
                                      medialist.name);
         },
-        onItemAdded: function(aMediaItem) {},
-        onComplete: function() {},
         QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
       }
-
-      medialist.addMediaItems(unwrapper, asyncListener, true);
+      
+      medialist.addSomeAsync(unwrapper, asyncListener);
     }
   },
 
@@ -651,35 +647,9 @@ addToPlaylistHelper.prototype = {
   _makingList    : false,
 
   refreshCommands: function() {
-
-    // Bug fixers beware! This code gets called very frequently and can have
-    // difficult-to-debug side effects. Proceed with caution.
-
-    var self = this;
-    function ensureRefreshExists() {
-      // Explicitly return true or false. Otherwise, JS will complain to the
-      // error console if any of the checks finds an undefined property.
-      return (self.m_commands &&
-              self.m_commands.m_Context &&
-              self.m_commands.m_Context.m_Playlist &&
-              self.m_commands.m_Context.m_Playlist.refreshCommands) ?
-              true : false;
-    }
-
-    /* We need to ensure that the context and playlist have been initialized
-     * and are ready to display commands before calling refreshCommands.
-     *
-     * It is possible for an event handler to fire before the binding
-     * is created or after it is destroyed, so it is possible for this to
-     * be triggered before m_Playlist is fully instantiated or after pieces
-     * of it have gone away.  Thus, we need to also check that refreshCommands
-     * is present to ensure the playlist binding is in a good state. */
-
-    if (ensureRefreshExists()) {
-      this.makeListOfPlaylists();
-      // Check again, as the playlist binding can be destroyed during the
-      // previous function call.
-      if (ensureRefreshExists()) {
+    if (this.m_commands) {
+      if (this.m_commands.m_Context && this.m_commands.m_Context.m_Playlist) {
+        this.makeListOfPlaylists();
         this.m_commands.m_Context.m_Playlist.refreshCommands();
       }
     }

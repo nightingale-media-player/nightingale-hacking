@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,16 +22,16 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <overlay id="PlaybackPaneOverlay"
@@ -39,7 +39,7 @@
 
   <script
     type="application/x-javascript"
-    src="chrome://songbird/content/scripts/preferences/playbackPrefs.js"/>
+    src="chrome://nightingale/content/scripts/preferences/playbackPrefs.js"/>
 
   <prefpane id="panePlayback"
             onpaneload="playbackPrefsPane.doPaneLoad();">
@@ -49,34 +49,34 @@
       <preference
         id="output_buffer_pref"
         prefid="output_buffer_pref"
-        name="songbird.mediacore.output.buffertime"
+        name="nightingale.mediacore.output.buffertime"
         type="int"
         onchange="playbackPrefsUI.doOnOutputBufferChange();"/>
 
       <preference
         id="streaming_buffer_pref"
         prefid="streaming_buffer_pref"
-        name="songbird.mediacore.streaming.buffersize"
+        name="nightingale.mediacore.streaming.buffersize"
         type="int"
         onchange="playbackPrefsUI.doOnStreamingBufferChange();"/>
         
       <preference
         id="normalization_enabled_pref"
         prefid="normalization_enabled_pref"
-        name="songbird.mediacore.normalization.enabled"
+        name="nightingale.mediacore.normalization.enabled"
         type="bool"
         onchange="playbackPrefsUI.doOnNormalizationEnabledChange();"/>
         
       <preference
         id="normalization_preferred_gain_pref"
         prefid="normalization_preferred_gain_pref"
-        name="songbird.mediacore.normalization.preferredGain"
+        name="nightingale.mediacore.normalization.preferredGain"
         type="string"/>
 
       <preference
         id="rating_metadata_writing_pref"
         prefid="rating_metadata_writing_pref"
-        name="songbird.metadata.ratings.enableWriting"
+        name="nightingale.metadata.ratings.enableWriting"
         type="bool"/>
 
     </preferences>

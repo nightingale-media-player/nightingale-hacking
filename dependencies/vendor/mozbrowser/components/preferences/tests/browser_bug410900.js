@@ -1,7 +1,7 @@
 function test() {
   waitForExplicitFinish();
 
-  // Setup a phony handler to ensure the app pane will be populated.
+  // setup a phony hander to ensure the app pane will be populated.
   var handler = Cc["@mozilla.org/uriloader/web-handler-app;1"].
                 createInstance(Ci.nsIWebHandlerApp);
   handler.name = "App pane alive test";
@@ -23,9 +23,8 @@ function test() {
     observe: function(win, topic, data) {
       if (topic != "app-handler-pane-loaded")
         return;
-
-      obs.removeObserver(observer, "app-handler-pane-loaded");
       runTest(win);
+      obs.removeObserver(observer, "app-handler-pane-loaded");
     }
   };
   obs.addObserver(observer, "app-handler-pane-loaded", false);

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -81,7 +81,7 @@ static const Scope sScopes[] = {
   { "library_write", sNotificationAlert, sNotificationStatus, },
 };
 
-static NS_DEFINE_CID( kSecurityMixinCID, SONGBIRD_SECURITYMIXIN_CID );
+static NS_DEFINE_CID( kSecurityMixinCID, NIGHTINGALE_SECURITYMIXIN_CID );
 
 NS_IMPL_ISUPPORTS3( sbSecurityMixin,
                     nsIClassInfo,
@@ -93,8 +93,8 @@ NS_IMPL_CI_INTERFACE_GETTER2( sbSecurityMixin,
                               sbISecurityMixin )
 
 SB_IMPL_CLASSINFO( sbSecurityMixin,
-                   SONGBIRD_SECURITYMIXIN_CONTRACTID,
-                   SONGBIRD_SECURITYMIXIN_CLASSNAME,
+                   NIGHTINGALE_SECURITYMIXIN_CONTRACTID,
+                   NIGHTINGALE_SECURITYMIXIN_CLASSNAME,
                    nsIProgrammingLanguage::CPLUSPLUS,
                    0,
                    kSecurityMixinCID );
@@ -504,7 +504,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
       
       PRBool notify;
       // look up the pref
-      nsCString prefKey("songbird.rapi.");
+      nsCString prefKey("nightingale.rapi.");
       prefKey.Append(scope->name);
       prefKey.AppendLiteral("_notify");
       rv = prefService->GetBoolPref( prefKey.get(), &notify );
@@ -557,7 +557,7 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const struct Scope *aScope )
 
   // build the pref key to check
   PRBool prefBlocked = PR_TRUE;
-  nsCString prefKey("songbird.rapi.");
+  nsCString prefKey("nightingale.rapi.");
   prefKey.Append(aScope->name);
   prefKey.AppendLiteral("_disable");
 

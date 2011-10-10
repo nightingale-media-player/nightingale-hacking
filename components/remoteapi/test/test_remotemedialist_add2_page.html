@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -33,20 +33,20 @@
 function runTest(tester) {
   try {
 
-  const SB_NS = "http://songbirdnest.com/data/1.0#";
+  const SB_NS = "http://getnightingale.com/data/1.0#";
 
   // prep the site library
-  var siteLib = songbird.siteLibrary;
+  var siteLib = nightingale.siteLibrary;
   siteLib.clear();
   var siteList = siteLib.createSimpleMediaList("testsitelist");
 
   // prep the main library
-  var mainLib = songbird.mainLibrary;
-  var downList = songbird.downloadMediaList;
+  var mainLib = nightingale.mainLibrary;
+  var downList = nightingale.downloadMediaList;
   var mainList = mainLib.createSimpleMediaList("testmainlist");
 
   // prep the web library
-  var webLib = songbird.webLibrary;
+  var webLib = nightingale.webLibrary;
 
   //
   // Download Observers

@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,25 +21,25 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set.
+// Nightingale album art fetcher set.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtFetcherSet.cpp
- * \brief Songbird Album Art Fetcher Set Source.
+ * \brief Nightingale Album Art Fetcher Set Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set imported services.
+// Nightingale album art fetcher set imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
-// Songbird imports
+// Nightingale imports
 #include <sbPrefBranch.h>
 #include <sbThreadUtils.h>
 
@@ -204,7 +204,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
   // Save the listener and list of items, this makes it easier later on
   mListener = aListener;
   nsCOMPtr<nsIMutableArray> itemArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = itemArray->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
                                 PR_FALSE);
@@ -395,14 +395,14 @@ sbAlbumArtFetcherSet::GetIsFetching(PRBool* aIsFetching)
 sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
   mType(sbIAlbumArtFetcherSet::TYPE_ALL),
   mShutdown(PR_FALSE),
-  mIsFetching(PR_FALSE),
   mListener(nsnull),
   mFetcherList(nsnull),
   mFetcherIndex(0),
   mFetcher(nsnull),
   mMediaItems(nsnull),
   mTimeoutTimerValue(ALBUMART_SCANNER_TIMEOUT),
-  mFoundAllArtwork(PR_FALSE)
+  mFoundAllArtwork(PR_FALSE),
+  mIsFetching(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gAlbumArtFetcherSetLog) {

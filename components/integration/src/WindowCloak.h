@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  WindowCloak.h
-* \brief Songbird Window Cloaker Object Definition.
+* \brief Nightingale Window Cloaker Object Definition.
 */
 
 #ifndef __WINDOW_CLOAK_H__
@@ -39,11 +39,11 @@
 #include <nsClassHashtable.h>
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWCLOAK_CONTRACTID                   \
-  "@songbirdnest.com/Songbird/WindowCloak;1"
-#define SONGBIRD_WINDOWCLOAK_CLASSNAME                    \
-  "Songbird Window Cloak Interface"
-#define SONGBIRD_WINDOWCLOAK_CID                          \
+#define NIGHTINGALE_WINDOWCLOAK_CONTRACTID                   \
+  "@getnightingale.com/Nightingale/WindowCloak;1"
+#define NIGHTINGALE_WINDOWCLOAK_CLASSNAME                    \
+  "Nightingale Window Cloak Interface"
+#define NIGHTINGALE_WINDOWCLOAK_CID                          \
 { /* d5267aa4-f3ba-4b7b-b136-c1861c410ee5 */              \
   0xd5267aa4,                                             \
   0xf3ba,                                                 \

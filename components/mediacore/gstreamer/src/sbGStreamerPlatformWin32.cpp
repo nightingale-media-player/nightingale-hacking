@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -374,7 +374,7 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
     mWindow = ::CreateWindowEx(
             0,                                  // extended window style
             SB_VIDEOWINDOW_CLASSNAME,           // Class name
-            L"Songbird GStreamer Video Window", // Window name
+            L"Nightingale GStreamer Video Window", // Window name
             WS_CHILD | WS_CLIPCHILDREN,         // window style
             0, 0,                               // X,Y offset
             0, 0,                               // Width, height
@@ -434,7 +434,7 @@ Win32PlatformInterface::FullScreen()
     WS_EX_NOACTIVATE, // This prevents the window from getting an entry in the
                       // Taskbar.
     SB_VIDEOWINDOW_CLASSNAME,
-    L"Songbird Fullscreen Video Window",
+    L"Nightingale Fullscreen Video Window",
     WS_POPUP,
     info.rcMonitor.left, info.rcMonitor.top, 
     abs(info.rcMonitor.right - info.rcMonitor.left), 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -53,7 +53,6 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbISearchableMediaListView.h>
@@ -74,23 +73,6 @@ static PRLogModuleInfo* sFilterSetLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
-
-
-class sbSuppressArrayInvalidation
-{
-public:
-  explicit
-  sbSuppressArrayInvalidation(sbILocalDatabaseGUIDArray *aArray)
-  : mArray(aArray) {
-    mArray->SuppressInvalidation(PR_TRUE);
-  }
-
-  virtual ~sbSuppressArrayInvalidation() {
-    mArray->SuppressInvalidation(PR_FALSE);
-  }
-private:
-  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
-};
 
 sbLocalDatabaseCascadeFilterSet::sbLocalDatabaseCascadeFilterSet(sbLocalDatabaseMediaListView* aMediaListView) :
   mMediaListView(aMediaListView)
@@ -343,8 +325,6 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
   nsresult rv;
 
   sbFilterSpec& fs = mFilters[aIndex];
-  PRBool isSearch = fs.isSearch;
-
   if (fs.arrayListener)
     fs.array->RemoveAsyncListener(fs.arrayListener);
 
@@ -361,21 +341,6 @@ sbLocalDatabaseCascadeFilterSet::Remove(PRUint16 aIndex)
 
   rv = UpdateListener();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Tell the view to update its configuration.  It will first apply its
-  // filters and then ask us for ours
-  if (mMediaListView) {
-    rv = mMediaListView->UpdateViewArrayConfiguration(PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // And notify the view's listeners
-    if (isSearch) {
-      mMediaListView->NotifyListenersSearchChanged();
-    }
-    else {
-      mMediaListView->NotifyListenersFilterChanged();
-    }
-  }
 
   return NS_OK;
 }
@@ -417,6 +382,9 @@ sbLocalDatabaseCascadeFilterSet::ChangeFilter(PRUint16 aIndex,
       rv = selection->ClearSelection();
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    rv = fs.treeView->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Tell the view to update its configuration.  It will first apply its
@@ -490,6 +458,9 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
         rv = selection->ClearSelection();
         NS_ENSURE_SUCCESS(rv, rv);
       }
+
+      rv = downstream.treeView->Rebuild();
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
     rv = ConfigureArray(i);
@@ -525,7 +496,7 @@ sbLocalDatabaseCascadeFilterSet::Get(PRUint16 aIndex,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> outArr =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISupportsString> supportsStr;
@@ -534,10 +505,10 @@ sbLocalDatabaseCascadeFilterSet::Get(PRUint16 aIndex,
     supportsStr = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     supportsStr->SetData(fs.values[i]);
-
+	  
     outArr->AppendElement(supportsStr, PR_FALSE);
   }
-
+  
   NS_ADDREF(*_retval = outArr);
   return NS_OK;
 }
@@ -704,8 +675,6 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
 {
   NS_ENSURE_ARG_POINTER(mArray);
   nsresult rv;
-
-  sbSuppressArrayInvalidation suppressInvalidation(mArray);
 
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
@@ -964,10 +933,6 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   sbFilterSpec& fs = mFilters[aIndex];
   fs.arrayListener->mIndex = aIndex;
 
-  // Suppress Invalidation to avoid rebuilds until
-  // we're done applying all of the filters.
-  sbSuppressArrayInvalidation suppressArray(fs.array);
-
   // Clear this filter since our upstream filters have changed
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1063,7 +1028,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureFilterArray(sbFilterSpec* aSpec,
   // bit by bit as needed.  Unfortunately in complex filtering/searching
   // cases the cost of the length query can be about the same as the
   // cost of just fetching all the rows.  Since there aren't likely to be
-  // that many rows for a distinct filter, we tell the guidarray to
+  // that many rows for a distinct filter, we tell the guidarray to 
   // fetch everything at once and avoid the length query entirely.
   rv = aSpec->array->SetFetchSize(PR_UINT32_MAX);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1094,11 +1059,13 @@ sbLocalDatabaseCascadeFilterSet::InvalidateFilter(sbFilterSpec& aFilter)
   LOG(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Invalidating %s",
        this, NS_ConvertUTF16toUTF8(aFilter.property).get()));
 
-  // Always invalidate the length when invalidating the filter`s
-  // guid array as there is now way to accurately tell how it's
-  // length may have been affected.
-  nsresult rv = aFilter.array->Invalidate(PR_TRUE);
+  nsresult rv = aFilter.array->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aFilter.treeView) {
+    rv = aFilter.treeView->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   aFilter.invalidationPending = PR_FALSE;
 
@@ -1178,7 +1145,7 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
                            valuesEnum,
                            PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-
+   
     valuesEnum = new sbTArrayStringEnumerator(&values);
     NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
 

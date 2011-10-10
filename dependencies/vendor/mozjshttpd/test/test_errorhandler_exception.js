@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is httpd.js code.
+ * The Original Code is MozJSHTTP code.
  *
  * The Initial Developer of the Original Code is
  * Jeff Walden <jwalden+code@mit.edu>.
@@ -39,32 +39,75 @@
 // Request handlers may throw exceptions, and those exception should be caught
 // by the server and converted into the proper error codes.
 
-var tests =
+var paths =
   [
-   new Test("http://localhost:4444/throws/exception",
-            null, start_throws_exception, succeeded),
-   new Test("http://localhost:4444/this/file/does/not/exist/and/404s",
-            null, start_nonexistent_404_fails_so_400, succeeded),
-   new Test("http://localhost:4444/attempts/404/fails/so/400/fails/so/500s",
-            register400Handler, start_multiple_exceptions_500, succeeded),
+   "http://localhost:4444/throws/exception",
+   "http://localhost:4444/this/file/does/not/exist/and/404s",
+   "http://localhost:4444/attempts/404/fails/so/400/fails/so/500s"
   ];
+var currPathIndex = 0;
 
-var srv;
+var listener =
+  {
+    // NSISTREAMLISTENER
+    onDataAvailable: function(request, cx, inputStream, offset, count)
+    {
+      makeBIS(inputStream).readByteArray(count); // required by API
+    },
+    // NSIREQUESTOBSERVER
+    onStartRequest: function(request, cx)
+    {
+      var ch = request.QueryInterface(Ci.nsIHttpChannel)
+                      .QueryInterface(Ci.nsIHttpChannelInternal);
 
-function run_test()
-{
-  srv = createServer();
+      switch (currPathIndex)
+      {
+        case 0:
+          checkStatusLine(ch, 1, 1, 500, "Internal Server Error");
+          break;
 
-  srv.registerErrorHandler(404, throwsException);
-  srv.registerPathHandler("/throws/exception", throwsException);
+        case 1:
+          checkStatusLine(ch, 1, 1, 400, "Bad Request");
+          break;
 
-  srv.start(4444);
+        case 2:
+          checkStatusLine(ch, 1, 1, 500, "Internal Server Error");
+          break;
+      }
+    },
+    onStopRequest: function(request, cx, status)
+    {
+      do_check_true(Components.isSuccessCode(status));
 
-  runHttpTests(tests, testComplete(srv));
-}
+      switch (currPathIndex)
+      {
+        case 0:
+          break;
 
+        case 1:
+          srv.registerErrorHandler(400, throwsException);
+          break;
 
-// TEST DATA
+        case 2:
+          break;
+      }
+
+      if (++currPathIndex == paths.length)
+        srv.stop();
+      else
+        performNextTest();
+      do_test_finished();
+    },
+    // NSISUPPORTS
+    QueryInterface: function(aIID)
+    {
+      if (aIID.equals(Ci.nsIStreamListener) ||
+          aIID.equals(Ci.nsIRequestObserver) ||
+          aIID.equals(Ci.nsISupports))
+        return this;
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    }
+  };
 
 function checkStatusLine(channel, httpMaxVer, httpMinVer, httpCode, statusText)
 {
@@ -77,31 +120,27 @@ function checkStatusLine(channel, httpMaxVer, httpMinVer, httpCode, statusText)
   do_check_eq(respMin.value, httpMinVer);
 }
 
-function start_throws_exception(ch, cx)
+function performNextTest()
 {
-  checkStatusLine(ch, 1, 1, 500, "Internal Server Error");
+  do_test_pending();
+
+  var ch = makeChannel(paths[currPathIndex]);
+  ch.asyncOpen(listener, null);
 }
 
-function start_nonexistent_404_fails_so_400(ch, cx)
-{
-  checkStatusLine(ch, 1, 1, 400, "Bad Request");
-}
+var srv;
 
-function start_multiple_exceptions_500(ch, cx)
+function run_test()
 {
-  checkStatusLine(ch, 1, 1, 500, "Internal Server Error");
-}
+  srv = createServer();
 
-function succeeded(ch, cx, status, data)
-{
-  do_check_true(Components.isSuccessCode(status));
-}
+  srv.registerErrorHandler(404, throwsException);
+  srv.registerPathHandler("/throws/exception", throwsException);
 
-function register400Handler(ch)
-{
-  srv.registerErrorHandler(400, throwsException);
-}
+  srv.start(4444);
 
+  performNextTest();
+}
 
 // PATH HANDLERS
 

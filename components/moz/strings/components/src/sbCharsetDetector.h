@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_CHARSET_DETECTOR_H_
@@ -30,19 +30,19 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird charset detector defs.
+// Nightingale charset detector defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbCharsetDetector.h
- * \brief Songbird Charset Detector Definitions.
+ * \brief Nightingale Charset Detector Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detector imported services.
+// Nightingale charset detector imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -51,22 +51,22 @@
 #include <nsICharsetDetectionObserver.h>
 #include <nsStringGlue.h>
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbICharsetDetector.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detector definitions.
+// Nightingale charset detector definitions.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird charset detector XPCOM component definitions.
+// Nightingale charset detector XPCOM component definitions.
 //
 
 #define SB_CHARSETDETECTOR_CLASSNAME "sbCharsetDetector"
-#define SB_CHARSETDETECTOR_DESCRIPTION "Songbird Charset Detector Utilities"
+#define SB_CHARSETDETECTOR_DESCRIPTION "Nightingale Charset Detector Utilities"
 #define SB_CHARSETDETECTOR_CID                                                 \
 {                                                                              \
   0x32f9b560,                                                                  \
@@ -78,7 +78,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird charset detector classes.
+// Nightingale charset detector classes.
 //
 //------------------------------------------------------------------------------
 

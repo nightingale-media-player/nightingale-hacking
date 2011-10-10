@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 EXPORTED_SYMBOLS = [ "sbCoverHelper" ];
@@ -53,7 +53,7 @@ var sbCoverHelper = {
    *        loaded from aImageURL is under the MAX_FILE_SIZE in bytes for
    *        storing into the meta data of a media file. The aImageURL should
    *        be a valid local file. MAX_FILE_SIZE is defined as a preference
-   *        songbird.albumart.maxsize or defaults to 16Mb.
+   *        nightingale.albumart.maxsize or defaults to 16Mb.
    * \param aImageURL - URL of the image to check
    * \param aImageSize - Size of the image in bytes
    * \returns True if the image size is under the MAX_FILE_SIZE or false if not.
@@ -61,7 +61,7 @@ var sbCoverHelper = {
   isImageSizeValid: function (aImageURL, aImageSize) {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
-    var maxFileSize = Application.prefs.getValue("songbird.albumart.maxsize",
+    var maxFileSize = Application.prefs.getValue("nightingale.albumart.maxsize",
                                                  MAX_FILE_SIZE_BYTES);
     
     if ( (aImageURL == 'undefined') &&
@@ -97,7 +97,7 @@ var sbCoverHelper = {
                             .getService(Ci.nsIPromptService);
       
       storageConverter =
-        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
           .createInstance(Ci.sbIPropertyUnitConverter);
       var strTitle = SBString("albumart.maxsize.title", null);
       var strMsg = SBBrandedFormattedString
@@ -181,7 +181,7 @@ var sbCoverHelper = {
       [imageData, mimeType] = this.readImageData(aFromFile);
 
       // Save the image data out to the new file in the artwork folder
-      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+      var artService = Cc["@getnightingale.com/Nightingale/album-art-service;1"]
                          .getService(Ci.sbIAlbumArtService);
       var newUri = artService.cacheImage(mimeType, imageData, imageData.length);
       if (newUri) {
@@ -206,7 +206,7 @@ var sbCoverHelper = {
     if (aFile instanceof Ci.nsIFile) {
       var prefs = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefBranch);
-      var prefStr = prefs.getCharPref("songbird.albumart.file.extensions");
+      var prefStr = prefs.getCharPref("nightingale.albumart.file.extensions");
       var supportedFileExtensions = prefStr.split(",");
       
       var length = supportedFileExtensions.length;
@@ -502,7 +502,7 @@ var sbCoverHelper = {
 
     // Create a hidden playlist temporarily
     var listProperties =
-      Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+      Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
         .createInstance(Ci.sbIPropertyArray);
     listProperties.appendProperty(SBProperties.hidden, "1");
     listProperties.appendProperty(SBProperties.mediaListName, "Get Artwork");
@@ -516,7 +516,7 @@ var sbCoverHelper = {
     getArtworkMediaList.addSome(audioItems);
 
     // Set up the scanner
-    var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
+    var artworkScanner = Cc["@getnightingale.com/Nightingale/album-art/scanner;1"]
                            .createInstance(Ci.sbIAlbumArtScanner);
 
     // Listener so that we can remove our list when done.

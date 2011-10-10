@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
 * \file sbFileMetadataService.cpp
@@ -47,6 +49,7 @@
 #include <sbIMediacoreStatus.h>
 #include <sbIMediaItem.h>
 #include <sbProxiedComponentManager.h>
+#include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 #include <sbIDataRemote.h>
 
@@ -77,10 +80,8 @@ extern PRLogModuleInfo* gMetadataLog;
 // GLOBALS ====================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_THREADSAFE_ISUPPORTS3( sbFileMetadataService, \
-                               sbIFileMetadataService, \
-                               sbPIFileMetadataService, \
-                               nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS2( \
+  sbFileMetadataService, sbIFileMetadataService, nsIObserver)
 
 sbFileMetadataService::sbFileMetadataService() : 
   mMainThreadProcessor(nsnull),
@@ -268,11 +269,8 @@ sbFileMetadataService::ProxiedRestartProcessors(PRUint16 aProcessorsToRestart)
     }
 
     if (aProcessorsToRestart & sbIFileMetadataService::BACKGROUND_THREAD_PROCESSOR) {
-      nsCOMPtr<nsIRunnable> event =
-        NS_NEW_RUNNABLE_METHOD(sbBackgroundThreadMetadataProcessor,
-                               mBackgroundThreadProcessor.get(),
-                               Start);
-      NS_DispatchToCurrentThread(event);
+      mBackgroundThreadProcessor->Start();
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
@@ -469,8 +467,6 @@ nsresult sbFileMetadataService::GetQueuedJobItem(PRBool aMainThreadOnly,
           PutProcessedJobItem(item);
         } else {        
           // Record that this item is being started
-          TRACE(("sbFileMetadataService[9x%.8x] GetQueuedJobItem starting %s",
-                 this, url.BeginReading()));
           rv = mCrashTracker->LogURLBegin(url);
           if (NS_FAILED(rv)) {
             NS_ERROR("sbFileMetadataService::GetQueuedJobItem couldn't log URL");
@@ -625,7 +621,7 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
       // Update blocked status of jobs.  If any job is blocked, all jobs after
       // it are also blocked.
       PRBool blocked = PR_FALSE;
-      PRUint32 jobCount = jobs.Length();
+      PRBool jobCount = jobs.Length();
       for (PRUint32 i=0; i < jobCount; i++) {
         // If no jobs are blocked yet, check current job.  Otherwise, mark
         // current job as blocked.
@@ -696,7 +692,7 @@ nsresult sbFileMetadataService::EnsureWritePermitted()
   nsCOMPtr<nsIPrefBranch> prefService =
   do_GetService( "@mozilla.org/preferences-service;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv);
-  prefService->GetBoolPref( "songbird.metadata.enableWriting", &enableWriting );
+  prefService->GetBoolPref( "nightingale.metadata.enableWriting", &enableWriting );
 
   if (!enableWriting) {    
     
@@ -704,7 +700,7 @@ nsresult sbFileMetadataService::EnsureWritePermitted()
     // Allow them to enable writing if desired.
     
     PRBool promptOnWrite = PR_TRUE;
-    prefService->GetBoolPref( "songbird.metadata.promptOnWrite", &promptOnWrite );
+    prefService->GetBoolPref( "nightingale.metadata.promptOnWrite", &promptOnWrite );
     
     if (promptOnWrite) {
       // Don't bother to prompt unless there is a player window open.
@@ -738,11 +734,11 @@ nsresult sbFileMetadataService::EnsureWritePermitted()
         NS_ENSURE_SUCCESS( rv, rv);
         
         if (checkState) {
-          prefService->SetBoolPref( "songbird.metadata.promptOnWrite", PR_FALSE );
+          prefService->SetBoolPref( "nightingale.metadata.promptOnWrite", PR_FALSE );
         }
         
         if (promptResult) {
-          prefService->SetBoolPref( "songbird.metadata.enableWriting", PR_TRUE );
+          prefService->SetBoolPref( "nightingale.metadata.enableWriting", PR_TRUE );
           enableWriting = PR_TRUE;
         }
       }
@@ -762,7 +758,7 @@ nsresult sbFileMetadataService::UpdateDataRemotes(PRInt64 aJobCount)
   // Get the legacy dataremote used for signaling metadata state
   if (!mDataCurrentMetadataJobs) {
     mDataCurrentMetadataJobs =
-      do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mDataCurrentMetadataJobs->Init(NS_LITERAL_STRING("backscan.concurrent"),
                                         EmptyString());
@@ -770,26 +766,5 @@ nsresult sbFileMetadataService::UpdateDataRemotes(PRInt64 aJobCount)
   }
 
   return mDataCurrentMetadataJobs->SetIntValue(aJobCount);;
-}
-
-/* void sbPIFileMetadataService::AddBlacklistURL (in ACString aURL); */
-NS_IMETHODIMP
-sbFileMetadataService::AddBlacklistURL(const nsACString & aURL)
-{
-  LOG(("%s[%.8x] Adding blacklist url \"%s\"",
-       __FUNCTION__,
-       this,
-       aURL.BeginReading()));
-  nsresult rv;
-  if (!mCrashTracker) {
-    // probably was running the unit test by itself
-    mCrashTracker = new sbMetadataCrashTracker();
-    NS_ENSURE_TRUE(mCrashTracker, NS_ERROR_OUT_OF_MEMORY);
-    rv = mCrashTracker->Init();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  rv = mCrashTracker->AddBlacklistURL(aURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-  return NS_OK;
 }
 

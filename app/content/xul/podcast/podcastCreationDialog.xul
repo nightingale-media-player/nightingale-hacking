@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -31,17 +31,17 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/podcastCreationDialog.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/podcastCreationDialog.css"
                  type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- ***************************************************************************
@@ -61,7 +61,7 @@
   id="podcast_creation_dialog"
   hidechrome="true"
   flex="1"
-  type="songbird"
+  type="nightingale"
   title="&podcast.creation_dialog.title;"
   buttons="accept,cancel"
   ondialogaccept="if (podcastCreationDialog.onAccept()) onExit();">
@@ -72,7 +72,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Creation dialog container box. -->
@@ -91,13 +91,13 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->
+  <!-- Import the Nightingale services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
 
   <!-- Podcast creation dialog services. -->
   <script><![CDATA[
@@ -115,7 +115,7 @@
       var Cu = Components.utils;
 
 
-    // Songbird imports.
+    // Nightingale imports.
     Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
     Cu.import("resource://app/jsmodules/StringUtils.jsm");
     Cu.import("resource://app/jsmodules/URLUtils.jsm");
@@ -150,7 +150,7 @@
 
         // Create the podcast.
         var dynamicPlaylistService =
-              Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+              Cc["@getnightingale.com/Nightingale/Library/DynamicPlaylistService;1"]
                 .getService(Ci.sbIDynamicPlaylistService);
         var podcast = null;
         try {

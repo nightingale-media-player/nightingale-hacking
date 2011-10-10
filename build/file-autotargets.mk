@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 ##############################################################################
@@ -27,7 +27,7 @@
 #
 # Throughout the old build system, there are constructs where we create a list
 # of files, and the variable represents their location to be placed in the
-# dist directory, to be shipped (SONGBIRD_DIST, SONGBIRD_XULRUNNER, etc.)
+# dist directory, to be shipped (NIGHTINGALE_DIST, NIGHTINGALE_XULRUNNER, etc.)
 #
 # The old method of doing this took this list and just ran a cp on it. This
 # is bad for a couple of reasons:
@@ -66,52 +66,52 @@ FILE_AUTOTARGETS_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
 # preedTODO: confirm there are no dups.; see page 70 of make book
-GST_PLUGINS_TARGETS = $(addprefix $(SONGBIRD_GSTPLUGINSDIR)/,$(notdir $(SONGBIRD_GST_PLUGINS)))
+GST_PLUGINS_TARGETS = $(addprefix $(NIGHTINGALE_GSTPLUGINSDIR)/,$(notdir $(NIGHTINGALE_GST_PLUGINS)))
 libs:: $(GST_PLUGINS_TARGETS)
 
-LIB_DIR_TARGETS = $(addprefix $(SONGBIRD_LIBDIR)/,$(notdir $(SONGBIRD_LIB)))
+LIB_DIR_TARGETS = $(addprefix $(NIGHTINGALE_LIBDIR)/,$(notdir $(NIGHTINGALE_LIB)))
 libs:: $(LIB_DIR_TARGETS)
 
-XR_DIR_TARGETS = $(addprefix $(SONGBIRD_XULRUNNERDIR)/,$(notdir $(SONGBIRD_XULRUNNER)))
+XR_DIR_TARGETS = $(addprefix $(NIGHTINGALE_XULRUNNERDIR)/,$(notdir $(NIGHTINGALE_XULRUNNER)))
 libs:: $(XR_DIR_TARGETS)
 
-DIST_DIR_TARGETS = $(addprefix $(SONGBIRD_DISTDIR)/,$(notdir $(SONGBIRD_DIST)))
+DIST_DIR_TARGETS = $(addprefix $(NIGHTINGALE_DISTDIR)/,$(notdir $(NIGHTINGALE_DIST)))
 libs:: $(DIST_DIR_TARGETS)
 
-CHROME_DIR_TARGETS = $(addprefix $(SONGBIRD_CHROMEDIR)/,$(notdir $(SONGBIRD_CHROME)))
+CHROME_DIR_TARGETS = $(addprefix $(NIGHTINGALE_CHROMEDIR)/,$(notdir $(NIGHTINGALE_CHROME)))
 libs:: $(CHROME_DIR_TARGETS)
 
-SCRIPTS_DIR_TARGETS = $(addprefix $(SONGBIRD_SCRIPTSDIR)/,$(notdir $(SONGBIRD_SCRIPTS)))
+SCRIPTS_DIR_TARGETS = $(addprefix $(NIGHTINGALE_SCRIPTSDIR)/,$(notdir $(NIGHTINGALE_SCRIPTS)))
 libs:: $(SCRIPTS_DIR_TARGETS)
 
-JSMODULES_DIR_TARGETS = $(addprefix $(SONGBIRD_JSMODULESDIR)/,$(notdir $(SONGBIRD_JSMODULES)))
+JSMODULES_DIR_TARGETS = $(addprefix $(NIGHTINGALE_JSMODULESDIR)/,$(notdir $(NIGHTINGALE_JSMODULES)))
 libs:: $(JSMODULES_DIR_TARGETS)
 
-COMPONENTS_DIR_TARGETS = $(addprefix $(SONGBIRD_COMPONENTSDIR)/,$(notdir $(SONGBIRD_COMPONENTS)))
+COMPONENTS_DIR_TARGETS = $(addprefix $(NIGHTINGALE_COMPONENTSDIR)/,$(notdir $(NIGHTINGALE_COMPONENTS)))
 libs:: $(COMPONENTS_DIR_TARGETS)
 
-DOCUMENTATION_DIR_TARGETS = $(addprefix $(SONGBIRD_DOCUMENTATIONDIR)/,$(notdir $(SONGBIRD_DOCUMENTATION)))
+DOCUMENTATION_DIR_TARGETS = $(addprefix $(NIGHTINGALE_DOCUMENTATIONDIR)/,$(notdir $(NIGHTINGALE_DOCUMENTATION)))
 libs:: $(DOCUMENTATION_DIR_TARGETS)
 
-PREFS_DIR_TARGETS = $(addprefix $(SONGBIRD_PREFERENCESDIR)/,$(notdir $(SONGBIRD_PREFS)))
+PREFS_DIR_TARGETS = $(addprefix $(NIGHTINGALE_PREFERENCESDIR)/,$(notdir $(NIGHTINGALE_PREFS)))
 libs:: $(PREFS_DIR_TARGETS)
 
-PLUGINS_DIR_TARGETS = $(addprefix $(SONGBIRD_PLUGINSDIR)/,$(notdir $(SONGBIRD_PLUGINS)))
+PLUGINS_DIR_TARGETS = $(addprefix $(NIGHTINGALE_PLUGINSDIR)/,$(notdir $(NIGHTINGALE_PLUGINS)))
 libs:: $(PLUGINS_DIR_TARGETS)
 
-SEARCHPLUGINS_DIR_TARGETS = $(addprefix $(SONGBIRD_SEARCHPLUGINSDIR)/,$(notdir $(SONGBIRD_SEARCHPLUGINS)))
+SEARCHPLUGINS_DIR_TARGETS = $(addprefix $(NIGHTINGALE_SEARCHPLUGINSDIR)/,$(notdir $(NIGHTINGALE_SEARCHPLUGINS)))
 libs:: $(SEARCHPLUGINS_DIR_TARGETS)
 
-CONTENTS_DIR_TARGETS = $(addprefix $(SONGBIRD_CONTENTSDIR)/,$(notdir $(SONGBIRD_CONTENTS)))
+CONTENTS_DIR_TARGETS = $(addprefix $(NIGHTINGALE_CONTENTSDIR)/,$(notdir $(NIGHTINGALE_CONTENTS)))
 libs:: $(CONTENTS_DIR_TARGETS)
 
-PROFILE_DIR_TARGETS = $(addprefix $(SONGBIRD_PROFILEDIR)/,$(notdir $(SONGBIRD_PROFILE)))
+PROFILE_DIR_TARGETS = $(addprefix $(NIGHTINGALE_PROFILEDIR)/,$(notdir $(NIGHTINGALE_PROFILE)))
 libs:: $(PROFILE_DIR_TARGETS)
 
 ##
 ## THERE BE DRAGONS HERE!
 ##
-## The ordering of these rules matters! More generic rules (SONGBIRD_DIST)
+## The ordering of these rules matters! More generic rules (NIGHTINGALE_DIST)
 ## MUST be further down in the list, or else they'll get matched with
 ## the core parts in the stem and none of the wildcard "magic" will work.
 ##
@@ -119,14 +119,14 @@ libs:: $(PROFILE_DIR_TARGETS)
 ##
 
 .SECONDEXPANSION:
-$(SONGBIRD_JSMODULESDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_JSMODULES))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_JSMODULESDIR)/$(@F)
+$(NIGHTINGALE_JSMODULESDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_JSMODULES))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_JSMODULESDIR)/$(@F)
 
-$(SONGBIRD_GSTPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_GST_PLUGINS))),$(addprefix $$d,%)))
-	$(INSTALL_PROG) $^ $(SONGBIRD_GSTPLUGINSDIR)/$(@F)
+$(NIGHTINGALE_GSTPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_GST_PLUGINS))),$(addprefix $$d,%)))
+	$(INSTALL_PROG) $^ $(NIGHTINGALE_GSTPLUGINSDIR)/$(@F)
 
-$(SONGBIRD_LIBDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_LIB))),$(addprefix $$d,%)))
-	$(INSTALL_PROG) $^ $(SONGBIRD_LIBDIR)/$(@F)
+$(NIGHTINGALE_LIBDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_LIB))),$(addprefix $$d,%)))
+	$(INSTALL_PROG) $^ $(NIGHTINGALE_LIBDIR)/$(@F)
 
 ifdef XULRUNNERDIR_MODE
    XULRUNNERDIR_INSTALL = $(INSTALL) -m $(XULRUNNERDIR_MODE)
@@ -134,32 +134,32 @@ else
    XULRUNNERDIR_INSTALL = $(INSTALL_FILE)
 endif
 
-$(SONGBIRD_XULRUNNERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_XULRUNNER))),$(addprefix $$d,%)))
-	$(XULRUNNERDIR_INSTALL) $^ $(SONGBIRD_XULRUNNERDIR)/$(@F)
+$(NIGHTINGALE_XULRUNNERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_XULRUNNER))),$(addprefix $$d,%)))
+	$(XULRUNNERDIR_INSTALL) $^ $(NIGHTINGALE_XULRUNNERDIR)/$(@F)
 
-$(SONGBIRD_CHROMEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CHROME))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_CHROMEDIR)/$(@F)
+$(NIGHTINGALE_CHROMEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_CHROME))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_CHROMEDIR)/$(@F)
 
-$(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SEARCHPLUGINS))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_SEARCHPLUGINSDIR)/$(@F)
+$(NIGHTINGALE_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_SEARCHPLUGINS))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_SEARCHPLUGINSDIR)/$(@F)
 
-$(SONGBIRD_SCRIPTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SCRIPTS))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_SCRIPTSDIR)/$(@F)
+$(NIGHTINGALE_SCRIPTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_SCRIPTS))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_SCRIPTSDIR)/$(@F)
 
-$(SONGBIRD_DOCUMENTATIONDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_DOCUMENTATION))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_DOCUMENTATIONDIR)/$(@F)
+$(NIGHTINGALE_DOCUMENTATIONDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_DOCUMENTATION))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_DOCUMENTATIONDIR)/$(@F)
 
-$(SONGBIRD_PREFERENCESDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PREFS))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_PREFERENCESDIR)/$(@F)
+$(NIGHTINGALE_PREFERENCESDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_PREFS))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_PREFERENCESDIR)/$(@F)
 
-$(SONGBIRD_PLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PLUGINS))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_PLUGINSDIR)/$(@F)
+$(NIGHTINGALE_PLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_PLUGINS))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_PLUGINSDIR)/$(@F)
 
-$(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SEARCHPLUGINS))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_SEARCHPLUGINSDIR)/$(@F)
+$(NIGHTINGALE_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_SEARCHPLUGINS))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_SEARCHPLUGINSDIR)/$(@F)
 
-$(SONGBIRD_PROFILEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PROFILE))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_PROFILEDIR)/$(@F)
+$(NIGHTINGALE_PROFILEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_PROFILE))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_PROFILEDIR)/$(@F)
 
 ifdef COMPONENTSDIR_MODE
    COMPONENTSDIR_INSTALL = $(INSTALL) -m $(COMPONENTSDIR_MODE)
@@ -167,8 +167,8 @@ else
    COMPONENTSDIR_INSTALL = $(INSTALL_FILE)
 endif
 
-$(SONGBIRD_COMPONENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_COMPONENTS))),$(addprefix $$d,%)))
-	$(COMPONENTSDIR_INSTALL) $^ $(SONGBIRD_COMPONENTSDIR)/$(@F)
+$(NIGHTINGALE_COMPONENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_COMPONENTS))),$(addprefix $$d,%)))
+	$(COMPONENTSDIR_INSTALL) $^ $(NIGHTINGALE_COMPONENTSDIR)/$(@F)
 
 ifdef DISTDIR_MODE
    DISTDIR_INSTALL = $(INSTALL) -m $(DISTDIR_MODE)
@@ -176,11 +176,11 @@ else
    DISTDIR_INSTALL = $(INSTALL_FILE)
 endif
 
-$(SONGBIRD_DISTDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_DIST))),$(addprefix $$d,%)))
-	$(DISTDIR_INSTALL) $^ $(SONGBIRD_DISTDIR)/$(@F)
+$(NIGHTINGALE_DISTDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_DIST))),$(addprefix $$d,%)))
+	$(DISTDIR_INSTALL) $^ $(NIGHTINGALE_DISTDIR)/$(@F)
 
-$(SONGBIRD_CONTENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CONTENTS))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_CONTENTSDIR)/$(@F)
+$(NIGHTINGALE_CONTENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(NIGHTINGALE_CONTENTS))),$(addprefix $$d,%)))
+	$(INSTALL_FILE) $^ $(NIGHTINGALE_CONTENTSDIR)/$(@F)
 
 #------------------------------------------------------------------------------
 endif #FILE_AUTOTARGETS_MK_INCLUDED

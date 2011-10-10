@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,14 +20,12 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
-const PREF_DOWNLOAD_MUSIC_FOLDER      = "songbird.download.music.folder";
-const PREF_DOWNLOAD_MUSIC_ALWAYS_ASK  = "songbird.download.music.alwaysPrompt";
-const PREF_DOWNLOAD_VIDEO_FOLDER      = "songbird.download.video.folder";
-const PREF_DOWNLOAD_VIDEO_ALWAYS_ASK  = "songbird.download.video.alwaysPrompt";
+const PREF_DOWNLOAD_MUSIC_FOLDER       = "nightingale.download.music.folder";
+const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT = "nightingale.download.music.alwaysPrompt";
 
 // Use var, not const, so that we won't conflict with other overlays that define
 // the same variables
@@ -59,26 +57,33 @@ function folderIsValid(folder) {
   return false;
 }
 
-var SongbirdMainPaneOverlay = {
+var NightingaleMainPaneOverlay = {
   /**
    * Cached default music folder for the platform this code runs on.
    */
   _defaultMusicFolder: null,
-  _defaultVideoFolder: null,
 
   /**
    * This is the element that will display the pretty file path.
    */
-  _musicPrefBox: null,
-  _videoPrefBox: null,
+  _pathField: null,
+
+  /**
+   * Thiese are the radio items thatcontrol the 'alwaysPrompt' pref.
+   */
+  _radioNoPrompt: null,
+  _radioPrompt: null,
+
+  /**
+   * This is the button for selecting a folder.
+   */
+  _browseButton: null,
 
   /**
    * These are the preference elements that we will create.
    */
-  _musicFolderPref: null,
-  _musicFolderAskPref: null,
-  _videoFolderPref: null,
-  _videoFolderAskPref: null,
+  _folderPref: null,
+  _alwaysPromptPref: null,
 
   /**
    * The string bundle we'll use.
@@ -86,156 +91,103 @@ var SongbirdMainPaneOverlay = {
   _strings: null,
 
   /**
-   * Getter/setter for the music folder UI widget
+   * The real folder that the path field is displaying.
    */
-  get musicFolder() {
-    return this._musicPrefBox.folder;
+  _folder: null,
+
+  /**
+   * Nice getter/setter for the path that takes care of setting the icon and
+   * hiding the full path from the UI.
+   */
+  get folder() {
+    return this._folder;
   },
-  set musicFolder(val) {
-    this._musicPrefBox.folder = val;
-    return this.musicFolder;
+  set folder(val) {
+    // Bail if the value is the same.
+    if (this._folder && this._folder.equals(val)) {
+      return val;
+    }
+
+    // Figure out the display name and icon for the path.
+    const ios = Cc["@mozilla.org/network/io-service;1"].
+                getService(Ci.nsIIOService);
+    const fph = ios.getProtocolHandler("file").
+                    QueryInterface(Ci.nsIFileProtocolHandler);
+
+    var leafName, iconURL, path;
+    if (val) {
+      if(PlatformUtils.platformString == "Windows_NT") {
+        var knownFolderManager = 
+          Cc["@getnightingale.com/Nightingale/KnownFolderManager;1"]
+            .createInstance(Ci.sbIKnownFolderManager);
+        leafName = knownFolderManager.getDisplayNameFromPath(val.path);
+      }
+      else {
+        leafName = val.leafName;
+      }
+      iconURL = "moz-icon://" + fph.getURLSpecFromFile(val) + "?size=16";
+      path = val.path;
+    }
+    else {
+      leafName = iconURL = path = "";
+    }
+
+    // Update the UI.
+    this._pathField.setAttribute("label", leafName);
+    this._pathField.setAttribute("image", iconURL);
+
+    this._folder = val;
+    return val;
   },
 
   /**
-   * Getter/setter for the video folder UI widget
+   * Getter/setter to control the alwaysPrompt preference and associated UI.
    */
-  get videoFolder() {
-    return this._videoPrefBox.folder;
+  get alwaysPrompt() {
+    return this._radioPrompt.getAttribute("selected") == "true";
   },
+  set alwaysPrompt(val) {
+    // Update the UI.
+    if (val) {
+      this._radioPrompt.setAttribute("selected", "true");
+      this._radioNoPrompt.removeAttribute("selected");
+      this._pathField.setAttribute("disabled", "true");
+      this._browseButton.setAttribute("disabled", "true");
+    }
+    else {
+      this._radioNoPrompt.setAttribute("selected", "true");
+      this._radioPrompt.removeAttribute("selected");
+      this._pathField.removeAttribute("disabled");
+      this._browseButton.removeAttribute("disabled");
+    }
 
-  set videoFolder(val) {
-    this._videoPrefBox.folder = val;
-    return this.videoFolder;
-  },
-
-  /**
-   * Getter/setter to control the music radio buttons.
-   */
-  get musicFolderAsk() {
-    return this._musicPrefBox.ask;
-  },
-  set musicFolderAsk(val) {
-    this._musicPrefBox.ask = val;
-    return this.musicFolderAsk;
-  },
-
-  /**
-   * Getter/setter to control the video radio buttons.
-   */
-  get videoFolderAsk() {
-    return this._videoPrefBox.ask;
-  },
-  set videoFolderAsk(val) {
-    this._videoPrefBox.ask = val;
-    return this.videoFolderAsk;
+    return val;
   },
 
   /**
    * This builds the UI dynamically.
    */
-  _createMusicUIElements: function() {
-    // Make some preference elements.
-    const preferencesElement = document.getElementById("mainPreferences");
-
-    this._musicFolderAskPref = document.createElement("preference");
-    this._musicFolderAskPref.setAttribute("id", PREF_DOWNLOAD_MUSIC_ALWAYS_ASK);
-    this._musicFolderAskPref.setAttribute("name",
-                                          PREF_DOWNLOAD_MUSIC_ALWAYS_ASK);
-    this._musicFolderAskPref.setAttribute("type", "bool");
-    this._musicFolderAskPref.setAttribute(
-                          "onchange",
-                          "SongbirdMainPaneOverlay.onMusicAskPrefChanged();");
-    preferencesElement.appendChild(this._musicFolderAskPref);
-
-    this._musicFolderPref = document.createElement("preference");
-    this._musicFolderPref.setAttribute("id", PREF_DOWNLOAD_MUSIC_FOLDER);
-    this._musicFolderPref.setAttribute("name", PREF_DOWNLOAD_MUSIC_FOLDER);
-    this._musicFolderPref.setAttribute("type", "unichar");
-    this._musicFolderPref.setAttribute(
-                       "onchange",
-                       "SongbirdMainPaneOverlay.onMusicFolderPrefChanged();");
-    preferencesElement.appendChild(this._musicFolderPref);
-
-    // Build the music downloads box
-    this._musicPrefBox = document.createElement("sb-savefolder-box");
-    this._musicPrefBox.setAttribute("id","musicDownloadsGroup");
-    this._musicPrefBox.setAttribute(
-                       "oncommand",
-                       "SongbirdMainPaneOverlay.onUserChangedMusicBox()");
-
-    // Insert it into the DOM to apply the XBL binding before trying
-    // to access its properties:
-    const mainPrefPane = document.getElementById("paneMain");
-    const downloadsGroup = document.getElementById("downloadsGroup");
-    mainPrefPane.insertBefore(this._musicPrefBox, downloadsGroup);
-
-    // Populate the labels.  Control labels are borrowed from the
-    // corresponding elements in the existing moz file downloads
-    // groupbox.  Other labels are taken from the strings bundle:
-    this._musicPrefBox.title =
-      this._strings.getString("prefs.main.downloads.audio.label");
-    this._musicPrefBox.folderLabel =
-      document.getElementById("saveTo").getAttribute("label"),
-    this._musicPrefBox.browseLabel =
-      document.getElementById("chooseFolder").getAttribute("label"),
-    this._musicPrefBox.askLabel =
-      document.getElementById("alwaysAsk").getAttribute("label");
-    this._musicPrefBox.browseWindowTitle =
-      this._strings.getString("prefs.main.downloads.audio.chooseTitle");
-  },
-
-  _createVideoUIElements: function() {
-    // Make some preference elements.
-    const preferencesElement = document.getElementById("mainPreferences");
-
-    this._videoFolderAskPref = document.createElement("preference");
-    this._videoFolderAskPref.setAttribute("id", PREF_DOWNLOAD_VIDEO_ALWAYS_ASK);
-    this._videoFolderAskPref.setAttribute("name",
-                                        PREF_DOWNLOAD_VIDEO_ALWAYS_ASK);
-    this._videoFolderAskPref.setAttribute("type", "bool");
-    this._videoFolderAskPref.setAttribute(
-                          "onchange",
-                          "SongbirdMainPaneOverlay.onVideoAskPrefChanged();");
-    preferencesElement.appendChild(this._videoFolderAskPref);
-
-    this._videoFolderPref = document.createElement("preference");
-    this._videoFolderPref.setAttribute("id", PREF_DOWNLOAD_VIDEO_FOLDER);
-    this._videoFolderPref.setAttribute("name", PREF_DOWNLOAD_VIDEO_FOLDER);
-    this._videoFolderPref.setAttribute("type", "unichar");
-    this._videoFolderPref.setAttribute(
-                        "onchange",
-                        "SongbirdMainPaneOverlay.onVideoFolderPrefChanged();");
-    preferencesElement.appendChild(this._videoFolderPref);
-
-    // Build the video downloads box
-    this._videoPrefBox = document.createElement("sb-savefolder-box");
-    this._videoPrefBox.setAttribute("id","videoDownloadsGroup");
-    this._videoPrefBox.setAttribute(
-                       "oncommand",
-                       "SongbirdMainPaneOverlay.onUserChangedVideoBox()");
-
-    // Insert it into the DOM to apply the XBL binding before trying
-    // to access its properties
-    const mainPrefPane = document.getElementById("paneMain");
-    const downloadsGroup = document.getElementById("downloadsGroup");
-    mainPrefPane.insertBefore(this._videoPrefBox, downloadsGroup);
-
-    // Populate the labels.  Control labels are borrowed from the
-    // corresponding elements in the existing moz file downloads
-    // groupbox.  Other labels are taken from the strings bundle:
-    this._videoPrefBox.title =
-      this._strings.getString("prefs.main.downloads.video.label");
-    this._videoPrefBox.folderLabel =
-      document.getElementById("saveTo").getAttribute("label"),
-    this._videoPrefBox.browseLabel =
-      document.getElementById("chooseFolder").getAttribute("label"),
-    this._videoPrefBox.askLabel =
-      document.getElementById("alwaysAsk").getAttribute("label");
-    this._videoPrefBox.browseWindowTitle =
-      this._strings.getString("prefs.main.downloads.video.chooseTitle");
-  },
-
   _createUIElements: function() {
+    // Make some preference elements.
+    const preferencesElement = document.getElementById("mainPreferences");
+
+    this._alwaysPromptPref = document.createElement("preference");
+    this._alwaysPromptPref.setAttribute("id", PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT);
+    this._alwaysPromptPref.setAttribute("name",
+                                        PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT);
+    this._alwaysPromptPref.setAttribute("type", "bool");
+    this._alwaysPromptPref.setAttribute("onchange",
+                                        "NightingaleMainPaneOverlay.onPromptChanged();");
+    preferencesElement.appendChild(this._alwaysPromptPref);
+
+    this._folderPref = document.createElement("preference");
+    this._folderPref.setAttribute("id", PREF_DOWNLOAD_MUSIC_FOLDER);
+    this._folderPref.setAttribute("name", PREF_DOWNLOAD_MUSIC_FOLDER);
+    this._folderPref.setAttribute("type", "unichar");
+    this._folderPref.setAttribute("onchange",
+                                  "NightingaleMainPaneOverlay.onFolderChanged();");
+    preferencesElement.appendChild(this._folderPref);
+
     var tempString;
 
     // Relabel the original downloads caption.
@@ -252,8 +204,57 @@ var SongbirdMainPaneOverlay = {
     var addonsGroup = document.getElementById("addonsMgrGroup");
     addonsGroup.parentNode.parentNode.removeChild(addonsGroup.parentNode);
 
-    this._createMusicUIElements();
-    this._createVideoUIElements();
+    // Build the rest of the content.
+    const groupbox = document.createElement("groupbox");
+    groupbox.setAttribute("id","mediaDownloadsGroup");
+
+    const caption = document.createElement("caption");
+    caption.setAttribute("id","mediaDownloadsCaption");
+    tempString = this._strings.getString("prefs.main.musicdownloads.label");
+    caption.setAttribute("label", tempString);
+    groupbox.appendChild(caption);
+
+    const promptGroup = document.createElement("radiogroup");
+    promptGroup.setAttribute("id", "mediaSaveWhere");
+    promptGroup.setAttribute("oncommand",
+                             "NightingaleMainPaneOverlay.onUserChangedPrompt()");
+    groupbox.appendChild(promptGroup);
+
+    const hbox = document.createElement("hbox");
+    hbox.setAttribute("id", "mediaSaveToRow");
+    promptGroup.appendChild(hbox);
+
+    this._radioNoPrompt = document.createElement("radio");
+    this._radioNoPrompt.setAttribute("id", "mediaSaveTo");
+    tempString = document.getElementById("saveTo").getAttribute("label");
+    this._radioNoPrompt.setAttribute("label", tempString);
+    this._radioNoPrompt.setAttribute("value", "false");
+    hbox.appendChild(this._radioNoPrompt);
+
+    this._pathField = document.createElement("filefield");
+    this._pathField.setAttribute("id", "mediaDownloadFolder");
+    this._pathField.setAttribute("flex", "1");
+    hbox.appendChild(this._pathField);
+
+    this._browseButton = document.createElement("button");
+    this._browseButton.setAttribute("id", "mediaChooseFolder");
+    tempString = document.getElementById("chooseFolder").getAttribute("label");
+    this._browseButton.setAttribute("label", tempString);
+    this._browseButton.setAttribute("oncommand",
+                                    "NightingaleMainPaneOverlay.onBrowse()");
+    hbox.appendChild(this._browseButton);
+
+    this._radioPrompt = document.createElement("radio");
+    this._radioPrompt.setAttribute("id", "mediaAlwaysAsk");
+    tempString = document.getElementById("alwaysAsk").getAttribute("label");
+    this._radioPrompt.setAttribute("label", tempString);
+    this._radioPrompt.setAttribute("value", "true");
+    promptGroup.appendChild(this._radioPrompt);
+
+    // Finally hook it all up
+    const mainPrefPane = document.getElementById("paneMain");
+    const downloadsGroup = document.getElementById("downloadsGroup");
+    mainPrefPane.insertBefore(groupbox, downloadsGroup);
   },
 
   /**
@@ -266,127 +267,82 @@ var SongbirdMainPaneOverlay = {
        return;
      }
 
-    const self = SongbirdMainPaneOverlay;
+    const self = NightingaleMainPaneOverlay;
     window.removeEventListener('paneload', self.onPaneLoad, false);
 
     // Save this for later.
-    var downloadHelper =
-      Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"].
-      getService(Ci.sbIDownloadDeviceHelper)
     self._defaultMusicFolder =
-      downloadHelper.getDefaultDownloadFolder("audio");
-    self._defaultVideoFolder =
-      downloadHelper.getDefaultDownloadFolder("video");
+      Cc["@getnightingale.com/Nightingale/DownloadDeviceHelper;1"].
+      getService(Ci.sbIDownloadDeviceHelper).
+      getDefaultMusicFolder();
 
-    self._strings = document.getElementById("bundleSongbirdPreferences");
+    self._strings = document.getElementById("bundleNightingalePreferences");
 
     // Build the UI. This requires strings to be defined.
     self._createUIElements();
 
     // Sync from preferences.
-    var musicFolder = makeFile(self._musicFolderPref.value);
-    if (!folderIsValid(musicFolder)) {
+    var downloadFolder = makeFile(self._folderPref.value);
+    if (!folderIsValid(downloadFolder)) {
       // Reset to default.
-      musicFolder = self._defaultMusicFolder;
-      self._musicFolderPref.value = (musicFolder ? musicFolder.path : "");
+      downloadFolder = self._defaultMusicFolder;
+      self._folderPref.value = downloadFolder.path;
     }
-    self.musicFolder = musicFolder;
+    self.folder = downloadFolder;
 
-    self.musicFolderAsk = self._musicFolderAskPref.value;
+    self.alwaysPrompt = self._alwaysPromptPref.value;
+  },
 
-    var videoFolder = makeFile(self._videoFolderPref.value);
-    if (!folderIsValid(videoFolder)) {
-      // Reset to default.
-      videoFolder = self._defaultVideoFolder;
-      self._videoFolderPref.value = (videoFolder ? videoFolder.path : "");
+  /**
+   * Called when the browse button is clicked.
+   */
+  onBrowse: function() {
+    const self = NightingaleMainPaneOverlay;
+    const title = self._strings
+                      .getString("prefs.main.musicdownloads.chooseTitle");
+    var folderPicker = Cc["@mozilla.org/filepicker;1"].
+                       createInstance(Ci.nsIFilePicker);
+    folderPicker.init(window, title, Ci.nsIFilePicker.modeGetFolder);
+    folderPicker.displayDirectory = self.folder;
+
+    if (folderPicker.show() == Ci.nsIFilePicker.returnOK) {
+      var selectedFolder = folderPicker.file;
+      if (!folderIsValid(selectedFolder)) {
+        selectedFolder = self._defaultMusicFolder;
+      }
+      self._folderPref.value = selectedFolder.path;
+      self.folder = selectedFolder;
     }
-    self.videoFolder = videoFolder;
-
-    self.videoFolderAsk = self._videoFolderAskPref.value;
   },
 
   /**
-   * Called when the user changes the music settings box
+   * Called when the user changes the prompt setting.
    */
-  onUserChangedMusicBox: function() {
-    // The user changed a pref control.  Reflect the new state to
-    // the preferences.
-    const self = SongbirdMainPaneOverlay;
-    var path = (self.musicFolder ? self.musicFolder.path : "");
-    self._musicFolderPref.value = path;
-    self._musicFolderAskPref.value = self.musicFolderAsk;
+  onUserChangedPrompt: function() {
+    const self = NightingaleMainPaneOverlay;
+    self._alwaysPromptPref.value = self.alwaysPrompt;
   },
 
   /**
-   * Called when the user changes the video settings box
+   * Called when the folder changes.
    */
-  onUserChangedVideoBox: function() {
-    // The user changed a pref control.  Reflect the new state to
-    // the preferences.
-    const self = SongbirdMainPaneOverlay;
-    var path = (self.videoFolder ? self.videoFolder.path : "");
-    self._videoFolderPref.value = path;
-    self._videoFolderAskPref.value = self.videoFolderAsk;
-  },
-
-  /**
-   * Called when the music folder pref changes.
-   */
-  onMusicFolderPrefChanged: function() {
-    // The folder pref changed.  Load the value and use
-    // it to update the pref box UI:
-    const self = SongbirdMainPaneOverlay;
-    var newFolder = makeFile(self._musicFolderPref.value);
+  onFolderChanged: function() {
+    const self = NightingaleMainPaneOverlay;
+    var newFolder = makeFile(self._folderPref.value);
     if (!folderIsValid(newFolder)) {
-      // The pref is not a valid folder.  Set it to the default
-      // folder.  This function will get called again if, and only
-      // if, the pref value changes here:
+      // Recursive!
       newFolder = self._defaultMusicFolder;
-      self._musicFolderPref.value = (newFolder ? newFolder.path : "");
+      self._folderPref.value = newFolder.path;
     }
-    
-    // Update the pref box UI with the new folder setting:
-    self.musicFolder = newFolder;
+    self.folder = newFolder;
   },
 
   /**
-   * Called when the video folder pref changes.
+   * Called when the prompt setting changes.
    */
-  onVideoFolderPrefChanged: function() {
-    // The folder pref changed.  Load the value and use
-    // it to update the pref box UI:
-    const self = SongbirdMainPaneOverlay;
-    var newFolder = makeFile(self._videoFolderPref.value);
-    if (!folderIsValid(newFolder)) {
-      // The pref is not a valid folder.  Set it to the default
-      // folder.  This function will get called again if, and only
-      // if, the pref value changes here:
-      newFolder = self._defaultVideoFolder;
-      self._videoFolderPref.value = (newFolder ? newFolder.path : "");
-    }
-    
-    // Update the pref box UI with the new folder setting:
-    self.videoFolder = newFolder;
-  },
-
-  /**
-   * Called when the music folder prompt setting changes.
-   */
-  onMusicAskPrefChanged: function() {
-    // The ask pref changed.  Load the value and use
-    // it to update the pref box UI:
-    const self = SongbirdMainPaneOverlay;
-    self.musicFolderAsk = self._musicFolderAskPref.value;
-  },
-
-  /**
-   * Called when the video folder prompt setting changes.
-   */
-  onVideoAskPrefChanged: function() {
-    // The ask pref changed.  Load the value and use
-    // it to update the pref box UI:
-    const self = SongbirdMainPaneOverlay;
-    self.videoFolderAsk = self._videoFolderAskPref.value;
+  onPromptChanged: function() {
+    const self = NightingaleMainPaneOverlay;
+    self.alwaysPrompt = self._alwaysPromptPref.value;
   }
 };
 
@@ -394,4 +350,4 @@ var SongbirdMainPaneOverlay = {
 // individual preference panes are loaded asynchronously via
 // document.loadOverlay (see preferences.xml) and the load event may fire before
 // our target pane has been integrated.
-window.addEventListener('paneload', SongbirdMainPaneOverlay.onPaneLoad, false);
+window.addEventListener('paneload', NightingaleMainPaneOverlay.onPaneLoad, false);

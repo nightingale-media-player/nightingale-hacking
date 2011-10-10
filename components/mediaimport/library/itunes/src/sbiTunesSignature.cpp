@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -38,7 +38,7 @@
 #include <sbProxiedComponentManager.h>
 
 
-char const SB_ITUNES_DB_GUID[] = "songbird";
+char const SB_ITUNES_DB_GUID[] = "nightingale";
 
 sbiTunesSignature::sbiTunesSignature() {}
 sbiTunesSignature::~sbiTunesSignature() {}
@@ -52,10 +52,10 @@ nsresult sbiTunesSignature::Initialize() {
   mHashProc->Init(nsICryptoHash::MD5);
   
   /* Create a signature database query component. */
-  mDBQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  mDBQuery = do_CreateInstance("@getnightingale.com/Nightingale/DatabaseQuery;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   mDBQuery->SetAsyncQuery(PR_FALSE);
-  mDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird"));
+  mDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("nightingale"));
   
   /* Ensure the signature database table exists. */
   nsString sql(NS_LITERAL_STRING("CREATE TABLE IF NOT EXISTS itunes_signatures (id TEXT UNIQUE NOT NULL, signature TEXT NOT NULL)"));

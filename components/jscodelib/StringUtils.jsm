@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -81,7 +81,7 @@ var gSBStringBrandBundle = null;
  * the string bundle specified by aStringBundle.  If the string cannot be found,
  * return the default string specified by aDefault; if aDefault is not
  * specified or is null, return aKey.
- *   If aStringBundle is not specified, use the main Songbird string bundle.
+ *   If aStringBundle is not specified, use the main Nightingale string bundle.
  *
  * \param aKey                  Localized string key.
  * \param aDefault              Optional default string.
@@ -91,7 +91,7 @@ var gSBStringBrandBundle = null;
  */
 
 function SBString(aKey, aDefault, aStringBundle) {
-  // Use default Songbird string bundle utility object if no bundle specified.
+  // Use default Nightingale string bundle utility object if no bundle specified.
   if (!aStringBundle)
     return SBStringGetDefaultBundle().get(aKey, aDefault);
 
@@ -114,7 +114,7 @@ function SBString(aKey, aDefault, aStringBundle) {
  * by aKey using the string bundle specified by aStringBundle.  If the string
  * cannot be found, return the string specified by aDefault; if aDefault is not
  * specified, return aKey.
- *   If aStringBundle is not specified, use the main Songbird string bundle.
+ *   If aStringBundle is not specified, use the main Nightingale string bundle.
  *   The bundle string will be treated as a formatted string, and the first
  * parameter will be set to the brand short name string.
  *
@@ -138,7 +138,7 @@ function SBBrandedString(aKey, aDefault, aStringBundle) {
  * format parameters specified by aParams and the string bundle specified by
  * aStringBundle.  If the string cannot be found, return the default string
  * specified by aDefault; if aDefault is not specified or is null, return aKey.
- *   If no string bundle is specified, get the string from the Songbird bundle.
+ *   If no string bundle is specified, get the string from the Nightingale bundle.
  * If a string cannot be found, return aKey.
  *
  * \param aKey                  Localized string key.
@@ -150,7 +150,7 @@ function SBBrandedString(aKey, aDefault, aStringBundle) {
  */
 
 function SBFormattedString(aKey, aParams, aDefault, aStringBundle) {
-  // Use default Songbird string bundle utility object if no bundle specified.
+  // Use default Nightingale string bundle utility object if no bundle specified.
   if (!aStringBundle)
     return SBStringGetDefaultBundle().format(aKey, aParams, aDefault);
 
@@ -174,7 +174,7 @@ function SBFormattedString(aKey, aParams, aDefault, aStringBundle) {
  * specified by aStringBundle.  If the string cannot be found, return the
  * default string specified by aDefault; if aDefault is not specified, return
  * aKey.
- *   If no string bundle is specified, get the string from the Songbird bundle.
+ *   If no string bundle is specified, get the string from the Nightingale bundle.
  * If a string cannot be found, return aKey.
  *   The brand short name string will be appended to the formatted string
  * parameter list.
@@ -205,7 +205,7 @@ function SBBrandedFormattedString(aKey, aParams, aDefault, aStringBundle) {
  *   Use the format parameters specified by aParams.  If aParams is not
  * specified, use the count as the single format parameter.
  *   Use the string bundle specified by aStringBundle.  If the string bundle is
- * not specified, use the main Songbird string bundle.
+ * not specified, use the main Nightingale string bundle.
  *   If the string cannot be found, return the default string specified by
  * aDefault; if aDefault is not specified or is null, return aKeyBase.
  *
@@ -223,7 +223,7 @@ function SBFormattedCountString(aKeyBase,
                                 aParams,
                                 aDefault,
                                 aStringBundle) {
-  // Use default Songbird string bundle utility object if no bundle specified.
+  // Use default Nightingale string bundle utility object if no bundle specified.
   if (!aStringBundle) {
     return SBStringGetDefaultBundle().formatCountString(aKeyBase,
                                                         aCount,
@@ -260,13 +260,13 @@ function SBFormattedCountString(aKeyBase,
 
 
 /**
- * Return the Songbird brand short name localized string.
+ * Return the Nightingale brand short name localized string.
  *
- * \return Songbird brand short name.
+ * \return Nightingale brand short name.
  */
 
 function SBStringBrandShortName() {
-  return SBString("brandShortName", "Songbird", SBStringGetBrandBundle());
+  return SBString("brandShortName", "Nightingale", SBStringGetBrandBundle());
 }
 
 
@@ -277,9 +277,9 @@ function SBStringBrandShortName() {
 //------------------------------------------------------------------------------
 
 /**
- * Return the default Songbird string bundle utility object.
+ * Return the default Nightingale string bundle utility object.
  *
- * \return Default Songbird string bundle utility object.
+ * \return Default Nightingale string bundle utility object.
  */
 
 function SBStringGetDefaultBundle() {
@@ -291,9 +291,9 @@ function SBStringGetDefaultBundle() {
 
 
 /**
- * Return the Songbird branding localized string bundle.
+ * Return the Nightingale branding localized string bundle.
  *
- * \return Songbird branding localized string bundle.
+ * \return Nightingale branding localized string bundle.
  */
 
 function SBStringGetBrandBundle() {
@@ -310,16 +310,16 @@ function SBStringGetBrandBundle() {
 
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle utility object.
+// Nightingale string bundle utility object.
 //
-//   The Songbird string bundle utility object provides an expanded set of
+//   The Nightingale string bundle utility object provides an expanded set of
 // string bundle services.  In particular, this object allows string bundles to
 // include other string bundles and to include bundle strings in other bundle
 // strings.
 //   To include one or more string bundles in a top-level string bundle, define
 // the string "include_bundle_list" in the top-level bundle.  This string should
 // consist of a comma separated list of included string bundle URI's.  When
-// the Songbird string bundle utility object looks up a string, it will look in
+// the Nightingale string bundle utility object looks up a string, it will look in
 // the top-level string bundle and all included string bundles.  The included
 // string bundles can include additional string bundles too.
 //   To include a bundle string in another bundle string, encapsulate the
@@ -338,10 +338,10 @@ function SBStringGetBrandBundle() {
 //------------------------------------------------------------------------------
 
 /**
- *   Construct a Songbird string bundle utility object using the base string
+ *   Construct a Nightingale string bundle utility object using the base string
  * bundle specified by aBundle.  If aBundle is a string, it is treated as a
  * URI for a string bundle; otherwise, it is treated as a string bundle object.
- * If aBundle is not specified, the default Songbird string bundle is used.
+ * If aBundle is not specified, the default Nightingale string bundle is used.
  *
  *   ==> aBundle                Base string bundle.
  */
@@ -352,9 +352,9 @@ function SBStringBundle(aBundle)
   this._stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"]
                                 .getService(Ci.nsIStringBundleService);
 
-  // Use the default Songbird string bundle if none specified.
+  // Use the default Nightingale string bundle if none specified.
   if (!aBundle)
-    aBundle = "chrome://songbird/locale/songbird.properties";
+    aBundle = "chrome://nightingale/locale/nightingale.properties";
 
   // Initialize the bundle list.
   this._bundleList = [];
@@ -369,7 +369,7 @@ SBStringBundle.prototype = {
   constructor: SBStringBundle,
 
   //
-  // Songbird string bundle utility object fields.
+  // Nightingale string bundle utility object fields.
   //
   //   _stringBundleService     String bundle service object.
   //   _bundleList              List of string bundles.
@@ -508,7 +508,7 @@ SBStringBundle.prototype = {
 
   //----------------------------------------------------------------------------
   //
-  // Internal Songbird string bundle utility object services.
+  // Internal Nightingale string bundle utility object services.
   //
   //----------------------------------------------------------------------------
 
@@ -569,7 +569,7 @@ SBStringBundle.prototype = {
 
 //------------------------------------------------------------------------------
 //
-// Songbird string set utility object.
+// Nightingale string set utility object.
 //
 //   A string set is a string containing a set of strings, separated by a
 // delimiter (e.g., " ").  A string set does not contain duplicates.  A string
@@ -659,7 +659,7 @@ var StringSet = {
 
     // Split the string set into an array and return whether the string set
     // contains the string.
-    var stringSet = aStringSet.split(delimiter);
+    var stringSet = aString.split(delimiter);
     return (stringSet.indexOf(aString) >= 0);
   }
 };

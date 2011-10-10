@@ -1,11 +1,11 @@
 /** vim: ts=2 sw=2 expandtab
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -35,8 +35,8 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Ce = Components.Exception;
 
-const URL_BINDING_DEFAULT_PANE = "chrome://songbird/content/bindings/facePlate.xml#default-pane";
-const URL_BINDING_DASHBOARD_PANE = "chrome://songbird/content/bindings/facePlate.xml#playback-pane"; 
+const URL_BINDING_DEFAULT_PANE = "chrome://nightingale/content/bindings/facePlate.xml#default-pane";
+const URL_BINDING_DASHBOARD_PANE = "chrome://nightingale/content/bindings/facePlate.xml#playback-pane"; 
 
 const DATAREMOTE_PLAYBACK = "faceplate.playing";
 
@@ -185,10 +185,10 @@ function FaceplateManager() {
                       .getService(Components.interfaces.nsIObserverService);
   
   // We want to wait till profile-after-change to initialize
-  os.addObserver(this, 'songbird-library-manager-ready', false);
+  os.addObserver(this, 'nightingale-library-manager-ready', false);
 
   // We need to unhook things on shutdown
-  os.addObserver(this, "songbird-library-manager-before-shutdown", false);
+  os.addObserver(this, "nightingale-library-manager-before-shutdown", false);
   
   this._listeners = [];
   this._panes = {};
@@ -215,7 +215,7 @@ FaceplateManager.prototype = {
     // Come up with some localized names for the default panes.
     var strings = Cc["@mozilla.org/intl/stringbundle;1"]
                   .getService(Ci.nsIStringBundleService)
-                  .createBundle("chrome://songbird/locale/songbird.properties"); 
+                  .createBundle("chrome://nightingale/locale/nightingale.properties"); 
     var getString = function(aStringId, aDefault) {
       try {
         return strings.GetStringFromName(aStringId);
@@ -227,12 +227,12 @@ FaceplateManager.prototype = {
     var dashboardName = getString("faceplate.pane.dashboard.name", "Dashboard");
     
     // Create the panes
-    this.createPane("songbird-intro", introName, URL_BINDING_DEFAULT_PANE);
-    this.createPane("songbird-dashboard", dashboardName, URL_BINDING_DASHBOARD_PANE);
+    this.createPane("nightingale-intro", introName, URL_BINDING_DEFAULT_PANE);
+    this.createPane("nightingale-dashboard", dashboardName, URL_BINDING_DASHBOARD_PANE);
     
     // Set up a dataremote to show the dashboard on first playback.
     var createDataRemote =  new Components.Constructor(
-                                   "@songbirdnest.com/Songbird/DataRemote;1",
+                                   "@getnightingale.com/Nightingale/DataRemote;1",
                                    Components.interfaces.sbIDataRemote, "init");
     
     this._playbackDataRemote = createDataRemote(DATAREMOTE_PLAYBACK, null);
@@ -310,7 +310,7 @@ FaceplateManager.prototype = {
   getDefaultPane: function FaceplateManager_getDefaultPane() {
     var pane = this.getPane(this._defaultPaneID);
     if (!pane) {
-      pane = this.getPane("songbird-intro");
+      pane = this.getPane("nightingale-intro");
     }
     return pane;
   },
@@ -369,7 +369,7 @@ FaceplateManager.prototype = {
    * starts for the first time.
    */  
   _showDashboardPane: function FaceplateManager__showDashboardPane() {
-    var pane = this.getPane("songbird-dashboard");
+    var pane = this.getPane("nightingale-dashboard");
     if (pane) {
       this.showPane(pane);
     } else {
@@ -386,12 +386,12 @@ FaceplateManager.prototype = {
                       .getService(Components.interfaces.nsIObserverService);
 
     switch (topic) {
-    case "songbird-library-manager-ready":
-      os.removeObserver(this, "songbird-library-manager-ready");
+    case "nightingale-library-manager-ready":
+      os.removeObserver(this, "nightingale-library-manager-ready");
       this._init();
       break;
-    case "songbird-library-manager-before-shutdown":
-      os.removeObserver(this, "songbird-library-manager-before-shutdown");
+    case "nightingale-library-manager-before-shutdown":
+      os.removeObserver(this, "nightingale-library-manager-before-shutdown");
       this._deinit();
       break;
     // When playback begins for the first time, jump
@@ -499,10 +499,10 @@ function makeGetModule(CONSTRUCTOR, CID, CLASSNAME, CONTRACTID, CATEGORIES) {
 var NSGetModule = makeGetModule (
   FaceplateManager,
   Components.ID("{eb5c665a-bfe2-49f0-a747-cd3554e55606}"),
-  "Songbird Faceplate Pane Manager Service",
-  "@songbirdnest.com/faceplate/manager;1",
+  "Nightingale Faceplate Pane Manager Service",
+  "@getnightingale.com/faceplate/manager;1",
   [{
     category: 'app-startup',
     entry: 'faceplate-pane-manager',
-    value: 'service,@songbirdnest.com/faceplate/manager;1'
+    value: 'service,@getnightingale.com/faceplate/manager;1'
   }]);

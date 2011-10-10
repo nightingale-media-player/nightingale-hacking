@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
  
@@ -36,7 +36,7 @@ interface nsIArray;
 [scriptable, uuid(dc0128a1-1f41-4d25-b1ad-6b5d2d608745)]
 interface sbIMediaFormatContainer : nsISupports {
   /**
-   * The container type for this format. This is Songbird defined, but will
+   * The container type for this format. This is Nightingale defined, but will
    * probably be mime types or things like ogg and quicktime.
    */
   readonly attribute AString containerType;
@@ -50,9 +50,9 @@ interface sbIMediaFormatContainer : nsISupports {
 %{C++
 
 #define SB_MEDIAFORMATCONTAINER_DESCRIPTION    \
-  "Songbird Mediacore Media Format Container"
+  "Nightingale Mediacore Media Format Container"
 #define SB_MEDIAFORMATCONTAINER_CONTRACTID     \
-  "@songbirdnest.com/Songbird/Mediacore/mediaformatcontainer;1"
+  "@getnightingale.com/Nightingale/Mediacore/mediaformatcontainer;1"
 #define SB_MEDIAFORMATCONTAINER_CLASSNAME      \
   "sbMediaFormatContainer"
 #define SB_MEDIAFORMATCONTAINER_CID            \
@@ -110,9 +110,9 @@ interface sbIMediaFormatVideo : nsISupports {
 %{C++
 
 #define SB_MEDIAFORMATVIDEO_DESCRIPTION    \
-  "Songbird Mediacore Media Format Video"
+  "Nightingale Mediacore Media Format Video"
 #define SB_MEDIAFORMATVIDEO_CONTRACTID     \
-  "@songbirdnest.com/Songbird/Mediacore/mediaformatvideo;1"
+  "@getnightingale.com/Nightingale/Mediacore/mediaformatvideo;1"
 #define SB_MEDIAFORMATVIDEO_CLASSNAME      \
   "sbMediaFormatVideo"
 #define SB_MEDIAFORMATVIDEO_CID            \
@@ -155,9 +155,9 @@ interface sbIMediaFormatAudio : nsISupports {
 %{C++
 
 #define SB_MEDIAFORMATAUDIO_DESCRIPTION    \
-  "Songbird Mediacore Media Format Audio"
+  "Nightingale Mediacore Media Format Audio"
 #define SB_MEDIAFORMATAUDIO_CONTRACTID     \
-  "@songbirdnest.com/Songbird/Mediacore/mediaformataudio;1"
+  "@getnightingale.com/Nightingale/Mediacore/mediaformataudio;1"
 #define SB_MEDIAFORMATAUDIO_CLASSNAME      \
   "sbMediaFormatAudio"
 #define SB_MEDIAFORMATAUDIO_CID            \
@@ -194,9 +194,9 @@ interface sbIMediaFormat : nsISupports
 %{C++
 
 #define SB_MEDIAFORMAT_DESCRIPTION    \
-  "Songbird Mediacore Media Format"
+  "Nightingale Mediacore Media Format"
 #define SB_MEDIAFORMAT_CONTRACTID     \
-  "@songbirdnest.com/Songbird/Mediacore/mediaformat;1"
+  "@getnightingale.com/Nightingale/Mediacore/mediaformat;1"
 #define SB_MEDIAFORMAT_CLASSNAME      \
   "sbMediaFormat"
 #define SB_MEDIAFORMAT_CID            \
@@ -213,7 +213,7 @@ interface sbIMediaInspector : nsISupports
 {
   /**
    * This method is used to retrieve the media format information for a given
-   * Songbird media item, synchronously. This method MUST NOT be used from the
+   * Nightingale media item, synchronously. This method MUST NOT be used from the
    * main thread.
    *
    * \param aMediaItem The item to retrieve the media format
@@ -224,7 +224,7 @@ interface sbIMediaInspector : nsISupports
 
   /**
    * This method is used to retrieve the media format information for a given
-   * Songbird media item, asynchronously. This method may be used from any
+   * Nightingale media item, asynchronously. This method may be used from any
    * thread. Before calling this, the caller should QI this object to
    * sbIJobProgress, and listen for the job to complete.
    * Once complete (and successful), the caller may read the
@@ -244,9 +244,9 @@ interface sbIMediaInspector : nsISupports
 %{C++
 
 #define SB_MEDIAINSPECTOR_DESCRIPTION    \
-  "Songbird Mediacore Media Inspector"
+  "Nightingale Mediacore Media Inspector"
 #define SB_MEDIAINSPECTOR_CONTRACTID     \
-  "@songbirdnest.com/Songbird/Mediacore/mediainspector;1"
+  "@getnightingale.com/Nightingale/Mediacore/mediainspector;1"
 #define SB_MEDIAINSPECTOR_CLASSNAME      \
   "sbMediaInspector"
 #define SB_MEDIAINSPECTOR_CID               \

@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -39,53 +39,53 @@ function runTest(tester) {
     }
 
     // these additions should all work
-    songbird.addListener("metadata.artist", listener);
-    songbird.addListener("metadata.title", listener);
-    songbird.addListener("metadata.album", listener);
-    songbird.addListener("metadata.genre", listener);
-    songbird.addListener("metadata.position", listener);
-    songbird.addListener("metadata.position.str", listener);
-    songbird.addListener("metadata.length", listener);
-    songbird.addListener("metadata.length.str", listener);
-    songbird.addListener("playlist.shuffle", listener);
-    songbird.addListener("playlist.repeat", listener);
-    songbird.addListener("faceplate.volume", listener);
-    songbird.addListener("faceplate.mute", listener);
-    songbird.addListener("faceplate.playing", listener);
-    songbird.addListener("faceplate.paused", listener);
+    nightingale.addListener("metadata.artist", listener);
+    nightingale.addListener("metadata.title", listener);
+    nightingale.addListener("metadata.album", listener);
+    nightingale.addListener("metadata.genre", listener);
+    nightingale.addListener("metadata.position", listener);
+    nightingale.addListener("metadata.position.str", listener);
+    nightingale.addListener("metadata.length", listener);
+    nightingale.addListener("metadata.length.str", listener);
+    nightingale.addListener("playlist.shuffle", listener);
+    nightingale.addListener("playlist.repeat", listener);
+    nightingale.addListener("faceplate.volume", listener);
+    nightingale.addListener("faceplate.mute", listener);
+    nightingale.addListener("faceplate.playing", listener);
+    nightingale.addListener("faceplate.paused", listener);
 
     // these removals should all work
-    songbird.removeListener("metadata.artist", listener);
-    songbird.removeListener("metadata.title", listener);
-    songbird.removeListener("metadata.album", listener);
-    songbird.removeListener("metadata.genre", listener);
-    songbird.removeListener("metadata.position", listener);
-    songbird.removeListener("metadata.position.str", listener);
-    songbird.removeListener("metadata.length", listener);
-    songbird.removeListener("metadata.length.str", listener);
-    songbird.removeListener("playlist.shuffle", listener);
-    songbird.removeListener("playlist.repeat", listener);
-    songbird.removeListener("faceplate.volume", listener);
-    songbird.removeListener("faceplate.mute", listener);
-    songbird.removeListener("faceplate.playing", listener);
-    songbird.removeListener("faceplate.paused", listener);
+    nightingale.removeListener("metadata.artist", listener);
+    nightingale.removeListener("metadata.title", listener);
+    nightingale.removeListener("metadata.album", listener);
+    nightingale.removeListener("metadata.genre", listener);
+    nightingale.removeListener("metadata.position", listener);
+    nightingale.removeListener("metadata.position.str", listener);
+    nightingale.removeListener("metadata.length", listener);
+    nightingale.removeListener("metadata.length.str", listener);
+    nightingale.removeListener("playlist.shuffle", listener);
+    nightingale.removeListener("playlist.repeat", listener);
+    nightingale.removeListener("faceplate.volume", listener);
+    nightingale.removeListener("faceplate.mute", listener);
+    nightingale.removeListener("faceplate.playing", listener);
+    nightingale.removeListener("faceplate.paused", listener);
 
     // invalid string should throw
     try {
-      songbird.addListener("foo.bar", listener);
+      nightingale.addListener("foo.bar", listener);
       tester.fail("did not throw: addListener('foo.bar')");
     }
     catch (e) {}
 
     try {
-      songbird.addListener("metadata.url", listener);
+      nightingale.addListener("metadata.url", listener);
       tester.fail("did not throw: addListener('metadata.url')");
     }
     catch (e) {}
 
     // removing invalid string should fail silently
-    songbird.removeListener("foo.bar", listener);
-    songbird.removeListener("metadata.url", listener);
+    nightingale.removeListener("foo.bar", listener);
+    nightingale.removeListener("metadata.url", listener);
 
   }
   catch(e) {

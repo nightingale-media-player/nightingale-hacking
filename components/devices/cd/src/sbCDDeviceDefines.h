@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,13 +34,13 @@
   "sbCDDeviceMarshall"
 
 #define SB_CDDEVICE_MARSHALL_CONTRACTID \
-  "@songbirdnest.com/Songbird/CDDeviceMarshall;1"
+  "@getnightingale.com/Nightingale/CDDeviceMarshall;1"
 
 #define SB_CDDEVICE_MARSHALL_CLASSNAME \
-  "SongbirdCDDeviceMarshall"
+  "NightingaleCDDeviceMarshall"
 
 #define SB_CDDEVICE_MARSHALL_DESC \
-  "Songbird CD Device Marshall"
+  "Nightingale CD Device Marshall"
 
 #define SB_CDDEVICE_MARSHALL_CID \
   {0x1115bc18, 0x1dd2, 0x11b2, {0xb4, 0x41, 0xaa, 0x8a, 0x5f, 0x59, 0x75, 0x1d}}
@@ -52,21 +52,21 @@
 // CD device sbIDeviceController Defines
 
 #define SB_CDDEVICE_CONTROLLER_CONTRACTID \
-  "@songbirdnest.com/Songbird/CDDeviceController;1"
+  "@getnightingale.com/Nightingale/CDDeviceController;1"
 
 #define SB_CDDEVICE_CONTROLLER_CLASSNAME \
-  "SongbirdCDDeviceController"
+  "NightingaleCDDeviceController"
 
 #define SB_CDDEVICE_CONTROLLER_DESC \
-  "Songbird CD Device Controller"
+  "Nightingale CD Device Controller"
 
 #define SB_CDDEVICE_CONTROLLER_CID \
   {0x45684bb8, 0x1dd2, 0x11b2, {0xac, 0xb3, 0x95, 0xcc, 0x54, 0x81, 0x87, 0x17}}
 
 #define NO_CD_INFO_FOUND_DIALOG_URI \
-  "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul"
+  "chrome://nightingale/content/xul/device/cdInfoNotFoundDialog.xul"
 #define MULTI_CD_INFO_FOUND_DIALOG_URI \
-  "chrome://songbird/content/xul/device/multiCDLookupResultsDialog.xul"
+  "chrome://nightingale/content/xul/device/multiCDLookupResultsDialog.xul"
 
 #endif  // sbCDDeviceDefines_h_
 

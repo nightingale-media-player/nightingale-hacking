@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,12 +21,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -42,7 +42,7 @@
    ************************************************************************* -->
 
   <binding id="sb-device-sync"
-     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+     extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
 
     <!-- ***********************************************************************
      *
@@ -53,33 +53,26 @@
      <content>
 
       <xul:vbox class="device-tab-content">
+        <xul:groupbox sbid="manual-mode-descr">
+          <xul:description>&device.sync.manual_mode.descr;</xul:description>
+        </xul:groupbox>
 
         <xul:vbox sbid="content_selector">
-          <xul:hbox align="center" sbid="import_header">
+
+          <xul:hbox align="center">
             <xul:stack flex="1">
-              <xul:hbox sbid="import_header_background"
-                        class="content_management_header_background"/>
-              <xul:checkbox sbid="import_header_checkbox"
-                            label="&device.import.header.label;"
-                            xbl:inherits="disabled"
-                            oncommand="_onUIPrefChange(true);"/>
-            </xul:stack>
-          </xul:hbox>
-          <xul:hbox align="center" sbid="sync_header">
-            <xul:stack flex="1">
-              <xul:hbox sbid="sync_header_background"
-                        class="content_management_header_background"/>
-              <xul:checkbox sbid="sync_header_checkbox"
+              <xul:hbox sbid="content_management_header_background"/>
+              <xul:checkbox sbid="content_management_checkbox"
                             label="&device.sync.header.label;"
                             xbl:inherits="disabled"
-                            oncommand="_onUIPrefChange(true);"/>
+                            oncommand="_onUIPrefChange();"/>
             </xul:stack>
           </xul:hbox>
           <xul:groupbox sbid="content_management_groupbox">
 
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"
-                      oncommand="_onUIPrefChange(true);">
+                      oncommand="_onUIPrefChange();">
 
               <!-- Content management radio group. -->
               <xul:radiogroup sbid="content_auto_sync_type_radio_group">
@@ -96,8 +89,8 @@
                           editable="true"
                           seltype="single"
                           rows="8"
-                          onkeyup="_onUIPrefChange(false);"
-                          onclick="_onUIPrefChange(false);">
+                          onkeyup="_onUIPrefChange();"
+                          onclick="_onUIPrefChange();">
                   <xul:treecols>
                     <xul:treecol sbid="content_auto_sync_playlist_check"
                                  type="checkbox"
@@ -168,13 +161,13 @@
       <!--
        * \brief Handle changes to the UI.
        *
-       * \param aNeedUpdate    Whether the UI needs to be updated.
+       * \param aEvent          UI event.
        -->
 
       <method name="_onUIPrefChange">
-        <parameter name="aNeedUpdate"/>
+        <parameter name="aEvent"/>
         <body><![CDATA[
-          this.DeviceSyncWidget.onUIPrefChange(aNeedUpdate);
+          this.DeviceSyncWidget.onUIPrefChange();
         ]]></body>
       </method>
 
@@ -214,7 +207,7 @@
                                .getService
                                   (Components.interfaces.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
-                  ("chrome://songbird/content/scripts/device/deviceSync.js",
+                  ("chrome://nightingale/content/scripts/device/deviceSync.js",
                    this);
         }
 

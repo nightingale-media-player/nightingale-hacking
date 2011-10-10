@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 var gHotkeysPane = {
@@ -41,11 +41,11 @@ var gHotkeysPane = {
   init: function init()
   {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
-    jsLoader.loadSubScript( "chrome://songbird/content/scripts/messageBox.js", this );
+    jsLoader.loadSubScript( "chrome://nightingale/content/scripts/messageBox.js", this );
 
     window.addEventListener("unload", onHotkeysUnload, true);
 
-    this._hotkeyService = Cc["@songbirdnest.com/Songbird/HotkeyService;1"]
+    this._hotkeyService = Cc["@getnightingale.com/Nightingale/HotkeyService;1"]
                             .getService(Ci.sbIHotkeyService);
 
     this._binding_enabled = SBDataBindElementAttribute(this._hotkeyService.hotkeysEnabledDRKey, "hotkeys.enabled", "checked", true);
@@ -79,7 +79,7 @@ var gHotkeysPane = {
     var menupopup = this._actionlist.firstChild;
     while (menupopup.childNodes.length>0) menupopup.removeChild(menupopup.childNodes[0]);
 
-    var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
+    var hotkeyActionsComponent = Components.classes["@getnightingale.com/Nightingale/HotkeyActions;1"];
     if (hotkeyActionsComponent) this._actions = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
     if (this._actions)
     {
@@ -174,12 +174,12 @@ var gHotkeysPane = {
   saveHotkeys: function()
   {
     // Set all hotkeys, extract them from the list itself
-    var hotkeyConfigList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+    var hotkeyConfigList = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
     var n = this._list.getRowCount();
     for (var i=0;i<n;i++)
     {
-      var hotkeyConfig = Cc["@songbirdnest.com/Songbird/HotkeyConfiguration;1"]
+      var hotkeyConfig = Cc["@getnightingale.com/Nightingale/HotkeyConfiguration;1"]
                            .createInstance(Ci.sbIHotkeyConfiguration);
       var item = this._list.getItemAtIndex(i);
       var keycombo = item.keycombo;

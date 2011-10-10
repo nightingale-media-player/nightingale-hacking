@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -41,11 +41,11 @@ Imported by bindings.css or directly into feathers.
 /* Twisty and Shouty **/
 .servicepane-tree > treechildren::-moz-tree-twisty(open)
 {
-  list-style-image: url(chrome://songbird/skin/servicepane/twisty-open.png);
+  list-style-image: url(chrome://nightingale/skin/servicepane/twisty-open.png);
 }
 .servicepane-tree > treechildren::-moz-tree-twisty(closed)
 {
-  list-style-image: url(chrome://songbird/skin/servicepane/twisty-closed.png);
+  list-style-image: url(chrome://nightingale/skin/servicepane/twisty-closed.png);
 }
 
 .servicepane-tree > treechildren::-moz-tree-twisty(open),
@@ -72,91 +72,91 @@ Imported by bindings.css or directly into feathers.
 .locationbar-image[properties~="library"],
 .tabbrowser-tab[properties~="library"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-lib.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-lib.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( birdhouse )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-birdhouse.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-birdhouse.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( web library ),
 .locationbar-image[properties~="library"][properties~="web"],
 .tabbrowser-tab[properties~="library"][properties~="web"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-web-media-history.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-web-media-history.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( medialist ),
 .locationbar-image[properties~="medialist"],
 .tabbrowser-tab[properties~="medialist"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-playlist.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart ),
 .locationbar-image[properties~="medialisttype-smart"],
 .tabbrowser-tab[properties~="medialisttype-smart"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png);
+  list-style-image: url(chrome://nightingale/skin/icons/icon-smplaylist.png);
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic ),
 .locationbar-image[properties~="medialisttype-dynamic"],
 .tabbrowser-tab[properties~="medialisttype-dynamic"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-subscription.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( podcast ),
 .locationbar-image[properties~="podcast"],
 .tabbrowser-tab[properties~="podcast"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-podcast.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-podcast.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( download ),
 .locationbar-image[properties~="download"],
 .tabbrowser-tab[properties~="download"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-downloads.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-downloads.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( download downloading ),
 .locationbar-image[properties~="download"][properties~="downloading"],
 .tabbrowser-tab[properties~="download"][properties~="downloading"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-downloads-progress.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-downloads-progress.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( device ),
 .locationbar-image[properties~="device"],
 .tabbrowser-tab[properties~="device"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-device.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-device.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( device busy ),
 .locationbar-image[properties~="device"][properties~="busy"],
 .tabbrowser-tab[properties~="device"][properties~="busy"] > .tab-image-middle > .tab-icon > .tab-icon-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-busy.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-busy.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( folder open )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-folder.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-folder.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( folder closed )
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-folder-closed.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-folder-closed.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-row( dropBefore ),
 .servicepane-tree > treechildren::-moz-tree-row( dropAfter )
 {
-  background-image: url(chrome://songbird/skin/backgrounds/drop-target.png) !important;
+  background-image: url(chrome://nightingale/skin/backgrounds/drop-target.png) !important;
   background-position: center bottom !important;
   background-repeat: repeat-x !important;
 }
@@ -196,23 +196,23 @@ Currently a single clickhold button below the service tree
 /** Bind images to the button and button-popup on the Service Pane */
 .servicepane-toolbar-newitem-button
 {
-  list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-playlist.png) ;
 }
 
 #menuitem_file_new {
-  list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-playlist.png) ;
 }
 
 #menuitem_file_smart {
-  list-style-image: url(chrome://songbird/skin/icons/icon-smplaylist.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-smplaylist.png) ;
 }
 
 #menuitem_file_remote {
-  list-style-image: url(chrome://songbird/skin/icons/icon-subscription.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-subscription.png) ;
 }
 
 #menuitem_file_podcast {
-  list-style-image: url(chrome://songbird/skin/icons/icon-podcast.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/icon-podcast.png) ;
 }
 
 /* Mac-specific icons for the file menu */

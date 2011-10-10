@@ -1,28 +1,30 @@
 /* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "nsISupports.idl"
 
@@ -31,7 +33,7 @@
  *
  *   This interface provides support for downloading files.
  *
- * "@songbirdnest.com/Songbird/FileDownloader;1"
+ * "@getnightingale.com/Nightingale/FileDownloader;1"
  * Use create instance with this component.
  */
 
@@ -39,9 +41,8 @@ interface nsIFile;
 interface nsIRequest;
 interface nsIURI;
 interface sbIFileDownloaderListener;
-interface sbITemporaryFileFactory;
 
-[scriptable, uuid(7a497d5c-1dd2-11b2-8c68-a37686c9bb01)]
+[scriptable, uuid(eb164d3f-cc1a-43a9-a8aa-d47486767bf7)]
 interface sbIFileDownloader : nsISupports
 {
   /**
@@ -116,12 +117,6 @@ interface sbIFileDownloader : nsISupports
 
   attribute AString destinationFileExtension;
 
-  /**
-   * \brief Temporary file factory to use for any temporary files.
-   */
-
-  attribute sbITemporaryFileFactory temporaryFileFactory;
-
 
   /**
    * \brief Start file download from source URI to destination file.  If source
@@ -177,6 +172,6 @@ interface sbIFileDownloaderListener : nsISupports
 
 %{C++
 #define SB_FILEDOWNLOADER_CONTRACTID \
-          "@songbirdnest.com/Songbird/FileDownloader;1"
+          "@getnightingale.com/Nightingale/FileDownloader;1"
 %}C++
 

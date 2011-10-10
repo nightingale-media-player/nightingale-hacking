@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -39,7 +39,7 @@ interface sbIMediaListView;
  * \interface sbILibraryServicePaneService
  * \brief Provides information about libraries and medialists needed by the service pane
  */
-[scriptable, uuid(01b1d300-82ca-11df-8395-0800200c9a66)]
+[scriptable, uuid(9b97a318-1dd1-11b2-8862-d80772a7244a)]
 interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Suggest a library for creating a new media list
@@ -77,15 +77,13 @@ interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Attempt to get a service pane node for the given library resource
    *
-   * \param aResource        an sbIMediaItem, sbIMediaItem, or sbILibrary
-   * \param [optional] aType resource media type: "audio", "video", etc.
+   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
    * \return a service pane node that represents the given resource, if one
    *         exists. Note that in the case that more than one node related to a
    *         given library exists, it is not specified which node will be
    *         returned. However, nodes that are not hidden will be preferred.
    */
-  sbIServicePaneNode getNodeForLibraryResource (in sbILibraryResource aResource,
-                                                [optional] in AString aType);
+  sbIServicePaneNode getNodeForLibraryResource (in sbILibraryResource aResource);
 
   /**
    * \brief Return all service pane nodes related to the library resource

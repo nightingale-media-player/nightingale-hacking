@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,13 +21,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
 * \file  sbDeviceManagerModule.cpp
-* \brief Songbird Device Manager Component Factory and Main Entry Point.
+* \brief Nightingale Device Manager Component Factory and Main Entry Point.
 */
 
 #include <nsCOMPtr.h>
@@ -44,20 +44,20 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceEventTesterStressThreads);
 static nsModuleComponentInfo sbDeviceEventTesterComponents[] =
 {
   {
-    "Songbird Device Event Tester - Removal",
+    "Nightingale Device Event Tester - Removal",
     { 0xd37fe51b, 0xf17e, 0x464e,
       { 0x9d, 0xcf, 0x37, 0x1f, 0x82, 0x8f, 0xde, 0x66 } },
-    "@songbirdnest.com/Songbird/Device/EventTester/Removal;1",
+    "@getnightingale.com/Nightingale/Device/EventTester/Removal;1",
     sbDeviceEventTesterRemovalConstructor
   },
   {
-    "Songbird Device Event Tester - Thread Stresser",
+    "Nightingale Device Event Tester - Thread Stresser",
     { 0xda2ce34c, 0xa53a, 0x414e,
       { 0x9f, 0x23, 0x9f, 0xf3, 0xa7, 0x18, 0x7f, 0xfa } },
-    "@songbirdnest.com/Songbird/Device/EventTester/StressThreads;1",
+    "@getnightingale.com/Nightingale/Device/EventTester/StressThreads;1",
     sbDeviceEventTesterStressThreadsConstructor
   }
 
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceManagerEventTests, sbDeviceEventTesterComponents)
+NS_IMPL_NSGETMODULE(NightingaleDeviceManagerEventTests, sbDeviceEventTesterComponents)

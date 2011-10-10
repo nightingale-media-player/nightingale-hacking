@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -66,7 +66,7 @@ interface sbIMockCDDeviceController : nsISupports
 
 
 %{C++
-#define SB_MOCK_CDDEVICECONTROLLER_CLASSNAME "Songbird Mock CD Device Service" 
+#define SB_MOCK_CDDEVICECONTROLLER_CLASSNAME "Nightingale Mock CD Device Service" 
 #define SB_MOCK_CDDEVICECONTROLLER_CID {0x1a0e7b9a, 0x1dd2, 0x11b2, {0x80, 0xa3, 0xdb, 0xd2, 0xc0, 0x47, 0x49, 0x8a}}
-#define SB_MOCK_CDDEVICECONTROLLER_CONTRACTID "@songbirdnest.com/device/cd/mock-cddevice-service;1"
+#define SB_MOCK_CDDEVICECONTROLLER_CONTRACTID "@getnightingale.com/device/cd/mock-cddevice-service;1"
 %}

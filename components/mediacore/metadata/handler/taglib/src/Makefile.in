@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 # 
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 # 
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../../../../
@@ -28,6 +28,8 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
 
 DYNAMIC_LIB = sbMetadataHandlerTaglib
 
@@ -42,7 +44,6 @@ CPP_EXTRA_INCLUDES = \
  $(DEPTH)/components/mediacore/metadata/manager/public \
  $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
  $(DEPTH)/components/albumart/public \
- $(DEPTH)/components/library/base/public \
  $(DEPTH)/components/property/public \
  $(DEPTH)/components/moz/proxy/public \
  $(topsrcdir)/components/mediacore/metadata/manager/src \
@@ -86,17 +87,20 @@ ifeq (linux,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
 endif
 
+ifeq (,$(TAGLIB_CFLAGS))
+ CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
+                       $(NULL)
+else
+ CPP_EXTRA_INCLUDES += $(TAGLIB_CFLAGS)
+endif
+
 ifeq (solaris,$(SB_PLATFORM))
    # Search in xulrunner directory at runtime for shared libraries.
    DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
 endif
 
-ifeq (,$(TAGLIB_CFLAGS))
 CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
                       $(NULL)
-else
-CPP_EXTRA_INCLUDES += $(TAGLIB_CFLAGS)
-endif
         
 IS_COMPONENT = 1                     
 

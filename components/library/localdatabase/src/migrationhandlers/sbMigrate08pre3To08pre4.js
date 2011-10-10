@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -56,7 +56,7 @@ function sbLibraryMigration()
 
 sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
-  classDescription: 'Songbird Migration Handler for converting utf16 to utf8 storage.',
+  classDescription: 'Nightingale Migration Handler for converting utf16 to utf8 storage.',
   classID: Components.ID("{E313D2F1-D1BE-4683-963F-5F43C5245C6C}"),  
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "utf16 to utf8",
 
@@ -71,7 +71,7 @@ sbLibraryMigration.prototype = {
       dump("Migrating " + this._databaseLocation.spec + this._databaseGUID + "\n");
       var dbParentDir = 
         this._databaseLocation.QueryInterface(Ci.nsIFileURL).file;
-      var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+      var dbEngine = Cc["@getnightingale.com/Nightingale/DatabaseEngine;1"]
                        .getService(Ci.sbIDatabaseEngine);
 
       // Dump the existing data into a temporary file
@@ -179,7 +179,7 @@ sbLibraryMigration.prototype = {
   },
 
   _createQuery: function sbLibraryMigration_createQuery() {
-    var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+    var query = Cc["@getnightingale.com/Nightingale/DatabaseQuery;1"]
                   .createInstance(Ci.sbIDatabaseQuery);
     query.databaseLocation = this._databaseLocation;
     query.setDatabaseGUID(this._databaseGUID);
@@ -193,7 +193,7 @@ sbLibraryMigration.prototype = {
       var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                             .getService(Components.interfaces.nsIIOService);
 
-      var schemaURI = ioService.newURI("chrome://songbird/content/library/localdatabase/schema.sql", null, null);
+      var schemaURI = ioService.newURI("chrome://nightingale/content/library/localdatabase/schema.sql", null, null);
       var channel = ioService.newChannelFromURI(schemaURI);
       var stream = channel.open();
  

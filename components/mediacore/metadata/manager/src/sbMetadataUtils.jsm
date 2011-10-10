@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -54,7 +54,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-// Songbird imports.
+// Nightingale imports.
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
@@ -107,7 +107,7 @@ var sbMetadataUtils = {
     }
 
     // Create an array for the media item list.
-    var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+    var mediaItemArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                            .createInstance(Ci.nsIMutableArray);
     for (var i = 0; i < aMediaItemList.length; i++) {
       mediaItemArray.appendElement(aMediaItemList[i], false);
@@ -118,7 +118,7 @@ var sbMetadataUtils = {
 
     try {
       // Initiate writing of the metadata.
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+      var metadataService = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);
       var job = metadataService.write(mediaItemArray, propertyArray);
 

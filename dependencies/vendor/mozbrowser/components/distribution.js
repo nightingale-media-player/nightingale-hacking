@@ -19,7 +19,6 @@
  *
  * Contributor(s):
  *   Dan Mills <thunder@mozilla.com>
- *   Marco Bonardo <mak77@bonardo.net>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -42,83 +41,77 @@ const Cc = Components.classes;
 const Cr = Components.results;
 const Cu = Components.utils;
 
-const DISTRIBUTION_CUSTOMIZATION_COMPLETE_TOPIC =
-  "distribution-customization-complete";
 const BOOKMARKS_ROOT = "SB:Bookmarks";
 
 function DistributionCustomizer() {
-  let dirSvc = Cc["@mozilla.org/file/directory_service;1"].
-               getService(Ci.nsIProperties);
-  let iniFile = dirSvc.get("XCurProcD", Ci.nsIFile);
-  iniFile.append("distribution");
+  this._distroDir = this._dirSvc.get("XCurProcD", Ci.nsIFile);
+  this._distroDir.append("distribution");
+
+  let iniFile = this._distroDir.clone();
   iniFile.append("distribution.ini");
-  if (iniFile.exists())
-    this._iniFile = iniFile;
+  this._iniExists = iniFile.exists();
+
+  if (!this._iniExists)
+    return;
+
+  this._ini = Cc["@mozilla.org/xpcom/ini-parser-factory;1"].
+    getService(Ci.nsIINIParserFactory).createINIParser(iniFile);
+
+  this._prefs = this._prefSvc.getBranch(null);
+  this._locale = this._prefs.getCharPref("general.useragent.locale");
+
 }
-
 DistributionCustomizer.prototype = {
-  _iniFile: null,
-
-  get _ini() {
-    let ini = Cc["@mozilla.org/xpcom/ini-parser-factory;1"].
-              getService(Ci.nsIINIParserFactory).
-              createINIParser(this._iniFile);
-    this.__defineGetter__("_ini", function() ini);
-    return this._ini;
-  },
-
-  get _locale() {
-    let locale;
-    try {
-      locale = this._prefs.getCharPref("general.useragent.locale");
-    }
-    catch (e) {
-      locale = "en-US";
-    }
-    this.__defineGetter__("_locale", function() locale);
-    return this._locale;
-  },
-
+  __bmSvc: null,
   get _bmSvc() {
-    let svc = Cc["@songbirdnest.com/servicepane/bookmarks;1"]
-                .getService(Ci.sbIBookmarks);
-    this.__defineGetter__("_bmSvc", function() svc);
-    return this._bmSvc;
+    if (!this.__bmSvc)
+      this.__bmSvc = Cc["@getnightingale.com/servicepane/bookmarks;1"]
+                       .getService(Ci.sbIBookmarks);
+    return this.__bmSvc;
   },
-
+  
+  __spsSvc: null,
   get _spsSvc() {
-    let svc = Cc["@songbirdnest.com/servicepane/service;1"]
-                .getService(Ci.sbIServicePaneService);
-    this.__defineGetter__("_spsSvc", function() svc);
-    return this._spsSvc;
+    if (!this.__spsSvc)
+      this.__spsSvc = Cc["@getnightingale.com/servicepane/service;1"]
+                       .getService(Ci.sbIServicePaneService);
+    return this.__spsSvc;
   },
 
+  __dirSvc: null,
+  get _dirSvc() {
+    if (!this.__dirSvc)
+      this.__dirSvc = Cc["@mozilla.org/file/directory_service;1"].
+        getService(Ci.nsIProperties);
+    return this.__dirSvc;
+  },
+
+  __prefSvc: null,
   get _prefSvc() {
-    let svc = Cc["@mozilla.org/preferences-service;1"].
-              getService(Ci.nsIPrefService);
-    this.__defineGetter__("_prefSvc", function() svc);
-    return this._prefSvc;
+    if (!this.__prefSvc)
+      this.__prefSvc = Cc["@mozilla.org/preferences-service;1"].
+        getService(Ci.nsIPrefService);
+    return this.__prefSvc;
   },
 
-  get _prefs() {
-    let branch = this._prefSvc.getBranch(null);
-    this.__defineGetter__("_prefs", function() branch);
-    return this._prefs;
+  __iosvc: null,
+  get _iosvc() {
+    if (!this.__iosvc)
+      this.__iosvc = Cc["@mozilla.org/network/io-service;1"].
+                   getService(Ci.nsIIOService);
+    return this.__iosvc;
   },
 
-  get _ioSvc() {
-    let svc = Cc["@mozilla.org/network/io-service;1"].
-              getService(Ci.nsIIOService);
-    this.__defineGetter__("_ioSvc", function() svc);
-    return this._ioSvc;
-  },
+  _locale: "en-US",
+  _distroDir: null,
+  _iniExists: false,
+  _ini: null,
+
 
   _makeURI: function DIST__makeURI(spec) {
-    return this._ioSvc.newURI(spec, null, null);
+    return this._iosvc.newURI(spec, null, null);
   },
-
-  _parseBookmarksSection:
-  function DIST_parseBookmarksSection(aParentNode, section) {
+  _parseBookmarksSection: function DIST_parseBookmarksSection(aParentNode, section) {
     var parentNode = aParentNode;
     if (!(parentNode instanceof Ci.sbIServicePaneNode)) {
       parentNode = this._spsSvc.getNode(aParentNode);
@@ -131,7 +124,6 @@ DistributionCustomizer.prototype = {
     for (let i in enumerate(this._ini.getKeys(section)))
       keys.push(i);
     keys.sort();
-
     let items = {};
     let defaultItemId = -1;
     let maxItemId = -1;
@@ -140,8 +132,7 @@ DistributionCustomizer.prototype = {
     for (let i = 0; i < keys.length; i++) {
       let m = /^item\.(\d+)\.(\w+)\.?(\w*)/.exec(keys[i]);
       if (m) {
-        let [foo, iid, iprop, ilocale] = m;
-        iid = parseInt(iid);
+        let [, iid, iprop, ilocale] = m;
 
         if (ilocale)
           continue;
@@ -166,7 +157,7 @@ DistributionCustomizer.prototype = {
     for (let iid = 0; iid <= maxItemId; iid++) {
       if (!items[iid])
         continue;
-
+      
       if (!("title" in items[iid])) {
         dump("Distribution.ini: missing title in '" + iid + "'\n");
         continue;
@@ -223,76 +214,60 @@ DistributionCustomizer.prototype = {
         this._spsSvc.sortNode(newNode);
       }
     }
-    return this._checkCustomizationComplete();
   },
-
-  _customizationsApplied: false,
   applyCustomizations: function DIST_applyCustomizations() {
-    this._customizationsApplied = true;
-    if (!this._iniFile)
-      return this._checkCustomizationComplete();
+    if (!this._iniExists)
+      return;
 
     // nsPrefService loads very early.  Reload prefs so we can set
     // distribution defaults during the prefservice:after-app-defaults
     // notification (see applyPrefDefaults below)
     this._prefSvc.QueryInterface(Ci.nsIObserver);
     this._prefSvc.observe(null, "reload-default-prefs", null);
-  },
-
-  _bookmarksApplied: false,
-  applyBookmarks: function DIST_applyBookarks() {
-    this._bookmarksApplied = true;
-    if (!this._iniFile)
-      return this._checkCustomizationComplete();
 
     let sections = enumToObject(this._ini.getSections());
 
     // The global section, and several of its fields, is required
     // (we also check here to be consistent with applyPrefDefaults below)
     if (!sections["Global"])
-      return this._checkCustomizationComplete();
+      return;
     let globalPrefs = enumToObject(this._ini.getKeys("Global"));
     if (!(globalPrefs["id"] && globalPrefs["version"] && globalPrefs["about"]))
-      return this._checkCustomizationComplete();
+      return;
 
+    let bmProcessed = false;
     let bmProcessedPref;
+
     try {
       bmProcessedPref = this._ini.getString("Global",
                                             "bookmarks.initialized.pref");
-    }
-    catch (e) {
+    } catch (e) {
       bmProcessedPref = "distribution." +
         this._ini.getString("Global", "id") + ".bookmarksProcessed";
     }
 
-    let bmProcessed = false;
     try {
       bmProcessed = this._prefs.getBoolPref(bmProcessedPref);
-    }
-    catch (e) {}
+    } catch (e) {}
 
     if (!bmProcessed) {
       if (sections["Bookmarks"])
         this._parseBookmarksSection(BOOKMARKS_ROOT, "Bookmarks");
       this._prefs.setBoolPref(bmProcessedPref, true);
     }
-    return this._checkCustomizationComplete();
   },
-
-  _prefDefaultsApplied: false,
   applyPrefDefaults: function DIST_applyPrefDefaults() {
-    this._prefDefaultsApplied = true;
-    if (!this._iniFile)
-      return this._checkCustomizationComplete();
+    if (!this._iniExists)
+      return;
 
     let sections = enumToObject(this._ini.getSections());
 
     // The global section, and several of its fields, is required
     if (!sections["Global"])
-      return this._checkCustomizationComplete();
+      return;
     let globalPrefs = enumToObject(this._ini.getKeys("Global"));
     if (!(globalPrefs["id"] && globalPrefs["version"] && globalPrefs["about"]))
-      return this._checkCustomizationComplete();
+      return;
 
     let defaults = this._prefSvc.getDefaultBranch(null);
 
@@ -361,18 +336,6 @@ DistributionCustomizer.prototype = {
           defaults.setComplexValue(key, Ci.nsIPrefLocalizedString, localizedStr);
         } catch (e) { /* ignore bad prefs and move on */ }
       }
-    }
-
-    return this._checkCustomizationComplete();
-  },
-
-  _checkCustomizationComplete: function DIST__checkCustomizationComplete() {
-    let prefDefaultsApplied = this._prefDefaultsApplied || !this._iniFile;
-    if (this._customizationsApplied && this._bookmarksApplied &&
-        prefDefaultsApplied) {
-      let os = Cc["@mozilla.org/observer-service;1"].
-               getService(Ci.nsIObserverService);
-      os.notifyObservers(null, DISTRIBUTION_CUSTOMIZATION_COMPLETE_TOPIC, null);
     }
   }
 };

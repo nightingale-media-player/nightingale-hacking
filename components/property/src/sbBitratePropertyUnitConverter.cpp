@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,7 +33,7 @@
 // ctor - register all units
 sbBitratePropertyUnitConverter::sbBitratePropertyUnitConverter() 
 {
-  SetStringBundle(NS_LITERAL_STRING("chrome://songbird/locale/songbird.properties"));
+  SetStringBundle(NS_LITERAL_STRING("chrome://nightingale/locale/nightingale.properties"));
   RegisterUnit(BITRATE_UNIT_BPS,
     NS_LITERAL_STRING("bps"),
     NS_LITERAL_STRING("&bitrate.unit.bitspersecond"), 
@@ -100,7 +100,7 @@ PRInt32 sbBitratePropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
   // get number of digits
   PRUint32 d;
   if (aValue == 0) d = 1;
-  else d = (PRUint32)(log10(fabs(aValue)) + 1);
+  else d = (PRUint32)(log10(abs(aValue)) + 1);
 
   // and pick most suitable unit
   if (d <= 1) return BITRATE_UNIT_BPS;

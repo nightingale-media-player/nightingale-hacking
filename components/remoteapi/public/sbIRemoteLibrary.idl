@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -48,7 +48,7 @@ interface sbICreateMediaListCallback : nsISupports
 Class: Library
 
 A <Library> is a collection of <MediaItems> and <MediaLists>.
-It is possible to create a <Library> using the <Songbird::siteLibrary>
+It is possible to create a <Library> using the <Nightingale::siteLibrary>
 function.
 
 Inherits:
@@ -57,7 +57,7 @@ Inherits:
 Example:
   (start code)
   //Create or get a library.
-  var library = songbird.siteLibrary("", "");
+  var library = nightingale.siteLibrary("", "");
 
   //Create a medialist using the library.
   var mediaList = library.createSimpleMediaList("Name of List");
@@ -91,7 +91,7 @@ Example:
   (end code)
 
 See Also:
-  <Songbird>
+  <Nightingale>
   <MediaItem>
   <MediaList>
 */
@@ -183,7 +183,7 @@ interface sbIRemoteLibrary : nsISupports
   Example:
     (start code)
     //Create or get a library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Create the mediaitem from a url pointing to a media file.
     var mediaItem = null;
@@ -244,7 +244,7 @@ interface sbIRemoteLibrary : nsISupports
   Example:
     (start code)
     //Create or get a library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Create an empty medialist.
     var mediaList = library.createSimpleMediaList("MyList");
@@ -263,10 +263,10 @@ interface sbIRemoteLibrary : nsISupports
    *
    * Create and insert a media list into the library. The URL passed in must
    * be an http or https url that points to a type of playlist file supported
-   * by Songbird. That is currently: .pls, .m3u, .html, and rss type feeds.
+   * by Nightingale. That is currently: .pls, .m3u, .html, and rss type feeds.
    *
    * \param aURL A string that points to a type of playlist file that is
-   *             supported by Songbird. It must be either http: or https: and
+   *             supported by Nightingale. It must be either http: or https: and
    *             one of the following playlist types: .pls, .m3u, .html and rss
    *             type feeds.
    * \param aCallback Optional callback object that gets called when the media
@@ -293,7 +293,7 @@ interface sbIRemoteLibrary : nsISupports
   Example:
     (start code)
     //Create or get a library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Create the medialist from a url pointing to a file.
     library.createMediaListFromURL("http://path/to/file.m3u",
@@ -345,7 +345,7 @@ interface sbIRemoteLibrary : nsISupports
   Example:
     (start code)
     //Create or get a library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Fetch the shopping cart media list
     var mediaList = library.getMediaListBySiteID("Shopping Cart");
@@ -371,7 +371,7 @@ interface sbIRemoteLibrary : nsISupports
   Example:
     (start code)
     //Create or get a library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Get all MediaLists.
     var mediaLists = library.getPlaylists();
@@ -409,7 +409,7 @@ interface sbIRemoteLibrary : nsISupports
 
   Example:
     (start code)
-    var artists = window.songbird.mainLibrary.mostPlayedArtists;
+    var artists = window.nightingale.mainLibrary.mostPlayedArtists;
     for (var i in artists) {
       var elem = document.createElement('li');
       elem.textContent = artists[i];

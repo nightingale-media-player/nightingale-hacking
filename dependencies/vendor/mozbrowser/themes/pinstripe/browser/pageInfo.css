@@ -39,8 +39,49 @@
 
 @import "chrome://global/skin/";
 
+#main-window {
+  -moz-binding: url("chrome://global/skin/globalBindings.xml#unifiedWindow");
+}
+
+#main-window:not([active="true"]) > #topStackBar {
+  background-image: url("chrome://global/skin/toolbar/toolbar-background-inactive.png");
+  background-color: #cfcfcf;
+  border-bottom: 1px solid rgba(0,0,0,0.35);
+}
+
+#main-window:not([active="true"]) > #topStackBar > #viewGroup {
+  opacity: 0.7;
+}
+
+#topStackBar {
+  display: -moz-box;
+  background-color: #969696;
+  border-bottom: 1px solid #404040;
+  background-image: url("chrome://global/skin/toolbar/toolbar-background.gif");
+  background-repeat: repeat-x;
+  background-position: top right;
+  padding: 4px 0 8px;
+  -moz-box-pack: center;
+}
+
 /* View buttons */
-@import "chrome://global/skin/viewbuttons.css";
+
+#viewGroup {
+  border: 1px solid #404040;
+  border-bottom: 2px solid;
+  -moz-border-bottom-colors: #C2C2C2 #404040;
+  -moz-border-radius: 4px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  background-image: url("chrome://global/skin/icons/white-gray-gradient.gif");
+  background-repeat: repeat-x;
+}
+
+#viewGroup radio {
+  -moz-box-orient: vertical;
+  -moz-box-align: center;
+  -moz-appearance: none;
+}
 
 /* Extensions will provide icons because the view buttons have icons
    on the winstripe and gnomestripe themes. We don't want to display them */
@@ -184,7 +225,7 @@ treechildren::-moz-tree-cell-text(broken) {
   background-color: -moz-field;
 }
 
-.permission {
+#permList > vbox {
   padding-top: 6px;
   padding-bottom: 6px;
   -moz-padding-start: 7px;
@@ -193,11 +234,11 @@ treechildren::-moz-tree-cell-text(broken) {
   border-bottom: 1px dotted #C0C0C0;
 }
 
-.permissionLabel {
+#permList > vbox > label {
   font-weight: bold;
 }
 
-.permission:hover {
+#permList > vbox:hover {
   background-color: -moz-dialog;
 }
 

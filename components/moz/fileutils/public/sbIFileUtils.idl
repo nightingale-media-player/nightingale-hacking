@@ -1,12 +1,12 @@
 /* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -31,13 +31,13 @@
  *
  *   This interface provides various file utilities.
  *
- * "@songbirdnest.com/Songbird/FileUtils;1"
+ * "@getnightingale.com/Nightingale/FileUtils;1"
  * Use get service with this component.
  */
 
 interface nsIFile;
 
-[scriptable, uuid(466b66d9-7007-48d8-aee1-b600e7745be8)]
+[scriptable, uuid(1bd939fc-1dd2-11b2-a0ef-d36ceb4e7caf)]
 interface sbIFileUtils : nsISupports
 {
   /**
@@ -46,15 +46,6 @@ interface sbIFileUtils : nsISupports
    */
 
   attribute nsIFile currentDir;
-
-  /**
-   * \brief Returns a file's case-sensitive path (Windows-only)
-   *
-   * \param aFilePath   File path
-   *
-   * \return Case-sensitive path or null
-   */
-  AString getExactPath(in AString aFilePath);
 };
 
 
@@ -64,6 +55,6 @@ interface sbIFileUtils : nsISupports
 
 %{C++
 #define SB_FILEUTILS_CONTRACTID \
-          "@songbirdnest.com/Songbird/FileUtils;1"
+          "@getnightingale.com/Nightingale/FileUtils;1"
 %}C++
 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
 * \file  sbMediaListViewMap.cpp
-* \brief Songbird MediaListViewMap Implementation.
+* \brief Nightingale MediaListViewMap Implementation.
 */
 #include "sbMediaListViewMap.h"
 
@@ -99,8 +99,8 @@ sbMediaListViewMap::RegisterSelf(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
-                                         SONGBIRD_MEDIALISTVIEWMAP_DESCRIPTION,
-                                         "service," SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
+                                         NIGHTINGALE_MEDIALISTVIEWMAP_DESCRIPTION,
+                                         "service," NIGHTINGALE_MEDIALISTVIEWMAP_CONTRACTID,
                                          PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -162,7 +162,7 @@ sbMediaListViewMap::GetView(nsISupports *aParentKey,
 
     nsresult rv;
     nsCOMPtr<sbILibraryManager> lm =
-        do_GetService( "@songbirdnest.com/Songbird/library/Manager;1", &rv );
+        do_GetService( "@getnightingale.com/Nightingale/library/Manager;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
 
     nsCOMPtr<sbILibrary> library;

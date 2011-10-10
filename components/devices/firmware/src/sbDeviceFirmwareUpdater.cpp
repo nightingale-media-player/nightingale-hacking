@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDeviceFirmwareUpdater.h"
@@ -150,7 +150,7 @@ sbDeviceFirmwareUpdater::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIEventTarget> threadPool = 
-    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   threadPool.swap(mThreadPool);
@@ -181,7 +181,7 @@ sbDeviceFirmwareUpdater::Shutdown()
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> mutableArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mRunningHandlers.EnumerateRead(sbDeviceFirmwareUpdater::EnumerateIntoArrayISupportsKey,
@@ -890,7 +890,7 @@ sbDeviceFirmwareUpdater::ContinueUpdate(sbIDevice *aDevice,
   *_retval = PR_FALSE;
 
   nsCOMPtr<nsIMutableArray> mutableArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mRecoveryModeHandlers.EnumerateRead(
@@ -1075,6 +1075,7 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
+  NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
   firmwarehandlers_t firmwareHandlers;

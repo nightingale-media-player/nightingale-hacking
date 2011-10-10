@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,8 +32,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include <sbDebugUtils.h>
-
 typedef sbFileDescMap::value_type sbFileDescPair;
 typedef sbFileDescMap::const_iterator sbFileDescIter;
 
@@ -41,6 +39,14 @@ typedef sbFileDescMap::const_iterator sbFileDescIter;
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLinuxFSWatcher:5
  */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gLinuxFSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gLinuxFSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLinuxFSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 //------------------------------------------------------------------------------
 
@@ -61,15 +67,18 @@ Inotify_Callback(GIOChannel *source, GIOCondition condition, gpointer data)
 
 sbLinuxFileSystemWatcher::sbLinuxFileSystemWatcher()
 {
-  SB_PRLOG_SETUP(sbLinuxFSWatcher);
-
+#ifdef PR_LOGGING
+  if (!gLinuxFSWatcherLog) {
+    gLinuxFSWatcherLog = PR_NewLogModule("sbLinuxFSWatcher");
+  }
+#endif
   mIsWatching = PR_FALSE;
 }
 
 sbLinuxFileSystemWatcher::~sbLinuxFileSystemWatcher()
 {
   if (mIsWatching) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) = Cleanup();
+    nsresult rv = Cleanup();
     NS_ASSERTION(NS_SUCCEEDED(rv), "ERROR: Could not cleanup inotify!");
   }
 }
@@ -103,9 +112,9 @@ sbLinuxFileSystemWatcher::AddInotifyHook(const nsAString & aDirPath)
     IN_MODIFY | IN_CREATE | IN_DELETE | IN_DELETE_SELF | 
     IN_MOVE_SELF | IN_MOVED_FROM | IN_MOVED_TO;
   
-  LOG("%s: adding inotify hook for [%s]",
+  LOG(("%s: adding inotify hook for [%s]",
        __PRETTY_FUNCTION__,
-       NS_ConvertUTF16toUTF8(aDirPath).get());
+       NS_ConvertUTF16toUTF8(aDirPath).get()));
 
   int pathFileDesc = inotify_add_watch(mInotifyFileDesc,
                                        NS_ConvertUTF16toUTF8(aDirPath).get(),
@@ -115,15 +124,15 @@ sbLinuxFileSystemWatcher::AddInotifyHook(const nsAString & aDirPath)
       int errnum = errno;
       char buf[0x1000];
       char *errorDesc = strerror_r(errnum, buf, sizeof(buf));
-      LOG("%s: could not add inotify watch path [%s], error %d (%s)",
+      LOG(("%s: could not add inotify watch path [%s], error %d (%s)",
            NS_ConvertUTF16toUTF8(aDirPath).get(),
            errnum,
-           errorDesc);
+           errorDesc));
     #endif /* PR_LOGGING */
     NS_WARNING("Could not add a inotify watch path!!");
     
     // Notify the listener of an invalid path error.
-    nsresult SB_UNUSED_IN_RELEASE(rv) = 
+    nsresult rv = 
       mListener->OnWatcherError(sbIFileSystemListener::INVALID_DIRECTORY,
                                 aDirPath);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
@@ -173,10 +182,10 @@ sbLinuxFileSystemWatcher::OnInotifyEvent()
       // Find the associated path in the map.
       sbFileDescIter curEventFileDesc = mFileDescMap.find(event->wd);
       if (curEventFileDesc != mFileDescMap.end()) {
-        TRACE("%s: inotify event for %s length %u",
+        TRACE(("%s: inotify event for %s length %u",
                __PRETTY_FUNCTION__,
                NS_ConvertUTF16toUTF8(curEventFileDesc->second).get(),
-               event->len);
+               event->len));
         // If the |event| has a |len| value, something has changed. Inform
         // the tree to update at the current path.
         if (event->len) {
@@ -251,10 +260,10 @@ NS_IMETHODIMP
 sbLinuxFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
                                       sbStringArray & aDirPathArray)
 {
-  TRACE("%s: adding root path [%s] and friends (previously watching [%s])",
+  TRACE(("%s: adding root path [%s] and friends (previously watching [%s])",
          __PRETTY_FUNCTION__,
          NS_ConvertUTF16toUTF8(aTreeRootPath).get(),
-         NS_ConvertUTF16toUTF8(mWatchPath).get());
+         NS_ConvertUTF16toUTF8(mWatchPath).get()));
   if (mWatchPath.Equals(EmptyString())) {
     // If the watch path is empty here, this means that the tree was loaded
     // from a previous session. Set the watch path now.

@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://songbirdnest.com
+# http://getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
@@ -29,9 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = localdatabaselibraryperf
+NIGHTINGALE_TEST_COMPONENT = localdatabaselibraryperf
 
-SONGBIRD_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
+NIGHTINGALE_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
                  $(srcdir)/tail_localdatabaselibraryperf.js \
                  $(srcdir)/test_guidarray.js \
                  $(srcdir)/test_guidarray_multisort.js \
@@ -47,7 +47,7 @@ SONGBIRD_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
 
 # test_load.js is a script that creates test databases.  It is not intended
 # to be run as part of a perf test
-SONGBIRD_TESTS += $(srcdir)/test_load.js \
+NIGHTINGALE_TESTS += $(srcdir)/test_load.js \
                   $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 if (typeof(Cc) == "undefined")
@@ -63,7 +63,7 @@ var multiCDDialog = {
 
     this._jobTracksMap = [];
     this._jobResultIndexMap =
-         Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+         Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
            .createInstance(Ci.nsIMutableArray);
 
     for (i in this._metadataResults)
@@ -89,7 +89,7 @@ var multiCDDialog = {
       this._infolist.insertBefore(tracks, this._other);
 
       // Do the follow-up call to get album detail for each track
-      var mlm = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+      var mlm = Cc["@getnightingale.com/Nightingale/MetadataLookup/manager;1"]
                   .getService(Ci.sbIMetadataLookupManager);
       var job = mlm.defaultProvider.getAlbumDetail(result);
 
@@ -107,7 +107,7 @@ var multiCDDialog = {
     this._infolist.selectedIndex = 0;
 
     // Listen for device events.
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
     deviceManager.addEventListener(this);
   },
@@ -118,7 +118,7 @@ var multiCDDialog = {
   onunload: function onunload()
   {
     // Remove device event listener.
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
     deviceManager.removeEventListener(this);
   },

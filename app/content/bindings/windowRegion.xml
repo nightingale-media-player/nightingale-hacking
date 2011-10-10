@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -56,7 +56,7 @@
           this.is_hidden = this.remote_accessibility.boolValue;
 
           this.makeRegionList();
-          var windowResizeHook = Components.classes["@songbirdnest.com/Songbird/WindowResizeHook;1"];
+          var windowResizeHook = Components.classes["@getnightingale.com/Nightingale/WindowResizeHook;1"];
           
           if (windowResizeHook) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
@@ -76,7 +76,7 @@
         try
         {
           this.regionList = null;
-          var windowResizeHook = Components.classes["@songbirdnest.com/Songbird/WindowResizeHook;1"];
+          var windowResizeHook = Components.classes["@getnightingale.com/Nightingale/WindowResizeHook;1"];
           if ( windowResizeHook ) {
             var service = windowResizeHook.getService(Components.interfaces.sbIWindowResizeHook);
             if (service) 
@@ -206,7 +206,7 @@
                 }
               }
             }
-            var windowRegion = Components.classes["@songbirdnest.com/Songbird/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
+            var windowRegion = Components.classes["@getnightingale.com/Nightingale/WindowRegion;1"].getService(Components.interfaces.sbIWindowRegion);
             windowRegion.setWindowRegion(document, region);
           }    
           catch ( err )

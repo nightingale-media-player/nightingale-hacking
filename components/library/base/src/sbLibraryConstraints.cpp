@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -66,10 +66,10 @@
  * encoding of the string.
  *
  * Sample (standard) constraint:
- * [{"http://songbirdnest.com/data/1.0#isList": ["0"]}, {"http://songbirdnest.com/data/1.0#hidden": ["0"]}]
+ * [{"http://getnightingale.com/data/1.0#isList": ["0"]}, {"http://getnightingale.com/data/1.0#hidden": ["0"]}]
  *
  * Sample constraint with escaped value:
- * [{"http://songbirdnest.com/data/1.0#genre": ["%E6%B8%AC%20%E8%A9%A6"]}]
+ * [{"http://getnightingale.com/data/1.0#genre": ["%E6%B8%AC%20%E8%A9%A6"]}]
  */
 
 /*
@@ -80,7 +80,7 @@ NS_IMPL_ISUPPORTS1(sbLibraryConstraintBuilder,
 
 
 static inline nsresult CheckStringAndSkip(const nsAString & aSource,
-                                          PRUint32 & offset,
+                                          PRInt32 & offset,
                                           const nsAString & aSubstring)
 {
   if (!Substring(aSource, offset, aSubstring.Length()).Equals(aSubstring)) {
@@ -98,7 +98,7 @@ sbLibraryConstraintBuilder::ParseFromString(const nsAString & aConstraint,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv;
-  PRUint32 offset = 0, next;
+  PRInt32 offset = 0, next;
 
   rv = EnsureConstraint();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -371,7 +371,7 @@ sbLibraryConstraintBuilder::EnsureConstraint()
  */
 
 static NS_DEFINE_CID(kLibraryConstraintCID,
-                     SONGBIRD_LIBRARY_CONSTRAINT_CID);
+                     NIGHTINGALE_LIBRARY_CONSTRAINT_CID);
 
 NS_IMPL_ISUPPORTS3(sbLibraryConstraint,
                    sbILibraryConstraint,
@@ -965,7 +965,7 @@ sbLibraryConstraintGroup::Write(nsIObjectOutputStream* aStream)
 }
 
 static NS_DEFINE_CID(kLibrarySortCID,
-                     SONGBIRD_LIBRARYSORT_CID);
+                     NIGHTINGALE_LIBRARYSORT_CID);
 
 NS_IMPL_ISUPPORTS3(sbLibrarySort,
                    sbILibrarySort,

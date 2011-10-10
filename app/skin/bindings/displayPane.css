@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -41,17 +41,17 @@ Imported by bindings.css or directly into feathers.
 */
 
 menuitem[target="displaypane_contentpane_bottom"] {
-  list-style-image: url(chrome://songbird/skin/icons/displaypane-contentpane-bottom.png);
+  list-style-image: url(chrome://nightingale/skin/icons/displaypane-contentpane-bottom.png);
   -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
 menuitem[target="displaypane_servicepane_bottom"] {
-  list-style-image: url(chrome://songbird/skin/icons/displaypane-servicepane-bottom.png);
+  list-style-image: url(chrome://nightingale/skin/icons/displaypane-servicepane-bottom.png);
   -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
 menuitem[target="displaypane_right_sidebar"] {
-  list-style-image: url(chrome://songbird/skin/icons/displaypane-right-sidebar.png);
+  list-style-image: url(chrome://nightingale/skin/icons/displaypane-right-sidebar.png);
   -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
@@ -69,7 +69,7 @@ sb-displaypane .favicon {
 .sb-displaypane-menubutton {
   height: 14px;
   padding: 0 2px 0 1px;
-  list-style-image: url(chrome://songbird/skin/icons/displaypane-content-picker.png);
+  list-style-image: url(chrome://nightingale/skin/icons/displaypane-content-picker.png);
   margin: 0;
   min-width: 10px;
   background-color:red;

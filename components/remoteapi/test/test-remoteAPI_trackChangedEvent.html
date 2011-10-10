@@ -2,12 +2,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -31,15 +31,15 @@
   <title>Remote API Test: TrackChangedEvent</title>
   <script type="application/javascript">
     var outputDiv;
-    var SB_NS = "http://songbirdnest.com/data/1.0#";
+    var SB_NS = "http://getnightingale.com/data/1.0#";
 
 
-    var siteLib = songbird.siteLibrary;
+    var siteLib = nightingale.siteLibrary;
     var list = siteLib.createSimpleMediaList("testTrackChangedEventList");
     list.add( [
-      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3",
-      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3",
-      "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3" ] );
+      "http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Sawtooth_-_We_Are_Not_Evil_(Down_To_Brass_Tacks_Remix).mp3",
+      "http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3",
+      "http://sandbox.getnightingale.com/~redfive/test_files/ccmixter/Vanchy_-_Black_Is_The_Night_(Vanchy_s_Re-Fix).mp3" ] );
 
     function dump(text) {
       outputDiv.appendChild(document.createTextNode( text ));
@@ -70,7 +70,7 @@
       document.addEventListener('trackchange', onTrackChanged, false);
       document.addEventListener('beforetrackchange', onBeforeTrackChanged, false);
       document.addEventListener('playbackstopped', onStop, false);
-      songbird.webPlaylist.mediaList = list;
+      nightingale.webPlaylist.mediaList = list;
       outputDiv = document.getElementById('output');
     }
 
@@ -93,13 +93,13 @@
     in the playlist) your trackName will be null, let it scan then next/prev or
     something to get it dumped.
     <form>
-      <input type="button" id="play_button" value="Play" onclick="songbird.play();" />
+      <input type="button" id="play_button" value="Play" onclick="nightingale.play();" />
       <br />
-      <input type="button" id="next_button" value="Next" onclick="songbird.next();" /> 
+      <input type="button" id="next_button" value="Next" onclick="nightingale.next();" /> 
       <br />
-      <input type="button" id="prev_button" value="Previous" onclick="songbird.previous();" /> 
+      <input type="button" id="prev_button" value="Previous" onclick="nightingale.previous();" /> 
       <br />
-      <input type="button" id="stop_button" value="Stop" onclick="songbird.stop();" /> 
+      <input type="button" id="stop_button" value="Stop" onclick="nightingale.stop();" /> 
     </form>
   </p>
   <hr>

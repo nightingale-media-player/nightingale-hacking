@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
@@ -123,7 +123,7 @@ function runTest() {
 
   // Create a new configurator to test with.
   var configurator =
-    Cc["@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
+    Cc["@getnightingale.com/Nightingale/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
       .createInstance(Ci.sbIDeviceTranscodingConfigurator);
   assertTrue(configurator, "failed to create configurator");
   // need to set an input URI so the error handling can report something;
@@ -143,7 +143,7 @@ function runTest() {
   }
   
   // Test the configurator by setting a device on it
-  var device = Cc["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
+  var device = Cc["@getnightingale.com/Nightingale/Device/DeviceTester/MockDevice;1"]
                   .createInstance(Ci.sbIDevice);
   configurator.device = device;
   configurator.determineOutputType();
@@ -168,7 +168,7 @@ function runTest() {
 
   // We have to inspect a mediaItem in order to get a mediaFormat
   var mediaInspector =
-    Cc["@songbirdnest.com/Songbird/Mediacore/mediainspector;1"]
+    Cc["@getnightingale.com/Nightingale/Mediacore/mediainspector;1"]
       .createInstance(Ci.sbIMediaInspector);
   var inputFormat = mediaInspector.inspectMedia(testItem);
   assertTrue(inputFormat, "failed to inspect configurator test file");

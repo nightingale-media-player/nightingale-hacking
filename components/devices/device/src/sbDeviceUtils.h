@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SBDEVICEUTILS__H__
@@ -42,7 +42,7 @@
 class nsIFile;
 class nsIMutableArray;
 
-// Songbird forwards
+// Nightingale forwards
 class sbIDeviceLibraryMediaSyncSettings;
 class sbIDeviceLibrarySyncSettings;
 class sbIMediaFormat;
@@ -125,20 +125,6 @@ public:
                                           /* out */ sbIDeviceLibrary** _retval);
 
   /**
-   * Return in aURI a URI produced using the URI spec specified by aSpec
-   * resolved relative to the base URI for the device library specified by
-   * aDeviceLibrary.  The device library base URI has the following form:
-   * "x-device:///<device-guid>/<library-guid>/".
-   *
-   * \param aDeviceLibrary      Device library for the base URI.
-   * \param aSpec               URI spec.
-   * \param aURI                Returned URI.
-   */
-  static nsresult NewDeviceLibraryURI(sbIDeviceLibrary* aDeviceLibrary,
-                                      const nsCString&  aSpec,
-                                      nsIURI**          aURI);
-
-  /**
    * Given a device and a sbILibrary, find the sbIDeviceLibrary for it
    * this is necessary because the device library is a wrapper
    */
@@ -175,19 +161,6 @@ public:
                     (/* in */  sbILibrary*      aLibrary,
                      /* in */  const nsAString& aDevicePersistentId,
                      /* out */ sbIMediaItem**   aItem);
-
-  /**
-   * Return in aWriteLength the length of the media item specified by aMediaItem
-   * when written to the device library specified by aDeviceLibrary.
-   *
-   * \param aDeviceLibrary      Device library to which media item will be
-   *                            written.
-   * \param aMediaItem          Media item to write to device library.
-   * \param aWriteLength        Returned write length of media item.
-   */
-  static nsresult GetDeviceWriteLength(sbIDeviceLibrary* aDeviceLibrary,
-                                       sbIMediaItem*     aMediaItem,
-                                       PRUint64*         aWriteLength);
 
   /**
    * Ask the user what action to take in response to an operation space exceeded
@@ -292,18 +265,6 @@ public:
     (const nsAString&                             aMimeType,
      const PRUint32                               aContentType,
      nsTArray<sbExtensionToContentFormatEntry_t>& aFormatTypeList);
-
-  /**
-   * Return in aMimeType the audio MIME type for the container specified by
-   * aContainer and codec specified by aCodec.
-   *
-   * \param aContainer            Container type.
-   * \param aCodec                Codec type.
-   * \param aMimeType             Returned MIME type.
-   */
-  static nsresult GetAudioMimeTypeForFormatTypes(const nsAString& aContainer,
-                                                 const nsAString& aCodec,
-                                                 nsAString&       aMimeType);
 
   /**
    * \brief Determine if an item needs transcoding
@@ -487,32 +448,6 @@ public:
   static nsresult GetDeviceLibrary(nsAString const & aDevLibGuid,
                                    nsID const * aDeviceID,
                                    sbIDeviceLibrary ** aDeviceLibrary);
-
-  /**
-   * Sets the origin is in main library property if the origin item exists
-   * \param aMediaItem This is the main library item that is used to find the
-   *                   find the corresponding item in the given device library
-   * \param aDevLibrary The device library of the item
-   * \param aMark Specifies whether to set or clear the mark
-   */
-  static nsresult SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
-                                           sbILibrary * aDevLibrary,
-                                           PRBool aMark);
-
-/**
- * Return in aSyncItem the target sync media item in the target sync library
- * specified by aTargetLibrary corresponding to the source sync media item
- * specified by aMediaItem.  If no matching target sync media item can be found,
- * this function returns NS_OK and returns nsnull in aSyncItem.
- *
- * \param aMediaItem            Sync source media item.
- * \param aTargetLibrary        Sync target library.
- * \param aSyncItem             Sync target media item.
- */
-static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
-                                     sbILibrary*    aTargetLibrary,
-                                     sbIMediaItem** aSyncItem);
-
 #ifdef PR_LOGGING
   /**
    * Outputs a the device's capabilites to a PR_Log.
@@ -521,15 +456,6 @@ static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
   LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
                         PRLogModuleInfo *aLogModule);
 #endif
-
-  /**
-   * Returns true if we should log the device info for devices. This is
-   * controlled by the songbird.device.log_device_info preference.
-   * \return true if logging should be performed false if not
-   */
-  static bool ShouldLogDeviceInfo();
-
-  static nsCString GetDeviceIdentifier(sbIDevice * aDevice);
 };
 
 /**

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -48,7 +48,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: Play Button */
 #library_cmd_play
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 11px 8px 0px);
 }
 #library_cmd_play:hover
@@ -64,7 +64,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: remove Button */
 #library_cmd_remove
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 22px 8px 11px);
 }
 #library_cmd_remove:hover
@@ -80,7 +80,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: edit Button */
 #library_cmd_edit
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 33px 8px 22px);
 }
 #library_cmd_edit:hover
@@ -97,7 +97,7 @@ Imported by bindings.css or directly into feathers.
 /* THIS ONE CREASHES */
 #library_cmd_addtoplaylist
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ;
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ;
   -moz-image-region: rect(0px 44px 8px 33px);
 }
 #library_cmd_addtoplaylist:hover
@@ -116,7 +116,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: burntocd Button */
 #library_cmd_burntocd
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 55px 8px 44px);
 }
 #library_cmd_burntocd:hover
@@ -132,7 +132,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: device Button */
 #library_cmd_device
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 66px 8px 55px);
 }
 #library_cmd_device:hover
@@ -148,7 +148,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: addtolibrary Button */
 #library_cmd_addtolibrary
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 77px 8px 66px);
 }
 #library_cmd_addtolibrary[active="true"]:hover
@@ -164,7 +164,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: download Button */
 #library_cmd_download
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 88px 8px 77px);
 }
 #library_cmd_download:hover
@@ -180,7 +180,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: subscribe Button */
 #library_cmd_subscribe
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 121px 8px 110px);
 }
 #library_cmd_subscribe:hover
@@ -195,7 +195,7 @@ Imported by bindings.css or directly into feathers.
 /* Toolbar: switch to downloads Button */
 #library_cmd_showdlplaylist
 {
-  list-style-image: url(chrome://songbird/skin/buttons/playlist-toolbar-buttons.png) ; 
+  list-style-image: url(chrome://nightingale/skin/buttons/playlist-toolbar-buttons.png) ; 
   -moz-image-region: rect(0px 110px 8px 99px);
 }
 #library_cmd_showdlplaylist:hover

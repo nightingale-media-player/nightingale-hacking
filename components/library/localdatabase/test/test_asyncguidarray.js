@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -288,14 +288,14 @@ function runTest () {
 
   testMediaItemId = library.QueryInterface(Ci.sbILocalDatabaseLibrary).getMediaItemIdForGuid("3E4FAFDA-AD99-11DB-9321-C22AB7121F49");
 
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/AsyncGUIDArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/AsyncGUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseAsyncGUIDArray);
   array.databaseGUID = databaseGUID;
   array.propertyCache =
     library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
-  array.addSort("http://songbirdnest.com/data/1.0#trackNumber", true);
+  array.addSort("http://getnightingale.com/data/1.0#albumName", true);
+  array.addSort("http://getnightingale.com/data/1.0#trackNumber", true);
 
   currentPhase = 0;
 

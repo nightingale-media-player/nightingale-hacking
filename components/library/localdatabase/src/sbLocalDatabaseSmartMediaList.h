@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SBLOCALDATABASESMARTMEDIALIST_H__
@@ -28,6 +28,7 @@
 #include <sbILocalDatabaseSmartMediaList.h>
 #include <sbILocalDatabaseMediaItem.h>
 
+#include <nsWeakReference.h>
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -42,8 +43,6 @@
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
 
-#include <sbWeakReference.h>
-
 class sbIDatabaseQuery;
 class sbILocalDatabaseLibrary;
 class sbILocalDatabasePropertyCache;
@@ -55,6 +54,23 @@ class sbISQLBuilderCriterion;
 class sbISQLSelectBuilder;
 
 typedef nsDataHashtable<nsStringHashKey, nsString> sbStringMap;
+
+static nsresult
+ParseQueryStringIntoHashtable(const nsAString& aString,
+                              sbStringMap& aMap);
+
+static nsresult
+ParseAndAddChunk(const nsAString& aString,
+                 sbStringMap& aMap);
+
+static PLDHashOperator PR_CALLBACK
+JoinStringMapCallback(nsStringHashKey::KeyType aKey,
+                      nsString aEntry,
+                      void* aUserData);
+
+static nsresult
+JoinStringMapIntoQueryString(sbStringMap& aMap,
+                             nsAString& aString);
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPEANDNAME(_to) \
@@ -76,7 +92,7 @@ typedef nsDataHashtable<nsStringHashKey, nsString> sbStringMap;
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddItem(aMediaItem, aNewMediaItem); } \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddAll(aMediaList); } \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSome(aMediaItems); } \
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddMediaItems(aMediaItems, aListener, aAsync); } \
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener* aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSomeAsync(aMediaItems, aListener); } \
   NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveByIndex(aIndex); } \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveSome(aMediaItems); } \
@@ -128,7 +144,7 @@ private:
 class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseMediaItem,
                                       public sbILocalDatabaseSmartMediaList,
                                       public sbIMediaListListener,
-                                      public sbSupportsWeakReference,
+                                      public nsSupportsWeakReference,
                                       public nsIObserver,
                                       public nsIClassInfo
 {

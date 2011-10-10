@@ -2,12 +2,12 @@
 <!-- vim: set sw=2 :miv -->
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -22,12 +22,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -257,7 +257,7 @@
 
       <method name="sbDeviceControl_importExternalServices"><body><![CDATA[
       {
-        // Songbird imports.
+        // Nightingale imports.
         Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
         Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
 
@@ -270,7 +270,7 @@
                                .getService
                                   (Components.interfaces.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
-                  ("chrome://songbird/content/scripts/device/deviceControl.js",
+                  ("chrome://nightingale/content/scripts/device/deviceControl.js",
                    null);
         }
       }
@@ -521,6 +521,7 @@
          listentodevice="true"
          label="&command.device.devicesync;"
          accesskey="&command.device.devicesync.accesskey;"
+         disabled_default="true"
          disabled_can_trigger_sync="remove_attribute"
          action="sync"/>
     </content>

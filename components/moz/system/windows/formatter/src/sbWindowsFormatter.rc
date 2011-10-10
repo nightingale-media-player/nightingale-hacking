@@ -1,6 +1,6 @@
 STRINGTABLE
 BEGIN
-  1000 "Songbird Windows Volume Formatter"
+  1000 "Nightingale Windows Volume Formatter"
 END
 
 1 TYPELIB "sbIWindowsFormatter.tlb"

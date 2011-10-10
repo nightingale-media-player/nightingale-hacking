@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -98,7 +98,7 @@ function testAvailable( library, url, available, completion ) {
     _completion: completion,
     observe: function( aSubject, aTopic, aData ) {
       if ( aTopic == "available" ) {
-        log( "(sbIMediaItem::TestIsURIAvailable) COMPLETE " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
+        log( "(sbIMediaItem::TestIsAvailable) COMPLETE " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
         assertEqual( aData, this._available );
         if ( this._completion != null )
           try {
@@ -118,13 +118,13 @@ function testAvailable( library, url, available, completion ) {
   }
 
   // Start the test, tell the testharness to wait for us.
-  item.testIsURIAvailable( is_available_observer );
+  item.testIsAvailable( is_available_observer );
   testPending();
-  log( "(sbIMediaItem::TestIsURIAvailable) START    " + url );
+  log( "(sbIMediaItem::TestIsAvailable) START    " + url );
 }
 
-function testIsURIAvailable( ioItem ) {
-  var databaseGUID = "test_mediaitem_isuriavailable";
+function testIsAvailable( ioItem ) {
+  var databaseGUID = "test_mediaitem_isavailable";
   var testlib = createLibrary(databaseGUID);
   // Async tests of availability for a (supposedly!) known url.
   testAvailable( testlib, ioItem.contentSrc.spec, "true",
@@ -165,7 +165,7 @@ function testAsyncRead(ioItem) {
     onStopRequest: function LLL_onStopReqeust(request, context, status) {
       // Test this and go on to the next tests.
       assertEqual( this._value, TEST_STRING );
-      testIsURIAvailable( this._item );
+      testIsAvailable( this._item );
       testFinished();
     },
     /**
@@ -240,7 +240,7 @@ function runTest () {
     gServer.registerDirectory("/", getFile("."));
 
     // Async test, pauses the test system.
-    // This passes control to testIsURIAvailable() when it completes.
+    // This passes control to testIsAvailable() when it completes.
     testAsyncRead(ioItem);
 
     // Shouldn't take more than 5 seconds to test all files.

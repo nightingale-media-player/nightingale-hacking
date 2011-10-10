@@ -1,11 +1,11 @@
 /* vim: set sw=2 : */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbLibraryUtils.h"
@@ -42,14 +42,11 @@
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
 
-#include <sbIDevice.h>
-#include <sbIDeviceManager.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabaseSmartMediaList.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 
 #include <sbArrayUtils.h>
@@ -180,7 +177,7 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aMediaItem,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> theCopies =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbLibraryUtils::FindCopiesByID(aMediaItem, aLibrary, theCopies);
@@ -386,11 +383,11 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
                                           /* out */ PRInt64      * _retval)
 {
   NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
 
-  PRInt64 contentLength = 0;
-  nsresult rv = aItem->GetContentLength(&contentLength);
+  nsresult rv = aItem->GetContentLength(_retval);
 
-  if(NS_FAILED(rv) || !contentLength) {
+  if(NS_FAILED(rv) || !*_retval) {
     // try to get the length from disk
     nsCOMPtr<sbIMediaItem> item(aItem);
 
@@ -404,7 +401,7 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
       rv = do_GetProxyForObject(target,
                                 NS_GET_IID(sbIMediaItem),
                                 aItem,
-                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                NS_PROXY_SYNC,
                                 getter_AddRefs(item));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -414,8 +411,7 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(contentURI, &rv);
-    if (NS_FAILED(rv))
-      return rv;
+    NS_ENSURE_SUCCESS(rv, rv);
     // note that this will abort if this is not a local file.  This is the
     // desired behaviour.
 
@@ -423,16 +419,13 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     rv = fileURL->GetFile(getter_AddRefs(file));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = file->GetFileSize(&contentLength);
+    rv = file->GetFileSize(_retval);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
-                            sbAutoString(contentLength));
+                            sbAutoString(*_retval));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  if (_retval)
-    *_retval = contentLength;
 
   return NS_OK;
 }
@@ -487,7 +480,7 @@ nsresult sbLibraryUtils::GetOriginItem(/* in */ sbIMediaItem*   aItem,
 
   // Get the origin item.
   nsCOMPtr<sbILibraryManager> libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbILibrary> library;
   rv = libraryManager->GetLibrary(originLibraryGUID, getter_AddRefs(library));
@@ -516,73 +509,32 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
   nsCOMPtr<nsIURI> uri = aURI;
 
-  // Applies only to Windows and Mac
-  PRBool compatible = PR_TRUE;
-#if XP_UNIX && !XP_MACOSX
-  compatible = PR_FALSE;
-#endif
-
+  // On Windows, convert "file:" URI's to lower-case.
+#ifdef XP_WIN
+  nsresult rv;
   PRBool isFileScheme;
   rv = uri->SchemeIs("file", &isFileScheme);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isFileScheme && compatible) {
-    nsCOMPtr<nsIIOService> ioService;
-    if (aIOService) {
-      ioService = aIOService;
-    } else {
-      ioService = GetIOService(rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
+  if (isFileScheme) {
+    // Get the URI spec.
     nsCAutoString spec;
-
-  #ifdef XP_WIN
-    // On Windows, convert "file:" URI's to lower-case.
     rv = uri->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Convert the URI spec to lower case.
     ToLowerCase(spec);
-  #elif XP_MACOSX
-    /**
-     * For Mac OS X, normalize the UTF-8 spec to be canonically decomposed
-     * (NFD). Supplementary notes:
-     * - [origin] Mac OS X NFD <-> NFC conversion
-     *   => https://bugzilla.mozilla.org/show_bug.cgi?id=227547
-     * - Note that with XULRunner 2.0, Mac OS X filesystem code was migrated
-     *   to be shared with UNIX filesystem code. That said, in the case of
-     *   a XULRunner update, this should still work.
-     *   => https://bugzilla.mozilla.org/show_bug.cgi?id=571193
-     * - Apple Developer documentation on file encodings:
-     *   => http://developer.apple.com/library/mac/#documentation \
-     *      /MacOSX/Conceptual/BPInternational/Articles/FileEncodings.html
-     */
-    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(uri, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIFile> file;
-    rv = fileURL->GetFile(getter_AddRefs(file));
+    // Regenerate the URI.
+    nsCOMPtr<nsIIOService> ioService = aIOService ? aIOService :
+                                                    GetIOService(rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIProtocolHandler> protocolHandler;
-    rv = ioService->GetProtocolHandler("file",
-                                       getter_AddRefs(protocolHandler));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIFileProtocolHandler> fileProtocolHandler =
-      do_QueryInterface(protocolHandler, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = fileProtocolHandler->GetURLSpecFromActualFile(file, spec);
-    NS_ENSURE_SUCCESS(rv, rv);
-  #endif
 
     rv = ioService->NewURI(spec, nsnull, nsnull, getter_AddRefs(uri));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+#endif // XP_WIN
 
   // Return results.
   NS_ADDREF(*_retval = uri);
@@ -627,15 +579,8 @@ nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
   rv = sbNewFileURI(aFile, getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  #ifdef XP_WIN
-    // Convert URI to a lowercase content URI.
-    rv = GetContentURI(uri, _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
-  #else
-    NS_ADDREF(*_retval = uri);
-  #endif
-
-  return NS_OK;
+  // Convert URI to a content URI.
+  return GetContentURI(uri, _retval);
 }
 
 /**
@@ -728,7 +673,7 @@ NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationBegin(sbIMediaList*,
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
 
-  mMediaLists = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  mMediaLists = do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
@@ -816,7 +761,7 @@ sbLibraryUtils::GetEqualOperator(sbIPropertyOperator ** aOperator)
   nsresult rv;
 
   nsCOMPtr<sbIPropertyManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+    do_GetService("@getnightingale.com/Nightingale/Properties/PropertyManager;1",
                   &rv);
   nsCOMPtr<sbIPropertyInfo> info;
   rv = manager->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
@@ -911,90 +856,31 @@ sbLibraryUtils::LinkCopy(sbIMediaItem * aOriginal, sbIMediaItem * aCopy)
 
   nsresult rv;
 
-  nsCOMPtr<sbILibrary> originalLibrary;
-  rv = aOriginal->GetLibrary(getter_AddRefs(originalLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibrary> newLibrary;
-  rv = aCopy->GetLibrary(getter_AddRefs(newLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  const PRBool originalIsMain = sbIsMainLibrary(originalLibrary);
-  const PRBool copyIsMain = sbIsMainLibrary(newLibrary);
-
-  // If we're copying from the main library or between two non-main libraries
-  // set the link up normally. DL is device library or other non-main library.
-  // ML to ML  = No Link
-  // ML to DL = Normal Link
-  // DL to ML = Reverse Link
-  // DL TO DL = No Link (Even if different libraries). origin guid from source
-  //            will be copied to the copy.
-  if (!originalIsMain && copyIsMain) {
-    // Copying from a non-main library to main library create a reverse link
-    // swap the original and copy
-    sbIMediaItem * temp = aCopy;
-    aCopy = aOriginal;
-    aOriginal = temp;
-  }
-  else if ((!originalIsMain && !copyIsMain) ||
-           (originalIsMain && copyIsMain)) {
-    return NS_OK;
-  }
-
   nsCOMPtr<sbIMutablePropertyArray> props =
     do_CreateInstance(
-               "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1",
+               "@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1",
                &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString originalGuid;
-  rv = aOriginal->GetGuid(originalGuid);
+  nsString playlistGuid;
+  rv = aOriginal->GetGuid(playlistGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                             originalGuid);
+                             playlistGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> originalLib;
-  rv = aOriginal->GetLibrary(getter_AddRefs(originalLib));
+  nsCOMPtr<sbILibrary> playlistLib;
+  rv = aOriginal->GetLibrary(getter_AddRefs(playlistLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString originalLibGuid;
-  rv = originalLib->GetGuid(originalLibGuid);
+  nsString playlistLibGuid;
+  rv = playlistLib->GetGuid(playlistLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-                             originalLibGuid);
+                             playlistLibGuid);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Determine whether the target item belongs to a device:
-  nsCOMPtr<sbIDeviceManager2> deviceMgr =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDevice> targetDev;
-  rv = deviceMgr->GetDeviceForItem(aCopy, getter_AddRefs(targetDev));
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "GetDeviceForItem() failed");
-
-  // Set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY on the target
-  // item if it belongs to a device and the original item is
-  // in the main library:
-  if (targetDev) {
-    // Get the main library:
-    nsCOMPtr<sbILibrary> mainLib;
-    rv = GetMainLibrary(getter_AddRefs(mainLib));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool isMainLib;
-    rv = originalLib->Equals(mainLib, &isMainLib);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (isMainLib) {
-      rv = props->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-        NS_LITERAL_STRING("1"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
 
   rv = aCopy->SetProperties(props);
   NS_ENSURE_SUCCESS(rv, rv);

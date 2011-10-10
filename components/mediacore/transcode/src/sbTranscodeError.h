@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBTRANSCODEERROR_H_
@@ -63,9 +63,9 @@ protected:
   nsCOMPtr<sbIMediaItem> mDestItem;
 };
 
-#define SONGBIRD_TRANSCODEERROR_CLASSNAME                  \
-  "Songbird Transcode Error"
-#define SONGBIRD_TRANSCODEERROR_CID                        \
+#define NIGHTINGALE_TRANSCODEERROR_CLASSNAME                  \
+  "Nightingale Transcode Error"
+#define NIGHTINGALE_TRANSCODEERROR_CID                        \
 { /* {9B0CDBF9-E4FA-4a5e-9E8A-C87AB37AA187} */             \
   0x9b0cdbf9,                                              \
   0xe4fa,                                                  \

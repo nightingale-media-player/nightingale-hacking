@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -33,14 +33,14 @@ function updateOnceAfterFirstRun() {
 
   // make sure first-run has already run - gets set by first run wizard
   // after the EULA is accepted and the welcome screen is shown.
-  var ranFirstRun = Application.prefs.get('songbird.firstrun.check.0.3');
+  var ranFirstRun = Application.prefs.get('nightingale.firstrun.check.0.3');
   if (!ranFirstRun || !ranFirstRun.value) {
     return;
   }
 
   // make sure we haven't run
-  var PREF_SONGBIRD_FIRSTRUN_UPDATEONCE = 'songbird.firstrun.update-once';
-  var ranUpdate = Application.prefs.get(PREF_SONGBIRD_FIRSTRUN_UPDATEONCE);
+  var PREF_NIGHTINGALE_FIRSTRUN_UPDATEONCE = 'nightingale.firstrun.update-once';
+  var ranUpdate = Application.prefs.get(PREF_NIGHTINGALE_FIRSTRUN_UPDATEONCE);
   if (ranUpdate && ranUpdate.value) {
     return;
   }
@@ -67,7 +67,7 @@ function updateOnceAfterFirstRun() {
   updateChecker.checkForUpdates(updateCheckListener, true);
 
   // set a pref so we don't run again
-  Application.prefs.setValue(PREF_SONGBIRD_FIRSTRUN_UPDATEONCE, true);
+  Application.prefs.setValue(PREF_NIGHTINGALE_FIRSTRUN_UPDATEONCE, true);
 }
 
 window.addEventListener('load', updateOnceAfterFirstRun, false);

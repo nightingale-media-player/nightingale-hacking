@@ -1,7 +1,7 @@
 /*
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -16,7 +16,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -24,18 +24,16 @@
 
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
-#include <nsCRT.h>
-#include <nsThreadUtils.h>
-#include <nsAutoLock.h>
-
 #include <nsISimpleEnumerator.h>
 #include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
 #include <nsIThreadPool.h>
-
-#include <sbProxiedComponentManager.h>
+#include <nsThreadUtils.h>
+#include <nsAutoLock.h>
+#include <sbProxyUtils.h>
 #include <sbStringUtils.h>
+#include <nsCRT.h>
 #include "sbFileSystemChange.h"
 
 // Save ourselves some pain by getting the path seperator char.
@@ -147,7 +145,7 @@ sbFileSystemTree::InitTree()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThreadPool> threadPoolService =
-    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIRunnable> runnable =
@@ -1031,15 +1029,12 @@ sbFileSystemTree::NotifyChanges(const nsAString & aChangePath,
                  aChangeType == eRemoved,
                  NS_ERROR_INVALID_ARG);
 
-  nsCOMPtr<nsIThread> currentThread;
-  nsresult rv = NS_GetCurrentThread(getter_AddRefs(currentThread));
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (currentThread != mOwnerContextThread) {
+  if (!NS_IsMainThread()) {
     nsCOMPtr<sbPIFileSystemTree> proxiedThis;
-    nsresult rv = do_GetProxyForObject(mOwnerContextThread,
+    nsresult rv = SB_GetProxyForObject(mOwnerContextThread,
                                        NS_GET_IID(sbPIFileSystemTree),
                                        this,
-                                       NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                       nsIProxyObjectManager::INVOKE_SYNC,
                                        getter_AddRefs(proxiedThis));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = proxiedThis->NotifyChanges(aChangePath, aChangeType);

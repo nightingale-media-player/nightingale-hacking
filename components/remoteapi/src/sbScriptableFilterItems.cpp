@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -486,7 +486,7 @@ NS_IMETHODIMP sbScriptableFilterItems::HasMoreElements(PRBool *_retval)
   NS_ENSURE_TRUE( mHasItems, NS_ERROR_NOT_INITIALIZED );
   NS_ENSURE_STATE( mEnumerationIndex >= 0 );
 
-  *_retval = mEnumerationIndex < (PRUint32)mItems.Count();
+  *_retval = mEnumerationIndex < mItems.Count();
   return NS_OK;
 }
 
@@ -495,7 +495,7 @@ NS_IMETHODIMP sbScriptableFilterItems::GetNext(nsISupports **_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE( mHasItems, NS_ERROR_NOT_INITIALIZED );
   NS_ENSURE_STATE( mEnumerationIndex >= 0 );
-  NS_ENSURE_TRUE( mEnumerationIndex < (PRUint32)mItems.Count(), NS_ERROR_FAILURE );
+  NS_ENSURE_TRUE( mEnumerationIndex < mItems.Count(), NS_ERROR_FAILURE );
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> rawItem = mItems[mEnumerationIndex];

@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,12 +20,12 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
+const NIGHTINGALE_BUNDLE_IID = Components.interfaces.sbIBundle;
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -44,9 +44,9 @@ function Bundle() {
 Bundle.prototype.constructor = Bundle;
 
 Bundle.prototype = {
-  classDescription: "Songbird Bundle Service Interface",
+  classDescription: "Nightingale Bundle Service Interface",
   classID:          Components.ID("{ff29ec35-1294-42ae-a341-63d0303df969}"),
-  contractID:       "@songbirdnest.com/Songbird/Bundle;1",
+  contractID:       "@getnightingale.com/Nightingale/Bundle;1",
 
   _bundleid: null,
   _bundleURL: null,
@@ -126,7 +126,7 @@ Bundle.prototype = {
       httpReq.removeEventListener("load", this._onload, false);
       httpReq.removeEventListener("error", this._onerror, false);
       this._req = null;
-      this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_DOWNLOADING;
+      this._status = NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_DOWNLOADING;
     }
 
     this._onload = {
@@ -159,7 +159,7 @@ Bundle.prototype = {
     // XXXredfive - this will(may) change to the mozilla urlformatter when
     //  bmo 430235 gets fixed.
     // use the urlFormatter service to replace the %FOO% mumbo-jumbo
-    var urlFormatter = Cc["@songbirdnest.com/moz/sburlformatter;1"]
+    var urlFormatter = Cc["@getnightingale.com/moz/sburlformatter;1"]
                          .getService(Ci.sbIURLFormatter);
     var pbag = Cc["@mozilla.org/hash-property-bag;1"]
                  .createInstance(Ci.nsIWritablePropertyBag2);
@@ -224,13 +224,13 @@ Bundle.prototype = {
   },
   
   onLoad: function() {
-    this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS;
+    this._status = NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS;
     this.getExtensionList();
     for (var i = 0; i < this._datalisteners.length; i++) this._datalisteners[i].onDownloadComplete(this);
   },
 
   onError: function() {
-    this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_ERROR;
+    this._status = NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_ERROR;
     for (var i = 0; i < this._datalisteners.length; i++) this._datalisteners[i].onError(this);
   },
   
@@ -240,7 +240,7 @@ Bundle.prototype = {
     
     for (var i = 0; i < datablocknodes.length; i++) {
       if (datablocknodes[i].nodeType == Ci.nsIDOMNode.ELEMENT_NODE &&
-          datablocknodes[i].tagName == "SongbirdInstallBundle") {
+          datablocknodes[i].tagName == "NightingaleInstallBundle") {
         this._bundleversion = datablocknodes[i].getAttribute("version")
 /*
         // Sample code to generate some elements for testing.
@@ -263,7 +263,7 @@ Bundle.prototype = {
                             
     this._installresult = Components.interfaces.sbIBundle.BUNDLE_INSTALL_ERROR;
     windowWatcherService.openWindow(aWindow,
-                                    "chrome://songbird/content/xul/setupProgress.xul",
+                                    "chrome://nightingale/content/xul/setupProgress.xul",
                                     "_blank",
                                     "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal",
                                     this);
@@ -276,7 +276,7 @@ Bundle.prototype = {
   
   getExtensionList: function() {
     this._extlist = new Array();
-    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
+    if (this._status == NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
       var bundledocument = this.bundleDataDocument;
       if (bundledocument) {
         var nodes = this.getDataNodes(bundledocument);
@@ -294,7 +294,7 @@ Bundle.prototype = {
   },
   
   get bundleExtensionCount() {
-    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
+    if (this._status == NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS) {
       if (this._simulate_lots_of_entries) return this._extlist.length * 20;
       return this._extlist.length;
     }
@@ -305,7 +305,7 @@ Bundle.prototype = {
     if (!this._extlist) return;
     if (this._extlist.length != 0 && this._simulate_lots_of_entries)
       aIndex = aIndex % this._extlist.length;
-    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount)
+    if (this._status == NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount)
       this._extlist.splice(aIndex, 1);
   },
 
@@ -313,7 +313,7 @@ Bundle.prototype = {
     if (!this._extlist) return "";
     if (this._extlist.length != 0 && this._simulate_lots_of_entries) 
       aIndex = aIndex % this._extlist.length;
-    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
+    if (this._status == NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
       return this._extlist[aIndex][0].getAttribute(aAttributeName);
     return "";
   },
@@ -322,7 +322,7 @@ Bundle.prototype = {
     if (!this._extlist) return false;
     if (this._extlist.length != 0 && this._simulate_lots_of_entries) 
       aIndex = aIndex % this._extlist.length;
-    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
+    if (this._status == NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
       return this._extlist[aIndex][1];
     return false;
   },
@@ -331,7 +331,7 @@ Bundle.prototype = {
     if (!this._extlist) return;
     if (this._extlist.length != 0 && this._simulate_lots_of_entries) 
       aIndex = aIndex % this._extlist.length;
-    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
+    if (this._status == NIGHTINGALE_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount) 
       this._extlist[aIndex][1] = aInstallFlag;
   },
   
@@ -381,7 +381,7 @@ Bundle.prototype = {
    * See nsISupports.idl
    */
   QueryInterface:
-    XPCOMUtils.generateQI([SONGBIRD_BUNDLE_IID,
+    XPCOMUtils.generateQI([NIGHTINGALE_BUNDLE_IID,
                            Components.interfaces.sbPIBundle,
                            Components.interfaces.nsIWebProgressListener,
                            Components.interfaces.nsISupportsWeakReference,

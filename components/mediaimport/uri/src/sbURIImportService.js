@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -75,7 +75,7 @@ sbURIImportService.prototype =
 
     // the array to record items to feed to the metadata scanner
     if (!this._scanList) {
-      this._scanList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+      this._scanList = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                          .createInstance(Ci.nsIMutableArray);
     }
 
@@ -84,7 +84,7 @@ sbURIImportService.prototype =
     this._totalImported = 0;
     this._totalInserted = 0;
     this._totalDups = 0;
-    this._mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+    this._mainLibrary = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                           .getService(Ci.sbILibraryManager)
                           .mainLibrary;
 
@@ -168,7 +168,7 @@ sbURIImportService.prototype =
         // if we created any mediaitem
         if (this._scanList && this._scanList.length > 0) {
           var metadataService = 
-            Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+            Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
               .getService(Ci.sbIFileMetadataService);
 
           metadataService.read(this._scanList);
@@ -209,13 +209,13 @@ sbURIImportService.prototype =
     try {    
       // is this a media url ?
       let typeSniffer = 
-        Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+        Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
           .createInstance(Ci.sbIMediacoreTypeSniffer);
       let Application = Cc["@mozilla.org/fuel/application;1"]
                           .getService(Ci.fuelIApplication);
 
       let isValidMediaURL = typeSniffer.isValidMediaURL(aURI);
-      if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)
+      if (!Application.prefs.getValue("nightingale.mediascan.enableVideoImporting", true)
           && typeSniffer.isValidVideoURL(aURI)) {
         isValidMediaURL = false;
       }
@@ -342,7 +342,7 @@ sbURIImportService.prototype =
   _importDropDirectories: function() 
   {
     var importService = 
-      Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+      Cc['@getnightingale.com/Nightingale/DirectoryImportService;1']
         .getService(Ci.sbIDirectoryImportService);
     
     var job = importService.import(ArrayConverter.nsIArray(this._directoryList),
@@ -401,11 +401,11 @@ sbURIImportService.prototype =
 // XPCOM Registration
 
 sbURIImportService.prototype.classDescription = 
-  "Songbird URI Import Service";
+  "Nightingale URI Import Service";
 sbURIImportService.prototype.classID =
   Components.ID("{CC435D34-F76A-458F-B786-FAF897CA69BD}");
 sbURIImportService.prototype.contractID =
-  "@songbirdnest.com/uri-import-service;1";
+  "@getnightingale.com/uri-import-service;1";
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([sbURIImportService]);

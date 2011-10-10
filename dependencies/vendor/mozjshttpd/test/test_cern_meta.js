@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is httpd.js code.
+ * The Original Code is MozJSHTTP code.
  *
  * The Initial Developer of the Original Code is
  * Jeff Walden <jwalden+code@mit.edu>.
@@ -58,12 +58,12 @@ function run_test()
 {
   var srv = createServer();
 
-  var cernDir = do_get_file("data/cern_meta/");
+  var cernDir = do_get_file("netwerk/test/httpserver/test/data/cern_meta/");
   srv.registerDirectory("/", cernDir);
 
   srv.start(4444);
 
-  runHttpTests(tests, testComplete(srv));
+  runHttpTests(tests, function() { srv.stop(); });
 }
 
 

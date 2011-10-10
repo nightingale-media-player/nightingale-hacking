@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2010 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -59,7 +59,7 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler,
                              nsIStreamListener)
 
 SB_DEVICE_FIRMWARE_HANLDER_REGISTERSELF_IMPL(sbMockDeviceFirmwareHandler,
-                                             "Songbird Device Firmware Tester - Mock Device Firmware Handler")
+                                             "Nightingale Device Firmware Tester - Mock Device Firmware Handler")
 
 sbMockDeviceFirmwareHandler::sbMockDeviceFirmwareHandler() : mComplete(0)
 {
@@ -74,10 +74,10 @@ sbMockDeviceFirmwareHandler::OnInit()
 {
   nsresult rv;
   mContractId =
-    NS_LITERAL_STRING("@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1");
+    NS_LITERAL_STRING("@getnightingale.com/Nightingale/Device/Firmware/Handler/MockDevice;1");
 
   mHandlerURLService =
-    do_GetService("@songbirdnest.com/mock-firmware-url-handler;1", &rv);
+    do_GetService("@getnightingale.com/mock-firmware-url-handler;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
  
   nsCString resetURL;

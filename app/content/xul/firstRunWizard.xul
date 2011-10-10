@@ -1,43 +1,45 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 -->
 
 <!-- Import external definitions. -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/firstRunWizard.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/firstRunWizard.css"
                  type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <!-- First-run wizard. -->
@@ -46,7 +48,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   id="first_run_wizard"
-  type="songbird"
+  type="nightingale"
   title="&first_run.title;"
   onload="firstRunWizard.doLoad();"
   onunload="firstRunWizard.doUnload();"
@@ -63,20 +65,22 @@
   <!-- EULA page. -->
   <wizardpage id="first_run_eula_page"
               pageid="first_run_eula_page"
-              class="first-run-wizard-page"
               next="first_run_welcome_page"
               label="&first_run.title;"
               showextra1="true"
               hideback="true"
               hidecancel="true"
-              onpageshow="firstRunWizard.doPageShow();"
-              firstrunwizardpage="true"
-              oncommand="firstRunWizard.update();"/>
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-eula id="first_run_eula"
+                       class="first-run-wizard-page"
+                       firstrunwizardpage="true"
+                       oncommand="firstRunWizard.update();"/>
+  </wizardpage>
 
   <!-- Welcome page. -->
   <wizardpage id="first_run_welcome_page"
               pageid="first_run_welcome_page"
-              next="first_run_app_update_check_page"
+              next="first_run_itunes_page"
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
@@ -85,97 +89,50 @@
                           firstrunwizardpage="true"/>
   </wizardpage>
 
-  <!-- Application update checking page. -->
-  <wizardpage id="first_run_app_update_check_page"
-              pageid="first_run_app_update_check_page"
-              class="first-run-wizard-page"
-              next="first_run_app_update_avail_page"
-              next_skip="first_run_itunes_page"
-              hidenext="true"
-              label="XXX first run: application update (checking)"
-              onpageshow="firstRunWizard.doPageShow();"
-              firstrunwizardpage="true"/>
-
-  <!-- Application update found page. -->
-  <wizardpage id="first_run_app_update_avail_page"
-              pageid="first_run_app_update_avail_page"
-              class="first-run-wizard-page"
-              next="first_run_app_update_download_page"
-              next_skip="first_run_itunes_page"
-              label="XXX first run: application update available"
-              onpageshow="firstRunWizard.doPageShow();"
-              showextra1="true"
-              hidecancel="true"
-              firstrunwizardpage="true"/>
-
-  <!-- Application update found (downloading) page. -->
-  <wizardpage id="first_run_app_update_download_page"
-              pageid="first_run_app_update_download_page"
-              class="first-run-wizard-page"
-              next="first_run_app_update_finished_page"
-              next_skip="first_run_itunes_page"
-              label="XXX first run: application update (downloading)"
-              onpageshow="firstRunWizard.doPageShow();"
-              firstrunwizardpage="true"/>
-
-  <!-- Application update download complete page -->
-  <wizardpage id="first_run_app_update_finished_page"
-              pageid="first_run_app_update_finished_page"
-              class="first-run-wizard-page"
-              next="first_run_app_update_post_page"
-              onpageshow="firstRunWizard.doPageShow();"
-              firstrunwizardpage="true"/>
-
-  <!-- Application update found (failed) page. -->
-  <wizardpage id="first_run_app_update_failed_page"
-              pageid="first_run_app_update_failed_page"
-              class="first-run-wizard-page"
-              next="first_run_itunes_page"
-              prev="first_run_welcome_page"
-              label="XXX first run: application update (failed)"
-              onpageshow="firstRunWizard.doPageShow();"
-              firstrunwizardpage="true"/>
-
-  <!-- Application update post-restart page -->
-  <wizardpage id="first_run_app_update_post_page"
-              pageid="first_run_app_update_post_page"
-              class="first-run-wizard-page"
-              next="first_run_itunes_page"
-              onpageshow="firstRunWizard.doPageShow();"
-              firstrunwizardpage="true"/>
-
   <!-- iTunes import/export page. -->
   <wizardpage id="first_run_itunes_page"
               pageid="first_run_itunes_page"
               next="first_run_import_media_page"
               label="&first_run.title;"
-              onpageshow="firstRunWizard.doPageShow();"
-              class="first-run-wizard-page"
-              firstrunwizardpage="true"/>
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-itunes id="first_run_itunes"
+                               class="first-run-wizard-page"
+                               firstrunwizardpage="true"/>
+  </wizardpage>
 
-  <!-- Import media page.
-   *   The binding for this page, sb-first-run-import-media, extends
-   *   sb-wizard-page directly.  It is therefore bound directly to this
-   *   <wizardpage> by id, rather than to an <sb-first-run-import-media>
-   *   child.
-   -->
+  <!-- Import media page. -->
   <wizardpage id="first_run_import_media_page"
               pageid="first_run_import_media_page"
               next="first_run_add_ons_page"
               label="&first_run.title;"
-              onpageshow="firstRunWizard.doPageShow();"
-              class="first-run-wizard-page"
-              firstrunwizardpage="true"/>
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-import-media id="first_run_import_media"
+                               class="first-run-wizard-page"
+                               firstrunwizardpage="true"/>
+  </wizardpage>
 
   <!-- Add-ons page. -->
   <wizardpage id="first_run_add_ons_page"
               pageid="first_run_add_ons_page"
+              next="first_run_feedback_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-add-ons id="first_run_add_ons"
                           class="first-run-wizard-page"
                           firstrunwizardpage="true"/>
   </wizardpage>
+
+  <!-- Feedback page. -->
+  <wizardpage id="first_run_feedback_page"
+              pageid="first_run_feedback_page"
+              postfinish="first_run_install_add_ons_page"
+              label="&first_run.title;"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-feedback id="first_run_feedback"
+                           class="first-run-wizard-page"
+                           firstrunwizardpage="true"/>
+  </wizardpage>
+
 
   <!--
    * Non-sequential pages.
@@ -227,21 +184,19 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->
+  <!-- Import the Nightingale services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js"/>
+          src="chrome://nightingale/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/switchLocale.js"/>
+          src="chrome://nightingale/content/scripts/switchLocale.js"/>
 
   <!-- Import the first run wizard services. -->
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/firstRunWizard.js"/>
-  <script type="application/x-javascript;version=1.8"
-          src="chrome://songbird/content/scripts/firstRun/firstRunAppUpdate.js"/>
+          src="chrome://nightingale/content/scripts/firstRunWizard.js"/>
 
 </wizard>
 

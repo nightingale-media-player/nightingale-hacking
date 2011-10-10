@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -34,7 +34,7 @@
  */
 function getLatestSchemaVersionFromFile() {
   // the schema file may be in a jar, so we alway need to use the chrome url
-  const schemaSpec = "chrome://songbird/content/library/localdatabase/schema.sql";
+  const schemaSpec = "chrome://nightingale/content/library/localdatabase/schema.sql";
   var ioService = Cc["@mozilla.org/network/io-service;1"]
                     .getService(Ci.nsIIOService);
   var schemaUri = ioService.newURI(schemaSpec, null, null);
@@ -67,7 +67,7 @@ function runTest() {
   var library = createLibrary(databaseGUID);
   
   var migrationHelper = 
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1"]
+    Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/MigrationHelper;1"]
       .createInstance(Ci.sbILocalDatabaseMigrationHelper);
 
   var latestSchemaVersion = getLatestSchemaVersionFromFile();

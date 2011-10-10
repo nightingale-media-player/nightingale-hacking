@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,11 +28,11 @@
 #define sbFileSystemCID_h_
 
 
-#define SONGBIRD_FILESYSTEMWATCHER_CONTRACTID                  \
-  "@songbirdnest.com/filesystem/watcher;1"
-#define SONGBIRD_FILESYSTEMWATCHER_CLASSNAME                   \
-  "Songbird FileSystem Watcher"
-#define SONGBIRD_FILESYSTEMWATCHER_CID                         \
+#define NIGHTINGALE_FILESYSTEMWATCHER_CONTRACTID                  \
+  "@getnightingale.com/filesystem/watcher;1"
+#define NIGHTINGALE_FILESYSTEMWATCHER_CLASSNAME                   \
+  "Nightingale FileSystem Watcher"
+#define NIGHTINGALE_FILESYSTEMWATCHER_CID                         \
 { /* A433A0C9-C350-421A-AAA0-A25EA2BFBE64 */                   \
   0xA433A0C9,                                                  \
   0xC350,                                                      \
@@ -41,9 +41,9 @@
 }
 
 
-#define SONGBIRD_FILESYSTEMNODE_CLASSNAME                      \
-  "Songbird FileSystem Node"
-#define SONGBIRD_FILESYSTEMNODE_CID                            \
+#define NIGHTINGALE_FILESYSTEMNODE_CLASSNAME                      \
+  "Nightingale FileSystem Node"
+#define NIGHTINGALE_FILESYSTEMNODE_CID                            \
 { /* 57DAC47F-2796-4570-86C3-F67CDC11CD31 */                   \
   0x57DAC47F,                                                  \
   0x2796,                                                      \

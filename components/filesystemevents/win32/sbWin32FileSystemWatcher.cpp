@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,7 +33,6 @@
 #include <nsThreadUtils.h>
 #include <nsAutoLock.h>
 #include <sbStringUtils.h>
-#include <sbDebugUtils.h>
 
 #define BUFFER_LEN 1024 * 64
 
@@ -41,6 +40,15 @@
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbWin32FSWatcher:5
  */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gWin32FSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gWin32FSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gWin32FSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
 
 //------------------------------------------------------------------------------
 // Async callback for ReadDirectoryChangesW()
@@ -54,7 +62,10 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
   sbWin32FileSystemWatcher *watcher =
     (sbWin32FileSystemWatcher *)lpOverlapped->hEvent;
   if (!watcher) {
-    LOG("%s: no watcher!", __FUNCTION__);
+    #if PR_LOGGING
+      if (gWin32FSWatcherLog)
+        LOG(("%s: no watcher!", __FUNCTION__));
+    #endif /*(PR_LOGGING*/
     return;
   }
 
@@ -72,7 +83,11 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
     (FILE_NOTIFY_INFORMATION *)watcher->GetBuffer();
   if (fileInfo) {
     {
-      TRACE("%s: found changes in %s", __FUNCTION__, fileInfo->FileName);
+      #if PR_LOGGING
+        if (gWin32FSWatcherLog)
+          TRACE(("%s: found changes in %s",
+                 __FUNCTION__, fileInfo->FileName));
+      #endif /* PR_/LOGGING */
       nsAutoLock lock(watcher->GetEventPathsSetLock());
 
       while (PR_TRUE) {
@@ -137,8 +152,11 @@ sbWin32FileSystemWatcher::sbWin32FileSystemWatcher() :
   mIsThreadRunning(PR_FALSE),
   mShuttingDown(PR_FALSE)
 {
-  SB_PRLOG_SETUP(sbWin32FSWatcher);
-
+#ifdef PR_LOGGING
+  if (!gWin32FSWatcherLog) {
+    gWin32FSWatcherLog = PR_NewLogModule("sbWin32FSWatcher");
+  }
+#endif
   mEventPathsSetLock =
     nsAutoLock::NewLock("sbWin32FileSystemWatcher::mEventPathsSetLock");
   NS_ASSERTION(mEventPathsSetLock, "Failed to create lock");
@@ -146,7 +164,7 @@ sbWin32FileSystemWatcher::sbWin32FileSystemWatcher() :
 
 sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
 {
-  TRACE("%s", __FUNCTION__);
+  TRACE(("%s", __FUNCTION__));
   nsAutoLock::DestroyLock(mEventPathsSetLock);
 
   // The thread was asked to terminate in the "quit-application" notification.
@@ -162,8 +180,8 @@ sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener,
                                const nsAString & aRootPath,
                                PRBool aIsRecursive)
 {
-  TRACE("%s: root path = %s", __FUNCTION__,
-         NS_ConvertUTF16toUTF8(aRootPath).get());
+  TRACE(("%s: root path = %s", __FUNCTION__,
+         NS_ConvertUTF16toUTF8(aRootPath).get()));
   nsresult rv;
   nsCOMPtr<nsIObserverService> obsService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
@@ -178,7 +196,7 @@ sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener,
 NS_IMETHODIMP
 sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
-  TRACE("%s", __FUNCTION__);
+  TRACE(("%s", __FUNCTION__));
 
   mShuttingDown = PR_TRUE;
 
@@ -202,7 +220,7 @@ sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 void
 sbWin32FileSystemWatcher::Cleanup()
 {
-  TRACE("%s", __FUNCTION__);
+  TRACE(("%s", __FUNCTION__));
   if (mBuffer) {
     nsMemory::Free(mBuffer);
     mBuffer = NULL;
@@ -218,7 +236,7 @@ sbWin32FileSystemWatcher::Cleanup()
 void
 sbWin32FileSystemWatcher::InitRebuildThread()
 {
-  TRACE("%s", __FUNCTION__);
+  TRACE(("%s", __FUNCTION__));
   nsresult rv;
   
   NS_ENSURE_TRUE(!mShuttingDown, /* void */);
@@ -233,7 +251,7 @@ sbWin32FileSystemWatcher::InitRebuildThread()
 void
 sbWin32FileSystemWatcher::WatchNextChange()
 {
-  TRACE("%s", __FUNCTION__);
+  TRACE(("%s", __FUNCTION__));
   DWORD const flags =
     FILE_NOTIFY_CHANGE_FILE_NAME |
     FILE_NOTIFY_CHANGE_DIR_NAME |
@@ -303,8 +321,8 @@ NS_IMETHODIMP
 sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
                                       sbStringArray & aDirPathArray)
 {
-  TRACE("%s: root path %s",
-         __FUNCTION__, NS_ConvertUTF16toUTF8(aTreeRootPath).get());
+  TRACE(("%s: root path %s",
+         __FUNCTION__, NS_ConvertUTF16toUTF8(aTreeRootPath).get()));
   if (mWatchPath.Equals(EmptyString())) {
     // If the watch path is empty here, this means that the tree was loaded
     // from a previous session. Set the watch path now.
@@ -367,7 +385,7 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
                                   const char *aTopic,
                                   const PRUnichar *aData)
 {
-  LOG("%s: observing %s", __FUNCTION__, aTopic);
+  LOG(("%s: observing %s", __FUNCTION__, aTopic));
   if (strcmp(aTopic, "quit-application") == 0) {
     if (mIsWatching) {
       // Pass in PR_FALSE - the owner of the file system watcher should stop
@@ -394,7 +412,7 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
 NS_IMETHODIMP
 sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
 {
-  TRACE("%s", __FUNCTION__);
+  TRACE(("%s", __FUNCTION__));
   {
     nsAutoLock lock(mEventPathsSetLock);
 

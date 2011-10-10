@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -39,7 +39,7 @@ Imported by bindings.css or directly into feathers.
 /** The back button **/
 #back-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 16px 16px 0px);
 }
 #back-button:hover
@@ -60,7 +60,7 @@ Imported by bindings.css or directly into feathers.
 #reload-button,
 .sb-browser-stopreload-reload-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 48px 16px 32px);
 }
 #reload-button:hover,
@@ -84,7 +84,7 @@ Imported by bindings.css or directly into feathers.
 #stop-button,
 .sb-browser-stopreload-stop-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 64px 16px 48px);
 }
 #stop-button:hover,
@@ -107,7 +107,7 @@ Imported by bindings.css or directly into feathers.
 /** The forward button **/
 #forward-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 32px 16px 16px);
 }
 #forward-button:hover
@@ -127,7 +127,7 @@ Imported by bindings.css or directly into feathers.
 /** The home button **/
 #home-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 80px 16px 64px);
 }
 #home-button:hover
@@ -146,7 +146,7 @@ Imported by bindings.css or directly into feathers.
 
 #subscription-button
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 112px 16px 96px);
 }
 #subscription-button:hover
@@ -165,7 +165,7 @@ Imported by bindings.css or directly into feathers.
 /** The Media Pages button **/
 #mediapages-button > .toolbarbutton-icon
 {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  list-style-image: url(chrome://nightingale/skin/buttons/webbar-buttons.png);
   -moz-image-region: rect(0px 144px 16px 128px);
 }
 #mediapages-button:hover > .toolbarbutton-icon
@@ -201,7 +201,7 @@ LOCATION TEXTBOX
 
 .locationbar-image
 {
-  list-style-image: url("chrome://songbird/skin/icons/small-globe-sunken.png");
+  list-style-image: url("chrome://nightingale/skin/icons/small-globe-sunken.png");
   background-color: transparent;
   height: 16px;
   width: 16px;
@@ -216,7 +216,7 @@ LOCATION TEXTBOX
 /** Convert the favicon into a spinner animation when
     the browser is loading **/ 
 .locationbar-textbox[loading="true"] > .locationbar-image {
-  background-image: url(chrome://songbird/skin/icons/spinner-spin.png) !important;
+  background-image: url(chrome://nightingale/skin/icons/spinner-spin.png) !important;
   width:16px;
   height:16px;
   padding-top:100px;
@@ -243,11 +243,11 @@ sb-browser-spinner
 }
 .browser-spinner-image
 {
-  list-style-image: url(chrome://songbird/skin/icons/spinner-stopped.png) ;  
+  list-style-image: url(chrome://nightingale/skin/icons/spinner-stopped.png) ;  
 }
 .browser-spinner-image[spinning="true"]
 {
-  list-style-image: url(chrome://songbird/skin/icons/spinner-spin.png) ;
+  list-style-image: url(chrome://nightingale/skin/icons/spinner-spin.png) ;
 }
 
 

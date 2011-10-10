@@ -46,7 +46,7 @@
   color: -moz-FieldText;
   overflow: auto;
 }
-
+ 
 /* ::::: console rows ::::: */
 
 .console-row {
@@ -58,8 +58,8 @@
   color: #505050;
 }
 
-.console-row-msg > label,
-    .console-row-msg > description,
+.console-row-msg > label, 
+    .console-row-msg > description, 
     .console-row-file > label {
   color: black;
 }
@@ -90,7 +90,7 @@
 }
 
 .text-link {
-  text-decoration: none;
+  text-decoration: none;  
 }
 
 .text-link:hover {
@@ -104,7 +104,7 @@
   font-size: larger;
 }
 
-.console-dots,
+.console-dots, 
 .console-caret {
   height: 9px;
 }
@@ -122,7 +122,7 @@
 
 .console-row[type="message"] {
   font-family: monospace;
-}
+} 
 
 /* ..... selected state ..... */
 
@@ -134,7 +134,7 @@
 .console-row-code[selected="true"],
 .console-row-content[selected="true"] > .console-row-file,
 .console-row-content[selected="true"] > .console-row-file > .console-error-source > .text-link {
-  color: #FFF !important;
+  color: #FFF !important;  
 }
 
 /* ::::: icons ::::: */
@@ -162,7 +162,7 @@
 
 #TextfieldEval {
   margin: 2px !important;
-
+  
 }
 
 #ButtonEval {
@@ -224,23 +224,6 @@ toolbarbutton[id="Console:clear"]:hover:active {
 
 #ConsoleBox {
   margin-bottom: 14px;
-  background-color: transparent;
-  border-bottom: none;
+  border-bottom: 1px solid #bebebe; 
 }
-#ConsoleBox hbox.lineNumberRow > label {
-  color: rgb(15,15,15);
-}
-#console-toolbox > toolbar#ToolbarMode toolbarbutton {
-  background-image: url(chrome://songbird/skin/base-elements/bg-button-tall.png);
-  background-position: center 0px;
-}
-#console-toolbox > toolbar#ToolbarMode toolbarbutton:hover {
-  background-position: center -45px;
-}
-#console-toolbox > toolbar#ToolbarMode toolbarbutton:active,
-#console-toolbox > toolbar#ToolbarMode toolbarbutton[checked="true"] {
-  background-position: center -90px;
-}
-#console-toolbox > toolbar#ToolbarMode toolbarbutton:disabled {
-  background-position: center -135px;
-}
+

@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,12 +22,12 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
-<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE bindings SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -45,14 +45,14 @@
       try{
         const Cc = Components.classes;
         const Ci = Components.interfaces;
-        var PM = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+        var PM = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
 
         var alreadyAdded = {};
         var enableAll = Application.prefs.getValue(
-                       "songbird.columnpicker.allowSecondaryProperties", false);
+                       "nightingale.columnpicker.allowSecondaryProperties", false);
         var alsoUnlocalized = Application.prefs.getValue(
-                       "songbird.columnpicker.allowUnlocalizedSecondaryProperties", 
+                       "nightingale.columnpicker.allowUnlocalizedSecondaryProperties", 
                        false);
         
         var self = this;
@@ -149,8 +149,7 @@
             this._updateControls("textbox", false);
             this._updateControls("label", false);
             // We have to make sure that the add link is in the correct state
-            if (this._addlink)
-              this._updateAddLink();
+            this._updateAddLink();
           }
         ]]></setter>
       </property>
@@ -194,7 +193,7 @@
           if (this.hasAttribute("defaultSeparator")) {
             return this.getAttribute("defaultSeparator");
           }
-          const OS = Components.classes["@mozilla.org/xre/runtime;1"]
+          const OS = Components.classes["@mozilla.org/xre/app-info;1"]
                                .getService(Components.interfaces.nsIXULRuntime)
                                .OS;
           switch (OS) {
@@ -326,9 +325,9 @@
               if (!(ary.length % 2)) {
                 Components.utils.reportError("values " + ary + "invalid, using default");
               }
-              return ["http://songbirdnest.com/data/1.0#artistName",
+              return ["http://getnightingale.com/data/1.0#artistName",
                       this.defaultSeparator,
-                      "http://songbirdnest.com/data/1.0#albumName"];
+                      "http://getnightingale.com/data/1.0#albumName"];
             }
             for (let i = 0; i < ary.length; ++i) {
               if (i % 2) {
@@ -415,7 +414,6 @@
               separator.setAttribute("class", "plain");
               if (!self.separatorEditable) {
                 separator.setAttribute("readonly", true);
-                separator.setAttribute("tabindex", -1);
               }
               vbox.appendChild(separator);
               return vbox;
@@ -512,9 +510,8 @@
               if (existingChild) {
                 var separator = document.createElement("textbox");
                 separator.setAttribute("value", this.defaultSeparator);
-                if (!self.separatorEditable) {
+                if (this.readonly) {
                     separator.setAttribute("readonly", true);
-                    separator.setAttribute("tabindex", -1);
                 }
                 separator.setAttribute("class", "plain");
                 vbox.appendChild(separator);

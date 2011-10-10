@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -272,17 +272,7 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   // Firstly, if we don't already have a video view set up, request a video
   // window, and set up the appropriate parent view.
   if (!mParentView) {
-    nsCOMPtr<nsIThread> mainThread;
-    nsresult rv = NS_GetMainThread(getter_AddRefs(mainThread));
-    NS_ENSURE_SUCCESS(rv, /* void */);
-
-    nsCOMPtr<nsIRunnable> runnable =
-        NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
-                                mCore,
-                                RequestVideoWindow);
-
-    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
-    NS_ENSURE_SUCCESS(rv, /* void */);
+    mCore->RequestVideoWindow();
   }
 
   // Now we can deal with setting this up...
@@ -306,21 +296,17 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 
   // Listen to live resize events since gecko resize events aren't posted on
   // Mac until the resize has finished. (see bug 20445).
-  SBGstGLViewDelgate *delegate = (SBGstGLViewDelgate *)mGstGLViewDelegate;
-  [delegate startListeningToResizeEvents];
-
-  // Now, we want to set this view as a subview of the NSView we have
-  // as our window-for-displaying-video. Don't do this from a non-main
-  // thread, though!
-  [parentView performSelectorOnMainThread:@selector(addSubview:)
-                               withObject:view
-                            waitUntilDone:YES];
+  [mGstGLViewDelegate startListeningToResizeEvents];
 
   // Fail safe, ensure that the gst |NSView| responds to the delegate method
   // before attempting to set the delegate of the view.
   if ([view respondsToSelector:@selector(setDelegate:)]) {
     [view setDelegate:(id)mGstGLViewDelegate];
   }
+
+  // Now, we want to set this view as a subview of the NSView we have
+  // as our window-for-displaying-video. 
+  [parentView addSubview:view];
 
   // Resize the window
   ResizeToWindow();
@@ -417,7 +403,7 @@ OSXPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
     NSString *frameStr = NSStringFromRect(rect);
     [view performSelectorOnMainThread:@selector(setFrameAsString:)
                            withObject:frameStr
-                        waitUntilDone:YES];
+                        waitUntilDone:NO];
   }
 
   [pool release];
@@ -428,15 +414,14 @@ void OSXPlatformInterface::RemoveView()
   if (mVideoView) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+    [mGstGLViewDelegate stopListeningToResizeEvents];
+
     NSView *view = (NSView *)mVideoView;
     if (view) {
       [view performSelectorOnMainThread:@selector(removeFromSuperviewWithoutNeedingDisplay)
                              withObject:nil
-                          waitUntilDone:YES];
+                          waitUntilDone:NO];
     }
-
-    SBGstGLViewDelgate *delegate = (SBGstGLViewDelgate *)mGstGLViewDelegate;
-    [delegate stopListeningToResizeEvents];
 
     mVideoView = nsnull;
     [pool release];

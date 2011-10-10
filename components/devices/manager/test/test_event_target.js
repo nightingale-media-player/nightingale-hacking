@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,7 +38,7 @@ function onEvent(aEvent) {
 }
 
 function runTest () {
-  var manager = Components.classes["@songbirdnest.com/Songbird/DeviceManager;2"]
+  var manager = Components.classes["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Components.interfaces.sbIDeviceManager2);
 
   manager.addEventListener(onEvent);
@@ -54,12 +54,12 @@ function runTest () {
   assertFalse(hasEvent, "event listener not removed");
   
   // stress test, yay!
-  var eventTest = Components.classes["@songbirdnest.com/Songbird/Device/EventTester/StressThreads;1"]
+  var eventTest = Components.classes["@getnightingale.com/Nightingale/Device/EventTester/StressThreads;1"]
                             .createInstance(Components.interfaces.nsIRunnable);
   eventTest.run();
   
   // test the sequencing too
-  var eventTest = Components.classes["@songbirdnest.com/Songbird/Device/EventTester/Removal;1"]
+  var eventTest = Components.classes["@getnightingale.com/Nightingale/Device/EventTester/Removal;1"]
                             .createInstance(Components.interfaces.nsIRunnable);
   eventTest.run();
 }

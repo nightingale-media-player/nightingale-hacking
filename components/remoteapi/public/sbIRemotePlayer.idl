@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -41,37 +41,37 @@ interface sbIRemoteObserver;
 interface sbIRemoteWebPlaylist;
 
 /*
-Class: Songbird
+Class: Nightingale
 
-The Songbird object provides several pieces of functionality to your web page: playback,
+The Nightingale object provides several pieces of functionality to your web page: playback,
 download, listener adding and removing and library creation and retrieval.
 
 This object provides you with functions that enable you to initiate playback
 of URL's, <MediaLists> and <WebPlaylists>. Basic playback control functions are also
 provided.
 
-The Songbird object provides download functionality as well. You may use it to download
+The Nightingale object provides download functionality as well. You may use it to download
 <MediaItems>, <MediaLists> and user selected items present in the <WebPlaylist>.
 
 You may listen for download events by adding "downloadstart" or
 "downloadcomplete" event listeners to the document object.  These events will
 only be sent to handlers within the scope of the page that originated the
 downloaded items.  The event listener is provided the downloaded media item
-within the main Songbird library.  To access the media item properties, the user
-must have enabled remote access to the main Songbird library.
+within the main Nightingale library.  To access the media item properties, the user
+must have enabled remote access to the main Nightingale library.
 
-The Songbird object is accessible (from Javascript) using the "songbird" global variable attached
+The Nightingale object is accessible (from Javascript) using the "nightingale" global variable attached
 to the currently loaded document. See the example below.
 
 Example:
 (start code)
 <script>
 //Get the currently playing artist.
-var artist = songbird.currentArtist;
+var artist = nightingale.currentArtist;
 
 //Create default library with current domain and path automatically guessed.
 //This is the suggested way to create your site library.
-var library = songbird.siteLibrary;
+var library = nightingale.siteLibrary;
 
 // Look up the artist in your web service database
 // ...
@@ -86,7 +86,7 @@ var mediaList = library.createSimpleMediaList("PlaylistName");
 mediaList.add(mediaItem);
 
 //Play it.
-songbird.playMediaList(mediaList, 0);
+nightingale.playMediaList(mediaList, 0);
 
 //You may also want to trigger a download to the users machine, for this mediaitem.
 function onDownloadComplete(aEvent) {
@@ -95,7 +95,7 @@ function onDownloadComplete(aEvent) {
   alert(aEvent.status);
 }
 document.addEventListener("downloadcomplete", onDownloadComplete, false);
-songbird.downloadItem(mediaItem);
+nightingale.downloadItem(mediaItem);
 </script>
 (end)
 
@@ -109,7 +109,7 @@ See Also:
  * \brief This interface is a composition of many of our other interfaces with the
  *  goal of exposing a more web-friendly interface to web sites. This defines
  *  our "Remote API" the websites can call to get information about and interact
- *  with Songbird.
+ *  with Nightingale.
  */
 [scriptable, uuid(91a57ebd-65e4-4320-84a1-fa0f6f74af15)]
 interface sbIRemotePlayer : nsISupports
@@ -394,7 +394,7 @@ interface sbIRemotePlayer : nsISupports
 /*
   Prop: mainLibrary
 
-  The main <Library> for Songbird. This will contain all the <MediaItem>s the
+  The main <Library> for Nightingale. This will contain all the <MediaItem>s the
   user has on their system.
 
   Type: 
@@ -402,7 +402,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    var mainLib = songbird.mainLibrary;
+    var mainLib = nightingale.mainLibrary;
     (end code)
 
   See Also:
@@ -415,7 +415,7 @@ interface sbIRemotePlayer : nsISupports
   /*
   Prop: webLibrary
 
-  The web <Library> for Songbird. This will contain all the <MediaItem>s that
+  The web <Library> for Nightingale. This will contain all the <MediaItem>s that
   have been discovered on web pages the user has visited.
 
   Type: 
@@ -423,7 +423,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    var webLib = songbird.webLibrary;
+    var webLib = nightingale.webLibrary;
     (end code)
 
   See Also:
@@ -447,7 +447,7 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     //Access your site library
-    var library = songbird.siteLibrary;
+    var library = nightingale.siteLibrary;
     (end)
   
   See Also:
@@ -472,7 +472,7 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     // Get the download media list
-    var dlList = songbird.downloadMediaList;
+    var dlList = nightingale.downloadMediaList;
     (end)
   
   See Also:
@@ -488,12 +488,12 @@ interface sbIRemotePlayer : nsISupports
   */
 
   /**
-   * \brief Bind an observer to get called on changes to Songbird metadata/state
+   * \brief Bind an observer to get called on changes to Nightingale metadata/state
    */
   /*
   Method: addListener()
 
-  Add a listener to get notified of changes to Songbird metadata and state.
+  Add a listener to get notified of changes to Nightingale metadata and state.
 
   Prototype:
     addListener(String key, Object listener)
@@ -519,11 +519,11 @@ interface sbIRemotePlayer : nsISupports
 
     var key = "metadata.genre";
 
-    songbird.addListener(key, listener);
+    nightingale.addListener(key, listener);
 
     ...
 
-    songbird.removeListener(key, listener);
+    nightingale.removeListener(key, listener);
     (end)
 
   See Also:
@@ -560,7 +560,7 @@ interface sbIRemotePlayer : nsISupports
     ...
 
     var key = "metadata.genre";
-    songbird.removeListener(key, listener);
+    nightingale.removeListener(key, listener);
     (end)
 
   See Also:
@@ -586,13 +586,13 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     //Create or get library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Create the mediaitem.
     var mediaItem = library.createMediaItem("http://path/to/item.mp3");
 
     //Download the mediaitem to the users local machine.
-    songbird.downloadItem(mediaItem);
+    nightingale.downloadItem(mediaItem);
     (end)
 
   See Also:
@@ -620,7 +620,7 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     //Create or get site library.
-    var library = songbird.siteLibrary("", "");
+    var library = nightingale.siteLibrary("", "");
 
     //Create mediaitem.
     var mediaItem = library.createMediaItem("http://path/to/item.mp3");
@@ -632,7 +632,7 @@ interface sbIRemotePlayer : nsISupports
     mediaList.add(mediaItem);
 
     //Download the medialist.
-    songbird.downloadList(mediaList);
+    nightingale.downloadList(mediaList);
     (end)
 
   See Also:
@@ -661,7 +661,7 @@ interface sbIRemotePlayer : nsISupports
     //Download the mediaitems currently selected by the user in
     //the current webplaylist.
 
-    songbird.downloadSelected(songbird.webPlaylist);
+    nightingale.downloadSelected(nightingale.webPlaylist);
     (end)
 
   See Also:
@@ -684,7 +684,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    songbird.play();
+    nightingale.play();
     (end)
 
   Note:
@@ -716,7 +716,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    //Songbird object implements Player.
+    //Nightingale object implements Player.
     //Play the media list, starting with item at index 2.
 
     player.playMediaList(mediaList, 2);
@@ -755,7 +755,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    songbird.playURL("http://path/to/item.mp3");
+    nightingale.playURL("http://path/to/item.mp3");
     (end)
 
   Note:
@@ -787,7 +787,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-     songbird.stop();
+     nightingale.stop();
     (end)
 
   See Also:
@@ -814,7 +814,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    songbird.pause();
+    nightingale.pause();
     (end)
 
   See Also:
@@ -844,7 +844,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    songbird.next();
+    nightingale.next();
     (end)
 
   See Also:
@@ -873,7 +873,7 @@ interface sbIRemotePlayer : nsISupports
 
   Example:
     (start code)
-    songbird.previous();
+    nightingale.previous();
     (end)
 
   See Also:
@@ -908,10 +908,10 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     // sets the site scope to TLD+1 (will throw unless the page was on *.example.com)
-    songbird.setSiteScope("example.com", "");
+    nightingale.setSiteScope("example.com", "");
     // sets the site scope to default values
     // (will throw because it has already been set once)
-    songbird.setSiteScope("", "");
+    nightingale.setSiteScope("", "");
     (end)
   
   See Also:
@@ -939,7 +939,7 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     var libraryID = "web";
-    var library = songbird.libraries(libraryID);
+    var library = nightingale.libraries(libraryID);
     (end)
 
   See Also:
@@ -983,9 +983,9 @@ interface sbIRemotePlayer : nsISupports
   Example:
     (start code)
     ...
-    if (songbird.hasAccess('Read Current'))
+    if (nightingale.hasAccess('Read Current'))
     {
-      var artist = songbird.currentArtist;
+      var artist = nightingale.currentArtist;
     }
     ...
     (end)
@@ -1003,7 +1003,7 @@ interface sbIRemotePlayer : nsISupports
          but that is a recommended format for ensuring uniqueness.
     displayName - The displayed name of the property.
     readOnly - If true this property's value can NOT be edited by the user.
-    viewable - If true this property will be viewable in all locations of Songbird
+    viewable - If true this property will be viewable in all locations of Nightingale
                including the main library.
     nullSort - The type of null sorting desired. When sorted will empty values
                sort small or large; see below for more detail.
@@ -1064,7 +1064,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property that indicates what store this item is from.
-    songbird.createTextProperty("http://example.com/Store",
+    nightingale.createTextProperty("http://example.com/Store",
                                 "Store", true, false, 0);
 
     // Add the store name to the media item
@@ -1113,7 +1113,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property of when this item was added to the store
-    songbird.createDateTimeProperty("http://example.com/DateAdded",
+    nightingale.createDateTimeProperty("http://example.com/DateAdded",
                                     "Added", true, false, 0);
 
     // Add the added date to the media item
@@ -1158,7 +1158,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property that links to the store
-    songbird.createURIProperty("http://example.com/StoreLink",
+    nightingale.createURIProperty("http://example.com/StoreLink",
                                "Store", true, false, 0);
 
     // Add a url to the media item
@@ -1203,7 +1203,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property that shows the price of this item
-    songbird.createNumberProperty("http://example.com/Price", "Price", true);
+    nightingale.createNumberProperty("http://example.com/Price", "Price", true);
 
     // Add a price to the media item
     mediaitem.setProperty("Price", "0.99");
@@ -1247,7 +1247,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property that shows the logo of the store this item is from
-    songbird.createImageProperty("http://example.com/Logo",
+    nightingale.createImageProperty("http://example.com/Logo",
                                  "Logo", true, false, 0);
 
     // Add a logo to the media item
@@ -1292,7 +1292,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a  property that shows what the average rating for this item is
-    songbird.createRatingsProperty("http://example.com/StoreRatings", "Ratings");
+    nightingale.createRatingsProperty("http://example.com/StoreRatings", "Ratings");
 
     // Add a share button to the media item
     mediaitem.setProperty("StoreRatings", "2");
@@ -1337,7 +1337,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property that allows the user to share this item with others
-    songbird.createButtonProperty("http://example.com/ShareItem",
+    nightingale.createButtonProperty("http://example.com/ShareItem",
                                   "Share", "Share Me", true, false, 0);
 
     // Add a share button to the media item
@@ -1398,7 +1398,7 @@ interface sbIRemotePlayer : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     // Create a property that will allow the user to get the item (Download)
-    songbird.createDownloadButtonProperty("http://example.com/DownlodButton",
+    nightingale.createDownloadButtonProperty("http://example.com/DownlodButton",
                                           "Download", "Get", true, false, 0);
 
     // Add a download button to the media item

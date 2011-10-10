@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ..
@@ -32,15 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = vendor/mozbrowser
 
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird-bin
+   NIGHTINGALE_XR_STUB = $(NIGHTINGALE_XULRUNNERDIR)/nightingale-bin
 else
-   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
-endif
-
-ifeq (linux,$(SB_PLATFORM)) 
-	ifndef TAGLIB_LIBS
-	 SONGBIRD_XULRUNNER += /usr/lib/libtag.so*
-	endif
+   NIGHTINGALE_XR_STUB = $(NIGHTINGALE_XULRUNNERDIR)/nightingale$(BIN_SUFFIX)
 endif
 
 ifeq (windows,$(SB_PLATFORM))
@@ -53,427 +47,60 @@ ifeq (windows,$(SB_PLATFORM))
    #   ... add whatever is in the runtime dir for that platform ...
 
    ifeq ($(SB_PLATFORM)_$(SB_USE_JEMALLOC),windows_)
-      SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
+      NIGHTINGALE_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
 
       # have to put the dlls here too because updater can't copy yet
-      SONGBIRD_XULRUNNER += \
+      NIGHTINGALE_XULRUNNER += \
        $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
 
       # MSVC 8 needs the manifest files, but only if we're not jemalloc!
       ifeq ($(_MSC_VER),1400)
-          SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+          NIGHTINGALE_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
           # have to put the manifest here too because updater can't copy yet
-          SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+          NIGHTINGALE_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
       endif
    else
       #preedTODO fix this
       ifneq ($(SB_PLATFORM),windows)
-         SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
-         SONGBIRD_XULRUNNER += \
+         NIGHTINGALE_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
+         NIGHTINGALE_XULRUNNER += \
           $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
      endif
   endif
    # Copy these immaterial of whether --disable-jemalloc is specified for 
-   # Songbird proper, because XR needs it.
-   MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19$(DEBUG:%=d).dll
+   # Nightingale proper, because XR needs it.
+   MOZ_WIN32_CUSTOM_CRT = $(NIGHTINGALE_XULRUNNERDIR)/mozcrt19$(DEBUG:%=d).dll
+endif
+
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+   NIGHTINGALE_DIST += $(NIGHTINGALE_XULRUNNERDIR)/libjemalloc.so
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
 libs::
-	$(MKDIR) $(SONGBIRD_MACOS)
+	$(MKDIR) $(NIGHTINGALE_MACOS)
 	$(INSTALL_PROG) $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
-    $(SONGBIRD_MACOS) \
+    $(NIGHTINGALE_MACOS) \
     $(NULL)
 endif
 
-# GStreamer
-ifdef MEDIA_CORE_GST #{
-   GLIB_NAMES = glib \
-                gmodule \
-                gobject \
-                gthread \
-                $(NULL)
-
-   LIBICONV_NAMES = charset \
-                    iconv \
-                    $(NULL)
-
-   GETTEXT_NAMES = gettextlib \
-                   gettextpo \
-                   gettextsrc \
-                   intl \
-                   $(NULL)
-
-   GSTREAMER_NAMES = gstreamer \
-                     gstbase \
-                     gstcontroller \
-                     gstdataprotocol \
-                     gstnet \
-                     $(NULL)
-
-   GST_PLUGINS_BASE_LIBS_NAMES = gstapp \
-                                 gstaudio \
-                                 gstcdda \
-                                 gstfft \
-                                 gstinterfaces \
-                                 gstnetbuffer \
-                                 gstpbutils \
-                                 gstriff \
-                                 gstrtp \
-                                 gstrtsp \
-                                 gstsdp \
-                                 gsttag \
-                                 gstvideo \
-                                 $(NULL)
-
-   OGG_NAMES = ogg \
-               $(NULL)
-
-   VORBIS_NAMES = vorbis \
-                  vorbisenc \
-                  vorbisfile \
-                  $(NULL)
-
-   THEORA_NAMES = theora \
-                  theoradec \
-                  theoraenc \
-                  $(NULL)
-
-   FLAC_NAMES = FLAC \
-                $(NULL)
-
-   JPEG_NAMES = jpeg \
-                $(NULL)
-
-   GST_PLUGINS_CORE_NAMES = gstcoreelements \
-                            gstcoreindexers \
-                            $(NULL)
-
-   GST_PLUGINS_BASE_NAMES = gstapp \
-                            gstadder \
-                            gstaudioconvert \
-                            gstaudiorate \
-                            gstaudioresample \
-                            gstaudiotestsrc \
-                            gstdecodebin \
-                            gstdecodebin2 \
-                            gstffmpegcolorspace \
-                            gstgdp \
-                            gstogg \
-                            gstplaybin \
-                            gstqueue2 \
-                            gsttheora \
-                            gsttypefindfunctions \
-                            gstvideorate \
-                            gstvideoscale \
-                            gstvideotestsrc \
-                            gstvolume \
-                            gstvorbis \
-                            $(NULL)
-
-   GST_PLUGINS_GOOD_NAMES = gstalaw \
-                            gstalpha \
-                            gstalphacolor \
-                            gstapetag \
-                            gstaudiofx \
-                            gstauparse \
-                            gstautodetect \
-                            gstavi \
-                            gstcutter \
-                            gsteffectv \
-                            gstequalizer \
-                            gstflac \
-                            gstgoom \
-                            gsticydemux \
-                            gstid3demux \
-                            gstjpeg \
-                            gstlevel \
-                            gstmatroska \
-                            gstmulaw \
-                            gstmultifile \
-                            gstmultipart \
-                            gstqtdemux \
-                            gstreplaygain \
-                            gstrtp \
-                            gstrtpmanager \
-                            gstrtsp \
-                            gstsmpte \
-                            gstspectrum \
-                            gstudp \
-                            gstvideobalance \
-                            gstvideobox \
-                            gstvideocrop \
-                            gstvideoflip \
-                            gstvideomixer \
-                            gstwavenc \
-                            gstwavparse \
-                            $(NULL)
-
-   GST_PLUGINS_UGLY_NAMES = gstasf \
-                            gstmpegaudioparse \
-                            $(NULL)
-
-   GST_PLUGINS_BAD_NAMES = gstaiffparse \
-                           gstadpcmdec \
-                           gstadpcmenc \
-                           gstid3tag \
-                           gstqtmux \
-                           gstsdpelem \
-                           gstselector \
-                           gstmozilla \
-                           gstmpeg4videoparse \
-                           $(NULL)
-
-   # Include asfmux only if it's present in the vendor binaries.
-   # It's not open source, so it might not be.
-   ASFMUX_NAME = $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/$(LIB_PREFIX)gstasfmux$(DLL_SUFFIX)
-
-   ifneq (,$(wildcard $(ASFMUX_NAME)))
-      GST_PLUGINS_BAD_NAMES += gstasfmux
-   endif
-
-   ifeq (windows,$(SB_PLATFORM)) #{
-      GST_PLUGINS_GOOD_NAMES += gstdirectsoundsink \
-                                $(NULL)
-
-      GST_PLUGINS_BAD_NAMES += gstacmmp3dec \
-                               gstdmoenc \
-                               gstqtaudiowrapper \
-                               gstqtvideowrapper \
-                               gstdshowdecwrapper \
-                               gstdshowvideosink \
-                               $(NULL)
-
-      GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
-             $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
-
-      LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
-                 $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
-
-      GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/bin/, \
-                $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))
-
-      GSTREAMER = \
-       $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/bin/, \
-       $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX),$(GSTREAMER_NAMES)))
-
-      GST_PLUGINS_BASE_LIBS = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/bin/, \
-       $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
-
-      OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/bin/, \
-            $(addsuffix -0$(DLL_SUFFIX), $(OGG_NAMES)))
-
-      LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
-                 $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
-
-      # XXX We need to append the version numbers of the libraries
-      VORBIS_VERSIONED_NAMES = $(join $(VORBIS_NAMES), -0 -2 -3)
-      VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/bin/, \
-               $(addsuffix $(DLL_SUFFIX), $(VORBIS_VERSIONED_NAMES)))
-
-      THEORA_VERSIONED_NAMES = $(join $(THEORA_NAMES), -0 -1 -1)
-      THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/bin/, \
-               $(addsuffix $(DLL_SUFFIX), $(THEORA_VERSIONED_NAMES)))
-
-      FLAC_VERSIONED_NAMES = $(join $(FLAC_NAMES), -8)
-      FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/bin/, \
-             $(addsuffix $(DLL_SUFFIX), $(FLAC_VERSIONED_NAMES)))
-
-      JPEG_VERSIONED_NAMES = $(join $(JPEG_NAMES), -7)
-      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/bin/, \
-             $(addsuffix $(DLL_SUFFIX), $(JPEG_VERSIONED_NAMES)))
-
-      GST_PLUGINS_CORE = \
-       $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
-       $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_CORE_NAMES)))
-
-      GST_PLUGINS_BASE = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
-       $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_BASE_NAMES)))
-
-      GST_PLUGINS_GOOD = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
-       $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_GOOD_NAMES)))
-
-      GST_PLUGINS_UGLY = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
-       $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_UGLY_NAMES)))
-
-      GST_PLUGINS_BAD = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
-       $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_BAD_NAMES)))
-
-      SONGBIRD_LIB += $(GLIB) \
-                      $(LIBICONV) \
-                      $(GETTEXT) \
-                      $(GSTREAMER) \
-                      $(GST_PLUGINS_BASE_LIBS) \
-                      $(OGG) \
-                      $(VORBIS) \
-                      $(THEORA) \
-                      $(FLAC) \
-                      $(JPEG) \
-                      $(NULL)
-
-      SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
-                              $(GST_PLUGINS_BASE) \
-                              $(GST_PLUGINS_GOOD) \
-                              $(GST_PLUGINS_UGLY) \
-                              $(GST_PLUGINS_BAD) \
-                              $(NULL)
-
-   endif #}windows
-
-   ifeq (macosx,$(SB_PLATFORM)) #{
-
-      GST_PLUGINS_GOOD_NAMES += gstosxaudio \
-                                gstosxvideosink \
-                                $(NULL)
-
-      GST_PLUGINS_BAD_NAMES += gstqtaudiowrapper \
-                               gstqtvideowrapper \
-                               $(NULL)
-
-      GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/lib, \
-             $(addsuffix -$(GLIB_VERSION)$(DLL_SUFFIX), $(GLIB_NAMES)))
-
-      # We use system iconv on Mac
-      LIBICONV = $(NULL)
-
-      GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib/lib, \
-                $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))
-
-      GSTREAMER = \
-       $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
-
-      GST_PLUGINS_BASE_LIBS = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
-
-      OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix $(DLL_SUFFIX), $(OGG_NAMES)))
-
-      VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
-
-      THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix $(DLL_SUFFIX), $(THEORA_NAMES)))
-
-      FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
-
-      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/lib/lib, \
-       $(addsuffix $(DLL_SUFFIX), $(JPEG_NAMES)))
-
-      GST_PLUGINS_CORE = \
-       $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
-
-      GST_PLUGINS_BASE = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_BASE_NAMES)))
-
-      GST_PLUGINS_GOOD = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_GOOD_NAMES)))
-
-      GST_PLUGINS_UGLY = \
-       $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_UGLY_NAMES)))
-
-      GST_PLUGINS_BAD = \
-	   $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-       $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
-
-      SONGBIRD_LIB += $(GLIB) \
-                      $(LIBICONV) \
-                      $(GETTEXT) \
-                      $(GSTREAMER) \
-                      $(GST_PLUGINS_BASE_LIBS) \
-                      $(OGG) \
-                      $(VORBIS) \
-                      $(THEORA) \
-                      $(FLAC) \
-                      $(JPEG) \
-                      $(NULL)
-
-   endif #}macosx
-   ifneq (,$(filter-out macosx windows,$(SB_PLATFORM))) #{
-
-      GST_PLUGINS_BASE_NAMES += gstalsa \
-                                gstximagesink \
-                                gstxvimagesink \
-                                $(NULL)
-
-      GST_PLUGINS_GOOD_NAMES += gstpulse \
-                                $(NULL)
-
-      GSTREAMER = $(NULL)
-
-      GST_PLUGINS_BASE_LIBS = $(NULL)
-      
-      OGG = $(NULL)
-
-      VORBIS = $(NULL)
-
-      THEORA = $(NULL)
-
-      FLAC = $(NULL)
-
-      JPEG = $(NULL)
-
-      GST_PLUGINS_CORE = $(NULL)
-
-      GST_PLUGINS_BASE = $(NULL)
-
-      GST_PLUGINS_GOOD = $(NULL)
-
-      GST_PLUGINS_UGLY = $(NULL)
-
-      GST_PLUGINS_BAD = $(NULL)
-
-      SONGBIRD_LIB += $(GSTREAMER) \
-                      $(GST_PLUGINS_BASE_LIBS) \
-                      $(OGG) \
-                      $(VORBIS) \
-                      $(THEORA) \
-                      $(FLAC) \
-                      $(JPEG) \
-                      $(NULL)
-
-      ifdef HAVE_FLUENDO_MP3
-         FLUENDO_PLUGIN = /usr/lib/gstreamer-0.10/libgstflumpegdemux.so
-         SONGBIRD_GST_PLUGINS += $(FLUENDO_PLUGIN)
-      endif
-   endif # } not mac or windows
-
-   SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
-                           $(GST_PLUGINS_BASE) \
-                           $(GST_PLUGINS_GOOD) \
-                           $(GST_PLUGINS_UGLY) \
-                           $(GST_PLUGINS_BAD) \
-                           $(NULL)
-endif # }MEDIA_CORE_GST
-
 ifeq (macosx,$(SB_PLATFORM))
-   SONGBIRD_XR_STUB_DIR = $(SONGBIRD_MACOS)
+   NIGHTINGALE_XR_STUB_DIR = $(NIGHTINGALE_MACOS)
 else
-   SONGBIRD_XR_STUB_DIR = $(call normalizepath,$(SONGBIRD_DISTDIR))
+   NIGHTINGALE_XR_STUB_DIR = $(call normalizepath,$(NIGHTINGALE_DISTDIR))
 endif
 
-ifeq (,$(SONGBIRD_OFFICIAL))
-   ICON_FILE = $(topsrcdir)/installer/windows/songbird_nightly.ico
+ifeq (,$(NIGHTINGALE_OFFICIAL))
+   ICON_FILE = $(topsrcdir)/installer/windows/nightingale_nightly.ico
 else
-   ICON_FILE = $(topsrcdir)/installer/windows/songbird.ico
+   ICON_FILE = $(topsrcdir)/installer/windows/nightingale.ico
 endif
 
-SONGBIRD_STUB = $(SONGBIRD_XR_STUB_DIR)/$(notdir $(SONGBIRD_XR_STUB))
+NIGHTINGALE_STUB = $(NIGHTINGALE_XR_STUB_DIR)/$(notdir $(NIGHTINGALE_XR_STUB))
 RESHACKER_BIN = $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
 
-RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/$(1), $(SONGBIRD_XR_STUB_DIR)/$(1), $(ICON_FILE), icongroup, $(2), 1033
-RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" songbird.rc
+RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(NIGHTINGALE_XR_STUB_DIR)/$(1), $(NIGHTINGALE_XR_STUB_DIR)/$(1), $(ICON_FILE), icongroup, $(2), 1033
+RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" nightingale.rc
 
 # WE have to add manifest information to the few remaining .exes that actually
 # link against the MSVCRT; see bug 10022
@@ -483,80 +110,75 @@ ADD_MANIFEST_EXES = crashreporter.exe \
                     $(NULL)
 
 
-GARBAGE += $(SONGBIRD_XULRUNNERDIR) \
-           $(SONGBIRD_XR_EXTENSIONS) \
+GARBAGE += $(NIGHTINGALE_XULRUNNERDIR) \
+           $(NIGHTINGALE_XR_EXTENSIONS) \
            $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
+include $(topsrcdir)/$(NIGHTINGALE_BRANDING_DIR)/branding.mk
 
 # Move all known extensions from XULRUNNERDIR/extensions to
-#  SONGBIRD_EXTENSIONSDIR
+#  NIGHTINGALE_EXTENSIONSDIR
 #
 # We are explicit about which XR extensions we "ship", namely
-#   none right now
+#   DOM inspector
+#   venkman
 #
 # We delete all other extensions, and we _ALWAYS_ delete for release builds; 
 # see bug 17874
 #
 
-XULRUNNER_SHIPPED_EXTENSIONS = $(NULL)
+XULRUNNER_SHIPPED_EXTENSIONS = inspector@mozilla.org \
+                               {f13b157f-b174-47e7-a34d-4815ddfdfeb8} \
+                               $(NULL)
 
-XULRUNNER_EXTENSION_ROOTDIR = $(SONGBIRD_XULRUNNERDIR)/extensions
+XULRUNNER_EXTENSION_ROOTDIR = $(NIGHTINGALE_XULRUNNERDIR)/extensions
 
 XULRUNNER_EXTENSION_DIRS = $(foreach e, \
                             $(XULRUNNER_SHIPPED_EXTENSIONS), \
                             $(XULRUNNER_EXTENSION_ROOTDIR)/$e)
 
-SONGBIRD_XR_EXTENSIONS = $(foreach e, \
+NIGHTINGALE_XR_EXTENSIONS = $(foreach e, \
                            $(XULRUNNER_SHIPPED_EXTENSIONS), \
-                           $(SONGBIRD_EXTENSIONSDIR)/$e)
+                           $(NIGHTINGALE_EXTENSIONSDIR)/$e)
 
 ## See comment above about, re: the specifics of this export::'s logic.
 export::
-	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
-	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
-ifneq (,$(XULRUNNER_EXTENSION_DIRS))
-	ifneq (1,$(SONGBIRD_OFFICIAL))
-		$(MV) $(XULRUNNER_EXTENSION_DIRS) $(SONGBIRD_EXTENSIONSDIR)
-	endif 
-endif
+	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(NIGHTINGALE_XULRUNNERDIR)
+	$(RM) -r $(NIGHTINGALE_XR_EXTENSIONS)
+ifneq (1,$(NIGHTINGALE_OFFICIAL))
+	$(MV) $(XULRUNNER_EXTENSION_DIRS) $(NIGHTINGALE_EXTENSIONSDIR)
+endif 
 	$(RM) -r $(XULRUNNER_EXTENSION_ROOTDIR)
 
-$(SONGBIRD_STUB): $(SONGBIRD_XR_STUB)
+libs::
+	$(MV) -f $(NIGHTINGALE_XR_STUB) $(NIGHTINGALE_XR_STUB_DIR)
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-	ln -s $< $@
-else
-	$(MV) -f $< $@
-endif
-
-libs:: $(SONGBIRD_STUB)
-ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-	$(INSTALL_PROG) $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
+	$(INSTALL_PROG) $(topsrcdir)/installer/linux/nightingale.sh $(NIGHTINGALE_DISTDIR)/nightingale
 endif
 ifeq (windows,$(SB_PLATFORM)) #{
 	@for f in $(ADD_MANIFEST_EXES); do \
-      $(call sh_make,$(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1); \
+      $(call sh_make,$(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(NIGHTINGALE_XULRUNNERDIR))/$$f\;1); \
    done
    ifneq (,$(SB_USE_JEMALLOC))
 	   $(MSMANIFEST_TOOL) -NOLOGO -MANIFEST \
 		 "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
-       -OUTPUTRESOURCE:$(SONGBIRD_STUB)\;1
+       -OUTPUTRESOURCE:$(NIGHTINGALE_STUB)\;1
    endif # Not-jemalloc and MSVC with manifest tool
    # On Win32, the stub requires the custom CRT in the same directory now,
    # if it's enabled; move that along if we find it too...
 	test -e $(MOZ_WIN32_CUSTOM_CRT) && \
-	 $(INSTALL_PROG) $(MOZ_WIN32_CUSTOM_CRT) $(SONGBIRD_XR_STUB_DIR)
+	 $(INSTALL_PROG) $(MOZ_WIN32_CUSTOM_CRT) $(NIGHTINGALE_XR_STUB_DIR)
 	# Win32 only - munge the stub installer for icons
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,32512)
-	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,IDI_APPICON)
-	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,IDI_DOCUMENT)
-	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,32512)
-	# overwrite the VersionInfo fields to say Songbird
-	$(RESHACKER_BIN) -extract $(SONGBIRD_XR_STUB_DIR)/songbird.exe, songbird.rc, VersionInfo, 1, 1033
-	$(call RESHACKER_REPLACE_RC,Comments,Songbird.exe is based on the Mozilla XULRunner stub loader)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,IDI_APPICON)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,IDI_DOCUMENT)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,32512)
+	# overwrite the VersionInfo fields to say Nightingale
+	$(RESHACKER_BIN) -extract $(NIGHTINGALE_XR_STUB_DIR)/nightingale.exe, nightingale.rc, VersionInfo, 1, 1033
+	$(call RESHACKER_REPLACE_RC,Comments,Nightingale.exe is based on the Mozilla XULRunner stub loader)
 	$(call RESHACKER_REPLACE_RC,CompanyName,$(SB_BRAND_VENDOR_NAME)) 
 	$(call RESHACKER_REPLACE_RC,FileDescription,$(SB_BRAND_FULL_NAME))
 	$(call RESHACKER_REPLACE_RC,ProductName,$(SB_BRAND_SHORT_NAME))
@@ -564,7 +186,8 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	$(call RESHACKER_REPLACE_RC,LegalTrademarks,$(SB_BRAND_TRADEMARKS))
 	$(call RESHACKER_REPLACE_RC,BuildID,$(SB_BUILD_NUMBER))
 	#preedTODO autoconf this
-	rc -v -fo songbird.res songbird.rc
-	$(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/songbird.exe, \
-	 $(SONGBIRD_XR_STUB_DIR)/songbird.exe, songbird.res, VersionInfo,1,1033
+	rc -v -fo nightingale.res nightingale.rc
+	$(RESHACKER_BIN) -addoverwrite $(NIGHTINGALE_XR_STUB_DIR)/nightingale.exe, \
+	 $(NIGHTINGALE_XR_STUB_DIR)/nightingale.exe, nightingale.res, VersionInfo,1,1033
 endif # }windows
+	$(CHMOD) 0755 $(NIGHTINGALE_STUB)

@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -132,15 +132,21 @@ var URLUtils = {
    */
 
   produceQuery: function URLUtils_produceQuery(aParams) {
-    if (typeof aParams !== 'object') { return null; }
+    // Add each field in the query params to the URL query.
+    var urlQuery = "";
+    for (paramName in aParams) {
+      // Add a separator before all but the first field.
+      if (urlQuery.length > 0)
+        urlQuery += "&";
 
-    var stack = [];
-    for (var param in aParams) {
-      stack.push(encodeURIComponent(param) + "=" +
-                 encodeURIComponent(aParams[param]));
+      // Add the parameter to the URL query.
+      var paramValue = aParams[paramName];
+      urlQuery += encodeURIComponent(paramName) +
+                  "=" +
+                  encodeURIComponent(paramValue);
     }
 
-    return stack.join("&");
+    return urlQuery;
   },
 
 

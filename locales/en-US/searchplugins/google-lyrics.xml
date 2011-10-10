@@ -11,5 +11,5 @@
   <MozParam name="client" condition="defaultEngine" trueValue="firefox-a" falseValue="firefox"/>-->
 </Url>
 <SearchForm>http://www.google.com/search?q=</SearchForm>
-<Tags>songbird:hidden lyrics</Tags>
+<Tags>nightingale:hidden lyrics</Tags>
 </SearchPlugin>

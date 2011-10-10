@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -30,14 +30,14 @@
 /**       
  * \file sbIMetrics.idl
  * \brief Metrics service interface file
- * This file contains the interfaces to the songbird metrics service, used to phone
+ * This file contains the interfaces to the nightingale metrics service, used to phone
  * home and send metrics gathered since the last report was sent.
  */
 
 /**
  * \interface sbIMetrics sbIMetrics.h
  * \brief Metrics service interface
- * This is an interface to the songbird metrics service, used to phone home and send 
+ * This is an interface to the nightingale metrics service, used to phone home and send 
  * metrics gathered since the last report was sent.
  */
 [scriptable, uuid(91c7a054-c7a0-4dc1-994c-e0629df95c2b)]

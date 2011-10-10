@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
@@ -40,7 +40,7 @@ var gRetriesExpected = 0;
  * \return The number of retries expected
  */
 function retries(aHandlers) {
-  var contractId = "@songbirdnest.com/Songbird/MetadataHandler/";
+  var contractId = "@getnightingale.com/Nightingale/MetadataHandler/";
   const MAP = {
     "taglib":    "Taglib;1",
     "gstreamer": "GStreamer;1",
@@ -56,7 +56,7 @@ function retries(aHandlers) {
 }
 
 /**
- * Confirm that Songbird doesn't crash or damage files when
+ * Confirm that Nightingale doesn't crash or damage files when
  * metadata jobs fail
  */
 function runTest() {
@@ -296,7 +296,7 @@ function runTest() {
       
       // Make sure writing didnt break anything by
       // comparing library1 with library2
-      var diffingService = Cc["@songbirdnest.com/Songbird/Library/DiffingService;1"]
+      var diffingService = Cc["@getnightingale.com/Nightingale/Library/DiffingService;1"]
                              .getService(Ci.sbILibraryDiffingService);
       var libraryChangeset = diffingService.createChangeset(library2, 
                                                             library1);
@@ -396,14 +396,14 @@ function importFilesToLibrary(files, library) {
 function startMetadataJob(items, type, writeProperties) {
   var prefSvc = Cc["@mozilla.org/preferences-service;1"]
                 .getService(Ci.nsIPrefBranch);
-  var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
-  prefSvc.setBoolPref("songbird.metadata.enableWriting", true);
-  var array = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var oldWritingEnabledPref = prefSvc.getBoolPref("nightingale.metadata.enableWriting");
+  prefSvc.setBoolPref("nightingale.metadata.enableWriting", true);
+  var array = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                 .createInstance(Ci.nsIMutableArray);
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  manager = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
               .getService(Ci.sbIFileMetadataService);
   var job;
   if (type == "write") {
@@ -411,7 +411,7 @@ function startMetadataJob(items, type, writeProperties) {
   } else {
     job = manager.read(array);
   }
-  prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
+  prefSvc.setBoolPref("nightingale.metadata.enableWriting", oldWritingEnabledPref); 
   
   return job;
 }

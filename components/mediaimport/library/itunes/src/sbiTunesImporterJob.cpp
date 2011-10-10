@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -29,7 +29,6 @@
 #include <nsThreadUtils.h>
 
 #include <sbTArrayStringEnumerator.h>
-#include <sbDebugUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbiTunesImporterJob, 
                               sbIJobProgress,
@@ -219,7 +218,7 @@ nsresult
 sbiTunesImporterJob::UpdateProgress() {
   PRUint32 const listenerCount = mListeners.Count();
   for (PRUint32 index = 0; index < listenerCount; ++index) {
-    nsresult SB_UNUSED_IN_RELEASE(rv) = mListeners[index]->OnJobProgress(this);
+    nsresult rv = mListeners[index]->OnJobProgress(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "iTunes Import listener reported error");
   }
   return NS_OK;

@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -92,22 +92,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
     mThreads.AppendObject(thread);
   }
 
-  // and wait for them to receive their messages... spin event loop until that
-  // happens. We need to wait explicitly as the OnEvent method does not directly
-  // queue all the events needed to complete the test - some get queued later,
-  // so calling thread->Shutdown() at this point will not allow the test to
-  // complete correctly.
-  nsCOMPtr<nsIThread> target;
-  rv = NS_GetMainThread(getter_AddRefs(target));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool processed = PR_FALSE;
-  while(mCounter > 0) {
-    rv = target->ProcessNextEvent(PR_FALSE, &processed);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Now shutdown all the threads
+  // and wait for them
   while (mThreads.Count()) {
     nsCOMPtr<nsIThread> thread = mThreads[0];
     PRBool succeeded = mThreads.RemoveObjectAt(0);

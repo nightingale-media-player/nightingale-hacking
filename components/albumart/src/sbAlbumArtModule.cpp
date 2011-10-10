@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,26 +22,26 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art components module.
+// Nightingale album art components module.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtModule.cpp
- * \brief Songbird Album Art Module Component Factory and Main Entry Point.
+ * \brief Nightingale Album Art Module Component Factory and Main Entry Point.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art components module imported services.
+// Nightingale album art components module imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -60,15 +60,16 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art service.
+// Nightingale album art service.
 //
 //------------------------------------------------------------------------------
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbAlbumArtService)
+// Construct the sbAlbumArtService object and call its Initialize method.
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtService, Initialize)
 
 
 /**
- * Register the Songbird album art service component.
+ * Register the Nightingale album art service component.
  */
 
 static NS_METHOD
@@ -101,7 +102,7 @@ sbAlbumArtServiceRegister(nsIComponentManager*         aCompMgr,
 
 
 /**
- * Unregister the Songbird album art service component.
+ * Unregister the Nightingale album art service component.
  */
 
 static NS_METHOD
@@ -130,7 +131,7 @@ sbAlbumArtServiceUnregister(nsIComponentManager*         aCompMgr,
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner component 
+// Nightingale album art scanner component 
 //
 //------------------------------------------------------------------------------
 
@@ -140,7 +141,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtScanner, Initialize)
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art fetcher set component.
+// Nightingale album art fetcher set component.
 //
 //------------------------------------------------------------------------------
 
@@ -150,7 +151,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtFetcherSet, Initialize)
 
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher component.
+// Nightingale local file album art fetcher component.
 //
 //------------------------------------------------------------------------------
 
@@ -159,7 +160,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileAlbumArtFetcher, Initialize)
 
 
 /**
- * Register the Songbird local file album art component.
+ * Register the Nightingale local file album art component.
  */
 
 static NS_METHOD
@@ -192,7 +193,7 @@ sbFileAlbumArtFetcherRegister(nsIComponentManager*         aCompMgr,
 
 
 /**
- * Unregister the Songbird local file album art component.
+ * Unregister the Nightingale local file album art component.
  */
 
 static NS_METHOD
@@ -220,7 +221,7 @@ sbFileAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
 
 //------------------------------------------------------------------------------
 //
-// Songbird metadata album art fetcher component.
+// Nightingale metadata album art fetcher component.
 //
 //------------------------------------------------------------------------------
 
@@ -230,7 +231,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataAlbumArtFetcher, Initialize)
 
 
 /**
- * Register the Songbird metadata album art component.
+ * Register the Nightingale metadata album art component.
  */
 
 static NS_METHOD
@@ -263,7 +264,7 @@ sbMetadataAlbumArtFetcherRegister(nsIComponentManager*         aCompMgr,
 
 
 /**
- * Unregister the Songbird metadata album art component.
+ * Unregister the Nightingale metadata album art component.
  */
 
 static NS_METHOD
@@ -293,7 +294,7 @@ sbMetadataAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art components module registration services.
+// Nightingale album art components module registration services.
 //
 //------------------------------------------------------------------------------
 

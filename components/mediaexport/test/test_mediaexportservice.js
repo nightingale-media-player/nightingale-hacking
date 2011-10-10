@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -103,7 +103,7 @@ TestController.prototype =
     removeAllTaskFiles();
 
     // Access the shutdown service via the |sbIShutdownJob| interface
-    this._shutdownService = Cc["@songbirdnest.com/media-export-service;1"]
+    this._shutdownService = Cc["@getnightingale.com/media-export-service;1"]
                               .getService(Ci.sbIShutdownJob);
     this._shutdownService.addJobProgressListener(this);
 
@@ -171,7 +171,7 @@ TestController.prototype =
         assertEqual(parsedTask.getRemovedMediaLists().length, 0);
 
         // Ensure the added tracks to the main library
-        var addedLibraryItems = parsedTask.getAddedMediaItems()["#####SONGBIRD_MAIN_LIBRRAY#####"];
+        var addedLibraryItems = parsedTask.getAddedMediaItems()["#####NIGHTINGALE_MAIN_LIBRRAY#####"];
         assertTrue(addedLibraryItems);
 
         // There should only be three added media items.
@@ -204,7 +204,7 @@ TestController.prototype =
 
         // Should be 3 added mediaitems to |this._mainLibrary|.
         addedMediaItems = 
-          parsedTask.getAddedMediaItems()["#####SONGBIRD_MAIN_LIBRRAY#####"];
+          parsedTask.getAddedMediaItems()["#####NIGHTINGALE_MAIN_LIBRRAY#####"];
         assertEqual(addedMediaItems.length, 3);
 
         assertEqual(addedMediaItems[0], this._track2Paths[0]);

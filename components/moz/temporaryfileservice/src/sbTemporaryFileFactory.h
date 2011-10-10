@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_TEMPORARY_FILE_FACTORY_H_
@@ -30,23 +30,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file factory defs.
+// Nightingale temporary file factory defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbTemporaryFileFactory.h
- * \brief Songbird Temporary File Factory Definitions.
+ * \brief Nightingale Temporary File Factory Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file factory imported services.
+// Nightingale temporary file factory imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbITemporaryFileFactory.h>
 
 // Mozilla imports.
@@ -55,16 +55,16 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file factory definitions.
+// Nightingale temporary file factory definitions.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird temporary file factory XPCOM component definitions.
+// Nightingale temporary file factory XPCOM component definitions.
 //
 
 #define SB_TEMPORARYFILEFACTORY_CLASSNAME "sbTemporaryFileFactory"
-#define SB_TEMPORARYFILEFACTORY_DESCRIPTION "Songbird Temporary File Factory"
+#define SB_TEMPORARYFILEFACTORY_DESCRIPTION "Nightingale Temporary File Factory"
 #define SB_TEMPORARYFILEFACTORY_CID                                            \
 {                                                                              \
   0x33ecad26,                                                                  \
@@ -76,7 +76,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird temporary file factory classes.
+// Nightingale temporary file factory classes.
 //
 //------------------------------------------------------------------------------
 
@@ -107,12 +107,12 @@ public:
   //
 
   /**
-   * Construct a Songbird temporary file factory object.
+   * Construct a Nightingale temporary file factory object.
    */
   sbTemporaryFileFactory();
 
   /**
-   * Destroy a Songbird temporary file factory object.
+   * Destroy a Nightingale temporary file factory object.
    */
   virtual ~sbTemporaryFileFactory();
 

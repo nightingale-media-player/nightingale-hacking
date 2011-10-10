@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbMediacoreTypeSniffer.h"
@@ -179,13 +179,13 @@ sbMediacoreTypeSniffer::Init()
   nsCOMPtr<sbIPlaylistReaderManager> readerManager;
   if (NS_IsMainThread()) {
     readerManager = do_GetService(
-                           "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+                           "@getnightingale.com/Nightingale/PlaylistReaderManager;1",
                            &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     readerManager = do_ProxiedGetService(
-                           "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+                           "@getnightingale.com/Nightingale/PlaylistReaderManager;1",
                            &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }

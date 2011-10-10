@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,47 +21,47 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 #include "sbLibraryListenerHelpers.h"
 
-// Mozilla includes
 #include <pratom.h>
 #include <prlog.h>
-#include <nsNetUtil.h>
 
-// Mozilla includes
-#include <nsIURI.h>
-
-
-// Local includes
+#include "sbIMediaItem.h"
+#include "sbIMediaList.h"
+#include "sbIOrderableMediaList.h"
 #include "sbBaseDevice.h"
+#include "sbLibraryUtils.h"
 
-#include <sbDebugUtils.h>
-// Songbird includes
-
-#include <sbLibraryUtils.h>
 #include <nsIURI.h>
 #include <nsNetUtil.h>
-
-// Songbird interfaces
-#include <sbIMediaItem.h>
-#include <sbIMediaList.h>
-#include <sbIOrderableMediaList.h>
 
 //
 // To log this module, set the following environment variable:
 //   NSPR_LOG_MODULES=sbLibraryListenerHelpers:5
 //
 
+#ifdef PR_LOGGING
+  static PRLogModuleInfo* gLibraryListenerHelpersLog = nsnull;
+# define TRACE(args) PR_LOG(gLibraryListenerHelpersLog, PR_LOG_DEBUG, args)
+# define LOG(args)   PR_LOG(gLibraryListenerHelpersLog, PR_LOG_WARN, args)
+# ifdef __GNUC__
+#   define __FUNCTION__ __PRETTY_FUNCTION__
+# endif /* __GNUC__ */
+#else
+# define TRACE(args) /* nothing */
+# define LOG(args)   /* nothing */
+#endif
+
 nsresult
 sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
   if (aIgnoreListener) {
     PR_AtomicIncrement(&mIgnoreListenerCounter);
   } else {
-    PRInt32 SB_UNUSED_IN_RELEASE(result) = PR_AtomicDecrement(&mIgnoreListenerCounter);
+    PRInt32 result = PR_AtomicDecrement(&mIgnoreListenerCounter);
     NS_ASSERTION(result >= 0, "invalid device library ignore listener counter");
   }
   return NS_OK;
@@ -201,7 +201,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener,
 sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener()
 : mDevice(nsnull)
 {
-  SB_PRLOG_SETUP(sbLibraryListenerHelpers);
+#ifdef PR_LOGGING
+  if (!gLibraryListenerHelpersLog)
+    gLibraryListenerHelpersLog = PR_NewLogModule("sbLibraryListenerHelpers");
+#endif
 }
 
 sbBaseDeviceLibraryListener::~sbBaseDeviceLibraryListener()
@@ -218,24 +221,18 @@ sbBaseDeviceLibraryListener::Init(sbBaseDevice* aDevice)
   return NS_OK;
 }
 
-void
-sbBaseDeviceLibraryListener::Destroy()
-{
-  mDevice = nsnull;
-}
-
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
-  return mDevice->BatchBegin();
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_BEGIN,
+                              nsnull, aMediaList);
 }
 
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
-  nsRefPtr<nsISupports> grip(NS_ISUPPORTS_CAST(sbIDevice*, mDevice));
-  NS_ENSURE_STATE(grip);
-  return mDevice->BatchEnd();
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
+                              nsnull, aMediaList);
 }
 
 inline bool
@@ -262,27 +259,28 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 
   nsresult rv;
 
-  // Skip hidden or ignored media items
-  if (IsItemHidden(aMediaList) || MediaItemIgnored(aMediaList)) {
+  // Skip hidden media items
+  if (IsItemHidden(aMediaList)) {
+    return NS_OK;
+  }
+
+  // Hide the item. It is the responsibility of the device to make the item
+  // visible when the transfer is successful.
+  // Always listen to all added lists.
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list) {
+    rv = mDevice->ListenToList(list);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
   //XXXAus: Before adding to queue, make sure it doesn't come from
   //another device. Ask DeviceManager for the device library
   //containing this item.
-
-  // Hide the item. It is the responsibility of the device to make the item
-  // visible when the transfer is successful.
-  // Listen to all added lists unless hidden.
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (list) {
-    if (IsItemHidden(list)) {
-      return NS_OK;
-    }
-
-    rv = mDevice->ListenToList(list);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // new playlist
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_NEW_PLAYLIST,
                               aMediaItem, aMediaList, aIndex);
@@ -400,7 +398,7 @@ sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
   // and hand it over to the device as an nsIArray<nsIURIs> through
   // the TransferRequest's data member.
   nsCOMPtr<nsIMutableArray> uris =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<MediaItemContentSrcArrayCreator> creator =
@@ -419,12 +417,19 @@ sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WIPE,
-                            aMediaList,
-                            nsnull,
-                            PR_UINT32_MAX,
-                            PR_UINT32_MAX,
-                            uris);
+  nsRefPtr<sbBaseDevice::TransferRequest> req = sbBaseDevice::TransferRequest::New();
+  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
+  req->type = sbBaseDevice::TransferRequest::REQUEST_WIPE;
+  req->item = aMediaList;
+  req->list = nsnull;
+  req->index = PR_UINT32_MAX;
+  req->otherIndex = PR_UINT32_MAX;
+  req->priority = sbBaseDevice::TransferRequest::PRIORITY_DEFAULT;
+
+  // the important bit
+  req->data = uris;
+
+  rv = mDevice->PushRequest(req);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -455,28 +460,18 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
 
   nsresult rv;
 
-  // We don't want to send updates for column spec only changes. The device
-  // doesn't care about it, it just creates needless thrashing of the device
-  // playlists.
-  // TODO: XXX See Bug 24191 to see what's to come and feel free to comment.
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
-  if (list) {
-    nsString name;
-    rv = aProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_COLUMNSPEC),
-                                     name);
-    PRUint32 length;
-    rv = aProperties->GetLength(&length);
-    // If the column spec property is the only thing changing, ignore the update
-    if (NS_SUCCEEDED(rv) && length == 1) {
-      return NS_OK;
-    }
-  }
-  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_UPDATE,
-                            aMediaItem,
-                            aMediaList,
-                            PR_UINT32_MAX,
-                            PR_UINT32_MAX,
-                            aProperties);
+  nsRefPtr<sbBaseDevice::TransferRequest>
+    req = sbBaseDevice::TransferRequest::New();
+  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
+  req->type = sbBaseDevice::TransferRequest::REQUEST_UPDATE;
+  req->item = aMediaItem;
+  req->list = aMediaList;
+  req->data = aProperties;
+  req->index = PR_UINT32_MAX;
+  req->otherIndex = PR_UINT32_MAX;
+  req->priority = sbBaseDevice::TransferRequest::PRIORITY_DEFAULT;
+
+  rv = mDevice->PushRequest(req);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -505,10 +500,7 @@ sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
 
   nsresult rv;
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOVE,
-                            nsnull,
-                            aMediaList,
-                            aFromIndex,
-                            aToIndex);
+                            nsnull, aMediaList, aFromIndex, aToIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -581,6 +573,14 @@ NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeClear(PRBool *_retval)
   return NS_OK;
 }
 
+NS_IMETHODIMP sbBaseDeviceLibraryListener::OnSyncSettings(
+                                   PRUint32 aAction,
+                                   sbIDeviceLibrarySyncSettings * aSyncSettings)
+{
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+  return NS_OK;
+}
+
 //sbILocalDatabaseMediaListCopyListener
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
                               sbILocalDatabaseMediaListCopyListener);
@@ -588,7 +588,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
 sbDeviceBaseLibraryCopyListener::sbDeviceBaseLibraryCopyListener()
 : mDevice(nsnull)
 {
-  SB_PRLOG_SETUP(sbLibraryListenerHelpers);
+#ifdef PR_LOGGING
+  if (!gLibraryListenerHelpersLog)
+    gLibraryListenerHelpersLog = PR_NewLogModule("sbLibraryListenerHelpers");
+#endif
 }
 
 sbDeviceBaseLibraryCopyListener::~sbDeviceBaseLibraryCopyListener()
@@ -636,10 +639,10 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   if (NS_SUCCEEDED(rv)) {
     rv = destLib->GetGuid(destLibId);
   }
-  TRACE("%s: %s::%s -> %s::%s",
+  TRACE(("%s: %s::%s -> %s::%s",
          __FUNCTION__,
          NS_ConvertUTF16toUTF8(srcLibId).get(), srcSpec.get(),
-         NS_ConvertUTF16toUTF8(destLibId).get(), destSpec.get());
+         NS_ConvertUTF16toUTF8(destLibId).get(), destSpec.get()));
   #endif
 
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_READ,
@@ -819,7 +822,8 @@ sbBaseDeviceMediaListListener::OnBatchBegin(sbIMediaList *aMediaList)
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
-  return mDevice->BatchBegin();
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_BEGIN,
+                              nsnull, aMediaList);
 }
 
 NS_IMETHODIMP
@@ -828,5 +832,6 @@ sbBaseDeviceMediaListListener::OnBatchEnd(sbIMediaList *aMediaList)
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
-  return mDevice->BatchEnd();
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
+                              nsnull, aMediaList);
 }

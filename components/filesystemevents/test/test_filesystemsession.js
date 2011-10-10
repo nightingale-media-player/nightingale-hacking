@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,7 +37,7 @@ const STATE_PHASE3 = "PHASE 3";
 function runTest()
 {
   // If the file-system watcher is not supported on this system, just return.
-  var fsWatcher = Cc["@songbirdnest.com/filesystem/watcher;1"]
+  var fsWatcher = Cc["@getnightingale.com/filesystem/watcher;1"]
                     .createInstance(Ci.sbIFileSystemWatcher);
   if (!fsWatcher.isSupported) {
     return;
@@ -48,7 +48,6 @@ function runTest()
                    .getService(Ci.nsIProperties)
                    .get("ProfD", Ci.nsIFile);
 
-  watchDir.normalize();
   watchDir.append("watch_dir");
   if (!watchDir.exists() || !watchDir.isDirectory()) {
     watchDir.create(Ci.nsIFile.DIRECTORY_TYPE, 0777);
@@ -304,7 +303,7 @@ sbFSListener.prototype =
                 this._savedSessionID);
 
       this._fsWatcher = null;
-      this._fsWatcher = Cc["@songbirdnest.com/filesystem/watcher;1"]
+      this._fsWatcher = Cc["@getnightingale.com/filesystem/watcher;1"]
                           .createInstance(Ci.sbIFileSystemWatcher);
 
       // In phase 3, the session data should be removed from disk to test

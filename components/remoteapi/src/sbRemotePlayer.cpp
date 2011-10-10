@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -56,7 +56,6 @@
 #include <sbIPlaylistClickEvent.h>
 #include <sbIPlaylistCommands.h>
 #include <sbITabBrowser.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
@@ -129,7 +128,7 @@ static PRLogModuleInfo* gRemotePlayerLog = nsnull;
 #define __FUNCTION__ __PRETTY_FUNCTION__
 #endif
 
-static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
+static NS_DEFINE_CID(kRemotePlayerCID, NIGHTINGALE_REMOTEPLAYER_CID);
 
 const static char* sPublicWProperties[] =
   { "playback_control:position" };
@@ -201,7 +200,6 @@ const static char* sPublicMetadata[] =
     "metadata.length.str",
     "playlist.shuffle",
     "playlist.repeat",
-    "playlist.shuffle.disabled",
     "faceplate.volume",
     "faceplate.mute",
     "faceplate.playing",
@@ -228,7 +226,7 @@ const static char* sPublicCategoryConversions[][2] =
 #define RAPI_EVENT_TYPE_BEFOREVIEW        NS_LITERAL_STRING("beforeviewchange")
 #define RAPI_EVENT_TYPE_VIEW              NS_LITERAL_STRING("viewchange")
 #define RAPI_EVENT_TYPE_STOP              NS_LITERAL_STRING("playbackstopped")
-#define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
+#define SB_PREFS_ROOT                     NS_LITERAL_STRING("nightingale.")
 #define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
 #define SB_WEB_TABBROWSER                 NS_LITERAL_STRING("sb-tabbrowser")
 
@@ -337,8 +335,8 @@ NS_IMPL_CI_INTERFACE_GETTER6( sbRemotePlayer,
                               sbISecurityAggregator )
 
 SB_IMPL_CLASSINFO( sbRemotePlayer,
-                   SONGBIRD_REMOTEPLAYER_CONTRACTID,
-                   SONGBIRD_REMOTEPLAYER_CLASSNAME,
+                   NIGHTINGALE_REMOTEPLAYER_CONTRACTID,
+                   NIGHTINGALE_REMOTEPLAYER_CLASSNAME,
                    nsIProgrammingLanguage::CPLUSPLUS,
                    0,
                    kRemotePlayerCID )
@@ -547,7 +545,7 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set up metrics and count this session
-  mMetrics = do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+  mMetrics = do_CreateInstance("@getnightingale.com/Nightingale/Metrics;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Count this session
@@ -657,7 +655,7 @@ NS_IMETHODIMP
 sbRemotePlayer::GetName( nsAString &aName )
 {
   LOG(("sbRemotePlayer::GetName()"));
-  aName.AssignLiteral("Songbird");
+  aName.AssignLiteral("Nightingale");
   return NS_OK;
 }
 
@@ -847,7 +845,7 @@ sbRemotePlayer::RegisterCommands( PRBool aUseDefaultCommands )
 
   // Get the PlaylistCommandsManager object and register commands with it.
   nsCOMPtr<sbIPlaylistCommandsManager> mgr(
-         do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
+         do_GetService( "@getnightingale.com/Nightingale/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIPlaylistCommands> commands = (sbIPlaylistCommands*) mCommandsObject;
@@ -924,7 +922,7 @@ sbRemotePlayer::GetDownloadMediaList( sbIRemoteMediaList **aDownloadMediaList )
 
   nsresult rv;
   nsCOMPtr<sbIDownloadDeviceHelper> dh(
-    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
+    do_GetService( "@getnightingale.com/Nightingale/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIMediaList> downloadMediaList;
@@ -963,7 +961,7 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
   }
 
   nsCOMPtr<sbIDownloadDeviceHelper> dh(
-    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
+    do_GetService( "@getnightingale.com/Nightingale/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
   // no check here, download device helper doesn't return values.
@@ -996,7 +994,7 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
   }
 
   nsCOMPtr<sbIDownloadDeviceHelper> dh(
-    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
+    do_GetService( "@getnightingale.com/Nightingale/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
   // no check here, download device helper doesn't return values.
@@ -1023,7 +1021,7 @@ sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
   NS_ENSURE_TRUE( wrapper, NS_ERROR_OUT_OF_MEMORY );
 
   nsCOMPtr<sbIDownloadDeviceHelper> dh =
-    do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv );
+    do_GetService( "@getnightingale.com/Nightingale/DownloadDeviceHelper;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
   // no check here, download device helper doesn't return values.
@@ -1039,7 +1037,7 @@ sbRemotePlayer::GetCurrentArtist( nsAString &aCurrentArtist )
   if (!mdrCurrentArtist) {
     nsresult rv;
     mdrCurrentArtist =
-           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+           do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrCurrentArtist->Init( NS_LITERAL_STRING("metadata.artist"),
                                  SB_PREFS_ROOT );
@@ -1055,7 +1053,7 @@ sbRemotePlayer::GetCurrentAlbum( nsAString &aCurrentAlbum )
   if (!mdrCurrentAlbum) {
     nsresult rv;
     mdrCurrentAlbum =
-           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+           do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrCurrentAlbum->Init( NS_LITERAL_STRING("metadata.album"),
                                 SB_PREFS_ROOT );
@@ -1071,7 +1069,7 @@ sbRemotePlayer::GetCurrentTrack( nsAString &aCurrentTrack )
   if (!mdrCurrentTrack) {
     nsresult rv;
     mdrCurrentTrack =
-           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+           do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrCurrentTrack->Init( NS_LITERAL_STRING("metadata.title"),
                                 SB_PREFS_ROOT );
@@ -1087,7 +1085,7 @@ sbRemotePlayer::GetPlaying( PRBool *aPlaying )
   NS_ENSURE_ARG_POINTER(aPlaying);
   if (!mdrPlaying) {
     nsresult rv;
-    mdrPlaying = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+    mdrPlaying = do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1",
                                     &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrPlaying->Init( NS_LITERAL_STRING("faceplate.playing"),
@@ -1104,7 +1102,7 @@ sbRemotePlayer::GetPaused( PRBool *aPaused )
   NS_ENSURE_ARG_POINTER(aPaused);
   if (!mdrPaused) {
     nsresult rv;
-    mdrPaused = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+    mdrPaused = do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1",
                                     &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrPaused->Init( NS_LITERAL_STRING("faceplate.paused"),
@@ -1121,7 +1119,7 @@ sbRemotePlayer::GetRepeat( PRInt64 *aRepeat )
   NS_ENSURE_ARG_POINTER(aRepeat);
   if (!mdrRepeat) {
     nsresult rv;
-    mdrRepeat = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+    mdrRepeat = do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1",
                                    &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrRepeat->Init( NS_LITERAL_STRING("playlist.repeat"),
@@ -1138,7 +1136,7 @@ sbRemotePlayer::GetShuffle( PRBool *aShuffle )
   NS_ENSURE_ARG_POINTER(aShuffle);
   if (!mdrShuffle) {
     nsresult rv;
-    mdrShuffle = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+    mdrShuffle = do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1",
                                     &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrShuffle->Init( NS_LITERAL_STRING("playlist.shuffle"),
@@ -1155,7 +1153,7 @@ sbRemotePlayer::GetPosition( PRInt64 *aPosition )
   NS_ENSURE_ARG_POINTER(aPosition);
   if (!mdrPosition) {
     nsresult rv;
-    mdrPosition = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+    mdrPosition = do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1",
                                      &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrPosition->Init( NS_LITERAL_STRING("metadata.position"),
@@ -1232,7 +1230,7 @@ sbRemotePlayer::GetVolume( PRInt64 *aVolume )
   rv = volumeControl->GetVolume(&volume);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  *aVolume = (PRInt64)(volume * 255); /* normalize to 0..255 */
+  *aVolume = volume * 255; /* normalize to 0..255 */
   // constrain things, because the mediacore API says they can be out of range...
   if (NS_UNLIKELY(*aVolume < 0)) {
     *aVolume = 0;
@@ -1250,7 +1248,7 @@ sbRemotePlayer::GetMute( PRBool *aMute )
   NS_ENSURE_ARG_POINTER(aMute);
   if (!mdrMute) {
     nsresult rv;
-    mdrMute = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
+    mdrMute = do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1",
                                  &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     rv = mdrMute->Init( NS_LITERAL_STRING("faceplate.mute"), SB_PREFS_ROOT );
@@ -1279,7 +1277,7 @@ sbRemotePlayer::AddListener( const nsAString &aKey,
 
   nsresult rv;
   nsCOMPtr<sbIDataRemote> dr =
-           do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1", &rv );
+           do_CreateInstance( "@getnightingale.com/Nightingale/DataRemote;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
   rv = dr->Init( aKey, SB_PREFS_ROOT );
   NS_ENSURE_SUCCESS( rv, rv );
@@ -1412,7 +1410,7 @@ sbRemotePlayer::Play()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->PlayView( mediaListView, index, PR_FALSE);
+  rv = sequencer->PlayView( mediaListView, index);
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -1455,7 +1453,7 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->PlayView( mediaListView, aIndex, PR_FALSE);
+  rv = sequencer->PlayView( mediaListView, aIndex);
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -1570,7 +1568,7 @@ sbRemotePlayer::Next()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->Next(PR_FALSE);
+  rv = sequencer->Next();
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -1596,7 +1594,7 @@ sbRemotePlayer::Previous()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->Previous(PR_FALSE);
+  rv = sequencer->Previous();
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -2153,7 +2151,7 @@ sbRemotePlayer::UnregisterCommands()
   // Get the PlaylistCommandsManager object to unregister the commands
   nsresult rv;
   nsCOMPtr<sbIPlaylistCommandsManager> mgr(
-         do_GetService( "@songbirdnest.com/Songbird/PlaylistCommandsManager;1", &rv ) );
+         do_GetService( "@getnightingale.com/Nightingale/PlaylistCommandsManager;1", &rv ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIPlaylistCommands> commands = (sbIPlaylistCommands*) mCommandsObject;
@@ -2220,7 +2218,7 @@ sbRemotePlayer::ConfirmPlaybackControl() {
 
     // check to see if this page has control
     nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
-      do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
+      do_GetService( "@getnightingale.com/remoteapi/remoteapiservice;1", &rv );
     NS_ENSURE_SUCCESS( rv, rv );
     PRBool hasPlaybackControl;
     rv = remoteAPIService->HasPlaybackControl( codebaseURI, &hasPlaybackControl );
@@ -2256,7 +2254,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
     do_GetService("@mozilla.org/preferences-service;1", &rv);
   if (NS_SUCCEEDED(rv)) {
     PRBool shouldPrompt;
-    rv = prefService->GetBoolPref( "songbird.rapi.promptForApproval",
+    rv = prefService->GetBoolPref( "nightingale.rapi.promptForApproval",
                                    &shouldPrompt );
     if (NS_SUCCEEDED(rv) && !shouldPrompt) {
       LOG(("sbRemotePlayer::GetUserApprovalForHost(URI) - shouldn't prompt or failed"));
@@ -2292,7 +2290,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // and the prompt title and message
-  rv = sbs->CreateBundle( "chrome://songbird/locale/songbird.properties",
+  rv = sbs->CreateBundle( "chrome://nightingale/locale/nightingale.properties",
                           getter_AddRefs(bundle) );
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
@@ -2391,7 +2389,7 @@ sbRemotePlayer::GetUserApprovalForHost( nsIURI *aURI,
 
   if (aScopedName) {
     nsCOMPtr<sbIMetrics> metrics =
-      do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Metrics;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCString name(aScopedName);
@@ -2446,7 +2444,7 @@ sbRemotePlayer::TakePlaybackControl( nsIURI* aURI )
   }
 
   nsCOMPtr<sbIRemoteAPIService> remoteAPIService =
-    do_GetService( "@songbirdnest.com/remoteapi/remoteapiservice;1", &rv );
+    do_GetService( "@getnightingale.com/remoteapi/remoteapiservice;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = remoteAPIService->TakePlaybackControl( uri, nsnull );
@@ -2827,8 +2825,8 @@ sbRemotePlayer::Register( nsIComponentManager* aCompMgr,
 
   // allow ourself to be accessed as a js global in webpage
   rv = catMan->AddCategoryEntry( JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
-                                 "songbird",      /* use this name to access */
-                                 SONGBIRD_REMOTEPLAYER_CONTRACTID,
+                                 "nightingale",      /* use this name to access */
+                                 NIGHTINGALE_REMOTEPLAYER_CONTRACTID,
                                  PR_TRUE,         /* persist */
                                  PR_TRUE,         /* replace existing */
                                  nsnull );
@@ -2851,7 +2849,7 @@ sbRemotePlayer::Unregister( nsIComponentManager* aCompMgr,
     return NS_ERROR_FAILURE;
 
   rv = catMan->DeleteCategoryEntry( JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
-                                    "songbird",
+                                    "nightingale",
                                     PR_TRUE );   /* delete persisted data */
   return rv;
 }
@@ -3234,15 +3232,15 @@ sbRemotePlayerDownloadCallback::Initialize(sbRemotePlayer* aRemotePlayer)
   nsCOMPtr<sbIDeviceManager> deviceManager;
   PRBool hasDeviceForCategory;
 
-  deviceManager = do_GetService("@songbirdnest.com/Songbird/DeviceManager;1",
+  deviceManager = do_GetService("@getnightingale.com/Nightingale/DeviceManager;1",
                                 &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceManager->HasDeviceForCategory
-        (NS_LITERAL_STRING("Songbird Download Device"), &hasDeviceForCategory);
+        (NS_LITERAL_STRING("Nightingale Download Device"), &hasDeviceForCategory);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(hasDeviceForCategory, NS_ERROR_UNEXPECTED);
   rv = deviceManager->GetDeviceByCategory
-                                (NS_LITERAL_STRING("Songbird Download Device"),
+                                (NS_LITERAL_STRING("Nightingale Download Device"),
                                  getter_AddRefs(mDownloadDevice));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mDownloadDevice->AddCallback(this);

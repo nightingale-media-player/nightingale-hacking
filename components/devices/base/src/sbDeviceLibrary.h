@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SBDEVICELIBRARY_H__
@@ -53,8 +53,7 @@ struct PRMonitor;
   NS_IMETHOD CreateMediaItemIfNotExist(nsIURI *aContentUri, sbIPropertyArray *aProperties, sbIMediaItem **aResultItem, PRBool *_retval); \
   NS_IMETHOD CreateMediaList(const nsAString & aType, sbIPropertyArray *aProperties, sbIMediaList **_retval);  \
   NS_IMETHOD GetDevice(sbIDevice * *aDevice); \
-  NS_IMETHOD ClearItems(); \
-  NS_IMETHOD ClearItemsByType(const nsAString &aContentType);
+  NS_IMETHOD ClearItems();
 
 // Use this macro to declare functions that forward the behavior of this
 // interface to another object in a safe way.
@@ -62,15 +61,13 @@ struct PRMonitor;
   NS_IMETHOD GetSupportsForeignMediaItems(PRBool *aSupportsForeignMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSupportsForeignMediaItems(aSupportsForeignMediaItems); } \
   NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
   NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
-  NS_IMETHOD ContainsItemWithSameIdentity(sbIMediaItem* aMediaItem, PRBool* _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ContainsItemWithSameIdentity(aMediaItem, _retval); } \
-  NS_IMETHOD GetItemsWithSameIdentity(sbIMediaItem* aMediaItem, nsIArray** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsWithSameIdentity(aMediaItem, _retval); } \
   NS_IMETHOD Resolve(nsIURI *aUri, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Resolve(aUri, _retval); } \
   NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, PRBool aDontCopyContent, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, aDontCopyContent, _retval); } \
   NS_IMETHOD GetMediaItem(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItem(aGuid, _retval); } \
   NS_IMETHOD GetDuplicate(sbIMediaItem *aMediaItem, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuplicate(aMediaItem, _retval); } \
   NS_IMETHOD GetMediaListTypes(nsIStringEnumerator * *aMediaListTypes) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaListTypes(aMediaListTypes); } \
   NS_IMETHOD RegisterMediaListFactory(sbIMediaListFactory *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterMediaListFactory(aFactory); } \
-  NS_IMETHOD Optimize(PRBool aAnalyzeOnly) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(aAnalyzeOnly); } \
+  NS_IMETHOD Optimize(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(); } \
   NS_IMETHOD Flush(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Flush(); } \
   NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
   NS_IMETHOD BatchCreateMediaItemsIfNotExist(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, nsIArray **aResultItemArray, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsIfNotExist(aURIArray, aPropertyArrayArray, aResultItemArray, _retval); } \
@@ -83,7 +80,7 @@ struct PRMonitor;
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem); \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList); \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems); \
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator *aMediaItems, sbIAddMediaItemsListener *aListener, PRBool aAsync); \
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener); \
   NS_IMETHOD Clear(void);
 
 #define SB_FORWARD_SAFE_SBIMEDIALIST(_to) \
@@ -116,7 +113,6 @@ struct PRMonitor;
 
 #define SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(_to) \
   NS_SCRIPTABLE NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
-  NS_SCRIPTABLE NS_IMETHOD GetItemController(sbIMediaItemController **aMediaItemController) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemController(aMediaItemController); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaUpdated(aMediaUpdated); } \
@@ -127,7 +123,7 @@ struct PRMonitor;
   NS_SCRIPTABLE NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentLength(aContentLength); } \
   NS_SCRIPTABLE NS_IMETHOD GetContentType(nsAString & aContentType) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetContentType(aContentType); } \
   NS_SCRIPTABLE NS_IMETHOD SetContentType(const nsAString & aContentType) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentType(aContentType); } \
-  NS_SCRIPTABLE NS_IMETHOD TestIsURIAvailable(nsIObserver *aObserver) { return !_to ? NS_ERROR_NULL_POINTER : _to->TestIsURIAvailable(aObserver); } \
+  NS_SCRIPTABLE NS_IMETHOD TestIsAvailable(nsIObserver *aObserver) { return !_to ? NS_ERROR_NULL_POINTER : _to->TestIsAvailable(aObserver); } \
   NS_SCRIPTABLE NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStreamAsync(aListener, aContext, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStream(_retval); } \
   NS_SCRIPTABLE NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenOutputStream(_retval); } \
@@ -270,7 +266,7 @@ private:
    * \brief Update the library is read-only property based upon the device
    *        management type preference.
    */
-  nsresult UpdateIsReadOnly();
+  nsresult UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings);
 
   /**
    * \brief Return true if the device is configured to auto sync and syncing
@@ -329,14 +325,15 @@ private:
   /**
    * \brief The sync mode has been changed or not.
    */
-  nsRefPtr<sbDeviceLibrarySyncSettings> mSyncSettings;
+  nsRefPtr<sbDeviceLibrarySyncSettings> mCurrentSyncSettings;
+  nsRefPtr<sbDeviceLibrarySyncSettings> mTempSyncSettings;
   PRMonitor* mMonitor;
 };
 
 #define PREF_SYNC_PREFIX    "library."
 #define PREF_SYNC_BRANCH    ".sync."
+#define PREF_SYNC_MODE      "syncMode"
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
-#define PREF_SYNC_IMPORT    "import"
 #define PREF_SYNC_LISTS     "playlists"
 #define PREF_SYNC_ROOT      "root"
 #define PREF_SYNC_FOLDER    "syncFolder"

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,7 +32,7 @@ function runTest () {
 
   Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
-  var SB_NS = "http://songbirdnest.com/data/1.0#";
+  var SB_NS = "http://getnightingale.com/data/1.0#";
 
   var databaseGUID = "test_bulkproperties";
   var library = createLibrary(databaseGUID, null, true);
@@ -42,11 +42,6 @@ function runTest () {
 
   var uri = "http://floo.com/";
   var item = library.createMediaItem(newURI(uri));
-  // Set the track name so that the identity hash gets set; otherwise changes
-  // later will make it come into existence and thus get our number of added
-  // properties wrong.
-  item.setProperty(SB_NS + "trackName", "Test item");
-
   var props = item.getProperties(null);
 
   var originalPropCount = props.length;

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -96,9 +96,9 @@ interface sbIFileScanCallback : nsISupports
 \verbatim
 function ScanBeneathADirectory(aPath) {
   // Create the objects
-  var aFileScan = Components.classes["@songbirdnest.com/Songbird/FileScan;1"]
+  var aFileScan = Components.classes["@getnightingale.com/Nightingale/FileScan;1"]
     .createInstance(Components.interfaces.sbIFileScan);
-  var aFileScanQuery = Components.classes["@songbirdnest.com/Songbird/FileScanQuery;1"]
+  var aFileScanQuery = Components.classes["@getnightingale.com/Nightingale/FileScanQuery;1"]
     .createInstance(Components.interfaces.sbIFileScanQuery);
 
   // Setup the query
@@ -296,7 +296,7 @@ interface sbIFileScanQuery : nsISupports
  *
  * \sa sbIFileScanCallback, sbIFileScanQuery
  */
-[scriptable, uuid(27431e35-b060-486e-ba58-76c5ae7f8c24)]
+[scriptable, uuid(9d87834c-cab9-488c-b152-416cfa8305c3)]
 interface sbIFileScan : nsISupports
 { 
   /**
@@ -307,6 +307,17 @@ interface sbIFileScan : nsISupports
    */
   void submitQuery(in sbIFileScanQuery pQuery);
   
+  /**
+   * \brief Execute a scan directly to a sbIFileScanCallback instance
+   *
+   * \param strDirectory The directory to scan
+   * \param bRecurse Whether or not to recurse
+   * \param pCallback The callback used to process the scan
+   * \sa submitQuery
+   */
+  PRInt32 scanDirectory(in AString strDirectory, 
+    in PRBool bRecurse, 
+    in sbIFileScanCallback pCallback);
   /**
    * Cleans up after ourselves. If you're using sbIFileScan in GC environment
    * please explicitly cleanup

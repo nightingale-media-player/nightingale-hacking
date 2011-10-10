@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,7 +36,7 @@
 //
 // \brief This class simply registers with the component manager
 //        for startup. Once the app has started up, it will override
-//        the XULRunner Mac application delegate so Songbird can
+//        the XULRunner Mac application delegate so Nightingale can
 //        handle Mac specific events like Dock creation.
 //
 @class SBMacAppDelegate;
@@ -63,11 +63,11 @@ private:
 
 
 // Component Registration Stuff:
-#define SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID                \
-  "@songbirdnest.com/integration/mac-app-delegate-mgr;1"
-#define SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME                 \
-  "Songbird Mac Application Delegate Manager" 
-#define SONGBIRD_MACAPPDELEGATEMANAGER_CID                       \
+#define NIGHTINGALE_MACAPPDELEGATEMANAGER_CONTRACTID                \
+  "@getnightingale.com/integration/mac-app-delegate-mgr;1"
+#define NIGHTINGALE_MACAPPDELEGATEMANAGER_CLASSNAME                 \
+  "Nightingale Mac Application Delegate Manager" 
+#define NIGHTINGALE_MACAPPDELEGATEMANAGER_CID                       \
 { /* CB64A891-2D63-4A71-850F-26201F7370D6 */              \
   0xCB64A891,                                             \
   0x2D63,                                                 \

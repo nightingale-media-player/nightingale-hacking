@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBIDEFAULTBASEDEVICEINFOREGISTRAR_H_
@@ -89,18 +89,6 @@ protected:
    * \param aDeviceXMLInfoSpec  Device XML info document URI spec.
    */
   virtual nsresult GetDeviceXMLInfoSpec(nsACString& aDeviceXMLInfoSpec);
-
-  /**
-   * Return in aDeviceXMLInfoExtensions a space-delimited list of file
-   * extensions (without dots) to scan for when searching a directory
-   * for device XML info files.  Directories are not scanned if this
-   * string is empty
-   *
-   * \param aDeviceXMLInfoExtensions  Returns a space-delimited list of
-   *                                  extensions
-   */
-  virtual nsresult GetDeviceXMLInfoExtensions(
-                     nsACString& aDeviceXMLInfoExtensions);
 
   /**
    * Return in aDeviceXMLInfoSpec the URI spec for the default device XML info

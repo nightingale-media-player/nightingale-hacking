@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -54,7 +54,7 @@ static PRLogModuleInfo* gDevicemanagerLog = nsnull;
 #define LOG(args) /* nothing */
 #endif
 
-#define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/OldDeviceImpl/"
+#define SB_DEVICE_PREFIX "@getnightingale.com/Nightingale/OldDeviceImpl/"
 
 // This allows us to be initialized once and only once.
 PRBool sbDeviceManagerObsolete::sServiceInitialized = PR_FALSE;
@@ -154,7 +154,6 @@ sbDeviceManagerObsolete::Finalize()
   NS_ENSURE_FALSE(sbDeviceManagerObsolete::sServiceFinalized, NS_ERROR_UNEXPECTED);
 
   // Loop through the array and call Finalize() on all the devices.
-  nsresult rv;
 
   nsAutoLock autoLock(mLock);
 
@@ -163,8 +162,7 @@ sbDeviceManagerObsolete::Finalize()
     nsCOMPtr<sbIDeviceBase> device = mSupportedDevices.ObjectAt(index);
     NS_ASSERTION(device, "Null pointer in mSupportedDevices");
 
-    rv = device->Finalize();
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
+    device->Finalize();
   }
 
   sbDeviceManagerObsolete::sServiceFinalized = PR_TRUE;
@@ -174,7 +172,7 @@ sbDeviceManagerObsolete::Finalize()
 
 // Instantiate all supported devices.
 // This is done by iterating through all registered XPCOM components and
-// finding the components with @songbirdnest.com/Songbird/Device/ prefix for the
+// finding the components with @getnightingale.com/Nightingale/Device/ prefix for the
 // contract ID for the interface.
 NS_IMETHODIMP
 sbDeviceManagerObsolete::LoadSupportedDevices()

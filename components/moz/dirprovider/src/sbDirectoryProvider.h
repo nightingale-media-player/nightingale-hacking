@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SB_DIRECTORY_PROVIDER_H__
@@ -38,8 +38,8 @@
 #define NS_WIN_DISCBURNING                  "DiscBurning"
 
 /**
- * This class implements a Songbird directory service provider, to have
- * directory service return special directories Songbird needs. Mozilla won't
+ * This class implements a Nightingale directory service provider, to have
+ * directory service return special directories Nightingale needs. Mozilla won't
  * add these directories by default (moz bug 431880).
  */
 
@@ -59,13 +59,13 @@ private:
 protected:
 };
 
-#define SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME "sbDirectoryProvider"
-#define SONGBIRD_DIRECTORY_PROVIDER_CID \
+#define NIGHTINGALE_DIRECTORY_PROVIDER_CLASSNAME "sbDirectoryProvider"
+#define NIGHTINGALE_DIRECTORY_PROVIDER_CID \
   /* {d1d8f5b0-c207-11de-8a39-0800200c9a66} */ \
   { 0xd1d8f5b0, 0xc207, 0x11de, \
     { 0x8a, 0x39, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 } \
   }
-#define SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID \
-  "@songbirdnest.com/moz/directory/provider;1"
+#define NIGHTINGALE_DIRECTORY_PROVIDER_CONTRACTID \
+  "@getnightingale.com/moz/directory/provider;1"
 
 #endif // SB_DIRECTORY_PROVIDER_H__

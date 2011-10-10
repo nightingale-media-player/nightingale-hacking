@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -106,10 +106,8 @@ sbPropertyInfo::sbPropertyInfo()
 , mRemoteReadable(PR_FALSE)
 , mRemoteWritableLock(nsnull)
 , mRemoteWritable(PR_FALSE)
-, mUnitConverterLock(nsnull)
 , mUnitConverter(nsnull)
-, mUsedInIdentityLock(nsnull)
-, mUsedInIdentity(PR_FALSE)
+, mUnitConverterLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gPropInfoLog) {
@@ -161,10 +159,6 @@ sbPropertyInfo::sbPropertyInfo()
   mUnitConverterLock = PR_NewLock();
   NS_ASSERTION(mUnitConverterLock,
     "sbPropertyInfo::mUnitConverterLock failed to create lock!");
-
-  mUsedInIdentityLock = PR_NewLock();
-  NS_ASSERTION(mUsedInIdentityLock,
-    "sbPropertyInfo::mUsedInIdentityLock failed to create lock!");
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -211,10 +205,6 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mUnitConverterLock) {
     PR_DestroyLock(mUnitConverterLock);
-  }
-
-  if(mUsedInIdentityLock) {
-    PR_DestroyLock(mUsedInIdentityLock);
   }
 }
 
@@ -563,9 +553,7 @@ NS_IMETHODIMP sbPropertyInfo::GetOperator(const nsAString & aOperator,
 
 NS_IMETHODIMP sbPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_TRUE;
-  return NS_OK;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
@@ -575,14 +563,12 @@ NS_IMETHODIMP sbPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _re
 
 NS_IMETHODIMP sbPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
-  _retval = aValue;
-  return NS_OK;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
-  _retval = aValue;
-  return NS_OK;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
@@ -652,19 +638,3 @@ NS_IMETHODIMP sbPropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitCo
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetUsedInIdentity(PRBool *aUsedInIdentity)
-{
-  NS_ENSURE_ARG_POINTER(aUsedInIdentity);
-
-  sbSimpleAutoLock lock(mUsedInIdentityLock);
-  *aUsedInIdentity = mUsedInIdentity;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP sbPropertyInfo::SetUsedInIdentity(PRBool aUsedInIdentity)
-{
-  sbSimpleAutoLock lock(mUsedInIdentityLock);
-  mUsedInIdentity = aUsedInIdentity;
-  return NS_OK;
-}

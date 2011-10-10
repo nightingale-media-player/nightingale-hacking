@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
 * \file  IntegrationComponent.cpp
-* \brief Songbird MediaLibrary Component Factory and Main Entry Point.
+* \brief Nightingale MediaLibrary Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
@@ -37,7 +37,6 @@
 #include "macosx/sbNativeWindowManager.h"
 #include "macosx/sbMacAppDelegate.h"
 #include "macosx/sbMacWindowMoveService.h"
-#include "macosx/sbMacWindowTitlebarService.h"
 #include "macosx/sbScreenSaverSuppressor.h"
 #endif
 
@@ -61,9 +60,9 @@
 
 
 #define SB_WINDOWMOVE_SERVICE_CONTRACTID \
-  "@songbirdnest.com/integration/window-move-resize-service;1"
+  "@getnightingale.com/integration/window-move-resize-service;1"
 #define SB_WINDOWMOVE_SERVICE_CLASSNAME \
-  "Songbird Window Move/Resize Service"
+  "Nightingale Window Move/Resize Service"
 #define SB_WINDOWMOVE_SERVICE_CID \
   {0x4f8fecc6, 0x1dd2, 0x11b2, {0x90, 0x3a, 0xf3, 0x47, 0x1b, 0xfd, 0x3a, 0x60}}
 
@@ -86,7 +85,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowMoveService, Init);
 #ifdef XP_MACOSX
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacAppDelegateManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowMoveService, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowTitlebarService, Initialize);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 #endif
 
@@ -98,59 +96,59 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 static nsModuleComponentInfo sbIntegration[] =
 {  
   {
-    SONGBIRD_WINDOWCLOAK_CLASSNAME,
-    SONGBIRD_WINDOWCLOAK_CID,
-    SONGBIRD_WINDOWCLOAK_CONTRACTID,
+    NIGHTINGALE_WINDOWCLOAK_CLASSNAME,
+    NIGHTINGALE_WINDOWCLOAK_CID,
+    NIGHTINGALE_WINDOWCLOAK_CONTRACTID,
     sbWindowCloakConstructor
   },
 
   {
-    SONGBIRD_NATIVEWINDOWMANAGER_CLASSNAME,
-    SONGBIRD_NATIVEWINDOWMANAGER_CID,
-    SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID,
+    NIGHTINGALE_NATIVEWINDOWMANAGER_CLASSNAME,
+    NIGHTINGALE_NATIVEWINDOWMANAGER_CID,
+    NIGHTINGALE_NATIVEWINDOWMANAGER_CONTRACTID,
     sbNativeWindowManagerConstructor
   },
 
 #ifdef XP_WIN
   {
-    SONGBIRD_KNOWN_FOLDER_MANAGER_CLASSNAME,
-    SONGBIRD_KNOWN_FOLDER_MANAGER_CID,
-    SONGBIRD_KNOWN_FOLDER_MANAGER_CONTRACTID,
+    NIGHTINGALE_KNOWN_FOLDER_MANAGER_CLASSNAME,
+    NIGHTINGALE_KNOWN_FOLDER_MANAGER_CID,
+    NIGHTINGALE_KNOWN_FOLDER_MANAGER_CONTRACTID,
     sbKnownFolderManagerConstructor
   },
 
   {
-    SONGBIRD_WINDOW_CHROME_SERVICE_CLASSNAME,
-    SONGBIRD_WINDOW_CHROME_SERVICE_CID,
-    SONGBIRD_WINDOW_CHROME_SERVICE_CONTRACTID,
+    NIGHTINGALE_WINDOW_CHROME_SERVICE_CLASSNAME,
+    NIGHTINGALE_WINDOW_CHROME_SERVICE_CID,
+    NIGHTINGALE_WINDOW_CHROME_SERVICE_CONTRACTID,
     sbWindowChromeServiceConstructor
   },
 
   {
-    SONGBIRD_WINDOWMINMAX_CLASSNAME,
-    SONGBIRD_WINDOWMINMAX_CID,
-    SONGBIRD_WINDOWMINMAX_CONTRACTID,
+    NIGHTINGALE_WINDOWMINMAX_CLASSNAME,
+    NIGHTINGALE_WINDOWMINMAX_CID,
+    NIGHTINGALE_WINDOWMINMAX_CONTRACTID,
     CWindowMinMaxConstructor
   },
 
   {
-    SONGBIRD_WINDOWRESIZEHOOK_CLASSNAME,
-    SONGBIRD_WINDOWRESIZEHOOK_CID,
-    SONGBIRD_WINDOWRESIZEHOOK_CONTRACTID,
+    NIGHTINGALE_WINDOWRESIZEHOOK_CLASSNAME,
+    NIGHTINGALE_WINDOWRESIZEHOOK_CID,
+    NIGHTINGALE_WINDOWRESIZEHOOK_CONTRACTID,
     CWindowResizeHookConstructor
   },
 
   {
-    SONGBIRD_WINDOWREGION_CLASSNAME,
-    SONGBIRD_WINDOWREGION_CID,
-    SONGBIRD_WINDOWREGION_CONTRACTID,
+    NIGHTINGALE_WINDOWREGION_CLASSNAME,
+    NIGHTINGALE_WINDOWREGION_CID,
+    NIGHTINGALE_WINDOWREGION_CONTRACTID,
     CWindowRegionConstructor
   },
 
   {
-    SONGBIRD_GLOBALHOTKEYS_CLASSNAME,
-    SONGBIRD_GLOBALHOTKEYS_CID,
-    SONGBIRD_GLOBALHOTKEYS_CONTRACTID,
+    NIGHTINGALE_GLOBALHOTKEYS_CLASSNAME,
+    NIGHTINGALE_GLOBALHOTKEYS_CID,
+    NIGHTINGALE_GLOBALHOTKEYS_CONTRACTID,
     CGlobalHotkeysConstructor
   },
 
@@ -171,9 +169,9 @@ static nsModuleComponentInfo sbIntegration[] =
 #endif
 #ifdef XP_MACOSX
   {
-    SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME,
-    SONGBIRD_MACAPPDELEGATEMANAGER_CID,
-    SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID,
+    NIGHTINGALE_MACAPPDELEGATEMANAGER_CLASSNAME,
+    NIGHTINGALE_MACAPPDELEGATEMANAGER_CID,
+    NIGHTINGALE_MACAPPDELEGATEMANAGER_CONTRACTID,
     sbMacAppDelegateManagerConstructor,
     sbMacAppDelegateManager::RegisterSelf
   },
@@ -182,14 +180,6 @@ static nsModuleComponentInfo sbIntegration[] =
     SB_WINDOWMOVE_SERVICE_CID,
     SB_WINDOWMOVE_SERVICE_CONTRACTID,
     sbMacWindowMoveServiceConstructor
-  },
-  {
-    SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME,
-    SB_MAC_WINDOW_TITLEBAR_SERVICE_CID,
-    SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID,
-    sbMacWindowTitlebarServiceConstructor,
-    sbMacWindowTitlebarService::RegisterSelf,
-    sbMacWindowTitlebarService::UnregisterSelf
   },
   {
     SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME,
@@ -216,4 +206,4 @@ static nsModuleComponentInfo sbIntegration[] =
 #endif
 };
 
-NS_IMPL_NSGETMODULE(SongbirdIntegrationComponent, sbIntegration)
+NS_IMPL_NSGETMODULE(NightingaleIntegrationComponent, sbIntegration)

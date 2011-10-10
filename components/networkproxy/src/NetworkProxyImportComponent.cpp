@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
 * \file  NetworkProxyImportComponent.cpp
-* \brief Songbird NetworkProxyImport Component Factory and Main Entry Point.
+* \brief Nightingale NetworkProxyImport Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
@@ -50,9 +50,9 @@ static NS_IMETHODIMP CNetworkProxyImportFactoryDestructor()
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_NetworkProxyImport_CLASSNAME, 
-    SONGBIRD_NetworkProxyImport_CID,
-    SONGBIRD_NetworkProxyImport_CONTRACTID,
+    NIGHTINGALE_NetworkProxyImport_CLASSNAME, 
+    NIGHTINGALE_NetworkProxyImport_CID,
+    NIGHTINGALE_NetworkProxyImport_CONTRACTID,
     CNetworkProxyImportConstructor,
     nsnull,
     nsnull,
@@ -60,5 +60,5 @@ static nsModuleComponentInfo components[] =
   },
 };
 
-NS_IMPL_NSGETMODULE(SongbirdNetworkProxyImportComponent, components)
+NS_IMPL_NSGETMODULE(NightingaleNetworkProxyImportComponent, components)
 

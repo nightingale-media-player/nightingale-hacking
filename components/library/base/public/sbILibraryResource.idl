@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -147,47 +147,47 @@ interface sbILibraryResource : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     //Get the albumName property from a mediaitem.
-    var albumName = mediaItem.getProperty("http://songbirdnest.com/data/1.0#albumName");
+    var albumName = mediaItem.getProperty("http://getnightingale.com/data/1.0#albumName");
     (end)
 
   Standard Properties:
-    http://songbirdnest.com/data/1.0#albumDetailUrl - A URL with information on the album
-    http://songbirdnest.com/data/1.0#albumName - The name of the album
-    http://songbirdnest.com/data/1.0#artistDetailUrl - A URL with information on the artist
-    http://songbirdnest.com/data/1.0#artistName - The name of the artist
-    http://songbirdnest.com/data/1.0#bitRate - The bit rate of the media, in bits per second
-    http://songbirdnest.com/data/1.0#bpm - The number of beats per minute
-    http://songbirdnest.com/data/1.0#columnSpec - Column display data
-    http://songbirdnest.com/data/1.0#composerName - The name of the composer
-    http://songbirdnest.com/data/1.0#copyrightURL - A URL with information on the copyright
-    http://songbirdnest.com/data/1.0#defaultColumnSpec - Default column display data
-    http://songbirdnest.com/data/1.0#disableDownload - Prevent this item from being downloaded
-    http://songbirdnest.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
-    http://songbirdnest.com/data/1.0#downloadDetails - Download state and progress
-    http://songbirdnest.com/data/1.0#duration - The duration of this media, in microseconds
-    http://songbirdnest.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
-    http://songbirdnest.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
-    http://songbirdnest.com/data/1.0#genre - The genre of this media
-    http://songbirdnest.com/data/1.0#hidden - Whether this item should be hidden from the user
-    http://songbirdnest.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
-    http://songbirdnest.com/data/1.0#lastPlayTime - The last time the media was played
-    http://songbirdnest.com/data/1.0#lyricistName - The name of the lyricist
-    http://songbirdnest.com/data/1.0#lyrics - The lyrics of the media
-    http://songbirdnest.com/data/1.0#originPage - The page this media was located on
-    http://songbirdnest.com/data/1.0#originPageTitle - The title of the page this media was located on
-    http://songbirdnest.com/data/1.0#originURL - The URL this media was retrived from
-    http://songbirdnest.com/data/1.0#playCount - The number of times this media has been played
-    http://songbirdnest.com/data/1.0#primaryImageURL - The URL of the primary image
-    http://songbirdnest.com/data/1.0#producerName - The name of the producer
-    http://songbirdnest.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
-    http://songbirdnest.com/data/1.0#recordLabelName - The name of the record label
-    http://songbirdnest.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
-    http://songbirdnest.com/data/1.0#skipCount - The number of times this item was skipped
-    http://songbirdnest.com/data/1.0#totalDiscs - The total number of discs in a compilation
-    http://songbirdnest.com/data/1.0#totalTracks - The total number of tracks in a compilation
-    http://songbirdnest.com/data/1.0#trackName - The name of the track
-    http://songbirdnest.com/data/1.0#trackNumber - The track number of this media in a compilation
-    http://songbirdnest.com/data/1.0#year - The year the media was released
+    http://getnightingale.com/data/1.0#albumDetailUrl - A URL with information on the album
+    http://getnightingale.com/data/1.0#albumName - The name of the album
+    http://getnightingale.com/data/1.0#artistDetailUrl - A URL with information on the artist
+    http://getnightingale.com/data/1.0#artistName - The name of the artist
+    http://getnightingale.com/data/1.0#bitRate - The bit rate of the media, in bits per second
+    http://getnightingale.com/data/1.0#bpm - The number of beats per minute
+    http://getnightingale.com/data/1.0#columnSpec - Column display data
+    http://getnightingale.com/data/1.0#composerName - The name of the composer
+    http://getnightingale.com/data/1.0#copyrightURL - A URL with information on the copyright
+    http://getnightingale.com/data/1.0#defaultColumnSpec - Default column display data
+    http://getnightingale.com/data/1.0#disableDownload - Prevent this item from being downloaded
+    http://getnightingale.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
+    http://getnightingale.com/data/1.0#downloadDetails - Download state and progress
+    http://getnightingale.com/data/1.0#duration - The duration of this media, in microseconds
+    http://getnightingale.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
+    http://getnightingale.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
+    http://getnightingale.com/data/1.0#genre - The genre of this media
+    http://getnightingale.com/data/1.0#hidden - Whether this item should be hidden from the user
+    http://getnightingale.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
+    http://getnightingale.com/data/1.0#lastPlayTime - The last time the media was played
+    http://getnightingale.com/data/1.0#lyricistName - The name of the lyricist
+    http://getnightingale.com/data/1.0#lyrics - The lyrics of the media
+    http://getnightingale.com/data/1.0#originPage - The page this media was located on
+    http://getnightingale.com/data/1.0#originPageTitle - The title of the page this media was located on
+    http://getnightingale.com/data/1.0#originURL - The URL this media was retrived from
+    http://getnightingale.com/data/1.0#playCount - The number of times this media has been played
+    http://getnightingale.com/data/1.0#primaryImageURL - The URL of the primary image
+    http://getnightingale.com/data/1.0#producerName - The name of the producer
+    http://getnightingale.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
+    http://getnightingale.com/data/1.0#recordLabelName - The name of the record label
+    http://getnightingale.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
+    http://getnightingale.com/data/1.0#skipCount - The number of times this item was skipped
+    http://getnightingale.com/data/1.0#totalDiscs - The total number of discs in a compilation
+    http://getnightingale.com/data/1.0#totalTracks - The total number of tracks in a compilation
+    http://getnightingale.com/data/1.0#trackName - The name of the track
+    http://getnightingale.com/data/1.0#trackNumber - The track number of this media in a compilation
+    http://getnightingale.com/data/1.0#year - The year the media was released
 
   Note:
     Metadata for the <MediaItems> may get updated and overwritten during playback.
@@ -219,40 +219,40 @@ interface sbILibraryResource : nsISupports
     //a mediaitem and assigned it to mediaItem.
 
     //Set the albumName property from a mediaitem.
-    mediaItem.setProperty("http://songbirdnest.com/data/1.0#albumName", "Let Us Play");
+    mediaItem.setProperty("http://getnightingale.com/data/1.0#albumName", "Let Us Play");
     (end)
 
   Standard Properties:
-    http://songbirdnest.com/data/1.0#albumDetailUrl - A URL with information on the album
-    http://songbirdnest.com/data/1.0#albumName - The name of the album
-    http://songbirdnest.com/data/1.0#artistDetailUrl - A URL with information on the artist
-    http://songbirdnest.com/data/1.0#artistName - The name of the artist
-    http://songbirdnest.com/data/1.0#bitRate - The bit rate of the media, in bits per second
-    http://songbirdnest.com/data/1.0#bpm - The number of beats per minute
-    http://songbirdnest.com/data/1.0#columnSpec - Column display data
-    http://songbirdnest.com/data/1.0#composerName - The name of the composer
-    http://songbirdnest.com/data/1.0#defaultColumnSpec - Default column display data
-    http://songbirdnest.com/data/1.0#disableDownload - Prevent this item from being downloaded
-    http://songbirdnest.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
-    http://songbirdnest.com/data/1.0#downloadDetails - Download state and progress
-    http://songbirdnest.com/data/1.0#duration - The duration of this media, in microseconds
-    http://songbirdnest.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
-    http://songbirdnest.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
-    http://songbirdnest.com/data/1.0#genre - The genre of this media
-    http://songbirdnest.com/data/1.0#hidden - Whether this item should be hidden from the user
-    http://songbirdnest.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
-    http://songbirdnest.com/data/1.0#lyricistName - The name of the lyricist
-    http://songbirdnest.com/data/1.0#lyrics - The lyrics of the media
-    http://songbirdnest.com/data/1.0#primaryImageURL - The URL of the primary image
-    http://songbirdnest.com/data/1.0#producerName - The name of the producer
-    http://songbirdnest.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
-    http://songbirdnest.com/data/1.0#recordLabelName - The name of the record label
-    http://songbirdnest.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
-    http://songbirdnest.com/data/1.0#totalDiscs - The total number of discs in a compilation
-    http://songbirdnest.com/data/1.0#totalTracks - The total number of tracks in a compilation
-    http://songbirdnest.com/data/1.0#trackName - The name of the track
-    http://songbirdnest.com/data/1.0#trackNumber - The track number of this media in a compilation
-    http://songbirdnest.com/data/1.0#year - The year the media was released
+    http://getnightingale.com/data/1.0#albumDetailUrl - A URL with information on the album
+    http://getnightingale.com/data/1.0#albumName - The name of the album
+    http://getnightingale.com/data/1.0#artistDetailUrl - A URL with information on the artist
+    http://getnightingale.com/data/1.0#artistName - The name of the artist
+    http://getnightingale.com/data/1.0#bitRate - The bit rate of the media, in bits per second
+    http://getnightingale.com/data/1.0#bpm - The number of beats per minute
+    http://getnightingale.com/data/1.0#columnSpec - Column display data
+    http://getnightingale.com/data/1.0#composerName - The name of the composer
+    http://getnightingale.com/data/1.0#defaultColumnSpec - Default column display data
+    http://getnightingale.com/data/1.0#disableDownload - Prevent this item from being downloaded
+    http://getnightingale.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
+    http://getnightingale.com/data/1.0#downloadDetails - Download state and progress
+    http://getnightingale.com/data/1.0#duration - The duration of this media, in microseconds
+    http://getnightingale.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
+    http://getnightingale.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
+    http://getnightingale.com/data/1.0#genre - The genre of this media
+    http://getnightingale.com/data/1.0#hidden - Whether this item should be hidden from the user
+    http://getnightingale.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
+    http://getnightingale.com/data/1.0#lyricistName - The name of the lyricist
+    http://getnightingale.com/data/1.0#lyrics - The lyrics of the media
+    http://getnightingale.com/data/1.0#primaryImageURL - The URL of the primary image
+    http://getnightingale.com/data/1.0#producerName - The name of the producer
+    http://getnightingale.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
+    http://getnightingale.com/data/1.0#recordLabelName - The name of the record label
+    http://getnightingale.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
+    http://getnightingale.com/data/1.0#totalDiscs - The total number of discs in a compilation
+    http://getnightingale.com/data/1.0#totalTracks - The total number of tracks in a compilation
+    http://getnightingale.com/data/1.0#trackName - The name of the track
+    http://getnightingale.com/data/1.0#trackNumber - The track number of this media in a compilation
+    http://getnightingale.com/data/1.0#year - The year the media was released
 
   Note:
     Metadata for the <MediaItems> may get updated and overwritten during playback.

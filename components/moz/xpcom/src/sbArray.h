@@ -52,7 +52,7 @@
   { 0xa3, 0xb5, 0xd1, 0x8b, 0x77, 0xbf, 0x8b, 0x36 } }
 
 #define SB_THREADSAFE_ARRAY_CONTRACTID \
-  "@songbirdnest.com/moz/xpcom/threadsafe-array;1"
+  "@getnightingale.com/moz/xpcom/threadsafe-array;1"
 
 struct PRLock;
 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,20 +38,20 @@ function runTest () {
   assertFilteredSort(view, "data_sort_created_asc.txt");
 
   var pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#contentURL", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#contentURL", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_contenturl_asc.txt");
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "a");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#trackNumber", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#albumName", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#trackNumber", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_album_asc_track_asc.txt");
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#artistName", "a");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#albumName", "a");
-  pa.appendProperty("http://songbirdnest.com/data/1.0#trackNumber", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#artistName", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#albumName", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#trackNumber", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_artist_asc_album_asc_track_asc.txt");
 
@@ -64,13 +64,13 @@ function runTest () {
   assertFilteredSort(view, "data_sort_sml101_ordinal_asc.txt");
 
   pa = createPropertyArray();
-  pa.appendProperty("http://songbirdnest.com/data/1.0#ordinal", "a");
+  pa.appendProperty("http://getnightingale.com/data/1.0#ordinal", "a");
   view.setSort(pa);
   assertFilteredSort(view, "data_sort_sml101_ordinal_asc.txt");
 }
 
 function createPropertyArray() {
-  var array = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                 .createInstance(Ci.sbIMutablePropertyArray);
   array.strict = false;
   return array;

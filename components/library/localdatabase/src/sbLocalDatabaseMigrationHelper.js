@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -32,7 +32,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
+const SBLDBCOMP = "@getnightingale.com/Nightingale/Library/LocalDatabase/";
 
 
 function sbLocalDatabaseMigrationHelper()
@@ -48,7 +48,7 @@ function sbLocalDatabaseMigrationHelper()
 sbLocalDatabaseMigrationHelper.prototype = {
   __proto__: SBJobUtils.JobBase.prototype,
   
-  classDescription: "Songbird Local Database Library Migration",
+  classDescription: "Nightingale Local Database Library Migration",
   classID:          Components.ID("{744f6217-4cb9-4929-8d1d-72492c1b8c83}"),
   contractID:       SBLDBCOMP + "MigrationHelper;1",
   implementationLanguage: Ci.nsIProgrammingLanguage.JAVASCRIPT,
@@ -76,10 +76,10 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.sbILocalDatabaseMigrationHelper,
                        Ci.sbIJobProgress,
                        Ci.sbIJobCancelable ],
-
-  _latestSchemaVersion: 29,
+  
+  _latestSchemaVersion: 24,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
-
+  
   _migrationHandlers:   null,
 
   //
@@ -214,7 +214,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
   //
 
   _initSCC: function sbLDBM__initSCC() {
-    this._securityMixin = Cc["@songbirdnest.com/remoteapi/security-mixin;1"]
+    this._securityMixin = Cc["@getnightingale.com/remoteapi/security-mixin;1"]
                             .createInstance(Ci.nsISecurityCheckedComponent);
 
     // initialize the security mixin with the cleared methods and props

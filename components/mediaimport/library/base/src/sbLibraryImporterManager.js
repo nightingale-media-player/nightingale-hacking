@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -45,7 +45,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird services.
+// Nightingale services.
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
@@ -85,9 +85,9 @@ if (typeof(Cu) == "undefined")
 //
 
 var sbLibraryImporterManagerCfg = {
-  className: "Songbird Library Importer Manager Service",
+  className: "Nightingale Library Importer Manager Service",
   cid: Components.ID("{0ed2a7e0-78ac-4574-8554-b1e422b02642}"),
-  contractID: "@songbirdnest.com/Songbird/LibraryImporterManager;1",
+  contractID: "@getnightingale.com/Nightingale/LibraryImporterManager;1",
   ifList: [ Ci.nsIObserver,
             Ci.sbILibraryImporterManager,
             Ci.sbILibraryImporterListener ]
@@ -172,7 +172,7 @@ sbLibraryImporterManager.prototype = {
    * contents of the import library change.
    *
    * \param aLibFilePath File path to external library that changed.
-   * \param aGUID GUID of Songbird library into which external library was
+   * \param aGUID GUID of Nightingale library into which external library was
    * imported.
    */
 
@@ -188,12 +188,12 @@ sbLibraryImporterManager.prototype = {
     //XXXeps should use importer that called onLibraryChanged
     var importer = this.defaultLibraryImporter;
     var libraryFilePath = Application.prefs.getValue
-                            ("songbird.library_importer.library_file_path",
+                            ("nightingale.library_importer.library_file_path",
                              "");
     var libraryPreviousImportPath = importer.libraryPreviousImportPath;
 
     // Initiate import.
-    var job = importer.import(libraryFilePath, "songbird", false);
+    var job = importer.import(libraryFilePath, "nightingale", false);
 
     // Get the library file from which to import.  Set to null for bad paths.
     var libraryFile = Cc["@mozilla.org/file/local;1"]
@@ -226,7 +226,7 @@ sbLibraryImporterManager.prototype = {
     var doImport = {};
     WindowUtils.openModalDialog
                   (null,
-                   "chrome://songbird/content/xul/importLibrary.xul",
+                   "chrome://nightingale/content/xul/importLibrary.xul",
                    "",
                    "chrome,centerscreen",
                    [ "error" ],
@@ -239,9 +239,9 @@ sbLibraryImporterManager.prototype = {
       var Application = Cc["@mozilla.org/fuel/application;1"]
                           .getService(Ci.fuelIApplication);
       var libraryFilePath = Application.prefs.getValue
-                              ("songbird.library_importer.library_file_path",
+                              ("nightingale.library_importer.library_file_path",
                                "");
-      this.defaultLibraryImporter.import(libraryFilePath, "songbird", false);
+      this.defaultLibraryImporter.import(libraryFilePath, "nightingale", false);
     }
   },
 
@@ -259,7 +259,7 @@ sbLibraryImporterManager.prototype = {
     function sbLibraryImporterManager_onNonExistentMedia(aNonExistentMediaCount,
                                                          aTrackCount) {
     // Present a non-existent media alert dialog.
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
     var alertTitle = SBBrandedString
                        ("import_library.nonexistent_media_alert.title");
@@ -268,7 +268,7 @@ sbLibraryImporterManager.prototype = {
                             [ aNonExistentMediaCount, aTrackCount ]);
     var songWin = Cc["@mozilla.org/appshell/window-mediator;1"]
                     .getService(Ci.nsIWindowMediator)
-                    .getMostRecentWindow("Songbird:Main");
+                    .getMostRecentWindow("Nightingale:Main");
 
     prompter.alert(songWin, alertTitle, alertMsg);
   },
@@ -276,7 +276,7 @@ sbLibraryImporterManager.prototype = {
 
   /**
    * \brief Handle unsupported media events.  These events occur whenever an
-   * attempt is made to import media that is not supported by Songbird.
+   * attempt is made to import media that is not supported by Nightingale.
    */
 
   onUnsupportedMedia: function sbLibraryImporterManager_onUnsupportedMedia() {
@@ -284,7 +284,7 @@ sbLibraryImporterManager.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     var alertEnabledPref =
-          "songbird.library_importer.unsupported_media_alert.enabled";
+          "nightingale.library_importer.unsupported_media_alert.enabled";
     var alertEnabled = Application.prefs.getValue(alertEnabledPref, false);
 
     // Do nothing if alert not enabled.
@@ -292,7 +292,7 @@ sbLibraryImporterManager.prototype = {
       return;
 
     // Present an unsupported media alert dialog.
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
     var alertTitle = SBBrandedString
                        ("import_library.unsupported_media_alert.title");
@@ -303,7 +303,7 @@ sbLibraryImporterManager.prototype = {
     
     var songWin = Cc["@mozilla.org/appshell/window-mediator;1"]
                     .getService(Ci.nsIWindowMediator)
-                    .getMostRecentWindow("Songbird:Main");
+                    .getMostRecentWindow("Nightingale:Main");
     
     prompter.alertCheck(songWin,
                         alertTitle,
@@ -319,10 +319,10 @@ sbLibraryImporterManager.prototype = {
 
   /**
    * \brief Handle dirty playlist events.  These events occur when an imported
-   * library playlist has been modified in Songbird.  This method returns the
-   * action to take, "keep" to keep the Songbird playlist unmodified, "merge"
-   * to merge the import library playlist into the Songbird playlist, and
-   * "replace" to replace the Songbird playlist.
+   * library playlist has been modified in Nightingale.  This method returns the
+   * action to take, "keep" to keep the Nightingale playlist unmodified, "merge"
+   * to merge the import library playlist into the Nightingale playlist, and
+   * "replace" to replace the Nightingale playlist.
    * This method also returns whether to apply the action to all dirty
    * playlists.
    *
@@ -339,7 +339,7 @@ sbLibraryImporterManager.prototype = {
     var applyAll = {};
     WindowUtils.openModalDialog
                   (null,
-                   "chrome://songbird/content/xul/dirtyPlaylistDialog.xul",
+                   "chrome://nightingale/content/xul/dirtyPlaylistDialog.xul",
                    "",
                    "chrome,centerscreen",
                    [ aPlaylistName ],
@@ -379,11 +379,11 @@ sbLibraryImporterManager.prototype = {
         this._handleProfileAfterChange();
         break;
 
-      case "songbird-library-manager-ready" :
+      case "nightingale-library-manager-ready" :
         this._handleLibraryManagerReady();
         break;
 
-      case "songbird-library-manager-before-shutdown" :
+      case "nightingale-library-manager-before-shutdown" :
         this._handleAppQuit();
         break;
 
@@ -472,10 +472,10 @@ sbLibraryImporterManager.prototype = {
     if (!this._observerSvc) {
       this._observerSvc = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
-      this._observerSvc.addObserver(this, "songbird-library-manager-before-shutdown", false);
+      this._observerSvc.addObserver(this, "nightingale-library-manager-before-shutdown", false);
       this._observerSvc.addObserver(this, "profile-after-change", false);
       this._observerSvc.addObserver(this,
-                                    "songbird-library-manager-ready",
+                                    "nightingale-library-manager-ready",
                                     false);
     }
 
@@ -485,7 +485,7 @@ sbLibraryImporterManager.prototype = {
 
     // Wait until the library manager services are available.
     try {
-      var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                              .getService(Ci.sbILibraryManager);
       if (!libraryManager.mainLibrary)
         return;
@@ -503,13 +503,13 @@ sbLibraryImporterManager.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     var hasLibraryFilePath =
-          Application.prefs.has("songbird.library_importer.library_file_path");
+          Application.prefs.has("nightingale.library_importer.library_file_path");
     if (!hasLibraryFilePath && this.defaultLibraryImporter) {
       var libraryDefaultFilePath =
             this.defaultLibraryImporter.libraryDefaultFilePath;
       if (libraryDefaultFilePath) {
         Application.prefs.setValue
-                            ("songbird.library_importer.library_file_path",
+                            ("nightingale.library_importer.library_file_path",
                              libraryDefaultFilePath);
       }
     }
@@ -528,9 +528,9 @@ sbLibraryImporterManager.prototype = {
 
   _finalize: function sbLibraryImporterManager__finalize() {
     // Remove observers.
-    this._observerSvc.removeObserver(this, "songbird-library-manager-before-shutdown");
+    this._observerSvc.removeObserver(this, "nightingale-library-manager-before-shutdown");
     this._observerSvc.removeObserver(this, "profile-after-change");
-    this._observerSvc.removeObserver(this, "songbird-library-manager-ready");
+    this._observerSvc.removeObserver(this, "nightingale-library-manager-ready");
 
     // Remove all library importers.
     this._removeAllLibraryImporters();
@@ -635,25 +635,25 @@ sbLibraryImporterManager.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     var firstRunDoImportLibrary =
-          Application.prefs.getValue("songbird.firstrun.do_import_library",
+          Application.prefs.getValue("nightingale.firstrun.do_import_library",
                                      false);
     var importTracks = Application.prefs.getValue(
-          "songbird.library_importer.import_tracks", false);
+          "nightingale.library_importer.import_tracks", false);
     var importPlaylists = Application.prefs.getValue(
-          "songbird.library_importer.import_playlists", false);
+          "nightingale.library_importer.import_playlists", false);
 
     // Do nothing if not auto-importing, or if this is first run.
     if (!this.defaultLibraryImporter || firstRunDoImportLibrary ||
         (!importTracks && !importPlaylists))
       return;
 
-    // Wait until the main Songbird window is ready before initiating
+    // Wait until the main Nightingale window is ready before initiating
     // auto-import.  This ensures any import modal dialogs have a parent.
-    var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+    var windowWatcher = Cc["@getnightingale.com/Nightingale/window-watcher;1"]
                           .getService(Ci.sbIWindowWatcher);
     var _this = this;
     var func = function(aWindow) { _this._autoImportWithWindow(aWindow); };
-    windowWatcher.callWithWindow("Songbird:Main", func, false);
+    windowWatcher.callWithWindow("Nightingale:Main", func, false);
   },
 
   _autoImportWithWindow:
@@ -662,10 +662,10 @@ sbLibraryImporterManager.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     var libraryFilePath = Application.prefs.getValue
-                            ("songbird.library_importer.library_file_path",
+                            ("nightingale.library_importer.library_file_path",
                              "");
     if (libraryFilePath)
-      this.defaultLibraryImporter.import(libraryFilePath, "songbird", true);
+      this.defaultLibraryImporter.import(libraryFilePath, "nightingale", true);
   }
 }
 

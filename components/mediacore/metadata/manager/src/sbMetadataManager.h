@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -45,11 +45,11 @@
 #include <list>
 
 // DEFINES ====================================================================
-#define SONGBIRD_METADATAMANAGER_CONTRACTID               \
-  "@songbirdnest.com/Songbird/MetadataManager;1"
-#define SONGBIRD_METADATAMANAGER_CLASSNAME                \
-  "Songbird Metadata Manager Interface"
-#define SONGBIRD_METADATAMANAGER_CID                      \
+#define NIGHTINGALE_METADATAMANAGER_CONTRACTID               \
+  "@getnightingale.com/Nightingale/MetadataManager;1"
+#define NIGHTINGALE_METADATAMANAGER_CLASSNAME                \
+  "Nightingale Metadata Manager Interface"
+#define NIGHTINGALE_METADATAMANAGER_CID                      \
 { /* 32bfdede-854d-448f-bada-7a3b4b192034 */              \
   0x32bfdede,                                             \
   0x854d,                                                 \

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,15 +20,13 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
  * \brief Some globally useful stuff for the library tests
  */
-
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function readList(dataFile) {
 
@@ -53,39 +51,3 @@ function getFile(fileName) {
   file.append(fileName);
   return file;
 }
-
-function BatchEndListener() {
-  this.depth = 0;
-}
-BatchEndListener.prototype = {
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListListener]),
-  onItemAdded: function() true,
-  onBeforeItemRemoved: function() true,
-  onAfterItemRemoved: function() true,
-  onItemUpdated: function() true,
-  onItemMoved: function() true,
-  onBeforeListCleared: function() true,
-  onListCleared: function() true,
-  onBatchBegin: function(aMediaList) {
-    ++this.depth;
-    log("depth: " + this.depth);
-  },
-  onBatchEnd: function(aMediaList) {
-    --this.depth;
-    log("depth: " + this.depth);
-  },
-  waitForCompletion: function(aCallback) {
-    var targetDepth = this.depth;
-    aCallback();
-    log("waiting for depth " + this.depth + " to go to " + targetDepth);
-    while (this.depth > targetDepth) {
-      sleep(100);
-    }
-  },
-  waitForEndBatch: function() {
-    log("waiting for depth " + this.depth + " to go straight to 0");
-    while (this.depth > 0) {
-      sleep(100);
-    }
-  }
-};

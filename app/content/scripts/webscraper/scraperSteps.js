@@ -1,11 +1,11 @@
 // vim: set sw=2 :miv
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 
 /* Web Scraper Steps */
@@ -159,10 +159,10 @@ var WebScraperSteps = {
    */
   MediaURL: function ScraperStep_MediaURL(scraper, node, pipeline) {
     Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-    var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+    var typeSniffer = Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                         .createInstance(Ci.sbIMediacoreTypeSniffer);
     var extensionsEnum = typeSniffer.mediaFileExtensions;
-    if (!Application.prefs.getValue("songbird.mediascan.enableVideo", false)) {
+    if (!Application.prefs.getValue("nightingale.mediascan.enableVideo", false)) {
       // disable video, so scan only audio - see bug 13173
       extensionsEnum = typeSniffer.audioFileExtensions;
     }
@@ -284,29 +284,24 @@ var WebScraperSteps = {
       properties[SBProperties.enableAutoDownload] = "1";
       properties[SBProperties.downloadButton] = "1|0|0";
   
-      // create a new media item, if necessary, or get an existing one for
-      // this URI
       var mediaItem = mediaList.library.createMediaItem(
                                           uri,
                                           SBProperties.createArray(properties));
-      // add it to the media list, ignoring duplicates
-      if (!mediaList.contains(mediaItem)) {
-        mediaList.add(mediaItem);
-        pipeline.send(mediaItem);
-      }
+      mediaList.add(mediaItem);
+      pipeline.send(mediaItem);
     }
   },
   
   ScanForMetadata: function ScraperStep_ScanForMetadata(scraper, node, pipeline) {
     var metadataService = 
-           Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+           Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                      .getService(Components.interfaces.sbIFileMetadataService);
   
     var mediaItem;
     while(( mediaItem = yield mediaItem )) {
       try {
         // TODO: this is stupidly expensive. and verbose.
-        var mediaItemsToScan = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+        var mediaItemsToScan = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                                  .createInstance(Ci.nsIMutableArray);
         mediaItemsToScan.appendElement(mediaItem, false);
         metadataService.read(mediaItemsToScan)

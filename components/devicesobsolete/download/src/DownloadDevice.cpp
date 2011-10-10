@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,7 +34,7 @@
 
 /**
 * \file  sbDownloadDevice.cpp
-* \brief Songbird DownloadDevice Component Implementation.
+* \brief Nightingale DownloadDevice Component Implementation.
 */
 
 /* *****************************************************************************
@@ -70,7 +70,7 @@
 
 #include <prmem.h>
 
-/* Songbird imports. */
+/* Nightingale imports. */
 #include <sbILibraryManager.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIFileMetadataService.h>
@@ -89,10 +89,10 @@
  * SB_DOWNLOAD_DEVICE_CATEGORY  Download device category name.
  * SB_DOWNLOAD_DEVICE_ID        Download device identifier.
  * SB_DOWNLOAD_DIR_DR           Default download directory data remote.
- * SB_TMP_DIR                   Songbird temporary directory name.
+ * SB_TMP_DIR                   Nightingale temporary directory name.
  * SB_DOWNLOAD_TMP_DIR          Download device temporary directory name.
  * SB_DOWNLOAD_LIST_NAME        Download device media list name.
- * SB_STRING_BUNDLE_CHROME_URL  URL for Songbird string bundle.
+ * SB_STRING_BUNDLE_CHROME_URL  URL for Nightingale string bundle.
  * SB_DOWNLOAD_COL_SPEC         Default download device playlist column spec.
  * SB_PREF_DOWNLOAD_LIBRARY     Download library preference name.
  * SB_PREF_WEB_LIBRARY          Web library GUID preference name.
@@ -106,20 +106,20 @@
  */
 
 #define SB_DOWNLOAD_DEVICE_CATEGORY                                            \
-                            NS_LITERAL_STRING("Songbird Download Device").get()
+                            NS_LITERAL_STRING("Nightingale Download Device").get()
 #define SB_DOWNLOAD_DEVICE_ID   "download"
 #define SB_DOWNLOAD_DIR_DR "download.folder"
-#define SB_TMP_DIR "Songbird"
+#define SB_TMP_DIR "Nightingale"
 #define SB_DOWNLOAD_TMP_DIR "DownloadDevice"
 #define SB_DOWNLOAD_LIST_NAME                                                  \
-                "&chrome://songbird/locale/songbird.properties#device.download"
+                "&chrome://nightingale/locale/nightingale.properties#device.download"
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
-                                "chrome://songbird/locale/songbird.properties"
+                                "chrome://nightingale/locale/nightingale.properties"
 #define SB_DOWNLOAD_COL_SPEC \
-  "http://songbirdnest.com/data/1.0#trackName 179 http://songbirdnest.com/data/1.0#artistName 115 http://songbirdnest.com/data/1.0#albumName 115 http://songbirdnest.com/data/1.0#originPageImage 43 http://songbirdnest.com/data/1.0#downloadDetails 266 http://songbirdnest.com/data/1.0#downloadButton 73"
+  "http://getnightingale.com/data/1.0#trackName 179 http://getnightingale.com/data/1.0#artistName 115 http://getnightingale.com/data/1.0#albumName 115 http://getnightingale.com/data/1.0#originPageImage 43 http://getnightingale.com/data/1.0#downloadDetails 266 http://getnightingale.com/data/1.0#downloadButton 73"
 
-#define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
-#define SB_PREF_WEB_LIBRARY     "songbird.library.web"
+#define SB_PREF_DOWNLOAD_MEDIALIST "nightingale.library.download"
+#define SB_PREF_WEB_LIBRARY     "nightingale.library.web"
 #define SB_DOWNLOAD_CUSTOM_TYPE "download"
 #define SB_DOWNLOAD_PROGRESS_UPDATE_PERIOD_MS   1000
 #define SB_DOWNLOAD_IDLE_TIMEOUT_MS (60*1000)
@@ -615,7 +615,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
 
     /* Get the library manager. */
     pLibraryManager =
-            do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+            do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the string bundle. */
@@ -695,7 +695,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         rv = mpTmpDownloadDir->GetPermissions(&permissions);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        /* Get the Songbird temporary directory and make sure it exists. */
+        /* Get the Nightingale temporary directory and make sure it exists. */
         rv = mpTmpDownloadDir->Append(NS_LITERAL_STRING(SB_TMP_DIR));
         NS_ENSURE_SUCCESS(rv, rv);
         rv = mpTmpDownloadDir->Exists(&exists);
@@ -2249,7 +2249,6 @@ nsresult sbDownloadDevice::SetTransferDestination(
                                 pDownloadHelper;
     nsCString                   dstSpec;
     nsresult                    propertyResult;
-    nsAutoString                contentType;
     nsresult                    result = NS_OK;
 
     /* Do nothing if destination is already set. */
@@ -2265,16 +2264,12 @@ nsresult sbDownloadDevice::SetTransferDestination(
     if (NS_SUCCEEDED(result))
     {
         pDownloadHelper = do_GetService
-                           ("@songbirdnest.com/Songbird/DownloadDeviceHelper;1",
+                           ("@getnightingale.com/Nightingale/DownloadDeviceHelper;1",
                             &result);
     }
 
     if (NS_SUCCEEDED(result))
-        result = pMediaItem->GetContentType (contentType);
-
-    if (NS_SUCCEEDED(result))
-        result = pDownloadHelper->GetDownloadFolder(contentType,
-                                                    getter_AddRefs(pDstFile));
+        result = pDownloadHelper->GetDownloadFolder(getter_AddRefs(pDstFile));
 
     /* Create a unique local destination file object.    */
     /* note that we only record the directory, we do not */
@@ -2512,7 +2507,7 @@ nsresult sbDownloadDevice::OpenDialog(
     if (NS_SUCCEEDED(result))
     {
         pDataRemote = do_CreateInstance
-                                    ("@songbirdnest.com/Songbird/DataRemote;1",
+                                    ("@getnightingale.com/Nightingale/DataRemote;1",
                                      &result);
     }
     if (NS_SUCCEEDED(result))
@@ -2575,7 +2570,7 @@ nsresult sbDownloadDevice::OpenDialog(
         }
 
         nsCOMPtr<sbILibraryManager> libraryManager =
-          do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+          do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsDependentSubstring libraryGuid(target, 0, pos);
@@ -2687,11 +2682,11 @@ nsresult sbDownloadSession::Initiate()
 
     /* Get the library manager and utilities services. */
     mpLibraryUtils =
-        do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     pLibraryManager = do_GetService
-                            ("@songbirdnest.com/Songbird/library/Manager;1",
+                            ("@getnightingale.com/Nightingale/library/Manager;1",
                              &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3389,21 +3384,6 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
     nsCOMPtr<sbIMediaList>      pDstMediaList;
     nsresult                    result = NS_OK;
     PRBool                      bIsDirectory;
-    PRBool                      bChangedDstFile = PR_FALSE;
-
-    // Get the the file name, if any, supplied in the MIME header:
-    nsCString mimeFilename;
-    nsCOMPtr<nsIHttpChannel> httpChannel =
-      do_QueryInterface(aRequest, &result);
-    if (NS_SUCCEEDED(result)) {
-      nsCAutoString contentDisposition;
-      result = httpChannel->GetResponseHeader(
-                              NS_LITERAL_CSTRING("content-disposition"),
-                              contentDisposition);
-      if (NS_SUCCEEDED(result)) {
-        mimeFilename = GetContentDispositionFilename(contentDisposition);
-      }
-    }
 
     /* Check if the destination is a directory.  If the destination */
     /* does not exist, assume it's a file about to be created.      */
@@ -3417,13 +3397,30 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
 
     if (bIsDirectory)
     {
-        // the destination is a directory; make a complete filename.
-        // Try the MIME file name first. If there isn't any, we'll fall back
-        // to the source url filename.
+        // check content disposition headers first. If there aren't any, we'll fall back
+        // to the final destination url filename.
 
-        nsCString escFileName(mimeFilename);
-        if (escFileName.IsEmpty()) {
-          // make a filename based on the source URL
+        nsCString escFileName;
+        PRBool noContentDispositionHeaders = PR_TRUE;
+        nsCOMPtr<nsIHttpChannel> httpChannel = do_QueryInterface(aRequest, &result);
+
+        if (NS_SUCCEEDED(result)) {
+          nsCAutoString contentDisposition;
+          result = httpChannel->GetResponseHeader(NS_LITERAL_CSTRING("content-disposition"),
+                                                  contentDisposition);
+
+          if (NS_SUCCEEDED(result) &&
+              contentDisposition.Length()) {
+            escFileName = GetContentDispositionFilename(contentDisposition);
+            if(!escFileName.IsEmpty())
+              noContentDispositionHeaders = PR_FALSE;
+          }
+        }
+
+        if (noContentDispositionHeaders) {
+          // the destination file is a directory; make a complete filename
+          // based on the actual source URL now that we know the actual
+          // channel used
           nsCOMPtr<nsIURI> pFinalSrcURI;
 
           nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &result);
@@ -3474,26 +3471,6 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         result = sbDownloadDevice::MakeFileUnique(mpDstFile);
         NS_ENSURE_SUCCESS(result, result);
 
-        bChangedDstFile = PR_TRUE;
-    }
-
-    // If the file name has no extension, use the one, if any, supplied
-    // in the MIME header:
-    result = mpDstFile->GetLeafName(fileName);
-    NS_ENSURE_SUCCESS(result, result);
-    if (fileName.RFindChar('.') == -1) {
-      PRInt32 extension = mimeFilename.RFindChar('.');
-      if (extension != -1) {
-        fileName.Append(
-          NS_ConvertUTF8toUTF16(Substring(mimeFilename, extension)));
-        result = mpDstFile->SetLeafName(fileName);
-        NS_ENSURE_SUCCESS(result, result);
-
-        bChangedDstFile = PR_TRUE;
-      }
-    }
-
-    if (bChangedDstFile) {
         /* Get the destination URI spec. */
         nsCOMPtr<nsIURI> pDstURI;
         result = mpLibraryUtils->GetFileContentURI(mpDstFile,
@@ -3530,6 +3507,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
       result = pDstMediaList->Add(mpMediaItem);
 
     /* Move the temporary download file to the final location. */
+    result = mpDstFile->GetLeafName(fileName);
     if (NS_SUCCEEDED(result))
         result = mpDstFile->GetParent(getter_AddRefs(pFileDir));
     if (NS_SUCCEEDED(result)) {
@@ -3596,7 +3574,7 @@ nsresult sbDownloadSession::UpdateDstLibraryMetadata()
     nsRefPtr<LibraryMetadataUpdater> 
                                 pLibraryMetadataUpdater;
     nsString                    durationStr;
-    PRInt32                     duration = 0;
+    PRInt32                     duration;
     PRBool                      updateDstLibraryMetadata = PR_TRUE;
     nsresult                    result1;
     nsresult                    result = NS_OK;
@@ -4092,7 +4070,7 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationBegin(
     NS_ENSURE_ARG_POINTER(_retval);
 
     /* Create an array to contain the media items to scan. */
-    mpMediaItemArray = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &result);
+    mpMediaItemArray = do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &result);
 
     /* Return results. */
     if (NS_SUCCEEDED(result))
@@ -4151,7 +4129,7 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationEnd(
 
     /* Start a metadata scanning job. */
     pMetadataService = do_GetService
-                            ("@songbirdnest.com/Songbird/FileMetadataService;1",
+                            ("@getnightingale.com/Nightingale/FileMetadataService;1",
                              &result);
     if (NS_SUCCEEDED(result))
     {
@@ -4294,14 +4272,14 @@ NS_IMETHODIMP sbDownloadSessionMoveHandler::Run() {
 
   /* Create an array to contain the media items to scan. */
   nsCOMPtr<nsIMutableArray> itemArray = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
 
   rv = itemArray->AppendElement(mDestinationItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   /* Start a metadata scanning job. */
   metadataService = 
-    do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/FileMetadataService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return metadataService->Read(itemArray,

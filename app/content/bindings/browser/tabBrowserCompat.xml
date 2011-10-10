@@ -54,7 +54,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <binding id="tabbrowser-compat" extends="chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser">
+  <binding id="tabbrowser-compat" extends="chrome://nightingale/content/bindings/browser/tabBrowser.xml#tabbrowser">
     <implementation>
       <!-- these are all forwards from the current browser,
            use tabbrowser.selectedBrowser.foo -->

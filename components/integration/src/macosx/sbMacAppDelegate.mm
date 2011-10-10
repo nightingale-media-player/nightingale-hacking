@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -73,7 +73,6 @@
 @interface SBMacAppDelegate (Private)
 
 - (void)_setOverride:(id)aOverrideObj;
-- (void)_addNowPlayingControls:(NSMenu *)aMenu;
 - (void)_addPlayerControlMenuItems:(NSMenu *)aMenu;
 - (void)_appendMenuItem:(NSString *)aTitle
                  action:(SEL)aSelector
@@ -127,7 +126,7 @@
   NS_ENSURE_SUCCESS(rv, NO);
 
   nsCOMPtr<nsIDOMWindowInternal> domWinInternal;
-  rv = winMed->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
+  rv = winMed->GetMostRecentWindow(NS_LITERAL_STRING("Nightingale:Main").get(),
                                    getter_AddRefs(domWinInternal));
   if (NS_SUCCEEDED(rv) && domWinInternal) {
     NSWindow *window = NativeWindowFromNode::get(domWinInternal);
@@ -236,7 +235,7 @@
 
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   if (NS_FAILED(rv)) {
     return;
   }
@@ -286,6 +285,10 @@
                    menu:aMenu];
 
   // Track name
+  NSMenuItem *trackNameItem = 
+    [[NSMenuItem alloc] initWithTitle:trackStr
+                               action:nil
+                        keyEquivalent:@""];
   [self _appendMenuItem:trackStr action:nil menu:aMenu];
   
   // Artist name
@@ -365,7 +368,7 @@
 
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   if (NS_FAILED(rv)) {
     return;
   }
@@ -377,7 +380,7 @@
   }
   else {
     nsCOMPtr<sbIApplicationController> app =
-      do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/ApplicationController;1", &rv);
     NS_ENSURE_SUCCESS(rv,);
     rv = app->PlayDefault();
     NS_ENSURE_SUCCESS(rv,);
@@ -392,7 +395,7 @@
 
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   if (NS_FAILED(rv)) {
     return;
   }
@@ -403,7 +406,7 @@
     return;
   }
 
-  sequencer->Next(PR_FALSE);
+  sequencer->Next();
 
   NS_OBJC_END_TRY_ABORT_BLOCK;
 }
@@ -414,7 +417,7 @@
 
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   if (NS_FAILED(rv)) {
     return;
   }
@@ -425,7 +428,7 @@
     return;
   }
 
-  sequencer->Previous(PR_FALSE);
+  sequencer->Previous();
 
   NS_OBJC_END_TRY_ABORT_BLOCK;
 }
@@ -441,7 +444,7 @@
 
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   if (NS_FAILED(rv)) {
     return;
   }
@@ -477,7 +480,7 @@
   // Until bug 13295 is fixed, use the |volume| property to determine muted state.
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, NO);
 
   nsCOMPtr<sbIMediacoreVolumeControl> volControl;
@@ -499,7 +502,7 @@
 
   nsresult rv;
   nsCOMPtr<sbIMediacoreManager> manager =
-    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Mediacore/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, NO);
 
   nsCOMPtr<sbIMediacoreStatus> status;
@@ -525,13 +528,13 @@
     do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
   NS_ENSURE_SUCCESS(rv, @"");
 
-  nsCOMPtr<nsIStringBundle> songbirdBundle;
-  rv = strBundleService->CreateBundle("chrome://songbird/locale/songbird.properties",
-                                      getter_AddRefs(songbirdBundle));
+  nsCOMPtr<nsIStringBundle> nightingaleBundle;
+  rv = strBundleService->CreateBundle("chrome://nightingale/locale/nightingale.properties",
+                                      getter_AddRefs(nightingaleBundle));
   NS_ENSURE_SUCCESS(rv, nil);
 
   nsString localizedStr;
-  rv = songbirdBundle->GetStringFromName(aBuffer, getter_Copies(localizedStr));
+  rv = nightingaleBundle->GetStringFromName(aBuffer, getter_Copies(localizedStr));
   NS_ENSURE_SUCCESS(rv, @"");
 
   return [NSString stringWithCharacters:(unichar *)localizedStr.get()
@@ -621,9 +624,9 @@ sbMacAppDelegateManager::RegisterSelf(nsIComponentManager *aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME,
+                                NIGHTINGALE_MACAPPDELEGATEMANAGER_CLASSNAME,
                                 "service,"
-                                SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID,
+                                NIGHTINGALE_MACAPPDELEGATEMANAGER_CONTRACTID,
                                 PR_TRUE, PR_TRUE, nsnull);
 
   return NS_OK;

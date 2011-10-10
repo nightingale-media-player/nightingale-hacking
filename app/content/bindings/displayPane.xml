@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE bindings SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -23,7 +23,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -55,9 +55,9 @@
     <xbl:implementation implements="sbIDisplayPaneInstantiator">
       <xbl:constructor><![CDATA[
       try {
-        this._lastURL = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+        this._lastURL = Components.classes["@getnightingale.com/Nightingale/DataRemote;1"]
                                   .createInstance(Components.interfaces.sbIDataRemote);
-        this._lastHiddenState = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+        this._lastHiddenState = Components.classes["@getnightingale.com/Nightingale/DataRemote;1"]
                                   .createInstance(Components.interfaces.sbIDataRemote);
         
       	// if the stateid attribute doesn't exist, fall back to id.
@@ -67,7 +67,7 @@
         
         this._lastHiddenState.init("displayPanes." + stateid + ".isHidden", null);
         // do not register until our browser is ready
-        var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+        var paneMgr = Components.classes["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                                 .getService(Components.interfaces.sbIDisplayPaneManager);
         setTimeout(function(self) {
           paneMgr.registerInstantiator(self);
@@ -316,7 +316,7 @@
           var lastContent = this.lastContentURL;
           var paneMgr = 
             Components
-              .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+              .classes["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
               .getService(Components.interfaces.sbIDisplayPaneManager);
 
           var paneinfo = paneMgr.getPaneInfo(lastContent);
@@ -333,7 +333,7 @@
       </xbl:method>
       <xbl:method name="destroy">
         <xbl:body><![CDATA[
-          var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+          var paneMgr = Components.classes["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                                   .getService(Components.interfaces.sbIDisplayPaneManager);
           paneMgr.unregisterInstantiator(this);
 
@@ -370,7 +370,7 @@
             
           var paneMgr = 
             Components
-              .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+              .classes["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
               .getService(Components.interfaces.sbIDisplayPaneManager);
           
           var enumerator = paneMgr.instantiatorsList;
@@ -416,7 +416,7 @@
               var binding = document.getElementById(aId);
               var paneMgr = 
                 Components
-                  .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                  .classes["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                   .getService(Components.interfaces.sbIDisplayPaneManager);
 
               var paneinfo = paneMgr.getPaneInfo(binding._lastURL.stringValue);
@@ -429,7 +429,7 @@
               var binding = document.getElementById(aId);
               var paneMgr = 
                 Components
-                  .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                  .classes["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                   .getService(Components.interfaces.sbIDisplayPaneManager);
               binding.hide();
             }
@@ -462,7 +462,7 @@
               
               this._strBundle = 
                 strBundleService
-                  .createBundle("chrome://songbird/locale/songbird.properties");          
+                  .createBundle("chrome://nightingale/locale/nightingale.properties");          
             }
             
             try {
@@ -564,7 +564,7 @@
             */
 
             // add an item for each available display pane content
-            var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+            var paneMgr = Cc["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                             .getService(Ci.sbIDisplayPaneManager);
             var contentGroup = this.contentGroup.toUpperCase();
             
@@ -636,7 +636,7 @@
                   var binding = document.getElementById(aId);
                   var menuitem = aEvent.target;
                   var paneMgr =
-                      Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                      Cc["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                          .getService(Ci.sbIDisplayPaneManager);
                   var paneinfo = 
                     paneMgr.getPaneInfo(menuitem.getAttribute("url"));
@@ -667,7 +667,7 @@
                               SBString("menu.displaypane.title.getmore", 
                                        "Get More Display Panes..."));
             elem.setAttribute("oncommand", "onMenu(this);");
-            elem.setAttribute("value", "songbird.url.addons.displaypanes");
+            elem.setAttribute("value", "nightingale.url.addons.displaypanes");
 
             this.parentNode.insertBefore(elem, this);
             this._items.push(elem);
@@ -748,7 +748,7 @@
         // on the id of the pane, specified via the "paneid" attribute on this
         // binding
         this._lastHiddenState = 
-          Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+          Components.classes["@getnightingale.com/Nightingale/DataRemote;1"]
                     .createInstance(Components.interfaces.sbIDataRemote);
         
       	var paneid = this.getAttribute("paneid");
@@ -863,7 +863,7 @@
               
               this._strBundle = 
                 strBundleService
-                  .createBundle("chrome://songbird/locale/songbird.properties");          
+                  .createBundle("chrome://nightingale/locale/nightingale.properties");          
             }
             
             try {

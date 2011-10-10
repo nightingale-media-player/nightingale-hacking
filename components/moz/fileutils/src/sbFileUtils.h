@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_FILE_UTILS_H_
@@ -30,38 +30,38 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities defs.
+// Nightingale file utilities defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbFileUtils.h
- * \brief Songbird File Utilities Definitions.
+ * \brief Nightingale File Utilities Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities imported services.
+// Nightingale file utilities imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIFileUtils.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities definitions.
+// Nightingale file utilities definitions.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird file utilities XPCOM component definitions.
+// Nightingale file utilities XPCOM component definitions.
 //
 
 #define SB_FILEUTILS_CLASSNAME "sbFileUtils"
-#define SB_FILEUTILS_DESCRIPTION "Songbird File Utilities"
+#define SB_FILEUTILS_DESCRIPTION "Nightingale File Utilities"
 #define SB_FILEUTILS_CID                                                       \
 {                                                                              \
   0x88d4bc8a,                                                                  \
@@ -73,7 +73,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities classes.
+// Nightingale file utilities classes.
 //
 //------------------------------------------------------------------------------
 

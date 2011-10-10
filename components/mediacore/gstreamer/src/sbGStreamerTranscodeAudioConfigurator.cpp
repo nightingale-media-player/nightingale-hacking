@@ -1,11 +1,11 @@
 /* vim: set sw=2 : */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-20010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 ///// Class header include
@@ -36,7 +36,7 @@
 #include <nsIWritablePropertyBag.h>
 #include <nsIWritablePropertyBag2.h>
 
-///// Songbird interface includes
+///// Nightingale interface includes
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIMediaFormatMutable.h>
@@ -51,7 +51,7 @@
 #include <nsArrayUtils.h>
 #include <prlog.h>
 
-///// Songbird header includes
+///// Nightingale header includes
 #include <sbArrayUtils.h>
 #include <sbMemoryUtils.h>
 #include <sbStringUtils.h>
@@ -496,7 +496,7 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
   }
 
   if (!hasProfilePref) {
-    sbPrefBranch prefs("songbird.device.transcode_profile.", &rv);
+    sbPrefBranch prefs("nightingale.device.transcode_profile.", &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
     rv = prefs.GetPreference(NS_LITERAL_STRING("profile_id"),
@@ -713,7 +713,7 @@ sbGStreamerTranscodeAudioConfigurator::SetAudioProperties()
 
   if (!mAudioEncoderProperties) {
     mAudioEncoderProperties =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -738,7 +738,7 @@ sbGStreamerTranscodeAudioConfigurator::SetAudioProperties()
     rv = ApplyPreferencesToPropertyArray(
             nsnull,
             propsSrc,
-            NS_LITERAL_STRING("songbird.device.transcode_profile.audio_properties"));
+            NS_LITERAL_STRING("nightingale.device.transcode_profile.audio_properties"));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -892,11 +892,11 @@ sbGStreamerTranscodeAudioConfigurator::GetAvailableProfiles(nsIArray * *aAvailab
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> array =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbITranscodeProfileLoader> profileLoader =
-      do_CreateInstance("@songbirdnest.com/Songbird/Transcode/ProfileLoader;1",
+      do_CreateInstance("@getnightingale.com/Nightingale/Transcode/ProfileLoader;1",
               &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 

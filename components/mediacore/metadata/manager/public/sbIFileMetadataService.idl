@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -44,10 +44,10 @@ interface sbIJobProgress;
  * (URIs beginning with file://), and timer driven read jobs for remote media.
  *
  * \example
- *  var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+ *  var mediaItemArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
  *    .createInstance(Ci.nsIMutableArray);
  *  mediaItemArray.appendElement(aItem, false);
- *  var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+ *  var metadataService = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
  *                          .getService(Ci.sbIFileMetadataService);
  *  var job = metadataService.read(mediaItemArray);
  * 

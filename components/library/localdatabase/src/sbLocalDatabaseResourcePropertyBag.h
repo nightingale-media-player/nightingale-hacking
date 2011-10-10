@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,10 +32,6 @@
 #include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsStringAPI.h>
-
-#include <set>
-
-#include <sbIIdentityService.h>
 
 class sbLocalDatabasePropertyCache;
 class sbIPropertyManager;
@@ -66,10 +62,6 @@ public:
   nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
   nsresult ClearDirty();
 
-  // Getting the dirty properties used for invalidation of GUID arrays will 
-  // also clear them from the property bag.
-  nsresult GetDirtyForInvalidation(std::set<PRUint32> &aDirty);
-
 private:
 
   static PLDHashOperator PR_CALLBACK
@@ -81,15 +73,12 @@ private:
   nsClassHashtableMT<nsUint32HashKey, sbPropertyData> mValueMap;
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
-  nsCOMPtr<sbIIdentityService> mIdService;
 
   nsString  mGuid;
   PRUint32  mMediaItemId;
   
   // Dirty Property ID's
   nsTHashtable<nsUint32HashKey> mDirty;
-  // Dirty Property ID's used for invalidating GUID arrays.
-  std::set<PRUint32> mDirtyForInvalidation;
 };
 
 /**

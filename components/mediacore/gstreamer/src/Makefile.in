@@ -1,27 +1,4 @@
-#
-# BEGIN SONGBIRD GPL
-#
-# This file is part of the Songbird web player.
-#
-# Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
-#
-# This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the "GPL").
-#
-# Software distributed under the License is distributed
-# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-# express or implied. See the GPL for the specific language
-# governing rights and limitations.
-#
-# You should have received a copy of the GPL along with this
-# program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc.,
-# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# END SONGBIRD GPL
-#
-
+#preedTODO: add copyright
 DEPTH  = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
@@ -31,12 +8,13 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 DYNAMIC_LIB = sbGStreamerMediacore
 
 SUBDIRS = metadata
 
 CPP_SRCS = sbGStreamerService.cpp \
-           sbGStreamerAudioProcessor.cpp \
            sbGStreamerMediacore.cpp \
            sbGStreamerMediacoreFactory.cpp \
            sbGStreamerMediacoreModule.cpp \
@@ -90,14 +68,12 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/mediacore/metadata/manager/public \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(topsrcdir)/components/mediacore/transcode/src \
-                     $(topsrcdir)/components/moz/streams/src/ \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/property/src \
                      $(DEPTH)/components/job/public \
-                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(MOZSDK_INCLUDE_DIR)/layout \
                      $(MOZSDK_INCLUDE_DIR)/gfx \
                      $(MOZSDK_INCLUDE_DIR)/widget \
@@ -156,7 +132,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-                            gstapp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \
@@ -165,7 +140,6 @@ DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- components/moz/errorconsole/src/sbErrorConsole \
  $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d)$(LIB_SUFFIX) \
  $(NULL)
 
@@ -226,12 +200,7 @@ ifeq (macosx,$(SB_PLATFORM))
                              $(NULL)
 endif
 
-# The GStreamer headers trigger this warning on MSVC; it's harmless
-ifeq (windows,$(SB_PLATFORM))
-   CPP_EXTRA_FLAGS += "-wd4244"
-endif
-
-SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -59,7 +59,7 @@ try
     cmdline_mgr: null,
 
     init: function() {
-      var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+      var cmdline = Components.classes["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"];
       if (cmdline) {
         var cmdline_service = cmdline.getService(Components.interfaces.nsICommandLineHandler);
         if (cmdline_service) {
@@ -76,7 +76,7 @@ try
     handleItem: function(aUriSpec, aCount, aTotal) {
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
           aUriSpec.toLowerCase().indexOf("https:") == 0 ||
-          aUriSpec.toLowerCase().indexOf("songbird:") == 0)
+          aUriSpec.toLowerCase().indexOf("nightingale:") == 0)
       {
         if (gBrowser._sessionStore && !gBrowser._sessionStore.tabStateRestored) {
           // process this after the session store is complete
@@ -92,7 +92,7 @@ try
           gBrowser.selectedTab = newTab;
         }  
       } else {
-        var typeSniffer = Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+        var typeSniffer = Components.classes["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                                     .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
         var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                                   .getService(Components.interfaces.nsIIOService);
@@ -101,7 +101,7 @@ try
           var list = SBOpenPlaylistURI(aUriSpec);
           if (list) {
             var view = LibraryUtils.createStandardMediaListView(list);
-            var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+            var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                                .getService(Components.interfaces.sbIMediacoreManager);
             mm.sequencer.playView(view, 0);
           }
@@ -126,7 +126,7 @@ try
               }
               
               // Play the item
-              var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+              var mm = Components.classes["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                                  .getService(Components.interfaces.sbIMediacoreManager);
               mm.sequencer.playView(view, index);
             },

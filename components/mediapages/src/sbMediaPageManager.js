@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -37,9 +37,9 @@ function MediaPageManager() {
 }
 
 MediaPageManager.prototype = {
-  classDescription: "Songbird MediaPage Manager",
+  classDescription: "Nightingale MediaPage Manager",
   classID:          Components.ID("{e63463d0-357c-4035-af33-db670ee1b7f2}"),
-  contractID:       "@songbirdnest.com/Songbird/MediaPageManager;1",
+  contractID:       "@getnightingale.com/Nightingale/MediaPageManager;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIMediaPageManager]),
   
   _pageInfoArray: [],
@@ -138,7 +138,7 @@ MediaPageManager.prototype = {
     aList = this._getOutermostList(aList);
 
     // Read the saved state
-    var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+    var remote = Cc["@getnightingale.com/Nightingale/DataRemote;1"]
                    .createInstance(Ci.sbIDataRemote);
     var baseKey = "mediapages." + aList.guid;
     var key = baseKey;
@@ -154,7 +154,7 @@ MediaPageManager.prototype = {
     }
     // fall back to prefs with no type
     else if (aType) {
-      let remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+      let remote = Cc["@getnightingale.com/Nightingale/DataRemote;1"]
                      .createInstance(Ci.sbIDataRemote);
       remote.init(baseKey, null);
       let savedOldPageURL = remote.stringValue;
@@ -208,7 +208,7 @@ MediaPageManager.prototype = {
     aList = this._getOutermostList(aList);
 
     // Save the state
-    var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+    var remote = Cc["@getnightingale.com/Nightingale/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
     var key = "mediapages." + aList.guid;
     if (aType)
@@ -255,7 +255,7 @@ MediaPageManager.prototype = {
       var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"]
                                   .getService(Ci.nsIStringBundleService);
       var stringBundle = stringBundleService.createBundle(
-           "chrome://songbird/locale/songbird.properties" );
+           "chrome://nightingale/locale/nightingale.properties" );
       playlistString = stringBundle.GetStringFromName(playlistString);
       filteredPlaylistString = stringBundle.GetStringFromName(
                   filteredPlaylistString);
@@ -271,14 +271,14 @@ MediaPageManager.prototype = {
     // Register the playlist with filters
     this._defaultFilteredPlaylistPage =
         this.registerPage( filteredPlaylistString,
-        "chrome://songbird/content/mediapages/filtersPage.xul",
+        "chrome://nightingale/content/mediapages/filtersPage.xul",
         null,
         matchAll);
 
     // And the playlist without filters
     this._defaultPlaylistPage = 
         this.registerPage( playlistString,
-        "chrome://songbird/content/mediapages/playlistPage.xul",
+        "chrome://nightingale/content/mediapages/playlistPage.xul",
         null,
         matchAll);
   },
@@ -297,7 +297,7 @@ var MediaPageMetadataReader = {
     
     var addons = RDFHelper.help(
       "rdf:addon-metadata",
-      "urn:songbird:addon:root",
+      "urn:nightingale:addon:root",
       RDFHelper.DEFAULT_RDF_NAMESPACES
     );
     

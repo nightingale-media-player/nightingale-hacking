@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -121,18 +121,18 @@ interface sbILibraryManager : nsISupports
 
 // The Library Manager will use this topic to notify interested components that
 // its startup libraries have all been registered.
-#define SB_LIBRARY_MANAGER_READY_TOPIC "songbird-library-manager-ready"
+#define SB_LIBRARY_MANAGER_READY_TOPIC "nightingale-library-manager-ready"
 
 // This notification is sent when shutdown has begun but before the individual
 // libraries are notified of shutdown
-#define SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC "songbird-library-manager-before-shutdown"
+#define SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC "nightingale-library-manager-before-shutdown"
 
 // This notification is sent when shutdown has begun and notifies individual
 // libraries to immediately shutdown
-#define SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC "songbird-library-manager-shutdown"
+#define SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC "nightingale-library-manager-shutdown"
 
 // This notification is sent when shutdown has begun and after the individual
 // libraries are notified of shutdown
-#define SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC "songbird-library-manager-after-shutdown"
+#define SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC "nightingale-library-manager-after-shutdown"
 
 %}

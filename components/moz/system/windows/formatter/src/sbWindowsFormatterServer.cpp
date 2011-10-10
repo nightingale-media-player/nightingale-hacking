@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,23 +21,23 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter component COM server.
+// Nightingale Windows formatter component COM server.
 //
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbWindowsFormatterServer.cpp
- * \brief Songbird Windows Formatter Component COM Server Source.
+ * \brief Nightingale Windows Formatter Component COM Server Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter component COM server imported services.
+// Nightingale Windows formatter component COM server imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -48,13 +48,13 @@
 #include "sbWindowsFormatter.h"
 #include "sbWindowsFormatterClassFactory.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbWindowsUtils.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter component COM server globals.
+// Nightingale Windows formatter component COM server globals.
 //
 //------------------------------------------------------------------------------
 
@@ -69,7 +69,7 @@ HINSTANCE gDLLModule = NULL;
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter component COM server DLL services.
+// Nightingale Windows formatter component COM server DLL services.
 //
 //------------------------------------------------------------------------------
 
@@ -189,7 +189,7 @@ DllRegisterServer()
   // HKCR\CLSID\SB_WINDOWS_FORMATTER_CLSID
   //
 
-  // Create the Songbird Windows formatter class ID registry key and set it up
+  // Create the Nightingale Windows formatter class ID registry key and set it up
   // to auto-close.
   HKEY clsidKey;
   result = RegCreateKeyEx(HKEY_CLASSES_ROOT,
@@ -350,7 +350,7 @@ DllRegisterServer()
   // HKCR\AppID\SB_WINDOWS_FORMATTER_CLSID
   //
 
-  // Create the Songbird Windows formatter application ID GUID registry key and
+  // Create the Nightingale Windows formatter application ID GUID registry key and
   // set it up to auto-close.
   HKEY appIDGUIDKey;
   result = RegCreateKeyEx(HKEY_CLASSES_ROOT,
@@ -367,7 +367,7 @@ DllRegisterServer()
   sbAutoRegKey autoAppIDGUIDKey(appIDGUIDKey);
 
   // Set the app description.
-  TCHAR appDescription[] = _T("Songbird Windows Formatter");
+  TCHAR appDescription[] = _T("Nightingale Windows Formatter");
   result = RegSetValueEx(appIDGUIDKey,
                          NULL,
                          0,
@@ -393,7 +393,7 @@ DllRegisterServer()
   // HKCR\AppID\sbWindowsFormatter.dll
   //
 
-  // Create the Songbird Windows formatter application ID executable registry
+  // Create the Nightingale Windows formatter application ID executable registry
   // key and set it up to auto-close.
   HKEY appIDExecutableKey;
   result = RegCreateKeyEx(HKEY_CLASSES_ROOT,
@@ -420,7 +420,7 @@ DllRegisterServer()
     return HRESULT_FROM_WIN32(result);
 
 
-  // Register the Songbird Windows formatter type library and set it up for
+  // Register the Nightingale Windows formatter type library and set it up for
   // auto-disposal.
   ITypeLib* typeLib;
   result = LoadTypeLib(dllModulePath, &typeLib);
@@ -442,7 +442,7 @@ DllRegisterServer()
 STDAPI
 DllUnregisterServer()
 {
-  // Unregister the Songbird Windows formatter type library.
+  // Unregister the Nightingale Windows formatter type library.
   UnRegisterTypeLib(LIBID_sbWindowsFormatterLibrary,
                     1,
                     0,
@@ -478,7 +478,7 @@ DllUnregisterServer()
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter component COM server services.
+// Nightingale Windows formatter component COM server services.
 //
 //------------------------------------------------------------------------------
 

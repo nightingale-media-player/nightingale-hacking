@@ -24,8 +24,7 @@ create table media_items (
   content_hash text,
   hidden integer not null check(hidden in (0, 1)),
   media_list_type_id integer,
-  is_list integer not null check(is_list in (0, 1)) default 0,
-  metadata_hash_identity text
+  is_list integer not null check(is_list in (0, 1)) default 0
 );
 create index idx_media_items_hidden on media_items (hidden);
 create index idx_media_items_created on media_items (created);
@@ -34,7 +33,6 @@ create index idx_media_items_media_list_type_id on media_items (media_list_type_
 create index idx_media_items_is_list on media_items (is_list);
 create index idx_media_items_hidden_media_list_type_id on media_items (hidden, media_list_type_id);
 create index idx_media_items_content_mime_type on media_items(content_mime_type);
-create index idx_media_items_metadata_hash_identity on media_items(metadata_hash_identity);
 
 create table library_media_item (
   guid text unique not null, /* implicit index creation */
@@ -46,8 +44,7 @@ create table library_media_item (
   content_hash text,
   hidden integer not null check(hidden in (0, 1)),
   media_list_type_id integer,
-  is_list integer not null check(is_list in (0, 1)) default 0,
-  metadata_hash_identity text
+  is_list integer not null check(is_list in (0, 1)) default 0
 );
 
 create table media_list_types (
@@ -71,10 +68,6 @@ create table resource_properties (
   primary key (media_item_id, property_id)
 );
 create index idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id on resource_properties (property_id, obj_sortable, obj_secondary_sortable, media_item_id);
-create index idx_resource_properties_property_id_obj_sortable_media_item_id on resource_properties (property_id, obj_sortable, media_item_id);
-
-create index idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id_asc on resource_properties (property_id, obj_sortable ASC, obj_secondary_sortable ASC, media_item_id ASC);
-create index idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id_desc on resource_properties (property_id, obj_sortable DESC, obj_secondary_sortable DESC, media_item_id DESC);
 
 create table simple_media_lists (
   media_item_id integer not null,
@@ -107,28 +100,29 @@ end;
 
 /* static data */
 
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#trackName');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#albumName');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#artistName');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#duration');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#genre');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#trackNumber');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#year');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#discNumber');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#totalDiscs');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#totalTracks');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#lastPlayTime');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#playCount');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#customType');
-insert into properties (property_name) values ('http://songbirdnest.com/data/1.0#isSortable');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#trackName');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#albumName');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#artistName');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#duration');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#genre');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#trackNumber');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#year');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#discNumber');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#totalDiscs');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#totalTracks');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#lastPlayTime');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#playCount');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#customType');
+insert into properties (property_name) values ('http://getnightingale.com/data/1.0#isSortable');
 
-insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
+insert into media_list_types (type, factory_contractid) values ('simple', '@getnightingale.com/Nightingale/Library/LocalDatabase/SimpleMediaListFactory;1');
 
 /**************************************************************************** */
 /*  XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update         */
-/*  sbLocalDatabaseMigrationHelper._latestSchemaVersion.                      */
+/*  sbLocalDatabaseMigration._latestSchemaVersion and                         */
+/*  testMigration.latestSchemaVersion to match this value                     */
 /**************************************************************************** */
-insert into library_metadata (name, value) values ('version', '29');
+insert into library_metadata (name, value) values ('version', '24');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */
@@ -140,11 +134,11 @@ insert into library_metadata (name, value) values ('version', '29');
 /*  * Spend some time scrolling, searching, filtering, and sorting            */
 /*  * Play some tracks, and exercise the smart playlists                      */
 /*  * Shutdown                                                                */
-/*  * Run ./songbird -test localdatabaselibraryperf                           */
+/*  * Run ./nightingale -test localdatabaselibraryperf                           */
 /*    (requires exporting environment variables                               */
 /*     SB_ENABLE_TESTS="1" SB_ENABLE_LIBRARY_PERF="1"                         */
-/*     and SB_PERF_RESULTS="/builds/songbird/trunk/results.txt")              */
-/*  * Run Songbird, and install the Developer Tools Extension                 */
+/*     and SB_PERF_RESULTS="/builds/nightingale/trunk/results.txt")              */
+/*  * Run Nightingale, and install the Developer Tools Extension                 */
 /*  * Open XPCOM Viewer from the Tools menu                                   */
 /*  * Execute the following in the JS Shell:                                  */
 /*     Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");*/

@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,7 +28,7 @@
 if (typeof(XUL_NS) == "undefined")
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
-var SongbirdTabPaneOverlay = {
+var NightingaleTabPaneOverlay = {
   /**
    * This function sets up our UI in the main preferences dialog.
    */
@@ -40,7 +40,7 @@ var SongbirdTabPaneOverlay = {
      }
 
     window.removeEventListener('paneload',
-                               SongbirdTabPaneOverlay.onPaneLoad,
+                               NightingaleTabPaneOverlay.onPaneLoad,
                                false);
 
     // Move tab preferences box into a group box.
@@ -59,5 +59,5 @@ var SongbirdTabPaneOverlay = {
 // document.loadOverlay (see preferences.xml) and the load event may fire before
 // our target pane has been integrated.
 window.addEventListener('paneload',
-                        SongbirdTabPaneOverlay.onPaneLoad,
+                        NightingaleTabPaneOverlay.onPaneLoad,
                         false);

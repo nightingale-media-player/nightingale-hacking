@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -29,8 +29,6 @@
 
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
-
-#include <sbDebugUtils.h>
 
 template<class T>
 PLDHashOperator sbBaseDeviceController::EnumerateIntoArray(const nsID& aKey,
@@ -92,7 +90,7 @@ sbBaseDeviceController::sbBaseDeviceController()
     nsAutoMonitor::NewMonitor("sbBaseDeviceController.mMonitor");
   NS_ASSERTION(mMonitor, "Failed to create monitor");
 
-  PRBool SB_UNUSED_IN_RELEASE(succeeded) = mDevices.Init();
+  PRBool succeeded = mDevices.Init();
   NS_ASSERTION(succeeded, "Failed to initialize hashtable");
 }
 
@@ -199,7 +197,7 @@ sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
@@ -247,7 +245,7 @@ sbBaseDeviceController::ConnectDevicesInternal() {
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;
@@ -273,7 +271,7 @@ sbBaseDeviceController::DisconnectDevicesInternal() {
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;

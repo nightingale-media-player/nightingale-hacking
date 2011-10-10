@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,7 +30,7 @@
 
 function runTest () {
 
-  var SB_NS = "http://songbirdnest.com/data/1.0#";
+  var SB_NS = "http://getnightingale.com/data/1.0#";
   var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
   var databaseGUID = "test_library";
@@ -190,49 +190,10 @@ function runTest () {
 
   // Removing a removed item should do nothing
   library.remove(newItem);
-
-  var databaseGUID = "test_library_clearItems";
-  var library = createLibrary(databaseGUID);
-
-  var list = library.createMediaList("simple");
-  var itemFoo = library.createMediaItem(uri, null, true);
-  var itemBar = library.createMediaItem(uri2, null, true);
-  
-  var itemFooGUID = itemFoo.guid;
-  
-  list.add(itemFoo);
-  list.add(itemBar);
-  assertEqual(list.length, 2);
-  library.clearItems();
-  assertEqual(list.length, 0);
-  
-  try {
-    let deadItemFoo = library.getMediaItem(itemFooGUID);
-    throw "ERROR! Dead Item in mMediaItemInfoTable!";
-  }
-  catch(e) {
-    // Everything is fine if we get NS_ERROR_NOT_AVAILABLE.
-    // Other exceptions are bad.
-    if(e.result != Cr.NS_ERROR_NOT_AVAILABLE) {
-      throw e;
-    }
-  }
-
-  var itemFoo2 = library.createMediaItem(uri, null, true);
-  var itemBar2 = library.createMediaItem(uri2, null, true);
-  
-  itemFoo2.setProperty(SB_NS + "contentType", "video");
-  itemBar2.setProperty(SB_NS + "contentType", "audio");
-  
-  list.add(itemFoo2);
-  list.add(itemBar2);
-  assertEqual(list.length, 2);
-  library.clearItemsByType("audio");
-  assertEqual(list.length, 1);
 }
 
 function createPropertyArray() {
-  return Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+  return Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
            .createInstance(Ci.sbIMutablePropertyArray);
 }
 

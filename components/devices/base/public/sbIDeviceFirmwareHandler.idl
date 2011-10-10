@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -188,22 +188,6 @@ interface sbIDeviceFirmwareHandler : nsISupports
                     in unsigned long aDeviceProductID);
 
   /**
-   * \brief Notify the handler to expect a device to connect in recovery mode
-   * \param aDeviceVendorID - The device vendor ID of the device that will
-   *                          reconnect in recovery mode, or 0 for the
-   *                          currently bound device.
-   * \param aDeviceProductID - The device product ID of the device that will
-   *                           reconnect in recovery mode, or 0 for the
-   *                           currently bound device.
-   * \note No events need to be sent for this method. It should be a
-   *       synchronous operation. But, do try and be as quick about it
-   *       as possible.
-   */
-  void initiateRecoveryModeSwitch(
-                                 [optional] in unsigned long aDeviceVendorID,
-                                 [optional] in unsigned long aDeviceProductID);
-
-  /**
    * \brief Bind the handler to a device
    * \param aDevice - The device you wish to bind to
    * \param [optional] aListener - Optional event listener 
@@ -284,7 +268,7 @@ interface sbIDeviceFirmwareHandler : nsISupports
 class nsIFile;
 struct nsModuleComponentInfo;
 
-#define SB_DEVICE_FIRMWARE_HANDLER_CATEGORY "songbird-device-firmware-handler"
+#define SB_DEVICE_FIRMWARE_HANDLER_CATEGORY "nightingale-device-firmware-handler"
 
 /**
  * Put this in your module definition file. Give your class name. Then your

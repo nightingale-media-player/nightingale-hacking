@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -31,8 +31,8 @@
     <title>Remote API Test: Enumeration Getters</title>
     <script>
       var outputDiv; 
-      var siteLib = songbird.siteLibrary;
-      var mainLib = songbird.mainLibrary;
+      var siteLib = nightingale.siteLibrary;
+      var mainLib = nightingale.mainLibrary;
       var siteList = siteLib.createSimpleMediaList("My Foo List");
 
       function load() {
@@ -53,33 +53,33 @@
       }
 
       function getArtists() {
-        var stuff = songbird.siteLibrary.getArtists();
+        var stuff = nightingale.siteLibrary.getArtists();
         dump("SiteLibrary has artists:");
         while (stuff.hasMore()) {
           dump(stuff.getNext());
         }
         dump("MainLibrary has artists:");
-        var stuff = songbird.mainLibrary.getArtists();
+        var stuff = nightingale.mainLibrary.getArtists();
         while (stuff.hasMore()) {
           dump(stuff.getNext());
         }
       }
 
       function getAlbums() {
-        var stuff = songbird.siteLibrary.getAlbums();
+        var stuff = nightingale.siteLibrary.getAlbums();
         dump("SiteLibrary has albums:");
         while (stuff.hasMore()) {
           dump(stuff.getNext());
         }
         dump("MainLibrary has albums:");
-        var stuff = songbird.mainLibrary.getAlbums();
+        var stuff = nightingale.mainLibrary.getAlbums();
         while (stuff.hasMore()) {
           dump(stuff.getNext());
         }
       }
 
       function getYears() {
-        var stuff = songbird.siteLibrary.getYears();
+        var stuff = nightingale.siteLibrary.getYears();
         dump("SiteLibrary has years:");
         while (stuff.hasMore()) {
           var thing = stuff.getNext();
@@ -87,7 +87,7 @@
           //dump(stuff.getNext());
         }
         dump("MainLibrary has years:");
-        var stuff = songbird.mainLibrary.getYears();
+        var stuff = nightingale.mainLibrary.getYears();
         while (stuff.hasMore()) {
           var thing = stuff.getNext();
           alert(thing);
@@ -96,26 +96,26 @@
       }
 
       function getGenres() {
-        var stuff = songbird.siteLibrary.getGenres();
+        var stuff = nightingale.siteLibrary.getGenres();
         dump("SiteLibrary has genres:");
         while (stuff.hasMore()) {
           dump(stuff.getNext());
         }
         dump("MainLibrary has genres:");
-        var stuff = songbird.mainLibrary.getGenres();
+        var stuff = nightingale.mainLibrary.getGenres();
         while (stuff.hasMore()) {
           dump(stuff.getNext());
         }
       }
 
       function getPlaylists() {
-        var stuff = songbird.siteLibrary.getPlaylists();
+        var stuff = nightingale.siteLibrary.getPlaylists();
         dump("SiteLibrary has playlists:");
         while (stuff.hasMoreElements()) {
           dump(stuff.getNext());
         }
         dump("MainLibrary has playlists:");
-        var stuff = songbird.mainLibrary.getPlaylists();
+        var stuff = nightingale.mainLibrary.getPlaylists();
         while (stuff.hasMoreElements()) {
           dump(stuff.getNext());
         }

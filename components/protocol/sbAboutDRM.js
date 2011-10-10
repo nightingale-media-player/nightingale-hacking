@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -77,11 +77,11 @@ sbAboutDRM.prototype = {
 
     if (username == "3542497335674c50367976365951515551494c6f69413d3d" ||
         username == "78636249353331464e4c6f3539612f7368714f694f673d3d" ||
-        Application.prefs.getValue("songbird.buildNumber","42") != "0")
+        Application.prefs.getValue("nightingale.buildNumber","42") != "0")
     {
       url = "http://wikipedia.org/wiki/Digital_rights_management#Controversy";
     } else {
-      url = "chrome://songbird/content/html/aboutDRM.xhtml";
+      url = "chrome://nightingale/content/html/aboutDRM.xhtml";
     }
     var ioService = Cc["@mozilla.org/network/io-service;1"]
                       .getService(Ci.nsIIOService);

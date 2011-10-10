@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -55,7 +55,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-// Songbird imports.
+// Nightingale imports.
 Cu.import("resource://app/jsmodules/sbTimeFormatter.jsm");
 
 
@@ -160,9 +160,9 @@ var DCW = {
     if (type != "music" && type != "video")
       return;
 
-    var playTimeProperty = "http://songbirdnest.com/device/1.0#" +
+    var playTimeProperty = "http://getnightingale.com/device/1.0#" +
                            type + "TotalPlayTime";
-    var itemCountProperty = "http://songbirdnest.com/device/1.0#" +
+    var itemCountProperty = "http://getnightingale.com/device/1.0#" +
                            type + "ItemCount";
     var playTime = parseInt(this._getDevLibProperty(playTimeProperty, -1));
     var itemCount = parseInt(this._getDevLibProperty(itemCountProperty, -1));

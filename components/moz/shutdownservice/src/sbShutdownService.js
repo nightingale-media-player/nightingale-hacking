@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,8 +30,8 @@ const Cu = Components.utils;
 const Cr = Components.results;
 
 const SB_SHUTDOWNSERVICE_CLASSNAME  = "sbShutdownService";
-const SB_SHUTDOWNSERVICE_DESC       = "Songbird Shutdown Service";
-const SB_SHUTDOWNSERVICE_CONTRACTID = "@songbirdnest.com/shutdown-service;1";
+const SB_SHUTDOWNSERVICE_DESC       = "Nightingale Shutdown Service";
+const SB_SHUTDOWNSERVICE_CONTRACTID = "@getnightingale.com/shutdown-service;1";
 const SB_SHUTDOWNSERVICE_CID        = "{594137ED-DB4A-4530-8635-2573C018B4FB}";
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -39,7 +39,7 @@ Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 //------------------------------------------------------------------------------
-// Songbird Shutdown Job Service
+// Nightingale Shutdown Job Service
 
 var gTestListeners = [];
 
@@ -69,7 +69,7 @@ sbShutdownJobService.prototype =
                               .getService(Ci.nsIObserverService);
       // Only hault shutdown if there are tasks to be processed.
       var listenerEnum = 
-        observerService.enumerateObservers("songbird-shutdown");
+        observerService.enumerateObservers("nightingale-shutdown");
       while (listenerEnum.hasMoreElements()) {
         try { 
           var curTask = 
@@ -205,25 +205,25 @@ sbShutdownJobService.prototype =
       this._mTotal += this._mTasks[i].total;
     }
 
-    // The only open window during the shutdown service should be the Songbird
-    // window. First, close down the main Songbird window.
+    // The only open window during the shutdown service should be the Nightingale
+    // window. First, close down the main Nightingale window.
     var winMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                         .getService(Ci.nsIWindowMediator);
-    var songbirdWin = winMediator.getMostRecentWindow("Songbird:Main");
-    if (songbirdWin) {
-      songbirdWin.close();
+    var nightingaleWin = winMediator.getMostRecentWindow("Nightingale:Main");
+    if (nightingaleWin) {
+      nightingaleWin.close();
     }
 
     var args = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
     args.appendElement(this, false);
 
     // Open the progress dialog using the hidden window since the shutdown
-    // progress dialog should be the only open Songbird window.
+    // progress dialog should be the only open Nightingale window.
     var appShellService = Cc["@mozilla.org/appshell/appShellService;1"]
                             .getService(Ci.nsIAppShellService);
 
     var parentWindow = appShellService.hiddenDOMWindow;
-    parentWindow.openDialog("chrome://songbird/content/xul/jobProgress.xul",
+    parentWindow.openDialog("chrome://nightingale/content/xul/jobProgress.xul",
                             "job_progress_dialog",
                             "chrome,centerscreen",
                             args);

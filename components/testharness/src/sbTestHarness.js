@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -36,20 +36,20 @@ const Cc = Components.classes;
 const Cr = Components.results;
 
 // testharness constants
-const SONGBIRD_TESTHARNESS_CONTRACTID = "@songbirdnest.com/Songbird/TestHarness;1";
-const SONGBIRD_TESTHARNESS_CLASSNAME = "Songbird Unit Test Test-Harness";
-const SONGBIRD_TESTHARNESS_CID = Components.ID("{fd541a71-0e71-48aa-9dd1-971df86d1e01}");
-const SONGBIRD_TESTHARNESS_IID = Ci.sbITestHarness;
+const NIGHTINGALE_TESTHARNESS_CONTRACTID = "@getnightingale.com/Nightingale/TestHarness;1";
+const NIGHTINGALE_TESTHARNESS_CLASSNAME = "Nightingale Unit Test Test-Harness";
+const NIGHTINGALE_TESTHARNESS_CID = Components.ID("{fd541a71-0e71-48aa-9dd1-971df86d1e01}");
+const NIGHTINGALE_TESTHARNESS_IID = Ci.sbITestHarness;
 
-const SONGBIRD_DEFAULT_DIR = "basetests";
-const SONGBIRD_HEAD_FILE = "head_songbird.js";
-const SONGBIRD_TAIL_FILE = "tail_songbird.js";
+const NIGHTINGALE_DEFAULT_DIR = "basetests";
+const NIGHTINGALE_HEAD_FILE = "head_nightingale.js";
+const NIGHTINGALE_TAIL_FILE = "tail_nightingale.js";
 
 const NS_PREFSERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
 const NS_SCRIPT_TIMEOUT_PREF = "dom.max_chrome_script_run_time";
 
-const PREF_DOWNLOAD_FOLDER       = "songbird.download.music.folder";
-const PREF_DOWNLOAD_ALWAYSPROMPT = "songbird.download.music.alwaysPrompt";
+const PREF_DOWNLOAD_FOLDER       = "nightingale.download.music.folder";
+const PREF_DOWNLOAD_ALWAYSPROMPT = "nightingale.download.music.alwaysPrompt";
 
 function sbTestHarness() { }
 
@@ -65,8 +65,8 @@ sbTestHarness.prototype = {
   mTestCount: 0,
 
   // toplevel default files to always attempt to load
-  mHeadSongbird : null,
-  mTailSongbird : null,
+  mHeadNightingale : null,
+  mTailNightingale : null,
 
   mOldScriptTimeout: -1,
 
@@ -85,13 +85,13 @@ sbTestHarness.prototype = {
   },
   
   _disableDatabaseLocaleCollation : function() {
-    var dbe = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+    var dbe = Cc["@getnightingale.com/Nightingale/DatabaseEngine;1"]
                 .getService(Ci.sbIDatabaseEngine)
     dbe.localeCollationEnabled = false;
   },
   
   _enableDatabaseLocaleCollation : function() {
-    var dbe = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+    var dbe = Cc["@getnightingale.com/Nightingale/DatabaseEngine;1"]
                 .getService(Ci.sbIDatabaseEngine)
     dbe.localeCollationEnabled = true;
   },
@@ -104,7 +104,7 @@ sbTestHarness.prototype = {
     this.mTempDownloadFolder = Cc["@mozilla.org/file/directory_service;1"].
                                getService(Ci.nsIProperties).
                                get("TmpD", Ci.nsIFile);
-    this.mTempDownloadFolder.append("songbird_test_downloads");
+    this.mTempDownloadFolder.append("nightingale_test_downloads");
 
     if (!(this.mTempDownloadFolder.exists() &&
           this.mTempDownloadFolder.isDirectory())) {
@@ -172,7 +172,7 @@ sbTestHarness.prototype = {
     
     var em = Cc["@mozilla.org/extensions/manager;1"]
                .getService(Ci.nsIExtensionManager);
-    var appInfo = Cc["@mozilla.org/xre/runtime;1"]
+    var appInfo = Cc["@mozilla.org/xre/app-info;1"]
                     .getService(Ci.nsIXULRuntime);
 
     var itemList = em.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
@@ -212,13 +212,13 @@ sbTestHarness.prototype = {
     this.mTestDir.appendRelativePath("testharness");
 
     // set up files for the top level head and tail files
-    this.mHeadSongbird = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
-    this.mHeadSongbird.append(SONGBIRD_DEFAULT_DIR);
-    this.mHeadSongbird.append(SONGBIRD_HEAD_FILE);
+    this.mHeadNightingale = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
+    this.mHeadNightingale.append(NIGHTINGALE_DEFAULT_DIR);
+    this.mHeadNightingale.append(NIGHTINGALE_HEAD_FILE);
 
-    this.mTailSongbird = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
-    this.mTailSongbird.append(SONGBIRD_DEFAULT_DIR);
-    this.mTailSongbird.append(SONGBIRD_TAIL_FILE);
+    this.mTailNightingale = this.mTestDir.clone().QueryInterface(Ci.nsILocalFile);
+    this.mTailNightingale.append(NIGHTINGALE_DEFAULT_DIR);
+    this.mTailNightingale.append(NIGHTINGALE_TAIL_FILE);
 
     this._disableDatabaseLocaleCollation();
     this._disableScriptTimeout();
@@ -228,7 +228,7 @@ sbTestHarness.prototype = {
   run : function () {
 
     var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
-    var consoleListener = Cc["@songbirdnest.com/Songbird/TestHarness/ConsoleListener;1"].createInstance(Ci.nsIConsoleListener);
+    var consoleListener = Cc["@getnightingale.com/Nightingale/TestHarness/ConsoleListener;1"].createInstance(Ci.nsIConsoleListener);
     consoleService.registerListener(consoleListener);
 
     var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
@@ -316,13 +316,12 @@ sbTestHarness.prototype = {
 
         // the scope to load the test into
         var scope = { __proto__ : (function()this)(),
-                      _test_name: "sbTestHarness",
-                      _test_comp: "testharness"};
+                      _test_name: "sbTestHarness"};
         scope.wrappedJSObject = scope;
 
         // top level head file to always load
-        if (this.mHeadSongbird.exists()) {
-          scriptUri = ioService.newFileURI(this.mHeadSongbird);
+        if (this.mHeadNightingale.exists()) {
+          scriptUri = ioService.newFileURI(this.mHeadNightingale);
           jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
@@ -338,11 +337,8 @@ sbTestHarness.prototype = {
           jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
-        // _test_name defined in the head_songbird.js file and is used in tail_songbird.js
+        // _test_name defined in the head_nightingale.js file and is used in tail_nightingale.js
         scope._test_name = testComp + " - " + testBase;
-
-        // _test_comp defined in head_songbird.js
-        scope._test_comp = testComp;
 
         // load the test script
         if (testFile.exists()) {
@@ -352,9 +348,9 @@ sbTestHarness.prototype = {
         }
 
         // top level tail file to always load - calls run_test()
-        if (this.mTailSongbird.exists()) {
+        if (this.mTailNightingale.exists()) {
           // load the cleanup script
-          scriptUri = ioService.newFileURI(this.mTailSongbird);
+          scriptUri = ioService.newFileURI(this.mTailNightingale);
           jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
@@ -432,7 +428,7 @@ sbTestHarness.prototype = {
   },
 
   QueryInterface : function(iid) {
-    if (!iid.equals(SONGBIRD_TESTHARNESS_IID) &&
+    if (!iid.equals(NIGHTINGALE_TESTHARNESS_IID) &&
         !iid.equals(Ci.nsISupports))
       throw Cr.NS_ERROR_NO_INTERFACE;
     return this;
@@ -447,16 +443,16 @@ sbTestHarness.prototype = {
 const sbTestHarnessModule = {
   registerSelf: function(compMgr, fileSpec, location, type) {
     compMgr = compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-    compMgr.registerFactoryLocation( SONGBIRD_TESTHARNESS_CID,
-                                     SONGBIRD_TESTHARNESS_CLASSNAME,
-                                     SONGBIRD_TESTHARNESS_CONTRACTID,
+    compMgr.registerFactoryLocation( NIGHTINGALE_TESTHARNESS_CID,
+                                     NIGHTINGALE_TESTHARNESS_CLASSNAME,
+                                     NIGHTINGALE_TESTHARNESS_CONTRACTID,
                                      fileSpec,
                                      location,
                                      type );
   },
 
   getClassObject: function(compMgr, cid, iid) {
-    if (!cid.equals(SONGBIRD_TESTHARNESS_CID))
+    if (!cid.equals(NIGHTINGALE_TESTHARNESS_CID))
       throw Cr.NS_ERROR_NO_INTERFACE;
 
     if (!iid.equals(Ci.nsIFactory))

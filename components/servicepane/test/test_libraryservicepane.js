@@ -1,11 +1,11 @@
 /** vim: ts=2 sw=2 expandtab ai
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -30,8 +30,8 @@
 
 const DEBUG_OUTPUT = false;
 
-const PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
-const LSP='http://songbirdnest.com/rdf/library-servicepane#';
+const PROP_ISLIST = "http://getnightingale.com/data/1.0#isList";
+const LSP='http://getnightingale.com/rdf/library-servicepane#';
 
 var servicePane;
 var libraryServicePane;
@@ -77,15 +77,15 @@ function runTest () {
 
 
 function setup() {
-  servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
+  servicePane = Components.classes['@getnightingale.com/servicepane/service;1']
                           .getService(Components.interfaces.sbIServicePaneService);
   assertNotEqual(servicePane, null);
 
-  libraryServicePane = Components.classes['@songbirdnest.com/servicepane/library;1']
+  libraryServicePane = Components.classes['@getnightingale.com/servicepane/library;1']
                                  .getService(Components.interfaces.sbILibraryServicePaneService);
   assertNotEqual(libraryServicePane, null);
 
-  libraryManager = Components.classes['@songbirdnest.com/Songbird/library/Manager;1']
+  libraryManager = Components.classes['@getnightingale.com/Nightingale/library/Manager;1']
                              .getService(Components.interfaces.sbILibraryManager);
   assertNotEqual(libraryManager, null);
 

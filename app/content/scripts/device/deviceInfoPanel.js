@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -68,35 +68,23 @@ var TYPE = { "NONE": 0,
 var DIPW = {
   //
   // Device info panel object fields.
-  //   MEDIA_TYPES_IN_TAB_DISPLAY_ORDER An array of media type strings in tab
-  //                                    display order
+  //
   //   _widget                  Device info widget.
   //   _deviceID                Device ID.
   //   _panelBar                The information panel bar widget to use.
   //   _lastOperation           The last operation performed on this device.
-  //   _lastDirection           The direction of the last operation performed on
-  //                            on this device
   //   _itemType                The processing item type
   //   _removePanels            The flag to remove all the panels before setup
 
-  MEDIA_TYPES_IN_TAB_DISPLAY_ORDER: ["audio", "video", "image", "none"],
   _widget: null,
   _deviceID: null,
   _panelBar: null,
   _lastOperation: null,
-  _lastDirection: null,
   _deviceErrorMonitor : null,
   _itemType: null,
-  _removePanels: false,
+  _removePanels: null,
   _lastUpdateTimeout: null,
-  _operationDR : null,
-  _debug : Application.prefs.getValue("songbird.device.errorInfoPanel.debug",
-                                      false),
-  _log : function DIPW__log(aMsg) {
-    if (this._debug) {
-      dump("deviceInfoPanel-" + aMsg + "\n");
-    }
-  },
+
   /**
    * \brief Initialize the device info panel services for the device info panel
    *        widget specified by aWidget.
@@ -105,7 +93,6 @@ var DIPW = {
    */
 
   initialize: function DIPW__initialize(aWidget) {
-    this._log("initialize");
     // Get the device widget.
     this._widget = aWidget;
 
@@ -122,7 +109,7 @@ var DIPW = {
     this._device = this._widget.device;
 
     // Always want to remove all the panels before syncing starts
-    this._removePanels = true;
+    this._removePanels = 1;
 
     // Initialize the device services.
     this._deviceInitialize();
@@ -130,19 +117,18 @@ var DIPW = {
     // Grab the device error monitor service so we can check for errors on this
     // device when we need to.
     this._deviceErrorMonitor =
-                          Cc["@songbirdnest.com/device/error-monitor-service;1"]
+                          Cc["@getnightingale.com/device/error-monitor-service;1"]
                             .getService(Ci.sbIDeviceErrorMonitor);
 
     // Get the processing item type
     var createDataRemote = new Components.Constructor(
-                                    "@songbirdnest.com/Songbird/DataRemote;1",
+                                    "@getnightingale.com/Nightingale/DataRemote;1",
                                     Ci.sbIDataRemote,
                                     "init");
 
-    this._itemType = createDataRemote(this._deviceID + ".status.type", null);
+    this._itemType = createDataRemote(
+                    this._deviceID + ".status.type", null);
 
-    this._operationDR = createDataRemote(this._deviceID + ".status.operation",
-                                         null);
     this._update();
 
   },
@@ -152,7 +138,6 @@ var DIPW = {
    */
 
   finalize: function DIPW_finalize() {
-    this._log("finalize");
     // Clean up the device error monitor
     if (this._deviceErrorMonitor) {
       this._deviceErrorMonitor = null;
@@ -165,7 +150,6 @@ var DIPW = {
     this._deviceID = null;
     this._panelBar = null;
     this._itemType = null;
-    this._operationDR = null;
   },
 
   //----------------------------------------------------------------------------
@@ -192,16 +176,54 @@ var DIPW = {
       return Ci.sbIDevice.STATE_IDLE;
   },
 
+
   /**
-   * \brief Get the state to update panel based on the device's state and
-   *        substate.
+   * \brief Get the state to update panel based on MSC device state and
+   *        substate
    *
-   * \return the substate of the device when syncing
+   * \return the substate when the MSC device is when syncing
    *         or the copying state based on the item type
    *         or the device state when device is not syncing (IDLE/PREPARING)
    */
 
-  _getDeviceState: function DIPW__getDeviceState() {
+  _getMSCDeviceState: function DIPW__getMSCDeviceState() {
+    // Get the current device state.
+    var deviceState = this._device.state;
+    var substate = this._device.currentStatus.currentSubState;
+    var state = deviceState;
+    if (deviceState ==  Ci.sbIDevice.STATE_SYNCING) {
+      if (substate == Ci.sbIDevice.STATE_SYNCING_TYPE ||
+          substate == Ci.sbIDevice.STATE_COPY_PREPARING ||
+          substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST ||
+          substate == Ci.sbIDevice.STATE_DELETING ||
+          substate == Ci.sbIDevice.STATE_UPDATING ||
+          substate == Ci.sbIDevice.STATE_IDLE) {
+        state = substate;
+      }
+      else if (substate == Ci.sbIDevice.STATE_COPYING ||
+               substate == Ci.sbIDevice.STATE_TRANSCODE) {
+        state = this._getCopyingState();
+      }
+    }
+    else if (deviceState == Ci.sbIDevice.STATE_COPYING ||
+             deviceState == Ci.sbIDevice.STATE_TRANSCODE ||
+             deviceState == Ci.sbIDevice.STATE_DELETING) {
+      state = this._getCopyingState();
+    }
+
+    return state;
+  },
+
+  /**
+   * \brief Get the state to update panel based on MTP device state and
+   *        substate.
+   *
+   * \return the substate when the MTP device is when syncing
+   *         or the copying state based on the item type
+   *         or the device state when device is not syncing (IDLE/PREPARING)
+   */
+
+  _getMTPDeviceState: function DIPW__getMTPDeviceState() {
     // Get the current device state.
     var deviceState = this._device.state;
     var substate = this._device.currentStatus.currentSubState;
@@ -256,54 +278,6 @@ var DIPW = {
   },
 
   /**
-   * \brief Updates the panel(s) for the current operation
-   * \param aMediaType             Type of media panel (contentType).
-   * \param aDirection             sbIDeviceStatus.[EXPORT|IMPORT]
-   */
-  _updateOperation: function DIPW__updateOperation(aMediaType, aState, aDirection) {
-    if (this._lastOperation != aState ||
-        this._lastDirection != aDirection) {
-      this._updateMediaInfoPanelState(aMediaType,
-                                      aDirection,
-                                      Ci.sbIDevice.STATE_SYNCING,
-                                      true);
-
-      // Update the current panel
-      let panel = this._findMediaInfoPanel(aMediaType);
-      if (panel && panel.index != 0) {
-        this._removeMediaInfoPanelsAfter(aMediaType, aDirection);
-        this._updateMediaInfoPanelState(aMediaType,
-                                        aDirection,
-                                        Ci.sbIDevice.STATE_SYNCING,
-                                        true);
-      }
-
-      // Update the preceding panels to a complete state
-      for each (let type in this.MEDIA_TYPES_IN_TAB_DISPLAY_ORDER) {
-
-        // Don't worry about the current mediaType
-        if (aMediaType == type) {
-          break;
-        }
-
-        // If we find a different mediaType's panel, set it to complete with
-        // STATE_IDLE.  It should handle error reporting if necessary.
-        if (this._findMediaInfoPanel(type)) {
-          this._updateMediaInfoPanelState(type,
-                                          -1,
-                                          Ci.sbIDevice.STATE_IDLE,
-                                          false);
-        }
-      }
-      this._lastOperation = aState;
-      this._lastDirection = aDirection;
-      // Make sure we are visible since the state has changed
-      if (!this._panelBar.isShown)
-        this._panelBar.animateIn();
-    }
-  },
-
-  /**
    * \brief Update the device info panel UI according to the current device
    *        state.
    */
@@ -319,31 +293,23 @@ var DIPW = {
    *  STATE_SYN_PLAYLIST     // Finish up video, Add complete panel.
    *  STATE_IDLE             // Finish up complete panel.
    */
+
   _update: function DIPW__update() {
-    this._log("deviceInfoPanel._update");
     var deviceType = this._device.parameters.getProperty("DeviceType");
     var state = Ci.sbIDevice.STATE_IDLE;
-    if ((deviceType == "WPD") ||
-        (deviceType == "MTP") ||
-        (deviceType == "MSCUSB")) {
-      state = this._getDeviceState();
-    }
+    if ((deviceType == "WPD") || (deviceType == "MTP"))
+      state = this._getMTPDeviceState();
+    else if (deviceType == "MSCUSB")
+      state = this._getMSCDeviceState();
+
     if (state != Ci.sbIDevice.STATE_IDLE &&
         this._lastUpdateTimeout) {
       clearTimeout(this._lastUpdateTimeout);
       this._lastUpdateTimeout = null;
     }
-    // See if we're importing or exporting. "Reading" is the only import
-    // operation
-    var direction = this._operationDR.stringValue == "reading" ?
-                      Ci.sbIDeviceStatus.IMPORT : Ci.sbIDeviceStatus.EXPORT;
-    this._log("state=" + state +
-              ", lastOperation=" + this._lastOperation +
-              ", direction=" + direction);
+
     switch (state) {
       case Ci.sbIDevice.STATE_COPYING:
-      case Ci.sbIDevice.STATE_COPY_PREPARING:
-      case Ci.sbIDevice.STATE_SYNCING_TYPE:
         break;
 
       case Ci.sbIDevice.STATE_SYNC_PREPARING:
@@ -352,14 +318,14 @@ var DIPW = {
         if (this._panelBar.isShown)
           this._panelBar.animateOut();
         this._lastOperation = state;
-        this._lastDirection = direction;
         break;
 
       case Ci.sbIDevice.STATE_IMAGESYNC_PREPARING:
         this._lastOperation = state;
-        this._lastDirection = direction;
         break;
 
+      case Ci.sbIDevice.STATE_COPY_PREPARING:
+      case Ci.sbIDevice.STATE_SYNCING_TYPE:
       case Ci.sbIDevice.STATE_UPDATING:
       case Ci.sbIDevice.STATE_DELETING:
         var active = state == Ci.sbIDevice.STATE_UPDATING ||
@@ -374,7 +340,7 @@ var DIPW = {
         // SYNC_PREPARING in between. Remove all panels.
         if (this._removePanels) {
           this._panelBar.removeAllPanels();
-          this._removePanels = false;
+          this._removePanels = 0;
         }
 
         // Make sure we are visible
@@ -387,13 +353,11 @@ var DIPW = {
         if ((this._itemType.intValue & TYPE.MUSIC) &&
             !this._findMediaInfoPanel("audio")) {
           this._updateMediaInfoPanel("audio",
-                                     Ci.sbIDeviceStatus.EXPORT,
-                                     SBString("device.infoPanel.audio_sync"),
+                                     SBString("device.infoPanel.sync_audio"),
                                      "sync",
                                      active);
           if (active) {
             this._updateMediaInfoPanelState("audio",
-                                            Ci.sbIDeviceStatus.EXPORT,
                                             Ci.sbIDevice.STATE_SYNCING,
                                             true);
           }
@@ -403,13 +367,11 @@ var DIPW = {
             this._supportsVideo() &&
             !this._findMediaInfoPanel("video")) {
           this._updateMediaInfoPanel("video",
-                                     Ci.sbIDeviceStatus.EXPORT,
-                                     SBString("device.infoPanel.video_sync"),
+                                     SBString("device.infoPanel.sync_video"),
                                      "sync",
                                      active);
           if (active) {
             this._updateMediaInfoPanelState("video",
-                                            Ci.sbIDeviceStatus.EXPORT,
                                             Ci.sbIDevice.STATE_SYNCING,
                                             true);
           }
@@ -418,13 +380,11 @@ var DIPW = {
         if ((this._itemType.intValue & TYPE.IMAGE) &&
             !this._findMediaInfoPanel("image")) {
           this._updateMediaInfoPanel("image",
-                                     Ci.sbIDeviceStatus.EXPORT,
-                                     SBString("device.infoPanel.image_sync"),
+                                     SBString("device.infoPanel.sync_image"),
                                      "sync",
                                      active);
           if (active) {
             this._updateMediaInfoPanelState("image",
-                                            Ci.sbIDeviceStatus.EXPORT,
                                             Ci.sbIDevice.STATE_SYNCING,
                                             true);
           }
@@ -435,7 +395,6 @@ var DIPW = {
         if (completeAudio) {
           if (this._findMediaInfoPanel("audio")) {
             this._updateMediaInfoPanelState("audio",
-                                            Ci.sbIDeviceStatus.EXPORT,
                                             Ci.sbIDevice.STATE_IDLE,
                                             false);
           }
@@ -443,7 +402,6 @@ var DIPW = {
         if (completeVideo) {
           if (this._findMediaInfoPanel("audio")) {
             this._updateMediaInfoPanelState("audio",
-                                            Ci.sbIDeviceStatus.EXPORT,
                                             Ci.sbIDevice.STATE_IDLE,
                                             false);
           }
@@ -452,36 +410,79 @@ var DIPW = {
         // - Set last operation when itemType is 0 (!= audio|video|image). This
         //   is necessary for cases that IDLE follows SYNCING_TYPE.
         //   If _itemType == 0, the sync will complete for the following IDLE.
-        if (!this._itemType.intValue) {
+        if (!this._itemType.intValue)
           this._lastOperation = state;
-          this._lastDirection = direction;
-        }
+
         break;
 
       case Ci.sbIDevice.STATE_COPYING_MUSIC:
-        this._updateOperation("audio", state, direction);
+        if (this._lastOperation != Ci.sbIDevice.STATE_COPYING_MUSIC) {
+          // Syncing music
+          this._updateMediaInfoPanelState("audio",
+                                          Ci.sbIDevice.STATE_SYNCING,
+                                          true);
+          this._lastOperation = state;
+
+          // Necessary to test and remove the preceding video panel
+          let audioPanel = this._findMediaInfoPanel("audio");
+          if (audioPanel && audioPanel.index != 0) {
+            this._removeMediaInfoPanel("video");
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_SYNCING,
+                                            true);
+          }
+          if (!this._panelBar.isShown)
+            this._panelBar.animateIn();
+          this._lastOperation = state;
+        }
         break;
 
       case Ci.sbIDevice.STATE_COPYING_VIDEO:
-        this._updateOperation("video", state, direction);
+        if (this._lastOperation != Ci.sbIDevice.STATE_COPYING_VIDEO) {
+          // Syncing video. Finish up audio panel if opened.
+          if (this._findMediaInfoPanel("audio")) {
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
+          }
+
+          // Mark video panel active
+          this._updateMediaInfoPanelState("video",
+                                          Ci.sbIDevice.STATE_SYNCING,
+                                          true);
+          if (!this._panelBar.isShown)
+            this._panelBar.animateIn();
+
+          this._lastOperation = state;
+        }
         break;
 
       case Ci.sbIDevice.STATE_SYNC_PLAYLIST:
         // Syncing playlist.
         this._lastOperation = state;
-        this._lastDirection = direction;
         break;
 
       case Ci.sbIDevice.STATE_COPYING_IMAGE:
-        this._updateOperation("image", state, direction);
+        if (this._findMediaInfoPanel("audio")) {
+          this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_IDLE, false);
+        }
+        if (this._findMediaInfoPanel("video")) {
+          this._updateMediaInfoPanelState("video", Ci.sbIDevice.STATE_IDLE, false);
+        }
+        this._updateMediaInfoPanelState("image", Ci.sbIDevice.STATE_SYNCING, true);
+        if (!this._panelBar.isShown)
+          this._panelBar.animateIn();
+        this._lastOperation = state;
         break;
 
       case Ci.sbIDevice.STATE_IDLE:
+      case Ci.sbIDevice.STATE_CANCEL:
         // For MTP, if IDLE after a SYNC_PLAYLIST then it is ok to disconnect.
         // For MSC, IDLE after COPYING_MUSIC/COPYING_VIDEO is also applicable.
         // Sync empty playlists can leave the last operation to COPY_PREPARING,
         // SYNCING_TYPE and UPDATING. Remove playlists with only one item can
         // give out DELETING.
+        if (state != Ci.sbIDevice.STATE_CANCEL) {
           switch (this._lastOperation) {
             case Ci.sbIDevice.STATE_SYNC_PLAYLIST:
             case Ci.sbIDevice.STATE_IMAGESYNC_PREPARING:
@@ -495,32 +496,8 @@ var DIPW = {
               break;
             default:
               for each (let type in ["audio", "video", "image", "none"]) {
-                if (this._checkForDeviceErrors(type, Ci.sbIDeviceStatus.EXPORT)) {
-                  this._log("Export errors for " + type);
-                  this._updateMediaInfoPanelState(type,
-                                                  Ci.sbIDeviceStatus.EXPORT,
-                                                  state,
-                                                  false);
-                  // Make sure we are visible
-                  if (!this._panelBar.isShown)
-                    this._panelBar.animateIn();
-                }
-                if (this._checkForDeviceErrors(type, Ci.sbIDeviceStatus.IMPORT)) {
-                  this._log("Import errors for " + type);
-                  this._updateMediaInfoPanelState(type,
-                                                  Ci.sbIDeviceStatus.IMPORT,
-                                                  state,
-                                                  false);
-                  // Make sure we are visible
-                  if (!this._panelBar.isShown)
-                    this._panelBar.animateIn();
-                }
-                if (this._checkForDeviceErrors(type, 0)) {
-                  this._log("Other errors for " + type);
-                  this._updateMediaInfoPanelState(type,
-                                                  0,
-                                                  state,
-                                                  false);
+                if (this._checkForDeviceErrors(type)) {
+                  this._updateMediaInfoPanelState(type, state, false);
                   // Make sure we are visible
                   if (!this._panelBar.isShown)
                     this._panelBar.animateIn();
@@ -528,8 +505,7 @@ var DIPW = {
               }
               return;
           }
-          // Intentional fall through, to process common idle/cancel logic
-      case Ci.sbIDevice.STATE_CANCEL:
+        }
 
         if (this._lastUpdateTimeout)
           break;
@@ -540,32 +516,28 @@ var DIPW = {
           // audio panel has to be finished up for CANCEL.
           if (self._findMediaInfoPanel("video")) {
             self._updateMediaInfoPanelState("video",
-                                            self._lastDirection,
                                             Ci.sbIDevice.STATE_IDLE,
                                             false);
           }
           if (self._findMediaInfoPanel("audio")) {
             self._updateMediaInfoPanelState("audio",
-                                            self._lastDirection,
                                             Ci.sbIDevice.STATE_IDLE,
                                             false);
           }
           if (self._findMediaInfoPanel("image")) {
             self._updateMediaInfoPanelState("image",
-                                            0,
                                             Ci.sbIDevice.STATE_IDLE,
                                             false);
           }
 
           // Update the existing one to OK to disconnect
           self._updateMediaInfoPanel("complete",
-                                     direction,
                                      SBString("device.status.progress_complete"),
                                      "success",
                                      true);
 
           // Reset to remove all panel for next sync.
-          self._removePanels = true;
+          self._removePanels = 1;
 
           self._lastOperation = state;
         }
@@ -576,7 +548,6 @@ var DIPW = {
 
       default:
         this._lastOperation = null;
-        this._lastDirection = null;
         if (this._panelBar.isShown)
           this._panelBar.animateOut();
         break;
@@ -588,11 +559,9 @@ var DIPW = {
    *        one panel of each type so this will ensure that doubles are removed.
    *
    * \param aMediaType             Type of media panel (contentType).
-   * \param aDirection             sbIDeviceStatus.[EXPORT|IMPORT]
    */
 
-  _removeMediaInfoPanel: function DIPW__removeMediaInfoPanel(aMediaType,
-                                                             aDirection) {
+  _removeMediaInfoPanel: function DIPW__removeMediaInfoPanel(aMediaType) {
     var mediaPanel;
     while ((mediaPanel = this._findMediaInfoPanel(aMediaType)) != null) {
       var index = mediaPanel.index;
@@ -601,32 +570,9 @@ var DIPW = {
   },
 
   /**
-   * \brief This removes all panels after the panel that matches aMediaType and
-   *        aDirection
-   * \param aMediaType             Type of media panel (contentType).
-   * \param aDirection             sbIDeviceStatus.[EXPORT|IMPORT]
-   */
-  _removeMediaInfoPanelsAfter: function DIPW__removeMediaInfoPanelAfter(
-                                                                   aMediaType,
-                                                                   aDirection) {
-    let panelCount = this._panelBar.panelCount;
-    for (var index = 0; index < panelCount; index++) {
-      var aPanel = this._panelBar.getPanelAtIndex(index);
-      if (aPanel &&
-          aPanel.getAttribute("mediatype") == aMediaType &&
-          aPanel.getAttribute("direction") == aDirection) {
-        while (++index < panelCount) {
-          this._panelBar.removePanelAt(index);
-        }
-        return;
-      }
-    }
-  },
-  /**
    * \brief Updates a media panel with the proper state.
    *
    * \param aMediaType             Type of media panel (contentType).
-   * \param aDirection             sbIDeviceStatus.[EXPORT|IMPORT]
    * \param aState                 State of the device for this media type.
    * \param aIsActive              Make this panel active or not.
    * \return                       Whether state has error.
@@ -634,28 +580,16 @@ var DIPW = {
 
   _updateMediaInfoPanelState: function DIPW__updateMediaInfoPanelState(
                                                aMediaType,
-                                               aDirection,
                                                aState,
                                                aIsActive) {
-    this._log("_updateMediaInfoPanelState(" + aMediaType +
-              ", " + aDirection +
-              ", " + aState +
-              ", " + aIsActive + ")");
-    // Anything but import is considered "sync"
-    var direction = "sync";
-    if (aDirection == Ci.sbIDeviceStatus.IMPORT) {
-      direction = "import";
-    }
-    var baseString = "device.infoPanel." + aMediaType;
+    var baseString = "device.infoPanel.sync_" + aMediaType;
+
     var hasErrors = false;
     switch (aState) {
       case Ci.sbIDevice.STATE_IDLE:
         hasErrors = this._checkForDeviceErrors(aMediaType);
-        this._log("hasErrors=" + hasErrors);
         if (hasErrors) {
-          var mediaPanel = this._updateMediaInfoPanel(
-                                     aMediaType,
-                                     aDirection,
+          var mediaPanel = this._updateMediaInfoPanel(aMediaType,
                                      SBString(baseString + "_errors"),
                                      "error",
                                      aIsActive);
@@ -665,20 +599,15 @@ var DIPW = {
           mediaPanel.setAttribute("icon-clickable", true);
         }
         else {
-          var mediaPanel = this._updateMediaInfoPanel(
-                                     aMediaType,
-                                     aDirection,
+          var mediaPanel = this._updateMediaInfoPanel(aMediaType,
                                      SBString(baseString + "_complete"),
                                      "success",
                                      aIsActive);
         }
         break;
-
       case Ci.sbIDevice.STATE_SYNCING:
-        var mediaPanel = this._updateMediaInfoPanel(
-                                   aMediaType,
-                                   aDirection,
-                                   SBString(baseString + "_" + direction + "_progress"),
+        var mediaPanel = this._updateMediaInfoPanel(aMediaType,
+                                   SBString(baseString + "_progress"),
                                    "sync",
                                    aIsActive);
         break;
@@ -692,30 +621,21 @@ var DIPW = {
    *
    * \param aMediaType             Type of media panel (contentType).
    * \param aMediaLabel            Text to display in the panel.
-   * \param aDirection             sbIDeviceStatus.[EXPORT|IMPORT]
-   * \param aSyncState             Sync, Compelete, or Error.
+   * \param aMediaIcon             Icon to display in the panel.
    * \param aIsActive              Make this panel active or not.
    */
 
   _updateMediaInfoPanel: function DIPW__updateMediaInfoPanel(aMediaType,
-                                                             aDirection,
                                                              aMediaLabel,
                                                              aSyncState,
                                                              aIsActive) {
-    this._log("_updateMediaInfoPanel(" + aMediaType + ", " +
-              aDirection + ", " +
-              aMediaLabel + ", " +
-              aSyncState + ", " +
-              aIsActive + ")");
     var mediaPanel = this._findMediaInfoPanel(aMediaType);
+
     if (mediaPanel == null) {
-      this._log("New panel");
       mediaPanel = this._panelBar.appendPanel(aMediaLabel, "", aIsActive);
       mediaPanel.setAttribute("mediatype", aMediaType);
-      mediaPanel.setAttribute("direction", aDirection);
     }
     else {
-      this._log("Existing panel: " + mediaPanel.label);
       mediaPanel.label = aMediaLabel;
       mediaPanel.active = aIsActive;
     }
@@ -761,21 +681,17 @@ var DIPW = {
       var target = aEvent.target
       // Make sure our target has a media type
       if (target.hasAttribute("mediatype")) {
-        let mediaType = target.getAttribute("mediatype");
-        let direction = target.getAttribute("direction");
-        this._log("handleEvent: mediaType=" + mediaType + ", directionType=" + direction);
-        if (this._checkForDeviceErrors(mediaType, direction)) {
+        var aMediaType = target.getAttribute("mediatype");
+        if (this._checkForDeviceErrors(aMediaType)) {
           var errorItems =
-            this._deviceErrorMonitor.getDeviceErrors(this._device,
-                                                     mediaType,
-                                                     direction);
+            this._deviceErrorMonitor.getDeviceErrors(this._device, aMediaType);
           WindowUtils.openDialog
             (window,
-             "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
+             "chrome://nightingale/content/xul/device/deviceErrorDialog.xul",
              "device_error_dialog",
              "chrome,centerscreen",
              false,
-             [ "", this._device, errorItems, direction != Ci.sbIDeviceStatus.IMPORT ? "syncing" : "importing"],
+             [ "", this._device, errorItems, "syncing" ],
              null);
 
           // We handled this event so stop the propagation
@@ -863,36 +779,15 @@ var DIPW = {
    * \brief Check if the device has errors for a particular type of media
    */
 
-  _checkForDeviceErrors: function DIPW__checkForDeviceErrors(aMediaType,
-                                                             aDirection) {
-    if (aDirection) {
-      let hasErrors = false;
-      try {
-        hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device,
-                                                             aMediaType,
-                                                             aDirection);
-      } catch (err) {
-        Cu.reportError(err);
-      }
-      return hasErrors;
+  _checkForDeviceErrors: function DIPW__checkForDeviceErrors(aMediaType) {
+    var hasErrors = false;
+    try {
+      hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device,
+                                                           aMediaType);
+    } catch (err) {
+      Cu.reportError(err);
     }
-    else {
-      let hasImportErrors = false;
-      let hasExportErrors = false;
-      try {
-        hasImportErrors = this._deviceErrorMonitor.deviceHasErrors
-                                                 (this._device,
-                                                  aMediaType,
-                                                  Ci.sbIDeviceStatus.IMPORT);
-        hasExportErrors = this._deviceErrorMonitor.deviceHasErrors
-                                                  (this._device,
-                                                   aMediaType,
-                                                   Ci.sbIDeviceStatus.EXPORT);
-      } catch (err) {
-        Cu.reportError(err);
-      }
-      return (hasImportErrors || hasExportErrors);
-    }
+    return hasErrors;
   },
 
   /**

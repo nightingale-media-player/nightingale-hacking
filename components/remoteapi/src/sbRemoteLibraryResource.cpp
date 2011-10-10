@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,12 +20,11 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 #include <sbILibrary.h>
-#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 
 #include "sbRemoteLibraryResource.h"
@@ -81,7 +80,7 @@ sbRemoteLibraryResource::GetProperty( const nsAString &aID,
 
   // get the property manager service
   nsCOMPtr<sbIPropertyManager> propertyManager =
-      do_GetService( "@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+      do_GetService( "@getnightingale.com/Nightingale/Properties/PropertyManager;1",
                      &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -144,7 +143,7 @@ sbRemoteLibraryResource::SetProperty( const nsAString &aID,
 
   // get the property manager service
   nsCOMPtr<sbIPropertyManager> propertyManager =
-      do_GetService( "@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+      do_GetService( "@getnightingale.com/Nightingale/Properties/PropertyManager;1",
                      &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 

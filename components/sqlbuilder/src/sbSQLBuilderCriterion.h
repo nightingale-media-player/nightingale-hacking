@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -110,22 +110,6 @@ public:
   virtual ~sbSQLBuilderCriterionLong() {};
 private:
   PRInt32 mValue;
-};
-
-class sbSQLBuilderCriterionLongLong : public sbSQLBuilderCriterionBase
-{
-public:
-  NS_DECL_ISUPPORTS_INHERITED
-  NS_DECL_SBISQLBUILDERCRITERION
-
-  sbSQLBuilderCriterionLongLong(const nsAString& aTableName,
-                            const nsAString& aColumnName,
-                            PRUint32 aMatchType,
-                            PRInt64 aValue);
-
-  virtual ~sbSQLBuilderCriterionLongLong() {};
-private:
-  PRInt64 mValue;
 };
 
 class sbSQLBuilderCriterionNull : public sbSQLBuilderCriterionBase

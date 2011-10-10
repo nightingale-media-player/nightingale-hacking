@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -28,8 +28,8 @@ const Cu = Components.utils;
 const Cr = Components.results;
 
 const SB_APPSTARTUPSERVICE_CLASSNAME  = "sbAppStartupService";
-const SB_APPSTARTUPSERVICE_DESC       = "Songbird Application Startup Service";
-const SB_APPSTARTUPSERVICE_CONTRACTID = "@songbirdnest.com/app-startup-service;1";
+const SB_APPSTARTUPSERVICE_DESC       = "Nightingale Application Startup Service";
+const SB_APPSTARTUPSERVICE_CONTRACTID = "@getnightingale.com/app-startup-service;1";
 const SB_APPSTARTUPSERVICE_CID        = "{bf8300d3-95a7-4f52-b8e1-7012d8c639b8}";
 
 const COMMAND_LINE_TOPIC  = "sb-command-line-startup";
@@ -41,7 +41,6 @@ const DATAREMOTE_TESTMODE = "__testmode__";
 const TEST_FLAG = "test";
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://app/jsmodules/LocalStore.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/WindowUtils.jsm");
@@ -72,7 +71,7 @@ function sbAppStartupService() {
   ObserverService.addObserver(this, COMMAND_LINE_TOPIC, false);
 }
 
-sbAppStartupService.prototype =
+sbAppStartupService.prototype = 
 {
   // Application is initialized
   _initialized: false,
@@ -82,11 +81,11 @@ sbAppStartupService.prototype =
   _shutdownComplete: false,
   // Application restart is required
   _restartRequired: false,
-  // DataRemote Command Line Handler
+  // DataRemote Command Line Handler 
   _dataRemoteCmdLineHandler: null,
   // DataRemote For App Restart
   _dataRemoteAppRestart: null,
-
+  
   // nsIObserver
   observe: function(aSubject, aTopic, aData) {
     switch(aTopic) {
@@ -100,66 +99,66 @@ sbAppStartupService.prototype =
         // Check to see if we are running in test mode.
         this._checkForTestCommandLine(aSubject);
 
-        // Bootstrap Application
+        // Bootstrap Application        
         this._bootstrap();
       }
       break;
-
+      
       case SHUTDOWN_TOPIC: {
         ObserverService.removeObserver(this, SHUTDOWN_TOPIC);
-
+        
         // Shut it all down!
         this._shutdown();
       }
       break;
     }
   },
-
+  
   ///////////////////////////////////////////////////////////////////
   // Internal Methods
   ///////////////////////////////////////////////////////////////////
-
+  
   _bootstrap: function() {
     if (this._initialized) {
       Cu.reportError("bootstrap is getting called multiple times");
       return;
     }
-
+    
     // Show the first-run wizard
-    if (this._firstRun()) {
+    //if (this._firstRun()) {
       this._mainWindowStart();
-    }
-
+    //}
+    
     this._initApplication();
     this._initRestarter();
-
+    
     this._initialized = true;
-
-    // Restart app if required.  Do this after initializing so that
+    
+    // Restart app if required.  Do this after initializing so that 
     // shutting down does not cause errors.
     if (this._restartRequired) {
       WindowUtils.restartApp();
       return;
     }
-
+    
     // Check to see if any version update migrations need to be performed
     this._migrator.doMigrations();
   },
-
+  
   _shutdown: function() {
     if(this._shutdownComplete) {
       Cu.reportError("shutdown is getting called multiple times");
       return;
     }
-
+    
     this._shutdownApplication();
     this._cleanupRestarter();
-
+    
     if(this._testMode) {
       SBDataSetBoolValue(DATAREMOTE_TESTMODE, false);
     }
   },
-
+  
   _checkForTestCommandLine: function(aCommandLine) {
     try {
       var cmdLine = aCommandLine.QueryInterface(Ci.nsICommandLine);
@@ -176,12 +175,12 @@ sbAppStartupService.prototype =
         // window not coming up.
         SBDataSetBoolValue(DATAREMOTE_TESTMODE, false);
       }
-    }
+    } 
     catch(e) {
       Cu.reportError(e);
     }
   },
-
+  
   /**
    * \brief Main Application Startup
    */
@@ -194,7 +193,7 @@ sbAppStartupService.prototype =
     catch (e) {
       Cu.reportError(e);
     }
-
+    
     try {
       // Startup the Metrics
       this._metricsAppStart();
@@ -202,15 +201,15 @@ sbAppStartupService.prototype =
     catch (e) {
       Cu.reportError(e);
     }
-
-    try {
+    
+    try {    
       // Handle dataremote commandline parameters
       this._initDataRemoteCmdLine();
     }
     catch (e) {
       Cu.reportError(e);
     }
-
+    
     try {
       // Handle app startup command line parameters
       this._initStartupCmdLine();
@@ -220,10 +219,10 @@ sbAppStartupService.prototype =
     }
 
     try {
-      // On Windows and Linux, register the songbird:// protocol.
+      // On Windows and Linux, register the nightingale:// protocol.
       // (Mac is in the info.plist)
       var platform = Cc["@mozilla.org/system-info;1"]
-                       .getService(Ci.nsIPropertyBag2)
+                       .getService(Ci.nsIPropertyBag2) 
                        .getProperty("name");
       if (platform == "Windows_NT") {
         this._registerProtocolHandlerWindows();
@@ -236,7 +235,7 @@ sbAppStartupService.prototype =
       Cu.reportError(e);
     }
   },
-
+  
   /**
    * \brief Main Application Shutdown
    */
@@ -246,7 +245,7 @@ sbAppStartupService.prototype =
 
     // Shutdown dataremote commandline handler
     this._cleanupDataRemoteCmdLine();
-
+    
     // Shutdown the Metrics
     this._metricsAppShutdown();
   },
@@ -256,7 +255,7 @@ sbAppStartupService.prototype =
    */
   _mainWindowStart: function () {
     try {
-      var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+      var metrics = Cc["@getnightingale.com/Nightingale/Metrics;1"]
                       .createInstance(Ci.sbIMetrics);
       metrics.checkUploadMetrics();
     }
@@ -269,7 +268,7 @@ sbAppStartupService.prototype =
     try {
       // Check for updates.
       var addOnBundleUpdateService =
-            Cc["@songbirdnest.com/AddOnBundleUpdateService;1"]
+            Cc["@getnightingale.com/AddOnBundleUpdateService;1"]
               .getService(Ci.sbIAddOnBundleUpdateService);
       addOnBundleUpdateService.checkForUpdates();
 
@@ -288,13 +287,13 @@ sbAppStartupService.prototype =
     // while an extension has the web playlist disabled.
     SBDataSetBoolValue("webplaylist.enabled", true);
 
-    var feathersManager = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+    var feathersManager = Cc['@getnightingale.com/nightingale/feathersmanager;1']
                             .getService(Ci.sbIFeathersManager);
     feathersManager.openPlayerWindow();
   },
 
   /**
-   * \brief Application First Run
+   * \brief Application First Run 
    */
   _firstRun: function () {
     var perfTest = false;
@@ -305,16 +304,16 @@ sbAppStartupService.prototype =
     }
 
     // Skip first-run if allowed (debug mode) and set to skip
-    if (Application.prefs.getValue("songbird.first_run.allow_skip", false)) {
+    if (Application.prefs.getValue("nightingale.first_run.allow_skip", false)) {
       var environment = Cc["@mozilla.org/process/environment;1"]
                           .getService(Ci.nsIEnvironment);
-
+                          
       // If we're skipping the first run
-      if (environment.exists("SONGBIRD_SKIP_FIRST_RUN")) {
+      if (environment.exists("NIGHTINGALE_SKIP_FIRST_RUN")) {
         // Check to see if we're skipping all or just part
-        var skipFirstRun = environment.get("SONGBIRD_SKIP_FIRST_RUN");
+        var skipFirstRun = environment.get("NIGHTINGALE_SKIP_FIRST_RUN");
         perfTest = (skipFirstRun == "CSPerf");
-
+        
         // Skip the first run wizard unless we're in a perf run.
         if (skipFirstRun && !perfTest)
           return true;
@@ -322,40 +321,40 @@ sbAppStartupService.prototype =
     }
 
     try {
-      var haveRun = Application.prefs.getValue("songbird.firstrun.check.0.3",
+      var haveRun = Application.prefs.getValue("nightingale.firstrun.check.0.3", 
                                                false);
       if (!haveRun) {
-
+        
         var self = this;
         var data = {
           perfTest: null,
           onComplete: function(aRedo) {
-            self._firstRunComplete(aRedo);
+            self._firstRunComplete(aRedo); 
           },
           QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports])
         };
-
+        
         data.perfTest = perfTest;
-
-        // Bah, we need to wrap the object so it crosses
+        
+        // Bah, we need to wrap the object so it crosses 
         // xpconnect boundaries properly.
         var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
                     .createInstance(Ci.nsISupportsInterfacePointer);
         sip.data = data;
-
+        
         // Wrap it.
         data.wrappedJSObject = data;
 
         // This cannot be modal as it will block the download of extensions.
         WindowUtils.openDialog(null,
-                               "chrome://songbird/content/xul/firstRunWizard.xul",
+                               "chrome://nightingale/content/xul/firstRunWizard.xul",
                                "firstrun",
                                "chrome,titlebar,centerscreen,resizable=no",
                                false,
                                [sip]);
         // Avoid leaks
         sip.data = null;
-
+                               
         // Do not open main window until the non-modal first run dialog returns
         return false;
       }
@@ -367,16 +366,16 @@ sbAppStartupService.prototype =
     //   the EULA so launch the main window.
     return true;
   },
-
+  
   _firstRunComplete: function(aRedo) {
     if (aRedo) {
       this._firstRun();
-    }
+    } 
     else {
       // If EULA has not been accepted, quit application.
-      var eulaAccepted =
-        Application.prefs.getValue("songbird.eulacheck", false);
-
+      var eulaAccepted = 
+        Application.prefs.getValue("nightingale.eulacheck", false);
+      
       if (!eulaAccepted) {
         this._shutdown();
         var appStartup = Components.classes["@mozilla.org/toolkit/app-startup;1"]
@@ -388,7 +387,7 @@ sbAppStartupService.prototype =
       }
     }
   },
-
+  
   /**
    * \brief Initialize the Application Restarter. The restarter is used
    *        during the first run process to restart the application
@@ -397,41 +396,41 @@ sbAppStartupService.prototype =
   _initRestarter: function () {
     this._dataRemoteAppRestart = SBNewDataRemote( "restart.restartnow", null );
     this._dataRemoteAppRestart.boolValue = false;
-
+    
     this._dataRemoteAppRestartHandler = {
-      observe: function ( aSubject, aTopic, aData ) {
+      observe: function ( aSubject, aTopic, aData ) { 
         var appStartup = Components.classes["@mozilla.org/toolkit/app-startup;1"]
                                    .getService(Components.interfaces.nsIAppStartup);
         appStartup.quit(appStartup.eAttemptQuit | appStartup.eRestart);
       }
     };
-
-    this._dataRemoteAppRestart.bindObserver( this._dataRemoteAppRestartHandler,
+    
+    this._dataRemoteAppRestart.bindObserver( this._dataRemoteAppRestartHandler, 
                                              true );
   },
-
+  
   /**
    * \brief Cleanup the Application Restarter.
    */
   _cleanupRestarter: function () {
     this._dataRemoteAppRestart.unbind();
     this._dataRemoteAppRestart = null;
-  },
+  }, 
 
   /**
-   * \brief Initialize the DataRemote used to propagate the command line
+   * \brief Initialize the DataRemote used to propagate the command line 
    *        parameters.
    */
   _initDataRemoteCmdLine: function () {
-    var cmdLine = Cc["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+    var cmdLine = Cc["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"];
     if (!cmdLine)
       return;
 
     var cmdLineService = cmdLine.getService(Ci.nsICommandLineHandler);
     if (!cmdLineService)
       return;
-
-    var cmdLineManager =
+    
+    var cmdLineManager = 
       cmdLineService.QueryInterface(Ci.sbICommandLineManager);
     if (!cmdLineManager)
       return;
@@ -444,13 +443,13 @@ sbAppStartupService.prototype =
           SBDataSetStringValue(v[0], v[1]);
           return true;
         }
-
+        
         return false;
       },
 
       QueryInterface: XPCOMUtils.generateQI([Ci.sbICommandLineFlagHandler])
     };
-
+    
     cmdLineManager.addFlagHandler(this._dataRemoteCmdLineHandler, "data");
   },
 
@@ -459,28 +458,28 @@ sbAppStartupService.prototype =
    *        parameters.
    */
   _cleanupDataRemoteCmdLine: function () {
-    var cmdLine = Cc["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+    var cmdLine = Cc["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"];
     if (!cmdLine)
       return;
-
+      
     var cmdLineService = cmdLine.getService(Ci.nsICommandLineHandler);
     if (!cmdLineService)
       return;
-
-    var cmdLineManager =
+      
+    var cmdLineManager = 
       cmdLineService.QueryInterface(Ci.sbICommandLineManager);
-    if (!cmdLineManager)
+    if (!cmdLineManager) 
       return;
-
+      
     cmdLineManager.removeFlagHandler(this._dataRemoteCmdLineHandler, "data");
-  },
+  }, 
 
   /**
    * \brief Initialize the startup command line parameters.
    */
   _initStartupCmdLine: function () {
     var cmdLine = Cc
-      ["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+      ["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"];
     if (!cmdLine)
       return;
 
@@ -503,7 +502,7 @@ sbAppStartupService.prototype =
    */
   _cleanupStartupCmdLine: function () {
     var cmdLine = Cc
-      ["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+      ["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"];
     if (!cmdLine)
       return;
 
@@ -522,7 +521,7 @@ sbAppStartupService.prototype =
   },
 
   /**
-   * \brief Register the songbird:// protocol handler on Windows
+   * \brief Register the nightingale:// protocol handler on Windows
    */
   _registerProtocolHandlerWindows: function () {
     if (!("@mozilla.org/windows-registry-key;1" in Components.classes)) {
@@ -534,18 +533,18 @@ sbAppStartupService.prototype =
                  .getService(Ci.nsIProperties)
                  .get("CurProcD", Ci.nsIFile);
     var file = path.clone();
-    // It'd be nice if there were a way to look this up.
-    // (mook suggests) ::GetModuleFileNameW().
+    // It'd be nice if there were a way to look this up. 
+    // (mook suggests) ::GetModuleFileNameW(). 
     // http://mxr.mozilla.org/seamonkey/source/browser/components/shell/src/nsWindowsShellService.cpp#264
-    file.append("songbird.exe");
+    file.append("nightingale.exe");
 
     var wrk = Cc["@mozilla.org/windows-registry-key;1"]
                 .createInstance(Ci.nsIWindowsRegKey);
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-               "Software\\Classes\\songbird",
+               "Software\\Classes\\nightingale",
                wrk.ACCESS_WRITE);
-    wrk.writeStringValue("", "URL:Songbird protocol");
+    wrk.writeStringValue("", "URL:Nightingale protocol");
     wrk.writeStringValue("URL Protocol", "");
 
     // The EditFlags key will make the protocol show up in the File Types
@@ -553,21 +552,21 @@ sbAppStartupService.prototype =
     wrk.writeBinaryValue("EditFlags", '\002\000\000\000');
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-               "Software\\Classes\\songbird\\DefaultIcon",
+               "Software\\Classes\\nightingale\\DefaultIcon",
                wrk.ACCESS_WRITE);
     wrk.writeStringValue("", '"' + file.path + '"');
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-               "Software\\Classes\\songbird\\shell\\open\\command",
+               "Software\\Classes\\nightingale\\shell\\open\\command",
                wrk.ACCESS_WRITE);
     wrk.writeStringValue("", '"' + file.path + '" "%1"');
     wrk.close();
   },
 
   /**
-   * \brief Register the songbird:// protocol handler on Gnome/Linux
+   * \brief Register the nightingale:// protocol handler on Gnome/Linux
    */
-  _registerProtocolHandlerGConf: function () {
+  _registerNightingaleProtocolGConf: function () {
     if (!("@mozilla.org/gnome-gconf-service;1" in Components.classes)) {
       // gnome-gconf-service doesn't exist
       return;
@@ -576,20 +575,20 @@ sbAppStartupService.prototype =
                  .getService(Ci.nsIProperties)
                  .get("CurProcD", Ci.nsIFile);
     var file = path.clone();
-    file.append("songbird");
+    file.append("nightingale");
 
     var gconf = Cc["@mozilla.org/gnome-gconf-service;1"]
                   .getService(Ci.nsIGConfService);
-    gconf.setString("/desktop/gnome/url-handlers/songbird/command", '"' + file.path + '" "%s"');
-    gconf.setBool("/desktop/gnome/url-handlers/songbird/enabled", true);
-    gconf.setBool("/desktop/gnome/url-handlers/songbird/needs_terminal", false);
+    gconf.setString("/desktop/gnome/url-handlers/nightingale/command", '"' + file.path + '" "%s"');
+    gconf.setBool("/desktop/gnome/url-handlers/nightingale/enabled", true);
+    gconf.setBool("/desktop/gnome/url-handlers/nightingale/needs_terminal", false);
   },
-
+  
   /**
    * \brief Metrics Startup Cleanup
    */
   _metricsAppStart: function () {
-    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    var metrics = Cc["@getnightingale.com/Nightingale/Metrics;1"]
                     .createInstance(Ci.sbIMetrics);
     metrics.metricsInc("app", "appstart", null);
 
@@ -609,9 +608,9 @@ sbAppStartupService.prototype =
       // The thinking here is that we may want to report on different kinds of
       // crashes in the future. Therefore we will keep the top level bucket as
       // crashlog, with a subdivision for the app.
-      metrics.metricsAdd("crashlog",
-                         "app" ,
-                         crashNum.intValue,
+      metrics.metricsAdd("crashlog", 
+                         "app" , 
+                         crashNum.intValue, 
                          uptime.intValue);
 
       // reset the uptime, inc the crashNum
@@ -624,7 +623,7 @@ sbAppStartupService.prototype =
 
     // mark this true so if we crash we know it. It gets reset by AppShutdown
     dirtyExit.boolValue = true;
-
+    
     var startstamp = (new Date()).getTime();
     SBDataSetStringValue("startup_timestamp", startstamp); // 64bit, use StringValue
 
@@ -643,8 +642,8 @@ sbAppStartupService.prototype =
     var timenow = (new Date()).getTime();
     var ticsPerMinute = 1000 * 60;
     var minutes = ( (timenow - startstamp) / ticsPerMinute ) + 1; // Add one for fractionals
-
-    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    
+    var metrics = Cc["@getnightingale.com/Nightingale/Metrics;1"]
                     .createInstance(Ci.sbIMetrics);
     metrics.metricsAdd("app", "timerun", null, minutes);
 
@@ -660,24 +659,24 @@ sbAppStartupService.prototype =
 
   /**
    * \brief Initialize the Extension Manager Permissions so it includes
-   *        the Songbird Add-Ons site as a permitted install location.
-   */
+   *        the Nightingale Add-Ons site as a permitted install location.
+   */ 
   _initExtensionManagerPermissions: function () {
     const httpPrefix = "http://";
     const prefRoot = "xpinstall.whitelist.add";
     const permissionType = "install";
-
-    var prefBranch =
+    
+    var prefBranch = 
       Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-
-    var ioService =
+      
+    var ioService = 
       Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-
-    var permissionManager =
+      
+    var permissionManager = 
       Cc["@mozilla.org/permissionmanager;1"].getService(Ci.nsIPermissionManager);
-
+    
     var childBranches = prefBranch.getChildList(prefRoot, {});
-
+    
     for each (let prefName in childBranches) {
       if(prefBranch.getPrefType(prefName) == Ci.nsIPrefBranch.PREF_STRING) {
         let prefValue = prefBranch.getCharPref(prefName);
@@ -689,8 +688,8 @@ sbAppStartupService.prototype =
             let uri = null;
             try {
               uri = ioService.newURI(value, null, null);
-              permissionManager.add(uri,
-                                    permissionType,
+              permissionManager.add(uri, 
+                                    permissionType, 
                                     Ci.nsIPermissionManager.ALLOW_ACTION);
             }
             catch(e) {
@@ -698,7 +697,7 @@ sbAppStartupService.prototype =
             }
           }
         }
-
+        
         prefBranch.setCharPref(prefName, "");
       }
     }
@@ -706,23 +705,23 @@ sbAppStartupService.prototype =
 
   /**
    * \brief Initialize the Extension Manager Permissions so it includes
-   *        the Songbird Add-Ons site as a permitted install location.
-   */
+   *        the Nightingale Add-Ons site as a permitted install location.
+   */ 
   _initRemoteAPIPermissions: function () {
     const httpPrefix = "http://";
     const prefRoot = "rapi.whitelist.add";
-
-    var prefBranch =
+    
+    var prefBranch = 
       Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-
-    var ioService =
+      
+    var ioService = 
       Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
-
-    var permissionManager =
+      
+    var permissionManager = 
       Cc["@mozilla.org/permissionmanager;1"].getService(Ci.nsIPermissionManager);
-
+    
     var childBranches = prefBranch.getChildList(prefRoot, {});
-
+    
     for each (let prefName in childBranches) {
       if(prefBranch.getPrefType(prefName) == Ci.nsIPrefBranch.PREF_STRING) {
         let prefValue = prefBranch.getCharPref(prefName);
@@ -737,8 +736,8 @@ sbAppStartupService.prototype =
             if (permissionType) {
               try {
                 uri = ioService.newURI(spec, null, null);
-                permissionManager.add(uri,
-                                      "rapi." + permissionType,
+                permissionManager.add(uri, 
+                                      "rapi." + permissionType, 
                                       Ci.nsIPermissionManager.ALLOW_ACTION);
                 }
               catch(e) {
@@ -747,7 +746,7 @@ sbAppStartupService.prototype =
             }
           }
         }
-
+        
         prefBranch.setCharPref(prefName, "");
       }
     }
@@ -770,90 +769,93 @@ sbAppStartupService.prototype =
         Cu.reportError(e);
       }
     },
-
+    
     /**
      * Perform UI migration tasks
      */
     _updateUI: function _updateUI() {
       var prefBranch = Cc["@mozilla.org/preferences-service;1"]
                          .getService(Ci.nsIPrefBranch);
-
-      var migration =
-        Application.prefs.getValue("songbird.migration.ui.version", 0);
-
+                         
+      var migration = 
+        Application.prefs.getValue("nightingale.migration.ui.version", 0);
+      
       // In 0.5 we added the "media pages" switcher button.
       // Make sure it appears in the nav-bar currentset.
       switch (migration) {
         case 0:
         {
-          // Make sure the media page switching is in the web toolbar
+          // Get a wrapper for localstore.rdf
+          var localStoreHelper = this._getLocalStoreHelper();
+
+          // Make sure the media page switching is in the web toolbar 
           // currentset for each known layout
-          var feathersManager = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+          var feathersManager = Cc['@getnightingale.com/nightingale/feathersmanager;1']
                                   .getService(Ci.sbIFeathersManager);
           var layouts = feathersManager.getLayoutDescriptions();
           while (layouts.hasMoreElements()) {
             var layoutURL = layouts.getNext()
                                    .QueryInterface(Ci.sbILayoutDescription).url;
-            var currentSet =
-              LocalStore.getPersistedAttribute(layoutURL,
-                                               "nav-bar",
-                                               "currentset");
+            var currentSet = 
+              localStoreHelper.getPersistedAttribute(layoutURL, 
+                                                     "nav-bar", 
+                                                     "currentset");
             if (currentSet && currentSet.indexOf("mediapages-container") == -1) {
               currentSet += ",mediapages-container";
-              LocalStore.setPersistedAttribute(layoutURL,
-                                               "nav-bar",
-                                               "currentset",
-                                               currentSet);
+              localStoreHelper.setPersistedAttribute(layoutURL, 
+                                                     "nav-bar", 
+                                                     "currentset", 
+                                                     currentSet);
             }
           }
-          LocalStore.flush();
+          localStoreHelper.flush();
 
           // migrate preferences
-          const PREF_OLD_DOWNLOAD_MUSIC_FOLDER =
-            "songbird.download.folder";
-          const PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT =
-            "songbird.download.always";
-          const PREF_DOWNLOAD_MUSIC_FOLDER  =
-            "songbird.download.music.folder";
-          const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT =
-            "songbird.download.music.alwaysPrompt";
+          const PREF_OLD_DOWNLOAD_MUSIC_FOLDER = 
+            "nightingale.download.folder";
+          const PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT = 
+            "nightingale.download.always";
+          const PREF_DOWNLOAD_MUSIC_FOLDER  = 
+            "nightingale.download.music.folder";
+          const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT = 
+            "nightingale.download.music.alwaysPrompt";
 
-          this._migratePref(prefBranch,
-                            "setCharPref",
-                            "getCharPref",
-                            function(p) { return p; },
-                            PREF_OLD_DOWNLOAD_MUSIC_FOLDER,
+          this._migratePref(prefBranch, 
+                            "setCharPref", 
+                            "getCharPref", 
+                            function(p) { return p; }, 
+                            PREF_OLD_DOWNLOAD_MUSIC_FOLDER, 
                             PREF_DOWNLOAD_MUSIC_FOLDER);
 
-          this._migratePref(prefBranch,
-                            "setBoolPref",
-                            "getCharPref",
-                            function(p) { return p=="1"; },
-                            PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT,
+          this._migratePref(prefBranch, 
+                            "setBoolPref", 
+                            "getCharPref", 
+                            function(p) { return p=="1"; }, 
+                            PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT, 
                             PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT);
 
           // update the migration version
-          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+          prefBranch.setIntPref("nightingale.migration.ui.version", ++migration);
 
-          // Fall through to process the next migration.
+          // Fall through to process the next migration. 
         }
         case 1:
         {
-          // Migrate iTunes importer pref changes introduced in Songbird 1.2
-          const PREF_OLD_AUTO_ITUNES_IMPORT =
-            "songbird.library_importer.auto_import";
+          // Migrate iTunes importer pref changes introduced in Nightingale 1.2
+          const PREF_OLD_AUTO_ITUNES_IMPORT = 
+            "nightingale.library_importer.auto_import";
           const PREF_IMPORT_ITUNES =
-            "songbird.library_importer.import_tracks";
+            "nightingale.library_importer.import_tracks";
 
-          const PREF_OLD_ITUNES_DONT_IMPORT_PLAYLISTS =
-            "songbird.library_importer.dont_import_playlists";
+          const PREF_OLD_ITUNES_DONT_IMPORT_PLAYLISTS = 
+            "nightingale.library_importer.dont_import_playlists";
           const PREF_ITUNES_IMPORT_PLAYLISTS =
-            "songbird.library_importer.import_playlists";
+            "nightingale.library_importer.import_playlists";
 
-          // Migrating these prefs isn't as easy as |_migratePref|, since the
-          // "auto_import" pref will determine the value for "dont import
+          // Migrating these prefs isn't as easy as |_migratePref|, since the 
+          // "auto_import" pref will determine the value for "dont import 
           // playlists" pref.
-          if (Application.prefs.getValue(PREF_OLD_AUTO_ITUNES_IMPORT,
+          if (Application.prefs.getValue(PREF_OLD_AUTO_ITUNES_IMPORT, 
                                               false)) {
             // Migrate the "auto_import" pref.
             Application.prefs.setValue(PREF_IMPORT_ITUNES, true);
@@ -867,60 +869,40 @@ sbAppStartupService.prototype =
           }
 
           // update the migration version
-          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+          prefBranch.setIntPref("nightingale.migration.ui.version", ++migration);
         }
         case 2:
         {
           // Migrate display pane hidden prefs due to display pane changes
-          // introduced in Songbird 1.4.1 (Korn)
+          // introduced in Nightingale 1.4.1 (Korn)
           const DP =["contentpane_bottom","right_sidebar","servicepane_bottom"];
           for each (var pane in DP) {
-            var pref = "songbird.displayPanes.displaypane_" +pane+ ".isHidden";
+            var pref = "nightingale.displayPanes.displaypane_" +pane+ ".isHidden";
             Application.prefs.setValue(pref, "0");
           }
 
           // update the migration version
-          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+          prefBranch.setIntPref("nightingale.migration.ui.version", ++migration);
         }
         case 3:
         {
-          // Songbird 1.4.2, bug 19334
+          // Nightingale 1.4.2, bug 19334
           // Force a switch to the default layout & skin
-          var defaultLayoutPref = "songbird.feathers.default_main_layout";
-          var defaultSkinPref = "songbird.feathers.default_skin_internalname";
+          var defaultLayoutPref = "nightingale.feathers.default_main_layout";
+          var defaultSkinPref = "nightingale.feathers.default_skin_internalname";
           var defaultLayout = Application.prefs.getValue(defaultLayoutPref, "");
           var defaultSkin = Application.prefs.getValue(defaultSkinPref, "");
-          var feathersMgr = Cc["@songbirdnest.com/songbird/feathersmanager;1"]
+          var feathersMgr = Cc["@getnightingale.com/nightingale/feathersmanager;1"]
                               .getService(Ci.sbIFeathersManager);
           if (feathersMgr.currentLayoutURL != defaultLayout)
             feathersMgr.switchFeathers(defaultLayout, defaultSkin);
-
+  
           // update the migration version
-          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
-        }
-        case 4:
-        {
-          // Songbird 1.10, bug 23299
-          // If the user is using media management, turn it off and tell them
-          // it's no longer available.
-          var mmEnabledPref = "songbird.media_management.library.enabled";
-          if (Application.prefs.getValue(mmEnabledPref, false)) {
-            // Display the dialog explaining this...
-            WindowUtils.openDialog(null,
-                                   "chrome://songbird/content/xul/mediaManagementRemovedDialog.xul",
-                                   "mediaManagementRemovedDialog",
-                                   "chrome,centerscreen",
-                                   true);
-
-            Application.prefs.setValue(mmEnabledPref, false);
-          }
-
-          // update migration version
-          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+          prefBranch.setIntPref("nightingale.migration.ui.version", ++migration);
         }
       }
     },
-
+    
     _migratePref: function(prefBranch, setMethod, getMethod, cvtFunction, oldPrefKey, newPrefKey) {
       // if the old pref exists, do the migration
       if (this._hasPref(prefBranch, getMethod, oldPrefKey)) {
@@ -929,7 +911,7 @@ sbAppStartupService.prototype =
           prefBranch[setMethod](newPrefKey, cvtFunction(prefBranch[getMethod](oldPrefKey)));
         }
         // in every case, get rid of the old pref
-        prefBranch.clearUserPref(oldPrefKey);
+        prefBranch.clearUserPref(oldPrefKey); 
       }
     },
 
@@ -941,6 +923,59 @@ sbAppStartupService.prototype =
         return false;
       }
     },
+    
+    /**
+     * Gets a wrapper for localstore.rdf
+     */
+    _getLocalStoreHelper: function _getLocalStoreHelper() {
+      var LocalStoreHelper = function() {
+        this._rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
+        this._localStore = this._rdf.GetDataSource("rdf:local-store");
+        this.dirty = false;
+      }
+      LocalStoreHelper.prototype = {
+        
+        // Get an attribute value for an element id in a given file
+        getPersistedAttribute: function(file, id, attribute) {
+          var source = this._rdf.GetResource(file + "#" + id);
+          var property = this._rdf.GetResource(attribute);
+          var target = this._localStore.GetTarget(source, property, true);
+          if (target instanceof Ci.nsIRDFLiteral)
+            return target.Value;
+          return null;
+        },
+        
+        // Set an attribute on an element id in a given file
+        setPersistedAttribute: function(file, id, attribute, value) {
+          var source = this._rdf.GetResource(file + "#" +  id);    
+          var property = this._rdf.GetResource(attribute);
+          try {
+            var oldTarget = this._localStore.GetTarget(source, property, true);
+            if (oldTarget) {
+              if (value)
+                this._localStore.Change(source, property, oldTarget, this._rdf.GetLiteral(value));
+              else
+                this._localStore.Unassert(source, property, oldTarget);
+            }
+            else {
+              this._localStore.Assert(source, property, this._rdf.GetLiteral(value), true);
+            }
+            this.dirty = true;
+          }
+          catch(ex) {
+            Components.utils.reportError(ex);
+          }
+        },
+          
+        // Save changes if needed
+        flush: function flush() {
+          if (this.dirty) {
+            this._localStore.QueryInterface(Ci.nsIRDFRemoteDataSource).Flush();
+          }
+        }
+      }
+      return new LocalStoreHelper();
+    }
   },
 
   // XPCOM Goo
@@ -948,7 +983,7 @@ sbAppStartupService.prototype =
   classDescription: SB_APPSTARTUPSERVICE_DESC,
   classID: Components.ID(SB_APPSTARTUPSERVICE_CID),
   contractID: SB_APPSTARTUPSERVICE_CONTRACTID,
-  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver])
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsIObserver]) 
 };
 
 //------------------------------------------------------------------------------
@@ -994,7 +1029,7 @@ var startupCmdLineHandler = {
     var appDirectory = directoryService.get("resource:app", Ci.nsIFile);
 
     // Set the current working directory to the application directory.
-    var fileUtils = Cc["@songbirdnest.com/Songbird/FileUtils;1"]
+    var fileUtils = Cc["@getnightingale.com/Nightingale/FileUtils;1"]
                       .getService(Ci.sbIFileUtils);
     fileUtils.currentDir = appDirectory;
   },

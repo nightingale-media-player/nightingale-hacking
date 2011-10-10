@@ -43,7 +43,7 @@ VPATH		= @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/nsSidebar.js
+NIGHTINGALE_COMPONENTS = $(srcdir)/nsSidebar.js
 
 include $(topsrcdir)/build/rules.mk
 

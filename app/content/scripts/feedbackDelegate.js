@@ -1,10 +1,10 @@
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -19,11 +19,11 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 
 /**
- * \brief This script manages and decides when the Songbird feedback
+ * \brief This script manages and decides when the Nightingale feedback
  *        dialog should be shown (based on pre-defined metrics).
  */
 
@@ -191,9 +191,9 @@ FeedbackDelegate.prototype =
       Components.classes["@mozilla.org/appshell/window-mediator;1"]
       .getService(Components.interfaces.nsIWindowMediator);
 
-    var mainWin = winMediator.getMostRecentWindow("Songbird:Main");
+    var mainWin = winMediator.getMostRecentWindow("Nightingale:Main");
     if (mainWin && mainWin.window && mainWin.window.gBrowser) {
-      mainWin.openDialog("chrome://songbird/content/xul/feedbackDialog.xul",
+      mainWin.openDialog("chrome://nightingale/content/xul/feedbackDialog.xul",
                          "feedback-dialog",
                          "chrome,modal=yes,centerscreen,resizable=false",
                          retVal);

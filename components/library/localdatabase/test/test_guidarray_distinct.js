@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,14 +38,14 @@ function runTest () {
   array = makeArray(library);
   array.isDistinct = true;
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#artistName", true);
+  array.addSort("http://getnightingale.com/data/1.0#artistName", true);
   array.fetchSize = 1;
   assertDistinct(array, "data_distinct_artist.txt");
 
   array = makeArray(library);
   array.isDistinct = true;
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#contentLength", true);
+  array.addSort("http://getnightingale.com/data/1.0#contentLength", true);
   array.fetchSize = 1;
   assertDistinct(array, "data_distinct_contentlength.txt");
 
@@ -54,7 +54,7 @@ function runTest () {
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
   array.baseConstraintValue = listId;
-  array.addSort("http://songbirdnest.com/data/1.0#albumName", true);
+  array.addSort("http://getnightingale.com/data/1.0#albumName", true);
   array.fetchSize = 10;
   assertDistinct(array, "data_distinct_sml101_album.txt");
 }

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -73,7 +73,7 @@ var SmartMediaListColumnSpecUpdater = {
     // find the property in the smartplaylistpropertyregistrar
     var registeredProp;
     var registrar = 
-      Cc["@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1"]
+      Cc["@getnightingale.com/Nightingale/SmartPlaylistPropertyRegistrar;1"]
         .getService(Ci.sbISmartPlaylistPropertyRegistrar);
     var props = registrar.getPropertiesForContext("default");
     while (props.hasMoreElements()) {
@@ -218,7 +218,7 @@ var SmartMediaListColumnSpecUpdater = {
   },
 
   _getDefaultSortDirection: function(prop) {
-    var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+    var pm = Components.classes["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                                .getService(Components.interfaces.sbIPropertyManager);
     var info = pm.getPropertyInfo(prop);
     switch (info.type) {
@@ -236,7 +236,7 @@ var SmartMediaListColumnSpecUpdater = {
   },
   
   _isDummyProperty: function(aProperty) {
-    var pm = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+    var pm = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                .getService(Components.interfaces.sbIPropertyManager);
     var info = pm.getPropertyInfo(aProperty);
     return (info instanceof Ci.sbIDummyPropertyInfo);

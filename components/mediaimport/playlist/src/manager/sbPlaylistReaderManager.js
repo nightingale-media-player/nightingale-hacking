@@ -1,25 +1,27 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+ //
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 
 //
@@ -70,14 +72,16 @@ CPlaylistReaderManager.prototype.constructor = CPlaylistReaderManager;
 
 CPlaylistReaderManager.prototype =
 {
-  classDescription: "Songbird Playlist Reader Manager Interface",
+  classDescription: "Nightingale Playlist Reader Manager Interface",
   classID:          Components.ID("{ced5902c-bd90-4099-acee-77487a5b1d13}"),
-  contractID:       "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+  contractID:       "@getnightingale.com/Nightingale/PlaylistReaderManager;1",
 
   originalURI: null,
 
-  m_rootContractID: "@songbirdnest.com/Songbird/Playlist/Reader/",
+  m_rootContractID: "@getnightingale.com/Nightingale/Playlist/Reader/",
   m_interfaceID: Components.interfaces.sbIPlaylistReader,
+  m_Browser: null,
+  m_Listeners: new Array(),
   m_Readers: new Array(),
   m_Extensions: new Array(),
   m_MIMETypes: new Array(),
@@ -92,7 +96,7 @@ CPlaylistReaderManager.prototype =
     var file = Components.classes["@mozilla.org/file/directory_service;1"]
                          .getService(Components.interfaces.nsIProperties)
                          .get("TmpD", Components.interfaces.nsIFile);
-    file.append("songbird." + extension);
+    file.append("nightingale." + extension);
     file.createUnique(Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 0664);
 
     return file.path;
@@ -124,7 +128,7 @@ CPlaylistReaderManager.prototype =
   //sbIPlaylistReaderManager
   loadPlaylist: function(aURI, aMediaList, aContentType, aAddDistinctOnly, aPlaylistReaderListener)
   {
-    const PlaylistReaderListener = new Components.Constructor("@songbirdnest.com/Songbird/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
+    const PlaylistReaderListener = new Components.Constructor("@getnightingale.com/Nightingale/PlaylistReaderListener;1", "sbIPlaylistReaderListener");
 
     var theExtension = this.getFileExtension(aURI);
 
@@ -184,6 +188,7 @@ CPlaylistReaderManager.prototype =
                       .createInstance(Ci.nsIWebBrowserPersist);
 
       if(!browser) return -1;
+      this.m_Browser = browser;
 
       // Create a local file to save the remote playlist to
       var destFile = this.getTempFilename(theExtension);
@@ -198,6 +203,16 @@ CPlaylistReaderManager.prototype =
       var registerFileForDelete = Cc["@mozilla.org/uriloader/external-helper-app-service;1"]
                                     .getService(Ci.nsPIExternalAppLauncher);
       registerFileForDelete.deleteTemporaryFileOnExit(localFile);
+
+      // cycle through the listener array and remove any that are done
+      for (var index = 0; index < this.m_Listeners.length; index++) {
+        var foo = this.m_Listeners[index];
+        if (foo.state && foo.state.indexOf("STOP") != -1) {
+          this.m_Listeners.splice(index, 1);
+          delete foo;
+          index = 0;
+        }
+      }
 
       var prListener = null;
       if(aPlaylistReaderListener)
@@ -215,12 +230,14 @@ CPlaylistReaderManager.prototype =
       prListener.addDistinctOnly = aAddDistinctOnly;
 
       // let the download decompress gzip as appropriate
-      browser.persistFlags &=
-        ~(Ci.nsIWebBrowserPersist.PERSIST_FLAGS_NO_CONVERSION);
+      this.m_Browser.persistFlags &= ~(Ci.nsIWebBrowserPersist.PERSIST_FLAGS_NO_CONVERSION);
 
-      browser.progressListener = prListener;
+//      this.m_Browser.persistFlags |= 2; // PERSIST_FLAGS_BYPASS_CACHE;
 
-      browser.saveURI(aURI, null, null, null, "", localFileUri);
+      this.m_Browser.progressListener = prListener;
+      this.m_Listeners.push(prListener);
+
+      this.m_Browser.saveURI(aURI, null, null, null, "", localFileUri);
 
       return 1;
     }
@@ -358,6 +375,9 @@ CPlaylistReaderManager.prototype =
 
     for (let i in this.m_Readers) {
       this.m_Readers[i] = null;
+    }
+    for (let i in this.m_Listeners) {
+      this.m_Listeners[i] = null;
     }
   },
 

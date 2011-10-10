@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbGStreamerRTPStreamer.h"
 
@@ -120,7 +122,7 @@ sbGStreamerRTPStreamer::GetDestPort(PRInt32 *aDestPort)
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbGStreamerRTPStreamer::BuildPipeline()
 {
   nsCString pipelineString = NS_ConvertUTF16toUTF8(mSourceURI);
@@ -204,10 +206,10 @@ sbGStreamerRTPStreamer::OnCapsSet(GstCaps *caps)
           "IN",         // Network type, always IN (Internet) 
           "IP4",        // Address type, for now hardcode to IPv4
           "127.0.0.1"); // Actual origin address. TODO: Set accurately?
-  gst_sdp_message_set_session_name (sdp, "Songbird RTP Stream");
-  gst_sdp_message_set_information (sdp, "Streaming from Songbird");
+  gst_sdp_message_set_session_name (sdp, "Nightingale RTP Stream");
+  gst_sdp_message_set_information (sdp, "Streaming from Nightingale");
   gst_sdp_message_add_time (sdp, "0", "0", NULL);
-  gst_sdp_message_add_attribute (sdp, "tool", "songbird");
+  gst_sdp_message_add_attribute (sdp, "tool", "nightingale");
 
   // TODO: Add a 'range' attribute with the correct info about the media
   // item; that way we can EOS at the appropriate time (requires more recent

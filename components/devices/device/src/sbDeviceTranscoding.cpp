@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDeviceTranscoding.h"
@@ -37,7 +37,7 @@
 
 #include <nsServiceManagerUtils.h>
 
-// Songbird interfaces
+// Nightingale interfaces
 #include <sbIDeviceEvent.h>
 #include <sbIJobCancelable.h>
 #include <sbIMediacoreEventTarget.h>
@@ -49,7 +49,7 @@
 #include <sbITranscodeVideoJob.h>
 #include <sbITranscodingConfigurator.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
@@ -115,7 +115,7 @@ sbDeviceTranscoding::SelectTranscodeProfile(PRUint32 transcodeType,
   if (NS_SUCCEEDED(rv)) {
     PRUint16 dataType = 0;
     rv = profileIdVariant->GetDataType(&dataType);
-    if (NS_SUCCEEDED(rv) &&
+    if (NS_SUCCEEDED(rv) && 
         dataType != nsIDataType::VTYPE_EMPTY &&
         dataType != nsIDataType::VTYPE_VOID) {
       hasProfilePref = PR_TRUE;
@@ -232,7 +232,6 @@ nsresult
 sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
 {
   TRACE(("%s", __FUNCTION__));
-
   nsresult rv;
 
   if (aBatch.empty()) {
@@ -247,20 +246,17 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
   }
 
   // Iterate over the batch getting the transcode profiles if needed.
-  const Batch::const_iterator end = aBatch.end();
-  for (Batch::const_iterator iter = aBatch.begin();
-       iter != end;
-       ++iter) {
-    TransferRequest * request = static_cast<TransferRequest*>(*iter);
-
+  Batch::iterator end = aBatch.end();
+  Batch::iterator iter = aBatch.begin();
+  while (iter != end) {
     // Check for abort.
-    if (mBaseDevice->IsRequestAborted()) {
+    if (mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
       return NS_ERROR_ABORT;
     }
 
-    // We only want non-playlist write requests
-    if (request->GetType() != sbIDevice::REQUEST_WRITE ||
-        request->IsPlaylist())
+    // Get request and skip it if it's a write playlist track request
+    TransferRequest * const request = *iter++;
+    if (request->IsPlaylist())
       continue;
 
     // First, ensure that the item isn't DRM protected before looking for
@@ -297,7 +293,7 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
       }
 
       request->albumArt = do_CreateInstance(
-              SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
+              NIGHTINGALE_TRANSCODEALBUMART_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       // It's ok for this to fail; album art is optional
@@ -350,7 +346,7 @@ DispatchTranscodeError(sbITranscodeError* aError,
   nsresult rv;
 
   nsCOMPtr<nsIWritablePropertyBag2> bag =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsISupportsString> errorString(do_QueryInterface(aError));
   NS_ENSURE_TRUE(errorString, NS_ERROR_NO_INTERFACE);
@@ -486,13 +482,7 @@ sbDeviceTranscoding::GetAudioFormatFromMediaItem(sbIMediaItem* aMediaItem,
           rate,
           channels,
           bitrate);
-  if (NS_FAILED(rv)) {
-    // Fill out the two fields we use - this will mean that we have a format
-    // object that certainly won't be supported anywhere, so we can then fall
-    // back to transcoding, etc.
-    formatInfo.Codec = "audio/x-unknown";
-    formatInfo.ContainerFormat = "application/x-unknown";
-  }
+  NS_ENSURE_SUCCESS (rv, rv);
 
   rv = audioFormat->SetAudioType(NS_ConvertASCIItoUTF16(formatInfo.Codec));
   NS_ENSURE_SUCCESS (rv, rv);
@@ -687,7 +677,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
   /* Set up album art for output to resulting file - transcoding will be
      performed if required. Ignore failures here - album art isn't essential */
   nsCOMPtr<sbITranscodeAlbumArt> albumArt = do_CreateInstance(
-                      SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
+                      NIGHTINGALE_TRANSCODEALBUMART_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> imageFormats;
@@ -709,16 +699,12 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(tcJob);
 
-  PRMonitor * const stopMonitor =
-    mBaseDevice->mRequestThreadQueue->GetStopWaitMonitor();
-  NS_ENSURE_TRUE(stopMonitor, NS_ERROR_UNEXPECTED);
-
   // Create our listener for transcode progress.
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(mBaseDevice,
                                      aDeviceStatusHelper,
                                      aMediaItem,
-                                     stopMonitor,
+                                     mBaseDevice->mReqWaitMonitor,
                                      sbTranscodeProgressListener::StatusProperty(),
                                      cancel);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
@@ -753,7 +739,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(stopMonitor);
+    nsAutoMonitor monitor(mBaseDevice->mReqWaitMonitor);
 
     // Check if the job is complete.
     isComplete = listener->IsComplete();
@@ -785,14 +771,14 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
   // If we abort, delete the destination file.
   if (listener->IsAborted()) {
-    nsCOMPtr<nsIFileURL> fileURL =
+    nsCOMPtr<nsIFileURL> fileURL = 
       do_QueryInterface(transcodedDestinationURIProxy);
     if (fileURL) {
       nsCOMPtr<nsIFile> file;
       rv = fileURL->GetFile(getter_AddRefs(file));
       if(NS_SUCCEEDED(rv)) {
         rv = file->Remove(PR_FALSE);
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
           "Failed to remove temporary file used for transcoding");
       }
     }
@@ -854,7 +840,7 @@ nsresult sbDeviceTranscoding::GetTranscodeManager(
     // Get the transcode manager.
     mTranscodeManager =
       do_ProxiedGetService
-        ("@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
+        ("@getnightingale.com/Nightingale/Mediacore/TranscodeManager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

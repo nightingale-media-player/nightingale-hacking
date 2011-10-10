@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -34,14 +34,13 @@
  *   This interface provides support for enumerating directory contents.  The
  * order of the enumeration is not determinate.
  *
- * "@songbirdnest.com/Songbird/DirectoryEnumerator;1"
+ * "@getnightingale.com/Nightingale/DirectoryEnumerator;1"
  * Use create instance with this component.
  *
  * XXXeps should add depth/breadth first support.
  */
 
 interface nsIFile;
-interface nsISimpleEnumerator;
 
 [scriptable, uuid(508bc51e-001f-4f3e-b036-d7dbff91e8dd)]
 interface sbIDirectoryEnumerator : nsISupports
@@ -103,31 +102,7 @@ interface sbIDirectoryEnumerator : nsISupports
 
 %{C++
 #define SB_DIRECTORYENUMERATOR_CONTRACTID \
-          "@songbirdnest.com/Songbird/DirectoryEnumerator;1"
-          
-#include <nsAutoPtr.h>
-#include <nsComponentManagerUtils.h>
-
-  inline nsresult sbGetDirectoryEntries(
-                                       nsIFile * aFile,
-                                       sbIDirectoryEnumerator ** aDirEntryEnumerator)
-  {
-    nsresult rv;
-    nsCOMPtr<sbIDirectoryEnumerator> dirEntries = 
-      do_CreateInstance(SB_DIRECTORYENUMERATOR_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    rv = dirEntries->SetFilesOnly(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = dirEntries->SetMaxDepth(1);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = dirEntries->Enumerate(aFile);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    dirEntries.forget(aDirEntryEnumerator);
-    
-    return NS_OK;
-  }
+          "@getnightingale.com/Nightingale/DirectoryEnumerator;1"
 %}C++
 
 

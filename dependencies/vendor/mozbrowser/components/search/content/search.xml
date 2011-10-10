@@ -47,6 +47,8 @@
 <!DOCTYPE bindings [
 <!ENTITY % searchBarDTD SYSTEM "chrome://browser/locale/searchbar.dtd" >
 %searchBarDTD;
+<!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+%globalDTD;
 <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd">
 %browserDTD;
 ]>
@@ -80,21 +82,27 @@
                    xbl:inherits="disabled,disableautocomplete,searchengine,src,newlines">
         <xul:button class="searchbar-engine-button"
                     type="menu"
-                    anonid="searchbar-engine-button">
+                    anonid="searchbar-engine-button"
+                    popup="_child"
+                    chromedir="&locale.dir;">
           <xul:image class="searchbar-engine-image" xbl:inherits="src"/>
           <xul:image class="searchbar-dropmarker-image"/>
           <xul:menupopup class="searchbar-popup"
-                         anonid="searchbar-popup">
+                         anonid="searchbar-popup"
+                         position="after_start">
             <xul:menuseparator/>
             <xul:menuitem class="open-engine-manager"
                           anonid="open-engine-manager"
                           label="&cmd_engineManager.label;"
+# The empty tooltiptext attribute is here to avoid bug 336231
+                          tooltiptext=""
                           oncommand="openManager(event);"/>
           </xul:menupopup>
         </xul:button>
-        <xul:hbox class="search-go-container">
+        <xul:hbox class="search-go-container" chromedir="&locale.dir;">
           <xul:image class="search-go-button"
                      anonid="search-go-button"
+                     chromedir="&locale.dir;"
                      onclick="handleSearchCommand(event);"
                      tooltiptext="&searchEndCap.label;" />
         </xul:hbox>
@@ -765,14 +773,14 @@
                phase="capturing"
                action="return this.openSearch();"/>
 
-<!-- XXX Songbird: enable F4 on mac too -->
-<!-- #ifndef XP_MACOSX -->
+// XXX Nightingale: enable F4 on mac too
+//#ifndef XP_MACOSX
       <handler event="keypress" keycode="VK_F4"
                phase="capturing"
                action="return this.openSearch();"/>
-<!-- #endif -->
+//#endif
 
-      <handler event="drop" phase="capturing">
+      <handler event="dragdrop" phase="capturing">
         nsDragAndDrop.drop(event, this.searchbarDNDObserver);
       </handler>
 

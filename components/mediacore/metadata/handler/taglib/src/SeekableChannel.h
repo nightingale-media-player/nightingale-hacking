@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,7 +37,7 @@
 
 /**
 * \file  SeekableChannel.h
-* \brief Songbird Seekable Channel Component Definition.
+* \brief Nightingale Seekable Channel Component Definition.
 */
 
 /*******************************************************************************
@@ -50,11 +50,11 @@
  * Seekable channel XPCOM component definitions.
  */
 
-#define SONGBIRD_SEEKABLECHANNEL_CONTRACTID                                    \
-                        "@songbirdnest.com/Songbird/SeekableChannel;1"
-#define SONGBIRD_SEEKABLECHANNEL_CLASSNAME                                     \
-                                    "Songbird Seekable Channel Component"
-#define SONGBIRD_SEEKABLECHANNEL_CID                                           \
+#define NIGHTINGALE_SEEKABLECHANNEL_CONTRACTID                                    \
+                        "@getnightingale.com/Nightingale/SeekableChannel;1"
+#define NIGHTINGALE_SEEKABLECHANNEL_CLASSNAME                                     \
+                                    "Nightingale Seekable Channel Component"
+#define NIGHTINGALE_SEEKABLECHANNEL_CID                                           \
 {                                                                              \
     0x2030739B,                                                                \
     0x5E60,                                                                    \
@@ -89,7 +89,7 @@
  *
  ******************************************************************************/
 
-#define NS_ERROR_SONGBIRD_SEEKABLE_CHANNEL_RESTART                             \
+#define NS_ERROR_NIGHTINGALE_SEEKABLE_CHANNEL_RESTART                             \
                         NS_ERROR_GENERATE_FAILURE(NS_ERROR_MODULE_GENERAL, 1)
 
 

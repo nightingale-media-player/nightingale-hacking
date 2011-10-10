@@ -14,7 +14,7 @@ fi
 destdir="$1"
 tempdir=${destdir}/.__temp
 currenttime=`date +%Y%m%d`
-tarballname=songbird_snapshot_${currenttime}.tar.gz
+tarballname=nightingale_snapshot_${currenttime}.tar.gz
 
 notice "Creating destination directory: ${destdir}"
 mkdir ${destdir}
@@ -22,12 +22,12 @@ mkdir ${destdir}
 notice "Creating temporary directory: ${tempdir}"
 mkdir ${tempdir}
 
-notice "Checking out songbird/trunk from public svn to ${tempdir}/songbird/trunk"
-svn co svn://publicsvn.songbirdnest.com/songbird/client/trunk ${tempdir}/songbird/trunk
+notice "Checking out nightingale/trunk from public svn to ${tempdir}/nightingale/trunk"
+svn co svn://publicsvn.getnightingale.com/nightingale/client/trunk ${tempdir}/nightingale/trunk
 
-notice "Creating gzipped tarball for songbird/trunk here: ${destdir}/${tarballname}"
+notice "Creating gzipped tarball for nightingale/trunk here: ${destdir}/${tarballname}"
 cd ${tempdir}
-tar -f ${destdir}/${tarballname} -cz songbird/trunk
+tar -f ${destdir}/${tarballname} -cz nightingale/trunk
 
 notice "Deleting temporary directory...."
 cd ${currentdir}

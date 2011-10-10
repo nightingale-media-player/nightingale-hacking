@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -38,9 +38,9 @@ function sbDownloadDeviceServicePaneModule()
 
 sbDownloadDeviceServicePaneModule.prototype =
 {
-  classDescription: "Songbird Download Device Service Pane Module",
+  classDescription: "Nightingale Download Device Service Pane Module",
   classID:          Components.ID("{ee93796b-090e-4703-982a-1d27bea552c3}"),
-  contractID:       "@songbirdnest.com/Songbird/DownloadDeviceServicePaneModule;1",
+  contractID:       "@getnightingale.com/Nightingale/DownloadDeviceServicePaneModule;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
                                            Ci.sbIDeviceBaseCallback])
 }
@@ -49,9 +49,9 @@ sbDownloadDeviceServicePaneModule.prototype =
 sbDownloadDeviceServicePaneModule.prototype.servicePaneInit =
 function sbDownloadDeviceServicePaneModule_servicePaneInit(aServicePaneModule)
 {
-  var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;1"]
+  var devMgr = Cc["@getnightingale.com/Nightingale/DeviceManager;1"]
                  .getService(Ci.sbIDeviceManager);
-  var downloadCat = "Songbird Download Device";
+  var downloadCat = "Nightingale Download Device";
   if (devMgr.hasDeviceForCategory(downloadCat)) {
     this._downloadDevice = devMgr.getDeviceByCategory(downloadCat)
                                  .QueryInterface(Ci.sbIDownloadDevice);
@@ -100,7 +100,7 @@ function sbDownloadDeviceServicePaneModule_onDrop(aNode,
 
 sbDownloadDeviceServicePaneModule.prototype.onDragGesture =
 function sbDownloadDeviceServicePaneModule_onDragGesture(aNode,
-                                                         aDataTransfer)
+                                                         aTransferable)
 {
 }
 
@@ -163,7 +163,7 @@ sbDownloadDeviceServicePaneModule.prototype.__defineGetter__("_node",
 function sbDownloadDeviceServicePaneModule_get_node()
 {
   if (!this._servicePaneNode) {
-    var lsps = Cc["@songbirdnest.com/servicepane/library;1"]
+    var lsps = Cc["@getnightingale.com/servicepane/library;1"]
                  .getService(Ci.sbILibraryServicePaneService);
     this._servicePaneNode =
       lsps.getNodeForLibraryResource(this._downloadDevice.downloadMediaList);

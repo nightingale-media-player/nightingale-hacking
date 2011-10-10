@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_KNOWNFOLDERMANAGER_H__
@@ -30,14 +30,11 @@
 // Mozilla Includes
 #include <nsAutoPtr.h>
 
-// Songbird Includes
-#include <sbAutoCOMInitializer.h>
-
 // Windows Includes
 #include <windows.h>
 
 // Forward Definitions
-struct IKnownFolderManager;
+class IKnownFolderManager;
 
 class sbKnownFolderManager : public sbIKnownFolderManager
 {
@@ -48,22 +45,22 @@ public:
   sbKnownFolderManager();
 
   nsresult Init();
-  nsresult GetDefaultDisplayName(const nsAString &aFolderPath,
+  nsresult GetDefaultDisplayName(const nsAString &aFolderPath, 
                                  nsAString &aDisplayName);
 
 private:
   ~sbKnownFolderManager();
 
 protected:
-  sbAutoCOMInitializer          mCOMInit;
+  HRESULT                       mCOMInitialized;
   nsRefPtr<IKnownFolderManager> mKnownFolderManager;
 };
 
-#define SONGBIRD_KNOWN_FOLDER_MANAGER_CONTRACTID          \
-  "@songbirdnest.com/Songbird/KnownFolderManager;1"
-#define SONGBIRD_KNOWN_FOLDER_MANAGER_CLASSNAME           \
-  "Songbird Known Folder Manager"
-#define SONGBIRD_KNOWN_FOLDER_MANAGER_CID                 \
+#define NIGHTINGALE_KNOWN_FOLDER_MANAGER_CONTRACTID          \
+  "@getnightingale.com/Nightingale/KnownFolderManager;1"
+#define NIGHTINGALE_KNOWN_FOLDER_MANAGER_CLASSNAME           \
+  "Nightingale Known Folder Manager"
+#define NIGHTINGALE_KNOWN_FOLDER_MANAGER_CID                 \
 { /*{DACCB32D-CFED-442f-8B6A-698FD7B22315}*/              \
   0xdaccb32d,                                             \
   0xcfed,                                                 \

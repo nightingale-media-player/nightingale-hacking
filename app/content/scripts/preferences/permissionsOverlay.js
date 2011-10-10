@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,78 +20,78 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
-var gSongbirdPermissionsOverlay = {
+var gNightingalePermissionsOverlay = {
   prompt: null,
   blocking: null,
   prefs: null,
   onLoad: function(event) {
-    window.removeEventListener('load', gSongbirdPermissionsOverlay.onLoad, false);
+    window.removeEventListener('load', gNightingalePermissionsOverlay.onLoad, false);
     
     if (!window.arguments || !window.arguments[0] ||
         !window.arguments[0].blocking) {
       // a blocking object wasn't passed in. nothing to do
       return;
     }
-    gSongbirdPermissionsOverlay.blocking = window.arguments[0].blocking;
-    gSongbirdPermissionsOverlay.remoteAPIPane = window.arguments[0].remoteAPIPane;
+    gNightingalePermissionsOverlay.blocking = window.arguments[0].blocking;
+    gNightingalePermissionsOverlay.remoteAPIPane = window.arguments[0].remoteAPIPane;
 
     var permissionsText = document.getElementById('permissionsText');
     if (!permissionsText) {
       return;
     }
     
-    gSongbirdPermissionsOverlay.prefs =
+    gNightingalePermissionsOverlay.prefs =
       Components.classes['@mozilla.org/preferences-service;1']
       .getService(Components.interfaces.nsIPrefBranch);
     
     var settings = document.createElement('description');
-    settings.appendChild(document.createTextNode(gSongbirdPermissionsOverlay.blocking.settings));
+    settings.appendChild(document.createTextNode(gNightingalePermissionsOverlay.blocking.settings));
     permissionsText.parentNode.insertBefore(settings, permissionsText);    
     
-    gSongbirdPermissionsOverlay.prompt = document.createElement('checkbox');
-    gSongbirdPermissionsOverlay.prompt.id = 'blockChkbx';
-    permissionsText.parentNode.insertBefore(gSongbirdPermissionsOverlay.prompt,
+    gNightingalePermissionsOverlay.prompt = document.createElement('checkbox');
+    gNightingalePermissionsOverlay.prompt.id = 'blockChkbx';
+    permissionsText.parentNode.insertBefore(gNightingalePermissionsOverlay.prompt,
       permissionsText);
-    gSongbirdPermissionsOverlay.prompt.label = gSongbirdPermissionsOverlay.blocking.prompt;
+    gNightingalePermissionsOverlay.prompt.label = gNightingalePermissionsOverlay.blocking.prompt;
     try {
-      gSongbirdPermissionsOverlay.prompt.checked =
-        gSongbirdPermissionsOverlay.prefs.getBoolPref(
-          gSongbirdPermissionsOverlay.blocking.pref);
+      gNightingalePermissionsOverlay.prompt.checked =
+        gNightingalePermissionsOverlay.prefs.getBoolPref(
+          gNightingalePermissionsOverlay.blocking.pref);
     } catch (e) {
       // don't fail on a missing pref
     }
-    gSongbirdPermissionsOverlay.originalBlocked = 
-      gSongbirdPermissionsOverlay.prompt.checked ? true : false;
-    gSongbirdPermissionsOverlay.prompt.addEventListener('command',
-      gSongbirdPermissionsOverlay.onCheckboxCommand, false);
+    gNightingalePermissionsOverlay.originalBlocked = 
+      gNightingalePermissionsOverlay.prompt.checked ? true : false;
+    gNightingalePermissionsOverlay.prompt.addEventListener('command',
+      gNightingalePermissionsOverlay.onCheckboxCommand, false);
 
-    window.addEventListener('unload', gSongbirdPermissionsOverlay.onClose, false);
-    window.addEventListener('command', gSongbirdPermissionsOverlay.onCommand, false);
+    window.addEventListener('unload', gNightingalePermissionsOverlay.onClose, false);
+    window.addEventListener('command', gNightingalePermissionsOverlay.onCommand, false);
   },
   onCheckboxCommand: function(event) {
-    gSongbirdPermissionsOverlay.prefs.setBoolPref(
-        gSongbirdPermissionsOverlay.blocking.pref,
-        gSongbirdPermissionsOverlay.prompt.checked);
+    gNightingalePermissionsOverlay.prefs.setBoolPref(
+        gNightingalePermissionsOverlay.blocking.pref,
+        gNightingalePermissionsOverlay.prompt.checked);
   },
   onCommand: function(event) {
     if ( event.target.id ) {
       // the close button doesn't have an id - very fragile!
-      gSongbirdPermissionsOverlay.remoteAPIPane.isChanged = true;
+      gNightingalePermissionsOverlay.remoteAPIPane.isChanged = true;
     }
   },
   onClose: function(event) {
-    window.removeEventListener('command', gSongbirdPermissionsOverlay.onCommand, false);
-    gSongbirdPermissionsOverlay.prompt.removeEventListener('command',
-      gSongbirdPermissionsOverlay.onCheckboxCommand, false);
+    window.removeEventListener('command', gNightingalePermissionsOverlay.onCommand, false);
+    gNightingalePermissionsOverlay.prompt.removeEventListener('command',
+      gNightingalePermissionsOverlay.onCheckboxCommand, false);
     window.removeEventListener('unload',
-                               gSongbirdPermissionsOverlay.onClose,
+                               gNightingalePermissionsOverlay.onClose,
                                false);
   }
 };
-window.addEventListener('load', gSongbirdPermissionsOverlay.onLoad, false);
+window.addEventListener('load', gNightingalePermissionsOverlay.onLoad, false);
 
 

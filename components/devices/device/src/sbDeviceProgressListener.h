@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_DEVICE_PROGRESS_LISTENER_H_
@@ -37,7 +37,7 @@
 
 /**
  * \file  sbDeviceProgressListener.h
- * \brief Songbird Device Progress Listener Definitions.
+ * \brief Nightingale Device Progress Listener Definitions.
  */
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIJobProgress.h>
 
 // Mozilla imports.
@@ -58,9 +58,6 @@
 // Device progress listener classes.
 //
 //------------------------------------------------------------------------------
-
-// Used class declarations.
-class sbDeviceStatusHelper;
 
 /**
  * This class implements a job progress listener that will send notification to
@@ -92,18 +89,15 @@ public:
   /**
    * Create a new device progress listener and return it in
    * aDeviceProgressListener.  If aCompleteNotifyMonitor is specified, send
-   * notification to it upon job completion.  If aDevicesStatusHelper is
-   * specified, use it to update device status.
+   * notification to it upon job completion.
    *
    * \param aDeviceProgressListener Returned device progress listener.
    * \param aCompleteNotifyMonitor  Monitor to notify upon job completion.
-   * \param aDeviceStatusHelper     Helper for updating device status.
    */
 
   static nsresult
     New(sbDeviceProgressListener** aDeviceProgressListener,
-        PRMonitor*                 aCompleteNotifyMonitor = nsnull,
-        sbDeviceStatusHelper*      aDeviceStatusHelper = nsnull);
+        PRMonitor*                 aCompleteNotifyMonitor = nsnull);
 
 
   /**
@@ -115,15 +109,12 @@ public:
 
   /**
    * Construct a new device progress listener using the job completion
-   * notification monitor specified by aCompleteNotifyMonitor and the device
-   * status helper specified by aDeviceStatusHelper.
+   * notification monitor specified by aCompleteNotifyMonitor.
    *
    * \param aCompleteNotifyMonitor  Monitor to notify upon job completion.
-   * \param aDeviceStatusHelper     Helper for updating device status.
    */
 
-  sbDeviceProgressListener(PRMonitor*            aCompleteNotifyMonitor,
-                           sbDeviceStatusHelper* aDeviceStatusHelper);
+  sbDeviceProgressListener(PRMonitor* aCompleteNotifyMonitor);
 
 
   /**
@@ -143,12 +134,10 @@ private:
 
   //
   // mCompleteNotifyMonitor     Monitor to notify upon job completion.
-  // mDeviceStatusHelper        Helper to update device status.
   // mIsComplete                True if job has completed.
   //
 
   PRMonitor*                    mCompleteNotifyMonitor;
-  sbDeviceStatusHelper*         mDeviceStatusHelper;
   PRInt32                       mIsComplete;
 };
 

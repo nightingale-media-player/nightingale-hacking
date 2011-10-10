@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,12 +21,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -46,7 +46,7 @@
    ************************************************************************* -->
 
   <binding id="sb-device-progress"
-     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+     extends="chrome://nightingale/content/bindings/device/deviceControl.xml#sb-device-control">
 
     <!-- ***********************************************************************
      *
@@ -64,6 +64,30 @@
                   flex="1"
                   class="device-progress-idle-box"
                   hidden="false">
+          <!-- Sync mode toggle buttons -->
+          <xul:hbox sbid="syncmode_box" class="device-syncmode-box">
+
+            <xul:label sbid="syncmode_label"/>
+
+            <xul:sb-device-management-toggle sbid="syncmode-toggle"
+                                             xbl:inherits="dev-lib-guid"/>
+
+            <xul:toolbarseparator sbid="device_progress_separator"
+                                  class="device-progress-manage-separator"/>
+          </xul:hbox>
+
+          <!-- Apply/cancel buttons to appear when the user modified settings -->
+          <xul:button sbid="settings_cancel_button"
+                      class="device-progress-settings-cancel-buton"
+                      label="&window.cancel;"
+                      action="settings-cancel"
+                      oncommand="DPW.onAction(event);"/>
+
+          <xul:button sbid="settings_apply_button"
+                      class="device-progress-settings-apply-buton"
+                      label="&window.apply;"
+                      action="settings-apply"
+                      oncommand="DPW.onAction(event);"/>
 
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
@@ -176,7 +200,7 @@
         /* Import the device progress services. */
         if (typeof(DPW) == "undefined") {
           jsLoader.loadSubScript
-                 ("chrome://songbird/content/scripts/device/deviceProgress.js",
+                 ("chrome://nightingale/content/scripts/device/deviceProgress.js",
                   null);
         }
       ]]></body></method>

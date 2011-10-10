@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is httpd.js code.
+ * The Original Code is MozJSHTTP code.
  *
  * The Initial Developer of the Original Code is
  * Jeff Walden <jwalden+code@mit.edu>.
@@ -40,81 +40,13 @@
 // escaping checks -- highly dependent on the default index handler output
 // format
 
-var srv, dir, dirEntries;
-
-function run_test()
-{
-  createTestDirectory();
-
-  srv = createServer();
-  srv.registerDirectory("/", dir);
-
-  var nameDir = do_get_file("data/name-scheme/");
-  srv.registerDirectory("/bar/", nameDir);
-
-  srv.start(4444);
-
-  function done()
-  {
-    do_test_pending();
-    destroyTestDirectory();
-    srv.stop(function() { do_test_finished(); });
-  }
-
-  runHttpTests(tests, done);
-}
-
-function createTestDirectory()
-{
-  dir = Cc["@mozilla.org/file/directory_service;1"]
-          .getService(Ci.nsIProperties)
-          .get("TmpD", Ci.nsIFile);
-  dir.append("index_handler_test_" + Math.random());
-  dir.createUnique(Ci.nsIFile.DIRECTORY_TYPE, 0744);
-
-  // populate with test directories, files, etc.
-  // Files must be in expected order of display on the index page!
-
-  var files = [];
-
-  makeFile("aa_directory", true, dir, files);
-  makeFile("Ba_directory", true, dir, files);
-  makeFile("bb_directory", true, dir, files);
-  makeFile("foo", true, dir, files);
-  makeFile("a_file", false, dir, files);
-  makeFile("B_file", false, dir, files);
-  makeFile("za'z", false, dir, files);
-  makeFile("zb&z", false, dir, files);
-  makeFile("zc<q", false, dir, files);
-  makeFile('zd"q', false, dir, files);
-  makeFile("ze%g", false, dir, files);
-  makeFile("zf%200h", false, dir, files);
-  makeFile("zg>m", false, dir, files);
-
-  dirEntries = [files];
-
-  var subdir = dir.clone();
-  subdir.append("foo");
-
-  files = [];
-
-  makeFile("aa_dir", true, subdir, files);
-  makeFile("b_dir", true, subdir, files);
-  makeFile("AA_file.txt", false, subdir, files);
-  makeFile("test.txt", false, subdir, files);
-
-  dirEntries.push(files);
-}
-
-function destroyTestDirectory()
-{
-  dir.remove(true);
-}
-
-
-/*************
- * UTILITIES *
- *************/
+var paths =
+  [
+   "http://localhost:4444/",            // check top-level directory listing
+   "http://localhost:4444/foo/",        // check non-top-level, too
+   "http://localhost:4444/bar/folder^/" // trailing-caret leaf with hidden files
+  ];
+var currPathIndex = 0;
 
 /** Verifies data in bytes for the trailing-caret path above. */
 function hiddenDataCheck(bytes, uri, path)
@@ -163,7 +95,8 @@ function hiddenDataCheck(bytes, uri, path)
   var top = ios.newURI(uri, null, null);
 
   // N.B. No ERROR_IF_SEE_THIS.txt^ file!
-  var dirEntries = [{name: "file.txt", isDirectory: false},
+  var dirEntries = [{name: "CVS", isDirectory: true}, // XXX sigh
+                    {name: "file.txt", isDirectory: false},
                     {name: "SHOULD_SEE_THIS.txt^", isDirectory: false}];
 
   for (var i = 0; i < items.length; i++)
@@ -179,10 +112,11 @@ function hiddenDataCheck(bytes, uri, path)
 
     do_check_eq(link.textContent, f.name + sep);
 
-    uri = ios.newURI(link.getAttribute("href"), null, top);
+    var uri = ios.newURI(link.getAttribute("href"), null, top);
     do_check_eq(decodeURIComponent(uri.path), path + f.name + sep);
   }
 }
+
 
 /**
  * Verifies data in bytes (an array of bytes) represents an index page for the
@@ -244,7 +178,7 @@ function dataCheck(bytes, uri, path, dirEntries)
   var ios = Cc["@mozilla.org/network/io-service;1"]
               .getService(Ci.nsIIOService);
 
-  var dirURI = ios.newURI(uri, null, null);
+  var top = ios.newURI(uri, null, null);
 
   for (var i = 0; i < items.length; i++)
   {
@@ -259,10 +193,134 @@ function dataCheck(bytes, uri, path, dirEntries)
 
     do_check_eq(link.textContent, f.name + sep);
 
-    uri = ios.newURI(link.getAttribute("href"), null, top);
+    var uri = ios.newURI(link.getAttribute("href"), null, top);
     do_check_eq(decodeURIComponent(uri.path), path + f.name + sep);
   }
 }
+
+var listener =
+  {
+    // data from request
+    _data: [],
+
+    onStartRequest: function(request, cx)
+    {
+      var ch = request.QueryInterface(Ci.nsIHttpChannel);
+      do_check_eq(ch.getResponseHeader("Content-Type"), "text/html");
+
+      this._data.length = 0;
+      this._uri = paths[currPathIndex];
+      this._path = this._uri.substring(paths[0].length - 1);
+      this._dirEntries = dirEntries[currPathIndex];
+    },
+    onDataAvailable: function(request, cx, inputStream, offset, count)
+    {
+      var bytes = makeBIS(inputStream).readByteArray(count);
+      Array.prototype.push.apply(this._data, bytes);
+    },
+    onStopRequest: function(request, cx, status)
+    {
+      if (currPathIndex == 2)
+        hiddenDataCheck(this._data, this._uri, this._path);
+      else
+        dataCheck(this._data, this._uri, this._path, this._dirEntries);
+
+      if (++currPathIndex == paths.length)
+      {
+        srv.stop();
+        destroyTestDirectory();
+      }
+      else
+      {
+        performNextTest();
+      }
+      do_test_finished();
+    },
+    QueryInterface: function(aIID)
+    {
+      if (aIID.equals(Ci.nsIStreamListener) ||
+          aIID.equals(Ci.nsIRequestObserver) ||
+          aIID.equals(Ci.nsISupports))
+        return this;
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    }
+  };
+
+
+var srv, dir, dirEntries;
+
+function run_test()
+{
+  createTestDirectory();
+
+  srv = createServer();
+  srv.registerDirectory("/", dir);
+
+  var nameDir = do_get_file("netwerk/test/httpserver/test/data/name-scheme/");
+  srv.registerDirectory("/bar/", nameDir);
+
+  srv.start(4444);
+
+  performNextTest();
+}
+
+function performNextTest()
+{
+  do_test_pending();
+
+  var ch = makeChannel(paths[currPathIndex]);
+  ch.asyncOpen(listener, null);
+}
+
+function createTestDirectory()
+{
+  dir = Cc["@mozilla.org/file/directory_service;1"]
+          .getService(Ci.nsIProperties)
+          .get("TmpD", Ci.nsIFile);
+  dir.append("index_handler_test_" + Math.random());
+  dir.createUnique(Ci.nsIFile.DIRECTORY_TYPE, 0744);
+
+  // populate with test directories, files, etc.
+  // Files must be in expected order of display on the index page!
+
+  files = [];
+
+  makeFile("aa_directory", true, dir, files);
+  makeFile("Ba_directory", true, dir, files);
+  makeFile("bb_directory", true, dir, files);
+  makeFile("foo", true, dir, files);
+  makeFile("a_file", false, dir, files);
+  makeFile("B_file", false, dir, files);
+  makeFile("za'z", false, dir, files);
+  makeFile("zb&z", false, dir, files);
+  makeFile("zc<q", false, dir, files);
+  makeFile('zd"q', false, dir, files);
+  makeFile("ze%g", false, dir, files);
+  makeFile("zf%200h", false, dir, files);
+  makeFile("zg>m", false, dir, files);
+
+  dirEntries = [files];
+
+  var subdir = dir.clone();
+  subdir.append("foo");
+
+  files = [];
+
+  makeFile("aa_dir", true, subdir, files);
+  makeFile("b_dir", true, subdir, files);
+  makeFile("AA_file.txt", false, subdir, files);
+  makeFile("test.txt", false, subdir, files);
+
+  dirEntries.push(files);
+}
+
+function destroyTestDirectory()
+{
+  dir.remove(true);
+}
+
+
+// utilities
 
 /**
  * Create a file/directory with the given name underneath parentDir, and
@@ -271,7 +329,10 @@ function dataCheck(bytes, uri, path, dirEntries)
  */
 function makeFile(name, isDirectory, parentDir, lst)
 {
-  var type = Ci.nsIFile[isDirectory ? "DIRECTORY_TYPE" : "NORMAL_FILE_TYPE"];
+  var type = isDirectory
+           ? Ci.nsIFile.DIRECTORY_TYPE
+           : Ci.nsIFile.NORMAL_FILE_TYPE;
+
   var file = parentDir.clone();
 
   try
@@ -281,44 +342,4 @@ function makeFile(name, isDirectory, parentDir, lst)
     lst.push({name: name, isDirectory: isDirectory});
   }
   catch (e) { /* OS probably doesn't like file name, skip */ }
-}
-
-/*********
- * TESTS *
- *********/
-
-var tests = [];
-var test;
-
-// check top-level directory listing
-test = new Test("http://localhost:4444/",
-                null, start, stopRootDirectory),
-tests.push(test);
-function start(ch)
-{
-  do_check_eq(ch.getResponseHeader("Content-Type"), "text/html");
-}
-function stopRootDirectory(ch, cx, status, data)
-{
-  dataCheck(data, "http://localhost:4444/", "/", dirEntries[0]);
-}
-
-
-// check non-top-level, too
-test = new Test("http://localhost:4444/foo/",
-                null, start, stopFooDirectory),
-tests.push(test);
-function stopFooDirectory(ch, cx, status, data)
-{
-  dataCheck(data, "http://localhost:4444/foo/", "/foo/", dirEntries[1]);
-}
-
-
-// trailing-caret leaf with hidden files
-test = new Test("http://localhost:4444/bar/folder^/",
-                null, start, stopTrailingCaretDirectory),
-tests.push(test);
-function stopTrailingCaretDirectory(ch, cx, status, data)
-{
-  hiddenDataCheck(data, "http://localhost:4444/bar/folder^/", "/bar/folder^/");
 }

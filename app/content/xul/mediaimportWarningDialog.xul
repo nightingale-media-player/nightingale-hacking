@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,27 +21,27 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
 -->
 
 <!-- Import external definitions. -->
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/mediaimportWarningDialog.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/mediaimportWarningDialog.css"
                  type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
 <!DOCTYPE overlay [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
   %brandDTD;
-  %songbirdDTD;
+  %nightingaleDTD;
   %textcontextDTD;
 ]>
 
@@ -169,8 +169,8 @@
 
         // Set the URL of the codec URL
         var label = document.getElementById("codec_wiki_url_label");
-        var url = Application.prefs.getValue("songbird.url.codec_not_found",
-            "http://wiki.songbirdnest.com/Docs/Video_Codec_Support");
+        var url = Application.prefs.getValue("nightingale.url.codec_not_found",
+            "http://wiki.getnightingale.com/Docs/Video_Codec_Support");
         label.setAttribute("value", url);
         label.setAttribute("onclick", "openLink('" + url + "');");
       },
@@ -182,7 +182,7 @@
           const prefs = Cc["@mozilla.org/fuel/application;1"]
                           .getService(Ci.fuelIApplication)
                           .prefs;
-          prefs.setValue("songbird.mediaimport.warn_filtered_exts", false);
+          prefs.setValue("nightingale.mediaimport.warn_filtered_exts", false);
         }
       },
     };
@@ -199,10 +199,10 @@
       externalLoader.loadURI(nsURI, null);
       */
 
-      // Open it in the Songbird browser
+      // Open it in the Nightingale browser
       Cc["@mozilla.org/appshell/window-mediator;1"]
         .getService(Ci.nsIWindowMediator)
-        .getMostRecentWindow("Songbird:Main").gBrowser.loadOneTab(url);
+        .getMostRecentWindow("Nightingale:Main").gBrowser.loadOneTab(url);
     }
   
   ]]></script>

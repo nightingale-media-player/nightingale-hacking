@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,32 +21,32 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird metadata album art fetcher.
+// Nightingale metadata album art fetcher.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbMetadataAlbumArtFetcher.cpp
- * \brief Songbird Metadata Album Art Fetcher Source.
+ * \brief Nightingale Metadata Album Art Fetcher Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird metadata album art fetcher imported services.
+// Nightingale metadata album art fetcher imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbMetadataAlbumArtFetcher.h"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
 #include <sbMemoryUtils.h>
@@ -124,7 +124,7 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItem
 
   // Get the metadata manager.
   nsCOMPtr<sbIMetadataManager> metadataManager =
-    do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/MetadataManager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Stash the album art source list into temporary variable in case
@@ -169,7 +169,7 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem
   // duplicate code. We can do this since we always go through each item
   // anyways.
   nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = items->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
                             PR_FALSE);
@@ -218,7 +218,7 @@ sbMetadataAlbumArtFetcher::GetName(nsAString& aName)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   sbStringBundle stringBundle;
-  aName.Assign(stringBundle.Get("songbird.albumart.metadata.name"));
+  aName.Assign(stringBundle.Get("nightingale.albumart.metadata.name"));
   return NS_OK;
 }
 
@@ -233,7 +233,7 @@ sbMetadataAlbumArtFetcher::GetDescription(nsAString& aDescription)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   sbStringBundle stringBundle;
-  aDescription.Assign(stringBundle.Get("songbird.albumart.metadata.description"));
+  aDescription.Assign(stringBundle.Get("nightingale.albumart.metadata.description"));
   return NS_OK;
 }
 
@@ -262,7 +262,7 @@ sbMetadataAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   NS_ENSURE_STATE(mPrefService);
   
-  nsresult rv = mPrefService->GetBoolPref("songbird.albumart.metadata.enabled",
+  nsresult rv = mPrefService->GetBoolPref("nightingale.albumart.metadata.enabled",
                                           aIsEnabled);
   if (NS_FAILED(rv)) {
     *aIsEnabled = PR_FALSE;
@@ -276,7 +276,7 @@ sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mPrefService);
-  return mPrefService->SetBoolPref("songbird.albumart.metadata.enabled",
+  return mPrefService->SetBoolPref("nightingale.albumart.metadata.enabled",
                                    aIsEnabled);
 }
 
@@ -291,7 +291,7 @@ sbMetadataAlbumArtFetcher::GetPriority(PRInt32* aPriority)
   NS_ENSURE_ARG_POINTER(aPriority);
   NS_ENSURE_STATE(mPrefService);
   
-  nsresult rv = mPrefService->GetIntPref("songbird.albumart.metadata.priority",
+  nsresult rv = mPrefService->GetIntPref("nightingale.albumart.metadata.priority",
                                          aPriority);
   if (NS_FAILED(rv)) {
     *aPriority = 0;
@@ -305,7 +305,7 @@ sbMetadataAlbumArtFetcher::SetPriority(PRInt32 aPriority)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mPrefService);
-  return mPrefService->SetIntPref("songbird.albumart.metadata.priority",
+  return mPrefService->SetIntPref("nightingale.albumart.metadata.priority",
                                   aPriority);
 }
 

@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbGStreamerPipeline.h"
 
@@ -66,11 +68,10 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerPipeline)
 sbGStreamerPipeline::sbGStreamerPipeline() :
   mPipeline(NULL),
   mMonitor(NULL),
+  mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
   mPipelineOp(GStreamer::OP_UNKNOWN)
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - Constructed", this));
-
-  mBaseEventTarget = new sbBaseMediacoreEventTarget(this);
 }
 
 sbGStreamerPipeline::~sbGStreamerPipeline()
@@ -84,8 +85,8 @@ sbGStreamerPipeline::~sbGStreamerPipeline()
   }
 }
 
-nsresult
-sbGStreamerPipeline::InitGStreamer()
+NS_IMETHODIMP
+sbGStreamerPipeline::Init()
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - Initialise", this));
 
@@ -109,13 +110,13 @@ sbGStreamerPipeline::InitGStreamer()
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbGStreamerPipeline::BuildPipeline()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-nsresult
+NS_IMETHODIMP
 sbGStreamerPipeline::SetupPipeline()
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - SetupPipeline", this));
@@ -147,7 +148,7 @@ sbGStreamerPipeline::SetupPipeline()
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbGStreamerPipeline::DestroyPipeline()
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - DestroyPipeline", this));
@@ -374,7 +375,7 @@ void sbGStreamerPipeline::HandleStateChangeMessage(GstMessage *message)
     else if (oldstate == GST_STATE_PLAYING && newstate == GST_STATE_PAUSED)
     {
       mTimeRunning += GetRunningTime();
-      mTimeStarted = (PRIntervalTime)-1;
+      mTimeStarted = -1;
     }
 
     // Dispatch START, PAUSE, STOP events
@@ -411,12 +412,12 @@ sbGStreamerPipeline::GetRunningTime()
   PRIntervalTime now = PR_IntervalNow();
   PRIntervalTime interval;
 
-  if (mTimeStarted == (PRIntervalTime)-1)
+  if (mTimeStarted == -1)
     return mTimeRunning;
 
   if (now < mTimeStarted) {
     // Wraparound occurred, deal with it.
-    PRInt64 realnow = (PRInt64)now + ((PRInt64)1<<32);
+    PRInt64 realnow = now + 1L<<32;
     interval = (PRIntervalTime)(realnow - mTimeStarted);
   }
   else {

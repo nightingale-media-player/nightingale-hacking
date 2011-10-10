@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -30,9 +30,9 @@
 <!-- Import external definitions. -->
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 <bindings
@@ -45,9 +45,7 @@
    *
    * First run import media widget.
    *
-   *   This widget provides a first run import media UI.  It extends
-   *   sb-wizard-page directly - rather than being enclosed in one - so
-   *   it can easily use the sb-wizard-page.visited property.
+   *   This widget provides a first run import media UI.
    *
    * Methods:
    *
@@ -57,8 +55,7 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-first-run-import-media"
-           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+  <binding id="sb-first-run-import-media">
 
     <!-- ***********************************************************************
      *
@@ -169,10 +166,7 @@
        -->
 
       <method name="saveSettings"><body><![CDATA[
-        // This page may be skipped.  Only save if it was visited:
-        if (this.visited) {
-          this._widgetSvc.saveSettings();
-        }
+        this._widgetSvc.saveSettings();
       ]]></body></method>
 
 
@@ -203,7 +197,7 @@
           jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                .getService
                                   (Components.interfaces.mozIJSSubScriptLoader);
-          jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
+          jsLoader.loadSubScript("chrome://nightingale/content/scripts/" +
                                    "firstRun/firstRunImportMedia.js",
                                  null);
         }

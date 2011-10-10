@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -814,7 +814,7 @@ function testSerialize(library) {
 
 function getOperatorForProperty(propertyID, operator) {
 
-  var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  var propMan = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                   .getService(Ci.sbIPropertyManager);
   var info = propMan.getPropertyInfo(propertyID);
   var op = info.getOperator(operator);
@@ -877,7 +877,7 @@ function assertUnique(list) {
 
 function countMediaItems(library) {
 
-  var PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
+  var PROP_ISLIST = "http://getnightingale.com/data/1.0#isList";
 
   var listener = {
     length: 0,

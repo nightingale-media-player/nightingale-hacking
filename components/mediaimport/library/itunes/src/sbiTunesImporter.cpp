@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -36,7 +36,6 @@
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
-#include <nsXPCOMCIDInternal.h>
 #include <nsIArray.h>
 #include <nsIBufferedStreams.h>
 #include <nsIFile.h>
@@ -56,7 +55,7 @@
 // NSPR includes
 #include <prtime.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbIAlbumArtFetcherSet.h>
 #include <sbIAlbumArtListener.h>
 #include <sbFileUtils.h>
@@ -79,7 +78,7 @@
 #include "sbiTunesImporterStatus.h"
 
 char const SB_ITUNES_LIBRARY_IMPORT_PREF_PREFIX[] = "library_import.itunes";
-char const SB_ITUNES_LIBRARY_IMPORTER_PREF_PREFIX[] = "songbird.library_importer.";
+char const SB_ITUNES_LIBRARY_IMPORTER_PREF_PREFIX[] = "nightingale.library_importer.";
 
 #ifdef PR_LOGGING
 static PRLogModuleInfo* giTunesImporter = nsnull;
@@ -104,18 +103,18 @@ static PRLogModuleInfo* giTunesImporter = nsnull;
 
 /**
  * typedef for conversion functions used to convert values from iTunes to 
- * Songbird
+ * Nightingale
  */
 typedef nsString (*ValueConversion)(nsAString const & aValue);
 
 /**
- * Convert the iTunes rating value specified by aITunesMetaValue to a Songbird
+ * Convert the iTunes rating value specified by aITunesMetaValue to a Nightingale
  * rating property value and return the result. 1 star is the same as 20 in 
  * iTunes
  *
  * \param aRating iTunes rating
  *
- * \return Songbird property value.
+ * \return Nightingale property value.
  */
 
 nsString ConvertRating(nsAString const & aRating) {
@@ -133,11 +132,11 @@ nsString ConvertRating(nsAString const & aRating) {
 
 /**
  * Convert the iTunes duration value specified by aITunesMetaValue to a
- * Songbird duration property value and return the result.
+ * Nightingale duration property value and return the result.
  *
  * \param aDuration iTunes duration in seconds.
  *
- * \return Songbird property value.
+ * \return Nightingale property value.
  */
 
 nsString ConvertDuration(nsAString const & aDuration) {
@@ -155,11 +154,11 @@ nsString ConvertDuration(nsAString const & aDuration) {
 
 /**
  * Convert the iTunes date/time value specified by aITunesMetaValue to a
- * Songbird date/time property value and return the result.
+ * Nightingale date/time property value and return the result.
  *
  * \param aDateTime iTunes date/time value.
  *
- * \return Songbird property value.
+ * \return Nightingale property value.
  */
 
 nsString ConvertDateTime(nsAString const & aDateTime) {
@@ -218,6 +217,31 @@ nsString ConvertDateTime(nsAString const & aDateTime) {
   return sbAutoString(static_cast<PRUint64>(prTime));
 }
 
+/**
+ * Convert the iTunes 'kind' value specified by aITunesMetaValue to a
+ * Nightingale contentType property value and return the result.
+ *
+ * \param aKind iTunes media kind value.
+ *
+ * \return Nightingale property value.
+ */
+
+nsString ConvertKind(nsAString const & aKind) {
+  nsString result;
+  
+  if (aKind.Find("video") != -1) {
+    result = NS_LITERAL_STRING("video");
+  }
+  else if (aKind.Find("audio") != -1) {
+    result = NS_LITERAL_STRING("audio");
+  }
+  else if (aKind.EqualsLiteral("true")) {
+    result = NS_LITERAL_STRING("podcast");
+  }
+ 
+  return result;
+}
+
 struct PropertyMap {
   char const * SBProperty;
   char const * ITProperty;
@@ -225,7 +249,7 @@ struct PropertyMap {
 };
 
 /**
- * Mapping between Songbird properties and iTunes
+ * Mapping between Nightingale properties and iTunes
  */
 PropertyMap gPropertyMap[] = {
   { SB_PROPERTY_ITUNES_GUID,      "Persistent ID", 0 },
@@ -236,12 +260,14 @@ PropertyMap gPropertyMap[] = {
   { SB_PROPERTY_BPM,              "BPM", 0 },
   { SB_PROPERTY_COMMENT,          "Comments", 0 },
   { SB_PROPERTY_COMPOSERNAME,     "Composer", 0 },
+  { SB_PROPERTY_CONTENTTYPE,      "Kind", ConvertKind },
   { SB_PROPERTY_DISCNUMBER,       "Disc Number", 0 },
   { SB_PROPERTY_DURATION,         "Total Time", ConvertDuration },
   { SB_PROPERTY_GENRE,            "Genre", 0},
   { SB_PROPERTY_LASTPLAYTIME,     "Play Date UTC", ConvertDateTime },
   { SB_PROPERTY_LASTSKIPTIME,     "Skip Date", ConvertDateTime },
   { SB_PROPERTY_PLAYCOUNT,        "Play Count", 0 },
+  { SB_PROPERTY_CONTENTTYPE,      "Podcast", ConvertKind },
   { SB_PROPERTY_RATING,           "Rating", ConvertRating },
   { SB_PROPERTY_SAMPLERATE,       "Sample Rate", 0 },
   { SB_PROPERTY_SKIPCOUNT,        "Skip Count", 0 },
@@ -276,7 +302,15 @@ sbiTunesImporter::~sbiTunesImporter()
 
 nsresult
 sbiTunesImporter::Cancel() {
-  nsString msg = SBLocalizedString("import_library.job.status.cancelled");
+  nsresult rv;
+  nsString msg;
+  rv = 
+    SBGetLocalizedString(msg,
+                         NS_LITERAL_STRING("import_library.job.status.cancelled"));
+  if (NS_FAILED(rv)) { 
+    // Show at least something
+    msg = NS_LITERAL_STRING("Library import cancelled");
+  }
   mStatus->SetStatusText(msg);
   mStatus->Done();
   mStatus->Update();
@@ -437,7 +471,7 @@ sbiTunesImporter::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   mAlbumArtFetcher = 
-    do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/album-art-fetcher-set;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset flags to their default value
@@ -454,7 +488,7 @@ sbiTunesImporter::Initialize()
   
 #ifdef SB_ENABLE_TEST_HARNESS
   // Ignore errors, we'll just not do timing
-  mTimingService = do_GetService("@songbirdnest.com/Songbird/TimingService;1", &rv);
+  mTimingService = do_GetService("@getnightingale.com/Nightingale/TimingService;1", &rv);
 #endif
   
   rv = miTunesDBServices.Initialize();
@@ -495,7 +529,7 @@ sbiTunesImporter::Initialize()
       }
 
       // line format is
-      // <songbird guid>=<library persistent id>,<track database id>
+      // <nightingale guid>=<library persistent id>,<track database id>
       // with only the last part be variable-length
       const int LEN_GUID = 36;
       const int LEN_PID = 16;
@@ -520,7 +554,8 @@ sbiTunesImporter::Initialize()
   } while(false);
   
   mPlaylistBlacklist = 
-    SBLocalizedString("import_library.itunes.excluded_playlists");
+    SBLocalizedString(NS_LITERAL_STRING("import_library.itunes.excluded_playlists"), 
+                      nsString());
   return NS_OK;
 }
 
@@ -626,7 +661,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
     rv = mStatus->Reset();
     NS_ENSURE_SUCCESS(rv, rv);
     
-    mStatus->SetStatusText(SBLocalizedString("import_library.itunes.no_changes"));
+    mStatus->SetStatusText(NS_LITERAL_STRING("No library changes found"));
     mStatus->Done();
     mStatus->Update();
     return NS_OK;
@@ -641,7 +676,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
     mImportPlaylists = userPrefs.GetBoolPref("import_playlists", PR_FALSE);
   }
   
-  mTypeSniffer = do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+  mTypeSniffer = do_CreateInstance("@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
 #ifdef SB_ENABLE_TEST_HARNESS 
@@ -670,8 +705,8 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
   
   
   nsAString const & msg = 
-    mImport ? SBLocalizedString("import_library.itunes.importing") :
-              SBLocalizedString("import_library.itunes.updating");
+    mImport ? NS_LITERAL_STRING("Importing library") :
+              NS_LITERAL_STRING("Checking for changes in library");
 
   mStatus->SetStatusText(msg);
 
@@ -708,7 +743,7 @@ sbiTunesImporter::OSType sbiTunesImporter::GetOSType()
   if (mOSType == UNINITIALIZED) {
     nsresult rv;
     nsCOMPtr<nsIXULRuntime> appInfo = 
-      do_CreateInstance(XULRUNTIME_SERVICE_CONTRACTID, &rv);
+      do_CreateInstance("@mozilla.org/xre/app-info;1", &rv);
     NS_ENSURE_SUCCESS(rv, UNKNOWN_OS);
     
     nsCString osName;
@@ -802,13 +837,13 @@ sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Name"), playlistName);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
   
-  // If we've seen the songbird folder check the parent ID of the playlist
-  // and if the parent is Songbird we don't need to import this playlist
-  // since this is a Songbird playlist
-  if (!mSongbirdFolderID.IsEmpty()) {
+  // If we've seen the nightingale folder check the parent ID of the playlist
+  // and if the parent is Nightingale we don't need to import this playlist
+  // since this is a Nightingale playlist
+  if (!mNightingaleFolderID.IsEmpty()) {
     nsString parentID;
     rv = aProperties->Get(NS_LITERAL_STRING("Parent Persistent ID"), parentID);
-    if (NS_FAILED(rv) || parentID.Equals(mSongbirdFolderID)) {
+    if (NS_FAILED(rv) || parentID.Equals(mNightingaleFolderID)) {
       return PR_FALSE;
     }
   }
@@ -835,10 +870,10 @@ sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
 }
 
 /**
- * Determines if this is the special Songbird folder for playlists
+ * Determines if this is the special Nightingale folder for playlists
  */
 static PRBool 
-IsSongbirdFolder(sbIStringMap * aProperties) {
+IsNightingaleFolder(sbIStringMap * aProperties) {
   
   nsString playlistName;
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Name"), playlistName);
@@ -852,7 +887,7 @@ IsSongbirdFolder(sbIStringMap * aProperties) {
 
   return smartInfo.IsEmpty() &&
          isFolder.EqualsLiteral("true") &&
-         playlistName.EqualsLiteral("Songbird");
+         playlistName.EqualsLiteral("Nightingale");
 }
 
 static nsresult
@@ -903,11 +938,11 @@ sbiTunesImporter::OnPlaylist(sbIStringMap *aProperties,
     return NS_ERROR_ABORT;
   }
   nsresult rv = UpdateProgress();
-  // If this is the Songbird folder save its ID
-  if (IsSongbirdFolder(aProperties)) {
+  // If this is the Nightingale folder save its ID
+  if (IsNightingaleFolder(aProperties)) {
     // Ignore errors, if not found it's left empty
     aProperties->Get(NS_LITERAL_STRING("Playlist Persistent ID"), 
-                     mSongbirdFolderID);
+                     mNightingaleFolderID);
   }
   else if (ShouldImportPlaylist(aProperties)) {
     nsString playlistID;
@@ -1050,7 +1085,7 @@ sbiTunesImporter::ProcessPlaylistItems(sbIMediaList * aMediaList,
   
   nsresult rv;
   nsCOMPtr<nsIMutableArray> tracks = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
@@ -1149,56 +1184,57 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
     NS_ENSURE_SUCCESS(rv, rv);
     action = NS_LossyConvertUTF16toASCII(userAction);
   }
-
   if (action.Equals("replace")) {
     mFoundChanges = PR_TRUE;
-
-    if (aTrackIdsCount > 0) {
+    if (mediaList) {
       nsString guid;
+      rv = mediaList->GetGuid(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = mLibrary->Remove(mediaList);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      // Playlist is dead so no more references
+      mediaList = nsnull;
+      
+      // Remove the old entry
+      rv = miTunesDBServices.RemoveSBIDEntry(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    if (aTrackIdsCount > 0) {
+      
+      // Setup the properties. We need to do properties so that when
+      // export sees this it knows it's an iTunes playlist
+      nsCOMPtr<sbIMutablePropertyArray> properties =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-      if (mediaList) {
-        // Clear the medialist in preparation for processing playlist items as
-        // ordered and listed in iTunes.
-        rv = mediaList->Clear();
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Unconditionally set the imported playlist's name.
-        rv = mediaList->SetName(playlistName);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        // Setup the properties. We need to do properties so that when
-        // export sees this it knows it's an iTunes playlist
-        nsCOMPtr<sbIMutablePropertyArray> properties =
-          do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
-                                        playlistName);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
-                                        playlistiTunesID);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = mLibrary->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                       properties,
-                                       getter_AddRefs(mediaList));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = mediaList->GetGuid(guid);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Now add the Songbird and iTunes IDs to the map table
-        rv = miTunesDBServices.MapID(miTunesLibID, playlistiTunesID, guid);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                      playlistName);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                                      playlistiTunesID);
+      NS_ENSURE_SUCCESS(rv, rv);
+     
+      rv = mLibrary->CreateMediaList(NS_LITERAL_STRING("simple"), 
+                                     properties, 
+                                     getter_AddRefs(mediaList));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      // Now add the Nightingale and iTunes ID's to the map table
+      nsString guid;
+      rv = mediaList->GetGuid(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = miTunesDBServices.MapID(miTunesLibID, playlistiTunesID, guid);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       rv = ProcessPlaylistItems(mediaList,
                                 aTrackIds,
                                 aTrackIdsCount);
       NS_ENSURE_SUCCESS(rv, rv);
-
+    
       StorePlaylistSignature(mediaList);
     }
   }
@@ -1211,14 +1247,14 @@ sbiTunesImporter::OnPlaylistsComplete() {
   mStatus->Reset();
   char const * completionMsg;
   if (mImport) {
-    completionMsg = "import_library.itunes.complete";
+    completionMsg = "Library import complete";
   }
   else {
     if (mFoundChanges) {
-      completionMsg = "import_library.itunes.updating.has_changes";
+      completionMsg = "Found library changes";
     }
     else {
-      completionMsg = "import_library.itunes.updating.no_changes";
+      completionMsg = "No library changes found";
     }
   }
   
@@ -1227,7 +1263,7 @@ sbiTunesImporter::OnPlaylistsComplete() {
     mBatchEnded = PR_TRUE;
   }
   
-  mStatus->SetStatusText(SBLocalizedString(completionMsg));
+  mStatus->SetStatusText(NS_ConvertASCIItoUTF16(completionMsg));
   
   mStatus->Done();
   mStatus->Update();
@@ -1302,7 +1338,7 @@ struct sbiTunesImporterEnumeratePropertiesData
   sbiTunesImporterEnumeratePropertiesData(sbIPropertyArray * aProperties, 
                                           nsresult * rv) :
     mProperties(aProperties) {
-    mChangedProperties = do_CreateInstance("@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1", rv);
+    mChangedProperties = do_CreateInstance("@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1", rv);
   }
   /**
    * Returns true if there are any changed properties
@@ -1378,7 +1414,7 @@ nsresult sbiTunesImporter::ProcessUpdates() {
           rv = properties->GetPropertyValue(CONTENT_URL,
                                             contentURL);
           if (NS_SUCCEEDED(rv)) {
-            // Get the track URI, compare to the songbird URI, if it's changed
+            // Get the track URI, compare to the nightingale URI, if it's changed
             // we need to add it into the changed property array
             track->GetTrackURI(GetOSType(), 
                                mIOService,
@@ -1397,7 +1433,7 @@ nsresult sbiTunesImporter::ProcessUpdates() {
               }
             }
           }
-          // Enumerate the track properties and compare them to the Songbird
+          // Enumerate the track properties and compare them to the Nightingale
           // ones and build a property array of the ones that are different
           track->mProperties.EnumerateRead(EnumReadFunc, &data);
           if (data.NeedsUpdating()) {
@@ -1421,11 +1457,11 @@ sbiTunesImporter::ProcessNewItems(
   nsresult rv;
   
   nsCOMPtr<nsIMutableArray> uriArray = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> propertyArrays = 
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<nsIURI> uri;
@@ -1676,7 +1712,7 @@ sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
   rv = mProperties.Put(location, URI);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  for (unsigned int index = 0; index < NS_ARRAY_LENGTH(gPropertyMap); ++index) {
+  for (int index = 0; index < NS_ARRAY_LENGTH(gPropertyMap); ++index) {
     PropertyMap const & propertyMapEntry = gPropertyMap[index];
     nsString value;
     rv = aProperties->Get(NS_ConvertASCIItoUTF16(propertyMapEntry.ITProperty),
@@ -1690,40 +1726,7 @@ sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
                       value);
     }
   }
-
-  mProperties.Put(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-                  GetContentType(aProperties));
-
   return NS_OK;
-}
-
-nsString
-sbiTunesImporter::iTunesTrack::GetContentType(sbIStringMap * aProperties)
-{
-  nsresult rv;
-  nsString result;
-
-  nsString podcastValue;
-  rv = aProperties->Get(NS_LITERAL_STRING("Podcast"), podcastValue);
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "sbIStringMap::Get failed");
-
-  if (NS_SUCCEEDED(rv) && podcastValue.EqualsLiteral("true")) {
-    result = NS_LITERAL_STRING("podcast");
-  }
-  else {
-    nsString hasVideo;
-    rv = aProperties->Get(NS_LITERAL_STRING("Has Video"), hasVideo);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "sbIStringMap::Get failed");
-
-    if (NS_SUCCEEDED(rv) && hasVideo.EqualsLiteral("true")) {
-      result = NS_LITERAL_STRING("video");
-    }
-    else {
-      result = NS_LITERAL_STRING("audio");
-    }
-  }
-
-  return result;
 }
 
 static PLDHashOperator
@@ -1746,7 +1749,7 @@ sbiTunesImporter::iTunesTrack::GetPropertyArray(
   
   nsresult rv;
   nsCOMPtr<sbIMutablePropertyArray> array = 
-    do_CreateInstance("@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1",
+    do_CreateInstance("@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1",
                       &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -1799,7 +1802,7 @@ sbiTunesImporter::iTunesTrack::GetTrackURI(
   else {
     char const c = uri[0];
     if (uri.Length() > 3 && 
-        ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) &&
+        (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') &&
         uri[1] == ':' &&
         uri[2] == '/') {
       adjustedURI = "file:///";

@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  DatabaseEngineComponent.cpp
-* \brief Songbird Database Engine Component Factory and Main Entry Point.
+* \brief Nightingale Database Engine Component Factory and Main Entry Point.
 */
 
 #include "nsIGenericFactory.h"
@@ -43,23 +43,23 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CDatabaseResult)
 static nsModuleComponentInfo sbDatabaseEngine[] =
 {
   {
-    SONGBIRD_DATABASEENGINE_CLASSNAME,
-    SONGBIRD_DATABASEENGINE_CID,
-    SONGBIRD_DATABASEENGINE_CONTRACTID,
+    NIGHTINGALE_DATABASEENGINE_CLASSNAME,
+    NIGHTINGALE_DATABASEENGINE_CID,
+    NIGHTINGALE_DATABASEENGINE_CONTRACTID,
     CDatabaseEngineConstructor
   },
 
   {
-    SONGBIRD_DATABASEQUERY_CLASSNAME,
-    SONGBIRD_DATABASEQUERY_CID,
-    SONGBIRD_DATABASEQUERY_CONTRACTID,
+    NIGHTINGALE_DATABASEQUERY_CLASSNAME,
+    NIGHTINGALE_DATABASEQUERY_CID,
+    NIGHTINGALE_DATABASEQUERY_CONTRACTID,
     CDatabaseQueryConstructor
   },
 
   {
-    SONGBIRD_DATABASERESULT_CLASSNAME,
-    SONGBIRD_DATABASERESULT_CID,
-    SONGBIRD_DATABASERESULT_CONTRACTID,
+    NIGHTINGALE_DATABASERESULT_CLASSNAME,
+    NIGHTINGALE_DATABASERESULT_CID,
+    NIGHTINGALE_DATABASERESULT_CONTRACTID,
     CDatabaseResultConstructor
   }
 };
@@ -71,4 +71,4 @@ static void sbDatabaseEngineDestructor(nsIModule* me)
   gEngine = nsnull;
 }
 
-NS_IMPL_NSGETMODULE_WITH_DTOR(SongbirdDatabaseEngineComponent, sbDatabaseEngine, sbDatabaseEngineDestructor)
+NS_IMPL_NSGETMODULE_WITH_DTOR(NightingaleDatabaseEngineComponent, sbDatabaseEngine, sbDatabaseEngineDestructor)

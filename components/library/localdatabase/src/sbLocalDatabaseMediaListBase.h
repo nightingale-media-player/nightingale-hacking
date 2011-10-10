@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #ifndef __SBLOCALDATABASEMEDIALISTBASE_H__
 #define __SBLOCALDATABASEMEDIALISTBASE_H__
@@ -63,8 +65,6 @@
     }                                                                          \
   PR_END_MACRO
 
-#define SB_ASYNC_NOTIFICATION_ITEMS  50
-
 class nsIArray;
 class nsIMutableArray;
 class nsIStringEnumerator;
@@ -78,6 +78,7 @@ class sbIMediaListEnumerationListener;
 
 class sbLocalDatabaseMediaListBase : public sbLocalDatabaseMediaItem,
                                      public sbLocalDatabaseMediaListListener,
+                                     public sbILocalDatabaseGUIDArrayListener,
                                      public sbIMediaList
 {
   friend class sbAutoBatchHelper;
@@ -92,6 +93,7 @@ public:
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaItem::)
   NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)
 
+  NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALIST
 
   sbLocalDatabaseMediaListBase();
@@ -135,21 +137,7 @@ protected:
   nsresult GetFilteredPropertiesForNewItem(sbIPropertyArray* aProperties,
                                            sbIPropertyArray** _retval);
 
-  // Set SB_PROPERTY_ORIGINLIBRARYGUID and SB_PROPERTY_ORIGINITEMGUID, and
-  // set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY to true in the given
-  // property array if aSourceItem is in the main library.  Otherwise, set
-  // these properties only if they are not already set, and remove
-  // SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY if it is false.  aProperties
-  // should be properties for a new item that is being created by copying
-  // aSourceItem.
-  nsresult GetOriginProperties(sbIMediaItem *             aSourceItem,
-                               sbIMutablePropertyArray *  aProperties);
-
 private:
-
-  // Remove any values for the aProperty from aPropertyArray
-  static nsresult RemoveProperty(sbIMutablePropertyArray * aPropertyArray,
-                                 const nsAString &         aProperty);
 
   // This callback is meant to be used with an sbStringArrayHash.
   // aUserData should be a sbILocalDatabaseGUIDArray pointer.
@@ -166,13 +154,17 @@ private:
   /**
    * Enumerates by properties using the previous filter that was set
    */
+  nsresult EnumerateItemsByPropertyInternal(sbIMediaListEnumerationListener* aEnumerationListener);
   nsresult EnumerateItemsByPropertiesInternal(sbStringArrayHash* aPropertiesHash,
                                               sbIMediaListEnumerationListener* aEnumerationListener);
 
   // Called for the enumeration methods.
   nsresult EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
                                   sbIMediaListEnumerationListener* aListener);
-
+  /**
+   * Clears the partial cached array and clears the last values
+   */
+  void ClearCachedPartialArray();
 protected:
   void SetArray(sbILocalDatabaseGUIDArray * aArray);
   // A monitor for changes to the media list.
@@ -182,17 +174,22 @@ protected:
   PRUint16 mListContentType;
 
   PRBool mLockedEnumerationActive;
+  PRBool mPreviousListener;
   
   // The mFilteredProperties hash table caches the property ids
   // that we always want to filter out of the property arrays that
   // are used to create media items or set multiple properties
   // on a library resource.
   nsTHashtable<nsStringHashKey> mFilteredProperties;
-
+  
+  // Used to track values passed in so we can optimize filtering of the arrays
+  nsString mLastID;
+  nsString mLastValue;
 private:
   // The mFullArray is a cached version of the full contents of the media
   // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mCachedPartialArray;
 };
 
 /**

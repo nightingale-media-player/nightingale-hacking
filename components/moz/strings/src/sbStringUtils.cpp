@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #include "sbStringUtils.h"
 
@@ -112,55 +114,6 @@ nsString_ToUint64(const nsAString& str, nsresult* rv)
   return result;
 }
 
-/**
- * This is originated from CompressWhitespace in nsStringAPI, with
- * modification. Make sure to update it when the upstream is changed.
- */
-void
-SB_CompressWhitespace(nsAString& aString, PRBool aLeading, PRBool aTrailing)
-{
-  PRUnichar *start;
-  PRUint32 len = NS_StringGetMutableData(aString, PR_UINT32_MAX, &start);
-  PRUnichar *end = start + len;
-  PRUnichar *from = start, *to = start;
-
-  while (from < end && NS_IsAsciiWhitespace(*from))
-    from++;
-
-  if (!aLeading)
-    to = from;
-
-  while (from < end) {
-    PRUnichar theChar = *from++;
-    if (NS_IsAsciiWhitespace(theChar)) {
-      // We found a whitespace char, so skip over any more
-      while (from < end && NS_IsAsciiWhitespace(*from))
-        from++;
-
-      // Turn all whitespace into spaces
-      theChar = ' ';
-    }
-
-    if (from == end && theChar == ' ') {
-      to = from;
-    } else {
-      *to++ = theChar;
-    }
-  }
-
-  // Drop any trailing space
-  if (aTrailing) {
-    while (to > start && to[-1] == ' ')
-      to--;
-  }
-
-  // Re-terminate the string
-  *to = '\0';
-
-  // Set the new length
-  aString.SetLength(to - start);
-}
-
 nsresult
 SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                           nsIStringEnumerator* aRight,
@@ -235,7 +188,7 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
   }
 }
 
-void
+void 
 nsCString_ReplaceChars(nsACString& aOldString,
                        const nsACString& aOldChars,
                        const char aNewChar)
@@ -304,7 +257,7 @@ PRBool IsLikelyUTF8(const nsACString& aString)
   aString.BeginReading(&begin, &end);
 
   for (; begin != end; ++begin) {
-    PRInt32 next = prefix_table[(unsigned char)(*begin)];
+    PRInt32 next = prefix_table[*begin];
     if (bytesRemaining) {
       if (next != -1) {
         // expected more bytes but didn't get a continuation
@@ -431,77 +384,13 @@ nsCString_Split(const nsACString&    aString,
   } while (delimiterIndex < stringLength);
 }
 
-nsString SB_FormatISO8601TimeString(PRTime aTime)
-{
-  PRExplodedTime exploded;
-  PR_ExplodeTime(aTime, PR_GMTParameters, &exploded);
-  char buffer[64];
-  PR_FormatTime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.0Z", &exploded);
-  return NS_ConvertASCIItoUTF16(buffer);
-}
-
-nsresult
-SB_ParseISO8601TimeString(const nsAString& aISO8601TimeString,
-                          PRTime*          aTime)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aTime);
-
-  // Function variables.
-  nsTArray<nsCString> components;
-  PRStatus            status;
-
-  // Convert the ISO 8601 string to "MM-DD-YYYY HH:MM:SS.SSSS TZ" format so that
-  // PR_ParseTimeString can parse it.
-  // E.g., Convert "1970-01-31T01:02:03.4567Z" to
-  //               "01-31-1970 01:02:03.4567 GMT".
-  //
-  // TODO: support other ISO 8601 formats.
-
-  // Split the ISO 8601 time string into separate time and date components.
-  nsCAutoString
-    iso8601TimeString = NS_LossyConvertUTF16toASCII(aISO8601TimeString);
-  nsCString_Split(iso8601TimeString, NS_LITERAL_CSTRING("T"), components);
-  NS_ENSURE_TRUE(components.Length() == 2, NS_ERROR_INVALID_ARG);
-  nsCAutoString date = components[0];
-  nsCAutoString time = components[1];
-
-  // Split the date into year, month, and day components.
-  nsCString_Split(date, NS_LITERAL_CSTRING("-"), components);
-  NS_ENSURE_TRUE(components.Length() == 3, NS_ERROR_INVALID_ARG);
-  nsCAutoString year = components[0];
-  nsCAutoString month = components[1];
-  nsCAutoString day = components[2];
-
-  // Check for local or GMT timezone.
-  nsCAutoString timezone;
-  if (time[time.Length() - 1] == 'Z') {
-    timezone.Assign(NS_LITERAL_CSTRING(" GMT"));
-    time.SetLength(time.Length() - 1);
-  }
-
-  // Produce the format for PR_ParseTimeString.
-  sbAutoSmprintf timeString = PR_smprintf("%s-%s-%s %s%s",
-                                          month.get(),
-                                          day.get(),
-                                          year.get(),
-                                          time.get(),
-                                          timezone.get());
-
-  // Parse the time string.
-  status = PR_ParseTimeString(timeString, PR_FALSE, aTime);
-  NS_ENSURE_TRUE(status == PR_SUCCESS, NS_ERROR_FAILURE);
-
-  return NS_OK;
-}
-
 /**
  * Get and return in aString the localized string with the key specified by aKey
  * using the string bundle specified by aStringBundle.  If the string cannot be
  * found, return the default string specified by aDefault; if aDefault is void,
  * return aKey.
  *
- * If aStringBundle is not specified, use the main Songbird string bundle.
+ * If aStringBundle is not specified, use the main Nightingale string bundle.
  *
  * \param aString               Returned localized string.
  * \param aKey                  Localized string key.
@@ -580,7 +469,7 @@ SBGetLocalizedString(nsAString&             aString,
  * string bundle specified by aStringBundle.  If the string cannot be found,
  * return the default string specified by aDefault; if aDefault is void, return
  * aKey.
- *   If aStringBundle is not specified, use the main Songbird string bundle.
+ *   If aStringBundle is not specified, use the main Nightingale string bundle.
  *
  * \param aString               Returned localized string.
  * \param aKey                  Localized string key.

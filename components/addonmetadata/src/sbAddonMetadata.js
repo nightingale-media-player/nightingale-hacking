@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -32,7 +32,7 @@
  */ 
  
 const CONTRACTID = "@mozilla.org/rdf/datasource;1?name=addon-metadata";
-const CLASSNAME = "Songbird Addon Metadata Datasource";
+const CLASSNAME = "Nightingale Addon Metadata Datasource";
 const CID = Components.ID("{a1edd551-0f29-4ce9-aebc-92fbee77f37e}");
 const IID = Components.interfaces.nsIRDFDataSource;
 
@@ -40,19 +40,19 @@ const FILE_INSTALL_MANIFEST = "install.rdf";
 const FILE_EXTENSIONS       = "extensions.rdf";
 const FILE_ADDONMETADATA    = "addon-metadata.rdf";
 
-const PREF_LASTMODIFIED = "songbird.addonmetadata.lastModifiedTime";
+const PREF_LASTMODIFIED = "nightingale.addonmetadata.lastModifiedTime";
 
 const KEY_PROFILEDIR                  = "ProfD";
 
 const RDFURI_INSTALL_MANIFEST_ROOT    = "urn:mozilla:install-manifest";
-const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root"
-const PREFIX_ADDON_URI                = "urn:songbird:addon:";
+const RDFURI_ADDON_ROOT               = "urn:nightingale:addon:root"
+const PREFIX_ADDON_URI                = "urn:nightingale:addon:";
 const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
-const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
+const PREFIX_NS_NIGHTINGALE              = "http://www.getnightingale.com/2007/addon-metadata-rdf#";
 const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
 
-function SONGBIRD_NS(property) {
-  return PREFIX_NS_SONGBIRD + property;
+function NIGHTINGALE_NS(property) {
+  return PREFIX_NS_NIGHTINGALE + property;
 }
 
 function EM_NS(property) {

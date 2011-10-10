@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -31,7 +31,7 @@ interface sbIJobProgress;
  * \interface sbIWFRemoveHelper9001
  * \brief A hackish helper that helps the watch folder component
  *        gracefully handle file removal.
- * Songbird is frozen if removing a big chunk of files from the watch
+ * Nightingale is frozen if removing a big chunk of files from the watch
  * folder. A remove progress dialog to improve the user experience.
  */
 [scriptable, uuid(61044519-d452-44e4-ab76-930806083a9f)]

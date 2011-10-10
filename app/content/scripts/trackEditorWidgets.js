@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 if (typeof(Ci) == "undefined")
@@ -107,7 +107,7 @@ function TrackEditorLabel(element) {
   if (element.hasAttribute("property-type") && 
       element.getAttribute("property-type") == "label") {
 
-    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+    var propMan = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
     var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
     element.setAttribute("value", propInfo.displayName);
@@ -444,7 +444,7 @@ function TrackEditorTextbox(element) {
   element.addEventListener("input",
           function() { self.onUserInput(); }, false);
 
-  var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  var propMan = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                  .getService(Ci.sbIPropertyManager);
   var propInfo = propMan.getPropertyInfo(this.property);
   if (propInfo instanceof Ci.sbINumberPropertyInfo || 
@@ -586,7 +586,7 @@ TrackEditorTextbox.prototype = {
 
       // Get content type for genre property and set to auto complete param.
       if (this.property == SBProperties.genre) {
-        var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+        var LSP = Cc["@getnightingale.com/servicepane/library;1"]
                     .getService(Ci.sbILibraryServicePaneService);
         var type =
           LSP.getNodeContentTypeFromMediaListView(TrackEditor.mediaListView);
@@ -605,7 +605,7 @@ TrackEditorTextbox.prototype = {
     this._element.inputField.tabIndex = this._element.tabIndex;
     
     // And we need to fix the dropdown not showing up...
-    // (Songbird bug 9149, same moz bug)
+    // (Nightingale bug 9149, same moz bug)
     var marker = this._element
                      .ownerDocument
                      .getAnonymousElementByAttribute(this._element,

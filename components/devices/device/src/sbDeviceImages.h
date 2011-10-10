@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBDEVICEIMAGES_H_
@@ -31,10 +31,11 @@
 // Mozilla includes
 #include <nsIArray.h>
 
-// Songbird local includes
+// Nightingale local includes
 #include "sbBaseDevice.h"
 #include "sbIDeviceImage.h"
 
+struct sbBaseDevice::TransferRequest;
 class sbIFileScanQuery;
 
 class sbDeviceImages
@@ -44,12 +45,14 @@ public:
 
   // Compute the difference between the images present locally and
   // those provided in the device image array. You must provide a list
-  // of supported extensions. The copy array will be filled with images
-  // which the device implementation should act upon.
-  nsresult ComputeImageSyncArray(sbIDeviceLibrary *aLibrary,
-                                 nsIArray *aDeviceImageArray,
-                                 const nsTArray<nsString> &aFileExtensionList,
-                                 nsIArray **retCopyArray);
+  // of supported extensions. Upon return, the copy and delete arrays are
+  // filled with sbIDeviceImage items which the device implementation should
+  // act upon.
+  nsresult ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
+                                  nsIArray *aDeviceImageArray,
+                                  const nsTArray<nsString> &aFileExtensionList,
+                                  nsIArray **retCopyArray,
+                                  nsIArray **retDeleteArray);
 
   // This may be called by devices whose underlying storage lies on the
   // filesystem to build an array of sbIDeviceImage items. aScanPath is the

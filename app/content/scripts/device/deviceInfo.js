@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -53,7 +53,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-// Songbird imports.
+// Nightingale imports.
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
@@ -86,7 +86,7 @@ var DIW = {
 
   _pollPeriodTable: { "battery": 60000, "firmware_version": 60000 },
   _contextMenuDocURL:
-    "chrome://songbird/content/xul/device/deviceContextMenu.xul",
+    "chrome://nightingale/content/xul/device/deviceContextMenu.xul",
 
 
   //
@@ -419,10 +419,10 @@ var DIW = {
     if (this._deviceLibrary) {
       try {
         storageConverter =
-          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
             .createInstance(Ci.sbIPropertyUnitConverter);
         capacity = this._deviceLibrary.getProperty
-                     ("http://songbirdnest.com/device/1.0#capacity");
+                     ("http://getnightingale.com/device/1.0#capacity");
         capacity = storageConverter.autoFormat(capacity, -1, 1);
       } catch (ex) {};
     }
@@ -817,10 +817,10 @@ var DIW = {
     if (this._deviceLibrary) {
       try {
         storageConverter =
-          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
             .createInstance(Ci.sbIPropertyUnitConverter);
         var modelSize = this._deviceLibrary.getProperty
-                               ("http://songbirdnest.com/device/1.0#capacity");
+                               ("http://getnightingale.com/device/1.0#capacity");
         return storageConverter.autoFormat(modelSize, -1, 1);
       } catch (err) { }
     }
@@ -917,7 +917,7 @@ var DIW = {
     var firmwareVersion = null;
     
     var deviceFirmwareUpdater = 
-      Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+      Cc["@getnightingale.com/Nightingale/Device/Firmware/Updater;1"]
         .getService(Ci.sbIDeviceFirmwareUpdater);
     
     // If we have a firmware handler for the device, use it to read
@@ -955,7 +955,7 @@ var DIW = {
   _getDeviceAccessCompatibility: function DIW__getDeviceAccessCompatibility() {
     var accessCompatibility =
           this._getDeviceProperty
-                 ("http://songbirdnest.com/device/1.0#accessCompatibility",
+                 ("http://getnightingale.com/device/1.0#accessCompatibility",
                   SBString("device.info.unknown"));
     return accessCompatibility;
   },
@@ -979,25 +979,18 @@ var DIW = {
   /**
    * \brief Format a mime type to human readable
    *
-   * \return Array of human readable information for mime type.
+   * \return Human readable information for mime type.
    */
 
-  _getExtsForMimeType : function(aMimeType, aContentType) {
-    var exts = [];
-    var idx = 0;
-
+  _getExtForMimeType : function(aMimeType, aContentType) {
     // Use the device capabilities utils mapping
     var devCapsUtils =
-      Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"]
+      Cc["@getnightingale.com/Nightingale/Device/DeviceCapabilitiesUtils;1"]
         .getService(Ci.sbIDeviceCapabilitiesUtils);
-    var extEnum = devCapsUtils.mapContentTypeToFileExtensions(aMimeType,
-                                                              aContentType);
-    while (extEnum.hasMore()) {
-      exts[idx++] = extEnum.getNext();
-    }
-
-    if (exts.length > 0)
-      return exts;
+    var extension = devCapsUtils.mapContentTypeToFileExtension(aMimeType,
+                                                               aContentType);
+    if (extension)
+      return extension;
     
     // As a fallback, use nsIMIMEService to look it up
     var mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService);
@@ -1009,14 +1002,12 @@ var DIW = {
       } catch (err) {}
 
       if (mimeExtension) {
-        exts[idx] = SBString("device.info.mimetype." + mimeExtension, mimeExtension);
-        return exts;
+        return SBString("device.info.mimetype." + mimeExtension, mimeExtension);
       }
     }
-
+    
     // Fall back to mime type if all else failed.
-    exts[idx] = aMimeType;
-    return exts;
+    return aMimeType;
   },
 
   /**
@@ -1045,13 +1036,10 @@ var DIW = {
                               contentArray[contentCounter], {});
           if (mimeTypeArray.length > 0) {
             for each (var mimetype in mimeTypeArray) {
-              var exts = this._getExtsForMimeType(mimetype,
-                                                  contentArray[contentCounter]);
-              for (var idx = 0; idx < exts.length; idx++) {
-                let ext = exts[idx];
-                if (extensions.indexOf(ext) == -1)
-                  extensions.push(ext);
-              }
+              var ext = this._getExtForMimeType(mimetype,
+                                                contentArray[contentCounter]);
+              if(extensions.indexOf(ext) == -1)
+                extensions.push(ext);
             }
           }
         }
@@ -1076,10 +1064,10 @@ var DIW = {
                                       (aBatteryLevel,
                                        aOnBatteryPower) {
     aBatteryLevel.value = this._getDeviceProperty
-                        ("http://songbirdnest.com/device/1.0#batteryLevel", 
+                        ("http://getnightingale.com/device/1.0#batteryLevel", 
                          -1);
     var powerSource = this._getDeviceProperty
-                        ("http://songbirdnest.com/device/1.0#powerSource", 0);
+                        ("http://getnightingale.com/device/1.0#powerSource", 0);
     aOnBatteryPower.value = (parseInt(powerSource) ? true : false);
   },
 

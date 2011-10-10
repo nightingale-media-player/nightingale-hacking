@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -46,7 +46,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 
 
@@ -114,7 +114,7 @@ firstRuniTunesSvc.prototype = {
 
   initialize: function firstRuniTunesSvc_initialize() {
     // Get the library importer.
-    this._libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
+    this._libraryImporter = Cc["@getnightingale.com/Nightingale/ITunesImporter;1"]
                               .getService(Ci.sbILibraryImporter);
   },
 
@@ -169,12 +169,12 @@ firstRuniTunesSvc.prototype = {
 
     // Save the iTunes import settings.
     Application.prefs.setValue
-                        ("songbird.library_importer.library_file_path",
+                        ("nightingale.library_importer.library_file_path",
                          importLibraryFilePath);
-    Application.prefs.setValue("songbird.firstrun.do_import_library", true);
-    Application.prefs.setValue("songbird.library_importer.import_tracks",
+    Application.prefs.setValue("nightingale.firstrun.do_import_library", true);
+    Application.prefs.setValue("nightingale.library_importer.import_tracks",
                         importEnabled);
-    Application.prefs.setValue("songbird.library_importer.import_playlists",
+    Application.prefs.setValue("nightingale.library_importer.import_playlists",
                         importEnabled);
 
     // Get the iTunes export settings.
@@ -182,16 +182,16 @@ firstRuniTunesSvc.prototype = {
     var exportEnabled = exportCheckbox.checked;
 
     // Save the iTunes export settings.
-    Application.prefs.setValue("songbird.library_exporter.export_tracks",
+    Application.prefs.setValue("nightingale.library_exporter.export_tracks",
                         exportEnabled);
-    Application.prefs.setValue("songbird.library_exporter.export_playlists",
+    Application.prefs.setValue("nightingale.library_exporter.export_playlists",
                         exportEnabled);
     Application.prefs.setValue
-                        ("songbird.library_exporter.export_smartplaylists",
+                        ("nightingale.library_exporter.export_smartplaylists",
                          exportEnabled);
 
     // Set the selected media import type for metrics collection.
-    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    var metrics = Cc["@getnightingale.com/Nightingale/Metrics;1"]
                     .createInstance(Ci.sbIMetrics);
     if (importEnabled) {
       // Update metrics here.  If the user opts not to import the iTunes

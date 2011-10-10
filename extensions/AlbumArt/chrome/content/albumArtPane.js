@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 if (typeof(Ci) == "undefined")
@@ -46,7 +46,7 @@ const DISPLAY_PANE_CONTENTURL = "chrome://albumart/content/albumArtPane.xul";
 const DISPLAY_PANE_ICON       = "chrome://albumart/skin/icon-albumart.png";
 
 // Default cover for items missing the cover
-const DROP_TARGET_IMAGE = "chrome://songbird/skin/album-art/drop-target.png";
+const DROP_TARGET_IMAGE = "chrome://nightingale/skin/album-art/drop-target.png";
 
 // Constants for toggling between Selected and Playing states
 // These releate to the deck
@@ -54,7 +54,7 @@ const STATE_SELECTED = 0;
 const STATE_PLAYING  = 1;
 
 // Preferences
-const PREF_STATE = "songbird.albumart.displaypane.view";
+const PREF_STATE = "nightingale.albumart.displaypane.view";
 
 // Namespace defs.
 if (typeof(XLINK_NS) == "undefined")
@@ -171,7 +171,7 @@ var AlbumArt = {
 
       var winMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                           .getService(Ci.nsIWindowMediator);
-      var mainWin = winMediator.getMostRecentWindow("Songbird:Main");
+      var mainWin = winMediator.getMostRecentWindow("Nightingale:Main");
       if (mainWin && mainWin.window) {
         mainWin.openDialog("chrome://albumart/content/coverPreview.xul",
                            "coverPreview",
@@ -298,16 +298,11 @@ var AlbumArt = {
       aStack.className = "artwork-found";
     }
 
-    if (!Application.prefs.getValue("songbird.albumart.autofetch.disabled",
+    if (!Application.prefs.getValue("nightingale.albumart.autofetch.disabled",
                                     false)) {
       // Auto-fetch artwork.
       AlbumArt.autoFetchArtwork();
     }
-
-    var princely = Application.prefs.getValue("songbird.purplerain.prince",
-                                              false);
-    if ((princely == "1") && aNotBox.hidden)
-      aNewURL = "chrome://songbird/skin/album-art/princeaa.jpg";
 
     /* Set the image element URL */
     if (aNewURL) {
@@ -477,7 +472,7 @@ var AlbumArt = {
     window.removeEventListener("DOMContentLoaded", AlbumArt.onLoad, false);
 
     // Get our displayPane
-    var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+    var displayPaneManager = Cc["@getnightingale.com/Nightingale/DisplayPane/Manager;1"]
                                 .getService(Ci.sbIDisplayPaneManager);
     var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
  
@@ -492,7 +487,7 @@ var AlbumArt = {
 
     // Get the mediacoreManager.
     AlbumArt._mediacoreManager =
-      Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+      Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
         .getService(Ci.sbIMediacoreManager);
 
     // Load the previous selected display the user shutdown with
@@ -511,7 +506,7 @@ var AlbumArt = {
     
     // Setup the dataremote for the now playing image.
     var createDataRemote =  new Components.Constructor(
-                                  "@songbirdnest.com/Songbird/DataRemote;1",
+                                  "@getnightingale.com/Nightingale/DataRemote;1",
                                   Components.interfaces.sbIDataRemote,
                                   "init");
     AlbumArt._coverBind = createDataRemote("metadata.imageURL", null);
@@ -531,9 +526,8 @@ var AlbumArt = {
                    currentStatus.state == currentStatus.STATUS_UNKNOWN);
     if (stopped) {
       AlbumArt.changeNowPlaying(null);
+      AlbumArt.changeNowSelected(null);
     }
-
-    AlbumArt.changeNowSelected(null);
 
     // Setup the Now Selected display
     AlbumArt.onTabContentChange();
@@ -617,9 +611,9 @@ var AlbumArt = {
     var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                           .getService(Components.interfaces.nsIWindowMediator);
 
-    var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
+    var nightingaleWindow = windowMediator.getMostRecentWindow("Nightingale:Main"); 
     // Store this so we don't have to get it every time.
-    AlbumArt._browser = songbirdWindow.gBrowser;
+    AlbumArt._browser = nightingaleWindow.gBrowser;
     if (AlbumArt._browser) {
       AlbumArt._browser.addEventListener("TabContentChange", 
                                          AlbumArt.onTabContentChange,
@@ -853,7 +847,7 @@ var AlbumArt = {
                                            aImageData,
                                            aIsValidAlbumArt) {
     // Get the clipboard image.
-    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+    var sbClipboard = Cc["@getnightingale.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
     var imageData = null;
@@ -871,7 +865,7 @@ var AlbumArt = {
     // Validate image as valid album art.
     var isValidAlbumArt = false;
     if (imageData && (imageData.length > 0)) {
-      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+      var artService = Cc["@getnightingale.com/Nightingale/album-art-service;1"]
                          .getService(Ci.sbIAlbumArtService);
       isValidAlbumArt = artService.imageIsValidAlbumArt(mimeType,
                                                         imageData,
@@ -1079,7 +1073,7 @@ var AlbumArt = {
     mimeType = mimeType.value;
     imageData = imageData.value;
     if (imageData && sbCoverHelper.isImageSizeValid(null, imageData.length)) {
-      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+      var artService = Cc["@getnightingale.com/Nightingale/album-art-service;1"]
                          .getService(Ci.sbIAlbumArtService);
 
       var newURI = artService.cacheImage(mimeType,
@@ -1095,7 +1089,7 @@ var AlbumArt = {
    * \brief Copy the currently displayed image to the clipboard.
    */
   onCopy: function AlbumArt_onCopy() {
-    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+    var sbClipboard = Cc["@getnightingale.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
     var aImageURL = AlbumArt.getCurrentStateItemImage();
     var ioService = Cc["@mozilla.org/network/io-service;1"]
@@ -1209,7 +1203,7 @@ var AlbumArt = {
     if (item) {
       AlbumArt._nowSelectedMediaItem = item;
       AlbumArt._nowSelectedMediaItemWatcher =
-                 Cc["@songbirdnest.com/Songbird/Library/MediaItemWatcher;1"]
+                 Cc["@getnightingale.com/Nightingale/Library/MediaItemWatcher;1"]
                    .createInstance(Ci.sbIMediaItemWatcher);
       var filter = SBProperties.createArray([ [ SBProperties.primaryImageURL,
                                                 null ] ]);

@@ -486,17 +486,6 @@
             if (docTitle) {
               newTitle += docElement.getAttribute("titlepreface");
               newTitle += docTitle;
-
-              // Some title could be so long to push the menu off the edge.
-              // Set a length limit and determine the text that will be
-              // displayed.
-              var titleLimit = 50;
-              if (newTitle.length > titleLimit) {
-                newTitle = newTitle.substring(0, titleLimit);
-                // Add "..." to the end
-                newTitle += "\u2026";
-              }
-
               if (navigator.oscpu.indexOf("Mac OS X") != -1)
                 modifier = "";
               if (modifier)
@@ -504,7 +493,7 @@
             }
             newTitle += modifier;
 
-/* Disabled (http://bugzilla.songbirdnest.com/show_bug.cgi?id=4274)
+/* Disabled (http://bugzilla.getnightingale.com/show_bug.cgi?id=4274)
 
             // If location bar is hidden and the URL type supports a host,
             // add the scheme and host to the title to prevent spoofing.
@@ -2012,7 +2001,7 @@
                */
               if ((aEvent.charCode == "/".charCodeAt(0) ||
                   aEvent.charCode == "'".charCodeAt(0)) &&
-                  this.tabbrowser.shouldDisableFindAgainForSelectedTab())
+                  this.tabbrowser.shouldDisableFindForSelectedTab())
               {
                 if (window.gSearchHandler && 
                     window.gSearchHandler.getSearchBar) {

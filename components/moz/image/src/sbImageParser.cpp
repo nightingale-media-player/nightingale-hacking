@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,32 +19,32 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird image parser.
+// Nightingale image parser.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbImageParser.cpp
- * \brief Songbird Image Parser Source.
+ * \brief Nightingale Image Parser Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird image parser imported services.
+// Nightingale image parser imported services.
 //
 //------------------------------------------------------------------------------
 
 // Self imports.
 #include "sbImageParser.h"
 
-// Songbird imports
+// Nightingale imports
 #include <sbMemoryUtils.h>
 
 // Mozilla imports.
@@ -70,7 +70,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird image parser nsISupports implementation.
+// Nightingale image parser nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbImageParser,
 
 //------------------------------------------------------------------------------
 //
-// Songbird image parser sbIImageParser implementation.
+// Nightingale image parser sbIImageParser implementation.
 //
 //------------------------------------------------------------------------------
 

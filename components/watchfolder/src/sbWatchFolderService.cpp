@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -51,6 +51,7 @@
 #include <nsTArray.h>
 #include <sbIMediacoreTypeSniffer.h>
 #include <nsThreadUtils.h>
+#include <nsXULAppAPI.h>
 #include <nsXPCOMCIDInternal.h>
 #include <nsIXULRuntime.h>
 #include <prlog.h>
@@ -97,7 +98,7 @@ sbWatchFolderService::Init()
   // OS or may not be supported on this OS version.  In either case, just return
   // without logging any errors.
   nsCOMPtr<sbIFileSystemWatcher> fileSystemWatcher =
-    do_CreateInstance("@songbirdnest.com/filesystem/watcher;1", &rv);
+    do_CreateInstance("@getnightingale.com/filesystem/watcher;1", &rv);
   if (NS_FAILED(rv))
     return NS_OK;
 
@@ -108,7 +109,7 @@ sbWatchFolderService::Init()
   // if watching is supported check for safe-mode
   if (isWatcherSupported) {
     nsCOMPtr<nsIXULRuntime> appInfo =
-      do_GetService(XULRUNTIME_SERVICE_CONTRACTID, &rv);
+      do_GetService(XULAPPINFO_SERVICE_CONTRACTID, &rv);
     // If we can't get or QI the runtime assume we're not in safe-mode
     if (NS_SUCCEEDED(rv)) {
       PRBool isInSafeMode = PR_FALSE;
@@ -188,7 +189,7 @@ sbWatchFolderService::InitInternal()
                           getter_Copies(mFileSystemWatcherGUID));
 
   mLibraryUtils =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the main library (all changes will be pushed into this library).
@@ -224,7 +225,7 @@ sbWatchFolderService::StartWatchingFolder()
 
   nsresult rv;
   mFileSystemWatcher =
-    do_CreateInstance("@songbirdnest.com/filesystem/watcher;1", &rv);
+    do_CreateInstance("@getnightingale.com/filesystem/watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mFileSystemWatcherGUID.Equals(EmptyCString())) {
@@ -411,7 +412,7 @@ sbWatchFolderService::ProcessAddedPaths()
 
   if (uriArrayLength > 0) {
     nsCOMPtr<sbIDirectoryImportService> importService =
-      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/DirectoryImportService;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     //
@@ -423,7 +424,7 @@ sbWatchFolderService::ProcessAddedPaths()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIJobProgressService> progressService =
-      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/JobProgressService;1", &rv);
     if (NS_SUCCEEDED(rv) && progressService) {
       nsCOMPtr<sbIJobProgress> jobProgress = do_QueryInterface(job, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -444,11 +445,11 @@ sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> uriArray =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
-    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbStringSetIter begin = aPathsSet.begin();
@@ -541,16 +542,16 @@ sbWatchFolderService::EnumerateItemsByPaths(sbStringSet & aPathSet)
 }
 
 nsresult
-sbWatchFolderService::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
+sbWatchFolderService::GetNightingaleWindow(nsIDOMWindow **aNightingaleWindow)
 {
-  NS_ENSURE_ARG_POINTER(aSongbirdWindow);
+  NS_ENSURE_ARG_POINTER(aNightingaleWindow);
 
   nsresult rv;
   nsCOMPtr<sbIApplicationController> appController =
-    do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/ApplicationController;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return appController->GetActiveMainWindow(aSongbirdWindow);
+  return appController->GetActiveMainWindow(aNightingaleWindow);
 }
 
 nsresult
@@ -606,19 +607,19 @@ sbWatchFolderService::HandleSessionLoadError()
   nsString dialogText =
     bundle.Format("watch_folder.session_load_error.rescan_text", params);
 
-  nsCOMPtr<nsIDOMWindow> songbirdWindow;
-  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  nsCOMPtr<nsIDOMWindow> nightingaleWindow;
+  rv = GetNightingaleWindow(getter_AddRefs(nightingaleWindow));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPrompter> prompter =
-    do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/Prompter;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool shouldRescan = PR_FALSE;
-  prompter->Confirm(songbirdWindow,
+  prompter->Confirm(nightingaleWindow,
                     dialogTitle.BeginReading(),
                     dialogText.BeginReading(),
                     &shouldRescan);
@@ -628,7 +629,7 @@ sbWatchFolderService::HandleSessionLoadError()
     // The user elected to rescan their watched directory. Setup the directory
     // scan service.
     nsCOMPtr<sbIDirectoryImportService> dirImportService =
-      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/DirectoryImportService;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // The directory import service wants the paths as an array.
@@ -640,7 +641,7 @@ sbWatchFolderService::HandleSessionLoadError()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIMutableArray> dirArray =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
 
     rv = dirArray->AppendElement(watchPathFile, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -653,7 +654,7 @@ sbWatchFolderService::HandleSessionLoadError()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIJobProgressService> progressService =
-      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/JobProgressService;1", &rv);
     if (NS_SUCCEEDED(rv) && progressService) {
       nsCOMPtr<sbIJobProgress> job = do_QueryInterface(importJob, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -686,18 +687,18 @@ sbWatchFolderService::HandleRootPathMissing()
   nsString dialogText =
     bundle.Format("watch_folder.root_path_missing.text", params);
 
-  nsCOMPtr<nsIDOMWindow> songbirdWindow;
-  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  nsCOMPtr<nsIDOMWindow> nightingaleWindow;
+  rv = GetNightingaleWindow(getter_AddRefs(nightingaleWindow));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPrompter> prompter =
-    do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/Prompter;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = prompter->Alert(songbirdWindow,
+  rv = prompter->Alert(nightingaleWindow,
                        dialogTitle.BeginReading(),
                        dialogText.BeginReading());
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1166,7 +1167,7 @@ sbWatchFolderService::OnEnumerationBegin(sbIMediaList *aMediaList,
   if (!mEnumeratedMediaItems) {
     nsresult rv;
     mEnumeratedMediaItems = 
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1199,7 +1200,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
     if (mCurrentProcessType == eRemoval) {
       // Remove the found items from the library, pop up the progress dialog.
       nsCOMPtr<sbIWFRemoveHelper9001> helper =
-        do_GetService("@songbirdnest.com/Songbird/RemoveHelper;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/RemoveHelper;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       mRemovedPaths.clear();
@@ -1210,7 +1211,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
     else if (mCurrentProcessType == eChanged) {
       // Rescan the changed items.
       nsCOMPtr<sbIFileMetadataService> metadataService =
-        do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/FileMetadataService;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIJobProgress> jobProgress;
@@ -1222,7 +1223,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
     else if (mCurrentProcessType == eMoveOrRename) {
       // Try to detect move/rename
       nsCOMPtr<sbIWFMoveRenameHelper9000> helper =
-        do_GetService("@songbirdnest.com/Songbird/MoveRenameHelper;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/MoveRenameHelper;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIArray> uriArray;
@@ -1387,9 +1388,9 @@ sbWatchFolderService::RegisterSelf(nsIComponentManager *aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_WATCHFOLDERSERVICE_CLASSNAME,
+                                NIGHTINGALE_WATCHFOLDERSERVICE_CLASSNAME,
                                 "service,"
-                                SONGBIRD_WATCHFOLDERSERVICE_CONTRACTID,
+                                NIGHTINGALE_WATCHFOLDERSERVICE_CONTRACTID,
                                 PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 

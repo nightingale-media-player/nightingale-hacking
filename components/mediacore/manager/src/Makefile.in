@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
@@ -19,18 +19,18 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/mediacore/base/src \
-        @top_srcdir@/components/moz/xpcom/src \
-        
+        @top_srcdir@/components/mediacore/base/src
 
 include $(DEPTH)/build/autodefs.mk
+
+DISABLE_DEADLY_WARNINGS = 1
 
 DYNAMIC_LIB = sbMediacoreManager
 
@@ -50,10 +50,6 @@ CPP_SRCS += sbMediacoreVotingChain.cpp \
             sbBaseMediacoreVolumeControl.cpp \
             sbMediacoreEqualizerBand.cpp \
             $(NULL)
-            
-# From components/moz/xpcom/src
-CPP_SRCS += sbWeakReference.cpp \
-            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
@@ -67,7 +63,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/moz/strings/components/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
-               $(topsrcdir)/components/moz/xpcom/src \
                $(DEPTH)/components/moz/windowwatcher/public \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR)/content \
@@ -84,10 +79,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(NULL)
 
-# MSVC has 'deprecated' std::copy, etc. This is remarkably unhelpful, so define
-# this to suppress the warning.
-CPP_EXTRA_FLAGS += "-D_SCL_SECURE_NO_WARNINGS"
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
@@ -98,7 +89,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 IS_COMPONENT = 1
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbMediacoreErrorHandler.js \
+NIGHTINGALE_COMPONENTS = $(srcdir)/sbMediacoreErrorHandler.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

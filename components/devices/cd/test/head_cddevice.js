@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ function createPropertyBag(aParams) {
 
 function newTOC(aFirstTrack, aLastTrack, aLead)
 {
-  var tocClass = Cc["@songbirdnest.com/Songbird/MockCDTOC;1"];
+  var tocClass = Cc["@getnightingale.com/Nightingale/MockCDTOC;1"];
   var toc = tocClass.createInstance(Ci.sbIMockCDTOC);
   toc.initialize(aFirstTrack, aLastTrack, aLead);
  
@@ -107,9 +107,9 @@ function sbMakeInstantJunk()
 
 function sbCreateDevice(deviceName, toc)
 {
-  var deviceController = Cc["@songbirdnest.com/Songbird/CDDeviceController;1"]
+  var deviceController = Cc["@getnightingale.com/Nightingale/CDDeviceController;1"]
                            .createInstance(Ci.sbIDeviceController);
-  var cdDevice = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
+  var cdDevice = Cc["@getnightingale.com/Nightingale/MockCDDevice;1"]
                    .createInstance(Ci.sbIMockCDDevice)
                    .QueryInterface(Ci.sbICDDevice);
 

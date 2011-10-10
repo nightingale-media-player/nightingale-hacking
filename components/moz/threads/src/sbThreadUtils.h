@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SB_THREAD_UTILS_H__
@@ -30,30 +30,31 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird thread utilities defs.
+// Nightingale thread utilities defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbThreadUtils.h
- * \brief Songbird Thread Utilities Definitions.
+ * \brief Nightingale Thread Utilities Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird thread utilities imported services.
+// Nightingale thread utilities imported services.
 //
 //------------------------------------------------------------------------------
 
 // Mozilla imports.
+#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
 
 //------------------------------------------------------------------------------
 //
-// Songbird thread utilities classes.
+// Nightingale thread utilities classes.
 //
 //------------------------------------------------------------------------------
 
@@ -89,7 +90,7 @@ public:
 
 
   /**
-   * nsIRunnable run method.  Invoke the Songbird runnable method.
+   * nsIRunnable run method.  Invoke the Nightingale runnable method.
    */
 
   NS_IMETHOD Run()
@@ -98,9 +99,13 @@ public:
     if (!mObject)
       return NS_OK;
 
+    // Ensure lock is available.
+    NS_ENSURE_TRUE(mLock, mFailureReturnValue);
+
     // Invoke method.
     ReturnType returnValue = (mObject->*mMethod)(mArg1Value);
     {
+      nsAutoLock autoLock(mLock);
       mReturnValue = returnValue;
     }
 
@@ -109,14 +114,14 @@ public:
 
 
   /**
-   *   Create and initialize a Songbird runnable method for the object specified
+   *   Create and initialize a Nightingale runnable method for the object specified
    * by aObject.  Call the object method specified by aMethod with the argument
    * specified by aArg1Value.  Use the value specified by aFailureReturnValue as
    * the failure return value.
-   *   Return the new Songbird runnable method in aRunnable.
+   *   Return the new Nightingale runnable method in aRunnable.
    *
-   * \param aRunnable           Returned created Songbird runnable method.
-   * \param aObject             Object for which to create a Songbird runnable
+   * \param aRunnable           Returned created Nightingale runnable method.
+   * \param aObject             Object for which to create a Nightingale runnable
    *                            method.
    * \param aMethod             Method to be invoked.
    * \param aFailureReturnValue Value to which to set runnable method return
@@ -138,14 +143,14 @@ public:
     // Function variables.
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable = new SelfType(aObject,
                                                aMethod,
                                                aFailureReturnValue,
                                                aArg1Value);
     NS_ENSURE_TRUE(runnable, aFailureReturnValue);
 
-    // Initialize the Songbird runnable method.
+    // Initialize the Nightingale runnable method.
     rv = runnable->Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -178,7 +183,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -218,7 +223,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -255,7 +260,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -293,7 +298,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -317,6 +322,8 @@ public:
 
   ReturnType GetReturnValue()
   {
+    NS_ENSURE_TRUE(mLock, mFailureReturnValue);
+    nsAutoLock autoLock(mLock);
     return mReturnValue;
   }
 
@@ -330,12 +337,12 @@ public:
 protected:
 
   /**
-   *   Construct a Songbird runnable method for the object specified by aObject.
+   *   Construct a Nightingale runnable method for the object specified by aObject.
    * Call the object method specified by aMethod with the argument specified by
    * aArg1Value.  Use the value specified by aFailureReturnValue as the failure
    * return value.
    *
-   * \param aObject             Object for which to create a Songbird runnable
+   * \param aObject             Object for which to create a Nightingale runnable
    *                            method.
    * \param aMethod             Method to be invoked.
    * \param aFailureReturnValue Value to which to set runnable method return
@@ -347,6 +354,7 @@ protected:
                     MethodType aMethod,
                     ReturnType aFailureReturnValue,
                     Arg1Type   aArg1Value) :
+    mLock(nsnull),
     mObject(aObject),
     mMethod(aMethod),
     mReturnValue(aFailureReturnValue),
@@ -357,25 +365,33 @@ protected:
 
 
   /**
-   * Dispose of the Songbird runnable method.
+   * Dispose of the Nightingale runnable method.
    */
 
   virtual ~sbRunnableMethod1()
   {
+    // Dispose of the Nightingale runnable method lock.
+    if (mLock)
+      nsAutoLock::DestroyLock(mLock);
   }
 
 
   /**
-   * Initialize the Songbird runnable method.
+   * Initialize the Nightingale runnable method.
    */
 
   nsresult Initialize()
   {
+    // Create the runnable lock.
+    mLock = nsAutoLock::NewLock("sbRunnableMethod1::mLock");
+    NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+
     return NS_OK;
   }
 
 
   //
+  // mLock                      Lock used to serialize field access.
   // mObject                    Object for which to invoke method.
   // mMethod                    Method to invoke.
   // mReturnValue               Method return value.
@@ -383,6 +399,7 @@ protected:
   // mArg1Value                 Method argument 1 value.
   //
 
+  PRLock*             mLock;
   nsRefPtr<ClassType> mObject;
   MethodType          mMethod;
   ReturnType          mReturnValue;
@@ -423,7 +440,7 @@ public:
 
 
   /**
-   * nsIRunnable run method.  Invoke the Songbird runnable method.
+   * nsIRunnable run method.  Invoke the Nightingale runnable method.
    */
 
   NS_IMETHOD Run()
@@ -437,6 +454,7 @@ public:
       returnValue = (BaseType::mObject->*mMethod)(BaseType::mArg1Value,
                                                   mArg2Value);
     {
+      nsAutoLock autoLock(BaseType::mLock);
       BaseType::mReturnValue = returnValue;
     }
 
@@ -445,14 +463,14 @@ public:
 
 
   /**
-   *   Create and initialize a Songbird runnable method for the object specified
+   *   Create and initialize a Nightingale runnable method for the object specified
    * by aObject.  Call the object method specified by aMethod with the arguments
    * specified by aArg1Value and aArg2Value.  Use the value specified by
    * aFailureReturnValue as the failure return value.
-   *   Return the new Songbird runnable method in aRunnable.
+   *   Return the new Nightingale runnable method in aRunnable.
    *
-   * \param aRunnable           Returned created Songbird runnable method.
-   * \param aObject             Object for which to create a Songbird runnable
+   * \param aRunnable           Returned created Nightingale runnable method.
+   * \param aObject             Object for which to create a Nightingale runnable
    *                            method.
    * \param aMethod             Method to be invoked.
    * \param aFailureReturnValue Value to which to set runnable method return
@@ -476,7 +494,7 @@ public:
     // Function variables.
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable = new SelfType(aObject,
                                                aMethod,
                                                aFailureReturnValue,
@@ -484,7 +502,7 @@ public:
                                                aArg2Value);
     NS_ENSURE_TRUE(runnable, aFailureReturnValue);
 
-    // Initialize the Songbird runnable method.
+    // Initialize the Nightingale runnable method.
     rv = runnable->Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -519,7 +537,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -562,7 +580,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -601,7 +619,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -642,7 +660,7 @@ public:
   {
     nsresult rv;
 
-    // Create a Songbird runnable method.
+    // Create a Nightingale runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
              aObject,
@@ -668,12 +686,12 @@ public:
 protected:
 
   /**
-   *   Construct a Songbird runnable method for the object specified by aObject.
+   *   Construct a Nightingale runnable method for the object specified by aObject.
    * Call the object method specified by aMethod with the argument specified by
    * aArg1Value.  Use the value specified by aFailureReturnValue as the failure
    * return value.
    *
-   * \param aObject             Object for which to create a Songbird runnable
+   * \param aObject             Object for which to create a Nightingale runnable
    *                            method.
    * \param aMethod             Method to be invoked.
    * \param aFailureReturnValue Value to which to set runnable method return
@@ -694,7 +712,7 @@ protected:
 
 
   /**
-   * Dispose of the Songbird runnable method.
+   * Dispose of the Nightingale runnable method.
    */
 
   virtual ~sbRunnableMethod2()
@@ -714,7 +732,7 @@ protected:
 
 //------------------------------------------------------------------------------
 //
-// Songbird thread utilities macros.
+// Nightingale thread utilities macros.
 //
 //------------------------------------------------------------------------------
 
@@ -1058,7 +1076,7 @@ nsresult sbInvokeOnThread2Async(T & aObject,
 
 //------------------------------------------------------------------------------
 //
-// Songbird thread utilities service prototypes.
+// Nightingale thread utilities service prototypes.
 //
 //------------------------------------------------------------------------------
 

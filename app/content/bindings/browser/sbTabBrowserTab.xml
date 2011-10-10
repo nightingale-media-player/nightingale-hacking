@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
 [
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-%songbirdDTD;
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
+%nightingaleDTD;
 ]
 >
 <!--
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -27,7 +27,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 -->
 
@@ -39,7 +39,7 @@
   
   <!--
     - NOTE:
-    -   In Songbird, there can be a "fake" tab that lives inside the <tabs>
+    -   In Nightingale, there can be a "fake" tab that lives inside the <tabs>
     - element but outside the normal scrollbox.  This is used to be able to
     - have a static tab that is always visible, even when there are too many
     - tabs and the user scrolls all the way to the right (left in RTL).  It
@@ -52,7 +52,7 @@
     -->
 
   <!-- these are from globalBindings.xml -->
-  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab">
+  <binding id="tabbrowser-tab" extends="chrome://nightingale/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab">
     <content closetabtext="&tabs.closeTab;" mousethrough="never">
       <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
       <xul:hbox flex="1" class="tab-image-middle" align="center" xbl:inherits="selected">
@@ -70,10 +70,10 @@
         // right after all the constructors run...
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
-        this._scrapers = [];
+        this._scraper = null;
           
         this._metrics =
-          Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+          Components.classes["@getnightingale.com/Nightingale/Metrics;1"]
                     .createInstance(Components.interfaces.sbIMetrics);
         
         // Watch for page unloading so that we can store
@@ -118,7 +118,7 @@
 
             // When we drop the tab, release all of the associated views stored in the map.
             if(this.linkedBrowser) {
-              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+              Components.classes["@getnightingale.com/Nightingale/library/MediaListViewMap;1"]
                         .getService(Components.interfaces.sbIMediaListViewMap)
                         .releaseViews(this.linkedBrowser);
             }
@@ -197,12 +197,12 @@
                 persist="columnSpec"
                 editable="true"
                 minheight="0"
-                columnSpec="http://songbirdnest.com/data/1.0#ordinal 20 a " +
-                           "http://songbirdnest.com/data/1.0#trackName 395 " +
-                           "http://songbirdnest.com/data/1.0#duration 50 " +
-                           "http://songbirdnest.com/data/1.0#artistName 222 " +
-                           "http://songbirdnest.com/data/1.0#albumName 222 " +
-                           "http://songbirdnest.com/data/1.0#genre 70");
+                columnSpec="http://getnightingale.com/data/1.0#ordinal 20 a " +
+                           "http://getnightingale.com/data/1.0#trackName 395 " +
+                           "http://getnightingale.com/data/1.0#duration 50 " +
+                           "http://getnightingale.com/data/1.0#artistName 222 " +
+                           "http://getnightingale.com/data/1.0#albumName 222 " +
+                           "http://getnightingale.com/data/1.0#genre 70");
                 _resize_height="105"
               />
             </vbox>
@@ -277,7 +277,7 @@
               SBProperties.albumName + ' 159 ' +
               SBProperties.downloadButton + ' 83');
           this._playlist.setAttribute('useColumnSpecPreference', 
-                                      'songbird.webplaylist.columnspec');
+                                      'nightingale.webplaylist.columnspec');
 
           // Start the first scan as soon as the browser DOM has loaded
           var self = this;
@@ -434,15 +434,14 @@
       <!-- sbITabBrowserTab -->
       <method name="clearOuterPlaylist">
         <body><![CDATA[
-          // cancel and discard all scapers
-          this._scrapers.forEach(function (aScraper) {aScraper.cancel();});
-          this._scrapers = [];
           // hide the outer playlist
+          if (this._scraper) {
+            this._scraper.cancel();
+            this._scraper = null;
+          }
           this.outerPlaylistShowing = false;
           this.scanProgress = -1;
-          if (this.outerPlaylist) {
-            this.outerPlaylist.mediaListView = null;
-          }
+          this.outerPlaylist.mediaListView = null;
         ]]></body>
       </method>
       
@@ -453,7 +452,7 @@
 
           // Since this is a chrome URL the service pane
           // may have extra information about the location
-          var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
+          var servicePane = Components.classes['@getnightingale.com/servicepane/service;1']
                                       .getService(Components.interfaces.sbIServicePaneService);
           var servicePaneNode = servicePane.getNodeForURL(this.linkedBrowser.currentURI.spec); 
 
@@ -461,7 +460,7 @@
           // looking it up by media list
           if (!servicePaneNode && this.mediaListView) {
             var libraryServicePane = 
-              Components.classes['@songbirdnest.com/servicepane/library;1']
+              Components.classes['@getnightingale.com/servicepane/library;1']
               .getService(Components.interfaces.sbILibraryServicePaneService);
             servicePaneNode = libraryServicePane.getNodeFromMediaListView(this.mediaListView);
           }
@@ -562,7 +561,7 @@
 
             // See if we're supposed to be restoring a view or making a new one
             var viewMap = Components
-              .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+              .classes["@getnightingale.com/Nightingale/library/MediaListViewMap;1"]
               .getService(Components.interfaces.sbIMediaListViewMap);
             view = viewMap.getView(browser, entry);
           }
@@ -586,7 +585,7 @@
           //SBWebPlaylistCommands.m_Playlist = this.outerPlaylist;
 
           var mgr =
-            Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+            Components.classes["@getnightingale.com/Nightingale/PlaylistCommandsManager;1"]
                       .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
           var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_WEBPLAYLIST);
 
@@ -605,12 +604,22 @@
             tree.treeBoxObject.ensureRowIsVisible(view.selection.currentIndex);
           }
 
+          // Dispose of any previous scraper.
+          if (this._scraper) {
+            this._scraper.cancel();
+            this._scraper = null;
+          }
+
           // create a new scraper.
-          let scraper = new WebScraper(view.mediaList);
-          this._scrapers.push(scraper);
+          if (!hasExplicitView) {
+            // only clear the view if it wasn't explicitly specified (because
+            // if it was, we wanted to use it - e.g. currently playing it)
+            view.mediaList.clear();
+          }
+          this._scraper = new WebScraper(view.mediaList);
             
           var self = this;
-          scraper.job.addJobProgressListener( {
+          this._scraper.job.addJobProgressListener( {
             QueryInterface: XPCOMUtils.generateQI([Ci.sbIJobProgressListener]),
             onJobProgress:  function(job) {
               if (view.mediaList.length > 0) {
@@ -625,7 +634,7 @@
           });
 
           // scrape the document.
-          scraper.start(aDocument);
+          this._scraper.start(aDocument);
           
         ]]></body>
       </method>
@@ -701,7 +710,7 @@
           // the servicepane node for this list
         try {
           let librarySPS =
-              Components.classes['@songbirdnest.com/servicepane/library;1']
+              Components.classes['@getnightingale.com/servicepane/library;1']
               .getService(Components.interfaces.sbILibraryServicePaneService);
 
           let node = this._findServicePaneNode();
@@ -735,7 +744,7 @@
           // this.backWithDefault();
 
           // Load the resource determined in the above listener
-          const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+          const NS_SP = "http://getnightingale.com/rdf/servicepane#";
           if (this._resourceToLoad) {
             let mediaList = this._resourceToLoad;
             let view = LibraryUtils.createStandardMediaListView(mediaList);
@@ -769,7 +778,7 @@
           };
 
           var propArray =
-            Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+            Components.classes["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
                       .createInstance(Components.interfaces.sbIMutablePropertyArray);
           propArray.appendProperty(SBProperties.originPage, aURL);
           propArray.appendProperty(SBProperties.isList, "1");
@@ -892,7 +901,7 @@
 
             // Look for an existing view for this page using the browser history
             var viewMap =
-              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+              Components.classes["@getnightingale.com/Nightingale/library/MediaListViewMap;1"]
                         .getService(Components.interfaces.sbIMediaListViewMap);
 
             var browser = this.linkedBrowser;
@@ -1001,7 +1010,7 @@
 
           // TODO why dont we care about saving view history for web pages?
           var viewMap =
-            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+            Components.classes["@getnightingale.com/Nightingale/library/MediaListViewMap;1"]
                       .getService(Components.interfaces.sbIMediaListViewMap);
           viewMap.setView(browser, entry, this.mediaPage.mediaListView);
         ]]>

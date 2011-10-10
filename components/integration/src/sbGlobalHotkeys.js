@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -28,23 +28,23 @@ const Cu = Components.utils;
 const Cr = Components.results;
 
 const SB_HOTKEY_SERVICE_CLASSNAME  = "sbHotkeyService"
-const SB_HOTKEY_SERVICE_DESC       = "Songbird Global Hotkey Service";
-const SB_HOTKEY_SERVICE_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyService;1";
+const SB_HOTKEY_SERVICE_DESC       = "Nightingale Global Hotkey Service";
+const SB_HOTKEY_SERVICE_CONTRACTID = "@getnightingale.com/Nightingale/HotkeyService;1";
 const SB_HOTKEY_SERVICE_CID        = "{8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}";
 
 const SB_DEFGLOBALHKACTIONS_CLASSNAME  = "sbDefaultGlobalHotkeyActions";
-const SB_DEFGLOBALHKACTIONS_DESC       = "Songbird Default Global Hotkey Actions";
-const SB_DEFGLOBALHKACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1";
+const SB_DEFGLOBALHKACTIONS_DESC       = "Nightingale Default Global Hotkey Actions";
+const SB_DEFGLOBALHKACTIONS_CONTRACTID = "@getnightingale.com/Nightingale/DefaultGlobalHotkeyActions;1";
 const SB_DEFGLOBALHKACTIONS_CID        = "{76512c09-7f02-48f5-86c0-c3a8670ead3f}";
 
 const SB_HOTKEY_CONFIGURATION_CLASSNAME  = "sbHotkeyConfiguration";
-const SB_HOTKEY_CONFIGURATION_DESC       = "Songbird Hotkey Configuration";
-const SB_HOTKEY_CONFIGURATION_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyConfiguration;1";
+const SB_HOTKEY_CONFIGURATION_DESC       = "Nightingale Hotkey Configuration";
+const SB_HOTKEY_CONFIGURATION_CONTRACTID = "@getnightingale.com/Nightingale/HotkeyConfiguration;1";
 const SB_HOTKEY_CONFIGURATION_CID        = "{5c6b204c-1dd2-11b2-8005-83725e03a0d0}";
 
-const SB_HOTKEYMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/GlobalHotkeys;1";
-const SB_HOTKEYACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyActions;1";
-const SB_COMMANDLINE_CONTRACTID   = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
+const SB_HOTKEYMANAGER_CONTRACTID = "@getnightingale.com/Nightingale/GlobalHotkeys;1";
+const SB_HOTKEYACTIONS_CONTRACTID = "@getnightingale.com/Nightingale/HotkeyActions;1";
+const SB_COMMANDLINE_CONTRACTID   = "@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale";
 
 const STARTUP_TOPIC  = "final-ui-startup";
 const SHUTDOWN_TOPIC = "quit-application";
@@ -150,7 +150,7 @@ sbHotkeyService.prototype =
   ///////////////////////////////////////////////////////////////////
   getHotkeys: function() {
     var count = SBDataGetIntValue("globalhotkeys.count");
-    var hotkeyConfigList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+    var hotkeyConfigList = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
     for (var i = 0; i < count; i++) {
       var hotkeyConfig = Cc[SB_HOTKEY_CONFIGURATION_CONTRACTID]
@@ -262,17 +262,17 @@ sbHotkeyService.prototype =
     // Register observer for application shutdown to clean up.
     ObserverService.addObserver(this, SHUTDOWN_TOPIC, false);
 
-    // Indicate that the service is ready.
-    var serviceManager = Cc["@songbirdnest.com/Songbird/ServiceManager;1"]
-                           .getService(Ci.sbIServiceManager);
-    serviceManager.setServiceReady(SB_HOTKEY_SERVICE_CONTRACTID, true);
+    // Send notification that the service is ready.
+    ObserverService.notifyObservers(this,
+                                    "service-ready",
+                                    SB_HOTKEY_SERVICE_CONTRACTID);
   },
 
   _shutdown: function() {
-    // Indicate that the service is no longer ready.
-    var serviceManager = Cc["@songbirdnest.com/Songbird/ServiceManager;1"]
-                           .getService(Ci.sbIServiceManager);
-    serviceManager.setServiceReady(SB_HOTKEY_SERVICE_CONTRACTID, false);
+    // Send notification that the service is about to shut down.
+    ObserverService.notifyObservers(this,
+                                    "before-service-shutdown",
+                                    SB_HOTKEY_SERVICE_CONTRACTID);
 
     if (CommandLine) {
       CommandLine.removeFlagHandler(this._hotkeyHandler, "hotkey");
@@ -474,7 +474,7 @@ sbHotkeyService.prototype =
     ];
 
     // Build an array of hot key configurations
-    var hotkeyConfigArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+    var hotkeyConfigArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                               .createInstance(Ci.nsIMutableArray);
     for (var i = 0; i < hotkeyConfigList.length; i++) {
       var hotkeyConfiguration = Cc[SB_HOTKEY_CONFIGURATION_CONTRACTID]
@@ -551,7 +551,7 @@ sbDefaultGlobalHotkeyActions.prototype =
    * You should change these to match your own actions, strings, and
    * stringbundle (ie, you will need to ship your own translations with
    * your extension since the description string you use will probably
-   * not be in the standard songbird string bundle)
+   * not be in the standard nightingale string bundle)
    */
   _packagename: "playback",
 
@@ -567,14 +567,14 @@ sbDefaultGlobalHotkeyActions.prototype =
    * (ie, hotkeys.actions.playback, hotkeys.actions.playback.volumeup,
    * hotkeys.actions.playback.volumedown, etc).
    */
-  _stringbundle: "chrome://songbird/locale/songbird.properties",
+  _stringbundle: "chrome://nightingale/locale/nightingale.properties",
 
   /**
    * Internal data
    */
   _localpackagename: null,
   _sbs: null,
-  _songbirdStrings: null,
+  _nightingaleStrings: null,
 
   /**
    * This enumerates the actions, their localized display strings,
@@ -611,7 +611,7 @@ sbDefaultGlobalHotkeyActions.prototype =
   },
 
   get _mm() {
-    return Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+    return Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
              .getService(Ci.sbIMediacoreManager);
   },
 
@@ -649,7 +649,7 @@ sbDefaultGlobalHotkeyActions.prototype =
       else {
         // If we have no context, initiate playback
         // via the root application controller
-        var app = Cc["@songbirdnest.com/Songbird/ApplicationController;1"]
+        var app = Cc["@getnightingale.com/Nightingale/ApplicationController;1"]
                     .getService(Ci.sbIApplicationController);
         app.playDefault();
       }
@@ -671,10 +671,10 @@ sbDefaultGlobalHotkeyActions.prototype =
     if (!this._sbs) {
       this._sbs = Cc["@mozilla.org/intl/stringbundle;1"]
                     .getService(Ci.nsIStringBundleService);
-      this._songbirdStrings = this._sbs.createBundle(this._stringbundle);
+      this._nightingaleStrings = this._sbs.createBundle(this._stringbundle);
     }
     try {
-      r = this._songbirdStrings.GetStringFromName(str);
+      r = this._nightingaleStrings.GetStringFromName(str);
     } catch (e) { /* we have a default */ }
 
     return r;

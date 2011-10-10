@@ -1,27 +1,29 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 #ifndef SBDEVICEENSURESPACEFORWRITE_H_
 #define SBDEVICEENSURESPACEFORWRITE_H_
@@ -32,49 +34,98 @@
 #include "sbBaseDevice.h"
 
 /**
- * This is a helper class that looks at the changeset and determines how many
- * items will fit in the free space of the device. The changeset passed to the
- * constructor is modified, removing changes that dont fit.
+ * This is a helper class that looks at the batch and determines how many
+ * items will fit in the free space of the device. The batch passed to the
+ * constructor is modified, with items that fail to fit being removed.
  */
 class sbDeviceEnsureSpaceForWrite
 {
 public:
+  // Typedefs for types from sbBaseDevice
+  typedef sbBaseDevice::Batch Batch;
+  typedef sbBaseDevice::TransferRequestQueue TransferRequestQueue;
+  typedef sbBaseDevice::TransferRequest TransferRequest;
+  
+  /**
+   * Holds the length and iters back to the batch for the item
+   */
+  struct BatchLink {
+    BatchLink() : mLength(0) {}
+    BatchLink(PRInt32 aOrder,
+              PRInt64 aLength,
+              Batch::iterator aIter) : mOrder(aOrder), mLength(aLength) {
+      mBatchIters.push_back(aIter);
+    }
+    PRInt32 mOrder;
+    PRInt64 mLength;
+    typedef std::vector<Batch::iterator> BatchIters;
+    BatchIters mBatchIters;
+  };
+
+  typedef std::map<sbIMediaItem*, BatchLink> ItemsToWrite;
 
   /**
-   * Initializes the object with the device and changeset to be analyzed
-   * \param aDevice     The device the changeset belongs to
-   * \param aDevLibrary The device's library
-   * \param aChangeset  The changeset that we're checking for available space
+   * Initializes the object with the device and batch to be analyzed
+   * \param aDevice The device the batch belongs to
+   * \param aBatch The batch that we'er checking for available space
    */
   sbDeviceEnsureSpaceForWrite(sbBaseDevice * aDevice,
-                              sbIDeviceLibrary * aDevLibrary,
-                              sbILibraryChangeset * aChangeset);
+                              Batch & aBatch);
   /**
    * Cleanup data
    */
   ~sbDeviceEnsureSpaceForWrite();
-
+  
   /**
-   * Ensures there's enough space for items in the changeset and removes any items
+   * Ensures there's enough space for items in the batch and removes any items
    * that don't fit.
    */
   nsresult EnsureSpace();
 private:
+  /**
+   * Our write mode
+   */
+  enum WriteMode {
+    NOP,
+    SHUFFLE,
+    MANUAL,
+    ABORT
+  };
+
+  struct RemoveItemInfo
+  {
+    RemoveItemInfo(sbIMediaItem * aItem, sbIMediaList * aList) : mItem(aItem),
+                                                                 mList(aList) {}
+    nsRefPtr<sbIMediaItem> mItem;
+    nsRefPtr<sbIMediaList> mList;
+  };
+
+  /**
+   * Simple list of non-owning media item pointers
+   */
+  typedef std::vector<sbIMediaItem*> ItemList;
+
+  /**
+   * Collection items to be removed and their list
+   */
+  typedef std::list<RemoveItemInfo> RemoveItems;
 
   /**
    * non-owning reference back to our device
    */
   sbBaseDevice * mDevice;
-
   /**
-   * The device library
+   * Collection of media item pointers
    */
-  nsCOMPtr<sbIDeviceLibrary> mDevLibrary;
-
+  ItemsToWrite mItemsToWrite;
   /**
-   * The changeset we're operating on
+   * The batch we're operating on
    */
-  nsCOMPtr<sbILibraryChangeset> mChangeset;
+  Batch & mBatch;
+  /**
+   * The owning library of the items
+   */
+  nsCOMPtr<sbIDeviceLibrary> mOwnerLibrary;
   /**
    * Total length in bytes of the items
    */
@@ -85,14 +136,35 @@ private:
   PRInt64 mFreeSpace;
 
   /**
+   * Builds a list of sbIMediaItem pointers mItemsToWrite
+   */
+  nsresult BuildItemsToWrite();
+
+  /**
+   * Creates an item list
+   */
+  void CreateItemList(ItemList & aItems);
+  
+  /**
    * Gets the free space for the device
    */
   nsresult GetFreeSpace();
 
   /**
-   * Removes the extra items from the changeset
+   * Determines the write mode for our device
+   */
+  nsresult GetWriteMode(WriteMode & aWriteMode);
+
+  /**
+   * Removes the extra items from the batch
    */
   nsresult RemoveExtraItems();
+
+  /**
+   * Removes the items picked to be removed from the device library
+   */
+  nsresult RemoveItemsFromLibrary(RemoveItems::iterator iter,
+                                  RemoveItems::iterator end);
 };
 
 #endif /* SBDEVICEENSURESPACEFORWRITE_H_ */

@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,12 +22,12 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -56,7 +56,7 @@
     open a window, or use the status bar area for the time being.
  
     Please submit any suggestions/feedback as bug reports to
-    http://bugzilla.songbirdnest.com
+    http://bugzilla.getnightingale.com
  
     WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING    
     
@@ -82,7 +82,7 @@
        
           // Listen for faceplate pane messages from the faceplate manager
           this._manager =
-             Components.classes["@songbirdnest.com/faceplate/manager;1"]
+             Components.classes["@getnightingale.com/faceplate/manager;1"]
                        .getService(Components.interfaces.sbIFaceplateManager);    
           this._manager.addListener(this);
           
@@ -389,7 +389,7 @@
             
             // Get the faceplate pane interface for this instance
             var manager =
-               Components.classes["@songbirdnest.com/faceplate/manager;1"]
+               Components.classes["@getnightingale.com/faceplate/manager;1"]
                          .getService(Components.interfaces.sbIFaceplateManager);    
             this._pane = manager.getPane(id);
             
@@ -450,7 +450,7 @@
     via CSS.
     -->
   <binding id="default-pane" 
-           extends="chrome://songbird/content/bindings/facePlate.xml#base-pane">
+           extends="chrome://nightingale/content/bindings/facePlate.xml#base-pane">
     <content>
         <xul:hbox pack="center" align="center" flex="1">
           <xul:image class="faceplate-intro-image"/>
@@ -469,7 +469,7 @@
     begins for the first time in a session.
     -->
   <binding id="playback-pane"
-           extends="chrome://songbird/content/bindings/facePlate.xml#base-pane">
+           extends="chrome://nightingale/content/bindings/facePlate.xml#base-pane">
     <content>
         <xul:vbox flex="1" pack="center">
           <xul:sb-player-curtrack-box class="faceplate-curtrack-box" orient="vertical" pack="center" align="center">
@@ -591,17 +591,17 @@
    open a window, or use the status bar area for the time being.
  
    Please submit any suggestions/feedback as bug reports to
-   http://bugzilla.songbirdnest.com
+   http://bugzilla.getnightingale.com
  
    WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING       
    
    
    Usage example: [NOTE: DOES NOT WORK. SEE ABOVE.]
    
-      var manager =  Components.classes["@songbirdnest.com/faceplate/manager;1"]
+      var manager =  Components.classes["@getnightingale.com/faceplate/manager;1"]
                         .getService(Components.interfaces.sbIFaceplateManager);  
       var pane = manager.createPane("test", "test", 
-                   "chrome://songbird/content/bindings/facePlate.xml#progress-pane");
+                   "chrome://nightingale/content/bindings/facePlate.xml#progress-pane");
       pane.setData("label1", "This is a demo of the");
       pane.setData("label2", "progress faceplate");
       pane.setData("progress-mode", "determined"); 
@@ -613,7 +613,7 @@
       manager.showPane(pane);
    -->
   <binding id="progress-pane" 
-           extends="chrome://songbird/content/bindings/facePlate.xml#base-pane">
+           extends="chrome://nightingale/content/bindings/facePlate.xml#base-pane">
     <content>
       <xul:vbox flex="1" align="center" pack="center">
         <xul:label anonid="label1"   class="faceplate-text" />
@@ -717,7 +717,7 @@
             // TODO: If this comes back (it's dead right now) it should be like the <sb-mediapages-menuitems/> binding!  
             
             // Add a menu item for each registered faceplate
-            var faceplateManager = Components.classes["@songbirdnest.com/faceplate/manager;1"]
+            var faceplateManager = Components.classes["@getnightingale.com/faceplate/manager;1"]
                                      .getService(Components.interfaces.sbIFaceplateManager);    
             var enumerator = faceplateManager.getPanes();
             while (enumerator.hasMoreElements()) {

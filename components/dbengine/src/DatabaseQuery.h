@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  DatabaseQuery.h
-* \brief Songbird Database Object Definition.
+* \brief Nightingale Database Object Definition.
 */
 
 #ifndef __DATABASE_QUERY_H__
@@ -60,11 +60,11 @@ class CDatabaseQuery;
 #include "DatabaseResult.h"
 
 // DEFINES ====================================================================
-#define SONGBIRD_DATABASEQUERY_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/DatabaseQuery;1"
-#define SONGBIRD_DATABASEQUERY_CLASSNAME                  \
-  "Songbird Database Query Interface"
-#define SONGBIRD_DATABASEQUERY_CID                        \
+#define NIGHTINGALE_DATABASEQUERY_CONTRACTID                 \
+  "@getnightingale.com/Nightingale/DatabaseQuery;1"
+#define NIGHTINGALE_DATABASEQUERY_CLASSNAME                  \
+  "Nightingale Database Query Interface"
+#define NIGHTINGALE_DATABASEQUERY_CID                        \
 { /* 377a6592-64bd-4a6b-a941-d488abb5a8aa */              \
   0x377a6592,                                             \
   0x64bd,                                                 \
@@ -147,7 +147,7 @@ protected:
   void SetResultObject(CDatabaseResult *aResultObject);
 
   nsresult PopQuery(sbIDatabasePreparedStatement **_retval);
-  bindParameterArray_t* GetQueryParameters(PRUint32 aQueryIndex);
+  bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
   bindParameterArray_t* PopQueryParameters();
 
   PRLock *m_pLock;

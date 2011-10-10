@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -49,7 +49,7 @@ BaseDeviceHelper.prototype = {
     var device = aDevice;
     if (!device) {
       // no device supplied, need to find it
-      const deviceMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+      const deviceMgr = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Ci.sbIDeviceRegistrar);
       var foundLib = false;
       for (device in ArrayConverter.JSArray(deviceMgr.devices)) {
@@ -71,7 +71,7 @@ BaseDeviceHelper.prototype = {
     var spaceRemaining =
       device.properties
             .properties
-            .getPropertyAsInt64("http://songbirdnest.com/device/1.0#freeSpace");
+            .getPropertyAsInt64("http://getnightingale.com/device/1.0#freeSpace");
     if (aSpaceRemaining) {
       aSpaceRemaining.value = spaceRemaining;
     }
@@ -84,7 +84,7 @@ BaseDeviceHelper.prototype = {
     var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
 
     storageConverter =
-      Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+      Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
         .createInstance(Ci.sbIPropertyUnitConverter);
     var messageParams = [
       device.name,
@@ -94,7 +94,7 @@ BaseDeviceHelper.prototype = {
     var message = SBFormattedString(messageKeyPrefix + ".message",
                                     messageParams);
 
-    const prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    const prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                        .getService(Ci.sbIPrompter);
     var neverPromptAgain = { value: false };
     var abortRequest = prompter.confirmEx(null, /* parent */
@@ -125,7 +125,7 @@ BaseDeviceHelper.prototype = {
     var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
 
     storageConverter =
-      Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+      Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
         .createInstance(Ci.sbIPropertyUnitConverter);
     var message = SBFormattedString
                     (messageKeyPrefix + ".message",
@@ -137,7 +137,7 @@ BaseDeviceHelper.prototype = {
                        Ci.nsIPromptService.BUTTON_TITLE_IS_STRING) +
                       (Ci.nsIPromptService.BUTTON_POS_1 *
                        Ci.nsIPromptService.BUTTON_TITLE_IS_STRING);
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .getService(Ci.sbIPrompter);
     var neverPromptAgain = { value: false };
     var abortRequest = prompter.confirmEx
@@ -157,12 +157,20 @@ BaseDeviceHelper.prototype = {
   _getMessageKeyPrefix:
     function BaseDeviceHelper__getMessageKeyPrefix(aLibrary) {
     var messageKeyPrefix = "device.error.not_enough_freespace.prompt.";
-    messageKeyPrefix += "manual";
+    if ((aLibrary.mgmtType & Ci.sbIDeviceLibrary.MGMT_TYPE_ALL_MASK) > 0) {
+        messageKeyPrefix += "sync";
+    }
+    else if ((aLibrary.mgmtType & Ci.sbIDeviceLibrary.MGMT_TYPE_PLAYLISTS_MASK) > 0){
+        messageKeyPrefix += "sync_playlists";
+    }
+    else {
+        messageKeyPrefix += "manual";
+    }
 
     return messageKeyPrefix;
   },
 
-  contractID: "@songbirdnest.com/Songbird/Device/Base/Helper;1",
+  contractID: "@getnightingale.com/Nightingale/Device/Base/Helper;1",
   classDescription: "Helper component for device implementations",
   classID: Components.ID("{ebe6e08a-0604-44fd-a3d7-2be556b96b24}"),
   QueryInterface: XPCOMUtils.generateQI([

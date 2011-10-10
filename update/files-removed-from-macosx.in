@@ -251,63 +251,28 @@
 ./Contents/Resources/gst-plugins/libgstflxdec.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/gst-plugins/libgstmozillasrc.so
-./Contents/Resources/gstreamer/encode-profiles/avi-mpeg2sp-mp3.xml
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/install.rdf
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome/venkman.jar
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome/
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome.manifest
-./Contents/Resources/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/
-./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
-./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
-./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/chrome/
-./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/chrome.manifest
-./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/
-./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf
-./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
-./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome.manifest
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components/sbQuickTime.dylib
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components/
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/
-./Contents/Resources/extensions/quicktime@songbirdnest.com/install.rdf
-./Contents/Resources/extensions/quicktime@songbirdnest.com/components/sbQuickTime.xpt
-./Contents/Resources/extensions/quicktime@songbirdnest.com/components/
-./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome/quicktime.jar
-./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome/
-./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome.manifest
-./Contents/Resources/extensions/quicktime@songbirdnest.com/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/WINNT/chrome/icons/default/winInspectorMain.ico
-./Contents/Resources/extensions/inspector@mozilla.org/platform/WINNT/chrome/icons/default/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/WINNT/chrome/icons/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/WINNT/chrome/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/WINNT/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/OS2/chrome/icons/default/winInspectorMain.ico
-./Contents/Resources/extensions/inspector@mozilla.org/platform/OS2/chrome/icons/default/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/OS2/chrome/icons/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/OS2/chrome/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/OS2/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/winInspectorMain16.xpm
-./Contents/Resources/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/winInspectorMain.xpm
-./Contents/Resources/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/Linux/chrome/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/Linux/
-./Contents/Resources/extensions/inspector@mozilla.org/platform/
-./Contents/Resources/extensions/inspector@mozilla.org/install.rdf
-./Contents/Resources/extensions/inspector@mozilla.org/defaults/preferences/inspector.js
-./Contents/Resources/extensions/inspector@mozilla.org/defaults/preferences/
-./Contents/Resources/extensions/inspector@mozilla.org/defaults/
-./Contents/Resources/extensions/inspector@mozilla.org/components/inspector-cmdline.js
-./Contents/Resources/extensions/inspector@mozilla.org/components/
-./Contents/Resources/extensions/inspector@mozilla.org/chrome/inspector.jar
-./Contents/Resources/extensions/inspector@mozilla.org/chrome/
-./Contents/Resources/extensions/inspector@mozilla.org/chrome.manifest
-./Contents/Resources/extensions/inspector@mozilla.org/
-./Contents/Resources/extensions/basic-layouts@songbirdnest.com/install.rdf
-./Contents/Resources/extensions/basic-layouts@songbirdnest.com/chrome.manifest
-./Contents/Resources/extensions/basic-layouts@songbirdnest.com/
+./Contents/Resources/extensions/rubberducky-dependencies@getnightingale.com/install.rdf
+./Contents/Resources/extensions/rubberducky-dependencies@getnightingale.com/chrome/rubberducky-dependencies.jar
+./Contents/Resources/extensions/rubberducky-dependencies@getnightingale.com/chrome/
+./Contents/Resources/extensions/rubberducky-dependencies@getnightingale.com/chrome.manifest
+./Contents/Resources/extensions/rubberducky-dependencies@getnightingale.com/
+./Contents/Resources/extensions/rubberducky@getnightingale.com/install.rdf
+./Contents/Resources/extensions/rubberducky@getnightingale.com/chrome/rubberducky.jar
+./Contents/Resources/extensions/rubberducky@getnightingale.com/chrome.manifest
+./Contents/Resources/extensions/quicktime@getnightingale.com/platform/Darwin_x86-gcc3/components/sbQuickTime.dylib
+./Contents/Resources/extensions/quicktime@getnightingale.com/platform/Darwin_x86-gcc3/components/
+./Contents/Resources/extensions/quicktime@getnightingale.com/platform/Darwin_x86-gcc3/
+./Contents/Resources/extensions/quicktime@getnightingale.com/platform/
+./Contents/Resources/extensions/quicktime@getnightingale.com/install.rdf
+./Contents/Resources/extensions/quicktime@getnightingale.com/components/sbQuickTime.xpt
+./Contents/Resources/extensions/quicktime@getnightingale.com/components/
+./Contents/Resources/extensions/quicktime@getnightingale.com/chrome/quicktime.jar
+./Contents/Resources/extensions/quicktime@getnightingale.com/chrome/
+./Contents/Resources/extensions/quicktime@getnightingale.com/chrome.manifest
+./Contents/Resources/extensions/quicktime@getnightingale.com/
+./Contents/Resources/extensions/basic-layouts@getnightingale.com/install.rdf
+./Contents/Resources/extensions/basic-layouts@getnightingale.com/chrome.manifest
+./Contents/Resources/extensions/basic-layouts@getnightingale.com/
 ./Contents/Resources/components/sbStorageFormatter.jsm
 ./Contents/Resources/components/sbProperties.jsm
 ./Contents/Resources/components/sbPlaylistPlayback.xpt
@@ -316,7 +281,6 @@
 ./Contents/Resources/components/sbMetadataManager.dylib
 ./Contents/Resources/components/sbMetadataImageScanner.js
 ./Contents/Resources/components/sbMetadataAlbumArtFetcher.dylib
-./Contents/Resources/components/sbMacPurpleRainComponent.dylib
 ./Contents/Resources/components/sbITunesImporter.js
 ./Contents/Resources/components/sbGStreamer.xpt
 ./Contents/Resources/components/XPCOMUtils.jsm
@@ -382,8 +346,6 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowN.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.svn/all-wcprops
 ./Contents/Frameworks/XUL.framework/res/cursors/.svn/format
-./Contents/Frameworks/XUL.framework/res/broken-image.gif
-./Contents/Frameworks/XUL.framework/res/loading-image.gif
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome.manifest
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome/inspector.jar
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/components/inspector-cmdline.js
@@ -454,7 +416,6 @@
 ./Contents/Resources/components/sbPlaylistWriter.xpt
 ./Contents/Resources/components/sbPrompter.xpt
 ./Contents/Resources/components/sbProperties.xpt
-./Contents/Resources/components/sbProxiedServices.dylib
 ./Contents/Resources/components/sbProxiedServices.xpt
 ./Contents/Resources/components/sbSQLBuilder.xpt
 ./Contents/Resources/components/sbServicePane.xpt
@@ -556,9 +517,6 @@
 ./Contents/Frameworks/XUL.framework/components/necko_socket.xpt
 ./Contents/Frameworks/XUL.framework/components/necko_strconv.xpt
 ./Contents/Frameworks/XUL.framework/components/necko_viewsource.xpt
-./Contents/Frameworks/XUL.framework/components/nsDictionary.js
-./Contents/Frameworks/XUL.framework/components/nsResetPref.js
-./Contents/Frameworks/XUL.framework/components/nsXmlRpcClient.js
 ./Contents/Frameworks/XUL.framework/components/oji.xpt
 ./Contents/Frameworks/XUL.framework/components/parentalcontrols.xpt
 ./Contents/Frameworks/XUL.framework/components/pipboot.xpt
@@ -607,9 +565,6 @@
 ./Contents/Frameworks/XUL.framework/components/xuldoc.xpt
 ./Contents/Frameworks/XUL.framework/components/xultmpl.xpt
 ./Contents/Frameworks/XUL.framework/components/zipwriter.xpt
-./Contents/Frameworks/XUL.framework/components/compreg.dat
-./Contents/Frameworks/XUL.framework/components/xpti.dat
-./Contents/Frameworks/XUL.framework/components/xptitemp.dat
 ./Contents/Frameworks/XUL.framework/regxpcom
 ./Contents/Frameworks/XUL.framework/xpcshell
 ./Contents/Frameworks/XUL.framework/xpidl
@@ -619,23 +574,3 @@
 ./Contents/Frameworks/XUL.framework/run-mozilla.sh
 ./Contents/Frameworks/XUL.framework/nsinstall
 ./Contents/Frameworks/XUL.framework/ssltunnel
-./Contents/Frameworks/XUL.framework/mangle
-./Contents/Frameworks/XUL.framework/libwidget.rsrc
-./Contents/Resources/components/browsersearch.xpt
-./Contents/Resources/components/exthelper.xpt
-./Contents/Resources/components/nsSearchService.js
-./Contents/Resources/components/nsSearchSuggestions.js
-./Contents/Resources/components/compreg.dat
-./Contents/Resources/components/xpti.dat
-./Contents/Resources/components/xptitemp.dat
-./Contents/Frameworks/XUL.framework/modules/JSON.jsm
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/MacOS/Default Plugin
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/MacOS/
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/English.lproj/InfoPlist.strings
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/English.lproj/
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/Default Plugin.rsrc
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Info.plist
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/PkgInfo
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/

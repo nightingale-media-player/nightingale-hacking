@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -616,7 +616,7 @@ sbTranscodeAlbumArt::ConvertArt()
   // TODO: what if we can't write to that (e.g. MTP)? 
 
   nsCOMPtr<nsIMutableArray> mediaItemArray =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mediaItemArray->AppendElement(mItem, PR_FALSE);
@@ -632,7 +632,7 @@ sbTranscodeAlbumArt::ConvertArt()
   NS_ENSURE_TRUE(propsToWrite, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbIFileMetadataService> metadataService = do_ProxiedGetService(
-	 "@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+	 "@getnightingale.com/Nightingale/FileMetadataService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIJobProgress> job;

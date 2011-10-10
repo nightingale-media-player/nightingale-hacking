@@ -2,12 +2,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,14 +22,14 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 
 
-<!-- WARNING : this file MUST NOT load songbird.dtd !! -->
+<!-- WARNING : this file MUST NOT load nightingale.dtd !! -->
 
 <!-- The reason for this is because an error while parsing that dtd
      may just be what caused this dialog to pop up, so in those cases,
@@ -54,7 +54,7 @@
 >
 
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/windowUtils.js" />
+   src="chrome://nightingale/content/scripts/windowUtils.js" />
 
   <hbox>
     <label id="label1"/>
@@ -81,7 +81,7 @@
       document.getElementById("label3").
                setAttribute("value", 
                  SBBrandedString("parsererror.label.mustquit",
-                                 "Songbird must quit."));
+                                 "Nightingale must quit."));
       document.getElementById("label4").
                setAttribute("value", 
                  SBString("parsererror.label.maybecausedbylocale", 
@@ -129,11 +129,11 @@
     function showDetails() {
       
       // Do not use the prompt service, because it uses our titlebar, 
-      // which loads the sysControl bindings, which loads songbird.dtd
+      // which loads the sysControl bindings, which loads nightingale.dtd
       // (see comment at the top of this file for more details).
       // Instead, load a minimal alert-like window.
       
-      window.openDialog( "chrome://songbird/content/xul/parserErrorDetails.xul", 
+      window.openDialog( "chrome://nightingale/content/xul/parserErrorDetails.xul", 
                          "_blank", 
                          "chrome,modal=yes,centerscreen,resizable=no", 
                          window.arguments[0].QueryInterface(Components.interfaces.nsIConsoleMessage).message);

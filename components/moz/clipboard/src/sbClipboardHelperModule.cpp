@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,27 +20,27 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
-// Local includes
 #include "sbClipboardHelper.h"
 
-// Mozilla includes
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbClipboardHelper)
-NS_DEFINE_NAMED_CID(SB_CLIPBOARD_HELPER_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdMozClipboardCIDs[] = {
-    { &kSB_CLIPBOARD_HELPER_CID, true, NULL, sbClipboardHelperConstructor },
-    { NULL }
+// fill out data struct to register with component system
+static const nsModuleComponentInfo components[] =
+{
+  {
+    NIGHTINGALE_CLIPBOARD_HELPER_CLASSNAME,
+    NIGHTINGALE_CLIPBOARD_HELPER_CID,
+    NIGHTINGALE_CLIPBOARD_HELPER_CONTRACTID,
+    sbClipboardHelperConstructor
+  }
 };
 
-static const mozilla::Module kSongbirdMozClipboardModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozClipboardCIDs
-};
+// create the module info struct that is used to regsiter
+NS_IMPL_NSGETMODULE(NightingaleClipboardHelper, components)
 
-NSMODULE_DEFN(SongbirdClipboardHelper) = &kSongbirdMozClipboardModule;

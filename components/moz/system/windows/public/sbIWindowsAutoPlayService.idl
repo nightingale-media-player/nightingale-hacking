@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -36,9 +36,9 @@
  * service.
  *   This interface allows clients to add handlers for various Windows AutoPlay
  * actions.  Clients should add handlers before the main application window is
- * presented ("songbird-main-window-presented") in order to receive all actions.
+ * presented ("nightingale-main-window-presented") in order to receive all actions.
  *
- * "@songbirdnest.com/Songbird/WindowsAutoPlayService;1"
+ * "@getnightingale.com/Nightingale/WindowsAutoPlayService;1"
  * Use get service with this component.
  */
 
@@ -114,6 +114,6 @@ interface sbIWindowsAutoPlayActionHandler : nsISupports
 
 %{C++
 #define SB_WINDOWSAUTOPLAYSERVICE_CONTRACTID \
-          "@songbirdnest.com/Songbird/WindowsAutoPlayService;1"
+          "@getnightingale.com/Nightingale/WindowsAutoPlayService;1"
 %}C++
 

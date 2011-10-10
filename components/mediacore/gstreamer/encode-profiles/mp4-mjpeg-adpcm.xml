@@ -30,9 +30,7 @@
       frames when the video is paused and only marginally so while increasing
       the theoretical size too much.
      -->
-    <!-- XXX: for 1.9, change min from 5 to 59, to select the quality Acme
-         wants for this profile by default. -->
-    <property name="quality" type="int" min="59" max="95" default="50"
+    <property name="quality" type="int" min="5" max="95" default="50"
               mapping="video-quality" scale="95"/>
   </video>
 

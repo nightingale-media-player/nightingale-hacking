@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \file sbIMediaItem.idl
@@ -37,19 +39,18 @@ interface nsIStreamListener;
 interface nsIInputStream;
 interface nsIOutputStream;
 interface sbILibrary;
-interface sbIMediaItemController;
 
 /**
 * \interface sbIMediaItem
 * \brief Interface that defines a single item of media in the system
 *
-* The Songbird concept of a media item is the abstraction of a renderable piece
+* The Nightingale concept of a media item is the abstraction of a renderable piece
 * of media. A media item contains content as well as metadata about the
 * content.  A media item must be associated with a particular library.
 *
 * \sa sbILibrary, sbIMediaList
 */
-[scriptable, uuid(64aa9b34-00e0-480e-b919-2322496175cb)]
+[scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
 interface sbIMediaItem : sbILibraryResource
 {
   /*
@@ -72,11 +73,6 @@ interface sbIMediaItem : sbILibraryResource
    */
   readonly attribute boolean isMutable;
 
-  /**
-   * \brief An interface to the media item controller (if any) that determines
-   * this item's availability for playback.
-   */
-  readonly attribute sbIMediaItemController itemController;
 
 // Convenience Attributes (these should thunk directly to the sbILibraryResource::G/SetProperty calls)
 
@@ -168,7 +164,7 @@ interface sbIMediaItem : sbILibraryResource
    * \brief Test if this media item is available for playback
    * \param aObserver An observer that is notified with the item's availabilty
    */
-  void testIsURIAvailable(in nsIObserver aObserver);
+  void testIsAvailable(in nsIObserver aObserver);
 
   /**
    * \brief Asynchronously get an input stream to the content of the media item

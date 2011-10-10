@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -171,18 +171,6 @@ var DPWCfg = {
       localeSuffix: "mounting",
       progressMeterUndetermined: true,
       canBeCompleted: true,
-      showIdleMessage: false, // no message after mount, just hide progress
-      showProgress: true,
-      updateBusy: true,
-      operationCanceled: false
-    },
-
-    /* Download */
-    {
-      state: Ci.sbIDevice.STATE_DOWNLOADING,
-      localeSuffix: "downloading",
-      progressMeterDetermined: true,
-      canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
@@ -243,7 +231,6 @@ var DPW = {
   //   _device                  Device bound to device control widget.
   //   _deviceID                Device ID.
   //   _deviceLibrary           Device library we are working with.
-  //   _deviceSyncSettings      Device sync settings we are working with.
   //   _deviceErrorMonitor      Error monitor for the device
   //   _curItemIndex            Current index in the batch of items to process
   //   _totalItems              Total items in the batch
@@ -257,8 +244,12 @@ var DPW = {
   //                            is transcoding.
   //   _operationCanceled       If true, last operation was canceled
   //   _showProgress            If true, progress status should be displayed.
+  //   _syncSettingsChanged     If true, buttons to apply/cancel sync settings
+  //                            should be displayed.
   //
   //   _progressInfoBox         Device progress info.
+  //   _settingsCancelButton    Cancel button for sync settings modifications.
+  //   _settingsApplyButton     Apply button for sync settings modifications.
   //   _syncButton              Sync button element.
   //   _idleBox                 Idle message & spacer.
   //   _cancelButtonBox         Cancel button box element.
@@ -292,8 +283,11 @@ var DPW = {
   _lastCompletedEventOperation: Ci.sbIDevice.STATE_IDLE,
   _operationCanceled: false,
   _showProgress: false,
+  _syncSettingsChanged: false,
 
   _progressInfoBox: null,
+  _settingsCancelButton: null,
+  _settingsApplyButton: null,
   _syncButton: null,
   _cancelButtonBox: null,
   _finishButton: null,
@@ -302,6 +296,7 @@ var DPW = {
   _idleLabel: null,
   _idleErrorsLabel: null,
   _idleBox: null,
+  _syncManualBox: null,
 
   _lastProgress: 0,
   _ratio: 1,
@@ -324,7 +319,7 @@ var DPW = {
     this._widget = aWidget;
 
     this._deviceErrorMonitor =
-      Cc["@songbirdnest.com/device/error-monitor-service;1"]
+      Cc["@getnightingale.com/device/error-monitor-service;1"]
         .getService(Ci.sbIDeviceErrorMonitor);
 
     // Initialize the operation info table.
@@ -336,6 +331,8 @@ var DPW = {
 
     // Get some widget elements.
     this._progressInfoBox  = this._getElement("progress_information_box");
+    this._settingsCancelButton = this._getElement("settings_cancel_button");
+    this._settingsApplyButton = this._getElement("settings_apply_button");
     this._syncButton       = this._getElement("sync_operation_button");
     this._cancelButtonBox = this._getElement("cancel_operation_box");
     this._finishButton = this._getElement("finish_progress_button");
@@ -343,6 +340,7 @@ var DPW = {
     this._progressTextLabel = this._getElement("progress_text_label");
     this._subProgressTextLabel = this._getElement("sub_progress_text_label")
     this._idleBox = this._getElement("progress_idle_box");
+    this._syncManualBox = this._getElement("syncmode_box");
 
     this._finishButton.addEventListener("click", this._onButtonEvent, false);
     this._finishButton.addEventListener("keypress", this._onButtonEvent, false);
@@ -352,22 +350,22 @@ var DPW = {
     this._device = this._widget.device;
     this._deviceLibrary = this._widget.devLib;
 
-    /* If we have a deviceLibrary initialize the things we can.
-     * If not disable the syncButton. */
-    if (this._deviceLibrary) {
+    // Listen for changes in the settings
+    if (this._deviceLibrary)
       this._deviceLibrary.addDeviceLibraryListener(this);
-      this._deviceSyncSettings = this._deviceLibrary.syncSettings;
-    }
-    else {
-      this._syncButton.setAttribute("disabled", "true");
-    }
+
+    // Set the label accordingly.
+    var syncModeLabel = this._getElement("syncmode_label");
+    var key = this._supportsVideo() ? "device.progress.audiovideosync.label"
+                                    : "device.progress.audiosync.label";
+    syncModeLabel.value = SBString(key, "");
 
     // Initialize the device services.
     this._deviceInitialize();
 
     // Get the device operation total items and current item index data remotes.
     var createDataRemote = new Components.Constructor(
-                                    "@songbirdnest.com/Songbird/DataRemote;1",
+                                    "@getnightingale.com/Nightingale/DataRemote;1",
                                     Ci.sbIDataRemote,
                                     "init");
     this._totalItems = createDataRemote(
@@ -421,6 +419,8 @@ var DPW = {
     this._operationInfoTable = null;
     this._progressInfoBox = null;
     this._idleBox = null;
+    this._settingsCancelButton = null;
+    this._settingsApplyButton = null;
     this._syncButton   = null;
     this._cancelButtonBox = null;
     this._finishButton = null;
@@ -428,6 +428,7 @@ var DPW = {
     this._progressTextLabel = null;
     this._idleLabel = null;
     this._idleErrorLabel = null;
+    this._syncManualBox = null;
   },
 
 
@@ -436,6 +437,24 @@ var DPW = {
   // Device progress UI update services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * \brief Check the device capabilities to see if it supports video.
+   */
+
+  _supportsVideo: function DPW__supportsVideo() {
+    var capabilities = this._device.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    try {
+      if (capabilities.supportsContent(sbIDC.FUNCTION_VIDEO_PLAYBACK,
+                                       sbIDC.CONTENT_VIDEO)) {
+        return true;
+      }
+    } catch (e) {}
+
+    // couldn't find VIDEO support
+    return false;
+  },
 
   /**
    * \brief Update the device progress UI according to the current device state.
@@ -455,12 +474,7 @@ var DPW = {
     // Show cancel button while busy and finish button while idle.
     var cancelButtonHidden;
     var finishButtonHidden;
-    if (deviceState == Ci.sbIDevice.STATE_CANCEL) {
-      // There's no way to escape close the cancel state
-      cancelButtonHidden = true;
-      finishButtonHidden = true;
-    }
-    else if (deviceState == Ci.sbIDevice.STATE_IDLE) {
+    if (deviceState == Ci.sbIDevice.STATE_IDLE) {
       cancelButtonHidden = true;
       finishButtonHidden = false;
     } else {
@@ -477,6 +491,12 @@ var DPW = {
       finishButtonHidden = true;
     }
 
+    // Only show sync button if not showing progress.
+    this._settingsCancelButton.hidden = this._showProgress || !this._syncSettingsChanged;
+    this._settingsApplyButton.hidden = this._showProgress || !this._syncSettingsChanged;
+    this._syncButton.hidden = this._showProgress || this._syncSettingsChanged;
+    this._syncManualBox.hidden = this._showProgress;
+
     // Set cancel and hide button hidden property.  The device cancel command
     // widget automatically hides/shows itself depending upon the device state.
     // Thus, the cancel button is hidden by hiding an enclosing box so as not to
@@ -484,41 +504,25 @@ var DPW = {
     this._cancelButtonBox.hidden = cancelButtonHidden;
     this._finishButton.hidden = finishButtonHidden;
 
-    // Only show sync button if not showing progress.
-    this._syncButton.hidden = this._showProgress;
+    // Update the sync mode toggle buttons
+    var syncModeToggle = this._getElement("syncmode-toggle");
+    if (syncModeToggle) {
+      let syncModeLabel = this._getElement("syncmode_label");
+      let separator = this._getElement("device_progress_separator");
+      if (!this._device.defaultLibrary) {
+        // Disable sync button if the device doesn't contain any storage
+        this._syncButton.setAttribute("disabled", "true");
 
-    // Disable sync button if the device doesn't contain any storage
-    // This must be checked first because if the library is null
-    // this._deviceSyncSettings will be null as well.
-    if (!this._device.defaultLibrary) {
-      this._syncButton.setAttribute("disabled", "true");
-      return;
-    }
-
-    /* Check if any mediaType is set to be imported or to sync to the device.
-     * If at least one is, we do not disable the sync button. */
-    var disableSyncButton = true;
-    for (var currMediaType = Ci.sbIDeviceLibrary.MEDIATYPE_AUDIO;
-         currMediaType < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT;
-         currMediaType++) {
-      var currMediaSettings = this._deviceSyncSettings
-                                  .getMediaSettings(currMediaType);
-
-      /* Check if this mediatype is set to be imported or have content
-       * synced to it from the main library */
-      if (currMediaSettings.import ||
-          (currMediaSettings.mgmtType !=
-           Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE)) {
-        disableSyncButton = false;
-        break;
+        // Dim the label and separator
+        syncModeLabel.setAttribute("disabled", "true");
+        separator.setAttribute("disabled", "true");
       }
-    }
+      else {
+        syncModeLabel.removeAttribute("disabled");
+        separator.removeAttribute("disabled");
+      }
 
-    if (disableSyncButton) {
-      this._syncButton.setAttribute("disabled", "true");
-    }
-    else {
-      this._syncButton.removeAttribute("disabled");
+      syncModeToggle.deviceInitialize();
     }
   },
 
@@ -540,12 +544,6 @@ var DPW = {
     }
 
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
-
-    /* If the lastCompletedEvent is one for which a message should be displayed,
-     * display that message.  If no message is to be displayed (and it's not the
-     * idle state) set the state to idle, finish, and clear the progress bar.
-     * We explicitly check for idle so that, in the event this code gets called
-     * more then once, we won't finish() twice.*/
     if (oInfo.showIdleMessage) {
       // Per bug 20294, don't bother showing different idle messages for each
       // operation type.
@@ -563,11 +561,6 @@ var DPW = {
         key += "_ok";
       }
       this._progressTextLabel.value = SBString(key, "");
-    }
-    else if (this._lastCompletedEventOperation != Ci.sbIDevice.STATE_IDLE) {
-      // notably, this is what happens when the lastCompletedEvent was mounting
-      this._lastCompletedEventOperation = Ci.sbIDevice.STATE_IDLE;
-      this._finish();
     }
 
     this._progressMeter.hidden = true;
@@ -780,8 +773,6 @@ var DPW = {
         localeKey = "device.status.progress_header_syncing";
         subLocaleKey = "device.status.progress_footer_syncing_finishing";
       }
-    } else if (operation == Ci.sbIDevice.STATE_CANCEL) {
-      localeKey = "device.status.progress_header_cancelling";
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
@@ -805,7 +796,6 @@ var DPW = {
     this._progressTextLabel.value = SBString(localeKey, "");
     if (curItemIndex > 0 && curItemIndex <= totalItems &&
         operation != Ci.sbIDevice.STATE_MOUNTING &&
-        operation != Ci.sbIDevice.STATE_CANCEL &&
         substate != Ci.sbIDevice.STATE_SYNCING &&
         substate != Ci.sbIDevice.STATE_COPY_PREPARING &&
         substate != Ci.sbIDevice.STATE_UPDATING &&
@@ -836,6 +826,32 @@ var DPW = {
     switch (aEvent.target.getAttribute("action")) {
       case "finish" :
         this._finish();
+        break;
+
+      case "settings-apply":
+        this._deviceLibrary.applySyncSettings();
+        this._device.syncLibraries();
+
+        // Set editable to true for device playlists in manual mode.
+        if (this._deviceLibrary.tempSyncSettings.syncMode ==
+            Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL) {
+          var DSP = Cc['@getnightingale.com/servicepane/device;1']
+                      .getService(Ci.sbIDeviceServicePaneService);
+          var base = 'http://getnightingale.com/rdf/library-servicepane#';
+          var deviceNode = DSP.getNodeForDevice(this._device);
+          for (let node = deviceNode.firstChild; node;
+               node = node.nextSibling) {
+            var listType = node.getAttributeNS(base, "ListType");
+            // Only update the playlist nodes.
+            if (listType != "library")
+              node.editable = true;
+          }
+        }
+
+        break;
+
+      case "settings-cancel":
+        this._deviceLibrary.resetSyncSettings();
         break;
 
       default :
@@ -885,6 +901,29 @@ var DPW = {
   onBeforeAddAll: function DeviceSyncWidget_onBeforeAddAll(aMediaList) { return true; },
   onBeforeAddSome: function DeviceSyncWidget_onBeforeAddSome(aMediaItems) { return true; },
   onBeforeClear: function DeviceSyncWidget_onBeforeClear() { return true; },
+
+  onSyncSettings: function DPW_onSyncSettings(aAction, aSyncSettings) {
+    switch (aAction) {
+      case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_APPLIED:
+        DPW._syncSettingsChanged = false;
+        DPW._device.cacheSyncRequests = false;
+        // Click apply button will trigger sync, which will do the update later.
+        break;
+
+     case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED:
+        DPW._syncSettingsChanged = true;
+        DPW._device.cacheSyncRequests = true;
+        DPW._update();
+        break;
+
+      case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_RESET:
+        DPW._syncSettingsChanged = false;
+        DPW._device.cacheSyncRequests = false;
+        DPW._update();
+        break;
+    }
+  },
+
 
   /**
    * \brief Handle the device state changed event specified by aEvent.
@@ -1006,6 +1045,12 @@ var DPW = {
       deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
       deviceEventTarget.addEventListener(this);
     }
+
+    // Check if we already have changed settings, if so update.
+    if (this._deviceLibrary && this._deviceLibrary.tempSyncSettingsChanged) {
+      this.onSyncSettings(Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED,
+                          this._deviceLibrary.tempSyncSettings);
+    }
   },
 
   /**
@@ -1016,6 +1061,43 @@ var DPW = {
     // Clear object fields.
     if (this._device) {
       var currentState = this._device.currentStatus.currentState;
+
+      // If there is pending sync mode change, make sure to reset when
+      // the summary page is reloaded.
+      if ((this._deviceLibrary.tempSyncSettingsChanged ||
+           this._syncSettingsChanged) &&
+          !(currentState == Ci.sbIDevice.STATE_DISCONNECTED)) {
+        var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
+                         .createInstance(Ci.sbIPrompter);
+
+        var buttonFlags = Ci.nsIPromptService.BUTTON_POS_1 *
+                          Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
+                          Ci.nsIPromptService.BUTTON_POS_0 *
+                          Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
+
+        var buttonPressed = prompter.confirmEx(
+          null,
+          SBString("device.dialog.sync_confirmation.leave.title"),
+          SBFormattedString("device.dialog.sync_confirmation.leave.msg",
+                            [this._device.name]),
+          buttonFlags,
+          SBString("device.dialog.sync_confirmation.leave.no_button"),
+          SBString("device.dialog.sync_confirmation.leave.sync_button"),
+          null,
+          null,
+          {});
+
+        if (buttonPressed == 1) {
+          this._deviceLibrary.applySyncSettings();
+          this._device.syncLibraries();
+        }
+        else if (this._deviceLibrary.tempSyncSettingsChanged) {
+          this._deviceLibrary.resetSyncSettings();
+        }
+      }
+
+      // Make sure we turn off the cacheSyncRequests if leaving.
+      this._device.cacheSyncRequests = false;
 
       var deviceEventTarget = this._device;
       deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
@@ -1068,9 +1150,6 @@ var DPW = {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_START:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_END:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_START:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_PROGRESS:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_END:
         this._update();
         break;
     }
@@ -1106,14 +1185,16 @@ var DPW = {
   },
 
   /**
-   * \brief Returns true if the device has errors
+   * \brief Returns true if the device has errors for the media type
+   * \param aMediaType the media type to check errors for, or if it's an
+   *                   an empty string it returns true if any media type has
+   *                   has errors.
    */
-  _checkForDeviceErrors: function DIPW__checkForDeviceErrors() {
+  _checkForDeviceErrors: function DIPW__checkForDeviceErrors(aMediaType) {
     var hasErrors = false;
     try {
       hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device,
-                                                           "",
-                                                           0);
+                                                           aMediaType);
     } catch (err) {
       Cu.reportError(err);
     }

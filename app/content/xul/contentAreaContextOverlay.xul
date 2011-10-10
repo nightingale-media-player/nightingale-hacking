@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <!--
   Originally from /browser/base/content/browser-context.inc
-  Forked on April 10, 2008, to accomodate for Songbird's needs
+  Forked on April 10, 2008, to accomodate for Nightingale's needs
 -->
 
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -27,19 +27,19 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 <!DOCTYPE overlay [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
   <!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
   <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd" >
   %brandDTD;
-  %songbirdDTD;
+  %nightingaleDTD;
   %textcontextDTD;
   %browserDTD;
   %globalDTD;
@@ -136,8 +136,8 @@
     <menuseparator id="context-sep-copylink"/>
 
     <menuitem id="context-showimage"
-       label="&reloadImageCmd.label;"
-       accesskey="&reloadImageCmd.accesskey;"
+       label="&showImageCmd.label;"
+       accesskey="&showImageCmd.accesskey;"
        oncommand="gContextMenu.showImage();"/>
     <menuseparator id="context-sep-viewbgimage"/>
     <menuitem id="context-viewimage"
@@ -289,7 +289,7 @@
   </popup>
 
   <script type="application/x-javascript"
-    src="chrome://songbird/content/scripts/contentAreaContextMenu.js" />
+    src="chrome://nightingale/content/scripts/contentAreaContextMenu.js" />
   <script type="application/x-javascript"
     src="chrome://global/content/inlineSpellCheckUI.js" />
   <script type="application/x-javascript"

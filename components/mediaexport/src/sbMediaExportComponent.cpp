@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,12 +37,12 @@ static nsModuleComponentInfo sbMediaExport[] =
 {
   {
     SB_MEDIAEXPORTSERVICE_CLASSNAME,
-    SONGBIRD_MEDIAEXPORTSERVICE_CID,
+    NIGHTINGALE_MEDIAEXPORTSERVICE_CID,
     SB_MEDIAEXPORTSERVICE_CONTRACTID,
     sbMediaExportServiceConstructor,
     sbMediaExportService::RegisterSelf
   },
 };
 
-NS_IMPL_NSGETMODULE(SongbirdMediaExportComponent, sbMediaExport)
+NS_IMPL_NSGETMODULE(NightingaleMediaExportComponent, sbMediaExport)
 

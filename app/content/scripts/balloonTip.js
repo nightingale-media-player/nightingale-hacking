@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -57,7 +57,7 @@ BalloonTip.prototype = {
   // tip.showText('Here is a helpful tip.',                        // autowraps if a width is specified
   //              document.getElementById('some_element_id'),      // anchor element
   //              'Here is something you should know',             // title (if none specified, no title is displayed)
-  //              'balloon-icon-songbird',                         // icon class (if none specified, no icon is displayed)
+  //              'balloon-icon-nightingale',                         // icon class (if none specified, no icon is displayed)
   //              'Do not show this again',                        // text to use on the checkbox (if none specified, checkbox is not visible)
   //              200);                                            // width (if -1 specified, text is on a single line, if none specified, wraps at 300px)
 
@@ -74,7 +74,7 @@ BalloonTip.prototype = {
     else if (!aWidth) { width_val = '300'; width_attr = 'width'; }
     else { width_val = aWidth; width_attr = 'width'; }
 
-    this.showContent('chrome://songbird/content/bindings/balloon.xml#balloon-text', 
+    this.showContent('chrome://nightingale/content/bindings/balloon.xml#balloon-text', 
                      aAnchorElement,
                      aTitle,
                      aTitleImageClass,
@@ -95,10 +95,10 @@ BalloonTip.prototype = {
   // tip.onClickCallback = myclickcallbackfunction; // get a callback when the tip is clicked (default = no callback), params = (tipInstance, event)
   // tip.anchorPosition = BALLOONTIP_INSIDE;        // anchor tip inside the element, or BALLOONTIP_OUTSIDE to anchor on its side (default = outside)
   //
-  // tip.showContent('chrome://songbird/content/bindings/balloon.xml#balloon-text', // a binding URL, or an element tag name
+  // tip.showContent('chrome://nightingale/content/bindings/balloon.xml#balloon-text', // a binding URL, or an element tag name
   //              document.getElementById('some_element_id'),                       // anchor element
   //              'Here is something you should know',                              // title (if none specified, no title is displayed)
-  //              'balloon-icon-songbird',                                          // icon class (if none specified, no icon is displayed)
+  //              'balloon-icon-nightingale',                                          // icon class (if none specified, no icon is displayed)
   //              'Do not show this again',                                         // text to use on the checkbox (if none specified, checkbox is not visible)
   //              ['value', 'width'],                                               // attributes to forward to the binding element (or null)
   //              ['Here is a helpful tip.'], '200');                               // values of the attributes to forward to the binding element (or null)                                                          
@@ -134,7 +134,7 @@ BalloonTip.prototype = {
       default: raisedflag = ",alwaysRaised"; break;
     }
     // Open the window (cloaked)
-    this.tipWindow = window.openDialog("chrome://songbird/content/xul/balloonTip.xul", "_blank", "chrome,modal=no,titlebar=no,resizable=no"+raisedflag, this);
+    this.tipWindow = window.openDialog("chrome://nightingale/content/xul/balloonTip.xul", "_blank", "chrome,modal=no,titlebar=no,resizable=no"+raisedflag, this);
     this.initTimeStamp = new Date().getTime();
     if (this.autoCloseTimeout) setTimeout( function(obj) { obj.onAutoCloseTimeout(); }, this.autoCloseTimeout * 1000, this );
   },
@@ -206,7 +206,7 @@ BalloonTip.prototype = {
     // want to see the window pop up and then being moved, we cloak it first, then position
     // it, and then we uncloak it (see computePositionAndOrientation)
     var windowCloak =
-      Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+      Components.classes["@getnightingale.com/Nightingale/WindowCloak;1"]
                 .getService(Components.interfaces.sbIWindowCloak);
     windowCloak.cloak(aWindow); 
   },
@@ -502,7 +502,7 @@ BalloonTip.prototype = {
       if (!this.doneUncloak) {
         // Now that the window is correctly positioned and sized, uncloak it
         var windowCloak =
-          Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+          Components.classes["@getnightingale.com/Nightingale/WindowCloak;1"]
                     .getService(Components.interfaces.sbIWindowCloak);
         windowCloak.uncloak(this.tipWindow); 
         this.doneUncloak = true;

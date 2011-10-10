@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,14 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 <?xml version="1.0"?>
 <pkmkdoc spec="1.12">
   <properties>
     <title>@SB_APPNAME@</title>
-    <build>@SONGBIRD_OBJDIR@/@DISTDIRNAME@/@SB_APPNAME@Installer.pkg</build>
-    <organization>com.songbirdnest</organization>
+    <build>@NIGHTINGALE_OBJDIR@/@DISTDIRNAME@/@SB_APPNAME@Installer.pkg</build>
+    <organization>com.nightingalenest</organization>
     <userSees ui="easy"/>
     <min-target os="2"/>
     <domain system="true"/>
@@ -37,16 +37,16 @@
   </distribution>
   <contents>
     <choice title="@SB_APPNAME@" id="choice0" starts_selected="true" starts_enabled="true" starts_hidden="false">
-      <pkgref id="com.songbirdnest.songbird"/>
+      <pkgref id="com.nightingalenest.nightingale"/>
     </choice>
   </contents>
   <resources bg-scale="none" bg-align="topleft">
     <locale lang="en">
-      <resource relative="true" mod="true" type="license">@SONGBIRD_OBJDIR@/app/content/html/eula.html</resource>
+      <resource relative="true" mod="true" type="license">@NIGHTINGALE_OBJDIR@/app/content/html/eula.html</resource>
     </locale>
   </resources>
   <flags/>
-  <item type="file">01songbird.xml</item>
+  <item type="file">01nightingale.xml</item>
   <mod>properties.systemDomain</mod>
   <mod>properties.userDomain</mod>
   <mod>properties.title</mod>

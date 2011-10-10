@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -118,9 +118,9 @@ interface sbIPlaybackHistoryEntry : nsISupports
 %{C++
 
 #define SB_PLAYBACKHISTORYENTRY_DESCRIPTION    \
-  "Songbird Playback History Entry"
+  "Nightingale Playback History Entry"
 #define SB_PLAYBACKHISTORYENTRY_CONTRACTID     \
-  "@songbirdnest.com/Songbird/PlaybackHistoryEntry;1"
+  "@getnightingale.com/Nightingale/PlaybackHistoryEntry;1"
 #define SB_PLAYBACKHISTORYENTRY_CLASSNAME      \
   "sbPlaybackHistoryEntry"
 #define SB_PLAYBACKHISTORYENTRY_CID            \

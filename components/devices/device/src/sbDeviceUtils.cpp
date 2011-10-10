@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDeviceUtils.h"
@@ -38,12 +38,10 @@
 #include <nsIMutableArray.h>
 #include <nsIFile.h>
 #include <nsISimpleEnumerator.h>
-#include <nsIStandardURL.h>
 #include <nsISupportsArray.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 #include <nsIWindowWatcher.h>
-#include <nsNetCID.h>
 #include <nsThreadUtils.h>
 
 #include "sbBaseDevice.h"
@@ -57,8 +55,6 @@
 #include "sbIDeviceLibrarySyncSettings.h"
 #include "sbIDeviceRegistrar.h"
 #include "sbIMediaItem.h"
-#include <sbIMediaItemDownloader.h>
-#include <sbIMediaItemDownloadService.h>
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
 #include <sbITranscodeProfile.h>
@@ -66,10 +62,10 @@
 #include <sbIPrompter.h>
 #include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
-#include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
+#include "sbProxyUtils.h"
 #include <sbVariantUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbMemoryUtils.h>
@@ -332,74 +328,6 @@ nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
 }
 
 /* static */
-nsresult sbDeviceUtils::NewDeviceLibraryURI(sbIDeviceLibrary* aDeviceLibrary,
-                                            const nsCString&  aSpec,
-                                            nsIURI**          aURI)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
-  NS_ENSURE_ARG_POINTER(aURI);
-
-  // Function variables.
-  nsresult rv;
-
-  // Get the device.
-  nsCOMPtr<sbIDevice> device;
-  rv = aDeviceLibrary->GetDevice(getter_AddRefs(device));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the device ID.
-  char               deviceIDString[NSID_LENGTH];
-  sbAutoMemPtr<nsID> deviceID;
-  rv = device->GetId(deviceID.StartAssignment());
-  NS_ENSURE_SUCCESS(rv, rv);
-  deviceID->ToProvidedString(deviceIDString);
-
-  // Get the device library GUID.
-  nsAutoString guid;
-  rv = aDeviceLibrary->GetGuid(guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Produce the base URI spec.
-  nsCAutoString baseURISpec;
-  baseURISpec.Assign("x-device:///");
-  baseURISpec.Append(deviceIDString);
-  baseURISpec.Append("/");
-  baseURISpec.Append(NS_ConvertUTF16toUTF8(guid));
-  baseURISpec.Append("/");
-
-  // Produce the base URI.
-  nsCOMPtr<nsIStandardURL>
-    baseStandardURL = do_CreateInstance(NS_STANDARDURL_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseStandardURL->Init(nsIStandardURL::URLTYPE_NO_AUTHORITY,
-                             -1,
-                             baseURISpec,
-                             nsnull,
-                             nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIURI> baseURI = do_QueryInterface(baseStandardURL, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Produce the requested URI.
-  nsCOMPtr<nsIStandardURL>
-    standardURL = do_CreateInstance(NS_STANDARDURL_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = standardURL->Init(nsIStandardURL::URLTYPE_NO_AUTHORITY,
-                         -1,
-                         aSpec,
-                         nsnull,
-                         baseURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Return results.
-  rv = CallQueryInterface(standardURL, aURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/* static */
 nsresult sbDeviceUtils::GetDeviceLibraryForLibrary(sbIDevice* aDevice,
                                                    sbILibrary* aLibrary,
                                                    sbIDeviceLibrary** _retval)
@@ -519,55 +447,6 @@ nsresult sbDeviceUtils::GetOriginMediaItemByDevicePersistentId
 }
 
 /* static */
-nsresult sbDeviceUtils::GetDeviceWriteLength(sbIDeviceLibrary* aDeviceLibrary,
-                                             sbIMediaItem*     aMediaItem,
-                                             PRUint64*         aWriteLength)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aWriteLength);
-
-  // Function variables.
-  nsresult rv;
-
-  // Get the download service to check if the media item needs to be downloaded.
-  // Even if the media item has a local content source file, a version that's
-  // compatible with the device may still need to be downloaded (e.g., for DRM
-  // purposes or for a compatible format).
-  nsCOMPtr<sbIMediaItemDownloadService> downloadService =
-    do_GetService("@songbirdnest.com/Songbird/MediaItemDownloadService;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get a downloader for the media item and target device library.
-  nsCOMPtr<sbIMediaItemDownloader> downloader;
-  rv = downloadService->GetDownloader(aMediaItem,
-                                      aDeviceLibrary,
-                                      getter_AddRefs(downloader));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // If a downloader was returned, the media item needs to be downloaded.  Get
-  // the download size.
-  if (downloader) {
-    rv = downloader->GetDownloadSize(aMediaItem,
-                                     aDeviceLibrary,
-                                     aWriteLength);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
-
-  // Try getting the content length directly from the media item.
-  PRInt64 contentLength;
-  rv = sbLibraryUtils::GetContentLength(aMediaItem, &contentLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(contentLength >= 0, NS_ERROR_FAILURE);
-
-  // Return results.
-  *aWriteLength = static_cast<PRUint64>(contentLength);
-
-  return NS_OK;
-}
-
-/* static */
 nsresult sbDeviceUtils::QueryUserSpaceExceeded
                           (/* in */  sbIDevice*        aDevice,
                            /* in */  sbIDeviceLibrary* aLibrary,
@@ -603,7 +482,7 @@ nsresult sbDeviceUtils::QueryUserAbortRip(PRBool* aAbort)
 
   // Get a prompter that does not wait for a window.
   nsCOMPtr<sbIPrompter> prompter =
-                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+                          do_CreateInstance(NIGHTINGALE_PROMPTER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = prompter->SetWaitForWindow(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -646,11 +525,11 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
   nsresult rv;
 
   nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
-      do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
+      do_GetService("@getnightingale.com/device/error-monitor-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasErrors;
-  rv = errMonitor->DeviceHasErrors(aDevice, EmptyString(), 0, &hasErrors);
+  rv = errMonitor->DeviceHasErrors(aDevice, EmptyString(), &hasErrors);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (hasErrors) {
@@ -658,7 +537,7 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
 
     // Get a prompter that does not wait for a window.
     nsCOMPtr<sbIPrompter> prompter =
-                            do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+                            do_CreateInstance(NIGHTINGALE_PROMPTER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = prompter->SetWaitForWindow(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -728,19 +607,18 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
 
   // Now add Objects (nsIMutableArray)
   nsCOMPtr<nsIMutableArray> objects =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   // Append device
   rv = objects->AppendElement(aDevice, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
   // Append error strings
   nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
-      do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
+      do_GetService("@getnightingale.com/device/error-monitor-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIArray> errorStrings;
   rv = errMonitor->GetDeviceErrors(aDevice,
                                    EmptyString(),
-                                   0,
                                    getter_AddRefs(errorStrings));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = objects->AppendElement(errorStrings, PR_FALSE);
@@ -755,7 +633,7 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
 
   // Get a prompter that does not wait for a window.
   nsCOMPtr<sbIPrompter> prompter =
-                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+                          do_CreateInstance(NIGHTINGALE_PROMPTER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = prompter->SetWaitForWindow(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -763,7 +641,7 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
   // Display the dialog.
   nsCOMPtr<nsIDOMWindow> dialogWindow;
   rv = prompter->OpenDialog(nsnull, // Default to parent window
-                            NS_LITERAL_STRING("chrome://songbird/content/xul/device/deviceErrorDialog.xul"),
+                            NS_LITERAL_STRING("chrome://nightingale/content/xul/device/deviceErrorDialog.xul"),
                             NS_LITERAL_STRING("device_error_dialog"),
                             NS_LITERAL_STRING("chrome,centerscreen,model=yes,titlebar=no"),
                             arguments,
@@ -870,7 +748,7 @@ sbDeviceUtilsQueryUserSpaceExceeded::HandleWindowCallback(nsIDOMWindow* aWindow)
 
   // get the device helper
   nsCOMPtr<sbIDeviceHelper> deviceHelper =
-    do_GetService("@songbirdnest.com/Songbird/Device/Base/Helper;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/Device/Base/Helper;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // query the user
@@ -907,10 +785,10 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
 
   // wait to query user until a window is available
   nsCOMPtr<sbIWindowWatcher> windowWatcher;
-  windowWatcher = do_GetService("@songbirdnest.com/Songbird/window-watcher;1",
+  windowWatcher = do_GetService("@getnightingale.com/Nightingale/window-watcher;1",
                                 &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = windowWatcher->CallWithWindow(NS_LITERAL_STRING("Songbird:Main"),
+  rv = windowWatcher->CallWithWindow(NS_LITERAL_STRING("Nightingale:Main"),
                                      this,
                                      PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -933,8 +811,8 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "3gp",  "audio/aac",       "video/3gpp",       "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/x-pn-audibleaudio", "", "",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "ogg",  "application/ogg", "application/ogg",  "audio/x-vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "oga",  "application/ogg", "application/ogg",  "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ogg",  "application/ogg", "application/ogg",  "audio/x-vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "flac", "audio/x-flac",    "", "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-wav",     "audio/x-wav",  "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-adpcm",   "audio/x-wav",  "audio/x-adpcm", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
@@ -945,7 +823,6 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* video */
   { "mp4",  "video/mp4",       "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mov",  "video/quicktime", "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "mp4",  "video/quicktime", "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mp4",  "image/jpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpg",  "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpeg", "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
@@ -958,7 +835,6 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* images */
   { "png",  "image/png",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "jpg",  "image/jpeg",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
-  { "jpeg", "image/jpeg",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "gif",  "image/gif",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "bmp",  "image/bmp",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "ico",  "image/x-icon",   "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
@@ -972,8 +848,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "pict", "image/pict",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
 
   /* playlists */
-  { "m3u",  "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN },
-  { "m3u8", "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
+  { "m3u",  "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
 };
 
 PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =
@@ -1199,46 +1074,6 @@ sbDeviceUtils::GetFormatTypesForMimeType
 }
 
 /**
- * Return in aMimeType the audio MIME type for the container specified by
- * aContainer and codec specified by aCodec.
- *
- * \param aContainer            Container type.
- * \param aCodec                Codec type.
- * \param aMimeType             Returned MIME type.
- */
-/* static */ nsresult
-sbDeviceUtils::GetAudioMimeTypeForFormatTypes(const nsAString& aContainer,
-                                              const nsAString& aCodec,
-                                              nsAString&       aMimeType)
-{
-  TRACE(("%s", __FUNCTION__));
-
-  // Search the content format map for a match.
-  for (PRUint32 index = 0;
-       index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
-       ++index) {
-    // Get the next format entry.
-    sbExtensionToContentFormatEntry_t const& entry =
-      MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
-
-    // Skip entry if it's not audio.
-    if (entry.ContentType != sbIDeviceCapabilities::CONTENT_AUDIO)
-      continue;
-
-    // Check for a match, returning if a match is found.
-    if (aContainer.EqualsLiteral(entry.ContainerFormat) &&
-        aCodec.EqualsLiteral(entry.Codec)) {
-      TRACE(("%s: container %s codec %s mime type %s",
-             __FUNCTION__, entry.ContainerFormat, entry.Codec, entry.MimeType));
-      aMimeType.AssignLiteral(entry.MimeType);
-      return NS_OK;
-    }
-  }
-
-  return NS_ERROR_NOT_AVAILABLE;
-}
-
-/**
  * Maps between the device caps and the transcode profile content types
  */
 static PRUint32 TranscodeToCapsContentTypeMap[] = {
@@ -1351,7 +1186,7 @@ sbDeviceUtils::GetTranscodeProfiles(PRUint32 aType, nsIArray ** aProfiles)
   nsresult rv;
 
   nsCOMPtr<sbITranscodeManager> tcManager = do_ProxiedGetService(
-          "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
+          "@getnightingale.com/Nightingale/Mediacore/TranscodeManager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = tcManager->GetTranscodeProfiles(aType, aProfiles);
@@ -1654,7 +1489,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(PRUint32 aTranscodeType,
                   TranscodeToCapsContentTypeMap[aTranscodeType];
 
   nsCOMPtr<sbIDeviceCapsCompatibility> devCompatible =
-    do_CreateInstance(SONGBIRD_DEVICECAPSCOMPATIBILITY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DEVICECAPSCOMPATIBILITY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = devCompatible->Initialize(devCaps, aMediaFormat, devCapContentType);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1677,13 +1512,13 @@ sbDeviceUtils::GetTranscodingConfigurator(
  nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
  if (aTranscodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
     configurator = do_CreateInstance(
-            "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/"
+            "@getnightingale.com/Nightingale/Mediacore/Transcode/Configurator/"
             "Audio/GStreamer;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     configurator = do_CreateInstance(
-            "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/"
+            "@getnightingale.com/Nightingale/Mediacore/Transcode/Configurator/"
             "Device/GStreamer;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -2082,7 +1917,7 @@ nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDevLibGuid,
   nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
 
   nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
 
   if (aDeviceID) {
     nsCOMPtr<sbIDevice> device;
@@ -2112,117 +1947,6 @@ nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDevLibGuid,
 
   return NS_OK;
 }
-
-nsresult sbDeviceUtils::GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
-                                             sbILibrary*    aTargetLibrary,
-                                             sbIMediaItem** aSyncItem)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aTargetLibrary);
-  NS_ENSURE_ARG_POINTER(aSyncItem);
-
-  // Function variables.
-  nsresult rv;
-
-  // Try getting the sync item directly in the target library.
-  rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, aTargetLibrary, aSyncItem);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (*aSyncItem)
-    return NS_OK;
-
-  // Get the source library.
-  nsCOMPtr<sbILibrary> sourceLibrary;
-  rv = aMediaItem->GetLibrary(getter_AddRefs(sourceLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Try getting the sync item using the outer GUID property.
-  nsAutoString outerGUID;
-  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID),
-                               outerGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!outerGUID.IsEmpty()) {
-    // Get the outer media item.
-    nsCOMPtr<sbIMediaItem> outerMediaItem;
-    rv = sourceLibrary->GetMediaItem(outerGUID, getter_AddRefs(outerMediaItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Try getting the sync item from the outer media item.
-    rv = sbLibraryUtils::GetItemInLibrary(outerMediaItem,
-                                          aTargetLibrary,
-                                          aSyncItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (*aSyncItem)
-      return NS_OK;
-  }
-
-  // Try getting the sync item using the storage GUID property.
-  nsAutoString storageGUID;
-  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
-                               storageGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!storageGUID.IsEmpty()) {
-    // Get the storage media item.
-    nsCOMPtr<sbIMediaItem> storageMediaItem;
-    rv = sourceLibrary->GetMediaItem(storageGUID,
-                                     getter_AddRefs(storageMediaItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Try getting the sync item from the storage media item.
-    rv = sbLibraryUtils::GetItemInLibrary(storageMediaItem,
-                                          aTargetLibrary,
-                                          aSyncItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (*aSyncItem)
-      return NS_OK;
-  }
-
-  // Could not find the sync item.
-  *aSyncItem = nsnull;
-
-  return NS_OK;
-}
-
-nsresult sbDeviceUtils::SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
-                                                 sbILibrary * aDevLibrary,
-                                                 PRBool aMark)
-{
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-
-  nsresult rv;
-
-  NS_NAMED_LITERAL_STRING(SB_PROPERTY_TRUE, "1");
-  NS_NAMED_LITERAL_STRING(SB_PROPERTY_FALSE, "0");
-
-  nsCOMPtr<sbIMediaItem> itemInDeviceLibrary;
-  rv = sbDeviceUtils::GetSyncItemInLibrary(aMediaItem,
-                                           aDevLibrary,
-                                           getter_AddRefs(itemInDeviceLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (itemInDeviceLibrary) {
-    nsString inMainLibrary;
-    rv = itemInDeviceLibrary->GetProperty(
-                     NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-                     inMainLibrary);
-    NS_ENSURE_SUCCESS(rv, rv);
-    // Default to "false" if there is no property
-    if (NS_FAILED(rv) || inMainLibrary.IsVoid()) {
-      inMainLibrary = SB_PROPERTY_FALSE;
-    }
-    // If the flag is different than what we want change it
-    const PRBool isMarked =
-        !inMainLibrary.Equals(SB_PROPERTY_FALSE) ? PR_TRUE : PR_FALSE;
-    if (aMark != isMarked) {
-      rv = itemInDeviceLibrary->SetProperty(
-                     NS_LITERAL_STRING(SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY),
-                     aMark ? SB_PROPERTY_TRUE : SB_PROPERTY_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  return NS_OK;
-}
-
 
 sbDeviceListenerIgnore::sbDeviceListenerIgnore(sbBaseDevice * aDevice,
                        sbIMediaItem * aItem) :
@@ -2265,7 +1989,6 @@ void sbDeviceListenerIgnore::SetIgnore(PRBool aIgnore) {
   }
 }
 
-
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions
 // NOTE: This is built only w/ PR_LOGGING turned on.
@@ -2293,6 +2016,10 @@ static nsresult LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
 static nsresult LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
                                    const nsAString & aFormat,
                                    PRLogModuleInfo *aLogModule);
+
+static nsresult LogPtrArray(PRUint32 aArraySize,
+                            char **aArray,
+                            PRLogModuleInfo *aLogModule);
 
 static nsresult LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule);
 
@@ -2713,6 +2440,21 @@ LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
 }
 
 /* static */ nsresult
+LogPtrArray(PRUint32 aArraySize,
+            char **aArray,
+            PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aArray);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  for (PRUint32 i = 0; i < aArraySize; i++) {
+    LOG_MODULE(aLogModule, ("   - %s", aArray[i]));
+  }
+
+  return NS_OK;
+}
+
+/* static */ nsresult
 LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule)
 {
   NS_ENSURE_ARG_POINTER(aSizeArray);
@@ -2781,47 +2523,3 @@ LogRange(sbIDevCapRange *aRange,
 }
 
 #endif
-
-bool sbDeviceUtils::ShouldLogDeviceInfo()
-{
-  const char * const DEVICE_PREF_BRANCH = "songbird.device.";
-  const char * const LOG_DEVICE_INFO_PREF = "log_device_info";
-
-  nsresult rv;
-  sbPrefBranch prefBranch(DEVICE_PREF_BRANCH, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return prefBranch.GetBoolPref(LOG_DEVICE_INFO_PREF, PR_FALSE) != PR_FALSE;
-}
-
-nsCString sbDeviceUtils::GetDeviceIdentifier(sbIDevice * aDevice)
-{
-  nsresult rv;
-
-  if (!aDevice) {
-    return NS_LITERAL_CSTRING("Device Unknown");
-  }
-  nsCString result;
-
-  nsString deviceIdentifier;
-  rv = aDevice->GetName(deviceIdentifier);
-  if (NS_FAILED(rv)) {
-    deviceIdentifier.Truncate();
-  }
-  // Convert to ascii since this is going to be output to an ascii device
-  result = NS_LossyConvertUTF16toASCII(deviceIdentifier);
-  nsID *deviceID;
-  rv = aDevice->GetId(&deviceID);
-  sbAutoNSMemPtr autoDeviceID(deviceID);
-  NS_ENSURE_SUCCESS(rv, result);
-
-  char volumeGUID[NSID_LENGTH];
-  deviceID->ToProvidedString(volumeGUID);
-
-  if (!result.IsEmpty()) {
-    result.Append(NS_LITERAL_CSTRING("-"));
-  }
-  result.Append(volumeGUID);
-
-  return result;
-}

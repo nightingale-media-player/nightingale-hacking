@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -32,12 +32,12 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
-const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
+const WINDOWTYPE_NIGHTINGALE_PLAYER      = "Nightingale:Main";
+const WINDOWTYPE_NIGHTINGALE_CORE        = "Nightingale:Core";
 
 /**
  * \class ApplicationController
- * \brief Service representing the global instance of the Songbird application.
+ * \brief Service representing the global instance of the Nightingale application.
  * \sa sbIApplicationController.idl
  */
 function ApplicationController() {
@@ -45,9 +45,9 @@ function ApplicationController() {
 ApplicationController.prototype = {
   QueryInterface          : XPCOMUtils.generateQI(
       [Ci.sbIApplicationController, Ci.nsIClassInfo]),
-  classDescription        : 'Songbird Root Application Service Implementation',
+  classDescription        : 'Nightingale Root Application Service Implementation',
   classID                 : Components.ID("{8492c5a0-ab8e-11dd-ad8b-0800200c9a66}"),
-  contractID              : "@songbirdnest.com/Songbird/ApplicationController;1",
+  contractID              : "@getnightingale.com/Nightingale/ApplicationController;1",
   flags                   : Ci.nsIClassInfo.MAIN_THREAD_ONLY,
   implementationLanguage  : Ci.nsIProgrammingLanguage.JAVASCRIPT,
   getHelperForLanguage    : function(aLanguage) { return null; },
@@ -70,19 +70,19 @@ ApplicationController.prototype = {
   },
   
   /**
-   * Get the current active window of type Songbird:Main.
+   * Get the current active window of type Nightingale:Main.
    */
   get activeMainWindow() {
     var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                            .getService(Ci.nsIWindowMediator);
-    return windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_PLAYER);
+    return windowMediator.getMostRecentWindow(WINDOWTYPE_NIGHTINGALE_PLAYER);
   },
 
   /**
    * Play something using the UI for context
    */
   playDefault: function ApplicationController_playDefault() {
-    var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+    var mm = Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                .getService(Ci.sbIMediacoreManager);
                  
     // If paused, just continue
@@ -101,7 +101,7 @@ ApplicationController.prototype = {
         return;
     }
         
-    // If that didn't work, then try the main songbird window
+    // If that didn't work, then try the main nightingale window
     // (if different)
     var mainWindow = this.activeMainWindow;
     if (mainWindow && mainWindow != window) {

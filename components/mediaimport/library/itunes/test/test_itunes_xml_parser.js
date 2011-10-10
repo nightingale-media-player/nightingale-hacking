@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -494,12 +494,12 @@ function runTest() {
   };    
 
   // Test error condition
-  var parser = Cc["@songbirdnest.com/Songbird/sbiTunesXMLParser;1"]
+  var parser = Cc["@getnightingale.com/Nightingale/sbiTunesXMLParser;1"]
                  .getService(Ci.sbIiTunesXMLParser);
   assertTrue(parser, "iTunes importer component is not available.");
 
   // Test normal xml data
-  parser = Cc["@songbirdnest.com/Songbird/sbiTunesXMLParser;1"]
+  parser = Cc["@getnightingale.com/Nightingale/sbiTunesXMLParser;1"]
              .getService(Ci.sbIiTunesXMLParser);
   assertTrue(parser, "iTunes importer component is not available.");
   parser.parse(stringToStream(testXML), listener);

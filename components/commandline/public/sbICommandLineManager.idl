@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,7 +28,7 @@
 
 /**       
  * \file sbICommandLineManager.idl
- * \brief Songbird Commandline Items Interface file
+ * \brief Nightingale Commandline Items Interface file
  * This file contains the interface used by the commandlineitems manager, 
  * whose purpose is to hold on to items from the commandline for later
  * opening, and to notify handlers of new items coming from
@@ -42,7 +42,7 @@ interface sbICommandLineFlagHandler;
 
 /**
  * \interface sbICommandLineManager sbICommandLineManager.h
- * \brief Songbird Command line manager interface
+ * \brief Nightingale Command line manager interface
  */
       
 [scriptable, uuid(d54a8a7a-b390-11db-96e7-005056c00008)]

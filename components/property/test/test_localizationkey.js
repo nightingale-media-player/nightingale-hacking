@@ -1,12 +1,12 @@
 /* vim: set sw=2 :*/
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -45,7 +45,6 @@ function runTest () {
     trackName: 'track_name',
     albumName: 'album_name',
     artistName: 'artist_name',
-    trackType: 'track_source',
     duration: 'duration',
     genre: 'genre',
     year: 'year',
@@ -105,18 +104,17 @@ function runTest () {
     showName: 'showName',
     episodeNumber: 'episodeNumber',
     seasonNumber: 'seasonNumber',
-    playlistURL: 'playlist_url',
-    metadataHashIdentity: 'metadata_hash_identity'
+    playlistURL: 'playlist_url'
   };
 
   // list of properties with localization keys, but not in SBProperties.jsm
   var specialLocalizationKeys = {
-    "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist":
+    "http://getnightingale.com/dummy/smartmedialists/1.0#playlist":
       "property.dummy.playlist",
   };
 
   var propMgr =
-    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+    Components.classes["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
               .getService(Components.interfaces.sbIPropertyManager);
   var info;
 

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  MetadataHandlerTaglibComponent.cpp
-* \brief Songbird taglib Metadata Handler Component Factory and Main Entry
+* \brief Nightingale taglib Metadata Handler Component Factory and Main Entry
 * Point.
 */
 
@@ -42,28 +42,28 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbSeekableChannel)
 static nsModuleComponentInfo componentInfo[] =
 {
   {
-    SONGBIRD_METADATAHANDLERTAGLIB_CLASSNAME, 
-    SONGBIRD_METADATAHANDLERTAGLIB_CID,
-    SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID,
+    NIGHTINGALE_METADATAHANDLERTAGLIB_CLASSNAME, 
+    NIGHTINGALE_METADATAHANDLERTAGLIB_CID,
+    NIGHTINGALE_METADATAHANDLERTAGLIB_CONTRACTID,
     sbMetadataHandlerTaglibConstructor
   },
 
   {
-    SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CLASSNAME, 
-    SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CID,
-    SONGBIRD_TAGLIBCHANNELFILEIOMANAGER_CONTRACTID,
+    NIGHTINGALE_TAGLIBCHANNELFILEIOMANAGER_CLASSNAME, 
+    NIGHTINGALE_TAGLIBCHANNELFILEIOMANAGER_CID,
+    NIGHTINGALE_TAGLIBCHANNELFILEIOMANAGER_CONTRACTID,
     sbTagLibChannelFileIOManagerConstructor
   },
 
   {
-    SONGBIRD_SEEKABLECHANNEL_CLASSNAME, 
-    SONGBIRD_SEEKABLECHANNEL_CID,
-    SONGBIRD_SEEKABLECHANNEL_CONTRACTID,
+    NIGHTINGALE_SEEKABLECHANNEL_CLASSNAME, 
+    NIGHTINGALE_SEEKABLECHANNEL_CID,
+    NIGHTINGALE_SEEKABLECHANNEL_CONTRACTID,
     sbSeekableChannelConstructor
   }
 };
 
-NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataHandlerTaglibComponent,
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(NightingaleMetadataHandlerTaglibComponent,
                                    componentInfo,
                                    sbMetadataHandlerTaglib::ModuleConstructor,
                                    sbMetadataHandlerTaglib::ModuleDestructor)

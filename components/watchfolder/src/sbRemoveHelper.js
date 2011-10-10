@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -34,7 +34,7 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/GeneratorThread.jsm");
 
 /******************************************************************************
- * http://bugzilla.songbirdnest.com/show_bug.cgi?id=16517
+ * http://bugzilla.getnightingale.com/show_bug.cgi?id=16517
  * Object implementing sbIJobProgress/sbIWFRemoveHelper9001. Pop up a remove
  * progress dialog.
  *
@@ -182,9 +182,9 @@ function RemoveHelper() {
 }
 
 RemoveHelper.prototype = {
-  classDescription: "Songbird Watch Folder Remove Helper Service",
+  classDescription: "Nightingale Watch Folder Remove Helper Service",
   classID:          Components.ID("{b44bf03e-fe28-4ad4-ba7e-6112cdced7a4}"),
-  contractID:       "@songbirdnest.com/Songbird/RemoveHelper;1",
+  contractID:       "@getnightingale.com/Nightingale/RemoveHelper;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIWFRemoveHelper9001]),
   
   // List of pending jobs.  We only want to allow one to run at a time, 

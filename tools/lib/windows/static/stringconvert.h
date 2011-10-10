@@ -12,15 +12,15 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is Songbird Distribution Stub Helper.
+ * The Original Code is Nightingale Distribution Stub Helper.
  *
  * The Initial Developer of the Original Code is
- * POTI <http://www.songbirdnest.com/>.
+ * POTI <http://www.getnightingale.com/>.
  * Portions created by the Initial Developer are Copyright (C) 2008-2010
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Mook <mook@songbirdnest.com>
+ *   Mook <mook@getnightingale.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or

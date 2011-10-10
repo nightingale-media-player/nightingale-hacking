@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 
@@ -48,7 +48,7 @@ function sbIDeviceDeviceTesterUtils_GetOrganizedPath(aUtils, aLibrary) {
 
   var result = aUtils.GetOrganizedPath(file, item);
   
-  var platform = Components.classes["@mozilla.org/xre/runtime;1"]
+  var platform = Components.classes["@mozilla.org/xre/app-info;1"]
                            .getService(Components.interfaces.nsIXULRuntime)
                            .OS;
   var badchars;
@@ -68,7 +68,7 @@ function sbIDeviceDeviceTesterUtils_GetOrganizedPath(aUtils, aLibrary) {
 }
 
 function runTest () {
-  var utils = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/Utils;1"]
+  var utils = Components.classes["@getnightingale.com/Nightingale/Device/DeviceTester/Utils;1"]
                         .createInstance(Components.interfaces.sbIDeviceDeviceTesterUtils);
 
   var libraryFile = Components.classes["@mozilla.org/file/directory_service;1"]
@@ -77,7 +77,7 @@ function runTest () {
   libraryFile.append("db");
   libraryFile.append("test_devicedevice.db");
   var libraryFactory =
-    Components.classes["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+    Components.classes["@getnightingale.com/Nightingale/Library/LocalDatabase/LibraryFactory;1"]
               .getService(Components.interfaces.sbILibraryFactory);
   var hashBag = Components.classes["@mozilla.org/hash-property-bag;1"]
                           .createInstance(Components.interfaces.nsIWritablePropertyBag2);

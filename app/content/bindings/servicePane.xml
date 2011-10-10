@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,11 +21,11 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -222,19 +222,25 @@
           // we are always expected to be in the service pane under a group at
           // this point so we call up the DOM of nodes.
           try {
-            // Run the setter to initialize the node
-            this.nodeData = this.nodeData;
+            if (this.hasAttribute("nodeid")) {
+              var nodeID = this.getAttribute("nodeid");
+              if (this.parentNode)
+                this.nodeData = this.parentNode.getNode(nodeID);
+            } else {
+              // If we have no node data, then hide by default.
+              this.setAttribute("hidden", true);
+            }
 
             this._textbox = this._getElement("servicepane-node-textbox");
             this._textbox.realParent = this;
             this.mService =
-              Components.classes['@songbirdnest.com/servicepane/service;1']
+              Components.classes['@getnightingale.com/servicepane/service;1']
               .getService(Components.interfaces.sbIServicePaneService);
             this.mDragService = 
               Components.classes['@mozilla.org/widget/dragservice;1']
               .getService(Components.interfaces.nsIDragService);
           } catch (e) {
-            Cu.reportError(e);
+            dump("Exception: " + e + "\n");
           }
         ]]>
       </constructor>
@@ -244,6 +250,11 @@
         -   whenever we need
         -->
       <field name="_nodeData">null</field>
+
+      <!--
+        - \brief The node ID
+        -->
+      <field name="nodeId">this._nodeData.id</field>
 
       <!--
         - \brief Get the servicepane element itself
@@ -286,33 +297,23 @@
             Cu.import("resource://app/jsmodules/ServicePaneHelper.jsm", this);
 
             // Set up the elements
-            this.setAttribute("id", this._nodeData.id);
             this.setAttribute("image", this._nodeData.image);
             this.setAttribute("label", this._nodeData.displayName);
-            if (!this._nodeData.isOpen) {
+            if (!this._nodeData.isOpen)
               this.setAttribute("closed", "true");
-            } else {
-              this.removeAttribute("closed");
-            }
 
             // Hide the node if it should be hidden
             if (this._nodeData.hidden) {
               this.setAttribute("hidden", true);
-            } else {
+            } else if (this.hasAttribute("hidden")) {
               this.removeAttribute("hidden");
             }
 
             this.className = this._nodeData.className;
 
-            // If the node has visible children mark it as a container
-            for (let child = this._nodeData.firstChild;
-                 child;
-                 child = child.nextSibling) {
-              if (!child.hidden) {
-                this.className += " container";
-                break;
-              }
-            }
+            // If the node has children mark it as a container
+            if (this._nodeData.firstChild)
+              this.className += " container";
 
             // Determine how much to indent this node
             let indent = -1;
@@ -327,14 +328,13 @@
             let badge = this.ServicePaneHelper.getBadge(this._nodeData,
                                                         "eject");
             if (this._nodeData.getAttribute("ejectable") == "true") {
-              badge.image = "chrome://songbird/skin/service-pane/eject.png";
+              badge.image = "chrome://nightingale/skin/service-pane/eject.png";
               badge.visible = true;
             } else {
               badge.remove();
             }
-          } else {
-            // No node data, clear all attributes and hide the node
-            this.removeAttribute("id");
+          }
+          else {
             this.removeAttribute("image");
             this.removeAttribute("label");
             this.setAttribute("hidden", "true");
@@ -404,10 +404,6 @@
           if (!this.browser)
             return; // Nothing to do if we don't have a browser.
 
-          // Node already active, nothing to do.
-          if (this._servicePane.activeNode == this.nodeData)
-            return;
-
           // Style the node as active (which means first removing any
           // styles from any currently active node
           this._servicePane.makeNodeActive(this.nodeData);
@@ -434,16 +430,16 @@
             // I'm told that this hack is fine, as it will one day be replaced
             // with the playlist commands system.
             var libraryServicePane =
-              Components.classes['@songbirdnest.com/servicepane/library;1']
+              Components.classes['@getnightingale.com/servicepane/library;1']
               .getService(Components.interfaces.sbILibraryServicePaneService);
             var mediaList = libraryServicePane.getLibraryResourceForNode(this._nodeData);
             if (mediaList) {
-              const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+              const NS_SP = "http://getnightingale.com/rdf/servicepane#";
               var view = LibraryUtils.createStandardMediaListView(mediaList);
               if (this._nodeData.hasAttributeNS(NS_SP,
                                                 "mediaListViewConstraints")) {
                 // set up the constraints
-                var builder = Components.classes["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                var builder = Components.classes["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
                                         .createInstance(Components.interfaces.sbILibraryConstraintBuilder);
                 try {
                   builder.parseFromString(
@@ -462,7 +458,7 @@
               this.browser.selectedTab = tab;
 
               // Record list type metrics for some reason.
-              // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+              // See http://bugzilla.getnightingale.com/show_bug.cgi?id=4021
               // changed to loadNode from click as there are ways other than clicking
               // to get here.
               try {
@@ -488,7 +484,7 @@
                                      event);
               this.dispatchEvent(event);
 
-              var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
+              var SP_NS = "http://getnightingale.com/rdf/servicepane#";
               var eventType = this._nodeData.getAttributeNS(SP_NS, "eventType");
               if (eventType) {
                 let event = document.createEvent("UIEvent");
@@ -546,7 +542,7 @@
             nodeToUpdate = this.nodeData;
           }
           
-          var domNode = this._servicePane.getDOMNode(nodeToUpdate);
+          var domNode = this._servicePane.getDOMNode(nodeToUpdate.id);
 
           if (isdroptarget) {
             if (domNode.className.search(/\bdroptarget\b/) == -1) {
@@ -610,14 +606,41 @@
         <parameter name="event"/>
         <body>
           <![CDATA[
-          if (this.mService.onDragGesture(this.nodeData, event.dataTransfer)) {
-            // Set the drag source to this sb-servicepane-node
-            // so the feedback image looks nice.
-            let dragElement = document.getElementById(this._nodeData.id);
-            event.dataTransfer.addElement(dragElement);
+          var transferable = {};
+          if (this.mService.onDragGesture(this.nodeData, transferable)) {
+            transferable = transferable.value;
+            var transArray = Components.classes["@mozilla.org/supports-array;1"]
+                                       .createInstance(Components.interfaces.nsISupportsArray);
+            transArray.AppendElement(transferable);
+            
+            var region = null;
+            // let's build the drag region
+            try {
+              region = Components.classes["@mozilla.org/gfx/region;1"]
+                        .createInstance(Components.interfaces.nsIScriptableRegion);
+              region.init();
 
+              var bo = this.boxObject;
+
+              region.unionRect(bo.x, bo.y, bo.width, bo.height);
+
+            } catch(ex) {
+              dump("Error while building drag region: " + ex + "\n");
+              region = null;
+            }
+            
             var group = this._servicePaneGroup;
             group._dndReordering = true; 
+            var dragAction = this.mDragService.DRAGDROP_ACTION_COPY +
+                             this.mDragService.DRAGDROP_ACTION_MOVE;
+            this.mDragService.invokeDragSessionWithImage(this, 
+                                                         transArray,
+                                                         region, dragAction,
+                                                         null, 0, 0,
+                                                         event);
+            
+            group._dndReordering = false; 
+            event.preventDefault();
           }
         ]]>
         </body>
@@ -643,9 +666,9 @@
           var orientations = [0];
           var tophalf = false;
           if (this._servicePaneGroup._dndReordering) {
-            var y = event.screenY - this.boxObject.screenY;
-            var third = this.boxObject.height/3;
-            if (y < this.boxObject.height/2)
+          var y = event.screenY - this.boxObject.screenY;
+          var third = this.boxObject.height/3;
+          if (y < this.boxObject.height/2)
               tophalf = true;
             if (y < third) 
               orientations = [-1, 0, 1]; // before, inside, after
@@ -660,6 +683,7 @@
       </method>
       <method name="canDrop">
         <parameter name="event"/>
+        <parameter name="session"/>
         <body>
           <![CDATA[
           var orientations = this._getDropOrientations(event);
@@ -718,13 +742,17 @@
 
       <method name="onDragOver">
         <parameter name="event"/>
+        <parameter name="flavour"/>
+        <parameter name="session"/>
         <body>
         <![CDATA[
-          if (this.mDragService.getCurrentSession().sourceNode != event.target &&
-              this.canDrop(event) ) {
-            event.preventDefault(); // accept the drop
-            if (!this._servicePaneGroup._dndReordering)
-              this.setAsDropTarget(true);
+          if (session.sourceNode != event.target) {
+            if (this._servicePaneGroup._dndReordering) {
+              // do nothing
+            } else {
+              if (this.canDrop(event, session))
+                this.setAsDropTarget(true);
+            }
           } 
         ]]>
         </body>
@@ -750,17 +778,16 @@
                                this.mDropOrientation,
                                window);
           this.setAsDropTarget(false);
-
-          /* Auto-collapse if we auto-expanded */
-          if (this._servicePaneGroup._collapseOnDragExit)
-          {
-            this._servicePaneGroup.visible = false;
-            this._servicePaneGroup._collapseOnDragExit = null;
-            this._servicePaneGroup.servicePane._collapsedGroup = null;
-          }
         ]]></body>
       </method>
 
+      <method name="getNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          return this.parentNode.getNode(nodeID);
+        ]]></body>
+      </method>
+ 
     </implementation>
 
     <handlers>
@@ -770,14 +797,13 @@
           this._servicePane._leaveKeyboardFocus();
           // if we're the active node, & the user clicked on the label
           // then rename
-          if (this._servicePane.activeNode == this.nodeData &&
+          if (this._servicePane.getActiveNode() == this.nodeData &&
               this.nodeData.editable &&
-              event.originalTarget.tagName == "xul:label") {
+              event.originalTarget.tagName == "xul:label")
             this._servicePane.startEditingNode(this.nodeData);
-          } // otherwise load 
-          else {
+          // otherwise load 
+          else
             this.loadNodeURL(event);
-          }
 
           event.stopPropagation();
           event.preventDefault();
@@ -788,7 +814,7 @@
       <handler event="contextmenu">
       <![CDATA[
         this._servicePane._leaveKeyboardFocus();
-        this._servicePane.openContextMenu(event, this.nodeData);
+        this._servicePane.openContextMenu(event, this.nodeId);
       ]]>
       </handler>
 
@@ -803,26 +829,19 @@
       ]]></handler>
 
       <handler event="dragover"><![CDATA[
-        this.onDragOver(event);
+        nsDragAndDrop.dragOver(event, this);
         this._servicePane.needScroll(event);
         event.stopPropagation();
       ]]></handler>
 
       <handler event="dragdrop">
-        this.onDrop(event, null);
+        nsDragAndDrop.drop(event, this);
         event.stopPropagation();
       </handler>
 
       <handler event="dragexit">
-        this.onDragExit(event, null);
+        nsDragAndDrop.dragExit(event, this);
         event.stopPropagation();
-      </handler>
-
-      <handler event="dragend">
-      <![CDATA[
-        this._removeDropOrientationClass();
-        this._servicePaneGroup._dndReordering = false;
-      ]]>
       </handler>
 
     </handlers>
@@ -865,72 +884,30 @@
 
     <implementation>
       <constructor><![CDATA[
-        Cu.import("resource://app/jsmodules/LocalStore.jsm", this);
+        Components.utils.import("resource://app/jsmodules/LocalStore.jsm", this);
 
-        // Set the collapsed state for a service pane group.
-        var collapsed = this.LocalStore.getPersistedAttribute(
-                                    document.location.href,
-                                    this._nodeData.id,
-                                    "collapsedChildren");
-        this._nodeData.isOpen = (collapsed == "false" ||
-                                 collapsed == null);
+        this._groupNodes = this._getElement("groupNodes");
 
-        // First time we are attached to this node, set node visibility
-        this.visible = this._nodeData.isOpen;
-              
-        // Run the setter to initialize the node
-        this.nodeData = this.nodeData;
+        var self = this;
+        this.nodeData = this.getNode(this.id);
+
+        // Determine whether we're starting up collapsed or visible
+        this._visible = true;
+
+        let collapsed =
+          this.LocalStore
+              .getPersistedAttribute(document.location.href,
+                                     this.id,
+                                     "collapsedChildren");
+        if (collapsed) {
+          self.nodeData.isOpen = (collapsed == "false");
+        }
+
       ]]></constructor>
-
-      <!-- 
-         - \brief Value of the .visible property.
-        -->
-      <field name="_visible">null</field>
-
-      <!-- 
-         - \brief Container box of the child nodes.
-        -->
-      <field name="_groupNodes">this._getElement("groupNodes")</field>
 
       <field name="_dndReordering">false</field>
       <field name="_autoCloseOnLeaveKeyboardFocus">false</field>
       <field name="_servicepane">this.parentNode</field>
-      <field name="_nodeData">null</field>
-
-      <property name="servicePane" onget="return this.parentNode;"/>
-
-      <property name="nodeData">
-        <getter><![CDATA[
-          return this._nodeData;
-        ]]></getter>
-        <setter><![CDATA[
-          // val should be a sbIServicePaneNode object
-          this._nodeData = val;
-
-          // _nodeData is set in the createGroup method of the servicepane
-          // binding. 
-          if (this._nodeData) {
-            this.setAttribute("id", this._nodeData.id);
-            this.setAttribute("label", this._nodeData.displayName);
-
-            this.visible = this._nodeData.isOpen;
-
-            if (this._nodeData.hidden) {
-              this.setAttribute("hidden", true);
-            } else {
-              this.removeAttribute("hidden");
-            }
-          } else {
-            // No node data, clear all attributes and hide the node
-            this.removeAttribute("label");
-            this.removeAttribute("id");
-            this.setAttribute("hidden", "true");
-            this.removeAttribute("collapsedChildren");
-          }
-
-          return this._nodeData;
-        ]]></setter>
-      </property>
 
       <method name="newPlaylist">
         <parameter name="e" />
@@ -962,11 +939,11 @@
           if (this._visible == val)
             return;
           this._visible = val;
-          let height = this._groupNodes.boxObject.height;
           if (this._visible) {
-            this.animateTo(this._groupNodes, 0, 0, height, 5, true);
+            this.animateTo(this._groupNodes, 0, 0, this._height, 5, true);
           } else {
-            this.animateTo(this._groupNodes, height, height, 0, 5, false);
+            this._height = this._groupNodes.boxObject.height;
+            this.animateTo(this._groupNodes, this._height, this._height, 0, 5, false);
           }
         ]]></setter>
       </property>
@@ -1025,7 +1002,7 @@
               }
             }
           } catch (e) {
-            Cu.reportError(e);
+            dump("Exception: " + e + "\n\n\n");
           }
         ]]></body>
       </method>
@@ -1039,10 +1016,17 @@
         ]]></body>
       </method>
 
+      <method name="getNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          return this.parentNode.getNode(nodeID);
+        ]]></body>
+      </method>
+
       <method name="getRelationshipToActiveNode">
         <body><![CDATA[
-          let activeNode = this._servicepane.activeNode;
-          let activeDomNode = this._servicepane.getDOMNode(activeNode);
+          let activeNode = this._servicepane.getActiveNode();
+          let activeDomNode = this._servicepane.getDOMNode(activeNode.id);
           let relationship = this.compareDocumentPosition(activeDomNode);
           return relationship;
         ]]></body>
@@ -1059,7 +1043,7 @@
             return;
             */
 
-          this.nodeData.isOpen = !this.nodeData.isOpen;
+          this.visible = !this.visible;
         ]]></body>
       </method>
 
@@ -1085,11 +1069,12 @@
       <method name="_fillMenu">
         <parameter name="event" />
         <body><![CDATA[
+          let node = this.getNode(this.getAttribute("nodeid"));
           let popup = this._getElement("servicepane-group-header-menupopup");
           while (popup.firstChild) {
             popup.removeChild(popup.firstChild);
           }
-          this._servicepane.mService.fillContextMenu(this.nodeData, popup, window);
+          this._servicepane.mService.fillContextMenu(node, popup, window);
         ]]></body>
       </method>
 
@@ -1242,7 +1227,7 @@
         this.noisyLog = DebugUtils.generateLogFunction("ServicePane", 5);
 
         this.mService =
-          Components.classes['@songbirdnest.com/servicepane/service;1']
+          Components.classes['@getnightingale.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
 
         this.loadServicePane();
@@ -1297,65 +1282,73 @@
           isOpenAttributeChanged: function(node, oldVal, newVal) {
           },
 
-          _knownAttributes: {
-            __proto__: null,
-            id: true,
-            hidden: true,
-            name: true,
-            image: true,
-            class: true,
-            isOpen: true,
-            ejectable: true,
-            badges: true
-          },
-
-          _updateContainerFlag: function(node, domNode) {
-            if (!node || !domNode || domNode == this.element)
-              return;
-
-            let hasVisibleChildren = false;
-            for (let child = node.firstChild; child; child = child.nextSibling)
-              if (!child.hidden)
-                hasVisibleChildren = true;
-  
-            if (hasVisibleChildren)
-              this.element.DOMUtils.setClass(domNode, "container");
-            else
-              this.element.DOMUtils.clearClass(domNode, "container");
-          },
-
           attrModified: function(node, attrName, namespace, oldVal, newVal) {
-            if (namespace != null || oldVal == newVal)
+            if (oldVal == newVal)
               return;
 
-            // attempt to find the DOM node in the SP, bail if no node is found
-            // or binding didn't apply to it yet
-            let domNode = this.element.getDOMNode(node);
-            if (!domNode || !("_getElement" in domNode))
+            // attempt to find the DOM node in the SP, bail otherwise
+            let domNode = this.element.getDOMNode(node.id);
+            if (!domNode)
               return;
 
-            // If hidden attribute changes - update container status of parent
-            if (attrName == "hidden")
-              this._updateContainerFlag(node.parentNode, domNode.parentNode);
+            switch (attrName) {
+              case "hidden":
+                if (newVal == "false") {
+                  domNode.removeAttribute("hidden");
+                } else if (newVal == "true") {
+                  domNode.setAttribute("hidden", true);
+                }
+                break;
 
-            // Act on changes of known attributes or badge-related attributes
-            if (attrName in this._knownAttributes || /^badge_/.test(attrName)) {
-              // Delay execution to prevent multiple updates in a row for the
-              // same node
-              if (domNode._updateTimeout)
-                window.clearTimeout(domNode._updateTimeout);
+              case "name":
+                domNode.setAttribute("label", newVal);
+                break;
 
-              domNode._updateTimeout = window.setTimeout(function() {
-                delete domNode._updateTimeout;
+              case "image":
+                domNode.setAttribute("image", newVal);
+                break;
 
-                // This will reinitialize the DOM node
-                domNode.nodeData = domNode.nodeData;
-              }, 0);
-            } else {
-              /* Can be useful, but noisy */
-              this.element.noisyLog("Unhandled node attribute change: " +
-                               attrName + " from '" + oldVal + "' => '" +
-                               newVal + "'");
+              case "class":
+                domNode.className = newVal;
+                if (node.firstChild)
+                  domNode.className += " container";
+                break;
+
+              case "isOpen":
+                // group's open states are a little different
+                if (domNode.tagName == "sb-servicepane-group") {
+                  if (newVal == "true")
+                    domNode.visible = true;
+                  else
+                    domNode.visible = false;
+                  return;
+                }
+
+                // update the "closed" attribute
+                if (newVal == "true") {
+                  domNode.removeAttribute("closed");
+                } else {
+                  // could be null or false
+                  domNode.setAttribute("closed", "true");
+                }
+                break;
+
+              case "badges":
+                domNode._updateBadges();
+                break;
+
+              default:
+                if (/^badge_/.test(attrName)) {
+                  // Change to some badge-related attribute
+                  domNode._updateBadges();
+                  break;
+                }
+
+                /* Can be useful, but noisy */
+                this.element.noisyLog("Unhandled node attribute change: " +
+                                 attrName + " from '" + oldVal + "' => '" +
+                                 newVal + "'");
+                break;
             }
           },
 
@@ -1370,9 +1363,9 @@
               parentNode = this.element;
             } else {
               // It's a regular node
-              this.element.log("New node: " + node.id + " (child of " + parent.id + ")");
+              this.element.log("New node: " + node.id);
               domNode = this.element.createNode(node);
-              parentNode = this.element.getDOMNode(parent);
+              parentNode = this.element.getDOMNode(parent.id);
               if (!parentNode) {
                 this.element.log("\tNo parent node found, skipping..");
                 return;
@@ -1382,7 +1375,7 @@
             // Find the insertion point
             let insertBeforeNode = null;
             if (insertBefore)
-              insertBeforeNode = this.element.getDOMNode(insertBefore);
+              insertBeforeNode = this.element.getDOMNode(insertBefore.id);
 
             // Insert new node
             if (insertBeforeNode && insertBeforeNode.parentNode == parentNode) {
@@ -1391,9 +1384,9 @@
               parentNode.appendChild(domNode);
             }
             
-            // Update container flag on parent node if visible node is added
-            if (!node.hidden)
-              this._updateContainerFlag(parent, parentNode);
+            // Update parent node - if it wasn't a container before it is one now
+            if (parentNode != this.element)
+              this.element.DOMUtils.setClass(parentNode, "container");
 
             // Hacky workaround for bug 21128, comment #2
             if (parentNode == this.element) {
@@ -1417,7 +1410,7 @@
 
             try {
               // find the DOM node representing this servicepane node
-              let domNode = this.element.getDOMNode(node);
+              let domNode = this.element.getDOMNode(node.id);
 
               // was this node active?
               let active = null;
@@ -1433,17 +1426,12 @@
 
               // remove the actual node
               if (domNode && domNode.parentNode) {
-                let parentNode = domNode.parentNode;
                 this.element.log("\tDOM nodes map to removing " + domNode.id +
-                                 " from " + parentNode.id);
-                parentNode.removeChild(domNode);
-
-                // Is the parent still a container?
-                if (!node.hidden)
-                  this._updateContainerFlag(parent, parentNode);
+                                 " from " + domNode.parentNode.id);
+                domNode.parentNode.removeChild(domNode);
               }
             } catch (e) {
-              Cu.reportError(e);
+              dump("Exception: " + e + "\n");
             }
             // XXXtodo
             // if the node was active, then the browser will have gone back
@@ -1455,11 +1443,11 @@
       ]]>
       </field>
 
-      <!-- The active node, or null if none -->
-      <field name="_activeNode">null</field>
+      <!-- The ID of the active node, or null if none -->
+      <field name="_activeNodeID">null</field>
 
-      <!-- The highlighted node, or null if none -->
-      <field name="_highlightedNode">null</field>
+      <!-- The ID of the highlighted node, or null if none -->
+      <field name="_highlightedNodeID">null</field>
 
       <!-- The node we're currently editing -->
       <field name="_editingNode">null</field>
@@ -1490,10 +1478,15 @@
         <body><![CDATA[
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var newGroup = document.createElementNS(XULNS, "sb-servicepane-group");
-
-          // Setting private property because binding didn't apply yet, public
-          // nodeData property isn't available
-          newGroup._nodeData = nodeData;
+          newGroup.setAttribute("label", nodeData.displayName);
+          newGroup.setAttribute("nodeid", nodeData.id);
+          newGroup.setAttribute("id", nodeData.id);
+          if (!nodeData.isOpen) {
+            newGroup.setAttribute("closed", true);
+          }
+          if (nodeData.hidden) {
+            newGroup.setAttribute("hidden", true);
+          }
           return newGroup;
         ]]></body>
       </method>
@@ -1508,10 +1501,7 @@
             <![CDATA[
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var newNode = document.createElementNS(XULNS,"sb-servicepane-node");
-
-          // Setting private property because binding didn't apply yet, public
-          // nodeData property isn't available
-          newNode._nodeData = nodeData;
+          newNode.setAttribute("nodeid", nodeData.id);
           if (this.hasAttribute("browser")) {
             newNode.setAttribute("browser", this.getAttribute("browser"));
           }
@@ -1549,7 +1539,7 @@
         <body><![CDATA[
           if (!this.mService) {
             this.mService =
-              Components.classes['@songbirdnest.com/servicepane/service;1']
+              Components.classes['@getnightingale.com/servicepane/service;1']
               .getService(Components.interfaces.sbIServicePaneService);
             this.mService.init();
           }
@@ -1588,24 +1578,23 @@
         ]]></body>
       </method>
 
-      <method name="getDOMNode">
-        <parameter name="nodeData"/>
+      <!--
+        - \brief Get the node from an id.
+        - \param nodeID is the id of the node.
+        - \return the sbIServicePaneNode from the id.
+        -->
+      <method name="getNode">
+        <parameter name="nodeID"/>
         <body><![CDATA[
-          let filter = {
-            acceptNode: function(node)
-            {
-              // Compare to private property so that nodes can be found even if
-              // their binding hasn't been applied yet (e.g., node is hidden).
-              // See "http://bugzilla.songbirdnest.com/show_bug.cgi?id=22059".
-              if (node._nodeData == nodeData)
-                return NodeFilter.FILTER_ACCEPT;
-              else
-                return NodeFilter.FILTER_REJECT;
-            }
-          };
-          let iterator = document.createNodeIterator(this,
-              NodeFilter.SHOW_ELEMENT, filter, false);
-          return iterator.nextNode();
+          return this.mService.getNode(nodeID);
+        ]]></body>
+      </method>
+
+      <method name="getDOMNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          let spNode = this.getElementsByAttribute("nodeid", nodeID)[0];
+          return spNode;
         ]]></body>
       </method>
 
@@ -1613,17 +1602,27 @@
         - \brief Get the active node if any.
         - \return sbIServicePaneNode of the active node, or null if none
         -->
-      <property name="activeNode">
-        <getter><![CDATA[
-          return this._activeNode;
-        ]]></getter>
-      </property>
+      <method name="getActiveNode">
+        <body><![CDATA[
+          if (this._activeNodeID) {
+            return this.mService.getNode(this._activeNodeID);
+          }
+          else {
+            return null;
+          }
+        ]]></body>
+      </method>
 
-      <property name="highlightedNode">
-        <getter><![CDATA[
-          return this._highlightedNode;
-        ]]></getter>
-      </property>
+      <method name="getHighlightedNode">
+        <body><![CDATA[
+          if (this._highlightedNodeID) {
+            return this.mService.getNode(this._highlightedNodeID);
+          }
+          else {
+            return null;
+          }
+        ]]></body>
+      </method>
 
       <method name="getKeyboardFocusNode">
         <parameter name="nodefault"/>
@@ -1631,7 +1630,7 @@
           if (this._keyboardFocusNode)
             return this._keyboardFocusNode;
           if (!nodefault)
-            return this.activeNode;
+            return this.getActiveNode();
           return null;
         ]]></body>
       </method>
@@ -1653,7 +1652,7 @@
 
             // if we still didn't find a node, try looking it up by medialist
             if (!node && this._browser.selectedTab.mediaListView) {
-              let librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+              let librarySPS = Cc['@getnightingale.com/servicepane/library;1']
                                  .getService(Ci.sbILibraryServicePaneService);
               node = librarySPS.getNodeFromMediaListView(
                                  this._browser.selectedTab.mediaListView);
@@ -1681,7 +1680,7 @@
             return;
 
           // Remove the 'active' CSS class from the currently active node
-          let activeNode = this.activeNode;
+          let activeNode = this.getActiveNode();
 
           if (activeNode == newNode)
             return;
@@ -1702,14 +1701,14 @@
 
           // Add the 'active' class to the new node
           newNode.className += " active";
-          this._activeNode = newNode;
+          this._activeNodeID = newNode.id;
 
           // Auto expand the parent group of this node
           let parentNode = newNode.parentNode;
           while (parentNode && (parentNode.parentNode != this.mService.root))
             parentNode = parentNode.parentNode;
           if (parentNode) {
-            let parentDomNode = this.getDOMNode(parentNode);
+            let parentDomNode = this.getDOMNode(parentNode.id);
             parentDomNode.visible = true;
           }
 
@@ -1725,20 +1724,19 @@
         <parameter name="newNode"/>
         <body><![CDATA[
           // Remove the 'highlight' CSS from the currently highlighted node
-          let highlightedNode = this.highlightedNode;
+          let highlightedNode = this.getHighlightedNode();
 
           if (highlightedNode == newNode)
             return;
 
           if (highlightedNode) {
-            let domNode = this.getDOMNode(highlightedNode);
-            if (domNode)
-              domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
+            let domNode = this.getDOMNode(highlightedNode.id);
+            domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
           }
 
           // Add the 'highlighted' class to the new node
           newNode.className += " highlighted";
-          this._highlightedNode = newNode.nodeData;
+          this._highlightedNodeID = newNode.nodeData.id;
           return newNode;
         ]]></body>
       </method>
@@ -1779,7 +1777,7 @@
             this.mService.onBeforeRename(aNode);
 
             // get the DOM node for the node we're about to edit
-            this._editingNode = this.getDOMNode(aNode);
+            this._editingNode = this.getDOMNode(aNode.id);
 
             // ensure this node is visible.  we do this by having the scrollbox
             // scroll to make the element visible.  but if the group is
@@ -1790,7 +1788,7 @@
             let groupNode = aNode.parentNode;
             while (groupNode.parentNode != this.mService.root)
               groupNode = groupNode.parentNode;
-            let groupDomNode = this.getDOMNode(groupNode);
+            let groupDomNode = this.getDOMNode(groupNode.id);
             // if the group is already open, then just make sure our editing
             // node is visible
             if (groupDomNode.actuallyVisible)
@@ -1814,7 +1812,7 @@
             this._editingNode._textbox.select();
             return true;
           } catch (e) {
-            Cu.reportError(e);
+            dump("Exception: " + e + "\n");
             this._editingNode = null;
             return false;
           }
@@ -1895,20 +1893,20 @@
           <![CDATA[
           //this.mPopup.hidePopup();
           // Remove the 'highlight' CSS from the currently highlighted node
-          let highlightedNode = this.highlightedNode;
+          let highlightedNode = this.getHighlightedNode();
           if (highlightedNode) {
-            let domNode = this.getDOMNode(highlightedNode);
+            let domNode = this.getDOMNode(highlightedNode.id);
             domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
           }
 
-          this._highlightedNode = null;
+          this._highlightedNodeID = null;
           ]]>
         </body>
       </method>
 
       <method name="openContextMenu">
         <parameter name="event" />
-        <parameter name="node" />
+        <parameter name="nodeId" />
         <body>
           <![CDATA[
           // clear the popup menu
@@ -1922,8 +1920,9 @@
           // node.  otherwise, fill the popup with the contents of the
           // "new stuff" menu
           var x, y;
-          if (node) {
-            let domNode = this.getDOMNode(node);
+          if (nodeId) {
+            let node = this.getNode(nodeId);
+            let domNode = this.getDOMNode(nodeId);
             this.makeNodeHighlighted(domNode);
             this.mService.fillContextMenu(node, this.mPopup, window);
             x = (event ? (event.screenX + 5) : domNode.boxObject.screenX);
@@ -2015,7 +2014,7 @@
         <body><![CDATA[
           let scrollbox =
               this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
-          scrollbox.ensureElementIsVisible(this.getDOMNode(node));
+          scrollbox.ensureElementIsVisible(this.getDOMNode(node.id));
         ]]></body>
       </method>
       
@@ -2023,7 +2022,7 @@
         <body><![CDATA[ 
           if (this._keyboardFocusNode) {
             var node = this._keyboardFocusNode;
-            var domnode = this.getDOMNode(node);
+            var domnode = this.getDOMNode(node.id);
             if (domnode) {
               var group = domnode._servicePaneGroup;
               if (group && 
@@ -2044,13 +2043,13 @@
         <body>
         <![CDATA[
           if (this._keyboardFocusNode) {
-            var domnode = this.getDOMNode(this._keyboardFocusNode);
+            var domnode = this.getDOMNode(this._keyboardFocusNode.id);
             domnode.className = 
               domnode.className.replace(/\bkeyboardfocus\b/g,'');
             this._keyboardFocusNode = null;
           }
           if (node) {
-            var domnode = this.getDOMNode(node);
+            var domnode = this.getDOMNode(node.id);
             if (domnode.className.search(/\bkeyboardfocus\b/) == -1) {
               domnode.className += " keyboardfocus";
             }
@@ -2066,7 +2065,7 @@
         <body><![CDATA[ 
           var node = this.getKeyboardFocusNode();
           if (node && !node.isOpen) {
-            var domnode = this.getDOMNode(node);
+            var domnode = this.getDOMNode(node.id);
             if (domnode) 
               domnode.toggleContainer(event);
           }
@@ -2077,7 +2076,7 @@
         <body><![CDATA[
           var node = this.getKeyboardFocusNode();
           if (node && node.isOpen) {
-            var domnode = this.getDOMNode(node);
+            var domnode = this.getDOMNode(node.id);
             if (domnode) 
               domnode.toggleContainer(event);
           }
@@ -2095,7 +2094,7 @@
         <body><![CDATA[ 
           var node = this.getKeyboardFocusNode();
           if (node) {
-            var domnode = this.getDOMNode(node);
+            var domnode = this.getDOMNode(node.id);
             if (domnode) {
               this._leaveKeyboardFocus();
               domnode.loadNodeURL(event)
@@ -2108,7 +2107,7 @@
         <body><![CDATA[ 
           var node = this.getKeyboardFocusNode();
           if (node) {
-            this.openContextMenu(null, node);
+            this.openContextMenu(null, node.id);
           }
         ]]></body>
       </method>
@@ -2144,7 +2143,7 @@
           var pos = -1;
           var kfnode = this.getKeyboardFocusNode();
           if (kfnode) {
-            var kfdomnode = this.getDOMNode(kfnode);
+            var kfdomnode = this.getDOMNode(kfnode.id);
             oldgroup = kfdomnode._servicePaneGroup;
             var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
             var domnodes = this.getElementsByTagNameNS(XULNS,"sb-servicepane-node");
@@ -2163,7 +2162,7 @@
             // discard non-element domnodes
             if (domnode.nodeType != Node.ELEMENT_NODE)
               continue;
-            var node = domnode.nodeData;
+            var node = this.getNode(domnode.getAttribute("nodeid"));
             if (node) {
               // discard hidden nodes
               if (node.hidden)
@@ -2201,7 +2200,7 @@
         <![CDATA[
           if (!node)
             return;
-          var domnode = this.getDOMNode(node);
+          var domnode = this.getDOMNode(node.id);
           if (domnode)
             domnode.loadNodeURL(event, arguments);
         ]]></body>

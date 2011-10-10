@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        id="mac_cmdline_forward" windowtype="Songbird:MacCmdLineFwd"
+        id="mac_cmdline_forward" windowtype="Nightingale:MacCmdLineFwd"
         title="Hidden" width="0" height="0" >
 
   <script><![CDATA[ 
     const PREFS_SERVICE_CONTRACTID = "@mozilla.org/preferences-service;1";
     const WNDMEDIATOR_SERVICE_CONTRACTID = "@mozilla.org/appshell/window-mediator;1";
-    const CMDLINEHANDLER_SERVICE_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
+    const CMDLINEHANDLER_SERVICE_CONTRACTID = "@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale";
     const Ci = Components.interfaces;
 
     function getPref(aFunc, aPreference, aDefaultValue) {

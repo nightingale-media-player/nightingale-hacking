@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -48,7 +48,7 @@ function runTest() {
 
   library.clear();
 
-  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var toAdd = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   toAdd.appendElement(newURI("http://example.com/foo.mp3"), false);
   toAdd.appendElement(newURI("http://example.com/foo.mp3"), false);
   toAdd.appendElement(newURI("http://example.com/foo1.mp3"), false);
@@ -93,7 +93,7 @@ function runTest() {
 
   // Create media item properties to match media items to content src URI's.
   var toAddProps =
-        Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+        Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 0; i < toAdd.length; i++) {
     var uri = toAdd.queryElementAt(i, Ci.nsIURI);
     var properties = [ [ SBProperties.originURL, uri.spec ] ];

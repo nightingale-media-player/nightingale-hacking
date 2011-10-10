@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -43,11 +43,9 @@ function onComplete(job) {
     job.removeJobProgressListener(onComplete);
     
     // Manage the files
-    var properties = getMediaManagerProperties();
-
     var fileManager = Cc[SB_MEDIAFILEMANAGER]
                         .createInstance(Ci.sbIMediaFileManager);
-    fileManager.init(properties);
+    fileManager.init();
     // COPY/MOVE/RENAME
     for (var i = 0; i < gTestMediaItems.length; i++) {
       var isManaged = false;
@@ -87,7 +85,10 @@ function onComplete(job) {
 }
 
 function runTest () {
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  // Setup the preferences for the media manager
+  setupMediaManagerPreferences();
+
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
 
   // Create the test library, do not init with items
@@ -108,7 +109,7 @@ function runTest () {
   gTestLibrary.removeListener(listListener);
 
   // Read the metadata for these items
-  var fileMetadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  var fileMetadataService = Cc["@getnightingale.com/Nightingale/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);
   var job = fileMetadataService.read(gTestMediaItems);
 

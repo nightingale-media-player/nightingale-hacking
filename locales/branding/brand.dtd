@@ -1,20 +1,20 @@
-<!ENTITY brandShortName        "Songbird">
-<!ENTITY brandFullName         "Songbird Web Player">            
-<!ENTITY vendorShortName       "POTI, Inc.">
+<!ENTITY brandShortName        "Nightingale">
+<!ENTITY brandFullName         "Nightingale Web Player">            
+<!ENTITY vendorShortName       "Nightingale">
 
 
-<!ENTITY bugzillaURL           "http://bugzilla.songbirdnest.com/">
-<!ENTITY supportURL            "http://getsongbird.com/help/">
-<!ENTITY vendorURL             "http://getsongbird.com/about">
-<!ENTITY productURL            "http://getsongbird.com">
-<!ENTITY getDisplayPanesURL    "http://addons.songbirdnest.com/tag/displaypane">
-<!ENTITY faviconURL            "chrome://songbird-branding/skin/logo_16.png">
-<!ENTITY aboutImageURL         "chrome://songbird-branding/skin/powered-by-mozilla.png">
+<!ENTITY bugzillaURL           "http://bugs.getnightingale.com/">
+<!ENTITY supportURL            "http://getnightingale.com/help/">
+<!ENTITY vendorURL             "http://getnightingale.com/about">
+<!ENTITY productURL            "http://getnightingale.com">
+<!ENTITY getDisplayPanesURL    "http://addons.getnightingale.com/tag/displaypane">
+<!ENTITY faviconURL            "chrome://nightingale-branding/skin/logo_16.png">
+<!ENTITY aboutImageURL         "chrome://nightingale-branding/skin/powered-by-mozilla.png">
 
-<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2010">
+<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2010-2011">
 
-<!ENTITY window.main.title     "Songbird">
-<!ENTITY window.dev.title      "Songbird">
+<!ENTITY window.main.title     "Nightingale">
+<!ENTITY window.dev.title      "Nightingale">
 
 <!-- Update the following prior to every release -->
-<!ENTITY releaseNotesURL       "http://wiki.songbirdnest.com/Release_Notes">
+<!ENTITY releaseNotesURL       "http://wiki.getnightingale.com/Release_Notes">

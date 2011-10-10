@@ -85,7 +85,7 @@ nsresult WriteImageMetadata(nsIArray* aMediaItems) {
     NS_ENSURE_TRUE(propsToWrite, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIFileMetadataService> metadataService =
-      do_GetService( "@songbirdnest.com/Songbird/FileMetadataService;1", &rv );
+      do_GetService( "@getnightingale.com/Nightingale/FileMetadataService;1", &rv );
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsCOMPtr<sbIJobProgress> job;

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBCDDEVICE_H_
@@ -29,6 +29,7 @@
 #include <sbBaseDevice.h>
 #include <sbICDDevice.h>
 #include <sbDeviceCapabilities.h>
+#include <sbDeviceStatusHelper.h>
 #include <sbIDeviceProperties.h>
 #include <sbITranscodeManager.h>
 #include <sbIMetadataLookupManager.h>
@@ -99,6 +100,7 @@ class nsIPropertyBag;
 //
 // Request Thread
 //
+//   mStatus
 //   mTranscodeManager
 //
 // Properties lock
@@ -122,7 +124,7 @@ class nsIPropertyBag;
 //------------------------------------------------------------------------------
 
 // Preference keys
-#define PREF_CDDEVICE_RIPBRANCH         "songbird.cdrip."
+#define PREF_CDDEVICE_RIPBRANCH         "nightingale.cdrip."
 #define PREF_CDDEVICE_AUTOEJECT         "oncomplete.autoeject"
 #define PREF_CDDEVICE_NOTIFYSOUND       "oncomplete.notifysound"
 #define PREF_CDDEVICE_RIPFORMAT         "format"
@@ -169,7 +171,6 @@ public:
                       nsIPropertyBag *aProperties,
                       sbCDDevice **aOutCDDevice);
 
-  virtual PRBool IsRequestAborted();
 private:
   /**
    * Protects the mProperites member and updating it's contents
@@ -182,6 +183,11 @@ private:
    * to protected properties is done via a read lock.
    */
   PRRWLock* mConnectLock;
+
+  /**
+   * Abort request indicator
+   */
+  PRInt32 mAbortRequests;
 
   /**
    * Transcode manager used to rip the tracks
@@ -198,6 +204,11 @@ private:
    * ID of the controller that created us
    */
   nsID mControllerID;
+
+  /**
+   * Indicates whether we're connected or not
+   */
+  PRBool mConnected;
 
   nsCOMPtr<sbICDDevice> mCDDevice;
 
@@ -227,9 +238,29 @@ private:
   nsCOMPtr<sbIDeviceContent> mDeviceContent;
 
   /**
+   * The device status helper
+   */
+  sbDeviceStatusHelper mStatus;
+
+  /**
+   * The request handler thread
+   */
+  nsCOMPtr<nsIThread> mReqThread;
+
+  /**
+   * Used to signal an abort during transcoding
+   */
+  PRMonitor* mReqWaitMonitor;
+
+  /**
    * Holds the device library path
    */
   nsString mDeviceLibraryPath;
+
+  /**
+   * Indicates whether we're handling a request or not
+   */
+  PRBool mIsHandlingRequests;
 
   /**
    * The cached transcode profile
@@ -242,14 +273,6 @@ private:
    */
   PRBool mPrefAutoEject;
   PRBool mPrefNotifySound;
-
-  /* Initialize request handler */
-  void InitRequestHandler();
-
-  /**
-   * Performs CD disconnect
-   */
-  virtual nsresult DeviceSpecificDisconnect();
 
   /**
    * Initializes the device properties
@@ -265,6 +288,27 @@ private:
    * Creates the device ID for the device
    */
   nsresult CreateDeviceID(nsID* aDeviceID);
+
+  /**
+   * Initialize the request queue connection
+   */
+  nsresult ReqConnect();
+
+  /**
+   * Stops processing of requests
+   */
+  nsresult ReqProcessingStop();
+
+  /**
+   * Tears down the request queue
+   */
+  nsresult ReqDisconnect();
+
+  /**
+   * Processes a request. This is called when there are requests
+   * pending.
+   */
+  nsresult ProcessRequest();
 
   /**
    * Mount the media volume specified by aVolume.
@@ -287,7 +331,7 @@ private:
   /**
    * Called to process a newly added request
    */
-  virtual nsresult ProcessBatch(Batch & aBatch);
+  nsresult ReqHandleRequestAdded();
 
   /**
    * Handle the mount request specified by aRequest.
@@ -317,6 +361,14 @@ private:
    * Returns a list of property arrays for the tracks on a CD
    */
   nsresult GetMediaProperties(nsIArray ** aPropertyList);
+
+  /**
+   * Return true if the active request should abort; otherwise, return false.
+   *
+   * \return PR_TRUE              Active request should abort.
+   *         PR_FALSE             Active request should not abort.
+   */
+  PRBool ReqAbortActive();
 
   /**
    * Populate the device library with metadata from the CD lookup service.
@@ -406,7 +458,7 @@ private:
    * Processes a read request. Copying content from a CD to the device library
    * \param aRequest The request to be processed
    */
-  nsresult ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount);
+  nsresult ReqHandleRead(TransferRequest * aRequest);
 
   /**
    * Gets the bitrate property from the cached transcoding profile

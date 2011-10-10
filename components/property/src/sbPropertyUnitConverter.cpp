@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,25 +19,20 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 // Base class for property unit converters (sbIPropertyUnitConverter)
 
 #include "sbPropertyUnitConverter.h"
-
-#include <sbIPropertyInfo.h>
-
-#include <locale.h>
-
+#include <nsServiceManagerUtils.h>
+#include <sbLockUtils.h>
+#include <nsCOMPtr.h>
+#include "nsEnumeratorUtils.h"
+#include "nsArrayEnumerator.h"
 #include <prprf.h>
 
-#include <nsArrayEnumerator.h>
-#include <nsCOMPtr.h>
-#include <nsEnumeratorUtils.h>
-#include <nsServiceManagerUtils.h>
-
-#include <sbLockUtils.h>
+#include <locale.h>
 
 static const char *gsFmtFloatOut = "%f";
 static const char *gsFmtFloatIn = "%lf";
@@ -149,8 +144,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyUnitConverter, sbIPropertyUnitConverter)
 
 // ctor
 sbPropertyUnitConverter::sbPropertyUnitConverter()
-: mLock(nsnull)
-, mNativeInternal((PRUint32)-1)
+: mNativeInternal(-1)
+, mLock(nsnull)
 , mDecimalPoint('.')
 {
   mLock = PR_NewLock();
@@ -208,7 +203,7 @@ nsresult
                                           nsAString &aOutValue) {
   // turn the double value into a string
   char out[64] = {0};
-  if(PR_snprintf(out, 63, gsFmtFloatOut, aValue) == (PRUint32)-1) {
+  if(PR_snprintf(out, 63, gsFmtFloatOut, aValue) == -1) {
     aOutValue = EmptyString();
     return NS_ERROR_FAILURE;
   }
@@ -286,7 +281,7 @@ sbPropertyUnitConverter::Convert(const nsAString & aValue,
 // iteratively remove all trailing zeroes, and the period if necessary
 void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
   PRUint32 decimal = aValue.FindChar(mDecimalPoint);
-  if (decimal != (PRUint32)-1) {
+  if (decimal != -1) {
     while (aValue.CharAt(aValue.Length()-1) == '0')
       aValue.Cut(aValue.Length()-1, 1);
     if (aValue.Length() == decimal+1)
@@ -298,7 +293,7 @@ void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
 void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
                                                PRUint32 aDecimals) {
   PRUint32 decimal = aValue.FindChar(mDecimalPoint);
-  if (decimal != (PRUint32)-1) {
+  if (decimal != -1) {
     PRUint32 p = decimal + aDecimals;
     if (aValue.Length() > p+1) {
       aValue.Cut(p+1, aValue.Length()-1-p);
@@ -310,7 +305,7 @@ void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
 void sbPropertyUnitConverter::ForceToNDecimals(nsAString &aValue,
                                                PRUint32 aDecimals) {
   PRUint32 decimal = aValue.FindChar(mDecimalPoint);
-  if (decimal == (PRUint32)-1) {
+  if (decimal == -1) {
     aValue += mDecimalPoint;
     decimal = aValue.Length()-1;
   }

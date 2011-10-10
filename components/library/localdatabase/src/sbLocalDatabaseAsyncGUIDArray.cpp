@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,12 +20,11 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 #include "sbLocalDatabaseAsyncGUIDArray.h"
-#include "sbLocalDatabaseGUIDArray.h"
 
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
@@ -37,7 +36,9 @@
 #include <prlog.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbLocalDatabaseCID.h>
-#include <sbProxiedComponentManager.h>
+#include <sbProxyUtils.h>
+
+#include "sbLocalDatabaseGUIDArray.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -190,17 +191,11 @@ sbLocalDatabaseAsyncGUIDArray::AddAsyncListener
          this, aListener));
 
   NS_ENSURE_ARG_POINTER(aListener);
-
-  /* Acquiring this spins the event loop; do it before grabbing mSyncMonitor */
-  nsresult rv;
-  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
-      do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsAutoMonitor monitor(mSyncMonitor);
 
   // See if we have already added this listener.
   PRUint32 length = mAsyncListenerArray.Length();
+  nsresult rv;
   nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -217,7 +212,7 @@ sbLocalDatabaseAsyncGUIDArray::AddAsyncListener
                           info(new sbLocalDatabaseAsyncGUIDArrayListenerInfo());
   NS_ENSURE_TRUE(info, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = info->Init(proxyObjMgr, weak);
+  rv = info->Init(weak);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseAsyncGUIDArrayListenerInfoAutoPtr* added =
@@ -489,33 +484,6 @@ sbLocalDatabaseAsyncGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* a
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::SetLengthCache(
-        sbILocalDatabaseGUIDArrayLengthCache *aLengthCache)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->SetLengthCache(aLengthCache);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetLengthCache(
-        sbILocalDatabaseGUIDArrayLengthCache **aLengthCache)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->GetLengthCache(aLengthCache);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
-                                        PRUint32 aCount)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->MayInvalidate(aDirtyPropIDs, aCount);
-}
-
-NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::AddSort(const nsAString& aProperty,
                                        PRBool aAscending)
 {
@@ -613,20 +581,11 @@ sbLocalDatabaseAsyncGUIDArray::GetRowidByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetViewItemUIDByIndex(PRUint32 aIndex,
-                                                     nsAString& _retval)
+sbLocalDatabaseAsyncGUIDArray::Invalidate()
 {
   nsAutoMonitor monitor(mSyncMonitor);
 
-  return mInner->GetViewItemUIDByIndex(aIndex, _retval);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::Invalidate(PRBool aInvalidateLength)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->Invalidate(aInvalidateLength);
+  return mInner->Invalidate();
 }
 
 NS_IMETHODIMP
@@ -664,13 +623,12 @@ sbLocalDatabaseAsyncGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetIndexByViewItemUID
-                              (const nsAString& aViewItemUID,
+sbLocalDatabaseAsyncGUIDArray::GetIndexByRowid(PRUint64 aRowid,
                                                PRUint32* _retval)
 {
   nsAutoMonitor monitor(mSyncMonitor);
 
-  return mInner->GetIndexByViewItemUID(aViewItemUID, _retval);
+  return mInner->GetIndexByRowid(aRowid, _retval);
 }
 
 NS_IMETHODIMP
@@ -680,14 +638,6 @@ sbLocalDatabaseAsyncGUIDArray::ContainsGuid(const nsAString& aGuid,
   nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->ContainsGuid(aGuid, _retval);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::SuppressInvalidation(PRBool aSuppress)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->SuppressInvalidation(aSuppress);
 }
 
 NS_IMETHODIMP
@@ -849,7 +799,7 @@ CommandProcessor::Run()
           // so might as well shut down.
           nsCOMPtr<nsIThread> doomed;
           // Try proxying to thread
-          do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD, NS_GET_IID(nsIThread), 
+          SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD, NS_GET_IID(nsIThread), 
                 mFriendArray->mThread, NS_PROXY_ASYNC, getter_AddRefs(doomed));
           if (doomed) {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread End Due To Timeout", mFriendArray));
@@ -1084,11 +1034,8 @@ sbLocalDatabaseAsyncGUIDArrayListenerInfo::
 }
 
 nsresult
-sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(
-        nsIProxyObjectManager *aProxyObjMgr,
-        nsIWeakReference* aWeakListener)
+sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(nsIWeakReference* aWeakListener)
 {
-  NS_ENSURE_ARG_POINTER(aProxyObjMgr);
   NS_ASSERTION(aWeakListener, "aWeakListener is null");
   nsresult rv;
 
@@ -1098,14 +1045,11 @@ sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(
   mWeakListenerWrapper = new sbWeakAsyncListenerWrapper(aWeakListener);
   NS_ENSURE_TRUE(mWeakListenerWrapper, NS_ERROR_OUT_OF_MEMORY);
 
-  /* Must not spin the event loop here - this is called with a lock held */
-  rv = do_GetProxyForObjectWithManager(aProxyObjMgr,
-                                       NS_PROXY_TO_CURRENT_THREAD,
-                                       NS_GET_IID(
-                                           sbILocalDatabaseAsyncGUIDArrayListener),
-                                       mWeakListenerWrapper,
-                                       NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
-                                       getter_AddRefs(mProxiedListener));
+  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                            NS_GET_IID(sbILocalDatabaseAsyncGUIDArrayListener),
+                            mWeakListenerWrapper,
+                            NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mProxiedListener));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

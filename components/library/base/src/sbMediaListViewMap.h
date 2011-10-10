@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,19 +20,20 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
  * \file  sbMediaListViewMap.h
- * \brief Songbird Library Manager Definition.
+ * \brief Nightingale Library Manager Definition.
  */
 
 #ifndef __SB_MEDIALISTVIEWMAP_H__
 #define __SB_MEDIALISTVIEWMAP_H__
 
 #include <nsIObserver.h>
+#include <nsWeakReference.h>
 #include <sbILibrary.h>
 #include <sbIMediaListViewMap.h>
 #include <sbIMediaListView.h>
@@ -44,15 +45,13 @@
 #include <nsTHashtable.h>
 #include <prlock.h>
 
-#include <sbWeakReference.h>
-
-#define SONGBIRD_MEDIALISTVIEWMAP_DESCRIPTION                \
-  "Songbird MediaListViewMap"
-#define SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID                 \
-  "@songbirdnest.com/Songbird/library/MediaListViewMap;1"
-#define SONGBIRD_MEDIALISTVIEWMAP_CLASSNAME                  \
-  "Songbird MediaListViewMap"
-#define SONGBIRD_MEDIALISTVIEWMAP_CID                        \
+#define NIGHTINGALE_MEDIALISTVIEWMAP_DESCRIPTION                \
+  "Nightingale MediaListViewMap"
+#define NIGHTINGALE_MEDIALISTVIEWMAP_CONTRACTID                 \
+  "@getnightingale.com/Nightingale/library/MediaListViewMap;1"
+#define NIGHTINGALE_MEDIALISTVIEWMAP_CLASSNAME                  \
+  "Nightingale MediaListViewMap"
+#define NIGHTINGALE_MEDIALISTVIEWMAP_CID                        \
 { 0x16ea057c, 0xd4c2, 0x4921, { 0x99, 0x84, 0x13, 0xac, 0x42, 0x1a, 0x5f, 0x8d } }
 
 
@@ -66,7 +65,7 @@ struct nsModuleComponentInfo;
 
 class sbMediaListViewMap : public sbIMediaListViewMap,
                            public nsIObserver,
-                           public sbSupportsWeakReference
+                           public nsSupportsWeakReference
 {
 
 public:

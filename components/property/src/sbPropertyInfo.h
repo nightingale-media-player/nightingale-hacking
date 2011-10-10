@@ -1,12 +1,12 @@
 // vim: set sw=2 : */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
-// Copyright(c) 2005-2011 POTI, Inc.
-// http://songbirdnest.com
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,14 +21,14 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 #ifndef __SBPROPERTYINFO_H__
 #define __SBPROPERTYINFO_H__
 
-#include <sbIPropertyInfo.h>
+#include <sbIPropertyManager.h>
 #include <sbIPropertyArray.h>
 #include "sbPropertyUnitConverter.h"
 
@@ -36,9 +36,8 @@
 #include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
-
+#include <nsWeakReference.h>
 #include "sbPropertyOperator.h"
-#include <sbWeakReference.h>
 
 #define NS_FORWARD_SBIPROPERTYINFO_NOSPECIFICS(_to) \
 NS_IMETHOD GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS) { return _to GetOPERATOR_EQUALS(aOPERATOR_EQUALS); } \
@@ -80,10 +79,7 @@ NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOpera
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
 NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
 NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter) { return _to SetUnitConverter(aUnitConverter); } \
-NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); } \
-NS_IMETHOD GetUsedInIdentity(PRBool *aUsedInIdentity) { return _to GetUsedInIdentity(aUsedInIdentity); } \
-NS_IMETHOD SetUsedInIdentity(PRBool aUsedInIdentity) { return _to SetUsedInIdentity(aUsedInIdentity); }
-
+NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); }
 
 #define NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to) \
 NS_IMETHOD MakeSortable(const nsAString &aValue, nsAString &retVal) { return _to MakeSortable(aValue, retVal); }
@@ -95,8 +91,7 @@ NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to)
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
 
-class sbPropertyInfo : public sbIPropertyInfo, 
-                       public sbSupportsWeakReference
+class sbPropertyInfo : public sbIPropertyInfo, public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS
@@ -145,9 +140,6 @@ protected:
   
   PRLock*   mUnitConverterLock;
   nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
-
-  PRLock*   mUsedInIdentityLock;
-  PRBool    mUsedInIdentity;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */

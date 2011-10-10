@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef _SB_GSTREAMER_VIDEO_TRANSCODE_H_
@@ -50,7 +50,7 @@
 	{ 0x9a, 0xb6, 0x95, 0x25, 0xe9, 0x89, 0xed, 0xfd } }
 
 #define SB_GSTREAMER_VIDEO_TRANSCODE_CONTRACTID \
-    "@songbirdnest.com/Songbird/Mediacore/Transcode/GStreamerVideo;1"
+    "@getnightingale.com/Nightingale/Mediacore/Transcode/GStreamerVideo;1"
 #define SB_GSTREAMER_VIDEO_TRANSCODE_CLASSNAME  "GStreamerVideoTranscode"
 
 
@@ -71,7 +71,7 @@ public:
 
   sbGStreamerVideoTranscoder();
 
-  virtual nsresult BuildPipeline();
+  NS_IMETHOD BuildPipeline();
   NS_IMETHOD PlayPipeline();
   NS_IMETHOD StopPipeline();
 

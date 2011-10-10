@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -31,17 +31,17 @@
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceErrorDialog.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/deviceErrorDialog.css"
                  type="text/css"?>
 
 <!-- Import external definitions. -->
 <!DOCTYPE overlay [
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
-  %songbirdDTD;
+  %nightingaleDTD;
   %textcontextDTD;
 ]>
 
@@ -75,7 +75,7 @@
   id="device_error_dialog"
   hidechrome="true"
   flex="1"
-  type="songbird"
+  type="nightingale"
   buttons="accept"
   ondialogaccept="onExit();"
   onload="deviceErrorDlg.onLoad();"
@@ -110,7 +110,7 @@
     </popup>
   </popupset>
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Information container box.  Use "infoContainer" -->
@@ -146,13 +146,13 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->
+  <!-- Import the Nightingale services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
 
   <!-- Unsupported media dialog services. -->
   <script><![CDATA[
@@ -324,7 +324,7 @@
                             .getService(Ci.nsIPrefBranch);
         var shouldShow = true;
         try {
-          shouldShow = prefBranch.getBoolPref("songbird.device.error.dialog.shouldShow");
+          shouldShow = prefBranch.getBoolPref("nightingale.device.error.dialog.shouldShow");
         } catch (err) {
         }
 
@@ -338,7 +338,7 @@
       _disableDialog: function deviceErrorDlg__disableDialog() {
         var prefBranch  = Cc["@mozilla.org/preferences-service;1"]
                             .getService(Ci.nsIPrefBranch);
-        prefBranch.setBoolPref("songbird.device.error.dialog.shouldShow", false);
+        prefBranch.setBoolPref("nightingale.device.error.dialog.shouldShow", false);
       }
     };
 

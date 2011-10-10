@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://songbirdnest.com
+# http://getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ../../../..
@@ -30,8 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIMediacore.idl \
-             sbIMediacoreAudioProcessor.idl \
-             sbIMediacoreAudioProcessorListener.idl \
              sbIMediacoreBalanceControl.idl \
              sbIMediacoreCapabilities.idl \
              sbIMediacoreError.idl \
@@ -40,7 +38,6 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreEventTarget.idl \
              sbIMediacoreFactory.idl \
              sbIMediacoreFactoryRegistrar.idl \
-             sbIMediacoreFactoryWrapper.idl \
              sbIMediacoreManager.idl \
              sbIMediacoreMultibandEqualizer.idl \
              sbIMediacorePlaybackControl.idl \
@@ -55,7 +52,6 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreVoting.idl \
              sbIMediacoreVotingChain.idl \
              sbIMediacoreVotingParticipant.idl \
-             sbIMediacoreWrapper.idl \
              sbIVideoBox.idl \
              sbIMediaInspector.idl \
              sbIMediaFormatMutable.idl \

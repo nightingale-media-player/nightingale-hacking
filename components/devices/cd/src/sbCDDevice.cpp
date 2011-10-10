@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,10 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbCDDevice.h"
+
+#include "sbCDLog.h"
 
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
@@ -40,27 +42,29 @@
 #include <nsILocalFile.h>
 #include <nsISound.h>
 
-#include <sbIDeviceEvent.h>
-#include <sbILibraryManager.h>
-#include <sbILocalDatabaseLibrary.h>
-#include <sbIDeviceErrorMonitor.h>
-
 #include <sbArrayUtils.h>
 #include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
 #include <sbDeviceUtils.h>
-#include <sbDeviceStatusHelper.h>
+#include <sbIDeviceEvent.h>
+#include <sbILibraryManager.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbVariantUtils.h>
 #include <sbStringUtils.h>
-#include <sbDebugUtils.h>
+#include <sbIDeviceErrorMonitor.h>
+
 
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbCDDevice:5
  */
+#ifdef PR_LOGGING
+PRLogModuleInfo* gCDDeviceLog = nsnull;
+#endif
+
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDevice)
 NS_IMPL_THREADSAFE_RELEASE(sbCDDevice)
@@ -75,25 +79,23 @@ NS_IMPL_CI_INTERFACE_GETTER3(sbCDDevice, sbIDevice,
 NS_DECL_CLASSINFO(sbCDDevice)
 NS_IMPL_THREADSAFE_CI(sbCDDevice)
 
-#if _MSC_VER
-// Disable warning about 'this' used in base member initializer list.
-#pragma warning(disable: 4355)
-#endif
-
 sbCDDevice::sbCDDevice(const nsID & aControllerId,
                        nsIPropertyBag *aProperties)
-  : mConnectLock(nsnull)
-  , mControllerID(aControllerId)
+  : mConnected(PR_FALSE)
+  , mStatus(this)
   , mCreationProperties(aProperties)
-  , mPrefAutoEject(PR_FALSE)
-  , mPrefNotifySound(PR_FALSE)
+  , mControllerID(aControllerId)
+  , mIsHandlingRequests(PR_FALSE)
+  , mConnectLock(nsnull)
 {
   mPropertiesLock = nsAutoMonitor::NewMonitor("sbCDDevice::mPropertiesLock");
   NS_ENSURE_TRUE(mPropertiesLock, );
 
-  SB_PRLOG_SETUP(sbCDDevice);
-
-  InitRequestHandler();
+#ifdef PR_LOGGING
+  if (!gCDDeviceLog) {
+    gCDDeviceLog = PR_NewLogModule( "sbCDDevice" );
+  }
+#endif
 }
 
 sbCDDevice::~sbCDDevice()
@@ -171,7 +173,7 @@ sbCDDevice::InitDevice()
   nsresult rv;
 
   // Log progress.
-  LOG("Enter sbCDDevice::InitDevice");
+  LOG(("Enter sbCDDevice::InitDevice"));
 
   // Create the connect lock.
   NS_ENSURE_FALSE(mConnectLock, NS_ERROR_ALREADY_INITIALIZED);
@@ -198,11 +200,14 @@ sbCDDevice::InitDevice()
   rv = CreateDeviceID(&mDeviceID);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mStatus.Initialize();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Initialize the device state.
   SetState(sbIDevice::STATE_IDLE);
 
   // Log progress.
-  LOG("Exit sbCDDevice::InitDevice");
+  LOG(("Exit sbCDDevice::InitDevice"));
 
   return NS_OK;
 }
@@ -212,7 +217,7 @@ nsresult sbCDDevice::InitializeProperties()
   nsresult rv;
 
   mProperties =
-    do_CreateInstance("@songbirdnest.com/Songbird/Device/DeviceProperties;1",
+    do_CreateInstance("@getnightingale.com/Nightingale/Device/DeviceProperties;1",
                       &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -350,7 +355,7 @@ sbCDDevice::CapabilitiesReset()
   nsresult rv;
 
   // Create the device capabilities object.
-  mCapabilities = do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
+  mCapabilities = do_CreateInstance(NIGHTINGALE_DEVICECAPABILITIES_CONTRACTID,
                                     &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   mCapabilities->Init();
@@ -371,13 +376,38 @@ sbCDDevice::CapabilitiesReset()
   return NS_OK;
 }
 
+nsresult
+sbCDDevice::ReqConnect()
+{
+  nsresult rv;
+
+  // Clear the abort requests flag.
+  PR_AtomicSet(&mAbortRequests, 0);
+
+  mTranscodeManager =
+    do_ProxiedGetService("@getnightingale.com/Nightingale/Mediacore/TranscodeManager;1",
+                         &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the request wait monitor.
+  mReqWaitMonitor =
+    nsAutoMonitor::NewMonitor("sbCDDevice::mReqWaitMonitor");
+  NS_ENSURE_TRUE(mReqWaitMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  // Create the request processing thread.
+  rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 /* void connect (); */
 NS_IMETHODIMP sbCDDevice::Connect()
 {
   nsresult rv;
 
   // Log progress.
-  LOG("Enter sbCDDevice::Connect\n");
+  LOG(("Enter sbCDDevice::Connect\n"));
 
   // This function should only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
@@ -397,9 +427,9 @@ NS_IMETHODIMP sbCDDevice::Connect()
   rv = sbBaseDevice::Connect();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mTranscodeManager = do_ProxiedGetService(
-                      "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1",
-                      &rv);
+  // Connect the request services.
+  rv = ReqConnect();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Connect the device capabilities.
   rv = CapabilitiesReset();
@@ -427,41 +457,89 @@ NS_IMETHODIMP sbCDDevice::Connect()
   rv = AddVolume(volume);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Start the request processing.
-  rv = ReqProcessingStart();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Mount volume.
   Mount(volume);
+
+  // Start the request processing.
+  rv = ProcessRequest();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Cancel auto-disconnect.
   autoDisconnect.forget();
 
   // Log progress.
-  LOG("Exit sbCDDevice::Connect\n");
+  LOG(("Exit sbCDDevice::Connect\n"));
 
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbCDDevice::Disconnect()
+nsresult
+sbCDDevice::ProcessRequest()
 {
-  return sbBaseDevice::Disconnect();
+  nsresult rv;
+
+  // Operate under the connect lock.
+  sbAutoReadLock autoConnectLock(mConnectLock);
+
+  // if we're not connected then do nothing
+  if (!mConnected) {
+    return NS_OK;
+  }
+
+  // Create the request added event object.
+  nsCOMPtr<nsIRunnable> reqAddedEvent;
+  rv = sbDeviceReqAddedEvent::New(this, getter_AddRefs(reqAddedEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Dispatch processing of the request added event.
+  rv = mReqThread->Dispatch(reqAddedEvent, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 nsresult
-sbCDDevice::DeviceSpecificDisconnect()
+sbCDDevice::ReqProcessingStop()
 {
-  // Log progress.
-  LOG("Enter sbCDDevice::DeviceSpecificDisconnect\n");
+  // Operate under the connect lock.
+  sbAutoReadLock autoConnectLock(mConnectLock);
+  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
 
-  nsresult rv;
+  // Set the abort requests flag.
+  PR_AtomicSet(&mAbortRequests, 1);
 
-  // This function should only be called on the main thread.
-  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+  // Clear requests.
+  ClearRequests();
+
+  // Notify the request thread of the abort.
+  {
+    nsAutoMonitor monitor(mReqWaitMonitor);
+    monitor.Notify();
+  }
+
+  // Shutdown the request processing thread.
+  mReqThread->Shutdown();
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::ReqDisconnect()
+{
+  LOG(("%s", __FUNCTION__));
+  // Clear all remaining requests.
+  nsresult rv = ClearRequests();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Remove object references.
+  mReqThread = nsnull;
   mTranscodeManager = nsnull;
+
+  // Dispose of the request wait monitor.
+  if (mReqWaitMonitor) {
+    nsAutoMonitor::DestroyMonitor(mReqWaitMonitor);
+    mReqWaitMonitor = nsnull;
+  }
 
   // Dispose of the library
   nsCOMPtr<sbIDeviceLibrary> deviceLib = mDeviceLibrary.forget();
@@ -469,9 +547,20 @@ sbCDDevice::DeviceSpecificDisconnect()
     rv = deviceLib->Finalize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  return NS_OK;
+}
 
-  // Indicate that the device is disconnected.
-  mStatus->ChangeState(STATE_DISCONNECTED);
+/* void disconnect (); */
+NS_IMETHODIMP
+sbCDDevice::Disconnect()
+{
+  nsresult rv;
+
+  // Log progress.
+  LOG(("Enter sbCDDevice::Disconnect\n"));
+
+  // This function should only be called on the main thread.
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
   // Unmount and remove the default volume.
   nsRefPtr<sbBaseDeviceVolume> volume;
@@ -485,6 +574,10 @@ sbCDDevice::DeviceSpecificDisconnect()
     RemoveVolume(volume);
   }
 
+  // Stop the request processing.
+  rv = ReqProcessingStop();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Mark the device as not connected.  After this, "connect lock" fields may
   // not be used.
   {
@@ -495,8 +588,20 @@ sbCDDevice::DeviceSpecificDisconnect()
   // Disconnect the device capabilities.
   mCapabilities = nsnull;
 
+  // Disconnect the device services.
+  rv = ReqDisconnect();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invoke the super-class.
+  sbBaseDevice::Disconnect();
+
+  // Send device removed notification.
+  rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,
+                              sbNewVariant(static_cast<sbIDevice*>(this)));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Log progress.
-  LOG("Exit sbCDDevice::Disconnect\n");
+  LOG(("Exit sbCDDevice::Disconnect\n"));
 
   return NS_OK;
 }
@@ -591,13 +696,6 @@ sbCDDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
   return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
 }
 
-/* readonly attribute sbIDeviceLibrary primaryLibrary; */
-NS_IMETHODIMP
-sbCDDevice::GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary)
-{
-  return sbBaseDevice::GetPrimaryLibrary(aPrimaryLibrary);
-}
-
 /* readonly attribute nsIPropertyBag2 parameters; */
 NS_IMETHODIMP
 sbCDDevice::GetParameters(nsIPropertyBag2 * *aParameters)
@@ -660,7 +758,7 @@ NS_IMETHODIMP
 sbCDDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 {
   NS_ENSURE_ARG_POINTER(aCurrentStatus);
-  return mStatus->GetCurrentStatus(aCurrentStatus);
+  return mStatus.GetCurrentStatus(aCurrentStatus);
 }
 
 /* readonly attribute boolean supportsReformat; */
@@ -672,17 +770,29 @@ sbCDDevice::GetSupportsReformat(PRBool *aSupportsReformat)
   return NS_OK;
 }
 
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbCDDevice::GetCacheSyncRequests(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  // The CD Device does not sync
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbCDDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
+{
+  // The CD Device does not sync
+  return NS_OK;
+}
+
 /* readonly attribute unsigned long state; */
 NS_IMETHODIMP
 sbCDDevice::GetState(PRUint32 *aState)
 {
   return sbBaseDevice::GetState(aState);
-}
-
-NS_IMETHODIMP
-sbCDDevice::SetState(PRUint32 aState)
-{
-  return sbBaseDevice::SetState(aState);
 }
 
 NS_IMETHODIMP
@@ -696,9 +806,20 @@ sbCDDevice::SubmitRequest(PRUint32 aRequest,
                           nsIPropertyBag2 *aRequestParameters)
 {
   // Log progress.
-  LOG("sbCDDevice::SubmitRequest\n");
+  LOG(("sbCDDevice::SubmitRequest\n"));
 
-  return sbBaseDevice::SubmitRequest(aRequest, aRequestParameters);
+  // Function variables.
+  nsresult rv;
+
+  // Create a transfer request.
+  nsRefPtr<TransferRequest> transferRequest;
+  rv = CreateTransferRequest(aRequest,
+                             aRequestParameters,
+                             getter_AddRefs(transferRequest));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Push the request onto the request queue.
+  return PushRequest(transferRequest);
 }
 
 /* void cancelRequests (); */
@@ -725,8 +846,8 @@ sbCDDevice::CancelRequests()
     }
   }
 
-  // Cancel requests
-  rv = sbBaseDevice::CancelRequests();
+  // Clear requests.
+  rv = ClearRequests();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -789,28 +910,6 @@ sbCDDevice::ResetWarningDialogs()
   return sbBaseDevice::ResetWarningDialogs();
 }
 
-/* nsIInputStream openInputStream(in nsIURI aURI); */
-NS_IMETHODIMP
-sbCDDevice::OpenInputStream(nsIURI*          aURI,
-                            nsIInputStream** retval)
-{
-  return sbBaseDevice::OpenInputStream(aURI, retval);
-}
-
-NS_IMETHODIMP
-sbCDDevice::ExportToDevice(sbIDeviceLibrary*    aDevLibrary,
-                           sbILibraryChangeset* aExportChangeset)
-{
-  return sbBaseDevice::ExportToDevice(aDevLibrary, aExportChangeset);
-}
-
-NS_IMETHODIMP
-sbCDDevice::ImportFromDevice(sbILibrary * aImportToLibrary,
-                             sbILibraryChangeset * aImportChangeset)
-{
-  return sbBaseDevice::ImportFromDevice(aImportToLibrary, aImportChangeset);
-}
-
 nsresult
 sbCDDevice::Mount(sbBaseDeviceVolume* aVolume)
 {
@@ -847,7 +946,7 @@ sbCDDevice::Mount(sbBaseDeviceVolume* aVolume)
   // Strip off the braces from the device ID.
   mDeviceLibraryPath.AssignLiteral("CD");
   mDeviceLibraryPath.Append(NS_ConvertUTF8toUTF16(deviceID + 1, NSID_LENGTH - 3));
-  mDeviceLibraryPath.AppendLiteral("@devices.library.songbirdnest.com");
+  mDeviceLibraryPath.AppendLiteral("@devices.library.getnightingale.com");
 
   // Create the device library.
   nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
@@ -923,7 +1022,7 @@ sbCDDevice::Mount(sbBaseDeviceVolume* aVolume)
   rv = PushRequest(TransferRequest::REQUEST_MOUNT, nsnull, deviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Indicate that the volume has been mounted in Songbird.
+  // Indicate that the volume has been mounted in Nightingale.
   rv = aVolume->SetIsMounted(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -966,7 +1065,7 @@ sbCDDevice::Unmount(sbBaseDeviceVolume* aVolume)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibraryManager> libManager =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = libManager->UnregisterLibrary(mDeviceLibrary);
@@ -976,18 +1075,24 @@ sbCDDevice::Unmount(sbBaseDeviceVolume* aVolume)
 }
 
 PRBool
-sbCDDevice::IsRequestAborted()
+sbCDDevice::ReqAbortActive()
 {
-  PRBool aborted = sbBaseDevice::IsRequestAborted();
-
-  // Abort requests if disc is not inserted.
-  if (!aborted) {
-    PRBool isDiscInserted;
-    nsresult rv = mCDDevice->GetIsDiscInserted(&isDiscInserted);
-    aborted = NS_SUCCEEDED(rv) && !isDiscInserted ? PR_TRUE : PR_FALSE;
+  // Atomically get the abort requests flag by atomically adding 0 and reading
+  // the result.
+  PRBool abortRequests = PR_AtomicAdd(&mAbortRequests, 0);
+  if (!abortRequests) {
+    abortRequests = IsRequestAbortedOrDeviceDisconnected();
   }
 
-  return aborted;
+  // Abort requests if disc is not inserted.
+  if (!abortRequests) {
+    PRBool isDiscInserted;
+    nsresult rv = mCDDevice->GetIsDiscInserted(&isDiscInserted);
+    if (NS_SUCCEEDED(rv) && !isDiscInserted)
+      abortRequests = PR_TRUE;
+  }
+
+  return (abortRequests != 0);
 }
 
 // Override base class: we want to return all profiles, not just those supported
@@ -1052,11 +1157,11 @@ sbCDDevice::ProxyHandleRipEnd()
   // Check to see if any errors occurred during the transcode.
   nsresult rv;
   nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
-      do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
+      do_GetService("@getnightingale.com/device/error-monitor-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   PRBool hasErrors;
-  rv = errMonitor->DeviceHasErrors(this, EmptyString(), 0, &hasErrors);
+  rv = errMonitor->DeviceHasErrors(this, EmptyString(), &hasErrors);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   if (hasErrors) {
@@ -1121,7 +1226,7 @@ sbCDDevice::QueryUserViewErrors()
 void
 sbCDDevice::ProxyQueryUserViewErrors()
 {
-  nsresult SB_UNUSED_IN_RELEASE(rv) = sbDeviceUtils::QueryUserViewErrors(this);
+  nsresult rv = sbDeviceUtils::QueryUserViewErrors(this);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not show user view errors!");
 }
 

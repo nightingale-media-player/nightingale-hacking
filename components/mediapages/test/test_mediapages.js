@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,7 +37,7 @@ function runTest () {
 
   log("Testing MediaPageManager Service:");
 
-  pageMgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+  pageMgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
               .getService(Ci.sbIMediaPageManager);
   assertTrue(pageMgr,
              "Manager service could not be retrieved!");
@@ -47,12 +47,12 @@ function runTest () {
   log("OK");
 }
 
-const DEFAULTPAGE1 = "chrome://songbird/content/mediapages/filtersPage.xul"
-const DEFAULTPAGE2 = "chrome://songbird/content/mediapages/playlistPage.xul"
-const EXTENSIONPAGE = "chrome://songbird-test-media-page/content/testMediaPage.xul"
-const EXTENSIONPAGEDOWNLOADS = "chrome://songbird-test-media-page/content/testMediaPage.xul?downloads"
-const EXTENSIONPAGELIBRARY = "chrome://songbird-test-media-page/content/testMediaPage.xul?library"
-const EXTENSIONPAGEVIDEO = "chrome://songbird-test-media-page/content/testMediaPage.xul?video"
+const DEFAULTPAGE1 = "chrome://nightingale/content/mediapages/filtersPage.xul"
+const DEFAULTPAGE2 = "chrome://nightingale/content/mediapages/playlistPage.xul"
+const EXTENSIONPAGE = "chrome://nightingale-test-media-page/content/testMediaPage.xul"
+const EXTENSIONPAGEDOWNLOADS = "chrome://nightingale-test-media-page/content/testMediaPage.xul?downloads"
+const EXTENSIONPAGELIBRARY = "chrome://nightingale-test-media-page/content/testMediaPage.xul?library"
+const EXTENSIONPAGEVIDEO = "chrome://nightingale-test-media-page/content/testMediaPage.xul?video"
 
 const BADURL = "http://non/registered/url.xul";
 const URL1 = "http://fake/url1.xul";
@@ -326,7 +326,7 @@ function createLibrary(databaseGuid, databaseLocation) {
   file.append(databaseGuid + ".db");
 
   var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+    Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/LibraryFactory;1"]
       .getService(Ci.sbILibraryFactory);
   var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
                 createInstance(Ci.nsIWritablePropertyBag2);

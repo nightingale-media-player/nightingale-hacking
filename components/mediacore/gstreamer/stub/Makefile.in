@@ -36,4 +36,4 @@ include $(topsrcdir)/build/rules.mk
 export:: 
 	$(PERL) -p -e "s/ogg.dll/ogg$(DEBUG:%=_d).dll/g" \
     $(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(GST_LIBS_FILE)
-	$(INSTALL_FILE) $(GST_LIBS_FILE) $(SONGBIRD_COMPONENTSDIR)
+	$(INSTALL_FILE) $(GST_LIBS_FILE) $(NIGHTINGALE_COMPONENTSDIR)

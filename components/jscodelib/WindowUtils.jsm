@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -85,7 +85,7 @@ var WindowUtils = {
    *        Set the value field of the objects within the array aOutArgs to the
    *        arguments returned by the dialog.
    *        A locale string bundle may be optionally specified by aLocale.  If
-   *        one is not specified, the Songbird locale bundle is used.
+   *        one is not specified, the Nightingale locale bundle is used.
    *        Return true if the dialog was accepted.
    *
    * \param aParent             Dialog parent window.
@@ -132,7 +132,7 @@ var WindowUtils = {
    *        Set the value field of the objects within the array aOutArgs to the
    *        arguments returned by the dialog.
    *        A locale string bundle may be optionally specified by aLocale.  If
-   *        one is not specified, the Songbird locale bundle is used.
+   *        one is not specified, the Nightingale locale bundle is used.
    *        Return true if the dialog was accepted.
    *
    * \param aParent             Dialog parent window.
@@ -183,7 +183,7 @@ var WindowUtils = {
     var dialogWatcher = new sbDialogWatcher();
 
     // Open the dialog and check for acceptance.
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
     var window = prompter.openDialog(aParent, aURL, aName, options, dialogPB);
     var accepted = dialogWatcher.getAccepted(window);
@@ -204,7 +204,7 @@ var WindowUtils = {
    * for the following bugs:
    *
    *   https://bugzilla.mozilla.org/show_bug.cgi?id=230959
-   *   http://bugzilla.songbirdnest.com/show_bug.cgi?id=20969.
+   *   http://bugzilla.getnightingale.com/show_bug.cgi?id=20969.
    *
    * \param aWindow             Window to size to content.
    */
@@ -219,7 +219,7 @@ var WindowUtils = {
     }
 
     // Defer resizing until after the current event completes.
-    // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=20969.
+    // See http://bugzilla.getnightingale.com/show_bug.cgi?id=20969.
     SBUtils.deferFunction(function() { aWindow.sizeToContent(); });
   },
 
@@ -251,7 +251,7 @@ var WindowUtils = {
    * \brief Create and return a dialog parameter block set with the arguments
    *        contained in the array specified by aArgs.  Look up string arguments
    *        as keys in the locale string bundle specified by aLocale; use the
-   *        Songbird locale string bundle if aLocale is not specified.
+   *        Nightingale locale string bundle if aLocale is not specified.
    *
    * \param aArgs               Array of dialog arguments to set.
    * \param aLocale             Optional locale string bundle.
@@ -277,7 +277,7 @@ var WindowUtils = {
       // it to the string list.
       if (arg instanceof Ci.nsISupports) {
         if (!dialogPB.objects) {
-          dialogPB.objects = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+          dialogPB.objects = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                                .createInstance(Ci.nsIMutableArray);
         }
         dialogPB.objects.appendElement(arg, false);
@@ -310,7 +310,7 @@ var WindowUtils = {
   /**
    * \brief Parse the argument specified by aArg and return a formatted,
    *        localized string using the locale string bundle specified by
-   *        aLocale.  If aLocale is not specified, use the Songbird locale
+   *        aLocale.  If aLocale is not specified, use the Nightingale locale
    *        string bundle.
    *
    * \param aArg                Argument to parse.

@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -53,7 +53,7 @@ function sbLibraryMigration()
 
 sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
-  classDescription: 'Songbird Migration Handler, version ' +
+  classDescription: 'Nightingale Migration Handler, version ' +
                      FROM_VERSION + ' to ' + TO_VERSION,
   classID: Components.ID("{73b78226-1dd2-11b2-92ba-c4ba81af8fc1}"),
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID +

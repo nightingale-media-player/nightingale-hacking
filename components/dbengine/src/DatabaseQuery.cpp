@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -49,9 +49,8 @@
 #include <nsSupportsArray.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
-#include <nsIProxyObjectManager.h>
 
-#include <sbProxiedComponentManager.h>
+#include <sbProxyUtils.h>
 #include <sbLockUtils.h>
 
 #ifdef DEBUG_locks
@@ -94,7 +93,7 @@ CDatabaseQuery::CDatabaseQuery()
 , m_IsAborting(PR_FALSE)
 , m_IsExecuting(PR_FALSE)
 , m_AsyncQuery(PR_FALSE)
-, m_CurrentQuery((PRUint32)-1)
+, m_CurrentQuery(-1)
 , m_LastError(0)
 , m_pQueryRunningMonitor(nsAutoMonitor::NewMonitor("CDatabaseQuery.m_pdbQueryRunningMonitor"))
 , m_QueryHasCompleted(PR_FALSE)
@@ -124,7 +123,7 @@ CDatabaseQuery::~CDatabaseQuery()
 nsresult CDatabaseQuery::Init()
 {
   nsresult rv;
-  mDatabaseEngine = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID, &rv);
+  mDatabaseEngine = do_GetService(NIGHTINGALE_DATABASEENGINE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -212,7 +211,7 @@ NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallb
   NS_ENSURE_ARG_POINTER(dbPersistCB);
   nsCOMPtr<sbIDatabaseSimpleQueryCallback> proxiedCallback;
 
-  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbIDatabaseSimpleQueryCallback),
                                      dbPersistCB,
                                      NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
@@ -659,7 +658,7 @@ CDatabaseQuery::SetResultObject(CDatabaseResult *aResultObject)
   m_QueryResult = aResultObject;
 }
 
-bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRUint32 aQueryIndex)
+bindParameterArray_t* CDatabaseQuery::GetQueryParameters(PRInt32 aQueryIndex)
 {
   bindParameterArray_t* retval = nsnull;
   sbSimpleAutoLock lock(m_pLock);

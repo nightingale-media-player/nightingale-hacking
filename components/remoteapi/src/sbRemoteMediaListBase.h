@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -75,9 +75,6 @@ public:
   NS_FORWARD_SAFE_SBIMEDIALIST_SIMPLE_ARGUMENTS(mMediaList)
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
 
-  using sbXPCScriptableStub::GetProperty;
-  using sbXPCScriptableStub::SetProperty;
-
   // nsIXPCScriptable
   NS_IMETHOD GetClassName(char **aClassName);
   NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
@@ -113,7 +110,7 @@ public:
   NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);
-  NS_IMETHOD AddMediaItems(nsISimpleEnumerator* aMediaItems, sbIAddMediaItemsListener* aListener, PRBool aAsync);
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator* aMediaItems, sbIMediaListAsyncListener* aListener);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString &aPropertyID,
                                           nsIStringEnumerator **_retval);

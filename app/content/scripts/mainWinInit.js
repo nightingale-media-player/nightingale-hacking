@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,14 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //
 // Mainwin Initialization
 //
 // XXX: This functionality was copied from the original 0.1 
-// songbird_hack.js and desperately needs to be rewritten.
+// nightingale_hack.js and desperately needs to be rewritten.
 //
 
 
@@ -75,6 +75,7 @@ function SBInitialize()
 {
   try
   {
+    windowPlacementSanityChecks();
     initializeDocumentPlatformAttribute();
 
     // Delay setting the min max callback to enable the reflow of the mainwin to
@@ -155,7 +156,7 @@ function setMinMaxCallback(evt)
   try {
 
     if (platfrom == "Windows_NT") {
-      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      var windowMinMax = Components.classes["@getnightingale.com/Nightingale/WindowMinMax;1"];
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
 
       service.setCallback(window, SBWindowMinMaxCB);
@@ -165,7 +166,7 @@ function setMinMaxCallback(evt)
   }
   catch (err) {
     // No component
-    dump("Error. songbird_hack.js:setMinMaxCallback() \n " + err + "\n");
+    dump("Error. nightingale_hack.js:setMinMaxCallback() \n " + err + "\n");
   }
 
   return;
@@ -178,7 +179,7 @@ function resetMinMaxCallback()
   try
   {
     if (platform == "Windows_NT") {
-      var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
+      var windowMinMax = Components.classes["@getnightingale.com/Nightingale/WindowMinMax;1"];
       var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
       service.resetCallback(window);
 
@@ -187,7 +188,7 @@ function resetMinMaxCallback()
 
   }
   catch(err) {
-    dump("Error. songbird_hack.js: SBUnitialize() \n" + err + "\n");
+    dump("Error. nightingale_hack.js: SBUnitialize() \n" + err + "\n");
   }
 
   return;
@@ -214,12 +215,8 @@ function SBDoFirstRun() {
   // determine whether to load the media library in the background by preference
   // so it can be overriden by partners in the distribution.ini
   var loadMLInBackground =
-          Application.prefs.getValue("songbird.firstrun.load_ml_in_background", false);
+          Application.prefs.getValue("nightingale.firstrun.load_ml_in_background", false);
 
-  // Prepare to notify observers when the library is ready
-  let obs = Components.classes["@mozilla.org/observer-service;1"]
-                      .getService(Components.interfaces.nsIObserverService);
-  
   // If we are scanning directories or importing a library, 
   // track the progress and show the library on completion.
   // This is done to simplify the display, avoid some bugs,
@@ -240,8 +237,6 @@ function SBDoFirstRun() {
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
       SBFirstRunSmartPlaylists();
-
-      obs.notifyObservers(null, "songbird-main-library-ready", null);
     }
     if (job.status != Ci.sbIJobProgress.STATUS_RUNNING)
       setTimeout(onJobComplete, 100);
@@ -262,12 +257,12 @@ function SBDoFirstRun() {
     SBFirstRunSmartPlaylists();
     
     var isFirstRun =
-          Application.prefs.getValue("songbird.firstrun.is_session", false);
+          Application.prefs.getValue("nightingale.firstrun.is_session", false);
     var mediaListView =
         LibraryUtils.createConstrainedMediaListView(
             LibraryUtils.mainLibrary, [SBProperties.contentType, "audio"]);
     if (isFirstRun) {    
-      const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
+      const placeholderURL = "chrome://nightingale/content/mediapages/firstrun.xul";
       var currentURI = gBrowser.mediaTab.linkedBrowser.currentURI.spec;
       if (currentURI == placeholderURL || currentURI == "about:blank") {
         const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
@@ -278,8 +273,13 @@ function SBDoFirstRun() {
                                             loadMLInBackground);
       }
     }
-
-    obs.notifyObservers(null, "songbird-main-library-ready", null);
+    else {
+      gBrowser.loadMediaListViewWithFlags(mediaListView,
+                                          gBrowser.mediaTab,
+                                          null,
+                                          null,
+                                          false);
+    }
   }
 }
 
@@ -287,21 +287,21 @@ function SBFirstRunScanDirectories()
 {
   // Do nothing if not set to scan directories.
   var firstRunDoScanDirectory =
-        Application.prefs.getValue("songbird.firstrun.do_scan_directory",
+        Application.prefs.getValue("nightingale.firstrun.do_scan_directory",
                                    false);
   if (!firstRunDoScanDirectory) {
     return null;
   }
 
   // Don't do a first-run directory scan again.  Flush to disk to be sure.
-  Application.prefs.setValue("songbird.firstrun.do_scan_directory", false);
+  Application.prefs.setValue("nightingale.firstrun.do_scan_directory", false);
   var prefService = Cc["@mozilla.org/preferences-service;1"]
                       .getService(Ci.nsIPrefService);
   prefService.savePrefFile(null);
 
   // Get the first-run scan directory.
   var firstRunScanDirectoryPath =
-        Application.prefs.getValue("songbird.firstrun.scan_directory_path", "");
+        Application.prefs.getValue("nightingale.firstrun.scan_directory_path", "");
   var firstRunScanDirectory = Cc["@mozilla.org/file/local;1"]
                                 .createInstance(Ci.nsILocalFile);
   try {
@@ -326,13 +326,13 @@ function SBFirstRunImportLibrary()
 {
   // Do nothing if not set to import library.
   var firstRunDoImportLibrary =
-        Application.prefs.getValue("songbird.firstrun.do_import_library",
+        Application.prefs.getValue("nightingale.firstrun.do_import_library",
                                    false);
   if (!firstRunDoImportLibrary)
     return null;
 
   // Don't do a first-run library import again.  Flush to disk to be sure.
-  Application.prefs.setValue("songbird.firstrun.do_import_library", false);
+  Application.prefs.setValue("nightingale.firstrun.do_import_library", false);
   var prefService = Cc["@mozilla.org/preferences-service;1"]
                       .getService(Ci.nsIPrefService);
   prefService.savePrefFile(null);
@@ -345,7 +345,7 @@ function SBFirstRunSmartPlaylists() {
   // Do nothing if first-run smart playlists were already created in the main
   // library.
   var libraryManager =
-    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+    Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
               .getService(Components.interfaces.sbILibraryManager);
   var library = libraryManager.mainLibrary;
   if (library.getProperty(SBProperties.createdFirstRunSmartPlaylists) == "1")
@@ -367,7 +367,7 @@ function createDefaultSmartPlaylists() {
   var defaultSmartPlaylists = [];
 
   var propertyManager =
-    Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+    Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
       .getService(Ci.sbIPropertyManager);
   var numberPI =
     propertyManager.getPropertyInfo(SBProperties.playCount);
@@ -473,7 +473,7 @@ function createDefaultSmartPlaylists() {
 
 function addSmartPlaylist(aItem) {
   var libraryManager = 
-    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+    Components.classes["@getnightingale.com/Nightingale/library/Manager;1"]
               .getService(Components.interfaces.sbILibraryManager);
   
   library = libraryManager.mainLibrary;

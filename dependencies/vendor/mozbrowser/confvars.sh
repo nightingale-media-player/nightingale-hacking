@@ -15,7 +15,7 @@
 # The Original Code is Mozilla Build System
 #
 # The Initial Developer of the Original Code is
-# Ben Turner <mozilla@songbirdnest.com>
+# Ben Turner <mozilla@getnightingale.com>
 #
 # Portions created by the Initial Developer are Copyright (C) 2007
 # the Initial Developer. All Rights Reserved.
@@ -41,7 +41,6 @@ MOZ_UPDATER=1
 MOZ_PHOENIX=1
 
 MOZ_ENABLE_LIBXUL=1
-MOZ_STATIC_BUILD_UNSUPPORTED=1
 MOZ_PLACES=1
 # always enabled for form history
 MOZ_MORKREADER=1
@@ -51,4 +50,3 @@ MOZ_NO_XPCOM_OBSOLETE=1
 MOZ_EXTENSIONS_DEFAULT=" gnomevfs reporter"
 # MOZ_APP_DISPLAYNAME will be set by branding/configure.sh
 MOZ_BRANDING_DIRECTORY=browser/branding/unofficial
-MOZ_OFFICIAL_BRANDING_DIRECTORY=other-licenses/branding/firefox

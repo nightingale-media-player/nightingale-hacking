@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -62,7 +62,7 @@ isInitialized(PR_FALSE)
   mLock = nsAutoLock::NewLock("sbDevicePropertiesLock");
   // Intialize our properties container
   mProperties2 =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1");
+    do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1");
   mProperties = do_QueryInterface(mProperties2);
 
   TRACE(("sbDeviceProperties[0x%.8x] - Constructed", this));
@@ -85,19 +85,6 @@ sbDeviceProperties::InitFriendlyName(const nsAString & aFriendlyName)
   nsresult rv =
     mProperties2->SetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
                                        aFriendlyName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceProperties::InitDefaultName(const nsAString & aDefaultName)
-{
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  nsresult rv =
-    mProperties2->SetPropertyAsAString(
-                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
-                      aDefaultName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -273,17 +260,6 @@ sbDeviceProperties::SetFriendlyName(const nsAString & aFriendlyName)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceProperties::GetDefaultName(nsAString & aDefaultName)
-{
-  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mLock);
-  return GetProperty(mProperties2,
-                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
-                     aDefaultName);
 }
 
 NS_IMETHODIMP

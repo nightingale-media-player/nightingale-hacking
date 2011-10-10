@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -35,13 +35,8 @@ const Cr = Components.results;
 const Cu = Components.utils;
 const CE = Components.Exception;
 
-const PREF_DOWNLOAD_FOLDER       = {audio: "songbird.download.music.folder",
-                                    video: "songbird.download.video.folder"};
-const PREF_DOWNLOAD_ALWAYSPROMPT = {audio: "songbird.download.music.alwaysPrompt",
-                                    video: "songbird.download.video.alwaysPrompt"};
-const _MFM_GET_MANAGED_PATH_OPTIONS = Ci.sbIMediaFileManager.MANAGE_MOVE |
-                                      Ci.sbIMediaFileManager.MANAGE_COPY |
-                                      Ci.sbIMediaFileManager.MANAGE_RENAME;
+const PREF_DOWNLOAD_MUSIC_FOLDER       = "nightingale.download.music.folder";
+const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT = "nightingale.download.music.alwaysPrompt";
 
 /**
  * \brief Get the name of the platform we are running on.
@@ -129,29 +124,29 @@ function makeFileURL(path)
 
 function sbDownloadDeviceHelper()
 {
-  this._mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  this._mainLibrary = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                         .getService(Ci.sbILibraryManager).mainLibrary;
 }
 
 sbDownloadDeviceHelper.prototype =
 {
-  classDescription: "Songbird Download Device Helper",
+  classDescription: "Nightingale Download Device Helper",
   classID:          Components.ID("{576b6833-15d8-483a-84d6-2fbd329c82e1}"),
-  contractID:       "@songbirdnest.com/Songbird/DownloadDeviceHelper;1",
+  contractID:       "@getnightingale.com/Nightingale/DownloadDeviceHelper;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIDownloadDeviceHelper])
 }
 
 sbDownloadDeviceHelper.prototype.downloadItem =
 function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 {
-  var downloadFolder = this._getDownloadFolder_nothrow(aMediaItem.contentType);
-  if (!downloadFolder) {
+  var downloadFileURL = this._safeDownloadFileURL();
+  if (!downloadFileURL) {
     return;
   }
 
-  let uriArray           = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  let uriArray           = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-  let propertyArrayArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  let propertyArrayArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
 
   let item;
@@ -166,11 +161,7 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
     item = items.queryElementAt(0, Ci.sbIMediaItem);
   }
 
-  // Pass the downloadFolder as the 'media-folder' option for the
-  // Media File Manager.  The MFM will then put the file in the
-  // user's preferred folder (or possibly a subfolder thereof)
-  this._setDownloadDestinationIfNotSet([item],
-                                       {'media-folder': downloadFolder});
+  this._setDownloadDestinationIfNotSet([item], downloadFileURL);
   this._checkAndRemoveExistingItem(item);
   this.getDownloadMediaList().add(item);
 }
@@ -178,13 +169,17 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
 sbDownloadDeviceHelper.prototype.downloadSome =
 function sbDownloadDeviceHelper_downloadSome(aMediaItems)
 {
-  let uriArray           = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var downloadFileURL = this._safeDownloadFileURL();
+  if (!downloadFileURL) {
+    return;
+  }
+
+  let uriArray           = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-  let propertyArrayArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  let propertyArrayArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
 
   var items = [];
-  var foundTypes = {};
   while (aMediaItems.hasMoreElements()) {
     let item = aMediaItems.getNext();
     if (item.library.equals(this._mainLibrary)) {
@@ -194,29 +189,6 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
       this._checkAndRemoveExistingItem(item);
       this._addItemToArrays(item, uriArray, propertyArrayArray);
     }
-    // Keep track of which media types are present.  This
-    // will be used below to get the download folders for
-    // these media types:
-    foundTypes[item.contentType] = true;
-  }
-
-  // Get the user's preferred download folder for each media type
-  // in the item list and set up Media File Manager options with
-  // those folders.  The MFM will then sort the files into the
-  // respective folders (or possibly subfolders thereof).  Do this
-  // before creating the media items in case the user is prompted
-  // to choose a folder and clicks cancel:
-  mfmFolders = {};
-  try {
-    for (let contentType in foundTypes) {
-      let folder = this.getDownloadFolder(contentType);
-      if (folder) {
-        mfmFolders["media-folder:" + contentType] = folder;
-      }
-    }
-  }
-  catch (e if e.result == Cr.NS_ERROR_ABORT) {
-    return;
   }
 
   if (uriArray.length > 0) {
@@ -228,20 +200,24 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
     }
   }
 
-  this._setDownloadDestinationIfNotSet(items, mfmFolders);
+  this._setDownloadDestinationIfNotSet(items, downloadFileURL);
   this.getDownloadMediaList().addSome(ArrayConverter.enumerator(items));
 }
 
 sbDownloadDeviceHelper.prototype.downloadAll =
 function sbDownloadDeviceHelper_downloadAll(aMediaList)
 {
-  let uriArray           = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  var downloadFileURL = this._safeDownloadFileURL();
+  if (!downloadFileURL) {
+    return;
+  }
+
+  let uriArray           = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-  let propertyArrayArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+  let propertyArrayArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
 
   var items = [];
-  var foundTypes = {};
   var isForeign = aMediaList.library.equals(this._mainLibrary);
   for (let i = 0; i < aMediaList.length; i++) {
     var item = aMediaList.getItemByIndex(i);
@@ -252,29 +228,6 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
     else {
       items.push(item);
     }
-    // Keep track of which media types are present.  This
-    // will be used below to get the download folders for
-    // these media types:
-    foundTypes[item.contentType] = true;
-  }
-
-  // Get the user's preferred download folder for each media type
-  // in the item list and set up Media File Manager options with
-  // those folders.  The MFM will then sort the files into the
-  // respective folders (or possibly subfolders thereof).  Do this
-  // before creating the media items in case the user is prompted
-  // to choose a folder and clicks cancel.
-  mfmFolders = {};
-  try {
-    for (let contentType in foundTypes) {
-      let folder = this.getDownloadFolder(contentType);
-      if (folder) {
-        mfmFolders["media-folder:" + contentType] = folder;
-      }
-    }
-  }
-  catch (e if e.result == Cr.NS_ERROR_ABORT) {
-    return;
   }
 
   if (uriArray.length > 0) {
@@ -286,7 +239,7 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
     }
   }
 
-  this._setDownloadDestinationIfNotSet(items, mfmFolders);
+  this._setDownloadDestinationIfNotSet(items, downloadFileURL);
   this.getDownloadMediaList().addSome(ArrayConverter.enumerator(items));
 }
 
@@ -294,10 +247,10 @@ sbDownloadDeviceHelper.prototype.getDownloadMediaList =
 function sbDownloadDeviceHelper_getDownloadMediaList()
 {
   if (!this._downloadDevice) {
-    var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;1"]
+    var devMgr = Cc["@getnightingale.com/Nightingale/DeviceManager;1"]
                    .getService(Ci.sbIDeviceManager);
     if (devMgr) {
-      var downloadCat = "Songbird Download Device";
+      var downloadCat = "Nightingale Download Device";
       if (devMgr.hasDeviceForCategory(downloadCat)) {
         this._downloadDevice = devMgr.getDeviceByCategory(downloadCat)
                                      .QueryInterface(Ci.sbIDownloadDevice);
@@ -307,58 +260,53 @@ function sbDownloadDeviceHelper_getDownloadMediaList()
   return this._downloadDevice ? this._downloadDevice.downloadMediaList : null;
 }
 
-sbDownloadDeviceHelper.prototype.getDefaultDownloadFolder =
-function sbDownloadDeviceHelper_getDefaultDownloadFolder(aContentType)
+sbDownloadDeviceHelper.prototype.getDefaultMusicFolder =
+function sbDownloadDeviceHelper_getDefaultMusicFolder()
 {
-  var mediaDir = FolderUtils.getDownloadFolder(aContentType);
+  var musicDir = FolderUtils.downloadFolder;
   // We should never get something bad here, but just in case...
-  if (!folderIsValid(mediaDir)) {
+  if (!folderIsValid(musicDir)) {
     Cu.reportError("Desktop directory is not a directory!");
     throw Cr.NS_ERROR_FILE_NOT_DIRECTORY;
   }
 
-  return mediaDir;
+  return musicDir;
 }
 
 sbDownloadDeviceHelper.prototype.getDownloadFolder =
-function sbDownloadDeviceHelper_getDownloadFolder(aContentType)
+function sbDownloadDeviceHelper_getDownloadFolder()
 {
   const Application = Cc["@mozilla.org/fuel/application;1"].
                       getService(Ci.fuelIApplication);
   const prefs = Application.prefs;
 
-  var downloadPath;
-  if (prefs.has(PREF_DOWNLOAD_FOLDER[aContentType])) {
-    downloadPath = prefs.get(PREF_DOWNLOAD_FOLDER[aContentType]).value;
-  }
-
   var downloadFolder;
-  if (downloadPath) {
+  if (prefs.has(PREF_DOWNLOAD_MUSIC_FOLDER)) {
+    var downloadPath = prefs.get(PREF_DOWNLOAD_MUSIC_FOLDER).value;
     downloadFolder = makeFile(downloadPath);
   }
-  else {
-    // The pref was empty. Use (and write) the default.
-    downloadFolder = this.getDefaultDownloadFolder(aContentType);
-    if (downloadFolder) {
-      prefs.setValue(PREF_DOWNLOAD_FOLDER[aContentType], downloadFolder.path);
-    }
+
+  if (!folderIsValid(downloadFolder)) {
+    // The pref was either bad or empty. Use (and write) the default.
+    downloadFolder = this.getDefaultMusicFolder();
+    prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
   }
 
-  const alwaysPrompt = prefs.getValue(PREF_DOWNLOAD_ALWAYSPROMPT[aContentType], false);
-  if (folderIsValid(downloadFolder) && !alwaysPrompt) {
+  const alwaysPrompt = prefs.getValue(PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT, false);
+  if (!alwaysPrompt) {
     return downloadFolder;
   }
 
   const sbs = Cc["@mozilla.org/intl/stringbundle;1"].
               getService(Ci.nsIStringBundleService);
   const strings =
-    sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  const title = strings.GetStringFromName(
-                "prefs.main.downloads." + aContentType + ".chooseTitle");
+    sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
+  const title =
+    strings.GetStringFromName("prefs.main.musicdownloads.chooseTitle");
 
   const wm = Cc["@mozilla.org/appshell/window-mediator;1"].
              getService(Ci.nsIWindowMediator);
-  const mainWin = wm.getMostRecentWindow("Songbird:Main");
+  const mainWin = wm.getMostRecentWindow("Nightingale:Main");
 
   // Need to prompt, launch the filepicker.
   const folderPicker = Cc["@mozilla.org/filepicker;1"].
@@ -374,7 +322,7 @@ function sbDownloadDeviceHelper_getDownloadFolder(aContentType)
 
   downloadFolder = folderPicker.file;
 
-  prefs.setValue(PREF_DOWNLOAD_FOLDER[aContentType], downloadFolder.path);
+  prefs.setValue(PREF_DOWNLOAD_MUSIC_FOLDER, downloadFolder.path);
   return downloadFolder;
 }
 
@@ -404,16 +352,16 @@ function sbDownloadDeviceHelper__checkAndRemoveExistingItem(aMediaItem)
   }
 }
 
-sbDownloadDeviceHelper.prototype._getDownloadFolder_nothrow =
-function sbDownloadDeviceHelper__getDownloadFolder_nothrow(aContentType)
+sbDownloadDeviceHelper.prototype._safeDownloadFileURL =
+function sbDownloadDeviceHelper__safeDownloadFileURL()
 {
   // This function returns null if the user cancels the dialog.
   try {
-    return this.getDownloadFolder(aContentType);
+    return makeFileURL(this.getDownloadFolder().path);
   }
   catch (e if e.result == Cr.NS_ERROR_ABORT) {
   }
-  return null;
+  return "";
 }
 
 sbDownloadDeviceHelper.prototype._addItemToArrays =
@@ -427,12 +375,7 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
   var source = aMediaItem.getProperties();
   for (let i = 0; i < source.length; i++) {
     var prop = source.getPropertyAt(i);
-    // Filter our enableAutoDownload, as the Auto Downloader
-    // should ignore these items.  Their download is already
-    // imminent:
-    if (prop.id != SBProperties.contentSrc &&
-        prop.id != SBProperties.enableAutoDownload)
-    {
+    if (prop.id != SBProperties.contentSrc) {
       dest.appendElement(prop, false);
     }
   }
@@ -444,46 +387,17 @@ function sbDownloadDeviceHelper__addItemToArrays(aMediaItem,
 }
 
 sbDownloadDeviceHelper.prototype._setDownloadDestinationIfNotSet =
-function sbDownloadDeviceHelper__setDownloadDestinationIfNotSet(
-         aItems,
-         aMediaFileManagerOptions)
+function sbDownloadDeviceHelper__setDownloadDestinationIfNotSet(aItems,
+                                                                aDownloadPath)
 {
-  // Copy the Media File Manager options to an nsIPropertyBag
-  var bag = Cc["@mozilla.org/hash-property-bag;1"]
-              .createInstance(Ci.nsIWritablePropertyBag);
-  for (prop in aMediaFileManagerOptions) {
-    bag.setProperty(prop, aMediaFileManagerOptions[prop]);
-  }
-  
-  // Use the Media File Manager to organize files into subfolders.
-  // The caller will designate the root folder for each media type
-  // in the MFM options bag (based on user preferences):
-  var mediaFileMgr = Cc["@songbirdnest.com/Songbird/media-manager/file;1"]
-                     .createInstance(Ci.sbIMediaFileManager);
-  mediaFileMgr.init(bag);
-  
   for each (var item in aItems) {
     try {
       var curDestination = item.getProperty(SBProperties.destination);
       if (!curDestination) {
-        let destFile = mediaFileMgr.getManagedPath(
-                                    item,
-                                    _MFM_GET_MANAGED_PATH_OPTIONS);
-        let path = destFile.path;
-        
-        /// @todo Video items tend to have meaningless file names, because
-        ///       they lack a trackName property.  For now, strip off the leaf
-        ///       name of unbetitled items, and
-        //        sbDownloadSession::CompleteTransfer() will construct a
-        //        file name from the source URL:
-        if (!item.getProperty(SBProperties.trackName)) {
-          // Leave a trailing delimiter so the path parses as a directory:
-          path = path.replace(/[^/\\]*$/, "");
-        }
         
         // Ensure all paths are lowercase for Windows.
         // See bug #7178.
-        let actualDestination = makeFileURL(path);
+        var actualDestination = aDownloadPath;
         if(getPlatformString() == "Windows_NT") {
           actualDestination = actualDestination.toLowerCase();
         }

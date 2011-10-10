@@ -1,7 +1,7 @@
 /* These preferences are from firefox.js */
 pref("browser.zoom.siteSpecific", true);
 pref("browser.zoom.updateBackgroundTabs", true);
-pref("browser.EULA.override", true); /* songbird has its own EULA dialog */
+pref("browser.EULA.override", true); /* nightingale has its own EULA dialog */
 
 /* The privacy prefs below are used by the sanitizer */
 pref("privacy.clearOnShutdown.history",     true);

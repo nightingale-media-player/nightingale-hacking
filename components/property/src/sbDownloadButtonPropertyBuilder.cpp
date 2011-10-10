@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,34 +33,9 @@
 #include <sbIPropertyManager.h>
 #include <nsIStringBundle.h>
 
-#include "sbStandardProperties.h"
-
-NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyBuilder,
+NS_IMPL_ISUPPORTS_INHERITED1(sbDownloadButtonPropertyBuilder,
                              sbAbstractPropertyBuilder,
-                             sbISimpleButtonPropertyBuilder,
                              sbIDownloadButtonPropertyBuilder)
-
-nsresult
-sbDownloadButtonPropertyBuilder::Init()
-{
-  nsresult rv;
-  rv = sbAbstractPropertyBuilder::Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetDisplayNameKey(NS_LITERAL_STRING("property.download_button"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetLabelKey(NS_LITERAL_STRING("property.download_button"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SetRetryLabelKey(NS_LITERAL_STRING("property.download_button_retry"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;  
-}
 
 NS_IMETHODIMP
 sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)

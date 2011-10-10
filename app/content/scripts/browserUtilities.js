@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -30,7 +30,7 @@
  ***********************************************************************************/
 
 /*
- * Songbird Dependencies:
+ * Nightingale Dependencies:
  *    gBrowser
  *    About() in playerOpen.js
  */
@@ -46,7 +46,7 @@ var gBidiUI = false;
 
 function getBrowserURL()
 {
-  throw("browserUtilities.js: :  getBrowserURL() is not implemented in Songbird!");
+  throw("browserUtilities.js: :  getBrowserURL() is not implemented in Nightingale!");
 }
 
 function goToggleToolbar( id, elementID )
@@ -69,7 +69,7 @@ function getTopWin()
 {
   var windowManager = Components.classes['@mozilla.org/appshell/window-mediator;1']
                                 .getService(Components.interfaces.nsIWindowMediator);
-  return windowManager.getMostRecentWindow("Songbird:Main");
+  return windowManager.getMostRecentWindow("Nightingale:Main");
 }
 
 function openTopWin( url )
@@ -213,7 +213,7 @@ function openUILinkIn( url, where, allowThirdPartyFixup, postData, referrerUrl )
   //  return;
   //}
   if (where == "window") {
-    dump("browserUtilities.js.openUILinkIn() Warning: Songbird does not support where=window.\n");
+    dump("browserUtilities.js.openUILinkIn() Warning: Nightingale does not support where=window.\n");
   }
 
 
@@ -228,7 +228,7 @@ function openUILinkIn( url, where, allowThirdPartyFixup, postData, referrerUrl )
     return;
   }
 
-  // Songbird defaults to tab
+  // Nightingale defaults to tab
   switch (where) {
   case "current":
     browser.loadURI(url, referrerUrl, postData, allowThirdPartyFixup);
@@ -386,7 +386,7 @@ function openPreferences(paneID)
  */
 function openReleaseNotes(event)
 {
-  throw("browserUtilities.js: openReleaseNotes() is not implemented in Songbird!");
+  throw("browserUtilities.js: openReleaseNotes() is not implemented in Nightingale!");
 }
   
 /**
@@ -473,7 +473,7 @@ function openNewTabWith(aURL, aDocument, aPostData, aEvent,
   if (aEvent && aEvent.shiftKey)
     loadInBackground = !loadInBackground;
 
-  // TODO: Does Songbird need this?
+  // TODO: Does Nightingale need this?
  
   // As in openNewWindowWith(), we want to pass the charset of the
   // current document over to a new tab. 
@@ -494,7 +494,7 @@ function openNewTabWith(aURL, aDocument, aPostData, aEvent,
 
 function openNewWindowWith(aURL, aDocument, aPostData, aAllowThirdPartyFixup)
 {
-  dump("\n\n\nbrowserUtilities.openNewWindowWith() Warning: Songbird does not support new windows.\n\n\n");  
+  dump("\n\n\nbrowserUtilities.openNewWindowWith() Warning: Nightingale does not support new windows.\n\n\n");  
 }
 
 
@@ -611,7 +611,7 @@ function BrowserHomeClick(aEvent)
     break;
   case "tabshifted":
   case "tab":
-  case "window": // because songbird does not support new browser windows
+  case "window": // because nightingale does not support new browser windows
     urls = homePage.split("|");
     var loadInBackground = getBoolPref("browser.tabs.loadBookmarksInBackground", false);
     gBrowser.loadTabs(urls, loadInBackground);
@@ -646,7 +646,7 @@ function loadOneOrMoreURIs(aURIString)
 function nsBrowserStatusHandler()
 {
   this.typeSniffer = 
-    Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+    Components.classes["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
               .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
   this.ios = Components.classes["@mozilla.org/network/io-service;1"]
                        .getService(Components.interfaces.nsIIOService);

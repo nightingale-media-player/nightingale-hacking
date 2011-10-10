@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,51 +22,77 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /** 
  * \file  sbThreadPoolService.cpp
- * \brief Songbird ThreadPool Service Module Component Factory and Main Entry Point.
+ * \brief Nightingale ThreadPool Service Module Component Factory and Main Entry Point.
  */
 
 #include "sbThreadPoolService.h"
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <mozilla/ModuleUtils.h>
+#include <nsIGenericFactory.h>
 
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOM.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbThreadPoolService, Init)
-NS_DEFINE_NAMED_CID(SB_THREADPOOLSERVICE_CID);
 
-static const mozilla::Module::CIDEntry kSongbirdMozThreadpoolCIDs[] = {
-    { &kSB_THREADPOOLSERVICE_CID, true, NULL, sbThreadPoolServiceConstructor },
-    { NULL }
+static NS_METHOD
+sbThreadPoolServiceRegisterSelf(nsIComponentManager* aCompMgr,
+                                nsIFile* aPath,
+                                const char* registryLocation,
+                                const char* componentType,
+                                const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->
+         AddCategoryEntry(NS_XPCOM_STARTUP_CATEGORY,
+                          SB_THREADPOOLSERVICE_CLASSNAME,
+                          SB_THREADPOOLSERVICE_CONTRACTID,
+                          PR_TRUE, PR_TRUE, nsnull);
+  return rv;
+}
+
+static NS_METHOD
+sbThreadPoolServiceUnregisterSelf(nsIComponentManager* aCompMgr,
+                                  nsIFile* aPath,
+                                  const char* registryLocation,
+                                  const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->DeleteCategoryEntry(NS_XPCOM_STARTUP_CATEGORY,
+                                            SB_THREADPOOLSERVICE_CLASSNAME,
+                                            PR_TRUE);
+
+  return rv;
+}
+
+// Module component information.
+static const nsModuleComponentInfo components[] =
+{
+  {
+    SB_THREADPOOLSERVICE_CLASSNAME,
+    SB_THREADPOOLSERVICE_CID,
+    SB_THREADPOOLSERVICE_CONTRACTID,
+    sbThreadPoolServiceConstructor,
+    sbThreadPoolServiceRegisterSelf,
+    sbThreadPoolServiceUnregisterSelf
+  }
 };
 
-
-static const mozilla::Module::ContractIDEntry kSongbirdMozThreadpoolContracts[] = {
-    { SB_THREADPOOLSERVICE_CONTRACTID, &kSB_THREADPOOLSERVICE_CID },
-    { NULL }
-};
-
-
-static const mozilla::Module::CategoryEntry kSongbirdMozThreadpoolCategories[] = {
-    { NS_XPCOM_STARTUP_CATEGORY, SB_THREADPOOLSERVICE_CLASSNAME, SB_THREADPOOLSERVICE_CONTRACTID },
-    { NULL }
-};
-
-
-static const mozilla::Module kSongbirdMozThreadpoolModule = {
-    mozilla::Module::kVersion,
-    kSongbirdMozThreadpoolCIDs,
-    kSongbirdMozThreadpoolContracts,
-    kSongbirdMozThreadpoolCategories
-};
-
-NSMODULE_DEFN(sbMozThreadpoolModule) = &kSongbirdMozThreadpoolModule;
+// NSGetModule
+NS_IMPL_NSGETMODULE(sbThreadPoolService, components)

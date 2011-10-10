@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -40,7 +40,7 @@
 #define TIMER_RESOLUTION 500
 #define MAX_NOTIFICATION_TIME 1 * PR_USEC_PER_SEC
 
-#define BUNDLE_URL "chrome://songbird/locale/songbird.properties"
+#define BUNDLE_URL "chrome://nightingale/locale/nightingale.properties"
 
 /**
  * To log this module, set the following environment variable:
@@ -82,7 +82,7 @@ sbRemoteNotificationManager::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mDataRemote =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+    do_CreateInstance("@getnightingale.com/Nightingale/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemote->Init(SB_DATAREMOTE_FACEPLATE_STATUS, EmptyString());
@@ -96,7 +96,7 @@ sbRemoteNotificationManager::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibraryManager> libManager =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = libManager->GetMainLibrary(getter_AddRefs(mMainLibrary));

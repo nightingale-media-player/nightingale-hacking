@@ -1,11 +1,11 @@
 
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 # 
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://songbirdnest.com
+# http://getnightingale.com
 # 
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 # or write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 !insertmacro un.GetParameters
@@ -46,7 +46,7 @@ Section "Uninstall"
 
    ; Before doing any uninstallation activities, execute disthelper.exe to 
    ; allow it to do any pre-uninstallation cleanup; it does this (obviously)
-   ; in distribution mode, but now that we have a songbird.ini for our own
+   ; in distribution mode, but now that we have a nightingale.ini for our own
    ; tasks, we need to always call it.
    ;
    ; We don't really bother checking if we failed here because there's not
@@ -63,8 +63,6 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
-   ; Disabled for now; see bug 22964
-   ; Call un.RDSConfigRemove
    Call un.RemoveCdrip
    Call un.RemoveAppRegistryKeys
 
@@ -81,7 +79,7 @@ SectionEnd
 Function un.RemoveBrandingRegistryKeys
    SetShellVarContext all
 
-   ; Remove Songbird AutoPlay services.
+   ; Remove Nightingale AutoPlay services.
    ExecWait '"$INSTDIR\sbAutoPlayUtil" -Remove'
 
    ; Read where start menu shortcuts are installed
@@ -133,14 +131,6 @@ Function un.RemoveCdrip
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\${CdripDriverInstallations}"
 FunctionEnd
 
-Function un.RDSConfigRemove
-   ; We mostly ignore the return value because there's not much we can do!
-   ExecWait '"$INSTDIR\${RDSConfigEXE}" remove' $0
-   ${If} $InstallerMode == "debug"
-      MessageBox MB_OK "$INSTDIR\${RDSConfigEXE} returned $0"
-   ${EndIf}
-FunctionEnd
-
 Function un.RemoveAppRegistryKeys
    ; Unregister DLLs
    UnRegDLL "$INSTDIR\lib\sbWindowsFormatter.dll"
@@ -148,7 +138,7 @@ Function un.RemoveAppRegistryKeys
    ; Remove registry keys
    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}-$InstallerType-${AppBuildNumber}"
 
-   ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+   ; Remove XULRunner and Nightingale to the Windows Media Player Shim Inclusion List.
    DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}"
    DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}"
 
@@ -158,7 +148,7 @@ Function un.RemoveAppRegistryKeys
    ; Remove the last of the registry keys
    DeleteRegKey HKLM "$RootAppRegistryKey"
 
-   ; And if we're the last installed copy of Songbird, delete all our reg keys
+   ; And if we're the last installed copy of Nightingale, delete all our reg keys
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\$InstallerType"
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}"
 FunctionEnd 

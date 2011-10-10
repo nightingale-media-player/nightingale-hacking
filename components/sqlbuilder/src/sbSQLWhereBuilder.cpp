@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -127,23 +127,6 @@ sbSQLWhereBuilder::CreateMatchCriterionLong(const nsAString& aTableName,
 
   nsCOMPtr<sbISQLBuilderCriterion> criterion =
     new sbSQLBuilderCriterionLong(aTableName, aSrcColumnName, aMatchType, aValue);
-  NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
-
-  NS_ADDREF(*_retval = criterion);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbSQLWhereBuilder::CreateMatchCriterionLongLong(const nsAString& aTableName,
-                                                const nsAString& aSrcColumnName,
-                                                PRUint32 aMatchType,
-                                                PRInt64 aValue,
-                                                sbISQLBuilderCriterion **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsCOMPtr<sbISQLBuilderCriterion> criterion =
-    new sbSQLBuilderCriterionLongLong(aTableName, aSrcColumnName, aMatchType, aValue);
   NS_ENSURE_TRUE(criterion, NS_ERROR_OUT_OF_MEMORY);
 
   NS_ADDREF(*_retval = criterion);

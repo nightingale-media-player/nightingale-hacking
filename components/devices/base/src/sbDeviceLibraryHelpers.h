@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -38,13 +38,98 @@
 #include <sbIMediaListListener.h>
 #include <sbLibraryUtils.h>
 
+class nsIArray;
 class sbILibrary;
 class sbIMediaList;
 
 class sbDeviceLibrary;
 
 /**
+ * Listens to events for a playlist and then performs a sync
+ * on the playlist
+ */
+class sbPlaylistSyncListener : public sbIMediaListListener,
+                               public sbILocalDatabaseSmartMediaListListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBILOCALDATABASESMARTMEDIALISTLISTENER
+
+  sbPlaylistSyncListener(sbILibrary * aTargetLibrary,
+                         bool aSyncPlaylists,
+                         sbIDevice * aDevice);
+
+  /**
+   * Add the media list to our list of lists
+   * TODO: XXX hack to keep the playlists from going away and our listeners
+   *           from going deaf
+   */
+  PRBool AddMediaList(sbIMediaList * aList) {
+    if (mMediaLists.IndexOf(aList) == -1)
+      return mMediaLists.AppendObject(aList);
+    return PR_TRUE;
+  }
+
+  /**
+   * Remove the media list from our list of lists
+   */
+  PRBool RemoveMediaList(sbIMediaList * aList) {
+    if (mMediaLists.IndexOf(aList) == -1)
+      return PR_TRUE;
+    return mMediaLists.RemoveObject(aList);
+  }
+
+  void StopListeningToPlaylists();
+
+  nsresult SetSyncPlaylists(nsIArray * aMediaLists);
+protected:
+  virtual ~sbPlaylistSyncListener();
+
+  /**
+   * Rebuild playlist after items removed.
+   */
+  nsresult RebuildPlaylistAfterItemRemoved(sbIMediaList *aMediaList);
+
+  /**
+   * Handle function for item removal which is not part of batch.
+   */
+  nsresult RemoveItemNotInBatch(sbIMediaList *aMediaList,
+                                sbIMediaItem *aMediaItem,
+                                PRUint32 aIndex);
+
+  /**
+   * Static batch callback function to add media items to media list.
+   */
+  static nsresult AddItemsToList(nsISupports* aUserData);
+
+  /**
+   * The device owns us and device library owns the device so we're good.
+   * non owning pointer
+   */
+  sbILibrary* mTargetLibrary;
+  sbIDevice* mDevice;
   bool mSyncPlaylists;
+
+  /**
+   * Hash table of sbIMediaList -> sbLibraryBatchHelper for playlist batch
+   * removal
+   */
+  nsClassHashtable<nsISupportsHashKey,
+                   sbLibraryBatchHelper> mBatchHelperTable;
+  // Array of media lists that the removed media items belong to
+  nsCOMArray<sbIMediaList> mListRemovedArray;
+  // Array of media items removed
+  nsCOMArray<sbIMediaItem> mItemRemovedArray;
+
+  /**
+   * TODO: XXX hack to keep the playlists from going away and our listeners
+   *           from going deaf
+   */
+  nsCOMArray<sbIMediaList> mMediaLists;
+};
+
+/**
  * Listens to item update events to propagate into a second library
  * The target library must register this listener before going away.
  */
@@ -55,9 +140,40 @@ public:
   NS_DECL_SBIMEDIALISTLISTENER
 
   sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
+                          bool aManualMode,
+                          nsIArray * aPlaylistsList,
                           bool aIgnorePlaylists,
                           sbIDevice * aDevice);
 
+  /**
+   * This function adds listener to the playlist aMainMediaList
+   * \param aMainMediaList The media list to listen to, must be in the
+   *        mTargetLibrary
+   */
+  nsresult ListenToPlaylist(sbIMediaList * aMainMediaList);
+
+  /**
+   * This function removes listener from the playlist aMainMediaList
+   * \param aMainMediaList The media list to remove listener from, must be
+   *        in the mTargetLibrary
+   */
+  nsresult StopListeningToPlaylist(sbIMediaList * aMainMediaList);
+
+  /**
+   * Stops listening to the playlists
+   */
+  void StopListeningToPlaylists()
+  {
+    mPlaylistListener->StopListeningToPlaylists();
+  }
+
+  /**
+   * Sets the management type for the listner
+   * \param aManualMode    Whether to set to manual mode
+   * \param aPlaylistsList The playlist list to sync to
+   */
+  void SetSyncMode(bool aManualMode,
+                   nsIArray * aPlaylistsList);
 protected:
   virtual ~sbLibraryUpdateListener();
 
@@ -66,8 +182,13 @@ protected:
    * safe to not own a reference
    */
   sbILibrary* mTargetLibrary;
-  bool mIgnorePlaylists;
+
+  nsRefPtr<sbPlaylistSyncListener> mPlaylistListener;
+
   sbIDevice* mDevice;
+  bool mManualMode;
+  bool mSyncPlaylists;
+  bool mIgnorePlaylists;
 };
 
 #endif

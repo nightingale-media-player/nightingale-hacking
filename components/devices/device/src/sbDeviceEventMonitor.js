@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -42,9 +42,9 @@ Cu.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
 const VIDEO_TOGO_PLAYLIST_NAME = "video-togo";
 
 var deviceEventMonitorConfig = {
-  className:      "Songbird Device Event Monitor Service",
+  className:      "Nightingale Device Event Monitor Service",
   cid:            Components.ID("{57b32ce8-a373-4d8d-babb-9d23afeeb409}"),
-  contractID:     "@songbirdnest.com/device/event-monitor-service;1",
+  contractID:     "@getnightingale.com/device/event-monitor-service;1",
 
   ifList: [ Ci.sbIDeviceEventListener,
             Ci.nsISupportsWeakReference,
@@ -55,7 +55,7 @@ var deviceEventMonitorConfig = {
     {
       category: 'app-startup',
       entry: 'service-device-event-monitor',
-      value: 'service,@songbirdnest.com/device/event-monitor-service;1'
+      value: 'service,@getnightingale.com/device/event-monitor-service;1'
     }
   ]
 };
@@ -80,7 +80,7 @@ deviceEventMonitor.prototype = {
    * \brief Initialize the deviceEventMonitor service.
    */
   _init: function deviceEventMonitor__init() {
-    var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    var deviceManagerSvc = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                              .getService(Ci.sbIDeviceManager2);
     deviceManagerSvc.addEventListener(this);
   },
@@ -89,7 +89,7 @@ deviceEventMonitor.prototype = {
    * \brief Shutdown (cleanup) the deviceEventMonitorService.
    */
   _shutdown: function deviceEventMonitor__shutdown() {
-    var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    var deviceManagerSvc = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                              .getService(Ci.sbIDeviceManager2);
     deviceManagerSvc.removeEventListener(this);
   },
@@ -131,7 +131,7 @@ deviceEventMonitor.prototype = {
     var mainLibrary = LibraryUtils.mainLibrary;
 
     var listProperties =
-      Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+      Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"]
         .createInstance(Ci.sbIMutablePropertyArray);
     listProperties.appendProperty(SBProperties.isList, "1");
     listProperties.appendProperty(SBProperties.hidden, "0");
@@ -158,7 +158,7 @@ deviceEventMonitor.prototype = {
 
     if (!playlistFound) {
       var propertyManager =
-        Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
           .getService(Ci.sbIPropertyManager);
       var typePI = propertyManager.getPropertyInfo(SBProperties.contentType);
       const sbILDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;

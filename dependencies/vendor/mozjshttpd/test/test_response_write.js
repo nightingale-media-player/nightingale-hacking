@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is httpd.js code.
+ * The Original Code is MozJSHTTP code.
  *
  * The Initial Developer of the Original Code is
  * Jeff Walden <jwalden+code@mit.edu>.
@@ -38,37 +38,76 @@
 
 // make sure response.write works for strings, and coerces other args to strings
 
-var tests =
+var paths =
   [
-   new Test("http://localhost:4444/writeString",
-            null, check_1234, succeeded),
-   new Test("http://localhost:4444/writeInt",
-            null, check_1234, succeeded),
+   "http://localhost:4444/writeString",
+   "http://localhost:4444/writeInt"
   ];
+var currPathIndex = 0;
+
+var listener =
+  {
+    // NSISTREAMLISTENER
+    onDataAvailable: function(request, cx, inputStream, offset, count)
+    {
+      makeBIS(inputStream).readByteArray(count); // required by API
+    },
+    // NSIREQUESTOBSERVER
+    onStartRequest: function(request, cx)
+    {
+      var ch = request.QueryInterface(Ci.nsIHttpChannel)
+                      .QueryInterface(Ci.nsIHttpChannelInternal);
+
+      switch (currPathIndex)
+      {
+        case 0:
+          do_check_eq(ch.getResponseHeader("Content-Length"), "4");
+          break;
+
+        case 1:
+          do_check_eq(ch.getResponseHeader("Content-Length"), "4");
+          break;
+      }
+    },
+    onStopRequest: function(request, cx, status)
+    {
+      do_check_true(Components.isSuccessCode(status));
+      if (++currPathIndex == paths.length)
+        srv.stop();
+      else
+        performNextTest();
+      do_test_finished();
+    },
+    // NSISUPPORTS
+    QueryInterface: function(aIID)
+    {
+      if (aIID.equals(Ci.nsIStreamListener) ||
+          aIID.equals(Ci.nsIRequestObserver) ||
+          aIID.equals(Ci.nsISupports))
+        return this;
+      throw Cr.NS_ERROR_NO_INTERFACE;
+    }
+  };
+
+function performNextTest()
+{
+  do_test_pending();
+
+  var ch = makeChannel(paths[currPathIndex]);
+  ch.asyncOpen(listener, null);
+}
+
+var srv;
 
 function run_test()
 {
-  var srv = createServer();
+  srv = createServer();
 
   srv.registerPathHandler("/writeString", writeString);
   srv.registerPathHandler("/writeInt", writeInt);
   srv.start(4444);
 
-  runHttpTests(tests, testComplete(srv));
-}
-
-
-// TEST DATA
-
-function succeeded(ch, cx, status, data)
-{
-  do_check_true(Components.isSuccessCode(status));
-  do_check_eq(data.map(function(v) String.fromCharCode(v)).join(""), "1234");
-}
-
-function check_1234(ch, cx)
-{
-  do_check_eq(ch.getResponseHeader("Content-Length"), "4");
+  performNextTest();
 }
 
 // PATH HANDLERS

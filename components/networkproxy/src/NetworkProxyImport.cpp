@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
 * \file  NetworkProxyImport.cpp
-* \brief Songbird NetworkProxyImport Component Implementation.
+* \brief Nightingale NetworkProxyImport Component Implementation.
 */
 
 #include "nspr.h"
@@ -83,7 +83,7 @@ NS_IMETHODIMP CNetworkProxyImport::ImportProxySettings(const nsAString &aSource,
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
   
-  for (unsigned int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
+  for (int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
     if (aSource.
       Equals(NS_ConvertASCIItoUTF16(networkProxyImportSources[i].sourceName))) {
       return networkProxyImportSources[i].ImportProxySettingsFunction(_retval);
@@ -101,10 +101,10 @@ NS_IMETHODIMP CNetworkProxyImport::GetImportSources(nsIArray **_retval)
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (unsigned int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
+  for (int i=0;i<NS_ARRAY_LENGTH(networkProxyImportSources);i++) {
     nsCOMPtr<nsISupportsString> source = 
       do_CreateInstance("@mozilla.org/supports-string;1", &rv);
     source->

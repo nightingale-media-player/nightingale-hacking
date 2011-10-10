@@ -1,5 +1,5 @@
 
-const DROP_TARGET_IMAGE = "chrome://songbird/skin/album-art/drop-target.png";
+const DROP_TARGET_IMAGE = "chrome://nightingale/skin/album-art/drop-target.png";
 const XLINK = "http://www.w3.org/1999/xlink";
 
 var metadataImage = null;
@@ -22,7 +22,7 @@ function onLoad () {
     }
     // Setup the dataremote for the now playing image.
     var createDataRemote =  new Components.Constructor(
-                                  "@songbirdnest.com/Songbird/DataRemote;1",
+                                  "@getnightingale.com/Nightingale/DataRemote;1",
                                   Components.interfaces.sbIDataRemote,
                                   "init");
     metadataImage = createDataRemote("metadata.imageURL", null);

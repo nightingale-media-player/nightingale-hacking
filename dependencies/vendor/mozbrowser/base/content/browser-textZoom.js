@@ -22,7 +22,6 @@
  * Contributor(s):
  *   Myk Melez <myk@mozilla.org>
  *   Dão Gottwald <dao@mozilla.com>
- *   Ehsan Akhgari <ehsan.akhgari@gmail.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -39,6 +38,9 @@
  * ***** END LICENSE BLOCK *****
 #endif
  */
+
+// From nsMouseScrollEvent::kIsHorizontal
+const MOUSE_SCROLL_IS_HORIZONTAL = 1 << 2;
 
 // One of the possible values for the mousewheel.* preferences.
 // From nsEventStateManager.cpp.
@@ -84,17 +86,8 @@ var FullZoom = {
   },
 
   // browser.zoom.siteSpecific preference cache
-  _siteSpecificPref: undefined,
+  siteSpecific: undefined,
 
-  // browser.zoom.updateBackgroundTabs preference cache
-  updateBackgroundTabs: undefined,
-
-  // whether we are in private browsing mode
-  _inPrivateBrowsing: false,
-
-  get siteSpecific FullZoom_get_siteSpecific() {
-    return !this._inPrivateBrowsing && this._siteSpecificPref;
-  },
 
   //**************************************************************************//
   // nsISupports
@@ -123,34 +116,15 @@ var FullZoom = {
     // Register ourselves with the service so we know when our pref changes.
     this._cps.addObserver(this.name, this);
 
-    // We disable site-specific preferences in Private Browsing mode, because the
-    // content preferences module is disabled
-    let os = Cc["@mozilla.org/observer-service;1"].
-             getService(Ci.nsIObserverService);
-    os.addObserver(this, "private-browsing", true);
-
-    // Retrieve the initial status of the Private Browsing mode.
-    // XXX Songbird: allow not having private browsing support
-    if ("@mozilla.org/privatebrowsing;1" in Cc) {
-      this._inPrivateBrowsing = Cc["@mozilla.org/privatebrowsing;1"].
-                                getService(Ci.nsIPrivateBrowsingService).
-                                privateBrowsingEnabled;
-    }
-
-    this._siteSpecificPref =
+    // Listen for changes to the browser.zoom.siteSpecific preference so we can
+    // enable/disable per-site saving and restoring of zoom levels accordingly.
+    this.siteSpecific =
       this._prefBranch.getBoolPref("browser.zoom.siteSpecific");
-    this.updateBackgroundTabs = 
-      this._prefBranch.getBoolPref("browser.zoom.updateBackgroundTabs");
-    // Listen for changes to the browser.zoom branch so we can enable/disable
-    // updating background tabs and per-site saving and restoring of zoom levels.
-    this._prefBranch.addObserver("browser.zoom.", this, true);
+    this._prefBranch.addObserver("browser.zoom.siteSpecific", this, true);
   },
 
   destroy: function FullZoom_destroy() {
-    let os = Cc["@mozilla.org/observer-service;1"].
-             getService(Ci.nsIObserverService);
-    os.removeObserver(this, "private-browsing");
-    this._prefBranch.removeObserver("browser.zoom.", this);
+    this._prefBranch.removeObserver("browser.zoom.siteSpecific", this);
     this._cps.removeObserver(this.name, this);
     window.removeEventListener("DOMMouseScroll", this, false);
     delete this._cps;
@@ -174,7 +148,7 @@ var FullZoom = {
     // Construct the "mousewheel action" pref key corresponding to this event.
     // Based on nsEventStateManager::GetBasePrefKeyForMouseWheel.
     var pref = "mousewheel";
-    if (event.axis == event.HORIZONTAL_AXIS)
+    if (event.scrollFlags & MOUSE_SCROLL_IS_HORIZONTAL)
       pref += ".horizscroll";
 
     if (event.shiftKey)
@@ -215,22 +189,8 @@ var FullZoom = {
       case "nsPref:changed":
         switch(aData) {
           case "browser.zoom.siteSpecific":
-            this._siteSpecificPref =
+            this.siteSpecific =
               this._prefBranch.getBoolPref("browser.zoom.siteSpecific");
-            break;
-          case "browser.zoom.updateBackgroundTabs":
-            this.updateBackgroundTabs =
-              this._prefBranch.getBoolPref("browser.zoom.updateBackgroundTabs");
-            break;
-        }
-        break;
-      case "private-browsing":
-        switch (aData) {
-          case "enter":
-            this._inPrivateBrowsing = true;
-            break;
-          case "exit":
-            this._inPrivateBrowsing = false;
             break;
         }
         break;
@@ -269,21 +229,10 @@ var FullZoom = {
 
   // location change observer
 
-  /**
-   * Called when the location of a tab changes.
-   * When that happens, we need to update the current zoom level if appropriate.
-   *
-   * @param aURI
-   *        A URI object representing the new location.
-   * @param aIsTabSwitch
-   *        Whether this location change has happened because of a tab switch.
-   * @param aBrowser
-   *        (optional) browser object displaying the document
-   */
-  onLocationChange: function FullZoom_onLocationChange(aURI, aIsTabSwitch, aBrowser) {
-    if (!aURI || (aIsTabSwitch && !this.siteSpecific))
+  onLocationChange: function FullZoom_onLocationChange(aURI) {
+    if (!aURI)
       return;
-    this._applyPrefToSetting(this._cps.getPref(aURI, this.name), aBrowser);
+    this._applyPrefToSetting(this._cps.getPref(aURI, this.name));
   },
 
   // update state of zoom type menu item
@@ -316,6 +265,11 @@ var FullZoom = {
     this._removePref();
   },
 
+  setSettingValue: function FullZoom_setSettingValue() {
+    var value = this._cps.getPref(gBrowser.currentURI, this.name);
+    this._applyPrefToSetting(value);
+  },
+
   /**
    * Set the zoom level for the current tab.
    *
@@ -335,29 +289,23 @@ var FullZoom = {
    * We don't check first to see if the new value is the same as the current
    * one.
    **/
-  _applyPrefToSetting: function FullZoom__applyPrefToSetting(aValue, aBrowser) {
-    if (!this.siteSpecific && !this._inPrivateBrowsing)
+  _applyPrefToSetting: function FullZoom__applyPrefToSetting(aValue) {
+    if (!this.siteSpecific || gInPrintPreviewMode)
       return;
 
-    var browser = aBrowser || gBrowser.selectedBrowser;
     try {
-      if (gInPrintPreviewMode ||
-          browser.contentDocument instanceof Ci.nsIImageDocument ||
-          this._inPrivateBrowsing)
-        ZoomManager.setZoomForBrowser(browser, 1);
-      else if (typeof aValue != "undefined")
-        ZoomManager.setZoomForBrowser(browser, this._ensureValid(aValue));
+      if (typeof aValue != "undefined")
+        ZoomManager.zoom = this._ensureValid(aValue);
       else if (typeof this.globalValue != "undefined")
-        ZoomManager.setZoomForBrowser(browser, this.globalValue);
+        ZoomManager.zoom = this.globalValue;
       else
-        ZoomManager.setZoomForBrowser(browser, 1);
+        ZoomManager.zoom = 1;
     }
     catch(ex) {}
   },
 
   _applySettingToPref: function FullZoom__applySettingToPref() {
-    if (!this.siteSpecific || gInPrintPreviewMode ||
-        content.document instanceof Ci.nsIImageDocument)
+    if (!this.siteSpecific || gInPrintPreviewMode)
       return;
 
     var zoomLevel = ZoomManager.zoom;
@@ -365,8 +313,7 @@ var FullZoom = {
   },
 
   _removePref: function FullZoom__removePref() {
-    if (!(content.document instanceof Ci.nsIImageDocument))
-      this._cps.removePref(gBrowser.currentURI, this.name);
+    this._cps.removePref(gBrowser.currentURI, this.name);
   },
 
 

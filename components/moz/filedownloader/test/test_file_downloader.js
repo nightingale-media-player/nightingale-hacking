@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -64,7 +64,7 @@ var testFileDownloader = {
   //   destinationFileExt       Destination file extension.
   //
 
-  succeedingURISpec: "chrome://songbird/locale/songbird.properties",
+  succeedingURISpec: "chrome://nightingale/locale/nightingale.properties",
   failingURISpec: "http://nonexistent_file",
   destinationFileExt: "tst",
 
@@ -151,7 +151,7 @@ var testFileDownloader = {
     // Test that the file downloader component is available.
     var fileDownloader;
     try {
-      fileDownloader = Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+      fileDownloader = Cc["@getnightingale.com/Nightingale/FileDownloader;1"]
                          .createInstance(Ci.sbIFileDownloader);
     } catch (ex) {}
     assertTrue(fileDownloader,
@@ -168,7 +168,7 @@ var testFileDownloader = {
 
   _testDownloadSucceeds: function testFileDownloader__testDownloadSucceeds() {
     // Create a file downloader.
-    var fileDownloader = Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+    var fileDownloader = Cc["@getnightingale.com/Nightingale/FileDownloader;1"]
                            .createInstance(Ci.sbIFileDownloader);
 
     // Create a file download listener.
@@ -220,7 +220,7 @@ var testFileDownloader = {
   _testDownloadWithURISpec:
     function testFileDownloader__testDownloadWithURISpec() {
     // Create a file downloader.
-    var fileDownloader = Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+    var fileDownloader = Cc["@getnightingale.com/Nightingale/FileDownloader;1"]
                            .createInstance(Ci.sbIFileDownloader);
 
     // Create a file download listener.
@@ -260,7 +260,7 @@ var testFileDownloader = {
   _testDownloadWithDstExt:
     function testFileDownloader__testDownloadWithDstExt() {
     // Create a file downloader.
-    var fileDownloader = Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+    var fileDownloader = Cc["@getnightingale.com/Nightingale/FileDownloader;1"]
                            .createInstance(Ci.sbIFileDownloader);
 
     // Create a file download listener.
@@ -313,7 +313,7 @@ var testFileDownloader = {
 
   _testDownloadFails: function testFileDownloader__testDownloadFails() {
     // Create a file downloader.
-    var fileDownloader = Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+    var fileDownloader = Cc["@getnightingale.com/Nightingale/FileDownloader;1"]
                            .createInstance(Ci.sbIFileDownloader);
 
     // Create a file download listener.
@@ -357,7 +357,7 @@ var testFileDownloader = {
 
   _testDownloadCancel: function testFileDownloader__testDownloadCancel() {
     // Create a file downloader.
-    var fileDownloader = Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+    var fileDownloader = Cc["@getnightingale.com/Nightingale/FileDownloader;1"]
                            .createInstance(Ci.sbIFileDownloader);
 
     // Create a file download listener.

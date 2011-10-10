@@ -1,6 +1,3 @@
-DO NOT BUILD THE MASTER BRANCH YET! BUILD THE nightingale-1.8 BRANCH
-UNTIL THIS MESSAGE DISAPPEARS FROM THE README!
-
 Nightingale is a community based fork of the Songbird Web/Media player
 distributed under the GNU GPL and portions (xulrunner and mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
@@ -10,10 +7,39 @@ eventually use only system libraries to conserve space. Currently, some
 libraries are still bundled, but progress is being made to change this 
 fact.
 
-This git tree is the upstream/future version of Nightingale, slated
-to use xulrunner 6.0.2+ and other current libraries. Hopefully, it's
-first release will be without the libraries bundled within, so that
-it can use system libs.
+This git tree is the old 1.8 tree for Nightingale, kept here for backup
+and also maintained to build until 1.10 is ready. Please report problems
+in the forums
+
+========================================================================
+Notes:
+========================================================================
+
+*To build, you need to have all of the gstreamer0.10 packages for your 
+distro, svn, wget, and git (if pulling the tree down) installed, 
+as well as the usual dependencies for building software upon your 
+distro.
+
+*If it gets python errors, make sure you have python2 installed,
+and try the build.sh script again.
+
+*If it doesn't play music, you'll need to copy /usr/lib/gstreamer0.10/*
+into compiled-dist-linux-[your arch]/dist/gst-plugins and then 
+rerun nightingale. It should then play music.
+
+========================================================================
+Building:
+========================================================================
+If on Linux, simply run the build.sh script. It will download the deps
+and build the app for you. 
+
+Ubuntu users should note you'll need:
+libdbus-glib-1-dev
+libgstreamer-plugins-base0.10-dev
+
+If on Mac or Windows, don't use build.sh, 
+instead follow the instructions on the Songbird wiki (you'd be better 
+off running Songbird builds for now anyway, if on Mac or Windows).
 
 ========================================================================
 Contributions:
@@ -29,5 +55,4 @@ Contributors:
 ilikenwf/Matt Parnell
 Mook
 GeekShadow
-stevo
-MattSD
+steveo

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -49,21 +49,21 @@ NS_DECL_CI_INTERFACE_GETTER(sbRemotePlayer)
 static const nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_REMOTEAPI_SERVICE_CLASSNAME,
-    SONGBIRD_REMOTEAPI_SERVICE_CID,
-    SONGBIRD_REMOTEAPI_SERVICE_CONTRACTID,
+    NIGHTINGALE_REMOTEAPI_SERVICE_CLASSNAME,
+    NIGHTINGALE_REMOTEAPI_SERVICE_CID,
+    NIGHTINGALE_REMOTEAPI_SERVICE_CONTRACTID,
     sbRemoteAPIServiceConstructor
   },
   {
-    SONGBIRD_REMOTEPLAYERFACTORY_CLASSNAME,
-    SONGBIRD_REMOTEPLAYERFACTORY_CID,
-    SONGBIRD_REMOTEPLAYERFACTORY_CONTRACTID,
+    NIGHTINGALE_REMOTEPLAYERFACTORY_CLASSNAME,
+    NIGHTINGALE_REMOTEPLAYERFACTORY_CID,
+    NIGHTINGALE_REMOTEPLAYERFACTORY_CONTRACTID,
     sbRemotePlayerFactoryConstructor
   },
   {
-    SONGBIRD_REMOTEPLAYER_CLASSNAME,
-    SONGBIRD_REMOTEPLAYER_CID,
-    SONGBIRD_REMOTEPLAYER_CONTRACTID,
+    NIGHTINGALE_REMOTEPLAYER_CLASSNAME,
+    NIGHTINGALE_REMOTEPLAYER_CID,
+    NIGHTINGALE_REMOTEPLAYER_CONTRACTID,
     sbRemotePlayerConstructor,
     sbRemotePlayer::Register,
     sbRemotePlayer::Unregister,
@@ -71,9 +71,9 @@ static const nsModuleComponentInfo components[] =
     NS_CI_INTERFACE_GETTER_NAME(sbRemotePlayer)
   },
   {
-    SONGBIRD_SECURITYMIXIN_CLASSNAME,
-    SONGBIRD_SECURITYMIXIN_CID,
-    SONGBIRD_SECURITYMIXIN_CONTRACTID,
+    NIGHTINGALE_SECURITYMIXIN_CLASSNAME,
+    NIGHTINGALE_SECURITYMIXIN_CID,
+    NIGHTINGALE_SECURITYMIXIN_CONTRACTID,
     sbSecurityMixinConstructor,
     NULL,
     NULL,
@@ -81,9 +81,9 @@ static const nsModuleComponentInfo components[] =
     NS_CI_INTERFACE_GETTER_NAME(sbSecurityMixin)
   },
   {
-    SONGBIRD_SECURITYEVENT_CLASSNAME,
-    SONGBIRD_SECURITYEVENT_CID,
-    SONGBIRD_SECURITYEVENT_CONTRACTID,
+    NIGHTINGALE_SECURITYEVENT_CLASSNAME,
+    NIGHTINGALE_SECURITYEVENT_CID,
+    NIGHTINGALE_SECURITYEVENT_CONTRACTID,
     sbRemoteSecurityEventConstructor,
     NULL,
     NULL,
@@ -93,5 +93,5 @@ static const nsModuleComponentInfo components[] =
 };
 
 // create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdRemoteAPIModule, components)
+NS_IMPL_NSGETMODULE(NightingaleRemoteAPIModule, components)
 

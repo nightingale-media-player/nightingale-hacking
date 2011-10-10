@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -51,7 +51,7 @@ function createNewLibrary(databaseGuid, databaseLocation) {
   file.append(databaseGuid + ".db");
 
   var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+    Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/LibraryFactory;1"]
       .getService(Ci.sbILibraryFactory);
   var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
                 createInstance(Ci.nsIWritablePropertyBag2);
@@ -64,7 +64,7 @@ function createNewLibrary(databaseGuid, databaseLocation) {
   }
 
   if (library) {
-    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+    var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"].
                          getService(Ci.sbILibraryManager);
     libraryManager.registerLibrary(library, false);
   }
@@ -161,7 +161,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_metadata_tests.tmp");
+  gTempFolder.append("nightingale_metadata_tests.tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }

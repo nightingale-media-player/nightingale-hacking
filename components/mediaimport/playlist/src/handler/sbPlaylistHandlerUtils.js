@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -76,7 +76,7 @@ function SB_DetectCharsetAndProcessFile(aFile, aCallback, aThis) {
   istream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
   istream.QueryInterface(Ci.nsILineInputStream);
 
-  var detector = Cc["@songbirdnest.com/Songbird/CharsetDetector;1"]
+  var detector = Cc["@getnightingale.com/Nightingale/CharsetDetector;1"]
                    .createInstance(Ci.sbICharsetDetector);
   var line = {}, hasmore, charset;
   var value = "";
@@ -211,9 +211,9 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
   if (aItems.length > 0) {
 
     // Create the array of media item content URIs.
-    var uris = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+    var uris = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                  .createInstance(Ci.nsIMutableArray);
-    var libraryUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+    var libraryUtils = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                          .getService(Ci.sbILibraryUtils);
     aItems.forEach(function(e) {
       uris.appendElement(libraryUtils.getContentURI(e.uri), false);
@@ -312,11 +312,7 @@ function SB_ResolveURI(aStringURL, aBaseURI)
   // Ok, it is not a local file.  Try creating a new URI with the base URI
   try {
     var uri = ios.newURI(aStringURL, null, aBaseURI);
-    if ( uri instanceof Ci.nsIFileURL && !uri.file.exists() ) {
-      return null;
-    } else {
-      return uri;
-    }
+    return uri;
   }
   catch(e) {
     // fall through

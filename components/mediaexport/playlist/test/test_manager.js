@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -30,7 +30,7 @@ function runTest () {
 
   var library = createLibrary("test_playlistwritermanager");
 
-  var manager = Cc["@songbirdnest.com/Songbird/PlaylistWriterManager;1"]
+  var manager = Cc["@getnightingale.com/Nightingale/PlaylistWriterManager;1"]
                   .getService(Ci.sbIPlaylistWriterManager);
   var platform = getPlatform();
 
@@ -72,7 +72,7 @@ function runTest () {
   var ioService = Cc["@mozilla.org/network/io-service;1"]
                     .getService(Ci.nsIIOService);
   var temporaryFileService =
-        Cc["@songbirdnest.com/Songbird/TemporaryFileService;1"]
+        Cc["@getnightingale.com/Nightingale/TemporaryFileService;1"]
           .getService(Ci.sbITemporaryFileService);
   var testDir = temporaryFileService.createFile(Ci.nsIFile.DIRECTORY_TYPE);
 

@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the “GPL”).
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ..
@@ -29,26 +29,26 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_XULRUNNER = $(srcdir)/updater.ini
+NIGHTINGALE_XULRUNNER = $(srcdir)/updater.ini
 
-SONGBIRD_DIST = $(srcdir)/blocklist.xml \
+NIGHTINGALE_DIST = $(srcdir)/blocklist.xml \
                 $(srcdir)/updater.ini \
                 $(NULL)
 
 # application.ini handling
-SONGBIRD_PP_RESOURCES = $(srcdir)/application.ini.in \
-                        $(srcdir)/songbird.ini.in \
+NIGHTINGALE_PP_RESOURCES = $(srcdir)/application.ini.in \
+                        $(srcdir)/nightingale.ini.in \
                         $(NULL)
-SONGBIRD_DIST += $(CURDIR)/application.ini \
-                 $(CURDIR)/songbird.ini \
+NIGHTINGALE_DIST += $(CURDIR)/application.ini \
+                 $(CURDIR)/nightingale.ini \
                  $(NULL)
 
 PPDEFINES += $(SB_BRANDING_DEFINES)
 
 ifeq (macosx,$(SB_PLATFORM))
-   SONGBIRD_CONTENTS += $(CURDIR)/Info.plist
-   SONGBIRD_PP_RESOURCES += $(srcdir)/Info.plist.in
-   SONGBIRD_DIST += $(srcdir)/updater.plist
+   NIGHTINGALE_CONTENTS += $(CURDIR)/Info.plist
+   NIGHTINGALE_PP_RESOURCES += $(srcdir)/Info.plist.in
+   NIGHTINGALE_DIST += $(srcdir)/updater.plist
 endif
 
 SUBDIRS = branding \
@@ -58,7 +58,9 @@ SUBDIRS = branding \
           profile \
           $(NULL)
 
+include $(topsrcdir)/$(NIGHTINGALE_BRANDING_DIR)/branding.mk
+
 include $(topsrcdir)/build/rules.mk
 
 libs::
-	$(TOUCH) $(SONGBIRD_DISTDIR)/.autoreg
+	$(TOUCH) $(NIGHTINGALE_DISTDIR)/.autoreg

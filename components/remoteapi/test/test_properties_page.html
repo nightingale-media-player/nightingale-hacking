@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -111,17 +111,13 @@ function runTest(tester) {
       "smartMediaListState",
       "createdFirstRunSmartPlaylists",
       "downloadMediaListGUID",
-      "playQueueMediaListGUID",
       "shouldRip",
       "cdDiscHash",
       "isDRMProtected",
       "lastPlayPosition",
       "playlistURL",
       "attemptedRemoteArtFetch",
-      "dontWriteMetadata",
-      "originIsInMainLibrary",
-      "importType",
-      "lastSyncTime"
+      "dontWriteMetadata"
     ];
 
     // These we can't modify from the WPAPI
@@ -151,7 +147,6 @@ function runTest(tester) {
       "originPageTitle",
       "originLibraryGuid",
       "originItemGuid",
-      "metadataHashIdentity",
       "lastPlayTime",
       "lastSkipTime",
       "originURL",
@@ -168,24 +163,20 @@ function runTest(tester) {
       "listType",
       "createdFirstRunSmartPlaylists",
       "downloadMediaListGUID",
-      "playQueueMediaListGUID",
       "shouldRip",
       "cdDiscHash",
       "isDRMProtected",
       "lastPlayPosition",
       "playlistURL",
       "attemptedRemoteArtFetch",
-      "dontWriteMetadata",
-      "originIsInMainLibrary",
-      "importType",
-      "lastSyncTime"
+      "dontWriteMetadata"
     ];
 
-    var library = songbird.mainLibrary;
+    var library = nightingale.mainLibrary;
     var list = library.createSimpleMediaList("TestList");
     var item = library.createMediaItem("http://example.com/foo");
 
-    var sitelibrary = songbird.siteLibrary;
+    var sitelibrary = nightingale.siteLibrary;
     var sitelist = sitelibrary.createSimpleMediaList("TestSiteList");
     var siteitem = sitelibrary.createMediaItem("http://example.com/foo");
 
@@ -300,8 +291,8 @@ function runTest(tester) {
           // behavior.
           // We should be able to read
           // the contentURL for list and item provided they aren't file: and
-          // currently the list is songbird-medialist:// and the file is
-          // created above as http: If library becomes a songbird-library::
+          // currently the list is nightingale-medialist:// and the file is 
+          // created above as http: If library becomes a nightingale-library::
           // url this test will break and need fixing.
           try {
             // for non-file siteitems and sitelists
@@ -348,7 +339,7 @@ function runTest(tester) {
             // library has it's mediaListName set specifically
             if ( stuff == "mediaListName" ) {
               var val = foo.getProperty(props[stuff]);
-              tester.assertEqual( val, "&chrome://songbird/locale/songbird.properties#servicesource.library" );
+              tester.assertEqual( val, "&chrome://nightingale/locale/nightingale.properties#servicesource.library" );
               tester.log( "property (ro)\t" + stuff + " is: " + val );
             } else {
               // All other properties are so varied we can't do value comparisons
@@ -396,7 +387,7 @@ function runTest(tester) {
     tester.endRemoteAPITest(e);
   }
 
-  songbird.downloadMediaList.clear();
+  nightingale.downloadMediaList.clear();
 
   tester.endRemoteAPITest();
 }

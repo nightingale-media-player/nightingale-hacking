@@ -1,11 +1,11 @@
 // vim: set sw=2 :miv
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 
 /**
@@ -47,7 +47,7 @@ function onRemoteAPI(event) {
   try {
     var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
                 .getService(Ci.nsIStringBundleService);
-    var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+    var nightingaleStrings = sbs.createBundle("chrome://nightingale/locale/nightingale.properties");
     var brandingStrings = sbs.createBundle("chrome://branding/locale/brand.properties");
   } catch (e) {
     /* just abort if we can't find strings.  It's doubtful if we would ever
@@ -60,18 +60,18 @@ function onRemoteAPI(event) {
   var notificationName = "remoteapi-called";
   var message = SBString("rapi.access.message." + event.categoryID,
                          "Web Page has accessed %S directly",
-                         songbirdStrings);
+                         nightingaleStrings);
   var editOptionsLabel = SBString("rapi.access.button.label.options",
                                   "Edit Options...",
-                                  songbirdStrings);
+                                  nightingaleStrings);
   var editOptionsAccessKey = SBString("rapi.access.button.accessKey.options",
                                       "O",
-                                      songbirdStrings);
+                                      nightingaleStrings);
   var allowAlwaysLabel = SBString("rapi.access.button.label.allow.always",
                                   "Always Allow Site",
-                                  songbirdStrings);
+                                  nightingaleStrings);
   var iconURL = SBString("rapi.access.iconURL", "", brandingStrings);
-  var appName = SBString("brandShortName", "Songbird", songbirdStrings);
+  var appName = SBString("brandShortName", "Nightingale", nightingaleStrings);
 
   message = message.replace(/\%S/, appName);
 
@@ -84,7 +84,7 @@ function onRemoteAPI(event) {
                         .getService(nsIPermissionManager);
     permManager.add(closure.siteScope, "rapi." + closure.categoryID, nsIPermissionManager.ALLOW_ACTION);
     
-    var allowEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
+    var allowEvt = Components.classes["@getnightingale.com/remoteapi/security-event;1"]
                      .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
 
     allowEvt.initSecurityEvent( doc,
@@ -99,7 +99,7 @@ function onRemoteAPI(event) {
   }
 
   var editOptionsCallback = function(aHat, aButtonInfo) {
-    var editEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
+    var editEvt = Components.classes["@getnightingale.com/remoteapi/security-event;1"]
                 .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
 
     // this causes an access denied event to be sent to the page
@@ -151,7 +151,7 @@ function onRemoteAPI(event) {
                                                  message, iconURL, priority,
                                                  buttons);
   
-  var defaultEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
+  var defaultEvt = Components.classes["@getnightingale.com/remoteapi/security-event;1"]
                      .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
 
   defaultEvt.initSecurityEvent( doc,

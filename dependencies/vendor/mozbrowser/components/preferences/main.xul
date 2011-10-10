@@ -43,10 +43,10 @@
 <!DOCTYPE overlay [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
   <!ENTITY % mainDTD SYSTEM "chrome://browser/locale/preferences/main.dtd">
-  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
   %brandDTD;
   %mainDTD;
-  %songbirdDTD;
+  %nightingaleDTD;
 ]>
 
 <overlay id="MainPaneOverlay"
@@ -61,7 +61,7 @@
       <!-- XXX Button preferences -->
 
       <!-- Startup -->
-      <!-- XXX SONGBIRD: we always open your previous tabs, don't handle this pref 
+      <!-- XXX NIGHTINGALE: we always open your previous tabs, don't handle this pref
       <preference id="browser.startup.page"
                   name="browser.startup.page"
                   type="int"/>
@@ -103,9 +103,9 @@
 
     <!-- Startup -->
     <groupbox id="startupGroup">
-      <caption label="&prefs.homepage.label;"/>
+      <caption label="&prefs.homepage.label;"/><!-- XXX Nightingale modified string -->
 
-      <!-- XXX SONGBIRD: we always open your previous tabs, don't show this ui 
+      <!-- XXX NIGHTINGALE: we always open your previous tabs, don't show this ui
       <hbox align="center">
         <label value="&startupPage.label;" accesskey="&startupPage.accesskey;"
                control="browserStartupPage"/>
@@ -122,8 +122,8 @@
       <hbox align="center">
         <label value="&prefs.homepage.url.label;"
                accesskey="&prefs.homepage.url.accesskey;"
-               control="browserHomePage"/><!-- XXX Songbird modified string -->
-        <textbox id="browserHomePage" class="padded uri-element" flex="1"
+               control="browserHomePage"/><!-- XXX Nightingale modified string -->
+        <textbox id="browserHomePage" class="padded" flex="1"
                  type="autocomplete" autocompletesearch="history"
                  preference="browser.startup.homepage"/>
       </hbox>
@@ -134,7 +134,7 @@
                 oncommand="gMainPane.setHomePageToCurrent();"
                 id="useCurrent"
                 preference="pref.browser.homepage.disable_button.current_page"/>
-        <!-- XXX SONGBIRD: we don't want this feature anyway
+        <!-- XXX NIGHTINGALE: we don't want this feature anyway
         <button label="&useBookmark.label;" accesskey="&useBookmark.accesskey;"
                 oncommand="gMainPane.setHomePageToBookmark();"
                 id="useBookmark"
@@ -172,7 +172,6 @@
           <filefield id="downloadFolder" flex="1"
                      preference="browser.download.folderList"
                      preference-editable="true"
-                     aria-labelledby="saveTo"
                      onsyncfrompreference="return gMainPane.displayDownloadDirPref();"
                      onsynctopreference="return gMainPane.getFolderListPref()"/>
           <button id="chooseFolder" oncommand="gMainPane.chooseFolder();"

@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<!--
+<!-- 
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,20 +21,20 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 -->
 
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/videoWinControls.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/videoWinControls.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css" title="Skin"?>
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 <window id="video_osd_controls_win"
-        windowtype="Songbird:Core"
-        onload="videoControlsController._initialize();"
-        onunload="videoControlsController._shutdown();"
+        windowtype="Nightingale:Core"
+        onload="videoControlsController._initialize();" 
+        onunload="videoControlsController._shutdown();" 
         onclose="return false;"
         hidechrome="true"
         sb-no-close-on-layout-switch="true"
@@ -43,11 +43,11 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js"/>
+          src="chrome://nightingale/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/videoWindowControls.js"/>
+          src="chrome://nightingale/content/scripts/videoWindowControls.js"/>
 
   <hbox id="osd_wrapper_hbox" pack="center" flex="1">
     <hbox id="osd_border_left" />
@@ -75,8 +75,7 @@
 
               <!-- Full screen button box -->
               <vbox id="osd_fullscreen_control_hbox" flex="0" pack="start">
-                <button id="full_screen_button"
-                        onmouseup="videoControlsController.toggleFullscreen();"/>
+                <button id="full_screen_button" oncommand="videoControlsController.toggleFullscreen();"/>
               </vbox>
             </hbox>
 
@@ -128,8 +127,8 @@
             </stack>
 
             <!-- XXXAus: We add a space before and after to avoid
-                         text rendering issues that cut off the last
-                         digit in the time elapsed display :(
+                         text rendering issues that cut off the last 
+                         digit in the time elapsed display :( 
             -->
             <sb-player-timeelapsed-label class="osd-faceplate-text"
                                          textbefore=" "

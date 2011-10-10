@@ -1,12 +1,12 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -34,7 +34,7 @@
 //
 // Device support services.
 //
-//   These services provide device support for the main Songbird window.
+//   These services provide device support for the main Nightingale window.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ var Ci = Components.interfaces;
 var Cr = Components.results;
 var Cu = Components.utils;
 
-// Songbird imports.
+// Nightingale imports.
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
@@ -120,7 +120,7 @@ var sbDeviceVolumeSupport = {
     this._deviceInfoTable = {};
 
     // Get the device manager.
-    this._deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    this._deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                             .getService(Ci.sbIDeviceEventTarget)
                             .QueryInterface(Ci.sbIDeviceRegistrar);
 
@@ -128,7 +128,7 @@ var sbDeviceVolumeSupport = {
     this._deviceManager.addEventListener(this);
 
     // Add each device.
-    var deviceRegistrar = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    var deviceRegistrar = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                             .getService(Ci.sbIDeviceRegistrar);
     for each (device in ArrayConverter.JSEnum(deviceRegistrar.devices)) {
       this._addDevice(device.QueryInterface(Ci.sbIDevice));
@@ -184,7 +184,6 @@ var sbDeviceVolumeSupport = {
         this._removeDevice(aEvent.data.QueryInterface(Ci.sbIDevice));
         break;
 
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_DEFAULT_LIBRARY_CHANGED :
       case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
       case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
         this._monitorDeviceVolumes(aEvent.origin.QueryInterface(Ci.sbIDevice));
@@ -327,9 +326,6 @@ var sbDeviceVolumeSupport = {
     // Update device notification.
     this._updateNotification(deviceInfo);
 
-    // Update service pane.
-    this._updateServicePane(deviceInfo);
-
     // Check for new volumes.
     this._checkForNewVolumes(deviceInfo);
   },
@@ -440,11 +436,11 @@ var sbDeviceVolumeSupport = {
 
       // Get the volume capacity.
       var capacity = volumeLibrary.getProperty
-                       ("http://songbirdnest.com/device/1.0#capacity");
+                       ("http://getnightingale.com/device/1.0#capacity");
 
       // Produce the notification label.
       storageConverter =
-        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+        Cc["@getnightingale.com/Nightingale/Properties/UnitConverter/Storage;1"]
           .createInstance(Ci.sbIPropertyUnitConverter);
       var label = SBFormattedString
                     ("device.new_volume_notification.label",
@@ -493,7 +489,7 @@ var sbDeviceVolumeSupport = {
 
   _doManageVolumes: function sbDeviceVolumeSupport__doManageVolumes(aDevice) {
     // Get the device service pane node.
-    var dsps = Cc["@songbirdnest.com/servicepane/device;1"]
+    var dsps = Cc["@getnightingale.com/servicepane/device;1"]
                  .getService(Ci.sbIDeviceServicePaneService);
     var deviceNode = dsps.getNodeForDevice(aDevice);
 
@@ -544,32 +540,6 @@ var sbDeviceVolumeSupport = {
       aDeviceInfo.notification.close();
       aDeviceInfo.notification = null;
     }
-  },
-
-  /**
-   * Update the service pane for the device specified by aDeviceInfo. If the
-   * active node is hidden (e.g. switching volumes hides the previously active
-   * volume's library), the device root node will be activated.
-   *
-   * \param aDeviceInfo         Info for device to update.
-   */
-
-  _updateServicePane:
-    function sbDeviceVolumeSupport__updateServicePane(aDeviceInfo)
-  {
-    var selected = gServicePane.activeNode;
-    let invisible = true;
-    if (selected) {
-      invisible = StringSet.contains(selected.className,
-                                       "non-default-library-node");
-    }                                       
-    if (invisible) {
-      // Get the device service pane node.
-      var dsps = Cc["@songbirdnest.com/servicepane/device;1"]
-                   .getService(Ci.sbIDeviceServicePaneService);
-      var deviceNode = dsps.getNodeForDevice(aDeviceInfo.device);
-      gServicePane.activateAndLoadNode(deviceNode, null, null);
-    }
   }
 };
 
@@ -582,7 +552,7 @@ sbDeviceVolumeSupport.initialize();
 //
 // Device transcode support services.
 //
-//   These services provide device transcode support for the main Songbird
+//   These services provide device transcode support for the main Nightingale
 // window.
 //
 //------------------------------------------------------------------------------
@@ -653,18 +623,19 @@ sbDeviceVolumeSupport.initialize();
         accessKey: SBString("transcode.error.notification.detail.accesskey"),
         callback: function(notification, button) {
           let deviceErrorMonitor =
-            Cc["@songbirdnest.com/device/error-monitor-service;1"]
+            Cc["@getnightingale.com/device/error-monitor-service;1"]
               .getService(Ci.sbIDeviceErrorMonitor);
           let errorItems = deviceErrorMonitor.getDeviceErrors(device);
           WindowUtils.openDialog
             (window,
-             "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
+             "chrome://nightingale/content/xul/device/deviceErrorDialog.xul",
              "device_error_dialog",
              "chrome,centerscreen",
              false,
              [ "", device, errorItems, "syncing" ],
              null);
           deviceErrorMonitor.clearErrorsForDevice(device);
+          notificationBox.removeNotification(notification);
           delete notificationTable[device.id];
         },
         popup: null
@@ -673,7 +644,7 @@ sbDeviceVolumeSupport.initialize();
     var notification = notificationBox.appendNotification(
                          msg,
                          event,
-                         "chrome://songbird/skin/device/error.png",
+                         "chrome://nightingale/skin/device/error.png",
                          notificationBox.PRIORITY_CRITICAL_MEDIUM,
                          buttons);
     notificationTable[device.id] = notification;
@@ -682,9 +653,10 @@ sbDeviceVolumeSupport.initialize();
       if (classes.indexOf("messageCloseButton") > -1) {
         // the user clicked on the dismiss button; clear the device errors
         let deviceErrorMonitor =
-          Cc["@songbirdnest.com/device/error-monitor-service;1"]
+          Cc["@getnightingale.com/device/error-monitor-service;1"]
             .getService(Ci.sbIDeviceErrorMonitor);
         deviceErrorMonitor.clearErrorsForDevice(device);
+        notificationBox.removeNotification(notification);
         delete notificationTable[device.id];
       }
     };
@@ -692,7 +664,7 @@ sbDeviceVolumeSupport.initialize();
   }
 
   // attach our device event listener
-  var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+  var deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                         .getService(Ci.sbIDeviceEventTarget);
   deviceManager.addEventListener(deviceManagerListener);
 

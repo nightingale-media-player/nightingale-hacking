@@ -1,12 +1,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 #include "sbTranscodeProgressListener.h"
@@ -29,7 +29,7 @@
 // Mozilla includes
 #include <nsIWritablePropertyBag2.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
 #include <sbIDeviceEvent.h>
@@ -148,7 +148,7 @@ sbTranscodeProgressListener::SetProgress(sbIJobProgress * aJobProgress) {
   sbStatusPropertyValue value;
   double const complete = percentComplete * 100.0;
   value.SetMode(sbStatusPropertyValue::eRipping);
-  value.SetCurrent((PRUint32)complete);
+  value.SetCurrent(complete);
   SetStatusProperty(value);
 
   return NS_OK;
@@ -165,21 +165,11 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
   // OnJobProgress.
   if (!mAborted &&
       mCancel &&
-      mBaseDevice->IsRequestAborted()) {
+      mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
     mAborted = PR_TRUE;
     nsCOMPtr<sbIJobCancelable> cancel = mCancel;
     mCancel = nsnull;
     cancel->Cancel();
-
-    nsresult rv;
-    sbStatusPropertyValue value;
-    value.SetMode(sbStatusPropertyValue::eAborted);
-    rv = SetStatusProperty(value);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = Completed(aJobProgress);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
   }
 
   PRUint16 status;
@@ -251,7 +241,7 @@ sbTranscodeProgressListener::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     // Dispatch the device event
     nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString message;

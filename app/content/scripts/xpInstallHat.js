@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -92,7 +92,7 @@
             }];
           }
   
-          const iconURL = "chrome://songbird/skin/base-elements/icon-generic-addon.png";
+          const iconURL = "chrome://nightingale/skin/base-elements/icon-generic-addon.png";
           // this is just a random notification box so we can get a priority
           var notificationBox = gBrowser.getNotificationBox(gBrowser.getBrowserAtIndex(0));
           const priority = notificationBox.PRIORITY_WARNING_MEDIUM;

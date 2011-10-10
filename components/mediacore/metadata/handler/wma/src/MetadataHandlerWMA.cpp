@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -30,7 +30,7 @@
 // INCLUDES ===================================================================
 #include "MetadataHandlerWMA.h"
 
-/* Songbird interfaces */
+/* Nightingale interfaces */
 #include "sbStandardProperties.h"
 #include "sbIPropertyArray.h"
 #include "sbPropertiesCID.h"
@@ -38,7 +38,6 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbFileUtils.h>
-#include <sbAutoCOMInitializer.h>
 
 #include <nsIChannel.h>
 #include <nsIContentSniffer.h>
@@ -142,7 +141,7 @@
 // and push to the SB interface.
 typedef struct
 {
-  PRUnichar const * const songbirdName;
+  PRUnichar const * const nightingaleName;
   TCHAR const * const wmpName;
   WMT_ATTR_DATATYPE type;
 } metadataKeyMapEntry_t;
@@ -177,6 +176,13 @@ static const metadataKeyMapEntry_t kMetadataKeys[] = {
 };
 #undef KEY_MAP_ENTRY
 
+// HELPER CLASSES =============================================================
+SB_AUTO_CLASS(sbCoInitializeWrapper,
+              HRESULT,
+              SUCCEEDED(mValue),
+              Invalidate(),
+              if (SUCCEEDED(mValue)) {::CoUninitialize();} mValue = E_FAIL);
+
 // CLASSES ====================================================================
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataHandlerWMA,
@@ -194,7 +200,7 @@ sbMetadataHandlerWMA::~sbMetadataHandlerWMA()
 
 NS_IMETHODIMP sbMetadataHandlerWMA::GetContractID(nsACString &aContractID)
 {
-  aContractID.AssignLiteral(SONGBIRD_METADATAHANDLERWMA_CONTRACTID);
+  aContractID.AssignLiteral(NIGHTINGALE_METADATAHANDLERWMA_CONTRACTID);
   return NS_OK;
 }
 
@@ -291,7 +297,7 @@ sbMetadataHandlerWMA::Read(PRInt32* _retval)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(_retval);
-  sbAutoCOMInitializer comInit(COINIT_MULTITHREADED);
+  sbCoInitializeWrapper coinit(::CoInitialize(0));
 
   // We're never asynchronous.
   m_Completed = PR_TRUE;
@@ -327,7 +333,7 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_PropertyArray, NS_ERROR_NOT_INITIALIZED);
 
-  sbAutoCOMInitializer comInit(COINIT_MULTITHREADED);
+  sbCoInitializeWrapper coinit(::CoInitialize(0));
 
   nsresult rv;
   HRESULT hr;
@@ -372,7 +378,7 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   }
   
   for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(kMetadataKeys); ++i) {
-    rv = propArray->GetPropertyValue(nsDependentString(kMetadataKeys[i].songbirdName),
+    rv = propArray->GetPropertyValue(nsDependentString(kMetadataKeys[i].nightingaleName),
                                      value);
     if (NS_LIKELY(rv == NS_ERROR_NOT_AVAILABLE)) {
       // no data
@@ -608,7 +614,7 @@ sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
       // look at the picture to see if it's the right type
       if (picData->bPictureType != aType) {
         // the picture is of a different type, don't override
-        // NOTE: this only works because both Songbird and WMP use the type IDs
+        // NOTE: this only works because both Nightingale and WMP use the type IDs
         // from ID3v1
         continue;
       }
@@ -666,7 +672,7 @@ sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
   nsString emptyString;
   WM_PICTURE newPicData;
   newPicData.pwszMIMEType = contentTypeUnicode.BeginWriting();
-  /* this only works because both songbird and WMA copy the types from id3v1 */
+  /* this only works because both nightingale and WMA copy the types from id3v1 */
   newPicData.bPictureType = aType;
   newPicData.pwszDescription = emptyString.BeginWriting();
   newPicData.pbData = reinterpret_cast<BYTE*>(dataString.BeginWriting());
@@ -819,7 +825,7 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
         PRInt64 intVal = *(reinterpret_cast<QWORD*>(data.get()));
         if (aKey.EqualsLiteral(WMP_LENGTH)) {
           // "Duration" comes in 100-nanosecond chunks. Wow.
-          // Songbird wants it in microseconds.
+          // Nightingale wants it in microseconds.
           intVal /= 10;
         }
 
@@ -834,7 +840,7 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
       case WMT_TYPE_DWORD: {
         PRUint32 intVal = *(reinterpret_cast<DWORD*>(data.get()));
         if (aKey.EqualsLiteral(WMP_BITRATE)) {
-          // Songbird wants bit rate in kbps
+          // Nightingale wants bit rate in kbps
           intVal /= 1000;
         }
         value.AppendInt( intVal );
@@ -894,7 +900,7 @@ sbMetadataHandlerWMA::CreateWMPMediaItem(const nsAString& aFilePath,
 
   // Make our custom playlist
   CComPtr<IWMPPlaylist> playlist;
-  CComBSTR playlistName(_T("SongbirdMetadataPlaylist"));
+  CComBSTR playlistName(_T("NightingaleMetadataPlaylist"));
   hr = player->newPlaylist(playlistName, NULL, &playlist);
   COM_ENSURE_SUCCESS(hr);
 
@@ -956,10 +962,10 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
 
     value = ReadHeaderValue(headerInfo, wmpKey);
 
-    // If there is a value, add it to the Songbird values.
+    // If there is a value, add it to the Nightingale values.
     if (!value.IsEmpty()) {
       nsAutoString sbKey;
-      sbKey.Assign(nsDependentString(kMetadataKeys[index].songbirdName));
+      sbKey.Assign(nsDependentString(kMetadataKeys[index].nightingaleName));
       nsresult rv = m_PropertyArray->AppendProperty(sbKey, value);
       if (NS_SUCCEEDED(rv)) {
         *_retval += 1;
@@ -1021,7 +1027,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
 
     // Special case for length... and others?
     if (key == WMP_LENGTH) {
-      // Songbird needs length in microseconds
+      // Nightingale needs length in microseconds
       double duration;
       hr = newMedia->get_duration(&duration);
       if (FAILED(hr)) {
@@ -1041,10 +1047,10 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
         continue;
       }
       if (key == WMP_BITRATE) {
-        // WMP returns bitrate in bits/sec, Songbird wants kbps/sec
+        // WMP returns bitrate in bits/sec, Nightingale wants kbps/sec
         metadataValue.Assign(value.m_str, value.Length() - 3);
       } else if (key == WMP_PROTECTED) {
-        // Songbird wants (nothing) or "1"
+        // Nightingale wants (nothing) or "1"
         if (value.Length() > 0) {
           metadataValue.AssignLiteral("1");
         }
@@ -1055,7 +1061,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
 
     if (!metadataValue.IsEmpty()) {
       nsAutoString sbKey;
-      sbKey.Assign(nsDependentString(kMetadataKeys[index].songbirdName));
+      sbKey.Assign(nsDependentString(kMetadataKeys[index].nightingaleName));
       nsresult rv =
         m_PropertyArray->AppendProperty(sbKey, metadataValue);
       if (NS_SUCCEEDED(rv))
@@ -1289,7 +1295,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 bytesRead;
-    rv = fileStream->Read((char*)fileData.get(), (PRUint32)fileSize, &bytesRead);
+    rv = fileStream->Read((char*)fileData.get(), fileSize, &bytesRead);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // the stream is actually already closed (CLOSE_ON_EOF), but no harm to be

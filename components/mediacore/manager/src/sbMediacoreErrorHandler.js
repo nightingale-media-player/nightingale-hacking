@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -34,7 +34,7 @@ var errorDialog = null;
 var errorQueue = null;
 
 /******************************************************************************
- * http://bugzilla.songbirdnest.com/show_bug.cgi?id=17812
+ * http://bugzilla.getnightingale.com/show_bug.cgi?id=17812
  * Responsible for passing mediacore errors to the error dialog and making sure
  * only one instance of the dialog is open at any time.
  *****************************************************************************/
@@ -42,9 +42,9 @@ function ErrorHandler() {
 }
 
 ErrorHandler.prototype = {
-  classDescription: "Songbird Mediacore error handler",
+  classDescription: "Nightingale Mediacore error handler",
   classID:          Components.ID("{8bb6de60-a11b-11de-8a39-0800200c9a66}"),
-  contractID:       "@songbirdnest.com/Songbird/MediacoreErrorHandler;1",
+  contractID:       "@getnightingale.com/Nightingale/MediacoreErrorHandler;1",
   QueryInterface:   XPCOMUtils.generateQI([Ci.sbIMediacoreErrorHandler]),
 
   /**
@@ -55,7 +55,7 @@ ErrorHandler.prototype = {
   processError: function ErrorHandler_processError(aError) {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
-    if (Application.prefs.getValue("songbird.mediacore.error.dontshowme",
+    if (Application.prefs.getValue("nightingale.mediacore.error.dontshowme",
                                    false)) {
       return;
     }
@@ -70,7 +70,7 @@ ErrorHandler.prototype = {
       var windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                             .getService(Ci.nsIWindowWatcher);
       errorDialog = windowWatcher.openWindow(windowWatcher.activeWindow,
-        "chrome://songbird/content/xul/mediacore/mediacoreErrorDialog.xul",
+        "chrome://nightingale/content/xul/mediacore/mediacoreErrorDialog.xul",
         null,
         "centerscreen,chrome,resizable,titlebar",
         aError);

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -38,56 +38,56 @@ function runTest () {
   // One level sort, small fetch size, ascending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#trackName", true);
+  array.addSort("http://getnightingale.com/data/1.0#trackName", true);
   array.fetchSize = 1;
   assertSort(array, "data_sort_trackname_asc.txt");
 
   // One level sort, small fetch size, descending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#trackName", false);
+  array.addSort("http://getnightingale.com/data/1.0#trackName", false);
   array.fetchSize = 2;
   assertSort(array, "data_sort_trackname_desc.txt");
 
   // One level sort, large fetch size, ascending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#trackName", true);
+  array.addSort("http://getnightingale.com/data/1.0#trackName", true);
   array.fetchSize = 20;
   assertSort(array, "data_sort_trackname_asc.txt");
 
   // One level sort, large fetch size, descending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#trackName", false);
+  array.addSort("http://getnightingale.com/data/1.0#trackName", false);
   array.fetchSize = 200;
   assertSort(array, "data_sort_trackname_desc.txt");
 
   // One level sort, ascending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#playCount", true);
+  array.addSort("http://getnightingale.com/data/1.0#playCount", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_playcount_asc.txt");
 
   // One level sort, descending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#playCount", false);
+  array.addSort("http://getnightingale.com/data/1.0#playCount", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_playcount_desc.txt");
 
   // One level top level property sort, ascending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#contentURL", true);
+  array.addSort("http://getnightingale.com/data/1.0#contentURL", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_asc.txt");
 
   // One level top level property sort, descending
   array = makeArray(library);
   array.baseTable = "media_items";
-  array.addSort("http://songbirdnest.com/data/1.0#contentURL", false);
+  array.addSort("http://getnightingale.com/data/1.0#contentURL", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_contenturl_desc.txt");
 
@@ -96,7 +96,7 @@ function runTest () {
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
   array.baseConstraintValue = listId;
-  array.addSort("http://songbirdnest.com/data/1.0#ordinal", true);
+  array.addSort("http://getnightingale.com/data/1.0#ordinal", true);
   array.fetchSize = 40;
   assertSort(array, "data_sort_sml101_ordinal_asc.txt");
 
@@ -104,7 +104,7 @@ function runTest () {
   array.baseTable = "simple_media_lists";
   array.baseConstraintColumn = "media_item_id";
   array.baseConstraintValue = listId;
-  array.addSort("http://songbirdnest.com/data/1.0#ordinal", false);
+  array.addSort("http://getnightingale.com/data/1.0#ordinal", false);
   array.fetchSize = 40;
   assertSort(array, "data_sort_sml101_ordinal_desc.txt");
 }

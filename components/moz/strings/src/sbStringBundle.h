@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,17 +32,17 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird string bundle services.
+// Nightingale string bundle services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /** 
  * \file  sbStringBundle.h
- * \brief Songbird String Bundle Definitions.
+ * \brief Nightingale String Bundle Definitions.
  */
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIStringBundleService.h>
 #include <sbStringUtils.h>
 
@@ -53,7 +53,7 @@
 
 
 /**
- *   This class implements the Songbird string bundle object.
+ *   This class implements the Nightingale string bundle object.
  *   This class provides support for including string bundles within string
  * bundles.  A string bundle may specify a list of included string bundles by
  * setting the string "include_bundle_list" to a comma separated list of string
@@ -66,7 +66,7 @@
  *
  * Included string bundle example:
  *
- *   include_bundle_list=chrome://branding/locale/brand.properties,chrome://songbird/locale/other.properties
+ *   include_bundle_list=chrome://branding/locale/brand.properties,chrome://nightingale/locale/other.properties
  *
  * String substitution example:
  *
@@ -89,9 +89,9 @@ public:
   //
 
   /**
-   *   Construct a Songbird string bundle with the string bundle URI specified
-   * by aURI.  If aURI is not specified, use the default Songbird string bundle.
-   *   Upon any failure, ensure that use of the Songbird string bundle is safe.
+   *   Construct a Nightingale string bundle with the string bundle URI specified
+   * by aURI.  If aURI is not specified, use the default Nightingale string bundle.
+   *   Upon any failure, ensure that use of the Nightingale string bundle is safe.
    *
    * \param aURI                  URI of string bundle.
    */
@@ -100,7 +100,7 @@ public:
 
 
   /**
-   *   Construct a Songbird string bundle with the string bundle specified by
+   *   Construct a Nightingale string bundle with the string bundle specified by
    * aBundle.
    */
 
@@ -115,7 +115,7 @@ public:
    *   Get and return the string with the bundle key specified by aKey.  If the
    * string cannot be found, return the string specified by aDefault; if
    * aDefault is not specified, return aKey.
-   *   Upon any failure, ensure that use of the Songbird string bundle is safe.
+   *   Upon any failure, ensure that use of the Nightingale string bundle is safe.
    *
    * \param aKey                  String bundle key.
    * \param aDefault              Default string value.
@@ -169,7 +169,7 @@ public:
 private:
 
   //
-  // mStringBundleService       Songbird string bundle service.
+  // mStringBundleService       Nightingale string bundle service.
   // mBundleList                List of string bundles.
   //
 

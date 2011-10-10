@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,36 +22,36 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /**
  * \file  wizardService.js
- * \brief Javascript source for the Songbird wizard widget services.
+ * \brief Javascript source for the Nightingale wizard widget services.
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird wizard widget services.
+// Nightingale wizard widget services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Songbird wizard widget imported services.
+// Nightingale wizard widget imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird wizard widget services defs.
+// Nightingale wizard widget services defs.
 //
 //------------------------------------------------------------------------------
 
@@ -69,16 +69,16 @@ if (typeof(Cu) == "undefined")
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird wizard widget services.
+// Nightingale wizard widget services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird wizard widget services object for the widget specified
+ * Construct a Nightingale wizard widget services object for the widget specified
  * by aWidget.
  *
- * \param aWidget               Songbird wizard widget.
+ * \param aWidget               Nightingale wizard widget.
  */
 
 function sbWizardSvc(aWidget) {
@@ -93,7 +93,7 @@ sbWizardSvc.prototype = {
   //
   // Internal widget services fields.
   //
-  //   _widget                  Songbird wizard page widget.
+  //   _widget                  Nightingale wizard page widget.
   //   _domEventListenerSet     Set of DOM event listeners.
   //
 
@@ -222,16 +222,16 @@ sbWizardSvc.prototype = {
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird wizard page widget services.
+// Nightingale wizard page widget services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
- * Construct a Songbird wizard page widget services object for the widget
+ * Construct a Nightingale wizard page widget services object for the widget
  * specified by aWidget.
  *
- * \param aWidget               Songbird wizard page widget.
+ * \param aWidget               Nightingale wizard page widget.
  */
 
 function sbWizardPageSvc(aWidget) {
@@ -246,7 +246,7 @@ sbWizardPageSvc.prototype = {
   //
   // Internal widget services fields.
   //
-  //   _widget                  Songbird wizard page widget.
+  //   _widget                  Nightingale wizard page widget.
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _wizardElem              Wizard page wizard element.
   //

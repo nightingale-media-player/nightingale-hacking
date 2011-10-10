@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -31,7 +31,7 @@
 var gFileMetadataService;
 
 function runTest () {
-  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
+  gFileMetadataService = Components.classes["@getnightingale.com/Nightingale/MetadataManager;1"]
                                 .getService(Components.interfaces.sbIMetadataManager);
   
   // the name to use, per-platform (or "*" for unknown)
@@ -45,7 +45,7 @@ function runTest () {
                 "!@%23$%25%5e&(),_+%20test%e4%b8%ad%0a%e6%96%87.mp3"]
   };
   
-  var platform = Components.classes["@mozilla.org/xre/runtime;1"]
+  var platform = Components.classes["@mozilla.org/xre/app-info;1"]
                            .getService(Components.interfaces.nsIXULRuntime)
                            .OS;
   if (!(platform in filenames)) {
@@ -67,7 +67,7 @@ function runTest () {
   
   // Verify that initially all properties are X
   var expectedProperties = {};
-  expectedProperties[SBProperties.artistName] = "Songbird";
+  expectedProperties[SBProperties.artistName] = "Nightingale";
   expectedProperties[SBProperties.albumName] = "Unit Test Classics";
   expectedProperties[SBProperties.trackName] = "Sample";
   

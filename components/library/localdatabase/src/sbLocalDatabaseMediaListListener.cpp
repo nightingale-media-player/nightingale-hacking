@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -37,9 +37,7 @@
 #include <nsAutoLock.h>
 #include <nsHashKeys.h>
 #include <nsThreadUtils.h>
-#include <nsServiceManagerUtils.h>
-
-#include <sbProxiedComponentManager.h>
+#include <sbProxyUtils.h>
 
 #ifdef DEBUG
 #include <nsIXPConnect.h>
@@ -150,12 +148,6 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
     aFlags = sbIMediaList::LISTENER_FLAGS_ALL;
   }
 
-  // Acquiring the proxied proxy object manager will spin the event loop, so
-  // we need to do it before acquiring mListenerArrayLock
-  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
-      do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsAutoLock lock(mListenerArrayLock);
 
   // See if we have already added this listener.
@@ -188,11 +180,11 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
   if (aOwnsWeak) {
     nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = info->Init(proxyObjMgr, weak, mBatchDepth, aFlags, aPropertyFilter);
+    rv = info->Init(weak, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = info->Init(proxyObjMgr, aListener, mBatchDepth, aFlags, aPropertyFilter);
+    rv = info->Init(aListener, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -226,7 +218,7 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbLocalDatabaseMediaListBase* a
   NS_ENSURE_ARG_POINTER(aListener);
   nsresult rv;
 
-  PRUint32 batchDepth = 0;
+  PRUint32 batchDepth;
   {
     nsAutoLock lock(mListenerArrayLock);
 
@@ -379,7 +371,7 @@ sbLocalDatabaseMediaListListener::SweepListenerArray(sbStopNotifyArray& aStopNot
   PRTime __now = PR_Now();
 
 #define SB_NOTIFY_LOG_STOP_TIMER                                          \
-  PRUint32 __delta = (PRUint32)(PR_Now() - __now);
+  PRUint32 __delta = PR_Now() - __now;
 #else
 
 #define SB_NOTIFY_LOG_COUNT(method)
@@ -639,13 +631,11 @@ sbListenerInfo::~sbListenerInfo()
 }
 
 nsresult
-sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
-                     sbIMediaListListener* aListener,
+sbListenerInfo::Init(sbIMediaListListener* aListener,
                      PRUint32 aCurrentBatchDepth,
                      PRUint32 aFlags,
                      sbIPropertyArray* aPropertyFilter)
 {
-  NS_ENSURE_ARG_POINTER(aProxyObjMgr);
   NS_ASSERTION(aListener, "aListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
@@ -663,14 +653,11 @@ sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
 
   InitPropertyFilter(aPropertyFilter);
 
-  /* This function is called with a lock held, so we must not spin the event
-     loop - so we use this variant of do_GetProxyForObject that does not */
-  rv = do_GetProxyForObjectWithManager(aProxyObjMgr,
-                                       NS_PROXY_TO_CURRENT_THREAD,
-                                       NS_GET_IID(sbIMediaListListener),
-                                       aListener,
-                                       NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                       getter_AddRefs(mProxy));
+  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                            NS_GET_IID(sbIMediaListListener),
+                            aListener,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef PR_LOGGING
@@ -682,13 +669,11 @@ sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
 }
 
 nsresult
-sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
-                     nsIWeakReference* aWeakListener,
+sbListenerInfo::Init(nsIWeakReference* aWeakListener,
                      PRUint32 aCurrentBatchDepth,
                      PRUint32 aFlags,
                      sbIPropertyArray* aPropertyFilter)
 {
-  NS_ENSURE_ARG_POINTER(aProxyObjMgr);
   NS_ASSERTION(aWeakListener, "aWeakListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
@@ -711,15 +696,11 @@ sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
     new sbWeakMediaListListenerWrapper(mWeak);
   NS_ENSURE_TRUE(wrapped, NS_ERROR_OUT_OF_MEMORY);
 
-  /* This function is called with a lock held, so we must not spin the event
-     loop - so we use this variant of do_GetProxyForObject that guarantees we
-     don't */
-  rv = do_GetProxyForObjectWithManager(aProxyObjMgr,
-                                       NS_PROXY_TO_CURRENT_THREAD,
-                                       NS_GET_IID(sbIMediaListListener),
-                                       wrapped,
-                                       NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                       getter_AddRefs(mProxy));
+  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                            NS_GET_IID(sbIMediaListListener),
+                            wrapped,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef PR_LOGGING

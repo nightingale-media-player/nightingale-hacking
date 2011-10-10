@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 #define SB_LOCALDATABASE_GUIDARRAY_DESCRIPTION                        \
   "Local Database GUID Array"
 #define SB_LOCALDATABASE_GUIDARRAY_CONTRACTID                         \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"
 #define SB_LOCALDATABASE_GUIDARRAY_CID                                \
   { /* c7d2688a-b214-46be-9083-d394ea6ab018 */                        \
     0xc7d2688a,                                                       \
@@ -38,7 +38,7 @@
 #define SB_LOCALDATABASE_ASYNCGUIDARRAY_DESCRIPTION                   \
   "Local Database Async GUID Array"
 #define SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID                    \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/AsyncGUIDArray;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/AsyncGUIDArray;1"
 #define SB_LOCALDATABASE_ASYNCGUIDARRAY_CID                           \
   { /* 590b758a-aa00-41e4-8b41-4ef002a6b31d */                        \
     0x590b758a,                                                       \
@@ -50,7 +50,7 @@
 #define SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION                   \
   "Local Database Library Factory"
 #define SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID                    \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/LibraryFactory;1"
 #define SB_LOCALDATABASE_LIBRARYFACTORY_CID                           \
   { /* f7035bf4-3eae-4733-991e-ea5800672101 */                        \
     0xf7035bf4,                                                       \
@@ -60,9 +60,9 @@
   }
 
 #define SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION                   \
-  "Songbird Local Database Library Loader"
+  "Nightingale Local Database Library Loader"
 #define SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID                    \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/Loader;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/Loader;1"
 #define SB_LOCALDATABASE_LIBRARYLOADER_CID                           \
 { /* aa55f918-cb84-45e6-9827-9c22d3e9f92d */                         \
   0xaa55f918,                                                        \
@@ -74,7 +74,7 @@
 #define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION          \
   "Local Database Simple Media List Factory"
 #define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID           \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/SimpleMediaListFactory;1"
 #define SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID                  \
   { /* 6b9b9718-05b4-4ee3-ab09-a9d575f4c2aa */                       \
     0x6b9b9718,                                                      \
@@ -86,7 +86,7 @@
 #define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_DESCRIPTION           \
   "Local Database Smart Media List Factory"
 #define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CONTRACTID            \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/SmartMediaListFactory;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/SmartMediaListFactory;1"
 #define SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID                   \
   { /* 89cc7c59-2d70-4d6f-8472-59e15f2a3581 */                       \
     0x89cc7c59,                                                      \
@@ -98,7 +98,7 @@
 #define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_DESCRIPTION         \
   "Local Database Dyanmic Media List Factory"
 #define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID          \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicMediaListFactory;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/DynamicMediaListFactory;1"
 #define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID                 \
   { /* 1dcff5da-9a36-46d7-87fd-a6f0d0ec081f */                       \
     0x1dcff5da,                                                      \
@@ -110,7 +110,7 @@
 #define SB_LOCALDATABASE_MEDIALISTVIEWSTATE_DESCRIPTION              \
   "Local Database Media List View State"
 #define SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CONTRACTID               \
-  "@songbirdnest.com/Songbird/Library/LocalDatabase/MediaListViewState;1"
+  "@getnightingale.com/Nightingale/Library/LocalDatabase/MediaListViewState;1"
 #define SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID                      \
   { /* 9a1a9305-ca11-4067-aa24-baeb64231dfa */                       \
     0x9a1a9305,                                                      \
@@ -121,9 +121,9 @@
 
 
 #define SB_LOCALDATABASE_DIFFINGSERVICE_DESCRIPTION                  \
-  "Songbird Library Diffing Service"
+  "Nightingale Library Diffing Service"
 #define SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID                   \
-  "@songbirdnest.com/Songbird/Library/DiffingService;1"              
+  "@getnightingale.com/Nightingale/Library/DiffingService;1"              
 #define SB_LOCALDATABASE_DIFFINGSERVICE_CLASSNAME                    \
   "sbLibraryDiffingService"
 #define SB_LOCALDATABASE_DIFFINGSERVICE_CID                          \

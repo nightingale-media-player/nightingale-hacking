@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,18 +22,18 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
  * \file  sbLocalDatabaseDynamicMediaListFactory.cpp
- * \brief Songbird Local Database Dynamic Media List Factory Source.
+ * \brief Nightingale Local Database Dynamic Media List Factory Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list factory imported services.
+// Nightingale dynamic media list factory imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list factory nsISupports implementation.
+// Nightingale dynamic media list factory nsISupports implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ NS_IMPL_ISUPPORTS1(sbLocalDatabaseDynamicMediaListFactory, sbIMediaListFactory)
 
 //------------------------------------------------------------------------------
 //
-// Songbird dynamic media list factory sbIMediaListFactory implementation.
+// Nightingale dynamic media list factory sbIMediaListFactory implementation.
 //
 //------------------------------------------------------------------------------
 

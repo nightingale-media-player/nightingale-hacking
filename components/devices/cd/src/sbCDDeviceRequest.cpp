@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 // Self imports.
 #include "sbCDDevice.h"
 #include "sbCDDeviceDefines.h"
 
-// Songbird imports.
+// Local imports
+#include "sbCDLog.h"
+
+// Nightingale imports.
 #include <sbArray.h>
 #include <sbDeviceTranscoding.h>
 #include <sbDeviceUtils.h>
@@ -36,6 +39,7 @@
 #include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventTarget.h>
+#include <sbIMediaManagementService.h>
 #include <sbITranscodeAlbumArt.h>
 #include <sbLibraryUtils.h>
 #include <sbPrefBranch.h>
@@ -46,12 +50,10 @@
 #include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStatusPropertyValue.h>
-#include <sbDeviceStatusHelper.h>
 #include <sbTranscodeProgressListener.h>
 #include <sbVariantUtils.h>
 #include <sbStandardProperties.h>
 #include <sbWatchFolderUtils.h>
-#include <sbDebugUtils.h>
 
 // Mozilla imports.
 #include <nsCRT.h>
@@ -145,15 +147,12 @@ private:
 
 //------------------------------------------------------------------------------
 
-void
-sbCDDevice::InitRequestHandler()
-{
-  SB_PRLOG_SETUP(sbCDDeviceRequest);
-}
-
 nsresult
-sbCDDevice::ProcessBatch(Batch & aBatch)
+sbCDDevice::ReqHandleRequestAdded()
 {
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
   // Operate under the connect lock.
   sbAutoReadLock autoConnectLock(mConnectLock);
   NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
@@ -161,11 +160,31 @@ sbCDDevice::ProcessBatch(Batch & aBatch)
   // Function variables.
   nsresult rv;
 
+  // Prevent re-entrancy.  This can happen if some API waits and runs events on
+  // the request thread.  Do nothing if already handling requests.  Otherwise,
+  // indicate that requests are being handled and set up to automatically set
+  // the handling requests flag to false on exit.  This check is only done on
+  // the request thread, so locking is not required.
+  if (mIsHandlingRequests) {
+    return NS_OK;
+  }
+  mIsHandlingRequests = PR_TRUE;
+  sbCDAutoFalse autoIsHandlingRequests(&mIsHandlingRequests);
+
+  // Start processing of the next request batch and set to automatically
+  // complete the current request on exit.
+  sbBaseDevice::Batch requestBatch;
+  rv = StartNextRequest(requestBatch);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (requestBatch.empty())
+    return NS_OK;
+  sbAutoDeviceCompleteCurrentRequest autoComplete(this);
+
   // Set up to automatically set the state to STATE_IDLE on exit.  Any device
   // operation must change the state to not be idle.  This ensures that the
   // device is not prematurely removed (e.g., ejected) while the device content
   // is being accessed.
-  sbDeviceStatusAutoState autoState(mStatus, STATE_IDLE);
+  sbDeviceStatusAutoState autoState(&mStatus, STATE_IDLE);
 
   // Snapshot the preferences to be used by the operations in this batch
   sbPrefBranch prefBranch(PREF_CDDEVICE_RIPBRANCH, &rv);
@@ -174,95 +193,108 @@ sbCDDevice::ProcessBatch(Batch & aBatch)
   mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
                                             PR_FALSE);
 
-  // Process each request in the batch
-  const Batch::const_iterator end = aBatch.end();
-  for (Batch::const_iterator iter = aBatch.begin();
-       iter != end;
-       ++iter) {
-    // Check for abort.
-    if (IsRequestAborted()) {
-
-      PRBool isDeviceLocked = PR_FALSE;
-      rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (isDeviceLocked) {
-        rv = mCDDevice->UnlockDevice();
+  // If the batch isn't empty, process the batch
+  while (!requestBatch.empty()) {
+    // Process each request in the batch
+    Batch::iterator const end = requestBatch.end();
+    Batch::iterator iter = requestBatch.begin();
+    while (iter != end) {
+      // Check for abort.
+      if (ReqAbortActive()) {
+        rv = RemoveLibraryItems(iter, end);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool isDeviceLocked = PR_FALSE;
+        rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (isDeviceLocked) {
+          rv = mCDDevice->UnlockDevice();
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        // Don't keep a cached profile after an abort.
+        mTranscodeProfile = nsnull;
+        return NS_ERROR_ABORT;
       }
 
+      TransferRequest * request = iter->get();
+
+      // Dispatch processing of request.
+      LOG(("sbCDDevice::ReqHandleRequestAdded 0x%08x\n", request->type));
+      switch(request->type)
+      {
+        case TransferRequest::REQUEST_MOUNT :
+          mStatus.ChangeState(STATE_MOUNTING);
+          rv = ReqHandleMount(request);
+          NS_ENSURE_SUCCESS(rv, rv);
+        break;
+
+        case TransferRequest::REQUEST_READ :
+          mStatus.ChangeState(STATE_TRANSCODE);
+
+          rv = ReqHandleRead(request);
+          if (rv != NS_ERROR_ABORT) {
+            // Warn of any errors
+            NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+              "Could not read a track off of disc!");
+          }
+          break;
+
+        case TransferRequest::REQUEST_EJECT:
+          rv = Eject();
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
+          break;
+
+        case sbICDDeviceEvent::REQUEST_CDLOOKUP:
+          rv = AttemptCDLookup();
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup CD data!");
+          break;
+
+        case TransferRequest::REQUEST_UPDATE:
+          rv = ReqHandleUpdate(request);
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not update CD data!");
+          break;
+
+        default :
+          NS_WARNING("Unsupported request type.");
+          break;
+      }
+      if (iter != end) {
+        requestBatch.erase(iter);
+        iter = requestBatch.begin();
+      }
+    }
+
+    PRBool isAborted = (rv == NS_ERROR_ABORT);
+
+    // If the device is currently locked, unlock it here.
+    // Always unlock before checking the result of the read request.
+    PRBool isDeviceLocked = PR_FALSE;
+    rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isDeviceLocked) {
+      rv = mCDDevice->UnlockDevice();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // If one of the above operatons returned |NS_ERROR_ABORT|, we need to
+    // bail out of this method.
+    if (isAborted) {
       // Don't keep a cached profile after an abort.
       mTranscodeProfile = nsnull;
       return NS_ERROR_ABORT;
     }
 
-    TransferRequest * requestItem = static_cast<TransferRequest*>(*iter);
-    const PRUint32 type = requestItem->GetType();
+    // Complete the current request and forget auto-completion.
+    CompleteCurrentRequest();
+    autoComplete.forget();
 
-    rv = NS_OK;
-    // Dispatch processing of request.
-    LOG("sbCDDevice::ReqHandleRequestAdded 0x%08x\n", type);
-    switch (type)
-    {
-      case TransferRequest::REQUEST_MOUNT :
-        mStatus->ChangeState(STATE_MOUNTING);
-        rv = ReqHandleMount(requestItem);
-        NS_ENSURE_SUCCESS(rv, rv);
-      break;
-
-      case TransferRequest::REQUEST_READ :
-        mStatus->ChangeState(STATE_TRANSCODE);
-
-        rv = ReqHandleRead(requestItem, aBatch.CountableItems());
-        if (rv != NS_ERROR_ABORT) {
-          // Warn of any errors
-          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-            "Could not read a track off of disc!");
-        }
-        break;
-
-      case TransferRequest::REQUEST_EJECT:
-        rv = Eject();
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
-        break;
-
-      case sbICDDeviceEvent::REQUEST_CDLOOKUP:
-        rv = AttemptCDLookup();
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup CD data!");
-        break;
-
-      case TransferRequest::REQUEST_UPDATE:
-        rv = ReqHandleUpdate(requestItem);
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not update CD data!");
-        break;
-
-      default :
-        NS_WARNING("Unsupported request type.");
-        break;
-    }
-    // null out the current request since it's completed
-    if (NS_SUCCEEDED(rv)) {
-      requestItem->SetIsProcessed(PR_TRUE);
-    }
-  }
-
-  PRBool isAborted = (rv == NS_ERROR_ABORT);
-
-  // If the device is currently locked, unlock it here.
-  // Always unlock before checking the result of the read request.
-  PRBool isDeviceLocked = PR_FALSE;
-  rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (isDeviceLocked) {
-    rv = mCDDevice->UnlockDevice();
+    // Start processing of the next request batch and set to automatically
+    // complete the current request on exit.
+    rv = StartNextRequest(requestBatch);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // If one of the above operatons returned |NS_ERROR_ABORT|, we need to
-  // bail out of this method.
-  if (isAborted) {
-    // Don't keep a cached profile after an abort.
-    mTranscodeProfile = nsnull;
-    return NS_ERROR_ABORT;
+    if (!requestBatch.empty())
+      autoComplete.Set(this);
   }
 
   return NS_OK;
@@ -278,24 +310,20 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   nsresult rv;
 
   // Log progress.
-  LOG("Enter sbCDDevice::ReqHandleMount \n");
+  LOG(("Enter sbCDDevice::ReqHandleMount \n"));
 
   // Set up to auto-disconnect in case of error.
   SB_CD_DEVICE_AUTO_INVOKE(AutoDisconnect, Disconnect()) autoDisconnect(this);
 
-  TransferRequest * request = static_cast<TransferRequest*>(aRequest);
-
   // Update status and set for auto-failure.
   sbDeviceStatusAutoOperationComplete autoStatus(
-                                    mStatus,
+                                    &mStatus,
                                     sbDeviceStatusHelper::OPERATION_TYPE_MOUNT,
-                                    request,
-                                    0);
-
+                                    aRequest);
 
   // Get the volume to mount.
   nsRefPtr<sbBaseDeviceVolume> volume;
-  rv = GetVolumeForItem(request->list, getter_AddRefs(volume));
+  rv = GetVolumeForItem(aRequest->list, getter_AddRefs(volume));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the volume info.
@@ -329,7 +357,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
 
-  LOG("Exit sbCDDevice::ReqHandleMount\n");
+  LOG(("Exit sbCDDevice::ReqHandleMount\n"));
   return NS_OK;
 }
 
@@ -404,7 +432,7 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   rv = GetMediaProperties(getter_AddRefs(newPropsArray));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
   // Clear out any previous information.
   rv = mDeviceLibrary->Clear();
@@ -443,7 +471,7 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> list =
-        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+        do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1",
                           &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -470,7 +498,7 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 index = 0; index < length; ++index) {
-    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
     entry = do_QueryElementAt(tracks, index, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -532,7 +560,7 @@ sbCDDevice::GetMediaProperties(nsIArray ** aPropertyList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 index = 0; index < length; ++index) {
-    NS_ENSURE_FALSE(IsRequestAborted(), NS_ERROR_ABORT);
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
     entry = do_QueryElementAt(tracks, index, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -591,7 +619,7 @@ sbCDDevice::ProxyCDLookup() {
   nsresult rv;
 
   // Update the status
-  rv = mStatus->ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
+  rv = mStatus.ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Dispatch the event to notify listeners that we're about to start
@@ -601,7 +629,7 @@ sbCDDevice::ProxyCDLookup() {
 
   // Get the metadata manager and the default provider
   nsCOMPtr<sbIMetadataLookupManager> mlm =
-    do_GetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/MetadataLookup/manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   nsCOMPtr<sbIMetadataLookupProvider> provider;
@@ -621,7 +649,7 @@ sbCDDevice::ProxyCDLookup() {
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Initiate the metadata lookup
-  LOG("Querying metadata lookup provider for disc");
+  LOG(("Querying metadata lookup provider for disc"));
   nsCOMPtr<sbIMetadataLookupJob> job;
   rv = provider->QueryDisc(toc, getter_AddRefs(job));
   if (NS_SUCCEEDED(rv) && job) {
@@ -673,7 +701,7 @@ sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
 
   // Build out the dialog arguments.
   nsCOMPtr<nsIMutableArray> args =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Always send over the device's library.
@@ -738,7 +766,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
 {
   nsresult rv;
 
-  rv = mStatus->ChangeState(STATE_IDLE);
+  rv = mStatus.ChangeState(STATE_IDLE);
 
   PRUint16 numResults = 0;
   nsCOMPtr<nsISimpleEnumerator> metadataResultsEnum;
@@ -759,7 +787,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
                            sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
   }
 
-  LOG("Number of metadata lookup results found: %d", numResults);
+  LOG(("Number of metadata lookup results found: %d", numResults));
   // 3 cases to match up
   if (numResults == 1) {
     // Exactly 1 match found, automatically populate all the tracks with
@@ -872,7 +900,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
   // If the album name is known, start an artwork scan.
   if (!albumNameUnknown) {
     nsCOMPtr<sbIAlbumArtScanner> artworkScanner =
-      do_CreateInstance("@songbirdnest.com/Songbird/album-art/scanner;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/album-art/scanner;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Update any artwork already present.
@@ -984,19 +1012,18 @@ sbCDDevice::GenerateFilename(sbIMediaItem *aItem,
 }
 
 nsresult
-sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
+sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
 
-  LOG("Enter sbMSCDeviceBase::ReqHandleRead\n");
+  LOG(("Enter sbMSCDeviceBase::ReqHandleRead\n"));
 
   nsresult rv;
 
   sbDeviceStatusAutoOperationComplete autoComplete
-                                     (mStatus,
+                                     (&mStatus,
                                       sbDeviceStatusHelper::OPERATION_TYPE_READ,
-                                      aRequest,
-                                      aBatchCount);
+                                      aRequest);
 
   // Ensure that the device is locked during a read operation.
   sbCDAutoDeviceLocker autoDeviceLocker(mCDDevice);
@@ -1032,23 +1059,13 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
     // the tracks as they're created. This avoids the problem where
     // tracks are marked with the wrong bitrate if the user changes
     // his transcoding prefs after inserting a cd.
+    PRUint32 bitrate;
+    GetBitrateFromProfile(&bitrate);
     mTranscodeBitrateStr.Truncate();
-    nsCOMPtr<nsIVariant> bitrateVariant;
-    rv = GetDeviceTranscodingProperty(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
-                                      NS_LITERAL_STRING("bitrate"),
-                                      getter_AddRefs(bitrateVariant));
-    if (NS_SUCCEEDED(rv) && bitrateVariant) {
-      PRUint32 bitrate;
-      rv = bitrateVariant->GetAsUint32(&bitrate);
-      if (NS_SUCCEEDED(rv))
-        mTranscodeBitrateStr.AppendInt(bitrate/1000);
-    }
+    mTranscodeBitrateStr.AppendInt(bitrate/1000);
   }
 
-  if (!mTranscodeBitrateStr.IsEmpty()) {
-    destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
-                             mTranscodeBitrateStr);
-  }
+  destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), mTranscodeBitrateStr);
 
   nsCOMPtr<nsIURI> sourceContentURI;
   rv = source->GetContentSrc(getter_AddRefs(sourceContentURI));
@@ -1090,7 +1107,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   }
 
   nsCOMPtr<sbITranscodeJob> tcJob = do_CreateInstance(
-          "@songbirdnest.com/Songbird/Mediacore/Transcode/GStreamer;1", &rv);
+          "@getnightingale.com/Nightingale/Mediacore/Transcode/GStreamer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThread> target;
@@ -1149,7 +1166,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbITranscodeAlbumArt> albumArt = do_CreateInstance(
-          SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
+          NIGHTINGALE_TRANSCODEALBUMART_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> imageFormats = do_CreateInstance(
@@ -1179,15 +1196,12 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
 
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(proxiedJob);
 
-  PRMonitor * const stopWaitMonitor =
-    mRequestThreadQueue->GetStopWaitMonitor();
-
   // Create our listener for transcode progress.
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(this,
-                                     mStatus,
+                                     &mStatus,
                                      aRequest->item,
-                                     stopWaitMonitor,
+                                     mReqWaitMonitor,
                                      statusProperty,
                                      cancel);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
@@ -1213,7 +1227,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
-    nsAutoMonitor monitor(stopWaitMonitor);
+    nsAutoMonitor monitor(mReqWaitMonitor);
 
     // Check if the job is complete.
     isComplete = listener->IsComplete();
@@ -1255,8 +1269,8 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
           break;
 
         // Log the error message.
-        LOG("sbCDDevice::ReqTranscodeWrite error %s\n",
-             NS_ConvertUTF16toUTF8(errorMessage).get());
+        LOG(("sbCDDevice::ReqTranscodeWrite error %s\n",
+             NS_ConvertUTF16toUTF8(errorMessage).get()));
 
         // Check for more error messages.
         rv = errorMessageEnum->HasMore(&hasMore);
@@ -1268,13 +1282,14 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
 #endif
 
   if (status == sbIJobProgress::STATUS_SUCCEEDED) {
-    // Update the destination item content length.
-    sbLibraryUtils::GetContentLength(destination);
-
-    // Show the destination item.
-    rv = destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                  NS_LITERAL_STRING("0"));
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Show the item.
+    {
+      IgnoreMediaItem(aRequest->item);
+      sbCDAutoIgnoreItem autoUnignore(this, aRequest->item);
+      rv = aRequest->item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                       NS_LITERAL_STRING("0"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     // Clear auto-removal of media file.
     autoRemoveMediaFile.forget();
@@ -1286,11 +1301,9 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
     rv = NS_ERROR_FAILURE;
   }
 
-  const PRUint32 batchIndex  = aRequest->GetBatchIndex() + 1;
-
   // We need to check if this is the last item to be ripped, if so check for
   // AutoEject.
-  if (batchIndex == aBatchCount) {
+  if (aRequest->batchIndex == aRequest->batchCount) {
     nsresult rv2;
     mTranscodeProfile = nsnull;
 
@@ -1301,3 +1314,45 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   return rv;
 }
 
+nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIArray> properties;
+  rv = mTranscodeProfile->GetAudioProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> propEnumerator;
+  rv = properties->Enumerate(getter_AddRefs(propEnumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool more = PR_FALSE;
+  rv = propEnumerator->HasMoreElements(&more);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  while (more)
+  {
+    nsCOMPtr<sbITranscodeProfileProperty> property;
+    rv = propEnumerator->GetNext(getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString profilePropName;
+    rv = property->GetPropertyName(profilePropName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (profilePropName.Equals(NS_LITERAL_STRING("bitrate")))
+    {
+      nsCOMPtr<nsIVariant> valueVariant;
+      rv = property->GetValue(getter_AddRefs(valueVariant));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = valueVariant->GetAsUint32(bitrate);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = propEnumerator->HasMoreElements(&more);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}

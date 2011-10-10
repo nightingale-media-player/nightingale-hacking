@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsIGenericFactory.h"
@@ -29,8 +29,6 @@
 #include "sbDurationPropertyInfo.h"
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbImagePropertyBuilder.h"
-#include "sbImageLabelLinkPropertyBuilder.h"
-#include "sbImageLabelLinkPropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
 #include "sbPropertyArray.h"
 #include "sbPropertyFactory.h"
@@ -50,18 +48,16 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyFactory);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyOperator);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDatetimePropertyInfo, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDurationPropertyInfo, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbNumberPropertyInfo, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTextPropertyInfo, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbURIPropertyInfo, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImageLabelLinkPropertyInfo, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDatetimePropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDurationPropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbBooleanPropertyInfo, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDownloadButtonPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStatusPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSimpleButtonPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImagePropertyBuilder, Init);
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImageLabelLinkPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRatingPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbOriginPageImagePropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbStoragePropertyUnitConverter);
@@ -147,22 +143,10 @@ static const nsModuleComponentInfo components[] =
     sbSimpleButtonPropertyBuilderConstructor
   },
   {
-    SB_SBIMAGELABELLINKPROPERTYINFO_DESCRIPTION,
-    SB_SBIMAGELABELLINKPROPERTYINFO_CID,
-    SB_SBIMAGELABELLINKPROPERTYINFO_CONTRACTID,
-    sbImageLabelLinkPropertyInfoConstructor
-  },
-  {
     SB_IMAGEPROPERTYBUILDER_DESCRIPTION,
     SB_IMAGEPROPERTYBUILDER_CID,
     SB_IMAGEPROPERTYBUILDER_CONTRACTID,
     sbImagePropertyBuilderConstructor
-  },
-  {
-    SB_SBIMAGELABELLINKPROPERTYBUILDER_DESCRIPTION,
-    SB_SBIMAGELABELLINKPROPERTYBUILDER_CID,
-    SB_SBIMAGELABELLINKPROPERTYBUILDER_CONTRACTID,
-    sbImageLabelLinkPropertyBuilderConstructor
   },
   {
     SB_RATINGPROPERTYBUILDER_DESCRIPTION,
@@ -184,4 +168,4 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdPropertiesModule, components)
+NS_IMPL_NSGETMODULE(NightingalePropertiesModule, components)

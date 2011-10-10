@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -46,7 +46,7 @@
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/FolderUtils.jsm");
 
@@ -116,7 +116,7 @@ firstRunImportMediaSvc.prototype = {
     this._selectDefaultScanDirectory();
 
     // Determine whether the watch folder services are available.
-    var watchFolderService = Cc["@songbirdnest.com/watch-folder-service;1"]
+    var watchFolderService = Cc["@getnightingale.com/watch-folder-service;1"]
                                .getService(Ci.sbIWatchFolderService);
     this._watchFolderAvailable = watchFolderService.isSupported;
 
@@ -140,9 +140,16 @@ firstRunImportMediaSvc.prototype = {
    */
 
   saveSettings: function firstRunImportMediaSvc_saveSettings() {
+    // If the user didn't visit this first-run page, then skip saving settings
+    // or setting metrics
+    if (document.getElementById("first_run_itunes_page").getAttribute("next")
+        != "first_run_import_media_page") {
+      return;
+    }
+
     // Dispatch processing of the import settings radio group.
     var importRadioGroupElem = this._getElement("import_radiogroup");
-    var metricsImportType;
+	var metricsImportType;
     switch (importRadioGroupElem.value) {
       case "scan_directories" :
         this._saveScanDirectoriesSettings();
@@ -154,7 +161,7 @@ firstRunImportMediaSvc.prototype = {
         break;
     }
     
-    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    var metrics = Cc["@getnightingale.com/Nightingale/Metrics;1"]
                     .createInstance(Ci.sbIMetrics);
     metrics.metricsInc("firstrun", "mediaimport", metricsImportType);
   },
@@ -291,9 +298,9 @@ firstRunImportMediaSvc.prototype = {
     var scanDirectoryPath = scanDirectoryTextBox.value;
 
     // Save the scan directories settings.
-    Application.prefs.setValue("songbird.firstrun.scan_directory_path",
+    Application.prefs.setValue("nightingale.firstrun.scan_directory_path",
                                scanDirectoryPath);
-    Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
+    Application.prefs.setValue("nightingale.firstrun.do_scan_directory", true);
 
     // If the watch folder services are available, save the watch folder
     // settings.
@@ -304,10 +311,10 @@ firstRunImportMediaSvc.prototype = {
       var enableWatchFolder = scanDirectoriesWatchCheckBox.checked;
 
       // Save the watch folder settings.
-      Application.prefs.setValue("songbird.watch_folder.enable",
+      Application.prefs.setValue("nightingale.watch_folder.enable",
                                  enableWatchFolder);
       if (enableWatchFolder) {
-        Application.prefs.setValue("songbird.watch_folder.path",
+        Application.prefs.setValue("nightingale.watch_folder.path",
                                    scanDirectoryPath);
       }
     }

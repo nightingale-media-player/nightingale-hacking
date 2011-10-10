@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -57,11 +57,11 @@
 #include <sbSQLBuilderCID.h>
 
 #define DEFAULT_LIBRARY_NAME NS_LITERAL_STRING("defaultlibrary.db")
-#define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
+#define NS_HASH_PROPERTY_BAG_CONTRACTID "@getnightingale.com/moz/xpcom/sbpropertybag;1"
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
-#define SCHEMA_URL "chrome://songbird/content/library/localdatabase/schema.sql"
+#define SCHEMA_URL "chrome://nightingale/content/library/localdatabase/schema.sql"
 #define SB_NAMEKEY_LIBRARY                            \
-  "&chrome://songbird/locale/songbird.properties#servicesource.library"
+  "&chrome://nightingale/locale/nightingale.properties#servicesource.library"
 
 #define PERMISSIONS_FILE      0644
 #define PERMISSIONS_DIRECTORY 0755
@@ -311,7 +311,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   nsCOMPtr<nsIPropertyBag2> creationParams = aCreationParameters;
   if (!creationParams) {
     nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance(SB_PROPERTYBAG_CONTRACTID, &rv);
+      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING(PROPERTY_KEY_DATABASEFILE),
@@ -363,7 +363,7 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
 
   // Now that we know we have appropriate permissions make a new query.
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->SetAsyncQuery(PR_FALSE);
@@ -552,7 +552,7 @@ sbLocalDatabaseLibraryFactory::UpdateLibrary(nsIFile* aDatabaseFile)
   PRInt32 dbOk;
 
   nsCOMPtr<sbIDatabaseQuery> query =
-    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+    do_CreateInstance(NIGHTINGALE_DATABASEQUERY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->SetAsyncQuery(PR_FALSE);

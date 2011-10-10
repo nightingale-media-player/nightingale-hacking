@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -312,7 +312,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     {
       nsresult rv;
       nsCOMPtr<sbIDeviceManager> deviceManager =
-        do_GetService("@songbirdnest.com/Songbird/DeviceManager;1", &rv);
+        do_GetService("@getnightingale.com/Nightingale/DeviceManager;1", &rv);
       if (NS_FAILED(rv))
       {
         NS_WARNING("Failed to get the DeviceManager!");
@@ -321,7 +321,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 
       // Send an event to the CDDevice, if present.
       PRBool hasCDDevice;
-      NS_NAMED_LITERAL_STRING(cdCategory, "Songbird CD Device");
+      NS_NAMED_LITERAL_STRING(cdCategory, "Nightingale CD Device");
 
       rv = deviceManager->HasDeviceForCategory(cdCategory, &hasCDDevice);
       if (NS_SUCCEEDED(rv) && hasCDDevice)

@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -29,7 +29,7 @@ Components.utils.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpda
 var sbILocalDatabaseSmartMediaList =
   Ci.sbILocalDatabaseSmartMediaList;
 
-var SB_NS = "http://songbirdnest.com/data/1.0#";
+var SB_NS = "http://getnightingale.com/data/1.0#";
 var SB_PROPERTY_UILIMITTYPE = SB_NS + "uiLimitType";
 
 var USECS_PER_MINUTE = 60 * 1000 * 1000;
@@ -396,7 +396,7 @@ function doOK()
 function configureList(list)
 {
   var pm = Components
-             .classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+             .classes["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
              .getService(Ci.sbIPropertyManager);
 
   // Save conditions
@@ -575,7 +575,7 @@ function checkIfCanAutoUpdate() {
 }
 
 function testAdditionalRestrictions(aConditions, aConditionsDrawer) {
-  var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  var pm = Components.classes["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                              .getService(Ci.sbIPropertyManager);
   var firstFailure = -1;
   for (var i=0; i<aConditions.length; i++) {

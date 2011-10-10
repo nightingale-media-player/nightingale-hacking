@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 
 ##############################################################################
@@ -54,7 +54,6 @@ tier_componentsbase_dirs = \
    components/intl \
    components/property \
    components/library \
-   components/integration \
    components/mediacore \
    components/albumart \
    components/dbengine \
@@ -70,7 +69,6 @@ tier_componentsbase_dirs = \
    components/devicesobsolete \
    components/mediamanager \
    components/feathers \
-   components/playqueue \
    $(NULL)
 
 tier_componentsall_dirs = \
@@ -81,6 +79,7 @@ tier_componentsall_dirs = \
    components/displaypanes \
    components/draganddrop \
    components/faceplate \
+   components/integration \
    components/jscodelib \
    components/mediapages \
    components/parsererror \
@@ -115,11 +114,11 @@ tier_extensions_dirs = \
    $(NULL)
 
 ifdef HAS_EXTRAS
-   tier_extensions_dirs += extras
+   tier_extensions_dirs += extras/extensions
 endif
 
 tier_branding_dirs = \
-   $(SONGBIRD_BRANDING_DIR) \
+   $(NIGHTINGALE_BRANDING_DIR) \
    $(NULL)
 
 tier_unittests_dirs = \

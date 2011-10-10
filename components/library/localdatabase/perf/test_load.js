@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,12 +20,12 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 /**
- * \brief Hack script to load a songbird library from a preformatted text file.
+ * \brief Hack script to load a nightingale library from a preformatted text file.
  */
 
 function runTest () {
@@ -50,7 +50,7 @@ function makeLibrary(aLength) {
 
   var file = Components.classes["@mozilla.org/file/local;1"]
                        .createInstance(Components.interfaces.nsILocalFile);
-  file.initWithPath("/builds/songbird/trunk/big.txt");
+  file.initWithPath("/builds/nightingale/trunk/big.txt");
 
   var data = "";
   var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
@@ -69,8 +69,8 @@ function makeLibrary(aLength) {
   sstream.close();
   fstream.close();
 
-  var uris       = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
-  var properties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var uris       = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var properties = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
 
   var a = data.split("\n");
   for (var i = 0; i < a.length && i < aLength; i++) {
@@ -137,8 +137,8 @@ function makeLibrary(aLength) {
     if (i > 0 && (i + 1) % 1000 == 0) {
       library.batchCreateMediaItems(uris, properties, true);
       dump("loading " + i + " a.length " + a.length + " length + " + aLength + "\n");
-      var uris       = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
-      var properties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+      var uris       = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+      var properties = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
 
     }
 
@@ -165,7 +165,7 @@ function createLibrary(databaseGuid, databaseLocation) {
   file.append(databaseGuid + ".db");
 
   var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+    Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/LibraryFactory;1"]
       .getService(Ci.sbILibraryFactory);
   var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
                 createInstance(Ci.nsIWritablePropertyBag2);

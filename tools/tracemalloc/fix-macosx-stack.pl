@@ -50,7 +50,7 @@
 # or make-tree.pl balance trees) through this script.
 
 #
-# XXX Songbird Notes:
+# XXX Nightingale Notes:
 #
 # This code was forked from Mozilla in January 2009 in order to 
 # make the output format match the input format.
@@ -258,8 +258,8 @@ while (<>) {
             }
 
             if ($fileandline eq ':') { $fileandline = $file; }
-            # XXX SONGBIRD/MATT this does not seem to match the output expected by TraceMalloc.
-            # XXX SONGBIRD/MATT fileandline is useless, just use symbol for now
+            # XXX NIGHTINGALE/MATT this does not seem to match the output expected by TraceMalloc.
+            # XXX NIGHTINGALE/MATT fileandline is useless, just use symbol for now
             print "$before$symbol" . "[$file \+0x$address]$after\n";
         } else {
             print STDERR "Warning: File \"$file\" does not exist.\n";

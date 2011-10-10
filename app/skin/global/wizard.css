@@ -9,9 +9,9 @@ The XUL layout of a wizard depends on the current platform.
 This CSS file is preprocessed to include platform specific rules
 and make sure that the padding and margins are correct. 
 
-If you've opened this file from a built songbird jar you should
-also look at "app/skin/global/wizard.css" in the Songbird subversion 
-repository.  See http://publicsvn.songbirdnest.com
+If you've opened this file from a built nightingale jar you should
+also look at "app/skin/global/wizard.css" in the Nightingale subversion 
+repository.  See http://publicsvn.getnightingale.com
 
 **/
 

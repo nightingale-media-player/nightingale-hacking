@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -32,23 +32,23 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner
+// Nightingale album art scanner
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
  * \file  sbAlbumArtScanner.h
- * \brief Songbird Album Art Scanner Definitions.
+ * \brief Nightingale Album Art Scanner Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner imported services.
+// Nightingale album art scanner imported services.
 //
 //------------------------------------------------------------------------------
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbIAlbumArtFetcherSet.h>
 #include <sbIAlbumArtListener.h>
 #include <sbIAlbumArtScanner.h>
@@ -71,17 +71,17 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner defs.
+// Nightingale album art scanner defs.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird album art scanner component defs.
+// Nightingale album art scanner component defs.
 //
 
 #define SB_ALBUMARTSCANNER_CLASSNAME "sbAlbumArtScanner"
 #define SB_ALBUMARTSCANNER_CONTRACTID \
-          "@songbirdnest.com/Songbird/album-art/scanner;1"
+          "@getnightingale.com/Nightingale/album-art/scanner;1"
 #define SB_ALBUMARTSCANNER_CID                                                 \
   /* {06c6e812-ca0d-4632-8e2d-2b0a8c9b0675} */                                 \
   {                                                                            \
@@ -95,12 +95,12 @@
 #define ALBUMART_SCANNER_INTERVAL 10
 
 // Preference keys
-#define PREF_ALBUMART_SCANNER_BRANCH    "songbird.albumart.scanner."
+#define PREF_ALBUMART_SCANNER_BRANCH    "nightingale.albumart.scanner."
 #define PREF_ALBUMART_SCANNER_INTERVAL  "interval"
 
 //------------------------------------------------------------------------------
 //
-// Songbird album art scanner classes.
+// Nightingale album art scanner classes.
 //
 //------------------------------------------------------------------------------
 

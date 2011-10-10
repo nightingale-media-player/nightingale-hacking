@@ -1,11 +1,11 @@
 /*
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -45,9 +45,9 @@ if (typeof(Cr) == "undefined")
  
 
 /**
- * \brief The Songbird Core Window Type.
+ * \brief The Nightingale Core Window Type.
  */
-var CORE_WINDOWTYPE         = "Songbird:Core";
+var CORE_WINDOWTYPE         = "Nightingale:Core";
 
 /**
  * \brief Maximized State value.
@@ -59,7 +59,7 @@ var STATE_MAXIMIZED         = Ci.nsIDOMChromeWindow.STATE_MAXIMIZED;
  */
 var STATE_MINIMIZED         = Ci.nsIDOMChromeWindow.STATE_MINIMIZED;
 
-var gMM      = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+var gMM      = Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                  .getService(Ci.sbIMediacoreManager);
 var gPrompt  = Cc["@mozilla.org/embedcomp/prompt-service;1"]
                  .getService(Ci.nsIPromptService);
@@ -68,7 +68,7 @@ var gPrefs   = Cc["@mozilla.org/preferences-service;1"]
 var gConsole = Cc["@mozilla.org/consoleservice;1"]
                  .getService(Ci.nsIConsoleService);
 
-var gTypeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+var gTypeSniffer = Cc["@getnightingale.com/Nightingale/Mediacore/TypeSniffer;1"]
                      .createInstance(Ci.sbIMediacoreTypeSniffer);
                                     
 
@@ -238,7 +238,7 @@ if (getPlatformString() == "Darwin")
 
 
 // Strings are cool.
-var theSongbirdStrings = document.getElementById( "songbird_strings" );
+var theNightingaleStrings = document.getElementById( "nightingale_strings" );
 
 // log to JS console AND to the command line (in case of crashes)
 function SB_LOG (scopeStr, msg) {
@@ -349,6 +349,22 @@ function syncResizers()
 */
 
 /**
+ * \brief Restore the window in the current context to unmaximized state.
+ * \internal
+ */
+function restoreWindow()
+{
+  if ( isMaximized() )
+  {
+    document.defaultView.restore();
+  }
+  
+  // TODO
+  //syncMaxButton();
+  //syncResizers();
+}
+
+/**
  * \brief onExit handler, saves window size and position before closing the window.
  * \internal
  */
@@ -370,15 +386,15 @@ function onHide()
   document.dispatchEvent(e);
 
   var windowCloak =
-    Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+    Components.classes["@getnightingale.com/Nightingale/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);
   windowCloak.cloak(window);
 
   // And try to focus another of our windows. We'll try to focus in this order:
-  var windowList = ["Songbird:Main",
-                    "Songbird:TrackEditor",
-                    "Songbird:Firstrun",
-                    "Songbird:EULA"];
+  var windowList = ["Nightingale:Main",
+                    "Nightingale:TrackEditor",
+                    "Nightingale:Firstrun",
+                    "Nightingale:EULA"];
   var windowCount = windowList.length;
 
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -425,7 +441,7 @@ function windowFocus()
 {
   // Try to activate the window if it isn't cloaked.
   var windowCloak =
-    Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+    Components.classes["@getnightingale.com/Nightingale/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);
   if (windowCloak.isCloaked(window))
     return;
@@ -456,6 +472,11 @@ function delayedActivate()
  */
 function windowPlacementSanityChecks()
 {
+  // we had to put this into a setTimeout because at onload some of the needed variables are not yet initialized
+  setTimeout(deferredWindowPlacementSanityChecks, 500);
+}
+function deferredWindowPlacementSanityChecks() {
+
   /**
    * \brief Get a style property from an element in the window in the current context.
    * \param el The element.
@@ -482,42 +503,58 @@ function windowPlacementSanityChecks()
   var y, oldy = y = parseInt(document.documentElement.boxObject.screenY, 10);
   
   /*
+   * actual: the current dimensions as found via the box object
    * xul:    the property as set on XUL, or via persist=
+   * css:    the property as computed by CSS
    * min:    the property minimum as computed by CSS.  Has a fallback minimum.
    * max:    the property maximum as computed by CSS.
    */
   var width = {
+    actual: parseInt(document.documentElement.boxObject.width, 10),
     xul: parseInt(document.documentElement.getAttribute("width"), 10),
+    css: getStyle(document.documentElement, "width"),
     min: Math.max(getStyle(document.documentElement, "min-width"), 16),
     max: getStyle(document.documentElement, "max-width", Number.POSITIVE_INFINITY)
   };
   var height = {
+    actual: parseInt(document.documentElement.boxObject.height, 10),
     xul: parseInt(document.documentElement.getAttribute("height"), 10),
+    css: getStyle(document.documentElement, "height"),
     min: Math.max(getStyle(document.documentElement, "min-height"), 16),
     max: getStyle(document.documentElement, "max-height", Number.POSITIVE_INFINITY)
   };
   
-  // correct width
-  var newWidth = width.xul || 0;
-
+  /// correct width
+  var newWidth = width.actual;
+  if (!width.xul) { // if we have a xul/persist do not override from CSS
+    // first try the css
+    if (width.css) {
+      newWidth = width.css;
+    }
+  }
   // correct for maximum and minimum sizes (including not larger than the screen)
   newWidth = Math.min(newWidth, width.max);
   newWidth = Math.min(newWidth, screen.availWidth);
   newWidth = Math.max(newWidth, width.min);
 
-  // correct height
-  var newHeight = height.xul || 0;
-
+  /// correct height
+  var newHeight = height.actual;
+  if (!height.xul) { // if we have a xul/persist do not override from CSS
+    // first try the css
+    if (height.css) {
+      newHeight = height.css;
+    }
+  }
   // correct for maximum and minimum sizes (including not larger than the screen)
   newHeight = Math.min(newHeight, height.max);
   newHeight = Math.min(newHeight, screen.availHeight);
   newHeight = Math.max(newHeight, height.min);
 
   // resize the window if necessary
-  if (newHeight != height.xul || newWidth != width.xul) {
+  if (newHeight != height.actual || newWidth != width.actual) {
     window.resizeTo(newWidth, newHeight);
   }
-
+  
   // check if we need to move the window, and
   // move fully offscreen windows back onto the center of the screen
   var screenRect = getCurMaxScreenRect();
@@ -620,7 +657,7 @@ function SBOpenModalDialog( url, param1, param2, param3, parentWindow )
   if (!parentWindow) { 
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                        .getService(Components.interfaces.nsIWindowMediator);
-    parentWindow = wm.getMostRecentWindow("Songbird:Main");
+    parentWindow = wm.getMostRecentWindow("Nightingale:Main");
   }
   // bonus stuff to shut the mac up.
   var chromeFeatures = ",modal=yes,resizable=no";
@@ -641,7 +678,7 @@ function SBOpenWindow( url, param1, param2, param3, parentWindow )
   if (!parentWindow) { 
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                        .getService(Components.interfaces.nsIWindowMediator);
-    parentWindow = wm.getMostRecentWindow("Songbird:Main");
+    parentWindow = wm.getMostRecentWindow("Nightingale:Main");
   }
   
   var titlebar = ",modal=no";
@@ -676,8 +713,7 @@ function quitApp( )
 {
   // Why not stop playback, too?
   try {
-    if (gMM.playbackControl)
-      gMM.playbackControl.stop();
+    gMM.playbackControl.stop();
   } catch (e) {
     dump("windowUtils.js:quitApp() Error: could not stop playback.\n");
   }
@@ -867,13 +903,13 @@ function onLayoutLoad(event) {
   window.removeEventListener('load', onLayoutLoad, false);
 
   var feathersMgr = 
-    Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+    Components.classes['@getnightingale.com/nightingale/feathersmanager;1']
               .getService(Components.interfaces.sbIFeathersManager);
   
   if (feathersMgr.currentLayoutURL == window.location.href) {
      // this is the primary window for the current layout
     var nativeWinMgr = 
-      Components.classes["@songbirdnest.com/integration/native-window-manager;1"]
+      Components.classes["@getnightingale.com/integration/native-window-manager;1"]
       .getService(Components.interfaces.sbINativeWindowManager);
     
     // Check to see if "ontop" is supported with the current window manager
@@ -1050,7 +1086,7 @@ function goUpdateGlobalContentMenuItems()
  */
 function goUpdateGlobalMetadataMenuItems()
 {
-  // This will call gSongbirdWindowController.isCommandEnabled in
+  // This will call gNightingaleWindowController.isCommandEnabled in
   // mainPlayerWindow.js with the command id as the parameter
   goUpdateCommand("cmd_metadata");
   goUpdateCommand("cmd_editmetadata");
@@ -1063,7 +1099,7 @@ function goUpdateGlobalMetadataMenuItems()
  */
 function toggleNextFeatherLayout()
 {
-  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+  Components.classes['@getnightingale.com/nightingale/feathersmanager;1']
             .getService(Components.interfaces.sbIFeathersManager)
             .switchToNextLayout();
 }

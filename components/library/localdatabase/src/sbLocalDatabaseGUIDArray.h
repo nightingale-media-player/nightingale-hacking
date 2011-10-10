@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef __SBLOCALDATABASEGUIDARRAY_H__
@@ -27,7 +27,7 @@
 
 #include "sbILocalDatabaseGUIDArray.h"
 #include "sbILocalDatabasePropertyCache.h"
-#include "sbLocalDatabaseGUIDArrayLengthCache.h"
+#include "sbLocalDatabaseLibrary.h"
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -38,14 +38,9 @@
 #include <sbISQLBuilder.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
-#include <sbIDatabasePreparedStatement.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 #include <sbHashKeys.h>
-#include <sbWeakReference.h>
-
-#include <set>
-#include <map>
 
 class nsIURI;
 class nsIWeakReference;
@@ -53,14 +48,17 @@ class sbILibrary;
 class sbIPropertyManager;
 class sbLocalDatabaseResourcePropertyBag;
 
-class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray,
-                                 public sbSupportsWeakReference
+class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASEGUIDARRAY
 
   sbLocalDatabaseGUIDArray();
+
+  nsresult MayInvalidate(const nsAString &aGUID,
+                         sbLocalDatabaseResourcePropertyBag *aBag);
+
 
   struct FilterSpec {
     nsString property;
@@ -134,7 +132,7 @@ private:
 
   nsresult UpdateLength();
 
-  nsresult RunLengthQuery(sbIDatabasePreparedStatement *aStatement,
+  nsresult RunLengthQuery(const nsAString& aSql,
                           PRUint32* _retval);
 
   nsresult UpdateQueries();
@@ -142,8 +140,7 @@ private:
   nsresult GetPrimarySortKeyPosition(const nsAString& aValue,
                                      PRUint32 *_retval);
 
-  nsresult MakeQuery(sbIDatabasePreparedStatement *aStatement, 
-                     sbIDatabaseQuery** _retval);
+  nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
 
   nsresult FetchRows(PRUint32 aRequestedIndex, PRUint32 aFetchSize);
 
@@ -155,7 +152,7 @@ private:
                     PRBool aIsOnly,
                     PRBool isNull);
 
-  nsresult ReadRowRange(sbIDatabasePreparedStatement *aStatement,
+  nsresult ReadRowRange(const nsAString& aSql,
                         PRUint32 aStartIndex,
                         PRUint32 aCount,
                         PRUint32 aDestIndexOffset,
@@ -177,18 +174,6 @@ private:
   void QueryInvalidate() {
     mQueriesValid = PR_FALSE;
   }
-
-  // GUID Array Length Caching Key and Hashtables.
-  void GenerateCachedLengthKey();
-  PRPackedBool  mNeedNewKey;
-  nsString      mCachedLengthKey;
-
-  nsCOMPtr<sbILocalDatabaseGUIDArrayLengthCache> mLengthCache;
-
-  // Set of property IDs used in the length cache key; the cache entry should
-  // be removed if any of these property IDs are invalidated.
-  std::set<PRUint32> mPropIdsUsedInCacheKey;
-  PRLock* mPropIdsLock;
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
@@ -226,8 +211,6 @@ private:
   // Current filter configuration
   nsTArray<FilterSpec> mFilters;
 
-  // Monitor to protect mCache
-  PRMonitor* mCacheMonitor;
   // Ordered array of GUIDs
   nsTArray<nsAutoPtr<ArrayItem> > mCache;
 
@@ -236,41 +219,32 @@ private:
 
   // Query used to count full length of the array
   nsString mFullCountQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mFullCountStatement;
 
   // Query used to count full length of the array where the primary sort key
   // is null
   nsString mNonNullCountQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mNonNullCountStatement;
 
   // Query used to return sorted GUIDs when the primary sort key is non-null
   nsString mFullGuidRangeQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mFullGuidRangeStatement;
 
   // Query used to return sorted GUIDs when the primary sort key is null
   nsString mNullGuidRangeQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mNullGuidRangeStatement;
 
   // Query used to resort chunks of results
   nsString mResortQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mResortStatement;
 
   // Query used to resort a chunk of results with a null primary sort key
   nsString mNullResortQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mNullResortStatement;
 
   // Query used to search for the position of a value in the primary sort
   nsString mPrefixSearchQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mPrefixSearchStatement;
-
 
   // Query used to find the position of a primary sort key in the library
   nsString mPrimarySortKeyPositionQuery;
-  nsCOMPtr<sbIDatabasePreparedStatement> mPrimarySortKeyPositionStatement;
 
   // Cached versions of some of the above variables used my the fetch
-  nsCOMPtr<sbIDatabasePreparedStatement> mStatementX;
-  nsCOMPtr<sbIDatabasePreparedStatement> mStatementY;
+  nsString mQueryX;
+  nsString mQueryY;
   PRUint32 mLengthX;
 
   // Our listener
@@ -282,8 +256,8 @@ private:
   // Map of guid -> first array index
   nsDataHashtable<nsStringHashKey, PRUint32> mGuidToFirstIndexMap;
 
-  // Map of mediaitemid + "-" + rowid -> array index for retrieval of the index
-  nsDataHashtable<nsStringHashKey, PRUint32> mViewItemUIDToIndexMap;
+  // Map of rowid -> array index
+  nsDataHashtable<sbUint64HashKey, PRUint32> mRowidToIndexMap;
 
   // Get distinct values?
   PRPackedBool mIsDistinct;
@@ -304,12 +278,6 @@ private:
 
   // True if rows have been prefetched
   PRPackedBool mPrefetchedRows;
-
-  // True if this GUID array is for a library
-  PRPackedBool mIsFullLibrary;
-
-  // Counter for suppression of invalidation.
-  PRUint32 mSuppress;
 };
 
 class sbGUIDArrayEnumerator : public nsISimpleEnumerator

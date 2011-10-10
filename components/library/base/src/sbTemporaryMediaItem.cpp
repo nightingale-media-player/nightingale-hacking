@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 //------------------------------------------------------------------------------
@@ -34,7 +34,7 @@
 
 /**
  * \file  sbTemporaryMediaItem.cpp
- * \brief Songbird Temporary Media Item Source.
+ * \brief Nightingale Temporary Media Item Source.
  */
 
 //------------------------------------------------------------------------------
@@ -230,11 +230,11 @@ sbTemporaryMediaItem::GetUserEditable(PRBool* aUserEditable)
 
 //-------------------------------------
 //
-// TestIsURIAvailable
+// TestIsAvailable
 //
 
 NS_IMETHODIMP
-sbTemporaryMediaItem::TestIsURIAvailable(nsIObserver* aObserver)
+sbTemporaryMediaItem::TestIsAvailable(nsIObserver* aObserver)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -317,19 +317,6 @@ sbTemporaryMediaItem::GetIsMutable(PRBool* aIsMutable)
 {
   NS_ENSURE_ARG_POINTER(aIsMutable);
   *aIsMutable = PR_FALSE;
-  return NS_OK;
-}
-
-//-------------------------------------
-//
-// itemController
-//
-
-NS_IMETHODIMP
-sbTemporaryMediaItem::GetItemController(sbIMediaItemController **aMediaItemController)
-{
-  NS_ENSURE_ARG_POINTER(aMediaItemController);
-  *aMediaItemController = nsnull;
   return NS_OK;
 }
 

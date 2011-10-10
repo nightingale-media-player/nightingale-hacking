@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -46,7 +46,7 @@ function runTest () {
   setAllAccess();
 
   // have to do this here to avoid the security checks
-  gLibraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  gLibraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                           .getService(Ci.sbILibraryManager);
   gLibraryManager.mainLibrary.clear();
 
@@ -54,7 +54,7 @@ function runTest () {
   foobar = Cc["@mozilla.org/preferences-service;1"]
       .getService(Ci.nsIPrefBranch2);
 
-  var webListGUID = foobar.getComplexValue( "songbird.library.web",
+  var webListGUID = foobar.getComplexValue( "nightingale.library.web",
                                             Ci.nsISupportsString );
   gWebLib = gLibraryManager.getLibrary(webListGUID);
   gWebLib.clear();
@@ -71,10 +71,10 @@ function runTest () {
   gWebItem3 = gWebLib.createMediaItem(item3URI);
   gWebItem4 = gWebLib.createMediaItem(item4URI);
 
-  gWebItemGUID1 = gWebItem1.getProperty("http://songbirdnest.com/data/1.0#GUID");
-  gWebItemGUID2 = gWebItem1.getProperty("http://songbirdnest.com/data/1.0#GUID");
-  gWebItemGUID3 = gWebItem1.getProperty("http://songbirdnest.com/data/1.0#GUID");
-  gWebItemGUID4 = gWebItem1.getProperty("http://songbirdnest.com/data/1.0#GUID");
+  gWebItemGUID1 = gWebItem1.getProperty("http://getnightingale.com/data/1.0#GUID");
+  gWebItemGUID2 = gWebItem1.getProperty("http://getnightingale.com/data/1.0#GUID");
+  gWebItemGUID3 = gWebItem1.getProperty("http://getnightingale.com/data/1.0#GUID");
+  gWebItemGUID4 = gWebItem1.getProperty("http://getnightingale.com/data/1.0#GUID");
 
 
   beginRemoteAPITest("test_remotemedialist_add2_page.html", startTesting);

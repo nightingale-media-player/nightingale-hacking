@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -99,13 +99,13 @@ interface sbIMockCDDevice : nsISupports
 %{C++
 #define SB_MOCK_CDDEVICE_CLASSNAME "sbMockCDDevice" 
 #define SB_MOCK_CDDEVICE_CID {0xcf0c112e, 0xa2f9, 0x4ca2, {0x90, 0x13, 0xa3, 0xde, 0x6b, 0xcc, 0x6b, 0x85}}
-#define SB_MOCK_CDDEVICE_CONTRACTID "@songbirdnest.com/Songbird/MockCDDevice;1"
+#define SB_MOCK_CDDEVICE_CONTRACTID "@getnightingale.com/Nightingale/MockCDDevice;1"
 
 #define SB_MOCK_CDTOC_CLASSNAME "sbMockCDTOC" 
 #define SB_MOCK_CDTOC_CID {0x136f8b3a, 0x8747, 0x4a2c, {0x9d, 0xb8, 0x74, 0x1a, 0x6c, 0x79, 0x80, 0x34}}
-#define SB_MOCK_CDTOC_CONTRACTID "@songbirdnest.com/Songbird/MockCDTOC;1"
+#define SB_MOCK_CDTOC_CONTRACTID "@getnightingale.com/Nightingale/MockCDTOC;1"
 
 #define SB_MOCK_CDTOCENTRY_CLASSNAME "sbMockCDTOCEntry" 
 #define SB_MOCK_CDTOCENTRY_CID {0x700a16e0, 0xfc80, 0x4760, {0xa9, 0x57, 0x47, 0x36, 0x27, 0xae, 0x33, 0x71}}
-#define SB_MOCK_CDTOCENTRY_CONTRACTID "@songbirdnest.com/Songbird/MockCDTOCEntry;1"
+#define SB_MOCK_CDTOCENTRY_CONTRACTID "@getnightingale.com/Nightingale/MockCDTOCEntry;1"
 %}

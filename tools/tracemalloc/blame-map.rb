@@ -7,7 +7,7 @@
 #
 # The output from this script works with the Javascript JIT viewer.
 # See thejit.org, treemap.html, and 
-# http://wiki.songbirdnest.com/Developer/Articles/Debugging/Using_TraceMalloc_with_Songbird
+# http://wiki.getnightingale.com/Developer/Articles/Debugging/Using_TraceMalloc_with_Nightingale
 #
 
 require 'rubygems'
@@ -64,7 +64,7 @@ $blame_list = {
   "QD" => "Apple",
   "Shortcut" => "Apple",
   
-  "songbird" => :ignore,
+  "nightingale" => :ignore,
   "XRE_main" => :ignore,
 
   # "sbDBEngine.dylib" => :breakapart,
@@ -124,7 +124,7 @@ $ignore_list = {
   "LaunchServices" => 1,
   "CoreUI" => 1,
   "ATS" => 1,
-  "songbird" => 1,
+  "nightingale" => 1,
   "CarbonCore" => 1,
   "libSystem.B.dylib" => 1
 }

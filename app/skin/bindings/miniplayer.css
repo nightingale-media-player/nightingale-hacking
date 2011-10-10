@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -49,7 +49,7 @@ Player Controls (Back, Play, Pause, Forward Buttons)
 /* the back button */
 sb-player-back-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/player-controls.png);
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
   -moz-image-region: rect(46px 45px 68px 0px);
   background-color: transparent;
 }
@@ -80,7 +80,7 @@ sb-player-playpause-button.miniplayer {
 .miniplayer > .sb-player-play-button-play > button,
 .miniplayer > .sb-player-playpause-button-play > button
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/player-controls.png);
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
   -moz-image-region: rect(46px 135px 68px 91px);
   background-color: transparent;
 }
@@ -105,7 +105,7 @@ sb-player-playpause-button.miniplayer {
 .miniplayer > .sb-player-pause-button-pause > button,
 .miniplayer > .sb-player-playpause-button-pause > button
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/player-controls.png);
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
   -moz-image-region: rect(46px 90px 68px 46px);
   background-color: transparent;
 }
@@ -128,7 +128,7 @@ sb-player-playpause-button.miniplayer {
 /* the resume state */
 .miniplayer > .sb-player-pause-button-resume > button
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/player-controls.png);
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
     -moz-image-region: rect(46px 135px 68px 91px);
   background-color: transparent;
 }
@@ -148,7 +148,7 @@ sb-player-playpause-button.miniplayer {
 /* the stop button */
 .miniplayer > .sb-player-stop-button-stop > button
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/player-controls.png);
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
   -moz-image-region: rect(46px 180px 68px 136px);
   background-color: transparent;
 }
@@ -169,7 +169,7 @@ sb-player-playpause-button.miniplayer {
 /* the fwd button */
 sb-player-forward-button.miniplayer
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/player-controls.png);
+  list-style-image: url(chrome://nightingale/skin/miniplayer/player-controls.png);
   -moz-image-region: rect(46px 225px 68px 181px);
   background-color: transparent;
 }
@@ -213,14 +213,14 @@ thumb.sb-player-volume-slider.miniplayer
 {
   width: 11px;
   height: 11px;
-  background-image: url(chrome://songbird/skin/miniplayer/volume-thumb.png);
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-thumb.png);
   background-repeat: no-repeat;
   background-position: center center;
   border: none;
 }
 thumb.sb-player-volume-slider.miniplayer:active
 {
-  background-image: url(chrome://songbird/skin/miniplayer/volume-thumb-active.png);
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-thumb-active.png);
   background-repeat: no-repeat;
   background-position: center center;
 }
@@ -239,7 +239,7 @@ progressmeter.sb-player-volume-slider.miniplayer > .progress-remainder
     
 slider.sb-player-volume-slider.miniplayer
 {
-  background-image: url(chrome://songbird/skin/miniplayer/volume-progress-slider-bkgd.png);
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-progress-slider-bkgd.png);
   background-position: left center;
   background-repeat: no-repeat;
   height: 13px !important;
@@ -251,7 +251,7 @@ slider.sb-player-volume-slider.miniplayer
 
 progressmeter.sb-player-volume-slider.miniplayer
 {
-  background-image: url(chrome://songbird/skin/miniplayer/volume-progressmeter-bkgd.png);
+  background-image: url(chrome://nightingale/skin/miniplayer/volume-progressmeter-bkgd.png);
   background-position: right center;
   height: 13px !important;
   border: none;
@@ -269,7 +269,7 @@ MINI DASHBOARD
 .sb-mini-player-controls-dash-box
 {
   height: 22px;
-  background-image: url(chrome://songbird/skin/miniplayer/dashboard-background.png); 
+  background-image: url(chrome://nightingale/skin/miniplayer/dashboard-background.png); 
   background-repeat: repeat-x;
   padding: 0px 0px 0px 0px;
 }
@@ -277,12 +277,12 @@ MINI DASHBOARD
 /* Dashboard edges (rounded corners) */
 .sb-mini-player-controls-dash-left-image
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/dashboard.png) !important;
+  list-style-image: url(chrome://nightingale/skin/miniplayer/dashboard.png) !important;
   -moz-image-region: rect(0px 9px 22px 0px);
 }
 .sb-mini-player-controls-dash-right-image
 {
-  list-style-image: url(chrome://songbird/skin/miniplayer/dashboard.png) !important;
+  list-style-image: url(chrome://nightingale/skin/miniplayer/dashboard.png) !important;
   -moz-image-region: rect(0px 20px 22px 11px);
 }
 

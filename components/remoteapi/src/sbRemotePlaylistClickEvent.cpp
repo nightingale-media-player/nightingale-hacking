@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -203,17 +203,20 @@ NS_IMETHODIMP sbRemotePlaylistClickEvent::GetItem(sbIMediaItem * *aItem)
 
 /*** nsIPrivateDOMEvent ***/
 // this macro forwards a method to the inner mouse event (up to one arg)
-#define FORWARD_NSIPRIVATEDOMEVENT(_method, _type, _arg, _rettype, _default) \
-  NS_IMETHODIMP_(_rettype) sbRemotePlaylistClickEvent::_method( _type _arg )   \
+#define FORWARD_NSIPRIVATEDOMEVENT(_method, _type, _arg) \
+  NS_IMETHODIMP sbRemotePlaylistClickEvent::_method( _type _arg )              \
   {                                                                            \
     nsresult rv;                                                               \
     nsCOMPtr<nsIPrivateDOMEvent> inner( do_QueryInterface(mMouseEvent, &rv) ); \
-    NS_ENSURE_SUCCESS(rv, _default);                                           \
+    NS_ENSURE_SUCCESS(rv, rv);                                                 \
     return inner->_method( _arg );                                             \
   }
 
-FORWARD_NSIPRIVATEDOMEVENT(DuplicatePrivateData, , , nsresult, rv)
-FORWARD_NSIPRIVATEDOMEVENT(SetTarget, nsIDOMEventTarget*, aTarget, nsresult, rv)
-FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, , , PRBool, PR_FALSE)
-FORWARD_NSIPRIVATEDOMEVENT(GetInternalNSEvent, , , nsEvent*, nsnull)
-FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, PRBool, aTrusted, nsresult, rv)
+FORWARD_NSIPRIVATEDOMEVENT(DuplicatePrivateData, , )
+FORWARD_NSIPRIVATEDOMEVENT(SetTarget, nsIDOMEventTarget*, aTarget)
+FORWARD_NSIPRIVATEDOMEVENT(SetCurrentTarget, nsIDOMEventTarget*, aTarget)
+FORWARD_NSIPRIVATEDOMEVENT(SetOriginalTarget, nsIDOMEventTarget*, aTarget)
+FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, PRBool*, aIsDispatchPrevented)
+FORWARD_NSIPRIVATEDOMEVENT(GetInternalNSEvent, nsEvent**, aNSEvent)
+FORWARD_NSIPRIVATEDOMEVENT(HasOriginalTarget, PRBool*, aResult)
+FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, PRBool, aTrusted)

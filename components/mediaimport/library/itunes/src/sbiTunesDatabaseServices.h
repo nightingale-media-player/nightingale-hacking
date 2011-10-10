@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -51,28 +51,28 @@ public:
    */
   nsresult Initialize();
   /**
-   * Map and iTunes ID to a Songbird ID
+   * Map and iTunes ID to a Nightingale ID
    * \param aiTunesLibID the library ID of the iTunes item
    * \param aiTunesID the ID of the iTunes item
-   * \param aSongbirdID the songbird ID/guid
+   * \param aNightingaleID the nightingale ID/guid
    */
   nsresult MapID(nsAString const & aiTunesLibID,
                  nsAString const & aiTunesID,
-                 nsAString const & aSongbirdID);
+                 nsAString const & aNightingaleID);
   /**
-   * Returns the Songbird ID given an iTunes ID 
+   * Returns the Nightingale ID given an iTunes ID 
    * \param aiTunesLibID the library ID of the iTunes item
    * \param aiTunesID the ID of the iTunes item
-   * \param aSongbirdID The returned Songbird ID/GUID
+   * \param aNightingaleID The returned Nightingale ID/GUID
    */
   nsresult GetSBIDFromITID(nsAString const & aiTunesLibID,
                            nsAString const & aiiTunesID,
-                           nsAString & aSongbirdID);
+                           nsAString & aNightingaleID);
   /**
-   * Returns a given ID mapping based on the Songbird ID
-   * \param aSongbirdID the Songbird ID of the mapping to be removed
+   * Returns a given ID mapping based on the Nightingale ID
+   * \param aNightingaleID the Nightingale ID of the mapping to be removed
    */
-  nsresult RemoveSBIDEntry(nsAString const & aSongbirdID);
+  nsresult RemoveSBIDEntry(nsAString const & aNightingaleID);
 private:
   typedef nsCOMPtr<sbIDatabasePreparedStatement> PreparedStatementPtr;
   

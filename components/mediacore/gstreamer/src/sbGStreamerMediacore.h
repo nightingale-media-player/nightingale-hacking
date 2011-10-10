@@ -1,26 +1,26 @@
 /*
 //
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
+// http://getnightingale.com
+// 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this
+// You should have received a copy of the GPL along with this 
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
+// or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
+// 
+// END NIGHTINGALE GPL
 //
 */
 
@@ -135,7 +135,7 @@ protected:
   nsresult DestroyPipeline();
   nsresult CreatePlaybackPipeline();
 
-  void DispatchMediacoreEvent (unsigned long type,
+  void DispatchMediacoreEvent (unsigned long type, 
           nsIVariant *aData = NULL, sbIMediacoreError *aError = NULL);
 
   void HandleAboutToFinishSignal ();
@@ -150,6 +150,8 @@ protected:
   void OnAudioCapsSet(GstCaps *caps);
   void OnVideoCapsSet(GstCaps *caps);
 
+  nsresult LogMessageToErrorConsole(nsString message, PRUint32 flags);
+
   GstElement *CreateSinkFromPrefs(const char *aSinkDescription);
   GstElement *CreateVideoSink();
   GstElement *CreateAudioSink();
@@ -163,19 +165,19 @@ protected:
 
   void AbortAndRestartPlayback();
 
-  bool SetPropertyOnChild(GstElement *aElement,
+  bool SetPropertyOnChild(GstElement *aElement, 
           const char *aPropertyName, gint64 aPropertyValue);
 
 private:
   // Static helpers for C callback
   static void aboutToFinishHandler(GstElement *playbin, gpointer data);
-  static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec,
+  static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
-  static void currentVideoSetHelper(GObject *obj, GParamSpec *pspec,
+  static void currentVideoSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
-  static void audioCapsSetHelper(GObject *obj, GParamSpec *pspec,
+  static void audioCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
-  static void currentAudioSetHelper(GObject *obj, GParamSpec *pspec,
+  static void currentAudioSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
 
 protected:
@@ -238,19 +240,19 @@ protected:
   PRInt64 mResourceSize;     // Size of current playing file, or -1 if unknown.
 
   PRBool mGaplessDisabled;   // If true, gapless playback is disabled for the
-                             // currently-in-use pipeline. Recreating the
+                             // currently-in-use pipeline. Recreating the 
                              // pipeline will re-enable gapless.
   PRBool mPlayingGaplessly;  // Gapless playback is currently happening - we're
                              // on a second or subsequent file in a gapless
                              // sequence.
-
-  PRBool mAbortingPlayback;  // Playback is being aborted (not normally
-                             // stopped), and bus messages should not be
+ 
+  PRBool mAbortingPlayback;  // Playback is being aborted (not normally 
+                             // stopped), and bus messages should not be 
                              // processed.
   PRBool mHasReachedPlaying; // If we've ever made it to PLAYING state while
                              // playing the current resource.
 
-  nsCString mCurrentUri;     // UTF-8 String form (as used by GStreamer) of
+  nsCString mCurrentUri;     // UTF-8 String form (as used by GStreamer) of 
                              // the currently-playing URI.
 
   GstCaps *mCurrentAudioCaps; // Caps of currently playing audio, or NULL

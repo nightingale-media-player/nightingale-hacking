@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,24 +22,24 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 <!-- Import external definitions. -->
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/importLibrary.css"
+<?xml-stylesheet href="chrome://nightingale-dialogs/skin/importLibrary.css"
                  type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
                  type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 
@@ -52,7 +52,7 @@
   title="&import_library.dialog.title;"
   hidechrome="true"
   flex="1"
-  type="songbird"
+  type="nightingale"
   buttonlabelaccept="&window.yes;"
   buttonlabelcancel="&window.no;"
   onload="importLibrary.doLoad();"
@@ -72,7 +72,7 @@
              oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
   </commandset>
 
-  <!-- Use Songbird window region. -->
+  <!-- Use Nightingale window region. -->
   <windowregion/>
 
   <!-- Dialog text. -->
@@ -93,7 +93,7 @@
     <label value="&import_library.library_file_label;"/>
     <textbox id="import_library_path_textbox"
              prefid="library_file_path_pref"
-             prefname="songbird.library_importer.library_file_path"
+             prefname="nightingale.library_importer.library_file_path"
              preftype="unichar"/>
 
     <!-- Browse button. -->
@@ -103,19 +103,19 @@
 
   <!-- Library import options. -->
   <vbox id="import_library_checkbox_box"
-        oncommand="importLibraryPrefsUI.doOptionsChange(event);">
+        oncommand="importLibraryPrefsUI.doImportOptionsChange(event);">
 
     <!-- Checkbox for track import. -->
     <checkbox id="import_library_import_track_checkbox"
               prefid="import_tracks_pref"
-              prefname="songbird.library_importer.import_tracks"
+              prefname="nightingale.library_importer.import_tracks"
               preftype="bool"
               label="&import_tracks_itunes_checkbox;"/>
 
     <!-- Checkbox for playlist import. -->
     <checkbox id="import_library_import_playlist_checkbox"
               prefid="import_playlists_pref"
-              prefname="songbird.library_importer.import_playlists"
+              prefname="nightingale.library_importer.import_playlists"
               preftype="bool"
               label="&import_playlists_itunes_checkbox;"/>
 
@@ -128,20 +128,20 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->
+  <!-- Import the Nightingale services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js"/>
+          src="chrome://nightingale/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js"/>
 
   <!-- Import the import library dialog services. -->
   <script
     type="application/x-javascript"
-    src="chrome://songbird/content/scripts/preferences/importLibraryPrefs.js"/>
+    src="chrome://nightingale/content/scripts/preferences/importLibraryPrefs.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/importLibrary.js"/>
+          src="chrome://nightingale/content/scripts/importLibrary.js"/>
 
 </dialog>
 

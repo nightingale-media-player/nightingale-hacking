@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -28,7 +28,7 @@
 function runTest() {
   var dirService = Cc["@mozilla.org/file/directory_service;1"]
                      .getService(Ci.nsIProperties);
-  var dirProvider = Cc["@songbirdnest.com/moz/directory/provider;1"]
+  var dirProvider = Cc["@getnightingale.com/moz/directory/provider;1"]
                      .getService(Ci.nsIDirectoryServiceProvider);
 
   // Test that our directory service provider returns valid directories

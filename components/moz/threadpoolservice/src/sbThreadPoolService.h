@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  sbThreadPoolService.h
-* \brief Songbird Thread Pool Service.
+* \brief Nightingale Thread Pool Service.
 */
 
 #ifndef __SB_THREADPOOLSERVICE_H__
@@ -38,9 +38,9 @@
 #include <nsCOMPtr.h>
 
 #define SB_THREADPOOLSERVICE_CONTRACTID                   \
-  "@songbirdnest.com/Songbird/ThreadPoolService;1"
+  "@getnightingale.com/Nightingale/ThreadPoolService;1"
 #define SB_THREADPOOLSERVICE_CLASSNAME                    \
-  "Songbird ThreadPool Service"
+  "Nightingale ThreadPool Service"
 #define SB_THREADPOOLSERVICE_CID                          \
 { /* f3980a5a-39da-4e1b-bb63-c3e26e85d3c6 */              \
   0xf3980a5a,                                             \

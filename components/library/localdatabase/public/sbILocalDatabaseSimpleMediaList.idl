@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -57,7 +57,7 @@ interface sbILocalDatabaseMediaListCopyListener : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(8243de6d-1c42-4b7b-8f05-ae291c9e9bf3)]
+[scriptable, uuid(5f046c4a-1dd2-11b2-bfe8-a62a32a20705)]
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {
   attribute sbILocalDatabaseMediaListCopyListener copyListener;
@@ -70,12 +70,9 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
   unsigned long getIndexByOrdinal(in AString aOrdinal);
 
   /**
-   * \brief Tell the list that its underlying datasource has changed.
-   * \param aInvalidateLength - Also invalidates the cached length of the 
-   *                            array. If you don't know what this means 
-   *                            set it to true :)
+   * \brief Tell the list that its underlying datasource has changed
    */
-  void invalidate(in boolean aInvalidateLength);
+  void invalidate();
 
   /**
    * \brief Notify this simple media list's listeners that an item has been

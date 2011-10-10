@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -208,6 +208,14 @@ sbBooleanPropertyInfo::GetCellValue(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
+sbBooleanPropertyInfo::GetColumnProperties(const nsAString& aValue,
+                                           nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbBooleanPropertyInfo::GetRowProperties(const nsAString& aValue,
                                         nsAString& _retval)
 {
@@ -291,19 +299,5 @@ sbBooleanPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
     _retval.AssignLiteral("1");
   }
   
-  return NS_OK;
-}
-
-/* boolean onClick (in sbIMediaItem aItem,
-                    [optional] in nsISupports aEvent,
-                    [optional] in nsISupports aContext); */
-NS_IMETHODIMP
-sbBooleanPropertyInfo::OnClick(sbIMediaItem *aItem,
-                               nsISupports *aEvent,
-                               nsISupports *aContext,
-                               PRBool *_retval NS_OUTPARAM)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_FALSE;
   return NS_OK;
 }

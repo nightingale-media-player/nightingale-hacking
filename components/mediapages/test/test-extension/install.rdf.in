@@ -2,16 +2,16 @@
 #filter substitution
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#"
-     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+     xmlns:nightingale="http://www.getnightingale.com/2007/addon-metadata-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>@EXTENSION_UUID@</em:id>
     <em:version>1.0</em:version>
 
-    <!-- Songbird -->
+    <!-- Nightingale -->
     <em:targetApplication>
       <Description>
-        <em:id>songbird@songbirdnest.com</em:id>
+        <em:id>nightingale@getnightingale.com</em:id>
         <em:minVersion>0.2</em:minVersion>
         <em:maxVersion>*</em:maxVersion>
       </Description>
@@ -23,36 +23,36 @@
     <em:creator>Pioneers of the Inevitable</em:creator>
     
     <!-- insert metadata here -->
-    <songbird:mediaPage>
+    <nightingale:mediaPage>
       <Description>
-        <songbird:contentTitle>Media Page Test (Match All)</songbird:contentTitle>
-        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul</songbird:contentUrl>
+        <nightingale:contentTitle>Media Page Test (Match All)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul</nightingale:contentUrl>
       </Description>
-    </songbird:mediaPage>
+    </nightingale:mediaPage>
 
-    <songbird:mediaPage>
+    <nightingale:mediaPage>
       <Description>
-        <songbird:contentTitle>Media Page Test (Downloads Match)</songbird:contentTitle>
-        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?downloads</songbird:contentUrl>
-        <songbird:match>customType:download</songbird:match>
+        <nightingale:contentTitle>Media Page Test (Downloads Match)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul?downloads</nightingale:contentUrl>
+        <nightingale:match>customType:download</nightingale:match>
       </Description>
-    </songbird:mediaPage>
+    </nightingale:mediaPage>
 
-    <songbird:mediaPage>
+    <nightingale:mediaPage>
       <Description>
-        <songbird:contentTitle>Media Page Test (Library Match)</songbird:contentTitle>
-        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?library</songbird:contentUrl>
-        <songbird:match>library</songbird:match>
+        <nightingale:contentTitle>Media Page Test (Library Match)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul?library</nightingale:contentUrl>
+        <nightingale:match>library</nightingale:match>
       </Description>
-    </songbird:mediaPage>
+    </nightingale:mediaPage>
 
-    <songbird:mediaPage>
+    <nightingale:mediaPage>
       <Description>
-        <songbird:contentTitle>Media Page Test (Video Match)</songbird:contentTitle>
-        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?video</songbird:contentUrl>
-        <songbird:match>contentType:video</songbird:match>
+        <nightingale:contentTitle>Media Page Test (Video Match)</nightingale:contentTitle>
+        <nightingale:contentUrl>chrome://nightingale-test-media-page/content/testMediaPage.xul?video</nightingale:contentUrl>
+        <nightingale:match>contentType:video</nightingale:match>
       </Description>
-    </songbird:mediaPage>
+    </nightingale:mediaPage>
 
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>

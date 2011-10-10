@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -104,11 +104,11 @@ var testListener = {
 
 function runTest () {
   // Get the media lookup manager and mock CD service/controller
-  gMLM = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+  gMLM = Cc["@getnightingale.com/Nightingale/MetadataLookup/manager;1"]
            .getService(Ci.sbIMetadataLookupManager);
-  gMockSvc = Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
+  gMockSvc = Cc["@getnightingale.com/device/cd/mock-cddevice-service;1"]
                .getService(Ci.sbICDDeviceService);
-  gMockController = Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
+  gMockController = Cc["@getnightingale.com/device/cd/mock-cddevice-service;1"]
                       .getService(Ci.sbIMockCDDeviceController);
 
   gMockSvc.registerListener(testListener);

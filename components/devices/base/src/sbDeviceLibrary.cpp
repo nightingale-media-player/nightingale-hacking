@@ -1,11 +1,11 @@
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /* base class */
@@ -32,7 +32,6 @@
 #include <nsIFileURL.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
-#include <nsISupportsPrimitives.h>
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
 
@@ -58,7 +57,7 @@
 #include <nsXPCOM.h>
 #include <nsXPCOMCIDInternal.h>
 
-/* songbird interfaces */
+/* nightingale interfaces */
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIDeviceContent.h>
@@ -73,7 +72,7 @@
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 
-/* songbird headers */
+/* nightingale headers */
 #include <sbDeviceLibraryHelpers.h>
 #include "sbDeviceLibrarySyncSettings.h"
 #include <sbDeviceUtils.h>
@@ -254,6 +253,75 @@ sbDeviceLibrary::Finalize()
   return NS_OK;
 }
 
+/**
+ * Enumerator class used to attach listeners to playlists
+ */
+class sbPlaylistAttachListenerEnumerator : public sbIMediaListEnumerationListener
+{
+public:
+  sbPlaylistAttachListenerEnumerator(sbLibraryUpdateListener* aListener)
+   : mListener(aListener)
+   {}
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+private:
+  sbLibraryUpdateListener* mListener;
+};
+
+NS_IMPL_ISUPPORTS1(sbPlaylistAttachListenerEnumerator,
+                   sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumerationBegin(sbIMediaList*,
+                                                                     PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumeratedItem(sbIMediaList*,
+                                                                   sbIMediaItem* aItem,
+                                                                   PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mListener, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  // check if the list has a custom type
+  nsString customType;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                          customType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // do not listen to hidden list
+  nsString hidden;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                          hidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if ((customType.IsEmpty() ||
+       customType.EqualsLiteral("simple") ||
+       customType.EqualsLiteral("smart")) &&
+      !hidden.EqualsLiteral("1")) {
+    nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mListener->ListenToPlaylist(list);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumerationEnd(sbIMediaList*,
+                                                                   nsresult)
+{
+  return NS_OK;
+}
+
 nsresult
 sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                      nsIURI *aDeviceDatabaseURI)
@@ -320,6 +388,10 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = GetSyncSettings(getter_AddRefs(syncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint32 syncMode;
+  rv = syncSettings->GetSyncMode(&syncMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaList> list;
   list = do_QueryInterface(mDeviceLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -348,10 +420,26 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = deviceEventTarget->AddEventListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool isManual = PR_FALSE;
+  rv = GetIsManualSyncMode(&isManual);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> syncPlaylistList;
+  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncPlaylistList));
+  NS_ENSURE_SUCCESS(rv,rv);
+
+  PRUint32 playlistListCount;
+  rv = syncPlaylistList->GetLength(&playlistListCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check to see if playlists are supported, and if not ignore
+  bool const ignorePlaylists = !sbDeviceUtils::ArePlaylistsSupported(mDevice);
   // hook up the listener now if we need to
   mMainLibraryListener =
     new sbLibraryUpdateListener(mDeviceLibrary,
-                                PR_TRUE,
+                                isManual != PR_FALSE,
+                                playlistListCount ? syncPlaylistList : nsnull,
+                                ignorePlaylists,
                                 mDevice);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
 
@@ -386,7 +474,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   }
 
   // update the library is read-only property
-  rv = UpdateIsReadOnly();
+  rv = UpdateIsReadOnly(syncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterDeviceLibrary();
@@ -402,7 +490,7 @@ sbDeviceLibrary::RegisterDeviceLibrary()
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
   libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->RegisterLibrary(this, PR_FALSE);
@@ -414,7 +502,7 @@ sbDeviceLibrary::UnregisterDeviceLibrary()
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
   libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->UnregisterLibrary(this);
@@ -453,6 +541,31 @@ sbDeviceLibrary::GetDefaultDeviceLibraryDatabaseFile
   NS_ENSURE_SUCCESS(rv, rv);
 
   libraryFile.forget(aDBFile);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrary::GetIsManualSyncMode(PRBool* aIsMgmtTypeManual)
+{
+  NS_ASSERTION(aIsMgmtTypeManual, "aIsMgmtTypeManual is null");
+
+  nsresult rv;
+
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 syncMode;
+  rv = syncSettings->GetSyncMode(&syncMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL) {
+    *aIsMgmtTypeManual = PR_TRUE;
+  }
+  else {
+    *aIsMgmtTypeManual = PR_FALSE;
+  }
 
   return NS_OK;
 }
@@ -542,23 +655,81 @@ sbDeviceLibrary::UpdateMainLibraryListeners(
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: XXX This code will probably need to be updated with the device
-  // listeners bug 23188
-  // hook up the metadata updating listener
-  rv = mainLib->AddListener(mMainLibraryListener,
-                            PR_FALSE,
-                            sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                            sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED |
-                            sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
-                            sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
-                            mMainLibraryListenerFilter);
+  PRUint32 syncMode;
+  rv = aSyncSettings->GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Stop listening to the previous selected playlists
+  mMainLibraryListener->StopListeningToPlaylists();
+
+  // Not in manual mode.
+  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO) {
+    PRBool isSyncAll = PR_FALSE;
+    rv = GetIsMgmtTypeSyncAll(&isSyncAll);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isSyncAll) {
+      // hook up the metadata updating listener
+      rv = mainLib->AddListener(mMainLibraryListener,
+                                PR_FALSE,
+                                sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                                sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
+                                sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
+                                mMainLibraryListenerFilter);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mMainLibraryListener->SetSyncMode(false, nsnull);
+
+      // hook up the media list listeners to the existing lists
+      nsRefPtr<sbPlaylistAttachListenerEnumerator> enumerator =
+        new sbPlaylistAttachListenerEnumerator(mMainLibraryListener);
+      NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = mainLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                             NS_LITERAL_STRING("1"),
+                                             enumerator,
+                                             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      nsCOMPtr<nsIArray> playlistList;
+      rv = aSyncSettings->GetSyncPlaylists(getter_AddRefs(playlistList));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length;
+      rv = playlistList->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mMainLibraryListener->SetSyncMode(false, length ? playlistList : nsnull);
+
+      for (PRUint32 index = 0; index < length; ++index) {
+        nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(playlistList, index, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIMediaList> list = do_QueryInterface(item, &rv);
+        // Not media list. Skip.
+        if (NS_FAILED(rv))
+          continue;
+
+        rv = mMainLibraryListener->ListenToPlaylist(list);
+      }
+      // remove the metadata updating listener
+      rv = mainLib->RemoveListener(mMainLibraryListener);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  } else {
+    mMainLibraryListener->SetSyncMode(
+                     syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL,
+                     nsnull);
+
+    // remove the metadata updating listener
+    rv = mainLib->RemoveListener(mMainLibraryListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceLibrary::UpdateIsReadOnly()
+sbDeviceLibrary::UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings)
 {
   nsresult rv;
 
@@ -586,12 +757,23 @@ sbDeviceLibrary::UpdateIsReadOnly()
     return NS_OK;
   }
 
-  // Mark library as read-write (TODO: XXX Not sure if we still need to do this
-  // but leaving it in as it doesn't hurt anything)
-  nsString str;
-  str.SetIsVoid(PR_TRUE);
-  rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
+  PRUint32 syncMode;
+  rv = aSyncSettings->GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the library is read-only property
+  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL) {
+    // Mark library as read-write
+    nsString str;
+    str.SetIsVoid(PR_TRUE);
+    rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // Mark library as read-only
+    rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                           NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -624,15 +806,19 @@ sbDeviceLibrary::GetSyncSettings(sbIDeviceLibrarySyncSettings ** aSyncSettings)
   nsresult rv;
 
   nsAutoMonitor lock(mMonitor);
-  if (!mSyncSettings) {
-    mSyncSettings = CreateSyncSettings();
-    NS_ENSURE_TRUE(mSyncSettings, NS_ERROR_OUT_OF_MEMORY);
+  if (!mCurrentSyncSettings) {
+    mCurrentSyncSettings = CreateSyncSettings();
+    NS_ENSURE_TRUE(mCurrentSyncSettings, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = mSyncSettings->Read(mDevice, this);
+    rv = mCurrentSyncSettings->Read(mDevice, this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = CallQueryInterface(mSyncSettings.get(), aSyncSettings);
+  nsRefPtr<sbDeviceLibrarySyncSettings> settings;
+  rv = mCurrentSyncSettings->CreateCopy(getter_AddRefs(settings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CallQueryInterface(settings.get(), aSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -715,13 +901,9 @@ sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
   nsresult rv = SetSyncSettingsNoLock(aSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // update the library is read-only property
-  rv = UpdateIsReadOnly();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // update the main library listeners
-  rv = UpdateMainLibraryListeners(mSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_NOTIFY_LISTENERS(OnSyncSettings(
+                                sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,
+                                mCurrentSyncSettings));
 
   return NS_OK;
 }
@@ -744,28 +926,136 @@ sbDeviceLibrary::SetSyncSettingsNoLock(
 
   nsAutoLock lock(syncSettings->GetLock());
 
-  if (mSyncSettings) {
-    rv = mSyncSettings->Assign(syncSettings);
+  if (syncSettings->HasChangedNoLock()) {
+    if (mCurrentSyncSettings) {
+      rv = mCurrentSyncSettings->Assign(syncSettings);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = syncSettings->CreateCopy(getter_AddRefs(mCurrentSyncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // if we're not being assigned the temp settings we need
+    // to update it. We'll cheat and just test the raw pointers
+    if (mTempSyncSettings && mTempSyncSettings != syncSettings) {
+      nsAutoLock lock(mTempSyncSettings->GetLock());
+      rv = mTempSyncSettings->Assign(syncSettings);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mTempSyncSettings->NotifyDeviceLibrary();
+      mTempSyncSettings->ResetChangedNoLock();
+    }
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Create a copy of sync settings for Write. We don't want to hold the lock
+    // while writing as it can dispatch device EVENT_DEVICE_PREFS_CHANGED event.
+    nsRefPtr<sbDeviceLibrarySyncSettings> copiedSyncSettings;
+    rv = mCurrentSyncSettings->CreateCopy(getter_AddRefs(copiedSyncSettings));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Release the lock before dispatching sync settings change event
+    lock.unlock();
+    monitor.Exit();
+
+    rv = copiedSyncSettings->Write(mDevice);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetTempSyncSettings(
+                               sbIDeviceLibrarySyncSettings **aTempSyncSettings)
+{
+  NS_ENSURE_ARG_POINTER(aTempSyncSettings);
+
+  nsresult rv;
+
+  nsAutoMonitor monitor(mMonitor);
+  if (!mTempSyncSettings) {
+    if (!mCurrentSyncSettings) {
+      mCurrentSyncSettings = CreateSyncSettings();
+      NS_ENSURE_TRUE(mCurrentSyncSettings, NS_ERROR_OUT_OF_MEMORY);
+    }
+    mCurrentSyncSettings->CreateCopy(getter_AddRefs(mTempSyncSettings));
+    mTempSyncSettings->NotifyDeviceLibrary();
+  }
+
+  rv = CallQueryInterface(mTempSyncSettings.get(), aTempSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* void resetSyncSettings (); */
+NS_IMETHODIMP
+sbDeviceLibrary::ResetSyncSettings()
+{
+  {
+    nsAutoMonitor monitor(mMonitor);
+
+    // If temp settings were never retrieved, nothing to do.
+    if (!mTempSyncSettings) {
+      return NS_OK;
+    }
+
+    nsAutoLock lockCurrentSyncSettings(mCurrentSyncSettings->GetLock());
+    nsAutoLock lockTempSyncSettings(mTempSyncSettings->GetLock());
+
+    nsresult rv;
+
+    rv = mTempSyncSettings->Assign(mCurrentSyncSettings);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mTempSyncSettings->NotifyDeviceLibrary();
+    mTempSyncSettings->ResetChangedNoLock();
+  }
+
+  SB_NOTIFY_LISTENERS(OnSyncSettings(
+                                  sbIDeviceLibraryListener::SYNC_SETTINGS_RESET,
+                                  mTempSyncSettings));
+
+  return NS_OK;
+}
+
+/* void applySyncSettings (); */
+NS_IMETHODIMP
+sbDeviceLibrary::ApplySyncSettings()
+{
+  // If temp settings were never retrieved, nothing to do.
+  if (!mTempSyncSettings) {
+    return NS_OK;
+  }
+  nsresult rv;
+
+  rv = SetSyncSettingsNoLock(mTempSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mTempSyncSettings->NotifyDeviceLibrary();
+  mTempSyncSettings->ResetChanged();
+
+  SB_NOTIFY_LISTENERS(OnSyncSettings(
+                                sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,
+                                mCurrentSyncSettings));
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetTempSyncSettingsChanged(PRBool * aChanged)
+{
+  NS_ENSURE_ARG_POINTER(aChanged);
+
+  nsAutoMonitor monitor(mMonitor);
+
+  if (!mTempSyncSettings) {
+    *aChanged = PR_FALSE;
   }
   else {
-    rv = syncSettings->CreateCopy(getter_AddRefs(mSyncSettings));
-    NS_ENSURE_SUCCESS(rv, rv);
+    *aChanged = mTempSyncSettings->HasChanged();
   }
-
-  // Create a copy of sync settings for Write. We don't want to hold the lock
-  // while writing as it can dispatch device EVENT_DEVICE_PREFS_CHANGED event.
-  nsRefPtr<sbDeviceLibrarySyncSettings> copiedSyncSettings;
-  rv = mSyncSettings->CreateCopy(getter_AddRefs(copiedSyncSettings));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Release the lock before dispatching sync settings change event
-  lock.unlock();
-  monitor.Exit();
-
-  rv = copiedSyncSettings->Write(mDevice);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -783,7 +1073,7 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
 
   // Create an array for the result
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
@@ -910,66 +1200,92 @@ sbDeviceLibrary::Sync()
   NS_ASSERTION(device,
                "sbDeviceLibrary::GetDevice returned success with no device");
 
-  nsCOMPtr<sbILibraryManager> libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  PRBool isManual = PR_FALSE;
+  rv = GetIsManualSyncMode(&isManual);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> mainLib;
-  rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isManual) {
+    nsCOMPtr<sbILibraryManager> libraryManager =
+      do_GetService("@getnightingale.com/Nightingale/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  #if DEBUG
-    // sanity check that we're using the right device
-    { /* scope */
-      nsCOMPtr<sbIDeviceContent> content;
-      rv = device->GetContent(getter_AddRefs(content));
-      NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbILibrary> mainLib;
+    rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<nsIArray> libraries;
-      rv = content->GetLibraries(getter_AddRefs(libraries));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 libraryCount;
-      rv = libraries->GetLength(&libraryCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool found = PR_FALSE;
-      for (PRUint32 index = 0; index < libraryCount; ++index) {
-        nsCOMPtr<sbIDeviceLibrary> library =
-          do_QueryElementAt(libraries, index, &rv);
+    #if DEBUG
+      // sanity check that we're using the right device
+      { /* scope */
+        nsCOMPtr<sbIDeviceContent> content;
+        rv = device->GetContent(getter_AddRefs(content));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        if (SameCOMIdentity(NS_ISUPPORTS_CAST(sbILibrary*, this), library)) {
-          found = PR_TRUE;
-          break;
-        }
-      }
-      NS_ASSERTION(found,
-                   "sbDeviceLibrary has device that doesn't hold this library");
-    }
-  #endif /* DEBUG */
+        nsCOMPtr<nsIArray> libraries;
+        rv = content->GetLibraries(getter_AddRefs(libraries));
+        NS_ENSURE_SUCCESS(rv, rv);
 
+        PRUint32 libraryCount;
+        rv = libraries->GetLength(&libraryCount);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool found = PR_FALSE;
+        for (PRUint32 index = 0; index < libraryCount; ++index) {
+          nsCOMPtr<sbIDeviceLibrary> library =
+            do_QueryElementAt(libraries, index, &rv);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (SameCOMIdentity(NS_ISUPPORTS_CAST(sbILibrary*, this), library)) {
+            found = PR_TRUE;
+            break;
+          }
+        }
+        NS_ASSERTION(found,
+                     "sbDeviceLibrary has device that doesn't hold this library");
+      }
+    #endif /* DEBUG */
+
+    nsCOMPtr<nsIWritablePropertyBag2> requestParams =
+      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
+                                               mainLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
+                                               NS_ISUPPORTS_CAST(sbIMediaList*, this));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // update the library is read-only property
+  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the user has enabled image sync, trigger it after the audio/video sync
+  // If the user has disabled image sync, trigger it to do the removal.
   nsCOMPtr<nsIWritablePropertyBag2> requestParams =
     do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
-                                             mainLib);
+  // make a low priority request so it's guaranteed to be handled after
+  // higher priority requests, such as audio and video
+  rv = requestParams->SetPropertyAsInt32(
+                          NS_LITERAL_STRING("priority"),
+                          sbBaseDevice::TransferRequest::PRIORITY_LOW);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = requestParams->SetPropertyAsInterface
+                        (NS_LITERAL_STRING("list"),
+                         NS_ISUPPORTS_CAST(sbIMediaList*, this));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
-                                             NS_ISUPPORTS_CAST(sbIMediaList*, this));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // update the library is read-only property
-  rv = UpdateIsReadOnly();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // TODO: XXX For bug 23188 would we need to update listeners. We used to,
-  // but I don't think it's necessary.
   return NS_OK;
 }
 
@@ -1285,16 +1601,6 @@ sbDeviceLibrary::ClearItems()
   return mDeviceLibrary->ClearItems();
 }
 
-/**
- * See sbILibrary
- */
-NS_IMETHODIMP
-sbDeviceLibrary::ClearItemsByType(const nsAString &aContentType)
-{
-  NS_ASSERTION(mDeviceLibrary, "mDevice library is null, call init first.");
-  return mDeviceLibrary->ClearItemsByType(aContentType);
-}
-
 /*
  * See sbIMediaList
  */
@@ -1312,7 +1618,7 @@ sbDeviceLibrary::AddItem(sbIMediaItem *aMediaItem,
                          sbIMediaItem ** aNewMediaItem)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
-  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem,
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, 
                                                  &mShouldProcceed));
 
   if (mPerformAction) {
@@ -1339,20 +1645,11 @@ sbDeviceLibrary::AddAll(sbIMediaList *aMediaList)
   }
 }
 
-NS_IMETHODIMP
-sbDeviceLibrary::AddSome(nsISimpleEnumerator * aMediaItems)
-{
-  // Forward to the new API
-  return AddMediaItems(aMediaItems, nsnull, PR_FALSE);
-}
-
 /*
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbDeviceLibrary::AddMediaItems(nsISimpleEnumerator *aMediaItems,
-                               sbIAddMediaItemsListener * aListener,
-                               PRBool aAsync)
+sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
@@ -1361,7 +1658,28 @@ sbDeviceLibrary::AddMediaItems(nsISimpleEnumerator *aMediaItems,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   if (mPerformAction) {
-    rv = mDeviceLibrary->AddMediaItems(aMediaItems, aListener, aAsync);
+    rv = mDeviceLibrary->AddSome(aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::AddSomeAsync(nsISimpleEnumerator *aMediaItems, 
+                              sbIMediaListAsyncListener *aListener)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
+                                                     &mShouldProcceed));
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if (mPerformAction) {
+    rv = mDeviceLibrary->AddSomeAsync(aMediaItems, aListener);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1381,4 +1699,12 @@ sbDeviceLibrary::Clear(void)
   } else {
     return NS_OK;
   }
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::FireTempSyncSettingsEvent(PRUint32 aEvent)
+{
+  SB_NOTIFY_LISTENERS(OnSyncSettings(aEvent, mCurrentSyncSettings));
+
+  return NS_OK;
 }

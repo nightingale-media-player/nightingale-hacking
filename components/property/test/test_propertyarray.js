@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -43,7 +43,7 @@ function dumpArray(array) {
 
 function runTest() {
   var propertyArray =
-    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"].
     createInstance(Ci.sbIMutablePropertyArray);
 
   // Test appendProperty.
@@ -57,7 +57,7 @@ function runTest() {
   assertEqual(propertyArray.length, 15);
   
   var propertyArray2 =
-    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"].
     createInstance(Ci.sbIMutablePropertyArray);
   for (var index = 10; index < 20; index++) {
     var id = "Property" + index;
@@ -67,7 +67,7 @@ function runTest() {
 
   // Test appendProperties without skipping duplicates.
   var propertyArray3 =
-    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"].
     createInstance(Ci.sbIMutablePropertyArray);
   propertyArray3.appendProperties(propertyArray, false);
   propertyArray3.appendProperties(propertyArray2, false);
@@ -114,7 +114,7 @@ function runTest() {
   assertEqual(count, 15);
   
   // Test replaceElementAt.
-  var factory = Cc["@songbirdnest.com/Songbird/Properties/PropertyFactory;1"].
+  var factory = Cc["@getnightingale.com/Nightingale/Properties/PropertyFactory;1"].
                 createInstance(Ci.sbIPropertyFactory);
   var newProperty = factory.createProperty("NewProperty", "NewValue");
   
@@ -187,7 +187,7 @@ function runTest() {
 
   // Test serialize
   var propertyArray =
-    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"].
     createInstance(Ci.sbIMutablePropertyArray);
 
   for (var index = 0; index < 10; index++) {

@@ -1,10 +1,10 @@
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 # 
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 # 
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 DEPTH = ..
@@ -32,17 +32,14 @@ include $(DEPTH)/build/autodefs.mk
 AWK_CMD = $(AWK) $(AWK_EXPR) < $(MOZSDK_INCLUDE_DIR)/mozilla-config.h
 AWK_EXPR = '/\#define MOZILLA_VERSION_U/ { gsub(/"/, "", $$3); print $$3 }'
 
-BUILD_INFO_MK_FILE = sbBuildInfo.mk
+export:: sbBuildInfo.mk
 
-export:: $(BUILD_INFO_MK_FILE)
+export NIGHTINGALE_OFFICIAL
 
-GARBAGE += $(BUILD_INFO_MK_FILE)
-
-export SONGBIRD_OFFICIAL
-
-$(BUILD_INFO_MK_FILE): FORCE
+sbBuildInfo.mk: FORCE
 	$(RM) -f $@
 	$(PYTHON) $(srcdir)/make-buildinfo.py -i $(srcdir)/$@.in -o $@ \
     -k SB_MOZILLA_VERSION=$(shell $(AWK_CMD)) 
+	
 
 include $(topsrcdir)/build/rules.mk

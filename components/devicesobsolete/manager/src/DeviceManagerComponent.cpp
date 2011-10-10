@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,13 +20,13 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
 /** 
 * \file  DeviceManagerComponent.cpp
-* \brief Songbird DeviceManager Component Factory and Main Entry Point.
+* \brief Nightingale DeviceManager Component Factory and Main Entry Point.
 */
 
 #include <nsCOMPtr.h>
@@ -54,8 +54,8 @@ sbDeviceManagerObsoleteRegisterSelf(nsIComponentManager* aCompMgr,
 
   rv = categoryManager->
          AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
-                          "service," SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID,
+                          NIGHTINGALE_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
+                          "service," NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CONTRACTID,
                           PR_TRUE, PR_TRUE, nsnull);
   return rv;
 }
@@ -72,7 +72,7 @@ sbDeviceManagerObsoleteUnregisterSelf(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
+                                            NIGHTINGALE_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
                                             PR_TRUE);
 
   return rv;
@@ -81,13 +81,13 @@ sbDeviceManagerObsoleteUnregisterSelf(nsIComponentManager* aCompMgr,
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME, 
-    SONGBIRD_OBSOLETE_DEVICEMANAGER_CID,
-    SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID,
+    NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CLASSNAME, 
+    NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CID,
+    NIGHTINGALE_OBSOLETE_DEVICEMANAGER_CONTRACTID,
     sbDeviceManagerObsoleteConstructor,
     sbDeviceManagerObsoleteRegisterSelf,
     sbDeviceManagerObsoleteUnregisterSelf
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceManagerObsoleteModule, components)
+NS_IMPL_NSGETMODULE(NightingaleDeviceManagerObsoleteModule, components)

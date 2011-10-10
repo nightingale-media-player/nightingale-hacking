@@ -3,7 +3,7 @@
 # This script is not intended to be run manually, it is called by check_copyright.sh
 
 # $1 = the behavior to use ("check"|"replace") 
-# $2 = the working directory for the copyright checker (eg. "/c/Projects/Songbird/trunk/tools/scripts")
+# $2 = the working directory for the copyright checker (eg. "/c/Projects/Nightingale/trunk/tools/scripts")
 # $3 = the years to use in the replaced copyright statement (eg. "2005-2008")
 # $4 = a line of result from the search performed by check_copyright.sh (eg. "<file_name>:<line_number>:<matching_line>")
 

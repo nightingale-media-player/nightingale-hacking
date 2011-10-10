@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -30,12 +30,12 @@
 
 var gTestFileLocation = "testharness/metadatamanager/files/";
 var gTestLibrary = createNewLibrary( "test_metadata_mpeg4" );
-var gTestMediaItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+var gTestMediaItems = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
 
 var gTestFolder;
 
-var gFileMetadataService = Cc["@songbirdnest.com/Songbird/MetadataManager;1"]
+var gFileMetadataService = Cc["@getnightingale.com/Nightingale/MetadataManager;1"]
                              .getService(Ci.sbIMetadataManager);
 
 
@@ -68,7 +68,7 @@ const gTestCases = [
     source: "MPEG4_Empty.m4a",
     ref:   "MPEG4_Empty_Ref.m4a",
     properties: {
-      artistName: "Songbird",
+      artistName: "Nightingale",
       trackName: "Start From Empty"
       
     }
@@ -77,7 +77,7 @@ const gTestCases = [
     source: "MPEG4_Empty_Shift.m4a",
     ref:   "MPEG4_Empty_Shift_Ref.m4a",
     properties: {
-      artistName: "Songbird",
+      artistName: "Nightingale",
       trackName: "memmov"
       
     }
@@ -86,7 +86,7 @@ const gTestCases = [
     source: "MPEG4_Useless.m4a",
     ref:   "MPEG4_Useless_Ref.m4a",
     properties: {
-      artistName: "Songbird",
+      artistName: "Nightingale",
       trackName: "Simple Test"
     }
   },
@@ -94,7 +94,7 @@ const gTestCases = [
     source: "MPEG4_Expand.m4a",
     ref:   "MPEG4_Expand_Ref.m4a",
     properties: {
-      artistName: "Songbird",
+      artistName: "Nightingale",
       albumName: "MPEG4 writing unit test",
       trackName: "expanding and shifting chunk offsets!",
       genre: "Soundtrack",
@@ -121,11 +121,11 @@ function runTest() {
 
   var prefSvc = Cc["@mozilla.org/preferences-service;1"]
                   .getService(Ci.nsIPrefBranch);
-  var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
+  var oldWritingEnabledPref = prefSvc.getBoolPref("nightingale.metadata.enableWriting");
   gTailCallback.push(function() {
-    prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
+    prefSvc.setBoolPref("nightingale.metadata.enableWriting", oldWritingEnabledPref); 
   });
-  prefSvc.setBoolPref("songbird.metadata.enableWriting", true);
+  prefSvc.setBoolPref("nightingale.metadata.enableWriting", true);
   
   // Make a copy of everything in the test file folder
   // so that our changes don't interfere with other tests
@@ -232,7 +232,7 @@ function startMetadataJob(items, type, writeProperties) {
   if (!(items instanceof Ci.nsIArray)) {
     items = ArrayConverter.nsIArray(items);
   }
-  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+  manager = Components.classes["@getnightingale.com/Nightingale/FileMetadataService;1"]
                       .getService(Components.interfaces.sbIFileMetadataService);
                       
   var job;

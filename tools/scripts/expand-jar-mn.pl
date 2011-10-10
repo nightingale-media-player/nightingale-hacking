@@ -1,11 +1,11 @@
 #!/usr/bin/perl
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 # 
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 # 
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 # or write to the Free Software Foundation, Inc., 
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 
@@ -71,7 +71,7 @@ while (<STDIN>)
       # If you run into build problems you may need to add more extensions to
       # to the following regular expression.
       #
-      if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|xhtml|html|htm|dtd|properties|swf|swd|rdf|manifest|csv|txt)$/)) {
+      if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|xhtml|html|htm|dtd|properties|swf|swd|rdf|manifest|txt)$/)) {
         die <<END;
 --- WARNING ---
 expand-jar-mn.pl was aborted due to presence of file with non-whitelisted 

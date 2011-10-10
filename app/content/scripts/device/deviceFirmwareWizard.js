@@ -2,12 +2,12 @@
 /* vim: set sw=2 :miv */
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,7 +22,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -163,22 +163,13 @@ var deviceFirmwareWizard = {
         cancelButton.disabled = false;
         
         let deviceManager = 
-          Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+          Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
             .getService(Ci.sbIDeviceManager2);
         
         deviceManager.addEventListener(this);
 
         // Handle default device
-        let handler = null;        
         if(this._isDefaultDevice) {
-          // Get a firmware handler for the selected device and hint it to
-          // expect a recovery mode connection
-          handler = this._deviceFirmwareUpdater.getHandler(
-                                                  null,
-                                                  this._defaultDeviceVID,
-                                                  this._defaultDevicePID);
-          handler.initiateRecoveryModeSwitch(this._defaultDeviceVID,
-                                             this._defaultDevicePID);
           let recoveryInstructions = 
             SBFormattedString("device.firmware.wizard.recovery_mode.instructions", 
                               [this._defaultDeviceName, 
@@ -201,6 +192,7 @@ var deviceFirmwareWizard = {
         }
         
         // Not default device, proceed as normal.
+        let handler = null;        
         try {
           handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
         }
@@ -217,9 +209,6 @@ var deviceFirmwareWizard = {
                 if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
                    aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
                   let handler = self._deviceFirmwareUpdater.getActiveHandler(this.device);
-
-                  // Hint the handler to expect a recovery mode connection
-                  handler.initiateRecoveryModeSwitch();
 
                   let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
                   label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
@@ -258,9 +247,6 @@ var deviceFirmwareWizard = {
 
         this._deviceFirmwareUpdater.requireRecovery(this._device);
         
-        // Hint the handler to expect a recovery mode connection
-        handler.initiateRecoveryModeSwitch();
-
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
         label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
                                         [this._deviceProperties.modelNumber]);
@@ -591,7 +577,7 @@ var deviceFirmwareWizard = {
     }
     
     this._deviceFirmwareUpdater = 
-      Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+      Cc["@getnightingale.com/Nightingale/Device/Firmware/Updater;1"]
         .getService(Ci.sbIDeviceFirmwareUpdater);
 
     this._wizardElem = document.getElementById("device_firmware_wizard");
@@ -638,12 +624,12 @@ var deviceFirmwareWizard = {
         setTimeout(function() {
             self._wizardElem.goTo("device_needs_recovery_mode_page");
           }, 0);
-    }
+      }
     }
     else {
-    setTimeout(function() {
-        self._wizardElem.goTo("device_firmware_wizard_check_page");
-      }, 0);
+      setTimeout(function() {
+          self._wizardElem.goTo("device_firmware_wizard_check_page");
+        }, 0);
     }
   },
 
@@ -651,7 +637,7 @@ var deviceFirmwareWizard = {
   _finalize: function deviceFirmwareWizard__finalize() {
     this._deviceFirmwareUpdater.finalizeUpdate(this._device);
     
-    let deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+    let deviceManager = Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
     deviceManager.removeEventListener(this);
   
@@ -745,10 +731,6 @@ var deviceFirmwareWizard = {
         
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_new_box");
-
-        var browserBox =
-          document.getElementById("device_firmware_wizard_release_notes_box");
-        browserBox.open = true;
           
         // force canRewind since we need to be able to use the back button
         // as the remind me later button.
@@ -875,7 +857,7 @@ var deviceFirmwareWizard = {
           this._waitingForDeviceReconnect = false;
         
           let deviceManager = 
-            Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+            Cc["@getnightingale.com/Nightingale/DeviceManager;2"]
               .getService(Ci.sbIDeviceManager2);
       
           deviceManager.removeEventListener(this);

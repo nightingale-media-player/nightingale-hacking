@@ -1,25 +1,27 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
  */
 
 #include "sbRemoteCommands.h"
@@ -252,39 +254,6 @@ sbRemoteCommands::GetOwner( sbIRemotePlayer **aOwner )
 //
 // ---------------------------------------------------------------------------
 
-/* void addListener (in sbIPlaylistCommandsListener listener); */
-NS_IMETHODIMP
-sbRemoteCommands::AddListener(sbIPlaylistCommandsListener *listener)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* void removeListener (in sbIPlaylistCommandsListener listener); */
-NS_IMETHODIMP
-sbRemoteCommands::RemoveListener(sbIPlaylistCommandsListener *listener)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::NotifyListeners(const nsAString &aTriggerFunction,
-                                 sbIPlaylistCommands *aCommandObject)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::AddCommandObject(sbIPlaylistCommands *aCommandObject)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::RemoveCommandObject(sbIPlaylistCommands *aCommandObject)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
 NS_IMETHODIMP
 sbRemoteCommands::SetContext( sbIPlaylistCommandsContext *aContext)
 {
@@ -335,39 +304,6 @@ sbRemoteCommands::GetCommandId( const nsAString &aSubMenu,
     return NS_OK;
   }
   return NS_ERROR_INVALID_ARG;
-}
-
-/* readonly attribute AString id */
-NS_IMETHODIMP
-sbRemoteCommands::GetId(nsAString & _retval NS_OUTPARAM)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* attribute PRUint16 targetFlags */
-NS_IMETHODIMP
-sbRemoteCommands::GetTargetFlags(PRUint16 *_retval)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::SetTargetFlags(PRUint16 targetFlags)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/* attribute sbIPlaylistCommands parentCommandObject */
-NS_IMETHODIMP
-sbRemoteCommands::GetParentCommandObject(sbIPlaylistCommands **_retval)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::SetParentCommandObject(sbIPlaylistCommands *aParentCommandObject)
-{
-    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
@@ -437,14 +373,6 @@ sbRemoteCommands::GetCommandVisible( const nsAString &aSubMenu,
 }
 
 NS_IMETHODIMP
-sbRemoteCommands::GetVisibleCallback(sbIPlaylistCommandsBuilderPCCallback **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = nsnull;
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
 sbRemoteCommands::GetCommandFlag( const nsAString &aSubMenu,
                                   PRInt32 aIndex,
                                   const nsAString &aHost,
@@ -501,7 +429,6 @@ sbRemoteCommands::GetCommandShortcutLocal( const nsAString &aSubMenu,
                                            const nsAString &aHost,
                                            PRBool *_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
   return NS_OK;
 }
@@ -515,24 +442,14 @@ sbRemoteCommands::GetCommandChoiceItem( const nsAString &aChoiceMenu,
   return NS_OK;
 }
 
-
 NS_IMETHODIMP
 sbRemoteCommands::GetCommandSubObject( const nsAString &aSubMenu,
                                       PRInt32 aIndex,
                                       const nsAString &aHost,
                                       sbIPlaylistCommands **_retval)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
   return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemoteCommands::GetChildrenCommandObjects(nsISimpleEnumerator **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = nsnull;
-  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP

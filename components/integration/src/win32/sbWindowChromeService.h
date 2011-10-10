@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBWINDOWCHROMESERVICE_H_
@@ -59,11 +59,11 @@ protected:
   t_DwmIsCompositionEnabled mDwmIsCompositionEnabled;
 };
 
-#define SONGBIRD_WINDOW_CHROME_SERVICE_CONTRACTID         \
-  "@songbirdnest.com/Songbird/WindowChromeService;1"
-#define SONGBIRD_WINDOW_CHROME_SERVICE_CLASSNAME          \
-  "Songbird Window Chrome Service"
-#define SONGBIRD_WINDOW_CHROME_SERVICE_CID                \
+#define NIGHTINGALE_WINDOW_CHROME_SERVICE_CONTRACTID         \
+  "@getnightingale.com/Nightingale/WindowChromeService;1"
+#define NIGHTINGALE_WINDOW_CHROME_SERVICE_CLASSNAME          \
+  "Nightingale Window Chrome Service"
+#define NIGHTINGALE_WINDOW_CHROME_SERVICE_CID                \
 { /* {2DA9047B-2256-4ab0-87D7-EA0AD684027A} */            \
   0x2da9047b,                                             \
   0x2256,                                                 \

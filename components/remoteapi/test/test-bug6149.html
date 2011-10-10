@@ -1,12 +1,12 @@
 <!--
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -21,7 +21,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
@@ -37,13 +37,13 @@ function log(stuff) {
 
 function runtest() {
 
-  var contentUrlProperty = "http://songbirdnest.com/data/1.0#contentURL";
+  var contentUrlProperty = "http://getnightingale.com/data/1.0#contentURL";
 
-  var library = songbird.mainLibrary;
+  var library = nightingale.mainLibrary;
   var list = library.createSimpleMediaList("TestList");
   var item = library.createMediaItem("http://example.com/foo");
 
-  var sitelibrary = songbird.siteLibrary;
+  var sitelibrary = nightingale.siteLibrary;
   var sitelist = sitelibrary.createSimpleMediaList("TestSiteList");
   var siteitem = sitelibrary.createMediaItem("http://example.com/foo");
 
@@ -102,7 +102,7 @@ function runtest() {
   </head>
   <body onload="runtest();">
     <h1> Test page for 
-      <a href="http://bugzilla.songbirdnest.com/show_bug.cgi?id=6149">bug 6149 </a>
+      <a href="http://bugzilla.getnightingale.com/show_bug.cgi?id=6149">bug 6149 </a>
     </h1>
     <p> This test the ability to read/write to contentURL. All tests should post
         Success: with some description of what succeeded. 2 reads should be possible

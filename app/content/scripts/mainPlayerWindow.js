@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
-
-
+ 
+ 
 var gTabBrowser = null;
-var PREF_PLAYER_CONTROL_LOCATION = "songbird.playercontrol.location";
+var PREF_PLAYER_CONTROL_LOCATION = "nightingale.playercontrol.location";
 
 if ("undefined" == typeof(Ci)) {
   this.Ci = Components.interfaces;
@@ -46,15 +46,15 @@ function movePlayerControls(aIsOnTop)
   if (contentPlayerWrapper) {
     if (Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, "") != locationVal) {
       // the location changed, send a metrics ping
-      // see http://bugzilla.songbirdnest.com/show_bug.cgi?id=11509
-      Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+      // see http://bugzilla.getnightingale.com/show_bug.cgi?id=11509
+      Components.classes["@getnightingale.com/Nightingale/Metrics;1"]
                 .createInstance(Components.interfaces.sbIMetrics)
                 .metricsInc("mainplayer.playercontrols", "location", locationVal);
     }
-
+    
     contentPlayerWrapper.setAttribute("playercontrols", locationVal);
     Application.prefs.setValue(PREF_PLAYER_CONTROL_LOCATION, locationVal);
-
+    
     // Invoke the broadcasters
     var broadcasterTop = document.getElementById("playercontrols_top");
     var broadcasterBottom = document.getElementById("playercontrols_bottom");
@@ -70,7 +70,7 @@ function movePlayerControls(aIsOnTop)
 }
 
 
-var gSongbirdWindowController =
+var gNightingaleWindowController = 
 {
   doCommand: function(aCommand)
   {
@@ -79,26 +79,13 @@ var gSongbirdWindowController =
       newEvent.initEvent(aType, aCanBubble, aCanCancel);
       return (aTarget || window).dispatchEvent(newEvent);
     }
-
+    
     var mm = gMM ||
-             Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+             Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                .getService(Components.interfaces.sbIMediacoreManager);
     var status = mm.status;
     if (aCommand == "cmd_find") {
-      if (gTabBrowser.mediaTab &&
-          gTabBrowser.selectedTab == gTabBrowser.mediaTab &&
-          gTabBrowser.selectedTab.mediaPage != null) {
-        if (window && window.gSearchHandler) {
-          var searchBar = window.gSearchHandler.getSearchBar();
-          if (searchBar) {
-            searchBar.select();
-            searchBar.focus();
-          }
-        }
-      }
-      else {
-        gTabBrowser.onFindCommand();
-      }
+      gTabBrowser.onFindCommand();
     } else if (aCommand == "cmd_findAgain") {
       gTabBrowser.onFindAgainCommand();
     } else if (aCommand == "cmd_print") {
@@ -112,9 +99,9 @@ var gSongbirdWindowController =
     } else if (aCommand == "cmd_getartwork") {
       SBGetArtworkOpen(); // Show the get artwork dialog
     } else if (aCommand == "cmd_exportmedia") {
-      var exportService = Cc["@songbirdnest.com/media-export-service;1"]
+      var exportService = Cc["@getnightingale.com/media-export-service;1"]
                             .getService(Ci.sbIMediaExportService);
-      exportService.exportSongbirdData();
+      exportService.exportNightingaleData();
     } else if (aCommand == "cmd_reveal") {
       SBRevealFile(); // reveal the selected file
     } else if (aCommand == "cmd_find_current_track") {
@@ -134,7 +121,7 @@ var gSongbirdWindowController =
       // a gBrowser object, the current window may still perform
       // its own custom action.
       var handled = !dispatchEvent("ShowCurrentTrack", false, true);
-      if (handled) {
+      if (handled) { 
         return;
       }
       gTabBrowser.showIndexInView(mm.sequencer.view, mm.sequencer.viewPosition);
@@ -149,7 +136,7 @@ var gSongbirdWindowController =
       // Otherwise dispatch a play event.  Someone should catch this
       // and intelligently initiate playback.  If not, just have
       // the playback service play the default.
-      }
+      } 
       else {
         var event = document.createEvent("Events");
         event.initEvent("Play", true, true);
@@ -168,10 +155,10 @@ var gSongbirdWindowController =
     } else if (aCommand == "cmd_delete") {
       SBDeleteMediaList(this._getTargetPlaylist());
     } else if (aCommand == "cmd_mediapage_next") {
-      gSongbirdPlayerWindow.nextMediaPage();
+      gNightingalePlayerWindow.nextMediaPage();
     }
   },
-
+  
   supportsCommand: function(aCommand)
   {
     switch(aCommand) {
@@ -202,7 +189,7 @@ var gSongbirdWindowController =
     }
     return false;
   },
-
+  
   isCommandEnabled: function(aCommand)
   {
     var browser = null;
@@ -215,18 +202,17 @@ var gSongbirdWindowController =
     }
 
     var mm = gMM||
-             Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+             Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                .getService(Components.interfaces.sbIMediacoreManager);
     var status = mm.status;
-
+    
     var playing = ( status.state == status.STATUS_BUFFERING ||
                     status.state == status.STATUS_PLAYING  ||
                     status.state == status.STATUS_PAUSED );
     switch(aCommand) {
       case "cmd_find":
-        return (!browser.shouldDisableFindForSelectedTab());
       case "cmd_findAgain":
-        return (!browser.shouldDisableFindAgainForSelectedTab());
+        return (!browser.shouldDisableFindForSelectedTab());
       case "cmd_print":
         // printing XUL is not supported, see NS_ERROR_GFX_PRINTER_NO_XUL
         return !(browser.contentDocument instanceof XULDocument);
@@ -241,7 +227,7 @@ var gSongbirdWindowController =
       case "cmd_getartwork":
         return (view != null);
       case "cmd_exportmedia":
-        var exportService = Cc["@songbirdnest.com/media-export-service;1"]
+        var exportService = Cc["@getnightingale.com/media-export-service;1"]
                               .getService(Ci.sbIMediaExportService);
         return exportService.hasPendingChanges;
       case "cmd_reveal": {
@@ -282,20 +268,20 @@ var gSongbirdWindowController =
     }
     return false;
   },
-
-  _getTargetPlaylist: function()
+  
+  _getTargetPlaylist: function() 
   {
     var list;
     var knode = gServicePane.getKeyboardFocusNode(true);
     if (knode) {
       var libraryServicePane =
-        Components.classes['@songbirdnest.com/servicepane/library;1']
+        Components.classes['@getnightingale.com/servicepane/library;1']
         .getService(Components.interfaces.sbILibraryServicePaneService);
       list = libraryServicePane.getLibraryResourceForNode(knode);
-
+      
     } else {
       var browser;
-      if (typeof SBGetBrowser == 'function')
+      if (typeof SBGetBrowser == 'function') 
         browser = SBGetBrowser();
       if (browser) {
         if (browser.currentMediaPage) {
@@ -307,7 +293,7 @@ var gSongbirdWindowController =
       }
     }
     if (list) {
-      var outerListGuid =
+      var outerListGuid = 
         list.getProperty(SBProperties.outerGUID);
       if (outerListGuid) {
         return list.library.getMediaItem(outerListGuid);
@@ -320,10 +306,10 @@ var gSongbirdWindowController =
 
 
 /**
- * Primary controller for a Songbird XUL layout containing a browser window.
+ * Primary controller for a Nightingale XUL layout containing a browser window.
  * Much of playerOpen.js and mainWinInit.js should eventually be moved here.
  */
-var gSongbirdPlayerWindow = {
+var gNightingalePlayerWindow = {
 
 
   ///////////////////////////
@@ -339,31 +325,31 @@ var gSongbirdPlayerWindow = {
     window.removeEventListener("load", this._onLoadCallback, false);
     this._onLoadCallback = null;
 
-    this._onUnloadCallback = function(e) { gSongbirdPlayerWindow.onUnload(e); };
-    window.addEventListener("unload",
+    this._onUnloadCallback = function(e) { gNightingalePlayerWindow.onUnload(e); };
+    window.addEventListener("unload", 
         this._onUnloadCallback, false);
 
-    this._onPlayCallback = function(e) { gSongbirdPlayerWindow.onPlay(e); };
+    this._onPlayCallback = function(e) { gNightingalePlayerWindow.onPlay(e); };    
     window.addEventListener("Play", this._onPlayCallback, false);
 
     window.addEventListener("keypress", this.onMainWindowKeyPress, false);
-
+    
     window.focus();
     windowPlacementSanityChecks();
-
+    
     gTabBrowser = document.getElementById("content");
-    top.controllers.insertControllerAt(0, gSongbirdWindowController);
-
+    top.controllers.insertControllerAt(0, gNightingaleWindowController);
+    
     // Set the player controls location
-    var playerControlsLocation =
+    var playerControlsLocation = 
       Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, false);
     movePlayerControls((playerControlsLocation == "top"));
     try
     {
-      var timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+      var timingService = Cc["@getnightingale.com/Nightingale/TimingService;1"]
                           .getService(Ci.sbITimingService);
       // NOTE: Must be in this order, CSPerfEndEULA doesn't always exist and
-      // will throw an error. CSPerfLibrary is just a timestamp for non-first
+      // will throw an error. CSPerfLibrary is just a timestamp for non-first 
       // runs.
       timingService.startPerfTimer("CSPerfLibrary");
       timingService.stopPerfTimer("CSPerfLibrary");
@@ -383,14 +369,14 @@ var gSongbirdPlayerWindow = {
   {
     window.removeEventListener("unload", this._onUnloadCallback, false);
     this._onUnloadCallback = null;
-
+   
     window.removeEventListener("Play",  this._onPlayCallback, false);
     this._onPlayCallback = null;
 
     window.removeEventListener("keypress", this.onMainWindowKeyPress, false);
   },
 
-
+  
   /**
    * Called in the capturing phase of a Play event.
    * Looks for a mediaListView that is appropriate to play
@@ -402,31 +388,31 @@ var gSongbirdPlayerWindow = {
       // Try to find a view from the event. If one exists that's probably
       // what we should play from.
       var view = this._getMediaListViewForEvent(event);
-
+      
       // If no view could be found, try getting one from the current tab
       if (!(view && view.length > 0)) {
         view = gBrowser.currentMediaListView;
       }
-
+      
       // If the current tab has failed, try the media tab (if it exists)
       if (!(view && view.length > 0) && gBrowser.mediaTab) {
         view = gBrowser.mediaTab.mediaListView;
       }
-
+      
       // If we've got a view, try playing it.
       if (view && view.length > 0) {
-        var mm =
-          Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        var mm = 
+          Cc["@getnightingale.com/Nightingale/Mediacore/Manager;1"]
                            .getService(Ci.sbIMediacoreManager);
-
-        mm.sequencer.playView(view,
-                              Math.max(view.selection.currentIndex,
+         
+        mm.sequencer.playView(view, 
+                              Math.max(view.selection.currentIndex, 
                                        Ci.sbIMediacoreSequencer.AUTO_PICK_INDEX));
-
+        
         // Since we've handled this play event, prevent any fallback action from
         // occurring.
         event.preventDefault();
-      }
+      } 
     } catch (e) {
       Components.utils.reportError(e);
     }
@@ -449,14 +435,14 @@ var gSongbirdPlayerWindow = {
     {
       return true;
     }
-
+    
     doMenu("menuitem_control_play");
     event.preventDefault();
     event.stopPropagation();
     return false;
   },
 
-  nextMediaPage: function gSongbirdPlayerWindow_nextMediaPage() {
+  nextMediaPage: function gNightingalePlayerWindow_nextMediaPage() {
     // no need to do this if we can't get the browser
     if (typeof SBGetBrowser != 'function')
       return;
@@ -469,10 +455,10 @@ var gSongbirdPlayerWindow = {
       return;
     }
 
-    var mediaPageMgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+    var mediaPageMgr = Cc["@getnightingale.com/Nightingale/MediaPageManager;1"]
                          .getService(Ci.sbIMediaPageManager);
     var pages = mediaPageMgr.getAvailablePages(mediaListView.mediaList);
-    var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+    var LSP = Cc["@getnightingale.com/servicepane/library;1"]
                 .getService(Ci.sbILibraryServicePaneService);
     var type = LSP.getNodeContentTypeFromMediaListView(mediaListView);
     var current = mediaPageMgr.getPage(mediaListView.mediaList, null, type);
@@ -498,10 +484,10 @@ var gSongbirdPlayerWindow = {
     }
 
     mediaPageMgr.setPage(mediaListView.mediaList, page);
-    browser.loadMediaList(mediaListView.mediaList,
+    browser.loadMediaList(mediaListView.mediaList,  
                           null,
-                          null,
-                          mediaListView,
+                          null, 
+                          mediaListView, 
                           null);
   },
 
@@ -528,7 +514,7 @@ var gSongbirdPlayerWindow = {
     }
     if (target.currentMediaListView) {
       return target.currentMediaListView;
-    }
+    }    
 
     // If the event came from within a binding, perhaps
     // the view is on the inner anon element.
@@ -538,8 +524,8 @@ var gSongbirdPlayerWindow = {
     }
     if (target.currentMediaListView) {
       return target.currentMediaListView;
-    }
-
+    }  
+    
     // Maybe this event is from an inner document (browser or iframe)
     if (event.target.ownerDocument != document && window.gBrowser) {
       target = gBrowser.getTabForDocument(event.target.ownerDocument);
@@ -550,10 +536,10 @@ var gSongbirdPlayerWindow = {
     return null;
   },
 
-}  // End of gSongbirdPlayerWindow
+}  // End of gNightingalePlayerWindow
 
 // Set up bubbling load listener
-gSongbirdPlayerWindow._onLoadCallback =
-    function(e) { gSongbirdPlayerWindow.onLoad(e) };
-window.addEventListener("load", gSongbirdPlayerWindow._onLoadCallback, false);
+gNightingalePlayerWindow._onLoadCallback = 
+    function(e) { gNightingalePlayerWindow.onLoad(e) };
+window.addEventListener("load", gNightingalePlayerWindow._onLoadCallback, false);
 

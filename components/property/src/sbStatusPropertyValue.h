@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SBSTATUSPROPERTYVALUE_H_
@@ -28,7 +28,7 @@
 // Mozilla includes
 #include <nsStringAPI.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbStringUtils.h>
 
 
@@ -42,8 +42,7 @@ public:
     eNone        = 0,
     eRipping     = 1,
     eComplete    = 2,
-    eFailed      = 3,
-    eAborted     = 4
+    eFailed      = 3
   };
   /**
    * Default initializer
@@ -80,9 +79,6 @@ public:
           break;
         case 3:
           mMode = eFailed;
-          break;
-        case 4:
-          mMode = eAborted;
           break;
         default:
           mMode = eNone;
@@ -134,7 +130,6 @@ public:
     switch (GetMode()) {
       case eComplete:
       case eFailed:
-      case eAborted:
         value.AppendLiteral("|100");
         break;
       default:

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,14 +28,14 @@
   { 0xc9cd159b, 0x8227, 0x41e1, \
   { 0xbd, 0xbc, 0xe6, 0x46, 0xcf, 0x32, 0xb3, 0x4e } }
 #define SB_TESTHARNESSCONSOLELISTENER_CONTRACTID \
-  "@songbirdnest.com/Songbird/TestHarness/ConsoleListener;1"
+  "@getnightingale.com/Nightingale/TestHarness/ConsoleListener;1"
 
 #define SB_TIMINGSERVICE_DESCRIPTION    \
-  "Songbird Timing Service"
+  "Nightingale Timing Service"
 #define SB_TIMINGSERVICE_CONTRACTID     \
-  "@songbirdnest.com/Songbird/TimingService;1"
+  "@getnightingale.com/Nightingale/TimingService;1"
 #define SB_TIMINGSERVICE_CLASSNAME      \
-  "Songbird Timing Service"
+  "Nightingale Timing Service"
 #define SB_TIMINGSERVICE_CID            \
 { /* 1f81bd64-a25a-4c25-b12e-9993add59177 */  \
   0x1f81bd64,                                 \
@@ -48,5 +48,5 @@
   { 0x14a72a82, 0x566c, 0x478d, \
   { 0xa7, 0xda, 0x2f, 0x32, 0xac, 0x7d, 0xa6, 0x26 } }
 #define SB_LEAKCANARY_CONTRACTID \
-  "@songbirdnest.com/Songbird/TestHarness/LeakCanary;1"
+  "@getnightingale.com/Nightingale/TestHarness/LeakCanary;1"
 

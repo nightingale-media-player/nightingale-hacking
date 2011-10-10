@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -28,12 +28,12 @@
 /** 
 *******************************************************************************
 
-SONGBIRD GLOBAL SKIN
+NIGHTINGALE GLOBAL SKIN
 
 A chrome://global/skin provider intended for use with feathers that fully
 style all XUL elements.
 
-The goal of the Songbird global is to provide a stable, minimal
+The goal of the Nightingale global is to provide a stable, minimal
 basis on which user feathers can build.  
 
 The global skin package contains images and style sheets loaded
@@ -42,15 +42,15 @@ loaded by all chrome windows.
 
 Global is usually the platform specific provider included in
 XULRunner (Winstripe on Windows, and Pinstripe on Mac).  
-This makes things difficult when Songbird feathers want complete
+This makes things difficult when Nightingale feathers want complete
 control over look and feel, and want the same appearance on
 all platforms.
 
-Feathers request the Songbird global through entries in their
+Feathers request the Nightingale global through entries in their
 chrome.manifest configuration file.  See the Rubberducky chrome.manifest
 for an example.
 
-For more information, see http://developer.songbirdnest.com/
+For more information, see http://developer.getnightingale.com/
 
 *******************************************************************************
 */ 
@@ -64,7 +64,7 @@ For more information, see http://developer.songbirdnest.com/
 
 @import url("chrome://global/skin/globalMisc.css");
  
-@import url("chrome://global/skin/songbirdBaseStyles.css");
+@import url("chrome://global/skin/nightingaleBaseStyles.css");
 
 @import url("chrome://global/skin/bindings.css");
 
@@ -72,5 +72,5 @@ For more information, see http://developer.songbirdnest.com/
 
 /* Import the current feathers.  This allows feathers
    to modify the look of XUL elements in all windows. */    
-@import url("chrome://songbird/skin/globalImport.css");
+@import url("chrome://nightingale/skin/globalImport.css");
 

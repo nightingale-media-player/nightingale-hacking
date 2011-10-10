@@ -1,11 +1,11 @@
 /*d
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -31,13 +31,13 @@
 #include <nsIContentSniffer.h>
 #include <nsStringGlue.h>
 
-#define SONGBIRD_MEDIASNIFFER_DESCRIPTION                  \
-  "Songbird Media Sniffer"
-#define SONGBIRD_MEDIASNIFFER_CONTRACTID                   \
-  "@songbirdnest.com/sontentsniffer/manager;1"
-#define SONGBIRD_MEDIASNIFFER_CLASSNAME                    \
+#define NIGHTINGALE_MEDIASNIFFER_DESCRIPTION                  \
+  "Nightingale Media Sniffer"
+#define NIGHTINGALE_MEDIASNIFFER_CONTRACTID                   \
+  "@getnightingale.com/sontentsniffer/manager;1"
+#define NIGHTINGALE_MEDIASNIFFER_CLASSNAME                    \
   "sbMediaSniffer"
-#define SONGBIRD_MEDIASNIFFER_CID                          \
+#define NIGHTINGALE_MEDIASNIFFER_CID                          \
 { /* b4f06ad2-0252-4a2f-9d83-f4f25d0303a3 */               \
   0xb4f06ad2,                                              \
   0x0252,                                                  \
@@ -45,8 +45,8 @@
   { 0x9d, 0x83, 0xf4, 0xf2, 0x5d, 0x03, 0x03, 0xa3 }       \
 }
 
-#define TYPE_MAYBE_MEDIA "application/vnd.songbird.maybe.media"
-#define TYPE_MAYBE_PLAYLIST "application/vnd.songbird.maybe.playlist"
+#define TYPE_MAYBE_MEDIA "application/vnd.nightingale.maybe.media"
+#define TYPE_MAYBE_PLAYLIST "application/vnd.nightingale.maybe.playlist"
 
 class sbMediaSniffer : public nsIContentSniffer
 {

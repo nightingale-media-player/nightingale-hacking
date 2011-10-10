@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,16 +22,16 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % nightingaleDTD SYSTEM "chrome://nightingale/locale/nightingale.dtd">
 %brandDTD;
-%songbirdDTD;
+%nightingaleDTD;
 ]>
 
 
@@ -41,25 +41,25 @@
   <prefpane id="paneRemoteAPI" flex="1">
 
     <preferences id="remoteAPIPreferences">
-      <preference id="songbird.rapi.playback_control_disable"
-                  name="songbird.rapi.playback_control_disable"
+      <preference id="nightingale.rapi.playback_control_disable"
+                  name="nightingale.rapi.playback_control_disable"
                   type="bool"
                   onchange="gRemoteAPIPane.onChange()"/>
-      <preference id="songbird.rapi.playback_read_disable"
-                  name="songbird.rapi.playback_read_disable"
+      <preference id="nightingale.rapi.playback_read_disable"
+                  name="nightingale.rapi.playback_read_disable"
                   type="bool"
                   onchange="gRemoteAPIPane.onChange()"/>
-      <preference id="songbird.rapi.library_read_disable"
-                  name="songbird.rapi.library_read_disable"
+      <preference id="nightingale.rapi.library_read_disable"
+                  name="nightingale.rapi.library_read_disable"
                   type="bool"
                   onchange="gRemoteAPIPane.onChange()"/>
-      <preference id="songbird.rapi.library_write_disable"
-                  name="songbird.rapi.library_write_disable"
+      <preference id="nightingale.rapi.library_write_disable"
+                  name="nightingale.rapi.library_write_disable"
                   type="bool"
                   onchange="gRemoteAPIPane.onChange()"/>
     </preferences>
 
-    <script type="application/x-javascript" src="chrome://songbird/content/scripts/preferences/remoteAPI.js"/>
+    <script type="application/x-javascript" src="chrome://nightingale/content/scripts/preferences/remoteAPI.js"/>
 
     <vbox align="start" class="bottomBox">
       <groupbox id="rapiAccessGroup">
@@ -72,31 +72,31 @@
           </columns>
           <rows>
             <row>
-              <checkbox preference="songbird.rapi.playback_control_disable"
+              <checkbox preference="nightingale.rapi.playback_control_disable"
                 label="&rapi.playback_control_disable.label;"
                 accesskey="&rapi.playback_control_disable.accesskey;"/>
               <vbox pack="top">
-                <button id="songbird.rapi.playback_control_disable.button"
+                <button id="nightingale.rapi.playback_control_disable.button"
                   label="&rapi.whitelist.label;"
                   oncommand="gRemoteAPIPane.configureWhitelist('playback_control');"/>
               </vbox>
             </row>
             <row>
-              <checkbox preference="songbird.rapi.playback_read_disable"
+              <checkbox preference="nightingale.rapi.playback_read_disable"
                 label="&rapi.playback_read_disable.label;"
                 accesskey="&rapi.playback_read_disable.accesskey;"/>
               <vbox pack="top">
-                <button id="songbird.rapi.playback_read_disable.button"
+                <button id="nightingale.rapi.playback_read_disable.button"
                   label="&rapi.whitelist.label;"
                   oncommand="gRemoteAPIPane.configureWhitelist('playback_read');"/>
               </vbox>
             </row>
             <row>
-              <checkbox preference="songbird.rapi.library_read_disable"
+              <checkbox preference="nightingale.rapi.library_read_disable"
                 label="&rapi.library_read_disable.label;"
                 accesskey="&rapi.library_read_disable.accesskey;"/>
               <vbox pack="top">
-                <button id="songbird.rapi.library_read_disable.button"
+                <button id="nightingale.rapi.library_read_disable.button"
                   label="&rapi.whitelist.label;"
                   oncommand="gRemoteAPIPane.configureWhitelist('library_read');"/>
               </vbox>
@@ -106,7 +106,7 @@
                 label="&rapi.library_write_disable.label;"
                 accesskey="&rapi.library_write_disable.accesskey;"/>
               <vbox pack="top">
-                <button id="songbird.rapi.library_write_disable.button"
+                <button id="nightingale.rapi.library_write_disable.button"
                   label="&rapi.whitelist.label;"
                   oncommand="gRemoteAPIPane.configureWhitelist('library_write');"/>
               </vbox>

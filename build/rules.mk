@@ -1,11 +1,11 @@
 # vim: ft=make ts=3 sw=3
 #
-# BEGIN SONGBIRD GPL
+# BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the GPL).
@@ -20,7 +20,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+# END NIGHTINGALE GPL
 #
 
 ##############################################################################
@@ -29,41 +29,14 @@
 # This file takes care of lots of messy rules. Each one is explained below.
 ###############################################################################
 
-
 #------------------------------------------------------------------------------
 # Only include this file once
 ifndef RULES_MK_INCLUDED
 RULES_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
-# We want include the extension-config.mk at the top of rules.mk, so it can
-# modify things like branding and other aspects of rules further down; this
-# normally wouldn't be an issue, but include statements are expanded and
-# executed immediately. 
-ifdef IS_EXTENSION
-   SB_EXTENSION_CONFIG ?= extension-config.mk
-   SB_EXTENSION_CONFIG_STRIPPED = $(strip $(SB_EXTENSION_CONFIG))
-
-   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)))
-      OUR_EXTENSION_MAKE_IN_ROOTSRCDIR = 1
-      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)
-   endif
-
-   ifndef OUR_SB_EXTENSION_CONFIG
-      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG_STRIPPED))
-      ifeq (,$(OUR_SB_EXTENSION_CONFIG))
-         $(error Could not file extension configuration .mk file. Bailing...)
-      endif
-   endif
-
-   include $(OUR_SB_EXTENSION_CONFIG)
-endif
-
 # include config.mk to pick up extra variables
 include $(topsrcdir)/build/config.mk
-
-# Include branding.mk to get the branding defines 
-include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 
 # define the tiers of the application
 include $(topsrcdir)/build/tiers.mk
@@ -128,10 +101,34 @@ ifdef IS_EXTENSION_MULTI_BUILD
 endif
 
 ifdef IS_EXTENSION # {
+   #------------------------------------------------------------------------------
+   # Get our extension config, if we're an extension.
+   #------------------------------------------------------------------------------
+   SB_EXTENSION_CONFIG ?= extension-config.mk
+   SB_EXTENSION_CONFIG_STRIPPED = $(strip $(SB_EXTENSION_CONFIG))
+
+   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)))
+      OUR_EXTENSION_MAKE_IN_ROOTSRCDIR = 1
+      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)
+   endif
+
+   ifndef OUR_SB_EXTENSION_CONFIG
+      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG_STRIPPED))
+      ifeq (,$(OUR_SB_EXTENSION_CONFIG))
+         $(error Could not file extension configuration .mk file. Bailing...)
+      endif
+   endif
+
+   include $(OUR_SB_EXTENSION_CONFIG)
+
+   # We include branding.mk here to get the branding defines to add to the
+   # preprocessor call for install.rdf.in, if any
+   include $(topsrcdir)/$(NIGHTINGALE_BRANDING_DIR)/branding.mk
+
    OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
 
    # set a specific location for the output if it doesn't already exist
-   EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
+   EXTENSION_DIR ?= $(NIGHTINGALE_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
    EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
 
    ifdef EXTENSION_NAME
@@ -148,29 +145,29 @@ ifdef IS_EXTENSION # {
    endif
 
    # Allow extension-config.mk to override this
-   EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/.xpistage
+   EXTENSION_STAGE_DIR ?= $(NIGHTINGALE_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/.xpistage
 
    # Define a temporary directory that extensions can use to dump things into;
    # this is mostly useful in the context of extension multi-builds, where 
    # EXTENSION_NAME will keep preprocessed files from collding into each 
    # other; see install.rdf preprocessing for an example...
-   EXTENSION_TMP_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/tmp
+   EXTENSION_TMP_DIR ?= $(NIGHTINGALE_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/tmp
    
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       export OUR_EXTENSION_VER_DEVDATE := $(shell date +%Y%m%d%H%M)
    endif
 
    ifdef EXTENSION_VER
-      ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
+      ifeq (_,$(NIGHTINGALE_OFFICIAL)_$(NIGHTINGALE_NIGHTLY))
          OUR_EXTENSION_VER = $(EXTENSION_VER)+dev-$(OUR_EXTENSION_VER_DEVDATE)
       else
          OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
       endif
    endif
 
-   #---------------------------------------------------------------------------
+   #------------------------------------------------------------------------------
    # Redefine these file locations when building extensions
-   #---------------------------------------------------------------------------
+   #------------------------------------------------------------------------------
    OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
    OUR_EXTENSION_TMP_DIR = $(strip $(EXTENSION_TMP_DIR))
 
@@ -186,22 +183,22 @@ ifdef IS_EXTENSION # {
       endif
    endif
 
-   SONGBIRD_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
-   SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_COMPONENT_PREFIX)/components
-   SONGBIRD_DEFAULTSDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults
-   SONGBIRD_LIBDIR = $(OUR_EXTENSION_COMPONENT_PREFIX)/lib
-   SONGBIRD_PREFERENCESDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults/preferences
-   SONGBIRD_PLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/plugins
-   SONGBIRD_SEARCHPLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/searchplugins
-   SONGBIRD_SCRIPTSDIR = $(OUR_EXTENSION_STAGE_DIR)/scripts
-   SONGBIRD_JSMODULESDIR = $(OUR_EXTENSION_STAGE_DIR)/jsmodules
+   NIGHTINGALE_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
+   NIGHTINGALE_COMPONENTSDIR = $(OUR_EXTENSION_COMPONENT_PREFIX)/components
+   NIGHTINGALE_DEFAULTSDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults
+   NIGHTINGALE_LIBDIR = $(OUR_EXTENSION_COMPONENT_PREFIX)/lib
+   NIGHTINGALE_PREFERENCESDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults/preferences
+   NIGHTINGALE_PLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/plugins
+   NIGHTINGALE_SEARCHPLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/searchplugins
+   NIGHTINGALE_SCRIPTSDIR = $(OUR_EXTENSION_STAGE_DIR)/scripts
+   NIGHTINGALE_JSMODULESDIR = $(OUR_EXTENSION_STAGE_DIR)/jsmodules
    APP_DIST_DIRS = $(NULL)
 endif # } IS_EXTENSION
 
-ifdef SONGBIRD_TEST_COMPONENT
-   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(strip $(SONGBIRD_TEST_COMPONENT))
+ifdef NIGHTINGALE_TEST_COMPONENT
+   NIGHTINGALE_TEST_COMPONENT_DIR = $(NIGHTINGALE_TESTSDIR)/$(strip $(NIGHTINGALE_TEST_COMPONENT))
    ifdef SB_ENABLE_TESTS
-      APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
+      APP_DIST_DIRS += $(NIGHTINGALE_TEST_COMPONENT_DIR)
    endif
 endif
 
@@ -308,7 +305,7 @@ else
 endif
 
 distclean:: FORCE
-	$(RM) -r $(SONGBIRD_DISTDIR)
+	$(RM) -r $(NIGHTINGALE_DISTDIR)
 
 export_tier_%:
 	$(EXIT_ON_ERROR) \
@@ -318,19 +315,6 @@ libs_tier_%:
 	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
-deps_defines= \
-   -DMOZ_APP_NAME=firefox\ \
-   -DMOZ_UPDATER=1\
-   -DMOZ_PHOENIX=1\
-   -DMOZ_ENABLE_LIBXUL=1\
-   -DMOZ_STATIC_BUILD_UNSUPPORTED=1\
-   -DMOZ_PLACES=1\ -DMOZ_MORKREADER=1\
-   -DMOZ_SAFE_BROWSING=1\
-   -DMOZ_APP_VERSION=$FIREFOX_VERSION\
-   -DMOZ_NO_XPCOM_OBSOLETE=1\
-   -DMOZ_BRANDING_DIRECTORY=browser/branding/unofficial\
-   -DMOZ_OFFICIAL_BRANDING_DIRECTORY=other-licenses/branding/firefox
-
 # This dependency listing is technically incorrect, in that it states that
 # _all_ the tiers are dependent on the makefiles of _all_ the tiers, not just
 # the tier you're actually building. We did this to avoid spawning a (99% of
@@ -339,9 +323,9 @@ deps_defines= \
 # it's all of them for all the tier_dirs.
 $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(tier)_dirs),$(addsuffix /Makefile,$(tier_$(tier)_dirs))))
 	@echo "BUILDING $(patsubst tier_%,%,$@) TIER; directories: $($@_dirs)"
-	$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e export_$@
-	$(if $(findstring tier_deps,$@), env PPDEFINES=$(deps_defines)) $(MAKE) -e libs_$@
-	
+	$(MAKE) export_$@
+	$(MAKE) libs_$@
+
 ##
 ## SUBDIRS handling for libs and export targets
 ##
@@ -379,9 +363,9 @@ ifndef NO_DIST_INSTALL
    endif
    ifdef DYNAMIC_LIB
       ifdef IS_COMPONENT
-	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)/
+	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(NIGHTINGALE_COMPONENTSDIR)/
       else
-	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_LIBDIR)/
+	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(NIGHTINGALE_LIBDIR)/
       endif
    endif
 endif
@@ -390,10 +374,10 @@ endif
 ## Unit test handling 
 ##
 
-libs:: $(SONGBIRD_TESTS)
+libs:: $(NIGHTINGALE_TESTS)
 ifdef SB_ENABLE_TESTS
-   ifneq (,$(SONGBIRD_TEST_COMPONENT_DIR))
-	   $(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TEST_COMPONENT_DIR)/
+   ifneq (,$(NIGHTINGALE_TEST_COMPONENT_DIR))
+	   $(INSTALL_FILE) $(NIGHTINGALE_TESTS) $(NIGHTINGALE_TEST_COMPONENT_DIR)/
    endif
 endif
 
@@ -466,7 +450,7 @@ endif
 
 libs collect_xpts:: $(XPIDL_TYPELIBS) $(XPIDL_MODULE)
 ifneq (,$(XPIDL_MODULE))
-	$(INSTALL_FILE) $(XPIDL_MODULE) $(SONGBIRD_COMPONENTSDIR)
+	$(INSTALL_FILE) $(XPIDL_MODULE) $(NIGHTINGALE_COMPONENTSDIR)
 endif
 
 #------------------------------------------------------------------------------
@@ -503,7 +487,6 @@ dlldata.c: %.midl
 	$(MIDL) $(OUR_MIDL_FLAGS) $^
 
 export:: $(MIDL_GENERATED_FILES)
-
 #------------------------------------------------------------------------------
 # Common compiler flags
 #------------------------------------------------------------------------------
@@ -537,15 +520,10 @@ endif
 #
 
 CPP_DEFAULT_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+                       $(MOZSDK_INCLUDE_DIR)/nspr \
                        $(MOZSDK_INCLUDE_DIR)/xpcom \
                        $(MOZSDK_INCLUDE_DIR)/string \
                        $(NULL)
-                       
-ifeq (,$(NSPR_CFLAGS))
-   CPP_DEFAULT_INCLUDES += $(MOZSDK_INCLUDE_DIR)/nspr
-else
-   CPP_RAW_INCLUDES += $(NSPR_CFLAGS)
-endif
 
 ifdef CPP_FLAGS
    OUR_CPP_FLAGS = $(CPP_FLAGS)
@@ -573,8 +551,8 @@ ifdef CPP_INCLUDES
    OUR_CPP_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(CPP_INCLUDES)))
 else
    OUR_CPP_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(CPP_EXTRA_INCLUDES) $(CPP_DEFAULT_INCLUDES)))
+   OUR_CPP_INCLUDES += $(CPP_RAW_INCLUDES)
 endif
-OUR_CPP_INCLUDES += $(CPP_RAW_INCLUDES)
 
 %$(OBJ_SUFFIX): %.cpp
 	$(CXX) $(COMPILER_OUTPUT_FLAG) $(OUR_CPP_FLAGS) $(OUR_CPP_DEFS) $(OUR_CPP_INCLUDES) $<
@@ -801,7 +779,6 @@ export:: $(OUR_WIN32_RC_OBJS)
 DEFAULT_DYNAMIC_LIBS_IMPORTS = xpcomglue_s \
                                nspr4 \
                                xpcom \
-                               mozalloc \
                                $(NULL)
 
 DEFAULT_DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
@@ -871,7 +848,7 @@ OUR_LD_STATIC_IMPORT_LIST = $(foreach import, \
                              $(DYNAMIC_LIB_STATIC_IMPORTS), \
                              $(if $(wildcard $(import)), \
                              $(import), \
-                             $(addprefix $(SONGBIRD_OBJDIR)/, \
+                             $(addprefix $(NIGHTINGALE_OBJDIR)/, \
                              $(import)$(DEBUG:%=_d)$(LIB_SUFFIX))))
 
 OUR_LD_IMPORTS = $(OUR_LD_STATIC_IMPORT_LIST) \
@@ -993,7 +970,7 @@ ifdef SIMPLE_PROGRAM_STATIC_IMPORTS
                                        $(SIMPLE_PROGRAM_STATIC_IMPORTS), \
                                        $(if $(wildcard $(import)), \
                                        $(import), \
-                                       $(addprefix $(SONGBIRD_OBJDIR)/, \
+                                       $(addprefix $(NIGHTINGALE_OBJDIR)/, \
                                        $(import)$(DEBUG:%=_d)$(LIB_SUFFIX))))
    else
       OUR_SIMPLE_PROGRAM_OBJS += $(addsuffix $(LIB_SUFFIX),$(SIMPLE_PROGRAM_STATIC_IMPORTS))
@@ -1037,11 +1014,11 @@ endif # } ifdef SIMPLE_PROGRAM
 #  A target for pre-processing a list of files and a directory for those files
 #  to end up at.
 #
-#  SONGBIRD_PP_RESOURCES - The list of files to preprocess, the target assumes
+#  NIGHTINGALE_PP_RESOURCES - The list of files to preprocess, the target assumes
 #                          that all the files in with ".in"
 #
-#  SONGBIRD_PP_DIR       - The target directory to put the pre-processed file
-#                          list in $(SONGBIRD_PP_RESOURCES).
+#  NIGHTINGALE_PP_DIR       - The target directory to put the pre-processed file
+#                          list in $(NIGHTINGALE_PP_RESOURCES).
 #
 #  PP_RESOURCES_STRIP_SUFFIX  - The suffix of the files to be preprocessed; 
 #                               defaults to ".in", but can be most anything,
@@ -1061,31 +1038,31 @@ ifndef PP_RESOURCES_STRIP_SUFFIX
    PP_RESOURCES_STRIP_SUFFIX = .in
 endif
 
-ifndef SONGBIRD_PP_DIR
-   OUR_SONGBIRD_PP_DIR = $(CURDIR)
+ifndef NIGHTINGALE_PP_DIR
+   OUR_NIGHTINGALE_PP_DIR = $(CURDIR)
 else
-   OUR_SONGBIRD_PP_DIR = $(strip $(SONGBIRD_PP_DIR))
+   OUR_NIGHTINGALE_PP_DIR = $(strip $(NIGHTINGALE_PP_DIR))
 endif
 
-ifndef SONGBIRD_PP_MODE
+ifndef NIGHTINGALE_PP_MODE
    # default to a file
-   SONGBIRD_PP_MODE = 644
+   NIGHTINGALE_PP_MODE = 644
 endif
 
-GENERATED_PP_DEPS = $(addprefix $(OUR_SONGBIRD_PP_DIR)/,$(foreach f,$(SONGBIRD_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
+GENERATED_PP_DEPS = $(addprefix $(OUR_NIGHTINGALE_PP_DIR)/,$(foreach f,$(NIGHTINGALE_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
 
-$(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
-   ifeq (,$(wildcard $(OUR_SONGBIRD_PP_DIR)))
-	   $(MKDIR_APP) $(OUR_SONGBIRD_PP_DIR)
+$(GENERATED_PP_DEPS): $(NIGHTINGALE_PP_RESOURCES)
+   ifeq (,$(wildcard $(OUR_NIGHTINGALE_PP_DIR)))
+	   $(MKDIR_APP) $(OUR_NIGHTINGALE_PP_DIR)
    endif
-	@$(EXIT_ON_ERROR) for item in $(SONGBIRD_PP_RESOURCES); do \
-      target=$(OUR_SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
+	@$(EXIT_ON_ERROR) for item in $(NIGHTINGALE_PP_RESOURCES); do \
+      target=$(OUR_NIGHTINGALE_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
       echo Preprocessing $$item into $$target...; \
       $(RM) -f $$target; \
       $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
        $(ACDEFINES) $(RESOURCES_PPFLAGS) \
        $(PPDEFINES) -- $$item > $$target; \
-      $(if $(SONGBIRD_PP_MODE),$(CHMOD) $(SONGBIRD_PP_MODE) $$target; ) \
+      $(if $(NIGHTINGALE_PP_MODE),$(CHMOD) $(NIGHTINGALE_PP_MODE) $$target; ) \
    done
 
 export:: $(GENERATED_PP_DEPS)
@@ -1134,9 +1111,9 @@ ifdef JAR_TARGET_DIR
    OUR_JAR_TARGET_DIR = $(JAR_TARGET_DIR)
 else
    # If this is an extension, the switch above on EXTENSION_STAGE_DIR redefines
-   # all of the SONGBIRD_*DIR variables, so this will still be correct for
+   # all of the NIGHTINGALE_*DIR variables, so this will still be correct for
    # extensions.
-   OUR_JAR_TARGET_DIR = $(SONGBIRD_CHROMEDIR)
+   OUR_JAR_TARGET_DIR = $(NIGHTINGALE_CHROMEDIR)
 endif
 
 ifdef MAKE_JARS_FLAGS
@@ -1296,6 +1273,24 @@ ifdef IS_EXTENSION # {
          endif
          ALL_TRASH += $(EXTENSION_DIR)/$(wildcard $(OUR_EXTENSION_NAME)*.xpi)
       endif
+
+      # XXX: this check is slightly incorrect: in the pre-processed
+      # install.rdf.in case, the check will be performed on the source
+      # install.rdf _before_ it has been preprocessed, but it's totally
+      # reasonable for someone to add the targetPlatform as part of
+      # pre-processing. Right now, no one does that, so this is a 
+      # limitation
+      OUR_EXTENSION_TARGET_PLATFORM_SET := $(shell $(GREP) -i "<em:targetPlatform>" $(if $(OUR_INSTALL_RDF_IN),$(OUR_INSTALL_RDF_IN),$(OUR_INSTALL_RDF)))
+
+      ifdef EXTENSION_NO_BINARY_COMPONENTS
+         ifneq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))
+            $(error EXTENSION_NO_BINARY_COMPONENTS set, but <em:targetPlatform> is also declared.)
+         endif
+      else
+         ifeq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))
+            $(error No <em:targetPlatform> declared for platform-dependent extension.)
+         endif
+      endif
    endif # } OUR_EXTENSION_MAKE_IN_ROOTSRCDIR 
 endif # } IS_EXTENSION
 
@@ -1322,22 +1317,9 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 # in the extension's Makefile
 
 export:: $(if $(IS_EXTENSION), $(if $(OUR_EXTENSION_MAKE_IN_ROOTSRCDIR), $(OUR_INSTALL_RDF)))
-ifdef IS_EXTENSION # {
+ifdef IS_EXTENSION
 	$(MKDIR_APP) $(OUR_EXTENSION_STAGE_DIR) $(if $(OUR_EXTENSION_TMP_DIR), $(OUR_EXTENSION_TMP_DIR))
-   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
-      ifdef EXTENSION_NO_BINARY_COMPONENTS
-	      @if test -n "$$($(GREP) -i "<em:targetPlatform>" "$(OUR_INSTALL_RDF)")"; then \
-            echo "EXTENSION_NO_BINARY_COMPONENTS set, but <em:targetPlatform> is also declared." 1>&2; \
-            exit -1; \
-         fi
-      else
-	      @if test -z "$$($(GREP) -i "<em:targetPlatform>" "$(OUR_INSTALL_RDF)")"; then \
-            echo "No <em:targetPlatform> declared for platform-dependent extension." 1>&2; \
-            exit -1; \
-         fi
-      endif 
-   endif 
-endif # } IS_EXTENSION
+endif
 
 libs:: $(if $(IS_EXTENSION), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef IS_EXTENSION
@@ -1352,9 +1334,9 @@ ifdef IS_EXTENSION
 	   $(MKDIR_APP) $(EXTENSION_DIR)
 	   $(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).tmp $(EXTENSION_DIR)/$(OUR_XPI_NAME)
       ifeq (1,$(INSTALL_EXTENSION))
-	      $(MKDIR_APP) $(SONGBIRD_EXTENSIONSDIR)
-	      $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
-	      $(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	      $(MKDIR_APP) $(NIGHTINGALE_EXTENSIONSDIR)
+	      $(RM) -r $(NIGHTINGALE_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	      $(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(NIGHTINGALE_EXTENSIONSDIR)/$(EXTENSION_UUID)
       endif
    endif
 endif

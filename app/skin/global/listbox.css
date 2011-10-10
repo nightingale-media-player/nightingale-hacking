@@ -15,14 +15,14 @@
  **/
 
 listheader {
-  background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
+  background-image: url('chrome://nightingale/skin/base-elements/bg-table-header.png');
   background-position:center 0px;
   background-repeat:repeat-x;
 }
 
 .listheader-sortdirection[sortDirection="ascending"] {
-  list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
+  list-style-image:url("chrome://nightingale/skin/base-elements/icon-sort-ascending.png") !important;
 }
 .listheader-sortdirection[sortDirection="descending"] {
-  list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
+  list-style-image:url("chrome://nightingale/skin/base-elements/icon-sort-descending.png") !important;
 }

@@ -195,7 +195,7 @@ sbPropertyBag::GetEnumerator(nsISimpleEnumerator* *_retval)
 {
     nsresult rv;
     nsCOMPtr<nsIMutableArray> propertyArray =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!propertyArray)
         return NS_ERROR_OUT_OF_MEMORY;
@@ -222,7 +222,7 @@ sbPropertyBag::SetPropertyAs ## Name (const nsAString & prop, Type value) \
 { \
     nsresult rv; \
     nsCOMPtr<nsIWritableVariant> var = \
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv); \
+      do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv); \
     NS_ENSURE_SUCCESS(rv, rv); \
     if (!var) \
         return NS_ERROR_OUT_OF_MEMORY; \
@@ -298,7 +298,7 @@ sbPropertyBag::SetPropertyAsAString(const nsAString & prop, const nsAString & va
 {
     nsresult rv;
     nsCOMPtr<nsIWritableVariant> var =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!var)
         return NS_ERROR_OUT_OF_MEMORY;
@@ -311,7 +311,7 @@ sbPropertyBag::SetPropertyAsACString(const nsAString & prop, const nsACString & 
 {
     nsresult rv;
     nsCOMPtr<nsIWritableVariant> var =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!var)
         return NS_ERROR_OUT_OF_MEMORY;
@@ -324,7 +324,7 @@ sbPropertyBag::SetPropertyAsAUTF8String(const nsAString & prop, const nsACString
 {
     nsresult rv;
     nsCOMPtr<nsIWritableVariant> var =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!var)
         return NS_ERROR_OUT_OF_MEMORY;
@@ -337,7 +337,7 @@ sbPropertyBag::SetPropertyAsInterface(const nsAString & prop, nsISupports* value
 {
     nsresult rv;
     nsCOMPtr<nsIWritableVariant> var =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+      do_CreateInstance("@getnightingale.com/Nightingale/Variant;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!var)
         return NS_ERROR_OUT_OF_MEMORY;

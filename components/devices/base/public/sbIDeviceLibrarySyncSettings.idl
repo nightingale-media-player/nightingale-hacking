@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2011 POTI, Inc.
- * http://www.songbirdnest.com
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,14 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
-
+ 
 #include "nsISupports.idl"
 #include "sbIDeviceLibraryMediaSyncSettings.idl"
-
-interface sbIDevice;
-
+ 
  /**
   * This interface serves as a holder of device sync management settings.
   * Changing values on this object or the objects it owns does not effect
@@ -34,28 +32,30 @@ interface sbIDevice;
   * syncSettings or call applySyncSettings in order for those changes to
   * be active.
   */
-[scriptable, uuid(cb2383c3-6369-4815-42e9-f66d04c48507)]
+[scriptable, uuid(bbda5d1e-b86a-4d3e-a9b2-f250be37f4ec)]
 interface sbIDeviceLibrarySyncSettings : nsISupports
 {
+  const unsigned long SYNC_MODE_MANUAL = 0;
+  const unsigned long SYNC_MODE_AUTO = 1;
+  
+  /**
+   * Syncronization mode, manual or auto
+   */
+  attribute unsigned long syncMode;
   /**
     * Returns an object to manage the synchronization settings for a given
     * media type. This object is a reference to the internal object of
     * the object held by the sbIDeviceSyncSettings object
-    * \param aMediaType the media type to get settings, from sbIDeviceLibrary
+    * \param aMediaType the media type to get settings for
     * \return the reference to the synchronization settings for the media
     *         type
     */
   sbIDeviceLibraryMediaSyncSettings getMediaSettings(
                                                    in unsigned long aMediaType);
   /**
-   * returns a list of the playlists currently selected for all media types
-   */
-  readonly attribute nsIArray syncPlaylists;
-
-  /**
-   * Writes this deviceLibrarySyncSetting and the deviceLibraryMediaSyncSettings
-   * to a device-specific pref so that the settings can be retrieved between
-   * sessions.
-   */
-  void write(in sbIDevice aDevice);
+   * returns a list of the playlists currently selected.
+   */                                                 
+  readonly attribute nsIArray syncPlaylists; 
 };
+
+  

@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -43,35 +43,35 @@ const componentData =
      constructor: null},
 
    {cid: Components.ID("{ba32eac9-6732-4d5d-be50-156f52b5368b}"),
-     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/M3U;1",
+     contractid: "@getnightingale.com/Nightingale/Playlist/Reader/M3U;1",
      script: "sbM3UPlaylistHandler.js",
      constructor: "sbM3UPlaylistHandler",
      category: "playlist-reader",
      categoryEntry: "m3u"},
 
    {cid: Components.ID("{a6937260-0d7f-4721-8f31-4b8455cf72c9}"),
-     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/PLS;1",
+     contractid: "@getnightingale.com/Nightingale/Playlist/Reader/PLS;1",
      script: "sbPLSPlaylistHandler.js",
      constructor: "sbPLSPlaylistHandler",
      category: "playlist-reader",
      categoryEntry: "pls"},
 
    {cid: Components.ID("{fc67054f-3a60-4d8e-a2ec-fc1c8feac14c}"),
-     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/Feed;1",
+     contractid: "@getnightingale.com/Nightingale/Playlist/Reader/Feed;1",
      script: "sbFeedPlaylistHandler.js",
      constructor: "sbFeedPlaylistHandler",
      category: "playlist-reader",
      categoryEntry: "feed"},
 
    {cid: Components.ID("{75c8f646-e75a-4743-89cd-412fa083ce07}"),
-     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/HTML;1",
+     contractid: "@getnightingale.com/Nightingale/Playlist/Reader/HTML;1",
      script: "sbHTMLPlaylistHandler.js",
      constructor: "sbHTMLPlaylistHandler",
      category: "playlist-reader",
      categoryEntry: "html"},
      
    {cid: Components.ID("{e2eeb4bd-85b2-4eda-8a7c-90ad7f04957c}"),
-     contractid: "@songbirdnest.com/Songbird/Playlist/Reader/ASX;1",
+     contractid: "@getnightingale.com/Nightingale/Playlist/Reader/ASX;1",
      script: "sbASXPlaylistHandler.js",
      constructor: "sbASXPlaylistHandler",
      category: "playlist-reader",

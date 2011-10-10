@@ -1,9 +1,9 @@
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -18,23 +18,23 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 
 var gRemoteAPIPane = {
   // the prefs for the checkboxes in the pane
   // these are both the XUL DOM id and pref key
   _prefKeys: [
-    'songbird.rapi.playback_control_disable',
-    'songbird.rapi.playback_read_disable',
-    'songbird.rapi.library_read_disable',
-    'songbird.rapi.library_write_disable',
+    'nightingale.rapi.playback_control_disable',
+    'nightingale.rapi.playback_read_disable',
+    'nightingale.rapi.library_read_disable',
+    'nightingale.rapi.library_write_disable',
   ],
   isChanged: false,
 
   configureWhitelist: function (aType, aScope)
   {
     // get ref to the properties file string bundle
-    var bundlePreferences = document.getElementById("bundleSongbirdPreferences");
+    var bundlePreferences = document.getElementById("bundleNightingalePreferences");
 
     // set up a parmater object to pass to permission window
     var params = {
@@ -48,7 +48,7 @@ var gRemoteAPIPane = {
       blocking: {
         settings: bundlePreferences.getString("rapi." + aType + ".block_settings"),
         prompt: bundlePreferences.getString("rapi.block_prompt"),
-        pref: "songbird.rapi." + aType + "_notify"
+        pref: "nightingale.rapi." + aType + "_notify"
       },
       remoteAPIPane: gRemoteAPIPane
     };

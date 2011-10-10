@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -74,7 +74,7 @@ sb-smart-splitter[orient="vertical"] > grippy {
 splitter:not([orient="vertical"]),
 sb-smart-splitter:not([orient="vertical"])
 {
-  background: url(chrome://songbird/skin/splitter/grippy-vertical.png) transparent no-repeat center;
+  background: url(chrome://nightingale/skin/splitter/grippy-vertical.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }
@@ -83,7 +83,7 @@ sb-smart-splitter:not([orient="vertical"])
 splitter[orient="vertical"],
 sb-smart-splitter[orient="vertical"]
 {
-  background: url(chrome://songbird/skin/splitter/grippy-horizontal.png) transparent no-repeat center;
+  background: url(chrome://nightingale/skin/splitter/grippy-horizontal.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }
@@ -92,7 +92,7 @@ sb-smart-splitter[orient="vertical"]
 splitter:not([orient="vertical"])[state="collapsed"],
 sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
 {
-  background: url(chrome://songbird/skin/splitter/grippy-collapsed-vertical.png) transparent no-repeat center;
+  background: url(chrome://nightingale/skin/splitter/grippy-collapsed-vertical.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }
@@ -101,7 +101,7 @@ sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
 splitter[orient="vertical"][state="collapsed"],
 sb-smart-splitter[orient="vertical"][state="collapsed"]
 {
-  background: url(chrome://songbird/skin/splitter/grippy-collapsed-horizontal.png) transparent no-repeat center;
+  background: url(chrome://nightingale/skin/splitter/grippy-collapsed-horizontal.png) transparent no-repeat center;
   margin: 0;
   padding: 0;
 }

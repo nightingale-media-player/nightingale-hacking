@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -41,7 +41,7 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const ARTWORK_NO_COVER = "chrome://songbird/skin/album-art/drop-target.png";
+const ARTWORK_NO_COVER = "chrome://nightingale/skin/album-art/drop-target.png";
 
 /******************************************************************************
  *
@@ -253,7 +253,7 @@ TrackEditorArtwork.prototype = {
     var curImageUrl = TrackEditor.state.getPropertyValue(this.property);
 
     // Get the clipboard image.
-    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+    var sbClipboard = Cc["@getnightingale.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
@@ -262,7 +262,7 @@ TrackEditorArtwork.prototype = {
     // Validate image as valid album art.
     var isValidAlbumArt = false;
     if (imageData && (imageData.length > 0)) {
-      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+      var artService = Cc["@getnightingale.com/Nightingale/album-art-service;1"]
                          .getService(Ci.sbIAlbumArtService);
       isValidAlbumArt = artService.imageIsValidAlbumArt(mimeType,
                                                         imageData,
@@ -343,14 +343,14 @@ TrackEditorArtwork.prototype = {
    *        context menu)
    */
   onPaste: function TrackEditorArtwork_onPaste() {
-    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+    var sbClipboard = Cc["@getnightingale.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
     if (sbCoverHelper.isImageSizeValid(null, imageData.length)) {
       
       var artService =
-                        Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                        Cc["@getnightingale.com/Nightingale/album-art-service;1"]
                           .getService(Ci.sbIAlbumArtService);
 
       var newURI = artService.cacheImage(mimeType.value,
@@ -367,7 +367,7 @@ TrackEditorArtwork.prototype = {
    *        context menu)
    */
   onCopy: function TrackEditorArtwork_onCopy() {
-    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+    var sbClipboard = Cc["@getnightingale.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
 
     // Load up the file (Properties are stored as URL Strings)

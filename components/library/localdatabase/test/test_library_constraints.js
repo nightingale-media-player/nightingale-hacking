@@ -1,11 +1,11 @@
 /* vim: set sw=2 et : */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -33,7 +33,7 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 function runTest () {
   var constraint;
-  var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+  var builder = Cc["@getnightingale.com/Nightingale/Library/ConstraintBuilder;1"]
                   .createInstance(Ci.sbILibraryConstraintBuilder);
 
   builder.includeConstraint(LibraryUtils.standardFilterConstraint);

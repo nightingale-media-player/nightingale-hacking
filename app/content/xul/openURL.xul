@@ -2,12 +2,12 @@
 <!--
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -22,14 +22,14 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css" type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://nightingale/locale/nightingale.dtd" >
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -38,27 +38,27 @@
  hidechrome="true"
  ondialogaccept="if ( doOK() ) onExit( );"
  ondialogcancel="if ( doCancel() ) onExit( );"
- type="songbird"
+ type="nightingale"
  buttons="accept,cancel"
 >
   <windowregion/>
-  <label  value="&textbox.songbird_open_url;"/>
+  <label  value="&textbox.nightingale_open_url;"/>
 
   <hbox>
-    <textbox id="songbird_open_url" flex="1"/>
+    <textbox id="nightingale_open_url" flex="1"/>
   </hbox>
 
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+   src="chrome://nightingale/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" 
     src="chrome://global/content/globalOverlay.js"/> 
   <script type="application/x-javascript"  
-   src="chrome://songbird/content/scripts/windowUtils.js" />
+   src="chrome://nightingale/content/scripts/windowUtils.js" />
   <script>
   <![CDATA[
     // Init the text box to the last url played (shrug).
-    var theTextbox = document.getElementById( "songbird_open_url" );
+    var theTextbox = document.getElementById( "nightingale_open_url" );
     if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
     {
       theTextbox.value = window.arguments[0].URL;

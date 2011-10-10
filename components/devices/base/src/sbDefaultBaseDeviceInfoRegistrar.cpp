@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbDefaultBaseDeviceInfoRegistrar.h"
@@ -34,7 +34,7 @@
 #include <nsMemory.h>
 #include <prlog.h>
 
-// Songbird includes
+// Nightingale includes
 #include <sbDeviceXMLCapabilities.h>
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
@@ -149,31 +149,6 @@ sbDefaultBaseDeviceInfoRegistrar::
 }
 
 NS_IMETHODIMP
-sbDefaultBaseDeviceInfoRegistrar::GetDefaultName(sbIDevice* aDevice,
-                                                 nsAString& retval)
-{
-  TRACE(("%s", __FUNCTION__));
-
-  nsresult rv;
-
-  // Default to no name.
-  retval.Truncate();
-
-  // Get the device XML info.  Just return if none available.
-  sbDeviceXMLInfo* deviceXMLInfo;
-  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!deviceXMLInfo)
-    return NS_OK;
-
-  // Get the device name.
-  rv = deviceXMLInfo->GetDefaultName(retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetDeviceFolder(sbIDevice* aDevice,
                                                   PRUint32   aContentType,
                                                   nsAString& retval)
@@ -194,31 +169,6 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceFolder(sbIDevice* aDevice,
 
   // Get the device folder.
   rv = deviceXMLInfo->GetDeviceFolder(aContentType, retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDefaultBaseDeviceInfoRegistrar::GetImportRules(
-                                    sbIDevice *   aDevice,
-                                    nsIArray **   _retval NS_OUTPARAM)
-{
-  TRACE(("%s", __FUNCTION__));
-
-  NS_ENSURE_ARG_POINTER(_retval);
-  
-  nsresult rv;
-
-  // Get the device XML info.  Just return if none available.
-  sbDeviceXMLInfo* deviceXMLInfo;
-  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!deviceXMLInfo)
-    return NS_OK;
-
-  // Get the rules.
-  rv = deviceXMLInfo->GetImportRules(_retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -347,35 +297,6 @@ sbDefaultBaseDeviceInfoRegistrar::GetStorageDeviceInfoList
 }
 
 NS_IMETHODIMP
-sbDefaultBaseDeviceInfoRegistrar::GetDeviceIcon(sbIDevice* aDevice,
-                                                nsAString& retval)
-{
-  TRACE(("%s", __FUNCTION__));
-
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aDevice);
-
-  // function variables.
-  nsresult rv;
-
-  // Default to no device icon.
-  retval.Truncate();
-
-  // Get the device XML info.  Just return if none available.
-  sbDeviceXMLInfo* deviceXMLInfo;
-  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!deviceXMLInfo)
-    return NS_OK;
-
-  // Get the device icon.
-  rv = deviceXMLInfo->GetDeviceIcon(retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
                                                      PRBool *retval)
 {
@@ -396,10 +317,7 @@ sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
   nsAutoPtr<sbDeviceXMLInfo> xmlInfo(new sbDeviceXMLInfo(aDevice));
   NS_ENSURE_TRUE(xmlInfo, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCString xmlInfoExtensions;
-  rv = GetDeviceXMLInfoExtensions(xmlInfoExtensions);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = xmlInfo->Read(xmlInfoSpec.get(), xmlInfoExtensions.get());
+  rv = xmlInfo->Read(xmlInfoSpec.BeginReading());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if the device XML info is present.
@@ -476,11 +394,7 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
   // Read the device XML info.
   mDeviceXMLInfo = new sbDeviceXMLInfo(aDevice);
   NS_ENSURE_TRUE(mDeviceXMLInfo, NS_ERROR_OUT_OF_MEMORY);
-  nsCString xmlInfoExtensions;
-  rv = GetDeviceXMLInfoExtensions(xmlInfoExtensions);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mDeviceXMLInfo->Read(aDeviceXMLInfoSpec.BeginReading(),
-                            xmlInfoExtensions.get());
+  rv = mDeviceXMLInfo->Read(aDeviceXMLInfoSpec.BeginReading());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if device XML info is present.
@@ -499,19 +413,11 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoSpec
 }
 
 nsresult
-sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoExtensions
-                                    (nsACString& aDeviceXMLInfoExtensions)
-{
-  aDeviceXMLInfoExtensions.Truncate();
-  return NS_OK;
-}
-
-nsresult
 sbDefaultBaseDeviceInfoRegistrar::GetDefaultDeviceXMLInfoSpec
                                     (nsACString& aDeviceXMLInfoSpec)
 {
   aDeviceXMLInfoSpec.Assign
-    ("chrome://songbird/content/devices/sbDefaultDeviceInfo.xml");
+    ("chrome://nightingale/content/devices/sbDefaultDeviceInfo.xml");
   return NS_OK;
 }
 

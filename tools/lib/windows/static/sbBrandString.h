@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #ifndef SB_BRAND_STRING_H_
@@ -28,11 +28,11 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird brand string services defs.
+// Nightingale brand string services defs.
 //
-//   The Songbird brand string services provide support for using brand specific
-// Songbird strings.  This allows Songbird partners to customize strings used by
-// Songbird.
+//   The Nightingale brand string services provide support for using brand specific
+// Nightingale strings.  This allows Nightingale partners to customize strings used by
+// Nightingale.
 //   The brand strings are specified in a branding INI file inside a section
 // named "Branding".  The branding INI file may be specified by the
 // "SB_BRANDING_INI_FILE" environment variable.  If this variable is not set,
@@ -44,12 +44,12 @@
 
 /**
  * \file  sbBrandString.h
- * \brief Songbird Brand String Definitions.
+ * \brief Nightingale Brand String Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string imported services.
+// Nightingale brand string imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string configuration.
+// Nightingale brand string configuration.
 //
 //------------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird brand string classes.
+// Nightingale brand string classes.
 //
 //------------------------------------------------------------------------------
 
@@ -129,7 +129,7 @@ private:
   //
 
   /**
-   * Initialize the Songbird brand string using the brand string with the key
+   * Initialize the Nightingale brand string using the brand string with the key
    * specified by aKey.  If the brand string does not exist, use the default
    * string specified by aDefault.
    *

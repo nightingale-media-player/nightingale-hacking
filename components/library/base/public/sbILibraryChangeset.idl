@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -84,7 +84,7 @@ interface sbIPropertyChange : sbIChangeOperation
    * Property ID
    *
    * The ID of the property that was changed.
-   * (e.g. http://songbirdnest.com/data/1.0#artistName)
+   * (e.g. http://getnightingale.com/data/1.0#artistName)
    */
   readonly attribute AString        id;
 
@@ -107,7 +107,7 @@ interface sbIPropertyChange : sbIChangeOperation
 interface sbILibraryChange : sbIChangeOperation
 {
   /**
-   * Timestamp for the change.
+   * Timestamp for the change. 
    *
    * This is a UNIX style timestamp.
    */
@@ -117,7 +117,7 @@ interface sbILibraryChange : sbIChangeOperation
    * The source item that triggered the change.
    *
    * In the case where the sourceItem was added;
-   * the destinationItem will be the same as the
+   * the destinationItem will be the same as the 
    * sourceItem.
    */
   readonly attribute sbIMediaItem   sourceItem;
@@ -125,7 +125,7 @@ interface sbILibraryChange : sbIChangeOperation
   /**
    * The destination item that should recieve the change.
    *
-   * The destination item may be the same as the
+   * The destination item may be the same as the 
    * source item.
    *
    * In the case where the sourceItem was added;
@@ -133,26 +133,16 @@ interface sbILibraryChange : sbIChangeOperation
    * sourceItem.
    */
   readonly attribute sbIMediaItem destinationItem;
-
+  
   /**
    * Indicates if the item changed is a list.
    *
-   * If this attribute is true, the item will
+   * If this attribute is true, the item will 
    * implement sbIMediaList.
    *
    * \sa sbIMediaList
    */
   readonly attribute boolean        itemIsList;
-
-  /**
-   * If itemIsList is true, this will be an array of sbIMediaItem that should
-   * be the contents of the list (unless this is a DELETED change).
-   *
-   * Each item may either be an item already present in the destination library,
-   * or it may be an item present in the source library that is being added to
-   * the destination library by an earlier entry in the sbILibraryChangeset.
-   */
-  readonly attribute nsIArray       listItems;
 
   /**
    * The item properties affected by the change.
@@ -166,7 +156,7 @@ interface sbILibraryChange : sbIChangeOperation
 };
 
 
-/**
+/** 
  * \interface sbILibraryChangeset
  * \sa sbILibraryChange sbIPropertyChange sbIChangeOperation
  */
@@ -175,29 +165,29 @@ interface sbILibraryChangeset : nsISupports
 {
   /**
    * Source Libraries or MediaLists.
-   *
+   * 
    * This is an array of sbIMediaList elements.
    */
   readonly attribute nsIArray      sourceLists;
-
+  
   /**
-   * Destination Library or MediaList.
+   * Destination Library or MediaList. 
    *
-   * This may be the same as the source library or media list when using
+   * This may be the same as the source library or media list when using 
    * sbILibraryLoggingService.
-   *
-   * When using sbILibraryDiffingService, this will be the destination
+   * 
+   * When using sbILibraryDiffingService, this will be the destination 
    * library or media listfor the changeset.
    */
   readonly attribute sbIMediaList      destinationList;
 
   /**
-   * Ordered array of changes.
+   * Ordered array of changes. 
    *
    * This is an array of sbILibraryChange elements.
    *
    * Applying these changes out of order to the destination will have
    * adverse effects.
    */
-  attribute nsIArray        changes;
+  readonly attribute nsIArray        changes;
 };

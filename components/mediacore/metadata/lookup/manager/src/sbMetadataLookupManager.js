@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the "GPL").
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 const Cc = Components.classes;
@@ -67,13 +67,13 @@ function sbMLM() {
 
   Cc["@mozilla.org/observer-service;1"]
     .getService(Ci.nsIObserverService)
-    .addObserver(this, "songbird-library-manager-before-shutdown", false);
+    .addObserver(this, "nightingale-library-manager-before-shutdown", false);
 }
 
 sbMLM.prototype = {
-  classDescription : 'Songbird Metadata Lookup Manager',
+  classDescription : 'Nightingale Metadata Lookup Manager',
   classID : Components.ID('46733000-1dd2-11b2-8022-ba2da8a6a950'),
-  contractID : '@songbirdnest.com/Songbird/MetadataLookup/manager;1',
+  contractID : '@getnightingale.com/Nightingale/MetadataLookup/manager;1',
   QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupManager,
                                           Ci.nsIObserver]),
 
@@ -118,12 +118,12 @@ sbMLM.prototype = {
   },
 
   observe: function sbMLM_observe(aSubject, aTopic, aData) {
-    if (aTopic == "songbird-library-manager-before-shutdown") {
+    if (aTopic == "nightingale-library-manager-before-shutdown") {
       // clean up providers list; this is necessary because the service shuts
       // down way too late
       Cc["@mozilla.org/observer-service;1"]
         .getService(Ci.nsIObserverService)
-        .removeObserver(this, "songbird-library-manager-before-shutdown");
+        .removeObserver(this, "nightingale-library-manager-before-shutdown");
       this._providers = {};
       this._numProviders = 0;
       this._defaultProvider = null;

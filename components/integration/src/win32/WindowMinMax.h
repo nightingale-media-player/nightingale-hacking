@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -51,11 +51,11 @@ namespace std
 class CWindowMinMaxSubclass;
 
 // DEFINES ====================================================================
-#define SONGBIRD_WINDOWMINMAX_CONTRACTID                  \
-  "@songbirdnest.com/Songbird/WindowMinMax;1"
-#define SONGBIRD_WINDOWMINMAX_CLASSNAME                   \
-  "Songbird Window MinMax Interface"
-#define SONGBIRD_WINDOWMINMAX_CID                         \
+#define NIGHTINGALE_WINDOWMINMAX_CONTRACTID                  \
+  "@getnightingale.com/Nightingale/WindowMinMax;1"
+#define NIGHTINGALE_WINDOWMINMAX_CLASSNAME                   \
+  "Nightingale Window MinMax Interface"
+#define NIGHTINGALE_WINDOWMINMAX_CID                         \
 { /* 97115dee-8454-49e9-9e24-4f8c04e87fe2 */              \
   0x97115dee,                                             \
   0x8454,                                                 \

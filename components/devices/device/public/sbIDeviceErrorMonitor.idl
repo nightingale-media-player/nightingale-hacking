@@ -1,11 +1,11 @@
 /* vim: ts=2 sw=2 expandtab
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -40,23 +40,17 @@ interface sbIDeviceErrorMonitorListener;
  * \brief This service monitors devices for errors and stores them for easy
  *        access later.
  */
-[scriptable, uuid(d70905a8-4644-4c9a-a976-7e9614af8ff2)]
+[scriptable, uuid(5410bf24-1dd2-11b2-8370-e803c6e895af)]
 interface sbIDeviceErrorMonitor : nsISupports {
 
   /**
    * \brief Checks to see if a device has had any recent errors.
    *
    * \param aDevice device to check for errors on.
-   * \param aContentType type of content we want to check for errors on. This
-   *                     may be blank in which case errors returned are not
-   *                     filtered by content type.
-   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT] or this may be 0 and
-   *                   errors returned are not filtered based on direction.
+   * \param aContentType type of content we want to check for errors on.
    * \returns true if any errors are currently registered for this device.
    */
-  boolean deviceHasErrors(in sbIDevice aDevice, 
-                          in AString aContentType,
-                          in unsigned long aDirection);
+  boolean deviceHasErrors(in sbIDevice aDevice, in AString aContentType);
 
   /**
    * \brief Gets an array of property bags containing information about the
@@ -65,15 +59,13 @@ interface sbIDeviceErrorMonitor : nsISupports {
    * \param aDevice The device to get the list of errors for
    * \param aContentType type of content we want errors for, or empty string for all
    *                     types.
-   * \param aDirection sbIDeviceStatus.[EXPORT|IMPORT]
    * \returns array of property bags that contain error information
    *
    * The property bag currently contains msg and state for the error message
    * and device state respectively
    */
   nsIArray getDeviceErrors(in sbIDevice aDevice,
-                           [optional] in AString aContentType,
-                           [optional] in unsigned long aDirection);
+                           [optional] in AString aContentType);
 
   /**
    * \brief Clears the array of error strings for a device.

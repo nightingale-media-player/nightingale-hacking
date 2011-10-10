@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,23 +20,23 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
 // This is the mapping from about:<module> to actual URI loaded.  Just changing
 // this part should be enough to register new things.
 const PAGES = {
-  "keyboard-help": "chrome://songbird/content/html/keyboardHelp.xhtml"
+  "keyboard-help": "chrome://nightingale/content/html/keyboardHelp.xhtml"
 };
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const DESCRIPTION = "Songbird about: protocol redirector";
+const DESCRIPTION = "Nightingale about: protocol redirector";
 const CID         = "42631c40-1cbe-4f3a-b859-7936e542130f";
-const CONTRACTID  = "@songbirdnest.com/aboutRedirector";
+const CONTRACTID  = "@getnightingale.com/aboutRedirector";
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 

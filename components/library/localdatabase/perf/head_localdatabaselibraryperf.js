@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,10 +28,10 @@
  * \brief Some globally useful stuff for the local database library tests
  */
 
-var SB_NS = "http://songbirdnest.com/data/1.0#";
+var SB_NS = "http://getnightingale.com/data/1.0#";
 
 // Make sure the db engine isn't taking any shortcuts
-var dbe = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+var dbe = Cc["@getnightingale.com/Nightingale/DatabaseEngine;1"]
             .getService(Ci.sbIDatabaseEngine);
 var localeCollationPreviouslyEnabled = dbe.localeCollationEnabled;
 dbe.localeCollationEnabled = true;
@@ -86,7 +86,7 @@ function getLibrary() {
   file.initWithPath(libraryFile);
 
   var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+    Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/LibraryFactory;1"]
       .getService(Ci.sbILibraryFactory);
   var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
                 createInstance(Ci.nsIWritablePropertyBag2);
@@ -113,7 +113,7 @@ Timer.prototype = {
 
 function newGuidArray(aLibrary) {
   var ldbl = aLibrary.QueryInterface(Ci.sbILocalDatabaseLibrary);
-  var array = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/GUIDArray;1"]
+  var array = Cc["@getnightingale.com/Nightingale/Library/LocalDatabase/GUIDArray;1"]
                 .createInstance(Ci.sbILocalDatabaseGUIDArray);
   array.databaseGUID = ldbl.databaseGuid;
   array.propertyCache = ldbl.propertyCache;

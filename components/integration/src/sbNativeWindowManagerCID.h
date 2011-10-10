@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 
@@ -29,11 +29,11 @@
 
 #include "sbINativeWindowManager.h"
 
-#define SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID                  \
-  "@songbirdnest.com/integration/native-window-manager;1"
-#define SONGBIRD_NATIVEWINDOWMANAGER_CLASSNAME                   \
-  "Songbird native window manager interface"
-#define SONGBIRD_NATIVEWINDOWMANAGER_CID                         \
+#define NIGHTINGALE_NATIVEWINDOWMANAGER_CONTRACTID                  \
+  "@getnightingale.com/integration/native-window-manager;1"
+#define NIGHTINGALE_NATIVEWINDOWMANAGER_CLASSNAME                   \
+  "Nightingale native window manager interface"
+#define NIGHTINGALE_NATIVEWINDOWMANAGER_CID                         \
 { /* 3ec4c167-4dee-45c5-b7f1-5091cc8192e8 */              \
   0x3ec4c167,                                             \
   0x4dee,                                                 \

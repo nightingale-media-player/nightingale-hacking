@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \brief Test file
@@ -82,7 +84,7 @@ function setDefaultAccess() {
 }
 
 function cleanup() {
-  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  var libraryManager = Cc["@getnightingale.com/Nightingale/library/Manager;1"]
                           .getService(Ci.sbILibraryManager);
   libraryManager.mainLibrary.clear();
   setDefaultAccess();
@@ -151,7 +153,7 @@ function beginRemoteAPITest(page, continueFunction) {
 
   var url = "data:application/vnd.mozilla.xul+xml," +
             "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" +
-            "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +
+            "<?xml-stylesheet href='chrome://nightingale/content/bindings/bindings.css' type='text/css'?>" +
             "<window xmlns='http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'/>";
 
   beginWindowTest(url, function() { setupBrowser(page, port, continueFunction); })
@@ -179,13 +181,6 @@ function setupBrowser(page, port, continueFunction) {
 function endRemoteAPITest(e) {
   testServer.stop(function() {});
   endWindowTest(e);
-
-  // Clear object references to avoid leaks.
-  testWindow = null;
-  testServer = null;
-  testBrowserWindow = null;
-  testBrowser = null;
-  testListener = null;
 }
 
 function getFile(fileName) {
@@ -233,7 +228,7 @@ function(aIID)
 function setRapiPref(name, value) {
   var prefs = Cc["@mozilla.org/preferences-service;1"]
                 .getService(Ci.nsIPrefService);
-  prefs = prefs.getBranch("songbird.rapi.");
+  prefs = prefs.getBranch("nightingale.rapi.");
   prefs.setBoolPref(name, value);
 }
 

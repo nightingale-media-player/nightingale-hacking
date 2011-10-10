@@ -1,10 +1,10 @@
 #
-#=BEGIN SONGBIRD GPL
+#=BEGIN NIGHTINGALE GPL
 #
-# This file is part of the Songbird web player.
+# This file is part of the Nightingale web player.
 #
 # Copyright(c) 2005-2010 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-#=END SONGBIRD GPL
+#=END NIGHTINGALE GPL
 #
 
 DEPTH = ..
@@ -32,16 +32,12 @@ include $(DEPTH)/build/autodefs.mk
 # installer, relative to the dist dir; for the XR executables, Firefox doesn't
 # ship (most of) them either.
 
-SB_INSTALLER_NO_PKG_FILES = xulrunner/js$(BIN_SUFFIX) \
-                            xulrunner/mangle$(BIN_SUFFIX) \
-                            xulrunner/redit$(BIN_SUFFIX) \
-                            xulrunner/regxpcom$(BIN_SUFFIX) \
+SB_INSTALLER_NO_PKG_FILES = xulrunner/regxpcom$(BIN_SUFFIX) \
                             xulrunner/xpcshell$(BIN_SUFFIX) \
                             xulrunner/xpidl$(BIN_SUFFIX) \
                             xulrunner/xpt_dump$(BIN_SUFFIX) \
                             xulrunner/xpt_link$(BIN_SUFFIX) \
                             xulrunner/nsinstall$(BIN_SUFFIX) \
-                            xulrunner/nspr-config \
                             xulrunner/shlibsign$(BIN_SUFFIX) \
                             xulrunner/ssltunnel$(BIN_SUFFIX) \
                             xulrunner/run-mozilla.sh \
@@ -49,13 +45,13 @@ SB_INSTALLER_NO_PKG_FILES = xulrunner/js$(BIN_SUFFIX) \
 
 SUBDIRS = $(SB_PLATFORM) 
 
-ifdef SONGBIRD_OFFICIAL
+ifdef NIGHTINGALE_OFFICIAL
    INSTALLER_README = README_OFFICIAL.txt
 else
    INSTALLER_README = README_NIGHTLY.txt
 endif
 
-SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
+NIGHTINGALE_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
                         $(topsrcdir)/installer/common/$(INSTALLER_README).in \
                         $(NULL)
 
@@ -73,12 +69,12 @@ GARBAGE += $(foreach p, $(INSTALLER_PACKAGES), $(SB_INSTALLER_FINAL_DIR)/$p) \
 
 # On Mac, the xulrunner dir is not the same place in the tree; unfortunately,
 # to make it more cross-platform, we specify a path that is relative to the
-# defined SONGBIRD_DISTDIR, instead of using the various already-defined
+# defined NIGHTINGALE_DISTDIR, instead of using the various already-defined
 # XULRUNNER_DIR variables
 ifeq (macosx,$(SB_PLATFORM))
-   SB_INSTALLER_NO_PKG_FILES_FULLPATH = $(addprefix $(SONGBIRD_DISTDIR)/, $(subst xulrunner/,../Frameworks/XUL.framework/, $(SB_INSTALLER_NO_PKG_FILES)))
+   SB_INSTALLER_NO_PKG_FILES_FULLPATH = $(addprefix $(NIGHTINGALE_DISTDIR)/, $(subst xulrunner/,../Frameworks/XUL.framework/, $(SB_INSTALLER_NO_PKG_FILES)))
 else
-   SB_INSTALLER_NO_PKG_FILES_FULLPATH = $(addprefix $(SONGBIRD_DISTDIR)/, $(SB_INSTALLER_NO_PKG_FILES))
+   SB_INSTALLER_NO_PKG_FILES_FULLPATH = $(addprefix $(NIGHTINGALE_DISTDIR)/, $(SB_INSTALLER_NO_PKG_FILES))
 endif
 
 include $(topsrcdir)/build/rules.mk
@@ -90,22 +86,22 @@ include $(topsrcdir)/build/rules.mk
 # we'll evaluate the $(wildcard)'s _ONCE_, and thus won't delete the 
 # (new, amalgamated) xpt files we just created, right after we created them.
 
-SONGBIRD_XPTS := $(notdir $(wildcard $(SONGBIRD_COMPONENTSDIR)/*.xpt))
+NIGHTINGALE_XPTS := $(notdir $(wildcard $(NIGHTINGALE_COMPONENTSDIR)/*.xpt))
 
 # There are two cases here: the first build, and then any subsequent builds,
-# where we already have a linked songbird.xpt, but the sub-xpts may have
-# changed, so we need to delete our songbird.xpt, re-collect all of the .xpts
-# in the tree, and rebuild the songbird.xpt (which we do by calling ourselves
+# where we already have a linked nightingale.xpt, but the sub-xpts may have
+# changed, so we need to delete our nightingale.xpt, re-collect all of the .xpts
+# in the tree, and rebuild the nightingale.xpt (which we do by calling ourselves
 # with the target, which the if-test will fall to the other branch now...
 
 link_installer_xpts:
-ifeq (songbird.xpt,$(strip $(SONGBIRD_XPTS)))
-	$(RM) $(SONGBIRD_COMPONENTSDIR)/songbird.xpt
-	$(MAKE) -C $(SONGBIRD_OBJDIR) collect_xpts
+ifeq (nightingale.xpt,$(strip $(NIGHTINGALE_XPTS)))
+	$(RM) $(NIGHTINGALE_COMPONENTSDIR)/nightingale.xpt
+	$(MAKE) -C $(NIGHTINGALE_OBJDIR) collect_xpts
 	$(MAKE) -C $(CURDIR) link_installer_xpts
 else
-	cd $(SONGBIRD_COMPONENTSDIR) && $(XPTLINK) songbird.xpt $(SONGBIRD_XPTS)
-	cd $(SONGBIRD_COMPONENTSDIR) && $(RM) $(SONGBIRD_XPTS)
+	cd $(NIGHTINGALE_COMPONENTSDIR) && $(XPTLINK) nightingale.xpt $(NIGHTINGALE_XPTS)
+	cd $(NIGHTINGALE_COMPONENTSDIR) && $(RM) $(NIGHTINGALE_XPTS)
 endif
 
 # preedTODO: the easiest way to re-express this dependency is to do it as
@@ -113,14 +109,14 @@ endif
 # that's kinda janky.
 export:: $(if $(DEBUG),$(NULL),link_installer_xpts)
 	$(MAKE) -C $(DEPTH) stripsymbols
-	$(INSTALL_FILE) $(topsrcdir)/TRADEMARK.txt $(SONGBIRD_DISTDIR)
-	$(INSTALL_FILE) $(SB_LICENSE_FILE) $(SONGBIRD_DISTDIR)
-	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
+	$(INSTALL_FILE) $(topsrcdir)/TRADEMARK.txt $(NIGHTINGALE_DISTDIR)
+	$(INSTALL_FILE) $(SB_LICENSE_FILE) $(NIGHTINGALE_DISTDIR)
+	$(INSTALL_FILE) $(INSTALLER_README) $(NIGHTINGALE_DISTDIR)/README.txt
 ifeq (macosx,$(SB_PLATFORM))
 	# On mac, the README needs to go here, as well.
-	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_OBJDIR)/dist/README.txt
+	$(INSTALL_FILE) $(INSTALLER_README) $(NIGHTINGALE_OBJDIR)/dist/README.txt
 endif
-ifneq (,$(SONGBIRD_OFFICIAL))
+ifneq (,$(NIGHTINGALE_OFFICIAL))
 	$(RM) $(SB_INSTALLER_NO_PKG_FILES_FULLPATH)
 endif
 	$(MKDIR) $(SB_INSTALLER_FINAL_DIR)

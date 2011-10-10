@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,18 +20,16 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
-// Songbird includes
+// Nightingale includes
 #include <sbIMediaFileManager.h>
 #include <sbIPropertyManager.h>
 #include <sbIWatchFolderService.h>
 
 // Mozilla includes
-#include <nsBaseHashtable.h>
-#include <nsHashKeys.h>
 #include <nsIFile.h>
 #include <nsIPrefBranch.h>
 #include <nsStringGlue.h>
@@ -40,7 +38,7 @@
 #include <nsNetUtil.h>
 
 #define SB_MEDIAFILEMANAGER_DESCRIPTION              \
-  "Songbird Media File Manager Implementation"
+  "Nightingale Media File Manager Implementation"
 
 #define SB_MEDIAFILEMANAGER_CID                      \
   {                                                        \
@@ -51,7 +49,9 @@
   }
 
 // Preference keys
-#define PREF_MFM_ROOT         "songbird.media_management.library."
+#define PREF_MFM_ROOT         "nightingale.media_management.library."
+#define PREF_MFM_LOCATION     "nightingale.media_management.library.folder"
+#define PREF_MFM_DIRFORMAT    "format.dir"
 #define PREF_MFM_FILEFORMAT   "format.file"
 #define PREF_MFM_DEFPROPERTY  "default.property."
 #define PREF_MFM_PADTRACKNUM  "pad_track_num"
@@ -59,7 +59,6 @@
 // String keys
 #define STRING_MFM_UNKNOWNPROP  "mediamanager.nonexistingproperty"
 #define STRING_MFM_UNKNOWNPROP_EMPTY  "mediamanager.nonexistingproperty.empty"
-#define STRING_MFM_RECORDINGS_FOLDER  "mediamanager.recordings_dir"
 
 class sbMediaFileManager : public sbIMediaFileManager {
 public:
@@ -98,27 +97,7 @@ protected:
                               nsString & aOutString);
   
 private:
-  typedef nsTArray<nsString>                  NameTemplate;
-  typedef nsBaseHashtable<nsStringHashKey,
-                          NameTemplate,
-                          NameTemplate>       NameTemplateMap;
-  typedef nsBaseHashtable<nsStringHashKey,
-                          nsCOMPtr<nsIFile>,
-                          nsIFile *>          MediaFoldersMap;
-
-  nsresult InitMediaFoldersMap(nsIPropertyBag2 * aProperties);
-
-  nsresult GetMediaFolder(sbIMediaItem * aMediaItem,
-                          nsIFile **     aFolder);
-
-  nsresult GetMediaFolder(nsIFile *   aFile,
-                          nsIFile **  aFolder);
-
-  nsresult InitFolderNameTemplates(nsIPropertyBag2 * aProperties);
-
-  nsresult GetFolderNameTemplate(sbIMediaItem *   aMediaItem,
-                                 NameTemplate &   aNameTemplate);
-
+  
   nsresult CheckDirectoryForDeletion_Recursive(nsIFile *aDir);
   
   void     RemoveBadCharacters(nsString& aStringToParse);
@@ -126,20 +105,23 @@ private:
   nsresult GetUnknownValue(nsString  aPropertyKey,
                            nsString& aUnknownValue);
 
-  nsresult GetFormattedFileFolder(const NameTemplate &  aNameTemplate,
-                                  sbIMediaItem*         aMediaItem,
-                                  PRBool                aAppendProperty,
-                                  PRBool                aTrimAtEnd,
-                                  nsString              aFileExtension,
-                                  nsString&             aRetVal);
+  nsresult GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
+                                  sbIMediaItem*       aMediaItem,
+                                  PRBool              aAppendProperty,
+                                  PRBool              aTrimAtEnd,
+                                  nsString            aFileExtension,
+                                  nsString&           aRetVal);
 
   /**
-   * \brief This function checks that the media folder exists.  This
-   *   allows us to take removeable drives and network connections
-   *   into account.
-   * \param aMediaItem - used to select which media folder to check
+   * \brief This function checks if we have stored the media folder location
+   *   in mMediaFolder and if not gets it from the parameter or from the
+   *   preferences. It also checks to ensure that the media folder exists, this
+   *   allows us to take removeable drives and network connections into account.
+   * \param aMediaFolder - Optional parameter to use as the media folder.
+   * \note mMediaFolder will be set with this folder and checked for
+   *   existance on successful return.
    */
-  nsresult CheckManagementFolder(sbIMediaItem * aMediaItem);
+  nsresult CheckManagementFolder(nsIFile * aMediaFolder);
 
   // Hold on to the services we use very often
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
@@ -148,11 +130,11 @@ private:
   nsCOMPtr<sbIWatchFolderService>           mWatchFolderService;
 
   // Where our media folder is located.
-  MediaFoldersMap                           mMediaFolders;
+  nsCOMPtr<nsIFile>                         mMediaFolder;
 
   // Formating properties (filename, folders, separators)
-  NameTemplate                              mTrackNameTemplate;
-  NameTemplateMap                           mFolderNameTemplates;
+  nsTArray<nsString>                        mTrackNameConfig;
+  nsTArray<nsString>                        mFolderNameConfig;
   
   PRBool                                    mInitialized;
 };

@@ -30,4 +30,3 @@
 @lib/libgstrtsp-0.10.dylib
 @lib/libgstsdp-0.10.dylib
 @lib/libgstvideo-0.10.dylib
-@lib/libgstapp-0.10.dylib

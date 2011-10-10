@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -149,7 +149,7 @@ var JobProgressDialog = {
     } else {
       this._progressMeter.mode = "determined";
       
-      // Songbird has a special modified progress meter.
+      // Nightingale has a special modified progress meter.
       // We allow max > 100, but there  are some crazy bugs 
       // if max goes too high.
       if (this._job.total < 10000) {
@@ -198,7 +198,7 @@ var JobProgressDialog = {
   },
   
   /**
-   * Workaround to set the title of a super special Songbird dialog
+   * Workaround to set the title of a super special Nightingale dialog
    */
   _setTitle: function JobProgressDialog__setTitle(aTitle) {
     if (document.title == aTitle) {
@@ -212,7 +212,7 @@ var JobProgressDialog = {
     var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                     .getService(Components.interfaces.nsIPropertyBag2);
     var platform = sysInfo.getProperty("name");
-    var isPlucked = Application.prefs.getValue("songbird.accessibility.enabled", false); 
+    var isPlucked = Application.prefs.getValue("nightingale.accessibility.enabled", false); 
     var titleBox = document.getElementById("jobprogress_title_box");
     if (platform == "Darwin" && isPlucked && window.opener) {
       var macSheetTitle = document.getElementById("jobprogress_title_desc");

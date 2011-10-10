@@ -1,32 +1,32 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \brief Test file
  */
-
-Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 function countItems(enumerator) {
   var count = 0;
@@ -58,9 +58,9 @@ function runTest () {
   contains = list.contains(item);
   assertEqual(contains, false);
 
-  var titleProperty = "http://songbirdnest.com/data/1.0#trackName";
-  var albumProperty = "http://songbirdnest.com/data/1.0#albumName";
-  var genreProperty = "http://songbirdnest.com/data/1.0#genre";
+  var titleProperty = "http://getnightingale.com/data/1.0#trackName";
+  var albumProperty = "http://getnightingale.com/data/1.0#albumName";
+  var genreProperty = "http://getnightingale.com/data/1.0#genre";
 
   // Test getItemsByProperty(s)
   var enumerationListener = new TestMediaListEnumerationListener();
@@ -84,7 +84,7 @@ function runTest () {
   enumerationListener.reset();
 
   var propertyArray =
-    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    Cc["@getnightingale.com/Nightingale/Properties/MutablePropertyArray;1"].
     createInstance(Ci.sbIMutablePropertyArray);
   propertyArray.appendProperty(albumProperty, "Back in Black");
   
@@ -211,9 +211,7 @@ function runTest () {
         this._complete = true;
         testFinished();
       }
-    },
-    onItemAdded: function(aMediaItem) {},
-    onComplete: function() {}
+    }
   };
   
   simpleEnumerator.reset();
@@ -222,7 +220,7 @@ function runTest () {
   {
     // This is kind of annoying but necessary because XPC shell only has
     // one JS context. If we don't do this XPC shell will lock up.
-    var tempArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+    var tempArray = Cc["@getnightingale.com/moz/xpcom/threadsafe-array;1"]
                       .createInstance(Ci.nsIMutableArray);
     while(simpleEnumerator.hasMoreElements()) {
       tempArray.appendElement(simpleEnumerator.getNext(), false);
@@ -230,7 +228,7 @@ function runTest () {
     
     var tempEnumerator = tempArray.enumerate();
     log("Testing addSomeAsync");
-    list.addMediaItems(tempEnumerator, asyncListener, true);
+    list.addSomeAsync(tempEnumerator, asyncListener);
     testPending();
   }
   
@@ -295,15 +293,6 @@ function runTest () {
   a.unshift(items[0].guid);
   assertList(list, a);
 
-  list.insertSomeBeforeAsync(0,
-                             new SimpleArrayEnumerator(items),
-                             asyncListener);
-  testPending();
-  a.unshift(items[2].guid);
-  a.unshift(items[1].guid);
-  a.unshift(items[0].guid);
-  assertList(list, a);
-
   // Test moveBefore
   library = createLibrary(databaseGUID);
   list = library.getMediaItem("7e8dcc95-7a1d-4bb3-9b14-d4906a9952cb");
@@ -336,35 +325,6 @@ function runTest () {
   // Test moveSomeLast
   list.moveSomeLast(indexes, indexes.length);
   var b = a.splice(5, 5);
-  a = a.concat(b);
-  assertList(list, a);
-
-  // Test insertAllBefore.
-  var insertItems = [];
-  insertItems[0] = library.getMediaItem("3E6DD1C2-AD99-11DB-9321-C22AB7121F49");
-  insertItems[1] = library.getMediaItem("3E6D8050-AD99-11DB-9321-C22AB7121F49");
-  insertItems[2] = library.getMediaItem("3E6D3050-AD99-11DB-9321-C22AB7121F49");
-  var insertList = library.createMediaList("simple");
-  insertList.addSome(new SimpleArrayEnumerator(insertItems));
-  list.insertAllBefore(0, insertList);
-  a.unshift(insertItems[2].guid);
-  a.unshift(insertItems[1].guid);
-  a.unshift(insertItems[0].guid);
-  assertList(list, a);
-
-  // Test insertAllBefore again to ensure ordinals are set properly.
-  list.insertAllBefore(0, insertList);
-  a.unshift(insertItems[2].guid);
-  a.unshift(insertItems[1].guid);
-  a.unshift(insertItems[0].guid);
-  assertList(list, a);
-
-  // Move items added with insertAllBefore to the end of the list. Otherwise,
-  // removal tests will fail because they require the items removed from the
-  // beginning of the list to only exist once on the list.
-  var indexes = [0, 1, 2, 3, 4, 5];
-  list.moveSomeLast(indexes, indexes.length);
-  b = a.splice(0, 6);
   a = a.concat(b);
   assertList(list, a);
 
@@ -461,21 +421,5 @@ function runTest () {
   a = [item2.guid, item2.guid, item2.guid, item2.guid, item2.guid, item2.guid];
   assertList(list, a);
 
-  // Test adding foreign and already existing items to the list
-  localLibrary = createLibrary("test_simplemedialist_local");
-  let localLibraryLength = localLibrary.length;
-  foreignLibrary = createLibrary("test_simplemedialist_foreign");
-  
-  let items = [
-    foreignLibrary.createMediaItem(newURI("file:///foo1")),
-    foreignLibrary.createMediaItem(newURI("file:///foo2")),
-    localLibrary.createMediaItem(newURI("file:///foo3")) 
-  ];
-  localLibrary.add(items[1]);
-  list = localLibrary.createMediaList("simple");
-  list.addSome(ArrayConverter.enumerator(items));
-  
-  // new items should be 4, 3 new items and the playlist
-  assertEqual(localLibrary.length - localLibraryLength, 4);
 }
 

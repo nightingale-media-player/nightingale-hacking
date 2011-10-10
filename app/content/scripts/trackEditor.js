@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 if (typeof(Ci) == "undefined")
@@ -51,7 +51,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
  *****************************************************************************/
 var TrackEditor = {
 
-  _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+  _propertyManager: Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
 
   // TrackEditorState object
@@ -73,8 +73,8 @@ var TrackEditor = {
     var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                           .getService(Ci.nsIWindowMediator);
 
-    var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
-    this._browser = songbirdWindow.gBrowser;
+    var nightingaleWindow = windowMediator.getMostRecentWindow("Nightingale:Main"); 
+    this._browser = nightingaleWindow.gBrowser;
     
     this.state = new TrackEditorState();  
     
@@ -111,7 +111,7 @@ var TrackEditor = {
 
     // Set up the advanced tab
     var enableAdvanced = Application.prefs.getValue(
-                           "songbird.trackeditor.enableAdvancedTab", false);
+                           "nightingale.trackeditor.enableAdvancedTab", false);
     if (enableAdvanced) {
       // this code assumes that the number of tabs and tabpanels is aligned
       var tabbox = document.getElementById("trackeditor-tabbox");
@@ -445,7 +445,7 @@ var TrackEditor = {
       return true;
     }
     
-    var enableRatingWrite = Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false);
+    var enableRatingWrite = Application.prefs.getValue("nightingale.metadata.ratings.enableWriting", false);
     
     // Properties we want to write
     var writeProperties = [];
@@ -453,51 +453,45 @@ var TrackEditor = {
     // Apply each modified property back onto the selected items,
     // keeping track of which items have been modified
     var needsWriting = new Array(items.length);
-    
-    var batchSetter = {
-      runBatched: function(aUserData) {
-        for each (property in properties) {
-          if (!TrackEditor.state.isPropertyEdited(property)) {
-            continue;
+    for each (property in properties) {
+      if (!TrackEditor.state.isPropertyEdited(property)) {
+        continue;
+      }
+      // Add the property to our list so only the changed ones get written
+      writeProperties.push(property);
+
+      for (var i = 0; i < items.length; i++) {
+        var value = TrackEditor.state.getPropertyValue(property);
+        var item = items[i];
+        // don't modify values for non-user-editable items (except rating)
+        if (!LibraryUtils.canEditMetadata(item)
+            && property != SBProperties.rating) {
+          continue;
+        }
+
+        if (value != item.getProperty(property)) {
+          // Completely remove empty properties
+          // HACK for 0.7: primaryImageURL likes to be set to ""
+          //               this says "i am scanned and empty"
+          //               setting it to null says "rescan me"
+          if (value == "" && property != SBProperties.primaryImageURL) {
+            value = null;
           }
-          // Add the property to our list so only the changed ones get written
-          writeProperties.push(property);
 
-          for (var i = 0; i < items.length; i++) {
-            var value = TrackEditor.state.getPropertyValue(property);
-            var item = items[i];
-            // don't modify values for non-user-editable items (except rating)
-            if (!LibraryUtils.canEditMetadata(item)
-                && property != SBProperties.rating) {
-              continue;
-            }
-
-            if (value != item.getProperty(property)) {
-              // Completely remove empty properties
-              // HACK for 0.7: primaryImageURL likes to be set to ""
-              //               this says "i am scanned and empty"
-              //               setting it to null says "rescan me"
-              if (value == "" && property != SBProperties.primaryImageURL) {
-                value = null;
-              }
-
-              item.setProperty(property, value);
-              
-              // Flag the item as needing a metadata-write job.
-              // Do not start a write-job if all that has changed is the 
-              // rating, and rating-write isn't enabled.
-              if (property != SBProperties.rating || enableRatingWrite) {
-                needsWriting[i] = true;
-              }
-            }
+          item.setProperty(property, value);
+          
+          // Flag the item as needing a metadata-write job.
+          // Do not start a write-job if all that has changed is the 
+          // rating, and rating-write isn't enabled.
+          if (property != SBProperties.rating || enableRatingWrite) {
+            needsWriting[i] = true;
           }
         }
       }
-    };
-
-    this.mediaListView.mediaList.runInBatchMode(batchSetter, null);
+    }
+      
     
-    /* TODO: finish or nix this
+  /* TODO: finish or nix this
     // isPartOfCompilation gets special treatment because
     // this is our only user-exposed boolean property right now
     // TODO: generalize this to be more like the textboxes above
@@ -521,7 +515,7 @@ var TrackEditor = {
           }
         }
     }
-    */
+  */
     
     // Add all items that need writing into an array 
     var mediaItemArray = [];
@@ -593,7 +587,7 @@ TrackEditorAdvancedTab.prototype = {
     var advancedRows = document.createElement("rows");
     advancedGrid.appendChild(advancedRows);
 
-    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+    var propMan = Cc["@getnightingale.com/Nightingale/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
 
     var propertiesEnumerator = propMan.propertyIDs;

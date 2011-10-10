@@ -1,11 +1,11 @@
 /* vim: set sw=2 : miv*/
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -20,7 +20,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
@@ -37,7 +37,7 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
  * if given
  */
 function CopyProperties(aPropertyBag) {
-  var newProps = Cc["@songbirdnest.com/moz/xpcom/sbpropertybag;1"]
+  var newProps = Cc["@getnightingale.com/moz/xpcom/sbpropertybag;1"]
                   .createInstance(Ci.nsIWritablePropertyBag2);
   if (aPropertyBag) {
     // stuff the property bag into a SIP to make sure instanceof works correctly
@@ -76,7 +76,7 @@ function F(aNumerator, aDenominator) {
  * or an object with "min", "step", and "max" properties.
  */
 function sbDevCapRange(aInput) {
-  var range = Cc["@songbirdnest.com/Songbird/Device/sbrange;1"]
+  var range = Cc["@getnightingale.com/Nightingale/Device/sbrange;1"]
                 .createInstance(Ci.sbIDevCapRange);
   if (aInput === null) {
     // possibly no size ranges, or something
@@ -395,7 +395,7 @@ function runTest() {
     log("Checking testcase [" + testcase.description + "]");
     // Create a new configurator to test with.
     var configurator =
-      Cc["@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
+      Cc["@getnightingale.com/Nightingale/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
         .createInstance(Ci.sbIDeviceTranscodingConfigurator);
     assertTrue(configurator, "failed to create configurator");
 
@@ -437,7 +437,7 @@ function runTest() {
 
     // the device caps is not so simple; we need to construct something more
     // complex to appropriately fake all the interfaces
-    var videoCaps = Cc["@songbirdnest.com/Songbird/Device/sbdevcapvideostream;1"]
+    var videoCaps = Cc["@getnightingale.com/Nightingale/Device/sbdevcapvideostream;1"]
                       .createInstance(Ci.sbIDevCapVideoStream);
     var videoSizes = [{width: x.width, height: x.height,
                        QueryInterface: XPCOMUtils.generateQI([Ci.sbIImageSize])}
@@ -452,20 +452,20 @@ function runTest() {
                          !(testcase.caps.video.frameRates instanceof Array),
                          sbDevCapRange(testcase.caps.video.bitRates));
 
-    var audioCaps = Cc["@songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1"]
+    var audioCaps = Cc["@getnightingale.com/Nightingale/Device/sbdevcapaudiostream;1"]
                       .createInstance(Ci.sbIDevCapAudioStream);
     audioCaps.initialize(testcase.caps.audio.type,
                          sbDevCapRange(testcase.caps.audio.bitRates),
                          sbDevCapRange(testcase.caps.audio.sampleRates),
                          sbDevCapRange(testcase.caps.audio.channels));
 
-    var formatType = Cc["@songbirdnest.com/Songbird/Device/sbvideoformattype;1"]
+    var formatType = Cc["@getnightingale.com/Nightingale/Device/sbvideoformattype;1"]
                        .createInstance(Ci.sbIVideoFormatType);
     formatType.initialize(testcase.caps.containerType,
                           videoCaps,
                           audioCaps);
 
-    var caps = Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilities;1"]
+    var caps = Cc["@getnightingale.com/Nightingale/Device/DeviceCapabilities;1"]
                  .createInstance(Ci.sbIDeviceCapabilities);
     caps.init();
     caps.setFunctionTypes([caps.FUNCTION_VIDEO_PLAYBACK], 1);

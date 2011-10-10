@@ -1,11 +1,11 @@
 /*
  //
- // BEGIN SONGBIRD GPL
+ // BEGIN NIGHTINGALE GPL
  //
- // This file is part of the Songbird web player.
+ // This file is part of the Nightingale web player.
  //
  // Copyright(c) 2005-2008 POTI, Inc.
- // http://songbirdnest.com
+ // http://getnightingale.com
  //
  // This file may be licensed under the terms of of the
  // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
  // or write to the Free Software Foundation, Inc.,
  // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  //
- // END SONGBIRD GPL
+ // END NIGHTINGALE GPL
  //
  */
 
@@ -80,7 +80,7 @@ void AppendDeviceController(nsCOMPtr<nsISupports> & ptr,
     
     // check if the device manager already has a matching controller
     nsCOMPtr<sbIDeviceControllerRegistrar> controllerRegistrar =
-      do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+      do_GetService("@getnightingale.com/Nightingale/DeviceManager;2", &rv);
     NS_ENSURE_SUCCESS(rv, /* void */);
     
     nsID* controllerId = nsnull;
@@ -123,7 +123,7 @@ nsIArray * sbBaseDeviceMarshall::RefreshControllers()
 {
   if (!mControllers) {
     nsresult rv;
-    mControllers = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    mControllers = do_CreateInstance("@getnightingale.com/moz/xpcom/threadsafe-array;1", &rv);
     if (NS_FAILED(rv)) {
       NS_ERROR("unable to create an nsArray");
       return nsnull;
@@ -154,10 +154,9 @@ PRBool CompareCompatibility(sbIDeviceCompatibility * comp1,
   PRUint32 compVal1 = sbIDeviceCompatibility::INCOMPATIBLE;
   PRUint32 compVal2 = sbIDeviceCompatibility::INCOMPATIBLE;
   
-  return (comp1 && NS_SUCCEEDED(comp1->GetCompatibility(&compVal1))) || 
-         ((comp2 && NS_SUCCEEDED(comp2->GetCompatibility(&compVal2))) && 
-          compVal2 > compVal1 && 
-          compVal2 != sbIDeviceCompatibility::INCOMPATIBLE);
+  return (comp1 && NS_SUCCEEDED(comp1->GetCompatibility(&compVal1)))
+      || (comp2 && NS_SUCCEEDED(comp2->GetCompatibility(&compVal2))) && compVal2
+      > compVal1 && compVal2 != sbIDeviceCompatibility::INCOMPATIBLE;
 }
 
 PRBool sbBaseDeviceMarshall::CompatibilityComparer::Compare(sbIDeviceController * controller,

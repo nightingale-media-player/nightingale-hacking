@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -31,14 +31,14 @@ interface nsISimpleEnumerator;
 
 /**       
  * \file sbIDisplayPanes.idl
- * \brief Songbird Display Panes Interface file
+ * \brief Nightingale Display Panes Interface file
  * This file contains interfaces pertaining to display panes.
  *
  * Display panes are blocks within the main user interface which can be
  * used to load arbitary sub-documents for display to the user with full
  * chrome privileges.
  *
- * \see http://publicsvn.songbirdnest.com/browser/extensions/wikipedia
+ * \see http://publicsvn.getnightingale.com/browser/extensions/wikipedia
  * \see app/content/bindings/displayPane.xml
  * 
  * \see sbDisplayPanes.js
@@ -143,13 +143,13 @@ interface sbIDisplayPaneListener : nsISupports
 
 /**
  * \interface sbIDisplayPaneManager sbIDisplayPaneManager.h
- * \brief Songbird Display Panes Interface
+ * \brief Nightingale Display Panes Interface
  * This is the main display panes management interface, used to register and
  * list panes and instantiators.  Display panes are blocks within the main user
  * interface which can be used to load arbitary sub-documents for display to
  * the user with full chrome privileges.
  *
- * \see http://publicsvn.songbirdnest.com/browser/extensions/wikipedia
+ * \see http://publicsvn.getnightingale.com/browser/extensions/wikipedia
  * \see app/content/bindings/displayPane.xml
  */
       

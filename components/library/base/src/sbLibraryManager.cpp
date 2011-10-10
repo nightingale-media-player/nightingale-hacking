@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,12 +19,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /** 
 * \file  sbLibraryManager.cpp
-* \brief Songbird Library Manager Implementation.
+* \brief Nightingale Library Manager Implementation.
 */
 #include "sbLibraryManager.h"
 #include "sbLibraryCID.h"
@@ -51,10 +51,9 @@
 #include <nsServiceManagerUtils.h>
 #include <prlog.h>
 #include <rdf.h>
+#include <sbProxyUtils.h>
 #include <sbLibraryUtils.h>
-#include <sbDebugUtils.h>
 #include <sbThreadUtils.h>
-#include <sbProxiedComponentManager.h>
 
 /* for sbILibraryUtils::GetCanonicalPath */
 #if XP_WIN
@@ -65,6 +64,14 @@
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLibraryManager:5
  */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gLibraryManagerLog = nsnull;
+#define TRACE(args) PR_LOG(gLibraryManagerLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLibraryManagerLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
 
 #define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
 #define NS_PROFILE_TEARDOWN_OBSERVER_ID "profile-change-teardown"
@@ -83,9 +90,12 @@ sbLibraryManager::sbLibraryManager()
   MOZ_COUNT_CTOR(sbLibraryManager);
   NS_ASSERTION(SB_IsMainThread(), "Wrong thread!");
 
-  SB_PRLOG_SETUP(sbLibraryManager);
+#ifdef PR_LOGGING
+  if (!gLibraryManagerLog)
+    gLibraryManagerLog = PR_NewLogModule("sbLibraryManager");
+#endif
 
-  TRACE("sbLibraryManager[0x%x] - Created", this);
+  TRACE(("sbLibraryManager[0x%x] - Created", this));
 }
 
 sbLibraryManager::~sbLibraryManager()
@@ -96,7 +106,7 @@ sbLibraryManager::~sbLibraryManager()
     nsAutoLock::DestroyLock(mLock);
   }
 
-  TRACE("LibraryManager[0x%x] - Destroyed", this);
+  TRACE(("LibraryManager[0x%x] - Destroyed", this));
   MOZ_COUNT_DTOR(sbLibraryManager);
 }
 
@@ -113,9 +123,9 @@ sbLibraryManager::RegisterSelf(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
-                                         SONGBIRD_LIBRARYMANAGER_DESCRIPTION,
+                                         NIGHTINGALE_LIBRARYMANAGER_DESCRIPTION,
                                          "service,"
-                                         SONGBIRD_LIBRARYMANAGER_CONTRACTID,
+                                         NIGHTINGALE_LIBRARYMANAGER_CONTRACTID,
                                          PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -128,7 +138,7 @@ sbLibraryManager::RegisterSelf(nsIComponentManager* aCompMgr,
 nsresult
 sbLibraryManager::Init()
 {
-  TRACE("sbLibraryManager[0x%x] - Init", this);
+  TRACE(("sbLibraryManager[0x%x] - Init", this));
   NS_ASSERTION(SB_IsMainThread(), "Wrong thread!");
 
   nsresult rv;
@@ -344,7 +354,7 @@ sbLibraryManager::GenerateDataSource()
 void
 sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
 {
-  TRACE("sbLibraryManager[0x%x] - NotifyListenersLibraryRegistered", this);
+  TRACE(("sbLibraryManager[0x%x] - NotifyListenersLibraryRegistered", this));
   
   nsCOMArray<sbILibraryManagerListener> listeners;
   {
@@ -373,7 +383,7 @@ sbLibraryManager::NotifyListenersLibraryRegistered(sbILibrary* aLibrary)
 void
 sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
 {
-  TRACE("sbLibraryManager[0x%x] - NotifyListenersLibraryUnregistered", this);
+  TRACE(("sbLibraryManager[0x%x] - NotifyListenersLibraryUnregistered", this));
   
   nsCOMArray<sbILibraryManagerListener> listeners;
   {
@@ -394,7 +404,7 @@ sbLibraryManager::NotifyListenersLibraryUnregistered(sbILibrary* aLibrary)
 void
 sbLibraryManager::InvokeLoaders()
 {
-  TRACE("sbLibraryManager[0x%x] - InvokeLoaders", this);
+  TRACE(("sbLibraryManager[0x%x] - InvokeLoaders", this));
   NS_ASSERTION(SB_IsMainThread(mThreadManager), "Wrong thread!");
 
   nsCOMArray<sbILibraryLoader> loaders = mLoaderCache.GetEntries();
@@ -403,8 +413,7 @@ sbLibraryManager::InvokeLoaders()
     mCurrentLoader = loaders.ObjectAt(index);
     NS_ASSERTION(mCurrentLoader, "Null pointer!");
 
-    nsresult SB_UNUSED_IN_RELEASE(rv) =
-        mCurrentLoader->OnRegisterStartupLibraries(this);
+    nsresult rv = mCurrentLoader->OnRegisterStartupLibraries(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnRegisterStartupLibraries failed!");
   }
   mCurrentLoader = nsnull;
@@ -422,7 +431,7 @@ sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
                                                    PRBool aLoadAtStartup,
                                                    sbLibraryInfo** aInfo)
 {
-  TRACE("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartupInternal", this);
+  TRACE(("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartupInternal", this));
 
   nsresult rv = NS_ERROR_NOT_AVAILABLE;
 
@@ -525,7 +534,7 @@ sbLibraryManager::GetMainLibrary(sbILibrary** _retval)
 NS_IMETHODIMP
 sbLibraryManager::GetDataSource(nsIRDFDataSource** aDataSource)
 {
-  TRACE("sbLibraryManager[0x%x] - GetDataSource", this);
+  TRACE(("sbLibraryManager[0x%x] - GetDataSource", this));
   NS_ENSURE_ARG_POINTER(aDataSource);
 
   nsAutoLock lock(mLock);
@@ -546,7 +555,7 @@ NS_IMETHODIMP
 sbLibraryManager::GetLibrary(const nsAString& aGuid,
                              sbILibrary** _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - GetLibrary", this);
+  TRACE(("sbLibraryManager[0x%x] - GetLibrary", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbILibrary> library;
@@ -572,7 +581,7 @@ sbLibraryManager::GetLibrary(const nsAString& aGuid,
 NS_IMETHODIMP
 sbLibraryManager::GetLibraries(nsISimpleEnumerator** _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - GetLibraries", this);
+  TRACE(("sbLibraryManager[0x%x] - GetLibraries", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMArray<sbILibrary> libraryArray;
@@ -602,7 +611,7 @@ sbLibraryManager::GetLibraries(nsISimpleEnumerator** _retval)
 NS_IMETHODIMP
 sbLibraryManager::GetStartupLibraries(nsISimpleEnumerator** _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - GetStartupLibraries", this);
+  TRACE(("sbLibraryManager[0x%x] - GetStartupLibraries", this));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMArray<sbILibrary> libraryArray;
@@ -633,7 +642,7 @@ NS_IMETHODIMP
 sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
                                   PRBool aLoadAtStartup)
 {
-  TRACE("sbLibraryManager[0x%x] - RegisterLibrary", this);
+  TRACE(("sbLibraryManager[0x%x] - RegisterLibrary", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
 
   nsAutoString libraryGUID;
@@ -699,7 +708,7 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
 NS_IMETHODIMP
 sbLibraryManager::UnregisterLibrary(sbILibrary* aLibrary)
 {
-  TRACE("sbLibraryManager[0x%x] - UnregisterLibrary", this);
+  TRACE(("sbLibraryManager[0x%x] - UnregisterLibrary", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
 
   NS_ASSERTION(!mCurrentLoader, "Shouldn't call this within InvokeLoaders!");
@@ -740,7 +749,7 @@ NS_IMETHODIMP
 sbLibraryManager::SetLibraryLoadsAtStartup(sbILibrary* aLibrary,
                                            PRBool aLoadAtStartup)
 {
-  TRACE("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartup", this);
+  TRACE(("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartup", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
 
   sbLibraryInfo* outLibInfo = nsnull;
@@ -788,7 +797,7 @@ NS_IMETHODIMP
 sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
                                            PRBool* _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - GetLibraryLoadsAtStartup", this);
+  TRACE(("sbLibraryManager[0x%x] - GetLibraryLoadsAtStartup", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -815,7 +824,7 @@ NS_IMETHODIMP
 sbLibraryManager::HasLibrary(sbILibrary* aLibrary,
                              PRBool* _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - HasLibrary", this);
+  TRACE(("sbLibraryManager[0x%x] - HasLibrary", this));
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -834,7 +843,7 @@ sbLibraryManager::HasLibrary(sbILibrary* aLibrary,
 NS_IMETHODIMP
 sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
 {
-  TRACE("sbLibraryManager[0x%x] - AddListener", this);
+  TRACE(("sbLibraryManager[0x%x] - AddListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
 
   {
@@ -849,7 +858,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
   // Make a proxy for the listener that will always send callbacks to the
   // current thread.
   nsCOMPtr<sbILibraryManagerListener> proxy;
-  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbILibraryManagerListener),
                                      aListener,
                                      NS_PROXY_SYNC | NS_PROXY_ALWAYS,
@@ -871,7 +880,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
 NS_IMETHODIMP
 sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
 {
-  TRACE("sbLibraryManager[0x%x] - RemoveListener", this);
+  TRACE(("sbLibraryManager[0x%x] - RemoveListener", this));
   NS_ENSURE_ARG_POINTER(aListener);
 
   nsAutoLock lock(mLock);
@@ -893,7 +902,7 @@ NS_IMETHODIMP
 sbLibraryManager::GetContentURI(nsIURI* aURI,
                                 nsIURI** _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - GetContentURI", this);
+  TRACE(("sbLibraryManager[0x%x] - GetContentURI", this));
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -907,7 +916,7 @@ NS_IMETHODIMP
 sbLibraryManager::GetFileContentURI(nsIFile* aFile,
                                     nsIURI** _retval)
 {
-  TRACE("sbLibraryManager[0x%x] - GetFileContentURI", this);
+  TRACE(("sbLibraryManager[0x%x] - GetFileContentURI", this));
   NS_ENSURE_ARG_POINTER(aFile);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -963,7 +972,7 @@ sbLibraryManager::Observe(nsISupports* aSubject,
                           const char* aTopic,
                           const PRUnichar* aData)
 {
-  TRACE("sbLibraryManager[0x%x] - Observe: %s", this, aTopic);
+  TRACE(("sbLibraryManager[0x%x] - Observe: %s", this, aTopic));
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService = 

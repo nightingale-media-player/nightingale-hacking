@@ -1,10 +1,10 @@
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "sbGStreamerMediaInspector.h"
@@ -496,7 +496,7 @@ sbGStreamerMediaInspector::Notify(nsITimer *aTimer)
 
 
 // Override base class to set the job progress appropriately
-NS_IMETHODIMP
+nsresult
 sbGStreamerMediaInspector::StopPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -937,7 +937,7 @@ sbGStreamerMediaInspector::ProcessContainerProperties (
   nsresult rv;
   const gchar *name = gst_structure_get_name (aStructure);
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "video/mpeg")) {
@@ -971,7 +971,7 @@ sbGStreamerMediaInspector::ProcessVideoProperties (
   nsresult rv;
   const gchar *name = gst_structure_get_name (aStructure);
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "video/mpeg")) {
@@ -1100,7 +1100,7 @@ sbGStreamerMediaInspector::ProcessAudioProperties (
   nsresult rv;
   const gchar *name = gst_structure_get_name (aStructure);
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+    do_CreateInstance("@getnightingale.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "audio/mpeg")) {

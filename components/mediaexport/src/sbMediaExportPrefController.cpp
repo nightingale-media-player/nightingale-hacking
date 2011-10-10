@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -33,8 +33,6 @@
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
 
-#include <sbDebugUtils.h>
-
 
 NS_IMPL_ISUPPORTS1(sbMediaExportPrefController, nsIObserver)
 
@@ -45,7 +43,6 @@ sbMediaExportPrefController::sbMediaExportPrefController()
   , mShouldStartExportAgent(PR_FALSE)
   , mListener(nsnull)
 {
-  SB_PRLOG_SETUP(sbMediaExportPrefController);
 }
 
 sbMediaExportPrefController::~sbMediaExportPrefController()
@@ -55,7 +52,7 @@ sbMediaExportPrefController::~sbMediaExportPrefController()
 nsresult
 sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
 {
-  TRACE("%s: Initializing the mediaexport pref controller", __FUNCTION__);
+  TRACE(("%s: Initializing the mediaexport pref controller", __FUNCTION__));
 
   nsresult rv;
   nsCOMPtr<nsIPrefBranch2> prefBranch =
@@ -90,7 +87,7 @@ sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
 nsresult
 sbMediaExportPrefController::Shutdown()
 {
-  LOG("%s: Shutting down the mediaexport pref controller", __FUNCTION__);
+  LOG(("%s: Shutting down the mediaexport pref controller", __FUNCTION__));
 
   nsresult rv;
   nsCOMPtr<nsIPrefBranch2> prefBranch =
@@ -131,10 +128,10 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
                                &modifiedValue);
   NS_ENSURE_SUCCESS(rv, rv);
  
-  LOG("%s: %s pref changed to %s",
+  LOG(("%s: %s pref changed to %s",
         __FUNCTION__,
         NS_ConvertUTF16toUTF8(modifiedPref).get(),
-        (modifiedValue ? "true" : "false"));
+        (modifiedValue ? "true" : "false")));
 
   if (modifiedPref.EqualsLiteral(PREF_EXPORT_TRACKS)) {
     mShouldExportTracks = modifiedValue;

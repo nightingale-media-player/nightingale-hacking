@@ -1,11 +1,11 @@
 /**
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
  
@@ -32,8 +32,8 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const CONTRACTID = "@songbirdnest.com/Songbird/DndSourceTracker;1";
-const CLASSNAME = "Songbird Drag and Drop Source Tracker Service";
+const CONTRACTID = "@getnightingale.com/Nightingale/DndSourceTracker;1";
+const CLASSNAME = "Nightingale Drag and Drop Source Tracker Service";
 const CID = Components.ID("{54b21a93-5b1b-46a2-a60f-5378ccf7f65c}");
 const IID = Ci.sbIDndSourceTracker;
 

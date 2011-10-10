@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,12 +21,12 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \file  sbWindowsAutoPlayService.js
- * \brief Songbird Windows AutoPlay Service Source.
+ * \brief Nightingale Windows AutoPlay Service Source.
  */
 
 //------------------------------------------------------------------------------
@@ -35,7 +35,7 @@
 // Windows AutoPlay Service component.
 //
 //   This component provides various Windows AutoPlay services.  This component
-// handles Windows AutoPlay flags in the Songbird command line.
+// handles Windows AutoPlay flags in the Nightingale command line.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-// Songbird imports.
+// Nightingale imports.
 Cu.import("resource://app/jsmodules/ObserverUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -77,9 +77,9 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 //
 
 var sbWindowsAutoPlayServiceCfg = {
-  classDescription: "Songbird Windows AutoPlay Service",
+  classDescription: "Nightingale Windows AutoPlay Service",
   classID: Components.ID("{3124ec90-1dd2-11b2-8059-c4e994415c12}"),
-  contractID: "@songbirdnest.com/Songbird/WindowsAutoPlayService;1",
+  contractID: "@getnightingale.com/Nightingale/WindowsAutoPlayService;1",
   ifList: [ Ci.sbIWindowsAutoPlayService,
             Ci.sbICommandLineFlagHandler,
             Ci.nsIObserver ]
@@ -225,7 +225,7 @@ sbWindowsAutoPlayService.prototype = {
         this._handleAppStartup();
         break;
 
-      case "songbird-main-window-presented" :
+      case "nightingale-main-window-presented" :
         this._handleSBMainWindowPresented();
         break;
 
@@ -307,15 +307,15 @@ sbWindowsAutoPlayService.prototype = {
                   null);
 
     // If the action was not handled, alert the user that the device cannot be
-    // managed.  Wait until a Songbird main window is available so it can be
+    // managed.  Wait until a Nightingale main window is available so it can be
     // used as the parent of the alert.
     if (!actionHandled) {
-      var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+      var windowWatcher = Cc["@getnightingale.com/Nightingale/window-watcher;1"]
                             .getService(Ci.sbIWindowWatcher);
       var _this = this;
       var func = function(aWindow)
                    { _this._alertUserCannotManageVolumeDevice(aWindow); };
-      windowWatcher.callWithWindow("Songbird:Main", func);
+      windowWatcher.callWithWindow("Nightingale:Main", func);
     }
   },
 
@@ -333,15 +333,15 @@ sbWindowsAutoPlayService.prototype = {
                   null);
 
     // If the action was not handled, alert the user that the device cannot be
-    // managed.  Wait until a Songbird main window is available so it can be
+    // managed.  Wait until a Nightingale main window is available so it can be
     // used as the parent of the alert.
     if (!actionHandled) {
-      var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+      var windowWatcher = Cc["@getnightingale.com/Nightingale/window-watcher;1"]
                             .getService(Ci.sbIWindowWatcher);
       var _this = this;
       var func = function(aWindow)
                    { _this._alertUserCannotManageMTPDevice(aWindow); };
-      windowWatcher.callWithWindow("Songbird:Main", func);
+      windowWatcher.callWithWindow("Nightingale:Main", func);
     }
   },
 
@@ -359,15 +359,15 @@ sbWindowsAutoPlayService.prototype = {
                   null);
 
     // If the action was not handled, alert the user that the device cannot be
-    // managed.  Wait until a Songbird main window is available so it can be
+    // managed.  Wait until a Nightingale main window is available so it can be
     // used as the parent of the alert.
     if (!actionHandled) {
-      var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+      var windowWatcher = Cc["@getnightingale.com/Nightingale/window-watcher;1"]
                             .getService(Ci.sbIWindowWatcher);
       var _this = this;
       var func = function(aWindow)
                    { _this._alertUserCannotCDRip(aWindow); };
-      windowWatcher.callWithWindow("Songbird:Main", func);
+      windowWatcher.callWithWindow("Nightingale:Main", func);
     }
   },
 
@@ -421,8 +421,8 @@ sbWindowsAutoPlayService.prototype = {
 
     // Determine which dialog strings to use.
     var stringNamePrefix = "windows.autoplay.cannot_manage_device.dialog.";
-    if (Application.extensions.has("msc@songbirdnest.com")) {
-      if (!Application.extensions.get("msc@songbirdnest.com").enabled) {
+    if (Application.extensions.has("msc@getnightingale.com")) {
+      if (!Application.extensions.get("msc@getnightingale.com").enabled) {
         stringNamePrefix =
           "windows.autoplay.cannot_manage_device.msc_not_enabled.dialog.";
       }
@@ -432,7 +432,7 @@ sbWindowsAutoPlayService.prototype = {
     }
 
     // Alert user.
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
     var title = SBString(stringNamePrefix + "title");
     var msg = SBString(stringNamePrefix + "msg");
@@ -455,8 +455,8 @@ sbWindowsAutoPlayService.prototype = {
 
     // Determine which dialog strings to use.
     var stringNamePrefix = "windows.autoplay.cannot_manage_device.dialog.";
-    if (Application.extensions.has("mtp@songbirdnest.com")) {
-      if (!Application.extensions.get("mtp@songbirdnest.com").enabled) {
+    if (Application.extensions.has("mtp@getnightingale.com")) {
+      if (!Application.extensions.get("mtp@getnightingale.com").enabled) {
         stringNamePrefix =
           "windows.autoplay.cannot_manage_device.mtp_not_enabled.dialog.";
       }
@@ -466,7 +466,7 @@ sbWindowsAutoPlayService.prototype = {
     }
 
     // Alert user.
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
     var title = SBString(stringNamePrefix + "title");
     var msg = SBString(stringNamePrefix + "msg");
@@ -484,7 +484,7 @@ sbWindowsAutoPlayService.prototype = {
   _alertUserCannotCDRip:
     function sbWindowsAutoPlayService__alertUserCannotCDRip(aWindow) {
     var prefix = "windows.autoplay.cannot_cd_rip.dialog.";
-    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+    var prompter = Cc["@getnightingale.com/Nightingale/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
     var title = SBString(prefix + "title");
     var msg = SBString(prefix + "msg");
@@ -508,7 +508,7 @@ sbWindowsAutoPlayService.prototype = {
 
 
   /**
-   * Handle Songbird main window presented events.
+   * Handle Nightingale main window presented events.
    */
 
   _handleSBMainWindowPresented:
@@ -542,9 +542,9 @@ sbWindowsAutoPlayService.prototype = {
    */
 
   _startCommandLine: function sbWindowsAutoPlayService__startCommandLine() {
-    // Get the Songbird command line manager.
+    // Get the Nightingale command line manager.
     var commandLineManager =
-      Cc["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"]
+      Cc["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"]
         .getService(Ci.sbICommandLineManager);
 
     // Add Windows AutoPlay command line flag handlers.
@@ -561,9 +561,9 @@ sbWindowsAutoPlayService.prototype = {
    */
 
   _stopCommandLine: function sbWindowsAutoPlayService__stopCommandLine() {
-    // Get the Songbird command line manager.
+    // Get the Nightingale command line manager.
     var commandLineManager =
-      Cc["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"]
+      Cc["@getnightingale.com/commandlinehandler/general-startup;1?type=nightingale"]
         .getService(Ci.sbICommandLineManager);
 
     // Remove Windows AutoPlay command line flag handlers.
@@ -596,7 +596,7 @@ sbWindowsAutoPlayService.prototype = {
     if (!this._observerSet) {
       this._observerSet = new ObserverSet();
       this._observerSet.add(this,
-                            "songbird-main-window-presented",
+                            "nightingale-main-window-presented",
                             false,
                             false);
       this._observerSet.add(this, "quit-application-granted", false, false);

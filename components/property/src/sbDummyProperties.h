@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -28,6 +28,6 @@
 #define __SB_DUMMY_PROPERTIES_H__
 
 // Playlist dummy property for smart medialists internal use
-#define SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST      "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist"
+#define SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST      "http://getnightingale.com/dummy/smartmedialists/1.0#playlist"
 
 #endif /* __SB_DUMMY_PROPERTIES_H__ */

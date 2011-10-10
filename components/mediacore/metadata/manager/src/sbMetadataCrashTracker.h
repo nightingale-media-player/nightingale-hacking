@@ -1,26 +1,28 @@
 /*
- *=BEGIN SONGBIRD GPL
- *
- * This file is part of the Songbird web player.
- *
- * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
- *
- * This file may be licensed under the terms of of the
- * GNU General Public License Version 2 (the ``GPL'').
- *
- * Software distributed under the License is distributed
- * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
- * express or implied. See the GPL for the specific language
- * governing rights and limitations.
- *
- * You should have received a copy of the GPL along with this
- * program. If not, go to http://www.gnu.org/licenses/gpl.html
- * or write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- *=END SONGBIRD GPL
- */
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
 
 /**
  * \file sbMetadataCrashTracker.h
@@ -64,7 +66,7 @@
  * Instead we trust the OS to flush and close on app crash. 
  *
  * The unit test framework can't handle crashes, so to verify this
- * functionality, set a "songbird.metadata.simulate.crash.url" preference
+ * functionality, set a "nightingale.metadata.simulate.crash.url" preference
  * to a partial filename, then run a media import.
  */
 class sbMetadataCrashTracker : public nsISupports
@@ -113,14 +115,6 @@ public:
    */
   nsresult IsURLBlacklisted(const nsACString& aURL,
                             PRBool* aIsBlackListed);
-
-  /**
-   * Adds a URL to the blacklist
-   * @note The blacklist is not threadsafe, there must be nothing else
-   * attempting to use it at the same time.  This only exists for unit testing
-   * purposes (see bug 22806).
-   */
-  nsresult AddBlacklistURL(const nsACString& aURL);
   
 private:
 
@@ -177,7 +171,7 @@ private:
   nsCOMPtr<nsIOutputStream>                   mOutputStream;
   PRLock*                                     mLock;
   
-  // Value of songbird.metadata.simulate.crash.url, if set
+  // Value of nightingale.metadata.simulate.crash.url, if set
   nsCString                                   mSimulateCrashURL;
 };
 

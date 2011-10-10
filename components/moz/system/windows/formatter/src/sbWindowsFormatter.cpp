@@ -1,12 +1,12 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2009 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,17 +21,17 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 /**
  * \file  sbWindowsFormatter.cpp
- * \brief Songbird Windows Formatter Source.
+ * \brief Nightingale Windows Formatter Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter imported services.
+// Nightingale Windows formatter imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -41,14 +41,14 @@
 // Local imports.
 #include "sbIWindowsFormatter_i.c"
 
-// Songbird imports.
+// Nightingale imports.
 #include <sbWindowsStorage.h>
 #include <sbWindowsUtils.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter IUnknown implementation.
+// Nightingale Windows formatter IUnknown implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -126,7 +126,7 @@ sbWindowsFormatter::QueryInterface(REFIID aIID,
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows formatter sbIWindowsFormat implementation.
+// Nightingale Windows formatter sbIWindowsFormat implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ sbWindowsFormatter::Format(BSTR          aVolumeName,
 
 //------------------------------------------------------------------------------
 //
-// Public Songbird Windows formatter services.
+// Public Nightingale Windows formatter services.
 //
 //------------------------------------------------------------------------------
 
@@ -247,12 +247,15 @@ sbWindowsFormatter::~sbWindowsFormatter()
   // Release the VDS service object.
   if (mVdsService)
     mVdsService->Release();
+
+  // Uninitialize COM.
+  CoUninitialize();
 }
 
 
 //------------------------------------------------------------------------------
 //
-// Private Songbird Windows formatter services.
+// Private Nightingale Windows formatter services.
 //
 //------------------------------------------------------------------------------
 
@@ -279,8 +282,7 @@ sbWindowsFormatter::Initialize()
   HRESULT result;
 
   // Initialize COM.
-  mAutoCOMInitializer.Initialize();
-  result = mAutoCOMInitializer.GetHRESULT();
+  result = CoInitialize(NULL);
   SB_WIN_ENSURE_SUCCESS(result, result);
 
   // Get the VDS service loader object and set it up for auto-disposal.

@@ -1,11 +1,11 @@
 /*
 //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 // 
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright© 2005-2008 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 // 
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc., 
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 // 
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
 */
 
@@ -40,12 +40,8 @@ interface sbIMediaList;
  * Holds the current status of a device, idle, syncing, etc with all the
  * relevent information.
  */
-[scriptable, uuid(a50eb732-08e5-4bc4-9389-e03173e79a7f)]
+[scriptable, uuid(c4b8e380-1dd1-11b2-b549-be35d52daa54)]
 interface sbIDeviceStatus: nsISupports {
-
-  // Import export transfer direction
-  const unsigned long EXPORT = 1;
-  const unsigned long IMPORT = 2;
   /**
    * \brief The current overall state of the device.
    * \sa sbIDevice::STATE_*

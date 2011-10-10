@@ -1,12 +1,12 @@
 /* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
- *=BEGIN SONGBIRD GPL
+ *=BEGIN NIGHTINGALE GPL
  *
- * This file is part of the Songbird web player.
+ * This file is part of the Nightingale web player.
  *
  * Copyright(c) 2005-2010 POTI, Inc.
- * http://www.songbirdnest.com
+ * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
  * GNU General Public License Version 2 (the ``GPL'').
@@ -21,7 +21,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *=END SONGBIRD GPL
+ *=END NIGHTINGALE GPL
  */
 
 #include "nsISupports.idl"
@@ -35,7 +35,7 @@
  * a parent window as an argument, the parent may be set to null.
  *   If a parent window is set to null, this interface will use a window of the
  * type specified by parentWindowType.  If no parent window type is specified,
- * this interface uses a default type (e.g., "Songbird:Main").  If a window of
+ * this interface uses a default type (e.g., "Nightingale:Main").  If a window of
  * the specified type is not available, this interface finds an appropriate
  * default window to use.
  *   This interface allows a parent window type to be set to be used as the
@@ -53,7 +53,7 @@
  * a window is not available, the method will return NS_ERROR_NOT_AVAILABLE.  If
  * any error occurs, the method will return NS_ERROR_FAILURE.
  *
- * "@songbirdnest.com/Songbird/Prompter;1"
+ * "@getnightingale.com/Nightingale/Prompter;1"
  * Use create instance with this component.  No default parent window type is
  * set and the default waitForWindow is false.
  */
@@ -126,6 +126,6 @@ interface sbIPrompter : nsIPromptService
 };
 
 %{C++
-#define SONGBIRD_PROMPTER_CONTRACTID "@songbirdnest.com/Songbird/Prompter;1"
+#define NIGHTINGALE_PROMPTER_CONTRACTID "@getnightingale.com/Nightingale/Prompter;1"
 %}C++
 

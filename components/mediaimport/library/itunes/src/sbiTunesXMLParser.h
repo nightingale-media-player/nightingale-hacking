@@ -1,11 +1,11 @@
 /*
  //
-// BEGIN SONGBIRD GPL
+// BEGIN NIGHTINGALE GPL
 //
-// This file is part of the Songbird web player.
+// This file is part of the Nightingale web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
+// http://getnightingale.com
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
@@ -20,7 +20,7 @@
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 //
-// END SONGBIRD GPL
+// END NIGHTINGALE GPL
 //
  */
 #ifndef SBITUNESXMLPARSER_H_
@@ -42,9 +42,9 @@ class nsIInputStreamPump;
 typedef nsCOMPtr<nsISAXXMLReader> nsISAXXMLReaderPtr;
 
 #define SBITUNESXMLPARSER_CONTRACTID                     \
-  "@songbirdnest.com/Songbird/sbiTunesXMLParser;1"
+  "@getnightingale.com/Nightingale/sbiTunesXMLParser;1"
 #define SBITUNESXMLPARSER_CLASSNAME                      \
-  "Songbird iTunes XML Parser Interface"
+  "Nightingale iTunes XML Parser Interface"
 // {F0EBF580-C5FB-4efc-960A-50BEF0BCEDCC}
 #define SBITUNESXMLPARSER_CID                            \
 { 0xf0ebf580, 0xc5fb, 0x4efc, { 0x96, 0xa, 0x50, 0xbe, 0xf0, 0xbc, 0xed, 0xcc } }
