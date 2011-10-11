@@ -7,7 +7,7 @@ richlistbox#extensionsView > scrollbox {
 }
 
 richlistbox richlistitem {
-  background-color: rgb(51,48,61);
+  background-color: rgb(51,51,51);
   border-bottom: 1px solid rgb(36,35,41);
 }
 
@@ -20,9 +20,10 @@ richlistbox:focus richlistitem[selected="true"] {
 }
 
 #addonsMsg > notification {
-  border-top: 1px solid rgb(80,78,91);
-  border-left: 1px solid rgb(80,78,91);
-  border-right: 1px solid rgb(80,78,91);
+	/* BLUE */
+  border-top: 1px solid rgb(47,95,130);
+  border-left: 1px solid rgb(47,95,130);
+  border-right: 1px solid rgb(47,95,130);
   border-bottom: none;
   margin-bottom: -1px;
   padding: 0px;

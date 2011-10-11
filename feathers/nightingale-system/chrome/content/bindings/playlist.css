@@ -269,35 +269,35 @@ In-cell Checkbox
 }
 
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-artistDetailImage, image link ) {
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale-com-data-1-0-artistDetailImage, image link ) {
   list-style-image: url(chrome://nightingale/skin/base-elements/icon-default-favicon.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-artistDetailImage, image noLink ) {
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale-com-data-1-0-artistDetailImage, image noLink ) {
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-albumDetailImage, image link ) {
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale-com-data-1-0-albumDetailImage, image link ) {
   list-style-image: url(chrome://nightingale/skin/base-elements/icon-default-favicon.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-albumDetailImage, image noLink ) {
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale-com-data-1-0-albumDetailImage, image noLink ) {
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-originPageImage, image webOrigin ) {
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale-com-data-1-0-originPageImage, image webOrigin ) {
   list-style-image: url(chrome://nightingale/skin/base-elements/icon-default-favicon.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale.com-data-1-0-originPageImage, image unknownOrigin ) {
+.sb-playlist-tree > treechildren::-moz-tree-image( http-getnightingale-com-data-1-0-originPageImage, image unknownOrigin ) {
 }
 
 
 
 .sb-playlist-tree > treecols > treecol[bind = 'http://getnightingale.com/data/1.0#trackName'],
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale-com-data-1-0-trackName ) {
   padding-left: 18px !important;
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale.com-data-1-0-trackName, playing ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-getnightingale-com-data-1-0-trackName, playing ) {
   background-repeat: no-repeat;
   background-image: url(chrome://nightingale/skin/playlist/icon-playing.png);
 }
@@ -312,9 +312,9 @@ treecol[bind="http://getnightingale.com/data/1.0#contentLength"] {
 }
 
 treecol[bind="http://getnightingale.com/data/1.0#duration"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-duration ),
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale-com-data-1-0-duration ),
 treecol[bind="http://getnightingale.com/data/1.0#trackNumber"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale.com-data-1-0-trackNumber ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-getnightingale-com-data-1-0-trackNumber ) {
 }
 
 

@@ -31,7 +31,7 @@ FORMS STYLES
 
 In Mozilla, certain things like CSS selection hightlight colors in text boxes
 cannot be modified by document-supplied style sheets.  These "native anonymous"
-elements can only be styled by agent stylesheets. Nightingale's feather manager
+elements can only be styled by agent stylesheets. nightingale's feather manager
 registers this file as a global agent stylesheet to allow for the styling of
 these elements.
 
@@ -59,7 +59,7 @@ For more information, visit http://developer.getnightingale.com/
    * e.g. <textbox/> elements
    */
   xul|*:root input > .anonymous-div::-moz-selection {
-    background-color: rgb(213,179,247);
+    background-color: rgb(190,201,217);
     color: rgb(40,40,40);
   }
 }

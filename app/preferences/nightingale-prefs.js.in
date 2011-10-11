@@ -432,6 +432,8 @@ pref("nightingale.columnpicker.allowUnlocalizedSecondaryProperties", false);
 
 // video can be disabled in gstreamer (but is on by default)
 pref("nightingale.mediacore.gstreamer.disablevideo", false);
+//Import video files (only imports ogv by default)
+pref("nightingale.mediacore.gstreamer.videoExtensions", "ogv,wmv,mp4,m4v,mov,divx,avi,mkv,asf,3gp");
 
 // playlist double click speed
 pref("nightingale.playlist.doubleclickspeed", 500);
