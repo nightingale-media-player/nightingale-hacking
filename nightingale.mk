@@ -51,8 +51,8 @@ CLOBBER_TRASH = $(CONFIGURE) \
 
 CONFIGURE_ARGS = $(NULL)
 
-ARCH ?= arch
-SB_ARCH = -`$(ARCH)`
+ARCH = $(call uname -m)
+SB_ARCH = -$(call uname -m)
 
 ####################################
 # Load nightingaleconfig Options

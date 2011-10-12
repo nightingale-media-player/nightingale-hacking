@@ -1,17 +1,20 @@
 # break on any error
-# unless using msys, because the call to the arch command breaks it
-# despite the fact it isn't run unless the machine is running linux... 
-if [ $OSTYPE!="msys" ] ; then
-	set -e
-fi
+set -e
 
-# do a debug or a release build? you want release.
+# do a debug or a release build? YOU WANT RELEASE!
 build="release"
+
+if [ $build="debug" ] ; then
+	grep -sq enable-debug nightingale.config || ( echo 'ac_add_options --enable-debug \nac_add_options --enable-tests' >> nightingale.config )
+else
+	sed -i '/debug/d' nightingale.config
+	sed -i '/tests/d' nightingale.config
+fi
 
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
 	linux*)
-		depdirn="linux-$(arch)"
+		depdirn="linux-$(uname -m)"
 		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/$depdirn"
 	  
 		# use our own gstreamer libs
@@ -26,7 +29,7 @@ case $OSTYPE in
 		done
 	  
 		# !!!! NOTICE: comment the below out if building on/for Windows or Mac or playback probably won't work !!!!
-		grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' > nightingale.config )
+		grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> nightingale.config )
 		;;
 	msys*)
 		echo "You should comment out line 29 in this build.sh script and rerun it to make sure things work properly!"
@@ -80,7 +83,7 @@ make -f nightingale.mk
 
 # insert a copy of the above code to locate gstreamer libs on ngale launch so we don't have to symlink anymore
 if [ $OSTYPE="linux-gnu" ] ; then
-	patch -Np0 -i add_search_for_gst_libs.patch compiled-release-"$(arch)"/dist/nightingale
+	patch -Np0 -i add_search_for_gst_libs.patch "compiled-$build-$(uname -m)/dist/nightingale"
 fi
 
 echo "Build finished!"
