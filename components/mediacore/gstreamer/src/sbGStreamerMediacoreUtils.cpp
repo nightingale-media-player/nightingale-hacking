@@ -992,11 +992,13 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
       }
       else {
         // Unexpected data type
+#ifdef PR_LOGGING
         const gchar *typeName = g_type_name(type);
         LOG(("Unexpected GType [%u %s] for [%s]",
              unsigned(type),
              typeName,
              NS_LossyConvertUTF16toASCII(aProperty).get()));
+#endif // #ifdef PR_LOGGING
         NS_ENSURE_TRUE(PR_FALSE, NS_ERROR_ILLEGAL_VALUE);
       }
       break;
