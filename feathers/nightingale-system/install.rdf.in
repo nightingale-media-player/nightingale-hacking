@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:nightingale="http://www.getnightingale.com/2007/addon-metadata-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>nightingale-system@getnightingale.com</em:id>
+    <em:type>2</em:type>
+    <em:name>Nightingale System Feather</em:name>
+    <em:version>@EXTENSION_VER@</em:version>
+
+    <em:description>Default feather for Nightingale</em:description>
+
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+
+    <!-- Register an skin for the built in layouts. 
+         See http://developer.getnightingale.com/feathers/ -->
+    <nightingale:skin>
+      <Description>
+        <nightingale:name>Nightingale System</nightingale:name>
+        <nightingale:internalName>nightingale-system</nightingale:internalName>
+        <nightingale:compatibleLayout>
+          <Description>
+            <nightingale:layoutURL>chrome://nightingale-system/content/xul/mainplayer.xul</nightingale:layoutURL>
+            <nightingale:showChrome>true</nightingale:showChrome>
+            <nightingale:onTop>false</nightingale:onTop>
+          </Description>
+          <Description>
+            <nightingale:layoutURL>chrome://nightingale-system/content/xul/miniplayer.xul</nightingale:layoutURL>
+            <nightingale:showChrome>false</nightingale:showChrome>
+            <nightingale:onTop>true</nightingale:onTop>
+          </Description>
+        </nightingale:compatibleLayout>
+      </Description>
+    </nightingale:skin>
+    <nightingale:layout>
+      <Description>
+        <nightingale:name>chrome://nightingale/locale/nightingale.properties#feathers.name.mainlayout</nightingale:name>
+        <nightingale:url>chrome://nightingale-system/content/xul/mainplayer.xul</nightingale:url>
+      </Description>
+      <Description>
+        <nightingale:name>chrome://nightingale/locale/nightingale.properties#feathers.name.minilayout</nightingale:name>
+        <nightingale:url>chrome://nightingale-system/content/xul/miniplayer.xul</nightingale:url>
+      </Description>
+    </nightingale:layout>
+
+
+    <!-- No need to show the user -->
+    <em:hidden>true</em:hidden>
+    <em:locked>true</em:locked>
+    <em:appManaged>true</em:appManaged>
+
+  </Description>
+</RDF>
+

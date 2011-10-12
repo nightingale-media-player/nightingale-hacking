@@ -1,0 +1,65 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+
+
+/** 
+*******************************************************************************
+
+UNIX RULES
+
+This css file provides additional rules that are only loaded on Unix systems.
+
+
+
+*******************************************************************************
+*/
+
+window:root[sizemode="maximized"] .sb-sys-outer-frame-resizer {
+  visibility: collapse;
+}
+
+popup,
+menupopup,
+tooltip,
+panel {
+  border:1px solid rgb(131,131,131);
+}
+
+wizard[hidechrome]:not([resizers]),
+dialog[hidechrome]:not([resizers]),
+wizard[hidechrome][resizers="none"],
+dialog[hidechrome][resizers="none"] {
+  border:3px solid black;
+  border-top:1px solid rgb(131,131,131);
+  -moz-border-right-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
+  -moz-border-bottom-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
+  -moz-border-left-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
+}
+
+.faceplate-text {
+  font-size:11px;
+}

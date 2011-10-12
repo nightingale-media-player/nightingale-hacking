@@ -1,0 +1,122 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+.sb-eq-band-slider:focus {
+	outline:none !important;
+}
+
+.sb-eq-band-slider .button-box {
+  padding:0;
+  margin:0;
+  border:none;
+}
+
+.sb-eq-band-slider {
+}
+
+progressmeter.sb-eq-band-slider {
+  min-height: 74px;
+  max-height: 74px;
+  min-width:16px;
+  max-width:16px;
+}
+
+sb-eq-band-slider {
+  margin:0;
+  padding:0;
+}
+/** The thumb does not respond to list-style-image, so we are forced to 
+    use a background. We put both states in one image and then change
+    the background-position in order to prevent flickering when changing
+    states. **/
+
+thumb.sb-eq-band-slider {
+  -moz-appearance:none;
+  width: 12px !important;
+  height: 12px !important;
+  background-image: url(chrome://nightingale/skin/media-control-pane/button-vertical-slider-thumb.png); 
+  background-repeat: no-repeat;
+  background-position: center 0px;
+  border: none;
+}
+
+thumb.sb-eq-band-slider:hover {
+  background-position: center -12px;
+}
+
+thumb.sb-eq-band-slider:active {
+  background-position: center -24px;
+}
+
+thumb.sb-eq-band-slider[disabled="true"] {
+  background-position: center -36px;
+}
+
+progressmeter.sb-eq-band-slider > .progress-bar,
+progressmeter.sb-eq-band-slider > .progress-remainder {
+  background-image: url(chrome://nightingale/skin/media-control-pane/bg-eq-slider.png); 
+  -moz-appearance: none !important;
+}
+  progressmeter.sb-eq-band-slider > .progress-bar {
+    background-position: 0px top;
+  }
+  progressmeter.sb-eq-band-slider > .progress-remainder
+  {
+    background-position: 0px bottom;
+  }
+
+slider.sb-eq-band-slider,
+progressmeter.sb-eq-band-slider {
+  min-width: 16px !important;
+  width: 16px !important;
+  max-width: 16px !important;
+  border: none;
+  background-color:transparent !important;
+}
+
+progressmeter.sb-eq-band-slider {
+  background-image: url(chrome://nightingale/skin/media-control-pane/bg-eq-slider-bkgd.png); 
+  background-position: center center;
+  border: none;
+}
+
+stack.sb-eq-band-slider {
+  padding:2px 0;
+}
+
+.sb-eq-label {
+  font-size : 7pt;
+  text-align : center;
+  margin : 0px;
+  padding : 0px;
+}
+
+.dialog-button-box {
+  background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(51,51,51);
+}

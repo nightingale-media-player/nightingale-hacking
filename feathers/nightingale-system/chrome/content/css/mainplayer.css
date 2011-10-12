@@ -1,0 +1,100 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/** 
+*******************************************************************************
+
+MAIN PLAYER WINDOW SIZE & POSITION
+
+This CSS file specifies the size and position of the Main Window UI.
+This file is typically included by the current feathers CSS.
+
+*******************************************************************************
+*/ 
+
+/** 
+*******************************************************************************
+THE LAYOUT for the Main Application Window
+Love the box.
+*******************************************************************************
+*/ 
+
+window#mainplayer {
+  min-width:640px;
+  min-height:480px;
+  width:1000px;
+  height:720px;
+}
+
+/* hide the overflow here so that as the window shrinks below a certain size
+   the scrollbars on the browser window don't disappear.
+ */  
+#control_pane_box {
+  min-height: 52px;
+  max-height: 52px;
+  overflow-x: hidden;
+}
+
+#middle_pane_box {
+  overflow: hidden;
+}
+
+#servicepane_box {
+  margin: 0px;
+  padding: 0px;
+  min-width: 133px;
+  width:180px;
+  max-width: 300px;
+}
+
+statusbar {
+  min-height:20px;
+  max-height:20px;
+}
+#servicepane-status-bar-box,
+#status-bar-box {
+  max-height:20px;
+}
+
+#search-splitter{
+  display:none;
+}
+
+#nav-bar[isAtMediaPage="true"] > #back-forward-buttons,
+#nav-bar[isAtMediaPage="true"] > #reload-button,
+#nav-bar[isAtMediaPage="true"] > #stop-button,
+#nav-bar[isAtMediaPage="true"] > #stopreload-container,
+#nav-bar[isAtMediaPage="true"] > #home-button,
+#nav-bar[isAtMediaPage="true"] > #bookmark-button,
+#nav-bar[isAtMediaPage="true"] > #subscription-button,
+#nav-bar[isAtMediaPage="true"] > #urlbar-container,
+#nav-bar[isAtMediaPage="true"] > *[hideAtMediaPage] {
+  visibility: collapse;
+}
+
+#nav-bar:not([isAtMediaPage="true"]) > #mediapages-container,
+#nav-bar:not([isAtMediaPage="true"]) > #nav-bar-spacer,
+#nav-bar:not([isAtMediaPage="true"]) > *[hideAtWebPage] {
+  visibility: collapse;
+}

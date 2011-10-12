@@ -1,0 +1,14 @@
+nightingale-system.jar:
+% skin  nightingale  nightingale-system  %feathers/nightingale-system/nightingale/chrome/skin/
+% skin  nightingale-os-specific  nightingale-system  %feathers/nightingale-system/nightingale/chrome/skin/os-specific/
+% skin  nightingale-system  nightingale-system  %feathers/nightingale-system/nightingale/chrome/skin/
+% skin  global  nightingale-system  chrome://nightingale-global/skin/
+% skin  mozapps  nightingale-system  chrome://nightingale-mozapps/skin/
+% content nightingale-system  %feathers/nightingale-system/nightingale/chrome/content/
+% locale  nightingale-system  en-US  %feathers/nightingale-system/nightingale/chrome/locale/en-US/
+# TODO these can be migrated to os-specific dir
+% override chrome://nightingale/skin/icons/displaypane-contentpane-bottom.png chrome://nightingale/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
+% override chrome://nightingale/skin/icons/displaypane-servicepane-bottom.png chrome://nightingale/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
+% override chrome://nightingale/skin/icons/displaypane-right-sidebar.png chrome://nightingale/skin/icons/mac/displaypane-right-sidebar.png os=darwin
+#
+@include_all_to feathers/nightingale-system/nightingale/chrome/
