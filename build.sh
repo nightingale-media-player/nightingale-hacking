@@ -9,9 +9,9 @@ build="release"
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
 	linux*)
+		arch=`uname -m`
 		depdirn="linux-$arch"
 		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/$depdirn"
-	    arch=`uname -m`
 	    
 		# use our own gstreamer libs
 		for dir in /usr/lib64 /usr/lib ; do
