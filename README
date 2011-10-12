@@ -1,6 +1,3 @@
-DO NOT BUILD THE MASTER BRANCH YET! BUILD THE nightingale-1.8 BRANCH
-UNTIL THIS MESSAGE DISAPPEARS FROM THE README!
-
 Nightingale is a community based fork of the Songbird Web/Media player
 distributed under the GNU GPL and portions (xulrunner and mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
@@ -10,10 +7,59 @@ eventually use only system libraries to conserve space. Currently, some
 libraries are still bundled, but progress is being made to change this 
 fact.
 
-This git tree is the upstream/future version of Nightingale, slated
-to use xulrunner 6.0.2+ and other current libraries. Hopefully, it's
-first release will be without the libraries bundled within, so that
-it can use system libs.
+This git tree is the old 1.8 tree for Nightingale, kept here for backup
+and also maintained to build until 1.10 is ready. Please report problems
+in the forums
+
+========================================================================
+Notes:
+========================================================================
+
+*To build, you need to have all of the gstreamer0.10 packages for your 
+distro, svn, wget, and git (if pulling the tree down) installed, 
+as well as the usual dependencies for building software upon your 
+distro.
+
+*If it gets python errors, make sure you have python2 installed,
+and try the build.sh script again.
+
+*If it doesn't play music, you'll need to copy /usr/lib/gstreamer0.10/*
+into compiled-dist-linux-[your arch]/dist/gst-plugins and then 
+rerun nightingale. It should then play music.
+
+========================================================================
+Building:
+========================================================================
+If on Linux, simply run the build.sh script. It will download the deps
+and build the app for you. You'll generally need the usual build deps
+for most software packages, though.
+
+Ubuntu and debian users should note you'll need:
+libdbus-glib-1-dev
+libgstreamer-plugins-base0.10-dev
+
+More information can be gleaned from the Songbird wiki:
+
+Windows: http://tinyurl.com/3jfo6lv
+Mac: http://tinyurl.com/3bwg8e3
+Linux: http://tinyurl.com/3kh3gk8
+
+========================================================================
+Configure Options:
+========================================================================
+
+  ac_add_options (option here)
+  
+  --enable-debug                        whether or not to compile debug
+  --enable-jars                         whether or not to create jars
+  --enable-installer                    whether or not to make installer
+  --enable-official                     whether or not to official build
+  --enable-nightly                      whether or not to nightly build
+  --enable-tests                        whether or not to build tests
+  --enable-update-channel=CHANNEL       which update channel to use
+  --enable-breakpad                     whether or not to enable breakpad
+  --enable-static                       single-component static build
+  --enable-compiler-environment-checks  only allow supported compilers
 
 ========================================================================
 Contributions:
@@ -26,11 +72,13 @@ or jump into #nightingale on irc.mozilla.org.
 Contributors:
 ========================================================================
 
-ilikenwf/Matt Parnell
-Mook
+Auzy
 GeekShadow
-stevo
-MattSD
+ilikenwf / Matt Parnell
+Manko10
+Mook
+rsjtdrjgfuzkfg
+steve-o
 
 ========================================================================
 REMINDER!!!!
