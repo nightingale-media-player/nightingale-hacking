@@ -2,21 +2,17 @@
 set -e
 
 # do a debug or a release build? YOU WANT RELEASE!
+# if you do a debug build, add the appropriate options
+# to your nightingale.config file!
 build="release"
-
-if [ $build="debug" ] ; then
-	grep -sq enable-debug nightingale.config || ( echo 'ac_add_options --enable-debug \nac_add_options --enable-tests' >> nightingale.config )
-else
-	sed -i '/debug/d' nightingale.config
-	sed -i '/tests/d' nightingale.config
-fi
 
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
 	linux*)
-		depdirn="linux-$(uname -m)"
+		depdirn="linux-$arch"
 		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/$depdirn"
-	  
+	    arch=`uname -m`
+	    
 		# use our own gstreamer libs
 		for dir in /usr/lib64 /usr/lib ; do
 			if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
@@ -83,7 +79,7 @@ make -f nightingale.mk
 
 # insert a copy of the above code to locate gstreamer libs on ngale launch so we don't have to symlink anymore
 if [ $OSTYPE="linux-gnu" ] ; then
-	patch -Np0 -i add_search_for_gst_libs.patch "compiled-$build-$(uname -m)/dist/nightingale"
+	patch -Np0 -i add_search_for_gst_libs.patch "compiled-$build-$arch/dist/nightingale"
 fi
 
 echo "Build finished!"
