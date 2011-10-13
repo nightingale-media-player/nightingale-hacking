@@ -1262,19 +1262,17 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
 
     rv = format->SetAudioType (NS_ConvertUTF8toUTF16(mimeType));
     NS_ENSURE_SUCCESS (rv, rv);
-
-    // format-specific attributes.
-    rv = ProcessAudioProperties(format, structure);
-    NS_ENSURE_SUCCESS (rv, rv);
   }
   else {
     // Raw audio, mark as such.
     // TODO: Can we add any more checks in here to be sure it's ACTUALLY raw
     // audio, and not just an internal error?
     format->SetAudioType (NS_LITERAL_STRING ("audio/x-raw"));
-
-    // TODO: Add additional properties for raw audio?
   }
+
+  // format-specific attributes.
+  rv = ProcessAudioProperties(format, structure);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   rv = CallQueryInterface(format.get(), aAudioFormat);
   NS_ENSURE_SUCCESS (rv, rv);
