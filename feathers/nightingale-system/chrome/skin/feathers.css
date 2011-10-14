@@ -473,7 +473,7 @@ statusbar {
 }
 #servicepane-status-bar-box,
 #status-bar-box {
-  background-color: rgb(43,43,43);
+  background-color: rgb(43,41,54);
   background-image: url(chrome://nightingale/skin/base-elements/bg-statusbar.png);
   border-top:1px solid rgb(119,119,119);
   min-height: 25px;
@@ -601,7 +601,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 
 #servicepane {
   background-color: rgb(102,102,102);
-  border-left: 1px solid rgb(43,43,43);
+  border-left: 1px solid rgb(43,41,54);
 }
 
 #displaypane_servicepane_bottom {
@@ -1197,8 +1197,8 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 
 .playlist-splitter,
 .playlist-web-splitter {
-  border-top: 1px solid rgb(43,43,43);
-  border-bottom: 1px solid rgb(43,43,43);
+  border-top: 1px solid rgb(43,41,54);
+  border-bottom: 1px solid rgb(43,41,54);
 }
 
 
@@ -1229,7 +1229,7 @@ sb-device-managetabs {
 /* the top half of the summary page + background for tabs (ipod only) */
 #overall_device_info_box,
 #device_management_tabs {
-  background-color: rgb(43,43,43);
+  background-color: rgb(43,41,54);
 }
 /* Override the shadow from generic-bar with our own device one */
 #overall_device_info_box > #sb-device-progress > hbox.generic-bar {
@@ -1292,7 +1292,7 @@ sb-device-managetabs {
 }
 .device-capacity-free,
 .device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(43,43,43);
+  background-color: rgb(43,41,54);
 }
 /* the device capacity bar has 9 notches (10 sections)
    note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
@@ -1320,7 +1320,7 @@ radiogroup#auto_sync_settings_radio_group {
   background-color: rgb(69,67,78);
 }
 radiogroup#auto_sync_settings_radio_group > listbox {
-  border: 1px solid rgb(102,102,102);
+  border: 1px solid rgb(87,86,94);
   background-color: transparent;
 }
 
@@ -1706,7 +1706,7 @@ domi-panelset label.viewer-title {
 * XPI INSTALL DIALOG
 ******************************************************************************/
 #itemList {
-  background-color: rgb(43,43,43);
+  background-color: rgb(43,41,54);
   border: none;
   overflow: visible !important;
 }

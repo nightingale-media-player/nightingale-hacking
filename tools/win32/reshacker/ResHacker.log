@@ -1,0 +1,5 @@
+[12 Okt 2011, 19:24:05]
+c:\Nightingale\tools\win32\reshacker\ResHacker.exe -addoverwrite c://Nightingale/compiled-release-i686/dist/nightingale.exe, c://Nightingale/compiled-release-i686/dist/nightingale.exe, nightingale.res, VersionInfo,1,1033
+  Modified: VERSIONINFO,1,1033
+
+Commands completed

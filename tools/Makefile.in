@@ -37,7 +37,7 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 # XXX Mook: disthelper only works on Windows for now
-ifeq (,$(filter-out windows macosx,$(SB_PLATFORM)))
+ifeq (windows,$(SB_PLATFORM))
    SUBDIRS += disthelper \
               $(NULL)
 endif

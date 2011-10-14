@@ -31,15 +31,35 @@ rerun nightingale. It should then play music.
 Building:
 ========================================================================
 If on Linux, simply run the build.sh script. It will download the deps
-and build the app for you. 
+and build the app for you. You'll generally need the usual build deps
+for most software packages, though.
 
-Ubuntu users should note you'll need:
+Ubuntu and debian users should note you'll need:
 libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
-If on Mac or Windows, don't use build.sh, 
-instead follow the instructions on the Songbird wiki (you'd be better 
-off running Songbird builds for now anyway, if on Mac or Windows).
+More information can be gleaned from the Songbird wiki:
+
+Windows: http://tinyurl.com/3jfo6lv
+Mac: http://tinyurl.com/3bwg8e3
+Linux: http://tinyurl.com/3kh3gk8
+
+========================================================================
+Configure Options:
+========================================================================
+
+  ac_add_options (option here)
+  
+  --enable-debug                        whether or not to compile debug
+  --enable-jars                         whether or not to create jars
+  --enable-installer                    whether or not to make installer
+  --enable-official                     whether or not to official build
+  --enable-nightly                      whether or not to nightly build
+  --enable-tests                        whether or not to build tests
+  --enable-update-channel=CHANNEL       which update channel to use
+  --enable-breakpad                     whether or not to enable breakpad
+  --enable-static                       single-component static build
+  --enable-compiler-environment-checks  only allow supported compilers
 
 ========================================================================
 Contributions:
@@ -52,7 +72,34 @@ or jump into #nightingale on irc.mozilla.org.
 Contributors:
 ========================================================================
 
-ilikenwf/Matt Parnell
-Mook
+Auzy
 GeekShadow
-steveo
+ilikenwf / Matt Parnell
+Manko10
+Mook
+rsjtdrjgfuzkfg
+steve-o
+
+========================================================================
+REMINDER!!!!
+========================================================================
+
+This is an opensource software, and everyone who works on it is a
+volunteer! Don't be a troll towards the people giving you free
+software and hard work!
+
+░░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄░░░░░░░
+░░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄░░░░
+░░░░█░░░▒▒▒▒▒▒░░░░░░░░▒▒▒░░█░░░
+░░░█░░░░░░▄██▀▄▄░░░░░▄▄▄░░░░█░░
+░▄▀▒▄▄▄▒░█▀▀▀▀▄▄█░░░██▄▄█░░░░█░
+█░▒█▒▄░▀▄▄▄▀░░░░░░░░█░░░▒▒▒▒▒░█
+█░▒█░█▀▄▄░░░░░█▀░░░░▀▄░░▄▀▀▀▄▒█
+░█░▀▄░█▄░█▀▄▄░▀░▀▀░▄▄▀░░░░█░░█░
+░░█░░░▀▄▀█▄▄░█▀▀▀▄▄▄▄▀▀█▀██░█░░
+░░░█░░░░██░░▀█▄▄▄█▄▄█▄████░█░░░
+░░░░█░░░░▀▀▄░█░░░█░█▀██████░█░░
+░░░░░▀▄░░░░░▀▀▄▄▄█▄█▄█▄█▄▀░░█░░
+░░░░░░░▀▄▄░▒▒▒▒░░░░░░░░░░▒░░░█░
+░░░░░░░░░░▀▀▄▄░▒▒▒▒▒▒▒▒▒▒░░░░█░
+░░░░░░░░░░░░░░▀▄▄▄▄▄░░░░░░░░█░░
