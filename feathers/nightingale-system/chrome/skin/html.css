@@ -51,19 +51,31 @@ body h4 {
 }
 
 body.dark {
+<<<<<<< HEAD
   background-color: rgb(87,86,100);
+=======
+  background-color: rgb(102,102,102);
+>>>>>>> timmy/nightingale-1.8
   color: rgb(255,255,255);
   background-image:none;
 }
 
 body.darker {
+<<<<<<< HEAD
   background-color: rgb(77,76,89);
+=======
+  background-color: rgb(102,102,102);
+>>>>>>> timmy/nightingale-1.8
   color: rgb(255,255,255);
   background-image:none;
 }
 
 body.darkest {
+<<<<<<< HEAD
   background-color: rgb(63,61,72);
+=======
+  background-color: rgb(60,60,60);
+>>>>>>> timmy/nightingale-1.8
   color: rgb(255,255,255);
   background-image:none;
 }
@@ -79,7 +91,11 @@ body.darkest a {
  */
 .selected {
   color: white;
+<<<<<<< HEAD
   background-color: rgb(146,139,180);
+=======
+  background-color: rgb(118,170,206);
+>>>>>>> timmy/nightingale-1.8
 }
 .unselected {
   color: rgb(209,208,217);
@@ -102,15 +118,26 @@ body.darkest a {
 }
 /* The unselected row */
 .row-unselected {
+<<<<<<< HEAD
   background-color: rgb(63,61,72);
+=======
+  background-color: rgb(102,102,102);
+>>>>>>> timmy/nightingale-1.8
   border-bottom: 1px solid rgb(47,47,58);
 }
 /* The selected row */
 .row-selected {
+<<<<<<< HEAD
   background-color: rgb(95,85,143);
   border-bottom: 1px solid rgb(47,47,58);
   border-left: 1px solid rgb(63,61,72);
   border-right: 1px solid rgb(63,61,72);
+=======
+  background-color: rgb(40,71,109);
+  border-bottom: 1px solid rgb(47,47,58);
+  border-left: 1px solid rgb(102,102,102);
+  border-right: 1px solid rgb(102,102,102);
+>>>>>>> timmy/nightingale-1.8
 }
 div.row-unselected a,
 div.row-selected a {
