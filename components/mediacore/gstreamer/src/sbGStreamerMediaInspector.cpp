@@ -984,6 +984,20 @@ sbGStreamerMediaInspector::ProcessContainerProperties (
     }
   }
 
+  // get total duration of media item
+  GstQuery *query;
+  query = gst_query_new_duration (GST_FORMAT_TIME);
+  gboolean res = gst_element_query (mPipeline, query);
+  // initialize to unknown
+  gint64 duration = -1;
+  if (res) {
+    gst_query_parse_duration (query, NULL, &duration);
+  }
+  gst_query_unref (query);
+  rv = writableBag->SetPropertyAsInt64 (
+         NS_LITERAL_STRING("duration"), duration);
+  NS_ENSURE_SUCCESS (rv, rv);
+
   // TODO: Additional properties for other container formats.
 
   rv = aContainerFormat->SetProperties (writableBag);
