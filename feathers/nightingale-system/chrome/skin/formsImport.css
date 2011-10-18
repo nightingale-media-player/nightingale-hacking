@@ -59,7 +59,7 @@ For more information, visit http://developer.getnightingale.com/
    * e.g. <textbox/> elements
    */
   xul|*:root input > .anonymous-div::-moz-selection {
-    background-color: rgb(190,201,217);
+    background-color: rgb(143,206,243);
     color: rgb(40,40,40);
   }
 }

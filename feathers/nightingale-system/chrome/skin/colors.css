@@ -1013,7 +1013,7 @@ richlistitem[selected="true"] .includeUpdate {
   background-image:url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
-  background-color: rgb(57,57,57);
+  background-color: rgb(50,50,50);
 }
 
 #addonsMsg+vbox {

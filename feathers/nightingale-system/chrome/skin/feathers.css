@@ -139,7 +139,7 @@ richlistbox {
   background-color: rgb(91,91,91);
 }
 tree.autocomplete-tree {
-  background-color:rgb(94,91,109);
+  background-color:rgb(100,100,100);
 }
 groupbox caption {
   background-color: rgb(70,70,70);
@@ -473,11 +473,7 @@ statusbar {
 }
 #servicepane-status-bar-box,
 #status-bar-box {
-<<<<<<< HEAD
-  background-color: rgb(43,41,54);
-=======
   background-color: rgb(43,43,43);
->>>>>>> timmy/nightingale-1.8
   background-image: url(chrome://nightingale/skin/base-elements/bg-statusbar.png);
   border-top:1px solid rgb(119,119,119);
   min-height: 25px;
@@ -605,15 +601,11 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 
 #servicepane {
   background-color: rgb(102,102,102);
-<<<<<<< HEAD
-  border-left: 1px solid rgb(43,41,54);
-=======
-  border-left: 1px solid rgb(43,43,43);
->>>>>>> timmy/nightingale-1.8
+  border-left: 1px solid rgb(51,51,51);
 }
 
 #displaypane_servicepane_bottom {
-  border-bottom: 1px solid rgb(44,42,55);
+  border-bottom: 1px solid rgb(51,51,51);
 }
 
 #sb_servicepane_box {
@@ -739,8 +731,8 @@ sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-image: url(chrome://nightingale/skin/service-pane/bg-active-node.png);
   background-position: left bottom;
-  border-left: 1px solid rgb(82,75,107);
-  border-right: 1px solid rgb(82,75,107);
+  /* border-left: 1px solid rgb(70,115,170);
+  border-right: 1px solid rgb(70,115,170); */
 }
 
 /* Set user focus to normal so we can tell when the servicepane is focused
@@ -1013,7 +1005,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 ******************************************************************************/
 .sb-commands-toolbar {
   /* XXXstevel border-top:1px solid rgb(131,131,131); */
-  background-color: rgb(51,51,51);
+  background-color: rgb(50,50,50);
 }
 
 
@@ -1197,6 +1189,7 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 }
 
 #filter_splitter {
+  min-width: 4px;
   background-color: rgb(102,102,102);
   background-image: none;
   border-right: 1px solid rgb(51,51,51);
@@ -1205,16 +1198,23 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 
 .playlist-splitter,
 .playlist-web-splitter {
-<<<<<<< HEAD
-  border-top: 1px solid rgb(43,41,54);
-  border-bottom: 1px solid rgb(43,41,54);
-=======
   border-top: 1px solid rgb(43,43,43);
   border-bottom: 1px solid rgb(43,43,43);
->>>>>>> timmy/nightingale-1.8
 }
 
-
+/** tree splitter for playlist tree **/
+splitter.tree-splitter {
+  background-color: rgb(102,102,102) !important;
+  background-image: none;
+  border-right: 1px solid rgb(51,51,51);
+  border-left: 1px solid rgb(51,51,51);
+  width: 3px !important;
+  min-width: 3px !important;
+  max-width: 3px !important;
+  height: 19px !important;
+  min-height: 19px !important;
+  max-height: 19px !important;
+}
 
 /******************************************************************************
 * DEVICE SUMMARY PAGE
@@ -1242,11 +1242,7 @@ sb-device-managetabs {
 /* the top half of the summary page + background for tabs (ipod only) */
 #overall_device_info_box,
 #device_management_tabs {
-<<<<<<< HEAD
-  background-color: rgb(43,41,54);
-=======
   background-color: rgb(43,43,43);
->>>>>>> timmy/nightingale-1.8
 }
 /* Override the shadow from generic-bar with our own device one */
 #overall_device_info_box > #sb-device-progress > hbox.generic-bar {
@@ -1309,11 +1305,7 @@ sb-device-managetabs {
 }
 .device-capacity-free,
 .device-capacity-legend-color-box[type="free"] {
-<<<<<<< HEAD
-  background-color: rgb(43,41,54);
-=======
   background-color: rgb(43,43,43);
->>>>>>> timmy/nightingale-1.8
 }
 /* the device capacity bar has 9 notches (10 sections)
    note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
@@ -1341,11 +1333,7 @@ radiogroup#auto_sync_settings_radio_group {
   background-color: rgb(69,67,78);
 }
 radiogroup#auto_sync_settings_radio_group > listbox {
-<<<<<<< HEAD
-  border: 1px solid rgb(87,86,94);
-=======
   border: 1px solid rgb(102,102,102);
->>>>>>> timmy/nightingale-1.8
   background-color: transparent;
 }
 
@@ -1354,19 +1342,19 @@ radiogroup#auto_sync_settings_radio_group > listbox {
   background-image: url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
-  background-color: rgb(57,57,57);
+  background-color: rgb(50,50,50);
   margin: -2px -1px -1px -1px;
-  border-left: 1px solid rgb(51,51,51);
-  border-right: 1px solid rgb(51,51,51);
-  border-bottom: 1px solid rgb(51,51,51);
+  border-left: 1px solid rgb(35,33,44);
+  border-right: 1px solid rgb(35,33,44);
+  border-bottom: 1px solid rgb(35,33,44);
 }
 
 .device-settings-button-box {
   background-image: url('chrome://nightingale/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
-  background-color: rgb(57,57,57);
-  border: 1px solid rgb(51,51,51);
+  background-color: rgb(51,51,51);
+  border: 1px solid rgb(35,33,44);
 }
 
 .device-capacity-legend-label-box > label.capacity_header_label,
@@ -1444,12 +1432,12 @@ sb-device-image-sync radiogroup {
 /* the track editor has tabs and tabpanels but are hidden for the time being
    this rule makes the tabpanels have the same background color as a dialog window */
 #track_editor tabpanels {
-  background-color: rgb(87,86,94);
+  background-color: rgb(102,102,102);
 }
 .art {
   background-color:rgb(230,230,230);
   border:1px solid rgb(58,58,62);
-  -moz-border-radius: 3px;
+  -moz-border-radius: 5px;
 }
 .art:focus {
   background-color:rgb(255,255,255);
@@ -1457,6 +1445,10 @@ sb-device-image-sync radiogroup {
 
 .art > vbox.artWrapperBox > label.drop-message {
   color: black;
+}
+
+.dialog-button-box {
+  background-color: rgb(50,50,50);
 }
 
 
@@ -1523,7 +1515,7 @@ sb-device-image-sync radiogroup {
 * FIND BAR
 ******************************************************************************/
 findbar {
-  background-color: rgb(51,51,51);
+  background-color: rgb(50,50,50);
   /* XXXstevel border-bottom:1px solid rgb(131,131,131); */
 }
 /* text that shows the status of the search - eg: "Phrase now found" */
@@ -1600,12 +1592,12 @@ scrollcorner {
   background-color: transparent;
 }
 #downloadManager > #search {
-  background-color: rgb(51,51,51);
+  background-color: rgb(50,50,50);
   /* XXX stevel border-top:1px solid rgb(131,131,131); */
 }
 
 #downloadView richlistitem {
-  background-color: rgb(63,59,72);
+  background-color: rgb(66,66,66);
 }
 
 #downloadView richlistitem[selected="true"] {
@@ -1731,11 +1723,7 @@ domi-panelset label.viewer-title {
 * XPI INSTALL DIALOG
 ******************************************************************************/
 #itemList {
-<<<<<<< HEAD
-  background-color: rgb(43,41,54);
-=======
   background-color: rgb(43,43,43);
->>>>>>> timmy/nightingale-1.8
   border: none;
   overflow: visible !important;
 }
