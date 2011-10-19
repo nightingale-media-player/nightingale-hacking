@@ -1,0 +1,459 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+img {
+	border: none;
+}
+
+/* LOGIN PAGE */
+div#login-page, div#subscriber-page {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 500;
+}
+div#subscriber-page {
+	display: none;
+}
+div.lightbox-bkg {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: 0.8;
+	z-index: 501;
+}
+
+div.wrapper-box {
+  position: relative;
+  height: 100%;
+}
+
+div#login-box, div#subscriber-box {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 510;
+	display: table;
+}
+div#login-box p,
+div#subscriber-box p {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+div#login-box p div#login-text,
+div#subscriber-box p div#subscriber-text {
+	width: 300px;
+	display: inline-block;
+
+	border: 1px solid black;
+	background-color: #d00a01;
+	position: relative;
+	padding: 2em;
+}
+div#login-box p div#login-text img,
+div#subscriber-box p div#subscriber-text img {
+	height: 100%;
+	left: 0px;
+	position: absolute;
+	top: 0px;
+	width: 100%;
+	z-index: 530;
+}
+div#login-box p div#login-text p,
+div#subscriber-box p div#subscriber-text p {
+	position: relative;
+	z-index: 550;
+	font-size: 9pt;
+  color: black;
+}
+
+/* HEADER STYLES */
+div#header {
+	/*border-top: 1px solid rgb(185,185,185);*/
+	border-bottom: 1px solid rgb(117,117,117);
+	padding: 0;
+	margin: 0;
+	vertical-align: middle;
+}
+
+/* RED LASTFM SEARCH+USER HEADER */
+div#header-top {
+	height: 50px;
+	vertical-align: middle;
+	border: none;
+	padding: 0px 20px 0px 18px;
+	background-image: url(chrome://sb-lastfm/skin/bg-header-lastfm.png);
+	background-repeat: repeat-x;
+}
+div#header-top[paintblack="true"] {
+	background-image: url(chrome://sb-lastfm/skin/bg-header-lastfm-black.png);	
+}
+
+div#header-top img#lastfm-logo {
+	vertical-align: middle;
+	height: 35px;
+	float: left;
+	margin-top: 6px;
+}
+
+div#header-top div#search {
+	float: right;
+	background-image: url(chrome://sb-lastfm/skin/search-box.png);
+	background-repeat: no-repeat;
+	vertical-align: middle;
+	width: 210px;
+	height: 29px;
+	margin-top: 10px;
+}
+
+div#header-top div#search #search-form {
+	display: inline-block;
+}
+
+div#header-top div#search #search-box {
+	font-size: 15px;
+	color: #bbb;
+	letter-spacing: -1px;
+	margin-left: 15px;
+	margin-right: 15px;
+	width: 162px;
+	margin-top: 4px;
+	border: none !important;
+}
+div#header-top div#search img {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+div#header-top div#user-profile {
+	float: right;
+	vertical-align: middle;
+	margin-top: 3px;
+}
+div#header-top div#user-profile img#lastfm-user-image {
+	height: 42px;
+	border: 1px solid white;
+	margin-left: 2em;
+	margin-right: 1em;
+	vertical-align: middle;
+	cursor: pointer;
+}
+div#header-top div#user-profile span#lastfm-user-name {
+	color: white;
+	font-weight: bold;
+	vertical-align: middle;
+	cursor: pointer;
+}
+div#header-top div#user-profile span#lastfm-header-style {
+	display: none;
+	color: white;
+	font-weight: bold;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+/* GREY USER STATIONS HEADER */
+div#header-stations {
+	height: 21px;
+	padding: 0px 20px 0px 20px;
+	background-image: url(chrome://sb-lastfm/skin/bg-header-stations.png);
+	background-repeat: repeat-x;
+	border: none;
+	border-top: 1px solid rgb(193,193,193);
+	vertical-align: middle;
+	font-size: 12px;
+	font-weight: bold;
+	padding-top: 7px;
+}
+div#header-stations a {
+	vertical-align: middle;
+	margin-right: 2em;
+	color: black;
+}
+div#header-stations a:hover {
+	text-decoration: none;
+}
+
+/* RIGHT NAVIGATION BAR */
+div#content {
+	background-color: rgb(238,238,238);
+}
+
+div#right-nav {
+	float: right;
+	width: 200px;
+	overflow: hidden;
+	background-color: rgb(242,242,242);
+	border-left: 3px solid rgb(131,131,131);
+}
+
+h3.nav-stations-category {
+	margin: 0;
+	padding: 5px 5px 0 5px;
+	height: 20px;
+	border-top: 1px solid black;
+	color: #888;
+	font-weight: normal;
+	/*
+	font-weight: bold;
+	font-variant: small-caps;
+	letter-spacing: 2px;
+	*/
+}
+div.nav-block div.nav-stations {
+	cursor: pointer;
+	margin: 0;
+	padding: 0 5px 0 5px;
+	color: rgb(82,82,82);
+	border-top: 1px solid rgb(207,207,207);
+	height: 23px;
+	background-image:url('chrome://sb-lastfm/skin/bg-sidebar-header.png');
+	background-repeat: repeat-x;
+	background-position: center top;
+}
+div.nav-block h3.nav-stations {
+	margin-top: 4px;
+	font-weight: normal;
+	letter-spacing: -0.5px;
+	font-size: 1.1em;
+}
+div#right-nav div.last {
+	border-bottom: 1px solid rgb(131,131,131);
+}
+
+div.nav-station {
+	cursor:pointer;
+	padding-left: 5px;
+}
+div.nav-station img {
+	vertical-align: middle;
+	margin-right: 3px;
+}
+div.nav-station div.station-play {
+	display: inline-block;
+	margin-right: 3px;
+}
+
+/* MAIN LEFT CONTENT AREA */
+div#left-content {
+	margin-right: 200px;
+	/* border-right: 3px solid rgb(131,131,131); */
+}
+
+/* EXPLORER AREA */
+div#explorer {
+	padding: 5px 20px 0px 20px;
+	background-color: rgb(238,238,238);
+}
+div#explorer div.start-suggestions {
+	padding-bottom: 8px;
+}
+
+div#explorer h2.title {
+	margin: 0 0 5px 0;
+	padding: 0;
+	font-weight: normal;
+	color: black;
+}
+
+div#explorer h3.subtitle {
+	margin: 1em 0 20px 0;
+	padding: 0 0 4px 0;
+	font-weight: normal;
+	font-size: 1.5em;
+	color: black;
+	width: 100%;
+	border-bottom: 1px solid rgb(182,182,182);
+}
+
+div#start-text {
+	font-size: 9pt;
+	padding-top: 1em;
+}
+div#explorer #start-tags h3 {
+	clear: left;
+	padding-top: 20px;
+}
+
+/* SEARCH RESULTS */
+
+div#tag-results {
+	padding-top: 16px;
+	clear: left;
+}
+.search-results .single-result {
+	float: left;
+	margin-right: 2em;
+	width: 16em;
+	cursor: pointer;
+}
+
+/* SEARCH RESULTS STYLES FOR TAGS */
+.search-results .tag-result img.tag-image {
+	margin-right: 3px;
+	vertical-align: middle;
+}
+.search-results .tag-result {
+	display: inline-block;
+}
+.search-results .tag-result:hover {
+	text-decoration: underline;
+}
+.search-results .tag-result div.station-nav {
+	position: absolute;
+}
+
+/* SEARCH RESULTS STYLES FOR ARTISTS */
+.search-results .artist-result {
+	height: 78px;
+	max-height: 78px;
+}
+
+.search-results .artist-result div.img-outer-shadow-bottom {
+	width: 70px;
+	height: 69px;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 1px solid rgb(214,214,214);
+	-moz-border-radius: 4px;
+	float: left;
+}
+
+.search-results .artist-result div.img-outer-shadow {
+	width: 68px;
+	height: 68px;
+	background-color: white;
+	border-top: none;
+	border-left: 1px solid rgb(209,209,209);
+	border-right: 1px solid rgb(211,211,211);
+	border-bottom: 1px solid rgb(161,161,161);
+	-moz-border-radius: 2px;
+}
+
+.search-results .artist-result div.img-outer {
+	/* border: 1px solid #e0e0e0; */
+	border: 2px solid white;
+	width: 64px;
+	height: 64px;
+	overflow: hidden;
+	position: relative;
+	float: left;
+}
+.search-results .artist-result div.img-inner {
+	position:absolute;
+	width: 1000px;
+	height: 64px;
+	text-align: center;
+	top: 0px;
+	left: -468px;
+}
+
+.search-results .artist-result .station-info {
+	margin-left: 70px;
+	color: rgb(85,85,85);
+	font-size: 13px;
+	height: 64px;
+	max-height: 64px;
+	width: 115px;
+	max-width: 85px;
+	width: 85px;
+	overflow: hidden;
+	display: table-cell;
+	padding-left: 15px;
+	vertical-align: middle;
+}
+
+/* DETAIL VIEW FOR ARTISTS/TAGS/USERS */
+div.detail-view div {
+	margin-bottom: 5px;
+}
+
+div.detail-view h3 {
+	font-size: 150%;
+	margin: 0px 0px 8px 0px;
+	padding: 0;
+}
+div.detail-view .detail-info-homepage img {
+	vertical-align: middle;
+	margin-right: 2px;
+}
+
+/* DETAIL VIEW STYLES FOR TAGS */
+div.detail-view .tag-image {
+	float: left;
+	width: 96px;
+}
+div.detail-view .detail-info-tag {
+	margin-left: 100px;
+}
+
+/* DETAIL VIEW STYLES FOR ARTISTS/USERS */
+div.detail-view .artist-image,
+div.detail-view .user-image {
+	float: left;
+	width: 126px;
+	border: 1px solid black;
+}
+div.detail-view .detail-info-artist,
+div.detail-view .detail-info-user {
+	margin-left: 134px;
+}
+
+/* PLAY RADIO STATION BUTTON */
+.station-nav {
+	position: absolute;
+	display: inline-block;
+	-moz-border-radius: 8px;
+	border: 1px solid #888;
+	background-color: white;
+	padding: 1px 5px 1px 5px;
+	vertical-align: middle;
+	font-size: 11px;
+}
+.station-nav div img {
+	position: relative;
+	bottom: -1px;
+}
+.station-nav div {
+	display: inline-block;
+	margin-right: 3px;
+}
+.station-play {
+	display: inline-block;
+	-moz-border-radius: 8px;
+	width: 3.4em;
+	cursor: pointer;
+	border-right: 1px solid #888;
+}
+
+.station-play a:hover { text-decoration: none; }
+
+/* THE STANDALONE PLAY BUTTON */
+.station-play-button {
+	display: inline-block;
+	-moz-border-radius: 8px;
+	width: 3.4em;
+	cursor: pointer;
+	border: 1px solid #888;
+	background-color: white;
+	padding: 1px 5px 1px 5px;
+	margin-right: 3px;
+}
+div.station-play-button img {
+	margin-right: 3px;
+	vertical-align: baseline !important;
+}
+
+.station-play-button:hover { background-color: rgb(116,189,5) }
+.station-play-button:hover a { color: white; }
+
+.station-play a,
+.station-play-button a {
+   color: black; text-decoration: none;
+}

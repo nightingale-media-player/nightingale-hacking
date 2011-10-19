@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Log på Last.fm...">
+<!ENTITY lastfm.menu.logout "Log af Last.fm">
+<!ENTITY lastfm.menu.enable "Slå scrobbling til">
+<!ENTITY lastfm.signup.label "Opret bruger på Last.fm">
+<!ENTITY lastfm.login.button "Log ind">
+<!ENTITY lastfm.loggingin.label "Logger ind...">
+<!ENTITY lastfm.cancel.button "Annuller">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Scrobble mine numre">
+<!ENTITY lastfm.profile.logout "Log ud">
