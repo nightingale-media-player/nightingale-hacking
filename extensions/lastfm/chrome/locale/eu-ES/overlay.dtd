@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Last.fm-n saioa hasi...">
+<!ENTITY lastfm.menu.logout "Last.fm-n saiotik irten...">
+<!ENTITY lastfm.menu.enable "Pistei buruzko informazioa bidaltzea gaitu">
+<!ENTITY lastfm.signup.label "Last.fm-n izena eman">
+<!ENTITY lastfm.login.button "Saioa hasi">
+<!ENTITY lastfm.loggingin.label "Saioa hasten">
+<!ENTITY lastfm.cancel.button "Utzi">
+<!ENTITY lastfm.profile.caption "Perfila">
+<!ENTITY lastfm.profile.scrobble "Nire pistei buruzko informazioa lortu">
+<!ENTITY lastfm.profile.logout "Saiotik irten">
