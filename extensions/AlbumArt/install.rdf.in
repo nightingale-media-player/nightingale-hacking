@@ -43,7 +43,7 @@
     <nightingale:displayPane>
         <Description>
             <nightingale:contentUrl>chrome://albumart/content/albumArtPane.xul</nightingale:contentUrl>
-            <nightingale:contentTitle>Artwork</nightingale:contentTitle>
+            <nightingale:contentTitle>chrome://nightingale/locale/nightingale.properties#albumart.displaypane.title</nightingale:contentTitle>
             <nightingale:contentIcon>chrome://albumart/skin/icon-albumart.png</nightingale:contentIcon>
             <nightingale:defaultWidth>178</nightingale:defaultWidth>
             <nightingale:defaultHeight>178</nightingale:defaultHeight>

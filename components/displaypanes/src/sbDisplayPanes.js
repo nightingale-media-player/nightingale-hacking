@@ -22,9 +22,12 @@
 // END NIGHTINGALE GPL
 //
 
+const CHROME_PREFIX = "chrome://"
+
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/RDFHelper.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 /**
  * sbIContentPaneInfo
@@ -139,7 +142,18 @@ DisplayPaneMetadataReader.prototype = {
           addon.Value + " due to these error(s):\n", errorList);
       return;
     }
-    
+
+    // Resolve any localised display pane contentTitle to their actual strings
+    if (info.contentTitle.substr(0,CHROME_PREFIX.length) == CHROME_PREFIX)
+    {
+      var contentTitle = SBString("displaypanes.contenttitle.unnamed");
+      var split = info.contentTitle.split("#", 2);
+      if (split.length == 2) {
+        var bundle = new SBStringBundle(split[0]);
+        contentTitle = bundle.get(split[1], contentTitle);
+      }
+      info.contentTitle = contentTitle;
+    }     
     // Submit description
     this._manager.registerContent( info.contentUrl, 
                                    info.contentTitle,
