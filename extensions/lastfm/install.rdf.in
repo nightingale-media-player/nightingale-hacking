@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:nightingale="http://www.getnightingale.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Nightingale target application. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:id>audioscrobbler@getnightingale.com</em:id>
+    <em:name>Last.fm</em:name>
+    <em:description>Publish your playback history to Last.fm and listen to Last.fm Radio</em:description>
+    <em:creator>Stephen Lau &amp; Ian McKeller</em:creator>
+    <em:contributor>Antoine Turmel: French Translation</em:contributor>
+    <em:contributor>Mobleman: Danish Translation</em:contributor>
+    <em:contributor>Soham Chatterjee: Bengali (India) Translation</em:contributor>
+    <em:contributor>/usr/bin/tux: German Translation</em:contributor>
+    <em:contributor>drry: Japanese Translation</em:contributor>
+    <em:contributor>Ивана Петровић: Serbian (Cyrillic) Translation</em:contributor>
+    <em:contributor>Humberto Sartini (http://www.hss.blog.br): Portuguese (Brazilian) Translation</em:contributor>
+    <em:contributor>animarval: Catalan Translation</em:contributor>
+    <em:contributor>cest713: Chinese (Simplified) Translation</em:contributor>
+    <em:contributor>Sepehr Lajevardi: Persian Translation</em:contributor>
+    <em:contributor>Wacław Jacek: Polish Translation</em:contributor>
+    <em:contributor>Iñigo R. (Dark-eye) http://d-eye.es: Spanish (Spain) Translation</em:contributor>
+    <em:contributor>Lenny Ekberg (lennyekberg@msn.com): Swedish Translation</em:contributor>
+    <em:contributor>Quicksilver tears: Russian Translation</em:contributor>
+    <em:contributor>eKuler: Czech Translation</em:contributor>
+    <em:contributor>inorbez: Basque Translation</em:contributor>
+    <em:contributor>josesun: Chinese (Traditional) Translation</em:contributor>
+    <em:contributor>JW_00000: Dutch Translation</em:contributor>
+    <em:contributor>Mippe: Finnish Translation</em:contributor>
+    <em:contributor>yammesicka: Hebrew Translation</em:contributor>
+    <em:contributor>Murat Biskin: Turkish Translation</em:contributor>
+    <em:contributor>Sappa: Ukrainian Translation</em:contributor>
+    <em:contributor>pokorny: Cornish Translation</em:contributor>
+    <em:contributor>Brogh: Cornish Translation</em:contributor>
+    <em:contributor>KongShaoLong: Portuguese (Portugal) Translation</em:contributor>
+    <em:contributor>Hiromacu: Hungarian Translation</em:contributor>
+    <em:contributor>gxgpet: Romanian Translation</em:contributor>
+    <em:contributor>miles: Slovenian Translation</em:contributor>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:type>2</em:type>
+    <em:iconURL>chrome://sb-lastfm/content/extensionicon.png</em:iconURL>
+  </Description>
+</RDF>
+

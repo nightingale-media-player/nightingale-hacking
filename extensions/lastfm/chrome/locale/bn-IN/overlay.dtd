@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Last.fm-এ অন্তর্পঞ্জী করুন">
+<!ENTITY lastfm.menu.logout "Last.fm-থেকে বহির্পঞ্জী করুন">
+<!ENTITY lastfm.menu.enable "স্ক্রবল্‌ সক্রিয়করণ">
+<!ENTITY lastfm.signup.label "Last.fm-এ স্বাক্ষরযুক্ত হন">
+<!ENTITY lastfm.login.button "অন্তর্পঞ্জী">
+<!ENTITY lastfm.loggingin.label "অন্তর্পঞ্জীকরণ হচ্ছে...">
+<!ENTITY lastfm.cancel.button "প্রত্যাহার">
+<!ENTITY lastfm.profile.caption "পার্শ্বচরিত্র">
+<!ENTITY lastfm.profile.scrobble "আমার গীতধারাগুলি স্ক্রবল্‌ করুন">
+<!ENTITY lastfm.profile.logout "বহির্পঞ্জী">

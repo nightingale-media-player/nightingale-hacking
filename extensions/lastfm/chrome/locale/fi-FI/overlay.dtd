@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Kirjaudu Last.fm:ään">
+<!ENTITY lastfm.menu.logout "Kirjaudu ulos Last.fm:stä">
+<!ENTITY lastfm.menu.enable "Salli scrobblaus">
+<!ENTITY lastfm.signup.label "Rekisteröidy Last.fm:ään">
+<!ENTITY lastfm.login.button "Kirjaudu">
+<!ENTITY lastfm.loggingin.label "Kirjaudutaan...">
+<!ENTITY lastfm.cancel.button "Peruuta">
+<!ENTITY lastfm.profile.caption "Profiili">
+<!ENTITY lastfm.profile.scrobble "Kerää soittotiedot kappaleistani">
+<!ENTITY lastfm.profile.logout "Kirjaudu ulos">

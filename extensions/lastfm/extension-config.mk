@@ -22,28 +22,10 @@
 #=END NIGHTINGALE GPL
 #
 
-DEPTH = ..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+EXTENSION_NAME = audioscrobbler
+EXTENSION_UUID = $(EXTENSION_NAME)@getnightingale.com
+EXTENSION_NO_BINARY_COMPONENTS = 1
 
-include $(DEPTH)/build/autodefs.mk
-
-DEFAULT_EXTENSIONS = AlbumArt \
-                     $(NULL)
-                     
-NOARCH_EXTENSIONS = lastfm \
-                    $(NULL)  
-                    
-ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-   DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
-else
-   ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
-      DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
-   endif
-endif                                
-
-SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
-          $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
-
-include $(topsrcdir)/build/rules.mk
+EXTENSION_VER = 1.0.4
+EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
+EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
