@@ -502,3 +502,8 @@ pref("nightingale.mediaimport.warn_filtered_exts", true);
 // Firmware Support Preferences
 //
 pref("nightingale.firmware.update.defaultInterval", 604800); // every 7 days
+
+//
+// Disable Feedback survey
+//
+pref("feedback.disabled", true);
