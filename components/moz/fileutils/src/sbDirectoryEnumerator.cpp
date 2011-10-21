@@ -226,9 +226,25 @@ nsresult sbDirectoryEnumeratorHelper::OpenDir(const nsAString & aPath)
 
 #if XP_WIN
   // Handle long paths
-  nsString path = NS_LITERAL_STRING("\\\\?\\");
-  path.Append(aPath);
-
+  nsString path(aPath);
+  path.Cut(2, -1);
+  // If this is a relative path we can't prefix.
+  if (!path.EqualsLiteral(".") &&
+      !path.EqualsLiteral("..")) {
+    // If this is a unc file name we need the \\?\UNC prefix
+    if (path.EqualsLiteral("\\\\")) {
+       path = NS_LITERAL_STRING("\\\\?\\UNC\\");
+       path.Append(aPath.BeginReading() + 2, aPath.Length() - 2);
+    }
+    else {
+      // Standard DOS path prefix with \\?\ (prevent line continuation)
+      path = NS_LITERAL_STRING("\\\\?\\");
+      path.Append(aPath);
+    }
+  }
+  else {
+    path = aPath;
+  }
   //If 'name' ends in a slash or backslash, do not append
   //another backslash.
   if (path.IsEmpty() ||
