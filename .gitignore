@@ -1,3 +1,5 @@
+dependencies/macosx*
+dependencies/windows*
 nightingale.config
 autom4te.cache
 songbird.config
