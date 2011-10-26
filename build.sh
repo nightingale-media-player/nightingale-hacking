@@ -13,6 +13,8 @@ case $OSTYPE in
 		arch=`uname -m`
 		depdirn="linux-$arch"
 		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/$depdirn"
+		# msys error workaround
+		patch=1
         deps=(  mozilla
                 sqlite
                 taglib
@@ -114,7 +116,7 @@ make -f nightingale.mk clobber
 make -f nightingale.mk
 
 # insert a copy of the above code to locate gstreamer libs on ngale launch so we don't have to symlink anymore
-if [ $OSTYPE="linux-gnu" ] ; then
+if [ $patch = 1 ] ; then
 	patch -Np0 -i add_search_for_gst_libs.patch "compiled-$build-$arch/dist/nightingale"
 fi
 
