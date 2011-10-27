@@ -421,13 +421,13 @@ sbGStreamerMediaInspector::InspectMediaURIAsync(const nsAString & aURI)
   // Reset internal state tracking.
   ResetStatus();
 
+  nsresult rv = StartTimeoutTimer();
+  NS_ENSURE_SUCCESS (rv, rv);
+
   // Set the pipeline to PAUSED. This will allow the pipeline to preroll,
   // at which point we can inspect the caps on the pads, and look at the events
   // that we have collected.
-  nsresult rv = PausePipeline();
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  rv = StartTimeoutTimer();
+  rv = PausePipeline();
   NS_ENSURE_SUCCESS (rv, rv);
 
   return NS_OK;
