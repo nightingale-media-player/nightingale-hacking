@@ -2,25 +2,28 @@ Nightingale is a community based fork of the Songbird Web/Media player
 distributed under the GNU GPL and portions (xulrunner and mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
 
-The goal of Nightingale is to create a Linux only player, which will 
-eventually use only system libraries to conserve space. Currently, some
-libraries are still bundled, but progress is being made to change this 
-fact.
+The goal of Nightingale is to create a multiplatform  player, which will 
+eventually use only system libraries under Linux to conserve space and
+avoid being redundant. Currently, some libraries are still bundled, 
+but progress is being made to change this fact.
 
-This git tree is the old 1.8 tree for Nightingale, kept here for backup
-and also maintained to build until 1.10 is ready. Please report problems
-in the forums
+This git tree is the work in progress tree, based on the 1.10 tree of
+Songbird. We are currently working on porting the code to use Gecko 6+
+to further pursue the goal of having a player that works with system 
+libraries. It currently won't build, but we're happy to have help in
+getting it to the point of building and release.
 
 ========================================================================
 Notes:
 ========================================================================
 
-*To build, you need to have all of the gstreamer0.10 packages for your 
-distro, svn, wget, and git (if pulling the tree down) installed, 
-as well as the usual dependencies for building software upon your 
-distro.
+*To build, git checkout nightingale-1.8 after cloning
+the nightingale-hacking git repo from GitHub. You need to have all 
+of the gstreamer0.10 packages for your distro, svn, wget, and git 
+(if pulling the tree down) installed, as well as the usual dependencies
+for building software upon your distro.
 
-*If it gets python errors, make sure you have python2 installed,
+*If you get python errors, make sure you have python2 installed,
 and try the build.sh script again.
 
 *If it doesn't play music, you'll need to copy /usr/lib/gstreamer0.10/*
