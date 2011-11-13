@@ -389,7 +389,7 @@ private:
   nsresult Initialize();
 
   sbWindowWatcherWaitForWindow();
-};
+}
 
 
 #endif // __SB_WINDOWWATCHER_H__

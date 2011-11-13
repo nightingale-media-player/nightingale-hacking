@@ -50,7 +50,7 @@
 #include <sbThreadUtils.h>
 
 // Mozilla imports.
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
@@ -1166,6 +1166,9 @@ sbWindowWatcherWaitForWindow::HandleWindowCallback(nsIDOMWindow* aWindow)
   mWindow = aWindow;
   mReady = PR_TRUE;
 
+  // Send notification that the window is ready.
+  autoReadyMonitor.Notify();
+
   return NS_OK;
 }
 
@@ -1242,8 +1245,6 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   rv = mSBWindowWatcher->CallWithWindow(aWindowType, this, false);
   NS_ENSURE_SUCCESS(rv, rv);
 
-<<<<<<< HEAD
-=======
   // Operate under the ready monitor.
   nsAutoMonitor autoReadyMonitor(mReadyMonitor);
 
@@ -1253,7 +1254,6 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
->>>>>>> parent of 8e46d13... remove MORE autolock references
   return NS_OK;
 }
 

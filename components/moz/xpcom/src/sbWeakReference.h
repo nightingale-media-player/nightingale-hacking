@@ -41,9 +41,6 @@ class NS_COM_GLUE sbSupportsWeakReference : public nsISupportsWeakReference
 {
 public:
   sbSupportsWeakReference() 
-<<<<<<< HEAD
-    : mProxy(nsnull){};
-=======
     : mProxy(nsnull)
     , mProxyLock(nsnull) {
     mProxyLock = mProxyLock("sbSupportsWeakReference::mProxyLock");
@@ -51,7 +48,6 @@ public:
   }
 
   NS_DECL_NSISUPPORTSWEAKREFERENCE
->>>>>>> parent of e3528da... remove refs to autolock in sbWeakReference.h
 
 protected:
   inline ~sbSupportsWeakReference();
@@ -74,7 +70,7 @@ protected:
   void ClearWeakReferences();
   PRBool HasWeakReferences() const {
     NS_ENSURE_TRUE(mProxyLock, PR_FALSE);
-     mozilla::MutexAutoLock autoLock(mProxyLock);
+    mozilla::MutexAutoLock autoLock(mProxyLock);
     return mProxy != 0; 
   }
 };
