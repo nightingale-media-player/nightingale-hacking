@@ -46,7 +46,7 @@ public:
 =======
     : mProxy(nsnull)
     , mProxyLock(nsnull) {
-    mProxyLock = mozilla::MutexAutoLock autoLock("sbSupportsWeakReference::mProxyLock");
+    mProxyLock = mProxyLock("sbSupportsWeakReference::mProxyLock");
     NS_WARN_IF_FALSE(mProxyLock, "Failed to create lock.");
   }
 
@@ -61,7 +61,7 @@ private:
 
   void NoticeProxyDestruction() {
     NS_ENSURE_TRUE(mProxyLock, /*void*/);
-     mozilla::MutexAutoLock autoLock(mProxyLock);
+    mozilla::MutexAutoLock autoLock(mProxyLock);
     // ...called (only) by an |nsWeakReference| from _its_ dtor.
     mProxy = nsnull;
   }
