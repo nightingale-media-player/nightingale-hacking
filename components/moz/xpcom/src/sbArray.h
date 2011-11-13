@@ -43,6 +43,8 @@
 #include "sbCOMArray.h"
 #include "nsCOMPtr.h"
 
+#include <mozilla/Mutex.h>
+
 #define SB_THREADSAFE_ARRAY_CLASSNAME \
   "threadsafe nsIArray implementation"
 
@@ -74,7 +76,7 @@ private:
     ~sbArray();
 
     sbCOMArray_base mArray;
-    PRLock* mLock;
+    mozilla::Mutex mLock;
 };
 
 #endif
