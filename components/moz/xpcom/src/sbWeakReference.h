@@ -42,11 +42,8 @@ class NS_COM_GLUE sbSupportsWeakReference : public nsISupportsWeakReference
 public:
   sbSupportsWeakReference() 
     : mProxy(nsnull)
-    , mProxyLock(nsnull) {
-    mProxyLock = mProxyLock("sbSupportsWeakReference::mProxyLock");
-    NS_WARN_IF_FALSE(mProxyLock, "Failed to create lock.");
-  }
-
+    , mProxyLock("sbSupportsWeakReference::mProxyLock")
+    {}
   NS_DECL_NSISUPPORTSWEAKREFERENCE
 
 protected:
@@ -56,7 +53,6 @@ private:
   friend class sbWeakReference;
 
   void NoticeProxyDestruction() {
-    NS_ENSURE_TRUE(mProxyLock, /*void*/);
     mozilla::MutexAutoLock autoLock(mProxyLock);
     // ...called (only) by an |nsWeakReference| from _its_ dtor.
     mProxy = nsnull;
@@ -64,12 +60,11 @@ private:
 
   sbWeakReference* mProxy;
   // Lock to protect mProxy.
-  PRLock*          mProxyLock;
+  mozilla::Mutex   mProxyLock;
 
 protected:
   void ClearWeakReferences();
-  PRBool HasWeakReferences() const {
-    NS_ENSURE_TRUE(mProxyLock, PR_FALSE);
+  PRBool HasWeakReferences() {
     mozilla::MutexAutoLock autoLock(mProxyLock);
     return mProxy != 0; 
   }
