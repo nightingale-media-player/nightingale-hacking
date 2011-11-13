@@ -151,7 +151,7 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
   }
 
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Check if window is already available.
   nsCOMPtr<nsIDOMWindow> window;
@@ -209,7 +209,7 @@ sbWindowWatcher::GetWindow(const nsAString& aWindowType,
   NS_ENSURE_TRUE(SB_IsMainThread(mThreadManager), NS_ERROR_UNEXPECTED);
 
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Get an enumerator of all windows of the specified type, sorted from oldest
   // to youngest.
@@ -280,7 +280,7 @@ sbWindowWatcher::WaitForWindow(const nsAString& aWindowType)
   // Don't wait if this instance is shutting down.
   {
     // Check is shutting down within the monitor.
-    nsAutoMonitor autoMonitor(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
     if (mIsShuttingDown)
       return NS_OK;
   }
@@ -314,7 +314,7 @@ sbWindowWatcher::GetIsShuttingDown(PRBool* aIsShuttingDown)
   NS_ENSURE_ARG_POINTER(aIsShuttingDown);
 
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Return results.
   *aIsShuttingDown = mIsShuttingDown;
@@ -461,6 +461,7 @@ sbWindowWatcher::OnQuitApplicationGranted()
 
 sbWindowWatcher::sbWindowWatcher() :
   mSentMainWinPresentedNotification(PR_FALSE),
+  mMonitor("sbWindowWatcher::mMonitor"),
   mIsShuttingDown(PR_FALSE),
   mServicingCallWithWindowList(PR_FALSE)
 {
@@ -510,10 +511,6 @@ sbWindowWatcher::Init()
   mThreadManager = do_GetService("@mozilla.org/thread-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create a monitor.
-  mMonitor = nsAutoMonitor::NewMonitor("sbWindowWatcher::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
   // Initialize the window information table.
   mWindowInfoTable.Init();
 
@@ -545,11 +542,6 @@ sbWindowWatcher::Finalize()
   // Remove all windows.
   RemoveAllWindows();
 
-  // Dispose of monitor.
-  if (mMonitor)
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  mMonitor = nsnull;
-
   // Remove object references.
   mWindowWatcher = nsnull;
   mWindowMediator = nsnull;
@@ -580,7 +572,7 @@ sbWindowWatcher::Shutdown()
 
   // Operate within the monitor.
   {
-    nsAutoMonitor autoMonitor(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
     // Do nothing if already shutting down.
     if (mIsShuttingDown)
@@ -619,7 +611,7 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   nsresult rv;
 
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Create the window info object.
   nsAutoPtr<WindowInfo> windowInfo;
@@ -683,7 +675,7 @@ sbWindowWatcher::RemoveWindow(nsIDOMWindow* aWindow)
   nsresult rv;
 
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Get the removed window information.
   WindowInfo* windowInfo;
@@ -717,7 +709,7 @@ void
 sbWindowWatcher::RemoveAllWindows()
 {
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Remove all of the windows.
   PRInt32 windowCount = mWindowList.Count();
@@ -759,7 +751,7 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
 
   // Operate within the monitor.
   {
-    nsAutoMonitor autoMonitor(mMonitor);
+    mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
     // Get the window information.  Do nothing if not available.
     WindowInfo* windowInfo;
@@ -833,7 +825,7 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
   }
 
   // Operate within the monitor.
-  nsAutoMonitor autoMonitor(mMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoMonitor(mMonitor);
 
   // Do nothing if the call with window list is already being serviced.
   if (mServicingCallWithWindowList)
@@ -1160,7 +1152,7 @@ NS_IMETHODIMP
 sbWindowWatcherWaitForWindow::HandleWindowCallback(nsIDOMWindow* aWindow)
 {
   // Operate under the ready monitor.
-  nsAutoMonitor autoReadyMonitor(mReadyMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoReadyMonitor(mReadyMonitor);
 
   // Get the ready window.
   mWindow = aWindow;
@@ -1218,11 +1210,6 @@ sbWindowWatcherWaitForWindow::New(sbWindowWatcherWaitForWindow** aWaitForWindow)
 
 sbWindowWatcherWaitForWindow::~sbWindowWatcherWaitForWindow()
 {
-  // Dispose of the monitor.
-  if (mReadyMonitor)
-    nsAutoMonitor::DestroyMonitor(mReadyMonitor);
-  mReadyMonitor = nsnull;
-
   // Remove object references.
   mSBWindowWatcher = nsnull;
   mWindow = nsnull;
@@ -1246,7 +1233,7 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Operate under the ready monitor.
-  nsAutoMonitor autoReadyMonitor(mReadyMonitor);
+  mozilla::ReentrantMonitorAutoEnter autoReadyMonitor(mReadyMonitor);
 
   // Wait for a window to be ready.
   if (!mReady) {
@@ -1269,7 +1256,7 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
  */
 
 sbWindowWatcherWaitForWindow::sbWindowWatcherWaitForWindow() :
-  mReadyMonitor(nsnull),
+  mReadyMonitor("sbWindowWatcherWaitForWindow::mReadyMonitor"),
   mReady(PR_FALSE)
 {
 }
@@ -1288,11 +1275,6 @@ sbWindowWatcherWaitForWindow::Initialize()
   mSBWindowWatcher =
     do_GetService("@songbirdnest.com/Songbird/window-watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create a monitor.
-  mReadyMonitor =
-    nsAutoMonitor::NewMonitor("sbWindowWatcherWaitForWindow::mReadyMonitor");
-  NS_ENSURE_TRUE(mReadyMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }

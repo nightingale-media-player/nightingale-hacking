@@ -40,13 +40,13 @@ SUBDIRS = strings \
           dirprovider \
           filedownloader \
           fileutils \
-          windowwatcher \
           prompter \
           temporaryfileservice \
           threadpoolservice \
           threads \
           urlformatter \
           variant \
+          windowwatcher \
           xpcom \
           errorconsole \
           streams \

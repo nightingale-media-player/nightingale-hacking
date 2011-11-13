@@ -47,7 +47,7 @@
 #include <nsIWindowMediator.h>
 #include <nsIWindowWatcher.h>
 #include <nsTArray.h>
-#include <prmon.h>
+#include <mozilla/ReentrantMonitor.h>
 
 #include <sbWeakReference.h>
 
@@ -143,7 +143,7 @@ private:
   nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIThreadManager>    mThreadManager;
   PRBool                        mSentMainWinPresentedNotification;
-  PRMonitor*                    mMonitor;
+  mozilla::ReentrantMonitor     mMonitor; // XXX check if this needs to be reentrant
   PRBool                        mIsShuttingDown;
   nsCOMArray<nsIDOMWindow>      mWindowList;
 
@@ -378,7 +378,7 @@ private:
   //
 
   nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
-  PRMonitor*                    mReadyMonitor;
+  mozilla::ReentrantMonitor     mReadyMonitor;  // XXX check if this needs to be reentrant
   nsCOMPtr<nsIDOMWindow>        mWindow;
   PRBool                        mReady;
 
@@ -389,7 +389,7 @@ private:
   nsresult Initialize();
 
   sbWindowWatcherWaitForWindow();
-}
+};
 
 
 #endif // __SB_WINDOWWATCHER_H__
