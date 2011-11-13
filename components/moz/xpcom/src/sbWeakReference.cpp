@@ -35,11 +35,9 @@ private:
   friend class sbSupportsWeakReference;
 
   sbWeakReference(sbSupportsWeakReference* referent) 
-    : mReferentLock(nsnull)
+    : mReferentMutex("sbWeakReference::mReferentMutex")
     , mReferent(referent) {
     // ...I can only be constructed by an |sbSupportsWeakReference|
-    mReferentLock = nsAutoLock::NewLock("sbWeakReference::mReferentLock");
-    NS_WARN_IF_FALSE(mReferentLock, "Failed to create lock.");
   }
 
   ~sbWeakReference() {
@@ -47,20 +45,15 @@ private:
     if (mReferent) {
       mReferent->NoticeProxyDestruction();
     }
-
-    if (mReferentLock) {
-      nsAutoLock::DestroyLock(mReferentLock);
-    }
   }
 
   void NoticeReferentDestruction() {
-    NS_ENSURE_TRUE(mReferentLock, /*void*/);
-    nsAutoLock lock(mReferentLock);
+    mozilla::MutexAutoLock lock(mReferentMutex);
     // ...called (only) by an |sbSupportsWeakReference| from _its_ dtor.
     mReferent = nsnull;
   }
 
-  PRLock *mReferentLock;
+  mozilla::Mutex mReferentMutex;
   sbSupportsWeakReference*  mReferent;
 };
 
@@ -68,9 +61,8 @@ NS_COM_GLUE nsresult
 sbSupportsWeakReference::GetWeakReference(nsIWeakReference** aInstancePtr) 
 {
   NS_ENSURE_ARG_POINTER(aInstancePtr);
-  NS_ENSURE_TRUE(mProxyLock, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mProxyLock);
+  mozilla::MutexAutoLock lock(mProxyLock);
 
   if (!mProxy) {
     mProxy = new sbWeakReference(this);
@@ -92,9 +84,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbWeakReference, nsIWeakReference)
 NS_IMETHODIMP
 sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr) 
 {
-  NS_ENSURE_TRUE(mReferentLock, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoLock lock(mReferentLock);
+  mozilla::MutexAutoLock lock(mReferentMutex);
   return mReferent ? 
     mReferent->QueryInterface(aIID, aInstancePtr) : NS_ERROR_NULL_POINTER;
 }
@@ -102,9 +92,7 @@ sbWeakReference::QueryReferent(const nsIID& aIID, void** aInstancePtr)
 void
 sbSupportsWeakReference::ClearWeakReferences() 
 {
-  NS_ENSURE_TRUE(mProxyLock, /*void*/);
-
-  nsAutoLock lock(mProxyLock);
+  mozilla::MutexAutoLock lock(mProxyLock);
 
   if (mProxy) {
     mProxy->NoticeReferentDestruction();

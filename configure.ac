@@ -962,6 +962,9 @@ case "$SB_PLATFORM" in
     # We always want to include "mozilla-config.h"
     GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -include \"mozilla-config.h\""
 
+    # HACK: we should detect char16_t support here. For now, assume new enough GCC.
+    GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS --std=gnu++0x"
+
     GCC_LINKER_FLAGS="-Wl,-z,defs -Wl,-rpath-link,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$XULRUNNERDIR"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
