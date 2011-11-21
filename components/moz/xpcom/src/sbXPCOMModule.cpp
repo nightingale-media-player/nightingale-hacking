@@ -39,23 +39,27 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
      {0xb3, 0x45, 0x3b, 0xb2, 0xfe, 0xe8, 0xfa, 0xb5}}
 #define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 
-static const mozilla::Module::CIDEntry kSongbirdMozsbArrayCIDs[] = {
-    { SB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
-    { SB_PROPERTYBAG_CID, true, NULL, sbArrayConstructor },
-    { SB_SERVICE_MANAGER_CID, true, NULL, sbArrayConstructor },
+NS_DEFINE_NAMED_CID(SB_THREADSAFE_ARRAY_CID);
+NS_DEFINE_NAMED_CID(SB_PROPERTYBAG_CID);
+NS_DEFINE_NAMED_CID(SB_SERVICE_MANAGER_CID);
+
+static const mozilla::Module::CIDEntry kSongbirdMozArrayCIDs[] = {
+    { &kSB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
+    { &kSB_PROPERTYBAG_CID, true, NULL, sbPropertyBagConstructor },
+    { &kSB_SERVICE_MANAGER_CID, true, NULL, sbServiceManagerConstructor },
     { NULL }
 };
 
 
-static const mozilla::Module::ContractIDEntry kSongbirdMozsbArrayContracts[] = {
-    { SB_THREADSAFE_ARRAY_CONTRACTID, &SB_THREADSAFE_ARRAY_CID },
-	{ SB_PROPERTYBAG_CID, &SB_PROPERTYBAG_CID },
-    { SB_SERVICE_MANAGER_CID, &SB_SERVICE_MANAGER_CID },
+static const mozilla::Module::ContractIDEntry kSongbirdMozArrayContracts[] = {
+    { SB_THREADSAFE_ARRAY_CONTRACTID, &kSB_THREADSAFE_ARRAY_CID },
+	{ SB_PROPERTYBAG_CONTRACTID, &kSB_PROPERTYBAG_CID },
+    { SB_SERVICE_MANAGER_CONTRACTID, &kSB_SERVICE_MANAGER_CID },
     { NULL }
 };
 
 
-static const mozilla::Module::CategoryEntry kSongbirdMozsbArrayCategories[] = {
+static const mozilla::Module::CategoryEntry kSongbirdMozArrayCategories[] = {
     { SB_THREADSAFE_ARRAY_CLASSNAME, SB_THREADSAFE_ARRAY_CONTRACTID },
     { SB_PROPERTYBAG_CLASSNAME, SB_PROPERTYBAG_CONTRACTID },
     { SB_SERVICE_MANAGER_CLASSNAME, SB_SERVICE_MANAGER_CONTRACTID },
@@ -63,11 +67,11 @@ static const mozilla::Module::CategoryEntry kSongbirdMozsbArrayCategories[] = {
 };
 
 
-static const mozilla::Module kSongbirdMozsbArrayModule = {
+static const mozilla::Module kSongbirdMozArrayModule = {
     mozilla::Module::kVersion,
-    kSongbirdMozsbArrayCIDs,
-    kSongbirdMozsbArrayContracts,
-    kSongbirdMozsbArrayCategories
+    kSongbirdMozArrayCIDs,
+    kSongbirdMozArrayContracts,
+    kSongbirdMozArrayCategories
 };
 
-NSMODULE_DEFN(sbMozsbArrayModule) = &kSongbirdMozsbArrayModule;
+NSMODULE_DEFN(sbMozArrayModule) = &kSongbirdMozArrayModule;
