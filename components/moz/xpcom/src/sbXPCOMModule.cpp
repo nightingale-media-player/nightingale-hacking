@@ -27,7 +27,7 @@
 #include "sbArray.h"
 #include "sbPropertyBag.h"
 #include "sbServiceManager.h"
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyBag, Init)
@@ -38,29 +38,30 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
    {0x135c8890, 0xd9da, 0x4a1c, \
      {0xb3, 0x45, 0x3b, 0xb2, 0xfe, 0xe8, 0xfa, 0xb5}}
 #define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SB_THREADSAFE_ARRAY_CLASSNAME,
-    SB_THREADSAFE_ARRAY_CID,
-    SB_THREADSAFE_ARRAY_CONTRACTID,
-    sbArrayConstructor
-  },
-  {
-    SB_PROPERTYBAG_CLASSNAME,
-    SB_PROPERTYBAG_CID,
-    SB_PROPERTYBAG_CONTRACTID,
-    sbPropertyBagConstructor
-  },
-  {
-    SB_SERVICE_MANAGER_CLASSNAME,
-    SB_SERVICE_MANAGER_CID,
-    SB_SERVICE_MANAGER_CONTRACTID,
-    sbServiceManagerConstructor
-  }
+
+static const mozilla::Module::CIDEntry kSongbirdMozsbArrayCIDs[] = {
+    { &kSB_SBARRAY_CID, true, NULL, sbArrayConstructor },
+    { NULL }
 };
 
-// create the module info struct that is used to regsiter
-NS_IMPL_NSGETMODULE(SongbirdXPCOMLib, components)
 
+static const mozilla::Module::ContractIDEntry kSongbirdMozsbArrayContracts[] = {
+    { SB_SBARRAY_CONTRACTID, &kSB_SBARRAY_CID },
+    { NULL }
+};
+
+
+static const mozilla::Module::CategoryEntry kSongbirdMozsbArrayCategories[] = {
+    { NS_XPCOM_STARTUP_CATEGORY, SB_SBARRAY_CLASSNAME, SB_SBARRAY_CONTRACTID },
+    { NULL }
+};
+
+
+static const mozilla::Module kSongbirdMozThreadpoolModule = {
+    mozilla::Module::kVersion,
+    kSongbirdMozsbArrayCIDs,
+    kSongbirdMozsbArrayContracts,
+    kSongbirdMozsbArrayCategories
+};
+
+NSMODULE_DEFN(sbMozsbArrayModule) = &kSongbirdMozsbArrayModule;
