@@ -40,17 +40,17 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
 #define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 
 static const mozilla::Module::CIDEntry kSongbirdMozsbArrayCIDs[] = {
-    { &kSB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
-    { &kSB_PROPERTYBAG_CID, true, NULL, sbArrayConstructor },
-    { &kSB_SERVICE_MANAGER_CID, true, NULL, sbArrayConstructor },
+    { SB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
+    { SB_PROPERTYBAG_CID, true, NULL, sbArrayConstructor },
+    { SB_SERVICE_MANAGER_CID, true, NULL, sbArrayConstructor },
     { NULL }
 };
 
 
 static const mozilla::Module::ContractIDEntry kSongbirdMozsbArrayContracts[] = {
-    { SB_THREADSAFE_ARRAY_CONTRACTID, &kSB_THREADSAFE_ARRAY_CID },
-	{ &kSB_PROPERTYBAG_CID, &kSB_PROPERTYBAG_CID },
-    { &kSB_SERVICE_MANAGER_CID, &kSB_SERVICE_MANAGER_CID },
+    { SB_THREADSAFE_ARRAY_CONTRACTID, &SB_THREADSAFE_ARRAY_CID },
+	{ SB_PROPERTYBAG_CID, &SB_PROPERTYBAG_CID },
+    { SB_SERVICE_MANAGER_CID, &SB_SERVICE_MANAGER_CID },
     { NULL }
 };
 
