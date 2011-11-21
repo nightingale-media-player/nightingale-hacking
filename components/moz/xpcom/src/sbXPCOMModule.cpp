@@ -40,24 +40,30 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
 #define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 
 static const mozilla::Module::CIDEntry kSongbirdMozsbArrayCIDs[] = {
-    { &kSB_SBARRAY_CID, true, NULL, sbArrayConstructor },
+    { &kSB_THREADSAFE_ARRAY_CID, true, NULL, sbArrayConstructor },
+    { &kSB_PROPERTYBAG_CID, true, NULL, sbArrayConstructor },
+    { &kSB_SERVICE_MANAGER_CID, true, NULL, sbArrayConstructor },
     { NULL }
 };
 
 
 static const mozilla::Module::ContractIDEntry kSongbirdMozsbArrayContracts[] = {
-    { SB_SBARRAY_CONTRACTID, &kSB_SBARRAY_CID },
+    { SB_THREADSAFE_ARRAY_CONTRACTID, &kSB_THREADSAFE_ARRAY_CID },
+	{ &kSB_PROPERTYBAG_CID, &kSB_PROPERTYBAG_CID },
+    { &kSB_SERVICE_MANAGER_CID, &kSB_SERVICE_MANAGER_CID },
     { NULL }
 };
 
 
 static const mozilla::Module::CategoryEntry kSongbirdMozsbArrayCategories[] = {
-    { NS_XPCOM_STARTUP_CATEGORY, SB_SBARRAY_CLASSNAME, SB_SBARRAY_CONTRACTID },
+    { SB_THREADSAFE_ARRAY_CLASSNAME, SB_THREADSAFE_ARRAY_CONTRACTID },
+    { SB_PROPERTYBAG_CLASSNAME, SB_PROPERTYBAG_CONTRACTID },
+    { SB_SERVICE_MANAGER_CLASSNAME, SB_SERVICE_MANAGER_CONTRACTID },
     { NULL }
 };
 
 
-static const mozilla::Module kSongbirdMozThreadpoolModule = {
+static const mozilla::Module kSongbirdMozsbArrayModule = {
     mozilla::Module::kVersion,
     kSongbirdMozsbArrayCIDs,
     kSongbirdMozsbArrayContracts,
