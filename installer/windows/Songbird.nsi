@@ -169,7 +169,7 @@ BrandingText " "
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ; Finish Page
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW un.PromptSurvey
+;!define MUI_PAGE_CUSTOMFUNCTION_SHOW un.PromptSurvey
 !insertmacro MUI_UNPAGE_FINISH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

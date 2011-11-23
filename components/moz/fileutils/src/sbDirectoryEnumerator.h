@@ -58,6 +58,7 @@
 #include <mozilla/Mutex.h>
 
 
+
 //------------------------------------------------------------------------------
 //
 // Songbird directory enumerator definitions.
@@ -145,7 +146,6 @@ private:
   PRUint32                      				mMaxDepth;
   PRBool                        				mDirectoriesOnly;
   PRBool                        				mFilesOnly;
-
 
   //
   // Public services.

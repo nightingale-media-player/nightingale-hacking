@@ -285,7 +285,7 @@ sbLocalDatabaseSmartMediaListCondition::GetOperator(sbIPropertyOperator** aOpera
   }
 
   *aOperator = mOperator;
-  NS_ADDREF(*aOperator);
+  NS_IF_ADDREF(*aOperator);
 
   return NS_OK;
 }
@@ -1584,9 +1584,9 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       
       nsAutoString newOp;
       if (op.EqualsLiteral(SB_OPERATOR_EQUALS))
-        newOp = NS_LITERAL_STRING(SB_OPERATOR_NOTEQUALS);
+        newOp = NS_LITERAL_STRING(SB_OPERATOR_ISSET);
       else
-        newOp = NS_LITERAL_STRING(SB_OPERATOR_EQUALS);
+        newOp = NS_LITERAL_STRING(SB_OPERATOR_ISNOTSET);
 
       ruleCondition = new 
         sbLocalDatabaseSmartMediaListCondition(NS_LITERAL_STRING(SB_PROPERTY_GUID),
@@ -2227,6 +2227,8 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   nsCOMPtr<sbIPropertyOperator> opObj;
   rv = aCondition->GetOperator(getter_AddRefs(opObj));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(opObj, NS_ERROR_FAILURE);
 
   nsAutoString op;
   rv = opObj->GetOperator(op);

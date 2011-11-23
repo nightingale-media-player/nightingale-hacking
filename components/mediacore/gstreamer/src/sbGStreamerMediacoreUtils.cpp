@@ -28,6 +28,7 @@
 
 #include <nsIRunnable.h>
 #include <nsINetUtil.h>
+#include <nsIWritablePropertyBag.h>
 
 #include <nsAutoPtr.h>
 #include <nsThreadUtils.h>
@@ -868,3 +869,140 @@ GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
 
 }
 
+
+// A GstStructureForeachFunc.  Adds each GValue to the nsIWritablePropertyBag2
+// (in aUserData) using the property name given by aFieldId
+static gboolean
+_OnEachGValue(GQuark aFieldId, const GValue *aValue, gpointer aUserData)
+{
+  const gchar * fieldname = g_quark_to_string(aFieldId);
+
+  nsresult rv;
+  rv = SetPropertyFromGValue(
+        static_cast<nsIWritablePropertyBag2 *>(aUserData),
+        NS_ConvertASCIItoUTF16(fieldname),
+        aValue);
+  NS_ENSURE_SUCCESS(rv, FALSE);
+  
+  return TRUE;
+}
+
+
+nsresult
+SetPropertiesFromGstStructure(nsIWritablePropertyBag2 * aPropertyBag,
+                              const GstStructure * aStructure,
+                              const gchar * const aDesiredFieldList[],
+                              PRUint32 aFieldCount)
+{
+  nsresult rv;
+
+  // Use the list of field names if present.  Otherwise, fall through
+  // and copy every field of aStructure to aPropertyBag
+  if (aDesiredFieldList) {
+    for (PRUint32 i = 0; i < aFieldCount; i++) {
+      const gchar * fieldname = aDesiredFieldList[i];
+      const GValue * value = gst_structure_get_value(aStructure, fieldname);
+
+      // Silently skip missing fields
+      if (value) {
+        rv = SetPropertyFromGValue(aPropertyBag,
+                                   NS_ConvertASCIItoUTF16(fieldname),
+                                   value);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    return NS_OK;
+  }
+
+  // If the field list is NULL, its count must be zero
+  NS_ENSURE_TRUE(aFieldCount == 0, NS_ERROR_INVALID_ARG);
+
+  gboolean ok = gst_structure_foreach(aStructure, _OnEachGValue, aPropertyBag);
+  NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
+
+nsresult
+SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
+                      const nsAString & aProperty,
+                      const GValue * aValue)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyBag);
+
+  nsresult rv;
+  GType type = G_VALUE_TYPE(aValue);
+  const gchar *asGstr = NULL;
+  gboolean asGboolean;
+  gint asGint;
+  guint asGuint;
+
+  switch (type) {
+    case G_TYPE_BOOLEAN:
+      asGboolean = g_value_get_boolean (aValue);
+      rv = aPropertyBag->SetPropertyAsBool(aProperty, asGboolean);
+      NS_ENSURE_SUCCESS (rv, rv);
+      break;
+
+    case G_TYPE_INT:
+      asGint = g_value_get_int (aValue);
+      rv = aPropertyBag->SetPropertyAsInt32(aProperty, asGint);
+      NS_ENSURE_SUCCESS (rv, rv);
+      break;
+
+    case G_TYPE_UINT:
+      asGuint = g_value_get_uint (aValue);
+      rv = aPropertyBag->SetPropertyAsUint32(aProperty, asGuint);
+      NS_ENSURE_SUCCESS (rv, rv);
+      break;
+
+    case G_TYPE_STRING:
+      asGstr = g_value_get_string (aValue);
+      NS_ENSURE_TRUE(asGstr, NS_ERROR_UNEXPECTED);
+      rv = aPropertyBag->SetPropertyAsACString(aProperty, nsCString(asGstr));
+      NS_ENSURE_SUCCESS (rv, rv);
+      break;
+
+    default:
+      // Handle any types that have dynamic type identifiers.  They can't be
+      // used as case labels because they aren't constant expressions
+
+      if (type == GST_TYPE_BUFFER) {
+        const GstBuffer * asGstBuffer = gst_value_get_buffer(aValue);
+        NS_ENSURE_TRUE(asGstBuffer, NS_ERROR_UNEXPECTED);
+
+        // Create a variant to hold the buffer data as an array of VTYPE_UINT8s
+        nsCOMPtr<nsIWritableVariant> asVariant =
+          do_CreateInstance("@mozilla.org/variant;1", &rv);
+        NS_ENSURE_SUCCESS (rv, rv);
+        rv = asVariant->SetAsArray(nsIDataType::VTYPE_UINT8,
+                                   nsnull,
+                                   GST_BUFFER_SIZE(asGstBuffer),
+                                   GST_BUFFER_DATA(asGstBuffer));
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        // QI to an nsIWritablePropertyBag to access the generic SetProperty()
+        // method
+        nsCOMPtr<nsIWritablePropertyBag> bagV1 =
+          do_QueryInterface(aPropertyBag, &rv);
+        NS_ENSURE_SUCCESS (rv, rv);
+        rv = bagV1->SetProperty(aProperty, asVariant);
+        NS_ENSURE_SUCCESS (rv, rv);
+      }
+      else {
+        // Unexpected data type
+#ifdef PR_LOGGING
+        const gchar *typeName = g_type_name(type);
+        LOG(("Unexpected GType [%u %s] for [%s]",
+             unsigned(type),
+             typeName,
+             NS_LossyConvertUTF16toASCII(aProperty).get()));
+#endif // #ifdef PR_LOGGING
+        NS_ENSURE_TRUE(PR_FALSE, NS_ERROR_ILLEGAL_VALUE);
+      }
+      break;
+  }
+
+  return NS_OK;
+}

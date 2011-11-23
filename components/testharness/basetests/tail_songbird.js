@@ -43,6 +43,8 @@ try {
   runTest();
   testFinished();
   doMain();
+} catch (e if e === _TH_SKIP) {
+  _skip = true;
 } catch (e) {
   _fail = true;
   log("*** [" + _test_name + " ] - EXCEPTION: " + e);
@@ -58,6 +60,9 @@ if (_fail) {
   testHarness.logFailure( _test_name );
   log("*** [" + _test_name + "] - ***** FAIL *****");
 }
-else
+else if (_skip) {
+  log("*** [" + _test_name + "] - ***** SKIP *****");
+}
+else {
   log("*** [" + _test_name + "] - ***** PASS *****");
-
+}

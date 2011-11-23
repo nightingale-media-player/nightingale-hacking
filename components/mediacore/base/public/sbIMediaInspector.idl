@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
- 
+
 #include "nsISupports.idl"
 
 interface sbIMediaItem;
@@ -74,7 +74,7 @@ interface sbIMediaFormatVideo : nsISupports {
    * The width of the video frame
    */
   readonly attribute long videoWidth;
-  
+
   /**
    * The height of the video frame
    */
@@ -85,16 +85,16 @@ interface sbIMediaFormatVideo : nsISupports {
    * \param aNumerator The numerator portion of the aspect ratio
    * \param aDenominator The denominator portion of the aspect ratio
    */
-  void getVideoPAR(out unsigned long aNumerator, 
+  void getVideoPAR(out unsigned long aNumerator,
                    out unsigned long aDenominator);
-  
+
   /**
    * The video frame rate in fps. It is returned as a fraction.
    * \param aNumerator The numerator portion of the framerate
    * \param aDenominator The denominator portion of the frame rate
-   */ 
+   */
   void getVideoFrameRate(out unsigned long aNumerator,
-                         out unsigned long aDenominator);                       
+                         out unsigned long aDenominator);
 
   /**
    * This is the bit rate of the video streams in bits per second
@@ -140,10 +140,10 @@ interface sbIMediaFormatAudio : nsISupports {
    * this is the sample rate of the audio format
    */
   readonly attribute long sampleRate;
-  
+
   /**
    * This is the number of channels contained by the audio format
-   */ 
+   */
   readonly attribute long channels;
 
   /**
@@ -208,9 +208,20 @@ interface sbIMediaFormat : nsISupports
  * This is the interface to the media inspector service. It provides information
  * on the format of a media item
  */
-[scriptable, uuid(225b6e0d-8db6-4935-86a5-b21395c0ab5b)]
+[scriptable, uuid(0e9a88cd-ee46-4d3c-b6b0-8cd2dc3d65f2)]
 interface sbIMediaInspector : nsISupports
 {
+  /**
+   * This method is used to retrieve the media format information for a given
+   * filename, synchronously. This method MUST NOT be used from the
+   * main thread.
+   *
+   * \param aURI The item's URI as a string to retrieve the media format
+   * \return the media format for the media item. If the service is unable to
+   * obtain the format NS_NOT_AVAILABLE exception is "thrown"
+   */
+  sbIMediaFormat inspectMediaURI(in AString aURI);
+
   /**
    * This method is used to retrieve the media format information for a given
    * Songbird media item, synchronously. This method MUST NOT be used from the
@@ -221,6 +232,18 @@ interface sbIMediaInspector : nsISupports
    * obtain the format NS_NOT_AVAILABLE exception is "thrown"
    */
   sbIMediaFormat inspectMedia(in sbIMediaItem aMediaItem);
+
+  /**
+   * This method is used to retrieve the media format information for a given
+   * filename, asynchronously. This method may be used from any
+   * thread. Before calling this, the caller should QI this object to
+   * sbIJobProgress, and listen for the job to complete.
+   * Once complete (and successful), the caller may read the
+   * 'mediaFormat' attribute.
+   *
+   * \param param aURI The item's URI as a string to retrieve the media format
+   */
+  void inspectMediaURIAsync(in AString aURI);
 
   /**
    * This method is used to retrieve the media format information for a given

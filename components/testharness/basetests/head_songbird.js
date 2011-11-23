@@ -56,11 +56,32 @@
 // setup the main thread event queue
 var _quit = false;
 var _fail = false;
+var _skip = false;
 var _running_event_loop = false;
 var _tests_pending = 0;
 var _test_name = "sbTestHarness";
 var _test_comp = "testharness";
 var _consoleService = null;
+
+// _extensionStates, when initialized, gives the status of each extension.
+// The property names are extension IDs (like "mashTape@songbirdnest.com").
+// Each value is the extension version, if the extension is active, or one
+// of the _TH_EXTENSION_* contants defined below
+var _extensionStates = null;
+
+// Used in _extensionStates when an extension is disabled
+const _TH_EXTENSION_DISABLED = "disabled";
+
+// Used in _extensionStates when an extension is newly installed and won't
+// be available until the app is relaunched
+const _TH_EXTENSION_NEEDS_RESTART = "needs-restart";
+
+// Used in _extensionStates when the extension RDF data was malformed
+const _TH_EXTENSION_BAD = "bad";
+
+// Thrown to signal a skip, meaning the current test should abort without
+// registering a failure
+const _TH_SKIP = {};
 
 function doTimeout(delay, func) {
   var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
@@ -132,6 +153,161 @@ function assertNotEqual( aExpected, aActual, aMessage) {
   }
 }
 
+
+// Assert that the extension with the given ID is active.  This function
+// throws if the extension is disabled or in a bad state or is not present.
+// It skips (i.e., throws without registering a failure) if the extension
+// is newly installed and not available until the app relaunches.  This
+// happens whenever a buildbot runs unit tests for the first time after
+// building.
+function assertExtension(aExtensionID) {
+  // Initialize the extensions roster the first time through:
+  if (!_extensionStates) {
+    function verbose (aMessage) {
+      // log(">>> " + aMessage);
+    }
+    log("[Test Harness] Scanning extensions...");
+
+    // Use the rdf:extensions datasource to enumerate extensions and get the
+    // following extension properties:
+    //
+    //   addonID - the key to use in _extensionStates
+    //   isDisabled - to identify disabled extensions
+    //   state - to identify extensions that are newly installed
+    //   version - the status string used for extensions that are operational
+    //
+    // Note that the "state" (if present) is not the general state of the
+    // extension, but strictly the outcome of an install operation that
+    // has just completed.  If not present, then the extension was installed
+    // during an earlier run of the app.  Thus, it can be used to detect
+    // newly installed exensions that won't be ready until the next launch
+    // of the app.  This does not appear to be documented, but there's a
+    // slim chance one might discern it from the logic and comments in
+    // extensions.js and nsExtensionManager:
+    //
+    // http://mxr.mozilla.org/mozilla1.9.2/source/toolkit/mozapps/extensions/content/extensions.js#438
+    // * which reveals that when showing the "installs" view, the types variable
+    //   is set to build a list of extensions whose "state" is not empty.
+    //
+    // http://mxr.mozilla.org/mozilla1.9.2/source/toolkit/mozapps/extensions/src/nsExtensionManager.js.in#7953
+    // * which states that the state property represents the current phase of
+    //   an install
+    // 
+    // http://mxr.mozilla.org/mozilla1.9.2/source/toolkit/mozapps/extensions/src/nsExtensionManager.js.in#7617
+    // * which shows that ExtensionsDataSource.updateDownloadState() sets the
+    //   state property
+    //
+    // http://mxr.mozilla.org/mozilla1.9.2/source/toolkit/mozapps/extensions/src/nsExtensionManager.js.in#4697
+    // * which shows that EM__setOp() sets the state to "success" (using
+    //   updateDownloadState()) if the extension reaches the OP_NEEDS_INSTALL
+    //   stage.
+    //
+    // Note that the opType property is cleared before control passes to
+    // Songbird, so the "needs-install" value of this property, which has
+    // a distintly useful sound to it, is gone at this point.
+    //
+    // The following logic is adapted from
+    // http://mxr.mozilla.org/mozilla1.9.2/source/toolkit/mozapps/extensions/content/extensions.js#2311
+    
+    
+    // Set up an enumerator of all extensions:
+    
+    let rdfService = Cc["@mozilla.org/rdf/rdf-service;1"]
+                       .getService(Ci.nsIRDFService);
+    let extensionsDS = rdfService.GetDataSource("rdf:extensions");
+    verbose("extensions datasource [" + extensionsDS.URI + "]");
+    
+    let container = Cc["@mozilla.org/rdf/container;1"]
+                      .createInstance(Ci.nsIRDFContainer);
+    container.Init(extensionsDS,
+                   rdfService.GetResource("urn:mozilla:item:root"));
+    let each = container.GetElements();
+
+    // Define the properties to look up:
+    const PREFIX_NS_EM = "http://www.mozilla.org/2004/em-rdf#";
+    const ADDONID_ARC = rdfService.GetResource(PREFIX_NS_EM + "addonID");
+    const STATE_ARC = rdfService.GetResource(PREFIX_NS_EM + "state");
+    const DISABLED_ARC =  rdfService.GetResource(PREFIX_NS_EM + "isDisabled");
+    const VERSION_ARC =  rdfService.GetResource(PREFIX_NS_EM + "version");
+
+    // Default to a blank set:
+    _extensionStates = {};
+
+    // Enumerate the extensions:
+    while (each.hasMoreElements()) {
+      let extensionRdf = each.getNext().QueryInterface(Ci.nsIRDFResource);
+      verbose("extension [" + extensionRdf.ValueUTF8 + "]");
+
+      // Get its add-on ID:
+      let addonID = extensionsDS.GetTarget(extensionRdf, ADDONID_ARC, true);
+      if (!(addonID instanceof Ci.nsIRDFLiteral)) {
+        verbose("INVALID " + ADDONID_ARC.ValueUTF8);
+        continue;
+      }
+
+      // Get the other properties of interest:
+      let installState = extensionsDS.GetTarget(extensionRdf, STATE_ARC, true);
+      let disabled = extensionsDS.GetTarget(extensionRdf, DISABLED_ARC, true);
+      let version = extensionsDS.GetTarget(extensionRdf, VERSION_ARC, true);
+      
+      // Check for successful install, then disabled status, then record its
+      // version as its status, and finally, mark it as bad if its properties
+      // weren't the expected type:
+      if (installState instanceof Ci.nsIRDFLiteral) {
+        verbose("install state [" + installState.Value + "]");
+        _extensionStates[addonID.Value] =
+          (installState.Value == "success") ? _TH_EXTENSION_NEEDS_RESTART :
+                                              _TH_EXTENSION_BAD;
+      }
+      else if (disabled instanceof Ci.nsIRDFLiteral &&
+               disabled.Value == "true")
+      {
+        verbose("disabled [" + disabled.Value + "]");
+        _extensionStates[addonID.Value] = _TH_EXTENSION_DISABLED;
+      }
+      else if (version instanceof Ci.nsIRDFLiteral) {
+        verbose("version [" + version.Value + "]");
+        _extensionStates[addonID.Value] = version.Value;
+      }
+      else {
+        verbose("RDF PROPERTIES INFO NOT FOUND <<<\n");
+        _extensionStates[addonID.Value] = _TH_EXTENSION_BAD;
+      }
+      
+      log("  " + addonID.Value + ": " + _extensionStates[addonID.Value]);
+    }
+  }
+
+  // The list of extensions is initialized.  Now check for the one
+  // specified.
+  
+  // Is it listed?
+  assertTrue((aExtensionID in _extensionStates),
+             "No such extension: " + aExtensionID);
+
+  let status = _extensionStates[aExtensionID];
+
+  // Is it inoperable?
+  switch (status) {
+    case _TH_EXTENSION_BAD:
+      fail("Required extension failed to install: " + aExtensionID);
+      break;
+
+    case _TH_EXTENSION_DISABLED:
+      fail("Required extension is disabled: " + aExtensionID);
+      break;
+
+    case _TH_EXTENSION_NEEDS_RESTART:
+      skip("Required extension " + aExtensionID +
+           " is newly installed.  You must relaunch to run this test.");
+      break;
+  }
+
+  // The extension is ready.  Its status will be its version.  Maybe
+  // the caller would like to know this tidbit:
+  return status;
+}
+
 function fail(aMessage) {
   var msg = (aMessage != null) ? ( "FAIL : " +  aMessage ) : "FAIL";
   doThrow(msg);
@@ -140,6 +316,15 @@ function fail(aMessage) {
 function failNoThrow(aMessage) {
   var msg = (aMessage != null) ? ( "FAIL : " +  aMessage ) : "FAIL";
   doFail(msg);
+}
+
+// Skip the current test without registering a failure
+function skip(aMessage) {
+  if (!aMessage) {
+    aMessage = "SKIPPING TEST";
+  }
+  log("*** [" + _test_name + "] - WARNING: " + aMessage);
+  throw _TH_SKIP;
 }
 
 function testPending() {

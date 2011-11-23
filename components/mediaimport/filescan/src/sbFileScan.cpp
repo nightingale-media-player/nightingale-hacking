@@ -818,7 +818,8 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   if(bFlag)
   {
     sbIDirectoryEnumerator * pDirEntries;
-    sbGetDirectoryEntries(pFile, &pDirEntries);
+    rv = sbGetDirectoryEntries(pFile, &pDirEntries);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool keepRunning = !m_ThreadShouldShutdown;
 
@@ -846,7 +847,25 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
         pEntry->IsDirectory(&bIsDirectory);
         pEntry->IsHidden(&bIsHidden);
 
-        if(!bIsHidden || bSearchHidden)
+        // If it's special, we always want to skip it. This causes files with a
+        // dot prefix to be treated as hidden which they are on Mac and Linux.
+        // Windows will include dot prefixed file as it did before the
+        // file scan reimplementation in bug 24478
+        PRBool isSpecial = PR_FALSE;
+        pEntry->IsSpecial(&isSpecial);
+
+#if XP_MACOSX
+        // If the path begins with a ._ we need to ignore on Mac. The Mac
+        // API's filter out these files as that designates that they are
+        // temporary files.
+        nsString fileName;
+        rv = pEntry->GetLeafName(fileName);
+        NS_ENSURE_SUCCESS(rv, rv);
+        isSpecial |= (fileName.Length() >= 2 &&
+                      fileName[0] == PRUnichar('.') &&
+                      fileName[1] == PRUnichar('_'));
+#endif
+        if(!isSpecial && (!bIsHidden || bSearchHidden))
         {
           if(bIsFile)
           {
@@ -893,7 +912,7 @@ sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
             rv = pMoreEntries->Enumerate(pEntry);
             NS_ENSURE_SUCCESS(rv, rv);
 
-            if(pMoreEntries)
+            if(pEntry)
             {
               dirStack.push_back(pDirEntries);
               fileEntryStack.push_back(pEntry);

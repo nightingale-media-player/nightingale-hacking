@@ -60,6 +60,25 @@ mainWinInit.onUnload = function()
   document.removeEventListener("sb-overlay-load", SBPostOverlayLoad, false);
   SBUninitialize();
 }
+
+/**
+ * Check to see if we're doing a first run import. First run import will load
+ * the media page on completion so we need to skip the default loading of the
+ * page
+ */
+function checkFirstRun()
+{
+  var firstRunDoImportLibrary =
+   Application.prefs.getValue("songbird.firstrun.do_import_library",
+                              false);
+  if (firstRunDoImportLibrary) {
+   Application.prefs.setValue("songbird.firstrun.skip_load_default_page", 
+                              true);
+  }
+}
+
+checkFirstRun();
+
 window.addEventListener("load", mainWinInit.onLoad, false);
 window.addEventListener("unload", mainWinInit.onUnload, false);
 document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);

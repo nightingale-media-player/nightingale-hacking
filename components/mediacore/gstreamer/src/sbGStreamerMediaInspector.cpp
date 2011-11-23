@@ -44,6 +44,7 @@
 /* Timeout for an inspectMedia() call, in ms */
 #define GST_MEDIA_INSPECTOR_TIMEOUT (2000)
 
+#define GST_TYPE_PROPERTY   "gst_type"
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -188,7 +189,7 @@ sbGStreamerMediaInspector::GetProgress(PRUint32* aProgress)
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aProgress);
 
-  *aProgress = 0; // Unknown 
+  *aProgress = 0; // Unknown
   return NS_OK;
 }
 
@@ -286,7 +287,7 @@ sbGStreamerMediaInspector::OnJobProgress()
 
   // Announce our status to the world
   for (PRInt32 i = mProgressListeners.Count() - 1; i >= 0; --i) {
-     // Ignore any errors from listeners 
+     // Ignore any errors from listeners
      mProgressListeners[i]->OnJobProgress(this);
   }
   return NS_OK;
@@ -336,30 +337,29 @@ sbGStreamerMediaInspector::GetMediaFormat(sbIMediaFormat **_retval)
 }
 
 NS_IMETHODIMP
-sbGStreamerMediaInspector::InspectMedia(sbIMediaItem *aMediaItem,
+sbGStreamerMediaInspector::InspectMediaURI(const nsAString & aURI,
                                         sbIMediaFormat **_retval)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_ARG_POINTER (aMediaItem);
   NS_ENSURE_ARG_POINTER (_retval);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   PRBool processed = PR_FALSE;
   PRBool isMainThread = NS_IsMainThread();
-  
+
   nsCOMPtr<nsIThread> target;
   if (isMainThread) {
     rv = NS_GetMainThread(getter_AddRefs(target));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   NS_ASSERTION(!isMainThread,
                "Synchronous InspectMedia is background-thread only");
 
   // Reset internal state tracking.
   ResetStatus();
 
-  rv = InspectMediaAsync (aMediaItem);
+  rv = InspectMediaURIAsync (aURI);
   NS_ENSURE_SUCCESS(rv, rv);
 
   while (PR_AtomicAdd (&mFinished, 0) == 0)
@@ -394,6 +394,46 @@ sbGStreamerMediaInspector::InspectMedia(sbIMediaItem *aMediaItem,
 }
 
 NS_IMETHODIMP
+sbGStreamerMediaInspector::InspectMedia(sbIMediaItem *aMediaItem,
+                                        sbIMediaFormat **_retval)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER (aMediaItem);
+  NS_ENSURE_ARG_POINTER (_retval);
+
+  // Get the content location from the media item. (we don't use GetContentSrc
+  // because we want the string form, not a URI, and URI objects aren't
+  // threadsafe)
+  nsString sourceURI;
+  nsresult rv = aMediaItem->GetProperty(
+          NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), sourceURI);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  // let InspectMediaURI do the work
+  return InspectMediaURI(sourceURI, _retval);
+}
+
+NS_IMETHODIMP
+sbGStreamerMediaInspector::InspectMediaURIAsync(const nsAString & aURI)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  mSourceURI = aURI;
+  // Reset internal state tracking.
+  ResetStatus();
+
+  nsresult rv = StartTimeoutTimer();
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  // Set the pipeline to PAUSED. This will allow the pipeline to preroll,
+  // at which point we can inspect the caps on the pads, and look at the events
+  // that we have collected.
+  rv = PausePipeline();
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerMediaInspector::InspectMediaAsync(sbIMediaItem *aMediaItem)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -402,22 +442,13 @@ sbGStreamerMediaInspector::InspectMediaAsync(sbIMediaItem *aMediaItem)
   // Get the content location from the media item. (we don't use GetContentSrc
   // because we want the string form, not a URI, and URI objects aren't
   // threadsafe)
+  nsString sourceURI;
   nsresult rv = aMediaItem->GetProperty(
-          NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), mSourceURI);
-
-  // Reset internal state tracking.
-  ResetStatus();
-
-  // Set the pipeline to PAUSED. This will allow the pipeline to preroll,
-  // at which point we can inspect the caps on the pads, and look at the events
-  // that we have collected.
-  rv = PausePipeline();
+          NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), sourceURI);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  rv = StartTimeoutTimer();
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  return NS_OK;
+  // let InspectMediaURIAsync do the work
+  return InspectMediaURIAsync(sourceURI);
 }
 
 nsresult
@@ -736,7 +767,7 @@ sbGStreamerMediaInspector::HandleStateChangeMessage(GstMessage *message)
     gst_message_parse_state_changed (message,
             &oldstate, &newstate, &pendingstate);
 
-    if (pendingstate == GST_STATE_VOID_PENDING && 
+    if (pendingstate == GST_STATE_VOID_PENDING &&
         newstate == GST_STATE_PAUSED)
     {
       mIsPaused = PR_TRUE;
@@ -784,7 +815,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
   }
 
   gst_iterator_free (it);
-  
+
   NS_ENSURE_SUCCESS (rv, rv);
 
   if (mAudioSrc) {
@@ -939,6 +970,9 @@ sbGStreamerMediaInspector::ProcessContainerProperties (
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
+  rv = writableBag->SetPropertyAsACString(NS_LITERAL_STRING(GST_TYPE_PROPERTY),
+                                          nsCString(name));
+  NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "video/mpeg")) {
     gboolean systemstream;
@@ -950,6 +984,20 @@ sbGStreamerMediaInspector::ProcessContainerProperties (
     }
   }
 
+  // get total duration of media item
+  GstQuery *query;
+  query = gst_query_new_duration (GST_FORMAT_TIME);
+  gboolean res = gst_element_query (mPipeline, query);
+  // initialize to unknown
+  gint64 duration = -1;
+  if (res) {
+    gst_query_parse_duration (query, NULL, &duration);
+  }
+  gst_query_unref (query);
+  rv = writableBag->SetPropertyAsInt64 (
+         NS_LITERAL_STRING("duration"), duration);
+  NS_ENSURE_SUCCESS (rv, rv);
+
   // TODO: Additional properties for other container formats.
 
   rv = aContainerFormat->SetProperties (writableBag);
@@ -957,7 +1005,7 @@ sbGStreamerMediaInspector::ProcessContainerProperties (
 
   return NS_OK;
 }
- 
+
 nsresult
 sbGStreamerMediaInspector::ProcessVideoProperties (
                              sbIMediaFormatVideoMutable *aVideoFormat,
@@ -972,6 +1020,9 @@ sbGStreamerMediaInspector::ProcessVideoProperties (
   const gchar *name = gst_structure_get_name (aStructure);
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = writableBag->SetPropertyAsACString(NS_LITERAL_STRING(GST_TYPE_PROPERTY),
+                                          nsCString(name));
   NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "video/mpeg")) {
@@ -1027,7 +1078,7 @@ sbGStreamerMediaInspector::ProcessVideoProperties (
 
   return NS_OK;
 }
- 
+
 nsresult
 sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 {
@@ -1055,7 +1106,7 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
     // information about what codec is being used.
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw video from the demuxer. Alternatively, it means we screwed up
-    // somehow. 
+    // somehow.
     sbGstCaps videoCaps = gst_pad_get_negotiated_caps (mVideoDecoderSink);
     GstStructure *structure = gst_caps_get_structure (videoCaps, 0);
 
@@ -1101,6 +1152,9 @@ sbGStreamerMediaInspector::ProcessAudioProperties (
   const gchar *name = gst_structure_get_name (aStructure);
   nsCOMPtr<nsIWritablePropertyBag2> writableBag =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = writableBag->SetPropertyAsACString(NS_LITERAL_STRING(GST_TYPE_PROPERTY),
+                                          nsCString(name));
   NS_ENSURE_SUCCESS (rv, rv);
 
   if ( !strcmp (name, "audio/mpeg")) {
@@ -1151,6 +1205,27 @@ sbGStreamerMediaInspector::ProcessAudioProperties (
     }
   }
 
+  /// @todo There's no need to check the codec type before extracting
+  ///       interesting properties.  The above code here and in
+  ///       ProcessVideoProperties() and ProcessContainerProperties()
+  ///       should be updated to use the following pattern:
+
+  static const gchar * const INTERESTING_AUDIO_PROPS [] = {
+                                // pcm
+                               "width",
+                               "endianness",
+                               "signed",
+
+                               // aac
+                               "codec_data"
+                             };
+
+  rv = SetPropertiesFromGstStructure(writableBag,
+                                     aStructure,
+                                     INTERESTING_AUDIO_PROPS,
+                                     NS_ARRAY_LENGTH(INTERESTING_AUDIO_PROPS));
+  NS_ENSURE_SUCCESS (rv, rv);
+
   rv = aAudioFormat->SetProperties (writableBag);
   NS_ENSURE_SUCCESS (rv, rv);
 
@@ -1191,7 +1266,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     // information about what codec is being used.
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw audio from the demuxer. Alternatively, it means we screwed up
-    // somehow. 
+    // somehow.
     sbGstCaps audioCaps = gst_pad_get_negotiated_caps (mAudioDecoderSink);
     structure = gst_caps_get_structure (audioCaps, 0);
 
@@ -1201,19 +1276,17 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
 
     rv = format->SetAudioType (NS_ConvertUTF8toUTF16(mimeType));
     NS_ENSURE_SUCCESS (rv, rv);
-
-    // format-specific attributes.
-    rv = ProcessAudioProperties(format, structure);
-    NS_ENSURE_SUCCESS (rv, rv);
   }
   else {
     // Raw audio, mark as such.
     // TODO: Can we add any more checks in here to be sure it's ACTUALLY raw
     // audio, and not just an internal error?
     format->SetAudioType (NS_LITERAL_STRING ("audio/x-raw"));
-
-    // TODO: Add additional properties for raw audio?
   }
+
+  // format-specific attributes.
+  rv = ProcessAudioProperties(format, structure);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   rv = CallQueryInterface(format.get(), aAudioFormat);
   NS_ENSURE_SUCCESS (rv, rv);
