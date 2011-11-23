@@ -28,10 +28,10 @@
 #include <mozilla/ModuleUtils.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbVariant)
-NS_DEFINE_NAMED_CID(SB_VARIANT_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_VARIANT_CID);
 
 static const mozilla::Module::CIDEntry kSongbirdMozVariantCIDs[] = {
-    { &kSB_VARIANT_CID, true, NULL, sbVariantConstructor },
+    { &kSONGBIRD_VARIANT_CID, true, NULL, sbVariantConstructor },
     { NULL }
 };
 

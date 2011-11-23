@@ -31,10 +31,10 @@
 #include <mozilla/ModuleUtils.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbClipboardHelper)
-NS_DEFINE_NAMED_CID(SB_CLIPBOARD_HELPER_CID);
+NS_DEFINE_NAMED_CID(SONGBIRD_CLIPBOARD_HELPER_CID);
 
 static const mozilla::Module::CIDEntry kSongbirdMozClipboardCIDs[] = {
-    { &kSB_CLIPBOARD_HELPER_CID, true, NULL, sbClipboardHelperConstructor },
+    { &kSONGBIRD_CLIPBOARD_HELPER_CID, true, NULL, sbClipboardHelperConstructor },
     { NULL }
 };
 
