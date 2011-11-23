@@ -94,12 +94,16 @@ public:
 
   NS_IMETHOD Run()
   {
+    // Get the raw pointer instead of a nsRefPtr because operator->*
+    // gets confused on some versions of GCC
+    ClassType *obj = mObject.get();
+
     // Do nothing if no object was provided.
-    if (!mObject)
+    if (!obj)
       return NS_OK;
 
     // Invoke method.
-    ReturnType returnValue = (mObject->*mMethod)(mArg1Value);
+    ReturnType returnValue = (obj->*mMethod)(mArg1Value);
     {
       mReturnValue = returnValue;
     }
