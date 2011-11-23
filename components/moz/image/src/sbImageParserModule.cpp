@@ -35,7 +35,9 @@
 
 // Construct the sbImageParser object
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageParser)
+
 NS_DEFINE_NAMED_CID(SONGBIRD_IMAGEPARSER_CID);
+
 
 static const mozilla::Module::CIDEntry ksbImageParserCIDs[] = {
     { &kSONGBIRD_IMAGEPARSER_CID, true, NULL, sbImageParserConstructor },
