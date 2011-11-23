@@ -30,23 +30,37 @@
 // Self imports.
 #include "sbImageParser.h"
 
-// Mozilla imports.
-#include <nsIGenericFactory.h>
+// Mozilla includes
+#include <mozilla/ModuleUtils.h>
 
 // Construct the sbImageParser object
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageParser)
+NS_DEFINE_NAMED_CID(SONGBIRD_IMAGEPARSER_CID);
 
-// Module component information.
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_IMAGEPARSER_CLASSNAME,
-    SONGBIRD_IMAGEPARSER_CID,
-    SONGBIRD_IMAGEPARSER_CONTRACTID,
-    sbImageParserConstructor
-  }
+static const mozilla::Module::CIDEntry ksbImageParserCIDs[] = {
+    { &kSONGBIRD_IMAGEPARSER_CID, true, NULL, sbImageParserConstructor },
+    { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbImageParser, components)
+
+static const mozilla::Module::ContractIDEntry ksbImageParserContracts[] = {
+    { SONGBIRD_IMAGEPARSER_CONTRACTID, &kSONGBIRD_IMAGEPARSER_CID },
+    { NULL }
+};
+
+
+static const mozilla::Module::CategoryEntry ksbImageParserCategories[] = {
+    { SONGBIRD_IMAGEPARSER_CLASSNAME, SONGBIRD_IMAGEPARSER_CONTRACTID },
+    { NULL }
+};
+
+
+static const mozilla::Module ksbImageParser = {
+    mozilla::Module::kVersion,
+    ksbImageParserCIDs,
+    ksbImageParserContracts,
+    ksbImageParserCategories
+};
+
+NSMODULE_DEFN(sbImageParser) = &ksbImageParser;
 
