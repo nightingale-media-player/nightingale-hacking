@@ -24,87 +24,33 @@
 //
 */
 
-#include "nsIGenericFactory.h"
+#include <mozilla/ModuleUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
 #include <nsServiceManagerUtils.h>
 
 #include "sbStringTransform.h"
 #include <sbIStringTransform.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStringTransform, Init);
+NS_DEFINE_NAMED_CID(SB_STRINGTRANSFORM_CID);
 
-/**
- * Register the Songbird string transform service component.
- */
+// Mook: what should I do with SB_STRINGTRANSFORM_DESCRIPTION ?
 
-static NS_METHOD
-sbStringTransformRegister(nsIComponentManager*         aCompMgr,
-                          nsIFile*                     aPath,
-                          const char*                  aLoaderStr,
-                          const char*                  aType,
-                          const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the app-startup category.
-  rv = categoryManager->AddCategoryEntry
-                          ("app-startup",
-                           SB_STRINGTRANSFORM_CLASSNAME,
-                           "service," SB_STRINGTRANSFORM_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Unregister the Songbird string transform service component.
- */
-
-static NS_METHOD
-sbStringTransformUnregister(nsIComponentManager*         aCompMgr,
-                            nsIFile*                     aPath,
-                            const char*                  aLoaderStr,
-                            const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the app-startup category.
-  rv = categoryManager->DeleteCategoryEntry("app-startup",
-                                            SB_STRINGTRANSFORM_CLASSNAME,
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-static const nsModuleComponentInfo components[] =
-{
-	{
-    SB_STRINGTRANSFORM_DESCRIPTION,
-    SB_STRINGTRANSFORM_CID,
-    SB_STRINGTRANSFORM_CONTRACTID,
-    sbStringTransformConstructor,
-    sbStringTransformRegister,
-    sbStringTransformUnregister
-	},
+static const mozilla::Module::CIDEntry ksbStringTransformCIDs[] = {
+    { &kSB_STRINGTRANSFORM_CID, true, NULL, sbStringTransformConstructor },
+    { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdIntlModule, components)
+
+static const mozilla::Module::ContractIDEntry ksbStringTransformContracts[] = {
+    { SB_STRINGTRANSFORM_CONTRACTID, &kSB_STRINGTRANSFORM_CID },
+    { NULL }
+};
+
+static const mozilla::Module kSongbirdStringTransformModule = {
+    mozilla::Module::kVersion,
+    ksbStringTransformCIDs,
+    ksbStringTransformContracts
+};
+
+NSMODULE_DEFN(sbStringTransform) = &kSongbirdStringTransformModule;
