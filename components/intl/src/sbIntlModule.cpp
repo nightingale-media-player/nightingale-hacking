@@ -34,8 +34,6 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStringTransform, Init);
 NS_DEFINE_NAMED_CID(SB_STRINGTRANSFORM_CID);
 
-// Mook: what should I do with SB_STRINGTRANSFORM_DESCRIPTION ?
-
 static const mozilla::Module::CIDEntry ksbStringTransformCIDs[] = {
     { &kSB_STRINGTRANSFORM_CID, true, NULL, sbStringTransformConstructor },
     { NULL }

@@ -109,8 +109,6 @@ interface sbIStringTransform : nsISupports
 
 %{C++
 
-#define SB_STRINGTRANSFORM_DESCRIPTION    \
-  "Songbird String Transform"
 #define SB_STRINGTRANSFORM_CONTRACTID     \
   "@songbirdnest.com/Songbird/Intl/StringTransform;1"
 #define SB_STRINGTRANSFORM_CLASSNAME      \
