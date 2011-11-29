@@ -54,7 +54,7 @@ function runTest () {
   // Test extensions
   var extCount = {};
   var exts = manager.supportedFileExtensions(extCount);
-  expected = ["m3u"];
+  expected = ["m3u", "m3u8"];
 
   for (var i in expected) {
     assertTrue(
