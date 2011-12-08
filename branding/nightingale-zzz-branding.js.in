@@ -18,7 +18,7 @@ pref("xpinstall.whitelist.add.0", "translate.getnightingale.com");
 // Remote API whitelist. Syntax: domain=permission
 pref("nightingale.rapi.whitelist.add", "getnightingale.com=library_write");
 
-pref("nightingale.url.locales", "https://locales.getnightingale.com/bundles/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/locales.xml");
+pref("nightingale.url.locales", "http://alivebirds.org/langpacks/%VERSION%/locales.xml");
 
 pref("breakpad.reportURL", "http://crashreports.getnightingale.com/report/index/");
 
