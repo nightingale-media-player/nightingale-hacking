@@ -115,7 +115,7 @@ sbPropertyManager::sbPropertyManager()
   }
 #endif
 
-  PRBool success = mPropInfoHashtable.Init(100);
+  PRBool SB_UNUSED_IN_RELEASE(success) = mPropInfoHashtable.Init(100);
   NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
