@@ -67,23 +67,14 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbPropertyArray, nsIArray,
 sbPropertyArray::sbPropertyArray()
 : mArrayLock(nsnull),
   mStrict(PR_TRUE)
-{
-}
+{}
 
-sbPropertyArray::~sbPropertyArray()
-{
-  if(mArrayLock) {
-    nsAutoLock::DestroyLock(mArrayLock);
-  }
-}
+//i think mutex does this automatically
 
 nsresult
 sbPropertyArray::Init()
 {
-  mArrayLock = nsAutoLock::NewLock("sbPropertyArray::mArrayLock");
-  NS_ENSURE_TRUE(mArrayLock, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
+  : mArrayLock("sbPropertyArray::mArrayLock");
 }
 
 /**
