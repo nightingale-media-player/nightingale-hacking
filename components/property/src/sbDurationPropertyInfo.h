@@ -36,7 +36,7 @@
 #include <nsIDateTimeFormat.h>
 #include <nsILocale.h>
 #include <nsILocaleService.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <sbIPropertyUnitConverter.h>
 
 class sbDurationPropertyInfo : public sbPropertyInfo,

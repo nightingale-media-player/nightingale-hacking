@@ -26,11 +26,11 @@
 #include "sbPropertiesCID.h"
 
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIObserverService.h>
 #include <nsIStringBundle.h>
 
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
