@@ -58,6 +58,7 @@
 #include "sbStoragePropertyUnitConverter.h"
 #include "sbFrequencyPropertyUnitConverter.h"
 #include "sbBitratePropertyUnitConverter.h"
+#include <sbDebugUtils.h>
 #include <sbLockUtils.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbIPropertyBuilder.h>
@@ -70,16 +71,6 @@
  *  * To log this module, set the following environment variable:
  *   *   NSPR_LOG_MODULES=sbPropMan:5
  *    */
-#include <prlog.h>
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gPropManLog = nsnull;
-#endif
-
-#define LOG(args) PR_LOG(gPropManLog, PR_LOG_WARN, args)
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif
-
 
 #if !defined(SB_STRING_BUNDLE_CHROME_URL)
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
@@ -109,19 +100,15 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
 sbPropertyManager::sbPropertyManager()
 : mPropIDsLock(nsnull)
 {
-#ifdef PR_LOGGING
-  if (!gPropManLog) {
-    gPropManLog = PR_NewLogModule("sbPropMan");
-  }
-#endif
+  SB_PRLOG_SETUP(sbPropMan);
 
-  //PRBool SB_UNUSED_IN_RELEASE(success) = mPropInfoHashtable.Init(100);
-  //NS_ASSERTION(success,
-  // "sbPropertyManager::mPropInfoHashtable failed to initialize!");
+  PRBool SB_UNUSED_IN_RELEASE(success) = mPropInfoHashtable.Init(100);
+  NS_ASSERTION(success,
+    "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
-  //success = mPropDependencyMap.Init(100);
-  //NS_ASSERTION(success,
-  //  "sbPropertyManager::mPropInfoHashtable failed to initialize!");
+  success = mPropDependencyMap.Init(100);
+  NS_ASSERTION(success,
+    "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
   mPropIDsLock = PR_NewLock();
   NS_ASSERTION(mPropIDsLock,

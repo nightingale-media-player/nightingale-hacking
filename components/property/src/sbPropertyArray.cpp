@@ -65,16 +65,17 @@ NS_IMPL_CI_INTERFACE_GETTER6(sbPropertyArray, nsIArray,
                                               sbIMutablePropertyArray,
                                               nsIClassInfo)
 sbPropertyArray::sbPropertyArray()
-: mArrayLock(nsnull),
+: mArrayLock("sbPropertyArray::mArrayLock"),
   mStrict(PR_TRUE)
-{}
+{
+}
 
 //i think mutex does this automatically
 
 nsresult
 sbPropertyArray::Init()
 {
-  : mArrayLock("sbPropertyArray::mArrayLock");
+  return NS_OK;
 }
 
 /**
@@ -144,7 +145,7 @@ sbPropertyArray::GetLength(PRUint32* aLength)
 {
   NS_ENSURE_ARG_POINTER(aLength);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   *aLength = (PRUint32)mArray.Count();
   return NS_OK;
 }
@@ -160,7 +161,7 @@ sbPropertyArray::QueryElementAt(PRUint32 aIndex,
   NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   nsCOMPtr<nsISupports> element = mArray.ObjectAt(aIndex);
   NS_ENSURE_STATE(element);
 
@@ -191,7 +192,7 @@ sbPropertyArray::IndexOf(PRUint32 aStartIndex,
   nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   PRInt32 index = mArray.IndexOf(property);
   NS_ENSURE_TRUE(index >= 0, NS_ERROR_NOT_AVAILABLE);
 
@@ -212,7 +213,7 @@ sbPropertyArray::Enumerate(nsISimpleEnumerator** _retval)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   PRUint32 length = mArray.Count();
   for (PRUint32 i = 0; i < length; i++) {
     rv = array->AppendElement(mArray.ObjectAt(i), PR_FALSE);
@@ -238,7 +239,7 @@ sbPropertyArray::AppendElement(nsISupports* aElement,
   nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   if (mStrict) {
     PRBool valid;
@@ -262,7 +263,7 @@ sbPropertyArray::RemoveElementAt(PRUint32 aIndex)
 {
   NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   PRBool success = mArray.RemoveObjectAt(aIndex);
   NS_ENSURE_STATE(success);
   return NS_OK;
@@ -286,7 +287,7 @@ sbPropertyArray::InsertElementAt(nsISupports* aElement,
   nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   if (mStrict) {
     PRBool valid;
@@ -320,7 +321,7 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
   nsCOMPtr<sbIProperty> property = do_QueryInterface(aElement, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   if (mStrict) {
     PRBool valid;
@@ -342,7 +343,7 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
 NS_IMETHODIMP
 sbPropertyArray::Clear()
 {
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   mArray.Clear();
   return NS_OK;
 }
@@ -356,7 +357,7 @@ sbPropertyArray::AppendProperty(const nsAString& aID,
 {
   NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   if (mStrict) {
     PRBool valid;
@@ -387,7 +388,7 @@ sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
   PRUint32 propertyCount;
   nsresult rv;
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   // If skipping duplicates, create the list of IDs of properties already in
   // array.
@@ -454,7 +455,7 @@ sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
 NS_IMETHODIMP
 sbPropertyArray::SetStrict(PRBool aStrict)
 {
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   if ((aStrict != mStrict) && mArray.Count()) {
     NS_WARNING("Can't change strict setting of a non-empty sbPropertyArray!");
@@ -482,7 +483,7 @@ sbPropertyArray::GetStrict(PRBool* aStrict)
 {
   NS_ENSURE_ARG_POINTER(aStrict);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   *aStrict = mStrict;
   return NS_OK;
@@ -498,7 +499,7 @@ sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
   NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   nsCOMPtr<sbIProperty> property = mArray.ObjectAt(aIndex);
   NS_ENSURE_STATE(property);
 
@@ -515,7 +516,7 @@ sbPropertyArray::GetPropertyValue(const nsAString& aID,
 {
   nsresult rv;
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
   PRUint32 length = mArray.Count();
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIProperty> property = mArray.ObjectAt(i);
@@ -543,7 +544,7 @@ sbPropertyArray::ToString(nsAString& _retval)
 {
   nsresult rv;
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   nsAutoString buff;
   buff.AssignLiteral("[");
@@ -597,7 +598,7 @@ sbPropertyArray::Read(nsIObjectInputStream* aStream)
 
   nsresult rv;
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   rv = aStream->ReadBoolean(&mStrict);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -634,7 +635,7 @@ sbPropertyArray::Write(nsIObjectOutputStream* aStream)
 
   nsresult rv;
 
-  nsAutoLock lock(mArrayLock);
+  mozilla::MutexAutoLock lock(mArrayLock);
 
   rv = aStream->WriteBoolean(mStrict);
   NS_ENSURE_SUCCESS(rv, rv);
