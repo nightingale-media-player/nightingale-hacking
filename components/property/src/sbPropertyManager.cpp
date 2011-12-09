@@ -115,13 +115,13 @@ sbPropertyManager::sbPropertyManager()
   }
 #endif
 
-  //PRBool SB_UNUSED_IN_RELEASE(success) = mPropInfoHashtable.Init(100);
-  //NS_ASSERTION(success,
-  // "sbPropertyManager::mPropInfoHashtable failed to initialize!");
+  PRBool SB_UNUSED_IN_RELEASE(success) = mPropInfoHashtable.Init(100);
+  NS_ASSERTION(success,
+    "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
-  //success = mPropDependencyMap.Init(100);
-  //NS_ASSERTION(success,
-  //  "sbPropertyManager::mPropInfoHashtable failed to initialize!");
+  success = mPropDependencyMap.Init(100);
+  NS_ASSERTION(success,
+    "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
   mPropIDsLock = PR_NewLock();
   NS_ASSERTION(mPropIDsLock,
