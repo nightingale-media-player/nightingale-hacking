@@ -115,7 +115,11 @@ sbPropertyManager::sbPropertyManager()
   PRBool success = mPropInfoHashtable.Init(100);
   NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
-    
+
+  success = mPropDependencyMap.Init(100);
+  NS_ASSERTION(success,
+    "sbPropertyManager::mPropInfoHashtable failed to initialize!");
+
   mPropIDsLock = PR_NewLock();
   NS_ASSERTION(mPropIDsLock,
     "sbPropertyManager::mPropIDsLock failed to create lock!");
