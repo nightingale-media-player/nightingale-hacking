@@ -13,6 +13,9 @@ to further pursue the goal of having a player that works with system
 libraries. It currently won't build, but we're happy to have help in
 getting it to the point of building and release.
 
+The official repository is located at 
+https://github.com/nightingale-media-player/nightingale-hacking
+
 ========================================================================
 Notes:
 ========================================================================
