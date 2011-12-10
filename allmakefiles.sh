@@ -77,10 +77,10 @@ update
 # Removed tools/mochitest and extras from SCANNED_MAKEFILE_DIRS
 
 echo "allmakefiles.sh: finding makefiles..."
-pushd ../
+cd ../
 # Find all Makefile.in file paths, then strip the leading ./ and the trailing .in
 MAKEFILES_auto=`find $SCANNED_MAKEFILE_DIRS -name .svn -prune -or -name Makefile.in -print | perl -pe "s/^\.\///; s/\.in\n\$/ /;"`
-popd
+cd compiled
 echo "allmakefiles.sh: done"
 
 

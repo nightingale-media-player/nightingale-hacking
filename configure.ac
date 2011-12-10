@@ -37,6 +37,7 @@ AC_CANONICAL_SYSTEM
 # The obj is now moved down so that it can take advantage of using the arch and build type.
 #
 
+OBJDIRNAME="compiled"
 DISTDIRNAME="dist"
 
 #
@@ -308,8 +309,6 @@ case "$target" in
 esac
 AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
-
-OBJDIRNAME="compiled-$SB_CONFIGURATION-$SB_ARCH"
 
 #
 #  Check for --enable-installer

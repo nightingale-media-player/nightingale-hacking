@@ -27,7 +27,7 @@
 #   just how it's gonna be... This MUST match what's in
 #   configure.ac or bad things will happen!
 #
-OBJDIRBASENAME  = compiled
+OBJDIRNAME  = compiled
 DISTDIRNAME = dist
 OBJDIR_DEPTH = ..
 
@@ -43,6 +43,9 @@ _AUTOCONF_TOOLS_DIR = $(TOPSRCDIR)/build/autoconf
 CONFIGURE = $(TOPSRCDIR)/configure
 ALLMAKEFILES = $(TOPSRCDIR)/allmakefiles.sh
 CONFIGUREAC = $(TOPSRCDIR)/configure.ac
+OBJDIR = $(TOPSRCDIR)/$(OBJDIRNAME)
+DISTDIR = $(OBJDIR)/$(DISTDIRNAME)
+CONFIGSTATUS = $(OBJDIR)/config.status
 
 CLOBBER_TRASH = $(CONFIGURE) \
                 $(TOPSRCDIR)/.nightingaleconfig.mk \
@@ -50,9 +53,6 @@ CLOBBER_TRASH = $(CONFIGURE) \
                 $(NULL)
 
 CONFIGURE_ARGS = $(NULL)
-
-ARCH = $(shell uname -m)
-SB_ARCH = -$(shell uname -m)
 
 ####################################
 # Load nightingaleconfig Options
@@ -112,8 +112,6 @@ ifdef DEBUG
    ifndef SB_DISABLE_TESTS
       CONFIGURE_ARGS += --enable-tests
    endif
-
-   OBJDIRNAME = $(OBJDIRBASENAME)-debug$(SB_ARCH)
 endif
 
 # release build options
@@ -128,8 +126,6 @@ ifndef DEBUG
       CONFIGURE_ARGS += --enable-tests
       ENV_SETTING_WARN += --enable-tests
    endif
-    
-   OBJDIRNAME = $(OBJDIRBASENAME)-release$(SB_ARCH)
 endif
 
 # choose core wrappers to enable
@@ -173,10 +169,6 @@ endif
 ifneq (,$(ENV_SETTING_WARN))
    $(warning WARNING: Setting build options via the environment is deprecated; add the following options to your nightingale.config: $(ENV_SETTING_WARN). Support for this will eventually go away.)
 endif
-
-OBJDIR = $(TOPSRCDIR)/$(OBJDIRNAME)
-DISTDIR = $(OBJDIR)/$(DISTDIRNAME)
-CONFIGSTATUS = $(OBJDIR)/config.status
 
 #
 # Set some needed commands; let configure figure out the rest
@@ -243,4 +235,4 @@ depclobber:
 build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
-.PHONY : all debug nightingale_output run_autoconf run_configure clean clobber depclobber build 
+.PHONY : all debug nightingale_output run_autoconf run_configure clean clobber depclobber build
