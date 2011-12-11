@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- options.xul
+     The preference dialog, accessible through AddOn manager and help group.
+     -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE prefwindow [
+  <!ENTITY % brandDTD SYSTEM "chrome://foldersync/locale/branding.dtd">
+  %brandDTD;
+  <!ENTITY % pageDTD SYSTEM "chrome://foldersync/locale/dialogs.dtd">
+  %pageDTD;
+]>
+
+<prefwindow id="foldersync-options"
+          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          title="&options.title;"
+          ondialogaccept="return foldersync.options.onAccept()"
+          style="min-width:300px">
+  
+  <!-- connect local namespace to global FolderSync controllers -->
+  <script src="../connect.js"></script>
+  
+  <!-- load Options controller for this window -->
+  <script src="options.js"></script>
+  
+  <prefpane id="foldersync-options-pane" label="&options.title;">
+    
+    <tabbox  flex="1">
+      <tabs >
+        <tab label="&options.ui.title;"/>
+        <tab label="&availabletags.window.title;"/>
+      </tabs>
+      <tabpanels flex="1" >
+        <tabpanel flex="1" orient="vertical"> <!-- UI -->
+          <checkbox id="foldersync-options-ui-notification"
+                    label="&options.ui.notification;"
+                    oncommand="foldersync.options.onChange()" />
+          <checkbox id="foldersync-options-ui-notification-exclusive"
+                    label="&options.ui.notificationExclusive;"
+                    style="margin-left:20px" />
+          <spacer height="10" />
+          <checkbox id="foldersync-options-ui-show-favorite"
+                    label="&options.ui.show.favorite;*" />
+          <checkbox id="foldersync-options-ui-show-help"
+                    label="&options.ui.show.help;*"
+                    disabled="true" />
+          <spacer flex="1" />
+          <label width="1">&options.ui.restart;</label>
+        </tabpanel>
+        <tabpanel flex="1" orient="vertical"> <!-- Tags -->
+          <label>&availabletags.info.defaulttags;</label>
+          <grid flex="1">
+            <columns>
+              <column />
+              <column flex="1" />
+            </columns>
+            <rows>
+              <row align="center">
+                <label>&availabletags.artist;</label>
+                <textbox id="foldersync-options-tags-artist" />
+              </row>
+              <row align="center">
+                <label>&availabletags.title;</label>
+                <textbox id="foldersync-options-tags-title" />
+              </row>
+              <row align="center">
+                <label>&availabletags.album;</label>
+                <textbox id="foldersync-options-tags-album" />
+              </row>
+              <row align="center">
+                <label>&availabletags.albumartist;</label>
+                <checkbox id="foldersync-options-tags-albumartist-fallback"
+                          label="&options.tags.albumartist.fallback;"
+                          oncommand="foldersync.options.onChange()" />
+              </row>
+              <row align="center">
+                <label />
+                <textbox id="foldersync-options-tags-albumartist" />
+              </row>
+              <row align="center">
+                <label>&availabletags.discnumber;</label>
+                <textbox id="foldersync-options-tags-discnumber" />
+              </row>
+              <row align="center">
+                <label>&availabletags.tracknumber;</label>
+                <textbox id="foldersync-options-tags-tracknumber" />
+              </row>
+              <row align="center">
+                <label>&availabletags.genre;</label>
+                <textbox id="foldersync-options-tags-genre" />
+              </row>
+              <row align="center">
+                <label>&availabletags.rating;</label>
+                <textbox id="foldersync-options-tags-rating" />
+              </row>
+              <row align="center">
+                <label>&availabletags.year;</label>
+                <textbox id="foldersync-options-tags-year" />
+              </row>
+              <row align="center">
+                <label>&availabletags.disccount;</label>
+                <textbox id="foldersync-options-tags-disccount" />
+              </row>
+              <row align="center">
+                <label>&availabletags.composer;</label>
+                <textbox id="foldersync-options-tags-composer" />
+              </row>
+              <row align="center">
+                <label>&availabletags.producer;</label>
+                <textbox id="foldersync-options-tags-producer" />
+              </row>
+            </rows>
+          </grid>
+        </tabpanel>
+      </tabpanels>
+    </tabbox>
+  </prefpane>
+</prefwindow>

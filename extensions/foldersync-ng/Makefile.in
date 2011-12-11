@@ -3,7 +3,7 @@
 #
 # This file is part of the Nightingale web player.
 #
-# Copyright(c) 2005-2009 POTI, Inc.
+# Copyright(c) 2011
 # http://www.getnightingale.com
 #
 # This file may be licensed under the terms of of the
@@ -22,30 +22,17 @@
 #=END NIGHTINGALE GPL
 #
 
-DEPTH = ..
+DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-DEFAULT_EXTENSIONS = AlbumArt \
-                     foldersync-ng \
-                     foldersync \
-                     $(NULL)
-                     
-NOARCH_EXTENSIONS = lastfm \
-                    $(NULL)  
-                    
-ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-   DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
-else
-   ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
-      DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
-   endif
-endif                                
+IS_EXTENSION = 1
+INSTALL_EXTENSION = 1
 
-SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
-          $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
+SUBDIRS = chrome \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

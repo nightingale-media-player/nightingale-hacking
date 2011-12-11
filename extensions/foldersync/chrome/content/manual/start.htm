@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Manual: Language Selection</title>
+    <link rel="stylesheet" type="text/css" href="manual.css" />
+  </head>
+  <body>
+    <div class="header smallheader">
+      <img alt="(Logo)" class="logo" src="chrome://foldersync/skin/fs-header.png" />
+      <h1>Language Selection</h1>
+    </div>
+    <div class="footer">
+      <p>
+        The Manual is available in the following languages:
+        <ul>
+          <li><a id ="link-en" href="en/index.htm">English</a></li>
+        </ul>
+      </p>
+    </div>
+  </body>
+  <script src="formatter.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    if (document.location.hash != "#select-locale"){
+      var locale = Components.classes["@mozilla.org/chrome/chrome-registry;1"].getService().QueryInterface(Components.interfaces.nsIXULChromeRegistry).getSelectedLocale("browser");
+      locale = locale.split('-')[0];
+      if (document.getElementById('link-'+locale))
+        document.location = document.getElementById('link-'+locale).href;
+    }
+  </script>
+</html>

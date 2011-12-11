@@ -1,0 +1,4 @@
+<!ENTITY foldersync.displayname "Verzeichnissynchronisation">
+<!ENTITY foldersync.tabname "Synchronisation">
+<!ENTITY foldersync.addonplatform "addons.getnightinale.com">
+<!ENTITY foldersync.addonURL "javascript:alert('Die AddOn-Platform für Nightingale steht noch nicht zur Verfügung.')">

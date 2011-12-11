@@ -1,0 +1,183 @@
+/* CSS for manual pages */
+
+*{
+  color: #333;
+  font-size: 12pt;
+  font-family: Arial, sans-serif;
+  text-align: justify;
+}
+
+h1,h2,h3,h4{
+  color: #000;
+  font-weight: bold;
+  margin-top: 7pt;
+  margin-bottom: 5pt;
+}
+
+h1{
+  font-size: 18pt;
+  margin-top: 14pt;
+}
+
+h2{
+  font-size: 15pt;
+  margin-top: 10pt;
+}
+
+h4{
+  font-weight: normal;
+  margin-top: 5pt;
+}
+
+p{
+  margin: 0;
+  margin-bottom: 3pt;
+}
+
+a{
+  color: #930;
+  text-decoration: none;
+}
+a[href*="http:"],
+a[href*="mailto:"]{
+  color: #229;
+}
+a:hover,
+a:active{
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+ul,ol{
+  margin: 0;
+  padding: 0;
+}
+
+li{
+  margin: 0;
+  margin-left: 20pt;
+  padding: 0;
+}
+
+.highlight{
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  background: rgba(0,0,0,0.1);
+  -moz-border-radius: 2pt;
+  padding: 0 2pt;
+}
+
+html{
+  background: -moz-linear-gradient(top,#EBCF4A,#FFF0A0 300pt);
+  min-height: 100%;
+}
+
+body{
+  padding: 7pt;
+}
+
+.content, .footer{
+  margin-top: 2pt;
+  background-color: rgba(255,255,255,0.5);
+  padding: 10pt;
+  padding-bottom: 7pt;
+}
+
+.content > *:first-child,
+.footer > *:first-child{
+  margin-top: 0;
+}
+
+.footer{
+  -moz-border-radius: 0 0 5pt 5pt;
+}
+
+.header{
+  background:-moz-linear-gradient(top, rgba(255,255,255,0.1), rgba(255,255,255,0.9) 40%, rgba(255,255,255,0.5));
+  padding: 10pt;
+  padding-top: 5pt;
+  padding-bottom: 5pt;
+  min-height: 50pt;
+  -moz-border-radius: 5pt 5pt 0 0;
+}
+
+.header > .logo{
+  float: right;
+  max-height: 50pt;
+}
+
+.navigator{
+  background: -moz-linear-gradient(left, rgba(0,0,0,0.0), rgba(100,50,0,0.05) 50pt, rgba(0,0,0,0.0));
+  padding:2pt;
+  padding-top: 1pt;
+  padding-left: 10pt;
+  margin: 40pt 80pt -5pt -10pt;
+}
+
+.header h1{
+  margin-top: 5pt;
+  font-size: 24pt;
+  background: none;
+  text-shadow: rgba(0,0,0,0.6) 2pt 2pt 3pt,
+               #FFF 0pt 0pt 10pt,
+               #FFF 0pt 0pt 15pt;
+}
+
+.header > div.js{
+  margin-top: 5pt;
+  position: relative;
+}
+
+.smallheader > div.js,
+.smallheader h1{
+  margin-top: 9pt;
+}
+
+.header > div.js > .js{
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-top: 0;
+  max-width: 100%;
+}
+
+.header > div.js > h1.outline{
+  text-shadow: none;
+  filter: url(../svg-effects.svg#dilate);
+}
+
+.header > div.js > h1.filling{
+  mask: url(../svg-effects.svg#vertical-fade);
+  filter: url(../svg-effects.svg#erode);
+  text-shadow: none;
+  color: #9E6E07;
+}
+
+.header + *{
+  clear: both;
+}
+
+.imagerow{
+  text-align: center;
+  background: -moz-linear-gradient(left, rgba(0,0,0,0.0), rgba(0,0,0,0.15), rgba(0,0,0,0.0));
+  margin: 10pt -10pt 10pt -10pt;
+  padding: 10pt;
+}
+
+.imagerow img{
+  width:49%;
+  border:0;
+}
+
+.example{
+  background: -moz-linear-gradient(left, rgba(0,0,0,0.0), rgba(0,0,0,0.05), rgba(0,0,0,0.0));
+  margin: 10pt -10pt 10pt -10pt;
+  padding: 0 10pt;
+  font-family: monospace;
+  font-size: 10pt;
+}
+
+#localeselector{
+  float: right;
+}

@@ -1,0 +1,72 @@
+<!ENTITY current.cancel "Cancelar">
+<!ENTITY current.details "Detalles...">
+<!ENTITY current.queue.cancel "Cancelar todo">
+<!ENTITY favorite.title "Sincronismos favoritos">
+<!ENTITY favorite.choose "(Elija un favorito)">
+<!ENTITY favorite.load "Carga">
+<!ENTITY favorite.load.tooltip "Cargue el Sync selectionado en control debajo e esta caja para cambiarlo antes de realizar la tarea">
+<!ENTITY favorite.delete "Borrar...">
+<!ENTITY favorite.delete.tooltip "Borrar sincronismos favoritos seleccionados">
+<!ENTITY favorite.start "Comenzar">
+<!ENTITY favorite.start.tooltip "Realizar los sincronismos favoritos marcados">
+<!ENTITY profile.current "Perfil actual:">
+<!ENTITY profile.save "Grabar...">
+<!ENTITY profile.save.tooltip "Grabar el perfil cambiado como nuevo perfil o actualizar uno existente">
+<!ENTITY profile.delete "Borrar...">
+<!ENTITY profile.delete.tooltip "Borrar el perfil seleccionado">
+<!ENTITY profile.changed "(Cambiado)">
+<!ENTITY profile.display.tooltip "Mostrar/Editar perfiles">
+<!ENTITY profile.hide.tooltip "Ocultar opciones de perfiles">
+<!ENTITY basic.title "Características de sincronismo">
+<!ENTITY basic.copy "Copiar los archivos de canciones a la carpeta elegida">
+<!ENTITY basic.update "Actualizar los archivos de canciones en la carpeta elegida">
+<!ENTITY basic.delete "Borrar todos los otros archivos y carpetas de la carpeta elegida">
+<!ENTITY basic.rockbox "Realizar un sincronismo rockbox-back en el dispositivo elegido">
+<!ENTITY basic.structure "Reorganizar los archivos de canciones en la capeta elegida">
+<!ENTITY basic.playlists "Grabar las listas de canciones en la carpeta elegida">
+<!ENTITY advanced.title "Preferencias avanzadas">
+<!ENTITY advanced.warning "Aquí hay modos adicionales para configurar la carpeta de sincronismo pero valores incorrectos en esta área pueden causar problemas.">
+<!ENTITY advanced.blocked "Reemplazar">
+<!ENTITY advanced.replace "con">
+<!ENTITY advanced.cutReplaced "Cortar reemplazar caracteres al final del nombre del archivo">
+<!ENTITY advanced.cutSpaces "Cortar espaciar caracteres al final del nombre del archivo">
+<!ENTITY advanced.length "Largo máximo del nombre del archivo:">
+<!ENTITY advanced.case "Comportamiento sensitivo de mayúscula-minúscula en las rutas de los archivos">
+<!ENTITY structure.title "Estructura">
+<!ENTITY structure.info "FolderSync puede reorganizar los archivos de canciones en el directorio elegido. La nueva estructura sigue un esquema de nombre de archivo y algunas otras preferencias podría cambiarlas aquí. Use la barra (/) para separar carpetas y los nombres de archivos en el esquema.">
+<!ENTITY structure.schema "Esquema:">
+<!ENTITY structure.schema.help "Etiquetas disponibles....">
+<!ENTITY structure.schema.help.tooltip "Ver una lista de expresiones que serán reemplazadas con los meta-datos de cada canción">
+<!ENTITY structure.schema.tracknumber "Número de dígitos para la etiqueta de número de pista:">
+<!ENTITY structure.covers "Grabar imágenes de cubiertas">
+<!ENTITY structure.coverSchema "Esquema para álbumes-capetas:">
+<!ENTITY structure.coverFile "Nombre de archivo de la imagen de cubierta:">
+<!ENTITY playlists.title "Escribir lista de canciones">
+<!ENTITY playlists.target "Carpeta elegida relativa:">
+<!ENTITY playlists.split "Carácter dividido para rutas de archivos:">
+<!ENTITY playlists.relativepoint "Inicio rutas relativas con .[split]">
+<!ENTITY playlists.format "Formato de lista de canciones:">
+<!ENTITY playlists.encoding "Codificación de lista de canciones:">
+<!ENTITY playlists.sort "Clasifique los puntos en las listas de ejecución">
+<!ENTITY playlists.sort.scheme "Diseño de clasificación:">
+<!ENTITY structure.sort.scheme.tooltip "Ingrese un diseño de clasificación usando etiquetas separadas por comas. La dirección de clasificación puede ser agregada como '&#37;artist:a&#37;' para el orden ascendente o'&#37;artist:d&#37;', para el orden descendente. Las canciones serán clasificadas en cada lista de ejecución de acuerdo aese diseño.">
+<!ENTITY playlists.selection "Listas de canciones a sincronismo:">
+<!ENTITY playlists.refresh "Actualizar">
+<!ENTITY playlists.refresh.tooltip "Cargar la lista de canciones otra vez, de modo que cambios tales como, renombrar, borrar o nuevas listas, aparecerán en la lista">
+<!ENTITY target.folder "Carpeta elegida:">
+<!ENTITY target.browse "Navegar...">
+<!ENTITY target.browse.tooltip "Seleccionar una carpeta mediante un diálogo">
+<!ENTITY complete.start "Comenzar Sync">
+<!ENTITY complete.start.tooltip "Comenzar la sincronización descrita más arriba">
+<!ENTITY complete.save "Grabar como sincronización favorita">
+<!ENTITY complete.save.tooltip "Grabar la sincronización descrita más arriba como sincronización favorita. Puede acceder a ella en la sección &amp;favorite.title, en la parte superior de esta etiqueta.">
+<!ENTITY complete.update "Actualice Sync favorita">
+<!ENTITY complete.update.tooltip "Sobreescriba la Sync favotita actual seleccionada con el sync descrito más arriba. Puede cambiar la selección y acceder a la Sync favorita en la sección &favorite.title; ubicada en la parte superior de esta etiqueta.">
+<!ENTITY help.title "¿Necesita ayuda?">
+<!ENTITY help.info "Los botones siguinetes lo llevarán a lugares que podrían ayudarlo a configurar y usar Folder Sync.">
+<!ENTITY help.preferences "Preferencias">
+<!ENTITY help.preferences.tooltip "Abrir la opción de diálogo de Folder Sync, puede configurar Folder Sync aquí">
+<!ENTITY help.manual "Manual">
+<!ENTITY help.manual.tooltip "Abrir el manual en línea de Folder Sync en una nueva etiqueta">
+<!ENTITY help.comments "Página de comentarios">
+<!ENTITY help.comments.tooltip "Ir a la página de Folder Sync en addons.songbirdnest.com">
