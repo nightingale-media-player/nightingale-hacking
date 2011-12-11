@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<!-- ***************************************************************************
+ *******************************************************************************
+ *
+ * Copyright(c) 2011
+ * http://getnightingale.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact the Nightingale Team.
+ *
+ *******************************************************************************
+ *
+ * Install file for the FolderSync extension for Nightingale.
+ *
+ *******************************************************************************
+ *************************************************************************** -->
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:nightingale="http://www.getnightingale.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Nightingale target application. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    
+    <em:requires>
+      <Description>
+        <em:id>foldersync@rsjtdrjgfuzkfg.com</em:id>
+        <em:minVersion>3.0.4.0</em:minVersion>
+        <em:maxVersion>3.*</em:maxVersion>
+      </Description>
+    </em:requires> 
+
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:name>FolderSync Branding</em:name>
+    <em:iconURL>chrome://foldersync/skin/fs-icon.png</em:iconURL>
+    <em:description>Nightingale Branding for FolderSync.</em:description>
+    <em:creator>@SB_VENDOR@</em:creator>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:homepageURL>http://www.getnightingale.com/</em:homepageURL>
+    
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+</RDF>

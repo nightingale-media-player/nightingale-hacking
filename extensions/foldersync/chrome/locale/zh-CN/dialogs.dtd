@@ -1,0 +1,35 @@
+<!ENTITY dialog.ok "确定">
+<!ENTITY dialog.cancel "取消">
+<!ENTITY error.title "FolderSync">
+<!ENTITY availabletags.window.title "可用标签">
+<!ENTITY availabletags.info.defaulttags "下列值将替代使用的文件名模式中的空标签：">
+<!ENTITY availabletags.info.schema "下列表达式将替代文件名模式或是使用的播放列表排序模式：">
+<!ENTITY availabletags.artist "艺术家姓名">
+<!ENTITY availabletags.title "歌曲标题">
+<!ENTITY availabletags.album "专辑标题">
+<!ENTITY availabletags.genre "流派">
+<!ENTITY availabletags.rating "评级">
+<!ENTITY availabletags.tracknumber "音轨编号">
+<!ENTITY availabletags.playlist "播放列表名称">
+<!ENTITY availabletags.albumartist "专辑艺术家姓名">
+<!ENTITY availabletags.year "年份">
+<!ENTITY availabletags.discnumber "CD 编号">
+<!ENTITY availabletags.disccount "CD 数量">
+<!ENTITY availabletags.composer "作曲家姓名">
+<!ENTITY availabletags.producer "演出者姓名">
+<!ENTITY saveprofile.title "保存配置">
+<!ENTITY saveprofile.new "保存为新的配置">
+<!ENTITY saveprofile.new.pre "在这输入配置的名称">
+<!ENTITY saveprofile.update "更新现有配置">
+<!ENTITY addfav.title "新建收藏">
+<!ENTITY addfav.name "为新建的收藏起个名：">
+<!ENTITY options.title "FolderSync 选项">
+<!ENTITY options.ui.title "用户界面">
+<!ENTITY options.ui.notification "显示全局通知">
+<!ENTITY options.ui.notificationExclusive "仅 FolderSync 标签页未打开时">
+<!ENTITY options.ui.show.favorite "启用同步收藏">
+<!ENTITY options.ui.show.help "在 FolderSync 标签页中显示帮助部分">
+<!ENTITY options.ui.restart "首选项标明了 * 的，将在您下次打开 FolderSync 标签页时被应用。">
+<!ENTITY options.tags.title "默认标签">
+<!ENTITY options.tags.info "如果它们的元数据缺失，FolderSync 将使用下列默认标签：">
+<!ENTITY options.tags.albumartist.fallback "如果此标签缺失，使用 &availabletags.artist;">

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Manual: Preferences</title>
+    <link rel="stylesheet" type="text/css" href="../manual.css" />
+  </head>
+  <body>
+    <div class="header">
+      <img alt="(Logo)" class="logo" src="chrome://foldersync/skin/fs-header.png" />
+      <h1>Preferences</h1>
+      <p class="navigator"><a href="index.htm">Main Page</a> | Preferences</p>
+    </div>
+    <div class="content">
+      <p>
+        You can configure FolderSync / the folder synchronisation feature with
+        a preference dialog available via the help section of the
+        <a href="sync.htm#tab">synchronisation tab</a> and via the AddOn
+        preferences when using FolderSync in Songbird. The preference dialog
+        is diviced into two categories, this chapter will describe the options
+        available there.
+      </p>
+      <div class="imagerow">
+        <img src="images/preferences-pr.png" />
+        <img src="images/preferences-sb.png" />
+      </div>
+      
+      <h1 id="ui">User interface</h1>
+      <p>
+        The first category determines the way folder synchronisation is integrated into
+        the player's user interface.
+      </p>
+      
+      <h2 id="notification">Display global notifications</h2>
+      <p>
+        If enabled, you get notified with a global notification when a sync is completed,
+        for example like this:
+      </p>
+      <div class="imagerow">
+        <img src="images/completed-global-pr.png" />
+        <img src="images/completed-global-sb.png" />
+      </div>
+      <p>
+        If you have global notifications enabled, you can restrict them by using "only if
+        FolderSync / Synchronisation Tab is not opened" to only appear when you're not
+        in the synchronisation tab; you recive a message about the completion of a sync
+        <a href="sync.htm#monitor">there as well</a>.
+      </p>
+      
+      <h2 id="favorites">Enable Sync Favorites</h2>
+      <p>
+        If you disable this option, all UI elements for
+        <a href="favorite.htm">sync favorites</a> will get hidden, so you have more space
+        for the other UI elements, but you won't be able to use sync favorites anymore.
+      </p>
+      <p>
+        Your sync favorites won't get deleted when disabling sync favorites, after re-enabling
+        you can access them again. You need to re-load the synchronisation tab for this option
+        to apply.
+      </p>
+      
+      <h2 id="help">Show Help section</h2>
+      <p>
+        If you disable this option, the Help section won't be displayed in the synchronisation
+        Tab. You need to re-load the synchronisation tab for this option
+        to apply.
+      </p>
+      <p>
+        This option is only avalable in FolderSync at the moment, as you need the help section
+        in Nightingale to access the preference dialog.
+      </p>
+      
+      <h1 id="tags">Available Tags</h1>
+      <p>
+        In the second section of the preference dialog you can specify what values should be used
+        for the tags in filename schema, when there is no metadata available for a song.
+      </p>
+      
+      <h2 id="albumartist">Albumartist's Name</h2>
+      <p>
+        If the option "Use Artist's Name if that tag is missing" is enabled, %albumartist% will
+        get replaced by %artist% if there is not albumartist set in a song's metadata.
+      </p>
+    </div>
+    <div class="footer">
+      <p id="localeselector">
+        <a href="../start.htm#select-locale" title="Change language">en</a>
+      </p>
+      <p>This chapter is related to version 3.0.4.</p>
+    </div>
+  </body>
+  <script src="../formatter.js" type="text/javascript"></script>
+</html>

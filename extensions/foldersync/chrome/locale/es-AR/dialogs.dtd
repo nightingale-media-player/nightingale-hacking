@@ -1,0 +1,35 @@
+<!ENTITY dialog.ok "OK">
+<!ENTITY dialog.cancel "Cancelar">
+<!ENTITY error.title "FolderSync">
+<!ENTITY availabletags.window.title "Etiquetas disponibles">
+<!ENTITY availabletags.info.defaulttags "Los valores siguientes reemplazarán las etiquetas vacías usadas en el diseño de un nombre de archivo:">
+<!ENTITY availabletags.info.schema "Las expresiones siguientes serán reemplazadas en el diseño de un nombre de archivo o usadas en el diseño de clasificación de laslistas de ejecución:">
+<!ENTITY availabletags.artist "Nombre del Artist's">
+<!ENTITY availabletags.title "Título de la canción">
+<!ENTITY availabletags.album "Título del álbum">
+<!ENTITY availabletags.genre "Género">
+<!ENTITY availabletags.rating "Valoración">
+<!ENTITY availabletags.tracknumber "Número de pista">
+<!ENTITY availabletags.playlist "Nombre de Playlist&apos;s">
+<!ENTITY availabletags.albumartist "Nombre del Albumartist's">
+<!ENTITY availabletags.year "Año">
+<!ENTITY availabletags.discnumber "Número de CD">
+<!ENTITY availabletags.disccount "Cuenta-CD">
+<!ENTITY availabletags.composer "Nombre del Composer's">
+<!ENTITY availabletags.producer "Nombre del Producer's">
+<!ENTITY saveprofile.title "Grabar perfil">
+<!ENTITY saveprofile.new "Grabar un perfil nuevo">
+<!ENTITY saveprofile.new.pre "Ingrese el nombre del perfil aquí">
+<!ENTITY saveprofile.update "Actualizar un perfil existente">
+<!ENTITY addfav.title "Nuevo favorito">
+<!ENTITY addfav.name "Ingresar un nombre para el nuevo favorito:">
+<!ENTITY options.title "Opciones de FolderSync">
+<!ENTITY options.ui.title "Interfaz del usario">
+<!ENTITY options.ui.notification "Mostrar notificaciones globales">
+<!ENTITY options.ui.notificationExclusive "solamente si la pestaña FolderSync no está abierta">
+<!ENTITY options.ui.show.favorite "Activar favoritos de Sync">
+<!ENTITY options.ui.show.help "Mostrar la sección de ayuda en la pestaña FolderSync">
+<!ENTITY options.ui.restart "Las preferencias marcadas con * serán activadas la próxima vez que abra la pestaña de FolderSync.">
+<!ENTITY options.tags.title "Etiquetas por defecto">
+<!ENTITY options.tags.info "Si se pierden meta-datos, FolderSync usará las siguientes etiquetas por defecto:">
+<!ENTITY options.tags.albumartist.fallback "Use &availabletags.artist; si no existe esta etiqueta">

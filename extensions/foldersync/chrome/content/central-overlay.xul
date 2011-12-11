@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- central-overlay.xul
+     All FolderSync-related things for the main Window go here.
+     -->
+<!DOCTYPE overlay SYSTEM "chrome://foldersync/locale/branding.dtd">
+<overlay id="foldersync-central-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<!-- load JSON workaround-->
+  <script src="jsonclass.js"></script>
+	
+  <!-- load central code -->
+  <script src="preferences.js"></script>
+  <script src="rockbox.js"></script>
+  <script src="sync.js"></script>
+  <script src="central.js"></script>
+  
+  <!-- global string bundle for central code -->
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="foldersync-central-strings"
+      src="chrome://foldersync/locale/central.properties" />
+  </stringbundleset>
+  
+  <!-- we need this to access the branding tab title in JS -->
+  <window id="mainplayer">
+    <label id="foldersync-central-branding-tab-title"
+           value="&foldersync.tabname;"
+           style="display:none" />
+  </window>
+</overlay>

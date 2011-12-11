@@ -1,0 +1,89 @@
+<!ENTITY current.cancel "Abbrechen">
+<!ENTITY current.details "Details...">
+
+<!ENTITY current.queue.cancel "Alle abbrechen">
+
+
+<!ENTITY favorite.title "Synchronisationsfavoriten">
+<!ENTITY favorite.choose "(Favorit wählen)">
+<!ENTITY favorite.load "Laden">
+<!ENTITY favorite.load.tooltip "Ausgewahlten Synchronisationsfavoriten in den Eingabebereich unter dieser Box laden, um ihn vor der Ausführung anzupassen.">
+<!ENTITY favorite.delete "Löschen...">
+<!ENTITY favorite.delete.tooltip "Ausgewahlten Synchronisationsfavoriten löschen">
+<!ENTITY favorite.start "Start">
+<!ENTITY favorite.start.tooltip "Ausgewahlten Synchronisationsfavoriten ausführen">
+
+
+<!ENTITY profile.current "Aktuelles Profil:">
+<!ENTITY profile.save "Speichern...">
+<!ENTITY profile.save.tooltip "Das geänderte Profil als neues speichern order ein bestehendes Profil aktualisieren.">
+<!ENTITY profile.delete "Löschen...">
+<!ENTITY profile.delete.tooltip "Ausgewähltes Profil löschen">
+<!ENTITY profile.changed "(Geändert)">
+<!ENTITY profile.display.tooltip "Profil anzeigen / bearbeiten">
+<!ENTITY profile.hide.tooltip "Profileinstellungen ausblenden">
+
+<!ENTITY basic.title "Synchronisationsfunktionen">
+<!ENTITY basic.copy "Musiktitel in Zielverzeichnis kopieren">
+<!ENTITY basic.update "Geänderte Musiktitel im Zielverzeichnis aktualisieren">
+<!ENTITY basic.delete "Andere Dateien und Verzeichnisse im Zielverzeichnis löschen">
+<!ENTITY basic.rockbox "Einen Rockbox-Back-Sync auf dem Zielgerät ausführen">
+<!ENTITY basic.structure "Musiktitel im Zielverzeichnis neu organisieren">
+<!ENTITY basic.playlists "Wiedergabelisten im Zielverzeichnis speichern">
+
+<!ENTITY advanced.title "Erweiterte Einstellungen">
+<!ENTITY advanced.warning "Mit den untenstehenden Einstellungen kann die Synchronisation zusätzlich angepasst werden, falsche Einstellungen können jedoch Probleme verursachen.">
+<!ENTITY advanced.blocked "Ersetze">
+<!ENTITY advanced.replace "durch">
+<!ENTITY advanced.cutReplaced "Ersetzte Zeichen am Dateinamensende abschneiden">
+<!ENTITY advanced.cutSpaces "Leerzeichen am Dateinamensende abschneiden">
+<!ENTITY advanced.length "Maximale Dateinamenlänge:">
+<!ENTITY advanced.case "Groß-/Kleinschreibung in Dateinamen beachten">
+
+<!ENTITY structure.title "Struktur">
+<!ENTITY structure.info "Musiktitel können im Zielverzeichnis neu organisiert werden. Die neue Struktur folgt einem Schema, sowie einigen anderen Einstellungen die hier geändert werden können. Nutzen Sie den Schrägstrich('/'), um Verzeichnisse und den Dateinamen im Schema zu trennen.">
+<!ENTITY structure.schema "Schema:">
+<!ENTITY structure.schema.help "Verfügbare Tags...">
+<!ENTITY structure.schema.help.tooltip "Eine Liste von Ausdrücken anzeigen, die mit den Metadaten des einzelnen Titels ersetzt werden">
+<!ENTITY structure.schema.tracknumber "Anzahl der Ziffern für Titelnummer-Tag:">
+<!ENTITY structure.covers "Albumcover-Bilddateien speichern">
+<!ENTITY structure.coverSchema "Schema für Alben-Verzeichnisse:">
+<!ENTITY structure.coverFile "Dateiname für Albumcover:">
+
+<!ENTITY playlists.title "Wiedergabelisten">
+<!ENTITY playlists.target "Relatives Zielverzeichnis:">
+<!ENTITY playlists.split "Zeichen für Verzeichnisebenenwechsel:">
+<!ENTITY playlists.relativepoint "Relative Dateipfade mit .[Verzeichnisebenenwechsel] einleiten">
+<!ENTITY playlists.format "Wiedergabelisten-Format:">
+<!ENTITY playlists.encoding "Wiedergabelisten-Encoding:">
+<!ENTITY playlists.sort "Playliste sortieren">
+<!ENTITY playlists.sort.scheme "Sortierschema:">
+<!ENTITY structure.sort.scheme.tooltip "Das Sortierschema, bestehend aus durch Komma getrennten Tags. Die Sortierrichtung kann zusätzlich angegeben werden, z.B. '&#37;artist:a&#37;' für aufsteigende und '&#37;artist:d&#37;' für absteigende Sortierung. Die Titel werden in ihrer jeweiligen Wiedergabeliste nach diesem Schema sortiert.">
+
+
+<!ENTITY playlists.selection "Zu synchronisierende Wiedergabelisten:">
+<!ENTITY playlists.refresh "Aktualisieren">
+<!ENTITY playlists.refresh.tooltip "Die Liste der Wiedergabelisten neu laden, damit Änderungen wie gelöschte, umbenannte oder neu erstellte Wiedergabelisten in der Liste erscheinen">
+
+
+<!ENTITY target.folder "Zielverzeichnis:">
+<!ENTITY target.browse "Durchsuchen...">
+<!ENTITY target.browse.tooltip "Verzeichnis mithilfe eines Dialoges auswählen">
+
+
+<!ENTITY complete.start "Synchronisation starten">
+<!ENTITY complete.start.tooltip "Die oben konfigurierte Synchronisation starten">
+<!ENTITY complete.save "Als Synchronisationsfavoriten speichern">
+<!ENTITY complete.save.tooltip "Die oben konfigurierte Synchronisation als Synchronisationsfavorit speichern. Synchronisationsfavoriten können im Bereich '&favorite.title;' oben in diesem Tab verwendet werden.">
+<!ENTITY complete.update "Synchronisationsfavorit aktualisieren">
+<!ENTITY complete.update.tooltip "Derzeit gewählten Synchronisationsfavoriten mit der oben konfigurierten Synchronisation überschreiben. Synchronisationsfavoriten können im Bereich '&favorite.title;' oben in diesem Tab ausgewählt und verwendet werden.">
+
+
+<!ENTITY help.title "Benötigen Sie Hilfe?">
+<!ENTITY help.info "Die folgenden Schaltflächen führen zu Orten, die Ihnen dabei behilflich sein könnten, &foldersync.displayname; zu konfigurieren und zu nutzen.">
+<!ENTITY help.preferences "Einstellungen">
+<!ENTITY help.preferences.tooltip "Einstellungsdialog anzeigen, in dem &foldersync.displayname; weiter angepasst werden kann.">
+<!ENTITY help.manual "Onlinehilfe">
+<!ENTITY help.manual.tooltip "Onlinehilfe in einem neuen Tab öffnen">
+<!ENTITY help.comments "Kommentarseite">
+<!ENTITY help.comments.tooltip "Kommentarseite auf &foldersync.addonplatform; besuchen">
