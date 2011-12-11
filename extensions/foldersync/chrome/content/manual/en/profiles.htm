@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Manual: Profiles</title>
+    <link rel="stylesheet" type="text/css" href="../manual.css" />
+  </head>
+  <body>
+    <div class="header">
+      <img alt="(Logo)" class="logo" src="chrome://foldersync/skin/fs-header.png" />
+      <h1>Profiles</h1>
+      <p class="navigator"><a href="index.htm">Main Page</a> | <a href="sync.htm">Setting up a Sync</a> | Profiles</p>
+    </div>
+    <div class="content">
+      <p>
+        As mentioned <a href="sync.htm#concept">before</a> options that do not
+        belong to a specific sync are saved in Profiles. This chapter explains
+        the <a href="#concept">profile concept</a> and the different
+        <a href="#options">possibilities to tweak them</a> to get a sync
+        fitting your needs perfectly.
+      </p>
+      <h1 id="concept">Why Profiles?</h1>
+      <p>
+        Folder Synchronisation is a quite individual thing. Everybody has his/her
+        own structures he/she would like to use on external backup media, MP3 players,
+        phones, etc. In contrast to the official device AddOns for Songbird FolderSync /
+        the folder synchronisation feature are designed to be highly customizeable,
+        so there are many different options to tweak.
+      </p>
+      <p>
+        The average user won't need to always specify every option with each sync,
+        profiles make it possible to customize the sync progress for each usage:
+        You can for example create a profile for backup, one for your MP3 player,
+        having a different sync for both devices. You can use many backup devices
+        with the one backup profile, and will get a consistent backup on all
+        devices without having to remember all preferences again. To sync the MP3
+        player, just change the profile.
+      </p>
+      <h2 id="favorite">Favorite Integration</h2>
+      <p>
+        You can integrate Profiles in <a href="favorite.htm">Favorites</a>, so all
+        dependent favorites will get changed automatically when changing general
+        sync options. This gives you the possibility to change for example your
+        backup concept within the profile, and it will get applied to all devices
+        as you sync them; there is no need of changing them one-by-one.
+      </p>
+      <h2 id="migration">Migration</h2>
+      <p>
+        In new versions new features might be added, they will be disabled in all saved
+        profiles per default. If you want to enable a new feature in an old profile,
+        you can <a href="#management">load, change and overwrite</a> the old profile.
+      </p>
+      
+      <h1 id="management">Manage your Profiles</h1>
+      <p>
+        You can do all profile-related tasks from within the
+        <a href="sync.htm#tab">synchronisation tab</a>, in the area you can choose a
+        profile for the sync:
+      </p>
+      <div class="imagerow">
+        <img src="images/profilecollapsed-pr.png" />
+        <img src="images/profilecollapsed-sb.png" />
+      </div>
+      <p>
+        After selecting a profile, you can use the "Delete..." button on the right hand
+        side to delete a profile. You can't delete the default profile, because it will
+        be used as fallback for favorites if you delete the profile the favorite is
+        related to. With the button with the down arrow you display the
+        profile's options; here you can change all the profile-related things.
+        If favorites used a deleted profile, they will fallback to the default profile. The
+        options will be explained <a href="#options">later</a>.
+      </p>
+      <div class="imagerow">
+        <img src="images/profile-pr.png" />
+        <img src="images/profile-sb.png" />
+      </div>
+      <p>
+        You can hide the options again with the up arrow button.
+        If you make changes to the profile, you can save your changes with the "Save..."
+        button, which now replaced the "Delete..." button.
+      </p>
+      <div class="imagerow">
+        <img src="images/saveprofile-pr.png" />
+        <img src="images/saveprofile-sb.png" />
+      </div>
+      <p>
+        You will be asked whether you want to overwrite an existing profile or create
+        a new one after hitting save. Enter a name for the new profile or check the
+        bottom option and select a profile to update, then hit ok.
+        <span class="highlight">Caution:</span> You won't be asked for
+        confirmation again, updating a profile deletes the old options.
+      </p>
+      
+      <h1 id="options">The Options</h1>
+      <p>The Profile's options are divided into categories:</p>
+      <div class="imagerow">
+        <img src="images/profile-pr.png" />
+        <img src="images/profile-sb.png" />
+      </div>
+      
+      <h2 id="features">Sync features</h2>
+      <p>This category contains general options about the features to be used:</p>
+      
+      <h3 id="copy">Copy song files to target folder</h3>
+      <p>
+        When enabled, the sync will copy music files of the playlists selected to the
+        target folder. As this is the basic sync
+        feature, you cannot disable it.
+      </p>
+      
+      <h3 id="update">Update changed song files in target folder</h3>
+      <p>
+        When enabled, the sync will look through existing song files and recopy them
+        if there are changed since the last sync. If you disable this option, songs
+        won't get updated if they already exist and you keep the old version on the
+        target folder.
+      </p>
+      
+      <h3 id="delete">Delete all other files and folders from target folder</h3>
+      <p>
+        <span class="highlight">Caution:</span> This option will delete files and
+        sub-folders in target folder. You won't be asked for confirmation after
+        starting a sync with a profile having this option enabled.
+      </p>
+      <p>
+        When enabled, all files and folders that are not part of the sync will get
+        deleted. Without enabling this option, there is no real sync happening.
+        The option is disabled per default, because quite many people didn't expect
+        the AddOn to delete files in the past.
+      </p>
+      <p>
+        A sync with this option enabled will clean up the target folder to only
+        contain song files and additional content selected (like
+        <a href="#playlist">playlists</a> or <a href="#cover">cover images</a>).
+      </p>
+      
+      <h3 id="reorganize">Re-organize song files in target folder</h3>
+      <p>
+        This option causes filenames and foldernames in target folder to get generated
+        by the options in the <a href="#structure">Structure</a> category, which
+        makes it possible to have a generated filename / folder structure in the
+        target folder. Without this option enabled, the song files will keep their
+        filenames.
+      </p>
+      
+      <h3 id="playlistwriting">Write Playlists to target folder</h3>
+      <p>
+        If enabled, playlist files will get generated using the options in the
+        <a href="#playlist">Playlist writing</a> category.
+      </p>
+      
+      <h3 id="rockbox">Perform a Rockbox-Back-Sync on target device</h3>
+      <p>
+        Enable this option, to add playcounts of each song in Rockbox to your
+        library and import ratings from Rockbox.
+        The playcounts in Rockbox get resetted after adding them.
+      </p>
+      <p>
+        Rockbox-Back-Sync will only work when Rockbox is installed on the device
+        the target folder resides on; it will get detected automatically. For
+        more information about Rockbox, visit <a href="http://rockbox.org">their
+        official homepage</a>.
+      </p>
+      
+      <h2 id="structure">Structure</h2>
+      <p>
+        You can define a folder and filename structure in that song files are
+        synced to the target folder. The following chapter deals with the options
+        related to that structure.
+      </p>
+      <p>
+        This category is only available, if <a href="#reorganize">Re-organize song
+        files in target folder</a> is enabled.
+      </p>
+      
+      <h3 id="schema">Schema</h3>
+      <p>
+        You can specify a Schema that describes the structure you want the song
+        files in. A Schema consists of tags, that will get replaced with the
+        metadata of the song to be synced, characters and slashes ('/'), which mark
+        folders.
+      </p>
+      <p>
+        The relative file path of each song file will get determined by replacing
+        the tags in the schema (and taking the slash as split character for folders),
+        here some examples for the song "Time Go To" by
+        <a href="http://www.jamendo.com/artist/Chill_Carrier">"Chill Carrier"</a>
+        from his album <a href="http://www.jamendo.com/album/70225">"Urban Dreams"</a>:
+      </p>
+      <p class="example">
+        %artist%/%album%/%title% -> Chill Carrier/Urban Dreams/Time Go To.mp3<br />
+        %title%(%artist%) -> Time Go To(Chill Carrier).mp3<br />
+        %album%/%tracknumber% - %title% -> Urban Dreams/1 - Time Go To.mp3
+      </p>
+      
+      <h4 id="tracknumber">The %tracknumber% Tag</h4>
+      <p>
+        The %tracknumber% Tag can get configured in how many digits it should have
+        by changing the number at "Number of digits for track number tag". Leading
+        Zeros are applied at the beginning of the number if there are not enough
+        digits, so for a preference of 2 the last of the examples above would result
+        in:
+      </p>
+      <p class="example">
+        %album%/%tracknumber% - %title% -> Urban Dreams/01 - Time Go To.mp3
+      </p>
+      
+      <h4 id="playlisttag">The %playlist% Tag</h4>
+      <p>
+        With the playlist tag you can include the name of the playlist containing
+        the song into its filename. This will cause a song to need storage for
+        each playlist it is part of.
+      </p>
+      <p>
+        As an example, there is the library and one playlist "Playlist" to get synced. The
+        library contains two songs, "Time Go To" and "Apart Together", the playlist
+        only contains "Time Go To". We're using the schema:
+      </p>
+      <p class="example">
+        %playlist%/%title%
+      </p>
+      <p>
+        When syncing library and playlist to a folder, we get the following files:
+      </p>
+      <p class="example">
+        Library/Time Go To.mp3<br />
+        Library/Apart Together.mp3<br />
+        Playlist/Time Go To.mp3
+      </p>
+      <p>
+        As you can see, Time Go To.mp3 exists two times. Using the playlist's name in
+        the schema caused more disk space to be needed for the sync, but also divided
+        the songs into playlist-folders. Some MP3 players can't use playlist files, but
+        play folders. Via using %playlist% you can use your playlists with such devices.
+      </p>
+      
+      <h4 id="cover">Cover Images</h4>
+      <p>
+        If you enable the "Save cover images" option, cover images will get saved in the
+        target folder's structure.
+      </p>
+      <p>
+        To save cover images, the schema must contain at least one folder with the %album%
+        tag. Enter the folder's schema into the textbox "Schema for album-folders", like:
+      </p>
+      <p class="example">
+        %album% for %artist%/<span class="highlight">%album%</span>/%title%<br />
+        %artist%-%album% for %playlist%/<span class="highlight">%artist%-%album%</span>/%title%
+      </p>
+      <p>
+        You can specify a filename for cover images; the file extension will get applied
+        automatically. If there is a cover available, it will get written into the album folder
+        specified with this filename and the corrent extension. You can specify a file extension
+        in the Filename, which will then be forced WITHOUT changing the file format.
+      </p>
+      
+      <h2 id="playlist">Playlist writing</h2>
+      <p>
+        Playlist writing generates playlist files in the target folder, which can be read
+        by most media player software. This chapter deals with the options you can use to
+        configure playlist writing.
+      </p>
+      <p>
+        This category is only available, if <a href="#playlistwriting">Write Playlists
+        to target folder</a> is enabled.
+      </p>
+      
+      <h3 id="playlistformat">Playlist Format</h3>
+      <p>
+        You can specify the file format for the playlist files using the two combo boxes
+        at the top of the playlist writing category:
+      </p>
+      <p>
+        "Playlist format" specifies the
+        file format to use, the value suitable to you depends on the media player software
+        you want to use, refer to its manual.
+      </p>
+      <p>
+        The field "Playlist encoding" gives you the
+        opportunity to choose an encoding for the playlist file, this also depends on
+        the media player software you want to use; most software does support UTF-8.
+      </p>
+      
+      <h3 id="playlisttarget">Relative target folder</h3>
+      <p>
+        This option gives you the opportunity to specify into which folder the playlist file
+        should get generated; use a slash to divide folders and filename. If you have for
+        example the playlist "Playlist" using an M3U
+        playlist format while syncing to "E:\Music", the value is interpreted as:
+      </p>
+      <p class="example">
+        . -> E:\Music\Playlist.m3u<br />
+        ../Playlists -> E:\Playlists\Playlist.m3u<br />
+        ./Playlists -> E:\Music\Playlist.m3u
+      </p>
+      
+      <h3 id="playlistsplit">File Paths in Playlist Files</h3>
+      <p>
+        Relative file paths will be used to refer to the song files from within the playlist,
+        so you can move the whole target folder for example to another computer easily.
+      </p>
+      <p>
+        For the path generation there are two options; You can specify the split character
+        for file paths, which will get used to separate folders and filename. Most players
+        accept a slash ("/"), but some might need another character as the backslash ("\"),
+        which is the regular split character on Windows.
+      </p>
+      <p>
+        You can also specify whether you want the file paths to get generated using a dot
+        to mark it as relative or not. Most likely you want to keep this option active, but
+        some media players (mostly those on MP3 players) cannot cope with it, disable it for
+        this device then.
+      </p>
+      
+      <h3 id="playlistsort">Playlist sorting</h3>
+      <p>
+        You can specify that the playlist file generator should sort the playlist before
+        generating the file. If you want to do so, enable the "Sort items in Playlists"
+        option and enter a sorting schema below.
+      </p>
+      <p>
+        A sorting schema consists of a set of rules, which are divided by comma (",").
+        Each rule uses one tag (see <a href="#schema">filename schema</a>), which will be
+        used to sort. You can add ":a" or ":d" to the tag, to specify ascending or descending
+        sort order. Here's an example for a sorting schema:
+      </p>
+      <p class="example">
+        %albumartist:a%,%title:d%
+      </p>
+      <p>
+        This will cause all playlists to get sorted in ascending order by album artist,
+        and songs from the same album artist will get sorted in descending order by title.
+      </p>
+      
+      <h2 id="advanced">Advanced preferences</h2>
+      <p>
+        You can tweak some of the internal values here, it is not recommended to change the
+        default values! Changing the default values might cause the sync not to work properly.
+      </p>
+    </div>
+    <div class="footer">
+      <p id="localeselector">
+        <a href="../start.htm#select-locale" title="Change language">en</a>
+      </p>
+      <p>This chapter is related to version 3.0.4.</p>
+    </div>
+  </body>
+  <script src="../formatter.js" type="text/javascript"></script>
+</html>

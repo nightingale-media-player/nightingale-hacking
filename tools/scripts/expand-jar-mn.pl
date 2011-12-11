@@ -71,7 +71,7 @@ while (<STDIN>)
       # If you run into build problems you may need to add more extensions to
       # to the following regular expression.
       #
-      if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|xhtml|html|htm|dtd|properties|swf|swd|rdf|manifest|txt)$/)) {
+      if (!($file =~ /\.(css|js|ico|png|gif|jpg|jpeg|xul|xml|xhtml|html|htm|dtd|properties|swf|swd|rdf|manifest|txt|svg)$/)) {
         die <<END;
 --- WARNING ---
 expand-jar-mn.pl was aborted due to presence of file with non-whitelisted 

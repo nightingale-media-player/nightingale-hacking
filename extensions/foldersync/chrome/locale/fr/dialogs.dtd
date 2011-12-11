@@ -1,0 +1,35 @@
+<!ENTITY dialog.ok "Ok">
+<!ENTITY dialog.cancel "Annuler">
+<!ENTITY error.title "&foldersync.displayname;">
+<!ENTITY availabletags.window.title "Balises disponibles">
+<!ENTITY availabletags.info.defaulttags "Les valeurs suivantes remplaceront les balises vides dans le schéma de nom de fichier :">
+<!ENTITY availabletags.info.schema "Les expressions suivantes seront remplacées dans un schéma de nom de fichier ou utilisées dans un schéma  de tri de liste de lecture :">
+<!ENTITY availabletags.artist "Nom de l'artiste">
+<!ENTITY availabletags.title "Titre de la piste">
+<!ENTITY availabletags.album "Titre de l'album">
+<!ENTITY availabletags.genre "Genre">
+<!ENTITY availabletags.rating "Note">
+<!ENTITY availabletags.tracknumber "Numéro de piste">
+<!ENTITY availabletags.playlist "Nom de la liste de lecture">
+<!ENTITY availabletags.albumartist "Nom de l'artiste de l'album">
+<!ENTITY availabletags.year "Année">
+<!ENTITY availabletags.discnumber "Numéro de disque">
+<!ENTITY availabletags.disccount "Nombre de disques">
+<!ENTITY availabletags.composer "Nom du compositeur">
+<!ENTITY availabletags.producer "Nom du producteur">
+<!ENTITY saveprofile.title "Enregistrer le profil">
+<!ENTITY saveprofile.new "Enregistrer comme nouveau profil">
+<!ENTITY saveprofile.new.pre "Saisir le nom du profil ici">
+<!ENTITY saveprofile.update "Modifier un profil existant">
+<!ENTITY addfav.title "Nouveau favori">
+<!ENTITY addfav.name "Saisir un nom pour le nouveau favori :">
+<!ENTITY options.title "Options de &foldersync.displayname;">
+<!ENTITY options.ui.title "Interface utilisateur">
+<!ENTITY options.ui.notification "Afficher les notifications globales">
+<!ENTITY options.ui.notificationExclusive "seulement si l'onglet &foldersync.tabname; n'est pas ouvert">
+<!ENTITY options.ui.show.favorite "Acviter les Synchronisations Favorites">
+<!ENTITY options.ui.show.help "Montrer la section Aide dans l'onglet &foldersync.tabname;">
+<!ENTITY options.ui.restart "Les préférences marquées avec * seront appliquées à la prochaine ouverture de l'onglet &foldersync.tabname;.">
+<!ENTITY options.tags.title "Balises par défaut">
+<!ENTITY options.tags.info "En cas d'absence de métadonnée, les balises suivantes seront utilisées par défaut :">
+<!ENTITY options.tags.albumartist.fallback "Utiliser &availabletags.artist; si cette balise est manquante">

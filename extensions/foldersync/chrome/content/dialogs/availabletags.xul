@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- availabletags.xul
+     The dialog showing all available tags for a filename schema.
+     -->
+<?xml-stylesheet href="chrome://global/skin"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % brandDTD SYSTEM "chrome://foldersync/locale/branding.dtd">
+  %brandDTD;
+  <!ENTITY % pageDTD SYSTEM "chrome://foldersync/locale/dialogs.dtd">
+  %pageDTD;
+]>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="foldersync-availabletags-dialog"
+        type="SB_FolderSync:Dialog"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+        title="&availabletags.window.title;"
+        hidechrome="false"
+        ondialogaccept="return true"
+        buttonlabelaccept="&dialog.ok;"
+        buttons="accept"
+        ondialogcancel="return true"
+        style="min-width:250px; max-width: 400px;
+               height:400px;">
+  
+  <label width="250">&availabletags.info.schema;</label>
+  
+  <!-- the style is because of our scrolling area being directly under this -->
+  <separator style="max-height:1px;margin-bottom:0px;padding-bottom:0px;" />
+  
+  <box flex="1" style="overflow-x:auto; overflow-y:scroll">
+    <grid flex="1">
+      <columns>
+        <column flex="1" />
+        <column flex="1" />
+      </columns>
+      <rows>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%artist%</label>
+          <label>&availabletags.artist;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%title%</label>
+          <label>&availabletags.title;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%album%</label>
+          <label>&availabletags.album;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">
+            %albumartist%
+          </label>
+          <label>&availabletags.albumartist;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">
+            %discnumber%
+            </label>
+          <label>&availabletags.discnumber;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%composer%</label>
+          <label>&availabletags.composer;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%genre%</label>
+          <label>&availabletags.genre;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%rating%</label>
+          <label>&availabletags.rating;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%playlist%</label>
+          <label>&availabletags.playlist;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%year%</label>
+          <label>&availabletags.year;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%disccount%</label>
+          <label>&availabletags.disccount;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%producer%</label>
+          <label>&availabletags.producer;</label>
+        </row>
+        <row>
+          <label style="-moz-user-select:text; cursor: text">%tracknumber%</label>
+          <label>&availabletags.tracknumber;</label>
+        </row>
+      </rows>
+    </grid>
+  </box>
+
+</dialog>
