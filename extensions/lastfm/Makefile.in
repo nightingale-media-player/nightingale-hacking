@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-INSTALL_EXTENSION = 1
+IS_EXTENSION = 1
 
 SUBDIRS = components \
           defaults \
