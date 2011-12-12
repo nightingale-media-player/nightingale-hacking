@@ -1402,17 +1402,6 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
   rv = InitializeDeviceLibraryPreferences(aDevLib);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // hook up the media list listeners to the existing lists
-  nsRefPtr<MediaListListenerAttachingEnumerator> enumerator =
-    new MediaListListenerAttachingEnumerator(this);
-  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = aDevLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                         NS_LITERAL_STRING("1"),
-                                         enumerator,
-                                         sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -5437,6 +5426,24 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
   return NS_OK;
 }
 
+nsresult sbBaseDevice::ListenToMediaLists(sbILibrary * aLibrary)
+{
+  nsresult rv;
+
+// hook up the media list listeners to the existing lists
+  nsRefPtr<MediaListListenerAttachingEnumerator> enumerator =
+    new MediaListListenerAttachingEnumerator(this);
+
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = aLibrary->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                          NS_LITERAL_STRING("1"),
+                                          enumerator,
+                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
 nsresult sbBaseDevice::SetupDevice()
 {
   TRACE(("%s", __FUNCTION__));

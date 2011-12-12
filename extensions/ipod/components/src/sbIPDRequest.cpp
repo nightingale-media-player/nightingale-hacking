@@ -265,6 +265,9 @@ sbIPDDevice::ReqHandleMount(TransferRequest * aRequest)
     rv = ImportDatabase();
     NS_ENSURE_SUCCESS(rv, /* void */);
 
+    rv = ListenToMediaLists(mDeviceLibrary);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
     // Show the device library.
     rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                      NS_LITERAL_STRING("0"));

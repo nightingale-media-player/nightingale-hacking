@@ -1407,6 +1407,13 @@ protected:
                                  nsIURI **     aDestinationURI);
 
   /**
+   * This hooks up media list listeners for playlists in the given library
+   * this is generally called after a mount is finished.
+   * \param aLibrary the library containing the playlists to listen to
+   */
+  nsresult ListenToMediaLists(sbILibrary * aLibrary);
+
+  /**
    * Present the user with a dialog for the initial device setup.
    */
   nsresult SetupDevice();
