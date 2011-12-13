@@ -55,7 +55,6 @@ public:
   NS_DECL_SBIMUTABLEPROPERTYARRAY
 
   sbPropertyArray();
-  ~sbPropertyArray();
 
   nsresult Init();
 
