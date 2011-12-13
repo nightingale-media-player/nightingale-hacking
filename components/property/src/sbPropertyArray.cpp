@@ -70,14 +70,6 @@ sbPropertyArray::sbPropertyArray()
 {
 }
 
-//i think mutex does this automatically
-
-nsresult
-sbPropertyArray::Init()
-{
-  return NS_OK;
-}
-
 /**
  * Just unwraps an sbIProperty object for validation.
  */
