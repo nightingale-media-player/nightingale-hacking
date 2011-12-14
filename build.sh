@@ -35,6 +35,9 @@ case $OSTYPE in
 		;;
 	msys*)
 		echo "You should comment out line 31 in this build.sh script and rerun it to make sure things work properly!"
+		tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
+		rm ./components/library/localdatabase/content/schema.sql
+		mv tmp.sql ./components/library/localdatabase/content/schema.sql
 		depdirn="windows-i686-msvc8"
 		svnroot="http://publicsvn.songbirdnest.com/vendor-binaries/tags/Songbird1.8.1/$depdirn"
         # I'm not sure we need all these, but I haven't delved into trimming down the deps we download on windows
