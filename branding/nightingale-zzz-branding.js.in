@@ -14,11 +14,13 @@ pref("extensions.blocklist.detailsURL", "https://addon-files.getnightingale.com/
 
 pref("xpinstall.whitelist.add", "addons.getnightingale.com");
 pref("xpinstall.whitelist.add.0", "translate.getnightingale.com");
+pref("xpinstall.whitelist.add.1", "wiki.getnightingale.com");
+pref("xpinstall.whitelist.add.2", "getnightingale.com");
 
 // Remote API whitelist. Syntax: domain=permission
 pref("nightingale.rapi.whitelist.add", "getnightingale.com=library_write");
 
-pref("nightingale.url.locales", "http://alivebirds.org/langpacks/%VERSION%/locales.xml");
+pref("nightingale.url.locales", "http://locales.getnightingale.com/langpacks/%VERSION%/locales.xml");
 
 pref("breakpad.reportURL", "http://crashreports.getnightingale.com/report/index/");
 
