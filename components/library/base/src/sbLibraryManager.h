@@ -37,7 +37,7 @@
 #include <sbILibraryUtils.h>
 
 #include <nsCategoryCache.h>
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsClassHashtable.h>
@@ -163,7 +163,7 @@ private:
 
   nsCOMPtr<sbILibraryLoader> mCurrentLoader;
 
-  PRLock* mLock;
+  mozilla::Mutex mLock;
 
   nsCOMPtr<nsIThreadManager> mThreadManager;
 };
