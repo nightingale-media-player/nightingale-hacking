@@ -28,7 +28,7 @@
 #define SBMEDIALISTDUPLICATEFILTER_H_
 
 // Mozilla includes
-#include <nsAutoLock.h>
+#include <mozilla/Mutex.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsISimpleEnumerator.h>
