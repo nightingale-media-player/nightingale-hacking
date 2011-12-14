@@ -415,12 +415,14 @@ before deciding what to do with it.
 const TYPE_X_SB_TRANSFER_MEDIA_ITEM = "application/x-sb-transfer-media-item";
 const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
 const TYPE_X_SB_TRANSFER_MEDIA_ITEMS = "application/x-sb-transfer-media-items";
+const TYPE_X_PF_TRANSFER_FOLDER = "application/x-pf-transfer-folder";
 
 var InternalDropHandler = {
 
   supportedFlavours: [ TYPE_X_SB_TRANSFER_MEDIA_ITEM,
                        TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                       TYPE_X_SB_TRANSFER_MEDIA_ITEMS ],
+                       TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                       TYPE_X_PF_TRANSFER_FOLDER ],
   
   // returns true if the drag session contains supported internal flavors
   isSupported: function(aDragSession) {

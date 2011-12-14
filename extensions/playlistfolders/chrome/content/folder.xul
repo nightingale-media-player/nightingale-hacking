@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin"?>
+<?xml-stylesheet href="chrome://nightingale/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://nightingale/skin/nightingale.css"
+                 type="text/css"
+                 title="Skin"?>
+                 
+<page id="playlistfolders-folder" title="Folder"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+</page>
