@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 DEFAULT_EXTENSIONS = AlbumArt \
                      foldersync-ng \
                      foldersync \
+                     playlistfolders \
                      $(NULL)
                      
 NOARCH_EXTENSIONS = lastfm \
