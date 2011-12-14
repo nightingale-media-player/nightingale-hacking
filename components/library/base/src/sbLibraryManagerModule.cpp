@@ -60,7 +60,7 @@ NS_DEFINE_NAMED_CID(SONGBIRD_MEDIAITEMWATCHER_CID)
 NS_DEFINE_NAMED_CID(SONGBIRD_TEMPORARYMEDIAITEM_CID)
 NS_DEFINE_NAMED_CID(SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CID)
 
-static const mozilla::Module::CIDEntry kSongbirdPropertiesModuleCIDs[] = {
+static const mozilla::Module::CIDEntry kSongbirdLibraryManagerCIDs[] = {
     { &kSONGBIRD_LIBRARY_CONSTRAINT_CID, false, NULL, sbLibraryConstraintConstructor },
 	{ &kSONGBIRD_LIBRARY_CONSTRAINTBUILDER_CID, false, NULL, sbLibraryConstraintBuilderConstructor },
 	{ &kSONGBIRD_LIBRARYMANAGER_CID, false, NULL, sbLibraryManagerConstructor },
@@ -75,7 +75,7 @@ static const mozilla::Module::CIDEntry kSongbirdPropertiesModuleCIDs[] = {
 };
 
 
-static const mozilla::Module::ContractIDEntry kSongbirdPropertiesModuleContracts[] = {
+static const mozilla::Module::ContractIDEntry kSongbirdLibraryManagerContracts[] = {
     { SONGBIRD_LIBRARY_CONSTRAINT_CONTRACTID, &kSONGBIRD_LIBRARY_CONSTRAINT_CID },
     { SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &kSONGBIRD_LIBRARY_CONSTRAINTBUILDER_CID },
     { SONGBIRD_LIBRARYMANAGER_CONTRACTID, &kSONGBIRD_LIBRARYMANAGER_CID },
@@ -89,7 +89,7 @@ static const mozilla::Module::ContractIDEntry kSongbirdPropertiesModuleContracts
     { NULL }
 };
 
-static const mozilla::Module::CategoryEntry kSongbirdMozArrayCategories[] = {
+static const mozilla::Module::CategoryEntry kSongbirdLibraryManagerCategories[] = {
     { SONGBIRD_LIBRARY_CONSTRAINT_CLASSNAME, SONGBIRD_LIBRARY_CONSTRAINT_CONTRACTID },
     { SONGBIRD_LIBRARYMANAGER_CLASSNAME, SONGBIRD_LIBRARYMANAGER_CONTRACTID },
     { SONGBIRD_LIBRARYSORT_CLASSNAME, SONGBIRD_LIBRARYSORT_CONTRACTID },
@@ -101,10 +101,11 @@ static const mozilla::Module::CategoryEntry kSongbirdMozArrayCategories[] = {
     { NULL }
 };
 
-static const mozilla::Module kSongbirdPropertiesModule = {
+static const mozilla::Module kSongbirdLibraryManager = {
     mozilla::Module::kVersion,
-    kSongbirdPropertiesModuleCIDs,
-    kSongbirdPropertiesModuleContracts
+    kSongbirdLibraryManagerCIDs,
+    kSongbirdLibraryManagerContracts,
+    kSongbirdLibraryManagerCategories
 };
 
 NSMODULE_DEFN(SongbirdLibraryManager) = &kSongbirdLibraryManager;
