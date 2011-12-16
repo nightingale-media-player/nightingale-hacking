@@ -1,4 +1,3 @@
-
 #
 # BEGIN NIGHTINGALE GPL
 # 
@@ -97,7 +96,7 @@ VIProductVersion "${AppVersionWindows}"
 VIAddVersionKey "CompanyName"     "${CompanyName}"
 VIAddVersionKey "FileDescription" "${BrandShortName} Installer"
 VIAddVersioNKey "FileVersion"     "${AppVersionWindows}"
-VIAddVersionKey "LegalCopyright"  "© ${CompanyName}"
+VIAddVersionKey "LegalCopyright"  "ï¿½ ${CompanyName}"
 VIAddVersionKey "LegalTrademarks" "${LegalTrademarks}"
 VIAddVersionKey "ProductName"     "${BrandFullName}"
 VIAddVersionKey "ProductVersion"  "${AppVersion}"
@@ -169,7 +168,7 @@ BrandingText " "
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ; Finish Page
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW un.PromptSurvey
+;!define MUI_PAGE_CUSTOMFUNCTION_SHOW un.PromptSurvey
 !insertmacro MUI_UNPAGE_FINISH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
