@@ -727,6 +727,7 @@ searchbar[empty="true"] > .searchbar-textbox > .search-go-container > .search-go
 searchbar:not([empty="true"]) > .searchbar-textbox > .search-go-container > .search-go-button {
   visibility: visible;
   list-style-image: url("chrome://nightingale/skin/nav-bar/button-clear-search.png");
+  margin-right: 3px !important;
 }
 
 
