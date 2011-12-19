@@ -28,7 +28,7 @@
 #define SBMEDIALISTENUMERATORWRAPPER_H_
 
 // Mozilla includes
-#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsISimpleEnumerator.h>
@@ -42,11 +42,9 @@
  *        medialist or library.
  */
 class sbMediaListEnumeratorWrapper: public sbIMediaListEnumeratorWrapper,
-                                    public nsISimpleEnumerator,
-                                    public nsIClassInfo
+                                    public nsISimpleEnumerator
 {
   NS_DECL_ISUPPORTS;
-  NS_DECL_NSICLASSINFO;
   NS_DECL_NSISIMPLEENUMERATOR;
   NS_DECL_SBIMEDIALISTENUMERATORWRAPPER;
 
@@ -55,7 +53,8 @@ class sbMediaListEnumeratorWrapper: public sbIMediaListEnumeratorWrapper,
 private:
   virtual ~sbMediaListEnumeratorWrapper();
 
-  PRMonitor* mMonitor;
+  // XXX Mook: check if this needs to be reentrant
+  mozilla::ReentrantMonitor mMonitor;
   nsCOMPtr<nsISimpleEnumerator> mEnumerator;
   nsCOMPtr<sbIMediaListEnumeratorWrapperListener> mListener;
 };
