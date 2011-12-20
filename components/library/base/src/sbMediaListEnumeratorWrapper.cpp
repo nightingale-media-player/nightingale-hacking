@@ -25,6 +25,7 @@
  */
 
 #include "sbMediaListEnumeratorWrapper.h"
+#include "sbLibraryCID.h"
 
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
@@ -44,27 +45,25 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbMediaListEnumeratorWrapper, 
-                              sbIMediaListEnumeratorWrapper,
-                              nsISimpleEnumerator,
-                              nsIClassInfo);
-NS_IMPL_CI_INTERFACE_GETTER3(sbMediaListEnumeratorWrapper,
+NS_IMPL_THREADSAFE_ADDREF(sbMediaListEnumeratorWrapper)
+NS_IMPL_THREADSAFE_RELEASE(sbMediaListEnumeratorWrapper)
+NS_IMPL_CLASSINFO(sbMediaListEnumeratorWrapper, NULL,
+                  nsIClassInfo::THREADSAFE,
+                  SONGBIRD_MEDIALISTENUMERATORWRAPPER_CID)
+NS_IMPL_QUERY_INTERFACE2_CI(sbMediaListEnumeratorWrapper,
+                            sbIMediaListEnumeratorWrapper,
+                            nsISimpleEnumerator)
+NS_IMPL_CI_INTERFACE_GETTER2(sbMediaListEnumeratorWrapper,
                              sbIMediaListEnumeratorWrapper,
-                             nsISimpleEnumerator,
-                             nsIClassInfo);
-NS_DECL_CLASSINFO(sbMediaListEnumeratorWrapper);
-NS_IMPL_THREADSAFE_CI(sbMediaListEnumeratorWrapper);
+                             nsISimpleEnumerator);
 
 sbMediaListEnumeratorWrapper::sbMediaListEnumeratorWrapper()
-: mMonitor(nsnull)
+: mMonitor("sbMediaListEnumeratorWrapper::mMonitor")
 {
 }
 
 sbMediaListEnumeratorWrapper::~sbMediaListEnumeratorWrapper()
 {
-  if(mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
 }
 
 NS_IMETHODIMP
@@ -74,10 +73,6 @@ sbMediaListEnumeratorWrapper::Initialize(
 {
   NS_ENSURE_ARG_POINTER(aEnumerator);
   
-  mMonitor = 
-    nsAutoMonitor::NewMonitor("sbMediaListEnumeratorWrapper::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
   mEnumerator = aEnumerator;
 
   if(aListener) {
@@ -100,21 +95,27 @@ sbMediaListEnumeratorWrapper::Initialize(
 NS_IMETHODIMP
 sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mEnumerator, NS_ERROR_NOT_INITIALIZED);
-  
-  nsAutoMonitor mon(mMonitor);
-  nsresult rv = mEnumerator->HasMoreElements(aMore);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  if(mListener) {
-    nsCOMPtr<nsISimpleEnumerator> grip(mEnumerator);
-    nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener(mListener);
-    mon.Exit();
+  nsCOMPtr<nsISimpleEnumerator> grip;
+  nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener;
+  nsresult rv;
 
-    rv = listener->OnHasMoreElements(grip, *aMore);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onHasMoreElements returned an error");
+  { /* scope for mon */
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+    rv = mEnumerator->HasMoreElements(aMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(!mListener) {
+      return NS_OK;
+    }
+
+    grip = mEnumerator;
+    listener = mListener;
   }
+
+  rv = listener->OnHasMoreElements(grip, *aMore);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onHasMoreElements returned an error");
 
   return NS_OK;
 }
@@ -122,68 +123,74 @@ sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
 NS_IMETHODIMP
 sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
 
-  nsAutoMonitor mon(mMonitor);
-
-  nsCOMPtr<nsISupports> supports;
-  nsresult rv = mEnumerator->GetNext(getter_AddRefs(supports));
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  nsCOMPtr<nsISimpleEnumerator> grip;
+  nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener;
   nsCOMPtr<sbIMediaItem> mediaItem;
-  nsCOMPtr<sbIIndexedMediaItem> indexedMediaItem = do_QueryInterface(supports, &rv);
+  nsresult rv;
 
-  if(NS_SUCCEEDED(rv)) {
-    rv = indexedMediaItem->GetMediaItem(getter_AddRefs(mediaItem));
+  { /* scope for mon */
+    mozilla::ReentrantMonitorAutoEnter mon(mMonitor);
+
+    nsCOMPtr<nsISupports> supports;
+    rv = mEnumerator->GetNext(getter_AddRefs(supports));
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else if(rv == NS_ERROR_NO_INTERFACE) {
-    mediaItem = do_QueryInterface(supports, &rv);
+
+    nsCOMPtr<sbIIndexedMediaItem> indexedMediaItem = do_QueryInterface(supports, &rv);
+
+    if(NS_SUCCEEDED(rv)) {
+      rv = indexedMediaItem->GetMediaItem(getter_AddRefs(mediaItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if(rv == NS_ERROR_NO_INTERFACE) {
+      mediaItem = do_QueryInterface(supports, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      return rv;
+    }
+
+    nsString itemGuid;
+    rv = mediaItem->GetGuid(itemGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    return rv;
-  }
 
-  nsString itemGuid;
-  rv = mediaItem->GetGuid(itemGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbILibrary> library;
+    rv = mediaItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> library;
-  rv = mediaItem->GetLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsString libraryGuid;
+    rv = library->GetGuid(libraryGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString libraryGuid;
-  rv = library->GetGuid(libraryGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsString propertyValue(libraryGuid);
+    propertyValue += NS_LITERAL_STRING(",");
+    propertyValue += itemGuid;
 
-  nsString propertyValue(libraryGuid);
-  propertyValue += NS_LITERAL_STRING(",");
-  propertyValue += itemGuid;
+    // Do not send notification when the item is updated.
+    nsCOMPtr<sbILocalDatabaseMediaItem> item =
+      do_QueryInterface(mediaItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // Do not send notification when the item is updated.
-  nsCOMPtr<sbILocalDatabaseMediaItem> item =
-    do_QueryInterface(mediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+    item->SetSuppressNotifications(PR_TRUE);
+    rv =
+      mediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
+                             propertyValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+    item->SetSuppressNotifications(PR_FALSE);
 
-  item->SetSuppressNotifications(PR_TRUE);
-  rv = 
-    mediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
-                           propertyValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-  item->SetSuppressNotifications(PR_FALSE);
+    NS_ADDREF(*aItem = mediaItem);
 
-  NS_ADDREF(*aItem = mediaItem);
+    if(!mListener) {
+      return NS_OK;
+    }
 
-  if(mListener) {
-    nsCOMPtr<nsISimpleEnumerator> grip(mEnumerator);
-    nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener(mListener);
-    mon.Exit();
+    grip = mEnumerator;
+    listener = mListener;
+  } /* end scope for mon */
 
-    rv = listener->OnGetNext(grip, mediaItem);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onGetNext returned an error");
-  }
+  rv = listener->OnGetNext(grip, mediaItem);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onGetNext returned an error");
   
   return NS_OK;
 }

@@ -28,7 +28,7 @@
 #define SBMEDIALISTDUPLICATEFILTER_H_
 
 // Mozilla includes
-#include <mozilla/Mutex.h>
+#include <mozilla/ReentrantMonitor.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsISimpleEnumerator.h>
@@ -76,7 +76,8 @@ private:
   nsresult Advance();
 
   // Monitor for thread-safety
-  PRMonitor* mMonitor;
+  // XXX Mook: check if this needs to be reentrant
+  mozilla::ReentrantMonitor mMonitor;
 
   // Have we run enumerate items yet?
   PRBool mInitialized;
