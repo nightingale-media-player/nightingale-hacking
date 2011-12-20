@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # this depends on your system's gstreamer location
 # this should be added to configure.ac and we should
 # make system gstreamer default on linux
