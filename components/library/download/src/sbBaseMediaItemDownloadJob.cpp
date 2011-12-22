@@ -34,7 +34,7 @@
 
 /**
  * \file  sbBaseMediaItemDownloadJob.cpp
- * \brief Base Media Itemozilla::Mutexm Download Job Source.
+ * \brief Base Media Item Download Job Source.
  */
 
 //------------------------------------------------------------------------------
