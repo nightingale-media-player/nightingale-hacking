@@ -59,6 +59,7 @@
 // Mozilla imports.
 #include <nsCOMPtr.h>
 #include <nsTArray.h>
+#include <mozilla/Mutex.h>
 
 
 //------------------------------------------------------------------------------
@@ -129,7 +130,7 @@ protected:
   // mStatus                    Download status.
   //
 
-  PRLock*                       mLock;
+  mozilla::Mutex                mLock;
   nsCOMPtr<sbIMediaItem>        mMediaItem;
   nsCOMPtr<sbIMutablePropertyArray>
                                 mProperties;
