@@ -107,7 +107,7 @@ HAVE_FLUENDO_MP3 = @HAVE_FLUENDO_MP3@
 #
 
 DEPS_DIR = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
-XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-${XUL}/$(SB_CONFIGURATION)
+XULRUNNER_DIR = $(DEPS_DIR)/xulrunner-${XUL}
 SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 
 #
