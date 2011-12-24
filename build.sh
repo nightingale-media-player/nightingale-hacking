@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# The xulrunner version we're using
+export XUL=9.0.1
+
 # this depends on your system's gstreamer location
 # this should be added to configure.ac and we should
 # make system gstreamer default on linux
