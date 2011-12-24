@@ -11,7 +11,7 @@ build="release"
 buildir="$(pwd)"
 
 # The xulrunner version we're using
-export XUL=9.0.1
+export XUL=6.0.2
 
 # this depends on your system's gstreamer location
 # this should be added to configure.ac and we should
