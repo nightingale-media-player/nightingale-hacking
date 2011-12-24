@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# break on any error
+set -e
+
+# do a debug or a release build? YOU WANT RELEASE!
+# if you do a debug build, add the appropriate options
+# to your nightingale.config file! 
+#...and build a debug xulrunner version
+build="release"
+buildir="$(pwd)"
+
 # The xulrunner version we're using
 export XUL=9.0.1
 
