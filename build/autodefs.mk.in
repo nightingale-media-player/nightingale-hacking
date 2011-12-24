@@ -246,7 +246,7 @@ TOUCH = @TOUCH@
 UNZIP = @UNZIP@
 ZIP = @ZIP@
 
-XPIDL = $(MOZSDK_DIR)/bin/xpidl
+XPIDL = $(MOZSDK_DIR)/frozen/bin/xpidl.py
 XPTLINK = python2 $(MOZSDK_DIR)/frozen/bin/xpt.py link
 MAR = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
