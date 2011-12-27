@@ -1,15 +1,15 @@
-Nightingale is a community based fork of the Songbird Web/Media player
-distributed under the GNU GPL and portions (xulrunner and mozilla libs)
+Nightingale is a community based fork of the Songbird Media player
+distributed under the GNU GPL and portions (XULRunner and Mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
 
-The goal of Nightingale is to create a Linux only player, which will 
+The goal of Nightingale is to create a Media Player, which will 
 eventually use only system libraries to conserve space. Currently, some
 libraries are still bundled, but progress is being made to change this 
 fact.
 
 This git tree is the old 1.8 tree for Nightingale, kept here for backup
-and also maintained to build until 1.10 is ready. Please report problems
-in the forums
+and also maintained to build until 1.11 is ready. Please report problems
+in the forums.
 
 ========================================================================
 Notes:
@@ -34,7 +34,7 @@ If on Linux, simply run the build.sh script. It will download the deps
 and build the app for you. You'll generally need the usual build deps
 for most software packages, though.
 
-Ubuntu and debian users should note you'll need:
+Ubuntu and Debian users should note you'll need:
 libdbus-glib-1-dev
 libgstreamer-plugins-base0.10-dev
 
@@ -65,26 +65,31 @@ Configure Options:
 Contributions:
 ========================================================================
 
-To join in and help, please visit http://getnightingale.com/forum
+To join in and help, please visit http://forum.getnightingale.com/
 or jump into #nightingale on irc.mozilla.org.
 
 ========================================================================
 Contributors:
 ========================================================================
 
-Auzy
-GeekShadow
-ilikenwf / Matt Parnell
-Manko10
-Mook
-rsjtdrjgfuzkfg
-steve-o
+* Steven Bengtson - Stevo
+* Janek Bevendorff - Manko10
+* Downward
+* Lukas Diener - Lukas_Skywalker
+* Matt Dwyer - MattSD
+* Martin Giger - freaktechnik
+* Geoffrey Gates - Timmythepirate
+* Andrew Luecke - Auzy
+* Matt Parnell - Ilikenwf
+* Dirk Steinmetz - rsjtdrjgfuzkfg
+* Antoine Turmel - GeekShadow
+* Mark Yen - Mook
 
 ========================================================================
 REMINDER!!!!
 ========================================================================
 
-This is an opensource software, and everyone who works on it is a
+This is an open source software and everyone who works on it is a
 volunteer! Don't be a troll towards the people giving you free
 software and hard work!
 
