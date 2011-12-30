@@ -176,10 +176,10 @@ notification[type="critical"],
   background-color: rgb(43,43,43);
 }
 #tabstrip-container > tabs#tabstrip {
-  border-bottom: 1px solid rgb(43,42,53) !important;
+  border-bottom: 1px solid rgb(43,43,43) !important;
 }
 #tabstrip-container > tabs#tabstrip > stack {
-  border-right: 1px solid rgb(15,15,23) !important;
+  border-right: 1px solid rgb(43,43,43) !important;
 }
 .tabbrowser-tab {
   background-image: url('chrome://nightingale/skin/browser-tab-bar/bg-tab-delimiter.png') !important;
@@ -540,12 +540,12 @@ treechildren::-moz-tree-twisty(open) {
   border:none;
   background-image:none;
   background-color:rgb(43,43,43);
-  border-bottom: 1px solid rgb(43,42,53);
+  border-bottom: 1px solid rgb(43,43,43);
 }
 #nav-bar {
   background-color: transparent;
   background-image: none;
-  border-right: 1px solid rgb(15,15,23);
+  border-right: 1px solid rgb(43,43,43);
 }
 /*
 #nav_bar_box > .hook > .left {
