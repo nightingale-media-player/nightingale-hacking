@@ -742,16 +742,17 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
 }
 #servicepane:focus sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-position: left top;
-  border-left: 1px solid rgb(74,65,104);
-  border-right: 1px solid rgb(74,65,104);
+  /* BLUE */
+  border-left: 1px solid rgb(65,108,153);
+  border-right: 1px solid rgb(65,108,153);
 }
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
  * loaded in the browser */
 sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
-  background-color: rgb(61,57,84);
+  background-color: rgb(41,67,100);
   -moz-border-radius: 3px;
-  border: 1px solid rgb(143,132,181);
+  border: 1px solid rgb(115,152,198);
 }
 /* needed to avoid the above border side-shifting all the elements 1px */
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
@@ -763,9 +764,9 @@ sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > image.serv
 
 /* highlighted in the servicepane for when a node is the target for a drop */
 sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
-  background-color: rgb(61,57,84);
+  background-color: rgb(41,67,100);
   -moz-border-radius: 3px;
-  border: 1px solid rgb(143,132,181);
+  border: 1px solid rgb(115,152,198);
 }
 
 /* highlighted in the servicepane for when a node is the keyboard focus */
@@ -783,19 +784,19 @@ sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > stack > 
 
 /* highlighted in the servicepane for when a node is the target for a drop */
 sb-servicepane-node.dndAcceptIn > vbox > hbox.servicepane-node-info {
-  background-color: rgb(61,57,84);
+  background-color: rgb(41,67,100);
   -moz-border-radius: 3px;
-  border: 1px solid rgb(143,132,181);
+  border: 1px solid rgb(115,152,198);
 }
 
 /* overlined in the servicepane for when a node is the target for a drop reorder */
 sb-servicepane-node.dndAcceptBefore > vbox > hbox.servicepane-node-info {
-  border-top: 2px solid rgb(143,132,181);
+  border-top: 2px solid rgb(115,152,198);
 }
 
 /* underlined in the servicepane for when a node is the target for a drop reorder */
 sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
-  border-bottom: 2px solid rgb(143,132,181);
+  border-bottom: 2px solid rgb(115,152,198);
 }
 
 /* when an open container node is a droptarget, then highlight the node and
@@ -804,9 +805,9 @@ sb-servicepane-node.container.droptarget:not([closed]) {
   margin-top: 0px;
 }
 sb-servicepane-node.container.droptarget:not([closed]) > vbox {
-  background-color: rgb(61,57,84);
+  background-color: rgb(41,67,100);
   -moz-border-radius: 3px;
-  border: 1px solid rgb(143,132,181);
+  border: 1px solid rgb(115,152,198);
 }
 /* undo the above changes for container node droptargets */
 sb-servicepane-node.container.droptarget:not([closed]) > vbox > hbox.servicepane-node-info {
@@ -1066,9 +1067,15 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 /******************************************************************************
 * DISPLAY PANES
 ******************************************************************************/
+.empty {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  background-color: rgb(51,51,51);
+}
+
 .empty-message {
   -moz-border-radius:8px;
-  background-color:rgb(54,52,63);;
+  background-color:rgb(51,51,51);;
   color: rgb(212,210,221);
 }
 
@@ -1247,7 +1254,7 @@ sb-device-managetabs {
 /* Override the shadow from generic-bar with our own device one */
 #overall_device_info_box > #sb-device-progress > hbox.generic-bar {
   background-image: url(chrome://nightingale/skin/device/bg-device-screen.png);
-  background-color: rgb(54,52,63);
+  background-color: rgb(51,51,51);
   border-bottom: 1px solid rgb(62,60,71);
 }
 #device_management_tabs > tab[selected] {
@@ -1572,7 +1579,7 @@ scrollcorner {
 .sb-sys-outer-frame-resizer-rightbottom,
 .sb-sys-outer-frame-resizer-righttop,
 .sb-sys-outer-frame-resizer[dir="right"] {
-  border-right: 1px solid rgb(224,223,222
+  border-right: 1px solid rgb(224,223,222);
 }
 .sb-sys-outer-frame-resizer-topleft,
 .sb-sys-outer-frame-resizer-topright,
