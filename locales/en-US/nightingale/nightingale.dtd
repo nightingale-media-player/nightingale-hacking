@@ -834,15 +834,15 @@
 <!ENTITY videowindow.bringtofront.key "T">
 
 <!-- about:credits entities. -->
-<!ENTITY about.credits.intro "We would like to thank our contributors, whose efforts make nightingale what it is. These people have helped by writing code and documentation, and by testing. They have created and maintained this product, its associated development kits, our build tools and our web sites.  Names are followed by IRC nicks, come by #nightingale on irc.mozilla.org and say hello!">
+<!ENTITY about.credits.intro "We would like to thank our contributors, whose efforts make Songbird what it is. These people have helped by writing code and documentation, and by testing. They have created and maintained this product, its associated development kits, our build tools and our web sites.  Names are followed by IRC nicks, come by #songbird on irc.mozilla.org and say hello!">
 <!ENTITY about.credits.footer.beforeLink "Of course, none of this would be possible without the hard work and efforts of">
 <!ENTITY about.credits.footer.linkText "the contributors">
 <!ENTITY about.credits.footer.afterLink "to the Mozilla project.">
 <!ENTITY about.credits.heading.translators "Translators">
 <!ENTITY about.credits.heading.champs "Champions">
-<!ENTITY about.credits.description.champs.link.pre "The nightingale Champions are the die-hard nightingale users and fans who have gone above and beyond the call of duty to help out other nightingale users on our">
-<!ENTITY about.credits.description.champs.link.text "nightingale GetSatisfaction Support Forum.">
-<!ENTITY about.credits.description.champs.link.post "They are the most prolific guys on our forum, and tirelessly work to ensure that every nightingale user is a happy nightingale user.">
+<!ENTITY about.credits.description.champs.link.pre "The Songbird Champions are the die-hard Songbird users and fans who have gone above and beyond the call of duty to help out other Songbird users on our">
+<!ENTITY about.credits.description.champs.link.text "Songbird GetSatisfaction Support Forum.">
+<!ENTITY about.credits.description.champs.link.post "They are the most prolific guys on our forum, and tirelessly work to ensure that every Songbird user is a happy Songbird user.">
 
 <!ENTITY cdrip.lookup.multiple.title       "Multiple CD Records Found">
 <!ENTITY cdrip.lookup.multiple.description "Choose one of the following or add your own info.">
