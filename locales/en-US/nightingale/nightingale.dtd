@@ -11,7 +11,7 @@
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
 <!ENTITY menu.mac.exit.key              "Q">
 <!ENTITY menu.mac.exit.modifiers        "accel">
-<!ENTITY menu.mac.preferences           "Preferences...">
+<!ENTITY menu.mac.preferences           "Preferences">
 <!ENTITY menu.mac.preferences.key       ",">
 <!ENTITY menu.mac.preferences.modifiers "accel">
 <!ENTITY menu.mac.services              "Services">
@@ -25,7 +25,7 @@
 <!ENTITY menu.mac.minimize.key          "M">
 
 <!ENTITY menu.file              "File" >
-<!ENTITY menu.file.new          "New Playlist" >
+<!ENTITY menu.file.new          "New Playlist..." >
 <!ENTITY menu.file.smart        "New Smart Playlist..." >
 <!ENTITY menu.file.remote       "New Subscription..." >
 <!ENTITY menu.file.podcast      "New Podcast..." >
@@ -35,7 +35,7 @@
 <!ENTITY menu.file.library      "Import a Library..." >
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
-<!ENTITY menu.file.metadata     "View Metadata...">
+<!ENTITY menu.file.metadata     "View Metadata">
 <!ENTITY menu.file.scan         "Import Media..." >
 <!ENTITY menu.file.exit         "Exit" >
 
@@ -51,7 +51,7 @@
 <!ENTITY menu.edit.findagain   "Find Again" >
 
 <!-- Linux edit menu -->
-<!ENTITY menu.linux.preferences           "Preferences...">
+<!ENTITY menu.linux.preferences           "Preferences">
 <!ENTITY menu.linux.preferences.accesskey "N">
 
 <!ENTITY menu.controls      "Controls" >
@@ -86,17 +86,17 @@
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.homepage "Nightingale Website" >
-<!ENTITY menu.help.bugz     "Report a Bug" >
+<!ENTITY menu.help.bugz     "Report a Bug..." >
 <!ENTITY menu.help.topics   "Help Topics" >
 <!ENTITY menu.help.keyboard "Keyboard Shortcuts">
-<!ENTITY menu.help.about    "About &brandShortName;..." >
+<!ENTITY menu.help.about    "About &brandShortName;" >
 
 <!ENTITY menu.equalizer     "Equalizer..." >
-<!ENTITY menu.preferences   "Options..." >
-<!ENTITY menu.extensions    "Add-ons..." >
+<!ENTITY menu.preferences   "Options" >
+<!ENTITY menu.extensions    "Add-ons" >
 <!ENTITY menu.clearprivatedata "Clear Private Data...">
 <!ENTITY menu.errorconsole "Error Console">
-<!ENTITY menu.downloadmgr   "File Downloads..." >
+<!ENTITY menu.downloadmgr   "File Downloads" >
 <!ENTITY menu.switchplayercontrols  "Player Controls" >
 <!ENTITY menu.controllerontop       "Display at Top">
 <!ENTITY menu.controlleronbottom    "Display at Bottom">
