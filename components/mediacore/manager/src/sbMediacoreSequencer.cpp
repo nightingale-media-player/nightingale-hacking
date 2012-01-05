@@ -1615,8 +1615,11 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
       nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
       mon.Exit();
 
-      rv = UpdateLastPositionProperty(lastItem, nsnull);
-      NS_ENSURE_SUCCESS(rv, rv);
+      // If we played an Item, update it. If we played an url (no Item in Library), we skip this part.
+      if (lastItem){
+        rv = UpdateLastPositionProperty(lastItem, nsnull);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
 
       rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv),
