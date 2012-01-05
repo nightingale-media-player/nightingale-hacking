@@ -138,7 +138,8 @@ function pfServicePane_fillFolderMenu(aNode, aContextMenu, aParentWindow) {
   menuitem.setAttribute("label", stringBundle.
                                  GetStringFromName("command.playlist.remove"));
   menuitem.setAttribute("oncommand", "playlistfolders.servicepane." +
-                        "deleteFolder('" + aNode.id + "');");
+                        "deleteFolder(this.node);");
+	menuitem.node = aNode;
   aContextMenu.appendChild(menuitem);
   
   // Add the rename folder button

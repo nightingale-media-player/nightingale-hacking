@@ -190,7 +190,8 @@ playlistfolders.servicepane={
   /* Called by UI, delete a given folder
    * id (string): the folder's node's id
    */
-  deleteFolder: function(id){
+  deleteFolder: function(node){
+	var id = node.id;
     playlistfolders.central.logEvent("servicepane", "Delete Folder with " +
                                      "Node " + id, 5);
     // Parse folder object from node's id
@@ -235,8 +236,8 @@ playlistfolders.servicepane={
     
     // Delete the folder, and if that succeeded delete the node
     if (playlistfolders.preferences.removeFolder(folder, true))
-      document.getElementById(id).parentNode.
-               removeChild(document.getElementById(id));
+      node.parentNode.
+               removeChild(node);
   },
   
   /* Called by UI, rename a given folder
