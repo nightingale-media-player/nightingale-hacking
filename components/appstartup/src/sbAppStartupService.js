@@ -566,7 +566,7 @@ sbAppStartupService.prototype =
   /**
    * \brief Register the nightingale:// protocol handler on Gnome/Linux
    */
-  _registerNightingaleProtocolGConf: function () {
+  _registerProtocolHandlerGConf: function () {
     if (!("@mozilla.org/gnome-gconf-service;1" in Components.classes)) {
       // gnome-gconf-service doesn't exist
       return;
