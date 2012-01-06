@@ -118,7 +118,7 @@
     
     <!-- Dialog enable checkbox. -->
     <checkbox id="dialog_enable"
-              checked="true"
+              checked="false"
               label="&mediaimporter.filtered_extensions.dontshowme;" />
 
   </vbox>
