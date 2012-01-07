@@ -769,6 +769,7 @@ sbBaseMediaItemDownloadJob::Initialize()
 sbBaseMediaItemDownloadJob::sbBaseMediaItemDownloadJob
                               (sbIMediaItem* aMediaItem,
                                sbILibrary*   aTargetLibrary) :
+  mLock("sbBaseMediaItemDownloadJob::mLock"),
   mMediaItem(aMediaItem),
   mTargetLibrary(aTargetLibrary),
   mStatus(sbIJobProgress::STATUS_RUNNING)
