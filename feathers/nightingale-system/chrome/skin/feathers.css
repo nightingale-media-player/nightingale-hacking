@@ -869,8 +869,8 @@ sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > stack > hb
 
 /* Badge Text labels */
 sb-servicepane-node-badge > hbox > label {
-  background-color: rgb(96,91,110);
-  color: rgb(31,30,39);
+  background-color: rgb(78,142,181);
+  color: rgb(255,255,255);
   padding-left: 5px;
   padding-right: 5px;
   -moz-border-radius: 6px;
@@ -882,7 +882,7 @@ sb-servicepane-node-badge > hbox > label {
 
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
   background-color: rgba(255,255,255,0.4);
-  color: rgba(31,30,39,0.8);
+  color: rgba(30,30,30,0.8);
 }
 
 /* Badge Images */
