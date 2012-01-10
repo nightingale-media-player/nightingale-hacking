@@ -10,9 +10,6 @@ set -e
 build="release"
 buildir="$(pwd)"
 
-# The xulrunner version we're using
-export XUL=6.0.2
-
 # this depends on your system's gstreamer location
 # this should be added to configure.ac and we should
 # make system gstreamer default on linux
