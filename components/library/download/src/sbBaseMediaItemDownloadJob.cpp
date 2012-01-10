@@ -47,6 +47,7 @@
 #include "sbBaseMediaItemDownloadJob.h"
 
 // Songbird imports.
+#include <sbDebugUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
@@ -70,20 +71,6 @@
  * Use the following to output to a file:
  *   NSPR_LOG_FILE=path/to/file.log
  */
-
-#include "prlog.h"
-#ifdef PR_LOGGING
-static PRLogModuleInfo* gBaseMediaItemDownloadJobLog = nsnull;
-#define TRACE(args) PR_LOG(gBaseMediaItemDownloadJobLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gBaseMediaItemDownloadJobLog, PR_LOG_WARN, args)
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif /* __GNUC__ */
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
-
 
 //------------------------------------------------------------------------------
 //
@@ -538,7 +525,7 @@ sbBaseMediaItemDownloadJob::OnProgress()
   TRACE(("%s[%.8x]", __FUNCTION__, this));
 
   // Function variables.
-  nsresult rv;
+  nsresult SB_UNUSED_IN_RELEASE(rv);
 
   // Get the listeners under the lock.
   nsTArray< nsCOMPtr<sbIJobProgressListener> > listenerList;
@@ -775,12 +762,7 @@ sbBaseMediaItemDownloadJob::sbBaseMediaItemDownloadJob
   mStatus(sbIJobProgress::STATUS_RUNNING)
 {
   // Initialize logging.
-#ifdef PR_LOGGING
-  if (!gBaseMediaItemDownloadJobLog) {
-    gBaseMediaItemDownloadJobLog =
-      PR_NewLogModule("sbBaseMediaItemDownloadJob");
-  }
-#endif
+  SB_PRLOG_SETUP(sbBaseMediaItemDownloadJob);
 
   TRACE(("%s[%.8x]", __FUNCTION__, this));
 }
