@@ -34,23 +34,6 @@ DEFAULT_EXTENSIONS = AlbumArt \
                      xpcom_helloworld \
                      $(NULL)
 
-# The ipod extension should build out-of-the-box on Linux and Mac, but needs
-# the DDK on Windows; this is a new build requirement, so to make it so
-# all the contributors' builds don't break, don't build ipod on Win32
-# by default; there's some configure.ac goo that goes with this to ensure
-# we have the right header files here...
-
-# Also, for now, disable the iPod in nightly and release builds.
-ifeq (,$(SONGBIRD_OFFICIAL)$(SONGBIRD_NIGHTLY))
-   ifeq (windows,$(SB_PLATFORM))
-      ifeq (1,$(HAS_EXTRAS))
-         DEFAULT_EXTENSIONS += ipod
-      endif
-   else
-      DEFAULT_EXTENSIONS += ipod
-   endif
-endif
-
 # AlbumArt is not on the list because it's used internally by the bird, so
 # we need to build it regardless of platform
 NOARCH_EXTENSIONS = 7digital \
