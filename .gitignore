@@ -6,6 +6,7 @@ songbird.config
 vcproj
 configure
 dependencies/linux-i686*
+dependencies/*.lzma
 compiled*
 dependencies/linux-x86_64*
 compiled

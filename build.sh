@@ -30,17 +30,16 @@ case $OSTYPE in
 		arch=$(uname -m)
 		depdirn="linux-$arch"
 		
-		if [ ! -d "dependencies/$depdirn" ] ; then		
-			cd dependencies
-			
-			if [ -f "$depdirn-$version.tar.lzma" ] ; then
-				tar xvf "$depdirn-$version.tar.lzma"
-			else
-				wget "https://downloads.sourceforge.net/project/ngale/$version/$arch/$depdirn-$version.tar.lzma"
-				tar xvf "$depdirn-$version.tar.lzma"
-			fi
-			cd ../
+		cd dependencies
+		rm -rf "$depdirn" &> /dev/null
+		
+		if [ -f "$depdirn-$version.tar.lzma" ] ; then
+			tar xvf "$depdirn-$version.tar.lzma"
+		else
+			wget "https://downloads.sourceforge.net/project/ngale/$version/$arch/$depdirn-$version.tar.lzma"
+			tar xvf "$depdirn-$version.tar.lzma"
 		fi
+		cd ../
 		
 		# use our own gstreamer libs
 		for dir in /usr/lib64 /usr/lib ; do
