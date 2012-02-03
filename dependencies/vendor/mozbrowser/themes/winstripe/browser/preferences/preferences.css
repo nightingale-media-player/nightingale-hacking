@@ -100,15 +100,6 @@ radio[pane=paneAdvanced][selected="true"] {
 	-moz-image-region: rect(32px, 224px, 64px, 192px)
 }
 
-/* General Pane */
-#browserHomePage {
-  padding-top: 2px;
-  padding-bottom: 3px;
-  -moz-padding-start: 4px;
-  -moz-padding-end: 2px;
-  background-color: -moz-Dialog;
-}
-
 /* Applications Pane */
 #BrowserPreferences[animated="true"] #handlersView {
   height: 25em;
@@ -118,41 +109,16 @@ radio[pane=paneAdvanced][selected="true"] {
   -moz-box-flex: 1;
 }
 
-/* File Field Widget */
-filefield {
-  margin: 2px 4px;
-  -moz-appearance: textfield;
+/* Privacy Pane */
+
+/* styles for the link elements copied from .text-link in global.css */
+.inline-link {
+  color: -moz-nativehyperlinktext;
+  text-decoration: underline;
 }
 
-.fileFieldContentBox {
-  background-color: -moz-Dialog;
-  color: -moz-DialogText;
-  margin: 1px;
-}
-
-filefield[disabled="true"] .fileFieldContentBox {
-  opacity: 0.5;
-}
-
-filefield[disabled="true"] .fileFieldIcon {
-  opacity: 0.2;
-}
-
-.fileFieldIcon {
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  -moz-margin-start: 2px;
-  -moz-margin-end: 4px;
-}
-
-.fileFieldLabel {
-  -moz-appearance: none;
-  background-color: transparent;
-  border: none;
-  padding: 1px 0px 0px 0px;
-  margin: 0px;
+.inline-link:not(:focus) {
+  outline: 1px dotted transparent;
 }
 
 /* Modeless Window Dialogs */
@@ -191,6 +157,14 @@ filefield[disabled="true"] .fileFieldIcon {
   -moz-border-radius: 0px;
   margin: 4px;
   padding: 0px;
+}
+
+/* Advanced Pane */
+
+/* Adding padding-bottom prevents the bottom of the tabpanel from being cutoff
+   when browser.preferences.animateFadeIn = true */
+#advancedPrefs {
+  padding-bottom: 8px;
 }
 
 /* bottom-most box containing a groupbox in a prefpane. Prevents the bottom

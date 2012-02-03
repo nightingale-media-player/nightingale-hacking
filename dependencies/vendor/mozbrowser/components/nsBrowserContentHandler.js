@@ -64,7 +64,7 @@ const nsIWebNavigationInfo   = Components.interfaces.nsIWebNavigationInfo;
 const nsIBrowserSearchService = Components.interfaces.nsIBrowserSearchService;
 const nsICommandLineValidator = Components.interfaces.nsICommandLineValidator;
 
-const NS_BINDING_ABORTED = 0x804b0002;
+const NS_BINDING_ABORTED = Components.results.NS_BINDING_ABORTED;
 const NS_ERROR_WONT_HANDLE_CONTENT = 0x805d0001;
 const NS_ERROR_ABORT = Components.results.NS_ERROR_ABORT;
 
@@ -150,7 +150,7 @@ function needHomepageOverride(prefb) {
 }
 
 // Copies a pref override file into the user's profile pref-override folder,
-// and then tells the pref service to reload it's default prefs.
+// and then tells the pref service to reload its default prefs.
 function copyPrefOverride() {
   try {
     var fileLocator = Components.classes["@mozilla.org/file/directory_service;1"]
@@ -257,48 +257,11 @@ function getMostRecentWindow(aType) {
   return wm.getMostRecentWindow(aType);
 }
 
-#ifdef XP_UNIX
-#ifndef XP_MACOSX
-#define BROKEN_WM_Z_ORDER
-#endif
-#endif
-#ifdef XP_OS2
-#define BROKEN_WM_Z_ORDER
-#endif
-
 // this returns the most recent non-popup browser window
 function getMostRecentBrowserWindow() {
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(Components.interfaces.nsIWindowMediator);
-
-#ifdef BROKEN_WM_Z_ORDER
-  var win = wm.getMostRecentWindow("navigator:browser", true);
-
-  // if we're lucky, this isn't a popup, and we can just return this
-  if (win && win.document.documentElement.getAttribute("chromehidden")) {
-    var windowList = wm.getEnumerator("navigator:browser", true);
-    // this is oldest to newest, so this gets a bit ugly
-    while (windowList.hasMoreElements()) {
-      var nextWin = windowList.getNext();
-      if (!nextWin.document.documentElement.getAttribute("chromehidden"))
-        win = nextWin;
-    }
-  }
-#else
-  var windowList = wm.getZOrderDOMWindowEnumerator("navigator:browser", true);
-  if (!windowList.hasMoreElements())
-    return null;
-
-  var win = windowList.getNext();
-  while (win.document.documentElement.getAttribute("chromehidden")) {
-    if (!windowList.hasMoreElements()) 
-      return null;
-
-    win = windowList.getNext();
-  }
-#endif
-
-  return win;
+  var browserGlue = Components.classes["@mozilla.org/browser/browserglue;1"]
+                              .getService(Components.interfaces.nsIBrowserGlue);
+  return browserGlue.getMostRecentBrowserWindow();
 }
 
 function doSearch(searchTerm, cmdLine) {
@@ -512,6 +475,18 @@ var nsBrowserContentHandler = {
     var searchParam = cmdLine.handleFlagWithParam("search", false);
     if (searchParam) {
       doSearch(searchParam, cmdLine);
+      cmdLine.preventDefault = true;
+    }
+
+    var fileParam = cmdLine.handleFlagWithParam("file", false);
+    if (fileParam) {
+      var file = cmdLine.resolveFile(fileParam);
+      var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService);
+      var uri = ios.newFileURI(file);
+      openWindow(null, this.chromeURL, "_blank", 
+                 "chrome,dialog=no,all" + this.getFeatures(cmdLine),
+                 uri.spec);
       cmdLine.preventDefault = true;
     }
 
@@ -934,7 +909,6 @@ var Module = {
     registerType("image/bmp");
     registerType("image/x-icon");
     registerType("image/vnd.microsoft.icon");
-    registerType("image/x-xbitmap");
     registerType("application/http-index-format");
 
     var catMan = Components.classes["@mozilla.org/categorymanager;1"]

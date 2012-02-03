@@ -26,7 +26,7 @@
  *   Dean Tessman (dean_tessman@hotmail.com)
  *   Blake Ross (blake@cs.stanford.edu)
  *   Pamela Greene (pamg.bugs@gmail.com)
- *   Dao Gottwald (dao@design-noir.de)
+ *   Dão Gottwald (dao@mozilla.com)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -52,22 +52,28 @@
   -moz-box-orient: vertical; /* for flex hack */
 }
 
-#menubar-items > menubar {
+#main-menubar {
   -moz-box-flex: 1; /* make menu items expand to fill toolbar height */
 }
 
-#PersonalToolbar {
-  min-height: 26px;
-}
-
-#wrapper-search-container #searchbar html|*.textbox-input {
-  visibility: hidden;
+#personal-bookmarks {
+  min-height: 29px;
 }
 
 #navigator-toolbox[inFullscreen="true"],
 #navigator-toolbox[inFullscreen="true"] > #nav-bar {
   border-top: none;
   padding-top: 0;
+}
+
+#urlbar:-moz-lwtheme:not([focused="true"]),
+.searchbar-textbox:-moz-lwtheme:not([focused="true"]),
+.tabbrowser-tab:-moz-lwtheme:not([selected="true"]) {
+  opacity: .85;
+}
+
+.tabbrowser-tab:-moz-lwtheme {
+  text-shadow: none;
 }
 
 /* Places toolbar */
@@ -106,20 +112,7 @@ toolbarbutton.bookmark-item[open="true"] {
 }
 
 .bookmarks-toolbar-customize {
-  display: none;
   max-width: 15em !important;
-}
-
-toolbarpaletteitem[place="toolbar"] .bookmarks-toolbar-customize {
-  display: -moz-box;
-}
-
-toolbarpaletteitem[place="toolbar"] .bookmarks-toolbar-items {
-  visibility: hidden;
-}
-
-toolbarpaletteitem[place="toolbar"] .places-toolbar-items {
-  display: none;
 }
 
 /* Bookmark menus */
@@ -136,19 +129,6 @@ menuitem.bookmark-item {
 
 .bookmark-item > .menu-iconic-left > .menu-iconic-icon {
   -moz-padding-start: 0px;
-}
-
-/* Bookmark panel dropdown menu items */
-#editBMPanel_toolbarFolderItem {
-  list-style-image: url("chrome://browser/skin/places/bookmarksToolbar.png") !important;  
-}
-
-#editBMPanel_bmRootItem {
-  list-style-image: url("chrome://browser/skin/places/bookmarksMenu.png") !important;  
-}
-
-#editBMPanel_unfiledRootItem {
-  list-style-image: url("chrome://browser/skin/places/unsortedBookmarks.png") !important;  
 }
 
 /* Bookmark drag and drop styles */
@@ -172,23 +152,9 @@ menuitem.bookmark-item {
   background-color: Highlight;
 }
 
+/* Bookmarks toolbar */
 .toolbar-drop-indicator {
-  width: 9px;
-  height: 18px;
-  margin-bottom: -6px;
-  position: relative;
-  background: url("chrome://browser/skin/places/toolbarDropMarker.png") 50% 50% no-repeat;
-}
-
-.toolbar-drop-indicator-bar {
-  visibility: hidden;
-  height: 18px;
-  margin-bottom: -18px;
-  position: relative;
-}
-
-.toolbar-drop-indicator-bar[dragging="true"] {
-  visibility: visible;
+  list-style-image: url(chrome://browser/skin/places/toolbarDropMarker.png);
 }
 
 /* Bookmark items */
@@ -235,7 +201,7 @@ menuitem:not([type]) {
 }
 
 #placesContext_open\:newwindow,
-menuitem[command="cmd_newNavigator"],
+#menu_newNavigator,
 #context-openlink,
 #context-openframe {
   list-style-image: url("chrome://browser/skin/Toolbar-small.png");
@@ -244,14 +210,14 @@ menuitem[command="cmd_newNavigator"],
 
 #placesContext_open\:newtab,
 #placesContext_openContainer\:tabs,
-menuitem[command="cmd_newNavigatorTab"],
+#menu_newNavigatorTab,
 #context-openlinkintab,
 #context-openframeintab {
   list-style-image: url("chrome://browser/skin/Toolbar-small.png");
   -moz-image-region: rect(0px 64px 16px 48px);
 }
 
-menuitem[command="Browser:OpenFile"] {
+#menu_openFile {
   list-style-image: url("moz-icon://stock/gtk-open?size=menu");
 }
 
@@ -259,19 +225,29 @@ menuitem[command="Browser:OpenFile"] {
   list-style-image: url("moz-icon://stock/gtk-close?size=menu");
 }
 
-menuitem[command="Browser:SavePage"],
+#context-media-play {
+  list-style-image: url("moz-icon://stock/gtk-media-play?size=menu");
+}
+
+#context-media-pause {
+  list-style-image: url("moz-icon://stock/gtk-media-pause?size=menu");
+}
+
+#menu_savePage,
 #context-savelink,
 #context-saveimage,
+#context-savevideo,
+#context-saveaudio,
 #context-savepage,
 #context-saveframe {
   list-style-image: url("moz-icon://stock/gtk-save-as?size=menu");
 }
 
-menuitem[command="cmd_printPreview"] {
+#menu_printPreview {
   list-style-image: url("moz-icon://stock/gtk-print-preview?size=menu");
 }
 
-menuitem[command="cmd_print"],
+#menu_print,
 #context-printframe {
   list-style-image: url("moz-icon://stock/gtk-print?size=menu");
 }
@@ -280,68 +256,81 @@ menuitem[command="cmd_print"],
   list-style-image: url("moz-icon://stock/gtk-quit?size=menu");
 }
 
-menuitem[command="cmd_undo"],
+#menu_undo,
 #context-undo {
   list-style-image: url("moz-icon://stock/gtk-undo?size=menu");
 }
 
-menuitem[command="cmd_undo"][disabled],
+#menu_undo[disabled],
 #context-undo[disabled] {
   list-style-image: url("moz-icon://stock/gtk-undo?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_redo"] {
+#menu_redo {
   list-style-image: url("moz-icon://stock/gtk-redo?size=menu");
 }
 
-menuitem[command="cmd_redo"][disabled] {
+#menu_redo[disabled] {
   list-style-image: url("moz-icon://stock/gtk-redo?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_cut"],
+#menu_cut,
+#placesContext_cut,
 #context-cut {
   list-style-image: url("moz-icon://stock/gtk-cut?size=menu");
 }
 
-menuitem[command="cmd_cut"][disabled],
+#menu_cut[disabled],
+#placesContext_cut[disabled],
 #context-cut[disabled] {
   list-style-image: url("moz-icon://stock/gtk-cut?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_copy"],
+#menu_copy,
+#placesContext_copy,
 #context-copy,
 #context-copyimage,
+#context-copyvideourl,
+#context-copyaudiourl,
 #context-copylink,
 #context-copyemail {
   list-style-image: url("moz-icon://stock/gtk-copy?size=menu");
 }
 
-menuitem[command="cmd_copy"][disabled],
+#menu_copy[disabled],
+#placesContext_copy[disabled],
 #context-copy[disabled] {
   list-style-image: url("moz-icon://stock/gtk-copy?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_paste"],
+#menu_paste,
+#placesContext_paste,
 #context-paste {
   list-style-image: url("moz-icon://stock/gtk-paste?size=menu");
 }
 
-menuitem[command="cmd_paste"][disabled],
+#menu_paste[disabled],
+#placesContext_paste[disabled],
 #context-paste[disabled] {
   list-style-image: url("moz-icon://stock/gtk-paste?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_delete"],
+#menu_delete,
+#placesContext_delete,
+#placesContext_delete_history,
 #context-delete {
   list-style-image: url("moz-icon://stock/gtk-delete?size=menu");
 }
 
-menuitem[command="cmd_delete"][disabled],
+#menu_delete[disabled],
+#placesContext_delete[disabled],
+#placesContext_delete_history[disabled],
 #context-delete[disabled] {
   list-style-image: url("moz-icon://stock/gtk-delete?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_selectAll"] {
+#menu_selectAll,
+#context-selectall {
   list-style-image: url("moz-icon://stock/gtk-select-all?size=menu");
 }
 
@@ -357,78 +346,78 @@ menuitem[command="cmd_selectAll"] {
   list-style-image: url("moz-icon://stock/gtk-preferences?size=menu");
 }
 
-menuitem[command="Browser:Stop"],
+#menu_stop,
 #context-stop {
   list-style-image: url("moz-icon://stock/gtk-stop?size=menu");
 }
 
-menuitem[command="Browser:Stop"][disabled],
+#menu_stop[disabled],
 #context-stop[disabled] {
   list-style-image: url("moz-icon://stock/gtk-stop?size=menu&state=disabled");
 }
 
+#menu_reload,
 #placesContext_reload,
 #placesContext_reloadMicrosummary,
-menuitem[command="Browser:Reload"],
 #context-reload,
 #context-reloadframe {
   list-style-image: url("moz-icon://stock/gtk-refresh?size=menu");
 }
 
-menuitem[command="Browser:Reload"][disabled],
+#menu_reload[disabled],
 #context-reload[disabled] {
   list-style-image: url("moz-icon://stock/gtk-refresh?size=menu&state=disabled");
 }
 
-menuitem[command="cmd_fullZoomEnlarge"] {
+#menu_zoomEnlarge {
   list-style-image: url("moz-icon://stock/gtk-zoom-in?size=menu");
 }
 
-menuitem[command="cmd_fullZoomReduce"] {
+#menu_zoomReduce {
   list-style-image: url("moz-icon://stock/gtk-zoom-out?size=menu");
 }
 
-menuitem[command="cmd_fullZoomReset"] {
+#menu_zoomReset {
   list-style-image: url("moz-icon://stock/gtk-zoom-100?size=menu");
 }
 
-menuitem[key="goBackKb"],
+#historyMenuBack,
 #context-back {
   list-style-image: url("moz-icon://stock/gtk-go-back-ltr?size=menu");
 }
 
-menuitem[key="goBackKb"][disabled],
+#historyMenuBack[disabled],
 #context-back[disabled] {
   list-style-image: url("moz-icon://stock/gtk-go-back-ltr?size=menu&state=disabled");
 }
 
-menuitem[key="goBackKb"][chromedir="rtl"],
-#context-back[chromedir="rtl"] {
+#historyMenuBack:-moz-locale-dir(rtl),
+#context-back:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=menu");
 }
 
-menuitem[key="goBackKb"][disabled][chromedir="rtl"],
-#context-back[disabled][chromedir="rtl"] {
+#historyMenuBack[disabled]:-moz-locale-dir(rtl),
+#context-back[disabled]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=menu&state=disabled");
 }
 
-menuitem[key="goForwardKb"],
+#historyMenuForward,
 #context-forward {
   list-style-image: url("moz-icon://stock/gtk-go-forward-ltr?size=menu");
 }
 
-menuitem[key="goForwardKb"][disabled],
+#historyMenuForward[disabled],
 #context-forward[disabled] {
   list-style-image: url("moz-icon://stock/gtk-go-forward-ltr?size=menu&state=disabled");
 }
 
-menuitem[key="goForwardKb"][chromedir="rtl"],
-#context-forward[chromedir="rtl"] {
+#historyMenuForward:-moz-locale-dir(rtl),
+#context-forward:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=menu");
 }
 
-menuitem[key="goForwardKb"][disabled][chromedir="rtl"],
-#context-forward[disabled][chromedir="rtl"] {
+#historyMenuForward[disabled]:-moz-locale-dir(rtl),
+#context-forward[disabled]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=menu&state=disabled");
 }
 
@@ -436,12 +425,12 @@ menuitem[key="goForwardKb"][disabled][chromedir="rtl"],
   list-style-image: url("moz-icon://stock/gtk-home?size=menu");
 }
 
-menuitem[command="Browser:ShowAllHistory"] {
+#menu_showAllHistory {
   list-style-image: url("chrome://browser/skin/Toolbar-small.png");
   -moz-image-region: rect(0px 32px 16px 16px);
 }
 
-menuitem[command="Browser:ShowAllBookmarks"] {
+#bookmarksShowAll {
   list-style-image: url("chrome://browser/skin/Toolbar-small.png");
   -moz-image-region: rect(0px 48px 16px 32px);
 }
@@ -455,14 +444,13 @@ menuitem[command="Browser:ShowAllBookmarks"] {
   -moz-image-region: rect(0px 16px 16px 0px);
 }
 
-menuitem[command="View:PageInfo"],
+#menu_pageInfo,
 #context-viewinfo,
 #context-viewframeinfo {
   list-style-image: url("moz-icon://stock/gtk-info?size=menu");
 }
 
-#placesContext_show\:info,
-#context-metadata {
+#placesContext_show\:info {
   list-style-image: url("moz-icon://stock/gtk-properties?size=menu");
 }
 
@@ -470,7 +458,7 @@ menuitem[command="View:PageInfo"],
   list-style-image: url("moz-icon://stock/gtk-clear?size=menu");
 }
 
-menuitem[key="key_openHelp"] {
+#menu_openHelp {
   list-style-image: url("moz-icon://stock/gtk-help?size=menu");
 }
 
@@ -523,10 +511,10 @@ toolbar[mode="full"] .toolbarbutton-menubutton-button {
   list-style-image: url("moz-icon://stock/gtk-go-back-ltr?size=toolbar&state=disabled");
 }
 
-#back-button[chromedir="rtl"] {
+#back-button:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=toolbar");
 }
-#back-button[disabled="true"][chromedir="rtl"] {
+#back-button[disabled="true"]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=toolbar&state=disabled");
 }
 
@@ -537,10 +525,10 @@ toolbar[mode="full"] .toolbarbutton-menubutton-button {
   list-style-image: url("moz-icon://stock/gtk-go-forward-ltr?size=toolbar&state=disabled");
 }
 
-#forward-button[chromedir="rtl"] {
+#forward-button:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=toolbar");
 }
-#forward-button[disabled="true"][chromedir="rtl"] {
+#forward-button[disabled="true"]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=toolbar&state=disabled");
 }
 
@@ -568,22 +556,13 @@ toolbar[mode="full"] .toolbarbutton-menubutton-button {
 #downloads-button {
   -moz-image-region: rect(0px 24px 24px 0px);
 }
-#downloads-button[disabled="true"] {
-  -moz-image-region: rect(24px 24px 48px 0px);
-}
 
 #history-button {
   -moz-image-region: rect(0px 48px 24px 24px);
 }
-#history-button[disabled="true"] {
-  -moz-image-region: rect(24px 48px 48px 24px);
-}
 
 #bookmarks-button {
   -moz-image-region: rect(0px 72px 24px 48px);
-}
-#bookmarks-button[disabled="true"] {
-  -moz-image-region: rect(24px 72px 48px 48px);
 }
 
 #print-button {
@@ -596,15 +575,9 @@ toolbar[mode="full"] .toolbarbutton-menubutton-button {
 #new-tab-button {
   -moz-image-region: rect(0px 96px 24px 72px);
 }
-#new-tab-button[disabled="true"] {
-  -moz-image-region: rect(24px 96px 48px 72px);
-}
 
 #new-window-button {
   -moz-image-region: rect(0px 120px 24px 96px);
-}
-#new-window-button[disabled="true"] {
-  -moz-image-region: rect(24px 120px 48px 96px);
 }
 
 #cut-button {
@@ -628,6 +601,10 @@ toolbar[mode="full"] .toolbarbutton-menubutton-button {
   list-style-image: url("moz-icon://stock/gtk-paste?size=toolbar&state=disabled");
 }
 
+#fullscreen-button {
+  list-style-image: url("moz-icon://stock/gtk-fullscreen?size=toolbar");
+}
+
 /* 16px primary toolbar buttons */
 toolbar[iconsize="small"] .toolbarbutton-1 {
   -moz-box-orient: vertical;
@@ -649,13 +626,13 @@ toolbar[iconsize="small"] #back-button[disabled="true"] {
   list-style-image: url("moz-icon://stock/gtk-go-back-ltr?size=menu&state=disabled");
 }
 
-toolbar[iconsize="small"] #back-button[chromedir="rtl"] {
+toolbar[iconsize="small"] #back-button:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=menu");
 }
-menupopup[chromedir="rtl"] > .unified-nav-back[_moz-menuactive] {
+.unified-nav-back[_moz-menuactive]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=menu") !important;
 }
-toolbar[iconsize="small"] #back-button[disabled="true"][chromedir="rtl"] {
+toolbar[iconsize="small"] #back-button[disabled="true"]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-back-rtl?size=menu&state=disabled");
 }
 
@@ -669,13 +646,13 @@ toolbar[iconsize="small"] #forward-button[disabled="true"] {
   list-style-image: url("moz-icon://stock/gtk-go-forward-ltr?size=menu&state=disabled");
 }
 
-toolbar[iconsize="small"] #forward-button[chromedir="rtl"] {
+toolbar[iconsize="small"] #forward-button:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=menu");
 }
-menupopup[chromedir="rtl"] > .unified-nav-forward[_moz-menuactive] {
+.unified-nav-forward[_moz-menuactive]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=menu") !important;
 }
-toolbar[iconsize="small"] #forward-button[disabled="true"][chromedir="rtl"] {
+toolbar[iconsize="small"] #forward-button[disabled="true"]:-moz-locale-dir(rtl) {
   list-style-image: url("moz-icon://stock/gtk-go-forward-rtl?size=menu&state=disabled");
 }
 
@@ -697,7 +674,7 @@ toolbar[iconsize="small"] #home-button ,
 #home-button.bookmark-item {
   list-style-image: url("moz-icon://stock/gtk-home?size=menu");
 }
-toolbar[iconsize="small"] #home-button[disabled="true"] ,
+toolbar[iconsize="small"] #home-button[disabled="true"],
 #home-button.bookmark-item[disabled="true"] {
   list-style-image: url("moz-icon://stock/gtk-home?size=menu&state=disabled");
 }
@@ -705,22 +682,13 @@ toolbar[iconsize="small"] #home-button[disabled="true"] ,
 toolbar[iconsize="small"] #downloads-button {
   -moz-image-region: rect(0px 16px 16px 0px);
 }
-toolbar[iconsize="small"] #downloads-button[disabled="true"] {
-  -moz-image-region: rect(16px 16px 32px 0px);
-}
 
 toolbar[iconsize="small"] #history-button {
   -moz-image-region: rect(0px 32px 16px 16px);
 }
-toolbar[iconsize="small"] #history-button[disabled="true"] {
-  -moz-image-region: rect(16px 32px 32px 16px);
-}
 
 toolbar[iconsize="small"] #bookmarks-button {
   -moz-image-region: rect(0px 48px 16px 32px);
-}
-toolbar[iconsize="small"] #bookmarks-button[disabled="true"] {
-  -moz-image-region: rect(16px 48px 32px 32px);
 }
 
 toolbar[iconsize="small"] #print-button {
@@ -733,15 +701,9 @@ toolbar[iconsize="small"] #print-button[disabled="true"] {
 toolbar[iconsize="small"] #new-tab-button {
   -moz-image-region: rect(0px 64px 16px 48px);
 }
-toolbar[iconsize="small"] #new-tab-button[disabled="true"] {
-  -moz-image-region: rect(16px 64px 32px 48px);
-}
 
 toolbar[iconsize="small"] #new-window-button {
   -moz-image-region: rect(0px 80px 16px 64px);
-}
-toolbar[iconsize="small"] #new-window-button[disabled="true"] {
-  -moz-image-region: rect(16px 80px 32px 64px);
 }
 
 toolbar[iconsize="small"] #cut-button {
@@ -763,6 +725,10 @@ toolbar[iconsize="small"] #paste-button {
 }
 toolbar[iconsize="small"] #paste-button[disabled="true"] {
   list-style-image: url("moz-icon://stock/gtk-paste?size=menu&state=disabled");
+}
+
+toolbar[iconsize="small"] #fullscreen-button {
+  list-style-image: url("moz-icon://stock/gtk-fullscreen?size=menu");
 }
 
 /* Fullscreen window controls */
@@ -787,6 +753,17 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 #urlbar {
   width: 7em;
   min-width: 7em;
+  -moz-appearance: textfield;
+}
+
+#urlbar > .autocomplete-textbox-container {
+  -moz-appearance: none;
+  /* keep the URL bar content LTR */
+  direction: ltr;
+}
+
+#urlbar > .autocomplete-history-dropmarker {
+  -moz-appearance: toolbarbutton-dropdown;
 }
 
 #urlbar-container {
@@ -795,18 +772,12 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 }
 
 #urlbar-icons {
-  height: 18px;
   -moz-box-align: center;
   -moz-padding-end: 2px;
 }
 
 .urlbar-icon {
   cursor: pointer;
-}
-
-#urlbar[pageproxystate="invalid"] > #urlbar-icons > :not(#go-button) ,
-#urlbar[pageproxystate="valid"] > #urlbar-icons > #go-button {
-  visibility: collapse;
 }
 
 #urlbar-search-splitter {
@@ -820,28 +791,16 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
   -moz-margin-start: 0;
 }
 
-#wrapper-urlbar-container #urlbar {
-  -moz-user-input: disabled;
-  cursor: -moz-grab;
-}
-
-#wrapper-urlbar-container #urlbar > .autocomplete-textbox-container {
-  -moz-appearance: textfield;
-}
-
 #wrapper-urlbar-container #urlbar > .autocomplete-history-dropmarker {
   display: none;
 }
 
-#PopupAutoComplete {
-  direction: ltr !important;
-}
-
+#PopupAutoComplete,
 #PopupAutoCompleteRichResult {
   direction: ltr !important;
 }
 
-#PopupAutoComplete[chromedir="rtl"] > tree > treerows {
+#PopupAutoComplete:-moz-locale-dir(rtl) > tree > treerows {
   direction: rtl;
 }
 
@@ -883,8 +842,21 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
   -moz-border-end: 1px solid ThreeDShadow;
 }
 
+#identity-box:-moz-locale-dir(rtl) {
+  -moz-border-start: 1px solid ThreeDShadow;
+}
+
 #identity-box:focus {
   outline: 1px dotted -moz-DialogText;
+}
+
+#identity-box:hover > #identity-box-inner {
+  background-color: rgba(255, 255, 255, .2);
+}
+
+#identity-box:hover:active > #identity-box-inner,
+#identity-box[open="true"] > #identity-box-inner {
+  background-color: rgba(0, 0, 0, .1);
 }
 
 #identity-icon-label {
@@ -896,12 +868,12 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
   display: none;
 }
 
-#identity-box.verifiedDomain > hbox {
+#identity-box.verifiedDomain {
   background-color: rgba(30, 80, 170, 0.7);
   color: white;
 }
 
-#identity-box.verifiedIdentity > hbox {
+#identity-box.verifiedIdentity {
   background-color: rgba(50, 150, 50, 0.8);
   color: white;
 }
@@ -924,16 +896,15 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 }
 
 /* Identity popup body text */
-#identity-popup-content-box > description,
-#identity-popup-encryption-label {
+.identity-popup-description {
   white-space: pre-wrap;
-  padding-left: 15px;
+  -moz-padding-start: 15px;
   margin: 2px 0 4px;
 }
 
-#identity-popup-content-box > label {
+.identity-popup-label {
   white-space: pre-wrap;
-  padding-left: 15px;
+  -moz-padding-start: 15px;
   margin: 0;
 }
 
@@ -959,7 +930,7 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 #identity-popup-content-box.verifiedIdentity > #identity-popup-encryption ,
 #identity-popup-content-box.verifiedDomain > #identity-popup-encryption {
   margin-top: 10px;
-  margin-left: -18px;
+  -moz-margin-start: -18px;
 }
 
 #identity-popup-content-box.verifiedIdentity > #identity-popup-encryption > vbox > #identity-popup-encryption-icon ,
@@ -969,31 +940,8 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 
 /* Identity popup bounding box */
 #identity-popup-container {
-  background-image: none;
   min-width: 280px;
   padding: 10px;
-}
-
-#urlbar > .autocomplete-textbox-container {
-  -moz-binding: url(chrome://browser/skin/browser.xml#autocomplete-security-wrapper);
-}
-
-#autocomplete-security-wrapper {
-  /* keep the URL bar content LTR */
-  direction: ltr;
-  -moz-box-align: stretch;
-  /* cover the white gap between the text field and the drop down button */
-  margin-right: -3px;
-}
-
-#urlbar[chromedir="rtl"] > .autocomplete-textbox-container > #autocomplete-security-wrapper {
-  margin-right: 0px;
-  margin-left: -3px;
-}
-
-#wrapper-urlbar-container #urlbar >
-.autocomplete-textbox-container > #autocomplete-security-wrapper {
-  margin: 0px;
 }
 
 /* Feed icon */
@@ -1006,25 +954,11 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
   background-color: transparent;
 }
 
-#feed-button > hbox > .button-menu-dropmarker,
-#feed-button > hbox > .button-text {
-  display: none;
-}
-
 #feed-button {
-  -moz-binding: url("chrome://global/content/bindings/button.xml#menu");
   -moz-appearance: none; 
   min-width: 0px; 
   margin-right: 1px !important;
-}
-
-#feed-button[feeds] {
   list-style-image: url("chrome://browser/skin/page-livemarks.png");
-}
-
-/* Autocomplete */
-#urlbar .autocomplete-textbox-container {
-  -moz-box-align: stretch;
 }
 
 #treecolAutoCompleteImage {
@@ -1034,6 +968,13 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 .ac-result-type-bookmark,
 .autocomplete-treebody::-moz-tree-image(bookmark, treecolAutoCompleteImage) {
   list-style-image: url("chrome://browser/skin/places/pageStarred.png");
+  width: 16px;
+  height: 16px;
+}
+
+.ac-result-type-keyword,
+.autocomplete-treebody::-moz-tree-image(keyword, treecolAutoCompleteImage) {
+  list-style-image: url(chrome://global/skin/icons/Search-glass.png);
   width: 16px;
   height: 16px;
 }
@@ -1054,7 +995,7 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
 }
 
 .ac-url-text {
-  color: GrayText;
+  color: -moz-nativehyperlinktext;
 }
 
 .autocomplete-treebody::-moz-tree-cell-text(treecolAutoCompleteComment) {
@@ -1110,6 +1051,16 @@ toolbar[iconsize="small"] #paste-button[disabled="true"] {
   font-size: 130%;
 }
 
+#editBookmarkPanelHeader,
+#editBookmarkPanelContent {
+  margin-bottom: .5em;
+}
+
+/* Implements editBookmarkPanel resizing on folderTree un-collapse. */
+#editBMPanel_folderTree {
+  min-width: 27em;
+}
+
 /* Content area */
 #sidebar {
   background-color: Window;
@@ -1123,49 +1074,25 @@ statusbarpanel#statusbar-display {
   -moz-padding-start: 0;
 }
 
-#security-button {
-  list-style-image: none;
-  min-width: 20px;
-  -moz-box-direction: reverse;
-  display: none;
-}
-
 #security-button[level="high"],
 #security-button[level="low"] {
   list-style-image: url("chrome://browser/skin/Secure.png");
-  display: -moz-box;
 }
 
 #security-button[level="broken"] {
   list-style-image: url("chrome://browser/skin/Security-broken.png");
-  display: -moz-box;
-}
-
-/* XXXsw prevent margins of a value-less label from shifting the image */
-#security-button > label:not([value]) {
-  display: none;
 }
 
 #page-report-button {
-  list-style-image: none;
-  width: 20px;
-  display: none;
-}
-
-#page-report-button[blocked] {
   list-style-image: url("chrome://browser/skin/Info.png");
-  display: -moz-box;
+  width: 20px;
 }
 
 /* Throbber */
 #navigator-throbber {
-  -moz-appearance: none;
-  -moz-user-focus: ignore;
-  margin: 0 !important;
-  border: none !important;
-  padding: 0px !important;
-  min-width: 0;
-  background-color: transparent;
+  width: 16px;
+  min-height: 16px;
+  margin: 0 3px;
   list-style-image: url("chrome://global/skin/icons/notloading_16.png");
 }
 
@@ -1173,20 +1100,6 @@ statusbarpanel#statusbar-display {
   list-style-image: url("chrome://global/skin/icons/loading_16.png");
 }
 
-#navigator-throbber > hbox {
-  border-top: 0px;
-  border-bottom: 0px;
-  padding-bottom: 1px;
-}
-
-toolbar[mode="text"] #navigator-throbber,
-toolbar[iconsize="small"] #navigator-throbber {
-  list-style-image: url("chrome://global/skin/icons/notloading_16.png");
-}
-toolbar[mode="text"] #navigator-throbber[busy="true"],
-toolbar[iconsize="small"] #navigator-throbber[busy="true"] {
-  list-style-image: url("chrome://global/skin/icons/loading_16.png");
-}
 
 tabpanels {
   -moz-appearance: none;
@@ -1254,7 +1167,7 @@ tabpanels {
   border: 1px dotted transparent;
 }
 
-.tabbrowser-tab[selected="true"]:focus > .tab-text {
+.tabbrowser-tab:focus > .tab-text {
   border: 1px dotted -moz-DialogText;
 }
 
@@ -1299,14 +1212,33 @@ tabpanels {
   outline: none !important;
 }
 
+/* Tabstrip new tab button */
+.tabs-newtab-button {
+  list-style-image: url("moz-icon://stock/gtk-add?size=menu");
+  border: none;
+  margin-bottom: 1px;
+}
+
+.tabbrowser-arrowscrollbox > .tabs-newtab-button {
+  width: 32px;
+}
+
+.tabs-newtab-button > .toolbarbutton-icon {
+  margin-top: -2px;
+  margin-bottom: -2px;
+}
+
 /* Tabstrip close button */
 .tabs-closebutton {
   list-style-image: url("moz-icon://stock/gtk-close?size=menu");
   border: none;
+  margin-bottom: 1px;
 }
 
 .tabs-closebutton > .toolbarbutton-icon {
-  margin: -3px !important;
+  /* XXX Buttons have padding in widget/ that we don't want here but can't override with good CSS, so we must
+     use evil CSS to give the impression of smaller content */
+  margin: -2px;
 }
 
 /* Tabbrowser arrowscrollbox arrows */
@@ -1325,6 +1257,23 @@ tabpanels {
   opacity: 0.0;
 }
 
+.tabs-alltabs-button {
+  margin-bottom: 1px;
+}
+
+.tabs-alltabs-button > .toolbarbutton-icon {
+  list-style-image: url("chrome://browser/skin/tabbrowser/alltabs.png");
+  margin: 2px 0 1px;
+}
+
+.tabs-alltabs-button[type="menu"] > .toolbarbutton-menu-dropmarker {
+  margin-bottom: -2px;
+}
+
+.tabs-alltabs-button[type="menu"] > .toolbarbutton-icon {
+  display: none;
+}
+
 /* All tabs menupopup */
 .alltabs-item > .menu-iconic-left > .menu-iconic-icon {
   list-style-image: url("chrome://global/skin/icons/folder-item.png");
@@ -1337,10 +1286,6 @@ tabpanels {
 
 .alltabs-item[busy] > .menu-iconic-left > .menu-iconic-icon {
   list-style-image: url("chrome://global/skin/icons/loading_16.png");
-}
-
-.tabs-alltabs-button > .toolbarbutton-icon {
-   margin: 0px;
 }
 
 /* Sidebar */
@@ -1358,28 +1303,21 @@ toolbarbutton.chevron {
   list-style-image: url("chrome://global/skin/toolbar/chevron.gif") !important;
 }
 
-toolbarbutton.chevron[chromedir="rtl"] {
-  list-style-image: url("chrome://global/skin/toolbar/chevron-rtl.gif") !important;
+toolbarbutton.chevron:-moz-locale-dir(rtl) > .toolbarbutton-icon {
+  -moz-transform: scaleX(-1);
 }
 
-toolbarbutton.chevron > .toolbarbutton-text {
-  display: none; /* hide chevron label */
-}
-
+toolbarbutton.chevron > .toolbarbutton-text,
 toolbarbutton.chevron > .toolbarbutton-menu-dropmarker {
   display: none;
 }
 
+toolbarbutton.chevron > .toolbarbutton-icon {
+  margin: 0;
+}
+
 toolbar[mode="text"] toolbarbutton.chevron > .toolbarbutton-icon {
   display: -moz-box; /* display chevron icon in text mode */
-}
-
-toolbar[mode="text"] > #window-controls > toolbarbutton > .toolbarbutton-icon {
-  display: -moz-box;
-}
-
-toolbar[mode="text"] > #window-controls > toolbarbutton > .toolbarbutton-text {
-   display: none;
 }
 
 /* Popup blocking dialog */
@@ -1394,4 +1332,93 @@ toolbar[mode="text"] > #window-controls > toolbarbutton > .toolbarbutton-text {
 #download-monitor {
   list-style-image: url("chrome://browser/skin/Toolbar-small.png");
   -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+
+/* ::::: Keyboard UI Panel ::::: */
+
+.KUI-panel-closebutton {
+  list-style-image: url(KUI-close.png);
+}
+
+.KUI-panel-closebutton > .toolbarbutton-icon {
+  margin: 0;
+}
+
+/* ::::: Ctrl-Tab and All Tabs Panels ::::: */
+
+.ctrlTab-preview,
+.allTabs-preview {
+  -moz-appearance: toolbarbutton;
+}
+
+.tabPreview-canvas {
+  -moz-box-shadow: 0 0 5px ThreeDShadow;
+}
+
+.ctrlTab-preview:focus .tabPreview-canvas,
+.ctrlTab-preview:hover .tabPreview-canvas,
+.allTabs-preview:focus .tabPreview-canvas,
+.allTabs-preview:hover .tabPreview-canvas {
+  -moz-box-shadow: none;
+}
+
+.ctrlTab-favicon[src],
+.allTabs-favicon[src] {
+  background-color: white;
+  padding: 2px;
+/* XXX: Upscaling images is ugly on Linux (bug 422179)
+  width: 24px;
+  height: 24px;
+  opacity: .7;
+*/
+  width: 20px;
+  height: 20px;
+  opacity: .8;
+}
+
+/* Ctrl-Tab */
+
+#ctrlTab-panel {
+  padding: 10px;
+}
+
+.ctrlTab-preview:not(#ctrlTab-showAll) .tabPreview-canvas {
+  margin-bottom: 2px;
+}
+
+#ctrlTab-showAll {
+  -moz-appearance: button;
+  color: ButtonText;
+  padding: 0 3px;
+  margin-top: 10px;
+}
+
+/* All Tabs */
+
+#allTabs-panel {
+  /* compensate for the widget border and padding to center the panel correctly */
+  margin-left: -13px;
+}
+
+#allTabs-tab-close-button {
+  /*XXX without this, the closebutton can cause the panel to expand horizontally */
+  margin-right: -16px;
+}
+
+#allTabs-meta {
+  padding: 5px;
+}
+
+#allTabs-filter {
+  -moz-margin-start: 36px;
+  -moz-margin-end: 0;
+}
+
+#allTabs-stack {
+  margin: 10px;
+}
+
+.allTabs-preview-label {
+  -moz-transform: translate(0, 2px);
 }

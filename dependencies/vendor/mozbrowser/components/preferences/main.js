@@ -86,7 +86,7 @@ var gMainPane = {
       // If we're in instant-apply mode, use the most recent browser window
       var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                          .getService(Components.interfaces.nsIWindowMediator);
-      win = wm.getMostRecentWindow("Nightingale:Main");
+      win = wm.getMostRecentWindow("Songbird:Main");
     }
     else
       win = window.opener;
@@ -95,7 +95,7 @@ var gMainPane = {
       var homePage = document.getElementById("browser.startup.homepage");
       var browser = win.document.getElementById("content");
 
-      /* XXX NIGHTINGALE: we only use the current tab
+      /* XXX SONGBIRD: we only use the current tab
       var newVal = browser.browsers[0].currentURI.spec;
       if (browser.browsers.length > 1) {
         // XXX using dangerous "|" joiner!
@@ -118,7 +118,7 @@ var gMainPane = {
   {
     var rv = { urls: null, names: null };
     document.documentElement.openSubDialog("chrome://browser/content/preferences/selectBookmark.xul",
-                                           "resizable", rv);
+                                           "resizable", rv);  
     if (rv.urls && rv.names) {
       var homePage = document.getElementById("browser.startup.homepage");
 
@@ -141,17 +141,17 @@ var gMainPane = {
       // If we're in instant-apply mode, use the most recent browser window
       var wm = Cc["@mozilla.org/appshell/window-mediator;1"]
                  .getService(Ci.nsIWindowMediator);
-      win = wm.getMostRecentWindow("Nightingale:Main");
+      win = wm.getMostRecentWindow("Songbird:Main");
     }
     else
       win = window.opener;
 
     if (win && win.document.documentElement
-                  .getAttribute("windowtype") == "Nightingale:Main") {
+                  .getAttribute("windowtype") == "Songbird:Main") {
       windowIsPresent = true;
 
       var tabbrowser = win.document.getElementById("content");
-      /* NIGHTINGALE: we only use the current tab
+      /* SONGBIRD: we only use the current tab 
       if (tabbrowser.browsers.length > 1)
         useCurrent.label = useCurrent.getAttribute("label2");
       else
@@ -213,9 +213,9 @@ var gMainPane = {
    *     2 - The default download location is elsewhere as specified in
    *         browser.download.dir.
    * browser.download.downloadDir
-   *   depreciated.
+   *   deprecated.
    * browser.download.defaultFolder
-   *   depreciated.
+   *   deprecated.
    */
 
   /**

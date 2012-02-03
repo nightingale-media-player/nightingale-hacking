@@ -84,12 +84,12 @@
 #endif
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 #ifdef USE_WIN_TITLE_STYLE
-            style="&prefWin.styleWin2;">
+            style="&prefWinMinSize.styleWin2;">
 #else
 #ifdef XP_MACOSX
-            style="&prefWin.styleMac2;">
+            style="&prefWinMinSize.styleMac;">
 #else
-            style="&prefWin.styleGNOME2;">
+            style="&prefWinMinSize.styleGNOME;">
 #endif
 #endif
 
@@ -99,12 +99,12 @@
     <stringbundle id="bundlePreferences"
                   src="chrome://browser/locale/preferences/preferences.properties"/>
 
-    <!-- XXX Nightingale HACK: Add an empty menu to keep the mac happy until
+    <!-- XXX Songbird HACK: Add an empty menu to keep the mac happy until
          the day we have a FireFox style macBrowserOverlay.xul.
       -->
     <menubar id="stub" />
 
-    <prefpane id="paneMain" label="&paneMain.title;"
+    <prefpane id="paneMain" label="&paneGeneral.title;"
               src="chrome://browser/content/preferences/main.xul"/>
     <prefpane id="paneTabs" label="&paneTabs.title;"
               src="chrome://browser/content/preferences/tabs.xul"/>

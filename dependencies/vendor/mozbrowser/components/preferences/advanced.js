@@ -56,14 +56,15 @@ var gAdvancedPane = {
       advancedPrefs.selectedTab = document.getElementById(extraArgs["advancedTab"]);
     } else {
       var preference = document.getElementById("browser.preferences.advanced.selectedTabIndex");
-      if (preference.value === null)
-        return;
-      advancedPrefs.selectedIndex = preference.value;
+      if (preference.value !== null)
+        advancedPrefs.selectedIndex = preference.value;
     }
 
+#ifdef MOZ_UPDATER
     this.updateAppUpdateItems();
     this.updateAutoItems();
     this.updateModeItems();
+#endif
     this.updateOfflineApps();
   },
 
@@ -163,7 +164,7 @@ var gAdvancedPane = {
   readCacheSize: function ()
   {
     var preference = document.getElementById("browser.cache.disk.capacity");
-    return preference.value / 1000;
+    return preference.value / 1024;
   },
 
   /**
@@ -174,7 +175,7 @@ var gAdvancedPane = {
   {
     var cacheSize = document.getElementById("cacheSize");
     var intValue = parseInt(cacheSize.value, 10);
-    return isNaN(intValue) ? 0 : intValue * 1000;
+    return isNaN(intValue) ? 0 : intValue * 1024;
   },
 
   /**
@@ -214,15 +215,24 @@ var gAdvancedPane = {
   },
 
   // XXX: duplicated in browser.js
-  _getOfflineAppUsage: function (host)
+  _getOfflineAppUsage: function (host, groups)
   {
-    var cacheService = Components.classes["@mozilla.org/network/cache-service;1"].
-                       getService(Components.interfaces.nsICacheService);
-    var cacheSession = cacheService.createSession("HTTP-offline",
-                                                  Components.interfaces.nsICache.STORE_OFFLINE,
-                                                  true).
-                       QueryInterface(Components.interfaces.nsIOfflineCacheSession);
-    var usage = cacheSession.getDomainUsage(host);
+    var cacheService = Components.classes["@mozilla.org/network/application-cache-service;1"].
+                       getService(Components.interfaces.nsIApplicationCacheService);
+    if (!groups) {
+      groups = cacheService.getGroups({});
+    }
+    var ios = Components.classes["@mozilla.org/network/io-service;1"].
+              getService(Components.interfaces.nsIIOService);
+
+    var usage = 0;
+    for (var i = 0; i < groups.length; i++) {
+      var uri = ios.newURI(groups[i], null, null);
+      if (uri.asciiHost == host) {
+        var cache = cacheService.getActiveCache(groups[i]);
+        usage += cache.usage;
+      }
+    }
 
     var storageManager = Components.classes["@mozilla.org/dom/storagemanager;1"].
                          getService(Components.interfaces.nsIDOMStorageManager);
@@ -244,6 +254,10 @@ var gAdvancedPane = {
       list.removeChild(list.firstChild);
     }
 
+    var cacheService = Components.classes["@mozilla.org/network/application-cache-service;1"].
+                       getService(Components.interfaces.nsIApplicationCacheService);
+    var groups = cacheService.getGroups({});
+
     var bundle = document.getElementById("bundlePreferences");
 
     var enumerator = pm.enumerator;
@@ -257,7 +271,7 @@ var gAdvancedPane = {
         row.className = "offlineapp";
         row.setAttribute("host", perm.host);
         var converted = DownloadUtils.
-                        convertByteUnits(this._getOfflineAppUsage(perm.host));
+                        convertByteUnits(this._getOfflineAppUsage(perm.host, groups));
         row.setAttribute("usage",
                          bundle.getFormattedString("offlineAppUsage",
                                                    converted));
@@ -298,14 +312,18 @@ var gAdvancedPane = {
       return;
 
     // clear offline cache entries
-    var cacheService = Components.classes["@mozilla.org/network/cache-service;1"]
-                       .getService(Components.interfaces.nsICacheService);
-    var cacheSession = cacheService.createSession("HTTP-offline",
-                                                  Components.interfaces.nsICache.STORE_OFFLINE,
-                                                  true)
-                       .QueryInterface(Components.interfaces.nsIOfflineCacheSession);
-    cacheSession.clearKeysOwnedByDomain(host);
-    cacheSession.evictUnownedEntries();
+    var cacheService = Components.classes["@mozilla.org/network/application-cache-service;1"].
+                       getService(Components.interfaces.nsIApplicationCacheService);
+    var ios = Components.classes["@mozilla.org/network/io-service;1"].
+              getService(Components.interfaces.nsIIOService);
+    var groups = cacheService.getGroups({});
+    for (var i = 0; i < groups.length; i++) {
+        var uri = ios.newURI(groups[i], null, null);
+        if (uri.asciiHost == host) {
+            var cache = cacheService.getActiveCache(groups[i]);
+            cache.discard();
+        }
+    }
 
     // send out an offline-app-removed signal.  The nsDOMStorage
     // service will clear DOM storage for this host.
@@ -380,16 +398,17 @@ var gAdvancedPane = {
    *             iii 0/1/2   t         true   
    * 
    */
+#ifdef MOZ_UPDATER
   updateAppUpdateItems: function () 
   {
     var aus = 
         Components.classes["@mozilla.org/updates/update-service;1"].
-        getService(Components.interfaces.nsIApplicationUpdateService);
+        getService(Components.interfaces.nsIApplicationUpdateService2);
 
     var enabledPref = document.getElementById("app.update.enabled");
     var enableAppUpdate = document.getElementById("enableAppUpdate");
 
-    enableAppUpdate.disabled = !aus.canUpdate || enabledPref.locked;
+    enableAppUpdate.disabled = !aus.canCheckForUpdates || enabledPref.locked;
   },
 
   /**
@@ -425,18 +444,6 @@ var gAdvancedPane = {
                   !autoPref.value || modePref.locked;
     warnIncompatible.disabled = disable;
   },
-
-  /**
-   * The Extensions checkbox and button are disabled only if the enable Addon
-   * update preference is locked. 
-   */
-  updateAddonUpdateUI: function ()
-  {
-    var enabledPref = document.getElementById("extensions.update.enabled");
-    var enableAddonUpdate = document.getElementById("enableAddonUpdate");
-
-    enableAddonUpdate.disabled = enabledPref.locked;
-  },  
 
   /**
    * Stores the value of the app.update.mode preference, which is a tristate
@@ -488,6 +495,19 @@ var gAdvancedPane = {
                              .createInstance(Components.interfaces.nsIUpdatePrompt);
     prompter.showUpdateHistory(window);
   },
+#endif
+
+  /**
+   * The Extensions checkbox and button are disabled only if the enable Addon
+   * update preference is locked. 
+   */
+  updateAddonUpdateUI: function ()
+  {
+    var enabledPref = document.getElementById("extensions.update.enabled");
+    var enableAddonUpdate = document.getElementById("enableAddonUpdate");
+
+    enableAddonUpdate.disabled = enabledPref.locked;
+  },  
   
   // ENCRYPTION TAB
 
@@ -522,7 +542,7 @@ var gAdvancedPane = {
    */
   showCRLs: function ()
   {
-    document.documentElement.openWindow("Mozilla:CRLManager", 
+    document.documentElement.openWindow("mozilla:crlmanager", 
                                         "chrome://pippki/content/crlManager.xul",
                                         "", null);
   },

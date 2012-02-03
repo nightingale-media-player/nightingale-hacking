@@ -40,7 +40,7 @@
 @import "chrome://global/skin/";
 
 /* View buttons */
-#viewGroup radio {
+#viewGroup > radio {
   list-style-image: url("chrome://browser/skin/pageInfo.png");
   -moz-box-orient: vertical;
   -moz-box-align: center;
@@ -48,9 +48,8 @@
   padding: 5px 3px 1px 3px;
 }
 
-.viewSelector {
+#topBar {
   border-bottom: 2px groove ThreeDFace;
-  margin: 0;
   -moz-padding-start: 10px;
   background-color: -moz-Field;
   color: -moz-FieldText;
@@ -141,13 +140,15 @@ groupbox.collapsable caption .caption-icon {
   height: 9px;
   background-repeat: no-repeat;
   background-position: center;
-  -moz-margin-start: 1px;
-  -moz-margin-end: 3px;
+  -moz-margin-start: 2px;
+  -moz-margin-end: 2px;
   background-image: url("chrome://global/skin/tree/twisty-open.png");
 }
 
 groupbox.collapsable[closed="true"] {
   border: none;
+  margin-bottom: 9px;
+  -moz-appearance: none;
 }
 
 groupbox.collapsable[closed="true"] caption .caption-icon { 
@@ -155,12 +156,8 @@ groupbox.collapsable[closed="true"] caption .caption-icon {
 }
 
 groupbox tree { 
-  margin: 0;
+  margin: 0 3px;
   border: none;
-}
-
-groupbox.treebox .groupbox-body { 
-  padding-top: 0;
 }
 
 #securityBox description { 
@@ -237,7 +234,7 @@ treechildren::-moz-tree-cell-text(broken) {
   background-color: -moz-field;
 }
 
-#permList > vbox {
+.permission {
   padding-top: 6px;
   padding-bottom: 6px;
   -moz-padding-start: 7px;
@@ -246,11 +243,11 @@ treechildren::-moz-tree-cell-text(broken) {
   border-bottom: 1px dotted #C0C0C0;
 }
 
-#permList > vbox > label {
+.permissionLabel {
   font-weight: bold;
 }
 
-#permList > vbox:hover {
+.permission:hover {
   background-color: -moz-dialog;
 }
 

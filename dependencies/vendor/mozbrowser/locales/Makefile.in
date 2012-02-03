@@ -37,7 +37,7 @@
 
 
 #
-# Nightingale Makefile.
+# Songbird Makefile.
 # For now all we want is the en-US locale added to browser.jar
 #
 

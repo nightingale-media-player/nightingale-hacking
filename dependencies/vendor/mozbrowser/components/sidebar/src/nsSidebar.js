@@ -41,7 +41,7 @@
 # the terms of any one of the MPL, the GPL or the LGPL.
 #
 # ***** END LICENSE BLOCK *****
- */
+*/
 
 /*
  * No magic constructor behaviour, as is de rigeur for XPCOM.
@@ -100,11 +100,11 @@ function (aTitle, aContentURL, aCustomizeURL)
 {
     debug("addPanel(" + aTitle + ", " + aContentURL + ", " +
           aCustomizeURL + ")");
-   
+
     return this.addPanelInternal(aTitle, aContentURL, aCustomizeURL, false);
 }
 
-nsSidebar.prototype.addPersistentPanel = 
+nsSidebar.prototype.addPersistentPanel =
 function(aTitle, aContentURL, aCustomizeURL)
 {
     debug("addPersistentPanel(" + aTitle + ", " + aContentURL + ", " +
@@ -120,7 +120,7 @@ function (aTitle, aContentURL, aCustomizeURL, aPersist)
                               .getService(Components.interfaces.nsIWindowMediator);
     var win = WINMEDSVC.getMostRecentWindow( "navigator:browser" );
     if (!win) return;
-
+                                                                                
     if (!sidebarURLSecurityCheck(aContentURL))
       return;
 
@@ -155,7 +155,7 @@ function (engineURL, iconURL)
     debug(ex);
     Components.utils.reportError("Invalid argument passed to window.sidebar.addSearchEngine: " + ex);
     
-    var searchBundle = srGetStrBundle("chrome://browser/locale/search.properties");
+    var searchBundle = srGetStrBundle("chrome://global/locale/search/search.properties");
     var brandBundle = srGetStrBundle("chrome://branding/locale/brand.properties");
     var brandName = brandBundle.GetStringFromName("brandShortName");
     var title = searchBundle.GetStringFromName("error_invalid_engine_title");
@@ -205,12 +205,16 @@ function (aDescriptionURL)
   // description anyway.
   var WINMEDSVC = Components.classes['@mozilla.org/appshell/window-mediator;1']
                             .getService(Components.interfaces.nsIWindowMediator);
-  var win = WINMEDSVC.getMostRecentWindow("Nightingale:Main");
+  var win = WINMEDSVC.getMostRecentWindow("Songbird:Main");
   var browser = win.document.getElementById("content");
   var iconURL = "";
-  if (browser.shouldLoadFavIcon(browser.selectedBrowser.currentURI)) {
+  // Use documentURIObject in the check for shouldLoadFavIcon so that we
+  // do the right thing with about:-style error pages.  Bug 453442
+  if (browser.shouldLoadFavIcon(browser.selectedBrowser
+                                       .contentDocument
+                                       .documentURIObject)) {
     //iconURL = win.gProxyFavIcon.getAttribute("src");
-    // XXX Nightingale: no proxy favicon
+    // XXX Songbird: no proxy favicon
     iconURL = browser.selectedBrowser.mIconURL;
   }
   
@@ -238,7 +242,7 @@ function (aSearchURL)
 nsSidebar.prototype.addMicrosummaryGenerator =
 function (generatorURL)
 {
-    // XXX Nightingale: no microsummaries
+    // XXX Songbird: no microsummaries
     throw Components.Exception(Components.results.NS_ERROR_NOT_IMPLEMENTED);
     debug("addMicrosummaryGenerator(" + generatorURL + ")");
 
@@ -280,12 +284,13 @@ nsSidebar.prototype.getHelperForLanguage = function(count) {return null;}
 
 nsSidebar.prototype.QueryInterface =
 function (iid) {
-    if (!iid.equals(nsISidebar) &&
-        !iid.equals(nsISidebarExternal) &&
-        !iid.equals(nsIClassInfo) &&
-        !iid.equals(nsISupports))
-        throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
+    if (iid.equals(nsISidebar) ||
+        iid.equals(nsISidebarExternal) ||
+        iid.equals(nsIClassInfo) ||
+        iid.equals(nsISupports))
+        return this;
+
+    throw Components.results.NS_ERROR_NO_INTERFACE;
 }
 
 var sidebarModule = new Object();
@@ -296,24 +301,25 @@ function (compMgr, fileSpec, location, type)
     debug("registering (all right -- a JavaScript module!)");
     compMgr = compMgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
 
-    compMgr.registerFactoryLocation(SIDEBAR_CID, 
+    compMgr.registerFactoryLocation(SIDEBAR_CID,
                                     "Sidebar JS Component",
-                                    SIDEBAR_CONTRACTID, 
-                                    fileSpec, 
+                                    SIDEBAR_CONTRACTID,
+                                    fileSpec,
                                     location,
                                     type);
+
     const CATMAN_CONTRACTID = "@mozilla.org/categorymanager;1";
     const nsICategoryManager = Components.interfaces.nsICategoryManager;
     var catman = Components.classes[CATMAN_CONTRACTID].
                             getService(nsICategoryManager);
-                            
+
     const JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY = "JavaScript global property";
     catman.addCategoryEntry(JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
                             "sidebar",
                             SIDEBAR_CONTRACTID,
                             true,
                             true);
-                            
+
     catman.addCategoryEntry(JAVASCRIPT_GLOBAL_PROPERTY_CATEGORY,
                             "external",
                             SIDEBAR_CONTRACTID,
@@ -325,10 +331,10 @@ sidebarModule.getClassObject =
 function (compMgr, cid, iid) {
     if (!cid.equals(SIDEBAR_CID))
         throw Components.results.NS_ERROR_NO_INTERFACE;
-    
+
     if (!iid.equals(Components.interfaces.nsIFactory))
         throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-    
+
     return sidebarFactory;
 }
 
@@ -338,7 +344,7 @@ function(compMgr)
     debug("Unloading component.");
     return true;
 }
-    
+
 /* factory object */
 var sidebarFactory = new Object();
 
@@ -362,24 +368,15 @@ if (DEBUG)
 else
     debug = function (s) {}
 
-var strBundleService = null;
+// String bundle service
+var gStrBundleService = null;
+
 function srGetStrBundle(path)
 {
-   var strBundle = null;
-   if (!strBundleService) {
-       try {
-          strBundleService =
-          Components.classes["@mozilla.org/intl/stringbundle;1"].getService(); 
-          strBundleService = 
-          strBundleService.QueryInterface(Components.interfaces.nsIStringBundleService);
-       } catch (ex) {
-          dump("\n--** strBundleService failed: " + ex + "\n");
-          return null;
-      }
-   }
-   strBundle = strBundleService.createBundle(path); 
-   if (!strBundle) {
-       dump("\n--** strBundle createInstance failed **--\n");
-   }
-   return strBundle;
+  if (!gStrBundleService)
+    gStrBundleService =
+      Components.classes["@mozilla.org/intl/stringbundle;1"]
+                .getService(Components.interfaces.nsIStringBundleService);
+
+  return gStrBundleService.createBundle(path);
 }

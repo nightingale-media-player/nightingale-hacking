@@ -1,0 +1,20 @@
+
+.history-calendar {
+  -moz-binding: url("chrome://browser/content/places/places.xml#calendar");
+}
+
+button.commandButton {
+  -moz-binding: url("chrome://browser/content/places/places.xml#command-button");
+}
+
+.filterList {
+  -moz-binding: url("chrome://browser/content/places/places.xml#filter-button");
+}
+
+#contentTitle {
+  width: 0px;
+}
+
+#searchFilter {
+  width: 23em;
+}

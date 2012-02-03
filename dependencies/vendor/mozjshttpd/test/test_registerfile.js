@@ -13,7 +13,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is MozJSHTTP code.
+ * The Original Code is httpd.js code.
  *
  * The Initial Developer of the Original Code is
  * Jeff Walden <jwalden+code@mit.edu>.
@@ -40,13 +40,7 @@
 
 const BASE = "http://localhost:4444";
 
-function isException(e, code)
-{
-  if (e !== code && e.result !== code)
-    do_throw("unexpected error: " + e);
-}
-
-var file = do_get_file("netwerk/test/httpserver/test/test_registerfile.js");
+var file = do_get_file("test_registerfile.js");
 
 function onStart(ch, cx)
 {
@@ -67,7 +61,7 @@ function run_test()
 
   try
   {
-    srv.registerFile("/foo", do_get_file("netwerk/test/httpserver/"));
+    srv.registerFile("/foo", do_get_cwd());
     throw "registerFile succeeded!";
   }
   catch (e)
@@ -78,5 +72,5 @@ function run_test()
   srv.registerFile("/foo", file);
   srv.start(4444);
 
-  runHttpTests([test], function() { srv.stop(); });
+  runHttpTests([test], testComplete(srv));
 }

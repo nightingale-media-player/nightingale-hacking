@@ -1,7 +1,9 @@
 af
 ar
+as
 be
 bg
+bn-BD
 bn-IN
 ca
 cs
@@ -13,17 +15,21 @@ en-GB
 en-US
 eo
 es-AR
+es-CL
 es-ES
+es-MX
 et
 eu
+fa
 fi
 fr
 fy-NL
 ga-IE
 gl
-gu-IN linux win32
+gu-IN
 he
 hi-IN
+hr
 hu
 id
 is
@@ -31,22 +37,25 @@ it
 ja linux win32
 ja-JP-mac osx
 ka
+kk
 kn
 ko
 ku
 lt
 lv
 mk
-mn
+ml
 mr
 nb-NO
 nl
 nn-NO
 oc
+or
 pa-IN
 pl
 pt-BR
 pt-PT
+rm
 ro
 ru
 si
@@ -55,9 +64,12 @@ sl
 sq
 sr
 sv-SE
+ta
+ta-LK
 te
 th
 tr
 uk
+vi
 zh-CN
 zh-TW

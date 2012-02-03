@@ -42,25 +42,71 @@ browser/app/profile/extensions/Makefile
 browser/base/Makefile
 browser/components/Makefile
 browser/components/build/Makefile
+browser/components/certerror/Makefile
 browser/components/dirprovider/Makefile
+browser/components/feeds/Makefile
+browser/components/feeds/public/Makefile
+browser/components/feeds/src/Makefile
+browser/components/microsummaries/Makefile
+browser/components/microsummaries/public/Makefile
+browser/components/microsummaries/src/Makefile
 browser/components/migration/Makefile
 browser/components/migration/public/Makefile
 browser/components/migration/src/Makefile
 browser/components/places/Makefile
+browser/components/places/public/Makefile
+browser/components/places/src/Makefile
 browser/components/preferences/Makefile
+browser/components/privatebrowsing/Makefile
+browser/components/privatebrowsing/src/Makefile
+browser/components/safebrowsing/Makefile
+browser/components/safebrowsing/src/Makefile
 browser/components/search/Makefile
+browser/components/sessionstore/Makefile
+browser/components/sessionstore/src/Makefile
 browser/components/sidebar/Makefile
 browser/components/sidebar/src/Makefile
 browser/components/shell/Makefile
 browser/components/shell/public/Makefile
 browser/components/shell/src/Makefile
+browser/components/wintaskbar/Makefile
+browser/fuel/Makefile
+browser/fuel/public/Makefile
+browser/fuel/src/Makefile
 browser/installer/Makefile
 browser/installer/windows/Makefile
 browser/locales/Makefile
 browser/themes/Makefile
 browser/themes/pinstripe/browser/Makefile
+browser/themes/pinstripe/communicator/Makefile
 browser/themes/pinstripe/Makefile
 browser/themes/winstripe/browser/Makefile
+browser/themes/winstripe/communicator/Makefile
 browser/themes/winstripe/Makefile
+$MOZ_BRANDING_DIRECTORY/Makefile
+$MOZ_BRANDING_DIRECTORY/content/Makefile
+$MOZ_BRANDING_DIRECTORY/locales/Makefile
 "
 
+if [ "$ENABLE_TESTS" ]; then
+  add_makefiles "
+    browser/base/content/test/Makefile
+    browser/components/certerror/test/Makefile
+    browser/components/preferences/tests/Makefile
+    browser/components/search/test/Makefile
+    browser/components/sessionstore/test/Makefile
+    browser/components/sessionstore/test/browser/Makefile
+    browser/components/shell/test/Makefile
+    browser/components/feeds/test/Makefile
+    browser/components/feeds/test/chrome/Makefile
+    browser/components/places/tests/Makefile
+    browser/components/places/tests/chrome/Makefile
+    browser/components/places/tests/browser/Makefile
+    browser/components/places/tests/perf/Makefile
+    browser/components/privatebrowsing/test/Makefile
+    browser/components/privatebrowsing/test/browser/Makefile
+    browser/components/safebrowsing/content/test/Makefile
+    browser/components/wintaskbar/test/Makefile
+    browser/fuel/test/Makefile
+  "
+fi
