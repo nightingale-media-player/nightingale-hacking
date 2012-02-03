@@ -30,10 +30,15 @@ case $OSTYPE in
 		arch=$(uname -m)
 		depdirn="linux-$arch"
 		
-		if [ ! -d "dependencies/$depdirn" ] ; then
+		if [ ! -d "dependencies/$depdirn" ] ; then		
 			cd dependencies
-			wget "https://downloads.sourceforge.net/project/ngale/$version/$arch/$depdirn-$version.tar.lzma"
-			tar xvf $depdirn-$version.tar.lzma
+			
+			if [ -f "$depdirn-$version.tar.lzma" ] ; then
+				tar xvf "$depdirn-$version.tar.lzma"
+			else
+				wget "https://downloads.sourceforge.net/project/ngale/$version/$arch/$depdirn-$version.tar.lzma"
+				tar xvf "$depdirn-$version.tar.lzma"
+			fi
 			cd ../
 		fi
 		
