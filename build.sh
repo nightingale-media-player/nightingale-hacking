@@ -54,7 +54,10 @@ case $OSTYPE in
 		done
         
 		# !!!! NOTICE: comment the below out if building on/for Windows or Mac or playback probably won't work !!!!
-		grep -sq gstreamer-system songbird.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> songbird.config )
+		if [ -f songbird.config ] ; then
+			rm songbird.config
+		fi
+		echo 'ac_add_options --with-media-core=gstreamer-system' >> songbird.config
 		;;
 	msys*)
 		echo "You should comment out line 31 in this build.sh script and rerun it to make sure things work properly!"
