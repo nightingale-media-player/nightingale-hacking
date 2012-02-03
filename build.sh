@@ -8,19 +8,35 @@ set -e
 # to your nightingale.config file!
 build="release"
 buildir="$(pwd)"
+version=1.11
+
+function get_deps() {	
+	cd dependencies
+	
+	mkdir $depdirn
+	cd $depdirn
+			
+	for dep in ${deps[@]}; do
+		mkdir -p "$dep/$build"
+		cd "$dep/$build"
+		svn co "$svnroot/$dep/$build" ./
+		cd ../../
+	done
+}
 
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
 	linux*)
-		arch=`uname -m`
+		arch=$(uname -m)
 		depdirn="linux-$arch"
-		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.11/$depdirn"
-		# msys error workaround
-		patch=1
-        deps=(  mozilla
-                sqlite
-                taglib
-                xulrunner)
+		
+		if [ ! -d "dependencies/$depdirn" ] ; then
+			cd dependencies
+			wget "https://downloads.sourceforge.net/project/ngale/$version/$arch/$depdirn-$version.tar.lzma"
+			tar xvf $depdirn-$version.tar.lzma
+			cd ../
+		fi
+		
 		# use our own gstreamer libs
 		for dir in /usr/lib64 /usr/lib ; do
 			if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
@@ -63,6 +79,10 @@ case $OSTYPE in
                 taglib
                 xulrunner
                 xulrunner-1.9.2 )
+                
+        if [ ! -d "dependencies/$depdirn" ] ; then
+			get_deps
+		fi
 		;;
 	darwin*)
 		echo "You should comment out line 31 in this build.sh script and rerun it to make sure things work properly!"
@@ -89,28 +109,16 @@ case $OSTYPE in
                 taglib
                 xulrunner
                 xulrunner-1.9.2 )
+        
+        if [ ! -d "dependencies/$depdirn" ] ; then
+			get_deps
+		fi
 		;;
 	*)
 		echo "Can't find deps for $OSTYPE. You may need to build them yourself. Doublecheck the SVN's for \n
 		Songbird and Nightingale trunks to be sure."
 		;;
 esac
-
-echo "Checking for the required dependencies..."
-if [ ! -d "dependencies/$depdirn" ] ; then
-	echo "You don't have them...downloading via SVN..."
-	
-	cd dependencies
-    mkdir $depdirn
-    cd $depdirn
-            
-    for dep in ${deps[@]}; do
-        mkdir -p "$dep/$build"
-        cd "$dep/$build"
-        svn co "$svnroot/$dep/$build" ./
-        cd ../../
-    done
-fi
 
 cd $buildir
 
