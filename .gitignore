@@ -4,7 +4,6 @@ compiled/
 configure
 dependencies/linux-x86_64-new/
 dependencies/linux-x86_64/
-dependencies/vendor/
 dependencies/*.lzma
 nightingale.config
 songbird.config
