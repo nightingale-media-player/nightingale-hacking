@@ -125,8 +125,8 @@ cd $buildir
 # hopefully we have python2 on this system
 export PYTHON="$(which python2 2>/dev/null || which python)"
 
-make -f songbird.mk clobber
-make -f songbird.mk
+make -f nightingale.mk clobber
+make -f nightingale.mk
 
 # insert a copy of the above code to locate gstreamer libs on ngale launch so we don't have to symlink anymore
 if [ $patch = 1 ] ; then
