@@ -14,7 +14,7 @@ case $OSTYPE in
 	linux*)
 		arch=`uname -m`
 		depdirn="linux-$arch"
-		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.8/$depdirn"
+		svnroot="http://ngale.svn.sourceforge.net/svnroot/ngale/branches/dependencies/Nightingale1.11/$depdirn"
 		# msys error workaround
 		patch=1
         deps=(  mozilla
@@ -41,7 +41,7 @@ case $OSTYPE in
 		rm ./components/library/localdatabase/content/schema.sql
 		mv tmp.sql ./components/library/localdatabase/content/schema.sql
 		depdirn="windows-i686-msvc8"
-		svnroot="http://publicsvn.songbirdnest.com/vendor-binaries/tags/Songbird1.8.1/$depdirn"
+		svnroot="http://publicsvn.songbirdnest.com/vendor-binaries/trunk/$depdirn"
         # I'm not sure we need all these, but I haven't delved into trimming down the deps we download on windows
         deps=(  flac
                 gettext 
@@ -68,7 +68,7 @@ case $OSTYPE in
 		echo "You should comment out line 31 in this build.sh script and rerun it to make sure things work properly!"
 		depdirn="macosx-i686"
         # I'm not sure we need all these, but I haven't delved into trimming down the deps we download on osx
-		svnroot="http://publicsvn.songbirdnest.com/vendor-binaries/tags/Songbird1.8.1/$depdirn"
+		svnroot="http://publicsvn.songbirdnest.com/vendor-binaries/trunk/$depdirn"
         deps=(  flac
                 gettext 
                 glib 
@@ -92,7 +92,7 @@ case $OSTYPE in
 		;;
 	*)
 		echo "Can't find deps for $OSTYPE. You may need to build them yourself. Doublecheck the SVN's for \n
-		Songbird and Nightingale 1.8 to be sure."
+		Songbird and Nightingale trunks to be sure."
 		;;
 esac
 
