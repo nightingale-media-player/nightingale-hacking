@@ -29,7 +29,8 @@ case $OSTYPE in
 	linux*)
 		arch=$(uname -m)
 		depdirn="linux-$arch"
-		
+		patch=1
+				
 		cd dependencies
 		rm -rf "$depdirn" &> /dev/null
 		
