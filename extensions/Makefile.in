@@ -40,8 +40,6 @@ NOARCH_EXTENSIONS = 7digital \
                     albumartlastfm \
                     lastfm \
                     mashTape \
-                    newreleases \
-                    qatesttools \
                     shoutcast \
                     $(NULL)
 
