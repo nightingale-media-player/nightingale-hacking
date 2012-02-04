@@ -1,3 +1,5 @@
+dependencies/*.zip
+dependencies/vendor
 songbirdconfig.mk
 songbirdconfig.out
 compiled/
