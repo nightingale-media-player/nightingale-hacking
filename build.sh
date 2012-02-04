@@ -128,7 +128,6 @@ case $OSTYPE in
 		;;
 esac
 
-
 # get the vendor build deps...
 cd dependencies
 rm -rf vendor &> /dev/null
@@ -140,7 +139,6 @@ else
 	unzip "vendor-$version.zip"
 fi
 cd ../
-
 
 cd $buildir
 
