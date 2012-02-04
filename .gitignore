@@ -1,3 +1,5 @@
+dependencies/*.zip
+dependencies/*.lzma
 nightingale.config
 autom4te.cache
 songbird.config
