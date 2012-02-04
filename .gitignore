@@ -1,3 +1,5 @@
+dependencies/vendor
+dependencies/*.zip
 dependencies/macosx*
 dependencies/windows*
 nightingale.config

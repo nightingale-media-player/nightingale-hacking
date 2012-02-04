@@ -124,6 +124,18 @@ case $OSTYPE in
 		;;
 esac
 
+# get the vendor build deps...
+cd dependencies
+rm -rf vendor &> /dev/null
+
+if [ -f "vendor-$version.zip" ] ; then
+	tar xvf "vendor-$version.zip"
+else
+	wget "https://downloads.sourceforge.net/project/ngale/$version/vendor-$version.zip"
+	unzip "vendor-$version.zip"
+fi
+cd ../
+
 cd $buildir
 
 # hopefully we have python2 on this system
