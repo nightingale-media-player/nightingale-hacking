@@ -32,9 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = vendor/mozbrowser
 
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird-bin
+   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/nightingale-bin
 else
-   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
+   SONGBIRD_XR_STUB = $(SONGBIRD_XULRUNNERDIR)/nightingale$(BIN_SUFFIX)
 endif
 
 ifeq (windows,$(SB_PLATFORM))
