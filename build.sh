@@ -144,9 +144,4 @@ export PYTHON="$(which python2 2>/dev/null || which python)"
 make -f nightingale.mk clobber
 make -f nightingale.mk
 
-# insert a copy of the above code to locate gstreamer libs on ngale launch so we don't have to symlink anymore
-if [ $patch = 1 ] ; then
-	patch -Np0 -i add_search_for_gst_libs.patch "compiled/dist/nightingale"
-fi
-
 echo "Build finished!"

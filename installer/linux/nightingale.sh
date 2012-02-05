@@ -38,6 +38,20 @@
 #set -v
 #set -e
 #set -x
+
+# this depends on your system's gstreamer location
+# while sometimes, the make process actually uses the location properly
+# it doesn't always, and this is better than symlinking
+for dir in /usr/lib64 /usr/lib ; do
+  if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
+    export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
+    break
+  elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+	export GST_PLUIN_PATH=${dir}/gstreamer0.10
+	break
+  fi
+done
+
 cmdname=`basename "$0"`
 MOZ_DIST_BIN=`dirname "$0"`
 MOZ_DEFAULT_NAME="./${cmdname}-bin"
