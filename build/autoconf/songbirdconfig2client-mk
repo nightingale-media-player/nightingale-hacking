@@ -27,7 +27,7 @@
 # Original code is mozconfig2client-mk from the Mozilla Foundation.
 #
 
-# songbirdconfig2client-mk - Translates songbird.config into options for songbird.mk.
+# songbirdconfig2client-mk - Translates songbird.config into options for nightingale.mk.
 #    Prints defines to stdout.
 #
 # See songbirdconfig2configure for more details
@@ -80,7 +80,7 @@ mk_add_options() {
 }
 
 mk_echo_options() {
-  echo "Adding songbird.mk options from $SONGBIRDCONFIG:"
+  echo "Adding nightingale.mk options from $SONGBIRDCONFIG:"
   IFS=^
   for _opt in $opts; do
     echo "    $_opt"

@@ -125,7 +125,7 @@ MOZSDK_BIN_DIR = $(MOZSDK_DIR)/bin
 MOZSDK_IDL_DIR = $(MOZSDK_DIR)/idl
 MOZSDK_SCRIPTS_DIR = $(MOZSDK_DIR)/scripts
 
-# Boo for hardcoding this; this appears in songbird.mk as well; so make
+# Boo for hardcoding this; this appears in nightingale.mk as well; so make
 # changes there, too.
 MOZBROWSER_DIR = $(topsrcdir)/dependencies/vendor/mozbrowser
 MOZJSHTTPD_DIR = $(topsrcdir)/dependencies/vendor/mozjshttpd

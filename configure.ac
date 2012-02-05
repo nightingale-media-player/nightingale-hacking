@@ -33,7 +33,7 @@ AC_CANONICAL_SYSTEM
 
 #
 # We're going to hardcode our obj and dist directory names for the moment.
-# These MUST match the vars in songbird.mk or bad things will happen!
+# These MUST match the vars in nightingale.mk or bad things will happen!
 #
 
 OBJDIRNAME="compiled"
