@@ -37,7 +37,7 @@ case $OSTYPE in
 		if [ -f "$depdirn-$version.tar.lzma" ] ; then
 			tar xvf "$depdirn-$version.tar.lzma"
 		else
-			wget "https://downloads.sourceforge.net/project/ngale/$version/$arch/$depdirn-$version.tar.lzma"
+			wget "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
 			tar xvf "$depdirn-$version.tar.lzma"
 		fi
 		cd ../
@@ -135,7 +135,7 @@ rm -rf vendor &> /dev/null
 if [ -f "vendor-$version.zip" ] ; then
 	unzip "vendor-$version.zip"
 else
-	wget "https://downloads.sourceforge.net/project/ngale/$version/vendor-$version.zip"
+	wget "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
 	unzip "vendor-$version.zip"
 fi
 cd ../
