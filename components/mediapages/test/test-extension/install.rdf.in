@@ -8,10 +8,10 @@
     <em:id>@EXTENSION_UUID@</em:id>
     <em:version>1.0</em:version>
 
-    <!-- Songbird -->
+    <!-- Nightingale -->
     <em:targetApplication>
       <Description>
-        <em:id>songbird@songbirdnest.com</em:id>
+        <em:id>nightingale@getnightingale.com</em:id>
         <em:minVersion>0.2</em:minVersion>
         <em:maxVersion>*</em:maxVersion>
       </Description>

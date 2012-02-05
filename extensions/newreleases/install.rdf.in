@@ -41,10 +41,10 @@
 
   <Description about="urn:mozilla:install-manifest">
 
-    <!-- Songbird target application. -->
+    <!-- Nightingale target application. -->
     <em:targetApplication>
       <Description>
-        <em:id>songbird@songbirdnest.com</em:id>
+        <em:id>nightingale@getnightingale.com</em:id>
         <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
         <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
       </Description>

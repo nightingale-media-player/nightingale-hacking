@@ -13,10 +13,10 @@
 	<em:description>Override brand &amp; EULA</em:description>
 	<em:homepageURL>http://wiki.songbirdnest.com/Developer/Articles/Distribution_Branding/Walk-through_Guide</em:homepageURL>
 
-	<!-- Songbird -->
+	<!-- Nightingale -->
 	<em:targetApplication>
 		<Description>
-			<em:id>songbird@songbirdnest.com</em:id>
+			<em:id>nightingale@getnightingale.com</em:id>
 			<em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
 			<em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
 		</Description>

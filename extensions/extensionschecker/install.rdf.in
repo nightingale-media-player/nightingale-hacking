@@ -13,7 +13,7 @@
     
     <em:targetApplication>
       <Description>
-        <em:id>songbird@songbirdnest.com</em:id> <!-- songbird -->
+        <em:id>nightingale@getnightingale.com</em:id> <!-- nightingale -->
         <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
         <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
       </Description>

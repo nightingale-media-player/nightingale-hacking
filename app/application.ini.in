@@ -6,8 +6,8 @@ Version=@SB_MILESTONE@
 BuildID=@SB_BUILD_ID@
 BuildNumber=@SB_BUILD_NUMBER@
 Copyright=
-ID=songbird@songbirdnest.com
-Profile=@SB_APPNAME@@SB_PROFILE_VERSION@
+ID=nightingale@getnightingale.com
+Profile=@SB_APPNAME@
 
 [Gecko]
 MinVersion=1.9.2
