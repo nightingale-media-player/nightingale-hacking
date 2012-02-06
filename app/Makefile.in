@@ -37,10 +37,10 @@ SONGBIRD_DIST = $(srcdir)/blocklist.xml \
 
 # application.ini handling
 SONGBIRD_PP_RESOURCES = $(srcdir)/application.ini.in \
-                        $(srcdir)/songbird.ini.in \
+                        $(srcdir)/nightingale.ini.in \
                         $(NULL)
 SONGBIRD_DIST += $(CURDIR)/application.ini \
-                 $(CURDIR)/songbird.ini \
+                 $(CURDIR)/nightingale.ini \
                  $(NULL)
 
 PPDEFINES += $(SB_BRANDING_DEFINES)
