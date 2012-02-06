@@ -37,6 +37,6 @@ SUBDIRS = chrome \
           defaults \
           $(NULL)
 
-CREATEDIRS = $(NIGHTINGALE_PREFERENCESDIR)
+CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)
 
 include $(topsrcdir)/build/rules.mk

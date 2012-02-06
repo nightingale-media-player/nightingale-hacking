@@ -35,7 +35,7 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-NIGHTINGALE_PREFS = $(srcdir)/prefs.js \
+SONGBIRD_PREFS = $(srcdir)/prefs.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
