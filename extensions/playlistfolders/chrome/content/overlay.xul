@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+<!-- overlay.xul
+     All Playlist Folder related things for the main Window go here.
+     -->
+<overlay id="playlistfolders-central-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <!-- load central code -->
+  <script src="preferences.js"></script>
+  <script src="servicepane.js"></script>
+  <script src="central.js"></script>
+  
+  <!-- the bookmark strings we can get the default Name from -->
+  <stringbundleset>
+    <stringbundle id="playlistfolders-bookmark-strings"
+                  src="chrome://browser/locale/places/bookmarkProperties.properties" />
+  </stringbundleset>
+  
+  <!-- add new folder to file menu -->
+  <menu id="menu_FilePopup">
+    <menuitem id="menuitem_file_folder"
+              class="menuitem-iconic"
+              label=""
+              accesskey=""
+              disabled="false"
+              insertbefore="menu_ImportSeparator"
+              oncommand="playlistfolders.servicepane.newFolder()" >
+      <observes element="servicePaneOpen"
+                attribute="disabled" />
+    </menuitem>
+  </menu>
+</overlay>

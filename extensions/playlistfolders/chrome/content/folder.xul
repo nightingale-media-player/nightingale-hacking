@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"
+                 title="Skin"?>
+                 
+<page id="playlistfolders-folder" title="Folder"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <!-- DEBUG ONLY
+  <hbox>
+    <label>Folder:</label>
+    <label id="display-name" />
+    <spacer flex="1" />
+    <label id="display-guid" />
+  </hbox>
+  <groupbox id="display-folders">
+    <caption label="Folders and Playlists" />
+  </groupbox>
+  <spacer flex="1" />
+  <groupbox id="display-folders-global">
+    <caption label="Global Folder entries" />
+  </groupbox>
+  <script>
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+                        getService(Components.interfaces.nsIWindowMediator);
+    var mainWindow = wm.getMostRecentWindow("Songbird:Main");
+    var playlistfolders = mainWindow.playlistfolders;
+    
+    var guid = document.location.toString().split('guid=')[1];
+    var folder = playlistfolders.preferences.getFolderByGUID(guid);
+    document.getElementById('display-name').appendChild(document.createTextNode(folder.name));
+    document.getElementById('display-guid').appendChild(document.createTextNode(folder.GUID));
+    
+    for each (var f in folder.content)
+      document.getElementById('display-folders').appendChild(document.createElement('label')).appendChild(document.createTextNode(f));
+    
+    var gfolder = playlistfolders.preferences.getFolderByGUID("{root}");
+    for each (var f in gfolder.content)
+      document.getElementById('display-folders-global').appendChild(document.createElement('label')).appendChild(document.createTextNode(f));
+    
+    setTimeout("location.reload(true);", 1000);
+  </script>
+  -->
+</page>
