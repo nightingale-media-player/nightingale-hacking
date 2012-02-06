@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- error.xul
+     The error / message dialog.
+     -->
+<?xml-stylesheet href="chrome://global/skin"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % brandDTD SYSTEM "chrome://foldersync/locale/branding.dtd">
+  %brandDTD;
+  <!ENTITY % pageDTD SYSTEM "chrome://foldersync/locale/dialogs.dtd">
+  %pageDTD;
+]>
+
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="foldersync-error-dialog"
+        type="SB_FolderSync:Dialog"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+        title="&error.title;"
+        hidechrome="false"
+        ondialogaccept="return true"
+        buttonlabelaccept="&dialog.ok;"
+        buttons="accept"
+        ondialogcancel="return true"
+        style="min-width:250px; max-height:480px;">
+  
+  <!-- load the error dialog conrtoller -->
+  <script src="error.js" />
+  
+  <label id="foldersync-error-description" width="200"
+         style="-moz-user-select:text; cursor: text" />
+  
+  <groupbox id="foldersync-error-messagegroup" flex="1"
+            style="min-height: 200px">
+    <vbox id="foldersync-error-messagebox" flex="1"
+          style="overflow-x:auto; overflow-y:scroll" />
+  </groupbox>
+
+</dialog>

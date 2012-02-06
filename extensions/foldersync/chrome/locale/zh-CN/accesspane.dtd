@@ -1,0 +1,72 @@
+<!ENTITY current.cancel "取消">
+<!ENTITY current.details "详情……">
+<!ENTITY current.queue.cancel "取消全部">
+<!ENTITY favorite.title "收藏同步">
+<!ENTITY favorite.choose "（选择收藏）">
+<!ENTITY favorite.load "载入">
+<!ENTITY favorite.load.tooltip "载入下方框中选定的收藏同步，请在执行前更改它。">
+<!ENTITY favorite.delete "删除...">
+<!ENTITY favorite.delete.tooltip "删除选定的收藏同步">
+<!ENTITY favorite.start "开始">
+<!ENTITY favorite.start.tooltip "完成选定的收藏同步">
+<!ENTITY profile.current "当前配置：">
+<!ENTITY profile.save "保存...">
+<!ENTITY profile.save.tooltip "保存已更改的配置为新的配置或者更新现有的">
+<!ENTITY profile.delete "删除...">
+<!ENTITY profile.delete.tooltip "删除选定的配置">
+<!ENTITY profile.changed "（已更改）">
+<!ENTITY profile.display.tooltip "显示 / 编辑配置">
+<!ENTITY profile.hide.tooltip "隐藏配置选项">
+<!ENTITY basic.title "同步功能">
+<!ENTITY basic.copy "复制歌曲文件到目标文件夹">
+<!ENTITY basic.update "在目标文件夹更新已更改歌曲">
+<!ENTITY basic.delete "从目标文件夹删除所有其他文件和文件夹">
+<!ENTITY basic.rockbox "在目标设备上执行 Rockbox-Back-Sync">
+<!ENTITY basic.structure "在目标文件夹中重新组织歌曲文件">
+<!ENTITY basic.playlists "写入播放列表到目标文件夹">
+<!ENTITY advanced.title "高级首选项">
+<!ENTITY advanced.warning "这是额外的 FolderSync 配置，但错误的值可能导致出现问题。">
+<!ENTITY advanced.blocked "替换">
+<!ENTITY advanced.replace "用">
+<!ENTITY advanced.cutReplaced "在文件名的尾部剪切替换字符">
+<!ENTITY advanced.cutSpaces "在文件名的尾部剪切空格字符">
+<!ENTITY advanced.length "文件名的最大长度：">
+<!ENTITY advanced.case "文件路径区分大小写">
+<!ENTITY structure.title "结构">
+<!ENTITY structure.info "FolderSync 能够在目标文件夹重新组织歌曲文件。新结构的文件名模式如下，还有一些其他首选项您可以在这更改。使用斜线([/])以在该结构中到单独的文件夹和文件名。">
+<!ENTITY structure.schema "模式：">
+<!ENTITY structure.schema.help "可用标签...">
+<!ENTITY structure.schema.help.tooltip "看表达式列表，它将被每首歌曲的元数据替换">
+<!ENTITY structure.schema.tracknumber "曲目编号标签的数字：">
+<!ENTITY structure.covers "保存封面图片">
+<!ENTITY structure.coverSchema "专辑文件夹的模式：">
+<!ENTITY structure.coverFile "封面图片的文件名：">
+<!ENTITY playlists.title "正在写入播放列表">
+<!ENTITY playlists.target "相对的目标文件夹：">
+<!ENTITY playlists.split "文件路径的分隔符：">
+<!ENTITY playlists.relativepoint "相对路径开头用 .[分割]">
+<!ENTITY playlists.format "播放列表格式：">
+<!ENTITY playlists.encoding "播放列表编码：">
+<!ENTITY playlists.sort "排序播放列表中的项目">
+<!ENTITY playlists.sort.scheme "排序模式：">
+<!ENTITY structure.sort.scheme.tooltip "输入排序模式，使用逗号分隔标签。排序方向可以添加像是“&#37;artist:a&#37;”为升序或是“&#37;artist:d&#37;”为降序。每个播放列表中的歌曲将依照此模式排序。">
+<!ENTITY playlists.selection "同步播放列表：">
+<!ENTITY playlists.refresh "刷新">
+<!ENTITY playlists.refresh.tooltip "再次加载播放列表，像是重命名、删除或者新的播放列表都将在列表中出现">
+<!ENTITY target.folder "目标文件夹：">
+<!ENTITY target.browse "浏览...">
+<!ENTITY target.browse.tooltip "通过对话框选择文件夹">
+<!ENTITY complete.start "开始同步">
+<!ENTITY complete.start.tooltip "开始上述同步">
+<!ENTITY complete.save "保存为收藏同步">
+<!ENTITY complete.save.tooltip "保存上述同步为收藏同步。您可以在 &favorite.title; 中的此选项卡的顶部访问它。">
+<!ENTITY complete.update "更新收藏同步">
+<!ENTITY complete.update.tooltip "用上述同步覆盖当前选定的收藏同步。您可以在 &favorite.title; 中的此选项卡的顶部中更改选择和访问收藏同步。">
+<!ENTITY help.title "需要帮助？">
+<!ENTITY help.info "下面的按钮将带您到可能帮助您配置和使用 FolderSync 的地方。">
+<!ENTITY help.preferences "首选项">
+<!ENTITY help.preferences.tooltip "打开 FolderSync 的选项对话框，您在那里可以调整 FolderSync">
+<!ENTITY help.manual "手册">
+<!ENTITY help.manual.tooltip "在新标签页中打开 FolderSync 的在线手册">
+<!ENTITY help.comments "评论页面">
+<!ENTITY help.comments.tooltip "转到 FolderSync 在 addons.songbirdnest.com 的页面">

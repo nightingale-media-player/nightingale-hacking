@@ -1,0 +1,89 @@
+<!ENTITY current.cancel "Cancel">
+<!ENTITY current.details "Details...">
+
+<!ENTITY current.queue.cancel "Cancel all">
+
+
+<!ENTITY favorite.title "Favorite Syncs">
+<!ENTITY favorite.choose "(Choose a favorite)">
+<!ENTITY favorite.load "Load">
+<!ENTITY favorite.load.tooltip "Load selected favorite Sync into controls under this box, to change it before performing.">
+<!ENTITY favorite.delete "Delete...">
+<!ENTITY favorite.delete.tooltip "Delete selected favorite Sync">
+<!ENTITY favorite.start "Start">
+<!ENTITY favorite.start.tooltip "Perform selected favorite Sync">
+
+
+<!ENTITY profile.current "Current Profile:">
+<!ENTITY profile.save "Save...">
+<!ENTITY profile.save.tooltip "Save the changed Profile as new Profile or update a existing one">
+<!ENTITY profile.delete "Delete...">
+<!ENTITY profile.delete.tooltip "Delete selected Profile">
+<!ENTITY profile.changed "(Changed)">
+<!ENTITY profile.display.tooltip "Display / Edit Profiles">
+<!ENTITY profile.hide.tooltip "Hide Profile Options">
+
+<!ENTITY basic.title "Sync features">
+<!ENTITY basic.copy "Copy song files to target folder">
+<!ENTITY basic.update "Update changed song files in target folder">
+<!ENTITY basic.delete "Delete all other files and folders from target folder">
+<!ENTITY basic.rockbox "Perform a Rockbox-Back-Sync on target device">
+<!ENTITY basic.structure "Re-organize song files in target folder">
+<!ENTITY basic.playlists "Write Playlists to target folder">
+
+<!ENTITY advanced.title "Advanced preferences">
+<!ENTITY advanced.warning "Here are additional ways to configurate the sync, but wrong values in this area may cause problems.">
+<!ENTITY advanced.blocked "Replace">
+<!ENTITY advanced.replace "with">
+<!ENTITY advanced.cutReplaced "Cut replace characters at filename's end off">
+<!ENTITY advanced.cutSpaces "Cut space characters at filename's end off">
+<!ENTITY advanced.length "Maximum file name's length:">
+<!ENTITY advanced.case "Case-sensitive behaviour in file paths">
+
+<!ENTITY structure.title "Structure">
+<!ENTITY structure.info "Song files can get re-organized in target directory. The new structure follows a filename schema, and some other preferences you might change here. Use the slash('/') to separate folders and the filename in the schema.">
+<!ENTITY structure.schema "Schema:">
+<!ENTITY structure.schema.help "Available tags...">
+<!ENTITY structure.schema.help.tooltip "See a list of expressions, that will get replaced with the metadata of each song">
+<!ENTITY structure.schema.tracknumber "Number of digits for track number tag:">
+<!ENTITY structure.covers "Save cover images">
+<!ENTITY structure.coverSchema "Schema for album-folders:">
+<!ENTITY structure.coverFile "Cover images' filename:">
+
+<!ENTITY playlists.title "Playlist writing">
+<!ENTITY playlists.target "Relative target folder:">
+<!ENTITY playlists.split "Split character for file paths:">
+<!ENTITY playlists.relativepoint "Start relative paths with .[split]">
+<!ENTITY playlists.format "Playlist format:">
+<!ENTITY playlists.encoding "Playlist encoding:">
+<!ENTITY playlists.sort "Sort items in Playlists">
+<!ENTITY playlists.sort.scheme "Sorting schema:">
+<!ENTITY structure.sort.scheme.tooltip "Enter a sorting schema using tags separated by commas. Sorting direction can be added like '&#37;artist:a&#37;' for ascending order or '&#37;artist:d&#37;' for descending order. Songs will be sorted in every playlist according to that schema.">
+
+
+<!ENTITY playlists.selection "Playlists to sync:">
+<!ENTITY playlists.refresh "Refresh">
+<!ENTITY playlists.refresh.tooltip "Load the list of playlists again, so changes like renamed, deleted or new playlists will appear in the list">
+
+
+<!ENTITY target.folder "Target folder:">
+<!ENTITY target.browse "Browse...">
+<!ENTITY target.browse.tooltip "Select a folder through a dialog">
+
+
+<!ENTITY complete.start "Start Sync">
+<!ENTITY complete.start.tooltip "Start the sync described above">
+<!ENTITY complete.save "Save as Favorite Sync">
+<!ENTITY complete.save.tooltip "Save the sync described above as a Favorite Sync. You can access it in the &favorite.title; section at the top of this tab.">
+<!ENTITY complete.update "Update Favorite Sync">
+<!ENTITY complete.update.tooltip "Overwrite the currently selected Favorite Sync with the sync described above. You can change the selection and access the Favorite Syncs it in the &favorite.title; section at the top of this tab.">
+
+
+<!ENTITY help.title "Need Help?">
+<!ENTITY help.info "The following buttons will take you to places that might help you configuring and using &foldersync.displayname;.">
+<!ENTITY help.preferences "Preferences">
+<!ENTITY help.preferences.tooltip "Open an option dialog where you can adjust &foldersync.displayname;">
+<!ENTITY help.manual "Manual">
+<!ENTITY help.manual.tooltip "Open online manual in a new tab">
+<!ENTITY help.comments "Comment page">
+<!ENTITY help.comments.tooltip "Go to the comment page at &foldersync.addonplatform;">

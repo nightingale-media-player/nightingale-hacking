@@ -1,0 +1,72 @@
+<!ENTITY current.cancel "Annuler">
+<!ENTITY current.details "Détails…">
+<!ENTITY current.queue.cancel "Annuler tout">
+<!ENTITY favorite.title "Synchronisations favorites">
+<!ENTITY favorite.choose "(Choisir un favori)">
+<!ENTITY favorite.load "Charger">
+<!ENTITY favorite.load.tooltip "Charger la synchronisation favorite sélectionnée dans le bloc sous cette boite, pour la modifier avant l'opération.">
+<!ENTITY favorite.delete "Supprimer…">
+<!ENTITY favorite.delete.tooltip "Supprimer la synchronisation favorite sélectionnée">
+<!ENTITY favorite.start "Commencer">
+<!ENTITY favorite.start.tooltip "Effectuer la synchronisation favorite sélectionnée">
+<!ENTITY profile.current "Profil actuel :">
+<!ENTITY profile.save "Enregistrer…">
+<!ENTITY profile.save.tooltip "Enregistrer le profil modifié comme un nouveau profil ou mettre à jour un profil existant">
+<!ENTITY profile.delete "Supprimer…">
+<!ENTITY profile.delete.tooltip "Supprimer le profil sélectionné">
+<!ENTITY profile.changed "(Modifié)">
+<!ENTITY profile.display.tooltip "Afficher / modifier le profil">
+<!ENTITY profile.hide.tooltip "Cacher les options du profil">
+<!ENTITY basic.title "Paramètres de la synchronisation">
+<!ENTITY basic.copy "Copier les fichiers musicaux vers le dossier cible">
+<!ENTITY basic.update "Mettre à jour les fichiers musicaux dans le dossier cible">
+<!ENTITY basic.delete "Supprimer tous les autres fichiers et dossiers du dossier cible">
+<!ENTITY basic.rockbox "Effectuer une synchronisation Rockbox-Back-Sync sur l'appareil cible">
+<!ENTITY basic.structure "Réorganiser les fichiers musicaux dans le dossier cible">
+<!ENTITY basic.playlists "Écrire les listes de lecture dans le dossier cible">
+<!ENTITY advanced.title "Préférences avancées">
+<!ENTITY advanced.warning "Voici d'autres possibilités de configurer &foldersync.displayname;, mais attention, des valeurs erronées à cet endroit pourraient causer des problèmes.">
+<!ENTITY advanced.blocked "Remplacer">
+<!ENTITY advanced.replace "avec">
+<!ENTITY advanced.cutReplaced "Couper remplacer les caractères à la fin du nom de fichier">
+<!ENTITY advanced.cutSpaces "Couper les caractères espaces à la fin du nom de fichier">
+<!ENTITY advanced.length "Longueur maximale du nom de fichier :">
+<!ENTITY advanced.case "Chemins de fichier sensibles à la casse">
+<!ENTITY structure.title "Structure">
+<!ENTITY structure.info "&foldersync.displayname; peut réorganiser les fichiers musicaux dans le dossier cible. La nouvelle structure se conforme à un schéma de nommage et à quelques préférences que vous pourrez changer ici. Utilisez le slash ('/') pour séparer les dossiers et le nom de fichier dans ce schéma.">
+<!ENTITY structure.schema "Schéma :">
+<!ENTITY structure.schema.help "Balises disponibles…">
+<!ENTITY structure.schema.help.tooltip "Une liste d'expressions qui seront remplacées par les métadonnées de chaque chanson.">
+<!ENTITY structure.schema.tracknumber "Nombre de chiffres dans la balise 'Numéro de piste' :">
+<!ENTITY structure.covers "Enregistrer les couvertures">
+<!ENTITY structure.coverSchema "Schéma pour les dossiers des albums :">
+<!ENTITY structure.coverFile "Nom du fichier des images de couverture :">
+<!ENTITY playlists.title "Écriture des listes de lecture">
+<!ENTITY playlists.target "Dosser cible relatif :">
+<!ENTITY playlists.split "Caractère de séparation pour les chemins de fichiers :">
+<!ENTITY playlists.relativepoint "Commencer les chemins relatifs par .[séparation]">
+<!ENTITY playlists.format "Format de liste de lecture :">
+<!ENTITY playlists.encoding "Encodage des listes de lecture :">
+<!ENTITY playlists.sort "Trier les éléments dans les listes de lecture">
+<!ENTITY playlists.sort.scheme "Schéma de tri :">
+<!ENTITY structure.sort.scheme.tooltip "Saisir un schéma de tri en utilisant les balises séparées par des virgules. Le sens de tri peut être ajouté comme par exemple dans '&#37;artist:a&#37;' pour un tri ascendant ou '&#37;artist:d&#37;' pour un tri descendant. Les chansons seront triées au sein de chaque liste de lecture selon cet ordre de tri.">
+<!ENTITY playlists.selection "Listes de lecture à synchroniser :">
+<!ENTITY playlists.refresh "Rafraichir">
+<!ENTITY playlists.refresh.tooltip "Recharger la liste des liste de lecture pour que les modifications apparaissent (listes nouvelles, supprimées ou renommées)">
+<!ENTITY target.folder "Dossier cible :">
+<!ENTITY target.browse "Parcourir…">
+<!ENTITY target.browse.tooltip "Sélectionner un dossier par une boite de dialogue">
+<!ENTITY complete.start "Commencer la synchronisation">
+<!ENTITY complete.start.tooltip "Commencer la synchronisation décrite ci-dessus">
+<!ENTITY complete.save "Enregistrer comme synchronisation favorite">
+<!ENTITY complete.save.tooltip "Enregistrer la synchronisation décrite ci-dessus comme synchronisation favorite. Vous pourrez y accéder dans la section &favorite.title; en haut de cet onglet.">
+<!ENTITY complete.update "Modifier la synchronisation favorite">
+<!ENTITY complete.update.tooltip "Écrase la synchronisation favorite actuellement sélectionnée par la synchronisation décrite ci-dessus. Vous pouvez changer la sélection et accéder aux synchronisations favorites dans la section &favorite.title; en haut de cet onglet.">
+<!ENTITY help.title "Besoin d'aide ?">
+<!ENTITY help.info "Les boutons qui suivent vous mèneront à des endroits qui pourraient vous aider à configurer et utiliser FolderSync.">
+<!ENTITY help.preferences "Préférences">
+<!ENTITY help.preferences.tooltip "Ouvrir la fenêtre des options de FolderSync pour que vous y puissiez régler FolderSync">
+<!ENTITY help.manual "Mode d'emploi">
+<!ENTITY help.manual.tooltip "Ouvrir le mode d'emploi en ligne de FolderSync dans un nouvel onglet">
+<!ENTITY help.comments "Page des commentaires">
+<!ENTITY help.comments.tooltip "Aller à la page de FolderSync sur addons.songbirdnest.com">

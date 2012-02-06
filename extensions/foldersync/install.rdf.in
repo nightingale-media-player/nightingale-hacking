@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<!-- ***************************************************************************
+ *******************************************************************************
+ *
+ * Copyright(c) 2011
+ * http://getnightingale.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * refer to http://sbfoldersync.googlecode.com.
+ *
+ *******************************************************************************
+ *
+ * Install file for the FolderSync extension for Nightingale.
+ *
+ *******************************************************************************
+ *************************************************************************** -->
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:type>2</em:type>
+    <em:name>FolderSync</em:name>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:creator>rsjtdrjgfuzkfg</em:creator>
+    
+    <em:contributor>GeekShadow</em:contributor>
+    <em:contributor>ChrisSavery</em:contributor>
+    <em:contributor>klint</em:contributor>
+		
+    <em:translator>rsjtdrjgfuzkfg (de)</em:translator>
+    <em:translator>odliam (es-AR)</em:translator>
+    <em:translator>GeekShadow (fr)</em:translator>
+    <em:translator>klint (fr)</em:translator>
+    <em:translator>yfdyh000 (zh-CN)</em:translator>
+    
+    <em:iconURL>chrome://FolderSync/skin/fs-icon.png</em:iconURL>
+    
+    <em:description>Sync Playlists or the whole Library with a folder! You can use USB-Mass-Storage-Devices with this Add-On. If you use Rockbox on a FolderSynced device, you can also track your play counts.</em:description>
+    <em:homepageURL>http://sbfoldersync.googlecode.com</em:homepageURL>
+    
+    <em:optionsURL>chrome://foldersync/content/dialogs/options.xul</em:optionsURL>
+    
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>1.9.0</em:minVersion>
+        <em:maxVersion>1.11.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+		
+    <em:targetApplication>
+      <Description>
+        <em:id>nightingale@getnightingale.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+		
+    <em:hidden>true</em:hidden>
+    <em:appManaged>true</em:appManaged>
+  </Description>
+</RDF>

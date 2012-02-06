@@ -1,0 +1,51 @@
+<!ENTITY dialog.ok "Ok">
+<!ENTITY dialog.cancel "Cancel">
+
+
+<!ENTITY error.title "&foldersync.displayname;">
+
+
+<!ENTITY availabletags.window.title "Available Tags">
+<!ENTITY availabletags.info.defaulttags "The following values will replace empty tags used in a filename schema:">
+<!ENTITY availabletags.info.schema "The following expressions will get replaced in a filename schema or used in the playlist sorting schema:">
+
+<!ENTITY availabletags.artist "Artist&apos;s Name">
+<!ENTITY availabletags.title "Song Title">
+<!ENTITY availabletags.album "Album Title">
+<!ENTITY availabletags.genre "Genre">
+<!ENTITY availabletags.rating "Rating">
+<!ENTITY availabletags.tracknumber "Track Number">
+<!ENTITY availabletags.playlist "Playlist&apos;s Name">
+<!ENTITY availabletags.albumartist "Albumartist&apos;s Name">
+<!ENTITY availabletags.year "Year">
+<!ENTITY availabletags.discnumber "CD-Number">
+<!ENTITY availabletags.disccount "CD-Count">
+<!ENTITY availabletags.composer "Composer&apos;s Name">
+<!ENTITY availabletags.producer "Producer&apos;s Name">
+
+
+<!ENTITY saveprofile.title "Save Profile">
+
+<!ENTITY saveprofile.new "Save as new Profile">
+<!ENTITY saveprofile.new.pre "Enter profile's name here">
+<!ENTITY saveprofile.update "Update existing Profile">
+
+
+<!ENTITY addfav.title "New Favorite">
+
+<!ENTITY addfav.name "Enter a name for the new Favorite:">
+
+
+<!ENTITY options.title "&foldersync.displayname; Options">
+
+<!ENTITY options.ui.title "User Interface">
+<!ENTITY options.ui.notification "Display global notifications">
+<!ENTITY options.ui.notificationExclusive "only if &foldersync.tabname; Tab is not opened">
+<!ENTITY options.ui.show.favorite "Enable Sync Favorites">
+<!ENTITY options.ui.show.help "Show Help section in &foldersync.tabname; tab">
+<!ENTITY options.ui.restart "Preferences marked with * will apply the next time you open the &foldersync.tabname; tab.">
+
+<!ENTITY options.tags.title "Default Tags">
+<!ENTITY options.tags.info "If there is metadata missing, the following default tags will get used:">
+<!ENTITY options.tags.albumartist.fallback "Use &availabletags.artist; if this tag is missing">
+

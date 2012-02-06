@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="0" height="0">  
+  <mask id="vertical-fade" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">  
+    <linearGradient id="foldersync-logo-g" gradientUnits="objectBoundingBox" x2="0" y2="1">  
+      <stop stop-color="white" offset="0"/>  
+      <stop stop-color="white" stop-opacity="0" offset="1"/>  
+    </linearGradient>  
+    <rect x="0" y="0" width="1" height="1" fill="url(#foldersync-logo-g)"/>   
+  </mask>
+  <filter id="dilate">
+    <feMorphology operator="dilate" radius="1" />
+    <feConvolveMatrix kernelMatrix="
+       1  2  1
+       2  4  2
+       1  2  1" />
+    <feConvolveMatrix order="5" kernelMatrix="
+       0 -1 -2 -1  0
+      -1  0  0  0 -1
+      -2  0 50  0 -2
+      -1  0  0  0 -1
+       0 -1 -2 -1  0" />
+    
+  </filter>
+  <filter id="erode">
+    <feConvolveMatrix kernelMatrix="
+       1  2  1
+       2  4  2
+       1  2  1" />
+    <feConvolveMatrix order="5" kernelMatrix="
+       0 -1 -1 -1  0
+      -1  0  0  0 -1
+      -1  0 20  0 -1
+      -1  0  0  0 -1
+       0 -1 -1 -1  0" />
+  </filter>
+</svg>

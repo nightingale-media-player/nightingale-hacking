@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- saveprofile.xul
+     The dialog asking the user weather to save the profile as new profile or
+     update an existing one.
+     -->
+<?xml-stylesheet href="chrome://global/skin"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % brandDTD SYSTEM "chrome://foldersync/locale/branding.dtd">
+  %brandDTD;
+  <!ENTITY % pageDTD SYSTEM "chrome://foldersync/locale/dialogs.dtd">
+  %pageDTD;
+]>
+
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="foldersync-saveprofile-dialog"
+        type="SB_FolderSync:Dialog"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+        title="&saveprofile.title;"
+        hidechrome="false"
+        ondialogaccept="return foldersync.saveprofile.onAccept()"
+        buttonlabelaccept="&dialog.ok;"
+        buttons="accept,cancel"
+        buttonlabelcancel="&dialog.cancel;"
+        ondialogcancel="return true;"
+        style="width:400px;">
+  
+  <!-- connect dialog namespace with global foldersync controllers -->
+  <script src="../connect.js"></script>
+  <!-- the controller for this dialog -->
+  <script src="saveprofile.js"></script>
+  
+  <!-- style: make sure this is not marked as group -->
+  <radiogroup style="background:transparent;
+                     border:0px; padding:0px; margin:0px"
+              id="foldersync-saveprofile-radio">
+    <hbox>
+      <radio id="foldersync-saveprofile-new" label="&saveprofile.new;"
+             oncommand="foldersync.saveprofile.onRChange()" />
+      <textbox id="foldersync-saveprofile-new-name" flex="1"
+               value="&saveprofile.new.pre;"
+               onfocus="foldersync.saveprofile.onNameFocus()"/>
+    </hbox>
+    <hbox>
+      <radio id="foldersync-saveprofile-update" label="&saveprofile.update;"
+             oncommand="foldersync.saveprofile.onRChange()" />
+      <menulist id="foldersync-savedprofile-update-profile" flex="1">
+        <menupopup id="foldersync-savedprofile-update-profile-popup"
+                   onpopupshowing="foldersync.saveprofile.reloadProfiles()">
+        </menupopup>
+      </menulist>
+    </hbox>
+  </radiogroup>
+</dialog>
