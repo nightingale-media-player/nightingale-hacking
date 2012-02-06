@@ -486,7 +486,7 @@ SONGBIRD_STUB = $(SONGBIRD_XR_STUB_DIR)/$(notdir $(SONGBIRD_XR_STUB))
 RESHACKER_BIN = $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
 
 RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/$(1), $(SONGBIRD_XR_STUB_DIR)/$(1), $(ICON_FILE), icongroup, $(2), 1033
-RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" songbird.rc
+RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" nightingale.rc
 
 # WE have to add manifest information to the few remaining .exes that actually
 # link against the MSVCRT; see bug 10022
@@ -558,12 +558,12 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,32512)
-	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,IDI_APPICON)
-	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,IDI_DOCUMENT)
-	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,32512)
-	# overwrite the VersionInfo fields to say Songbird
-	$(RESHACKER_BIN) -extract $(SONGBIRD_XR_STUB_DIR)/songbird.exe, songbird.rc, VersionInfo, 1, 1033
-	$(call RESHACKER_REPLACE_RC,Comments,Songbird.exe is based on the Mozilla XULRunner stub loader)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,IDI_APPICON)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,IDI_DOCUMENT)
+	$(call RESHACKER_OVERWRITE_ICON,nightingale.exe,32512)
+	# overwrite the VersionInfo fields to say Nightingale
+	$(RESHACKER_BIN) -extract $(SONGBIRD_XR_STUB_DIR)/nightingale.exe, nightingale.rc, VersionInfo, 1, 1033
+	$(call RESHACKER_REPLACE_RC,Comments,Nightingale.exe is based on the Mozilla XULRunner stub loader)
 	$(call RESHACKER_REPLACE_RC,CompanyName,$(SB_BRAND_VENDOR_NAME)) 
 	$(call RESHACKER_REPLACE_RC,FileDescription,$(SB_BRAND_FULL_NAME))
 	$(call RESHACKER_REPLACE_RC,ProductName,$(SB_BRAND_SHORT_NAME))
@@ -571,8 +571,8 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	$(call RESHACKER_REPLACE_RC,LegalTrademarks,$(SB_BRAND_TRADEMARKS))
 	$(call RESHACKER_REPLACE_RC,BuildID,$(SB_BUILD_NUMBER))
 	#preedTODO autoconf this
-	rc -v -fo songbird.res songbird.rc
-	$(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/songbird.exe, \
-	 $(SONGBIRD_XR_STUB_DIR)/songbird.exe, songbird.res, VersionInfo,1,1033
+	rc -v -fo nightingale.res nightingale.rc
+	$(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/nightingale.exe, \
+	 $(SONGBIRD_XR_STUB_DIR)/nightingale.exe, nightingale.res, VersionInfo,1,1033
 endif # }windows
 	$(CHMOD) 0755 $(SONGBIRD_STUB)
