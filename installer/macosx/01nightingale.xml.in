@@ -24,7 +24,7 @@
 <?xml version="1.0"?>
 <pkgref spec="1.12" uuid="FB44D038-4DB4-4803-A10A-0DCD5DC2676D">
   <config>
-    <identifier>com.songbirdnest.songbird</identifier>
+    <identifier>com.getnightingale.nightingale</identifier>
     <version>1</version>
     <description/>
     <post-install type="none"/>
@@ -46,15 +46,15 @@
     <scripts-dir mod="true">@CURDIR@/scripts</scripts-dir>
   </scripts>
   <contents>
-    <file-list>01songbird-contents.xml</file-list>
+    <file-list>01nightingale-contents.xml</file-list>
     <!-- disable relocatable to prevent being diverted; that would cause the
        - postinstall / postupgrade scripts to get the wrong paths passed in $2
        -->
-    <component id="com.songbirdnest.songbird" path="@SONGBIRD_APPBUNDLE@" version="@SB_MILESTONE@" isRelocatable="false">
+    <component id="com.getnightingale.nightingale" path="@SONGBIRD_APPBUNDLE@" version="@SB_MILESTONE@" isRelocatable="false">
       <locator-info>
         <token title="pkmk-token-62">
           <search-rule>
-            <combo identifier="com.songbirdnest.songbird" default-path="/Applications/@MACOSX_APPBUNDLE@"/>
+            <combo identifier="com.getnightingale.nightingale" default-path="/Applications/@MACOSX_APPBUNDLE@"/>
           </search-rule>
         </token>
       </locator-info>
@@ -62,7 +62,7 @@
       <component id="com.netscape.DefaultPlugin" path="@SONGBIRD_APPBUNDLE@/Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin" version="1.0"/>
       <component id="com.netscape.MRJPlugin" path="@SONGBIRD_APPBUNDLE@/Contents/Frameworks/XUL.framework/plugins/MRJPlugin.plugin" version="1.0-JEP-0.9.7.2"/>
       <component id="org.mozilla.updater" path="@SONGBIRD_APPBUNDLE@/Contents/Frameworks/XUL.framework/updater.app" version="1.0"/>
-      <component id="com.songbirdnest.songbirditunesagent" path="@SONGBIRD_APPBUNDLE@/Contents/Resources/songbirditunesagent.app" version="@SB_MILESTONE@0"/>
+      <component id="com.getnightingale.songbirditunesagent" path="@SONGBIRD_APPBUNDLE@/Contents/Resources/songbirditunesagent.app" version="@SB_MILESTONE@0"/>
     </component>
     <filter>/CVS$</filter>
     <filter>/\.svn$</filter>

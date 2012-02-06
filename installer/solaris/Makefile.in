@@ -4,7 +4,7 @@
 # This file is part of the Songbird web player.
 #
 # Copyright(c) 2005-2008 POTI, Inc.
-# http://www.songbirdnest.com
+# http://www.nightingalenest.com
 #
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_DIST = $(topsrcdir)/app/branding/songbird-512.png \
-                $(topsrcdir)/installer/common/songbird.desktop \
+SONGBIRD_DIST = $(topsrcdir)/app/branding/Songbird-512.png \
+                $(topsrcdir)/installer/common/nightingale.desktop \
                 $(NULL)
 
 ifdef SONGBIRD_OFFICIAL

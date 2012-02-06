@@ -20,13 +20,6 @@ These nightly builds are provided for:
 2) Awesome users who want to test our latest stuff to find and fix bugs 
    and who don't mind a little pain.
 
-If you're running an old nightly, you can always grab the latest nightly at:
-
-http://wiki.songbirdnest.com/Developer/Articles/Builds/Nightly_Builds
-
-If you think you've found a bug, please ensure you can reproduce with a recent
-nightly and file your bug at
-
-http://bugzilla.songbirdnest.com
-
 Thanks for helping us test!
+
+Let us know about problems/bugs at http://forum.getnightingale.com
