@@ -26,7 +26,7 @@
   <properties>
     <title>@SB_APPNAME@</title>
     <build>@SONGBIRD_OBJDIR@/@DISTDIRNAME@/@SB_APPNAME@Installer.pkg</build>
-    <organization>com.songbirdnest</organization>
+    <organization>com.getnightingale</organization>
     <userSees ui="easy"/>
     <min-target os="2"/>
     <domain system="true"/>
@@ -37,7 +37,7 @@
   </distribution>
   <contents>
     <choice title="@SB_APPNAME@" id="choice0" starts_selected="true" starts_enabled="true" starts_hidden="false">
-      <pkgref id="com.songbirdnest.songbird"/>
+      <pkgref id="com.getnightingale.nightingale"/>
     </choice>
   </contents>
   <resources bg-scale="none" bg-align="topleft">
@@ -46,7 +46,7 @@
     </locale>
   </resources>
   <flags/>
-  <item type="file">01songbird.xml</item>
+  <item type="file">01nightingale.xml</item>
   <mod>properties.systemDomain</mod>
   <mod>properties.userDomain</mod>
   <mod>properties.title</mod>

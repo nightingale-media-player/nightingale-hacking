@@ -38,7 +38,7 @@ ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
    SONGBIRD_PP_DIR = installer.pmdoc
 
    SONGBIRD_PP_RESOURCES = $(srcdir)/index.xml.in \
-                           $(srcdir)/01songbird.xml.in \
+                           $(srcdir)/01nightingale.xml.in \
                            $(NULL)
 
    RESOURCES_PPFLAGS = -Fsubstitution \
@@ -70,7 +70,7 @@ endif
 
 include $(topsrcdir)/build/rules.mk
 
-$(SONGBIRD_PP_DIR)/01songbird-contents.xml:
+$(SONGBIRD_PP_DIR)/01nightingale-contents.xml:
 	$(MAKE_MACPKG_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE) -o $@
 
 $(SCRIPTS_COPY_DIR): FORCE
@@ -78,8 +78,8 @@ $(SCRIPTS_COPY_DIR): FORCE
 	$(CP) $(srcdir)/pkg-postinstall.sh $(SCRIPTS_COPY_DIR)/postinstall
 	$(CP) $(srcdir)/pkg-postinstall.sh $(SCRIPTS_COPY_DIR)/postupgrade
 
-$(PKG_STAGING_DIR)/$(SB_INSTALLER_NAME).pkg: $(SONGBIRD_PP_DIR)/01songbird-contents.xml $(SCRIPTS_COPY_DIR)
-	$(MACPKGMAKER) --doc installer.pmdoc --verbose --id com.songbirdnest.songbird -o $@
+$(PKG_STAGING_DIR)/$(SB_INSTALLER_NAME).pkg: $(SONGBIRD_PP_DIR)/01nightingale-contents.xml $(SCRIPTS_COPY_DIR)
+	$(MACPKGMAKER) --doc installer.pmdoc --verbose --id com.getnightingale.nightingale -o $@
 
 # .dmg libs target
 libs::
@@ -92,7 +92,7 @@ ifneq (,$(filter dmg,$(SB_INSTALLER_SUFFIXES)))
     $(DEPTH)/dist \
     $(SB_APPNAME) \
     -null- \
-    $(srcdir)/songbird.dsstore \
+    $(srcdir)/nightingale.dsstore \
     $(srcdir)/background.tiff \
     $(srcdir)/MacSongbirdDiskImage.icns 
 endif

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-APPNAME="Songbird.app"
+APPNAME="Nightingale.app"
 TARGET="${2}/${APPNAME}"
 RESDIR="${TARGET}/Contents/Resources"
 if [ -z "${DISTHELPER_DISTINI}" ] ; then
-  DISTHELPER_DISTINI="${RESDIR}/songbird.ini"
+  DISTHELPER_DISTINI="${RESDIR}/nightingale.ini"
 fi
 
 # Set the umask here explicitly to create files as group-writable, so any
