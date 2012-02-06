@@ -36,7 +36,7 @@
 topsrcdir=$1
 
 for _config in "$SONGBIRDCONFIG" \
-               "$topsrcdir/songbird.config"
+               "$topsrcdir/nightingale.config"
 do
   if test -f "$_config"; then
     echo "$_config";

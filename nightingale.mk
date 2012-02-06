@@ -84,7 +84,7 @@ endif
 # These are all of the old environment variables that used to control
 # various builds options.
 ifneq (,$(SB_ENABLE_INSTALLER)$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL)$(SB_UPDATE_CHANNEL)$(SB_ENABLE_JARS)$(SB_DISABLE_JARS)$(SB_DISABLE_TESTS)$(SB_ENABLE_TESTS)$(SB_FORCE_MEDIA_CORE_WMP)$(SB_FORCE_MEDIA_CORE_QT)$(SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS))
-   $(error Setting build options via the environment is no longer supported; create/edit a songbird.config file.)
+   $(error Setting build options via the environment is no longer supported; create/edit a nightingale.config file.)
 endif
 
 #
@@ -96,7 +96,7 @@ MKDIR ?= mkdir -p
 PERL ?= perl
 RM ?= rm
 
-SONGBIRD_MESSAGE = Songbird Build System
+SONGBIRD_MESSAGE = Nightingale Build System
 
 # When calling configure we need to use a relative path so that it will spit
 # out relative paths for our makefiles.
