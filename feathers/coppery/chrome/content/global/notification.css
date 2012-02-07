@@ -1,0 +1,63 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+notification {
+  min-height: 30px;
+}
+
+notification,
+notification > .notification-inner {
+  -moz-box-pack: center;
+  -moz-box-align: center;
+}
+
+.messageImage {
+  width: 16px;
+  height: 16px;
+  margin: 0px;
+}
+
+.messageText {
+  margin-left: 4px;
+}
+
+.messageButton {
+}
+
+.notification-inner {
+  border: none;
+}
+
+.messageCloseButton {
+  -moz-appearance: none;
+  list-style-image: url("chrome://songbird/skin/notification-bar/button-close.png") !important;
+  -moz-image-region: rect(0px 12px 12px 0px);
+  min-height:12px;
+  min-width:12px;
+  padding:0px !important;
+  border:none;
+  background-image:none;
+  background-color:transparent;
+  margin:0px !important;
+}
+.messageCloseButton:hover {
+  -moz-image-region: rect(12px 12px 24px 0px);
+}
+.messageCloseButton:active {
+  -moz-image-region: rect(24px 12px 36px 0px);
+}
+.messageCloseButton[disabled="true"] {
+  -moz-image-region: rect(36px 12px 48px 0px) !important;
+}
+
+
+.messageCloseButton > .toolbarbutton-text {
+  display: none;
+}
+
+
+.messageText,
+.messageText:hover,
+.messageText:active {
+  font-size:10px;
+}
+

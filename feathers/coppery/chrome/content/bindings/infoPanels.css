@@ -1,0 +1,112 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/**
+ * Info Panel Bar
+ */
+sb-info-panelbar {
+  min-height: 45px;
+  height: 45px;
+  max-height: 45px;
+  -moz-box-flex: 1;
+  background-color: rgb(204, 204, 204);
+  background-image: url('chrome://songbird/skin/info-bar/bottom.png');
+  background-position: bottom;
+  background-repeat: repeat-x;
+}
+sb-info-panelbar[starthidden="true"] {
+  opacity: 0;
+  margin-top: -45px;
+}
+
+/**
+ * Info Panel
+ */
+.info-panel-outter {
+  padding-right: 17px;
+}
+
+.info-panel-bar-scrollbox .autorepeatbutton-up{
+  list-style-image: url("chrome://songbird/skin/base-elements/button-scroll-left.png") !important;
+}
+.info-panel-bar-scrollbox .autorepeatbutton-down{
+  list-style-image: url("chrome://songbird/skin/base-elements/button-scroll-right.png") !important;
+}
+
+/**
+ * Separator between panels
+ */
+.info-panel-separator {
+  padding-right: 19px;
+  height: 45px;
+}
+sb-info-panel[index="0"] .info-panel-separator {
+  width: 0px;
+}
+sb-info-panel *[clickable] {
+  cursor: pointer;
+}
+
+/* Top section */
+.info-panel-content {
+  padding-top: 8px;
+  height: 36px;
+}
+
+.info-panel-icon-box {
+  width: 16px;
+}
+
+.info-panel-label {
+  font-size: 11px;
+  font-weight: bold;
+  padding-left: 4px;
+  color: rgb( 234, 234, 235) !important;
+  opacity: 0.5 !important;
+}
+sb-info-panel[active="true"] .info-panel-label {
+  color: rgb( 234, 234, 235) !important;
+  opacity: 1.0 !important;
+}
+
+/* Bottom section */
+.info-panel-bottom {
+  min-height: 9px;
+  height: 9px;
+  max-height: 9px;
+}
+
+.info-panel-active {
+  width: 16px;
+  height: 9px;
+  padding: 0px;
+  margin: 0px;
+  background: none;
+}
+
+sb-info-panel[active="true"] .info-panel-active {
+  background-image: url('chrome://songbird/skin/info-bar/indicator.png');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}

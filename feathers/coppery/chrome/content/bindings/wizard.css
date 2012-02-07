@@ -1,0 +1,75 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+*******************************************************************************
+WIZARD
+
+Style rules pertaining to the wizard widget.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+.sb-wizard {
+  height: 420px;
+  width: 420px;
+}
+
+.sb-wizard-description {
+}
+
+/* Wizard header style. */
+.wizard-header-box-text {
+  padding: 0;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+/* Wizard page box style.  Add enough padding to align with the wizard     */
+/* buttons.  The wizard button box has 8 pixels of padding and the buttons */
+/* have 4 pixels of margin.                                                */
+.wizard-page-box {
+  padding: 4px 12px 4px 12px;
+  margin: 0;
+}
+
+.wizard-label-box {
+  display: none;
+}
+
+.wizard-buttons-btm {
+  padding: 0;
+  margin: 0;
+  -moz-box-align: center;
+  -moz-box-flex: 1;
+}
+
+button[hidewizardbutton="true"] {
+  display: none;
+}
+

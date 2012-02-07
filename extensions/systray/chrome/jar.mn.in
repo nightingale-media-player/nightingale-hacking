@@ -3,6 +3,7 @@ systray.jar:
 % content       systray                                                         %content/
 % locale        systray         en-US                                           %locale/en-US/
 % skin          systray         purplerain        %skin/purplerain/
+% skin		systray		coppery		  %skin/coppery/
 % skin          systray         gonzo             %skin/gonzo/
 % skin          systray         rubberducky/0.2   %skin/rubberducky/
 # overlays and styling

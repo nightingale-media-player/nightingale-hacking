@@ -1,0 +1,348 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+SYSTEM CONTROLS
+
+Applies image and layout styles to the window chrome widgets 
+in app/bindings/sysControls.xml.
+
+Use these styles to paint image graphics around the edge of the player
+and modify the custom titlebar and window controls
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+
+
+/** 
+*******************************************************************************
+WINDOWS TITLE BAR
+*******************************************************************************
+*/
+sb-sys-close-button,
+sb-sys-maximize-button,
+sb-sys-minimize-button,
+sb-sys-hide-button
+{
+  background-color: transparent;
+  border:none;
+}
+
+
+#sb-sys-titlebar-buttons {
+  min-height:19px;
+  padding-right: 5px;
+  -moz-box-align: center;
+  -moz-box-pack: center;  
+}
+
+
+/*  Topbar Icon 
+sb-sys-icon
+{
+  list-style-image: url(chrome://songbird-branding/skin/application-icon-16x16.png) ;
+  margin-top:5px;
+}
+*/
+/*  Switch Feathers 
+.sb-feathers-toggle-button > .clickhold-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
+  -moz-image-region: rect(0px 9px 9px 0px);
+}
+.sb-feathers-toggle-button:hover > .clickhold-button
+{
+  -moz-image-region: rect(9px 9px 18px 0px);
+}
+
+.feathers-menu-selected-skin > .menu-iconic-left {
+  margin-left: 16px !important;
+}
+
+*/
+sb-sys-titlebar > menubar 
+{
+
+}
+
+/* Keep feathers icon from exscaping the right side of the toolbar. */
+#sb-sys-dialog-titlebar-primary-content,
+#sb-sys-titlebar-primary-content,
+#sb-sys-titlebar-title
+{
+  overflow: hidden;
+}
+
+sb-sys-minimize-button {
+  list-style-image: url(chrome://songbird/skin/window/button-minimize.png);
+}
+
+sb-sys-maximize-button {
+  background-image: url(chrome://songbird/skin/window/button-maximize.png);
+  background-position:left 0px;
+  background-repeat:no-repeat;
+  min-width:26px;
+  min-height:19px;
+  max-width:26px;
+  max-height:19px;
+}
+
+sb-sys-close-button,
+sb-sys-hide-button {
+  list-style-image: url(chrome://songbird/skin/window/button-close.png);
+}
+
+/* For dialogs that only have the close button, use the solo close button gfx */
+sb-sys-buttons[type="dialog"] > hbox > sb-sys-close-button,
+sb-sys-buttons[type="dialog"] > hbox > sb-sys-hide-button {
+  max-height: 19px;
+  list-style-image: url(chrome://songbird/skin/window/button-close-solo.png);
+  margin-right: 5px !important;
+}
+
+sb-sys-minimize-button,
+sb-sys-maximize-button,
+sb-sys-close-button,
+sb-sys-hide-button {
+  -moz-image-region: rect(0px 26px 19px 0px);
+  margin:0 0 0 0 !important;
+  background-position:left 0px;
+}
+sb-sys-minimize-button:hover,
+sb-sys-maximize-button:hover,
+sb-sys-close-button:hover,
+sb-sys-hide-button:hover {
+  -moz-image-region: rect(19px 26px 38px 0px);
+  background-position:left -19px;
+}
+sb-sys-minimize-button:active,
+sb-sys-maximize-button:active,
+sb-sys-close-button:active,
+sb-sys-hide-button:active {
+  -moz-image-region: rect(38px 26px 57px 0px);
+  background-position:left -38px;
+}
+sb-sys-minimize-button[disabled="true"],
+sb-sys-maximize-button[disabled="true"],
+sb-sys-close-button[disabled="true"],
+sb-sys-hide-button[disabled="true"] {
+  -moz-image-region: rect(57px 26px 76px 0px) !important;
+  background-position:left -57px;
+}
+sb-sys-maximize-button[checked] {
+  background-position:right 0px;
+}
+sb-sys-maximize-button[checked="true"]:hover {
+  background-position:right -19px;
+}
+sb-sys-maximize-button[checked="true"]:active {
+  background-position:right -38px;
+}
+sb-sys-maximize-button[checked="true"][disabled="true"] {
+  background-position:right -57px;
+}
+
+
+/*  Evict the checkbox guts, just use it for click handling */
+sb-sys-maximize-button > .checkbox-label-box,
+sb-sys-maximize-button > .checkbox-check {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+/* Fullscreen (Video Window) */
+sb-player-fullscreen-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
+  -moz-image-region: rect(0px 45px 9px 36px);
+}
+sb-player-fullscreen-button:hover
+{
+  -moz-image-region: rect(9px 45px 18px 36px);
+}
+
+/* Media Pages 
+komi:???
+.mediapages-menu-selected-page > .menu-iconic-left {
+  margin-left: 16px !important;
+}
+*/
+
+/** 
+*******************************************************************************
+MAC OSX TITLE BAR
+*******************************************************************************
+*/
+
+#sb-sys-osx-buttons {
+}
+
+#sb-sys-osx-buttons > sb-sys-close-button,
+#sb-sys-osx-buttons > sb-sys-minimize-button,
+#sb-sys-osx-buttons > sb-sys-maximize-button,
+#sb-sys-osx-buttons > sb-sys-hide-button {
+  margin:3px 5px 2px 0px !important;
+}
+
+#sb-sys-osx-buttons > sb-sys-close-button,
+#sb-sys-osx-buttons > sb-sys-hide-button {
+  margin-left:7px !important;
+  list-style-image: url(chrome://songbird/skin/window/button-close-macos.png);
+}
+#sb-sys-osx-buttons > sb-sys-minimize-button {
+  list-style-image: url(chrome://songbird/skin/window/button-minimize-macos.png);
+}
+#sb-sys-osx-buttons > sb-sys-maximize-button {
+  background-image: url(chrome://songbird/skin/window/button-expand-macos.png);
+  min-height:16px;
+  min-width:16px;
+  background-repeat:no-repeat;
+}
+
+#sb-sys-osx-buttons > sb-sys-close-button,
+#sb-sys-osx-buttons > sb-sys-minimize-button,
+#sb-sys-osx-buttons > sb-sys-maximize-button,
+#sb-sys-osx-buttons > sb-sys-hide-button {
+  -moz-image-region: rect(0px 16px 16px 0px);
+  background-position:center 0px;
+}
+
+#sb-sys-osx-buttons:hover > sb-sys-close-button,
+#sb-sys-osx-buttons:hover > sb-sys-minimize-button,
+#sb-sys-osx-buttons:hover > sb-sys-maximize-button,
+#sb-sys-osx-buttons:hover > sb-sys-hide-button {
+  -moz-image-region: rect(16px 16px 32px 0px);
+  background-position:center -16px;
+}
+
+#sb-sys-osx-buttons > sb-sys-minimize-button:active,
+#sb-sys-osx-buttons > sb-sys-maximize-button:active,
+#sb-sys-osx-buttons > sb-sys-close-button:active,
+#sb-sys-osx-buttons > sb-sys-hide-button:active {
+  -moz-image-region: rect(32px 16px 48px 0px);
+  background-position:center -32px;
+}
+
+#sb-sys-osx-buttons > sb-sys-minimize-button[disabled="true"],
+#sb-sys-osx-buttons > sb-sys-maximize-button[disabled="true"],
+#sb-sys-osx-buttons > sb-sys-close-button[disabled="true"],
+#sb-sys-osx-buttons > sb-sys-hide-button[disabled="true"] {
+  -moz-image-region: rect(48px 16px 64px 0px) !important;
+  background-position:center -48px;
+}
+
+
+
+
+/** 
+*******************************************************************************
+WINDOW FRAME
+*******************************************************************************
+*/ 
+
+sb-sys-outer-frame {
+  -moz-box-orient: vertical;
+}
+
+.sb-sys-outer-frame-resizer {
+  height: 2px;
+  width: 2px;
+}
+.sb-sys-outer-frame-resizer-top,
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-topright {
+  height: 2px;
+  width: 2px;
+}
+
+.sb-sys-outer-frame-chrome-background,
+.sb-sys-outer-frame-chrome,
+.sb-sys-outer-frame-resizer {  
+  background-color: transparent;
+}
+
+/** Set resizer mouse cursors (why doesn't XULRunner provide this?) **/
+.sb-sys-outer-frame-resizer[dir="topleft"] {
+  cursor: nw-resize;
+}
+.sb-sys-outer-frame-resizer[dir="top"] {
+  cursor: n-resize;
+}
+.sb-sys-outer-frame-resizer[dir="topright"] {
+  cursor: ne-resize;
+}
+.sb-sys-outer-frame-resizer[dir="left"] {
+  cursor: w-resize;
+}
+.sb-sys-outer-frame-resizer[dir="right"] {
+  cursor: e-resize;
+}
+.sb-sys-outer-frame-resizer[dir="bottomleft"] {
+  cursor: sw-resize;
+}
+.sb-sys-outer-frame-resizer[dir="bottom"] {
+  cursor: s-resize;
+}
+.sb-sys-outer-frame-resizer[dir="bottomright"] {
+  cursor: se-resize;
+}
+.sb-sys-outer-frame-resizer-rightbottom,
+.sb-sys-outer-frame-resizer-leftbottom,
+.sb-sys-outer-frame-resizer-righttop,
+.sb-sys-outer-frame-resizer-lefttop {
+  min-height:9px;
+}
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-topright,
+.sb-sys-outer-frame-resizer-bottomleft,
+.sb-sys-outer-frame-resizer-bottomright {
+  min-width:12px;
+}
+
+
+
+
+
+
+
+/** Mac bottom right resizer **/
+.sb-sys-outer-frame-resizer-image {
+  list-style-image: url(chrome://songbird/skin/window/button-resizer.png);
+  min-width:12px;
+  min-height:12px;
+}

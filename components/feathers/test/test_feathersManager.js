@@ -39,9 +39,9 @@ var gBundledSkins = []; // Empty, will get filled in testAddonMetadataReader
 var gBundledLayouts = []; // Empty, will get filled in testAddonMetadataReader
 
 // These skins / Layouts are required to be registered
-var gRequiredSkinInternalNames = [ "purplerain" ];
-var gRequiredLayoutURLs = [ "chrome://purplerain/content/xul/mainplayer.xul",
-                            "chrome://purplerain/content/xul/miniplayer.xul" ];
+var gRequiredSkinInternalNames = [ "coppery" ];
+var gRequiredLayoutURLs = [ "chrome://coppery/content/xul/mainplayer.xul",
+                            "chrome://coppery/content/xul/miniplayer.xul" ];
 
 // Preference constants for default layout/skin/feather
 // @see sbFeathersManager.js for information about each pref.
@@ -283,7 +283,7 @@ function testAddonMetadataReader()
   assertEqual( feathersManager.isOnTop(layoutURLs[0], skinNames[0]), false);
   assertEqual( feathersManager.isOnTop(layoutURLs[1], skinNames[0]), false);
   
-  // Verify we have the PurpleRain skin and the two PurpleRain layouts
+  // Verify we have the Coppery skin and the two Coppery layouts
   var thing;
   for each (thing in gRequiredSkinInternalNames)
     assertTrue( feathersManager.getSkinDescription(thing) );

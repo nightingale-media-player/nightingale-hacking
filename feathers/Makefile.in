@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = gonzo \
 					purplerain \
+					coppery \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
