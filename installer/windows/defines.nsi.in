@@ -16,11 +16,11 @@
 !define GREVersion            "@SB_MOZILLA_VERSION@"
 !define AppVersionWindows     "@SB_MILESTONE_WINDOWS@"
 
-!define FileMainEXE           "Songbird.exe"
-!define FileUninstallEXE      "Songbird-Uninstall.exe"
-!define WindowClass           "SongbirdMessageWindow"
-!define DDEApplication        "Songbird"
-!define AppRegName            "Songbird"
+!define FileMainEXE           "Nightingale.exe"
+!define FileUninstallEXE      "Nightingale-Uninstall.exe"
+!define WindowClass           "NightingaleMessageWindow"
+!define DDEApplication        "Nightingale"
+!define AppRegName            "Nightingale"
 !define InstallerMutexName    "${BrandShortName}InstallerMutex"
 
 !define DefaultDistributionName "PartnerId"
