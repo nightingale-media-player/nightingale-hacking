@@ -504,3 +504,8 @@ pref("songbird.mediaimport.warn_filtered_exts", true);
 // Firmware Support Preferences
 //
 pref("songbird.firmware.update.defaultInterval", 604800); // every 7 days
+
+///
+/// Disable Feedback survey
+///
+pref("feedback.disabled", true);
