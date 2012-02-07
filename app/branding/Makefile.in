@@ -45,10 +45,10 @@ else
    ICON_TGT_DIR = $(SONGBIRD_CHROMEDIR)/icons/default
 endif
 
-ICON_SRC_NAME = songbird$(ICON_EXTENSION)
+ICON_SRC_NAME = nightingale$(ICON_EXTENSION)
 
 ifeq (macosx,$(SB_PLATFORM))
-   ICON_TGT_NAME = songbird$(ICON_EXTENSION)
+   ICON_TGT_NAME = nightingale$(ICON_EXTENSION)
 else
    ICON_TGT_NAME = default$(ICON_EXTENSION)
 endif

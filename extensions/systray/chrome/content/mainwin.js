@@ -55,7 +55,7 @@ var systray = {
         }
         trayIcon.title = title + '\n' + artist + '\n' + album + '\n' + position + '/' + length;
         if (aSystray._doAlertNotification) {
-          alsertsSvc.showAlertNotification("chrome://branding/content/songbird-64.png",
+          alsertsSvc.showAlertNotification("chrome://branding/content/nightingale-64.png",
                                           title, artist + " : " + album + " - " + position + '/' + length,
                                           false, "", null);
         }

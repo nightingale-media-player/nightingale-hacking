@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_DIST = $(topsrcdir)/app/branding/Songbird-512.png \
+SONGBIRD_DIST = $(topsrcdir)/app/branding/nightingale-512.png \
                 $(topsrcdir)/installer/common/nightingale.desktop \
                 $(NULL)
 

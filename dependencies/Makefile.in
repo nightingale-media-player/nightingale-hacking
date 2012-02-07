@@ -477,9 +477,9 @@ else
 endif
 
 ifeq (,$(SONGBIRD_OFFICIAL))
-   ICON_FILE = $(topsrcdir)/installer/windows/songbird_nightly.ico
+   ICON_FILE = $(topsrcdir)/installer/windows/nightingale_nightly.ico
 else
-   ICON_FILE = $(topsrcdir)/installer/windows/songbird.ico
+   ICON_FILE = $(topsrcdir)/installer/windows/nightingale.ico
 endif
 
 SONGBIRD_STUB = $(SONGBIRD_XR_STUB_DIR)/$(notdir $(SONGBIRD_XR_STUB))

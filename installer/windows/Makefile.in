@@ -29,16 +29,16 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef SONGBIRD_OFFICIAL
-   SONGBIRD_DIST += $(srcdir)/songbird.ico \
-                    $(srcdir)/songbird_installer.ico \
-                    $(srcdir)/songbird_uninstaller.ico \
-                    $(srcdir)/songbird_vista.ico \
+   SONGBIRD_DIST += $(srcdir)/nightingale.ico \
+                    $(srcdir)/nightingale_installer.ico \
+                    $(srcdir)/nightingale_uninstaller.ico \
+                    $(srcdir)/nightingale_vista.ico \
                     $(NULL)
-   export ICON_FILE = songbird.ico
+   export ICON_FILE = nightingale.ico
 else
-   SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
+   SONGBIRD_DIST += $(srcdir)/nightingale_nightly.ico \
                     $(NULL)
-   export ICON_FILE = songbird_nightly.ico
+   export ICON_FILE = nightingale_nightly.ico
 endif
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
