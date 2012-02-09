@@ -1,0 +1,98 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+
+/******************************************************************************
+> MAC OSX RULES
+  This css file provides additional rules that are only loaded on Mac OSX
+******************************************************************************/
+
+
+#sb-sys-title-title {
+  font-family: Lucida Grande !important;
+  font-size: 13px;
+  margin:0;
+  padding:3px 0px 0px 0px !important;
+  font-weight:normal;
+}
+
+
+/******************************************************************************
+> WINDOW UNFOCUSED
+******************************************************************************/
+window:not([active="true"]) .inactive-box {
+  background-color:rgba(255,255,255,0.15);
+}
+
+#video_window:not([active="true"]) .inactive-box {
+  background-color: black !important;
+}
+
+/******************************************************************************
+> WINDOW RESIZER SUPPORT
+  Add padding to the status bar when the media controls are at the top so that 
+  the window resizer image can be shown without overlapping anything
+******************************************************************************/
+
+#content_player_wrapper[playercontrols='top'] #status-bar-box {
+  padding-right: 12px;
+}
+#content_player_wrapper[playercontrols='top'] #status-bar-box > sb-displaypane-button.right-sidebar-display-pane-button > button {
+  min-width:20px !important;
+  border-right: 1px solid rgb(161,161,161);
+}
+#content_player_wrapper[playercontrols='top'] #servicepane_splitter {
+  border-bottom:none;
+}
+
+
+
+/******************************************************************************
+> HIDE ELEMENTS
+  Hide specific elements in the window used only for Windows and Linux
+******************************************************************************/
+
+/* title bar */
+window:not([hidechrome="true"]) #titlebar_box {
+  visibility:collapse;
+  border:none !important;
+  min-height:0px !important;
+}
+
+/* window resizers */
+.sb-sys-outer-frame-resizer {
+  display:none;
+}
+
+/* remove window borders because Mac windows have shadows */
+window[windowtype*="Songbird"] {
+  border:none !important;
+}
+wizard,
+dialog {
+  border:none !important;
+}

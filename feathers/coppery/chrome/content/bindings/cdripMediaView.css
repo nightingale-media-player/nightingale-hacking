@@ -1,0 +1,96 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+*/
+
+
+/*
+//------------------------------------------------------------------------------
+// CD rip header view
+//------------------------------------------------------------------------------
+*/
+
+
+hbox.sb-cdrip-header-hbox {
+  background-color: transparent;
+  margin: 10px;
+}
+
+hbox.sb-cdrip-header-plain-hbox {
+  border: none;
+  margin: 10px;
+}
+
+#sb-cdrip-settings-hbox {
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid rgba(145,145,145,0.5);
+}
+
+#sb-cdrip-settings-title-label {
+  font-size: 10pt;
+}
+
+label.sb-cdrip-settings-label {
+  margin: 0;
+}
+
+label.sb-cdrip-status-label {
+  font-weight: bold;
+}
+
+#sb-cdrip-actionstatus-image {
+  margin-left: 10px;
+  margin-right: 20px;
+}
+
+#sb-cdrip-actionstatus-label {
+  font-weight: bold;
+  font-size: 10pt;
+}
+
+#sb-cdrip-status-image {
+  max-width: 32px;
+  max-height: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.sb-cdrip-link {
+  cursor: pointer;
+}
+
+#sb-cdrip-status-buttons > button {
+  background-image: url(chrome://songbird/skin/base-elements/bg-button-tall.png);
+  background-position: center 0px;
+}
+#sb-cdrip-status-buttons > button:hover {
+  background-position: center -45px;
+}
+#sb-cdrip-status-buttons > button:active {
+  background-position: center -90px;
+}
+#sb-cdrip-status-buttons > button[disabled="true"] {
+  background-position: center -135px
+}

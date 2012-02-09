@@ -1,0 +1,134 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+
+/** 
+*******************************************************************************
+DEVICE CAPACITY
+
+See app/content/bindings/device/deviceCapacity.xml
+
+Style rules pertaining to the device capacity bar.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+.device-capacity-legend-label {
+  margin:0;
+  padding:0;
+}
+
+.capacity_header_label {
+  font-size:100%;
+}
+
+.capacity_value_label {
+  font-size:80%;
+}
+
+.device-capacity-legend-box {
+  margin-top:4px;
+  margin-right: 8px;
+  -moz-box-pack: start;
+}
+
+.device-capacity-legend-box > sb-device-capacity-legend {
+  padding-right: 18px;
+}
+ 
+#device_capacity {
+  margin:4px 0px 4px 0px;
+}
+
+.device-capacity-bar-stack[disabled="true"] {
+  opacity: .3;
+}
+
+.device-capacity-bar-box {
+  height: 20px;
+}
+
+.device-capacity-legend-color-box {
+  width: 18px;
+  height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  margin: 2px 4px 2px 2px;
+  -moz-border-radius: 1px;
+}
+.device-capacity-box-overlay {
+  width: 20px;
+  height: 20px;
+  max-width: 20px;
+  max-height: 20px;
+  background-image:url('chrome://songbird/skin/device/bg-legend.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+  margin-right: 2px;
+}
+
+.device-capacity-bar-notches {
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+
+.device-capacity-box-overlay {
+  border:none !important;
+}
+
+.device-capacity-bar-notches {
+}
+
+
+.device-capacity-legend-label-box {
+  min-width: 50px;
+}
+
+
+
+
+.device-capacity-bar-caps > .left,
+.device-capacity-bar-caps > .right {
+  min-width:20px;
+  width:20px;
+  max-width:20px;
+  background-repeat:no-repeat;
+  background-position:center top !important;
+  margin:0px !important; 
+}
+.device-capacity-bar-caps > .left {
+  background-image:url('chrome://songbird/skin/device/bg-capacity-bar-left.png');
+}
+.device-capacity-bar-caps > .right {
+  background-image:url('chrome://songbird/skin/device/bg-capacity-bar-right.png');
+}
+
+.device-capacity-bar-caps > .middle {
+  background-image:url('chrome://songbird/skin/device/bg-capacity-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+ margin:0px !important; 
+}

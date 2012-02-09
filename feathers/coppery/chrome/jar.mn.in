@@ -1,0 +1,14 @@
+coppery.jar:
+% skin  songbird  coppery  %feathers/coppery/songbird/chrome/skin/
+% skin  songbird-os-specific  coppery  %feathers/coppery/songbird/chrome/skin/os-specific/
+% skin  coppery  coppery  %feathers/coppery/songbird/chrome/skin/
+% skin  global  coppery  chrome://songbird-global/skin/
+% skin  mozapps  coppery  chrome://songbird-mozapps/skin/
+% content coppery  %feathers/coppery/songbird/chrome/content/
+% locale  coppery  en-US  %feathers/coppery/songbird/chrome/locale/en-US/
+# TODO these can be migrated to os-specific dir
+% override chrome://songbird/skin/icons/displaypane-contentpane-bottom.png chrome://songbird/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-servicepane-bottom.png chrome://songbird/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-right-sidebar.png chrome://songbird/skin/icons/mac/displaypane-right-sidebar.png os=darwin
+#
+@include_all_to feathers/coppery/songbird/chrome/

@@ -1,0 +1,163 @@
+/*
+ *=BEGIN NIGHTINGALE GPL
+ *
+ * This file is part of the Nightingale web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.getnightingale.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END NIGHTINGALE GPL
+ */
+
+/******************************************************************************
+> HTML.CSS
+*******************************************************************************
+
+Including this CSS file into HTML documents should make the rendered page look 
+similar to the selected application feather.
+
+******************************************************************************/
+
+/*
+ * Make the body look "XUL"-y, with the same background color and image
+ * that XUL would get in the Feather
+ */
+body {
+  font-family: Lucida Grande, Lucida, Helvetica, Arial, Sans;
+  /*font-family: Helvetica, Arial, Sans;*/
+  font-size: 11px;
+  color: rgb(128,127,132);
+  background-color: rgb(220,220,220);
+  background-image:none;
+  padding: 0px;
+  margin: 0px;
+}
+
+body h4 {
+  font-size: 13px;
+}
+
+body.dark {
+  background-color: rgb(102,102,102);
+  color: rgb(255,255,255);
+  background-image:none;
+}
+
+body.darker {
+  background-color: rgb(102,102,102);
+  color: rgb(255,255,255);
+  background-image:none;
+}
+
+body.darkest {
+  background-color: rgb(60,60,60);
+  color: rgb(255,255,255);
+  background-image:none;
+}
+
+body.dark a,
+body.darker a,
+body.darkest a {
+  color: rgb(187,179,230);
+}
+
+/*
+ * Various colour classes
+ */
+.selected {
+  color: white;
+  background-color: rgb(118,170,206);
+}
+.unselected {
+  color: rgb(209,208,217);
+  background-color: rgb(145,143,154);
+}
+.hover {
+  color: white;
+  background-color: rgb(145,143,154);
+}
+
+/*
+ * Classes for presenting alternating rows of data to visually distinguish
+ * and separate the rows from each other
+ */
+.row-even {
+  background-color: #eee;
+}
+.row-odd {
+  background-color: #fff;
+}
+/* The unselected row */
+.row-unselected {
+  background-color: rgb(102,102,102);
+  border-bottom: 1px solid rgb(47,47,58);
+}
+/* The selected row */
+.row-selected {
+  background-color: rgb(40,71,109);
+  border-bottom: 1px solid rgb(47,47,58);
+  border-left: 1px solid rgb(102,102,102);
+  border-right: 1px solid rgb(102,102,102);
+}
+div.row-unselected a,
+div.row-selected a {
+  color: rgba(255,255,255,0.85);
+  font-size: 11px;
+}
+
+a {
+  color: rgb(97,67,140);
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:underline;
+} 
+a:active {
+} 
+a:visited {
+}
+
+/* LyricMaster styles */
+body.lyricmaster {
+  color: rgb(194,192,203);
+  background-color: rgb(51,51,51);
+  padding: 10px;
+  font-family: Helvetica, Arial, Sans;
+}
+h1#lyricmaster_title {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+h2#lyricmaster_artist {
+  font-size: 12px;
+}
+h3#lyricmaster_album {
+  font-size: 12px;
+}
+p.lyricmaster_lyrics {
+  font-size: 11px;
+}
+body.lyricmaster p.header,
+body.lyricmaster p.separator1,
+body.lyricmaster p.separator2 {
+  display: none;
+}
+
+/* Text selection colour */
+::-moz-selection {
+  background-color: #000;
+}

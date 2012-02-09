@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- addfav.xul
+     The dialog asking the user for a new Favorite's name
+     -->
+<?xml-stylesheet href="chrome://global/skin"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % brandDTD SYSTEM "chrome://foldersync/locale/branding.dtd">
+  %brandDTD;
+  <!ENTITY % pageDTD SYSTEM "chrome://foldersync/locale/dialogs.dtd">
+  %pageDTD;
+]>
+
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="foldersync-getfavname-dialog"
+        type="SB_FolderSync:Dialog"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+        title="&addfav.title;"
+        hidechrome="false"
+        ondialogaccept="window.arguments[0].name =
+                            document.
+                                getElementById('foldersync-addfav-name').
+                                    value;
+                        return true;"
+        buttonlabelaccept="&dialog.ok;"
+        buttons="accept,cancel"
+        buttonlabelcancel="&dialog.cancel;"
+        ondialogcancel="return true;"
+        style="width:400px;">
+  
+  <label>&addfav.name;</label>
+  <textbox id="foldersync-addfav-name" />
+</dialog>

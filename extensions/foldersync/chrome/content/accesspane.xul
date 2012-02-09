@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- accesspane.xul
+     This is the main control tab of FolderSync.
+     -->
+<?xml-stylesheet href="chrome://global/skin"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"
+                 title="Skin"?>
+
+<!DOCTYPE page [
+  <!ENTITY % brandDTD SYSTEM "chrome://foldersync/locale/branding.dtd">
+  %brandDTD;
+  <!ENTITY % pageDTD SYSTEM "chrome://foldersync/locale/accesspane.dtd">
+  %pageDTD;
+]>
+
+<page id="foldersync-tab" title="&foldersync.displayname;"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:svg="http://www.w3.org/2000/svg">
+  <!-- connect to the global namespace -->
+  <script src="connect.js"></script>
+  <!-- load the accesspane conrtoller -->
+  <script src="accesspane.js"></script>
+  
+  <hbox> <!-- the head of the tab: foldersync logo, sync / queue status -->
+    <vbox>
+      <!-- FolderSync / Branding Logo -->
+      <hbox align="center">
+        <stack style="margin-left: 10px; margin-right:-14px;">
+          <!-- Shadow and white blurred area-->
+          <label style="text-shadow: 2pt 2pt 4pt rgba(0,0,0,0.6),
+                                     0px 0px 17pt #FFF,
+                                     0px 0px 20pt #FFF;
+                        color: #000;
+                        font-size:24pt;
+                        font-weight: bold;
+                        font-family: Arial, sans-serif;
+                       ">&foldersync.tabname;</label>
+          <!-- Outline -->
+          <label style="filter: url(svg-effects.svg#dilate);
+                        color: #000;
+                        font-size:24pt;
+                        font-weight: bold;
+                        font-family: Arial, sans-serif;
+                       ">&foldersync.tabname;</label>
+          <!-- Orange Filling -->
+          <label style="mask: url(svg-effects.svg#vertical-fade);
+                        filter: url(svg-effects.svg#erode);
+                        color: #9E6E07;
+                        font-size:24pt;
+                        font-weight: bold;
+                        font-family: Arial, sans-serif;
+                       ">&foldersync.tabname;</label>
+        </stack>
+        <image src="chrome://foldersync/skin/fs-header.png"/>
+      </hbox>
+      <spacer flex="1" />
+    </vbox>
+    <groupbox id="foldersync-current-box" flex="1" style="display:none">
+      <!-- we have the status text in background, and blend notifications above
+           it, when a syncs end, because the next sync might start in bg. -->
+      <stack flex="1">
+        <vbox>
+          <hbox flex="1">
+            <deck flex="1">
+              <hbox align="center">
+                <label flex="1" crop="center" id="foldersync-current-state"/>
+              </hbox>
+              <button label=" "/> <!-- ensure minimal height of a button -->
+            </deck>
+            <button id="foldersync-current-details" label="&current.details;"
+                    oncommand="foldersync.accesspane.showDetails()"/>
+            <button id="foldersync-current-cancel" label="&current.cancel;"
+                    oncommand="foldersync.accesspane.cancelSync()"/>
+          </hbox>
+          <progressmeter id="foldersync-current-progress"
+                         mode="determined" value="0" />
+        </vbox>
+        <vbox mousethrough="always">
+          <notificationbox id="foldersync-current-notification" />
+        </vbox>
+      </stack>
+      <vbox id="foldersync-queue-box" style="display:none">
+        <separator />
+        <hbox align="center">
+          <label id="foldersync-queue-state" flex="1"/>
+          <button id="foldersync-queue-cancel" label="&current.queue.cancel;"
+                  oncommand="foldersync.accesspane.cancelQueue()"/>
+        </hbox>
+      </vbox>
+    </groupbox>
+  </hbox>
+  
+  <!-- the style is because of our scrolling area being directly under this -->
+  <separator style="max-height:1px;margin-bottom:0px;padding-bottom:0px;" />
+  
+  <vbox style="overflow-y:auto" flex="1">
+    <!-- the favorite box -->
+    <groupbox id="foldersync-favorite-box">
+    <caption label="&favorite.title;" />
+      <hbox>
+        <menulist id="foldersync-favorites" flex="1"
+                  oncommand="foldersync.accesspane.favorite.
+                             changeFavorite(!this.selectedIndex)">
+          <menupopup id="foldersync-favorites-popup"
+                     onpopupshowing="foldersync.accesspane.favorite.
+                                                reloadFavorites()">
+            <menuitem disabled="true" label="&favorite.choose;" />
+          </menupopup>
+        </menulist>
+        <button id="foldersync-favorite-delete"
+                label="&favorite.delete;"
+                disabled="true"
+                oncommand="foldersync.accesspane.favorite.delete()"
+                tooltiptext="&favorite.delete.tooltip;" />
+        <button id="foldersync-favorite-load"
+                label="&favorite.load;"
+                oncommand="foldersync.accesspane.favorite.load()"
+                tooltiptext="&favorite.load.tooltip;"
+                disabled="true" />
+        <button id="foldersync-favorite-start"
+                label="&favorite.start;"
+                disabled="true"
+                oncommand="foldersync.accesspane.favorite.start()"
+                tooltiptext="&favorite.start.tooltip;"/>
+        </hbox>
+    </groupbox>
+    
+    <!-- the direct sync group-->
+    <groupbox flex="1">
+      <!-- the top area: profiles -->
+      <hbox align="center">
+        <label>&profile.current;</label>
+        <menulist id="foldersync-profile" flex="1"
+                  oncommand="foldersync.accesspane.profile.changeProfile();
+                             foldersync.accesspane.favorite.onChange();
+                             foldersync.accesspane.playlists.calcSize()">
+          <menupopup id="foldersync-profile-popup"
+                     onpopupshowing="foldersync.accesspane.profile.
+                                                reloadProfiles()">
+            <menuitem label="&profile.changed;" value="changed" disabled="true"/>
+          </menupopup>
+        </menulist>
+        <deck id="foldersync-profile-savedelete">
+          <button id="foldersync-profile-save" label="&profile.save;"
+                  oncommand="foldersync.accesspane.profile.save()"
+                  tooltiptext="&profile.save.tooltip;" />
+          <button id="foldersync-profile-delete" label="&profile.delete;"
+                  oncommand="foldersync.accesspane.profile.delete()"
+                  tooltiptext="&profile.delete.tooltip;" />
+        </deck>
+        <deck id="foldersync-profile-collapse">
+          <button id="foldersync-profile-show" label="&#11015;"
+                  oncommand="foldersync.accesspane.profile.show()"
+                  flex="1" tooltiptext="&profile.display.tooltip;" />
+          <button id="foldersync-profile-hide" label="&#11014;"
+                  oncommand="foldersync.accesspane.profile.hide()"
+                  flex="1" tooltiptext="&profile.hide.tooltip;" />
+        </deck>
+      </hbox>
+      <tabbox id="foldersync-profile-box" style="display:none" orient="horizontal">
+        <tabs orient="vertical" class="tabs-left"
+              style="-moz-border-radius-topleft:3px;
+                     -moz-border-radius-bottomleft:3px;">
+          <tab label="&basic.title;" />
+          <tab label="&structure.title;" id="foldersync-tab-structure"/>
+          <tab label="&playlists.title;" id="foldersync-tab-playlists"/>
+          <tab label="&advanced.title;" />
+        </tabs>
+        <tabpanels flex="1">
+          <!-- the basic sync feature tab -->
+          <tabpanel width="300" flex="1" orient="vertical">
+            <checkbox label="&basic.copy;" checked="true" disabled="true" />
+            <checkbox id="foldersync-basic-update" label="&basic.update;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+            <checkbox id="foldersync-basic-delete" label="&basic.delete;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+            <separator />
+            <checkbox id="foldersync-basic-struct" label="&basic.structure;"
+                      oncommand="foldersync.accesspane.profile.onChange();
+                                 foldersync.accesspane.profile.updateArea();
+                                 foldersync.accesspane.playlists.calcSize()" />
+            <separator />
+            <checkbox id="foldersync-basic-plists" label="&basic.playlists;"
+                      oncommand="foldersync.accesspane.profile.onChange();
+                                 foldersync.accesspane.profile.updateArea()" />
+            <separator />
+            <checkbox id="foldersync-basic-rockbox" label="&basic.rockbox;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+          </tabpanel>
+          <!-- the structure tab -->
+          <tabpanel width="300" flex="1" orient="vertical"
+                    id="foldersync-structure">
+            <label>&structure.info;</label>
+            <hbox align="center">
+              <label value="&structure.schema;" />
+              <textbox id="foldersync-structure-schema" flex="1"
+                       onchange="foldersync.accesspane.profile.onChange();
+                                 foldersync.accesspane.playlists.calcSize()" />
+              <button id="foldersync-structure-tags"
+                      label="&structure.schema.help;"
+                      tooltiptext="&structure.schema.help.tooltip;"
+                      oncommand="foldersync.accesspane.profile.
+                                            openAvailableTags()" />
+            </hbox>
+            <hbox align="center">
+              <label value="&structure.schema.tracknumber;" />
+              <textbox id="foldersync-structure-tndigits"
+                       flex="1" type="number"
+                       onchange="foldersync.accesspane.profile.onChange()" />
+            </hbox>
+            <separator />
+            <checkbox id="foldersync-structure-covers"
+                      label="&structure.covers;"
+                      oncommand="foldersync.accesspane.profile.onChange();
+                                 foldersync.accesspane.profile.updateArea()" />
+            <grid id="foldersync-structure-cover-box"
+                  style="padding-left:16px">
+              <columns>
+                <column />
+                <column flex="1" />
+              </columns>
+              <rows>
+                <row align="center">
+                  <label value="&structure.coverSchema;" />
+                  <textbox id="foldersync-structure-cover-schema"
+                           onchange="foldersync.accesspane.profile.onChange()" />
+                </row>
+                <row align="center">
+                  <label value="&structure.coverFile;" />
+                  <textbox id="foldersync-structure-cover-file"
+                           onchange="foldersync.accesspane.profile.onChange()" />
+                </row>
+              </rows>
+            </grid>
+          </tabpanel>
+          <!-- the playlist tab -->
+          <tabpanel width="300" flex="1" orient="vertical"
+                    id="foldersync-playlists">
+            <grid>
+              <columns>
+                <column />
+                <column flex="1" />
+              </columns>
+              <rows>
+                <row align="center">
+                  <label value="&playlists.format;" />
+                  <menulist id="foldersync-playlists-format"
+                            oncommand="foldersync.accesspane.profile.
+                                                    onChange()">
+                    <menupopup id="foldersync-playlists-format-popup" />
+                  </menulist>
+                </row>
+                <row align="center">
+                  <label value="&playlists.encoding;" />
+                  <menulist id="foldersync-playlists-encoding"
+                            oncommand="foldersync.accesspane.profile.
+                                                  onChange()">
+                    <menupopup id="foldersync-playlists-encoding-popup">
+                      <menuitem selected="true" label="UTF-8"
+                                value="UTF-8" />
+                       <menuitem label="Latin 1 (ISO-8859-1)"
+                                 value="ISO-8859-1" />
+                       <menuitem label="ANSI (Windows-1252)"
+                                 value="Windows-1252" />                                
+                    </menupopup>
+                  </menulist>
+                </row>
+                <row align="center">
+                  <label value="&playlists.target;" />
+                  <textbox id="foldersync-playlists-target"
+                           onchange="foldersync.accesspane.profile.
+                                                onChange()" />
+                </row>
+                <row align="center">
+                  <label value="&playlists.split;" />
+                  <textbox id="foldersync-playlists-split"
+                           onchange="foldersync.accesspane.profile.
+                                                onChange()" />
+                </row>
+              </rows>
+            </grid>
+            <checkbox id="foldersync-playlists-relpoint"
+                      label="&playlists.relativepoint;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+            <separator />
+            <checkbox id="foldersync-playlists-sort"
+                      label="&playlists.sort;"
+                      oncommand="foldersync.accesspane.profile.onChange();
+                                 foldersync.accesspane.profile.updateArea()" />
+            <hbox align="center"
+                  id="foldersync-playlists-sort-box"
+                  style="padding-left:16px">
+              <label value="&playlists.sort.scheme;" />
+              <textbox id="foldersync-playlists-sortingscheme" flex="1"
+                       tooltiptext="&structure.sort.scheme.tooltip;"
+                       onchange="foldersync.accesspane.profile.onChange()" />
+              <button id="foldersync-structure-tags"
+                      label="&structure.schema.help;"
+                      tooltiptext="&structure.schema.help.tooltip;"
+                      oncommand="foldersync.accesspane.profile.
+                                            openAvailableTags()" />
+            </hbox>
+          </tabpanel>
+          <!-- the advanced sync feature tab -->
+          <tabpanel width="300" flex="1" orient="vertical">
+            <label>&advanced.warning;</label>
+            <checkbox id="foldersync-advanced-case" label="&advanced.case;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+            <hbox align="center">
+              <label value="&advanced.blocked;" />
+              <textbox id="foldersync-advanced-blocked" flex="1"
+                       onchange="foldersync.accesspane.profile.onChange()" />
+              <label value="&advanced.replace;" />
+              <textbox id="foldersync-advanced-replace" width="20"
+                       onchange="foldersync.accesspane.profile.onChange()" />
+            </hbox>
+            <checkbox id="foldersync-advanced-cutReplace"
+                      label="&advanced.cutReplaced;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+            <checkbox id="foldersync-advanced-cutSpaces"
+                      label="&advanced.cutSpaces;"
+                      oncommand="foldersync.accesspane.profile.onChange()" />
+            <hbox align="center">
+              <label value="&advanced.length;" />
+              <textbox id="foldersync-advanced-length" flex="1" type="number"
+                       onchange="foldersync.accesspane.profile.onChange()" />
+            </hbox>
+          </tabpanel>
+        </tabpanels>
+      </tabbox>
+      
+      <separator />
+      
+      <!-- the middle area: Playlists -->
+      <hbox flex="1">
+        <vbox style="min-width:120px">
+          <label>&playlists.selection;</label>
+          <spacer flex="1" />
+          <hbox style="background-color:rgba(170, 170, 170, 0.2);
+                      -moz-border-radius: 3px">
+            <!-- flex:1 width:1 are for correct word wrap -->
+            <label id="foldersync-space" flex="1" width="1"/>
+          </hbox>
+          <spacer flex="1"/>
+          <button id="foldersync-playlists-refresh" label="&playlists.refresh;"
+                  tooltiptext="&playlists.refresh.tooltip;"
+                  oncommand="foldersync.accesspane.playlists.reload()"/>
+        </vbox>
+        <listbox flex="1" id="foldersync-playlists-list"
+                 style="min-height:100px"
+                 oncommand="foldersync.accesspane.playlists.onChange()"/>
+      </hbox>
+      
+      <separator />
+      
+      <!-- the bottom area: Target Folder -->
+      <hbox align="center">
+        <label>&target.folder;</label>
+        <textbox id="foldersync-target" flex="1"
+                 onchange="foldersync.accesspane.target.onChange()"/>
+        <button id="foldersync-target-browse" label="&target.browse;"
+                tooltiptext="&target.browse.tooltip;"
+                oncommand="foldersync.accesspane.target.browse()"/>
+      </hbox>
+      
+      <separator />
+      
+      <!-- the bottom line: complete buttons -->
+      <hbox>
+        <button id="foldersync-direct-update" label="&complete.update;"
+                oncommand="foldersync.accesspane.favorite.update()"
+                tooltiptext="&complete.update.tooltip;" />
+        <button id="foldersync-direct-add" label="&complete.save;"
+                oncommand="foldersync.accesspane.favorite.add()"
+                tooltiptext="&complete.save.tooltip;" />
+        <spacer flex="1" />
+        <button id="foldersync-direct-start" label="&complete.start;"
+                oncommand="foldersync.accesspane.startSync()"
+                tooltiptext="&complete.start.tooltip;"/>
+      </hbox>
+    </groupbox>
+    
+    <groupbox id="foldersync-help-box"> <!-- the help group -->
+      <caption label="&help.title;" />
+      <label>&help.info;</label>
+      <hbox>
+        <spacer flex="1" />
+        <button id="foldersync-help-preferences" label="&help.preferences;"
+                tooltiptext="&help.preferences.tooltip;"
+                oncommand="foldersync.accesspane.help.preferences()" />
+        <button id="foldersync-help-comments" label="&help.comments;"
+                tooltiptext="&help.comments.tooltip;"
+                value="&foldersync.addonURL;"
+                oncommand="foldersync.accesspane.help.openURL(
+                                      this.getAttribute('value'))" />
+        <button id="foldersync-help-manual" label="&help.manual;"
+                tooltiptext="&help.manual.tooltip;"
+                value="chrome://foldersync/content/manual/start.htm"
+                oncommand="foldersync.accesspane.help.openURL(
+                                      this.getAttribute('value'))" />
+      </hbox>
+    </groupbox>
+  </vbox>
+</page>

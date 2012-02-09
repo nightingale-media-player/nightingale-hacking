@@ -16,11 +16,11 @@
 !define GREVersion            "@SB_MOZILLA_VERSION@"
 !define AppVersionWindows     "@SB_MILESTONE_WINDOWS@"
 
-!define FileMainEXE           "Songbird.exe"
-!define FileUninstallEXE      "Songbird-Uninstall.exe"
-!define WindowClass           "SongbirdMessageWindow"
-!define DDEApplication        "Songbird"
-!define AppRegName            "Songbird"
+!define FileMainEXE           "Nightingale.exe"
+!define FileUninstallEXE      "Nightingale-Uninstall.exe"
+!define WindowClass           "NightingaleMessageWindow"
+!define DDEApplication        "Nightingale"
+!define AppRegName            "Nightingale"
 !define InstallerMutexName    "${BrandShortName}InstallerMutex"
 
 !define DefaultDistributionName "PartnerId"
@@ -65,17 +65,17 @@
 
 #ifdef SONGBIRD_OFFICIAL
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}\"
-!define PreferredIcon             songbird.ico
-!define PreferredInstallerIcon    songbird_installer.ico
-!define PreferredUninstallerIcon  songbird_uninstaller.ico
-!define VistaIcon                 songbird_vista.ico
+!define PreferredIcon             nightingale.ico
+!define PreferredInstallerIcon    nightingale_installer.ico
+!define PreferredUninstallerIcon  nightingale_uninstaller.ico
+!define VistaIcon                 nightingale_vista.ico
 !define InstallerBuildType        "release"
 #else
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}-${AppVersion}-${AppBuildNumber}\"
-!define PreferredIcon             songbird_nightly.ico
-!define PreferredInstallerIcon    songbird_nightly.ico
-!define PreferredUninstallerIcon  songbird_nightly.ico
-!define VistaIcon                 songbird_nightly.ico
+!define PreferredIcon             nightingale_nightly.ico
+!define PreferredInstallerIcon    nightingale_nightly.ico
+!define PreferredUninstallerIcon  nightingale_nightly.ico
+!define VistaIcon                 nightingale_nightly.ico
 !define InstallerBuildType        "nightly"
 #endif
 

@@ -317,10 +317,10 @@ Function GetAncientVersionLocation
 
    StrCpy $0 ""
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding112}"
+   StrCpy $R1 "Software\Nightingale\${AncientRegKeyBranding112}"
    ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp112}"
+      StrCpy $R1 "Software\Nightingale\${AncientRegKeyApp112}"
       ReadRegStr $R0 HKLM $R1 "InstallDir"
       ${If} $R0 != ""
          StrCpy $0 $R1
@@ -328,10 +328,10 @@ Function GetAncientVersionLocation
       ${EndIf}
    ${EndIf}
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding111}"
+   StrCpy $R1 "Software\Nightingale\${AncientRegKeyBranding111}"
    ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp111}"
+      StrCpy $R1 "Software\Nightingale\${AncientRegKeyApp111}"
       ReadRegStr $R0 HKLM $R1 "InstallDir"
       ${If} $R0 != ""
          StrCpy $0 $R1
@@ -339,10 +339,10 @@ Function GetAncientVersionLocation
       ${EndIf}
    ${EndIf}
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding100}"
+   StrCpy $R1 "Software\Nightingale\${AncientRegKeyBranding100}"
    ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp100}"
+      StrCpy $R1 "Software\Nightingale\${AncientRegKeyApp100}"
       ReadRegStr $R0 HKLM $R1 "InstallDir"
       ${If} $R0 != ""
          StrCpy $0 $R1
@@ -455,10 +455,10 @@ recheck:
 
       ${If} $R2 == ${TRUE}
          DeleteRegKey HKLM $R1
-         ; This is hardcoded as "Songbird" and not "${BrandNameShort}" because
+         ; This is hardcoded as "Nightingale" and not "${BrandNameShort}" because
          ; while they _should_ be the same thing, we don't want to mess with
          ; any other keys, in case they weren't.
-         DeleteRegKey /ifempty HKLM "Software\Songbird"
+         DeleteRegKey /ifempty HKLM "Software\Nightingale"
       ${EndIf}
 
       Goto recheck

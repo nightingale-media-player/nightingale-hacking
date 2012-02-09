@@ -83,7 +83,7 @@ function dumpDS(prefix, ds) {
 
 /**
  * Minimal sanity check for the AddonMetadata Datasource.
- * Assumes that purplerain will be installed.
+ * Assumes that coppery will be installed.
  */
 function runTest () {
 
@@ -93,8 +93,8 @@ function runTest () {
     
   // dumpDS("AddonMetadataTest DataSource: ", datasource);
   
-  // Find purplerain in the item container
-  var purplerain = null;
+  // Find coppery in the item container
+  var coppery = null;
   var itemRoot = rdfService.GetResource(RDFURI_ADDON_ROOT);    
   var cu = Components.classes["@mozilla.org/rdf/container-utils;1"]
                      .getService(Components.interfaces.nsIRDFContainerUtils);
@@ -103,17 +103,17 @@ function runTest () {
 
   while (addons.hasMoreElements()) {
     var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-    if (addon.Value == ADDON_NS("purplerain@songbirdnest.com")) {
-      purplerain = addon;
+    if (addon.Value == ADDON_NS("coppery@getnightingale.com")) {
+      coppery = addon;
       break;
     }
   }
   
-  // Did we find purplerain in the list?
-  assertEqual(purplerain != null, true);
+  // Did we find coppery in the list?
+  assertEqual(coppery != null, true);
   
   // Does it have a description?
-  assertEqual(datasource.hasArcOut(purplerain, 
+  assertEqual(datasource.hasArcOut(coppery, 
       rdfService.GetResource(EM_NS("description"))), true); 
       
       

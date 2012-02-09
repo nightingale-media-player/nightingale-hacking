@@ -83,7 +83,7 @@ ifdef SB_ENABLE_BREAKPAD
       endif
 
       MAKE_SYM_STORE_ARGS += -a $(BREAKPAD_ARCH)
-      MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/Songbird.app/Contents/Resources/components
+      MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/Nightingale.app/Contents/Resources/components
    endif
 
    ifeq ($(SB_PLATFORM),linux)

@@ -1,0 +1,72 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+/** 
+***************************************************************************************************
+
+GLOBAL STYLES
+
+Whereas nightingale.css is loaded only by nightingale windows, global.css 
+is loaded into all windows and dialogs in the application 
+(provided that the nightingale global skin is active).
+
+When the nightingale global skin is the active provider for the 
+chrome://global/skin package, chrome://global/skin/global.css will 
+in turn import this global.css file. The nightingale global skin, 
+located at /app/skin/global and chrome://songbird-global/skin/, 
+is used with feathers that want complete control over thee look and
+feel of the application.
+
+This file can be used to pull in additional styles that should be
+present everywhere in the application.
+
+For more information, visit http://developer.songbirdnest.com/
+
+***************************************************************************************************
+*/ 
+
+
+
+/* size, positioning, and images for the standard nightingale elements */
+/*
+@import url(chrome://songbird-bindings/skin/bindings.css); 
+*/
+@import url(chrome://coppery/content/bindings/bindings.css); 
+
+/* baseline styles - needs to reorganize and consolidate */
+@import url(colors.css); 
+@import url(images.css); 
+
+/* feather-specific styles - colors, borders, background-colors */
+@import url(feathers.css); 
+
+/* additional operating system specific styles */
+@import url(chrome://songbird-os-specific/skin/overrides.css); 
+
+
+
+
+

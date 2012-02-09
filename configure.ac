@@ -865,7 +865,7 @@ case "$SB_PLATFORM" in
       SB_MACOSX_SDK_10_5=
     fi
 
-    MACOSX_APPBUNDLE="Songbird.app"
+    MACOSX_APPBUNDLE="Nightingale.app"
     MACOSX_CONTENTS="/$MACOSX_APPBUNDLE/Contents"
     MACOSX_RESOURCES="$MACOSX_CONTENTS/Resources"
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"

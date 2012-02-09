@@ -1,0 +1,83 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+/**
+*******************************************************************************
+ADD-ON BUNDLE
+
+See app/content/bindings/addOnBundle.xml
+
+Style rules pertaining to the add-on bundle widget.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+/* Add-on bundle box style. */
+.sb-add-on-bundle-box {
+  -moz-box-flex: 1;
+}
+
+/* Add-on bundle listbox style. */
+.sb-add-on-bundle-listbox {
+  -moz-box-flex: 1;
+}
+
+/* Add-on bundle item box style. */
+.sb-add-on-bundle-item-box {
+  -moz-box-flex: 1;
+  -moz-box-align: start;
+
+  /* Set max-width so that item description will properly wrap. */
+  /*XXXeps is there some way that wrap will work by just setting the dialog */
+  /*XXXeps width? */
+  max-width: 365px;
+}
+
+/* Add-on bundle item image style. */
+.sb-add-on-bundle-item-image-box {
+  width: 32px;
+  max-width: 32px;
+  height: 32px;
+  max-height: 32px;
+}
+
+.sb-add-on-bundle-item-image {
+  /* Set a default add-on item image.  This may be  */
+  /* overridden by setting the image src attribute. */
+  list-style-image: url(chrome://songbird/skin/base-elements/icon-generic-addon.png);
+}
+
+/* Add-on bundle item description style. */
+.sb-add-on-bundle-item-desc-box {
+  -moz-box-flex: 1;
+}
+
+.sb-add-on-bundle-item-desc {
+  font-size: smaller;
+}
+

@@ -1,0 +1,156 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is mozilla.org code.
+ *
+ * The Initial Developer of the Original Code is
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Joe Hewitt <hewitt@netscape.com>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either of the GNU General Public License Version 2 or later (the "GPL"),
+ * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+
+/******************************************************************************
+> BASE
+******************************************************************************/
+tabpanels,
+tabbox {
+  padding:0px;
+  margin:0px;
+}
+tabs {
+  margin: 0px;
+}
+
+tabs[orient="horizontal"] {
+  padding:6px 6px 0 6px;
+}
+tabs[orient="horizontal"].tabs-bottom {
+  padding:0 6px 6px 6px;
+}
+tabs[orient="vertical"] {
+  padding:6px 6px 6px 0;
+}
+tabs[orient="vertical"].tabs-left {
+  padding:6px 0 6px 6px;
+}
+
+tabs[orient="horizontal"] tab {
+  margin:0 !important;
+  padding:2px 8px;
+}
+tabs[orient="horizontal"].tabs-bottom tab {
+  margin:-1px 0 0 0 !important;
+}
+tabs[orient="horizontal"] tab+tab,
+tabs[orient="horizontal"].tabs-bottom tab+tab {
+  margin-left:1px !important;
+}
+tabs[orient="vertical"] tab {
+  margin:0 0 0 -1px !important;
+}
+tabs[orient="vertical"].tabs-left tab {
+  margin:0 -1px 0 0 !important;
+}
+tabs[orient="vertical"] tab+tab,
+tabs[orient="vertical"].tabs-left tab+tab {
+  margin-top:1px !important;
+}
+
+tab {
+  padding:2px 8px;
+}
+.tab-middle {
+  padding:0px !important;
+}
+.tab-text {
+  padding:0px;
+  margin:0px 4px !important;
+  font-size:11px;
+}
+
+tabs[orient="horizontal"] > .tabs-left,
+tabs[orient="horizontal"] > .tabs-right {
+	-moz-box-flex:1;
+}
+
+
+
+/******************************************************************************
+> TAB BROWSER TABS
+
+  Need to undo some base styles to style the browser tabs
+******************************************************************************/
+.tabbrowser-tabs {
+  background-color:transparent !important;
+  background-image:none !important;
+  border:none !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+.tabbrowser-tab,
+.tabbrowser-tab:hover,
+.tabbrowser-tab[selected="true"] {
+  background-color:transparent;
+  border:none !important;
+}
+.tabbrowser-tab > .tab-image-middle > .tab-text {
+  padding: 0px !important;
+  margin: 0px !important;
+  background-color:transparent;
+}
+.tabbrowser-tab > .tab-image-middle > .tab-text,
+.tabbrowser-tab > .tab-image-middle > .tab-icon {
+  margin-top: -1px !important;
+}
+
+
+/******************************************************************************
+> DISPLAY PANE TABS
+
+  Undo and redo styles for tabs in the display pane title bar
+******************************************************************************/
+tabs.sb-displaypane-tabs {
+  -moz-box-flex: 1;
+  background-color:transparent;
+  background-image:none;
+  border-bottom:none !important;
+  padding:0px;
+  margin:0px 0px -1px 0px;
+}
+tabs.sb-displaypane-tabs > tab {
+  padding:1px 2px 1px 2px;
+}
+tabs.sb-displaypane-tabs > tab > .tab-middle > .tab-text {
+  font-size:9px;
+}
+
+

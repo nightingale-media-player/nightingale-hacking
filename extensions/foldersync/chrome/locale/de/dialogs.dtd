@@ -1,0 +1,50 @@
+<!ENTITY dialog.ok "Ok">
+<!ENTITY dialog.cancel "Abbrechen">
+
+
+<!ENTITY error.title "&foldersync.displayname;">
+
+
+<!ENTITY availabletags.window.title "Verfügbare Tags">
+<!ENTITY availabletags.info.defaulttags "Die folgenden Werte werden leere Tags ersetzen, wenn sie im Dateinamen-Schema verwendet werden:">
+<!ENTITY availabletags.info.schema "Die folgenden Ausdrücke können im Dateinamen- sowie im Sortierschema verwendet werden:">
+
+<!ENTITY availabletags.artist "Name des Interpreten">
+<!ENTITY availabletags.title "Titel">
+<!ENTITY availabletags.album "Titel des Albums">
+<!ENTITY availabletags.genre "Genre">
+<!ENTITY availabletags.rating "Bewertung">
+<!ENTITY availabletags.tracknumber "Titelnummer">
+<!ENTITY availabletags.playlist "Name der Playlist">
+<!ENTITY availabletags.albumartist "Name des Albuminterpreten">
+<!ENTITY availabletags.year "Jahr">
+<!ENTITY availabletags.discnumber "CD-Nummer">
+<!ENTITY availabletags.disccount "CD-Anzahl">
+<!ENTITY availabletags.composer "Name des Komponisten">
+<!ENTITY availabletags.producer "Name des Produzenten">
+
+
+<!ENTITY saveprofile.title "Profil speichern">
+
+<!ENTITY saveprofile.new "Als neues Profil speichen">
+<!ENTITY saveprofile.new.pre "Profilnamen eingeben:">
+<!ENTITY saveprofile.update "Bestehendes Profil aktualisieren">
+
+
+<!ENTITY addfav.title "Neuer Synchronisationsfavorit">
+
+<!ENTITY addfav.name "Namen für den Favoriten eingeben:">
+
+
+<!ENTITY options.title "&foldersync.displayname;-Einstellungen">
+
+<!ENTITY options.ui.title "Benutzeroberfläche">
+<!ENTITY options.ui.notification "Globale Benachrichtigungen anzeigen">
+<!ENTITY options.ui.notificationExclusive "nur wenn kein &foldersync.tabname;-Tab offen ist">
+<!ENTITY options.ui.show.favorite "Synchronisationsfavoriten aktivieren">
+<!ENTITY options.ui.show.help "Hilfebereich im &foldersync.tabname;-Tab anzeigen">
+<!ENTITY options.ui.restart "Einstellungen, die mit * markiert sind, werden erst beim nächsten Laden des &foldersync.tabname;-Tabs aktiv.">
+
+<!ENTITY options.tags.title "Standardtags">
+<!ENTITY options.tags.info "Wenn Metadaten fehlen, werden die folgenden Standardtags verwendet:">
+<!ENTITY options.tags.albumartist.fallback "&availabletags.artist; verwenden, wenn dieser Tag fehlt">
