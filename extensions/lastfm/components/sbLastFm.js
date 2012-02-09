@@ -60,8 +60,8 @@ const PROPERTY_ALBUMID = LASTFM_NS+'albumid';
 const PROPERTY_ARTISTID = LASTFM_NS+'artistid';
 
 // Last.fm API key, secret and URL
-const API_KEY = '4d5bce1e977549f10623b51dd0e10c5a';
-const API_SECRET = '3ebb03d4561260686b98388037931f11'; // obviously not secret
+const API_KEY = 'ad68d3b69dee88a912b193a35d235a5b';
+const API_SECRET = '5cb0c1f1cceb3bff561a62b718702175'; // obviously not secret
 var API_URL = 'http://ws.audioscrobbler.com/2.0/';
 var AUTH_URL = 'http://post.audioscrobbler.com/';
 
