@@ -11,6 +11,8 @@
 ./chrome/locales.manifest
 ./chrome/purplerain.jar
 ./chrome/purplerain.manifest
+./chrome/coppery.jar
+./chrome/coppery.manifest
 ./chrome/songbird.jar
 ./chrome/songbird.manifest
 ./components/DeviceDeviceTester.xpt

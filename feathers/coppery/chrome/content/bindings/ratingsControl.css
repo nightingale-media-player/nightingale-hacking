@@ -1,0 +1,109 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+//
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+
+RATINGS CONTROL
+
+*******************************************************************************
+*/ 
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+sb-rating {
+  min-height:20px;
+  margin:4px;
+}
+
+.rating-stars {
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/ratings/ratings.png);
+  width: 70px;
+  height: 18px;
+}
+
+.rating-stars[value="0"] {
+  background-position:0px -18px;
+}
+sb-rating[edited] .rating-stars[value="0"] {
+}
+.rating-stars[value="0"]:hover,
+sb-rating[edited] .rating-stars[value="0"]:hover {
+  background-position:0px 0px;
+}
+
+.rating-stars[value="1"] {
+  background-position:0px -54px;
+}
+sb-rating[edited] .rating-stars[value="1"] {
+}
+.rating-stars[value="1"]:hover,
+sb-rating[edited] .rating-stars[value="1"]:hover {
+  background-position:0px -36px;
+}
+
+.rating-stars[value="2"] {
+  background-position:0px -90px;
+}
+sb-rating[edited] .rating-stars[value="2"] {
+}
+.rating-stars[value="2"]:hover,
+sb-rating[edited] .rating-stars[value="2"]:hover {
+  background-position:0px -72px;
+}
+
+
+.rating-stars[value="3"] {
+  background-position:0px -126px;
+}
+sb-rating[edited] .rating-stars[value="3"] {
+}
+.rating-stars[value="3"]:hover,
+sb-rating[edited] .rating-stars[value="3"]:hover {
+   background-position:0px -108px;
+ }
+
+.rating-stars[value="4"] {
+  background-position:0px -162px;
+}
+sb-rating[edited] .rating-stars[value="4"] {
+}
+.rating-stars[value="4"]:hover,
+sb-rating[edited] .rating-stars[value="4"]:hover {
+  background-position:0px -144px;
+}
+
+.rating-stars[value="5"] {
+  background-position:0px -198px;
+}
+sb-rating[edited] .rating-stars[value="5"] {
+}
+.rating-stars[value="5"]:hover,
+sb-rating[edited] .rating-stars[value="5"]:hover {
+  background-position:0px -180px;
+}

@@ -1,0 +1,389 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+/*
+about.css
+*/
+
+dialog#about .dialog-content-box {
+  padding:0px;
+}
+
+#aboutPageContainer {
+  position: relative;
+  min-width: 330px;
+  max-width: 50em;
+}
+
+#aboutLogoContainer {
+  width: 300px;
+  margin-bottom: 2em;
+}
+
+#version {
+}
+
+
+
+
+
+
+/*
+appPicker.css
+*/
+
+#app-picker {
+  width:320px !important;
+  max-width:320px !important;
+}
+
+#content-description {
+}
+
+#suggested-filename {
+}
+
+#file-info {
+}
+
+#app-picker-list {
+  height:225px;
+  min-height:225px;
+}
+
+#app-picker-item {
+}
+
+#app-picker-item-image {
+}
+
+#app-picker-item-cell {
+    font-weight:normal; 
+}
+
+#browse-button {
+}
+
+
+
+
+
+/*
+autocomplete.css
+*/
+/* ::::: autocomplete ::::: */
+
+.autocomplete-textbox-container {
+  -moz-box-align: center;
+}
+
+.textbox-input-box {
+  -moz-box-align: center;
+}
+
+/* ::::: history button ::::: */
+
+/* GTK does not stretch image regions properly, so use background images instead.
+   See bugs 351764 and 254659. */
+.autocomplete-dropmarker-bkgnd-mid-top {
+  background-repeat: repeat;
+}
+
+.autocomplete-dropmarker-bkgnd-mid-bottom {
+  background-repeat: repeat;
+  list-style-image: none;
+}
+
+.autocomplete-dropmarker-bkgnd-bottom {
+  -moz-image-region: rect(11px, 16px, 20px, 0px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-top {
+  -moz-image-region: rect(0px, 32px, 9px, 16px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-mid-top {
+  background-position: -16px 0px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-mid-bottom {
+  background-position: -16px 0px;
+}
+
+.autocomplete-history-dropmarker:hover .autocomplete-dropmarker-bkgnd-bottom {
+  -moz-image-region: rect(11px, 32px, 20px, 16px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-top {
+  -moz-image-region: rect(0px, 64px, 9px, 48px);
+  height: 9px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-mid-top {
+  background-position: -48px 0px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-mid-bottom {
+  background-position: -48px 0px;
+}
+
+.autocomplete-history-dropmarker:hover:active .autocomplete-dropmarker-bkgnd-bottom {
+  -moz-image-region: rect(11px, 64px, 20px, 48px);
+  height: 9px;
+}
+
+/* ::::: autocomplete popups ::::: */
+
+panel[type="autocomplete"],
+.autocomplete-history-popup {
+  -moz-appearance: none;
+  padding: 0;
+  /*
+  -moz-border-radius: 3px;
+  border: 2px solid;
+  -moz-border-top-colors: rgba(28,27,38,0.25) rgba(28,27,38,1.0);
+  -moz-border-bottom-colors: rgba(28,27,38,0.25) rgba(28,27,38,1.0);
+  -moz-border-left-colors: rgba(28,27,38,0.25) rgba(28,27,38,1.0);
+  -moz-border-right-colors: rgba(28,27,38,0.25) rgba(28,27,38,1.0);
+  */
+  border: 1px solid rgb(28,27,38);
+}
+
+panel[type="autocomplete"] > tree > treecols > hbox
+{
+  height: 0px;
+}
+
+.autocomplete-history-popup {
+  max-height: 180px;
+}
+
+/* ::::: tree ::::: */
+
+.autocomplete-tree {
+  -moz-appearance: none !important;
+  margin:0 !important;
+  border:none;
+  background-image: none;
+}
+
+.autocomplete-tree treecols {
+  border:none;
+}
+
+
+.autocomplete-treecol {
+  -moz-appearance: none !important;
+}
+
+/* ::::: textboxes inside toolbarpaletteitems ::::: */
+
+toolbarpaletteitem > toolbaritem > textbox > hbox > hbox > html|*.textbox-input {
+  visibility: hidden;
+}
+
+toolbarpaletteitem > toolbaritem > * > textbox > hbox > hbox > html|*.textbox-input {
+  visibility: hidden;
+}
+
+
+
+
+
+/*
+browser.css
+*/
+.tabbrowser-tab {
+  -moz-appearance: none;
+  -moz-box-pack: center;
+}
+.tabbrowser-tabs {
+  -moz-box-pack: center;
+  -moz-box-align: center;
+}
+
+
+
+
+/*
+button.css
+*/
+.button-text {
+  margin: 0px;
+  text-align: center;
+  overflow: hidden !important;
+}
+
+button[type="menu-button"] {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+button > dropmarker.button-menubutton-dropmarker
+{
+  -moz-border-radius: 0px !important;
+}
+
+
+
+
+
+/*
+colorpicker.css
+*/
+
+colorpicker[type="button"] {
+  width: 38px;
+  height: 24px;
+  border: 1px solid #a7a7a7;
+}
+.colorpicker-button-colorbox {
+  border: 1px solid #000000;
+}
+.colorpickertile {
+  width:20px;
+  height:20px;
+}
+.colorpickertile[selected="true"] {
+}
+.colorpickertile[hover="true"] {
+}
+.cp-light[hover="true"] {
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+toolbarbutton.css
+*/
+toolbarbutton {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.toolbarbutton-icon {
+}
+
+.toolbarbutton-text {
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+toolbarbutton:hover:active[buttonstyle="text"],
+toolbarbutton[open="true"][buttonstyle="text"] {
+}
+
+
+
+toolbarbutton[disabled="true"],
+toolbarbutton[disabled="true"]:hover,
+toolbarbutton[disabled="true"]:hover:active
+toolbarbutton[disabled="true"][open="true"] {
+}
+
+/* ..... checked state ..... */
+/** TODO Handle checked state in skin colors **/
+
+toolbarbutton[checked="true"] {
+}
+    
+/* ::::: toolbarbutton menu ::::: */
+
+.toolbarbutton-menu-dropmarker {
+}
+
+toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker
+{
+}
+
+.toolbarbutton-menu-dropmarker[disabled="true"] {
+}
+
+/* ::::: toolbarbutton menu-button ::::: */
+
+toolbarbutton[type="menu-button"] {
+  -moz-box-align: stretch;
+  -moz-box-orient: horizontal !important;
+}
+
+toolbarbutton[type="menu-button"],
+toolbarbutton[type="menu-button"]:hover,
+toolbarbutton[type="menu-button"]:hover:active,
+toolbarbutton[type="menu-button"][open="true"],
+toolbarbutton[type="menu-button"][disabled="true"],
+toolbarbutton[type="menu-button"][disabled="true"]:hover,
+toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
+/*  background-color: transparent;*/
+}
+
+.toolbarbutton-menubutton-button {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  -moz-box-orient: vertical;
+}
+
+
+/* .......... dropmarker .......... */
+
+.toolbarbutton-menubutton-dropmarker {
+}
+
+.toolbarbutton-menubutton-dropmarker[disabled="true"] {
+}
+
+toolbarbutton.tabbable {
+  -moz-user-focus: normal !important;
+}
+
+toolbarbutton > toolbarbutton,
+toolbarbutton > toolbarbutton:active
+{
+}
+
+
+
+
+/*
+numberbox.css
+*/
+textbox[type="number"] {
+  -moz-appearance: none;
+  -moz-box-align: center;
+  cursor: default;
+}
+
+textbox[type="number"][focused="true"] 
+{
+}
+
+html|*.numberbox-input {
+  text-align: right;
+}
+
+.numberbox-input-box {
+  -moz-appearance: none;
+  cursor: text;
+  border: none;
+}
+
+
+
+
+
+.drop-message {
+  text-align: center;
+  margin:15px;
+}

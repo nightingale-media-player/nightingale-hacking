@@ -1,0 +1,137 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+ 
+ 
+/** 
+*******************************************************************************
+
+THE SPLITTERS
+
+Applies images and sizing to the generic and smart splitters.  
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+
+sb-displaypane-splitter, 
+sb-smart-splitter  {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+   
+   
+splitter:not([orient="vertical"]),
+sb-smart-splitter:not([orient="vertical"]),
+splitter:not([orient="vertical"]) > grippy,
+sb-smart-splitter:not([orient="vertical"]) > grippy
+{
+  cursor: ew-resize;
+}
+splitter[orient="vertical"],
+sb-smart-splitter[orient="vertical"],
+splitter[orient="vertical"] > grippy,
+sb-smart-splitter[orient="vertical"] > grippy
+{
+  cursor: ns-resize;
+}
+
+
+/** Match global/splitter.css rule for vertical splitter grippies **/
+sb-smart-splitter[orient="vertical"] > grippy {
+  margin: 0;
+  min-width: 42px;
+  min-height: 3px;
+}
+
+/** Note: This is a smartsplitter that moves side to side **/
+splitter:not([orient="vertical"]),
+sb-smart-splitter:not([orient="vertical"])
+{
+  background-image: url(chrome://songbird/skin/splitter/grippy-vertical.png);
+  background-position:center center;
+  background-repeat:no-repeat;
+  margin: 0;
+  padding: 0;
+}
+
+/** Note: This is a smartsplitter that moves up and down **/
+splitter[orient="vertical"],
+sb-smart-splitter[orient="vertical"]
+{
+  background-image: url(chrome://songbird/skin/splitter/grippy-horizontal.png);
+  margin: 0;
+  padding: 0;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+
+/** Note: This is a closed smartsplitter that moves side to side **/
+splitter:not([orient="vertical"])[state="collapsed"],
+sb-smart-splitter:not([orient="vertical"])[state="collapsed"]
+{
+  background-image: url(chrome://songbird/skin/splitter/grippy-collapsed-vertical.png);
+  margin: 0;
+  padding: 0;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+
+/** Note: This is a closed smartsplitter that moves up and down **/
+splitter[orient="vertical"][state="collapsed"],
+sb-smart-splitter[orient="vertical"][state="collapsed"]
+{
+  background-image: url(chrome://songbird/skin/splitter/grippy-collapsed-horizontal.png);
+  margin: 0;
+  padding: 0;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+
+/** When collapsed, show a pointer since it's click to open **/
+splitter:not([orient="vertical"])[state="collapsed"],
+sb-smart-splitter:not([orient="vertical"])[state="collapsed"],
+splitter:not([orient="vertical"])[state="collapsed"] > grippy,
+sb-smart-splitter:not([orient="vertical"])[state="collapsed"] > grippy
+{
+/*  cursor: pointer !important;*/
+}
+splitter[orient="vertical"][state="collapsed"],
+sb-smart-splitter[orient="vertical"][state="collapsed"],
+splitter[orient="vertical"][state="collapsed"] > grippy,
+sb-smart-splitter[orient="vertical"][state="collapsed"] > grippy
+{
+/*  cursor: pointer !important;*/
+}
+
+/** tree splitter for playlist tree **/
+splitter.tree-splitter {
+  background-color: transparent !important;
+  background-image: url(chrome://songbird/skin/splitter/column-sort-delimiter.png);
+  width: 1px !important;
+  min-width: 1px !important;
+  max-width: 1px !important;
+}

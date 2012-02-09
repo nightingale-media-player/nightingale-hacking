@@ -1,0 +1,129 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is Mozilla Communicator client code, released
+ * March 31, 1998.
+ *
+ * The Initial Developer of the Original Code is
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998-1999
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+/* ===== checkbox.css ===================================================
+  == Styles used by the XUL checkbox element.
+  ======================================================================= */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+
+
+
+
+checkbox,
+radio {
+  -moz-box-align: center;
+  margin: 2px 4px;
+}
+
+.checkbox-label-box,
+.radio-label-box {
+  margin:0px;
+  padding:0px;
+}
+
+.checkbox-icon,
+.radio-icon {
+  margin-right: 2px;
+}
+
+.checkbox-label,
+.radio-label {
+  margin:0;
+  padding:0;
+}
+
+checkbox[disabled="true"],
+radio[disabled="true"] {
+  
+}
+
+.checkbox-check {
+  list-style-image: url(chrome://songbird/skin/base-elements/button-checkbox.png);
+}
+.radio-check {
+  list-style-image: url(chrome://songbird/skin/base-elements/button-radio.png);
+}
+
+
+
+
+
+.checkbox-check,
+.radio-check {
+  -moz-image-region: rect(0px 14px 14px 0px);
+  min-height:14px;
+  min-width:14px;
+}
+
+checkbox:hover > .checkbox-check,
+radio:hover > .radio-check {
+  -moz-image-region: rect(14px 14px 28px 0px);
+}
+checkbox:active > .checkbox-check,
+radio:active > .radio-check {
+  -moz-image-region: rect(28px 14px 42px 0px);
+}
+checkbox[disabled="true"] > .checkbox-check,
+radio[disabled="true"] > .radio-check {
+  -moz-image-region: rect(42px 14px 56px 0px);
+}
+checkbox > .checkbox-check[checked="true"],
+radio[selected="true"] > .radio-check {
+  -moz-image-region: rect(0px 28px 14px 14px);
+}
+checkbox[checked="true"]:hover > .checkbox-check,
+radio[selected="true"]:hover > .radio-check {
+  -moz-image-region: rect(14px 28px 28px 14px);
+}
+checkbox[checked="true"]:active > .checkbox-check,
+radio[selected="true"]:active > .radio-check {
+  -moz-image-region: rect(28px 28px 42px 14px);
+}
+checkbox[checked="true"][disabled="true"] > .checkbox-check,
+radio[selected="true"][disabled="true"] > .radio-check {
+  -moz-image-region: rect(42px 28px 56px 14px);
+}
+
+
+checkbox[focused="true"],
+radio[focused="true"] {
+}
+checkbox[disabled="true"][focused="true"],
+radio[disabled="true"][focused="true"] {
+}

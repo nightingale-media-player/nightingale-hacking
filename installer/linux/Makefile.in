@@ -30,7 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 DISTDIR_MODE = 644
-SONGBIRD_DIST = $(topsrcdir)/app/branding/songbird-512.png \
+SONGBIRD_DIST = $(topsrcdir)/app/branding/nightingale-512.png \
                 $(NULL)
 
 ifdef SONGBIRD_OFFICIAL

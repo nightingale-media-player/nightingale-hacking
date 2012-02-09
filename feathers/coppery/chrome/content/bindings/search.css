@@ -1,0 +1,123 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+
+THE SEARCH BOX 
+
+Applies images and layout to the nightingale library and web search widget.
+
+Note that this widget inherits from the FireFox binding.
+See dependencies/vendor/mozilla/browser/components/search/content/search.xml
+and app/content/bindings/search.xml
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+
+
+
+#searchbar-container {
+  max-width: 180px;
+}
+
+.search-go-button,
+.searchbar-textbox {
+  border: none;
+}
+.searchbar-engine-button {  
+  padding:0 2px 0 0 !important;
+  margin:0 2px -1px 0;
+  min-height:20px;
+  cursor: default;
+}
+
+
+.searchbar-textbox {
+  margin:0;
+  padding: 0;
+  min-height:20px;
+}
+
+.searchbar-textbox > .autocomplete-textbox-container {
+  margin-top: -1px;
+}
+
+.searchbar-engine-image {
+  width:16px;
+  height:16px;
+  max-width:16px;
+  max-height:16px;
+  margin:2px;
+}
+
+
+
+
+
+
+
+.search-go-button {
+  padding: 0px !important;
+  margin: 0px !important;
+
+  min-height:16px !important;
+  max-height:16px !important;
+  min-width:16px !important;
+  max-width:16px !important;
+  cursor: default;
+}
+.search-go-button {
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+.search-go-button:hover {
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+.search-go-button:hover:active {
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+.search-go-button[disabled="true"] {
+  -moz-image-region: rect(48px 16px 64px 0px) !important;
+}
+
+
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
+}
+/* hide the search button when not needed */
+searchbar:not([livesearchmode="true"]) > .searchbar-box > .search-go-button-stack > .search-go-button {
+  min-width:1px !important;
+  max-width:1px !important;
+  list-style-image: none;
+  -moz-image-region: rect(0px 0px 0px 0px);
+}
+
+toolbarbutton.search-go-button > .toolbarbutton-text {
+  display: none !important;
+}

@@ -1,0 +1,236 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+
+
+.tabbrowser-tab > .tab-image-middle {
+  -moz-box-flex: 0 !important;
+}
+
+
+.tab-drop-indicator-bar {
+   display:none;
+   height: 10px;
+   margin-top: -10px;
+   position: relative;
+}
+.tab-drop-indicator {
+   height: 10px;
+   width: 12px;
+   margin-top: -16px;
+   position: relative;
+   background: url('chrome://songbird/skin/browser-tab-bar/icon-drop-indicator.png') left center no-repeat;
+}
+.tab-drop-indicator-bar[dragging="true"] {
+   display: -moz-box;
+}
+
+
+/**
+ * Tab Scrollbox Arrow Buttons
+ */
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up,
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
+  -moz-border-radius:0px;
+  -moz-image-region:auto !important;
+  margin:0;
+
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
+  background-repeat:no-repeat;
+  min-width:17px;
+
+  background-color:transparent !important;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-up {
+  border: none;
+  border-right: 1px solid black;
+  margin-bottom: 1px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
+  border: none;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  margin-bottom: 1px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-up {
+  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-left.png") !important;  
+  background-position:-1px 0px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
+  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-right.png") !important;
+  background-position:right 0px;
+}
+
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up:hover {
+  -moz-image-region:auto !important;
+  background-position:-1px -30px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-up:active {
+  -moz-image-region:auto !important;
+  background-position:-1px -60px; 
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
+  -moz-image-region:auto !important;
+  background-position:-1px 0px !important;
+  opacity: 1 !important;
+}
+
+
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:hover {
+  -moz-image-region:auto !important;
+  background-position:right -30px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:active {
+  -moz-image-region:auto !important;
+  background-position:right -60px; 
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[disabled="true"],
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[disabled="true"]:hover,
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[disabled="true"]:active {
+  -moz-image-region:auto !important;
+  background-position:right 0px !important;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[disabled="true"] > image {
+  opacity: 1 !important;
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
+}
+
+.scrollbutton-rel-box > .scrollbutton-down-box {
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[collapsed="true"] {
+   margin:0px !important;
+}
+
+
+
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down:not([disabled="true"]):hover:active {
+}
+
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down > .toolbarbutton-icon {
+}
+
+
+/*
+.tabbrowser-arrowscrollbox > scrollbox {
+  border-left: 1px solid black;
+}
+.tabbrowser-arrowscrollbox {
+  border-right: 1px solid black;
+}
+  */
+
+
+tab[first-tab="true"] > .tab-close-button,
+.tabs-container > hbox > tab > .tab-close-button {
+	display:none;
+}
+
+
+.tabbrowser-tab[collapsed="true"]+.tabbrowser-tab {
+  margin-left:0px !important;
+}
+
+/**
+ * All Tabs Button
+ */
+
+.tabs-alltabs-box {
+}
+
+.tabs-alltabs-button  > .toolbarbutton-text {
+  display: none;
+}
+
+/**
+ * All Tabs Button
+ */
+
+.tabs-alltabs-button {
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab.png');
+  background-repeat:no-repeat;
+  background-position:center 0px;
+
+  -moz-border-radius:0px !important;
+  padding: 0px !important;
+  margin:0px 1px 2px 0px !important;
+  border: none;
+  min-width:20px;
+}
+
+.tabs-alltabs-button:hover {
+  background-position:-1px -30px;
+}
+.tabs-alltabs-button:active {
+  background-position:-1px -60px;
+}
+.tabs-alltabs-button[open="true"] {
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png') !important;
+  background-position:-1px -60px !important;
+}
+
+/**
+ * All Tabs Menupopup 
+ */
+
+.alltabs-item[selected="true"] {
+  font-weight: bold;
+}
+
+.alltabs-item {
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
+}
+.alltabs-item > .menu-iconic-left > .menu-iconic-icon {
+  width: 16px;
+  height: 16px;
+}
+.alltabs-item[busy] > .menu-iconic-left > .menu-iconic-icon {
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading-white.png") !important;
+}
+
+
+.close-button,
+.tab-close-button {
+ background-color:transparent !important;
+ -moz-border-radius:0px !important;
+ list-style-image: url(chrome://songbird/skin/browser-tab-bar/button-close.png) !important;
+ -moz-image-region: rect(0px 12px 12px 0px);
+ max-height:12px !important;
+ max-width:12px;
+ padding:0 !important;
+ margin:0 !important;
+ border: none;
+ cursor: default;
+}
+.tab-close-button > .toolbarbutton-icon {
+ padding:0;
+}
+.close-button:hover,
+.tab-close-button:hover {
+ -moz-image-region: rect(12px 12px 24px 0px);
+}
+.close-button:active,
+.tab-close-button:hover:active {
+ -moz-image-region: rect(24px 12px 36px 0px);
+}
+.close-button[disabled="true"],
+.tab-close-button[disabled="true"] {
+ -moz-image-region: rect(36px 12px 48px 0px) !important;
+}
+
+
+
+
+/*
+weak!
+*/
+
+#tabstrip .tabbrowser-arrowscrollbox .scrollbox-innerbox {
+  background-image:url(chrome://songbird/skin/browser-tab-bar/bg-tab-delimiter.png);
+  background-position:right top;
+  background-repeat:no-repeat;
+}

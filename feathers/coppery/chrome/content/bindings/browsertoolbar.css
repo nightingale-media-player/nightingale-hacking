@@ -1,0 +1,158 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+WEB TOOLBAR IMAGES
+
+Applies images to the toolbar items in browserToolbarOverlay.xul.  
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+/** The back button **/
+
+
+
+/* HIDDEN:
+   rules to stick the back/forward button together as if they are one element */
+#back-button {
+  /*
+  -moz-border-radius-topright:0px!important;
+  -moz-border-radius-bottomright:0px!important;
+  */
+}
+#forward-button {
+  /*
+  -moz-border-radius-topleft:0px !important;
+  -moz-border-radius-bottomleft:0px!important;
+  */
+}
+#back-button:not([disabled="true"])+#forward-button:not([disabled="true"]),
+#back-button:not([disabled="true"])+#forward-button[disabled="true"] {  
+  /*border-left:none !important;
+  min-width:23px !important;
+  width:23px !important;
+  max-width:23px !important;
+  */
+}
+
+#back-button[disabled="true"] {
+  /*border-right:none !important;
+  min-width:23px !important;
+  width:23px !important;
+  max-width:23px !important;
+  */
+}
+
+#back-button,
+#forward-button,
+#stop-button,
+.sb-browser-stopreload-stop-button,
+#reload-button,
+.sb-browser-stopreload-reload-button,
+#home-button,
+#bookmark-subscribe-button > .clickhold-button,
+#mediapages-button {
+  /*
+  -moz-image-region: rect(0px 16px 16px 0px);
+  margin:3px;
+  */
+}
+#mediapages-button .menu-iconic-icon {
+  -moz-image-region: rect(0px 0px 0px 0px);
+}
+
+#bookmark-subscribe-button {
+  padding:0 !important;
+  margin:0 !important;
+  border:none !important;
+  min-width:12px !important;
+  max-width:12px !important;
+  width:12px !important;
+  opacity:1.0 !important;
+}
+#bookmark-subscribe-button > .clickhold-button {
+  -moz-border-radius-topleft:0px !important;
+  -moz-border-radius-bottomleft:0px!important;
+  min-width:12px !important;
+  width:12px !important;
+  max-width:12px !important;
+  -moz-image-region: rect(0px 8px 8px 0px);
+  margin:0  !important;
+  
+  /* REVISIT */
+  opacity:1.0 !important;
+}
+
+
+/** 
+*******************************************************************************
+LOCATION TEXTBOX
+*******************************************************************************
+*/
+
+
+/* the box with the url image and the url textbox */
+.locationbar-textbox {
+  min-height: 20px;
+  margin: 0px;
+  padding: 0px;
+  -moz-border-radius: 3px;
+}
+
+.locationbar-textbox dropmarker image {
+  margin-left: -1px;
+}
+
+.locationbar-image {
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
+  background-color: transparent;
+  height: 16px;
+  width: 16px;
+  max-height: 16px !important;
+  max-width: 16px !important;
+  min-height: 16px !important;
+  min-width: 16px !important;
+  margin: 0 4px 0 2px;
+  padding:0px;
+}
+
+
+/** Convert the favicon into a spinner animation when
+    the browser is loading **/ 
+.locationbar-textbox[loading="true"] > .locationbar-image {
+  list-style-image: url('chrome://songbird/skin/base-elements/icon-loading.png') !important;
+}
+
+/** NOTE: If the URL is from the servicepane it may have a hardcoded 
+    image URL or may get an icon from CSS.  In order to apply icons 
+    from CSS we reflect a list of properties onto the image element.  
+    See /app/skin/bindings/servicepane.css for details. **/

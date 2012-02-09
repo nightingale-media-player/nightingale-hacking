@@ -1,0 +1,139 @@
+/*
+//
+// BEGIN NIGHTINGALE GPL
+// 
+// This file is part of the Nightingale web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://getnightingale.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END NIGHTINGALE GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+FACEPLATE
+
+Applies image and layout styles to the LCD faceplate screen.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+/** Rounded corners for the faceplate **/
+
+
+/** Text **/
+.faceplate-text {
+  margin: 0;
+}
+
+.faceplate-album-box,
+.faceplate-artist-box {
+  height: 14px;
+  padding: 0px;
+  margin: 0px;
+}
+.faceplate-curtrack-box:hover,
+.faceplate-curtrack-box:hover .faceplate-text {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+#track_info {
+  min-height:20px;
+  padding:3px 8px 1px 8px;
+}
+.faceplate-seekinfo-box {
+  min-height:16px;
+  padding:0px 8px 4px 8px;
+}
+sb-player-timeelapsed-label,
+sb-player-totaltime-label {
+  padding:0;
+  margin:0;
+  min-height:16px;
+}
+
+.faceplate-progressmeter,
+.faceplate-seekbar,
+slider.sb-player-seek-slider,
+progressmeter.sb-player-seek-slider {
+  height: 12px;
+}
+
+thumb.sb-player-seek-slider  {
+  -moz-appearance:none;
+  width: 12px;
+  height: 12px;
+}
+thumb.sb-player-seek-slider  > gripper {
+  -moz-appearance:none;
+  height: 12px;
+}
+
+progressmeter.sb-player-seek-slider {
+  margin: 0px;
+  padding: 0px;
+}
+
+progressmeter.sb-player-seek-slider > .progress-remainder
+{
+  height: 12px;
+  background-image: none;
+}
+
+progressmeter.sb-player-seek-slider > .progress-bar {
+  min-width:12px;
+  background-image:none;
+}
+
+
+
+/**
+TODO
+sb-player-seek-slider[buffering="true"] {
+  background-image: url('chrome://songbird/skin/faceplate/seek-buffering-animation.png');
+  background-repeat: repeat-x;
+  background-position: center center;
+}
+sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider {
+  display: none;
+}
+*/
+
+
+
+
+#faceplate_seekbar_box > .hook > .left,
+#faceplate_seekbar_box > .hook > .middle,
+#faceplate_seekbar_box > .hook > .right {
+  min-width:8px;
+  min-height:12px;
+}
+
+
+
+
+#sb-player-artist-label-label:not([value=""]),
+#sb-player-album-label-label:not([value=""]) {
+  padding-left:12px;
+}
