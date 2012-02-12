@@ -1,4 +1,4 @@
-<!ENTITY foldersync.displayname "Folder Synchronisation">
-<!ENTITY foldersync.tabname "Synchronisation">
-<!ENTITY foldersync.addonplatform "addons.getnightinale.com">
-<!ENTITY foldersync.addonURL "javascript:alert('The AddOn Platform for Nightingale is not available yet.')">
+<!ENTITY foldersync.displayname "Folder Synchronization">
+<!ENTITY foldersync.tabname "Synchronization">
+<!ENTITY foldersync.addonplatform "forum.getnightinale.com">
+<!ENTITY foldersync.addonURL "http://forum.getnightingale.com/forum-14.html">
