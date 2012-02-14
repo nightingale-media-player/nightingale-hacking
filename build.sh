@@ -54,10 +54,10 @@ case $OSTYPE in
 		done
 				
 		# !!!! NOTICE: comment the below out if building on/for Windows or Mac or playback probably won't work !!!!
-		if [ -f songbird.config ] ; then
-			rm songbird.config
+		if [ -f nightingale.config ] ; then
+			rm nightingale.config
 		fi
-		echo 'ac_add_options --with-media-core=gstreamer-system' >> songbird.config
+		echo 'ac_add_options --with-media-core=gstreamer-system' >> nightingale.config
 		;;
 	msys*)
 		tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
