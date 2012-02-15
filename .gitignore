@@ -1,13 +1,7 @@
-dependencies/macosx-i686
-dependencies/linux-x86_64
-dependencies/linux-i686
-dependencies/windows-i686
-dependencies/
-dependencies/vendor/*
 dependencies/*.zip
 dependencies/*.tar.???
 dependencies/*.tar.????
-dependencies/*/
+dependencies/**/*
 tools/win32/reshacker/ResHacker.ini
 tools/win32/reshacker/ResHacker.log
 songbirdconfig.out
