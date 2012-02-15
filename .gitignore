@@ -1,3 +1,4 @@
+dependencies/mac*
 dependencies/*.zip
 dependencies/vendor
 songbirdconfig.mk
