@@ -95,11 +95,9 @@ case $OSTYPE in
 								libogg 
 								libtheora 
 								libvorbis  
-								mozilla
 								mozilla-1.9.2
 								sqlite
 								taglib
-								xulrunner
 								xulrunner-1.9.2 )
 				
 				if [ ! -d "dependencies/$depdirn" ] ; then
