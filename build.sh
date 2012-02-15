@@ -76,7 +76,7 @@ case $OSTYPE in
         if [ -f "$depdirn-$version.tar.bz2" ] ; then
             tar --lzma -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
         else
-            wget "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
+            curl -L -O "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
             tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
         fi
         cd ../
