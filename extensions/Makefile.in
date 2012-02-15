@@ -32,9 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 DEFAULT_EXTENSIONS = AlbumArt \
                      concerts \
                      xpcom_helloworld \
-										 foldersync \
-										 foldersync-ng \
-										 playlistfolders \
+					 foldersync \
+					 foldersync-ng \
+					 playlistfolders \
                      $(NULL)
 
 # AlbumArt is not on the list because it's used internally by the bird, so
