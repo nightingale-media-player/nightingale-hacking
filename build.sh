@@ -9,6 +9,33 @@ set -e
 build="release"
 buildir="$(pwd)"
 version=1.11
+# we'll use wget as default. OS without wget should override this.
+DOWNLOADER="wget"
+
+function md5_verify() {
+  function md5_fail() {
+    echo "-------------------------------------------------------------------------------"
+    echo "WARNING: MD5 checksum verification failed: $1"
+    echo "It is a safety risk to continue unless you know exactly what you do. You won't"
+    echo "get asked again for that file! The suspicious file will get removed if you do"
+    echo "not continue."
+    read -p "Continue? (y/n) [n]" ans
+    case $ans in
+      "y" | "Y")
+        echo "Checksum ignored."
+        ;;
+      "n" | "N" | "")
+        rm "$1"
+        exit 1
+        ;;
+      *)
+			  echo "Invalid input."
+        md5_fail $1
+        ;;
+    esac
+  }
+  md5sum -c --status "$1.md5" || md5_fail "$1"
+}
 
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
@@ -20,10 +47,9 @@ case $OSTYPE in
     cd dependencies
     rm -rf "$depdirn" &> /dev/null
     
-    if [ -f "$depdirn-$version.tar.lzma" ] ; then
-      tar xvf "$depdirn-$version.tar.lzma"
-    else
-      wget "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
+    if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
+      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
+      md5_verify "$depdirn-$version.tar.lzma"
       tar xvf "$depdirn-$version.tar.lzma"
     fi
     cd ../
@@ -48,26 +74,28 @@ case $OSTYPE in
   msys*)
     depdirn="windows-i686"
     
+		# Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
     rm ./components/library/localdatabase/content/schema.sql
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
     
     cd dependencies
     
-    if [ ! -d "$depdirn" ] ; then
-      mkdir "$depdirn"
-    fi
-    
-    if [ -f "$depdirn-$version.tar.lzma" ] ; then
-      tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
-    else
-      wget "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
+    if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
+      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
+      md5_verify "$depdirn-$version.tar.lzma"
+			rm -rf "$depdirn" &> /dev/null
+			mkdir "$depdirn"
       tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
     fi
     cd ../
     ;;
   darwin*)
+    # no wget on OSX, use curl
+    DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
+    
+    echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' >> nightingale.config
     
     cd dependencies
     
@@ -75,10 +103,9 @@ case $OSTYPE in
       mkdir "$depdirn"
     fi
     
-    if [ -f "$depdirn-$version.tar.bz2" ] ; then
-      tar --lzma -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
-    else
-      curl -L -O "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
+    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
+            md5_verify "$depdirn-$version.tar.bz2"
       tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
     fi
     cd ../
@@ -91,12 +118,10 @@ esac
 
 # get the vendor build deps...
 cd dependencies
-rm -rf vendor &> /dev/null
-
-if [ -f "vendor-$version.zip" ] ; then
-  unzip "vendor-$version.zip"
-else
-  curl -L -O "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+if [ ! -f "vendor-$version.zip" ] ; then
+  $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+  md5_verify "vendor-$version.zip"
+	rm -rf vendor &> /dev/null
   unzip "vendor-$version.zip"
 fi
 cd ../
