@@ -29,7 +29,7 @@ function md5_verify() {
         exit 1
         ;;
       *)
-			  echo "Invalid input."
+        echo "Invalid input."
         md5_fail $1
         ;;
     esac
@@ -74,7 +74,7 @@ case $OSTYPE in
   msys*)
     depdirn="windows-i686"
     
-		# Ensure line endings, as git might have converted them
+    # Ensure line endings, as git might have converted them
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
     rm ./components/library/localdatabase/content/schema.sql
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
@@ -84,8 +84,8 @@ case $OSTYPE in
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
       $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
-			rm -rf "$depdirn" &> /dev/null
-			mkdir "$depdirn"
+      rm -rf "$depdirn" &> /dev/null
+      mkdir "$depdirn"
       tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
     fi
     cd ../
@@ -121,7 +121,7 @@ cd dependencies
 if [ ! -f "vendor-$version.zip" ] ; then
   $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
   md5_verify "vendor-$version.zip"
-	rm -rf vendor &> /dev/null
+  rm -rf vendor &> /dev/null
   unzip "vendor-$version.zip"
 fi
 cd ../
