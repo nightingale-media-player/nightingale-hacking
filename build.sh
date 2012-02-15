@@ -35,7 +35,7 @@ function md5_verify() {
   }
 
   if [ $depdirn = "macosx-i686" ] ; then
-    md5 -r "$1"|grep -f "$1.md5" || md5_fail "$1"
+    md5 -r "$1"|grep -q -f "$1.md5" || md5_fail "$1"
   else
     md5sum -c --status "$1.md5" || md5_fail "$1"
   fi
@@ -122,6 +122,7 @@ esac
 
 # get the vendor build deps...
 cd dependencies
+
 if [ ! -f "vendor-$version.zip" ] ; then
   $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
   md5_verify "vendor-$version.zip"
@@ -129,8 +130,8 @@ if [ ! -f "vendor-$version.zip" ] ; then
   rm -rf vendor &> /dev/null
   unzip "vendor-$version.zip"
 fi
-cd ../
 
+cd ../
 cd $buildir
 
 # hopefully we have python2 on this system
