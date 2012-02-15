@@ -69,6 +69,8 @@ case $OSTYPE in
 	darwin*)
 		depdirn="macosx-i686"
         
+        cd dependencies
+
         if [ ! -d "$depdirn" ] ; then
             mkdir "$depdirn"
         fi
