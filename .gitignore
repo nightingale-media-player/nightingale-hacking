@@ -1,5 +1,8 @@
-dependencies/linux*
-dependencies/mac*
+dependencies/macosx-i686
+dependencies/linux-x86_64
+dependencies/linux-i686
+dependencies/windows-i686
+dependencies/
 dependencies/vendor/*
 dependencies/*.zip
 dependencies/*.tar.???
