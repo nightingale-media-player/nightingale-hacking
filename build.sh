@@ -99,7 +99,7 @@ case $OSTYPE in
     _DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
 
-    echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' >> nightingale.config
+    echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' > nightingale.config
     
     cd dependencies
     
