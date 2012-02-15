@@ -68,7 +68,8 @@ case $OSTYPE in
 		;;
 	darwin*)
 		depdirn="macosx-i686"
-        
+        echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' >> nightingale.config
+
         cd dependencies
 
         if [ ! -d "$depdirn" ] ; then
