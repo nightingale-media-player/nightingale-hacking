@@ -1,6 +1,7 @@
+dependencies/linux*
 dependencies/mac*
 dependencies/*.zip
-dependencies/vendor
+dependencies/vendor/*
 songbirdconfig.mk
 songbirdconfig.out
 compiled/
