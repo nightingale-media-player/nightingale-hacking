@@ -10,15 +10,14 @@ build="release"
 buildir="$(pwd)"
 version=1.11
 # we'll use wget as default. OS without wget should override this.
-DOWNLOADER="wget"
+_DOWNLOADER="wget"
 
 function md5_verify() {
   function md5_fail() {
     echo "-------------------------------------------------------------------------------"
     echo "WARNING: MD5 checksum verification failed: $1"
-    echo "It is a safety risk to continue unless you know exactly what you do. You won't"
-    echo "get asked again for that file! The suspicious file will get removed if you do"
-    echo "not continue."
+    echo "It is a safety risk to continue unless you know exactly what you're doing."
+    echo "Answer yes to delete it and retry the build process, or no to continue anyway."
     read -p "Continue? (y/n) [n]" ans
     case $ans in
       "y" | "Y")
@@ -48,7 +47,7 @@ case $OSTYPE in
     rm -rf "$depdirn" &> /dev/null
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
+      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
       tar xvf "$depdirn-$version.tar.lzma"
     fi
@@ -82,7 +81,7 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
+      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
       rm -rf "$depdirn" &> /dev/null
       mkdir "$depdirn"
@@ -92,7 +91,7 @@ case $OSTYPE in
     ;;
   darwin*)
     # no wget on OSX, use curl
-    DOWNLOADER="curl -L -O"
+    _DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
     
     echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' >> nightingale.config
@@ -104,7 +103,7 @@ case $OSTYPE in
     fi
     
     if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
+      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
             md5_verify "$depdirn-$version.tar.bz2"
       tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
     fi
@@ -119,7 +118,7 @@ esac
 # get the vendor build deps...
 cd dependencies
 if [ ! -f "vendor-$version.zip" ] ; then
-  $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+  $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
   md5_verify "vendor-$version.zip"
   rm -rf vendor &> /dev/null
   unzip "vendor-$version.zip"
