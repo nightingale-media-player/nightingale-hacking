@@ -34,8 +34,8 @@ function md5_verify() {
     esac
   }
 
-  if [ $2 != "" ] ; then
-    md5 -r "$1"|grep $2 || md5_fail "$1"
+  if [ $depdirn = "macosx-i686" ] ; then
+    md5 -r "$1"|grep -f "$1.md5" || md5_fail "$1"
   else
     md5sum -c --status "$1.md5" || md5_fail "$1"
   fi
@@ -109,7 +109,7 @@ case $OSTYPE in
     
    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
       $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
-      md5_verify "$depdirn-$version.tar.bz2" "b7021c3fb0467a4fd8d07e0bc982ee41"
+      md5_verify "$depdirn-$version.tar.bz2"
       tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
    fi
     cd ../
@@ -124,12 +124,8 @@ esac
 cd dependencies
 if [ ! -f "vendor-$version.zip" ] ; then
   $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
-  
-if [ $depdirn = "macosx-i686" ] ; then
-  md5_verify "vendor-$version.zip" "208c81bfd972ae4cb1f350688da304e6"
-else
   md5_verify "vendor-$version.zip"
-fi
+
   rm -rf vendor &> /dev/null
   unzip "vendor-$version.zip"
 fi
