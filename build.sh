@@ -98,6 +98,12 @@ case $OSTYPE in
     # no wget on OSX, use curl
     _DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
+    arch_flags="-m32 -arch i386"
+    export CFLAGS="$arch_flags" 
+    export CXXFLAGS="$arch_flags" 
+    export CPPFLAGS="$arch_flags"
+    export LDFLAGS="$arch_flags" 
+    export OBJCFLAGS="$arch_flags"
 
     echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' > nightingale.config
     
