@@ -33,7 +33,12 @@ function md5_verify() {
         ;;
     esac
   }
-  md5sum -c --status "$1.md5" || md5_fail "$1"
+
+  if [ $depdirn = "macosx-i686" ] ; then
+    md5 -r "$1"|grep -q -f "$1.md5" || md5_fail "$1"
+  else
+    md5sum -c --status "$1.md5" || md5_fail "$1"
+  fi
 }
 
 # Check for the build deps for the system's architecture and OS
@@ -93,8 +98,14 @@ case $OSTYPE in
     # no wget on OSX, use curl
     _DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
-    
-    echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' >> nightingale.config
+    arch_flags="-m32 -arch i386"
+    export CFLAGS="$arch_flags" 
+    export CXXFLAGS="$arch_flags" 
+    export CPPFLAGS="$arch_flags"
+    export LDFLAGS="$arch_flags" 
+    export OBJCFLAGS="$arch_flags"
+
+    echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' > nightingale.config
     
     cd dependencies
     
@@ -102,11 +113,11 @@ case $OSTYPE in
       mkdir "$depdirn"
     fi
     
-    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/osx/$depdirn-$version.tar.bz2"
-            md5_verify "$depdirn-$version.tar.bz2"
+   if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
+      md5_verify "$depdirn-$version.tar.bz2"
       tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
-    fi
+   fi
     cd ../
     ;;
   *)
@@ -117,14 +128,16 @@ esac
 
 # get the vendor build deps...
 cd dependencies
+
 if [ ! -f "vendor-$version.zip" ] ; then
   $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
   md5_verify "vendor-$version.zip"
+
   rm -rf vendor &> /dev/null
   unzip "vendor-$version.zip"
 fi
-cd ../
 
+cd ../
 cd $buildir
 
 # hopefully we have python2 on this system
