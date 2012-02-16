@@ -44,11 +44,11 @@ case $OSTYPE in
     patch=1
     
     cd dependencies
-    rm -rf "$depdirn" &> /dev/null
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
       $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
+      rm -rf "$depdirn" &> /dev/null
       tar xvf "$depdirn-$version.tar.lzma"
     fi
     cd ../
