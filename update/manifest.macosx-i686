@@ -425,11 +425,11 @@
 ./scripts/sbPLSPlaylistHandler.js
 ./scripts/sbPlaylistHandlerUtils.js
 ./searchplugins/songbird-internal-search.xml
-./songbird.icns
+./nightingale.icns
 ./songbird.ini
 ./songbirditunesagent.app/Contents/Info.plist
 ./songbirditunesagent.app/Contents/MacOS/songbirditunesagent
 ./songbirditunesagent.app/Contents/PkgInfo
-./songbirditunesagent.app/Contents/Resources/songbird.icns
+./songbirditunesagent.app/Contents/Resources/nightingale.icns
 ./updater.ini
 ./updater.plist

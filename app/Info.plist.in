@@ -681,7 +681,7 @@
   <key>CFBundleGetInfoString</key>
   <string>@SB_APPNAME@ @SB_MILESTONE@ (build @SB_BUILD_NUMBER@) For Mac, © 2005-2010 Pioneers of the Inevitable</string>
   <key>CFBundleIconFile</key>
-  <string>songbird.icns</string>
+  <string>nightingale.icns</string>
   <key>CFBundleIdentifier</key>
   <string>@SB_APP_BUNDLE_BASENAME@.songbird</string>
   <key>CFBundleInfoDictionaryVersion</key>
