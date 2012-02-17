@@ -10,7 +10,7 @@ build="release"
 buildir="$(pwd)"
 version=1.11
 # we'll use wget as default. OS without wget should override this.
-_DOWNLOADER="wget"
+DOWNLOADER="wget"
 
 function md5_verify() {
   function md5_fail() {
@@ -51,7 +51,7 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
+      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
       rm -rf "$depdirn" &> /dev/null
       tar xvf "$depdirn-$version.tar.lzma"
@@ -86,7 +86,7 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
+      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
       rm -rf "$depdirn" &> /dev/null
       mkdir "$depdirn"
@@ -96,7 +96,7 @@ case $OSTYPE in
     ;;
   darwin*)
     # no wget on OSX, use curl
-    _DOWNLOADER="curl -L -O"
+    DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
     arch_flags="-m32 -arch i386"
     export CFLAGS="$arch_flags" 
@@ -105,7 +105,7 @@ case $OSTYPE in
     export LDFLAGS="$arch_flags" 
     export OBJCFLAGS="$arch_flags"
 
-    echo 'ac_add_options  --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' > nightingale.config
+    echo 'ac_add_options --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk' > nightingale.config
     
     cd dependencies
     
@@ -114,7 +114,7 @@ case $OSTYPE in
     fi
     
    if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-      $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
+      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
       md5_verify "$depdirn-$version.tar.bz2"
       tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
    fi
@@ -130,7 +130,7 @@ esac
 cd dependencies
 
 if [ ! -f "vendor-$version.zip" ] ; then
-  $_DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+  $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
   md5_verify "vendor-$version.zip"
 
   rm -rf vendor &> /dev/null
