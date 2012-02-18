@@ -106,6 +106,9 @@ case $OSTYPE in
     export OBJCFLAGS="$arch_flags"
 
     echo 'ac_add_options --with-macosx-sdk=/Developer/SDKs/MacOSX10.4u.sdk' > nightingale.config
+    echo 'ac_add_options --enable-installer' >> nightingale.config
+    echo 'ac_add_options --enable-official' >> nightingale.config
+    echo 'ac_add_options --enable-compiler-environment-checks=no' >> nightingale.config
     
     cd dependencies
     
