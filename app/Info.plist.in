@@ -677,9 +677,9 @@
     </dict>
   </array>
   <key>CFBundleExecutable</key>
-  <string>songbird</string>
+  <string>nightingale</string>
   <key>CFBundleGetInfoString</key>
-  <string>@SB_APPNAME@ @SB_MILESTONE@ (build @SB_BUILD_NUMBER@) For Mac, © 2005-2010 Pioneers of the Inevitable</string>
+  <string>@SB_APPNAME@ @SB_MILESTONE@ (build @SB_BUILD_NUMBER@) For Mac OSX, By The Nightingale Community</string>
   <key>CFBundleIconFile</key>
   <string>nightingale.icns</string>
   <key>CFBundleIdentifier</key>
