@@ -21,4 +21,3 @@ EnableExtensionManager=true
 Enabled=1
 #endif
 ServerURL=@SB_CRASHREPORT_SERVER_URL@
-
