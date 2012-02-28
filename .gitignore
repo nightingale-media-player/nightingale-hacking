@@ -21,3 +21,6 @@ compiled
 .nightingaleconfig.mk
 .nightingaleconfig.out
 compiled-release*
+config.log
+conftest.o
+confdefs.h
