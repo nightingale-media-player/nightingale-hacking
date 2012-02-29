@@ -28,11 +28,12 @@
     <em:contributor>GeekShadow</em:contributor>
     <em:contributor>ChrisSavery</em:contributor>
     <em:contributor>klint</em:contributor>
-		
+    
     <em:translator>rsjtdrjgfuzkfg (de)</em:translator>
     <em:translator>odliam (es-AR)</em:translator>
     <em:translator>GeekShadow (fr)</em:translator>
     <em:translator>klint (fr)</em:translator>
+    <em:translator>gogo (hr-HR)</em:translator>
     <em:translator>yfdyh000 (zh-CN)</em:translator>
     
     <em:iconURL>chrome://FolderSync/skin/fs-icon.png</em:iconURL>
@@ -49,7 +50,7 @@
         <em:maxVersion>1.11.*</em:maxVersion>
       </Description>
     </em:targetApplication>
-		
+    
     <em:targetApplication>
       <Description>
         <em:id>nightingale@getnightingale.com</em:id>
@@ -57,7 +58,7 @@
         <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
       </Description>
     </em:targetApplication>
-		
+    
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>
   </Description>
