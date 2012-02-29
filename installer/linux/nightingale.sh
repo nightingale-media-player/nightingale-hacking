@@ -39,18 +39,32 @@
 #set -e
 #set -x
 
+# fix for Ubuntu 12.04	
+gstdirs="/usr/lib64 /usr/lib"
+
+if [ -f /etc/lsb-release && -n $(cat /etc/lsb-release | grep Ubuntu) ] ; then
+  if [ -n $(cat /etc/lsb-release | grep 12.04) ] ; then
+	if [ $(uname -m)==x86_64 ] ; then
+	  gstdirs="/usr/lib/x86_64-linux-gnu /usr/lib64 /usr/lib"
+	elif [ $(uname -m)==i386 ] ; then
+	  gstdirs="/usr/lib/i386-linux-gnu /usr/lib"
+    fi
+  fi
+fi
+
 # this depends on your system's gstreamer location
 # while sometimes, the make process actually uses the location properly
 # it doesn't always, and this is better than symlinking
-for dir in /usr/lib64 /usr/lib ; do
-  if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-    export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
-    break
-  elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-	export GST_PLUIN_PATH=${dir}/gstreamer0.10
-	break
-  fi
+for dir in $gstdirs ; do
+	if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
+		export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
+		break
+	elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+		export GST_PLUGIN_PATH=${dir}/gstreamer0.10
+		break
+	fi
 done
+
 
 cmdname=`basename "$0"`
 MOZ_DIST_BIN=`dirname "$0"`
