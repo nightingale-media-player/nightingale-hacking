@@ -1,4 +1,4 @@
-Nightingale is a community based fork of the Songbird Media player
+﻿Nightingale is a community based fork of the Songbird Media player
 distributed under the GNU GPL and portions (XULRunner and Mozilla libs)
 licensed under the Mozilla MPL/BSD license. 
 
@@ -7,8 +7,8 @@ eventually use only system libraries to conserve space. Currently, some
 libraries are still bundled, but progress is being made to change this 
 fact.
 
-This git tree is the Songbird trunk, rebranded for Nightingale. It's a 
-reflection of what our Xul 6+ releases will be like.
+This git tree is based on the Songbird 1.11 tree, rebranded and enhanced
+for Nightingale. It's a reflection of what our Xul 6+ releases will be like.
 
 ========================================================================
 Notes:
