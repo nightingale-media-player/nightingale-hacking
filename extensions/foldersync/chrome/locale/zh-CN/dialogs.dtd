@@ -23,13 +23,13 @@
 <!ENTITY saveprofile.update "更新现有配置">
 <!ENTITY addfav.title "新建收藏">
 <!ENTITY addfav.name "为新建的收藏起个名：">
-<!ENTITY options.title "FolderSync 选项">
+<!ENTITY options.title "&foldersync.displayname; 选项">
 <!ENTITY options.ui.title "用户界面">
 <!ENTITY options.ui.notification "显示全局通知">
-<!ENTITY options.ui.notificationExclusive "仅 FolderSync 标签页未打开时">
+<!ENTITY options.ui.notificationExclusive "仅 &foldersync.tabname; 标签页未打开时">
 <!ENTITY options.ui.show.favorite "启用同步收藏">
-<!ENTITY options.ui.show.help "在 FolderSync 标签页中显示帮助部分">
-<!ENTITY options.ui.restart "首选项标明了 * 的，将在您下次打开 FolderSync 标签页时被应用。">
+<!ENTITY options.ui.show.help "在 &foldersync.tabname; 标签页中显示帮助部分">
+<!ENTITY options.ui.restart "首选项标明了 * 的，将在您下次打开 &foldersync.tabname; 标签页时被应用。">
 <!ENTITY options.tags.title "默认标签">
-<!ENTITY options.tags.info "如果它们的元数据缺失，FolderSync 将使用下列默认标签：">
+<!ENTITY options.tags.info "如果元数据缺失，将使用下列默认标签：">
 <!ENTITY options.tags.albumartist.fallback "如果此标签缺失，使用 &availabletags.artist;">
