@@ -31,7 +31,7 @@ Flickr.prototype = {
 	sort: "&sort=relevance",
 	searchType: "&text=",
 	searchURL: "http://api.flickr.com/services/rest/?" +
-		"method=flickr.photos.search&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7" +
+		"method=flickr.photos.search&api_key=461354d3cdcc5425055670cbd3b8e16e" +
 		"&extras=owner_name,date_taken,o_dims,original_format",
 
 	query: function(searchTerms, updateFn) {

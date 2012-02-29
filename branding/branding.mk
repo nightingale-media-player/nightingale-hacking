@@ -4,7 +4,6 @@ SB_BRAND_SHORT_NAME  = $(SB_APPNAME)
 SB_BRAND_FULL_NAME   = Nightingale Media Player
 SB_BRAND_VENDOR_NAME = The Nightingale Community
 SB_BRAND_TRADEMARKS  = \
-  Songbird and 'Play the Web' are registered trademarks of POTI, Inc.\\\\r\\\\n\
   Mozilla is a registered trademark of the Mozilla Foundation.\\\\r\\\\n\
   XULRunner is a trademark of the Mozilla Foundation.
 SB_INSTALLER_ABOUT_URL=http://getnightingale.com/

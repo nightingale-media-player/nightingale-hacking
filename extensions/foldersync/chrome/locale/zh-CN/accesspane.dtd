@@ -25,7 +25,7 @@
 <!ENTITY basic.structure "在目标文件夹中重新组织歌曲文件">
 <!ENTITY basic.playlists "写入播放列表到目标文件夹">
 <!ENTITY advanced.title "高级首选项">
-<!ENTITY advanced.warning "这是额外的 FolderSync 配置，但错误的值可能导致出现问题。">
+<!ENTITY advanced.warning "这是其他配置同步的方法，但是错误的值可能导致出现问题。">
 <!ENTITY advanced.blocked "替换">
 <!ENTITY advanced.replace "用">
 <!ENTITY advanced.cutReplaced "在文件名的尾部剪切替换字符">
@@ -33,7 +33,7 @@
 <!ENTITY advanced.length "文件名的最大长度：">
 <!ENTITY advanced.case "文件路径区分大小写">
 <!ENTITY structure.title "结构">
-<!ENTITY structure.info "FolderSync 能够在目标文件夹重新组织歌曲文件。新结构的文件名模式如下，还有一些其他首选项您可以在这更改。使用斜线([/])以在该结构中到单独的文件夹和文件名。">
+<!ENTITY structure.info "歌曲文件能在目标文件夹中被重新整理。新结构的文件名模式如下，还有一些其他首选项您可以在这更改。使用斜线([/])以在该结构中到单独的文件夹和文件名。">
 <!ENTITY structure.schema "模式：">
 <!ENTITY structure.schema.help "可用标签...">
 <!ENTITY structure.schema.help.tooltip "看表达式列表，它将被每首歌曲的元数据替换">
@@ -63,10 +63,10 @@
 <!ENTITY complete.update "更新收藏同步">
 <!ENTITY complete.update.tooltip "用上述同步覆盖当前选定的收藏同步。您可以在 &favorite.title; 中的此选项卡的顶部中更改选择和访问收藏同步。">
 <!ENTITY help.title "需要帮助？">
-<!ENTITY help.info "下面的按钮将带您到可能帮助您配置和使用 FolderSync 的地方。">
+<!ENTITY help.info "下面的按钮将带您到可能帮助您配置和使用 &foldersync.displayname; 的地方。">
 <!ENTITY help.preferences "首选项">
-<!ENTITY help.preferences.tooltip "打开 FolderSync 的选项对话框，您在那里可以调整 FolderSync">
+<!ENTITY help.preferences.tooltip "打开 FolderSync 的选项对话框，您在那里可以调整 &foldersync.displayname;">
 <!ENTITY help.manual "手册">
-<!ENTITY help.manual.tooltip "在新标签页中打开 FolderSync 的在线手册">
+<!ENTITY help.manual.tooltip "在新标签页中打开在线手册">
 <!ENTITY help.comments "评论页面">
-<!ENTITY help.comments.tooltip "转到 FolderSync 在 addons.songbirdnest.com 的页面">
+<!ENTITY help.comments.tooltip "转到 &foldersync.addonplatform; 上的评论页面">

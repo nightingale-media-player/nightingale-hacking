@@ -10,7 +10,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>@SB_APPNAME@ iTunes Agent, © 2009 @SB_VENDOR@</string>
 	<key>CFBundleIconFile</key>
-	<string>songbird.icns</string>
+	<string>nightingale.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>@SB_APP_BUNDLE_BASENAME@.songbirditunesagent</string>
 	<key>CFBundleInfoDictionaryVersion</key>

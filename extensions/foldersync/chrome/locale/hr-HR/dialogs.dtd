@@ -1,0 +1,35 @@
+<!ENTITY dialog.ok "U redu">
+<!ENTITY dialog.cancel "Poništi">
+<!ENTITY error.title "&foldersync.displayname;">
+<!ENTITY availabletags.window.title "Dostupne oznake">
+<!ENTITY availabletags.info.defaulttags "Sljedeće vrijednosti će zamijeniti prazne oznake korištene u shemi naziva datoteke:">
+<!ENTITY availabletags.info.schema "Sljedeći izrazi će biti zamijenjeni u shemi naziva datoteke ili korišteni u shemi razvrstavanja popisa izvođenja:">
+<!ENTITY availabletags.artist "Naziv izvođača">
+<!ENTITY availabletags.title "Naziv pjesme">
+<!ENTITY availabletags.album "Naziv albuma">
+<!ENTITY availabletags.genre "Žanr">
+<!ENTITY availabletags.rating "Ocjena">
+<!ENTITY availabletags.tracknumber "Broj pjesme">
+<!ENTITY availabletags.playlist "Naziv popisa izvođenja">
+<!ENTITY availabletags.albumartist "Naziv izvođača albuma">
+<!ENTITY availabletags.year "Godina">
+<!ENTITY availabletags.discnumber "Broj CD-a">
+<!ENTITY availabletags.disccount "CD broj">
+<!ENTITY availabletags.composer "Naziv skladatelja">
+<!ENTITY availabletags.producer "Naziv redatelja">
+<!ENTITY saveprofile.title "Spremi profil">
+<!ENTITY saveprofile.new "Spremi novi profil">
+<!ENTITY saveprofile.new.pre "Unesi ovdje naziv profila">
+<!ENTITY saveprofile.update "Ažuriraj postojeći profil">
+<!ENTITY addfav.title "Novo omiljeno usklađivanje">
+<!ENTITY addfav.name "Unesi naziv novog omiljenog usklađivanja:">
+<!ENTITY options.title "Mogućnosti &foldersync.displayname;">
+<!ENTITY options.ui.title "Korisničko sučelje">
+<!ENTITY options.ui.notification "Prikaži globalne obavijesti">
+<!ENTITY options.ui.notificationExclusive "samo ako kartica &foldersync.tabname; nije otvorena">
+<!ENTITY options.ui.show.favorite "Omogući omiljena usklađivanja">
+<!ENTITY options.ui.show.help "Prikaži Pomoć u kartici &foldersync.tabname;">
+<!ENTITY options.ui.restart "Postavke označene sa * biti će primjenjene sljedeći put kada otvorite karticu &foldersync.tabname;.">
+<!ENTITY options.tags.title "Uobičajene oznake">
+<!ENTITY options.tags.info "Ako metapodaci nedostaju, sljedeće uobičajene oznake će se koristiti:">
+<!ENTITY options.tags.albumartist.fallback "Koristi &availabletags.artist; ako ova oznaka nedostaje:">

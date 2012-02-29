@@ -32,6 +32,7 @@ foldersync.jar:
 % locale  foldersync  en-US  %locale/en-US/
 % locale  foldersync  es-AR  %locale/es-AR/
 % locale  foldersync  fr     %locale/fr/
+% locale  foldersync  hr-HR  %locale/hr-HR/
 % locale  foldersync  zh-CN  %locale/zh-CN/
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://foldersync/content/central-overlay.xul 
 @include_all_to

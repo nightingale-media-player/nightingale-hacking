@@ -1,0 +1,72 @@
+<!ENTITY current.cancel "Poništi">
+<!ENTITY current.details "Pojedinosti...">
+<!ENTITY current.queue.cancel "Poništi sve">
+<!ENTITY favorite.title "Omiljena usklađivanja">
+<!ENTITY favorite.choose "(Odaberi omiljeno)">
+<!ENTITY favorite.load "Učitaj">
+<!ENTITY favorite.load.tooltip "Učitaj odabrano omiljeno usklađivanje u kontrolama ovog okna ako želite promjenu prije izvođenja.">
+<!ENTITY favorite.delete "Obriši...">
+<!ENTITY favorite.delete.tooltip "Obriši odabrano omiljeno usklađivanje">
+<!ENTITY favorite.start "Pokreni">
+<!ENTITY favorite.start.tooltip "Izvršite odabrano omiljeno usklađivanje">
+<!ENTITY profile.current "Trenutni profil:">
+<!ENTITY profile.save "Spremi...">
+<!ENTITY profile.save.tooltip "Spremi izmijenjeni profil kao novi profil ili ažuriraj postojeći">
+<!ENTITY profile.delete "Obriši...">
+<!ENTITY profile.delete.tooltip "Obriši odabrani profil">
+<!ENTITY profile.changed "(Promijenjeno)">
+<!ENTITY profile.display.tooltip "Prikaži / Uredi profile">
+<!ENTITY profile.hide.tooltip "Sakrij mogućnosti profila">
+<!ENTITY basic.title "Značajke usklađivanja">
+<!ENTITY basic.copy "Kopiraj datoteku pjesme u odredišnu mapu">
+<!ENTITY basic.update "Ažuriraj promjene pjesama u odredišnoj mapi">
+<!ENTITY basic.delete "Obriši sve ostale datoteke i mape u odredišnoj mapi">
+<!ENTITY basic.rockbox "Izvedi  Rockbox-Back-Sync u odredišnoj mapi">
+<!ENTITY basic.structure "Ponovno organizirajte datoteke pjesme u odredišnoj mapi">
+<!ENTITY basic.playlists "Zapiši popise izvođenja u odredišnu mapu">
+<!ENTITY advanced.title "Napredne postavke">
+<!ENTITY advanced.warning "Ovo su dodatni načini podešavanja usklađivanja, pogrešne vrijednosti mogu uzrokovati probleme.">
+<!ENTITY advanced.blocked "Zamijeni">
+<!ENTITY advanced.replace "sa">
+<!ENTITY advanced.cutReplaced "Ukloni znakove zamjene na kraju naziva datoteke(a)">
+<!ENTITY advanced.cutSpaces "Ukloni znakove razmaka na kraju naziva datoteke(a)">
+<!ENTITY advanced.length "Maksimalna duljina naziva datoteke(a):">
+<!ENTITY advanced.case "Ponašanje malih i velikih slova u putanjama datoteka">
+<!ENTITY structure.title "Ustrojstvo">
+<!ENTITY structure.info "Datoteke pjesme se mogu ponovno organizirati u odredišnom direktoriju. Novo ustrojstvo slijedi shemu naziva datoteke i ostale postavke koje ovdje promijenite. Koristite kose crte(\'/\') za razdvajanje mapa i naziva datoteke u shemi.">
+<!ENTITY structure.schema "Shema:">
+<!ENTITY structure.schema.help "Dostupne oznake...">
+<!ENTITY structure.schema.help.tooltip "Pogledajte popis izraza koji će zamijeniti oznake svake pjesme">
+<!ENTITY structure.schema.tracknumber "Broj znamenki oznake broja pjesme:">
+<!ENTITY structure.covers "Spremi slike omota albuma">
+<!ENTITY structure.coverSchema "Shema za mape omota albuma:">
+<!ENTITY structure.coverFile "Naziv datotekeke slike(a)omota albuma:">
+<!ENTITY playlists.title "Zapisivanje popisa izvođenja">
+<!ENTITY playlists.target "Slična odredišna mapa:">
+<!ENTITY playlists.split "Oznaka podjele za putanje datoteke:">
+<!ENTITY playlists.relativepoint "Započni slične putanje sa .[podijeli]">
+<!ENTITY playlists.format "Vrsta popisa izvođenja:">
+<!ENTITY playlists.encoding "Enkodiranje popisa izvođenja:">
+<!ENTITY playlists.sort "Razvrstaj stavke u popisu izvođenja">
+<!ENTITY playlists.sort.scheme "Razvrstavanje sheme:">
+<!ENTITY structure.sort.scheme.tooltip "Unesite shemu razvrstavanja koristeći oznake odvojene zarezima. Može se dodati smjer razvrstavnja poput \'&#37;artist:a&#37;\' za rastući red ili \'&#37;artist:d&#37;\' za padajući red. Pjesme će biti razvrstane u svakom popisu izvođenja prema ovoj shemi.">
+<!ENTITY playlists.selection "Popis izvođenja za usklađivanje:">
+<!ENTITY playlists.refresh "Osvježi">
+<!ENTITY playlists.refresh.tooltip "Učitaj popis popisa izvođenja ponovno tako da promjene poput promjene naziva, brisanja ili novih popisa izvođenja se pojave na popisu">
+<!ENTITY target.folder "Odredišna mapa:">
+<!ENTITY target.browse "Pregledaj...">
+<!ENTITY target.browse.tooltip "Odaberi mapu kroz dijalog">
+<!ENTITY complete.start "Pokreni usklađivanje">
+<!ENTITY complete.start.tooltip "Pokreni usklađivanje opisano iznad">
+<!ENTITY complete.save "Spremi kao omiljeno usklađivanje">
+<!ENTITY complete.save.tooltip "Spremite usklađivanje opisano iznad kao omiljeno usklađivanje. Možete mu pristupiti u dijelu &favorite.title; na vrhu ove kartice.">
+<!ENTITY complete.update "Ažuriraj omiljeno usklađivanje">
+<!ENTITY complete.update.tooltip "Zamijenite trenutno odabrano omiljeno usklađivanje sa usklađivanjem opisanim iznad. Možete promjeniti odabir i pristupiti omiljenim usklađivanjima u dijelu &favorite.title; na vrhu ove kartice.">
+<!ENTITY help.title "Trebate pomoć?">
+<!ENTITY help.info "Sljedeće tipke će vas odvesti na mjesta koja će vam pomoći u podešavanju i korištenju &foldersync.displayname;.">
+<!ENTITY help.preferences "Mogućnosti">
+<!ENTITY help.preferences.tooltip "Otvorite dijalog mogućnosti gdje možete podesiti &foldersync.displayname;">
+<!ENTITY help.manual "Upute">
+<!ENTITY help.manual.tooltip "Otvori online upute u novoj kartici">
+<!ENTITY help.comments "Stranica komentara">
+<!ENTITY help.comments.tooltip "Idi na stranicu komentara &foldersync.addonplatform;">

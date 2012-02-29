@@ -185,7 +185,7 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
       // empty one instead
       NSDictionary* attribs = [fileMan attributesOfItemAtPath:srcPath
                                                         error:NULL];
-      success = [fileMan createDirectoryAtPath:dest
+      success = [fileMan createDirectoryAtPath:destPath
                    withIntermediateDirectories:YES
                                     attributes:attribs
                                          error:NULL];

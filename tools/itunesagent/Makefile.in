@@ -140,6 +140,6 @@ ifeq (macosx,$(SB_PLATFORM))
 	$(CP) -R $(srcdir)/$(SB_PLATFORM)/appskeleton/* $(MAC_APP_DIR)
 	$(FIND) $(MAC_APP_DIR) -depth -type d -name '.svn' -exec $(RM) -r {} \;
 	$(INSTALL_FILE) $(CURDIR)/Info.plist $(MAC_APP_DIR)/Contents/
-	$(INSTALL_FILE) $(topsrcdir)/app/branding/songbird.icns $(MAC_APP_DIR)/Contents/Resources
+	$(INSTALL_FILE) $(topsrcdir)/app/branding/nightingale.icns $(MAC_APP_DIR)/Contents/Resources
 endif
 
