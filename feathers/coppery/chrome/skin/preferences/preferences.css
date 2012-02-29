@@ -93,23 +93,6 @@
   font-size:11px !important;
 }
 
-
-/***** Media Management preferences pane *****/
-#manage_media_format_box {
-  margin: 4px;
-  padding: 0 4px;
-  /*
-  background-color:rgb(255,255,255);
-  border:1px solid rgb(161,161,161);
-  */
-  -moz-border-radius:0px;
-}
-
-prefpane#paneManageMedia {
-  padding: 0px !important;
-  margin: 0px !important;
-}
-
 #paneAlbumArtwork #fetcherListBox {
   background-color: rgba(43, 41, 54,0.4);
   border: 1px solid rgb(80,78,91);
@@ -117,4 +100,10 @@ prefpane#paneManageMedia {
 
 browser#addonsFrame {
   background-color: transparent;
+}
+
+/* Inline Link */
+
+.inline-link {
+  color: rgb(177,153,255);
 }

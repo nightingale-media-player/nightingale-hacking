@@ -41,6 +41,9 @@
  */
 -->
 
+<!-- Window has attributes for default dimensions that will apply only to first       -->
+<!-- run. Otherwise, the window should load and size to values as calculated by       -->
+<!-- windowPlacementSanityChecks().                                                   -->
 <window
   id="mainplayer"
   title="&window.dev.title;"
@@ -56,7 +59,9 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
-  onload="windowPlacementSanityChecks();"
+  height="728"
+  width="1000"
+
   onclose="quitApp();"
   persist="screenX screenY width height sizemode"
 >
@@ -271,20 +276,22 @@
 
           <hbox id="control_pane" flex="1" mousethrough="always">
             <hbox id="control_buttons_box" pack="center" align="center">
-              <sb-player-back-button id="play_back_button" class="sb-player-button"/>
-              <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
-              <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
+            <stack>
+              <sb-player-back-button id="play_back_button" left="0" class="sb-player-button"/>
+              <sb-player-forward-button id="play_fwd_button" left="76" class="sb-player-button" />
+              <sb-player-playpause-button id="play_pause_button" left="38" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
+            </stack>
             </hbox>
 
             <hbox id="volume_box" pack="center" align="center">
               <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
             </hbox>
-
+            
             <hbox id="shuffle_repeat_box" pack="center" align="center">
               <sb-player-shuffle-button class="sb-player-button" />
               <sb-player-repeat-button class="sb-player-button" />
             </hbox>
-            
+
             <hbox id="faceplate_box" flex="1" pack="center" align="center">
               <stack id="faceplate" flex="1">
     

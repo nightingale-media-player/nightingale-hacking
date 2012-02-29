@@ -77,7 +77,8 @@ window:not([active="true"]) .inactive-box {
 ******************************************************************************/
 
 /* title bar */
-window:not([hidechrome="true"]) #titlebar_box {
+window:not([hidechrome]) #titlebar_box,
+window:not([sb-native-hidechrome]) #titlebar_box {
   visibility:collapse;
   border:none !important;
   min-height:0px !important;

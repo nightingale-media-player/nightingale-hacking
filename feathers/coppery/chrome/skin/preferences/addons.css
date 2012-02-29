@@ -43,3 +43,7 @@ richlistbox:focus richlistitem[selected="true"] {
   border-top: 1px solid rgb(183,93,132) !important;
   border-bottom: 1px solid rgb(128,42,69) !important;
 }
+
+#topBar > deck {
+  -moz-binding: url(chrome://songbird/content/bindings/prefwindow.xml#sb-deck);
+}

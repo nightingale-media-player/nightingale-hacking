@@ -3,7 +3,6 @@
 
 #miniplayer {
   min-width:240px !important;
-  width:480px !important;
   overflow:hidden !important;
   max-height: 42px;
   max-width: 1280px;
@@ -81,12 +80,11 @@ progressmeter.sb-player-seek-slider {
 }
 
 
-
-
-
+/* No thumb for the miniplayer so we constrain the width to 0. */
 #miniplayer thumb.sb-player-seek-slider 
 {
-  min-width: 18px !important;
+  max-width: 0px !important;
+  min-width: 0px !important;
   background-image: none;
   background-color:transparent;
 }

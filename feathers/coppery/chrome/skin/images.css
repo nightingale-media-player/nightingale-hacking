@@ -85,7 +85,6 @@ treecolpicker > .tree-columnpicker-icon {
 }
 
 menulist .dropmarker-icon {
-  margin-right: 10px;
   margin-left: -10px;
 }
 .dropmarker-icon {
@@ -334,17 +333,20 @@ notification[type="critical"],
   Player Control Box
 **/
 #control_pane_box > .hook > .left {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-media-control-pane-left.png');
+  /* background-image: url('chrome://songbird/skin/media-control-pane/bg-media-control-pane-left.png'); */
+  background-color: rgb(224,223,222);
   background-position:left top;
   background-repeat:no-repeat;
 }
 #control_pane_box > .hook > .right {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-media-control-pane-right.png');
+  /* background-image: url('chrome://songbird/skin/media-control-pane/bg-media-control-pane-right.png'); */
+  background-color: rgb(224,223,222);
   background-position:right top;
   background-repeat:no-repeat;
 }
 #control_pane_box > .hook {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-media-control-pane.png');
+  /* background-image: url('chrome://songbird/skin/media-control-pane/bg-media-control-pane.png'); */
+  background-color: rgb(224,223,222);
   background-repeat:repeat-x;
   background-position:center top;
 }
@@ -373,7 +375,8 @@ notification[type="critical"],
   min-height:44px;
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-splash.png');
   background-repeat:no-repeat;
-  background-position:center center;
+  background-position:right center;
+  margin-right: 10px;
 }
 #faceplate-inactive-splash-prince {
   min-height:44px;
