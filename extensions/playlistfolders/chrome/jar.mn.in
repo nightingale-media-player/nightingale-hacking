@@ -28,6 +28,7 @@ playlistfolders.jar:
 % locale  playlistfolders  de     %locale/de/
 % locale  playlistfolders  en-US  %locale/en-US/
 % locale  playlistfolders  fr     %locale/fr/
+% locale  playlistfolders  hr-HR     %locale/hr-HR/
 % locale  playlistfolders  sr     %locale/sr/
 % locale  playlistfolders  sv-SE  %locale/sv-SE/
 % locale  playlistfolders  tr     %locale/tr/
