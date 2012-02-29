@@ -46,7 +46,6 @@ TABLE OF CONTENTS
 > NAV BAR
 > DISPLAY PANES
 > SPLITTERS
-> DEVICE SUMMARY PAGE
 > FIRST RUN WIZARD
 > TRACK EDITOR
 > MEDIACORE ERROR DIALOG
@@ -59,43 +58,44 @@ TABLE OF CONTENTS
 > ABOUT CONFIG (MOZAPP)
 > PREFERENCES (MOZAPP)
 > FIREFOX API
+> PLAY QUEUE
 
 ******************************************************************************
 
-This feather focuses on images more than styles defined though CSS. Often 
-times you'll update colors in this file but wont see any change in the final 
-appearance because there is a background-image that is drawn over it. There 
+This feather focuses on images more than styles defined though CSS. Often
+times you'll update colors in this file but wont see any change in the final
+appearance because there is a background-image that is drawn over it. There
 are a few colors defined in this file that might be of interest:
 
-Often used by boxes that contain elements that update what is displayed in the 
-content pane. eg: service pane, find bar, top half of the device summary 
+Often used by boxes that contain elements that update what is displayed in the
+content pane. eg: service pane, find bar, top half of the device summary
 page, command bar.
 > rgb(220,220,220);
 
-The following is used by all/most borders in the content area. eg: borders for 
+The following is used by all/most borders in the content area. eg: borders for
 filer pane splitters, border for treecols and list headers.
 > rgb(161,161,161);
 
-The following is used by all/most borders in the chrome area. eg: splitter for 
+The following is used by all/most borders in the chrome area. eg: splitter for
 service pane, splitters for display panes, borders for windows/dialogs/wizards.
 > rgb(131,131,131)
 
-This file contains most but not all colors used in the feather. The styles in 
+This file contains most but not all colors used in the feather. The styles in
 the following files need to be there for technical reasons.
 > formsImport.css for text selection color
 > os-specific/max/overrides.css for Mac-specific styles
 > os-specific/unix/overrides.css for Linux-specific styles
 > os-specific/win/overrides.css for Windows-specific styles
 
-All the other CSS files in the feather and elsewhere in the app need major 
+All the other CSS files in the feather and elsewhere in the app need major
 clean up. Don't go there if you can help it, for now.
 
 ******************************************************************************
 
 We are eager to hear your feedback - please drop by and say hi:
 
-nightingale-dev Google Group:
-http://groups.google.com/group/nightingale-dev
+Nightingale Forum
+http://forum.getnightingale.com/
 
 IRC:
 irc.mozilla.org #nightingale
@@ -118,14 +118,14 @@ prefwindow,
 panel {
   background-color: rgb(51,51,51);
 }
-/* fixme */
 page {
   background-color: rgb(51,51,51);
 }
-menupopup, 
+menupopup,
 popup {
   background-color:rgb(102,102,102);
   border: 1px solid rgb(28,27,38);
+  -moz-background-clip: padding;
 }
 menuitem > label {
   color: rgb(255,255,255);
@@ -169,7 +169,7 @@ tooltip label {
   color: rgb(40,40,40);
 }
 treechildren::-moz-tree-cell-text {
-  color: rgb(212,210,221);
+  color: rgb(230,228,240);
 }
 
 listheader,
@@ -257,7 +257,7 @@ html|*.loss-of-data-text,
 
 /******************************************************************************
 * TEXTBOXES
-* 
+*
 * Styles for textboxes and elements that we want to look like textboxes
 ******************************************************************************/
 textbox,
@@ -294,7 +294,7 @@ textbox[invalid="true"],
 textbox[focused="true"][invalid="true"] {
   background-color:rgb(255,224,200) !important;
   color:rgb(235,125,41);
-} 
+}
 textbox[empty="true"],
 searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
   color:rgb(131,131,131);
@@ -323,7 +323,7 @@ toolbarbutton:focus,
 checkbox:focus > .checkbox-check,
 radio[focused="true"] > .radio-check,
 menulist:focus {
-  outline:2px solid rgba(144,143,154,0.6); 
+  outline:2px solid rgba(144,143,154,0.6);
   outline-offset:0px;
   -moz-outline-radius:5px;
 }
@@ -367,8 +367,7 @@ tabpanels {
   background-image: url(chrome://songbird/skin/base-elements/bg-tabpanel.png);
   background-position: left top;
   background-repeat: repeat-x;
-  /* BLUE */
-  border: 1px solid rgb(47,95,130) !important;
+  border: 1px solid rgb(47,95,130) !important; /* BLUE */
   padding: 15px 10px 10px 10px !important;
 }
 tabpanel {
@@ -486,6 +485,11 @@ sb-displaypane-button > button {
   border-left: none;
 }
 
+.sb-status-bar-text,
+.statusbarpanel-text {
+  color: rgb(202,202,205);
+}
+
 
 
 /******************************************************************************
@@ -571,6 +575,21 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 /******************************************************************************
 * TITLE BAR
 ******************************************************************************/
+/*
+ *   For Mac, separate active and inactive background colors and images may be
+ * specified for the titlebar.  In addition, separate active and inactive colors
+ * may be specified for the titlebar text.
+ *   If both a background color and image are specified for the titlebar, the
+ * background color is drawn first, then the background image is drawn over the
+ * background color.  If the background image is translucent, it will be mixed
+ * accordingly with the background color.
+ */
+sb-sys-titlebar[platform="Darwin"] {
+  background-image: url(chrome://songbird-os-specific/skin/title-bar-backing.png);
+}
+sb-sys-titlebar[platform="Darwin"][inactive] {
+  background-image: url(chrome://songbird-os-specific/skin/title-bar-backing.png);
+}
 #sb-sys-title-title {
   font-weight:bold;
   color: rgb(0,0,0);
@@ -671,10 +690,9 @@ sb-servicepane-group toolbarbutton.clickhold-button {
   padding: 0;
   border: 0;
   -moz-border-radius: 0;
-  border-radius: 0;
 }
 
-sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton {
+sb-servicepane-group[id="SB:Playlists"] toolbarbutton {
   background-image: url(chrome://songbird/skin/service-pane/new-playlist.png);
   background-position: left 0px;
   min-height: 20px;
@@ -682,10 +700,10 @@ sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton {
   min-width: 23px;
   max-width: 23px;
 }
-sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton:hover {
+sb-servicepane-group[id="SB:Playlists"] toolbarbutton:hover {
   background-position: left -20px;
 }
-sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton:active {
+sb-servicepane-group[id="SB:Playlists"] toolbarbutton:active {
   background-position: left -40px;
 }
 /* SERVICE PANE NODES */
@@ -749,7 +767,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
  * loaded in the browser */
-sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
+sb-servicepane-node.highlighted:not(.active) > vbox > hbox.servicepane-node-info {
   background-color: rgb(41,67,100);
   -moz-border-radius: 3px;
   border: 1px solid rgb(115,152,198);
@@ -758,7 +776,7 @@ sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
 sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
 sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
-sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
+sb-servicepane-node.highlighted:not(.active) > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
   margin-left: -1px;
 }
 
@@ -852,8 +870,9 @@ sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
   -moz-box-align: center;
 }
 
+/* to make sure the child text element align properly */
 sb-servicepane-node textbox {
-  margin: 0px;
+  margin: -1px;
 }
 
 /* SERVICE PANE BADGES */
@@ -863,7 +882,7 @@ hbox.servicepane-node-badges {
 }
 
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
-sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
+sb-servicepane-node.highlighted:not(.active) > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
   margin-right: -1px;
 }
 
@@ -1059,7 +1078,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
    * Featherers want to */
 }
 
-#searchbar menupopup menuitem {
+.searchbar-engine-button menupopup menuitem {
   margin-left: -8px !important;
 }
 
@@ -1092,7 +1111,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 
 .drop-message {
   color: rgb(212,210,221);
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 /******************************************************************************
@@ -1209,191 +1228,7 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
   border-bottom: 1px solid rgb(43,43,43);
 }
 
-/** tree splitter for playlist tree **/
-splitter.tree-splitter {
-  background-color: rgb(102,102,102) !important;
-  background-image: none;
-  border-right: 1px solid rgb(51,51,51);
-  border-left: 1px solid rgb(51,51,51);
-  width: 3px !important;
-  min-width: 3px !important;
-  max-width: 3px !important;
-  height: 19px !important;
-  min-height: 19px !important;
-  max-height: 19px !important;
-}
 
-/******************************************************************************
-* DEVICE SUMMARY PAGE
-*
-* The page that is displayed when the device node is clicked on - iPod, MTP
-******************************************************************************/
-window > vbox#main_box {
-  overflow: auto;
-}
-
-sb-device-info-panel {
-  border-bottom: 1px solid rgb(67,65,76);
-}
-
-sb-device-info-panel[collapsed="true"] {
-  border-bottom: 0px;
-}
-
-sb-device-managetabs {
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 12px;
-}
-
-/* the top half of the summary page + background for tabs (ipod only) */
-#overall_device_info_box,
-#device_management_tabs {
-  background-color: rgb(43,43,43);
-}
-/* Override the shadow from generic-bar with our own device one */
-#overall_device_info_box > #sb-device-progress > hbox.generic-bar {
-  background-image: url(chrome://songbird/skin/device/bg-device-screen.png);
-  background-color: rgb(51,51,51);
-  border-bottom: 1px solid rgb(62,60,71);
-}
-#device_management_tabs > tab[selected] {
-  border-bottom: none;
-}
-
-#device-icon {
-  margin-right: 2px;
-}
-
-#device-name {
-  margin-top: -1px;
-  margin-left: -3px;
-}
-
-#volume-selector {
-  min-width: 164px;
-  margin-top: 2px;
-  margin-bottom: 4px;
-}
-
-.eject-info-buttons {
-  margin: 0px 6px 0px 0px;
-  padding: 0px;
-}
-
-.device-capacity-bar-box {
-  margin-left: 1px;
-}
-/*
-.device-capacity-bar-box > hbox + hbox:not([flex="0"]) {
-  margin-left: 1px;
-}
-*/
-.device-capacity-bar-box > hbox {
-  max-height: 18px !important;
-  margin-top: 2px;
-  margin-bottom: 2px;
-}
-.device-capacity-music,
-.device-capacity-legend-color-box[type="music"] {
-  background-color: rgb(84,69,130);
-}
-.device-capacity-video,
-.device-capacity-legend-color-box[type="video"] {
-  background-color: rgb(82,113,50);
-}
-.device-capacity-image,
-.device-capacity-legend-color-box[type="image"] {
-  background-color: rgb(140,42,81);
-}
-.device-capacity-other,
-.device-capacity-legend-color-box[type="other"] {
-  background-color: rgb(171,98,23);
-}
-.device-capacity-free,
-.device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(43,43,43);
-}
-/* the device capacity bar has 9 notches (10 sections)
-   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
-.device-capacity-bar-notches hbox+hbox {
-  margin: 2px 0px;
-  border-left: 2px solid;
-  -moz-border-left-colors: rgba(0,0,0,0.4) rgba(255,255,255,0.25);
-}
-#device_management_box {
-  margin: 10px 10px 13px 10px;
-}
-
-.device-settings-tab-header-box,
-.device-tab-header-box {
-  background-color: rgb(74,73,79);
-  height: 28px;
-}
-.device-tab-header-box {
-  margin-top: 15px;
-}
-.device-tab-content groupbox {
-  margin: 0px 0px 2px 0px;
-}
-radiogroup#auto_sync_settings_radio_group {
-  background-color: rgb(69,67,78);
-}
-radiogroup#auto_sync_settings_radio_group > listbox {
-  border: 1px solid rgb(102,102,102);
-  background-color: transparent;
-}
-
-/* box that holds all the buttons for sync settings */
-.device-tab-button-box {
-  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  background-color: rgb(50,50,50);
-  margin: -2px -1px -1px -1px;
-  border-left: 1px solid rgb(35,33,44);
-  border-right: 1px solid rgb(35,33,44);
-  border-bottom: 1px solid rgb(35,33,44);
-}
-
-.device-settings-button-box {
-  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  background-color: rgb(51,51,51);
-  border: 1px solid rgb(35,33,44);
-}
-
-.device-capacity-legend-label-box > label.capacity_header_label,
-label.device-name-label {
-  color: rgb(234,234,234);
-}
-.device-capacity-legend-label-box > label.capacity_value_label {
-  font-size: 9px !important;
-  color: rgb(159,157,166);
-}
-
-.device_management_tabpanels {
-  padding-top: 30px !important;
-}
-
-/* tree that holds the list of playlists to sync */
-sb-device-sync tree,
-sb-device-image-sync tree {
-  background-image: none;
-  background-color: rgb(69,67,78);
-  border: 1px solid rgb(48,48,48);
-}
-sb-device-sync tree treecol[type="checkbox"],
-sb-device-image-sync tree treecol[type="checkbox"] {
-  min-width: 23px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-  margin-right: -3px !important;
-}
-sb-device-image-sync radiogroup {
-  padding: 0px;
-}
 /******************************************************************************
 * WIZARDS
 ******************************************************************************/
@@ -1539,7 +1374,7 @@ findbar > .findbar-container > .findbar-find-status {
 * the browser window
 ******************************************************************************/
 scrollbarbutton,
-scrollbar > slider > thumb {   
+scrollbar > slider > thumb {
 }
 
 #servicepane scrollbar {
@@ -1559,7 +1394,7 @@ scrollcorner {
 
 /******************************************************************************
 * WINDOW RESIZERS
-*  
+*
 * Draw a border around windows that are resizable - Linux and Windows only
 * Make sure to update skin/window/bg-resizer-bottom-corner.png to match
 * changes made here
@@ -1660,13 +1495,10 @@ scrollcorner {
   background-image: none !important;
 }
 
-/* Need to specialcase the manage media prefpane due to the notificationbox */
-prefpane:not(#paneManageMedia) {
+prefpane {
   padding: 15px 10px !important;
 }
-#media_manage_notification_box_contents {
-  padding: 15px 10px !important;
-}
+
 prefpane groupbox {
   margin-top: 0px !important;
   margin-bottom: 2px !important;
@@ -1675,7 +1507,7 @@ prefpane groupbox {
 /******************************************************************************
 * FIREFOX API
 * 
-* nightingale does not use the following rules but add-ons ported from Firefox
+* Nightingale does not use the following rules but add-ons ported from Firefox
 * might.
 ******************************************************************************/
 html|*.error-text,
@@ -1690,9 +1522,9 @@ html|*.error-text,
 }
 .text-link:hover {
   text-decoration: underline;
-} 
+}
 .text-link:hover:active {
-} 
+}
 .text-link[visited="true"] {
 }
 .text-link[disabled="true"]:hover {
@@ -1736,31 +1568,6 @@ domi-panelset label.viewer-title {
 }
 
 /******************************************************************************
-* ERROR CONSOLE
-******************************************************************************/
-#ConsoleBox {
-  background-color: transparent;
-  border-bottom: none;
-}
-#ConsoleBox hbox.lineNumberRow > label {
-  color: rgb(15,15,15);
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton {
-  background-image: url(chrome://songbird/skin/base-elements/bg-button-tall.png);
-  background-position: center 0px;
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton:hover {
-  background-position: center -45px;
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton:active,
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton[checked="true"] {
-  background-position: center -90px;
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton:disabled {
-  background-position: center -135px;
-}
-
-/******************************************************************************
 * EXTENSIONS ABOUT
 ******************************************************************************/
 #clientBox {
@@ -1791,7 +1598,22 @@ domi-panelset label.viewer-title {
 #dialog_desc_box
 {
   background-color: #4b4a57;
-  /* BLUE */
-  border: 1px solid #2f5f82;
+  border: 1px solid #2f5f82;  /* BLUE */
 }
 
+/*******************************************************************************
+* PLAY QUEUE
+*******************************************************************************/
+
+.playqueue-instructions {
+  background-color: rgb(36,34,46);
+  line-height: 16px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history ) {
+  color: rgb(186,184,194);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled ) {
+  color: rgb(146,144,153);
+}

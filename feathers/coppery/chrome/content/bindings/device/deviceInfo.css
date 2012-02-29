@@ -45,6 +45,7 @@ Imported by bindings.css or directly into feathers.
 }
 .device-specs-grid-label {
   font-size:100%;
+  max-width: 200px;
 }
 
 #info_box {
@@ -157,7 +158,6 @@ sb-device-battery {
 #overall_device_info_box {
   background-repeat:repeat-x;
   background-position:center top;
-  background-color: rgb(35,33,44);
   /* padding:10px 8px 0px 8px; */
 }
 tabbox#device_management_box > tabpanels > tabpanel {

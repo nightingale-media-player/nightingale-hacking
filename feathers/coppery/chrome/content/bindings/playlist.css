@@ -3,7 +3,7 @@
  *
  * This file is part of the Nightingale web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.getnightingale.com
  *
  * This file may be licensed under the terms of of the
@@ -297,14 +297,15 @@ In-cell Checkbox
   padding-left: 18px !important;
 }
 
+/* check originNotInMainLibrary before playing so that playing icon will override */
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, originNotInMainLibrary ) {
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/playlist/icon-originnotinmainlibrary.png);
+}
+
 .sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing ) {
   background-repeat: no-repeat;
   background-image: url(chrome://songbird/skin/playlist/icon-playing.png);
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled )
-{
-  color: rgb(146,144,153);
 }
 
 treecol[bind="http://songbirdnest.com/data/1.0#duration"],
@@ -366,15 +367,9 @@ Play Queue
  *
  * (4) Normal styling for 'selected' and 'focus' overrides playqueue-history
  *     styling, but not playqueue-current styling
+ *
+ * See PLAY QUEUE chapter in feathers.css for font colors.
  */
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history ) {
-  color: rgb(186,184,194);
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled ) {
-  color: rgb(146,144,153);
-}
 
 .sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, odd ) {
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-history-odd-row.png');

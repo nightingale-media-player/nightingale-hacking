@@ -500,15 +500,20 @@ sb-sys-titlebar {
 #sb-sys-titlebar-primary-content {
   -moz-box-align:center !important;
 }
+#faceplate-tool-bar  {
+}
 #faceplate-tool-bar > * {
-  margin:2px 0px 2px 4px;
+  margin:0px 2px 2px 2px;
 }
 #faceplate-tool-bar > sb-nowplaying-rating {
-  margin:0px 0px 0px 4px !important;
+  margin:0px 0px 0px 1px !important;
 }
 #faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
+  min-height: 18px;
 }
-
+#faceplate_seekbar_box {
+  margin-top: 1px;
+}
 
 
 #control_pane_box {
@@ -521,34 +526,31 @@ sb-sys-titlebar {
   padding:0 9px 0 5px;
 }
 #control_buttons_box > .sb-player-button {
-  margin:0 1px;
+  margin:0px;
+}
+#shuffle_repeat_box {
+  margin-left: 3px;
 }
 #shuffle_repeat_box > .sb-player-button {
-  margin:0px 1px 0px 2px;
+  margin:0px 0px 0px 1px;
 }
 #volume_box {
+  margin-left: 1px;
   padding:0 6px 0px 1px;
   -moz-box-pack: center;
   -moz-box-align: center;
-  min-height:52px;
-}
-/* fixme by adjusting height of volume slider */
-.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
-	margin-top: 2px;
-}
-.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
-	margin-top: 2px;
+  min-height:60px;
 }
 
 #control_pane {
-  padding:0 5px;
+  padding:0 11px 0px 3px;
 }
 
 #control_pane_box > .hook > .left,
 #control_pane_box > .hook > .right,
 #control_pane_box > .hook > .middle {
   min-width:16px;
-  min-height:52px;
+  min-height:60px;
 }
 
 
@@ -596,8 +598,8 @@ treechildren::-moz-tree-twisty(open) {
 
 
 #faceplate_box {
-  padding:2px 8px;
-  min-height:52px;
+  padding:2px 8px 2px 7px;
+  min-height:60px;
 }
 #faceplate > .hook > .left,
 #faceplate > .hook > .middle,
@@ -690,8 +692,8 @@ notification,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .left,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .right,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .middle {
-  min-height: 53px;
-  max-height: 53px;
+  min-height: 61px;
+  max-height: 61px;
 }
 #content_player_wrapper[playercontrols='top'] #servicepane-status-bar-box,
 #content_player_wrapper[playercontrols='top'] #status-bar-box {
@@ -1016,19 +1018,31 @@ richlistitem[selected="true"] .includeUpdate {
   background-color: rgb(50,50,50);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 #addonsMsg+vbox {
   padding:0 8px;
 }
 #viewGroup {
   -moz-box-pack:center;
+  -moz-box-flex:1;
   padding:6px 6px 0px 0px;
-  margin-left: -18px;
 }
 #extensionsView {
   margin:0px;
   /* HIDDEN */
-  /* BLUE */
-  border:1px solid rgb(47,95,130);
+  border:1px solid rgb(47,95,130);   /* BLUE */
 }
 #viewGroup > radio {
   padding:2px 8px;
@@ -1055,6 +1069,7 @@ richlistitem:first-child,
 template+richlistitem {
   border-top:none !important;
 }
+.dialog-button-box,
 .prefWindow-dlgbuttons {
   background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
@@ -1135,15 +1150,15 @@ treecol {
 }
 
 treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
-  min-width: 78px;
-  width: 78px;
+  min-width: 90px;
+  width: 90px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
   min-width: 20px;
   width: 20px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#ordinal"] {
-  min-width: 42px;
+  min-width: 30px;
   width: 42px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {
@@ -1159,7 +1174,10 @@ treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-downloadButton cell-active ) {
   color: rgb(164,163,166);
 }
-
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled )
+{
+  color: rgb(146,144,153);
+}
 
 radiogroup {
   padding:4px;

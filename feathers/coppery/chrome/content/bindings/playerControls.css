@@ -63,7 +63,7 @@ Imported by bindings.css or directly into feathers.
 .sb-player-button > button > .button-box > .button-icon,
 .sb-player-button > .button-box > .button-icon
 {
-  margin: 0px !important;  
+  margin: 0px !important;
 }
 
 .sb-player-button:focus > button > .button-box > .button-text,
@@ -85,6 +85,7 @@ Imported by bindings.css or directly into feathers.
   border:none;
 }
 
+
 /*play&pause*/
 .sb-player-play-button-play > button,
 .sb-player-playpause-button-play > button,
@@ -104,37 +105,37 @@ Imported by bindings.css or directly into feathers.
   /*play*/
   .sb-player-play-button-play > button,
   .sb-player-playpause-button-play > button {
-    -moz-image-region: rect(0px 40px 40px 0px);
+    -moz-image-region: rect(0px 52px 52px 0px);
   }
   .sb-player-play-button-play:hover > button,
   .sb-player-playpause-button-play:hover > button {
-    -moz-image-region: rect(40px 40px 80px 0px);
+    -moz-image-region: rect(52px 52px 104px 0px);
   }
   .sb-player-play-button-play:active > button,
   .sb-player-playpause-button-play:active > button {
-    -moz-image-region: rect(80px 40px 120px 0px);
+    -moz-image-region: rect(104px 52px 156px 0px);
   }
   .sb-player-play-button-play[disabled="true"] > button,
   .sb-player-playpause-button-play[disabled="true"] > button {
-    -moz-image-region: rect(120px 40px 160px 0px);
+    -moz-image-region: rect(156px 52px 208px 0px);
     opacity: 1.0 !important;
   }
   /*pause*/
   .sb-player-pause-button-pause > button,
   .sb-player-playpause-button-pause > button {  
-    -moz-image-region: rect(0px 80px 40px 40px);
+    -moz-image-region: rect(0px 104px 52px 52px);
   }
   .sb-player-pause-button-pause:hover > button,
   .sb-player-playpause-button-pause:hover > button { 
-    -moz-image-region: rect(40px 80px 80px 40px);
+    -moz-image-region: rect(52px 104px 104px 52px);
   }
   .sb-player-pause-button-pause:active > button,
   .sb-player-playpause-button-pause:active > button{
-    -moz-image-region: rect(80px 80px 120px 40px);
+    -moz-image-region: rect(104px 104px 156px 52px);
   }
   .sb-player-pause-button-pause[disabled="true"] > button,
   .sb-player-playpause-button-pause[disabled="true"] > button { 
-    -moz-image-region: rect(120px 80px 160px 40px);
+    -moz-image-region: rect(156px 104px 208px 52px);
     opacity: 1.0 !important;
   }
 
@@ -143,16 +144,16 @@ Imported by bindings.css or directly into feathers.
 
 .sb-player-stop-button-stop > button {
   list-style-image: url(chrome://songbird/skin/media-control-pane/button-stop.png); 
-  -moz-image-region: rect(0px 40px 40px 0px);
+  -moz-image-region: rect(0px 52px 52px 0px);
 }
 .sb-player-stop-button-stop:hover > button { 
-  -moz-image-region: rect(40px 40px 80px 0px);
+  -moz-image-region: rect(52px 52px 104px 0px);
 }
 .sb-player-stop-button-stop:active > button {
-  -moz-image-region: rect(80px 40px 120px 0px);
+  -moz-image-region: rect(104px 52px 156px 0px);
 }
 .sb-player-stop-button-stop[disabled="true"] > button { 
-  -moz-image-region: rect(120px 40px 160px 0px);
+  -moz-image-region: rect(156px 52px 208px 0px);
 }
 
 
@@ -164,19 +165,19 @@ sb-player-forward-button {
 }
 sb-player-back-button,
 sb-player-forward-button {
-  -moz-image-region: rect(0px 40px 40px 0px);
+  -moz-image-region: rect(0px 52px 52px 0px);
 }
 sb-player-back-button:hover,
 sb-player-forward-button:hover { 
-  -moz-image-region: rect(40px 40px 80px 0px);
+  -moz-image-region: rect(52px 52px 104px 0px);
 }
 sb-player-back-button:active,
 sb-player-forward-button:active { 
-  -moz-image-region: rect(80px 40px 120px 0px);
+  -moz-image-region: rect(104px 52px 156px 0px);
 }
 sb-player-back-button[disabled="true"],
 sb-player-forward-button[disabled="true"] { 
-  -moz-image-region: rect(120px 40px 160px 0px);
+  -moz-image-region: rect(156px 52px 208px 0px);
   opacity:1.0 !important;
 }
 
@@ -222,11 +223,13 @@ Mute and Slider
 
 
 
-.sb-player-volume-slider[sbid="sb-progress-slider-min"],
-.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
-  -moz-image-region: rect(0px 16px 16px 0px);
+.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+  -moz-image-region: rect(0px 14px 13px 0px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  -moz-image-region: rect(0px 22px 13px 0px);
+}
+/* .sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
 .sb-player-volume-slider[sbid="sb-progress-slider-max"]:hover {
   -moz-image-region: rect(16px 16px 32px 0px);
 }
@@ -254,7 +257,7 @@ Mute and Slider
 .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked][disabled="true"],
 .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked][disabled="true"] {
   -moz-image-region: rect(48px 32px 64px 16px);
-}
+} */
 
 sb-player-mute-button {
   padding:0;
@@ -324,6 +327,7 @@ progressmeter.sb-player-volume-slider {
 }
 
 stack.sb-player-volume-slider {
+  margin-left: -1px;
   padding:2px 0;
 }
 

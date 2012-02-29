@@ -31,25 +31,23 @@ This CSS file specifies the size and position of the Main Window UI.
 This file is typically included by the current feathers CSS.
 
 *******************************************************************************
-*/ 
+*/
 
-/** 
+/**
 *******************************************************************************
 THE LAYOUT for the Main Application Window
 Love the box.
 *******************************************************************************
-*/ 
+*/
 
 window#mainplayer {
   min-width:640px;
   min-height:480px;
-  width:1000px;
-  height:720px;
 }
 
 /* hide the overflow here so that as the window shrinks below a certain size
    the scrollbars on the browser window don't disappear.
- */  
+ */
 #control_pane_box {
   min-height: 52px;
   max-height: 52px;
