@@ -10,17 +10,15 @@ set -e
 build="release"
 buildir="$(pwd)"
 
-# this depends on your system's gstreamer location
-# this should be added to configure.ac and we should
-# make system gstreamer default on linux
-for dir in /usr/lib64 /usr/lib ; do
-	if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-		export GST_PLUGIN_PATH=${dir}/gstreamer-0.10
-		break
-	elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-		export GST_PLUIN_PATH=${dir}/gstreamer0.10
-		break
-	fi
+# use our own gstreamer libs
+for dir in /usr/lib64 /usr/lib /usr/lib/i386-linux/gnu /usr/lib/x86_64-linux-gnu ; do
+  if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
+    export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
+    break
+  elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+    export GST_PLUGIN_PATH=${dir}/gstreamer0.10
+    break
+  fi
 done
 
 # hopefully we have python2 on this system
