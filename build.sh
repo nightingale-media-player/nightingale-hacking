@@ -41,16 +41,16 @@ case $OSTYPE in
 		fi
 		cd ../
 		
-		# use our own gstreamer libs
-		for dir in /usr/lib64 /usr/lib /usr/lib/i386-linux-gnu /usr/lib/x86_64-linux-gnu; do
-			if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
-				export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
-				break
-			elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
-				export GST_PLUGIN_PATH=${dir}/gstreamer0.10
-				break
-			fi
-		done
+    # use our own gstreamer libs
+    for dir in /usr/lib /usr/lib64 /usr/lib/i386-linux/gnu /usr/lib/x86_64-linux-gnu ; do
+      if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
+        export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
+        break
+      elif [ -f ${dir}/gstreamer0.10/libgstcoreelements.so ] ; then
+        export GST_PLUGIN_PATH=${dir}/gstreamer0.10
+        break
+      fi
+    done
         
 		# !!!! NOTICE: comment the below out if building on/for Windows or Mac or playback probably won't work !!!!
 		grep -sq gstreamer-system nightingale.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> nightingale.config )
