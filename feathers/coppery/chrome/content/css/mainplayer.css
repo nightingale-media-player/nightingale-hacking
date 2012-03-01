@@ -49,8 +49,8 @@ window#mainplayer {
    the scrollbars on the browser window don't disappear.
  */
 #control_pane_box {
-  min-height: 52px;
-  max-height: 52px;
+  min-height: 61px;
+  max-height: 61px;
   overflow-x: hidden;
 }
 

@@ -688,13 +688,6 @@ notification,
 #content_player_wrapper[playercontrols='top'] {
   -moz-box-direction: reverse;
 }
-#content_player_wrapper[playercontrols='top'] #control_pane_box,
-#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .left,
-#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .right,
-#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .middle {
-  min-height: 61px;
-  max-height: 61px;
-}
 #content_player_wrapper[playercontrols='top'] #servicepane-status-bar-box,
 #content_player_wrapper[playercontrols='top'] #status-bar-box {
   border-bottom:none !important;
