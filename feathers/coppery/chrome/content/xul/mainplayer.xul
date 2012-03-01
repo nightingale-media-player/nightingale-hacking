@@ -288,8 +288,10 @@
             </hbox>
             
             <hbox id="shuffle_repeat_box" pack="center" align="center">
-              <sb-player-shuffle-button class="sb-player-button" />
-              <sb-player-repeat-button class="sb-player-button" />
+            <stack>
+              <sb-player-shuffle-button left="0" class="sb-player-button" />
+              <sb-player-repeat-button left="27" class="sb-player-button" />
+            </stack>
             </hbox>
 
             <hbox id="faceplate_box" flex="1" pack="center" align="center">

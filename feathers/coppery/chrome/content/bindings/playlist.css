@@ -371,6 +371,7 @@ Play Queue
  * See PLAY QUEUE chapter in feathers.css for font colors.
  */
 
+/*
 .sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, odd ) {
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-history-odd-row.png');
 }
@@ -398,3 +399,4 @@ Play Queue
 .sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, selected, focus) {
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-selected-focused.png');
 }
+*/
