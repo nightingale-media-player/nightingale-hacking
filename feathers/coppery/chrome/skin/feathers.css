@@ -1597,7 +1597,7 @@ domi-panelset label.viewer-title {
 *******************************************************************************/
 #dialog_desc_box
 {
-  background-color: #4b4a57;
+  background-color: #5b5b5b;
   border: 1px solid #2f5f82;  /* BLUE */
 }
 
@@ -1606,7 +1606,8 @@ domi-panelset label.viewer-title {
 *******************************************************************************/
 
 .playqueue-instructions {
-  background-color: rgb(36,34,46);
+  background-color: rgb(110,110,110);
+  border: 1px solid #434343;
   line-height: 16px;
 }
 
