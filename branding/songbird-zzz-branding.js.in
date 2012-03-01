@@ -6,13 +6,13 @@ pref("app.update.url.manual", "http://getnightingale.com/");
 pref("app.update.url.details", "http://wiki.getnightingale.com/doku.php?id=release_notes");
 
 pref("extensions.update.url", "https://addon-files.songbirdnest.com/updates/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/%ITEM_VERSION%/%ITEM_ID%/update.rdf");
-pref("extensions.getMoreExtensionsURL", "http://addons.songbirdnest.com/");
-pref("extensions.getMoreThemesURL", "http://addons.songbirdnest.com/tag/feathers");
+pref("extensions.getMoreExtensionsURL", "http://addons.getnightingale.com/");
+pref("extensions.getMoreThemesURL", "http://addons.getnightingale.com/");
 
 pref("extensions.blocklist.url", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/blocklist.xml");
 pref("extensions.blocklist.detailsURL", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/");
 
-pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
+pref("xpinstall.whitelist.add", "addons.getnightingale.com");
 //pref("xpinstall.whitelist.add.0", "translate.songbirdnest.com");
 pref("xpinstall.whitelist.add.0", "wiki.getnightingale.com");
 pref("xpinstall.whitelist.add.1", "getnightingale.com");
@@ -28,19 +28,19 @@ pref("songbird.url.locales", "http://locales.getnightingale.com/langpacks/%VERSI
 pref("breakpad.reportURL", "http://crashreports.songbirdnest.com/report/index/");
 
 // Search engines URL
-pref("browser.search.searchEnginesURL",      "http://addons.songbirdnest.com/tag/search");
+pref("browser.search.searchEnginesURL",      "http://addons.getnightingale.com/");
 
 // Songbird default urls
-pref("songbird.url.addons", "http://addons.songbirdnest.com/");
-pref("songbird.url.addons.displaypanes", "http://addons.songbirdnest.com/tag/displaypane");
-pref("songbird.url.addons.feathers", "http://addons.songbirdnest.com/tag/feathers");
-pref("songbird.url.addons.mediaviews", "http://addons.songbirdnest.com/tag/mediaview");
+pref("songbird.url.addons", "http://addons.getnightingale.com/");
+pref("songbird.url.addons.displaypanes", "http://addons.getnightingale.com/");
+pref("songbird.url.addons.feathers", "http://addons.getnightingale.com/");
+pref("songbird.url.addons.mediaviews", "http://addons.getnightingale.com/");
 pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
-pref("songbird.url.homepage", "http://www.getsongbird.com/");
-pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
+pref("songbird.url.homepage", "http://getnightingale.com/");
+pref("songbird.url.bugzilla", "https://github.com/nightingale-media-player/nightingale-hacking/issues");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
 pref("songbird.url.subscribe", "http://getsongbird.us1.list-manage2.com/subscribe/post");
-pref("songbird.url.support", "http://songbirdnest.com/support/");
+pref("songbird.url.support", "http://forum.getnightingale.com/forum-13.html");
 pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
 pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
 pref("songbird.url.support.inaccessiblelibrary", "https://wiki.songbirdnest.com/Getting_Started_with_Songbird/08_First_Aid_(HELP!)/Inaccessible_Library");
