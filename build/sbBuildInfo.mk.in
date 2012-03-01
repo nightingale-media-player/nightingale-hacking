@@ -5,7 +5,7 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_BUILD_ID=20120228104905
+SB_BUILD_ID=20120301000000
 BuildNumber=2219
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.11.0
@@ -18,10 +18,10 @@ SB_MOZILLA_VERSION=
 # use them; we make a slight distinction between JS-only and binary extensions
 # for historical policy reasons; that's likely to change if/when we get
 # nightly addon update/1st run bundles working
-SB_BINARY_EXTENSION_MIN_VER=1.11.0b1
+SB_BINARY_EXTENSION_MIN_VER=$(SB_MILESTONE)
 SB_BINARY_EXTENSION_MAX_VER=$(SB_MILESTONE)
-SB_JSONLY_EXTENSION_MIN_VER=1.11.0b1
-SB_JSONLY_EXTENSION_MAX_VER=1.12.01a
+SB_JSONLY_EXTENSION_MIN_VER=$(SB_MILESTONE)
+SB_JSONLY_EXTENSION_MAX_VER=$(SB_MILESTONE)
 
 # Why is there no RepoRevisionClient, you ask? We have to treat client-pull
 # revisions slightly differently, because we modify the repo itself whenever
