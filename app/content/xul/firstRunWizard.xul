@@ -61,7 +61,7 @@
    ************************************************************************* -->
 
   <!-- EULA page. -->
-  <!--<wizardpage id="first_run_eula_page"
+  <wizardpage id="first_run_eula_page"
               pageid="first_run_eula_page"
               class="first-run-wizard-page"
               next="first_run_welcome_page"
@@ -71,7 +71,7 @@
               hidecancel="true"
               onpageshow="firstRunWizard.doPageShow();"
               firstrunwizardpage="true"
-              oncommand="firstRunWizard.update();"/>-->
+              oncommand="firstRunWizard.update();"/>
 
   <!-- Welcome page. -->
   <wizardpage id="first_run_welcome_page"
