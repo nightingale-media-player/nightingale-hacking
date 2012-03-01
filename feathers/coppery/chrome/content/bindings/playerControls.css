@@ -411,16 +411,16 @@ sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat
 }
 
 .sb-player-repeat-button-rep1 {
-  -moz-image-region: rect(0px 111px 24px 74px);
+  -moz-image-region: rect(0px 111px 33px 74px);
 }
 .sb-player-repeat-button-rep1:hover {
-  -moz-image-region: rect(24px 111px 48px 74px);
+  -moz-image-region: rect(33px 111px 66px 74px);
 }
 .sb-player-repeat-button-rep1:active {
-  -moz-image-region: rect(48px 111px 72px 74px);
+  -moz-image-region: rect(66px 111px 99px 74px);
 }
 sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-rep1 {
-  -moz-image-region: rect(72px 111px 96px 74px);
+  -moz-image-region: rect(99px 111px 132px 74px);
 }
 
 sb-player-repeat-button[disabled="true"] {
