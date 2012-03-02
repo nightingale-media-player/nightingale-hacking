@@ -716,6 +716,499 @@ protected:
 };
 
 
+
+/**
+ * A subclass of nsRunnable that can be waited on when synchronous
+ * operation is needed.
+ */
+class sbRunnable : public nsRunnable
+{
+public:
+  sbRunnable(
+    const char *  aName) :
+    mMonitor(aName ? aName : "sbRunnable"),
+    mDone(false)
+    {}
+
+
+  /**
+   * nsIRunnable run method.  Marks the operation as complete
+   * and signals all waiters.  Subclasses must override this
+   * function to perform any real work, and then delegate to
+   * this function when done.
+   */
+  NS_IMETHOD Run();
+
+  /**
+   * Returns true if Run() completes before the timeout lapses,
+   * or false otherwise.
+   */
+  PRBool Wait(PRIntervalTime aTimeout);
+
+private:
+  mozilla::Monitor  mMonitor;
+  PRBool            mDone;
+};
+
+
+
+/**
+ * A subclass template of sbRunnable that can return a result.
+ */
+template <typename ResultType>
+class sbRunnable_ : public sbRunnable
+{
+public:
+  using sbRunnable::Wait;
+
+public:
+  sbRunnable_(
+    const char *  aName) :
+    sbRunnable(aName)
+    {}
+
+
+  /**
+   * nsIRunnable run method.  Delegates to OnRun().  Subclasses
+   * must override OnRun(), not this function.
+   */
+  NS_IMETHOD Run()
+  {
+    // Invoke method.
+    mResult = OnRun();
+    return sbRunnable::Run();
+  }
+
+
+  /**
+   * Waits indefinitely for OnRun() to complete and returns its result.
+   */
+  ResultType
+  Wait()
+  {
+    Wait(PR_INTERVAL_NO_TIMEOUT);
+    return mResult;
+  }
+
+
+  /**
+   * Returns true if OnRun() completes before the timeout lapses,
+   * or false otherwise.  If true, returns the result of OnRun()
+   * in aResult.
+   */
+  PRBool
+  Wait(PRIntervalTime aTimeout, ResultType & aResult)
+  {
+    if (!Wait(aTimeout)) {
+      return PR_FALSE;
+    }
+
+    aResult = mResult;
+    return PR_TRUE;
+  }
+
+
+protected:
+  /**
+   * The operation to perform when invoked, as defined by a subclass.
+   */
+  virtual ResultType OnRun() = 0;
+
+private:
+  ResultType  mResult;
+};
+
+
+
+/**
+ * A specialization of sbRunnable_<> for operations that return void.
+ */
+template <>
+class sbRunnable_<void> : public sbRunnable
+{
+public:
+  sbRunnable_(
+    const char *  aName) :
+    sbRunnable(aName)
+    {}
+
+
+  /**
+   * nsIRunnable run method.  Delegates to OnRun().  Subclasses
+   * must override OnRun(), not this function.
+   */
+  NS_IMETHOD Run()
+  {
+    // Invoke method.
+    OnRun();
+    return sbRunnable::Run();
+  }
+
+
+protected:
+  /**
+   * The operation to perform when invoked, as defined by a subclass.
+   */
+  virtual void OnRun() = 0;
+};
+
+
+
+/**
+ * A subclass template of sbRunnable_<> that captures an object and
+ * a method to call when Run() is invoked.  A subclass must invoke the
+ * method, because this class doesn't know what arguments to pass,
+ * if any.
+ */
+template <typename ResultType,
+          typename TargetType,
+          typename MethodType>
+class sbRunnableMethod_ : public sbRunnable_<ResultType>
+{
+public:
+  sbRunnableMethod_(
+    TargetType &  aTarget,
+    MethodType    aMethod,
+    const char *  aName) :
+    sbRunnable_<ResultType>(aName),
+    mTarget(&aTarget),
+    mMethod(aMethod)
+    {}
+
+
+protected:
+  /**
+   * The operation to perform when invoked.  Subclasses should call
+   * mMethod on mTarget with the proper arguments and return the result.
+   */
+  virtual ResultType OnRun() = 0;
+
+  nsRefPtr<TargetType>  mTarget;
+  MethodType            mMethod;
+};
+
+
+
+/**
+ * A subclass template of sbRunnableMethod_<> for methods that take one
+ * argument.  Use the optional Arg1Type to specify the type used to curry
+ * the argument if it should differ from Param1Type.
+ *
+ * For example, if Param1Type is nsISupports *, Arg1Type can be set to
+ * nsRefPtr<nsISupports> to ensure that the sbRunnableMethod1_<> retains
+ * a reference to the argument for the life of the sbRunnableMethod1_<>.
+ */
+template <typename ResultType,
+          typename TargetType,
+          typename Param1Type,
+          typename Arg1Type = Param1Type,
+          typename MethodType = ResultType (TargetType::*) (Param1Type)>
+class sbRunnableMethod1_ :
+  public sbRunnableMethod_<ResultType, TargetType, MethodType>
+{
+public:
+  typedef sbRunnableMethod_<ResultType, TargetType, MethodType> BaseType;
+
+
+  /**
+   * Capture the object and method to call and the argument to pass
+   */
+  sbRunnableMethod1_(
+    TargetType &  aTarget,
+    MethodType    aMethod,
+    Param1Type    aArg1,
+    const char *  aName = NULL) :
+    BaseType(aTarget, aMethod, aName),
+    mArg1(aArg1)
+    {}
+
+
+protected:
+  /**
+   * Invokes the captured method on the captured object with the
+   * captured argument and returns its result.  A subclass that
+   * overrides this function should eventually delegate to it.
+   */
+  virtual ResultType OnRun()
+  {
+    return (BaseType::mTarget->*BaseType::mMethod)(mArg1);
+  }
+
+
+private:
+  Arg1Type  mArg1;
+};
+
+
+
+/**
+ * A subclass template of sbRunnableMethod_<> for methods that take two
+ * arguments.  Use the optional Arg*Types to specify the types used to
+ * curry arguments if any should differ from the corresponding Param*Type.
+ *
+ * For example, if Param2Type is nsISupports *, Arg2Type can be set to
+ * nsRefPtr<nsISupports> to ensure that the runnable retains a reference to
+ * the argument for the life of the runnable.
+ */
+template <typename ResultType,
+          typename TargetType,
+          typename Param1Type,
+          typename Param2Type,
+          typename Arg1Type = Param1Type,
+          typename Arg2Type = Param2Type,
+          typename MethodType = ResultType (TargetType::*) (Param1Type,
+                                                            Param2Type)>
+class sbRunnableMethod2_ :
+  public sbRunnableMethod_<ResultType, TargetType, MethodType>
+{
+public:
+  typedef sbRunnableMethod_<ResultType, TargetType, MethodType> BaseType;
+
+
+  /**
+   * Capture the object and method to call and the arguments to pass
+   */
+  sbRunnableMethod2_(
+    TargetType &  aTarget,
+    MethodType    aMethod,
+    Param1Type    aArg1,
+    Param2Type    aArg2,
+    const char *  aName = NULL) :
+    BaseType(aTarget, aMethod, aName),
+    mArg1(aArg1),
+    mArg2(aArg2)
+    {}
+
+
+protected:
+  /**
+   * Invokes the captured method on the captured object with the
+   * captured arguments and returns its result.  A subclass that
+   * overrides this function should eventually delegate to it.
+   */
+  virtual ResultType OnRun()
+  {
+    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2);
+  }
+
+
+private:
+  Arg1Type  mArg1;
+  Arg2Type  mArg2;
+};
+
+
+
+/**
+ * A subclass template of sbRunnableMethod_<> for methods that take three
+ * arguments.  Use the optional Arg*Types to specify the types used to
+ * curry arguments if any should differ from the corresponding Param*Type.
+ *
+ * For example, if Param2Type is nsISupports *, Arg2Type can be set to
+ * nsRefPtr<nsISupports> to ensure that the runnable retains a reference to
+ * the argument for the life of the runnable.
+ */
+template <typename ResultType,
+          typename TargetType,
+          typename Param1Type,
+          typename Param2Type,
+          typename Param3Type,
+          typename Arg1Type = Param1Type,
+          typename Arg2Type = Param2Type,
+          typename Arg3Type = Param3Type,
+          typename MethodType = ResultType (TargetType::*) (Param1Type,
+                                                            Param2Type,
+                                                            Param3Type)>
+class sbRunnableMethod3_ :
+  public sbRunnableMethod_<ResultType, TargetType, MethodType>
+{
+public:
+  typedef sbRunnableMethod_<ResultType, TargetType, MethodType> BaseType;
+
+
+  /**
+   * Capture the object and method to call and the arguments to pass
+   */
+  sbRunnableMethod3_(
+    TargetType &  aTarget,
+    MethodType    aMethod,
+    Param1Type    aArg1,
+    Param2Type    aArg2,
+    Param3Type    aArg3,
+    const char *  aName = NULL) :
+    BaseType(aTarget, aMethod, aName),
+    mArg1(aArg1),
+    mArg2(aArg2),
+    mArg3(aArg3)
+    {}
+
+
+protected:
+  /**
+   * Invokes the captured method on the captured object with the
+   * captured arguments and returns its result.  A subclass that
+   * overrides this function should eventually delegate to it.
+   */
+  virtual ResultType OnRun()
+  {
+    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2, mArg3);
+  }
+
+
+private:
+  Arg1Type  mArg1;
+  Arg2Type  mArg2;
+  Arg3Type  mArg3;
+};
+
+
+
+/**
+ * A subclass template of sbRunnableMethod_<> for methods that take four
+ * arguments.  Use the optional Arg*Types to specify the types used to
+ * curry arguments if any should differ from the corresponding Param*Type.
+ *
+ * For example, if Param2Type is nsISupports *, Arg2Type can be set to
+ * nsRefPtr<nsISupports> to ensure that the runnable retains a reference to
+ * the argument for the life of the runnable.
+ */
+template <typename ResultType,
+          typename TargetType,
+          typename Param1Type,
+          typename Param2Type,
+          typename Param3Type,
+          typename Param4Type,
+          typename Arg1Type = Param1Type,
+          typename Arg2Type = Param2Type,
+          typename Arg3Type = Param3Type,
+          typename Arg4Type = Param4Type,
+          typename MethodType = ResultType (TargetType::*) (Param1Type,
+                                                            Param2Type,
+                                                            Param3Type,
+                                                            Param4Type)>
+class sbRunnableMethod4_ :
+  public sbRunnableMethod_<ResultType, TargetType, MethodType>
+{
+public:
+  typedef sbRunnableMethod_<ResultType, TargetType, MethodType> BaseType;
+
+
+  /**
+   * Capture the object and method to call and the arguments to pass
+   */
+  sbRunnableMethod4_(
+    TargetType &  aTarget,
+    MethodType    aMethod,
+    Param1Type    aArg1,
+    Param2Type    aArg2,
+    Param3Type    aArg3,
+    Param4Type    aArg4,
+    const char *  aName = NULL) :
+    BaseType(aTarget, aMethod, aName),
+    mArg1(aArg1),
+    mArg2(aArg2),
+    mArg3(aArg3),
+    mArg4(aArg4)
+    {}
+
+
+protected:
+  /**
+   * Invokes the captured method on the captured object with the
+   * captured arguments and returns its result.  A subclass that
+   * overrides this function should eventually delegate to it.
+   */
+  virtual ResultType OnRun()
+  {
+    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2, mArg3, mArg4);
+  }
+
+
+private:
+  Arg1Type  mArg1;
+  Arg2Type  mArg2;
+  Arg3Type  mArg3;
+  Arg4Type  mArg4;
+};
+
+
+
+/**
+ * A subclass template of sbRunnableMethod_<> for methods that take five
+ * arguments.  Use the optional Arg*Types to specify the types used to
+ * curry arguments if any should differ from the corresponding Param*Type.
+ *
+ * For example, if Param2Type is nsISupports *, Arg2Type can be set to
+ * nsRefPtr<nsISupports> to ensure that the runnable retains a reference to
+ * the argument for the life of the runnable.
+ */
+template <typename ResultType,
+          typename TargetType,
+          typename Param1Type,
+          typename Param2Type,
+          typename Param3Type,
+          typename Param4Type,
+          typename Param5Type,
+          typename Arg1Type = Param1Type,
+          typename Arg2Type = Param2Type,
+          typename Arg3Type = Param3Type,
+          typename Arg4Type = Param4Type,
+          typename Arg5Type = Param5Type,
+          typename MethodType = ResultType (TargetType::*) (Param1Type,
+                                                            Param2Type,
+                                                            Param3Type,
+                                                            Param4Type,
+                                                            Param5Type)>
+class sbRunnableMethod5_ :
+  public sbRunnableMethod_<ResultType, TargetType, MethodType>
+{
+public:
+  typedef sbRunnableMethod_<ResultType, TargetType, MethodType> BaseType;
+
+
+  /**
+   * Capture the object and method to call and the arguments to pass
+   */
+  sbRunnableMethod5_(
+    TargetType &  aTarget,
+    MethodType    aMethod,
+    Param1Type    aArg1,
+    Param2Type    aArg2,
+    Param3Type    aArg3,
+    Param4Type    aArg4,
+    Param5Type    aArg5,
+    const char *  aName = NULL) :
+    BaseType(aTarget, aMethod, aName),
+    mArg1(aArg1),
+    mArg2(aArg2),
+    mArg3(aArg3),
+    mArg4(aArg4),
+    mArg5(aArg5)
+    {}
+
+
+protected:
+  /**
+   * Invokes the captured method on the captured object with the
+   * captured arguments and returns its result.  A subclass that
+   * overrides this function should eventually delegate to it.
+   */
+  virtual ResultType OnRun()
+  {
+    return (BaseType::mTarget->*BaseType::mMethod)(mArg1, mArg2, mArg3, mArg4, mArg5);
+  }
+
+
+private:
+  Arg1Type  mArg1;
+  Arg2Type  mArg2;
+  Arg3Type  mArg3;
+  Arg4Type  mArg4;
+  Arg5Type  mArg5;
+};
+
+
+
 //------------------------------------------------------------------------------
 //
 // Songbird thread utilities macros.
