@@ -87,3 +87,55 @@ SB_IsMainThread(nsIThreadManager* aThreadManager)
   return isMainThread;
 }
 
+
+
+NS_IMETHODIMP
+sbRunnable::Run()
+{
+  // Enter the monitor to set the done flag:
+  mozilla::MonitorAutoEnter lock(mMonitor);
+
+  // Set the done flag and notify all waiters:
+  mDone = true;
+  mMonitor.NotifyAll();
+
+  return NS_OK;
+}
+
+
+
+PRBool
+sbRunnable::Wait(PRIntervalTime aTimeout)
+{
+  // Compute a fixed expiration time that won't drift:
+  const PRIntervalTime expiry = PR_IntervalNow() + aTimeout;
+
+  // Enter the monitor to check the done flag:
+  mozilla::MonitorAutoEnter lock(mMonitor);
+
+  // Only wait for Run() to complete if asked:
+  if (aTimeout != PR_INTERVAL_NO_WAIT) {
+    // Loop every time the monitor is signaled, until done
+    // or timed out:
+    while (!mDone) {
+      // Compute how long to wait: indefinitely if PR_INTERVAL_NO_TIMEOUT
+      // was given, or the time remaining until the fixed expiration time,
+      // otherwise.
+      PRIntervalTime timeout;
+      if (aTimeout == PR_INTERVAL_NO_TIMEOUT) {
+        timeout = PR_INTERVAL_NO_TIMEOUT;
+      }
+      else {
+        timeout = expiry - PR_IntervalNow();
+        if (PRInt32(timeout) <= 0) {
+          break;
+        }
+      }
+      // Wait for a signal from Run(), or until timed out
+      mMonitor.Wait(timeout);
+    }
+  }
+
+  // Return the done flag:
+  return mDone;
+}
