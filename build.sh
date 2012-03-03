@@ -44,7 +44,7 @@ function md5_verify() {
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
   linux*)
-    arch=$(uname -m)
+    arch=$(gcc -dumpmachine|sed -e 's/\-.*//')
     depdirn="linux-$arch"
     patch=1
     
@@ -53,9 +53,12 @@ case $OSTYPE in
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
       $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
-      rm -rf "$depdirn" &> /dev/null
-      tar xvf "$depdirn-$version.tar.lzma"
     fi
+    
+    if [ ! -d "$depdirn" ] ; then
+		tar xvf "$depdirn-$version.tar.lzma"
+	fi
+	
     cd ../
     
     # use our own gstreamer libs
@@ -86,16 +89,18 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
-      md5_verify "$depdirn-$version.tar.lzma"
-      rm -rf "$depdirn" &> /dev/null
-      mkdir "$depdirn"
-      tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
+		$DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
+		md5_verify "$depdirn-$version.tar.lzma"
+    fi
+    
+    if [ ! -d "$depdirn" ] ; then
+		mkdir "$depdirn"
+		tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
     fi
     cd ../
     ;;
   darwin*)
-    # no wget on OSX, use curl
+	# no wget on OSX, use curl
     DOWNLOADER="curl -L -O"
     depdirn="macosx-i686"
     arch_flags="-m32 -arch i386"
@@ -112,15 +117,15 @@ case $OSTYPE in
     
     cd dependencies
     
-    if [ ! -d "$depdirn" ] ; then
-      mkdir "$depdirn"
-    fi
+	if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
+		$DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
+		md5_verify "$depdirn-$version.tar.bz2"
+	fi
     
-   if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
-      md5_verify "$depdirn-$version.tar.bz2"
-      tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
-   fi
+	if [ ! -d "$depdirn" ] ; then
+		mkdir "$depdirn"
+		tar -xvf "$depdirn-$version.tar.bz2" -C "$depdirn"
+    fi
     cd ../
     ;;
   *)
@@ -133,11 +138,13 @@ esac
 cd dependencies
 
 if [ ! -f "vendor-$version.zip" ] ; then
-  $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
-  md5_verify "vendor-$version.zip"
+	$DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+	md5_verify "vendor-$version.zip"
+fi
 
-  rm -rf vendor &> /dev/null
-  unzip "vendor-$version.zip"
+if [ ! -d "vendor" ] ; then
+	rm -rf vendor &> /dev/null
+	unzip "vendor-$version.zip"
 fi
 
 cd ../
@@ -147,6 +154,7 @@ cd $buildir
 export PYTHON="$(which python2 2>/dev/null || which python)"
 
 make -f nightingale.mk clobber
+rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make -f nightingale.mk
 
 echo "Build finished!"

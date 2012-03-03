@@ -49,13 +49,8 @@ NOARCH_EXTENSIONS = 7digital \
 # Right now, all of these addons are so-called "noarch" addons; because
 # of this, we only want to build them on one platform if we're an official
 # build; we're using Linux now (see bug 13477#6)
-ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-   DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
-else
-   ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
-      DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
-   endif
-endif
+DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
+
 
 # XXX Mook: NOT installed by default yet, this shouldn't go anywhere,
 # just a build check

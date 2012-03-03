@@ -1255,7 +1255,7 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 * RECOMMENDED AND FIRST RUN ADD-ONS
 ******************************************************************************/
 .sb-add-on-bundle-listbox > richlistitem {
-  background-color: rgb(63,59,72);
+  background-color: rgb(51,51,51);
 }
 
 .sb-add-on-bundle-listbox > richlistitem[selected="true"] {
