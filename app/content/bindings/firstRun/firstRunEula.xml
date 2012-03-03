@@ -91,17 +91,16 @@
           </xul:menulist>
         </xul:hbox>
 
-        <!-- Options box. -->
+        <!-- No metrics for Nightingale
         <xul:vbox anonid="options_box">
 
-          <!-- Metrics collection checkbox. -->
           <xul:checkbox anonid="metrics_checkbox"
                         label="&first_run.feedback.metrics.label;"/>
           <xul:description class="indent sb-first-run-checkbox-description">
             &first_run.feedback.metrics.description;
           </xul:description>
 
-        </xul:vbox> <!-- options_box -->
+        </xul:vbox> -->
 
       </xul:vbox> <!-- container_box -->
 
@@ -151,6 +150,7 @@
         // Initialize the widget services.
         this._widgetSvc.initialize();
 
+        /* No metrics for Nightingale
         // set the default value of the metrics collection checkbox
         var metricsChecked =
           Application.prefs.getValue("app.metrics.checkedByDefault", true);
@@ -159,10 +159,12 @@
                                                   "anonid",
                                                   "metrics_checkbox");
         metricsCheckbox.checked = metricsChecked;
+				*/
       ]]></constructor>
 
 
       <method name="saveSettings"><body><![CDATA[
+			  /* No metrics for Nightingale
         // Save the metrics collection setting.
         var metricsCheckbox =
               document.getAnonymousElementByAttribute(this,
@@ -170,6 +172,8 @@
                                                       "metrics_checkbox");
         var metricsEnabled = metricsCheckbox.checked ? "1" : "0";
         Application.prefs.setValue("app.metrics.enabled", metricsEnabled);
+				*/
+				Application.prefs.setValue("app.metrics.enabled", "0");
       ]]></body></method>
 
       <!--
