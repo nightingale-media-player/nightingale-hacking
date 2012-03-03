@@ -154,6 +154,7 @@ cd $buildir
 export PYTHON="$(which python2 2>/dev/null || which python)"
 
 make -f nightingale.mk clobber
+rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make -f nightingale.mk
 
 echo "Build finished!"
