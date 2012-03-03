@@ -5,7 +5,6 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_APPNAME=Songbird
 SB_BUILD_ID=20120302013325
 BuildNumber=2222
 SB_BUILD_NUMBER=$(BuildNumber)
