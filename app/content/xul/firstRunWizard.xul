@@ -212,7 +212,8 @@
   <wizardpage id="first_run_install_add_ons_page"
               pageid="first_run_install_add_ons_page"
               label="&first_run.install_add_ons.title;"
-              onpageshow="firstRunWizard.doPageShow();">
+              onpageshow="firstRunWizard.doPageShow();"
+			  postfinish="first_run_install_add_ons_page">
     <sb-first-run-install-add-ons id="first_run_install_add_ons"
                                   class="first-run-wizard-page"
                                   firstrunwizardpage="true"
