@@ -82,11 +82,6 @@ case $OSTYPE in
     rm ./components/library/localdatabase/content/schema.sql
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
     
-    if [-f nightingale.config ] ; then
-		rm nightingale.config
-		echo "Removed nightingale.config - if you set options here, you should comment out the rm line."
-    fi
-    
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
