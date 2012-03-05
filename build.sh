@@ -35,7 +35,7 @@ export CXXFLAGS="-std=gnu++0x"
 # this is always necessary for linux builds using system libs
 # unless we make it default, then we'll want to make an inverse rule
 # and remove this one
-echo 'ac_add_options --with-media-core=gstreamer-system' > songbird.config
+grep -sq gstreamer-system songbird.config || ( echo 'ac_add_options --with-media-core=gstreamer-system' >> songbird.config )
 
 make -f songbird.mk clobber
 make -f songbird.mk
