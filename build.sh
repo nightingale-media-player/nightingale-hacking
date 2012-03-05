@@ -73,10 +73,7 @@ case $OSTYPE in
     done
     
     # !!!! NOTICE: comment the below out if building on/for Windows or Mac or playback probably won't work !!!!
-    if [ -f nightingale.config ] ; then
-      rm nightingale.config
-    fi
-    echo 'ac_add_options --with-media-core=gstreamer-system' >> nightingale.config
+    echo 'ac_add_options --with-media-core=gstreamer-system' > nightingale.config
     ;;
   msys*)
     depdirn="windows-i686"
@@ -85,6 +82,10 @@ case $OSTYPE in
     tr -d '\r' < ./components/library/localdatabase/content/schema.sql > tmp.sql
     rm ./components/library/localdatabase/content/schema.sql
     mv tmp.sql ./components/library/localdatabase/content/schema.sql
+    
+    if [-f nightingale.config ] ; then
+		rm nightingale.config
+    fi
     
     cd dependencies
     
@@ -97,7 +98,7 @@ case $OSTYPE in
 		mkdir "$depdirn"
 		tar --lzma -xvf "$depdirn-$version.tar.lzma" -C "$depdirn"
     fi
-    cd ../
+    cd ../    
     ;;
   darwin*)
 	# no wget on OSX, use curl
