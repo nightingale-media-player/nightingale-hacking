@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # break on any error
 set -e
@@ -72,7 +72,6 @@ case $OSTYPE in
       fi
     done
     
-    # !!!! NOTICE: comment the below out if building on/for Windows or Mac or playback probably won't work !!!!
     echo 'ac_add_options --with-media-core=gstreamer-system' > nightingale.config
     ;;
   msys*)
@@ -85,6 +84,7 @@ case $OSTYPE in
     
     if [-f nightingale.config ] ; then
 		rm nightingale.config
+		echo "Removed nightingale.config - if you set options here, you should comment out the rm line."
     fi
     
     cd dependencies
@@ -152,7 +152,7 @@ cd ../
 cd $buildir
 
 # hopefully we have python2 on this system
-export PYTHON="$(which python2 2>/dev/null || which python)"
+export PYTHON="$(which python2|grep -v 'not found' || which python)"
 
 make -f nightingale.mk clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
