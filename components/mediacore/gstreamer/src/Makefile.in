@@ -37,6 +37,7 @@ SUBDIRS = metadata
 
 CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerAudioProcessor.cpp \
+           sbGStreamerMediaContainer.cpp \
            sbGStreamerMediacore.cpp \
            sbGStreamerMediacoreFactory.cpp \
            sbGStreamerMediacoreModule.cpp \
