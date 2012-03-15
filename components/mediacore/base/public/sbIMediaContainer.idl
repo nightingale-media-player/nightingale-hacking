@@ -1,0 +1,56 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+
+#include "nsISupports.idl"
+
+/**
+ * This is a bare bones interface for analyzing a media container.  It's
+ * a work in progress, so it's not currently scriptable and it only gets
+ * the MIME type.  The hope is to add stream descriptions later, and
+ * either supercede sbIMediaInspector or fold the implementation into
+ * sbGStreamerMediaInspector.  The motivation for this new implementation
+ * is that sbGStreamerMediaInspector is rather slow (it reads a lot more
+ * of the file than necessary), and it will be difficult to fix.  The
+ * reason for exposing this interface before it's finished is that a
+ * fast MIME typer is needed right away.
+ */
+[uuid(9cdd9ee0-6c70-40e2-ab83-61b86fdd1b9a)]
+interface sbIMediaContainer : nsISupports
+{
+  /**
+   * The path to the media file.  Set this and then get the mimeType.
+   */
+  attribute ACString path;
+
+  /**
+   * The MIME type of the file specified by the path attribute.
+   */
+  readonly attribute ACString mimeType;
+};
+
+%{C++
+#define SB_MEDIACONTAINER_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/mediacontainer;1"
+%};
