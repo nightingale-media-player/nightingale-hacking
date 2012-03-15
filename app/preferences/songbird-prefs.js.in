@@ -509,3 +509,8 @@ pref("songbird.firmware.update.defaultInterval", 604800); // every 7 days
 /// Disable Feedback survey
 ///
 pref("feedback.disabled", true);
+
+//
+// import port all video formats, not just ogv
+//
+pref("songbird.mediacore.gstreamer.videoExtensions", "3gp,ogv,avi,divx,flv,mov,mp4,m4v,webm");
