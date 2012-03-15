@@ -5,11 +5,11 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_BUILD_ID=20120306030342
-BuildNumber=2225
+SB_BUILD_ID=20120314113350
+BuildNumber=2237
 SB_BUILD_NUMBER=$(BuildNumber)
-SB_MILESTONE=1.11.0
-SB_MILESTONE_WINDOWS=1.10.99.1
+SB_MILESTONE=1.11.0b2
+SB_MILESTONE_WINDOWS=1.10.99.2
 SB_BRANCHNAME=Songbird1.11
 SB_PROFILE_VERSION=2
 SB_MOZILLA_VERSION=
