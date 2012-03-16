@@ -205,7 +205,11 @@ sbGStreamerMediaContainer::AcquireMimeType_Priv()
 	
   // Get the MIME type if typefind got caps:
   if (mCaps) {
-    GetMimeTypeForCaps(mCaps, mMimeType);
+    // Check to see if there is video
+    GstStructure *structure = gst_caps_get_structure (mCaps, 0);
+    const gchar *name = gst_structure_get_name (structure);
+    const bool isVideo = g_str_has_prefix (name, "video/");
+    GetMimeTypeForCaps(mCaps, mMimeType, isVideo);
   }
 
   // Set the bus message callback for pipeline shutdown:
