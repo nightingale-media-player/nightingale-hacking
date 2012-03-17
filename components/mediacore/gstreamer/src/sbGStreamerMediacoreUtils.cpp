@@ -821,7 +821,7 @@ GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType aType )
 
 
 nsresult
-GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType, bool aHasVideo)
+GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
 {
   GstStructure *structure = gst_caps_get_structure (aCaps, 0);
   const gchar *capsName = gst_structure_get_name (structure);
@@ -832,17 +832,8 @@ GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType, bool aHasVideo)
     if (variant) {
       if (!strcmp(variant, "3gpp"))
         aMimeType.AssignLiteral("video/3gpp");
-      else if (!strcmp(variant, "iso")) {
-        // This special case is due to the fact that gstreamer returns audio/x-m4a
-        // for both audio and video.
-        //  See https://bugzilla.gnome.org/show_bug.cgi?id=340375
-        if (aHasVideo) {
-          aMimeType.AssignLiteral("video/mp4");
-        }
-        else {
-          aMimeType.AssignLiteral("audio/mp4");
-        }
-      }
+      else if (!strcmp(variant, "iso"))
+        aMimeType.AssignLiteral("video/mp4");
       else // variant is 'apple' or something we don't recognise; use quicktime.
         aMimeType.AssignLiteral("video/quicktime");
     }
@@ -868,15 +859,6 @@ GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType, bool aHasVideo)
   {
     if (!strcmp(capsName, sb_gst_caps_map[i].gst_name)) {
       aMimeType.AssignLiteral(sb_gst_caps_map[i].mime_type);
-      // This special case is due to the fact that gstreamer returns audio/x-m4a
-      // for both audio and video.
-      //  See https://bugzilla.gnome.org/show_bug.cgi?id=340375
-      if (strcmp(sb_gst_caps_map[i].mime_type, "video/mp4") == 0 && !aHasVideo) {
-        aMimeType.AssignLiteral("audio/mp4");
-      }
-      else {
-        aMimeType.AssignLiteral(sb_gst_caps_map[i].mime_type);
-      }
       return NS_OK;
     }
   }

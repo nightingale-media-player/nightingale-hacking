@@ -145,7 +145,7 @@ RegisterCustomTags();
 
 /* Get the mime type string to use for a given GStreamer caps type */
 nsresult
-GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType, bool aHasVideo);
+GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType);
 
 enum sbGstCapsMapType {
   SB_GST_CAPS_MAP_NONE,
