@@ -872,7 +872,7 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
     GstStructure *structure = gst_caps_get_structure (caps, 0);
 
     nsCString mimeType;
-    rv = GetMimeTypeForCaps (caps, mimeType, mVideoSrc != nsnull);
+    rv = GetMimeTypeForCaps (caps, mimeType);
     NS_ENSURE_SUCCESS (rv, rv);
 
     rv = containerFormat->SetContainerType (NS_ConvertUTF8toUTF16(mimeType));
@@ -1111,7 +1111,7 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
     GstStructure *structure = gst_caps_get_structure (videoCaps, 0);
 
     nsCString mimeType;
-    rv = GetMimeTypeForCaps (videoCaps, mimeType, true);
+    rv = GetMimeTypeForCaps (videoCaps, mimeType);
     NS_ENSURE_SUCCESS (rv, rv);
 
     rv = format->SetVideoType (NS_ConvertUTF8toUTF16(mimeType));
@@ -1271,7 +1271,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     structure = gst_caps_get_structure (audioCaps, 0);
 
     nsCString mimeType;
-    rv = GetMimeTypeForCaps (audioCaps, mimeType, false);
+    rv = GetMimeTypeForCaps (audioCaps, mimeType);
     NS_ENSURE_SUCCESS (rv, rv);
 
     rv = format->SetAudioType (NS_ConvertUTF8toUTF16(mimeType));
