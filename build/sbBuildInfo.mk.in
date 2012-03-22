@@ -5,11 +5,11 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_BUILD_ID=20120314113350
-BuildNumber=2237
+SB_BUILD_ID=20120321133425
+BuildNumber=2245
 SB_BUILD_NUMBER=$(BuildNumber)
-SB_MILESTONE=1.11.0b2
-SB_MILESTONE_WINDOWS=1.10.99.2
+SB_MILESTONE=1.11.0
+SB_MILESTONE_WINDOWS=1.11.0.0
 SB_BRANCHNAME=Songbird1.11
 SB_PROFILE_VERSION=2
 SB_MOZILLA_VERSION=
@@ -33,5 +33,5 @@ SB_JSONLY_EXTENSION_MAX_VER=$(SB_MILESTONE)
 # and if you want to be 100% sure/correct, so should you..
 #
 # RepoRevisionClient=$Rev$
-RepoRevisionVendor=11405
+RepoRevisionVendor=11406
 RepoRevisionVendorBinaries=11910
