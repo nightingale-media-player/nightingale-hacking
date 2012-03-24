@@ -31,7 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 DYNAMIC_LIB = sbWatchFolderService
 
-CPP_SRCS = sbWatchFolderService.cpp \
+CPP_SRCS = sbWatchFolder.cpp \
+           sbWatchFolderService.cpp \
            sbWatchFolderPrefMgr.cpp \
            sbWatchFolderComponent.cpp \
            $(NULL)

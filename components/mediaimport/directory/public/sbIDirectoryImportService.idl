@@ -31,6 +31,8 @@ interface sbIMediaList;
 interface nsIArray;
 interface nsISimpleEnumerator;
 interface sbIJobProgress;
+interface sbIMediacoreTypeSniffer;
+interface sbIFileMetadataService;
 
 /**
  * \interface sbIDirectoryImportJob
@@ -39,7 +41,7 @@ interface sbIJobProgress;
  * Use sbIJobProgress to track job status and wait for completion.
  * \sa sbIDirectoryImportService, sbIJobProgress
  */
-[scriptable, uuid(6b029f20-cadd-11dd-ad8b-0800200c9a66)]
+[scriptable, uuid(395adc1c-64a3-45e4-8b00-893e7f76419c)]
 interface sbIDirectoryImportJob : nsISupports
 {
   /**
@@ -97,6 +99,24 @@ interface sbIDirectoryImportService : nsISupports
    *        (ignored if aTargetMediaList is not an sbIOrderableMediaList)
    */
   sbIDirectoryImportJob import(in nsIArray aDirectories,
+                               [optional] in sbIMediaList aTargetMediaList,
+                               [optional] in PRInt32 aTargetIndex);
+
+  /**
+   * \brief Recursively import from the given directories into 
+   *        the specified media list.
+   *
+   * \param aDirectories an array of nsIFile paths
+   * \param aTargetMediaList the media list into which found items should be loaded
+   *        (defaults to the main library)
+   * \param aTargetIndex the index into the media list where items should be inserted
+   *        (ignored if aTargetMediaList is not an sbIOrderableMediaList)
+   * \param aTypeSniffer a type sniffer to be used to check whether the imported files 
+   *         are supported
+   */
+  sbIDirectoryImportJob importWithCustomSnifferAndMetadataScanner(in nsIArray aDirectories,
+                               in sbIMediacoreTypeSniffer aSniffer,
+                               in sbIFileMetadataService aMetadataScanner,
                                [optional] in sbIMediaList aTargetMediaList,
                                [optional] in PRInt32 aTargetIndex);
 };

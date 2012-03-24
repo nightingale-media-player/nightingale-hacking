@@ -24,12 +24,10 @@
 //
 */
 
-#ifndef sbWatchFolderService_h_
-#define sbWatchFolderService_h_
+#ifndef sbWatchFolder_h_
+#define sbWatchFolder_h_
 
-#include "sbWatchFolderPrefMgr.h"
-
-#include <sbIWatchFolderService.h>
+#include <sbIWatchFolder.h>
 #include <sbIFileSystemWatcher.h>
 #include <sbIFileSystemListener.h>
 #include <sbILibrary.h>
@@ -54,45 +52,34 @@
 #include <map>
 
 
-//==============================================================================
-//
-// @brief Ignore case comparision function for the string maps.
-//
-//==============================================================================
+#define SB_WATCHFOLDER_CLASSNAME \
+  "sbWatchFolder"
+#define SB_WATCHFOLDER_CID \
+  {0x11ef8123, 0x666b, 0x4acc, {0xab, 0x17, 0x58, 0x7a, 0x5c, 0x44, 0xc5, 0xb9}}
+  // {11EF8123-666B-4acc-AB17-587A5C44C5B9}
+#define SB_WATCHFOLDER_DESCRIPTION \
+  "Songbird Watch Folder"
 
-struct sbStringIgnoreCaseCompare
-{
-  bool operator() (const nsAString & s1, const nsAString & s2) const
-  {
-#if defined(XP_WIN)
-    return s1.Compare(s2, CaseInsensitiveCompare) < 0;
-#else
-    return s1.Compare(s2) < 0;
-#endif
-  }
-};
 
 //==============================================================================
 //
-// @interface sbWatchFolderService
+// @interface sbWatchFolder
 // @brief Songbird watch folder implementation class.
 //
 //==============================================================================
 
-class sbWatchFolderService : public sbIWatchFolderService,
+class sbWatchFolder : public sbIWatchFolder,
                              public sbIFileSystemListener,
                              public sbIMediaListEnumerationListener,
                              public nsITimerCallback,
                              public sbIJobProgressListener
 {
-  friend class sbWatchFolderPrefMgr;
-
 public:
-  sbWatchFolderService();
-  virtual ~sbWatchFolderService();
+  sbWatchFolder();
+  virtual ~sbWatchFolder();
 
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIWATCHFOLDERSERVICE
+  NS_DECL_SBIWATCHFOLDER
   NS_DECL_SBIFILESYSTEMLISTENER
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
   NS_DECL_NSITIMERCALLBACK
@@ -100,14 +87,20 @@ public:
 
   nsresult Init();
 
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
 protected:
-  typedef std::set<nsString, sbStringIgnoreCaseCompare> sbStringSet;
+  struct IgnoringCase
+  {
+    bool operator() (const nsAString & s1, const nsAString & s2) const
+    {
+  #if defined(XP_WIN)
+      return s1.Compare(s2, CaseInsensitiveCompare) < 0;
+  #else
+      return s1.Compare(s2) < 0;
+  #endif
+    }
+  };
+
+  typedef std::set<nsString, IgnoringCase> sbStringSet;
   typedef sbStringSet::iterator sbStringSetIter;
   struct ignorePathData_t {
     PRInt32 depth; // number of calls to addIgnorePath()
@@ -116,7 +109,7 @@ protected:
     ignorePathData_t(PRInt32 aDepth, PRInt32 aCount)
       : depth(aDepth), count(aCount) {}
   };
-  typedef std::map<nsString, ignorePathData_t, sbStringIgnoreCaseCompare> sbStringMap;
+  typedef std::map<nsString, ignorePathData_t, IgnoringCase> sbStringMap;
 
   typedef enum {
     eNone  = 0,
@@ -208,6 +201,8 @@ protected:
   //
   nsresult HandleSessionLoadError();
 
+  nsresult Rescan();
+
   //
   // \brief Handle the situation where the watcher reports that the root watch
   //        folder path is missing.
@@ -221,41 +216,15 @@ protected:
   nsresult DecrementIgnoredPathCount(const nsAString & aFilePath,
                                      PRBool *aIsIgnoredPath);
 
-  //----------------------------------------------------------------------------
-  // Pref Changes
-
-  //
-  // \brief Callback method when the app has started up and the watch folder
-  //        service should startup.
-  //
-  nsresult OnAppStartup();
-
-  //
-  // \brief Callback method when the app is about to shutdown and the watch
-  //        folder service should shutdown.
-  //
-  nsresult OnAppShutdown();
-
-  //
-  // \brief Callback method when the watchfolder path changes.
-  //
-  nsresult OnWatchFolderPathChanged(const nsAString & aNewPath);
-
-  //
-  // \brief Callback method when the watch folder enable pref has changed.
-  //
-  nsresult OnEnableWatchFolderChanged(PRBool aShouldEnable);
-
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
-  nsCOMPtr<sbILibrary>           mMainLibrary;
+  nsCOMPtr<sbIMediaList>         mMediaList;
   nsCOMPtr<sbILibraryUtils>      mLibraryUtils;
   nsCOMPtr<nsITimer>             mEventPumpTimer;
   nsCOMPtr<nsITimer>             mChangeDelayTimer;
   nsCOMPtr<nsITimer>             mStartupDelayTimer;
   nsCOMPtr<nsITimer>             mFlushFSWatcherTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
-  nsRefPtr<sbWatchFolderPrefMgr> mPrefMgr;
   sbStringSet                    mChangedPaths;
   sbStringSet                    mDelayedChangedPaths;
   sbStringSet                    mAddedPaths;
@@ -270,6 +239,23 @@ private:
   PRBool                         mShouldProcessEvents;
   PRBool                         mChangeDelayTimerIsSet;
   EProcessType                   mCurrentProcessType;
+  
+  PRBool                                mCanInteract;
+  PRBool                                mShouldSynchronize;
+  nsCOMPtr<sbIDirectoryImportService>   mCustomImporter;
+  nsCOMPtr<sbIMediacoreTypeSniffer>     mTypeSniffer;
+  nsCOMPtr<sbIFileMetadataService>      mMetadataScanner;
+
+  nsresult Enable();
+  nsresult Disable();
 };
 
-#endif  // sbWatchFolderService_h_
+#define SB_WATCHFOLDER_CLASSNAME \
+  "sbWatchFolder"
+#define SB_WATCHFOLDER_CID \
+  {0x11ef8123, 0x666b, 0x4acc, {0xab, 0x17, 0x58, 0x7a, 0x5c, 0x44, 0xc5, 0xb9}}
+  // {11EF8123-666B-4acc-AB17-587A5C44C5B9}
+#define SB_WATCHFOLDER_DESCRIPTION \
+  "Songbird Watch Folder"
+
+#endif  // sbWatchFolder_h_

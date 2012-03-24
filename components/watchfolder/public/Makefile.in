@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIWatchFolderService.idl \
+XPIDL_SRCS = sbIWatchFolder.idl \
+             sbIWatchFolderService.idl \
              sbIWFMoveRenameHelper9000.idl \
              sbIWFRemoveHelper9001.idl \
              $(NULL)
