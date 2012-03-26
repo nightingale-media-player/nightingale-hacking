@@ -26,14 +26,22 @@
 
 #include <nsIGenericFactory.h>
 
+#include "sbWatchFolder.h"
 #include "sbWatchFolderServiceCID.h"
 #include "sbWatchFolderService.h"
 
 
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWatchFolder, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWatchFolderService, Init)
 
 static nsModuleComponentInfo sbWatchFolder[] =
 {
+  {
+    SB_WATCHFOLDER_CLASSNAME,
+    SB_WATCHFOLDER_CID,
+    SB_WATCHFOLDER_CONTRACTID,
+    sbWatchFolderConstructor,
+  },
   {
     SONGBIRD_WATCHFOLDERSERVICE_CLASSNAME,
     SONGBIRD_WATCHFOLDERSERVICE_CID,
