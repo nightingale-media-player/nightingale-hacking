@@ -1,0 +1,137 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+
+interface sbIDirectoryImportService;
+interface sbIFileMetadataService;
+interface sbIMediacoreTypeSniffer;
+interface sbIMediaList;
+
+
+[scriptable, uuid(d5f4dec1-6c33-4401-b3b1-bf4d56b7b459)]
+interface sbIWatchFolder : nsISupports
+{
+  /// @todo sbWatchFolderService will set this where it currently
+  ///       handles PREF_WATCHFOLDER_ENABLE.  Enabled => main library, 
+  ///       disabled => null
+  attribute sbIMediaList mediaList;
+
+  /// @todo sbWatchFolderService will initialize this from PREF_WATCHFOLDER_PATH
+  readonly attribute AString path;
+
+  attribute sbIDirectoryImportService importer;
+
+  attribute sbIMediacoreTypeSniffer typeSniffer;
+
+  attribute sbIFileMetadataService metadataScanner;
+
+  /// @todo sbWatchFolderService will set this flag where it currently
+  ///       calls GetIsUnitTestsRunning().  canInteract == !GetIsUnitTestsRunning()
+  attribute boolean canInteract;
+
+  //
+  // \brief Find out if the watch folder services are supported on 
+  //        the current OS.
+  // \return True if watch folder is supported, false if not.
+  //
+  readonly attribute boolean isSupported;
+
+  //
+  // \brief Find out if the watch folder services are currently running and
+  //        actively updating the users library.
+  // \return True if the watch folder is running, false if not.
+  //
+  readonly attribute boolean isRunning;
+
+  /**
+   * \brief Add a absolute file path to be ignored by the watch folder service.
+   *        This path will be ignored until it is removed via a call to
+   *        |removeIgnorePath()|.  Each call to |addIgnorePath()| should be
+   *        balanced by a call to |removeIgnorePath()|.
+   *        When used in conjunction with |addIgnoreCount()|, the count will be
+   *        decremented as normal when the path is ignored.  The path will
+   *        continue to be ignored when the count reaches zero.
+   * \param aFilePath The absolute path to start ignoring.
+   */
+  void addIgnorePath(in AString aFilePath);
+
+  /**
+   * \brief Remove an absolute file path from the ignored paths list of the
+   *        watch folder service. All future events at the specified path
+   *        will be processed by the watch folders service.
+   *        When used in conjunction with |addIgnoreCount()|, any remaining
+   *        events specified by the count will still be ignored.
+   * \param aFilePath The absolute path to stop ignoring.
+   */
+  void removeIgnorePath(in AString aFilePath);
+  
+  /**
+   * \brief Add an absolute file path to be ignore by the watch folder service.
+   *        This path will be ignored for the given number of events, which
+   *        includes file addition, deletion, or change.
+   *        When used in conjunction with |addIgnorePath()| and
+   *        |removeIgnorPath()|, the counter will be decremented as events are
+   *        ignored.  The path may continue to be ignored after the count
+   *        reaches zero if any calls to |addIgnorePath()| are not balanced by
+   *        calls to |removeIgnorePath()|.
+   * \param aFilePath The absolute path to ignore.
+   * \param aCount The number of times to ignore events for the given path.
+   *               Passing in zero will have no effect.
+   *               Passing in a negative number will decrement the previously
+   *               recorded count.
+   *               Attempts to decrement the count below zero will be silently
+   *               clamped to zero.
+   */
+  void addIgnoreCount(in AString aFilePath, in long aCount);
+
+  /**
+   * \brief Starts watching.
+   * \param aSessionGuid An empty string or a string previously returned by
+   *                     stop().  If valid, the specified watch session resumes.
+   *                     Otherwise, start() begins a new watch session.
+   */
+  /// @todo sbWatchFolderService will set aSessionGuid from
+  ///       PREF_WATCHFOLDER_SESSIONGUID
+  void start(in ACString aSessionGuid);
+
+  /**
+   * \brief Stops watching.
+   * \return A session GUID.  The GUID can be saved and later passed to start()
+   *         to resume the stopped watch session.
+   */
+  /// @todo sbWatchFolderService will save the result in
+  ///       PREF_WATCHFOLDER_SESSIONGUID
+  ACString stop();
+
+  void setFolder(in AString aPath, in boolean aSynchronizeMediaList);
+};
+
+%{C++
+#define SB_WATCHFOLDER_CONTRACTID     \
+  "@songbirdnest.com/watch-folder;1"
+%};
