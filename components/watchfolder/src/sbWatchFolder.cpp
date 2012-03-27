@@ -24,8 +24,7 @@
 //
 */
 
-#include "sbWatchFolderService.h"
-#include "sbWatchFolderServiceCID.h"
+#include "sbWatchFolder.h"
 #include "sbWatchFolderDefines.h"
 #include <sbIWFMoveRenameHelper9000.h>
 #include <sbIWFRemoveHelper9001.h>
@@ -36,16 +35,13 @@
 #include <sbIFileMetadataService.h>
 #include <sbIJobProgress.h>
 #include <sbIJobProgressService.h>
-#include <sbILibraryManager.h>
 #include <sbIPropertyArray.h>
 #include <sbStringBundle.h>
 #include <sbIPrompter.h>
-#include <sbIDirectoryImportService.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsILocalFile.h>
-#include <nsIPrefBranch2.h>
 #include <nsIObserverService.h>
 #include <nsIURI.h>
 #include <nsTArray.h>
@@ -57,38 +53,40 @@
 
 
 #ifdef PR_LOGGING
-PRLogModuleInfo* gWatchFoldersLog = nsnull;
+static PRLogModuleInfo* gLog = nsnull;
 #endif
 
-NS_IMPL_ISUPPORTS5(sbWatchFolderService,
-                   sbIWatchFolderService,
+NS_IMPL_ISUPPORTS5(sbWatchFolder,
+                   sbIWatchFolder,
                    sbIFileSystemListener,
                    sbIMediaListEnumerationListener,
                    nsITimerCallback,
                    sbIJobProgressListener)
 
-sbWatchFolderService::sbWatchFolderService()
+sbWatchFolder::sbWatchFolder()
 {
+  mCanInteract = PR_TRUE;
   mHasWatcherStarted = PR_FALSE;
   mShouldReinitWatcher = PR_FALSE;
+  mShouldSynchronize = PR_FALSE;
   mEventPumpTimerIsSet = PR_FALSE;
   mChangeDelayTimerIsSet = PR_FALSE;
   mShouldProcessEvents = PR_FALSE;
   mCurrentProcessType = eNone;
 
 #ifdef PR_LOGGING
-   if (!gWatchFoldersLog) {
-     gWatchFoldersLog = PR_NewLogModule("sbWatchFoldersComponent");
+   if (!gLog) {
+     gLog = PR_NewLogModule("sbWatchFolder");
    }
 #endif
 }
 
-sbWatchFolderService::~sbWatchFolderService()
+sbWatchFolder::~sbWatchFolder()
 {
 }
 
 nsresult
-sbWatchFolderService::Init()
+sbWatchFolder::Init()
 {
   nsresult rv;
 
@@ -123,81 +121,35 @@ sbWatchFolderService::Init()
     return NS_OK;
   }
 
+  mLibraryUtils =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Assume the service is disabled. This will be verified on the delayed
   // initialization in |InitInternal()|.
   mServiceState = eDisabled;
-
-  // Setup the pref watcher class.
-  mPrefMgr = new sbWatchFolderPrefMgr();
-  NS_ENSURE_TRUE(mPrefMgr, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = mPrefMgr->Init(this);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbWatchFolderService::InitInternal()
+sbWatchFolder::InitInternal()
 {
   nsresult rv;
-  nsCOMPtr<nsIPrefBranch2> prefBranch =
-    do_GetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // First, check to see if the service should be running.
-  PRBool shouldEnable = PR_FALSE;
-  rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE, &shouldEnable);
-  if (NS_FAILED(rv)) {
-    shouldEnable = PR_FALSE;
-  }
 
   // Set the service as disabled, if this method exits cleanly, the service
   // will be considered 'started'.
   mServiceState = eDisabled;
 
   // If the service is set to be turned off, do not continue.
-  if (!shouldEnable) {
+  if (!mMediaList) {
     return NS_OK;
   }
-
-  // Next, read in the watch path.
-  nsCOMPtr<nsISupportsString> supportsString;
-  rv = prefBranch->GetComplexValue(PREF_WATCHFOLDER_PATH,
-                                   NS_GET_IID(nsISupportsString),
-                                   getter_AddRefs(supportsString));
-
-  // The service can not continue if the watch path does not exist.
-  if (NS_FAILED(rv) || !supportsString) {
-    return NS_ERROR_UNEXPECTED;
-  }
-
-  rv = supportsString->GetData(mWatchPath);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Don't start the service if the watch path isn't defined.
   if (mWatchPath.Equals(EmptyString())) {
     return NS_ERROR_UNEXPECTED;
   }
-
-  // Look to see if the watch folder service has saved a previous file system
-  // watcher session.
-  // NOTE: Validating the return value is not needed, either there is a
-  // saved session or there is not.
-  prefBranch->GetCharPref(PREF_WATCHFOLDER_SESSIONGUID,
-                          getter_Copies(mFileSystemWatcherGUID));
-
-  mLibraryUtils =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the main library (all changes will be pushed into this library).
-  nsCOMPtr<sbILibraryManager> libraryMgr =
-    do_QueryInterface(mLibraryUtils, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = libraryMgr->GetMainLibrary(getter_AddRefs(mMainLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // The service is now considered started.
   mServiceState = eStarted;
@@ -214,7 +166,7 @@ sbWatchFolderService::InitInternal()
 }
 
 nsresult
-sbWatchFolderService::StartWatchingFolder()
+sbWatchFolder::StartWatchingFolder()
 {
   // Don't start if the service is not in the |eStarted| state or if the
   // watch path is empty.
@@ -243,16 +195,26 @@ sbWatchFolderService::StartWatchingFolder()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if (mShouldSynchronize) {
+    NS_ENSURE_STATE(mMediaList);
+    mMediaList->Clear();
+  }
+
   rv = mFileSystemWatcher->StartWatching();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // The service is now watching
   mServiceState = eWatching;
+
+  if (mShouldSynchronize) {
+    mShouldSynchronize = PR_FALSE;
+    Rescan();
+  }
   return NS_OK;
 }
 
 nsresult
-sbWatchFolderService::StopWatchingFolder()
+sbWatchFolder::StopWatchingFolder()
 {
   if (mServiceState != eWatching) {
     return NS_OK;
@@ -270,15 +232,7 @@ sbWatchFolderService::StopWatchingFolder()
   if (mFileSystemWatcherGUID.Equals(EmptyCString())) {
     // This is the first time the file system watcher has run. Save the session
     // guid so changes can be determined when the watcher starts next.
-    nsCOMPtr<nsIPrefBranch2> prefBranch =
-      do_GetService("@mozilla.org/preferences-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = mFileSystemWatcher->GetSessionGuid(mFileSystemWatcherGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = prefBranch->SetCharPref(PREF_WATCHFOLDER_SESSIONGUID,
-                                 mFileSystemWatcherGUID.get());
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -292,7 +246,7 @@ sbWatchFolderService::StopWatchingFolder()
 }
 
 nsresult
-sbWatchFolderService::SetStartupDelayTimer()
+sbWatchFolder::SetStartupDelayTimer()
 {
   nsresult rv;
   if (!mStartupDelayTimer) {
@@ -309,7 +263,7 @@ sbWatchFolderService::SetStartupDelayTimer()
 }
 
 nsresult
-sbWatchFolderService::SetEventPumpTimer()
+sbWatchFolder::SetEventPumpTimer()
 {
   if (mHasWatcherStarted) {
     if (mEventPumpTimerIsSet) {
@@ -337,7 +291,7 @@ sbWatchFolderService::SetEventPumpTimer()
 }
 
 nsresult
-sbWatchFolderService::ProcessEventPaths()
+sbWatchFolder::ProcessEventPaths()
 {
   TRACE(("%s: Processing the observed event paths", __FUNCTION__));
   TRACE(("%s: mRemovedPaths.size() == %i", __FUNCTION__, mRemovedPaths.size()));
@@ -350,7 +304,7 @@ sbWatchFolderService::ProcessEventPaths()
   // If possible, try to guess moves and renames and avoid
   // just removing and re-adding
   if (mRemovedPaths.size() > 0 && mAddedPaths.size() > 0) {
-    LOG(("sbWatchFolderService: possible move/rename detected"));
+    LOG(("sbWatchFolder: possible move/rename detected"));
     rv = HandleEventPathList(mRemovedPaths, eMoveOrRename);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -369,7 +323,7 @@ sbWatchFolderService::ProcessEventPaths()
 }
 
 nsresult
-sbWatchFolderService::HandleEventPathList(sbStringSet & aEventPathSet,
+sbWatchFolder::HandleEventPathList(sbStringSet & aEventPathSet,
                                           EProcessType aProcessType)
 {
   LOG(("%s: Processing event path list [aEventPathSet.size == %i]",
@@ -389,7 +343,7 @@ sbWatchFolderService::HandleEventPathList(sbStringSet & aEventPathSet,
 }
 
 nsresult
-sbWatchFolderService::ProcessAddedPaths()
+sbWatchFolder::ProcessAddedPaths()
 {
   LOG(("%s: Processing the added file paths... [mAddedPaths.size == %i]",
     __FUNCTION__, mAddedPaths.size()));
@@ -410,8 +364,8 @@ sbWatchFolderService::ProcessAddedPaths()
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (uriArrayLength > 0) {
-    nsCOMPtr<sbIDirectoryImportService> importService =
-      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+    nsCOMPtr<sbIDirectoryImportService> importService;
+    rv = GetImporter(getter_AddRefs(importService));
     NS_ENSURE_SUCCESS(rv, rv);
 
     //
@@ -419,7 +373,13 @@ sbWatchFolderService::ProcessAddedPaths()
     //          and dropping into a playlist. This will need to be fixed.
     //
     nsCOMPtr<sbIDirectoryImportJob> job;
-    rv = importService->Import(uriArray, mMainLibrary, -1, getter_AddRefs(job));
+    rv = importService->ImportWithCustomSnifferAndMetadataScanner(
+      uriArray,
+      mTypeSniffer,
+      mMetadataScanner,
+      mMediaList,
+      -1,
+      getter_AddRefs(job));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIJobProgressService> progressService =
@@ -437,7 +397,7 @@ sbWatchFolderService::ProcessAddedPaths()
 }
 
 nsresult
-sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
+sbWatchFolder::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
                                                 nsIArray **aURIs)
 {
   NS_ENSURE_ARG_POINTER(aURIs);
@@ -481,7 +441,7 @@ sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
 }
 
 nsresult
-sbWatchFolderService::GetFilePathURI(const nsAString & aFilePath,
+sbWatchFolder::GetFilePathURI(const nsAString & aFilePath,
                                      nsIURI **aURIRetVal)
 {
   NS_ENSURE_ARG_POINTER(aURIRetVal);
@@ -499,7 +459,7 @@ sbWatchFolderService::GetFilePathURI(const nsAString & aFilePath,
 }
 
 nsresult
-sbWatchFolderService::EnumerateItemsByPaths(sbStringSet & aPathSet)
+sbWatchFolder::EnumerateItemsByPaths(sbStringSet & aPathSet)
 {
   nsresult rv;
   nsCOMPtr<sbIMutablePropertyArray> properties =
@@ -534,14 +494,14 @@ sbWatchFolderService::EnumerateItemsByPaths(sbStringSet & aPathSet)
   }
 
   PRUint16 enumType = sbIMediaList::ENUMERATIONTYPE_SNAPSHOT;
-  rv = mMainLibrary->EnumerateItemsByProperties(properties, this, enumType);
+  rv = mMediaList->EnumerateItemsByProperties(properties, this, enumType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbWatchFolderService::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
+sbWatchFolder::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
 {
   NS_ENSURE_ARG_POINTER(aSongbirdWindow);
 
@@ -554,7 +514,7 @@ sbWatchFolderService::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
 }
 
 nsresult
-sbWatchFolderService::HandleSessionLoadError()
+sbWatchFolder::HandleSessionLoadError()
 {
   NS_ASSERTION(NS_IsMainThread(),
       "HandleSessionLoadError() not called on main thread!");
@@ -563,9 +523,7 @@ sbWatchFolderService::HandleSessionLoadError()
   // If the unit tests are running, don't show the dialog (Don't bother
   // checking result of call too).
   nsresult rv;
-  PRBool isUnitTestsRunning = PR_FALSE;
-  mPrefMgr->GetIsUnitTestsRunning(&isUnitTestsRunning);
-  if (isUnitTestsRunning) {
+  if (!mCanInteract) {
     return NS_OK;
   }
 
@@ -581,14 +539,6 @@ sbWatchFolderService::HandleSessionLoadError()
     }
 
     mFileSystemWatcherGUID.Truncate();
-
-    // Clear the GUID preference.
-    nsCOMPtr<nsIPrefBranch2> prefBranch =
-      do_GetService("@mozilla.org/preferences-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
@@ -625,10 +575,22 @@ sbWatchFolderService::HandleSessionLoadError()
 
   // Only start the scan if the user picked the YES button (option 0).
   if (shouldRescan) {
-    // The user elected to rescan their watched directory. Setup the directory
-    // scan service.
-    nsCOMPtr<sbIDirectoryImportService> dirImportService =
-      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+      // The user elected to rescan their watched directory.
+      rv = Rescan();
+      NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolder::Rescan()
+{
+    nsresult rv;
+
+    // Setup the directory scan service.
+    nsCOMPtr<sbIDirectoryImportService> dirImportService;
+    rv = GetImporter(getter_AddRefs(dirImportService));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // The directory import service wants the paths as an array.
@@ -646,35 +608,51 @@ sbWatchFolderService::HandleSessionLoadError()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIDirectoryImportJob> importJob;
-    rv = dirImportService->Import(dirArray,
-                                  nsnull,  // defaults to main library
+    rv = dirImportService->ImportWithCustomSnifferAndMetadataScanner(
+                                  dirArray,
+                                  mTypeSniffer,
+                                  mMetadataScanner,
+                                  mMediaList,
                                   -1,
                                   getter_AddRefs(importJob));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    if (!importJob) {
+      return NS_OK;
+    }
+
+    if (!mCanInteract) {
+      return NS_OK;
+    }
+
     nsCOMPtr<sbIJobProgressService> progressService =
       do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
-    if (NS_SUCCEEDED(rv) && progressService) {
-      nsCOMPtr<sbIJobProgress> job = do_QueryInterface(importJob, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = progressService->ShowProgressDialog(job, nsnull, 1);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
+    nsCOMPtr<sbIJobProgress> job = do_QueryInterface(importJob, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
+    nsCOMPtr<sbIApplicationController> appController =
+      do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMWindow> activeWindow;
+    rv = appController->GetActiveWindow(getter_AddRefs(activeWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = progressService->ShowProgressDialog(job, activeWindow, 1);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
 }
 
 nsresult
-sbWatchFolderService::HandleRootPathMissing()
+sbWatchFolder::HandleRootPathMissing()
 {
   // If the unit tests are running, don't show the dialog (Don't bother
   // checking result of call too).
   nsresult rv;
-  PRBool isUnitTestsRunning = PR_FALSE;
-  mPrefMgr->GetIsUnitTestsRunning(&isUnitTestsRunning);
-  if (isUnitTestsRunning) {
+  if (!mCanInteract) {
     return NS_OK;
   }
 
@@ -706,7 +684,7 @@ sbWatchFolderService::HandleRootPathMissing()
 }
 
 nsresult
-sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath,
+sbWatchFolder::DecrementIgnoredPathCount(const nsAString & aFilePath,
                                                 PRBool *aIsIgnoredPath)
 {
   NS_ENSURE_ARG_POINTER(aIsIgnoredPath);
@@ -727,17 +705,19 @@ sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath,
   return NS_OK;
 }
 
-nsresult
-sbWatchFolderService::OnAppStartup()
+NS_IMETHODIMP
+sbWatchFolder::Start(const nsACString & aSessionGuid)
 {
+  mFileSystemWatcherGUID = aSessionGuid;
+
   nsresult rv = SetStartupDelayTimer();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult
-sbWatchFolderService::OnAppShutdown()
+NS_IMETHODIMP
+sbWatchFolder::Stop(nsACString & _retval NS_OUTPARAM)
 {
   nsresult rv;
   if (mServiceState == eWatching) {
@@ -753,30 +733,29 @@ sbWatchFolderService::OnAppShutdown()
           __FUNCTION__, mStartupDelayTimer.get()));
   }
 
+  _retval = mFileSystemWatcherGUID;
+
   // Prevent reference loops and leaks.
   mFileSystemWatcher = nsnull;
-  mPrefMgr = nsnull;
 
   return NS_OK;
 }
 
-nsresult
-sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
+NS_IMETHODIMP
+sbWatchFolder::SetFolder(const nsAString & aNewWatchPath, PRBool aSynchronizeMediaList)
 {
-  LOG(("%s: OnWatchFolderPathChanged( %s )",
+  LOG(("%s: %s",
         __FUNCTION__,
         NS_ConvertUTF16toUTF8(aNewWatchPath).get()));
 
-  if (mWatchPath.Equals(aNewWatchPath)) {
+  if (mWatchPath.Equals(aNewWatchPath, CaseInsensitiveCompare)) {
     return NS_OK;
   }
 
   nsresult rv;
-  nsCOMPtr<nsIPrefBranch2> prefBranch =
-      do_GetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   mWatchPath = aNewWatchPath;
+  mShouldSynchronize = aSynchronizeMediaList;
 
   if (mServiceState == eWatching) {
     TRACE(("%s: already watching, stopping...", __FUNCTION__));
@@ -786,18 +765,6 @@ sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
     // that is currently active. The watcher needs to be stopped (
     // without saving a session) and re-started once it has
     // successfully shutdown.
-
-    // Remove the pref since the watch folder service does not want
-    // to load the old session.
-    PRBool hasSavedSessionGUID;
-    rv = prefBranch->PrefHasUserValue(PREF_WATCHFOLDER_SESSIONGUID,
-                                      &hasSavedSessionGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (hasSavedSessionGUID) {
-      rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
 
     if (!mFileSystemWatcherGUID.IsEmpty()) {
       // Clear any previously stored data from the session that might
@@ -831,10 +798,7 @@ sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
     // The service has not started up internally, but the watch path
     // has changed. If the service has been set to be enabled, start
     // the delayed internal startup.
-    PRBool shouldEnable = PR_FALSE;
-    rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE,
-        &shouldEnable);
-    if (NS_SUCCEEDED(rv) && shouldEnable) {
+    if (mMediaList) {
       TRACE(("%s: not watching yet, arming...", __FUNCTION__));
       // Now that the service state is disabled, the watch path has
       // been set, and the service should enable - it is time to
@@ -848,24 +812,32 @@ sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
 }
 
 nsresult
-sbWatchFolderService::OnEnableWatchFolderChanged(PRBool aShouldEnable)
+sbWatchFolder::Disable()
 {
-  LOG(("%s: OnEnableWatchFolderChanged( aShouldEnable=%s )",
-        __FUNCTION__,
-        (aShouldEnable ? "true" : "false")));
+  LOG(("%s", __FUNCTION__));
 
   nsresult rv;
 
   // Stop watching since the service is watching and the pref was toggled
   // to not watch.
-  if (mServiceState == eWatching && !aShouldEnable) {
+  if (mServiceState == eWatching) {
     rv = StopWatchingFolder();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolder::Enable()
+{
+  LOG(("%s", __FUNCTION__));
+
+  nsresult rv;
+
   // Start watching since the service is not watching and the pref was
   // toggled to start watching.
-  else if (mServiceState == eStarted && aShouldEnable) {
+  if (mServiceState == eStarted) {
     rv = StartWatchingFolder();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -874,8 +846,7 @@ sbWatchFolderService::OnEnableWatchFolderChanged(PRBool aShouldEnable)
   // Start the timer if the service is in a disabled state, the watch path
   // has been defined, and the service should enable.
   else if (mServiceState == eDisabled &&
-           !mWatchPath.IsEmpty() &&
-           aShouldEnable)
+           !mWatchPath.IsEmpty())
   {
     rv = SetStartupDelayTimer();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -885,10 +856,120 @@ sbWatchFolderService::OnEnableWatchFolderChanged(PRBool aShouldEnable)
 }
 
 //------------------------------------------------------------------------------
-// sbIWatchFolderService
+// sbIWatchFolder
+
+NS_IMETHODIMP sbWatchFolder::GetMediaList(sbIMediaList * *aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_IF_ADDREF(*aMediaList = mMediaList);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::SetMediaList(sbIMediaList * aMediaList)
+{
+  nsresult rv;
+
+  if (mMediaList && aMediaList) {
+    PRBool same = PR_FALSE;
+    rv = mMediaList->Equals(aMediaList, &same);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (same) {
+      return NS_OK;
+    }
+  }
+
+  if (mMediaList) {
+    Disable();
+  }
+
+  mMediaList = aMediaList;
+
+  if (mMediaList) {
+    Enable();
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::GetPath(nsAString & aPath)
+{
+  aPath = mWatchPath;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::GetImporter(sbIDirectoryImportService * *aImporter)
+{
+  NS_ENSURE_ARG_POINTER(aImporter);
+
+  nsresult rv;
+  nsCOMPtr<sbIDirectoryImportService> importer = mCustomImporter;
+  if (!importer) {
+    importer = do_GetService(
+      "@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  importer.forget(aImporter);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::SetImporter(sbIDirectoryImportService * aImporter)
+{
+  mCustomImporter = aImporter;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::GetTypeSniffer(sbIMediacoreTypeSniffer * *aTypeSniffer)
+{
+  NS_ENSURE_ARG_POINTER(aTypeSniffer);
+  NS_IF_ADDREF(*aTypeSniffer = mTypeSniffer);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::SetTypeSniffer(sbIMediacoreTypeSniffer * aTypeSniffer)
+{
+  mTypeSniffer = aTypeSniffer;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::GetMetadataScanner(sbIFileMetadataService * *aMetadataScanner)
+{
+  NS_ENSURE_ARG_POINTER(aMetadataScanner);
+
+  nsresult rv;
+  nsCOMPtr<sbIFileMetadataService> scanner = mMetadataScanner;
+  if (!scanner) {
+    scanner = do_GetService(
+        "@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  scanner.forget(aMetadataScanner);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::SetMetadataScanner(sbIFileMetadataService * aMetadataScanner)
+{
+  mMetadataScanner = aMetadataScanner;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::GetCanInteract(PRBool *aCanInteract)
+{
+  NS_ENSURE_ARG_POINTER(aCanInteract);
+  *aCanInteract = mCanInteract;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbWatchFolder::SetCanInteract(PRBool aCanInteract)
+{
+  mCanInteract = aCanInteract;
+  return NS_OK;
+}
 
 NS_IMETHODIMP
-sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
+sbWatchFolder::GetIsSupported(PRBool *aIsSupported)
 {
   NS_ENSURE_ARG_POINTER(aIsSupported);
   *aIsSupported = mServiceState != eNotSupported;
@@ -896,7 +977,7 @@ sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
+sbWatchFolder::GetIsRunning(PRBool *aIsRunning)
 {
   NS_ENSURE_ARG_POINTER(aIsRunning);
   *aIsRunning = (mServiceState == eWatching);
@@ -904,9 +985,9 @@ sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
+sbWatchFolder::AddIgnorePath(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::AddIgnorePath %s",
+  LOG(("sbWatchFolder::AddIgnorePath %s",
         NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   nsString filePath(aFilePath);
@@ -923,9 +1004,9 @@ sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::RemoveIgnorePath(const nsAString & aFilePath)
+sbWatchFolder::RemoveIgnorePath(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::RemoveIgnorePath %s",
+  LOG(("sbWatchFolder::RemoveIgnorePath %s",
         NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   nsString filePath(aFilePath);
@@ -944,7 +1025,7 @@ sbWatchFolderService::RemoveIgnorePath(const nsAString & aFilePath)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::AddIgnoreCount(const nsAString & aFilePath,
+sbWatchFolder::AddIgnoreCount(const nsAString & aFilePath,
                                      PRInt32 aCount)
 {
   nsString filePath(aFilePath);
@@ -972,7 +1053,7 @@ sbWatchFolderService::AddIgnoreCount(const nsAString & aFilePath,
 // sbIFileSystemListener
 
 NS_IMETHODIMP
-sbWatchFolderService::OnWatcherStarted()
+sbWatchFolder::OnWatcherStarted()
 {
   nsresult rv;
 
@@ -1001,13 +1082,13 @@ sbWatchFolderService::OnWatcherStarted()
   mShouldProcessEvents = PR_TRUE;
   mHasWatcherStarted = PR_TRUE;
 
-  TRACE(("sbWatchFolderService::OnWatcherStarted (path [%s])",
+  TRACE(("sbWatchFolder::OnWatcherStarted (path [%s])",
          NS_ConvertUTF16toUTF8(mWatchPath).get()));
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnWatcherStopped()
+sbWatchFolder::OnWatcherStopped()
 {
   if (mEventPumpTimer) {
     mEventPumpTimer->Cancel();
@@ -1034,13 +1115,13 @@ sbWatchFolderService::OnWatcherStopped()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  TRACE(("sbWatchFolderService::OnWatcherStopped (path [%s])",
+  TRACE(("sbWatchFolder::OnWatcherStopped (path [%s])",
          NS_ConvertUTF16toUTF8(mWatchPath).get()));
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
+sbWatchFolder::OnWatcherError(PRUint32 aErrorType,
                                      const nsAString & aDescription)
 {
   nsresult rv;
@@ -1065,9 +1146,9 @@ sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
+sbWatchFolder::OnFileSystemChanged(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::OnFileSystemChanged %s",
+  LOG(("sbWatchFolder::OnFileSystemChanged %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
@@ -1115,9 +1196,9 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
+sbWatchFolder::OnFileSystemRemoved(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::OnFileSystemRemoved %s",
+  LOG(("sbWatchFolder::OnFileSystemRemoved %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
@@ -1136,9 +1217,9 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
+sbWatchFolder::OnFileSystemAdded(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::OnFileSystemAdded %s",
+  LOG(("sbWatchFolder::OnFileSystemAdded %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
@@ -1160,7 +1241,7 @@ sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 // sbIMediaListEnumerationListener
 
 NS_IMETHODIMP
-sbWatchFolderService::OnEnumerationBegin(sbIMediaList *aMediaList,
+sbWatchFolder::OnEnumerationBegin(sbIMediaList *aMediaList,
                                          PRUint16 *aRetVal)
 {
   if (!mEnumeratedMediaItems) {
@@ -1175,7 +1256,7 @@ sbWatchFolderService::OnEnumerationBegin(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnEnumeratedItem(sbIMediaList *aMediaList,
+sbWatchFolder::OnEnumeratedItem(sbIMediaList *aMediaList,
                                        sbIMediaItem *aMediaItem,
                                        PRUint16 *aRetVal)
 {
@@ -1185,7 +1266,7 @@ sbWatchFolderService::OnEnumeratedItem(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
+sbWatchFolder::OnEnumerationEnd(sbIMediaList *aMediaList,
                                        nsresult aStatusCode)
 {
   nsresult rv;
@@ -1209,8 +1290,8 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
     }
     else if (mCurrentProcessType == eChanged) {
       // Rescan the changed items.
-      nsCOMPtr<sbIFileMetadataService> metadataService =
-        do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+      nsCOMPtr<sbIFileMetadataService> metadataService;
+      rv = GetMetadataScanner(getter_AddRefs(metadataService));
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIJobProgress> jobProgress;
@@ -1285,7 +1366,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
 // nsITimerCallback
 
 NS_IMETHODIMP
-sbWatchFolderService::Notify(nsITimer *aTimer)
+sbWatchFolder::Notify(nsITimer *aTimer)
 {
   nsresult rv;
 
@@ -1345,7 +1426,7 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
 // sbIJobProgressListener
 
 NS_IMETHODIMP
-sbWatchFolderService::OnJobProgress(sbIJobProgress *aJobProgress)
+sbWatchFolder::OnJobProgress(sbIJobProgress *aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
 
@@ -1364,35 +1445,3 @@ sbWatchFolderService::OnJobProgress(sbIJobProgress *aJobProgress)
 
   return NS_OK;
 }
-
-//------------------------------------------------------------------------------
-// XPCOM Startup Registration
-
-/* static */ NS_METHOD
-sbWatchFolderService::RegisterSelf(nsIComponentManager *aCompMgr,
-                                   nsIFile *aPath,
-                                   const char *aLoaderStr,
-                                   const char *aType,
-                                   const nsModuleComponentInfo *aInfo)
-{
-  NS_ENSURE_ARG_POINTER(aCompMgr);
-  NS_ENSURE_ARG_POINTER(aPath);
-  NS_ENSURE_ARG_POINTER(aLoaderStr);
-  NS_ENSURE_ARG_POINTER(aType);
-  NS_ENSURE_ARG_POINTER(aInfo);
-
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsICategoryManager> catMgr =
-    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_WATCHFOLDERSERVICE_CLASSNAME,
-                                "service,"
-                                SONGBIRD_WATCHFOLDERSERVICE_CONTRACTID,
-                                PR_TRUE, PR_TRUE, nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-

@@ -26,9 +26,34 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(a33307c2-1dd1-11b2-ad85-c03a5b21f0a3)]
-interface sbIWatchFolderService : nsISupports
+
+interface sbIDirectoryImportService;
+interface sbIFileMetadataService;
+interface sbIMediacoreTypeSniffer;
+interface sbIMediaList;
+
+
+[scriptable, uuid(d5f4dec1-6c33-4401-b3b1-bf4d56b7b459)]
+interface sbIWatchFolder : nsISupports
 {
+  /// @todo sbWatchFolderService will set this where it currently
+  ///       handles PREF_WATCHFOLDER_ENABLE.  Enabled => main library, 
+  ///       disabled => null
+  attribute sbIMediaList mediaList;
+
+  /// @todo sbWatchFolderService will initialize this from PREF_WATCHFOLDER_PATH
+  readonly attribute AString path;
+
+  attribute sbIDirectoryImportService importer;
+
+  attribute sbIMediacoreTypeSniffer typeSniffer;
+
+  attribute sbIFileMetadataService metadataScanner;
+
+  /// @todo sbWatchFolderService will set this flag where it currently
+  ///       calls GetIsUnitTestsRunning().  canInteract == !GetIsUnitTestsRunning()
+  attribute boolean canInteract;
+
   //
   // \brief Find out if the watch folder services are supported on 
   //        the current OS.
@@ -83,4 +108,30 @@ interface sbIWatchFolderService : nsISupports
    *               clamped to zero.
    */
   void addIgnoreCount(in AString aFilePath, in long aCount);
+
+  /**
+   * \brief Starts watching.
+   * \param aSessionGuid An empty string or a string previously returned by
+   *                     stop().  If valid, the specified watch session resumes.
+   *                     Otherwise, start() begins a new watch session.
+   */
+  /// @todo sbWatchFolderService will set aSessionGuid from
+  ///       PREF_WATCHFOLDER_SESSIONGUID
+  void start(in ACString aSessionGuid);
+
+  /**
+   * \brief Stops watching.
+   * \return A session GUID.  The GUID can be saved and later passed to start()
+   *         to resume the stopped watch session.
+   */
+  /// @todo sbWatchFolderService will save the result in
+  ///       PREF_WATCHFOLDER_SESSIONGUID
+  ACString stop();
+
+  void setFolder(in AString aPath, in boolean aSynchronizeMediaList);
 };
+
+%{C++
+#define SB_WATCHFOLDER_CONTRACTID     \
+  "@songbirdnest.com/watch-folder;1"
+%};
