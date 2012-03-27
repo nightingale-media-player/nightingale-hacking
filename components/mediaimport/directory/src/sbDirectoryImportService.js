@@ -53,6 +53,8 @@ var gCounter = 0;
  * Call begin() to start the job.
  *****************************************************************************/
 function DirectoryImportJob(aInputArray, 
+                            aTypeSniffer,
+                            aMetadataScanner,
                             aTargetMediaList, 
                             aTargetIndex, 
                             aImportService) {
@@ -69,6 +71,8 @@ function DirectoryImportJob(aInputArray,
   this.targetIndex = aTargetIndex;
 
   this._importService = aImportService;
+  this._typeSniffer = aTypeSniffer;
+  this._metadataScanner = aMetadataScanner;
     
   // TODO these strings probably need updating
   this._titleText = SBString("media_scan.scanning");
@@ -127,6 +131,10 @@ DirectoryImportJob.prototype = {
   
   // The sbIDirectoryImportService.  Called back on job completion.
   _importService            : null,
+
+  _typeSniffer              : null,
+
+  _metadataScanner   : null,
   
   // JS Array of URI strings for all found media items
   _itemURIStrings           : [],
@@ -252,13 +260,11 @@ DirectoryImportJob.prototype = {
                           .createInstance(Components.interfaces.sbIFileScan);
 
     // Figure out what files we are looking for.
-    var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
-                        .createInstance(Ci.sbIMediacoreTypeSniffer);
     try {
-      var extensions = typeSniffer.mediaFileExtensions;
+      var extensions = this._typeSniffer.mediaFileExtensions;
       if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)) {
         // disable video, so scan only audio - see bug 13173
-        extensions = typeSniffer.audioFileExtensions;
+        extensions = this._typeSniffer.audioFileExtensions;
       }
       this._fileExtensions = [];
       while (extensions.hasMore()) {
@@ -284,7 +290,7 @@ DirectoryImportJob.prototype = {
           .createInstance(Ci.nsIMutableArray);
       this._flaggedFileExtensions = [];
       try {
-        var unsupportedExtensions = typeSniffer.unsupportedVideoFileExtensions;
+        var unsupportedExtensions = this._typeSniffer.unsupportedVideoFileExtensions;
         while (unsupportedExtensions.hasMore()) {
           var item = unsupportedExtensions.getNext();
           this._flaggedFileExtensions.push(item);
@@ -656,9 +662,7 @@ DirectoryImportJob.prototype = {
   function DirectoryImportJob__startMetadataScan() {
     if (this._currentMediaItems && this._currentMediaItems.length > 0) {
       
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                              .getService(Ci.sbIFileMetadataService);
-      var metadataJob = metadataService.read(this._currentMediaItems);
+      var metadataJob = this._metadataScanner.read(this._currentMediaItems);
         
       // Pump metadata job progress to the UI
       this.delegateJobProgress(metadataJob);
@@ -884,13 +888,27 @@ DirectoryImportService.prototype = {
    *        the specified media list.
    */
   import: function DirectoryImportService_import(aDirectoryArray, aTargetMediaList, aTargetIndex) {
+    return this.importWithCustomSnifferAndMetadataScanner(
+      aDirectoryArray, null, null, aTargetMediaList, aTargetIndex);
+  },
 
+  importWithCustomSnifferAndMetadataScanner: function DirectoryImportService_importWithCustomSniffer(
+      aDirectoryArray, aTypeSniffer, aMetadataScanner, aTargetMediaList, aTargetIndex) {
+    if (!aTypeSniffer) {
+      aTypeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                     .createInstance(Ci.sbIMediacoreTypeSniffer);
+    }
+    if (!aMetadataScanner) {
+      aMetadataScanner = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                         .getService(Ci.sbIFileMetadataService);
+    }
     // Default to main library if not target is provided
     if (!aTargetMediaList) {
       aTargetMediaList = LibraryUtils.mainLibrary;
     }
     
-    var job = new DirectoryImportJob(aDirectoryArray, aTargetMediaList, aTargetIndex, this);
+    var job = new DirectoryImportJob(
+      aDirectoryArray, aTypeSniffer, aMetadataScanner, aTargetMediaList, aTargetIndex, this);
     
     this._importJobs.push(job);
     
