@@ -47,6 +47,7 @@ case $OSTYPE in
     arch=$(gcc -dumpmachine|sed -e 's/\-.*//')
     depdirn="linux-$arch"
     patch=1
+    export CXXFLAGS="-fpermissive"
     
     cd dependencies
     
