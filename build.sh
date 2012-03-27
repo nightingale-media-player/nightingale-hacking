@@ -29,7 +29,7 @@ export PYTHON="$(which python2 2>/dev/null || which python)"
 
 # fixes a build error
 # add to one of the build files...not sure if it's linux specific or not
-export CXXFLAGS="-std=gnu++0x"
+export CXXFLAGS="-std=gnu++0x -fpermissive"
 
 # use our own gstreamer libs
 # this is always necessary for linux builds using system libs
