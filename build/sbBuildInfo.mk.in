@@ -8,8 +8,8 @@ SB_APPNAME=Songbird
 SB_BUILD_ID=20120330030529
 BuildNumber=2257
 SB_BUILD_NUMBER=$(BuildNumber)
-SB_MILESTONE=1.11.0
-SB_MILESTONE_WINDOWS=1.11.0.0
+SB_MILESTONE=1.11.1
+SB_MILESTONE_WINDOWS=1.11.1.0
 SB_BRANCHNAME=Songbird1.11
 SB_PROFILE_VERSION=2
 SB_MOZILLA_VERSION=
@@ -18,7 +18,7 @@ SB_MOZILLA_VERSION=
 # use them; we make a slight distinction between JS-only and binary extensions
 # for historical policy reasons; that's likely to change if/when we get
 # nightly addon update/1st run bundles working
-SB_BINARY_EXTENSION_MIN_VER=1.11.0
+SB_BINARY_EXTENSION_MIN_VER=1.11.1
 SB_BINARY_EXTENSION_MAX_VER=$(SB_MILESTONE)
 SB_JSONLY_EXTENSION_MIN_VER=1.11.0b1
 SB_JSONLY_EXTENSION_MAX_VER=1.12.0a
