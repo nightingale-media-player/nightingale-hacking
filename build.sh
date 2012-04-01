@@ -52,7 +52,7 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
+      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
     fi
     
@@ -86,7 +86,7 @@ case $OSTYPE in
     cd dependencies
     
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-		$DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
+		$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/i686/$depdirn-$version.tar.lzma"
 		md5_verify "$depdirn-$version.tar.lzma"
     fi
     
@@ -115,7 +115,7 @@ case $OSTYPE in
     cd dependencies
     
 	if [ ! -f "$depdirn-$version.tar.bz2" ] ; then
-		$DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
+		$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$depdirn/$depdirn-$version.tar.bz2"
 		md5_verify "$depdirn-$version.tar.bz2"
 	fi
     
@@ -135,7 +135,7 @@ esac
 cd dependencies
 
 if [ ! -f "vendor-$version.zip" ] ; then
-	$DOWNLOADER "https://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
+	$DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/vendor-$version.zip"
 	md5_verify "vendor-$version.zip"
 fi
 
