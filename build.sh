@@ -44,7 +44,7 @@ md5_verify() {
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
   linux*)
-    arch=`uname -m`
+    arch=`uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!{s/.*/i686/}`
     depdirn="linux-$arch"
     patch=1
     export CXXFLAGS="-fpermissive"
