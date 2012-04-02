@@ -1,0 +1,57 @@
+This package was debianized by David Rogers <ezekiel000@lavabit.com> on
+Sat, 31 Mar 2012 21:16:39 +0000.
+
+It was downloaded from http://github.com/nightingale-media-player/nightingale-hacking
+
+Upstream Authors: 
+	* Steven Bengtson - Stevo
+	* Janek Bevendorff - Manko10
+	* Downward
+	* Lukas Diener - Lukas_Skywalker
+	* Matt Dwyer - MattSD
+	* Martin Giger - freaktechnik
+	* Geoffrey Gates - Timmythepirate
+	* Andrew Luecke - Auzy
+	* Matt Parnell - Ilikenwf
+	* Dirk Steinmetz - rsjtdrjgfuzkfg
+	* Antoine Turmel - GeekShadow
+	* Mark Yen - Mook
+
+Copyright: 
+Certain files in this binary application ("binary") are
+Copyright(c) 2005-2007 POTI, Inc.
+Copyright(c) 2010-2011 getnightingale.com.
+
+Certain files in this binary contain code from VLC and XUL Runner which is 
+copyright their respective copyright holders. These files may include 
+modifications which are
+Copyright(c) 2005-2007 POTI, Inc.
+Copyright(c) 2010-2011 getnightingale.com.
+
+This binary may also contain trademarks of POTI, Inc. 
+including, but not limited to, the name "Songbird", logos, and page layout files
+("skins"). POTI, Inc. does not express or imply any permission to use or distribute
+these trademarks.
+
+License:
+
+    This package is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL-2'.
+
+Packaging:
+        Copyright (C) 2011 by David Rogers <ezekiel000@lavabit.com>
+        released under GPL license.
