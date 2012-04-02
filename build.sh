@@ -12,12 +12,12 @@ version=1.11
 # we'll use wget as default. OS without wget should override this.
 DOWNLOADER="wget"
 
-function md5_verify() {
-  function md5_fail() {
+md5_verify() {
+  md5_fail() {
     echo "-------------------------------------------------------------------------------"
     echo "WARNING: MD5 checksum verification failed: $1"
     echo "It is a safety risk to continue unless you know exactly what you're doing."
-    echo "Answer yes to delete it and retry the build process, or no to continue anyway."
+    echo "Answer no to delete it and retry the build process, or yes to continue anyway."
     read -p "Continue? (y/n) [n]" ans
     case $ans in
       "y" | "Y")
