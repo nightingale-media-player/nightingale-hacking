@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+DEB_DH_SHLIBDEPS_ARGS_ALL := -X nightingale
+
+makebuilddir/nightingale::
+	./build.sh
+	cp -r $(CURDIR)/compiled/dist $(CURDIR)/compiled/nightingale
+	cp $(CURDIR)/compiled/nightingale/chrome/icons/default/default.xpm $(CURDIR)/compiled/nightingale/chrome/icons/default/nightingale.xpm
