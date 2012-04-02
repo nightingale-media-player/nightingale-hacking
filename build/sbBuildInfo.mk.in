@@ -5,8 +5,8 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_BUILD_ID=20120329013529
-BuildNumber=2254
+SB_BUILD_ID=20120331013542
+BuildNumber=2259
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.12.0a
 SB_MILESTONE_WINDOWS=1.11.90.1
