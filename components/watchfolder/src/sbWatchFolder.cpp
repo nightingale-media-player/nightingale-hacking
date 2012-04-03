@@ -407,9 +407,9 @@ sbWatchFolder::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
-    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer;
+  rv = GetTypeSniffer(getter_AddRefs(typeSniffer));
+  NS_ENSURE_SUCCESS(rv,rv);
 
   sbStringSetIter begin = aPathsSet.begin();
   sbStringSetIter end = aPathsSet.end();
@@ -923,7 +923,15 @@ NS_IMETHODIMP sbWatchFolder::SetImporter(sbIDirectoryImportService * aImporter)
 NS_IMETHODIMP sbWatchFolder::GetTypeSniffer(sbIMediacoreTypeSniffer * *aTypeSniffer)
 {
   NS_ENSURE_ARG_POINTER(aTypeSniffer);
-  NS_IF_ADDREF(*aTypeSniffer = mTypeSniffer);
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreTypeSniffer> sniffer = mTypeSniffer;
+  if (!sniffer) {
+    sniffer = do_GetService(
+        "@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  sniffer.forget(aTypeSniffer);
+
   return NS_OK;
 }
 
