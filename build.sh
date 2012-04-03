@@ -44,13 +44,14 @@ md5_verify() {
 # Check for the build deps for the system's architecture and OS
 case $OSTYPE in
   linux*)
-    arch=$(gcc -dumpmachine|sed -e 's/\-.*//')
+    arch=`uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!s/.*/i686/'`
     depdirn="linux-$arch"
     patch=1
     export CXXFLAGS="-fpermissive"
-    
+
+    echo "linux $arch"
     cd dependencies
-    
+ 
     if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
       $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
       md5_verify "$depdirn-$version.tar.lzma"
