@@ -25,7 +25,14 @@ done
 # we can add this bit to the configure.ac as well
 # and locate in order of preference
 # python2.x python2.x python2 pyton
-export PYTHON="$(which python2 2>/dev/null || which python)"
+set +e
+PYTHON="$(which python2)"
+if [[ $? == 0 ]]; then
+ export PYTHON=PYTHON
+else
+ export PYTHON="$(which python)"
+fi
+set -e
 
 # fixes a build error
 # add to one of the build files...not sure if it's linux specific or not
