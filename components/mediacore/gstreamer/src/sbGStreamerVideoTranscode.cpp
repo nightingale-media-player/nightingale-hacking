@@ -27,6 +27,7 @@
 #include <sbIGStreamerService.h>
 
 #include <sbFileUtils.h>
+#include <sbGStreamerMediacoreUtils.h>
 #include <sbStringUtils.h>
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -2099,31 +2100,37 @@ sbGStreamerVideoTranscoder::PadNotifyCaps (GstPad *pad)
   return CheckForAllCaps();
 }
 
+
 GstCaps *
 sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
 {
   // We want to get the caps from the decoder associated with this pad (but this
   // pad might be a ghost pad, or a queue pad linked to the ghost pad, etc)
-  // gst_pad_get_caps() should return the correct caps for our uses here, but
-  // due to bugs in some elements it doesn't always do so (usually this is 
-  // because an element does not call gst_pad_use_fixed_caps()).
-  // So, as a fallback, we try GST_PAD_CAPS, which works in some of these cases,
+  // gst_pad_get_negotiated_caps() is needed. gst_pad_get_caps would fail in 
+  // in some cases (wmv) even with the fallback to GST_PAD_CAPS.
+  // We still fallback and try GST_PAD_CAPS, which works in some of these cases,
   // if the get_caps returned us some non-fixed caps (usually these will be
-  // template caps).
+  // template caps). The use of gst_pad_get_negotiated_caps was thought of
+  // mainly because the media inspector uses it and that particular logic
+  // is doing the same thing as the transcoder, getting caps for the stream.
 
-  GstCaps *caps = gst_pad_get_caps (pad);
+  GstPad * realPad = GetRealPad(pad);
+  GstCaps *caps = gst_pad_get_negotiated_caps (realPad);
   if (caps) {
-    if (gst_caps_is_fixed (caps))
+    if (gst_caps_is_fixed (caps)) {
+      g_object_unref(realPad);
       return caps;
+    }
     gst_caps_unref (caps);
   }
 
-  caps = GST_PAD_CAPS (pad);
+  caps = GST_PAD_CAPS (realPad);
   if (caps) {
     gst_caps_ref (caps);
+    g_object_unref(realPad);
     return caps;
   }
-
+  g_object_unref(realPad);
   return NULL;
 }
 

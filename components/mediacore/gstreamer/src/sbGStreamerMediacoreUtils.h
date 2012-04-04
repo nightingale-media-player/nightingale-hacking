@@ -174,5 +174,10 @@ nsresult
 SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
                       const nsAString & aProperty,
                       const GValue * aValue);
+
+/* Return the real pad, skipping ghosts. The return object is add ref'd */
+GstPad *
+GetRealPad (GstPad *pad);
+
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 
