@@ -733,9 +733,15 @@ sbRTQAddedEvent::Run()
 
     rv = mRTQ->ProcessBatch(batch);
 
+    // Always clean up the batch to remove any failed items from
+    // the device library. They can show up as ghosts until the device
+    // is re-scanned.
+    nsresult rv2 = mRTQ->CleanupBatch(batch);
+    NS_ENSURE_SUCCESS(rv2, rv2);
+
+    // Check to see if the ProcessBatch call was aborted. If so we don't
+    // want to surface the error, just stop processing the batches.
     if (rv == NS_ERROR_ABORT) {
-      rv = mRTQ->CleanupBatch(batch);
-      NS_ENSURE_SUCCESS(rv, rv);
       return NS_OK;
     }
     NS_ENSURE_SUCCESS(rv, rv);
