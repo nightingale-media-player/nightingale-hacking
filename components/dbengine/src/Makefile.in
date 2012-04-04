@@ -72,6 +72,20 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
+ifeq (linux,$(SB_PLATFORM))
+   DYNAMIC_LIB_RAW_IMPORTS += \
+    $(SQLITE_LIBS) \
+    $(NULL)
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
+    $(NULL)
+
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+    $(NULL)
+endif
+
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_STATIC_IMPORTS += \
     $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
@@ -100,6 +114,8 @@ else
     DYNAMIC_LIB_STATIC_IMPORTS += \
 		$(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
 		$(NULL)
+   CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
+                       $(NULL)
 endif
 
 ifeq (solaris,$(SB_PLATFORM))

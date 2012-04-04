@@ -140,6 +140,12 @@ ifdef DEBUG
                          $(NULL)
 endif
 
+ifneq (linux,$(SB_PLATFORM))
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+    $(NULL)
+endif
+
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 

@@ -55,9 +55,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
-ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-   CPP_EXTRA_INCLUDES += $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
-					     $(NULL)
+ifneq (linux,$(SB_PLATFORM))
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+    $(NULL)
 endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
