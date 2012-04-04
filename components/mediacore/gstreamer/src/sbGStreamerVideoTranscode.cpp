@@ -2139,6 +2139,7 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
 {
   // Ensure this isn't called from multiple threads concurrently.
   nsAutoLock lock(mBuildLock);
+  nsresult rv = NS_OK;
 
   if (mWaitingForCaps) {
     TRACE(("CheckForAllCaps: checking if we have fixed caps on all pads"));
@@ -2164,25 +2165,36 @@ sbGStreamerVideoTranscoder::CheckForAllCaps ()
 
     // Ok, we have caps for everything.
     // Build the rest of the pipeline, and unblock the pads.
-    nsresult rv = BuildRemainderOfPipeline();
-    NS_ENSURE_SUCCESS (rv, rv);
+    rv = BuildRemainderOfPipeline();
 
-    if (mAudioQueueSrc) {
-      gst_pad_set_blocked_async (mAudioQueueSrc, FALSE,
-                                 (GstPadBlockCallback)pad_blocked_cb, this);
-    }
-    if (mVideoQueueSrc) {
-      gst_pad_set_blocked_async (mVideoQueueSrc, FALSE,
-                                 (GstPadBlockCallback)pad_blocked_cb, this);
-    }
-
+    // success or failure, we're done waiting for caps
     mWaitingForCaps = PR_FALSE;
+
+    if (NS_SUCCEEDED (rv)) {
+      if (mAudioQueueSrc) {
+        gst_pad_set_blocked_async (mAudioQueueSrc, FALSE,
+                                   (GstPadBlockCallback)pad_blocked_cb, this);
+      }
+      if (mVideoQueueSrc) {
+        gst_pad_set_blocked_async (mVideoQueueSrc, FALSE,
+                                   (GstPadBlockCallback)pad_blocked_cb, this);
+      }
+    } else {
+      // handle NS_FAILED(rv)
+      // Set status so progress reporting shows we failed
+      mStatus = sbIJobProgress::STATUS_FAILED;
+
+      // unlock before making the proxied error dispatch
+      lock.unlock();
+      TranscodingFatalError("songbird.transcode.error.failed_configuration");
+      lock.lock();
+    }
 
     // Done with all building, clean these up.
     CleanupPads();
   }
 
-  return NS_OK;
+  return rv;
 }
 
 nsresult
