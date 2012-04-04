@@ -50,6 +50,7 @@
 #include <nsAutoPtr.h>
 #include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
+#include <mozilla/ReentrantMonitor.h>
 
 //------------------------------------------------------------------------------
 //
@@ -746,7 +747,7 @@ public:
   PRBool Wait(PRIntervalTime aTimeout);
 
 private:
-  mozilla::Monitor  mMonitor;
+  mozilla::ReentrantMonitor  mMonitor;
   PRBool            mDone;
 };
 
