@@ -85,9 +85,6 @@ private:
                                   GstStructure *aStructure);
   nsresult InspectorateElement (GstElement *element);
 
-  /* Get the real pad associated with a (possibly ghost) pad */
-  GstPad * GetRealPad (GstPad *pad);
-
   void HandleStateChangeMessage(GstMessage *message);
   void HandleErrorMessage(GstMessage *message);
 

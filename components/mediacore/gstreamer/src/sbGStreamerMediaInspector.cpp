@@ -1317,21 +1317,6 @@ sbGStreamerMediaInspector::InspectorateElement (GstElement *element)
   return NS_OK;
 }
 
-GstPad *
-sbGStreamerMediaInspector::GetRealPad (GstPad *pad)
-{
-  TRACE(("%s[%p]", __FUNCTION__, this));
-
-  GstPad *current = pad;
-  GstGhostPad *ghost;
-  while (GST_IS_GHOST_PAD (current)) {
-    ghost = GST_GHOST_PAD (current);
-    current = gst_ghost_pad_get_target (ghost);
-  }
-
-  return current;
-}
-
 /* static */ void
 sbGStreamerMediaInspector::fakesink_audio_event_cb (GstPad * pad,
         GstEvent * event, sbGStreamerMediaInspector *inspector)
