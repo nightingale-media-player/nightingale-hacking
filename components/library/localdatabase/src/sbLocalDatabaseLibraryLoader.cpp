@@ -50,8 +50,8 @@
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsTHashtable.h>
+#include <nsToolkitCompsCID.h>
 #include <nsXPCOMCID.h>
-#include <nsXPFEComponentsCID.h>
 #include <prlog.h>
 #include <sbLibraryManager.h>
 #include <sbMemoryUtils.h>
