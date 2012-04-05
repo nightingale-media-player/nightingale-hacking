@@ -27,7 +27,6 @@
 #include <nsICategoryManager.h>
 #include <nsIAppStartup.h>
 #include <nsIFile.h>
-#include <nsIGenericFactory.h>
 #include <nsILocalFile.h>
 #include <nsIObserverService.h>
 #include <nsIIOService.h>

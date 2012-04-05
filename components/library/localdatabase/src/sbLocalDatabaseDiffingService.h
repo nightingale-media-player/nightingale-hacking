@@ -28,7 +28,6 @@
 #include <sbILibraryDiffingService.h>
 
 #include <nsIClassInfo.h>
-#include <nsIGenericFactory.h>
 #include <nsIThread.h>
 
 #include <sbILibrary.h>
@@ -57,12 +56,6 @@ public:
   NS_DECL_SBILIBRARYDIFFINGSERVICE
 
   sbLocalDatabaseDiffingService();
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
 
   /**
    * Initialize the local database diffing service.

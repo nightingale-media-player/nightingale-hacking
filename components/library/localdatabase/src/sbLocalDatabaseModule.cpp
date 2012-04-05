@@ -24,7 +24,8 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <nsIClassInfoImpl.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
@@ -47,69 +48,66 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSmartMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseDynamicMediaListFactory);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseMediaListViewState)
 
-SB_LIBRARY_LOADER_REGISTRATION(sbLocalDatabaseLibraryLoader,
-                               SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION)
-
-static const nsModuleComponentInfo components[] =
+static const mozilla::Module::CIDEntry kLocalDatabaseCIDs[] =
 {
-  {
-    SB_LOCALDATABASE_GUIDARRAY_DESCRIPTION,
-    SB_LOCALDATABASE_GUIDARRAY_CID,
-    SB_LOCALDATABASE_GUIDARRAY_CONTRACTID,
-    sbLocalDatabaseGUIDArrayConstructor
-  },
-  {
-    SB_LOCALDATABASE_ASYNCGUIDARRAY_DESCRIPTION,
-    SB_LOCALDATABASE_ASYNCGUIDARRAY_CID,
-    SB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID,
-    sbLocalDatabaseAsyncGUIDArrayConstructor
-  },
-  {
-    SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
-    SB_LOCALDATABASE_LIBRARYFACTORY_CID,
-    SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
-    sbLocalDatabaseLibraryFactoryConstructor,
-    sbLocalDatabaseLibraryFactory::RegisterSelf
-  },
-  {
-    SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION,
-    SB_LOCALDATABASE_LIBRARYLOADER_CID,
-    SB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID,
-    sbLocalDatabaseLibraryLoaderConstructor,
-    sbLocalDatabaseLibraryLoaderRegisterSelf,
-    sbLocalDatabaseLibraryLoaderUnregisterSelf
-  },
-  {
-    SB_LOCALDATABASE_DIFFINGSERVICE_DESCRIPTION,
-    SB_LOCALDATABASE_DIFFINGSERVICE_CID,
-    SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID,
-    sbLocalDatabaseDiffingServiceConstructor,
-    sbLocalDatabaseDiffingService::RegisterSelf,
-  },
-  {
-    SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION,
-    SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
-    SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID,
-    sbLocalDatabaseSimpleMediaListFactoryConstructor
-  },
-  {
-    SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_DESCRIPTION,
-    SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID,
-    SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CONTRACTID,
-    sbLocalDatabaseSmartMediaListFactoryConstructor
-  },
-  {
-    SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_DESCRIPTION,
-    SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID,
-    SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID,
-    sbLocalDatabaseDynamicMediaListFactoryConstructor
-  },
-  {
-    SB_LOCALDATABASE_MEDIALISTVIEWSTATE_DESCRIPTION,
-    SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID,
-    SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CONTRACTID,
-    sbLocalDatabaseMediaListViewStateConstructor
-  }
+  { &kSB_LOCALDATABASE_GUIDARRAY_CID, false, NULL,
+    sbLocalDatabaseGUIDArrayConstructor },
+  { &kSB_LOCALDATABASE_ASYNCGUIDARRAY_CID, false, NULL,
+    sbLocalDatabaseAsyncGUIDArray },
+  { &kSB_LOCALDATABASE_LIBRARYFACTORY_CID, false, NULL,
+    sbLocalDatabaseLibraryFactoryConstructor },
+  { &kSB_LOCALDATABASE_LIBRARYLOADER_CID, false, NULL,
+    sbLocalDatabaseLibraryLoaderConstructor },
+  { &kSB_LOCALDATABASE_DIFFINGSERVICE_CID, false, NULL,
+    sbLocalDatabaseDiffingServiceConstructor },
+  { &kSB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID, false, NULL,
+    sbLocalDatabaseSimpleMediaListFactoryConstructor },
+  { &kSB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID, false, NULL,
+    sbLocalDatabaseSmartMediaListFactoryConstructor },
+  { &kSB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID, false, NULL,
+    sbLocalDatabaseDynanmicMediaListFactoryConstructor },
+  { &kSB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID, false, NULL,
+    sbLocalDatabaseMediaListViewStateConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdLocalDatabaseLibraryModule, components)
+static const mozilla::Module::ContractIDEntry kLocalDatabaseContracts[] =
+{
+  { SB_LOCALDATABASE_GUIDARRAY_CID,
+    &kSB_LOCALDATABASE_GUIDARRAY_CONTRACTID },
+  { SB_LOCALDATABASE_ASYNCGUIDARRAY_CID,
+    &kSB_LOCALDATABASE_ASYNCGUIDARRAY_CONTRACTID },
+  { SB_LOCALDATABASE_LIBRARYFACTORY_CID,
+    &kSB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID },
+  { SB_LOCALDATABASE_LIBRARYLOADER_CID,
+    &kSB_LOCALDATABASE_LIBRARYLOADER_CONTRACTID },
+  { SB_LOCALDATABASE_DIFFINGSERVICE_CID,
+    &kSB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID },
+  { SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CID,
+    &kSB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_CONTRACTID },
+  { SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID,
+    &kSB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CONTRACTID },
+  { SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID,
+    &kSB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID },
+  { SB_LOCALDATABASE_MEDIALISTVIEWSTATE_CID,
+    &kSB_LOCALDATABASE_MEDIALISTVIEWSTATE_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kLocalDatabaseCategories[] =
+{
+  { "profile-after-change" SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID },
+  { "profile-after-change" SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kLocalDatabaseLibraryModule =
+{
+  mozilla::Module::kVersion,
+  kLocalDatabaseCIDs,
+  kLocalDatabaseContracts,
+  kLocalDatabaseCategories
+};
+
+NSMODULE_DEFN(SongbirdLocalDatabaseLibraryModule) =
+  &kLocalDatabaseLibraryModule;
