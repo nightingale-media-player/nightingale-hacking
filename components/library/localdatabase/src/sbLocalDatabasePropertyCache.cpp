@@ -95,8 +95,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
 
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 : mWritePendingCount(0),
-  mDependentGUIDArrayMonitor(nsnull),
-  mMonitor(nsnull),
+  mDependentGUIDArrayMonitor("sbLocalDatabasePropertyCache::mDependentGUIDArrayMonitor"),
+  mMonitor("sbLocalDatabasePropertyCache::mMonitor"),
   mCache(sbLocalDatabasePropertyCache::CACHE_SIZE),
   mLibrary(nsnull),
   mSortInvalidateJob(nsnull)
@@ -108,14 +108,6 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
-  if (mDependentGUIDArrayMonitor) {
-    nsAutoMonitor::DestroyMonitor(mDependentGUIDArrayMonitor);
-  }
-
-  if (mMonitor) {
-    nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
-
   MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
 }
 
@@ -146,13 +138,6 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  mDependentGUIDArrayMonitor =
-    nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mDependentGUIDArrayMonitor");
-  NS_ENSURE_TRUE(mDependentGUIDArrayMonitor, NS_ERROR_OUT_OF_MEMORY);
-
-  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
