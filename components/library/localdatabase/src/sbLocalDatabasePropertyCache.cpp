@@ -675,7 +675,6 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
   }
   // First, collect all the guids that are not cached
   nsTArray<nsString> misses;
-  PRBool cacheLibraryMediaItem = PR_FALSE;
 
   // Unfortunately need to lock for the duration of this call
   // till after we build the misses array, we don't want another
@@ -691,7 +690,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
       if (mCache.Get(guid) == nsnull) {
 
         if (guid.Equals(mLibraryResourceGUID)) {
-          cacheLibraryMediaItem = PR_TRUE;
+	  // TODO: do something with the cache here
         }
         else {
           nsString* newElement = misses.AppendElement(guid);
