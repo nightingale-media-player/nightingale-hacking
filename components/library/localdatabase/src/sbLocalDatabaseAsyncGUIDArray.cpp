@@ -38,6 +38,7 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbProxiedComponentManager.h>
 #include <mozilla/Monitor.h>
+#include <mozilla/Util.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -688,15 +689,17 @@ nsresult
 sbLocalDatabaseAsyncGUIDArray::SendOnGetLength(PRUint32 aLength,
                                                nsresult aResult)
 {
-  nsresult rv;
-  PRBool listenSucceeded = PR_TRUE;
+  mozilla::DebugOnly<PRBool> listenSucceeded = PR_TRUE;
 
   PRUint32 length = mAsyncListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    rv = mAsyncListenerArray[i]->mProxiedListener->OnGetLength(aLength,
-                                                               aResult);
+    mozilla::DebugOnly<nsresult> rv =
+      mAsyncListenerArray[i]->mProxiedListener->OnGetLength(aLength,
+							    aResult);
+#ifdef DEBUG
     if (NS_FAILED(rv))
       listenSucceeded = PR_FALSE;
+#endif
   }
   NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
 
@@ -708,16 +711,18 @@ sbLocalDatabaseAsyncGUIDArray::SendOnGetGuidByIndex(PRUint32 aIndex,
                                                     const nsAString& aGUID,
                                                     nsresult aResult)
 {
-  nsresult rv;
-  PRBool listenSucceeded = PR_TRUE;
+  mozilla::DebugOnly<PRBool> listenSucceeded = PR_TRUE;
 
   PRUint32 length = mAsyncListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    rv = mAsyncListenerArray[i]->mProxiedListener->OnGetGuidByIndex(aIndex,
-                                                                    aGUID,
-                                                                    aResult);
+    mozilla::DebugOnly<nsresult> rv =
+      mAsyncListenerArray[i]->mProxiedListener->OnGetGuidByIndex(aIndex,
+								 aGUID,
+								 aResult);
+#ifdef DEBUG
     if (NS_FAILED(rv))
       listenSucceeded = PR_FALSE;
+#endif
   }
   NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
 
@@ -730,15 +735,18 @@ sbLocalDatabaseAsyncGUIDArray::SendOnGetSortPropertyValueByIndex
                                                          const nsAString& aGUID,
                                                          nsresult aResult)
 {
-  nsresult rv;
-  PRBool listenSucceeded = PR_TRUE;
+  mozilla::DebugOnly<PRBool> listenSucceeded = PR_TRUE;
 
   PRUint32 length = mAsyncListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    rv = mAsyncListenerArray[i]->mProxiedListener->
-                          OnGetSortPropertyValueByIndex(aIndex, aGUID, aResult);
+    mozilla::DebugOnly<nsresult> rv =
+      mAsyncListenerArray[i]->mProxiedListener->
+        OnGetSortPropertyValueByIndex(aIndex, aGUID, aResult);
+
+#ifdef DEBUG
     if (NS_FAILED(rv))
       listenSucceeded = PR_FALSE;
+#endif
   }
   NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
 
@@ -751,15 +759,18 @@ sbLocalDatabaseAsyncGUIDArray::SendOnGetMediaItemIdByIndex
                                                          PRUint32 aMediaItemId,
                                                          nsresult aResult)
 {
-  nsresult rv;
-  PRBool listenSucceeded = PR_TRUE;
+  mozilla::DebugOnly<PRBool> listenSucceeded = PR_TRUE;
 
   PRUint32 length = mAsyncListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    rv = mAsyncListenerArray[i]->mProxiedListener->
-                        OnGetMediaItemIdByIndex(aIndex, aMediaItemId, aResult);
+    mozilla::DebugOnly<nsresult> rv =
+      mAsyncListenerArray[i]->mProxiedListener->
+        OnGetMediaItemIdByIndex(aIndex, aMediaItemId, aResult);
+
+#ifdef DEBUG
     if (NS_FAILED(rv))
       listenSucceeded = PR_FALSE;
+#endif
   }
   NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
 
@@ -769,14 +780,17 @@ sbLocalDatabaseAsyncGUIDArray::SendOnGetMediaItemIdByIndex
 nsresult
 sbLocalDatabaseAsyncGUIDArray::SendOnStateChange(PRUint32 aState)
 {
-  nsresult rv;
-  PRBool listenSucceeded = PR_TRUE;
+  mozilla::DebugOnly<PRBool> listenSucceeded = PR_TRUE;
 
   PRUint32 length = mAsyncListenerArray.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    rv = mAsyncListenerArray[i]->mProxiedListener->OnStateChange(aState);
+    mozilla::DebugOnly<nsresult> rv =
+      mAsyncListenerArray[i]->mProxiedListener->OnStateChange(aState);
+
+#ifdef DEBUG
     if (NS_FAILED(rv))
       listenSucceeded = PR_FALSE;
+#endif
   }
   NS_WARN_IF_FALSE(listenSucceeded, "Listener notification failed");
 
