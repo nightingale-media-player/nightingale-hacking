@@ -1359,7 +1359,7 @@ sbLocalDatabasePropertyCache::InvalidateSortData(sbIJobProgress** _retval)
   GetSetInvalidSortDataPref(PR_TRUE, hasInvalidData);
 
   // Start a job to read, process, and set all the properties in the library
-  NS_NEWXPCOM(mSortInvalidateJob, sbLocalDatabaseSortInvalidateJob);
+  mSortInvalidateJob = new sbLocalDatabaseSortInvalidateJob();
   NS_ENSURE_TRUE(mSortInvalidateJob, NS_ERROR_OUT_OF_MEMORY);
 
   // Go!

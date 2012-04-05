@@ -1071,7 +1071,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureFilterArray(sbFilterSpec* aSpec,
   rv = aSpec->array->AddSort(aSortProperty, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NEWXPCOM(aSpec->arrayListener, sbLocalDatabaseCascadeFilterSetArrayListener);
+  aSpec->arrayListener = new sbLocalDatabaseCascadeFilterSetArrayListener();
   NS_ENSURE_TRUE(aSpec->arrayListener, NS_ERROR_OUT_OF_MEMORY);
   rv = aSpec->arrayListener->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);

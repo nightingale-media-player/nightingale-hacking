@@ -1136,13 +1136,13 @@ nsresult
 sbLocalDatabaseLibrary::RegisterDefaultMediaListFactories()
 {
   nsCOMPtr<sbIMediaListFactory> factory;
-  NS_NEWXPCOM(factory, sbLocalDatabaseSimpleMediaListFactory);
+  factory = new sbLocalDatabaseSimpleMediaListFactory();
   NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = RegisterMediaListFactory(factory);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NEWXPCOM(factory, sbLocalDatabaseSmartMediaListFactory);
+  factory = new sbLocalDatabaseSmartMediaListFactory();
   NS_ENSURE_TRUE(factory, NS_ERROR_OUT_OF_MEMORY);
 
   rv = RegisterMediaListFactory(factory);
