@@ -941,10 +941,6 @@ case "$SB_PLATFORM" in
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
 
-    PKG_CHECK_MODULES(SQLITE, sqlite3)
-    AC_SUBST(SQLITE_CFLAGS)
-    AC_SUBST(SQLITE_LIBS)
-
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -fno-strict-aliasing -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
