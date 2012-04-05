@@ -29,20 +29,40 @@
  * \brief Songbird Identity Service Component Factory and Main Entry Point.
  */
 
-#include <nsIGenericFactory.h>
+#include <nsIClassInfoImpl.h>
+#include <mozilla/ModuleUtils.h>
+
 #include "sbIdentityService.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbIdentityService);
 
-static nsModuleComponentInfo sbIdentityServiceComponent[] =
+NS_DEFINE_NAMED_CID(SONGBIRD_IDENTITY_SERVICE_CID);
+
+static const mozilla::Module::CIDEntry kIdentityServiceCIDs[] =
 {
-  {
-    SONGBIRD_IDENTITY_SERVICE_CLASSNAME,
-    SONGBIRD_IDENTITY_SERVICE_CID,
-    SONGBIRD_IDENTITY_SERVICE_CONTRACTID,
-    sbIdentityServiceConstructor
-  }
+  { &kSONGBIRD_IDENTITY_SERVICE_CID, false, NULL,
+    sbIdentityServiceConstructor },
+  { NULL }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdIdentityServiceComponent,
-                    sbIdentityServiceComponent);
+static const mozilla::Module::ContractIDEntry kIdentityServiceContracts[] =
+{
+  { SONGBIRD_IDENTITY_SERVICE_CONTRACTID,
+    &kSONGBIRD_IDENTITY_SERVICE_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kIdentityServiceCategories[] =
+{
+  { NULL }
+};
+
+static const mozilla::Module kIdentityServiceComponent =
+{
+  mozilla::Module::kVersion,
+  kIdentityServiceCIDs,
+  kIdentityServiceContracts,
+  kIdentityServiceCategories
+};
+
+NSMODULE_DEFN(SongbirdIdentityServiceComponent) = &kIdentityServiceComponent;
