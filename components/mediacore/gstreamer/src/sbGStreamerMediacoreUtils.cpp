@@ -1006,3 +1006,20 @@ SetPropertyFromGValue(nsIWritablePropertyBag2 * aPropertyBag,
 
   return NS_OK;
 }
+
+GstPad *
+GetRealPad (GstPad *pad)
+{
+  GstPad *current = pad;
+  g_object_ref(current);
+  GstGhostPad *ghost;
+  while (GST_IS_GHOST_PAD (current)) {
+    ghost = GST_GHOST_PAD (current);
+    GstPad *padToRelease = current;
+    current = gst_ghost_pad_get_target (ghost);
+    g_object_unref (padToRelease);
+  }
+  return current;
+}
+
+
