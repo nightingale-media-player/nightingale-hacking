@@ -2891,17 +2891,81 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
     }
 
     // XXX Mook: We should be looking at whether the
-    // moov/trak/mdia/minf/stbl/stsd/drms box exists; for now, just assume file
-    // extension is close enough, because our taglib m4a support doesn't support
+    // moov/trak/mdia/minf/stbl/stsd/drms box exists
+    // taglib m4a support doesn't support
     // exposing boxes to the outside world (nor does it understand DRM).
+    /*
+    pavel@salsita: TagLib does not publicize the atom tree logic,
+    fortunately it supports searching in the file stream so let's 
+    incrementally find all required atoms.
+    For now, ignore that there should be a serialization of tree structure.
+    Just the fact that there are all these strings sequentially is good enough.
+    Meanings for the atom names taken from http://www.mp4ra.org/atoms.html
+
+    The toplevel "moov" atom must be iterated properly (i.e. by reading and
+    summing up the offsets) instead of find()-ing because MP4::File regularly
+    does not find the atom block when it's appended at the end of file
+    (after the media stream). Perhaps a TagLib partial match logic bug?
+    */
     if (NS_SUCCEEDED(result)) {
-        nsCString fileExt;
-        result = mpURL->GetFileExtension(fileExt);
-        if (NS_SUCCEEDED(result) &&
-            fileExt.Equals(NS_LITERAL_CSTRING("m4p"), CaseInsensitiveCompare))
-        {
-            result = AddMetadataValue(SB_PROPERTY_ISDRMPROTECTED, true);
+      static const TagLib::ByteVector DRM_ATOMS[] = {
+        TagLib::ByteVector("moov"), // ISO container for metadata
+        TagLib::ByteVector("trak"), // ISO individual track [+]
+        TagLib::ByteVector("mdia"), // ISO media information on a track
+        TagLib::ByteVector("minf"), // ISO media information container
+        TagLib::ByteVector("stbl"), // ISO sample table box
+        TagLib::ByteVector("stsd"), // ISO sample descriptions
+        TagLib::ByteVector("drms"), // nonstandard, DRM box/atom
+        TagLib::ByteVector("sinf"), // ISO, protection scheme information box/atom
+        TagLib::ByteVector("schi"), // ISO, scheme information box
+        TagLib::ByteVector("priv"), // nonstandard, DRM private key
+      };
+      // [+] there can be multiple tracks in one moov (and perhaps some other atoms
+      // down the tree as well). But because we are searching linearly, the expected
+      // next atom will be hit anyway (even if we pass more occurences of the upper
+      // atoms in the scanning)
+      static const size_t DRM_ATOM_COUNT = sizeof(DRM_ATOMS)/sizeof(TagLib::ByteVector);
+      static const size_t ATOM_LEN_BYTES = 4;
+
+      long lPos = 0; // byte offset into file
+      long atomLen = 0;
+      size_t idx = 0; // index into DRM_ATOMS
+      pTagFile->seek(lPos,TagLib::File::Beginning);
+      // find the toplevel atom incrementally
+      while(pTagFile->tell() < pTagFile->length()) {
+        // Format of atom is
+        // [L=4B length][4B ASCII atom name][L - 8, atom content]
+        atomLen = pTagFile->readBlock(ATOM_LEN_BYTES).toUInt();
+        // Do not count passed atom header (length+name)
+        // into further seeking and reading
+        atomLen -= 2*ATOM_LEN_BYTES;
+        if( pTagFile->readBlock(ATOM_LEN_BYTES) == DRM_ATOMS[idx] ) {
+          // found desired root, break out to dig the tree
+          idx++;
+          break;
         }
+        // jump to the next atom
+        pTagFile->seek(atomLen,TagLib::File::Current);
+      }
+      if( (idx > 0) && // "moov" atom has been actually found
+          // sanity check on the length
+          (atomLen > 0) && (pTagFile->tell()+atomLen <= pTagFile->length())
+      ) {
+        // read up the remaining metadata block
+        ByteVector moovBuffer = pTagFile->readBlock(atomLen);
+        lPos = 0;
+        while( lPos < atomLen ) {
+          // start at last known position, return -1 when not found
+          lPos = moovBuffer.find(DRM_ATOMS[idx++],lPos);
+          if( lPos == -1 ) {
+            break; // not found
+          } else if( idx == DRM_ATOM_COUNT ) {
+            // found the last atom
+            result = AddMetadataValue(SB_PROPERTY_ISDRMPROTECTED, true);
+            break;
+          }
+        }
+      }        
     }
 
     /* File is invalid on any error. */
