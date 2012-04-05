@@ -24,6 +24,9 @@
  *=END SONGBIRD GPL
  */
 
+#include <nsIClassInfoImpl.h>
+#include <mozilla/ModuleUtils.h>
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
@@ -48,10 +51,6 @@
 #include "sbHTTPMediaItemDownloader.h"
 #include "sbMediaItemDownloadService.h"
 
-// Mozilla imports.
-#include <nsIGenericFactory.h>
-
-
 //------------------------------------------------------------------------------
 //
 // Songbird media item download service components module registration services.
@@ -62,33 +61,42 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbHTTPMediaItemDownloader)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemDownloadService)
 
-// Component registration declarations.
-SB_MEDIA_ITEM_DOWNLOADER_REGISTERSELF(sbHTTPMediaItemDownloader)
+NS_DEFINE_NAMED_CID(SB_HTTP_MEDIA_ITEM_DOWNLOADER_CID);
+NS_DEFINE_NAMED_CID(SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID);
 
-// Module component information.
-static nsModuleComponentInfo sbMediaItemDownloadComponents[] =
+static const mozilla::Module::CIDEntry kMediaItemDownloadCIDs[] =
 {
-  // HTTP media item downloader component info.
-  {
-    SB_HTTP_MEDIA_ITEM_DOWNLOADER_CLASSNAME,
-    SB_HTTP_MEDIA_ITEM_DOWNLOADER_CID,
-    SB_HTTP_MEDIA_ITEM_DOWNLOADER_CONTRACTID,
-    sbHTTPMediaItemDownloaderConstructor,
-    sbHTTPMediaItemDownloaderRegisterSelf,
-    sbHTTPMediaItemDownloaderUnregisterSelf
-  },
-
-  // Songbird media item download service component info.
-  {
-    SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME,
-    SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID,
-    SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID,
-    sbMediaItemDownloadServiceConstructor,
-    sbMediaItemDownloadService::RegisterSelf,
-    sbMediaItemDownloadService::UnregisterSelf
-  }
+  { &kSB_HTTP_MEDIA_ITEM_DOWNLOADER_CID, false, NULL,
+    sbHTTPMediaItemDownloaderConstructor },
+  { &kSB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID, false, NULL,
+    sbMediaItemDownloadServiceConstructor },
+  { NULL }
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbMediaItemDownloadModule, sbMediaItemDownloadComponents)
+static const mozilla::Module::ContractIDEntry kMediaItemDownloadContracts[] =
+{
+  { SB_HTTP_MEDIA_ITEM_DOWNLOADER_CONTRACTID,
+    &kSB_HTTP_MEDIA_ITEM_DOWNLOADER_CID },
+  { SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID,
+    &kSB_MEDIA_ITEM_DOWNLOAD_SERVICE_CID },
+  { NULL }
+};
 
+static const mozilla::Module::CategoryEntry kMediaItemDownloadCategories[] =
+{
+  { SB_MEDIA_ITEM_DOWNLOADER_CATEGORY,
+    SB_HTTP_MEDIA_ITEM_DOWNLOADER_CONTRACTID },
+  { "profile-after-change",
+    SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CONTRACTID },
+  { NULL}
+};
+
+static const mozilla::Module kMediaItemDownloadModule =
+{
+  mozilla::Module::kVersion,
+  kMediaItemDownloadCIDs,
+  kMediaItemDownloadContracts,
+  kMediaItemDownloadCategories
+};
+
+NSMODULE_DEFN(sbMediaItemDownloadModule) = &kMediaItemDownloadModule;

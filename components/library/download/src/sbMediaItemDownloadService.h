@@ -52,7 +52,6 @@
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
-#include <nsIGenericFactory.h>
 #include <nsIObserver.h>
 #include <nsTArray.h>
 
@@ -66,6 +65,8 @@
 //
 // Songbird media item download service XPCOM component definitions.
 //
+
+#define SB_MEDIA_ITEM_DOWNLOADER_CATEGORY "songbird-media-item-downloader"
 
 #define SB_MEDIA_ITEM_DOWNLOAD_SERVICE_CLASSNAME "sbMediaItemDownloadService"
 #define SB_MEDIA_ITEM_DOWNLOAD_SERVICE_DESCRIPTION \
@@ -124,24 +125,6 @@ public:
    * Destroy a media item download service object.
    */
   virtual ~sbMediaItemDownloadService();
-
-  /**
-   * Register the media item download service component.
-   */
-  static NS_METHOD RegisterSelf(nsIComponentManager*         aCompMgr,
-                                nsIFile*                     aPath,
-                                const char*                  aLoaderStr,
-                                const char*                  aType,
-                                const nsModuleComponentInfo* aInfo);
-
-  /**
-   * Unregister the media item download service component.
-   */
-  static NS_METHOD UnregisterSelf(nsIComponentManager*         aCompMgr,
-                                  nsIFile*                     aPath,
-                                  const char*                  aLoaderStr,
-                                  const nsModuleComponentInfo* aInfo);
-
 
   //----------------------------------------------------------------------------
   //
