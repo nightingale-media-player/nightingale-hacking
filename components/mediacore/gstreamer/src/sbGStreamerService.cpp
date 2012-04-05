@@ -25,7 +25,7 @@
 #include "sbGStreamerService.h"
 #include "sbGStreamerMediacoreUtils.h"
 #include <gst/pbutils/descriptions.h>
-#include <glib/gutils.h>
+#include <glib.h>
 
 #include <sbLibraryLoaderUtils.h>
 
