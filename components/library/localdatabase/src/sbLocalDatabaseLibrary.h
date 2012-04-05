@@ -345,15 +345,15 @@ private:
 
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
-  nsresult ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aStringArray);
+  nsresult ConvertURIsToStrings(nsIArray* aURIs, nsTArray<nsString>** aStringArray);
 
   nsresult ContainsCopy(sbIMediaItem* aMediaItem,
                         PRBool*       aContainsCopy);
 
-  nsresult FilterExistingItems(nsStringArray* aURIs,
+  nsresult FilterExistingItems(nsTArray<nsString>* aURIs,
                                nsIArray* aPropertyArrayArray,
                                nsTArray<PRUint32>* aFilteredIndexArray,
-                               nsStringArray** aFilteredURIs,
+                               nsTArray<nsString>** aFilteredURIs,
                                nsIArray** aFilteredPropertyArrayArray);
 
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
@@ -551,7 +551,7 @@ public:
                       sbBatchCreateTimerCallback* aCallback = nsnull);
 
   nsresult InitQuery(sbIDatabaseQuery* aQuery,
-                     nsStringArray* aURIArray,
+                     nsTArray<nsString>* aURIArray,
                      nsIArray* aPropertyArrayArray);
 
   nsresult NotifyAndGetItems(nsIArray** _retval);
@@ -565,7 +565,7 @@ private:
   // reference to the callback
   sbLocalDatabaseLibrary*     mLibrary;
   sbBatchCreateTimerCallback*      mCallback;
-  nsAutoPtr<nsStringArray>  mURIArray;
+  nsAutoPtr< nsTArray<nsString> >  mURIArray;
   nsCOMPtr<nsIArray>  mPropertiesArray;
   nsTArray<nsString>  mGuids;
   PRUint32 mLength;
