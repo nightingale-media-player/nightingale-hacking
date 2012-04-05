@@ -37,8 +37,7 @@
 #include <nsStringGlue.h>
 #include <nsWeakReference.h>
 #include <nsTArray.h>
-#include <prlock.h>
-#include <prmon.h>
+#include <mozilla/Monitor.h>
 
 class nsIProxyObjectManager;
 class nsIThread;
@@ -102,10 +101,10 @@ private:
   sbCommandQueue mQueue;
 
   // This monitor protects methods that are called synchronously
-  PRMonitor* mSyncMonitor;
+  mozilla::Monitor mSyncMonitor;
 
   // Monitor over mQueue and calls to InitalizeThread()
-  PRMonitor* mQueueMonitor;
+  mozilla::Monitor mQueueMonitor;
 
   // Background thread
   nsCOMPtr<nsIThread> mThread;
