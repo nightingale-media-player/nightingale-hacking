@@ -58,7 +58,6 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(MOZSDK_INCLUDE_DIR)/xpcom \
                      $(MOZSDK_IDL_DIR) \
-                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
                      $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
@@ -67,8 +66,21 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
  $(NULL)
+
+ifeq (linux,$(SB_PLATFORM))
+   DYNAMIC_LIB_RAW_IMPORTS += \
+    $(SQLITE_LIBS) \
+    $(NULL)
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
+    $(NULL)
+
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
+    $(NULL)
+endif
 
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_STATIC_IMPORTS += \
@@ -87,8 +99,8 @@ ifeq (linux,$(SB_PLATFORM))
                               $(GLIB_LIBS) \
                               $(NULL)
 
-   CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
-                      $(NULL)
+   CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
+                       $(NULL)
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
