@@ -992,7 +992,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     sbStringArray* stringArray;
     PRBool arrayExists = propertyHash.Get(propertyID, &stringArray);
     if (!arrayExists) {
-      NS_NEWXPCOM(stringArray, sbStringArray);
+      stringArray = new sbStringArray;
       SB_CONTINUE_IF_FALSE(stringArray);
 
       // Try to add the array to the hash table.
@@ -1001,7 +1001,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
         NS_WARNING("Failed to add string array to property hash!");
 
         // Make sure to delete the new array, otherwise it will leak.
-        NS_DELETEXPCOM(stringArray);
+        delete stringArray;
         continue;
       }
     }
@@ -1087,8 +1087,8 @@ sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator;
-  NS_NEWXPCOM(enumerator, sbLocalMediaListBaseEnumerationListener);
+  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator =
+    new sbLocalMediaListBaseEnumerationListener();
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = enumerator->Init();
@@ -1110,8 +1110,8 @@ sbLocalDatabaseMediaListBase::GetItemCountByProperty(const nsAString & aProperty
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator;
-  NS_NEWXPCOM(enumerator, sbLocalMediaListBaseEnumerationListener);
+  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator =
+    new sbLocalMediaListBaseEnumerationListener();
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = enumerator->Init();
@@ -1133,8 +1133,8 @@ sbLocalDatabaseMediaListBase::GetItemsByProperties(sbIPropertyArray *aProperties
   NS_ENSURE_ARG_POINTER(aProperties);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator;
-  NS_NEWXPCOM(enumerator, sbLocalMediaListBaseEnumerationListener);
+  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator =
+    new sbLocalMediaListBaseEnumerationListener();
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = enumerator->Init();
