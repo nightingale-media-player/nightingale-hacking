@@ -49,7 +49,6 @@
 #include <sbISortableMediaListView.h>
 
 #include <DatabaseQuery.h>
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsHashKeys.h>

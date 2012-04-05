@@ -95,7 +95,7 @@ protected:
   PRBool mItemControllerFetched;
 
 private:
-  PRLock* mPropertyBagLock;
+  mozilla::Mutex mPropertyBagLock;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
 };
 

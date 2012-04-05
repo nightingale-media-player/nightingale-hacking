@@ -232,29 +232,23 @@ sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(c
                                                                                const nsAString& aLeftValue,
                                                                                const nsAString& aRightValue,
                                                                                const nsAString& aDisplayUnit)
-: mLock(nsnull)
+: mLock("sbLocalDatabaseSmartMediaListCondition::mLock")
 , mPropertyID(aPropertyID)
 , mOperatorString(aOperatorString)
 , mLeftValue(aLeftValue)
 , mRightValue(aRightValue)
 , mDisplayUnit(aDisplayUnit)
 {
-  mLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaListCondition::mLock");
-  NS_ASSERTION(mLock,
-    "sbLocalDatabaseSmartMediaListCondition::mLock failed to create lock!");
 }
 
 sbLocalDatabaseSmartMediaListCondition::~sbLocalDatabaseSmartMediaListCondition()
 {
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
-  }
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaListCondition::GetPropertyID(nsAString& aPropertyID)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   aPropertyID = mPropertyID;
 
   return NS_OK;
@@ -265,7 +259,7 @@ sbLocalDatabaseSmartMediaListCondition::GetOperator(sbIPropertyOperator** aOpera
 {
   NS_ENSURE_ARG_POINTER(aOperator);
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   
   if (!mOperator) {
     nsresult rv;
@@ -293,7 +287,7 @@ sbLocalDatabaseSmartMediaListCondition::GetOperator(sbIPropertyOperator** aOpera
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaListCondition::GetLeftValue(nsAString& aLeftValue)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   aLeftValue = mLeftValue;
 
   return NS_OK;
@@ -302,7 +296,7 @@ sbLocalDatabaseSmartMediaListCondition::GetLeftValue(nsAString& aLeftValue)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaListCondition::GetRightValue(nsAString& aRightValue)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   aRightValue = mRightValue;
 
   return NS_OK;
@@ -311,7 +305,7 @@ sbLocalDatabaseSmartMediaListCondition::GetRightValue(nsAString& aRightValue)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaListCondition::GetDisplayUnit(nsAString& aDisplayUnit)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
   aDisplayUnit = mDisplayUnit;
 
   return NS_OK;
@@ -320,7 +314,7 @@ sbLocalDatabaseSmartMediaListCondition::GetDisplayUnit(nsAString& aDisplayUnit)
 nsresult
 sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   nsresult rv;
 

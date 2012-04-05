@@ -36,7 +36,6 @@
 #include <sbProxiedComponentManager.h>
 
 #include <prmon.h>
-#include <nsAutoLock.h>
 #include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsCOMArray.h>

@@ -203,7 +203,7 @@ private:
 
   nsTArray<sbListenerInfoAutoPtr> mListenerArray;
 
-  PRLock* mListenerArrayLock;
+  mozilla::Mutex mListenerArrayLock;
 
   PRUint32 mBatchDepth;
 };

@@ -46,7 +46,6 @@
 
 #include <DatabaseQuery.h>
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>

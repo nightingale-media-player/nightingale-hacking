@@ -28,7 +28,6 @@
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabasePropertyCache.h"
 
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIObserverService.h>
 #include <nsIProxyObjectManager.h>

@@ -213,7 +213,7 @@ private:
   sbLibraryBatchHelper mBatchHelper;
 
   // The lock to protect our listener table.
-  PRLock* mListenerTableLock;
+  mozilla::Mutex mListenerTableLock;
 
   // Our listener table, stores nsISupports entries that are either strong
   // references to sbIMediaListViewListener instances or

@@ -34,7 +34,6 @@
 #include <nsCOMArray.h>
 #include <nsDataHashtable.h>
 #include <nsStringGlue.h>
-#include <nsAutoLock.h>
 
 #include <nsIClassInfo.h>
 #include <nsIObserver.h>
@@ -112,7 +111,7 @@ public:
   nsresult ToString(nsAString& _retval);
 
 protected:
-  PRLock* mLock;
+  mozilla::Mutex mLock;
 
   nsString mPropertyID;
   nsString mOperatorString;

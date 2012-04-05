@@ -28,7 +28,6 @@
 
 #include <DatabaseQuery.h>
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIClassInfoImpl.h>
@@ -210,7 +209,7 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrar
   mMediaList(aMediaList),
   mDefaultSortProperty(aDefaultSortProperty),
   mMediaListId(aMediaListId),
-  mListenerTableLock(nsnull),
+  mListenerTableLock("sbLocalDatabaseMediaListView::mListenerTableLock"),
   mInvalidatePending(PR_FALSE)
 {
   NS_ASSERTION(aLibrary, "aLibrary is null");
@@ -250,10 +249,6 @@ sbLocalDatabaseMediaListView::~sbLocalDatabaseMediaListView()
   if (mTreeView) {
     mTreeView->ClearMediaListView();
   }
-
-  if (mListenerTableLock) {
-    nsAutoLock::DestroyLock(mListenerTableLock);
-  }
 }
 
 nsresult
@@ -278,10 +273,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
 
   PRBool success = mListenerTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  mListenerTableLock =
-    nsAutoLock::NewLock("sbLocalDatabaseMediaListView::mListenerTableLock");
-  NS_ENSURE_TRUE(mListenerTableLock, NS_ERROR_OUT_OF_MEMORY);
 
   mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -730,7 +721,7 @@ sbLocalDatabaseMediaListView::AddListener(sbIMediaListViewListener* aListener,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsAutoLock lock(mListenerTableLock);
+  mozilla::MutexAutoLock lock(mListenerTableLock);
   if (mListenerTable.GetEntry(supports)) {
     NS_WARNING("Attempted to add the same listener twice!");
     return NS_OK;
@@ -766,7 +757,7 @@ sbLocalDatabaseMediaListView::RemoveListener(sbIMediaListViewListener* aListener
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsAutoLock lock(mListenerTableLock);
+  mozilla::MutexAutoLock lock(mListenerTableLock);
 
   // Lame, but we have to check this inside the lock.
   if (weakSupports && mListenerTable.GetEntry(weakSupports)) {
@@ -1217,7 +1208,7 @@ sbLocalDatabaseMediaListView::NotifyListenersInternal(ListenerFunc aListenerFunc
     // Take a snapshot of the listener array. This will return only strong
     // references, so any weak refs that have died will not be included in this
     // list.
-    nsAutoLock lock(mListenerTableLock);
+    mozilla::MutexAutoLock lock(mListenerTableLock);
     mListenerTable.EnumerateEntries(AddListenersToCOMArray, &listeners);
   }
 

@@ -59,6 +59,7 @@
 #include <sbStringUtils.h>
 #include <sbMemoryUtils.h>
 #include <sbThreadUtils.h>
+#include <mozilla/Monitor.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -85,11 +86,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabaseGUIDArray,
 
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mNeedNewKey(PR_FALSE),
+  mPropIdsLock("sbLocalDatabaseGUIDArray::mPropIdsLock"),
   mBaseConstraintValue(0),
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
   mPrimarySortsCount(0),
-  mCacheMonitor(nsnull),
+  mCacheMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor"),
   mIsDistinct(PR_FALSE),
   mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),
@@ -104,12 +106,6 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
     gLocalDatabaseGUIDArrayLog = PR_NewLogModule("sbLocalDatabaseGUIDArray");
   }
 #endif
-  mPropIdsLock =
-    nsAutoLock::NewLock("sbLocalDatabaseGUIDArray::mPropIdsLock");
-
-  mCacheMonitor =
-    nsAutoMonitor::NewMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor");
-  NS_WARN_IF_FALSE(mCacheMonitor, "Failed to create mCacheMonitor.");
 }
 
 sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
@@ -121,14 +117,6 @@ sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
   if(mLengthCache && !mCachedLengthKey.IsEmpty()) {
     mLengthCache->RemoveCachedLength(mCachedLengthKey);
     mLengthCache->RemoveCachedNonNullLength(mCachedLengthKey);
-  }
-
-  if(mCacheMonitor) {
-    nsAutoMonitor::DestroyMonitor(mCacheMonitor);
-  }
-
-  if (mPropIdsLock) {
-    nsAutoLock::DestroyLock(mPropIdsLock);
   }
 }
 
@@ -453,7 +441,7 @@ sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
 
   // First we check to see if we need to remove cached lengths.
   if (mLengthCache) {
-    nsAutoLock mon(mPropIdsLock);
+    mozilla::MutexAutoLock mon(mPropIdsLock);
     for (PRUint32 index = 0; index < aCount; ++index) {
       std::set<PRUint32>::iterator itEntry =
           mPropIdsUsedInCacheKey.find(aDirtyPropIDs[index]);
@@ -671,7 +659,7 @@ sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
   NS_ENSURE_ARG_POINTER(_retval);
 
   {
-    nsAutoMonitor mon(mCacheMonitor);
+    mozilla::MonitorAutoLock mon(mCacheMonitor);
     if (aIndex < mCache.Length()) {
       ArrayItem* item = mCache[aIndex];
       if (item) {
@@ -830,7 +818,7 @@ sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
 
   // Scope for monitor.
   {
-    nsAutoMonitor mon(mCacheMonitor);
+    mozilla::MonitorAutoLock mon(mCacheMonitor);
 
     mCache.Clear();
     mGuidToFirstIndexMap.Clear();
@@ -862,8 +850,7 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  sbLocalDatabaseGUIDArray* newArray;
-  NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
+  sbLocalDatabaseGUIDArray* newArray = new sbLocalDatabaseGUIDArray();
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray(newArray);
@@ -943,7 +930,7 @@ sbLocalDatabaseGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
+  mozilla::MonitorAutoLock mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1070,7 +1057,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
+  mozilla::MonitorAutoLock mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1166,7 +1153,7 @@ sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
 
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
+  mozilla::MonitorAutoLock mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1215,7 +1202,7 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
+  mozilla::MonitorAutoLock mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -1403,7 +1390,7 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 {
   nsresult rv;
 
-  nsAutoMonitor mon(mCacheMonitor);
+  mozilla::MonitorAutoLock mon(mCacheMonitor);
 
   // If we have a fetch size of 0 or PR_UINT32_MAX it means
   // we're supposed to fetch everything.  If this is
@@ -2347,7 +2334,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 
   TRACE(("GetByIndexInternal %d %d", aIndex, mLength));
 
-  nsAutoMonitor mon(mCacheMonitor);
+  mozilla::MonitorAutoLock mon(mCacheMonitor);
 
   if (mValid == PR_FALSE) {
     rv = Initialize();
@@ -2462,7 +2449,7 @@ sbLocalDatabaseGUIDArray::GetMTListener(
 void
 sbLocalDatabaseGUIDArray::GenerateCachedLengthKey()
 {
-  nsAutoLock mon(mPropIdsLock);
+  mozilla::MutexAutoLock mon(mPropIdsLock);
 
   // Clear all the old property IDs from this set, and remove the cache
   // entries on the old key.

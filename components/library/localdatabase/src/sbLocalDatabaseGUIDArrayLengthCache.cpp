@@ -28,23 +28,21 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArrayLengthCache,
         sbILocalDatabaseGUIDArrayLengthCache);
 
 sbLocalDatabaseGUIDArrayLengthCache::sbLocalDatabaseGUIDArrayLengthCache()
+  : mLock("sbLocalDatabaseGUIDArrayLengthCache::mLock")
 {
-  mLock = nsAutoLock::NewLock("sbLocalDatabaseGUIDArrayLengthCache");
-
   mCachedLengths.Init();
   mCachedNonNullLengths.Init();
 }
 
 sbLocalDatabaseGUIDArrayLengthCache::~sbLocalDatabaseGUIDArrayLengthCache()
 {
-  nsAutoLock::DestroyLock(mLock);
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArrayLengthCache::AddCachedLength(const nsAString &aKey,
                                                      PRUint32 aLength)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   NS_ENSURE_TRUE(mCachedLengths.Put(aKey, aLength), NS_ERROR_OUT_OF_MEMORY);
 
@@ -59,7 +57,7 @@ sbLocalDatabaseGUIDArrayLengthCache::GetCachedLength(const nsAString &aKey,
 
   *aLength = 0;
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   if (!mCachedLengths.Get(aKey, aLength))
     return NS_ERROR_NOT_AVAILABLE;
@@ -69,7 +67,7 @@ sbLocalDatabaseGUIDArrayLengthCache::GetCachedLength(const nsAString &aKey,
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArrayLengthCache::RemoveCachedLength(const nsAString &aKey)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   // We don't care if it wasn't there
   mCachedLengths.Remove(aKey);
@@ -82,7 +80,7 @@ sbLocalDatabaseGUIDArrayLengthCache::AddCachedNonNullLength(
         const nsAString &aKey,
         PRUint32 aLength)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   NS_ENSURE_TRUE(mCachedNonNullLengths.Put(aKey, aLength),
           NS_ERROR_OUT_OF_MEMORY);
@@ -99,7 +97,7 @@ sbLocalDatabaseGUIDArrayLengthCache::GetCachedNonNullLength(
 
   *aLength = 0;
 
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   if (!mCachedNonNullLengths.Get(aKey, aLength))
     return NS_ERROR_NOT_AVAILABLE;
@@ -110,7 +108,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArrayLengthCache::RemoveCachedNonNullLength(
         const nsAString &aKey)
 {
-  nsAutoLock lock(mLock);
+  mozilla::MutexAutoLock lock(mLock);
 
   // We don't care if it wasn't there
   mCachedNonNullLengths.Remove(aKey);

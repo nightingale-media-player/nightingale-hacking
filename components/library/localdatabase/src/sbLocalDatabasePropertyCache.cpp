@@ -30,7 +30,6 @@
 #include <sbPropertiesCID.h>
 
 #include <DatabaseQuery.h>
-#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIObserverService.h>

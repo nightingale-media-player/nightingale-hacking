@@ -66,7 +66,6 @@
 
 #include <DatabaseQuery.h>
 #include <sbIDatabaseEngine.h>
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>

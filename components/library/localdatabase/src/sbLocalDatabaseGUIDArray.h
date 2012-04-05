@@ -43,6 +43,7 @@
 #include <sbIMediaItem.h>
 #include <sbHashKeys.h>
 #include <sbWeakReference.h>
+#include <mozilla/Monitor.h>
 
 #include <set>
 #include <map>
@@ -188,7 +189,7 @@ private:
   // Set of property IDs used in the length cache key; the cache entry should
   // be removed if any of these property IDs are invalidated.
   std::set<PRUint32> mPropIdsUsedInCacheKey;
-  PRLock* mPropIdsLock;
+  mozilla::Mutex mPropIdsLock;
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
@@ -227,7 +228,7 @@ private:
   nsTArray<FilterSpec> mFilters;
 
   // Monitor to protect mCache
-  PRMonitor* mCacheMonitor;
+  mozilla::Monitor mCacheMonitor;
   // Ordered array of GUIDs
   nsTArray<nsAutoPtr<ArrayItem> > mCache;
 
