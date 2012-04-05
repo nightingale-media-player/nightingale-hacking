@@ -682,7 +682,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
   // thread coming in behind us and thinking there's misses when they're
   // going to be loaded.
   {
-    nsAutoMonitor mon(mMonitor);
+    mozilla::MonitorAutoLock mon(mMonitor);
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
 
@@ -766,7 +766,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
   PRUint32 i;
   PRBool cacheUpdated = PR_FALSE;
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   for (i = 0; i < aGUIDArrayCount; i++) {
 
@@ -779,13 +779,10 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
       // Write will acquire the lock as necessary. Write will 
       // also potentially have to call back into the property 
       // cache on the main thread to invalidate the GUID arrays.
-      mon.Exit();
+      mozilla::MonitorAutoUnlock monn(mMonitor);
 
       rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
-
-      // Relock.
-      mon.Enter();
     }
 
     bag = mCache.Get(guid);
@@ -881,7 +878,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   // Scoped locking. Must always avoid calling Write with monitor acquired.
   {
-    nsAutoMonitor mon(mMonitor);
+    mozilla::MonitorAutoLock mon(mMonitor);
     for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
       nsDependentString const guid(aGUIDArray[i]);
       nsRefPtr<sbLocalDatabaseResourcePropertyBag> bag;
@@ -1116,7 +1113,7 @@ sbLocalDatabasePropertyCache::Write()
     DirtyItems dirtyItems;
 
     //Lock it.
-    nsAutoMonitor mon(mMonitor);
+    mozilla::MonitorAutoLock mon(mMonitor);
 
     if (!mDirty.Count()) {
       return NS_OK;
@@ -1406,7 +1403,7 @@ sbLocalDatabasePropertyCache::AddDependentGUIDArray(
 {
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
 
-  nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+  mozilla::MonitorAutoLock mon(mDependentGUIDArrayMonitor);
   nsCOMPtr<nsISupports> supports =
     do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
   nsCOMPtr<nsIWeakReference> weakRef =
@@ -1421,7 +1418,7 @@ sbLocalDatabasePropertyCache::RemoveDependentGUIDArray(
                                 sbLocalDatabaseGUIDArray *aGUIDArray)
 {
   NS_ENSURE_TRUE(aGUIDArray, /*void*/);
-  nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+  mozilla::MonitorAutoLock mon(mDependentGUIDArrayMonitor);
 
   nsCOMPtr<nsISupports> supports =
     do_QueryInterface(static_cast<sbILocalDatabaseGUIDArray*>(aGUIDArray));
@@ -1571,24 +1568,21 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   NS_ENSURE_ARG_POINTER(aBag);
   nsAutoString guid(aGuid);
 
-  nsAutoMonitor mon(mMonitor);
+  mozilla::MonitorAutoLock mon(mMonitor);
 
   // If another bag for the same guid is already in the dirty list, then we
   // risk losing information if we don't write out immediately.
   if (mDirty.Get(guid, nsnull)) {
     NS_WARNING("Property cache forcing Write() due to duplicate "
-               "guids in the dirty bag list.  This should be a rare event.");
+	       "guids in the dirty bag list.  This should be a rare event.");
 
     // Never call Write with monitor acquired. Write may have to proxy
     // invalidation of the GUID arrays to the main thread which requires
     // acquiring the monitor.
-    mon.Exit();
+    mozilla::MonitorAutoUnlock monn(mMonitor);
 
     rv = Write();
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Relock.
-    mon.Enter();
   }
 
   mDirty.Put(guid, aBag);
@@ -1620,7 +1614,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   nsCOMArray<sbILocalDatabaseGUIDArray> arrays;
 
   {
-    nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+    mozilla::MonitorAutoLock mon(mDependentGUIDArrayMonitor);
     DependentGUIDArrays_t::iterator cit = mDependentGUIDArrays.begin();
     DependentGUIDArrays_t::iterator end = mDependentGUIDArrays.end();
     while (cit != end) {
@@ -1645,7 +1639,7 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
   // Copy the data into a temporary set to avoid invalidating the guid arrays
   // with the property cache lock held.
   {
-    nsAutoMonitor mon(mMonitor);
+    mozilla::MonitorAutoLock mon(mMonitor);
     std::insert_iterator<std::vector<PRUint32> > insertIter(dirtyPropIDs,
                                                             dirtyPropIDs.end());
     std::copy(mDirtyForInvalidation.begin(),
