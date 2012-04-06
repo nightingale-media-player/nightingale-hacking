@@ -477,20 +477,13 @@ sbLDBDSEnumerator::OnEnumerationEnd(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseDiffingService)
-NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseDiffingService)
+NS_IMPL_CLASSINFO(sbLocalDatabaseDiffingService, NULL,
+		  nsIClassInfo::THREADSAFE,
+		  SB_LOCALDATABASE_DIFFINGSERVICE_CID);
+NS_IMPL_ISUPPORTS2_CI(sbLocalDatabaseDiffingService,
+		      sbILibraryDiffingService,
+		      nsIClassInfo)
 
-NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseDiffingService)
-  NS_IMPL_QUERY_CLASSINFO(sbLocalDatabaseDiffingService)
-  NS_INTERFACE_MAP_ENTRY(sbILibraryDiffingService)
-  NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
-  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbILibraryDiffingService)
-NS_INTERFACE_MAP_END
-
-NS_IMPL_CI_INTERFACE_GETTER1(sbLocalDatabaseDiffingService,
-                             sbILibraryDiffingService)
-
-NS_DECL_CLASSINFO(sbLocalDatabaseDiffingService)
 NS_IMPL_THREADSAFE_CI(sbLocalDatabaseDiffingService)
 
 sbLocalDatabaseDiffingService::sbLocalDatabaseDiffingService()
