@@ -40,26 +40,12 @@
 // sbPropertyChange
 //-----------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ADDREF(sbPropertyChange)
-NS_IMPL_THREADSAFE_RELEASE(sbPropertyChange)
+NS_IMPL_CLASSINFO(sbPropertyChange, NULL,
+		  nsIClassInfo::THREADSAFE, NS_GET_IID(sbPropertyChange))
+NS_IMPL_ISUPPORTS2_CI(sbPropertyChange,
+		      sbIPropertyChange,
+		      sbIChangeOperation)
 
-NS_INTERFACE_MAP_BEGIN(sbPropertyChange)
-  NS_IMPL_QUERY_CLASSINFO(sbPropertyChange)
-  //XXXAus: static_cast does not work in this case,
-  //reinterpret_cast to nsISupports is necessary
-  if ( aIID.Equals(NS_GET_IID(sbPropertyChange)) )
-    foundInterface = reinterpret_cast<nsISupports*>(this);
-  else
-  NS_INTERFACE_MAP_ENTRY(sbIPropertyChange)
-  NS_INTERFACE_MAP_ENTRY(sbIChangeOperation)
-  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIPropertyChange)
-NS_INTERFACE_MAP_END
-
-NS_IMPL_CI_INTERFACE_GETTER2(sbPropertyChange,
-                             sbIPropertyChange,
-                             sbIChangeOperation)
-
-NS_DECL_CLASSINFO(sbPropertyChange)
 NS_IMPL_THREADSAFE_CI(sbPropertyChange)
 
 sbPropertyChange::sbPropertyChange()
@@ -146,25 +132,12 @@ NS_IMETHODIMP sbPropertyChange::GetNewValue(nsAString & aNewValue)
 // sbLibraryChange
 //-----------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ADDREF(sbLibraryChange)
-NS_IMPL_THREADSAFE_RELEASE(sbLibraryChange)
+NS_IMPL_CLASSINFO(sbLibraryChange, NULL,
+		  nsIClassInfo::THREADSAFE, NS_GET_IID(sbLibraryChange))
+NS_IMPL_ISUPPORTS2_CI(sbLibraryChange,
+		      sbILibraryChange,
+		      sbIChangeOperation)
 
-NS_INTERFACE_MAP_BEGIN(sbLibraryChange)
-  NS_IMPL_QUERY_CLASSINFO(sbLibraryChange)
-  //XXXAus: static_cast does not work in this case,
-  //reinterpret_cast to nsISupports is necessary
-  if ( aIID.Equals(NS_GET_IID(sbLibraryChange)) )
-    foundInterface = reinterpret_cast<nsISupports*>(this);
-  else
-  NS_INTERFACE_MAP_ENTRY(sbILibraryChange)
-  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbILibraryChange)
-NS_INTERFACE_MAP_END
-
-NS_IMPL_CI_INTERFACE_GETTER2(sbLibraryChange,
-                             sbILibraryChange,
-                             sbIChangeOperation)
-
-NS_DECL_CLASSINFO(sbLibraryChange)
 NS_IMPL_THREADSAFE_CI(sbLibraryChange)
 
 sbLibraryChange::sbLibraryChange()
@@ -332,25 +305,11 @@ NS_IMETHODIMP sbLibraryChange::GetProperties(nsIArray * *aProperties)
 // sbLibraryChangeset
 //-----------------------------------------------------------------------------
 
+NS_IMPL_CLASSINFO(sbLibraryChangeset, NULL,
+		  nsIClassInfo::THREADSAFE, NS_GET_IID(sbLibraryChangeset))
+NS_IMPL_ISUPPORTS1_CI(sbLibraryChangeset,
+		      sbILibraryChangeset)
 
-NS_IMPL_THREADSAFE_ADDREF(sbLibraryChangeset)
-NS_IMPL_THREADSAFE_RELEASE(sbLibraryChangeset)
-
-NS_INTERFACE_MAP_BEGIN(sbLibraryChangeset)
-  NS_IMPL_QUERY_CLASSINFO(sbLibraryChangeset)
-  //XXXAus: static_cast does not work in this case,
-  //reinterpret_cast to nsISupports is necessary
-  if ( aIID.Equals(NS_GET_IID(sbLibraryChangeset)) )
-    foundInterface = reinterpret_cast<nsISupports*>(this);
-  else
-  NS_INTERFACE_MAP_ENTRY(sbILibraryChangeset)
-  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbILibraryChangeset)
-NS_INTERFACE_MAP_END
-
-NS_IMPL_CI_INTERFACE_GETTER1(sbLibraryChangeset,
-                             sbILibraryChangeset)
-
-NS_DECL_CLASSINFO(sbLibraryChangeset)
 NS_IMPL_THREADSAFE_CI(sbLibraryChangeset)
 
 sbLibraryChangeset::sbLibraryChangeset()
