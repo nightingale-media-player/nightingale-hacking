@@ -1020,7 +1020,6 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbGUIDArrayToIndexedMediaItemEnumerator,
                              nsISimpleEnumerator,
                              nsIClassInfo)
 
-NS_DECL_CLASSINFO(sbGUIDArrayToIndexedMediaItemEnumerator)
 NS_IMPL_THREADSAFE_CI(sbGUIDArrayToIndexedMediaItemEnumerator)
 
 /**
@@ -1115,7 +1114,6 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbIndexedGUIDArrayEnumerator,
                              nsISimpleEnumerator,
                              nsIClassInfo)
 
-NS_DECL_CLASSINFO(sbIndexedGUIDArrayEnumerator)
 NS_IMPL_THREADSAFE_CI(sbIndexedGUIDArrayEnumerator)
 
 sbIndexedGUIDArrayEnumerator::sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
@@ -1198,7 +1196,6 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbIndexedToUnindexedMediaItemEnumerator,
                              nsISimpleEnumerator,
                              nsIClassInfo)
 
-NS_DECL_CLASSINFO(sbIndexedToUnindexedMediaItemEnumerator)
 NS_IMPL_THREADSAFE_CI(sbIndexedToUnindexedMediaItemEnumerator)
 
 /**
