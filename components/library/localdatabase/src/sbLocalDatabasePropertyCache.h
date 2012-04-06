@@ -30,6 +30,7 @@
 #include <nsIStringEnumerator.h>
 #include <sbILocalDatabasePropertyCache.h>
 
+#include <a11yGeneric.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
@@ -244,6 +245,8 @@ private:
   nsInterfaceHashtable<nsUint32HashKey, sbIDatabasePreparedStatement> mMediaItemsUpdatePreparedStatements;
   nsInterfaceHashtable<nsUint32HashKey, sbIDatabasePreparedStatement> mLibraryMediaItemUpdatePreparedStatements;
 
+  NS_DECL_RUNNABLEMETHOD(sbLocalDatabasePropertyCache, InvalidateGUIDArrays);
+  NS_DECL_RUNNABLEMETHOD(sbLocalDatabasePropertyCache, RunFlushThread);
 };
 
 /**

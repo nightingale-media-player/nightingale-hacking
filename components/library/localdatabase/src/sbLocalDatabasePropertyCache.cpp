@@ -89,7 +89,6 @@
 #define NS_XPCOM_SHUTDOWN_THREADS_OBSERVER_ID "xpcom-shutdown-threads"
 #define NS_FINAL_UI_STARTUP_OBSERVER_ID       "final-ui-startup"
 
-
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
                               sbILocalDatabasePropertyCache,
                               nsIObserver)
@@ -1231,9 +1230,7 @@ sbLocalDatabasePropertyCache::Write()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, 
-                             this, 
-                             InvalidateGUIDArrays);
+      new nsRunnableMethod_InvalidateGUIDArrays(this);
     NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
     // We must dispatch async since the guid array may have acquired the
@@ -1435,7 +1432,7 @@ nsresult
 sbLocalDatabasePropertyCache::DispatchFlush()
 {
   nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, this, RunFlushThread);
+    new nsRunnableMethod_RunFlushThread(this);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
   nsresult rv = mThreadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
