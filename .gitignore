@@ -1,3 +1,4 @@
+dependencies/linux*
 .DS_Store
 dependencies/*.zip
 dependencies/*.tar.???
