@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # break on any error
 set -e
