@@ -40,7 +40,7 @@
 #set -x
 
 # use our own gstreamer libs
-for dir in /usr/lib /usr/lib64 /usr/lib/i386-linux-gnu /usr/lib/x86_64-linux-gnu ; do
+for dir in /usr/lib /usr/lib64 /usr/lib/$(uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!s/.*/i386/')-linux-gnu ; do
   if [ -f ${dir}/gstreamer-0.10/libgstcoreelements.so ] ; then
     export GST_PLUGIN_PATH=${dir}/gstreamer\-0.10
     break
@@ -49,7 +49,6 @@ for dir in /usr/lib /usr/lib64 /usr/lib/i386-linux-gnu /usr/lib/x86_64-linux-gnu
     break
   fi
 done
-
 
 cmdname=`basename "$0"`
 MOZ_DIST_BIN=`dirname "$0"`
