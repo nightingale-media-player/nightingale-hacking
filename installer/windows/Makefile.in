@@ -41,6 +41,16 @@ else
    export ICON_FILE = songbird_nightly.ico
 endif
 
+ifeq ($(SB_PLATFORM),windows)
+SONGBIRD_DIST += \
+    $(DEPS_DIR)/private/ask/ApnIC.dll \
+    $(DEPS_DIR)/private/ask/ApnStub.exe \
+    $(DEPS_DIR)/private/ask/ApnToolbarInstaller.exe \
+    $(DEPS_DIR)/private/ask/AskToolbar.bmp \
+    $(NULL)
+endif
+
+                      
 SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
                         $(NULL)
 
@@ -90,7 +100,7 @@ include $(topsrcdir)/build/rules.mk
 
 libs::
 	cd $(SONGBIRD_DISTDIR) && \
-	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
+	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "Apn*$(DLL_SUFFIX)" -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
 	    sort -o rebase.txt && \
 	  $(REBASE) -v -b 62000000 @rebase.txt && \
 	  $(RM) rebase.txt
