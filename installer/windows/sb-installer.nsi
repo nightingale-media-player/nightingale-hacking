@@ -28,6 +28,124 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Icon ${PreferredInstallerIcon}
 
+var Dialog
+
+var installAskToolbarCB
+var installAskToolbarState
+var setDefaultSearchEngineCB
+var setDefaultSearchEngineState
+var setHomePageCB
+var setHomePageState
+var installingMessage
+var groupBox
+var toolbarImage
+var askToolbarParam
+
+Function askToolbarPage
+   push $0
+   !insertmacro MUI_HEADER_TEXT "Songbird® Toolbar Installation" "Install the Songbird® Toolbar" 
+   ${If} $askInstallChecked == "0"
+     StrCpy $askInstallChecked "1"
+     call AskToolbarCheck
+   ${EndIf}
+   ${If} $alreadyInstalled == "1"
+      Abort
+   ${EndIf}
+   nsDialogs::Create 1018
+   Pop $Dialog
+   ${If} $Dialog == Error
+      Abort
+   ${EndIf}
+   ${NSD_CreateLabel} 0u 0u 100% 11u "• Quick link to Songbird® for Facebook right from your browser"
+   pop $0
+   ${NSD_CreateLabel} 0u 12u 100% 11u "• Get Songbird® for Android from Google Play"
+   pop $0
+   ${NSD_CreateLabel} 0u 24u 100% 11u "• Easy access to search"
+   pop $0
+   ${NSD_CreateBitmap} 0u 36u 100% 22 "" 
+   pop $0
+   ${NSD_SetImage} $0 $INSTDIR\AskToolbar.bmp $toolbarImage
+   
+   ${NSD_CreateCheckBox} 0u 54u 100% 11u "Install the Songbird® Toolbar?"
+   pop $installAskToolbarCB
+   
+   ${NSD_SetState} $installAskToolbarCB $installAskToolbarState
+   
+   ${NSD_CreateGroupBox} 0u 66u 320 28u ""
+   pop $groupBox
+   ${NSD_CreateCheckBox} 8u 72u 100% 11u "Set Ask.com to be your default search engine?"
+   pop $setDefaultSearchEngineCB 
+   ${NSD_SetState} $setDefaultSearchEngineCB $setDefaultSearchEngineState
+   ${NSD_CreateCheckBox} 8u 82u 100% 11u "Set Ask.com to be your home page?"
+   pop $setHomePageCB
+   ${NSD_SetState} $setHomePageCB $setHomePageState
+   ${NSD_OnClick} $installAskToolbarCB installAskToolbarCBChange
+   
+   ${NSD_CreateLabel} 5u 98u 100% 11u "By installing this application and associated updater, you agree to the"
+   ${NSD_CreateLink} 5u 110u 60u 11u "End User License Agreement"
+   pop $0
+   ${NSD_OnClick} $0 onEulaClick
+   ${NSD_CreateLabel} 65u 110u 12u 11u "and"
+   pop $0
+   ${NSD_CreateLink} 80u 110u 60u 11u "Privacy Policy."
+   pop $0
+   ${NSD_OnClick} $0 onPrivacyClick
+   ${NSD_CreateLabel} 5u 122u 100% 11u "You can remove this application easily at any time." 
+   nsDialogs::Show
+   ${NSD_FreeImage} $toolbarImage
+   pop $0
+FunctionEnd
+
+Function onEulaClick
+   ExecShell "open" "http://about.ask.com/en/docs/about/ask_eula.shtml"
+FunctionEnd
+
+Function onPrivacyClick
+   ExecShell "open" " http://about.ask.com/en/docs/about/privacy.shtml"
+FunctionEnd
+
+Function installAskToolbarCBChange
+   Push $0
+   ${NSD_GetState} $installAskToolbarCB $0
+   ${If} $0 == ${BST_CHECKED}
+     EnableWindow $setDefaultSearchEngineCB 1
+     EnableWindow $setHomePageCB 1
+   ${Else}
+     EnableWindow $setDefaultSearchEngineCB 0
+     EnableWindow $setHomePageCB 0
+   ${EndIf}
+   Pop $0
+FunctionEnd
+
+Function askToolbarLeave
+   push $0
+   ; Install Ask Toolbar?
+   ${NSD_GetState} $installAskToolbarCB $0
+   ${If} $0 == ${BST_CHECKED}
+      StrCpy $installAskToolbar "1"
+      
+      StrCpy $askInstallToolbarArg "/tbr"
+   
+     ; Set default search engine
+     ${NSD_GetState} $setDefaultSearchEngineCB $0
+     ${If} $0 == ${BST_CHECKED}
+        StrCpy $askSetDefaultSearchEngineArg "/sa"
+     ${EndIf}
+     
+     ; Set home page
+     ${NSD_GetState} $setHomePageCB $0
+     ${If} $0 == ${BST_CHECKED}
+        StrCpy $askSetHomePageArg "/hpr"
+        Strcpy $askToolbarParam "toolbar=SGD2"
+     ${Else}
+        Strcpy $askToolbarParam "toolbar=SGD"
+     ${EndIf}
+     Exec '"$INSTDIR\${AskToolbarEXE}" $askToolbarParam $askInstallToolbarArg $askSetDefaultSearchEngineArg $askSetHomePageArg'
+     ${NSD_SetText} $installingMessage "Ask Toolbar installation complete"
+  ${EndIf}
+  pop $0
+FunctionEnd
+
 ShowInstDetails hide
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -465,6 +583,19 @@ recheck:
    ${EndIf}
 FunctionEnd
 
+Function AskToolbarCheck
+  push $R0
+  ; See if we need to install
+  ExecWait '"$INSTDIR\${AskToolbarEXE}" /tb=SGD' $R0
+  ; 0 means Ask is not installed
+  ${if} $R0 == "0"
+    StrCpy $alreadyInstalled "0"
+  ${Else}
+    StrCpy $alreadyInstalled "1"
+  ${EndIf}
+  pop $R0
+FunctionEnd
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Initialization Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -472,6 +603,12 @@ FunctionEnd
 Function .onInit
    ; preedTODO: Check drive space
 
+   StrCpy $installAskToolbarState ${BST_CHECKED}
+   StrCpy $setDefaultSearchEngineState ${BST_CHECKED}
+   StrCpy $setHomePageState ${BST_CHECKED}
+   StrCpy $askInstallChecked "0"
+   StrCpy $alreadyInstalled "0"
+   
    ; May seem weird, but it's used for update testing; so ignore the man
    ; behind the curtain...
    ReadEnvStr $0 SB_FORCE_NO_UAC
