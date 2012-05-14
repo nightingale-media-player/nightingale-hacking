@@ -76,18 +76,18 @@ Function askToolbarPage
    ${NSD_CreateCheckBox} 8u 72u 100% 11u "Set Ask.com to be your default search engine?"
    pop $setDefaultSearchEngineCB 
    ${NSD_SetState} $setDefaultSearchEngineCB $setDefaultSearchEngineState
-   ${NSD_CreateCheckBox} 8u 82u 100% 11u "Set Ask.com to be your home page?"
+   ${NSD_CreateCheckBox} 8u 82u 100% 11u "Set Ask.com to be your home page and new tabs page?"
    pop $setHomePageCB
    ${NSD_SetState} $setHomePageCB $setHomePageState
    ${NSD_OnClick} $installAskToolbarCB installAskToolbarCBChange
    
    ${NSD_CreateLabel} 5u 98u 100% 11u "By installing this application and associated updater, you agree to the"
-   ${NSD_CreateLink} 5u 110u 60u 11u "End User License Agreement"
+   ${NSD_CreateLink} 5u 110u 92u 11u "End User License Agreement"
    pop $0
    ${NSD_OnClick} $0 onEulaClick
-   ${NSD_CreateLabel} 65u 110u 12u 11u "and"
+   ${NSD_CreateLabel} 100u 110u 12u 11u "and"
    pop $0
-   ${NSD_CreateLink} 80u 110u 60u 11u "Privacy Policy."
+   ${NSD_CreateLink} 115u 110u 60u 11u "Privacy Policy."
    pop $0
    ${NSD_OnClick} $0 onPrivacyClick
    ${NSD_CreateLabel} 5u 122u 100% 11u "You can remove this application easily at any time." 
