@@ -32,12 +32,9 @@ var Dialog
 
 var installAskToolbarCB
 var installAskToolbarState
-var setDefaultSearchEngineCB
-var setDefaultSearchEngineState
 var setHomePageCB
 var setHomePageState
 var installingMessage
-var groupBox
 var toolbarImage
 var askToolbarParam
 
@@ -62,35 +59,32 @@ Function askToolbarPage
    pop $0
    ${NSD_CreateLabel} 0u 24u 100% 11u "• Easy access to search"
    pop $0
-   ${NSD_CreateBitmap} 0u 36u 100% 22 "" 
+   ${NSD_CreateLabel} 5u 37u 100% 11u "* Toolbar installs across all major browsers. Features, functionality, and appearance"
+   pop $0
+   ${NSD_CReateLabel} 10u 48u 100% 11u "may vary by version or browser."
+   
+   ${NSD_CreateBitmap} 0u 59u 100% 22 "" 
    pop $0
    ${NSD_SetImage} $0 $INSTDIR\AskToolbar.bmp $toolbarImage
    
-   ${NSD_CreateCheckBox} 0u 54u 100% 11u "Install the Songbird® Toolbar?"
+   ${NSD_CreateCheckBox} 4u 82u 100% 11u "Install the Songbird® Toolbar and make Ask my default search provider."
    pop $installAskToolbarCB
-   
    ${NSD_SetState} $installAskToolbarCB $installAskToolbarState
-   
-   ${NSD_CreateGroupBox} 0u 66u 320 28u ""
-   pop $groupBox
-   ${NSD_CreateCheckBox} 8u 72u 100% 11u "Set Ask.com to be your default search engine?"
-   pop $setDefaultSearchEngineCB 
-   ${NSD_SetState} $setDefaultSearchEngineCB $setDefaultSearchEngineState
-   ${NSD_CreateCheckBox} 8u 82u 100% 11u "Set Ask.com to be your home page and new tabs page?"
-   pop $setHomePageCB
-   ${NSD_SetState} $setHomePageCB $setHomePageState
    ${NSD_OnClick} $installAskToolbarCB installAskToolbarCBChange
    
-   ${NSD_CreateLabel} 5u 98u 100% 11u "By installing this application and associated updater, you agree to the"
-   ${NSD_CreateLink} 5u 110u 92u 11u "End User License Agreement"
+   ${NSD_CreateCheckBox} 4u 94u 100% 11u "Set Ask.com to be your home page and new tabs page."
+   pop $setHomePageCB
+   
+   ${NSD_CreateLabel} 5u 109u 100% 11u "By installing this application and associated updater, you agree to the"
+   ${NSD_CreateLink} 5u 120u 92u 11u "End User License Agreement"
    pop $0
    ${NSD_OnClick} $0 onEulaClick
-   ${NSD_CreateLabel} 100u 110u 12u 11u "and"
+   ${NSD_CreateLabel} 100u 120u 12u 11u "and"
    pop $0
-   ${NSD_CreateLink} 115u 110u 60u 11u "Privacy Policy."
+   ${NSD_CreateLink} 115u 120u 60u 11u "Privacy Policy."
    pop $0
    ${NSD_OnClick} $0 onPrivacyClick
-   ${NSD_CreateLabel} 5u 122u 100% 11u "You can remove this application easily at any time." 
+   ${NSD_CreateLabel} 5u 131u 100% 11u "You can remove this application easily at any time." 
    nsDialogs::Show
    ${NSD_FreeImage} $toolbarImage
    pop $0
@@ -108,10 +102,8 @@ Function installAskToolbarCBChange
    Push $0
    ${NSD_GetState} $installAskToolbarCB $0
    ${If} $0 == ${BST_CHECKED}
-     EnableWindow $setDefaultSearchEngineCB 1
      EnableWindow $setHomePageCB 1
    ${Else}
-     EnableWindow $setDefaultSearchEngineCB 0
      EnableWindow $setHomePageCB 0
    ${EndIf}
    Pop $0
@@ -125,13 +117,8 @@ Function askToolbarLeave
       StrCpy $installAskToolbar "1"
       
       StrCpy $askInstallToolbarArg "/tbr"
+      StrCpy $askSetDefaultSearchEngineArg "/sa"
    
-     ; Set default search engine
-     ${NSD_GetState} $setDefaultSearchEngineCB $0
-     ${If} $0 == ${BST_CHECKED}
-        StrCpy $askSetDefaultSearchEngineArg "/sa"
-     ${EndIf}
-     
      ; Set home page
      ${NSD_GetState} $setHomePageCB $0
      ${If} $0 == ${BST_CHECKED}
@@ -604,7 +591,6 @@ Function .onInit
    ; preedTODO: Check drive space
 
    StrCpy $installAskToolbarState ${BST_CHECKED}
-   StrCpy $setDefaultSearchEngineState ${BST_CHECKED}
    StrCpy $setHomePageState ${BST_CHECKED}
    StrCpy $askInstallChecked "0"
    StrCpy $alreadyInstalled "0"
