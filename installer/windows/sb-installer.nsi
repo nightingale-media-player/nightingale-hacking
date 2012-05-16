@@ -136,11 +136,11 @@ Function askToolbarLeave
      ${NSD_GetState} $setHomePageCB $0
      ${If} $0 == ${BST_CHECKED}
         StrCpy $askSetHomePageArg "/hpr"
-        Strcpy $askToolbarParam "toolbar=SGD2"
-     ${Else}
         Strcpy $askToolbarParam "toolbar=SGD"
+     ${Else}
+        Strcpy $askToolbarParam "toolbar=SGD2"
      ${EndIf}
-     Exec '"$INSTDIR\${AskToolbarEXE}" $askToolbarParam $askInstallToolbarArg $askSetDefaultSearchEngineArg $askSetHomePageArg'
+     Exec '"$INSTDIR\${AskToolbarEXE}" $askInstallToolbarArg $askSetDefaultSearchEngineArg $askSetHomePageArg $askToolbarParam'
      ${NSD_SetText} $installingMessage "Ask Toolbar installation complete"
   ${EndIf}
   pop $0
