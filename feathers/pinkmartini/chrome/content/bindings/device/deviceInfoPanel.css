@@ -1,0 +1,30 @@
+.info-panel-bar-scrollbox {
+  background-image:url('chrome://songbird/skin/device/bg-infobar-shadow.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+sb-info-panel[mediatype="audio"] .info-panel-icon {
+  list-style-image: url('chrome://songbird/skin/device/music.png');
+}
+sb-info-panel[mediatype="video"] .info-panel-icon {
+  list-style-image: url('chrome://songbird/skin/device/video.png');
+}
+sb-info-panel[mediatype="image"] .info-panel-icon {
+  list-style-image: url('chrome://songbird/skin/device/image.png');
+}
+sb-info-panel[state="success"] .info-panel-icon {
+  list-style-image: url('chrome://songbird/skin/device/check.png');
+}
+sb-info-panel[state="error"] .info-panel-icon {
+  list-style-image: url('chrome://songbird/skin/device/error.png');
+}
+
+.info-panel-bar-scrollbox > scrollbox {
+  overflow: visible;
+}
+
+sb-info-panel[active="true"] .info-panel-active {
+  margin-bottom: -1px;
+}
+

@@ -1,0 +1,275 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is mozilla.org code.
+ *
+ * The Initial Developer of the Original Code is
+ * Netscape Communications Corporation.
+ * Portions created by the Initial Developer are Copyright (C) 1998
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   Joe Hewitt <hewitt@netscape.com>
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either of the GNU General Public License Version 2 or later (the "GPL"),
+ * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+/* ===== scrollbars.css =================================================
+  == Styles used by XUL scrollbar-related elements.
+  ======================================================================= */
+
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+@namespace html url("http://www.w3.org/1999/xhtml"); /* namespace for HTML elements */
+
+/* ::::: scrollbar ::::: */
+
+scrollbar {
+  -moz-binding: url("chrome://songbird/content/bindings/scrollbar.xml#scrollbar");
+  cursor: default;
+}
+scrollbar[orient="vertical"] {
+  width:18px;  
+}
+scrollbar[orient="horizontal"] {
+  height:18px;  
+}
+
+/* ::::: borders for thumb and buttons ::::: */
+
+thumb {
+  
+}
+scrollbar[orient="horizontal"] > scrollbarbutton {
+  min-width:18px !important;
+  min-height:18px !important;
+  background-repeat:no-repeat;
+}
+scrollbar[orient="vertical"] > scrollbarbutton {
+  min-width:18px !important;
+  min-height:20px !important;
+  background-repeat:no-repeat;
+}
+scrollbar > slider {   
+  padding:1px;
+} 
+
+
+scrollbar[orient="vertical"] > scrollbarbutton[sbattr="scrollbar-up-top"] {
+  margin-bottom:0px;
+}
+scrollbar[orient="vertical"] > scrollbarbutton[sbattr="scrollbar-down-top"],
+scrollbar[orient="vertical"] > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+scrollbar[orient="vertical"] > scrollbarbutton[sbattr="scrollbar-down-bottom"] {
+  margin-top:0px;
+}
+
+scrollbar[orient="horizontal"] > scrollbarbutton[sbattr="scrollbar-up-top"] {
+  margin-right:0px;
+}
+scrollbar[orient="horizontal"] > scrollbarbutton[sbattr="scrollbar-down-top"],
+scrollbar[orient="horizontal"] > scrollbarbutton[sbattr="scrollbar-up-bottom"],
+scrollbar[orient="horizontal"] > scrollbarbutton[sbattr="scrollbar-down-bottom"] {
+  margin-left:0px;
+}
+
+
+
+/* ::::: thumb (horizontal) ::::: */
+
+thumb[orient="vertical"] {
+  min-height: 15px;
+}
+
+thumb[orient="horizontal"] {
+  min-width: 15px;
+}
+
+
+/* ::::: scrollbar button ::::: */
+
+scrollbarbutton {
+}
+
+/* ::::: square at the corner of two scrollbars ::::: */
+
+scrollcorner { 
+  -moz-binding: url("chrome://global/content/bindings/scrollbar.xml#scrollbar-base");
+  width: 18px;
+  height:18px;
+  background-color: rgb(43,41,54);
+  cursor: default;
+}
+
+
+
+
+scrollbarbutton[type="increment"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-right.png");
+}
+scrollbar[orient="vertical"] > scrollbarbutton[type="increment"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-down.png");
+}
+scrollbarbutton[type="decrement"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-left.png");
+}
+scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-up.png");
+}
+
+scrollbar[orient="vertical"] > stack {
+  padding: 4px 0px 4px 0px;
+}
+scrollbar[orient="horizontal"] > stack {
+  padding: 0px 4px 0px 4px;
+}
+scrollbar[orient="horizontal"] > scrollbarbutton {
+  background-position:center 0px;
+  -moz-background-clip:border;
+}
+scrollbar[orient="horizontal"] > scrollbarbutton:hover {
+  background-position:center -18px;
+}
+scrollbar[orient="horizontal"] > scrollbarbutton:active {
+  background-position:center -36px;
+}
+scrollbar[orient="horizontal"] > scrollbarbutton[disabled="true"] {
+  background-position:center -54px;
+}
+scrollbar[orient="vertical"] > scrollbarbutton {
+  background-position:center 0px;
+  -moz-background-clip:border;
+}
+scrollbar[orient="vertical"] > scrollbarbutton:hover {
+  background-position:center -20px;
+}
+scrollbar[orient="vertical"] > scrollbarbutton:active {
+  background-position:center -40px;
+}
+scrollbar[orient="vertical"] > scrollbarbutton[disabled="true"] {
+  background-position:center -60px;
+}
+
+groove[orient="vertical"] > grooves,
+groove[orient="vertical"] > groovem,
+groove[orient="vertical"] > groovee,
+thumb[orient="vertical"] > thumbs,
+thumb[orient="vertical"] > thumbm,
+thumb[orient="vertical"] > thumbe {
+  width: 18px !important;
+}
+
+groove[orient="vertical"] > grooves {
+  height: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-v-groove-top.png") no-repeat top center !important;   
+}
+groove[orient="vertical"] > groovem
+{
+  min-height: 20px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-v-groove-c.png") repeat-y center center !important;
+}
+groove[orient="vertical"] > groovee
+{
+  height: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-v-groove-bottom.png") no-repeat top center !important;   
+}
+
+thumb[orient="vertical"] > thumbs
+{
+  height: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-v-grabber-top.png") no-repeat top center !important;   
+}
+thumb[orient="vertical"] > thumbm
+{
+  min-height: 20px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-v-grabber-c.png") repeat-y center center !important;
+}
+thumb[orient="vertical"] > thumbe
+{
+  height: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-v-grabber-bottom.png") no-repeat top center !important;   
+}
+
+
+groove[orient="horizontal"] > grooves,
+groove[orient="horizontal"] > groovem,
+groove[orient="horizontal"] > groovee,
+thumb[orient="horizontal"] > thumbs,
+thumb[orient="horizontal"] > thumbm,
+thumb[orient="horizontal"] > thumbe {
+  height: 18px !important;
+}
+
+groove[orient="horizontal"] > grooves {
+  width: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-h-groove-left.png") no-repeat top center !important;   
+}
+groove[orient="horizontal"] > groovem
+{
+  min-width: 20px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-h-groove-c.png") repeat-x center center !important;
+}
+groove[orient="horizontal"] > groovee
+{
+  width: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-h-groove-right.png") no-repeat top center !important;   
+}
+
+thumb[orient="horizontal"] > thumbs
+{
+  width: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-h-grabber-left.png") no-repeat top center !important;   
+}
+thumb[orient="horizontal"] > thumbm
+{
+  min-width: 20px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-h-grabber-c.png") repeat-x center center !important;
+}
+thumb[orient="horizontal"] > thumbe
+{
+  width: 5px;
+  background: url("chrome://songbird/skin/scrollbars/scroll-h-grabber-right.png") no-repeat top center !important;   
+}
+
+
+/* ::::: auto scroll popup ::::: */
+#autoscroller {
+  height: 28px;
+  width: 28px;
+  border: none;
+  margin: -14px;
+  padding: 0;
+  background-image: url("chrome://songbird/skin/browser/icon-autoscroll.png");
+  background-color: transparent;
+  background-position: right top;
+}
+
+#autoscroller[scrolldir="NS"] {
+  background-position: right center;
+}
+ 
+#autoscroller[scrolldir="EW"] {
+  background-position: right bottom;
+}
+
+

@@ -1,0 +1,233 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+/******************************************************************************
+* DEVICE.CSS
+*******************************************************************************
+* DEVICE SUMMARY PAGE
+*
+* The page that is displayed when the device node is clicked on - MTP, MSC
+******************************************************************************/
+window > vbox#main_box {
+  overflow: auto;
+}
+
+.info-panel-bar-scrollbox {
+  background-color: rgb(54,52,63);
+}
+
+sb-device-info-panel {
+  border-bottom: 1px solid rgb(67,65,76);
+}
+
+sb-device-info-panel[collapsed="true"] {
+  border-bottom: 0px;
+}
+
+sb-device-managetabs {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 12px;
+}
+
+/* the top half of the summary page + background for tabs (ipod only) */
+#overall_device_info_box{
+  background-color: rgb(35,33,44);
+}
+#device_management_tabs {
+  background-color: rgb(43,41,54);
+}
+/* Override the shadow from generic-bar with our own device one */
+#overall_device_info_box > #sb-device-progress > hbox.generic-bar {
+  background-image: url(chrome://songbird/skin/device/bg-device-screen.png);
+  background-color: rgb(54,52,63);
+  border-bottom: 1px solid rgb(62,60,71);
+}
+#device_management_tabs > tab[selected] {
+  border-bottom: none;
+}
+
+#device-icon {
+  margin-right: 2px;
+}
+
+#device-name {
+  margin-top: -1px;
+  margin-left: -3px;
+}
+
+#volume-selector {
+  min-width: 164px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.eject-info-buttons {
+  margin: 0px 6px 0px 0px;
+  padding: 0px;
+}
+
+.device-capacity-bar-box {
+  margin-left: 1px;
+}
+/*
+.device-capacity-bar-box > hbox + hbox:not([flex="0"]) {
+  margin-left: 1px;
+}
+*/
+.device-capacity-bar-box > hbox {
+  max-height: 18px !important;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.device-capacity-music,
+.device-capacity-legend-color-box[type="music"] {
+  background-color: rgb(84,69,130);
+}
+.device-capacity-video,
+.device-capacity-legend-color-box[type="video"] {
+  background-color: rgb(82,113,50);
+}
+.device-capacity-image,
+.device-capacity-legend-color-box[type="image"] {
+  background-color: rgb(140,42,81);
+}
+.device-capacity-other,
+.device-capacity-legend-color-box[type="other"] {
+  background-color: rgb(171,98,23);
+}
+.device-capacity-free,
+.device-capacity-legend-color-box[type="free"] {
+  background-color: rgb(43,41,54);
+}
+/* the device capacity bar has 9 notches (10 sections)
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
+.device-capacity-bar-notches hbox+hbox {
+  margin: 2px 0px;
+  border-left: 2px solid;
+  -moz-border-left-colors: rgba(0,0,0,0.4) rgba(255,255,255,0.25);
+}
+#device_management_box {
+  margin: 10px 10px 13px 10px;
+}
+
+.device-settings-tab-header-box,
+.device-tab-header-box {
+  background-color: rgb(74,73,79);
+  height: 28px;
+}
+.device-tab-header-box {
+  margin-top: 15px;
+}
+.device-tab-content groupbox {
+  margin: 0px 0px 2px 0px;
+}
+radiogroup#auto_sync_settings_radio_group {
+  background-color: rgb(69,67,78);
+}
+radiogroup#auto_sync_settings_radio_group > listbox {
+  border: 1px solid rgb(87,86,94);
+  background-color: transparent;
+}
+
+/* box that holds all the buttons for sync settings */
+.device-tab-button-box {
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+  margin: -2px -1px -1px -1px;
+  border-left: 1px solid rgb(35,33,44);
+  border-right: 1px solid rgb(35,33,44);
+  border-bottom: 1px solid rgb(35,33,44);
+}
+
+.device-settings-button-box {
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+  border: 1px solid rgb(35,33,44);
+}
+
+.device-capacity-legend-label-box > label.capacity_header_label,
+label.device-name-label {
+  color: rgb(234,234,234);
+}
+.device-capacity-legend-label-box > label.capacity_value_label {
+  font-size: 9px !important;
+  color: rgb(159,157,166);
+}
+
+.device_management_tabpanels {
+  padding-top: 30px !important;
+}
+
+/* tree that holds the list of playlists to sync */
+sb-device-sync tree,
+sb-device-image-sync tree {
+  background-image: none;
+  background-color: rgb(69,67,78);
+  border: 1px solid rgb(42,42,53);
+}
+sb-device-sync tree treecol[type="checkbox"],
+sb-device-image-sync tree treecol[type="checkbox"] {
+  min-width: 23px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-right: -3px !important;
+}
+sb-device-image-sync radiogroup {
+  padding: 0px;
+}
+
+/* progress */
+.device-progress-button[sbid="sync_operation_button"]:hover > .button-box > label {
+  color: rgb(255,255,255);
+}
+.device-progress-button[sbid="sync_operation_button"][disabled="true"] > .button-box > label,
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover > .button-box > label {
+  color: rgb(154,153,160);
+}
+.dev-progress-text-label,
+.dev-sub-progress-text-label {
+  color: rgb(234,234,235);
+}
+.device-progress-information-box {
+  background-color: rgb(51,49,62);
+}
+
+/* Sync */
+vbox.device-tab-content {
+  margin-top: 25px;
+}
+hbox[sbid="sync_header"] {
+  margin-top: 5px;
+}
+hbox.content_management_header_background {
+  background-color: rgb(74,73,79);
+}
+label[sbid="sync_images_supported_formats"] {
+  color: rgb(170, 168, 179);
+}
