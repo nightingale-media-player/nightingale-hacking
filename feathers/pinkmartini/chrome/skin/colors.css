@@ -1,0 +1,1188 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+
+
+
+
+description,
+label,
+menu,
+treechildren::-moz-tree-cell-text {
+  font-size:11px;
+}
+textbox html|textarea,
+textbox html|input {
+  font-size:11px !important;
+}
+
+
+window {
+  padding:0px;
+}
+listhead,
+treecol,
+treecolpicker {
+  min-height:15px !important;
+  max-height:15px !important;
+}
+listheader > label,
+treecol > label {
+  font-size:9px !important;
+  /* :-( need this for aligning the text */
+  padding-bottom:1px !important;
+}
+treecol {
+  /** 1px of the left padding is replaced by border when reordering columns **/
+  padding: 0px 4px 0px 5px;
+}
+treechildren::-moz-tree-cell {
+  /** 1px of the left/right padding is replaced by border when reordering columns **/
+  padding: 0px 5px;
+}
+listheader {
+  padding: 0px 4px;
+}
+
+
+treechildren::-moz-tree-progressmeter {
+  margin:0;
+  padding-top:5px;
+  padding-bottom:5px;
+  min-height:18px;
+}
+
+treecolpicker > .tree-columnpicker-icon {
+  /* :-( need this for aligning the button */
+  padding:0px 1px 1px 1px;
+}
+
+
+.servicepane-tree > treechildren::-moz-tree-row {
+  min-height:20px !important;
+}
+
+.servicepane-tree {
+  background-color:transparent;
+}
+
+/* rm icons for container nodes */
+.servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-image( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-image( folder ) {
+  list-style-image:none;
+  width:0px;
+  height:0px;
+}
+
+
+.autocomplete-treebody::-moz-tree-image( favicon ) {
+  /* :-( need this for making sure the favicon is never bigger than 16x16 */
+  max-width:16px !important;
+  max-height:16px !important;
+  min-width:16px !important;
+  min-height:16px !important;
+}
+.autocomplete-treebody::-moz-tree-cell,
+.autocomplete-treebody::-moz-tree-cell-text {
+  padding:0 2px;
+  margin:0;
+}
+
+
+#tabstrip-container {
+  padding:0px;
+  margin:0px;
+}
+
+.tabbrowser-tabs {
+  padding:0px;
+}
+
+.tabbrowser-tab {
+  -moz-box-align: stretch;
+  -moz-box-pack: center;  
+  /* HIDDEN */
+  -moz-border-radius: 0;
+  
+  margin: 0px;
+  /** 1px right for the delimiter, 3px bottom for the tab bar separator **/
+  padding: 0px 1px 3px 0px !important;
+}
+
+/* HIDDEN */
+.tabbrowser-tab:not([selected="true"]) > .tab-image-middle > .tab-icon > .tab-icon-image {
+  opacity:0.66;
+}
+.tabbrowser-tab + .tabbrowser-tab {
+  /* rm 1px margin between vanilla tabs */
+  margin-left: 0px !important;
+}
+
+.tabbrowser-tab > .tab-image-middle,
+.tabbrowser-tab > .tab-image-left,
+.tabbrowser-tab > .tab-image-right,
+.tabbrowser-tab > .tab-close-button {
+  margin: 0px;
+  padding: 0px;
+  min-height: 22px !important;
+}
+
+.tabbrowser-tab > .tab-image-left,
+.tabbrowser-tab > .tab-image-right {
+  width:4px;
+}
+
+.tabbrowser-tab > hbox > label.tab-text {
+  text-align:left;
+}
+
+
+#nav-bar toolbarbutton {  
+  -moz-background-clip:border;
+
+  min-width:22px;
+    
+  min-height:22px;
+  max-height:22px;
+  padding:0 !important;
+  margin:0;
+}
+
+
+
+
+menubar > menu {
+  background-color:transparent;
+  padding:4px 8px !important;
+}
+
+menulist {
+  min-width:0px;
+  min-height:0px;
+  padding:0px;
+}
+.menulist-label {
+  padding:3px 8px;
+  margin:0;
+}
+
+
+.menulist-editable-box {
+  margin:2px 0px 1px 2px;
+  padding:0px 4px 1px 4px;
+}
+
+
+button,
+toolbarbutton,
+.clickhold-button {
+  padding:0px;
+}
+
+/* add padding here because buttons come in a few flavors
+   ie: image only, text only, image and text */
+.button-box {
+  padding:3px 8px;
+}
+.button-text {
+  padding:0px;
+  margin:0px;
+}
+
+
+toolbarbutton {
+  min-width:0px;
+  min-height:0px;
+  padding:2px 4px !important;
+}
+notification > button {
+}
+notification > button > .button-box {
+  padding:2px 4px !important;
+}
+.sb-commands-toolbar toolbarbutton .toolbarbutton-text,
+notification > button > .button-box > .button-text {
+  font-size:9px !important;
+  padding:0;
+  margin:0;
+}
+
+
+toolbarbutton[type="menu"] > .toolbarbutton-icon {
+  margin-left:2px;
+}
+
+toolbarbutton[type="menu"],
+toolbarbutton[type="menu-button"] {
+  padding:2px !important;
+}
+
+#nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  /* HIDDEN */
+  /* rm rounded corners because the menubutton is displayed to the right of the button */
+  -moz-border-radius-topright:0px !important;
+  -moz-border-radius-bottomright:0px !important;
+
+  min-height:20px;
+  max-height:20px;
+}
+.toolbarbutton-menubutton-button > .toolbarbutton-icon {
+  min-height:16px !important;
+  min-width:16px !important;
+  max-height:16px !important;
+  max-width:16px !important;
+}
+
+
+button > dropmarker.button-menubutton-dropmarker,
+button > .button-box > dropmarker.button-menu-dropmarker,
+toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker {
+  padding-top:1px;
+}
+dropmarker {
+  width: 11px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  -moz-image-region: auto;
+  margin:0;
+}
+
+
+dropmarker:hover:active {
+/*  padding: 2px 0 0 2px !important;*/
+}
+
+
+.button-menubutton-button,
+button[type="menu"] > .button-box {
+  margin:0 !important;
+  padding:0px;
+  
+  background-image:none;
+  background-color:transparent;
+}
+
+.button-menubutton-button > .button-box {
+  padding:3px 0px;
+}
+button[type="menu"],
+button[type="menu-button"] {
+  padding:0;
+}
+
+
+/** 
+*******************************************************************************
+DATEPICKER see the RICHLISTBOX for box styles
+*******************************************************************************
+*/
+.datepicker-gridlabel[selected="true"] {
+}
+
+
+/** 
+*******************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+*******************************************************************************
+*/
+
+
+menuitem > label,
+menupopup > menu > label,
+popup > menu > label {
+  padding:0;
+  margin:0;
+}
+
+
+/** 
+*******************************************************************************
+THE SPLITTERS
+These let the user resize the frames in your box model.
+*******************************************************************************
+*/ 
+
+#filter_splitter > grippy {
+  visibility:collapse;
+}
+
+#displaypane_right_sidebar_splitter[state="collapsed"],
+#displaypane_contentpane_bottom_splitter[state="collapsed"],
+#displaypane_servicepane_bottom_splitter[state="collapsed"] {
+}
+#servicepane_splitter[state="collapsed"] {
+  width:0px;
+  min-width:0px;
+  max-width:0px;
+  border:none !important;
+}
+
+#servicepane_splitter[state="collapsed"]:hover,
+#displaypane_right_sidebar_splitter[state="collapsed"]:hover,
+#displaypane_contentpane_bottom_splitter[state="collapsed"]:hover,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:hover {
+}
+
+#servicepane_splitter[state="collapsed"]:active,
+#displaypane_right_sidebar_splitter[state="collapsed"]:active,
+#displaypane_contentpane_bottom_splitter[state="collapsed"]:active,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:active {
+}
+
+#servicepane_splitter,
+#filter_splitter,
+#displaypane_right_sidebar_splitter {
+  max-width:3px;
+  min-width:3px;
+}
+
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter,
+.playlist-splitter,
+.playlist-web-splitter {
+  min-height:4px;
+  max-height:4px;
+}
+
+.playlist-splitter:active,
+.playlist-web-splitter:active {
+}
+
+.playlist-splitter[state="collapsed"],
+.playlist-web-splitter[state="collapsed"] {
+}
+
+
+/** 
+*******************************************************************************
+TEXTBOX
+*******************************************************************************
+*/
+
+textbox[disabled="true"],
+html|*.numberbox-input[disabled="true"] {
+  cursor: default;
+}
+
+
+/**
+*******************************************************************************
+MISC
+*******************************************************************************
+*/
+
+button.button-menubutton-button,
+button.button-menubutton-button:active {
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+/** 
+*******************************************************************************
+LISTBOX
+*******************************************************************************
+*/
+
+#working-list {
+  border-top:none;
+  border-bottom:none;
+  border-left:none;
+}
+
+/** 
+*******************************************************************************
+PREFERENCES
+*******************************************************************************
+*/
+
+/* View buttons */
+.viewSelector  {
+}
+
+#viewGroup radio:hover {
+  background:transparent !important;
+}
+
+/* Extensions */
+
+
+#extensionsBox {
+}
+#extensionsBox richlistitem {
+}
+#extensionsBox richlistitem[hidden="false"]:last-child {
+}
+
+
+
+
+
+
+
+#sb-sys-title-title {
+  padding:1px 5px 2px 5px !important;
+}
+
+#titlebar_box {
+  min-height:22px !important;
+  height:22px !important;
+  max-height:22px !important;
+}
+sb-sys-titlebar {
+  overflow:hidden;
+}
+#sb-sys-titlebar-primary-content {
+  -moz-box-align:center !important;
+}
+#faceplate-tool-bar > * {
+  margin:2px 0px 2px 4px;
+}
+#faceplate-tool-bar > sb-nowplaying-rating {
+  margin:0px 0px 0px 4px !important;
+}
+#faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
+}
+
+
+
+#control_pane_box {
+/*  border-top:1px solid brown;*/
+}
+#control_buttons_box {
+  padding:0 5px 0 10px;
+}
+#shuffle_repeat_box {
+  padding:0 9px 0 5px;
+}
+#control_buttons_box > .sb-player-button {
+  margin:0 1px;
+}
+#shuffle_repeat_box > .sb-player-button {
+  margin:0 1px 0 2px;
+}
+#volume_box {
+  padding:0 6px 0px 1px;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  min-height:52px;
+}
+#control_pane {
+  padding:0 5px;
+}
+
+#control_pane_box > .hook > .left,
+#control_pane_box > .hook > .right,
+#control_pane_box > .hook > .middle {
+  min-width:16px;
+  min-height:52px;
+}
+
+
+#titlebar_box > .hook > .left,
+#titlebar_box > .hook > .right {
+  min-width:16px;
+  min-height:22px;
+}
+#titlebar_box > .hook > .middle {
+  min-height:22px;
+}
+
+
+
+
+
+
+
+#nav-bar {
+  padding:3px 4px !important;
+  max-height:28px;
+}
+#nav-bar > * {
+  margin:0 2px !important;
+}
+#nav-bar > observes {
+  margin:0 !important;
+}
+
+
+#nav_bar_box > .hook > .left,
+#nav_bar_box > .hook > .right {
+  min-width:16px;
+}
+#nav_bar_box > .hook > .middle {
+}
+
+
+.closable-box-image,
+treechildren::-moz-tree-twisty(closed),
+.closable-box-image[open="true"],
+treechildren::-moz-tree-twisty(open) {
+  width: 9px;
+}
+
+
+#faceplate_box {
+  padding:2px 8px;
+  min-height:52px;
+}
+#faceplate > .hook > .left,
+#faceplate > .hook > .middle,
+#faceplate > .hook > .right,
+#faceplate_inactive > .hook > .left,
+#faceplate_inactive > .hook > .middle,
+#faceplate_inactive > .hook > .right {
+  min-width:8px;
+  min-height:44px;
+  max-height:44px;
+}
+#faceplate > .hook ,
+#faceplate_inactive > .hook {
+  margin:2px 0 !important;
+}
+
+
+#faceplate-inactive-splash {
+  min-height:44px;
+}
+
+#faceplate-album-art {
+  min-width:40px;
+  min-height:40px;
+  max-width:40px;
+  max-height:40px;
+}
+
+#faceplate_content {
+  min-height:44px;
+  padding:4px 2px;
+}
+
+
+.tab-icon-image {
+  max-width: 16px;
+  max-height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  margin-right:2px;
+}
+
+
+tab[first-tab="true"],
+.tabs-container > hbox > tab {
+  margin-left:0px !important;
+}
+
+
+
+
+
+
+.close-button {
+  background-image:none;
+  margin:5px !important;
+}
+.close-button > .button-box {
+  padding:0;
+}
+
+
+
+
+.service-pane-spring-load-button {
+}
+.service-pane-spring-load-button > .button-box {
+  padding:0;
+}
+.service-pane-spring-load-button> .button-box > .button-text {
+  display:none;
+}
+
+
+
+
+
+
+notification,
+.dialog-notification {
+  padding: 2px 8px;
+}
+
+
+/** PLAYER CONTENT WRAPPER **/
+#content_player_wrapper[playercontrols='top'] {
+  -moz-box-direction: reverse;
+}
+#content_player_wrapper[playercontrols='top'] #control_pane_box,
+#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .left,
+#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .right,
+#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .middle {
+  min-height: 53px;
+  max-height: 53px;
+}
+#content_player_wrapper[playercontrols='top'] #servicepane-status-bar-box,
+#content_player_wrapper[playercontrols='top'] #status-bar-box {
+  border-bottom:none !important;
+  max-height:19px;
+}
+
+
+
+.servicepane-toolbar-newitem-button {
+  max-width:16px;
+  max-height:16px;
+  margin:0px;
+}
+.servicepane-toolbar-newitem-button > .clickhold-button {
+  border:none;
+  padding:0px;
+  margin:0px;
+}
+.servicepane-toolbar-newitem-button > .clickhold-button > .button-box {
+  padding:0px;
+}
+.servicepane-toolbar-newitem-button > .clickhold-button > .button-box > .button-text {
+  display:none;
+}
+.servicepane-toolbar-newitem-button > .clickhold-button > .button-box > .button-icon {
+  min-height:14px;
+  min-width:14px;
+}
+.clickhold-button {
+  background-image:none;
+  background-color:transparent;
+}
+
+
+
+
+/* rm progress meter in the status bar because it is not hooked up */
+#statusbar-progresspanel {
+  display:none;
+}
+
+
+
+
+
+
+textbox[type="number"],
+datepicker,
+timepicker {
+  padding:0;
+}
+textbox[type="number"] > .textbox-input-box,
+.datetimepicker-input-subbox,
+.datetimepicker-year {
+  padding:2px 3px 2px 2px;
+}
+textbox[type="number"] > spinbuttons > .spinbuttons-box > button,
+datepicker > spinbuttons > .spinbuttons-box > button,
+timepicker > spinbuttons > .spinbuttons-box > button {
+  margin:0;
+  border:none !important;
+}
+textbox[type="number"] > spinbuttons > .spinbuttons-box > button > .button-box,
+datepicker > spinbuttons > .spinbuttons-box > button > .button-box,
+timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
+  padding:0px;
+}
+
+/* REVISIT:
+   rm background color for tab panels in the advanced pane so that the bottom border of the tabs will show */
+#advancedPrefs > tabpanels {
+  background-color:transparent !important;
+}
+#advancedPrefs {
+  margin-right:0 !important;
+  margin-left:0 !important;
+}
+
+
+
+.smart-condition-minus > .button-box,
+.smart-condition-plus > .button-box {
+  padding:0;
+}
+.smart-condition-minus > .button-box > .button-text,
+.smart-condition-plus > .button-box > .button-text {
+  display:none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#extensionsManager:not([active="true"]) > #topStackBar > #viewGroup {
+  background-image: none;
+}
+
+#extensionsManager:not([active="true"]) > #topStackBar > #viewGroup > .radiogroupWrapper {
+  opacity: 0.7;
+}
+
+#extensionsBox {
+  margin: 0px;
+}
+
+#resizerBox {
+/*  margin-top: -12px;
+  visibility: hidden;
+  border:2px solid red !important;*/
+}
+
+#resizerBox > resizer {
+  height: 10px;
+  max-height: 10px;
+  visibility: visible;
+}
+
+/* Command Bar */
+#commandBarBottom {
+  margin: 0px;
+}
+
+#commandBarBottom > button {
+  list-style-image: none !important;
+}
+
+#commandBarBottom button .button-icon {
+}
+
+
+
+/* List Items */
+
+
+richlistitem {
+  padding:4px;
+  min-height: 24px;
+}
+
+richlistitem[selected="true"]:not([opType]) .descriptionCrop {
+  display: none;
+}
+
+.addonName {
+  font-weight: bold;
+}
+/*
+.previewText {
+  font-size: 10px;
+  font-weight: bold;
+  color: blue;
+  text-align: center;
+}
+*/
+
+.addonIcon {
+  width: 32px;
+  max-width: 32px;
+  height: 32px;
+  max-height: 32px;
+}
+/*
+.updateBadge,
+.notifyBadge {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://mozapps/skin/extensions/notifyBadges.png");
+}
+
+.updateBadge {
+  -moz-margin-end: -2px;
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+.notifyBadge {
+  -moz-margin-start: -2px;
+  -moz-image-region: rect(0px 48px 16px 32px);
+}
+
+.updateBadge,
+.updateAvailableBox,
+.notifyBadge {
+  display: none;
+}
+*/
+
+.updateBadge,
+.updateAvailableBox,
+.notifyBadge {
+  display: none;
+}
+
+/* Selected Add-on buttons
+   See content/extensions.css to hide / display buttons */
+.selectedButtons {
+}
+
+.selectedButtons > button {
+}
+
+.enableButton,
+.disableButton,
+.optionsButton,
+.useThemeButton {
+}
+
+.enableButton, .disableButton,
+.uninstallButton, .cancelUninstallButton {
+}
+
+/* Selected Add-on status messages and images */
+
+.selectedStatusMsgs > hbox {
+}
+
+.selectedStatusMsgs label {
+  font-weight: bold;
+}
+
+.selectedStatusMsgs label.text-link {
+  font-weight: normal;
+  border: none;
+}
+
+richlistitem[opType="needs-uninstall"] .notifyBadge {
+  display: none;
+}
+
+#progressBox {
+  padding: 4px;
+}
+
+#progressBox > hbox {
+  -moz-box-align: center;
+}
+
+/* View buttons */
+.viewSelector {
+  margin: 0px;
+}
+#viewGroup radio {
+  -moz-appearance: none;
+  margin: 0px;
+  padding: 0px;
+  list-style-image: none;
+}
+
+
+#viewGroup radio[selected="true"] {
+
+}
+
+.viewButtonIcon {
+  display:none;
+}
+
+
+/* Update view checkbox */
+.includeUpdate {
+  -moz-user-focus: none;
+}
+
+richlistitem[selected="true"] .includeUpdate {
+  -moz-user-focus: normal;
+}
+
+#infoDisplay {
+  overflow-y: auto;
+}
+
+#infoDisplay body {
+  padding: 5px;
+}
+
+#infoDisplay h1,
+#infoDisplay h2,
+#infoDisplay h3 {
+  text-align: left;
+  font-weight: bold;
+  margin: 0 0 0.7em 0;
+}
+
+#infoDisplay h1 {
+  font-size: 150%;
+}
+
+#infoDisplay h2 {
+  font-size: 125%;
+}
+
+#infoDisplay h3 {
+  font-size: 100%;
+}
+
+#infoDisplay ol,
+#infoDisplay ul {
+  margin: 0 0 0.7em 0;
+}
+
+#infoDisplay li {
+  text-align: left;
+}
+
+#infoDisplay p {
+  text-align: justify;
+  margin: 0 0 0.7em 0;
+}
+
+
+
+/** about config **/
+#filterRow {
+  min-height:29px;
+  margin:0px !important;
+  
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#addonsMsg+vbox {
+  padding:0 8px;
+}
+#viewGroup {
+  -moz-box-pack:center;
+  padding:6px 6px 0px 6px;
+}
+#extensionsView {
+  margin:0px;
+  /* HIDDEN */
+  border:none !important;
+}
+#viewGroup > radio {
+  padding:2px 8px;
+  margin:0 0 -1px 0;
+}
+#viewGroup > radio+radio {
+  margin-left:1px !important;
+}
+
+
+#viewGroup > radio > .viewButtonLabel {
+  padding:0px;
+  margin:0px 4px !important;
+}
+
+.selectedButtons > button {
+}
+.selectedButtons > button > .button-box > .button-text {
+  font-size:9px;
+  padding:0;
+  margin:0;
+}
+richlistitem:first-child,
+template+richlistitem {
+  border-top:none !important;
+}
+.prefWindow-dlgbuttons {
+  margin:0px !important;
+} 
+
+.insecureUpdateBox {
+}
+richlistitem[providesUpdatesSecurely="true"] {
+}
+
+.addonThrobber,
+richlistitem[loading="true"] .updateBadge {
+  display: -moz-box;
+  width: 16px;
+  height: 16px;
+}
+
+
+
+
+
+
+
+/* pref */
+#defaultFontSize {
+  min-width:5em;
+}
+#showUpdateInfoButton {
+  visibility:collapse;
+}
+
+
+
+
+
+.wizard-buttons-separator,
+.wizard-header-description[value=""] {
+  display:none !important;
+}
+.wizard-buttons-box-2 {
+  margin:0px;
+}
+
+
+
+.message-icon,
+.alert-icon,
+.error-icon,
+.question-icon {
+  width: 0px;
+  height: 0px;
+  list-style-image: none;
+  margin: 0px !important;
+
+}
+
+.tabs-alltabs-button > dropmarker {
+  width:7px !important;
+  padding-right:2px;
+}
+
+
+
+
+
+
+#sb-playlist-filters {
+  min-height:60px;
+}
+
+
+
+treecol {
+  min-width: 45px;
+}
+
+treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
+  min-width: 78px;
+  width: 78px;
+}
+treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
+  min-width: 20px;
+  width: 20px;
+}
+treecol[bind="http://songbirdnest.com/data/1.0#ordinal"] {
+  min-width: 42px;
+  width: 42px;
+}
+treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {
+  min-width: 86px;
+  width: 86px;
+}
+
+
+radiogroup {
+  padding:4px;
+}
+.groupbox-body {
+  padding: 8px !important;
+  margin: 0;
+}
+.groupbox-title {
+  padding:0 !important;
+  margin:0 !important;
+}
+groupbox caption {
+  padding:0 !important;
+  margin:0 !important;
+  -moz-box-flex:1 !important;
+}
+.caption-text {
+  font-size:9px !important;
+}
+
+
+separator {
+  padding:4px 0;
+}
+
+
+
+
+toolbarbutton:active > .toolbarbutton-icon,
+toolbarbutton:active > .toolbarbutton-menu-dropmarker,
+toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
+toolbarbutton:active > .toolbarbutton-menubutton-dropmarker,
+toolbarbutton[open="true"] > .toolbarbutton-icon,
+toolbarbutton[open="true"] > .toolbarbutton-menu-dropmarker,
+toolbarbutton[open="true"] > .toolbarbutton-menulist-dropmarker,
+toolbarbutton[open="true"] > .toolbarbutton-menubutton-dropmarker {
+  opacity:0.5;
+}
+
+
+
+
+
+#nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  border:none;
+}
+
+findbar {
+  border:none;
+}
+
+#viewGroup {
+  border:none !important;
+  -moz-border-radius:0px !important;
+}
+
+
+.locationbar-textbox {
+  border-right:none !important;
+}
+.searchbar-textbox {
+  border-right:none !important;
+  border-left:none !important;
+}
+.searchbar-engine-button:active > .searchbar-engine-button-stack > .searchbar-engine-image-container > image,
+.searchbar-engine-button[open="true"] > .searchbar-engine-button-stack > .searchbar-engine-image-container > image {
+  opacity:0.5;
+}
+
