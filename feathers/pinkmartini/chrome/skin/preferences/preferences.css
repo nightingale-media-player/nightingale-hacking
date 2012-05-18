@@ -101,3 +101,23 @@
   border:1px solid rgb(161,161,161);
   -moz-border-radius:3px;
 }
+
+prefpane#paneManageMedia { 
+  padding: 0px !important; 
+  margin: 0px !important; 
+} 
+ 
+#paneAlbumArtwork #fetcherListBox { 
+  background-color: rgba(220,220,220,0.4); 
+  border: 1px solid rgb(161,161,161); 
+} 
+	 
+browser#addonsFrame { 
+  background-color: transparent; 
+} 
+
+/* Inline Link */ 
+	 
+.inline-link { 
+  color: rgb(22,148,217); 
+} 

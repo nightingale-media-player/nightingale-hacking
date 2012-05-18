@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
-<?xml-stylesheet href="chrome://purplerain/content/css/mainplayer.css" type="text/css"?>
+<?xml-stylesheet href="chrome://pinkmartini/content/css/mainplayer.css" type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
@@ -59,9 +59,9 @@
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
-  height="728"
-  width="1000"
-
+  height="728" 
+ 	width="1000"
+  
   onclose="quitApp();"
   persist="screenX screenY width height sizemode"
 >
@@ -109,7 +109,6 @@
                                   'splitter.servicepane_splitter.was_collapsed',
                                   gServicePane.open);"
                     style="min-height:16px; min-width:16px;"
-                    hidden="true"
                     >
               <observes type="dataremote"
                         key="splitter.servicepane_splitter.collapsed"
@@ -231,7 +230,6 @@
                       id="displaypane_right_sidebar_splitter"
                       menuid="displaypane_right_sidebar_menu" />
             <sb-displaypane id="displaypane_right_sidebar"
-                      style="min-width: 102px;"
                       contentgroup="sidebar"
                       orient="vertical"
                       label="&displaypane.name.sidebar;"
@@ -249,8 +247,7 @@
                     oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
                                gServicePane.open = !gServicePane.open;
                                SBDataSetBoolValue(key, gServicePane.open);"
-                    style="min-height:16px; min-width:16px;"
-                    hidden="true" >
+                    style="min-height:16px; min-width:16px;" >
               <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
                         attribute="hidden" inverted="true"/>
             </button>
@@ -285,11 +282,6 @@
               <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
             </hbox>
             
-            <hbox id="shuffle_repeat_box" pack="center" align="center">
-              <sb-player-shuffle-button class="sb-player-button" />
-              <sb-player-repeat-button class="sb-player-button" />
-            </hbox>
-
             <hbox id="faceplate_box" flex="1" pack="center" align="center">
               <stack id="faceplate" flex="1">
     
@@ -384,6 +376,10 @@
               </stack>
             </hbox>
             
+            <hbox id="shuffle_repeat_box" pack="center" align="center">
+              <sb-player-shuffle-button class="sb-player-button" />
+              <sb-player-repeat-button class="sb-player-button" />
+            </hbox>
           </hbox>
         </stack> <!-- /control_pane_box -->
       </vbox> <!-- /player_wrapper -->

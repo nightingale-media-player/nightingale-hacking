@@ -48,9 +48,7 @@ window:not([active="true"]) .inactive-box {
   background-color:rgba(255,255,255,0.33);
 }
 
-#video_window:not([active="true"]) .inactive-box {
-  background-color: black !important;
-}
+
 
 /******************************************************************************
 > WINDOW RESIZER SUPPORT
@@ -77,7 +75,7 @@ window:not([active="true"]) .inactive-box {
 ******************************************************************************/
 
 /* title bar */
-window:not([hidechrome]) #titlebar_box,
+window:not([hidechrome]) #titlebar_box, 
 window:not([sb-native-hidechrome]) #titlebar_box {
   visibility:collapse;
   border:none !important;

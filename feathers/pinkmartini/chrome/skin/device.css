@@ -1,0 +1,301 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2011 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+/******************************************************************************
+* DEVICE.CSS
+*******************************************************************************
+* DEVICE SUMMARY PAGE
+*
+* The page that is displayed when the device node is clicked on - MTP, MSC
+******************************************************************************/
+#msc-device-summary,
+#mtp-device-summary {
+  background-color: rgb(220,220,220) !important;
+}
+window > vbox#main_box {
+  overflow: auto;
+}
+
+sb-device-info-panel {
+  border-bottom: 1px solid rgb(100,100,100);
+}
+
+sb-device-info-panel[collapsed="true"] {
+  border-bottom: 0px;
+}
+
+sb-device-managetabs {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 12px;
+}
+/* the top half of the summary page + background for tabs (ipod only) */
+#overall_device_info_box,
+#device_management_tabs {
+  background-color: rgb(220,220,220);
+}
+/* Override the shadow from generic-bar with our own device one */
+#overall_device_info_box > #sb-device-progress > hbox.generic-bar {
+  background-image: url(chrome://songbird/skin/device/bg-device-screen.png);
+  background-color: rgb(161,161,161);
+  border-bottom: 1px solid rgb(131,131,131);
+}
+#device_management_tabs > tab[selected] {
+  border-bottom: none;
+}
+#device-icon { 
+  margin-right: 2px; 
+} 
+ 
+#device-name { 
+  margin-top: -1px; 
+  margin-left: -3px; 
+} 
+ 
+#volume-selector { 
+ min-width: 164px; 
+  margin-top: 2px; 
+  margin-bottom: 4px; 
+} 
+ 
+.eject-info-buttons { 
+  margin: 0px 6px 0px 0px; 
+  padding: 0px; 
+} 
+.device-capacity-bar-box {
+  margin-left: 1px;
+}
+/*
+.device-capacity-bar-box > hbox + hbox:not([flex="0"]) {
+  margin-left: 1px;
+}
+*/
+/* label for the legend that shows total file size */
+.capacity_value_label {
+  color:rgb(131,131,131);
+}
+.device-capacity-music,
+.device-capacity-legend-color-box[type="music"] {
+  background-color: rgb(0,105,245);
+}
+.device-capacity-video,
+.device-capacity-legend-color-box[type="video"] {
+  background-color: rgb(70,200,0);
+}
+.device-capacity-image,
+.device-capacity-legend-color-box[type="image"] {
+  background-color: rgb(140,42,81);
+}
+.device-capacity-other,
+.device-capacity-legend-color-box[type="other"] {
+  background-color: rgb(255,210,0);
+}
+.device-capacity-free,
+.device-capacity-legend-color-box[type="free"] {
+  background-color: rgb(235,235,235);
+}
+/* the device capacity bar has 9 notches (10 sections)
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
+.device-capacity-bar-notches hbox+hbox {
+  border-left: 1px solid rgba(0,0,0,0.1);
+}
+/* box that holds all the buttons for sync settings */
+.device-tab-button-box {
+  -moz-border-radius:3px;
+  border:1px solid rgb(131,131,131);
+}
+/* the device capacity bar has 9 notches (10 sections)
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
+.device-capacity-bar-notches hbox+hbox {
+  margin: 2px 0px;
+  border-left: 2px solid;
+  -moz-border-left-colors: rgba(0,0,0,0.4) rgba(255,255,255,0.25);
+}
+#device_management_box {
+  margin: 10px 10px 13px 10px;
+}
+
+.device-settings-tab-header-box,
+.device-tab-header-box {
+  background-color: rgb(74,73,79);
+  height: 28px;
+}
+.device-tab-header-box {
+  margin-top: 15px;
+}
+.device-tab-content groupbox {
+  margin: 0px 0px 2px 0px;
+}
+radiogroup#auto_sync_settings_radio_group {
+  background-color: rgb(235,235,235);
+}
+radiogroup#auto_sync_settings_radio_group > listbox {
+  border: 1px solid rgb(161,161,161);
+  background-color: transparent;
+}
+
+/* box that holds all the buttons for sync settings */
+.device-tab-button-box {
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(221,221,221);
+  margin: -2px -1px -1px -1px;
+  border-left: 1px solid rgb(161,161,161);
+  border-right: 1px solid rgb(161,161,161);
+  border-bottom: 1px solid rgb(161,161,161);
+}
+
+.device-settings-button-box {
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(221,221,221);
+  border: 1px solid rgb(161,161,161);
+}
+
+.device-capacity-legend-label-box > label.capacity_header_label,
+label.device-name-label {
+  color: rgb(10,10,10);
+}
+.device-capacity-legend-label-box > label.capacity_value_label {
+  font-size: 9px !important;
+  color: rgb(20,20,20);
+}
+
+.device_management_tabpanels {
+  padding-top: 30px !important;
+}
+
+/* tree that holds the list of playlists to sync */
+sb-device-sync tree,
+sb-device-image-sync tree {
+  background-image: none;
+  background-color: rgb(235,235,235);
+  border: 1px solid rgb(161,161,161);
+}
+sb-device-sync tree treecol[type="checkbox"],
+sb-device-image-sync tree treecol[type="checkbox"] {
+  min-width: 23px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-right: -3px !important;
+}
+sb-device-image-sync radiogroup {
+  padding: 0px;
+}
+
+/* added from deviceProgress.css */
+
+.device-syncmode-manual-button,
+.device-syncmode-auto-button {
+  height: 19px;
+  border: 1px solid rgb(120,120,120);
+  border-bottom: 1px solid rgb(131,131,131);
+  background-image: url(chrome://songbird/skin/device/sync-toggle-buttons.png);
+ background-position:0px -19px;
+}
+ .device-syncmode-manual-button > .button-box > label,
+.device-syncmode-auto-button > .button-box > label {
+  color: rgb(150,150,150);
+}
+.device-syncmode-manual-button:active > .button-box > label,
+.device-syncmode-auto-button:active > .button-box > label {
+  color: rgb(150,150,150);
+}
+.device-syncmode-manual-button[checked="true"] > .button-box > label,
+.device-syncmode-auto-button[checked="true"] > .button-box > label {
+  color: rgb(0,0,0);
+}
+.device-syncmode-manual-button:hover > .button-box > label,
+.device-syncmode-auto-button:hover > .button-box > label {
+  color: rgb(40,40,40);
+}
+.dev-progress-text-label,
+.dev-sub-progress-text-label {
+  font-size:10px;
+  color: rgb(40,40,40);
+  margin:0px;
+}
+.device-progress-information-box {
+  padding: 10px 10px 10px 10px;
+  border: 1px solid rgb(131,131,131);
+  background-color: rgb(230,230,230);
+  -moz-border-radius: 3px;
+  -moz-box-pack: end;
+  -moz-box-align: center;
+  min-width: 284px;
+}
+/* Added from deviceInfoPanel.css */
+.info-panel-bar-scrollbox {
+  background-image:url('chrome://songbird/skin/device/bg-infobar-shadow.png');
+  background-color: rgb(205,205,205);
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+.info-panel-label {
+ color: rgb(40,40,40) !important; 
+}
+
+
+/* MODIFY - MJP */
+.info-panel-bar-scrollbox {
+  background-color: rgb(230,230,230);
+}
+
+/* progress */
+.device-progress-button[sbid="sync_operation_button"]:hover > .button-box > label {
+  color: rgb(30,30,30);
+}
+.device-progress-button[sbid="sync_operation_button"][disabled="true"] > .button-box > label,
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover > .button-box > label {
+  color: rgb(90,90,90);
+}
+.dev-progress-text-label,
+.dev-sub-progress-text-label {
+  color: rgb(30,30,30);
+}
+.device-progress-information-box {
+  background-color: rgb(230,230,230);
+}
+
+/* Sync */
+vbox.device-tab-content {
+  margin-top: 25px;
+}
+hbox[sbid="sync_header"] {
+  margin-top: 5px;
+}
+hbox.content_management_header_background {
+  background-color: rgb(200,200,200);
+}
+label[sbid="sync_images_supported_formats"] {
+  color: rgb(30,30,30);
+}
+
+/*mjp added*/
+.device_management_tabpanels {
+  border: 1px solid rgb(171,171,171) !important; 
+  background-color: rgb(245,245,245);  
+}

@@ -32,7 +32,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 
-<?xml-stylesheet href="chrome://purplerain/content/css/miniplayer.css" type="text/css"?>
+<?xml-stylesheet href="chrome://pinkmartini/content/css/miniplayer.css" type="text/css"?>
 
 
 <!DOCTYPE window [
@@ -49,26 +49,27 @@
 <!-- run. Otherwise, the window should load and size to values as calculated by       -->
 <!-- windowPlacementSanityChecks().                                                   -->
 <window 
-  xmlns:html="http://www.w3.org/1999/xhtml"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+ xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 
-  id="miniplayer"
-  title="&window.dev.title;"
-  windowtype="Songbird:Main"
-  hidechrome="true"
+ id="miniplayer"
+ title="&window.dev.title;"
+ windowtype="Songbird:Main"
+ hidechrome="true"
+ 
+ onload="gMiniplayer.onLoad();"
+ onunload="gMiniplayer.onUnload();"
+ onclose="quitApp();"
+ onkeypress="gMiniplayer.onKeypress(event);"
+ ondragover="nsDragAndDrop.dragOver( event, gMiniplayer );"
+ ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
+ ondblclick="gMiniplayer.onDblClick(event);"
+  
 
-  onload="gMiniplayer.onLoad();"
-  onunload="gMiniplayer.onUnload();"
-  onclose="quitApp();"
-  onkeypress="gMiniplayer.onKeypress(event);"
-  ondragover="nsDragAndDrop.dragOver( event, gMiniplayer );"
-  ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
-  ondblclick="gMiniplayer.onDblClick(event);"
-  onresize="gMiniplayer.resizeHandler(event);"
+  height="22" 
 
-  height="42"
-  width="480"
-
+ 	width="480" 
+ 
   persist="screenX screenY width"
 >
   <!-- Load the Mozilla helpers -->
@@ -85,8 +86,7 @@
       <!-- menubar on osx -->
       <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
 
-      <box id="miniplayer_resizer_left" />
-      <!--<resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>-->
+      <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>
 
       <stack flex="1" id="miniplayer_box">
 
@@ -126,7 +126,7 @@
                   <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
                 </sb-autoscroll>
                 <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
-                <label value="/" class="faceplate-text time-delimiter"/>
+                <label value=" / " class="faceplate-text time-delimiter"/>
                 <sb-player-totaltime-label class="faceplate-text" align="left" />        
               </hbox>
   <!-- TODO Move corner xul into an sb-themed-frame-stack -->
@@ -145,22 +145,24 @@
               <spacer flex="1"/>
               <hbox class="right"/>
             </hbox>
-            <hbox id="faceplate-tool-bar" pack="center" align="center">
+            <hbox id="faceplate-tool-bar">
               <sb-nowplaying-rating />
             </hbox>
           </stack>
 
-          <vbox id="miniplayer_buttons" pack="center" align="center">
-            <sb-sys-close-button id="miniplayer_close_button" class="mini"/>
-            <button id="miniplayer_feathers_button"
-                    class="miniplayer sb-player-button"
-                    onclick="gMiniplayer.revertFeathers();" />
-          </vbox>
+          <sb-sys-close-button id="miniplayer_close_button" class="mini"/>
+
+          <!-- window controls (collapsed) -->
+          <hbox id="window_controls_box" pack="end" align="end" class="mini">
+            <sb-player-jumpto-button id="miniplayer_jumpto_button" class="miniplayer"/>
+            <sb-feathers-toggle-button id="miniplayer_feathers_button" popupanchor="bottomleft"
+                                       popupalign="topleft" class="miniplayer sb-player-button"/>
+          </hbox>
         </hbox>
 
       </stack>
 
-      <resizer oncommand="onWindowResizeComplete()" onmousedown="gMiniplayer._mouseDown=true;" onmouseup="gMiniplayer._mouseDown=false;" id="miniplayer_resizer_right" dir="right"/>
+      <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_right" dir="right"/>
 
     </hbox>
 

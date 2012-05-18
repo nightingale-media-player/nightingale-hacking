@@ -104,14 +104,24 @@ irc.mozilla.org #songbird
 ******************************************************************************/
 
 
-
-
+window#mainplayer-native,
+window#mainplayer {
+  min-width:640px;
+  min-height:480px;
+  width:1000px;
+  height:720px;
+  /* display: -moz-box;
+   background-color: blue;
+   border-left: 1px solid blue;
+   width: 1px; */
+}
 
 /******************************************************************************
 > BASE
 
   Mostly vanilla elements that act as the starting point for rules to follow.
 ******************************************************************************/
+
 wizard,
 dialog,
 window,
@@ -119,12 +129,15 @@ prefwindow,
 panel {
   background-color: rgb(245,245,245);
 }
+
 page {
   background-color: rgb(220,220,220);
 }
 menupopup, 
 popup {
   background-color:rgb(255,255,255);
+  border: 1px solid rgb(131,131,131) !important;
+  -moz-background-clip: padding;
 }
 
 tree,
@@ -152,20 +165,26 @@ label,
 treechildren::-moz-tree-cell-text {
   color: rgb(40,40,40);
 }
-
+/*
 listheader,
 treecols {
   border-bottom:1px solid rgb(161,161,161);
 }
+*/
 listheader,
 treecol {
-  border-right:1px solid rgb(161,161,161);
+  /*border-right:1px solid rgb(161,161,161);*/
+  height: 20px;
 }
 listheader > label,
 treecol > label {
   color: rgb(101,101,101);
 }
-
+/* prevent the content pane bottom display pane from being resized high enough 
+ * that it breaks the tabbrowser vertical scrollbar */ 
+sb-tabbrowser { 
+  min-height: 110px; 
+} 
 treecol[insertafter="true"],
 treechildren::-moz-tree-cell( insertafter ) {
   border-right: 1px solid rgb(131,131,131);
@@ -176,6 +195,10 @@ treechildren::-moz-tree-cell( insertbefore ) {
   border-left: 1px solid rgb(131,131,131);
   padding-left: 4px;
 }
+
+treecol[hidden="true"] + splitter.tree-splitter { 
+  display: none; 
+} 
 richlistitem {
   border-bottom: 1px solid rgb(131,131,131);
 }
@@ -212,6 +235,12 @@ menubar,
 .generic-bar {
   border-bottom:1px solid rgb(131,131,131);
 }
+
+/* fix for video window - 1px showing on top of video - menubar - mjp */
+#video_menu {
+ display:none;
+}
+
 toolbarseparator {
   background-color:rgb(131,131,131);
 }
@@ -239,12 +268,32 @@ sb-status-progressmeter {
   border-top:1px solid rgb(131,131,131);
 }
 
-html|*.loss-of-data-text,
-.loss-of-data-text {
-  color: rgb(255,0,0);
+
+browser#addonsFrame { 
+  border:1px solid rgb(131,131,131) !important;
+} 
+/*** ADDED FROM PURPLE RAIN ***/
+menuitem[checked="true"][_moz-menuactive="true"],
+menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
+.menulist-menupopup > menuitem[selected="true"][_moz-menuactive="true"] {
+  background-color: rgb(169,212,255) !important;
 }
-
-
+.autocomplete-tree {
+  -moz-appearance: none !important;
+  margin:0 !important;
+  border:none;
+  background-image: none;
+  background-color:rgb(255,255,255) !important;
+}
+-­panel[type="autocomplete"],
+.autocomplete-history-popup {
+  -moz-appearance: none;
+  padding: 0;
+  border: 1px solid rgb(131,131,131) !important;
+}
+.rating-stars {
+margin-top:0px !important;
+}
 /******************************************************************************
 > TEXTBOXES
   
@@ -309,7 +358,9 @@ menulist {
   -moz-border-radius:3px;
   border:1px solid rgb(120,120,120);
 }
-
+menulist { 
+  min-width: 60px; 
+} 
 button:focus,
 toolbarbutton:focus,
 checkbox:focus > .checkbox-check,
@@ -418,7 +469,20 @@ tabs[orient="vertical"].tabs-left tab[selected="true"] {
 }
 
 
-
+/* Options > Advanced */
+#tabsElement {
+ background-image:none !important;
+ list-style-image: none !important;
+ background-color: transparent !important;
+ border-bottom: none !important;
+}
+/* Options > Media Import */
+#import_media_tabs { 
+ background-image:none !important;
+ list-style-image: none !important;
+ background-color: transparent !important;
+ border-bottom: none !important;
+} 
 /******************************************************************************
 > NOTIFICATION
 
@@ -453,11 +517,18 @@ notification[type="critical"],
 ******************************************************************************/
 statusbar {
   border-top:1px solid rgb(131,131,131);
+  margin-right: 8px; 
+  padding-top: 1px; 
+  padding-bottom: 1px; 
 }
 #servicepane-status-bar-box,
 #status-bar-box {
   border-top:1px solid rgb(131,131,131);
   border-bottom:1px solid rgb(131,131,131);
+  /*background-color: rgb(43,41,54); */
+  background-image: url(chrome://songbird/skin/base-elements/bg-statusbar.png);
+  min-height: 20px; 
+ -moz-box-align: center; 
 }
 .service-pane-spring-load-button,
 .servicepane-toolbar-newitem-button,
@@ -465,8 +536,6 @@ sb-displaypane-button > button {
   border-right: 1px solid rgb(161,161,161);
   border-left: 1px solid rgb(161,161,161);
 }
-
-
 
 /******************************************************************************
 > SELECTED STATES
@@ -544,6 +613,24 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 /******************************************************************************
 > TITLE BAR
 ******************************************************************************/
+/*
+ *   For Mac, separate active and inactive background colors and images may be
+ * specified for the titlebar.  In addition, separate active and inactive colors
+ * may be specified for the titlebar text.
+ *   If both a background color and image are specified for the titlebar, the
+ * background color is drawn first, then the background image is drawn over the
+ * background color.  If the background image is translucent, it will be mixed
+ * accordingly with the background color.
+ */
+/* I use the native mac titlebar so i dont need this */
+
+sb-sys-titlebar[platform="Darwin"] {
+  background-image: url(chrome://songbird-os-specific/skin/title-bar-backing.png);
+}
+sb-sys-titlebar[platform="Darwin"][inactive] {
+  background-image: url(chrome://songbird-os-specific/skin/title-bar-backing.png);
+}
+
 #sb-sys-title-title {
   font-weight:bold;
 }
@@ -562,6 +649,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 ******************************************************************************/
 #servicepane {
   background-color: rgb(220,220,220);
+  border-left: 1px solid rgb(220,220,220);
 }
 .servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
   font-weight:bold;
@@ -573,7 +661,311 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   color:rgb(101,101,101) !important;
   font-weight:normal !important;
 }
+#sb_servicepane_box { 
+  border: none; 
+  overflow: auto; 
+  overflow-x: hidden; 
+} 
+.sb-status-bar-text,
+.statusbarpanel-text {	
+  color: rgb(40,40,40);
+}
 
+/* BEGIN NEW SERVICEPANE */
+sb-servicepane-group > vbox > vbox.servicepane-group-overflow-container {
+  overflow: hidden;
+}
+sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
+  overflow: hidden;
+}
+vbox.servicepane-group-nodes {
+  padding-bottom: 4px;
+}
+
+sb-servicepane-group .servicepane-group-header {
+  background-repeat: repeat-x;
+  background-position: center 0px;
+}
+
+sb-servicepane-group hbox.servicepane-group-header-wrapper {
+  background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
+  min-height: 20px;
+  max-height: 20px;
+  -moz-box-align: center;
+}
+
+#servicepane > sb-servicepane-group:first-child .servicepane-group-header{
+  background-image: url(chrome://songbird/skin/service-pane/group-header-first-bg.png);
+}
+
+sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wrapper:-moz-drag-over,
+/* Commented out per bug 21108
+ * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper {
+ */
+sb-servicepane-group .servicepane-group-header-wrapper:hover,
+sb-servicepane-group toolbarbutton:hover {
+  background-position: center -20px;
+}
+/* Commented out per bug 21108
+ * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper:active { */
+sb-servicepane-group .servicepane-group-header-wrapper:active,
+sb-servicepane-group toolbarbutton:active {
+  background-position: center -40px;
+}
+
+sb-servicepane-group description.servicepane-group-label {
+  color: rgb(30,30,30);
+  margin: 0px;
+  text-transform: uppercase;
+  margin-left: 4px;
+}
+
+sb-servicepane-group toolbarbutton,
+sb-servicepane-group toolbarbutton.clickhold-button {
+  background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+sb-servicepane-group[id="SB:Playlists"] toolbarbutton {
+  background-image: url(chrome://songbird/skin/service-pane/new-playlist.png);
+  background-position: left 0px;
+  min-height: 20px;
+  max-height: 20px;
+  min-width: 23px;
+  max-width: 23px;
+}
+sb-servicepane-group[id="SB:Playlists"] toolbarbutton:hover {
+  background-position: left -20px;
+}
+sb-servicepane-group[id="SB:Playlists"] toolbarbutton:active {
+  background-position: left -40px;
+}
+
+/* SERVICE PANE NODES */
+sb-servicepane-node {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+sb-servicepane-node > vbox > hbox.servicepane-node-info {
+  min-height: 18px;
+  max-height: 18px;
+}
+
+hbox.servicepane-node-info > stack > hbox > label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: rgb(40,40,40);
+  font: message-box;
+  font-size: 11px;
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
+  color: black;
+}
+sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
+  padding-left: 10px;
+}
+sb-servicepane-node[indent="2"] > vbox > hbox.servicepane-node-info {
+  padding-left: 24px;
+}
+/* if you really have this much nesting, you're crazy */
+sb-servicepane-node[indent="3"] > vbox > hbox.servicepane-node-info {
+  padding-left: 38px;
+}
+sb-servicepane-node[indent="4"] > vbox > hbox.servicepane-node-info {
+  padding-left: 52px;
+}
+sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
+  padding-left: 66px;
+}
+
+/* loaded in the browser & selected in the servicepane */
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
+  background-position: left bottom;
+    border-left: 1px solid rgb(243,243,243);
+  border-right: 1px solid rgb(243,243,243);
+}
+
+/* Set user focus to normal so we can tell when the servicepane is focused
+ * or not */
+#servicepane {
+  -moz-user-focus: normal;
+}
+#servicepane:focus sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-position: left top;
+  border-left: 1px solid rgb(255,255,255);
+  border-right: 1px solid rgb(255,255,255);
+}
+
+/* highlighted in the servicepane for when a node is right-clicked, but not
+ * loaded in the browser */
+sb-servicepane-node.highlighted:not(.active) > vbox > hbox.servicepane-node-info {
+  background-color: rgb(240,240,240);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(161,161,161);
+}
+/* needed to avoid the above border side-shifting all the elements 1px */
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.highlighted:not(.active) > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
+  margin-left: -1px;
+}
+
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
+  background-color: rgb(240,240,240);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(161,161,161);
+}
+
+/* highlighted in the servicepane for when a node is the keyboard focus */
+#servicepane sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+#servicepane:focus sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info {
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(131,131,131);
+}
+/* to compensate for the 1px border added above */
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > stack > textbox {
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.dndAcceptIn > vbox > hbox.servicepane-node-info {
+  background-color: rgb(240,240,240);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(161,161,161);
+}
+
+/* overlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptBefore > vbox > hbox.servicepane-node-info {
+  border-top: 2px solid rgb(161,161,161);
+}
+
+/* underlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
+  border-bottom: 2px solid rgb(161,161,161);
+}
+
+/* when an open container node is a droptarget, then highlight the node and
+ * all its children */
+sb-servicepane-node.container.droptarget:not([closed]) {
+  margin-top: 0px;
+}
+sb-servicepane-node.container.droptarget:not([closed]) > vbox {
+  background-color: rgb(240,240,240);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(161,161,161);
+}
+/* undo the above changes for container node droptargets */
+sb-servicepane-node.container.droptarget:not([closed]) > vbox > hbox.servicepane-node-info {
+  background-color: transparent;
+  border: none;
+  margin-left: 0px;
+  margin-right: -1px;
+}
+sb-servicepane-node.container.droptarget:not([closed]) > vbox > vbox {
+  margin-left: -1px;
+}
+
+/* the open/closed container toggle arrow for the node and its subnodes */
+sb-servicepane-node image.servicepane-node-container-arrow {
+  padding: 10px 3px;
+  min-width: 7px;
+  min-height: 7px;
+  margin-right: 1px;
+  background-image: none;
+  background-repeat: no-repeat;
+}
+
+sb-servicepane-node.container > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
+  background-position: left top;
+}
+sb-servicepane-node.active.container > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right top;
+}
+
+sb-servicepane-node.container[closed] > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
+  background-position: left bottom;
+}
+sb-servicepane-node.active.container[closed] > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right bottom;
+}
+
+/* the image for the node itself */
+sb-servicepane-node > vbox > hbox.servicepane-node-info,
+sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
+  -moz-box-align: center;
+}
+
+/* to make sure the child text element align properly */ 
+sb-servicepane-node textbox {
+  margin: -1px;
+}
+
+/* SERVICE PANE BADGES */
+hbox.servicepane-node-badges {
+  -moz-box-pack: end;
+  margin-right: 0px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
+sb-servicepane-node.highlighted:not(.active) > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
+  margin-right: -1px;
+}
+
+/* Badge Text labels */
+sb-servicepane-node-badge > hbox > label {
+  background-color: rgb(171,171,171);
+  color: rgb(250,250,250);
+  padding-left: 5px;
+  padding-right: 5px;
+  -moz-border-radius: 6px;
+  margin: 0px 4px 0px 0px;
+  font-family: Helvetica Neue, Helvetica, Arial;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
+  background-color: rgba(161,161,161,0.4);
+  color: rgb(70,70,70);
+}
+
+/* Badge Images */
+sb-servicepane-node-badge > hbox > image {
+  margin-left: 5px;
+  margin-right: 2px;
+}
+sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,18px,18px,0px);
+}
+sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,18px,36px,0px);
+}
+sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,18px,54px,0px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,36px,18px,18px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,36px,36px,18px);
+}sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,36px,54px,18px);
+}
+/* END NEW SERVICEPANE */
+ 	
+ 	
 /* rm bottom border for treecols */
 #servicepane treecols {
   border:none;
@@ -605,8 +997,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   -moz-border-radius:6px;
 }
 
-
-
+.servicepane-tree {
+margin-top:1px !important;
+}
 
 /******************************************************************************
 > DRAG BADGE
@@ -629,6 +1022,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 ******************************************************************************/
 .faceplate-text {
   color:rgb(250,250,250);
+  font: message-box;
 }
 #sb-player-title-label-label {
   font-weight:bold;
@@ -640,7 +1034,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #sb-player-timeelapsed-label > label,
 #sb-player-totaltime-label > label {
   color:rgb(140,140,140);
-  font-size:9px;
+  font-size:9px !important;
 }
 
 
@@ -672,35 +1066,40 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
   border-right:1px solid rgb(80,80,80);
 }
-
+.locationbar-textbox html|*.textbox-input, 
+.searchbar-textbox html|*.textbox-input { 
+} 
+.searchbar-textbox:not([focused="true"]) {
+  color: Gray;
+}
+.searchbar-textbox[focused="true"] {
+  color: Black;
+}
+.locationbar-textbox { 
+  cursor: default; 
+} 
 
 /**
   Location bar and search bar in the nav bar
 **/
 .locationbar-textbox,
-.searchbar-textbox,
-#searchbar .search-go-button {
-  background-color:rgb(230,230,230);
-
-  border-top:1px solid rgb(80,80,80);
-  border-right:1px solid rgb(80,80,80);
-  border-bottom:1px solid rgb(140,140,140);
-  border-left:1px solid rgb(80,80,80);
-}
-.searchbar-engine-button {  
-  background-color:rgb(180,180,180);
-    
-  -moz-border-radius:0 !important;
-  -moz-border-radius-topleft:2px !important;
-  -moz-border-radius-bottomleft:2px !important;
-  border:1px solid rgb(80,80,80);
-}
+.searchbar-textbox { 
+  background-color: rgb(230,230,230); 
+  border: 1px solid rgb(80,80,80); 
+  -moz-border-radius: 1px; 
+} 
+.searchbar-engine-button { 
+  background-image: none; 
+  border: none; 
+} 
 /* highlight the menu item when it's available */
 .addengine-item {
-  background-color:rgb(255,255,215);
+  /*background-color:rgb(255,255,215);*/
 }
 
-
+.searchbar-engine-button menupopup menuitem { 
+   margin-left: -8px !important; 
+} 
 
 /******************************************************************************
 > DISPLAY PANES
@@ -715,95 +1114,138 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   border:1px solid rgb(200,200,200);
   color:rgb(120,120,120);
 }
-
+.empty-box { 
+  background-color: rgb(220,220,220); 
+} 
+.empty { 
+  background-color: rgb(220,220,220); 
+} 
+.instructions description { 
+  color: rgb(120,120,120); 
+  background-color: rgb(235,235,235); 
+  border: 1px solid rgb(200,200,200); 
+  line-height: 16px; 
+} 
 .drop-message {
   color:rgb(120,120,120);
+  white-space: pre-wrap;
+}
+
+
+
+/******************************************************************************
+* DISPLAY PANES SPLITTERS & GRIPPIES
+******************************************************************************/
+sb-displaypane-splitter {
+  cursor: -moz-grab;
+}
+sb-displaypane-splitter[disabled="true"] {
+  opacity: 1;
+  cursor: auto;
+}
+sb-displaypane-splitter[disabled="true"]:active {
+  cursor: auto;
+}
+sb-displaypane-splitter:active {
+  cursor: -moz-grabbing;
+}
+sb-displaypane-splitter > stack > box > #dropdown-button {
+  cursor: pointer;
+}
+sb-displaypane-splitter > stack > box > #dropdown-button[disabled="true"] {
+  cursor: auto;
+  opacity: 1 !important;
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > label {
+  color: rgb(40,40,40);
+  font-size: 11px;
+}
+sb-displaypane-splitter[state="collapsed"] > stack > box > label { 
+  color: rgb(166,166,166);
+ }
+sb-displaypane-splitter[orient="vertical"][hovergrippy="true"] > stack > box > sb-displaypane-grippy {
+  background-image: none;
+}
+sb-displaypane-splitter[orient="vertical"][hovergrippy="true"] > stack > box > sb-displaypane-grippy:hover {
+  background-image: url(chrome://songbird/skin/splitter/splitter-horizontal-gripper.png);
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > sb-displaypane-grippy {
+  cursor: pointer;
+  background-image: url(chrome://songbird/skin/splitter/splitter-horizontal-gripper.png);
+  margin: 0;
+  padding: 0 10px;
+  height: 20px;
+  max-height: 20px;
+  min-height: 20px;
+  background-position:center 0px;
+  background-repeat:no-repeat;
+  min-width: 49px;
+  max-width: 49px;
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -44px;
+}
+sb-displaypane-splitter[orient="vertical"][state="collapsed"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -66px;
+}
+sb-displaypane-splitter[orient="vertical"] > stack > box > #dropdown-button {
+  margin-left: 2px;
+}
+
+sb-displaypane-splitter[orient="horizontal"] > stack > box > sb-displaypane-grippy {
+  cursor: pointer;
+  background-image: url(chrome://songbird/skin/splitter/splitter-vertical-gripper.png);
+  margin: 0;
+  padding: 0;
+  width: 20px;
+  max-width: 20px;
+  min-width: 20px;
+  background-position:center 0px;
+  background-repeat:no-repeat;
+  min-height: 19px;
+  max-height: 19px;
+}
+sb-displaypane-splitter[orient="horizontal"][hovergrippy="true"] > stack > box > sb-displaypane-grippy {
+  background-image: none;
+}
+sb-displaypane-splitter[orient="horizontal"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -38px;
+}
+sb-displaypane-splitter[orient="horizontal"][state="collapsed"] > stack > box > sb-displaypane-grippy:hover {
+  background-position: center -57px;
+}
+sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
+  margin-top: 3px;
+  margin-left: 2px;
 }
 
 /******************************************************************************
-> SPLITTERS
+* SPLITTERS (the non-displaypane variety)
 ******************************************************************************/
 #servicepane_splitter,
-#filter_splitter,
-#displaypane_right_sidebar_splitter {
+#filter_splitter {
   background-color:rgb(220,220,220);
   border-right:1px solid rgb(131,131,131);
   border-left:1px solid rgb(131,131,131);
+  background-image: none;
 }
-#servicepane_splitter {
-  border-bottom:1px solid rgb(131,131,131);
+#servicepane_box[collapsed="true"] + #servicepane_splitter { 
+  margin-left: 2px; 
+} 
+#servicepane_box[collapsed="true"] {
+	background-color: rgb(161,161,161);
 }
-#filter_splitter {
-  border-right:1px solid rgb(161,161,161);
-  border-left:1px solid rgb(161,161,161);  
-}
-
-#displaypane_contentpane_bottom_splitter,
-#displaypane_servicepane_bottom_splitter,
 .playlist-splitter,
 .playlist-web-splitter {
-  border-bottom:1px solid rgb(131,131,131);
-  border-top:1px solid rgb(131,131,131);
-}
-.playlist-splitter {
   border-top:1px solid rgb(161,161,161);
-  border-bottom:1px solid rgb(161,161,161);  
+  border-bottom:1px solid rgb(161,161,161); 
 }
-.playlist-web-splitter {
-  border-bottom:1px solid rgb(161,161,161);  
-}
-
-
 
 /******************************************************************************
 > DEVICE SUMMARY PAGE
 
   The page that is displayed when the device node is clicked on - iPod, MTP
 ******************************************************************************/
-/* the top half of the summary page + background for tabs (ipod only) */
-#overall_device_info_box,
-#device_management_tabs {
-  background-color: rgb(220,220,220);
-}
-#device_management_tabs > tab[selected] {
-  border-bottom: none;
-}
-/* label for the legend that shows total file size */
-.capacity_value_label {
-  color:rgb(131,131,131);
-}
-.device-capacity-music,
-.device-capacity-legend-color-box[type="music"] {
-  background-color: rgb(0,105,245);
-}
-.device-capacity-video,
-.device-capacity-legend-color-box[type="video"] {
-  background-color: rgb(70,200,0);
-}
-.device-capacity-image,
-.device-capacity-legend-color-box[type="image"] {
-  background-color: rgb(140,42,81);
-}
-.device-capacity-other,
-.device-capacity-legend-color-box[type="other"] {
-  background-color: rgb(255,210,0);
-}
-.device-capacity-free,
-.device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(235,235,235);
-}
-/* the device capacity bar has 9 notches (10 sections)
-   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
-.device-capacity-bar-notches hbox+hbox {
-  border-left: 1px solid rgba(0,0,0,0.1);
-}
-/* box that holds all the buttons for sync settings */
-.device-tab-button-box {
-  -moz-border-radius:3px;
-  border:1px solid rgb(131,131,131);
-}
-
-
 
 /******************************************************************************
 > WIZARDS
@@ -934,13 +1376,16 @@ scrollbar > slider > thumb {
 }
 
 
-
 /******************************************************************************
 > WINDOW RESIZERS
   
   Draw a border around windows that are resizable - Linux and Windows only
   Make sure to update skin/window/bg-resizer-bottom-corner.png to match changes made here
 ******************************************************************************/
+#mainplayer-native .sb-sys-outer-frame-resizer {
+  display: none;
+}
+
 .sb-sys-outer-frame-resizer {
   background-color:rgb(161,161,161);
 }
@@ -1036,7 +1481,21 @@ scrollbar > slider > thumb {
   background-color:rgb(220,220,220);
 }
 
+/* Need to specialcase the manage media prefpane due to the notificationbox */ 
+prefpane:not(#paneManageMedia) { 
+  padding: 15px 10px !important; 
+} 
+#media_manage_notification_box_contents { 
+ padding: 15px 10px !important; 
+} 
+prefpane groupbox { 
+  margin-top: 0px !important; 
+  margin-bottom: 2px !important; 
+} 
 
+#version_number .textbox-input-box {
+  color: rgb(0,0,0) !important;
+}
 
 /******************************************************************************
 > FIREFOX API
@@ -1061,6 +1520,67 @@ html|*.error-text,
 .text-link[visited="true"] {
 }
 
+
+/******************************************************************************
+* ALBUM ARTWORK
+******************************************************************************/
+/* The color used for when artwork is displayed */
+deck#sb-albumart-deck > stack.artwork-found {
+  background-color: rgb(220,220,220);
+}
+/* The color used for when no artwork is found */
+deck#sb-albumart-deck > stack.artwork-none {
+  background-color: white;
+}
+deck#sb-albumart-deck > stack > vbox > description {
+  color: rgb(120,120,120);
+  background-color: transparent;
+}
+sb-displaypane#displaypane_servicepane_bottom { 
+  max-height: 300px !important; 
+}
+/******************************************************************************
+* DOM INSPECTOR
+******************************************************************************/
+domi-panelset label.viewer-title {
+  color: black;
+}
+
+/******************************************************************************
+* XPI INSTALL DIALOG
+******************************************************************************/
+#itemList {
+  background-color: rgb(190,190,190);
+  border: none;
+  overflow: visible !important; 
+}
+
+
+/******************************************************************************
+* EXTENSIONS ABOUT
+******************************************************************************/
+#clientBox {
+  background-color: transparent !important;
+}
+#extensionDescription {
+  color: rgb(30,30,30) !important;
+}
+
+/******************************************************************************
+* SOFTWARE UPDATE DIALGO
+******************************************************************************/
+#incompatibleWarning {
+  background-color: white !important;
+}
+#incompatibleWarning > vbox > description {
+  color: black !important;
+}
+
+#updateCheckErrorNotFound {
+  background-color: transparent;
+  border: none;
+}
+
 /*******************************************************************************
 * MEDIA IMPORT DIALOG
 *******************************************************************************/
@@ -1070,3 +1590,278 @@ html|*.error-text,
   border: 1px solid #504e5b;
 }
 
+/*******************************************************************************
+* PLAY QUEUE
+*******************************************************************************/
+
+.playqueue-instructions {
+  background-color: rgb(220,220,220);
+  line-height: 16px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history ) { 
+  color: rgb(100,100,100); 
+} 
+ 
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled ) { 
+  color: rgb(110,110,110); 
+} 
+/*********************************************************
+*  GONZO LOOK
+*********************************************************/
+
+/* PLAYER CONTROLS */
+/*play*/
+.sb-player-play-button-play > button,
+.sb-player-playpause-button-play > button {
+  -moz-image-region: rect(0px 40px 40px 0px);
+}
+.sb-player-play-button-play:hover > button,
+.sb-player-playpause-button-play:hover > button {
+  -moz-image-region: rect(40px 40px 80px 0px);
+}
+.sb-player-play-button-play:active > button,
+.sb-player-playpause-button-play:active > button {
+  -moz-image-region: rect(80px 40px 120px 0px);
+}
+.sb-player-play-button-play[disabled="true"] > button,
+.sb-player-playpause-button-play[disabled="true"] > button {
+  -moz-image-region: rect(120px 40px 160px 0px);
+  opacity: 1.0 !important;
+}
+/*pause*/
+.sb-player-pause-button-pause > button,
+.sb-player-playpause-button-pause > button {  
+  -moz-image-region: rect(0px 80px 40px 40px);
+}
+.sb-player-pause-button-pause:hover > button,
+.sb-player-playpause-button-pause:hover > button { 
+  -moz-image-region: rect(40px 80px 80px 40px);
+}
+.sb-player-pause-button-pause:active > button,
+.sb-player-playpause-button-pause:active > button{
+  -moz-image-region: rect(80px 80px 120px 40px);
+}
+.sb-player-pause-button-pause[disabled="true"] > button,
+.sb-player-playpause-button-pause[disabled="true"] > button { 
+  -moz-image-region: rect(120px 80px 160px 40px);
+  opacity: 1.0 !important;
+}
+
+/* the stop button */
+.sb-player-stop-button-stop > button {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-stop.png); 
+  -moz-image-region: rect(0px 40px 40px 0px);
+}
+.sb-player-stop-button-stop:hover > button { 
+  -moz-image-region: rect(40px 40px 80px 0px);
+}
+.sb-player-stop-button-stop:active > button {
+  -moz-image-region: rect(80px 40px 120px 0px);
+}
+.sb-player-stop-button-stop[disabled="true"] > button { 
+  -moz-image-region: rect(120px 40px 160px 0px);
+}
+/*back-forward*/
+sb-player-back-button, 
+sb-player-forward-button { 
+   -moz-image-region: rect(0px 30px 30px 0px); 
+} 
+sb-player-back-button:hover, 
+sb-player-forward-button:hover {  
+  -moz-image-region: rect(30px 30px 60px 0px); 
+} 
+sb-player-back-button:active, 
+sb-player-forward-button:active {  
+  -moz-image-region: rect(60px 30px 90px 0px); 
+} 
+sb-player-back-button[disabled="true"], 
+sb-player-forward-button[disabled="true"] {  
+ -moz-image-region: rect(90px 30px 120px 0px); 
+  opacity:1.0 !important; 
+} 
+
+/* GONZO SCROLL BARS */
+
+/* ::::: scrollbar ::::: */
+scrollbar {
+  -moz-binding: url("chrome://global/content/bindings/scrollbar.xml#scrollbar");
+  cursor: default;
+}
+scrollbar[orient="vertical"] {
+  width:14px !important;  
+}
+scrollbar[orient="horizontal"] {
+  height:14px !important;  
+}
+
+/* ::::: borders for thumb and buttons ::::: */
+thumb {
+}
+scrollbarbutton {
+  min-width:12px !important;
+  min-height:12px !important;
+  margin:1px;
+  background-repeat:no-repeat;
+}
+
+/* ::::: thumb (horizontal) ::::: */
+thumb[orient="vertical"] {
+  min-height: 14px !important;
+}
+thumb[orient="horizontal"] {
+  min-width: 14px !important;
+}
+
+/* ::::: scrollbar button ::::: */
+scrollbarbutton {
+}
+
+/* ::::: square at the corner of two scrollbars ::::: */
+
+scrollcorner { 
+  -moz-binding: url("chrome://global/content/bindings/scrollbar.xml#scrollbar-base") !important;
+  width: 14px !important;
+  height:14px !important;
+  cursor: default !important;
+}
+scrollbarbutton[type="increment"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-right.png") !important;
+}
+scrollbar[orient="vertical"] > scrollbarbutton[type="increment"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-down.png") !important;
+}
+scrollbarbutton[type="decrement"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-left.png") !important;
+}
+scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"] {
+  background-image: url("chrome://songbird/skin/base-elements/button-scroll-up.png") !important;
+}
+
+scrollbarbutton {
+  background-position:center 0px !important;
+  -moz-background-clip:border !important;
+}
+scrollbarbutton:hover {
+  background-position:center -10px !important;
+}
+scrollbarbutton:active {
+  background-position:center -20px !important;
+}
+scrollbarbutton[disabled="true"] {
+  background-position:center -30px !important;
+}
+
+scrollbar[orient="horizontal"] > scrollbarbutton {
+  min-width:12px !important;
+  min-height:12px !important;
+  background-repeat:no-repeat;
+}
+scrollbar[orient="vertical"] > scrollbarbutton {
+  min-width:12px !important;
+  min-height:12px !important;
+  background-repeat:no-repeat;
+}
+
+
+/* Mashtape*/
+
+#mashTape-rss-splitter,
+#mashTape-flash-splitter {
+background-image: none !important;
+background-color: rgb(131,131,131) !important;
+border: 0px !important;
+border-left: 1px solid rgb(131,131,131) !important;
+}
+#mashTape-content-vbox{
+ background-color: rgb(220,220,220) !important;
+ border-bottom: 1px solid rgb(161,161,161) !important;
+}
+.no-data-found-hbox,
+.content-frame {
+  background-color: rgb(238,238,238) !important;
+  border: 1px solid rgba(161,161,161,0.6) !important;
+  -moz-border-bottom-colors: rgba(255,255,255,0.13) rgba(161,161,161,0.6) !important;
+}
+.mashTape-splitter {
+  -moz-border-left-colors: rgb(161,161,161) rgb(163,163,163) !important;
+  -moz-border-right-colors: rgb(161,161,161) rgb(163,163,163) !important;
+}
+div#artist-photo img {
+  border: 1px solid rgb(161,161,161) !important;
+}
+#mashTape-nav > radiogroup > radio[selected="true"] > hbox {
+  background-image: url(chrome://songbird/skin/mashtape/mashtape-tab-active-bkg.png) !important;
+}
+#mashTape-nav > radiogroup > radio[selected="true"] > hbox > .radio-label {
+  background-image: url(chrome://songbird/skin/mashtape/selector-notch.png) !important;
+  max-height:20px !important;
+}
+#mashTape-nav .radio-label-box {
+  max-height: 20px !important; 
+}
+#mashTape-nav {
+  background-image: url(chrome://songbird/skin/mashtape/mashtape-tab-bkg.png) !important;
+}
+#mashTape-nav > radiogroup > radio {
+  background-image: url(chrome://songbird/skin/mashtape/mashtape-tab-delimiter.png) !important;
+  margin-bottom: -1px !important;
+}
+.nothing-playing {
+  background-color: rgb(220,220,220) !important;
+  background-image: url(chrome://songbird/skin/mashtape/mashtape-big-bird.png) !important;
+}
+#mashTape-nav > radiogroup > radio > hbox > .radio-label {
+  color: rgb(40,40,40) !important;
+}
+/* Hover state for nav */
+#mashTape-nav > radiogroup > radio:hover > hbox > .radio-label {
+  color: rgb(0,0,0) !important;
+}
+
+/*
+.sb-displaypane-tabs {
+border-bottom-color: rgb(255,41,41) !important;
+}
+*/
+
+
+/* Miniplayer*/
+#miniplayer sb-player-back-button {
+  list-style-image: url(chrome://songbird/skin/mini-player/previous.png); 
+  padding:0px !important;
+  margin:0px !important;
+}
+#miniplayer sb-player-forward-button {
+  list-style-image: url(chrome://songbird/skin/mini-player/next.png); 
+  padding:0px !important;
+  margin:0px !important;
+}
+#miniplayer sb-player-back-button,
+#miniplayer sb-player-forward-button {
+  -moz-image-region: rect(0px 26px 22px 0px) !important;
+}
+#miniplayer sb-player-back-button:hover,
+#miniplayer sb-player-forward-button:hover { 
+  -moz-image-region: rect(22px 26px 44px 0px) !important;
+}
+#miniplayer sb-player-back-button:active,
+#miniplayer sb-player-forward-button:active { 
+  -moz-image-region: rect(44px 26px 66px 0px) !important;
+}
+#miniplayer sb-player-back-button[disabled="true"],
+#miniplayer sb-player-forward-button[disabled="true"] { 
+  -moz-image-region: rect(66px 26px 88px 0px) !important;
+}
+
+/* Concerts / New Releases */
+#newReleases-firstrun-page .menu-iconic-text,
+#newReleases-firstrun-page menulist > hbox > label,
+#newReleases-firstrun-page button > hbox > label,
+#concerts-firstrun-page .menu-iconic-text,
+#concerts-firstrun-page menulist > hbox > label,
+#concerts-firstrun-page button > hbox > label,
+.get-tickets,
+.location-change,
+.location {
+  color: black !important;
+}

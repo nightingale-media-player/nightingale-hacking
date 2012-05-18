@@ -31,9 +31,9 @@ FORMS STYLES
 
 In Mozilla, certain things like CSS selection hightlight colors in text boxes
 cannot be modified by document-supplied style sheets.  These "native anonymous"
-elements can only be styled by agent stylesheets. Songbird's feather manager
-registers this file as a global agent stylesheet to allow for the styling of
-these elements.
+elements can only be styled by special stylesheets included in the original
+Mozilla runtime.  As a workaround, resource://gre/res/forms.css has been
+modified to import this file to allow for the styling of these elements.
 
 Please note that as this file is included in every page loaded, including
 content pages loaded from remote websites, it should be kept as minimal as

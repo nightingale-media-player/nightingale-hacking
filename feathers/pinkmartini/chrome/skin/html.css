@@ -87,3 +87,30 @@ a:visited {
 }
 
 
+/* LyricMaster styles */
+body.mlyrics {
+  color: rgb(90,90,90);
+  background-color: rgb(220,220,220);
+  padding: 10px;
+  font-family: Helvetica, Arial, Sans;
+}
+h1#mlyrics_title {
+  color: black;
+  font-size: 12px;
+  font-weight: bold;
+}
+h2#mlyrics_artist {
+  font-size: 12px;
+}
+h3#mlyrics_album {
+  font-size: 12px;
+}
+p.mlyrics_lyrics {
+  font-size: 11px;
+}
+body.mlyrics p.header,
+body.mlyrics p.separator1,
+body.mlyrics p.separator2 {
+  display: none;
+}
+
