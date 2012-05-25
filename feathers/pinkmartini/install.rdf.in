@@ -55,5 +55,10 @@
       </Description>
     </songbird:layout>
 
+    <!-- No need to show the user -->
+    <em:hidden>true</em:hidden>
+    <em:locked>true</em:locked>
+    <em:appManaged>true</em:appManaged>
+
   </Description>
 </RDF>
