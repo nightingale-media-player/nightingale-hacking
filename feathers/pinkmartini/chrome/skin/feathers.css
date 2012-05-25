@@ -276,7 +276,7 @@ browser#addonsFrame {
 menuitem[checked="true"][_moz-menuactive="true"],
 menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
 .menulist-menupopup > menuitem[selected="true"][_moz-menuactive="true"] {
-  background-color: rgb(169,212,255) !important;
+  background-color: rgb(245,183,209) !important;
 }
 .autocomplete-tree {
   -moz-appearance: none !important;
@@ -328,7 +328,7 @@ searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
 textbox[focused="true"]:not(.plain),
 searchbar[focused="true"] .search-go-button,
 searchbar[focused="true"] .searchbar-textbox {
-  background-color: rgb(255,255,235) !important;
+  background-color: rgb(237,248,254) !important;
 }
 
 /*
@@ -563,12 +563,12 @@ menu[_moz-menuactive="true"],
 menuitem[_moz-menuactive="true"],
 treechildren.autocomplete-treebody::-moz-tree-row( selected even ),
 treechildren::-moz-tree-row( selected focus even ) {
-  background-color: rgb(169,212,255);
+  background-color: rgb(245,183,209);
 }
 /* alternating rows for trees */
 treechildren.autocomplete-treebody::-moz-tree-row( selected odd ),
 treechildren::-moz-tree-row( selected focus odd ) {
-  background-color: rgb(164,207,250);
+  background-color: rgb(238,179,205);
 }
 
 /**
@@ -1285,7 +1285,7 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
   border:1px solid rgb(140,140,140);
 }
 .art:focus {
-  background-color:rgb(255,255,235);
+  background-color:rgb(237,248,254);
   border:2px solid rgb(140,140,140);
 }
 

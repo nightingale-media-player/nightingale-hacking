@@ -59,7 +59,7 @@ For more information, visit http://developer.songbirdnest.com/
    * e.g. <textbox/> elements
    */
   xul|*:root input > .anonymous-div::-moz-selection {
-    background-color: rgb(186,218,255);
-    color: rgb(40,40,40);
+    background-color: rgb(251,212,227);
+    color: rgb(5,5,5);
   }
 }
