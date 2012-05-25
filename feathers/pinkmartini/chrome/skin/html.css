@@ -75,7 +75,7 @@ body.plain {
 }
 
 a {
-  color:#1694d9;
+  color: rgb(226,17,106);
   text-decoration:none;
 }
 a:hover {

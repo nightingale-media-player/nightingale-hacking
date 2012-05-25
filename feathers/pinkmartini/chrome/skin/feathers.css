@@ -1509,7 +1509,7 @@ html|*.error-text,
 
 /* text that looks like a link */
 .text-link {
-  color:#1694d9;
+  color: rgb(226,17,106);
   text-decoration:none;
 }
 .text-link:hover {
