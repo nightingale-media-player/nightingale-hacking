@@ -1,0 +1,14 @@
+pinkmartini.jar:
+% skin  songbird pinkmartini %feathers/pinkmartini/songbird/chrome/skin/
+% skin  songbird-os-specific  pinkmartini  %feathers/pinkmartini/songbird/chrome/skin/os-specific/
+% skin  pinkmartini pinkmartini %feathers/pinkmartini/songbird/chrome/skin/
+% skin  global pinkmartini  chrome://songbird-global/skin/
+% skin  mozapps  pinkmartini  chrome://songbird-mozapps/skin/
+% content pinkmartini  %feathers/pinkmartini/songbird/chrome/content/
+% locale  pinkmartini  en-US  %feathers/pinkmartini/songbird/chrome/locale/en-US/
+# TODO these can be migrated to os-specific dir
+% override chrome://songbird/skin/icons/displaypane-contentpane-bottom.png chrome://songbird/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-servicepane-bottom.png chrome://songbird/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-right-sidebar.png chrome://songbird/skin/icons/mac/displaypane-right-sidebar.png os=darwin
+#
+@include_all_to feathers/pinkmartini/songbird/chrome/

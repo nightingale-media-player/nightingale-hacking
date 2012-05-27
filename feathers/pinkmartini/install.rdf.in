@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>pinkmartini@songbirdnest.com</em:id>
+    <em:type>2</em:type>
+    <em:name>Pink Martini</em:name>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:creator>Songbird</em:creator>
+    <em:iconURL>chrome://pinkmartini/skin/icon.png</em:iconURL>
+    <em:description>New look for 2012</em:description>
+    <em:contributor>Songbird, Michael Purses</em:contributor>
+
+
+
+
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+
+    <!-- Register an skin for the built in layouts. 
+         See http://wiki.songbirdnest.com/Developer/Developer_Intro/Feathers -->
+    <songbird:skin>
+      <Description>
+        <songbird:name>Pink Martini</songbird:name>
+        <songbird:internalName>pinkmartini</songbird:internalName>
+        <songbird:compatibleLayout>
+          <Description>
+            <songbird:layoutURL>chrome://pinkmartini/content/xul/mainplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
+            <songbird:onTop>false</songbird:onTop>
+          </Description>
+          <Description>
+            <songbird:layoutURL>chrome://pinkmartini/content/xul/miniplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
+            <songbird:onTop>true</songbird:onTop>
+          </Description>
+        </songbird:compatibleLayout>
+      </Description>
+    </songbird:skin>
+    <songbird:layout>
+      <Description>
+        <songbird:name>chrome://songbird/locale/songbird.properties#feathers.name.mainlayout</songbird:name>
+        <songbird:url>chrome://pinkmartini/content/xul/mainplayer.xul</songbird:url>
+      </Description>
+      <Description>
+        <songbird:name>chrome://songbird/locale/songbird.properties#feathers.name.minilayout</songbird:name>
+        <songbird:url>chrome://pinkmartini/content/xul/miniplayer.xul</songbird:url>
+      </Description>
+    </songbird:layout>
+
+    <!-- No need to show the user -->
+    <em:hidden>true</em:hidden>
+    <em:locked>true</em:locked>
+    <em:appManaged>true</em:appManaged>
+
+  </Description>
+</RDF>

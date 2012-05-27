@@ -29,9 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = 	gonzo \
-			purplerain \
-			coppery \
-			$(NULL)
+SUBDIRS = gonzo \
+          pinkmartini \
+          purplerain \
+          coppery \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

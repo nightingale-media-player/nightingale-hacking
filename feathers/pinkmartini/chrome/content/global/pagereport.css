@@ -1,0 +1,25 @@
+/* ::::: page report button (blocked popup windows button in statusbar) ::::: */
+
+#page-report-button {
+  display: none;
+}
+#page-report-button[blocked] {
+  display: -moz-box;
+}
+
+
+#page-report-button > image {
+  list-style-image: url("chrome://songbird/skin/browser/icon-popup-blocker.png");
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+/*
+#page-report-button:hover > image {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#page-report-button:active > image {
+  -moz-image-region: rect(32px, 16px, 48px, 0px);
+}
+#page-report-button[disabled="true"] > image {
+  -moz-image-region: rect(48px, 16px, 64px, 0px);
+}
+*/
