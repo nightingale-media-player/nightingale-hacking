@@ -20,12 +20,6 @@ pref("songbird.feathers.default_feather_id", "coppery@getnightingale.com");
 pref("songbird.feathers.default_main_layout", "chrome://coppery/content/xul/mainplayer.xul");
 pref("songbird.feathers.default_secondary_layout", "chrome://coppery/content/xul/miniplayer.xul");
 
-pref("general.skins.selectedSkin", "pinkmartini");
-pref("songbird.feathers.default_skin_internalname", "pinkmartini");
-pref("songbird.feathers.default_feather_id", "pinkmartini@songbirdnest.com");
-pref("songbird.feathers.default_main_layout", "chrome://pinkmartini/content/xul/mainplayer.xul");
-pref("songbird.feathers.default_secondary_layout", "chrome://pinkmartini/content/xul/miniplayer.xul");
-
 pref("accessibility.typeaheadfind", false);
 pref("accessibility.typeaheadfind.timeout", 5000);
 pref("accessibility.typeaheadfind.flashBar", 1);
