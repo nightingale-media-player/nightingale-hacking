@@ -150,17 +150,11 @@ var mmListener = {
 
   setPlayerState: function(scStream) {
     var stationIcon = document.getElementById("shoutcast-station-icon");
-    var stopButton = document.getElementById("play_stop_button");
-    var playButton = document.getElementById("play_pause_button");
 
     if (scStream) {
       stationIcon.style.visibility = "visible";
-      playButton.setAttribute("hidden", "true");
-      stopButton.removeAttribute("hidden");
     } else {
       stationIcon.style.visibility = "collapse";
-      stopButton.setAttribute("hidden", "true");
-      playButton.removeAttribute("hidden");
     }
   },
 
