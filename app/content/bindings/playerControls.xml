@@ -1632,7 +1632,7 @@
             this.play.hidden = true;
 			this.stop.hidden = true;
             this.pause.hidden = false;
-          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0 && this.remote_url.stringValue.match(/^http/))) {
+          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0 && this.remote_url.stringValue.match(/^http/)) {
 			this.play.hidden = true;
             this.stop.hidden = false;
             this.pause.hidden = true;
