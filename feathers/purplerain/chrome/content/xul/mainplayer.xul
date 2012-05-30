@@ -278,7 +278,6 @@
             <hbox id="control_buttons_box" pack="center" align="center">
               <sb-player-back-button id="play_back_button" class="sb-player-button"/>
               <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
-              <sb-player-stop-button id="play_stop_button" hidden="true" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
               <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
             </hbox>
 
