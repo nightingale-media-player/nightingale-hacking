@@ -1553,14 +1553,30 @@
         </xul:button>
 
         <xul:button type="sb-clickhold"
-		    id="sb-player-playpause-button-pause"
-		    sbid="pause"
+					id="sb-player-playpause-button-pause"
+					sbid="pause"
                     class="sb-player-playpause-button-pause sb-player-button"
                     oncommand="onPlayPause(event.target);"
                     delayDuration="2000"
                     tooltiptext="&tooltip.control.pause;"
                     xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
+          <xul:menupopup xbl:inherits="popupanchor,popupalign">
+	          <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
+	          <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
+	          <xul:menuitem id="menu_stop" class="menuitem-iconic" label="&menu.control.stop.button;"/>
+	        </xul:menupopup>
+        </xul:button>
+		
+		<xul:button type="sb-clickhold"
+	            id="sb-player-stop-button-stop"
+	            sbid="stop"
+	            class="sb-player-stop-button-stop sb-player-button"
+	            oncommand="onPlayPause(event.target);"
+				delayDuration="2000"
+	            tooltiptext="&tooltip.control.stop;"
+	            xbl:inherits="label,position,disabled"
+				onmenushowing="syncMenus();">
           <xul:menupopup xbl:inherits="popupanchor,popupalign">
 	          <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
 	          <xul:menuitem id="menu_pause" class="menuitem-iconic" label="&menu.control.pause.button;"/>
@@ -1583,28 +1599,46 @@
         this.on_state_change._that = this;
         this.remote_playing = SB_NewDataRemote("faceplate.playing", null);
         this.remote_paused = SB_NewDataRemote("faceplate.paused", null);
+        this.remote_length = SB_NewDataRemote( "metadata.length", null );
+        this.remote_url = SB_NewDataRemote( "faceplate.play.url", null );
         this.remote_playing.bindObserver(this.on_state_change, false);
         this.remote_paused.bindObserver(this.on_state_change, false);
+		this.remote_length.bindObserver(this.on_state_change, false);
+		this.remote_url.bindObserver(this.on_state_change, false);
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
         this.remote_playing.unbind();
         this.remote_paused.unbind();
+        this.remote_length.unbind();
+		this.remote_url.unbind();
       ]]>
     </destructor>
 
     <field name="play">document.getAnonymousElementByAttribute(this, 'sbid', 'play');</field>
     <field name="pause">document.getAnonymousElementByAttribute(this, 'sbid', 'pause');</field>
+	<field name="stop">document.getAnonymousElementByAttribute(this, 'sbid', 'stop');</field>
 
     <method name="onStateChanged">
       <body>
         <![CDATA[
-          if (this.remote_playing.boolValue && !this.remote_paused.boolValue) {
+			/*
+				While buffering files have always the length zero.
+				Since you may want to stop the buffering of external files, its logic to display the stop buttons. Streams also have the length zero.
+				Pausing buffering is strange.
+			*/
+          if (this.remote_playing.boolValue && !this.remote_paused.boolValue && this.remote_length.intValue > 0 ) {
             this.play.hidden = true;
+			this.stop.hidden = true;
             this.pause.hidden = false;
-          } else {
+          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0 && this.remote_url.stringValue.match(/^http/))) {
+			this.play.hidden = true;
+            this.stop.hidden = false;
+            this.pause.hidden = true;
+		  } else {
             this.play.hidden = false;
+            this.stop.hidden = true;
             this.pause.hidden = true;
           }
         ]]>
@@ -1615,6 +1649,7 @@
       <body>
         this.syncMenu(this.play);
         this.syncMenu(this.pause);
+		this.syncMenu(this.stop);
       </body>
     </method>
 
@@ -1685,6 +1720,7 @@
           var sbid = target.getAttribute("sbid");
           if (sbid == "play") this.onPlay();
           else if (sbid == "pause") this.onPause();
+		  else if (sbid == "stop") this.onStop();
           else {
             switch (target.id) {
               case "menu_play": this.onPlay(); break;
