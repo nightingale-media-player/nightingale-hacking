@@ -280,6 +280,7 @@
               <sb-player-back-button id="play_back_button" left="0" class="sb-player-button"/>
               <sb-player-forward-button id="play_fwd_button" left="76" class="sb-player-button" />
               <sb-player-playpause-button id="play_pause_button" left="38" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
+              <sb-player-stop-button id="play_stop_button" hidden="true" left="38" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
             </stack>
             </hbox>
 
