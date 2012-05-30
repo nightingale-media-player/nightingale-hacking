@@ -254,14 +254,14 @@ pref("songbird.rapi.library_read_notify", true);
 pref("songbird.rapi.library_write_notify", true);
 
 // Songbird default urls
-pref("songbird.url.addons", "http://addons.songbirdnest.com/");
-pref("songbird.url.addons.displaypanes", "http://addons.songbirdnest.com/tag/displaypane");
-pref("songbird.url.addons.feathers", "http://addons.songbirdnest.com/tag/feathers");
-pref("songbird.url.addons.mediaviews", "http://addons.songbirdnest.com/tag/mediaview");
-pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
-pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
+pref("songbird.url.addons", "http://addons.getnightingale.com/");
+pref("songbird.url.addons.displaypanes", "http://addons.getnightingale.com/");
+pref("songbird.url.addons.feathers", "http://addons.getnightingale.com/");
+pref("songbird.url.addons.mediaviews", "http://addons.getnightingale.com/");
+pref("browser.startup.homepage", "http://addons.getnightingale.com/");
+pref("songbird.url.bugzilla", "http://github.com/nightingale-media-player/nightingale-hacking/issues/");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
-pref("songbird.url.support", "http://songbirdnest.com/support/");
+pref("songbird.url.support", "http://forum.getnightingale.com/");
 pref("songbird.url.keyboard", "about:keyboard-help");
 pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
 pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
