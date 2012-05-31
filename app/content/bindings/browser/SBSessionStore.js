@@ -385,7 +385,7 @@ var SBSessionStore = {
       var skipDefault = 
         Application.prefs.getValue("songbird.firstrun.skip_load_default_page", 
                                    false);
-      if (skipDefault == false ) {
+      if (!skipDefault) {
         Application.prefs.setValue("songbird.firstrun.skip_load_default_page", 
                                    false);
         this.loadDefault(aTabBrowser);
