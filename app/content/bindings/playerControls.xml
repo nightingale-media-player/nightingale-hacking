@@ -97,7 +97,7 @@
           if (self.remote_lastVolume.stringValue == "") {
             self.lastValue = self.value;
           }
-        }, 0);
+        }, 1000);
       ]]>
     </constructor>
     <destructor>
@@ -1632,7 +1632,7 @@
             this.play.hidden = true;
             this.stop.hidden = true;
             this.pause.hidden = false;
-          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0 && this.remote_url.stringValue.match(/^http/)) {
+          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0 && !this.remote_url.stringValue.match(/^file:/)) {
             this.play.hidden = true;
             this.stop.hidden = false;
             this.pause.hidden = true;
