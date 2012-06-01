@@ -11,6 +11,8 @@
 ./chrome/icons/default/default.ico
 ./chrome/locales.jar
 ./chrome/locales.manifest
+./chrome/pinkmartini.jar
+./chrome/pinkmartini.manifest
 ./chrome/purplerain.jar
 ./chrome/purplerain.manifest
 ./chrome/songbird.jar
@@ -290,6 +292,8 @@
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPMarshall.xpt
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPServices.js
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPWin32.dll
+./extensions/pinkmartini@songbirdnest.com/chrome.manifest
+./extensions/pinkmartini@songbirdnest.com/install.rdf
 ./extensions/purplerain@songbirdnest.com/chrome.manifest
 ./extensions/purplerain@songbirdnest.com/install.rdf
 ./gst-plugins/gstacmmp3dec.dll
