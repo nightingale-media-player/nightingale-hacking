@@ -1623,16 +1623,16 @@
     <method name="onStateChanged">
       <body>
         <![CDATA[
-            /*
-                While buffering files have always the length zero.
-                Since you may want to stop the buffering of external files, its logic to display the stop buttons. Streams also have the length zero.
-                Pausing buffering is strange.
-            */
-          if (this.remote_playing.boolValue && !this.remote_paused.boolValue && this.remote_length.intValue > 0 ) {
+          /*
+            While buffering files have always the length zero.
+            Since you may want to stop the buffering of external files, its logic to display the stop buttons. Streams also have the length zero.
+            Pausing buffering is strange.
+          */
+          if (this.remote_playing.boolValue && !this.remote_paused.boolValue && (this.remote_length.intValue > 0 || this.remote_url.stringValue.match(/^file:/) ) ) {
             this.play.hidden = true;
             this.stop.hidden = true;
             this.pause.hidden = false;
-          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0 && !this.remote_url.stringValue.match(/^file:/)) {
+          }	else if (this.remote_playing.boolValue && this.remote_length.intValue == 0) {
             this.play.hidden = true;
             this.stop.hidden = false;
             this.pause.hidden = true;
