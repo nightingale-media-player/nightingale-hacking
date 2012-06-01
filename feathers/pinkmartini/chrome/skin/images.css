@@ -642,8 +642,6 @@ treechildren::-moz-tree-twisty(open) {
 #mediapages-other > toolbarbutton.mp-other {
   min-height: 22px !important;
   max-height: 22px !important;
-  margin-bottom:-1px !important;
-  margin-top:-1px !important;
 }
 #mediapages-button-listview { min-width:24px !important; }
 #mediapages-button-filterview { min-width:24px !important; border-left: 1px solid rgb(80,80,80) !important; }
@@ -663,7 +661,6 @@ treechildren::-moz-tree-twisty(open) {
 
 #mediapages-other {
   min-height: 20px;
-  max-height: 20px;
   padding-right: 2px;
 }
 #mediapages-other > toolbarbutton.mp-other {

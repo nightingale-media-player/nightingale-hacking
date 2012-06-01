@@ -61,7 +61,7 @@ Imported by bindings.css or directly into feathers.
 
 
 .searchbar-textbox {
-  margin:0;
+  margin: 1px 0; /* prevent the search box from shifting while xul populates the toolbar */
   padding: 0;
   min-height:20px;
 }
