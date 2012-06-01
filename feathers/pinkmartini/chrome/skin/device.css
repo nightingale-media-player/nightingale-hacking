@@ -97,23 +97,23 @@ sb-device-managetabs {
 }
 .device-capacity-music,
 .device-capacity-legend-color-box[type="music"] {
-  background-color: rgb(0,105,245);
+  background-color: rgb(221,0,112);
 }
 .device-capacity-video,
 .device-capacity-legend-color-box[type="video"] {
-  background-color: rgb(70,200,0);
+  background-color: rgb(0,154,220);
 }
 .device-capacity-image,
 .device-capacity-legend-color-box[type="image"] {
-  background-color: rgb(140,42,81);
+  background-color: rgb(230,209,85);
 }
 .device-capacity-other,
 .device-capacity-legend-color-box[type="other"] {
-  background-color: rgb(255,210,0);
+  background-color: rgb(62,62,62);
 }
 .device-capacity-free,
 .device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(235,235,235);
+  background-color: rgb(230,230,230);
 }
 /* the device capacity bar has 9 notches (10 sections)
    note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
