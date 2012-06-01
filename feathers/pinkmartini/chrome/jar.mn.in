@@ -6,6 +6,10 @@ pinkmartini.jar:
 % skin  mozapps  pinkmartini  chrome://songbird-mozapps/skin/
 % content pinkmartini  %feathers/pinkmartini/songbird/chrome/content/
 % locale  pinkmartini  en-US  %feathers/pinkmartini/songbird/chrome/locale/en-US/
+#
+# Use the first run welcome image that matches the pinkmartini window background color
+% override chrome://songbird-branding/skin/first-run-welcome.png chrome://songbird/skin/branding/first-run-welcome.png
+#
 # TODO these can be migrated to os-specific dir
 % override chrome://songbird/skin/icons/displaypane-contentpane-bottom.png chrome://songbird/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
 % override chrome://songbird/skin/icons/displaypane-servicepane-bottom.png chrome://songbird/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
