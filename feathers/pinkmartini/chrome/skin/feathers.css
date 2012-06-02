@@ -764,7 +764,7 @@ hbox.servicepane-node-info > stack > hbox > label {
   font-size: 11px;
 }
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
-  color: black;
+  color: white;
 }
 sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
   padding-left: 10px;
@@ -787,8 +787,6 @@ sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
   background-position: left bottom;
-    border-left: 1px solid rgb(243,243,243);
-  border-right: 1px solid rgb(243,243,243);
 }
 
 /* Set user focus to normal so we can tell when the servicepane is focused
@@ -797,9 +795,8 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   -moz-user-focus: normal;
 }
 #servicepane:focus sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
   background-position: left top;
-  border-left: 1px solid rgb(255,255,255);
-  border-right: 1px solid rgb(255,255,255);
 }
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
