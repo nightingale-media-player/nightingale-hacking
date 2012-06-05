@@ -316,9 +316,7 @@ sb-rating,
   Edited state - mainly used for the track editor
 */
 textbox[edited="true"],
-sb-rating[edited],
-searchbar:not([empty="true"])[livesearchmode="true"] .search-go-button,
-searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
+sb-rating[edited] {
   background-color:rgb(255,255,215) !important;
 }
 
