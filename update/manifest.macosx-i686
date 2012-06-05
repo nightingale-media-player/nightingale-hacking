@@ -9,6 +9,8 @@
 ./chrome/gonzo.manifest
 ./chrome/locales.jar
 ./chrome/locales.manifest
+./chrome/pinkmartini.jar
+./chrome/pinkmartini.manifest
 ./chrome/purplerain.jar
 ./chrome/purplerain.manifest
 ./chrome/coppery.jar
@@ -262,6 +264,8 @@
 ./extensions/mediapage-test-stub@songbirdnest.com/chrome.manifest
 ./extensions/mediapage-test-stub@songbirdnest.com/chrome/testMediaPage.jar
 ./extensions/mediapage-test-stub@songbirdnest.com/install.rdf
+./extensions/pinkmartini@songbirdnest.com/chrome.manifest
+./extensions/pinkmartini@songbirdnest.com/install.rdf
 ./extensions/purplerain@songbirdnest.com/chrome.manifest
 ./extensions/purplerain@songbirdnest.com/install.rdf
 ./gst-plugins/libgstadder.so

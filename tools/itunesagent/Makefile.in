@@ -118,7 +118,7 @@ ifeq (macosx,$(SB_PLATFORM)) # {
                            -framework CoreFoundation \
                            -framework Cocoa \
                            -framework Carbon \
-                           -Wl,-syslibroot,$(SB_MACOSX_SDK_10_4)
+                           -Wl,-syslibroot,$(SB_MACOSX_SDK)
 
    MAC_APP_DIR = $(SONGBIRD_DISTDIR)/$(SIMPLE_PROGRAM).app
 
