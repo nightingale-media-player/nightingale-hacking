@@ -29,6 +29,13 @@
 # This file takes care of lots of messy rules. Each one is explained below.
 ###############################################################################
 
+ifeq (macosx,$(SB_PLATFORM))
+  ifneq (,$(SB_MACOSX_DEV_ROOT))
+    ifeq (,$(findstring $(SB_MACOSX_DEV_ROOT)/usr/bin,$(PATH)))
+      export PATH := $(SB_MACOSX_DEV_ROOT)/usr/bin:$(PATH)
+    endif
+  endif
+endif
 
 #------------------------------------------------------------------------------
 # Only include this file once
