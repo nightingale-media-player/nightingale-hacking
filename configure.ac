@@ -367,6 +367,26 @@ AC_SUBST(MAKE_INSTALLER)
 AC_SUBST(SB_INSTALLER_SUFFIXES)
 
 #
+# Check for --with-macosx-developer-tools
+#
+
+SB_MACOSX_DEV_ROOT_DEFAULT=
+SB_MACOSX_DEV_ROOT=
+
+case $SB_PLATFORM in
+  macosx)
+    SB_MACOSX_DEV_ROOT_DEFAULT=/Developer
+  ;;
+esac
+AC_SUBST(SB_MACOSX_DEV_ROOT_DEFAULT)
+
+AC_ARG_WITH(macosx-developer-tools,
+            [  --with-macosx-developer-tools=<directory>,path to directory containing the Mac OS X developer tools (default=/Developer) ],
+            [ SB_MACOSX_DEV_ROOT=$withval ],
+            [ SB_MACOSX_DEV_ROOT=$SB_MACOSX_DEV_ROOT_DEFAULT])
+AC_SUBST(SB_MACOSX_DEV_ROOT)
+
+#
 # Handle SDK detection
 #
 #
@@ -376,13 +396,10 @@ AC_SUBST(SB_INSTALLER_SUFFIXES)
 #
 
 SB_MACOSX_SDK_DEFAULT=
-SB_MACOSX_SDK_10_4=
-SB_MACOSX_SDK_10_5=
 
 case $SB_PLATFORM in
   macosx)
-    SB_MACOSX_SDK_10_4=/Developer/SDKs/MacOSX10.4u.sdk
-    SB_MACOSX_SDK_10_5=/Developer/SDKs/MacOSX10.5.sdk
+    SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_DEV_ROOT/SDKs/MacOSX10.4u.sdk
   ;;
 esac
 
@@ -391,9 +408,9 @@ esac
 #
 
 AC_ARG_WITH(macosx-sdk,
-            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=/Developer/SDKs/MacOSX10.4u.sdk) ],
-            [ SB_MACOSX_SDK_DEFAULT=$withval ],
-            [ SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_SDK_10_4])
+            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=<dev-tools>/SDKs/MacOSX10.4u.sdk) ],
+            [ SB_MACOSX_SDK=$withval ],
+            [ SB_MACOSX_SDK=$SB_MACOSX_SDK_DEFAULT])
 
 #
 # Breakpad support
@@ -451,6 +468,11 @@ fi
 #
 # Checks for programs.
 #
+
+# Use the developer tools specified by --with-macosx-developer-tools
+if test "$SB_PLATFORM" == "macosx"; then
+  PATH="${SB_MACOSX_DEV_ROOT}/usr/bin:${PATH}"
+fi
 
 # Don't let autoconf hijack our flags
 _SAVE_CFLAGS=$CFLAGS
@@ -514,7 +536,7 @@ if test -z "$INSTALL"; then AC_MSG_ERROR(Install not found); fi
 AC_CHECK_PROG(LN, ln, ln)
 if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 
-AC_PATH_PROGS(MACPKGMAKER, packagemaker, false, /Developer/usr/bin)
+AC_PATH_PROGS(MACPKGMAKER, packagemaker, false, $SB_MACOSX_DEV_ROOT/usr/bin)
 
 AC_CHECK_PROGS(MD5SUM, ${MD5SUM} gmd5sum md5sum md5, "")
 
@@ -858,11 +880,8 @@ case "$SB_PLATFORM" in
     COMPILER_GARBAGE="vc70.pdb vc71.pdb vc80.pdb vc90.pdb"
   ;;
   macosx)
-    if ! test -e $SB_MACOSX_SDK_DEFAULT/SDKSettings.plist; then
-      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK_DEFAULT)
-    fi
-    if ! test -e $SB_MACOSX_SDK_10_5/SDKSettings.plist; then
-      SB_MACOSX_SDK_10_5=
+    if ! test -e $SB_MACOSX_SDK/SDKSettings.plist; then
+      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK)
     fi
 
     MACOSX_APPBUNDLE="Songbird.app"
@@ -915,9 +934,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
     STRIP_FLAGS="-x -S"
-    AC_SUBST(SB_MACOSX_SDK_10_4)
-    AC_SUBST(SB_MACOSX_SDK_10_5)
-    AC_SUBST(SB_MACOSX_SDK_DEFAULT)
+    AC_SUBST(SB_MACOSX_SDK)
   ;;
   linux)
     XULRUNNERDIR="/xulrunner"

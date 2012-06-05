@@ -114,9 +114,13 @@ SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 # Where o' where have my lil' SDKs gone...
 #
 
-SB_MACOSX_SDK_10_4 = @SB_MACOSX_SDK_10_4@
-SB_MACOSX_SDK_10_5 = @SB_MACOSX_SDK_10_5@
-SB_MACOSX_SDK = @SB_MACOSX_SDK_DEFAULT@
+SB_MACOSX_DEV_ROOT_DEFAULT = @SB_MACOSX_DEV_ROOT_DEFAULT@
+SB_MACOSX_DEV_ROOT = @SB_MACOSX_DEV_ROOT@
+SB_MACOSX_SDK_10_4 = $(SB_MACOSX_DEV_ROOT)/SDKs/MacOSX10.4u.sdk
+SB_MACOSX_SDK_10_5 = $(SB_MACOSX_SDK_10_4:%.4u.sdk=%.5.sdk)
+SB_MACOSX_SDK_10_6 = $(SB_MACOSX_SDK_10_5:%.5.sdk=%.6.sdk)
+SB_MACOSX_SDK_10_7 = $(SB_MACOSX_SDK_10_6:%.6.sdk=%.7.sdk)
+SB_MACOSX_SDK = @SB_MACOSX_SDK@
 
 MOZSDK_DIR = $(DEPS_DIR)/mozilla-1.9.2/@SB_CONFIGURATION@
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include
@@ -305,6 +309,8 @@ HAL_LIBS = @HAL_LIBS@
 # Version numbers for various packages
 GST_VERSION = 0.10
 GLIB_VERSION = 2.0
+
+-include $(topsrcdir)/local.mk
 
 #------------------------------------------------------------------------------
 endif #AUTODEFS_MK_INCLUDED
