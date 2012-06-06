@@ -423,12 +423,16 @@ var firstRunWizard = {
 
     // Services are now initialized.
     this._initialized = true;
-
     var skipToPage = Application.prefs.getValue("songbird.firstrun.goto", null);
     if (skipToPage) {
       Application.prefs.get("songbird.firstrun.goto").reset();
       this.wizardElem.advance(skipToPage);
       return;
+    }
+    // we want to skip the EULA if we're on Windows, as the Windows' installer 
+    // has already presented it
+    if (getPlatformString() == "Windows_NT") {
+      Application.prefs.setValue("songbird.eulacheck", true);
     }
   },
 
