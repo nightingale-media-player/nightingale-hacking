@@ -55,14 +55,6 @@ tree,
   background-position:left 19px;
 }
 
-/* actually i lied. technically the treecol header takes up 20px, but the last
- * pixel is a slightly transparent one to achieve a shadow effect, so the
- * "visual" height of it is 19px.  we accomplish this by making the image 20px
- * and shifting the whole tree-stack up 1px */
-tree > stack.tree-stack {
-  margin-top: -1px;
-}
-
 /*
 #trDOMTree,
 .sb-playlist-tree,
