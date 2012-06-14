@@ -115,6 +115,7 @@ export:: $(if $(DEBUG),$(NULL),link_installer_xpts)
 	$(MAKE) -C $(DEPTH) stripsymbols
 	$(INSTALL_FILE) $(topsrcdir)/TRADEMARK.txt $(SONGBIRD_DISTDIR)
 	$(INSTALL_FILE) $(SB_LICENSE_FILE) $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(topsrcdir)/installer/common/LICENSE.rtf $(SONGBIRD_DISTDIR)
 	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
 ifeq (macosx,$(SB_PLATFORM))
 	# On mac, the README needs to go here, as well.
