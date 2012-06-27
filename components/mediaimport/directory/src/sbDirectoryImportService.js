@@ -36,6 +36,7 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/DebugUtils.jsm");
+Cu.import("resource://app/jsmodules/URLUtils.jsm");
 
 /**
  * To log this module, set the following environment variable:
@@ -604,6 +605,27 @@ DirectoryImportJob.prototype = {
 
     LOG("Items in main library=" + this._itemsInMainLib.length);
     LOG("Items needing to be created=" + uris.length);
+    
+    // Now that the uri list is settled, make a corresponding list of media
+    // item property arrays.  For now, we just ask the type sniffer whether
+    // the media item contentType should be image.  If you try to do this in
+    // another component, you'll probably find that you don't have access to
+    // just any ol' type sniffer that might be used here, only the default
+    // mediacore type sniffer.
+    const NO_PROPS = SBProperties.createArray();
+    const IMAGE_PROPS = function () {
+      var props = SBProperties.createArray();
+      props.appendProperty(SBProperties.contentType, "image");
+      return props;
+    } ();
+    var propsArray = uris.map(function (aURISpec) {
+      var uri = URLUtils.newURI(aURISpec);
+      if (this._typeSniffer.isValidImageURL(uri)) {
+        return IMAGE_PROPS;
+      }
+      return NO_PROPS;
+    }, this);
+    
     // Bug 10228 - this needs to be replaced with an sbIJobProgress interface
     var thisJob = this;
     var batchCreateListener = {
@@ -618,7 +640,7 @@ DirectoryImportJob.prototype = {
     // library
     targetLib.batchCreateMediaItemsAsync(batchCreateListener, 
                                          ArrayConverter.nsIArray(uris), 
-                                         null, 
+                                         ArrayConverter.nsIArray(propsArray), 
                                          false);
   },
   
