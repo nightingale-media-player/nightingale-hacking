@@ -975,13 +975,13 @@ foldersync.sync={
                 
                 // Check if the file exists, and decide if we want to overwrite
                 if (tFile.exists()){
-                  if (crtProfile.structure.doUpdate){
+                  if (crtProfile.flags.doUpdate){
                     /* Compare last changed date, if preference is set,
                      * 2000 because of FAT storing in 2 second steps
                      */
-                    if (((tFile.lastModifiedTime + 2000 <
-                          crtFile.lastModifiedTime) ||
-                         (tFile.lastModifiedTime - 2000 >
+                    if (((tFile.lastModifiedTime + 2000 >
+                          crtFile.lastModifiedTime) &&
+                         (tFile.lastModifiedTime - 2000 <
                           crtFile.lastModifiedTime))){
                       foldersync.central.logEvent("sync-sync", "File '" +
                                                   tFile.path + "' hasn't " +
