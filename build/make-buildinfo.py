@@ -30,6 +30,11 @@ import os
 
 DEFAULT_KEY = 'SB_BUILD_ID'
 
+if sys.version > '3':
+    PY3 = True
+else:
+    PY3 = False
+
 def main(argv):                          
    o = OptionParser()
    o.add_option("-i", "--input-file", dest="inputFile",
@@ -71,8 +76,13 @@ def main(argv):
 
    for line in open(options.inputFile, 'rb'):
       for substKey in substitutions.keys():
-         if line.startswith(substKey):
+         if PY3 == True:
+            sKey = bytes(substKey,'utf8')
+         else:
+            sKey = substKey
+         if line.startswith(sKey):
             line = substKey + '=' + substitutions[substKey] + "\n"
+            line = line.encode('utf-8')
             break
       lines.append(line)
 
