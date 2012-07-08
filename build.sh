@@ -148,9 +148,6 @@ fi
 cd ../
 cd $buildir
 
-# hopefully we have python2 on this system
-export PYTHON="$(which python2|grep -v 'not found' || which python)"
-
 make -f nightingale.mk clobber
 rm -rf compiled &> /dev/null #sometimes clobber doesn't nuke it all
 make -f nightingale.mk
