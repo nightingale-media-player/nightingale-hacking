@@ -74,7 +74,7 @@ case $OSTYPE in
       fi
     done
     
-    echo 'ac_add_options --with-media-core=gstreamer-system' > nightingale.config
+    grep -q -E 'ac_add_options\s+--with-media-core=gstreamer-system' nightingale.config || echo 'ac_add_options --with-media-core=gstreamer-system\n' >> nightingale.config
     ;;
   msys*)
     depdirn="windows-i686"
