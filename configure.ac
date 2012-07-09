@@ -913,7 +913,7 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
-    CFLAGS_WARNING_IS_ERROR="-Werror"
+    CFLAGS_WARNING_IS_ERROR=""
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
     LDFLAGS_DLL=""
     LDFLAGS_BIN=""
@@ -958,14 +958,11 @@ case "$SB_PLATFORM" in
     AC_SUBST(GLIB_CFLAGS)
     AC_SUBST(GLIB_LIBS)
 
-    # The iPod support needs dbus and hal.
+    # The iPod support needs dbus.
     # hal is deprecated
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
-    #PKG_CHECK_MODULES(HAL, hal)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
-    #AC_SUBST(HAL_CFLAGS)
-    #AC_SUBST(HAL_LIBS)
 
     # Breakpad needs stabs debugging data, so always explicitly request it with
     # -gstabs+
@@ -992,7 +989,7 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
-    CFLAGS_WARNING_IS_ERROR="-Werror"
+    CFLAGS_WARNING_IS_ERROR=""
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
     LDFLAGS_DLL="-shared"
     LDFLAGS_BIN=""
@@ -1040,14 +1037,10 @@ case "$SB_PLATFORM" in
     AC_SUBST(GLIB_CFLAGS)
     AC_SUBST(GLIB_LIBS)
 
-    # The iPod support needs dbus and hal.
-    # hal is deprecated
+    # The iPod support needs dbus.
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
-    #PKG_CHECK_MODULES(HAL, hal)
     AC_SUBST(DBUS_CFLAGS)
     AC_SUBST(DBUS_LIBS)
-    #AC_SUBST(HAL_CFLAGS)
-    #AC_SUBST(HAL_LIBS)
 
     if test "$GNU_CC" = "yes" ; then
       AC_MSG_ERROR([GCC not yet supported])
@@ -1074,7 +1067,7 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
-    CFLAGS_WARNING_IS_ERROR="-Werror"
+    CFLAGS_WARNING_IS_ERROR=""
     LDFLAGS_LIB="-static"
     LDFLAGS_OUT_PREFIX="-o "
     LDFLAGS_OUT_SUFFIX=""
