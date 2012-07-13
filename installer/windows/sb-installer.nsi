@@ -70,21 +70,17 @@ Function askToolbarPage
    ${NSD_CreateCheckBox} 4u 82u 100% 11u "Install the Songbird® Toolbar and make Ask my default search provider."
    pop $installAskToolbarCB
    ${NSD_SetState} $installAskToolbarCB $installAskToolbarState
-   ${NSD_OnClick} $installAskToolbarCB installAskToolbarCBChange
    
-   ${NSD_CreateCheckBox} 4u 94u 100% 11u "Set Ask.com to be your home page and new tabs page."
-   pop $setHomePageCB
-   
-   ${NSD_CreateLabel} 5u 109u 100% 11u "By installing this application and associated updater, you agree to the"
-   ${NSD_CreateLink} 5u 120u 92u 11u "End User License Agreement"
+   ${NSD_CreateLabel} 5u 98u 100% 11u "By installing this application and associated updater, you agree to the"
+   ${NSD_CreateLink} 5u 109u 92u 11u "End User License Agreement"
    pop $0
    ${NSD_OnClick} $0 onEulaClick
-   ${NSD_CreateLabel} 100u 120u 12u 11u "and"
+   ${NSD_CreateLabel} 100u 109u 12u 11u "and"
    pop $0
-   ${NSD_CreateLink} 115u 120u 60u 11u "Privacy Policy."
+   ${NSD_CreateLink} 115u 109u 60u 11u "Privacy Policy."
    pop $0
    ${NSD_OnClick} $0 onPrivacyClick
-   ${NSD_CreateLabel} 5u 131u 100% 11u "You can remove this application easily at any time." 
+   ${NSD_CreateLabel} 5u 120u 100% 11u "You can remove this application easily at any time." 
    nsDialogs::Show
    ${NSD_FreeImage} $toolbarImage
    pop $0
@@ -98,17 +94,6 @@ Function onPrivacyClick
    ExecShell "open" " http://about.ask.com/en/docs/about/privacy.shtml"
 FunctionEnd
 
-Function installAskToolbarCBChange
-   Push $0
-   ${NSD_GetState} $installAskToolbarCB $0
-   ${If} $0 == ${BST_CHECKED}
-     EnableWindow $setHomePageCB 1
-   ${Else}
-     EnableWindow $setHomePageCB 0
-   ${EndIf}
-   Pop $0
-FunctionEnd
-
 Function askToolbarLeave
    push $0
    ; Install Ask Toolbar?
@@ -120,14 +105,8 @@ Function askToolbarLeave
       StrCpy $askSetDefaultSearchEngineArg "/sa"
    
      ; Set home page
-     ${NSD_GetState} $setHomePageCB $0
-     ${If} $0 == ${BST_CHECKED}
-        StrCpy $askSetHomePageArg "/hpr"
-        Strcpy $askToolbarParam "toolbar=SGD"
-     ${Else}
-        Strcpy $askToolbarParam "toolbar=SGD2"
-     ${EndIf}
-     Exec '"$INSTDIR\${AskToolbarEXE}" $askInstallToolbarArg $askSetDefaultSearchEngineArg $askSetHomePageArg $askToolbarParam'
+     Strcpy $askToolbarParam "toolbar=SGD2 /local"
+     Exec '"$INSTDIR\${AskToolbarEXE}" /tbr /sa toolbar=SGD2 /local'
      ${NSD_SetText} $installingMessage "Ask Toolbar installation complete"
   ${EndIf}
   pop $0
