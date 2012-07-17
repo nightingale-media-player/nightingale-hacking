@@ -5,8 +5,8 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_BUILD_ID=20120710014312
-BuildNumber=2321
+SB_BUILD_ID=20120713154142
+BuildNumber=2323
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.11.1a
 SB_MILESTONE_WINDOWS=1.11.1.0
@@ -33,5 +33,5 @@ SB_JSONLY_EXTENSION_MAX_VER=$(SB_MILESTONE)
 # and if you want to be 100% sure/correct, so should you..
 #
 # RepoRevisionClient=$Rev$
-RepoRevisionVendor=11440
-RepoRevisionVendorBinaries=11929
+RepoRevisionVendor=11441
+RepoRevisionVendorBinaries=11930
