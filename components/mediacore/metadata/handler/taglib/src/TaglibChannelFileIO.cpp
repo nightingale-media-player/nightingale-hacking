@@ -255,7 +255,7 @@ bool TagLibChannelFileIO::isWritable()
 
 int TagLibChannelFileIO::seek(
     long                        offset,
-    Position                    p)
+    File::Position              p)
 {
     PRUint64                    channelPosition;
     nsresult                    result = NS_OK;
@@ -270,17 +270,17 @@ int TagLibChannelFileIO::seek(
         switch (p)
         {
             default :
-            case Beginning :
+            case File::Beginning :
                 channelPosition = offset;
                 break;
 
-            case Current :
+            case File::Current :
                 result = mpSeekableChannel->GetPos(&channelPosition);
                 if (NS_SUCCEEDED(result))
                     channelPosition = channelPosition + offset;
                 break;
 
-            case End :
+            case File::End :
                 channelPosition = mChannelSize + offset;
                 break;
         }
@@ -346,7 +346,7 @@ long TagLibChannelFileIO::length()
     return (mChannelSize);
 }
 
-FileIO* TagLibChannelFileIO::tempFile()
+File* TagLibChannelFileIO::tempFile()
 {
   // temporary files are not supported (since we shouldn't be using this
   // for any writable files; we should be using TagLib::LocalFileIO instead)

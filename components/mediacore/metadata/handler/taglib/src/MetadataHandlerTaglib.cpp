@@ -129,18 +129,6 @@
   }                                                         \
   PR_END_MACRO
 
-#define WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY, method) \
-  PR_BEGIN_MACRO                                            \
-  result = mpMetadataPropertyArray->GetPropertyValue(       \
-    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
-  if (NS_SUCCEEDED(result)) {                               \
-    if (propertyValue.EqualsLiteral("0"))                   \
-      f.tag()->set##method(false);                          \
-    else                                                    \
-      f.tag()->set##method(true);                           \
-  }                                                         \
-  PR_END_MACRO
-
 // Property namespace for Gracenote properties
 // Note that this must match those used in sbGracenoteDefines.h, so
 // be sure to change those if you change these.
@@ -648,17 +636,40 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       NS_ENSURE_TRUE(f.file()->isValid(), NS_ERROR_FAILURE);
 
       nsAutoString propertyValue;
-
-      // WRITE_PROPERTY is a natty macro
+      
+      // Default Tags
+      // TODO: move some into format-specific, to support multiple values (?)
       WRITE_PROPERTY(result, SB_PROPERTY_TRACKNAME, Title);
       WRITE_PROPERTY(result, SB_PROPERTY_ARTISTNAME, Artist);
-      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMARTISTNAME, AlbumArtist);
       WRITE_PROPERTY(result, SB_PROPERTY_ALBUMNAME, Album);
       WRITE_PROPERTY(result, SB_PROPERTY_COMMENT, Comment);
-      WRITE_PROPERTY(result, SB_PROPERTY_LYRICS, Lyrics);
       WRITE_PROPERTY(result, SB_PROPERTY_GENRE, Genre);
-// Disable writing producer.
-//      WRITE_PROPERTY(result, SB_PROPERTY_PRODUCERNAME, Producer);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_YEAR, Year);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TRACKNUMBER, Track);
+      
+      // TODO: something better than looking at file extensions?!
+
+      /* TODO: This stuff is NOT HANDLED YET. Will need to move into the filetype-specific part
+      
+#define WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY, method) \
+  PR_BEGIN_MACRO                                            \
+  result = mpMetadataPropertyArray->GetPropertyValue(       \
+    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
+  if (NS_SUCCEEDED(result)) {                               \
+    if (propertyValue.EqualsLiteral("0"))                   \
+      f.tag()->set##method(false);                          \
+    else                                                    \
+      f.tag()->set##method(true);                           \
+  }                                                         \
+  PR_END_MACRO
+      
+      // WRITE_PROPERTY is a natty macro
+      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMARTISTNAME, AlbumArtist);
+      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMNAME, Album);
+      WRITE_PROPERTY(result, SB_PROPERTY_LYRICS, Lyrics);
+      
+      // Disable writing producer.
+      //      WRITE_PROPERTY(result, SB_PROPERTY_PRODUCERNAME, Producer);
       WRITE_PROPERTY(result, SB_PROPERTY_COMPOSERNAME, Composer);
       WRITE_PROPERTY(result, SB_PROPERTY_CONDUCTORNAME, Conductor);
       WRITE_PROPERTY(result, SB_PROPERTY_LYRICISTNAME, Lyricist);
@@ -668,8 +679,6 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       WRITE_PROPERTY(result, SB_PROPERTY_KEY, Key);
       WRITE_PROPERTY(result, SB_PROPERTY_COPYRIGHT, License);
       WRITE_PROPERTY(result, SB_PROPERTY_COPYRIGHTURL, LicenseUrl);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_YEAR, Year);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TRACKNUMBER, Track);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALTRACKS, TotalTracks);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_DISCNUMBER, Disc);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALDISCS, TotalDiscs);
@@ -677,10 +686,11 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY_ISPARTOFCOMPILATION,
               IsCompilation);
       // todo: Tests!
-
-      /* Write MP3 specific properties. */
+      */
+      
       // TODO: write other files' metadata.
       if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
+        LOG(("Writing MP3 Metadata"));
         TagLib::MPEG::File* MPEGFile = static_cast<TagLib::MPEG::File*>(f.file());
 
         // Write Image Data
@@ -754,7 +764,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         }
       } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
                  fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
-        LOG(("Writing Ogg specific metadata"));
+        LOG(("Write OGG metadata"));
         // Write ogg specific metadata
         TagLib::Ogg::Vorbis::File* oggFile =
                 static_cast<TagLib::Ogg::Vorbis::File*>(f.file());
@@ -784,7 +794,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       } else if (fileExt.EqualsLiteral("mp4") ||
                  fileExt.EqualsLiteral("m4a") ||
                  fileExt.EqualsLiteral("m4v")) {
-        LOG(("Writing MPEG-4 specific metadata"));
+        LOG(("Writing MPEG-4 metadata"));
         // Write MP4 specific metadata
         TagLib::MP4::File* mp4File = static_cast<TagLib::MP4::File*>(f.file());
 
@@ -1252,26 +1262,36 @@ nsresult sbMetadataHandlerTaglib::RemoveAllImagesOGG(
                                           PRInt32 imageType)
 {
   if (aOGGFile->tag()) {
-    // Create a new FlacPicture object and leave the picture element empty
-    TagLib::FlacPicture *pic = new TagLib::FlacPicture;
-    pic->setType(TagLib::FlacPicture::Type(imageType));
-
-    List<TagLib::FlacPicture*> artworkList = aOGGFile->tag()->artwork();
-    List<TagLib::FlacPicture*>::Iterator it = artworkList.begin();
-    while (it != artworkList.end())
-    {
-      // erase all images of this type
-      if ((*it)->type() == imageType) {
-        LOG(("erasing iterator"));
-        it = artworkList.erase(it);
-      } else {
-        ++it;
+    StringList s_artworkList = aOGGFile->tag()->fieldListMap()["METADATA_BLOCK_PICTURE"];
+    if(!s_artworkList.isEmpty()){
+      for (StringList::Iterator it = s_artworkList.begin();
+        it != s_artworkList.end();
+        ++it)
+      {
+        TagLib::FLAC::Picture *picture = new TagLib::FLAC::Picture();
+        String encodedData = *it;
+        if (encodedData.isNull())
+        {
+          break;
+        }
+        std::string decodedData = base64_decode(encodedData.to8Bit());
+        if (decodedData.empty())
+          break;
+        ByteVector bv;
+        bv.setData(decodedData.data(), decodedData.size());
+        if (!picture->parse(bv))
+        {
+          delete picture;
+          break;
+        }
+        
+        if (picture->type() == imageType) {
+          LOG(("erasing artwork"));
+          aOGGFile->tag()->removeField("METADATA_BLOCK_PICTURE", *it);
+        }
+        delete picture;
       }
     }
-
-    // Add the artwork back to the file
-    LOG(("setting artwork"));
-    aOGGFile->tag()->setArtwork(artworkList);
   }
 
   return NS_OK;
@@ -1454,12 +1474,12 @@ nsresult sbMetadataHandlerTaglib::WriteOGGImage(
 
     // Create the picture frame, and set mimetype, image type (e.g. front cover)
     // and then fill in the data.
-    LOG(("WriteOGGImage():: Creating new FlacPicture"));
-    TagLib::FlacPicture *pic = new TagLib::FlacPicture;
+    LOG(("WriteOGGImage():: Creating new FLAC::Picture"));
+    TagLib::FLAC::Picture *pic = new TagLib::FLAC::Picture;
     pic->setMimeType(TagLib::String(imageMimeType.BeginReading(),
                                     TagLib::String::UTF8));
-    pic->setType(TagLib::FlacPicture::Type(imageType));
-    pic->setPicture(TagLib::ByteVector((const char *)imageData, imageDataSize));
+    pic->setType(TagLib::FLAC::Picture::Type(imageType));
+    pic->setData(TagLib::ByteVector((const char *)imageData, imageDataSize));
 
     // First we have to remove any other existing frames of the same type
     LOG(("WriteOGGImage():: Removing all images from OGG file"));
@@ -1468,7 +1488,10 @@ nsresult sbMetadataHandlerTaglib::WriteOGGImage(
 
     // Add the frame to the file
     LOG(("WriteOGGImage():: Setting the artwork"));
-    aOGGFile->tag()->addArtwork(*pic);
+    ByteVector bv = pic->render();
+    std::string encodedData = base64_encode((const unsigned char *)bv.data(), bv.size());
+    bv = ByteVector(encodedData.data(), encodedData.length());
+    aOGGFile->tag()->addField("METADATA_BLOCK_PICTURE", bv.data());
   }
 
   return rv;
@@ -1645,22 +1668,36 @@ nsresult sbMetadataHandlerTaglib::ReadImageOgg(TagLib::Ogg::XiphComment  *aTag,
   /*
    * Extract the requested image from the metadata
    */
-  if (aTag->artwork().size() > 0) {
-    List<TagLib::FlacPicture*> artwork = aTag->artwork();
-    for (List<TagLib::FlacPicture*>::Iterator it = artwork.begin();
-         it != artwork.end();
-         ++it)
+  StringList artworkList = aTag->fieldListMap()["METADATA_BLOCK_PICTURE"];
+  if(!artworkList.isEmpty()){
+    for (StringList::Iterator it = artworkList.begin();
+      it != artworkList.end();
+      ++it)
     {
-      TagLib::FlacPicture* p = *it;
-      if (p->type() == aType) {
-        *aDataLen = p->picture().size();
-
-        aMimeType.Assign(p->mimeType().toCString());
-
-        *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
-                                                        *aDataLen));
+      TagLib::FLAC::Picture* picture = new TagLib::FLAC::Picture();
+      String encodedData = *it;
+      if (encodedData.isNull())
+      {
+        break;
+      }
+      std::string decodedData = base64_decode(encodedData.to8Bit());
+      if (decodedData.empty())
+        break;
+      ByteVector bv;
+      bv.setData(decodedData.data(), decodedData.size());
+      if (!picture->parse(bv))
+      {
+        delete picture;
+        break;
+      }
+      if (picture->type() == aType) {
+        *aDataLen = picture->data().size();
+        aMimeType.Assign(picture->mimeType().toCString());
+        *aData = static_cast<PRUint8 *>(
+            nsMemory::Clone(picture->data().data(), *aDataLen));
         NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
       }
+      delete picture;
     }
   }
 
@@ -2132,32 +2169,6 @@ void sbMetadataHandlerTaglib::ReadXiphTags(
  *
  ******************************************************************************/
 
-
- /*
-  * OpenTagFile
-  *
-  *   Open and configure the given file instance for
-  * the specified URL.
-  */
-
- nsresult sbMetadataHandlerTaglib::OpenTagFile(TagLib::File *pTagFile)
- {
-     NS_ENSURE_ARG_POINTER(pTagFile);
-
-     /* Get the file path in the proper format for the platform. */
- #if XP_WIN
-     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
- #else
-     nsACString &filePath = mMetadataPath;
- #endif
-
-     pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-     pTagFile->open(filePath.BeginReading());
-
-     return NS_OK;
- }
-
-
  /*
   * CheckChannelRestart
   *
@@ -2335,13 +2346,19 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
   pTag = pTagFile->tag();
   if (pTag) {
     // yay random charset guessing!
+    
+    // Default tags
     AddMetadataValue(SB_PROPERTY_TRACKNAME,       pTag->title(), aCharset);
     AddMetadataValue(SB_PROPERTY_ARTISTNAME,      pTag->artist(), aCharset);
-    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME, pTag->albumArtist(), aCharset);
     AddMetadataValue(SB_PROPERTY_ALBUMNAME,       pTag->album(), aCharset);
     AddMetadataValue(SB_PROPERTY_COMMENT,         pTag->comment(), aCharset);
-    AddMetadataValue(SB_PROPERTY_LYRICS,          pTag->lyrics(), aCharset);
     AddMetadataValue(SB_PROPERTY_GENRE,           pTag->genre(), aCharset);
+    AddMetadataValue(SB_PROPERTY_YEAR,            (PRUint64)pTag->year());
+    AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     (PRUint64)pTag->track());
+    
+    /* TODO: this stuff IS NOT HANDLED YET, must do some filetype-specific work here!
+    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME, pTag->albumArtist(), aCharset);
+    AddMetadataValue(SB_PROPERTY_LYRICS,          pTag->lyrics(), aCharset);
 // Disabling producer: it's not exposed anywhere in the UI anyway.
 //    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    pTag->producer(), aCharset);
     AddMetadataValue(SB_PROPERTY_COMPOSERNAME,    pTag->composer(), aCharset);
@@ -2353,14 +2370,12 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     AddMetadataValue(SB_PROPERTY_KEY,             pTag->key(), aCharset);
     AddMetadataValue(SB_PROPERTY_COPYRIGHT,       pTag->license(), aCharset);
     AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,    pTag->licenseUrl(), aCharset);
-    AddMetadataValue(SB_PROPERTY_YEAR,            (PRUint64)pTag->year());
-    AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     (PRUint64)pTag->track());
     AddMetadataValue(SB_PROPERTY_TOTALTRACKS,     (PRUint64)pTag->totalTracks());
     AddMetadataValue(SB_PROPERTY_DISCNUMBER,      (PRUint64)pTag->disc());
     AddMetadataValue(SB_PROPERTY_TOTALDISCS,      (PRUint64)pTag->totalDiscs());
     AddMetadataValue(SB_PROPERTY_BPM,             (PRUint64)pTag->bpm());
     AddMetadataValue(SB_PROPERTY_CONTENTTYPE,     NS_LITERAL_STRING("audio"));
-    AddMetadataValue(SB_PROPERTY_ISPARTOFCOMPILATION, pTag->isCompilation());
+    AddMetadataValue(SB_PROPERTY_ISPARTOFCOMPILATION, pTag->isCompilation());*/
   }
 
   pAudioProperties = pTagFile->audioProperties();
@@ -2374,165 +2389,6 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
   }
 
   return true; // file was valid
-}
-
-
-/*
- * GuessCharset
- *
- *   --> pTag                   The tags to look at
- *
- *   <--                        The best guess at the encoding the tags are in
- *
- *   This function looks at a a set of tags and tries to guess what charset
- *   (encoding) the tags are in.  Returns empty string to mean don't convert
- *   (valid Unicode), and the literal "CP_ACP" if on Windows and best guess is
- *   whatever the system locale is.
- */
-
-void sbMetadataHandlerTaglib::GuessCharset(
-    TagLib::Tag*                pTag,
-    nsACString&                 _retval)
-{
-    nsresult rv;
-
-    if (!pTag) {
-        // no tag to read
-        _retval.Truncate();
-        return;
-    }
-
-    // first, build a string consisting of some tags
-    TagLib::String tagString, stringPiece;
-    stringPiece = pTag->album();
-    if (stringPiece.shouldGuessCharacterSet()) {
-        tagString += stringPiece;
-    }
-    stringPiece = pTag->artist();
-    if (stringPiece.shouldGuessCharacterSet()) {
-        tagString += stringPiece;
-    }
-    stringPiece = pTag->title();
-    if (stringPiece.shouldGuessCharacterSet()) {
-        tagString += stringPiece;
-    }
-
-    if (tagString.isEmpty()) {
-        // nothing needs guessing
-        _retval.AssignLiteral("UTF-8");
-        return;
-    }
-
-    // comment and genre can end up confusing the detection; ignore them
-    //tagString += pTag->comment();
-    //tagString += pTag->genre();
-
-    // first, figure out if this was from unicode - we do this by scanning the
-    // string for things that had more than 8 bits.
-
-    // XXXben We can't use the TagLib::String iterators here because TagLib was
-    //        not compiled with -fshort_wchar whereas this component (and
-    //        mozilla) are. Iterate manually instead.
-    std::string data = tagString.toCString(true);
-    NS_ConvertUTF8toUTF16 expandedData(data.c_str());
-
-    #if PR_LOGGING && DEBUG
-    {
-      nsCOMPtr<nsINetUtil> netUtil =
-        do_GetService("@mozilla.org/network/util;1", &rv);
-      NS_ENSURE_SUCCESS(rv, /* void */);
-
-      nsCString escaped;
-      rv = netUtil->EscapeString(NS_ConvertUTF16toUTF8(expandedData),
-                                 nsINetUtil::ESCAPE_ALL,
-                                 escaped);
-      NS_ENSURE_SUCCESS(rv, /* void */);
-
-      LOG(("sbMetadataHandlerTaglib::GuessCharset: guessing with data %s",
-           escaped.BeginReading()));
-    }
-    #endif /* PR_LOGGING && DEBUG */
-
-    const PRUnichar *begin, *end;
-    expandedData.BeginReading(&begin, &end);
-
-    PRBool is7Bit = PR_TRUE;
-    while (begin < end) {
-        PRUnichar character = *begin++;
-        if (character & ~0xFF) {
-            _retval.Truncate();
-            return;
-        }
-        if (character & 0x80) {
-            is7Bit = PR_FALSE;
-        }
-    }
-
-    if (is7Bit) {
-        _retval.AssignLiteral("us-ascii");
-        return;
-    }
-
-    // XXXben The code below is going to run *slowly*, but hopefully we already
-    //        exited for UTF16 and ASCII.
-
-    // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    nsDependentCString raw(tagString.toCString());
-    if (IsLikelyUTF8(raw) && IsUTF8(raw)) {
-        // this is utf8
-        _retval.AssignLiteral("UTF-8");
-        return;
-    }
-
-    // the metadata is in some 8-bit encoding; try to guess
-    nsCOMPtr<nsICharsetDetector> detector = do_CreateInstance(
-        NS_CHARSET_DETECTOR_CONTRACTID_BASE "universal_charset_detector");
-    rv = RunCharsetDetector(detector, tagString);
-    if (NS_SUCCEEDED(rv)) {
-        if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
-            _retval.Assign(mLastCharset);
-            LOG(("sbMetadataHandlerTaglib::GuessCharset: detected answer %s",
-                 _retval.BeginReading()));
-
-            // Bug 8394 - The universal charset detector likes to treat cp1251
-            // as MacUkranian, so in this case run the specific Ukranian
-            // detector since it does a better job.
-            if (mLastCharset.EqualsLiteral("x-mac-cyrillic")) {
-                detector = do_CreateInstance(
-                    NS_CHARSET_DETECTOR_CONTRACTID_BASE "ukprob");
-                rv = RunCharsetDetector(detector, tagString);
-                if (NS_SUCCEEDED(rv)) {
-                    if (eSureAnswer == mLastConfidence ||
-                        eBestAnswer == mLastConfidence)
-                    {
-                        _retval.Assign(mLastCharset);
-                    }
-                }
-            }
-            return;
-        }
-    }
-
-#if XP_WIN
-    // we have no idea what charset this is, but we know it's bad.
-    // for Windows only, assume CP_ACP
-
-    // make the call fail if it's not valid CP_ACP
-    int size = MultiByteToWideChar( CP_ACP,
-                                    MB_ERR_INVALID_CHARS,
-                                    data.c_str(),
-                                    data.length(),
-                                    nsnull,
-                                    0 );
-    if (size) {
-        // okay, so CP_ACP is usable
-        _retval.AssignLiteral("CP_ACP");
-        return;
-    }
-#endif
-
-    // we truely know nothing
-    _retval.Truncate();
 }
 
 /*
@@ -2592,6 +2448,7 @@ inline void toMozString(TagLib::String aString, nsAString& aResult)
   CopyUTF8toUTF16(nsDependentCString(aString.toCString(true)), aResult);
 }
 
+// TODO: needed with current taglib?
 void sbMetadataHandlerTaglib::ConvertCharset(
     TagLib::String              aString,
     const char                  *aCharset,
@@ -2602,7 +2459,6 @@ void sbMetadataHandlerTaglib::ConvertCharset(
     // If UTF16 or ASCII, or we have no idea,
     // just leave the string as-is
     if (!aCharset || !*aCharset ||
-        !aString.shouldGuessCharacterSet() ||
         !strcmp("UTF-8", aCharset) ||
         !strcmp("us-ascii", aCharset))
 
@@ -2687,15 +2543,20 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile()
     nsAutoPtr<TagLib::FLAC::File>   pTagFile;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+    
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
 
     /* Open and read the metadata file. */
-    pTagFile = new TagLib::FLAC::File();
+    pTagFile = new TagLib::FLAC::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
@@ -2728,14 +2589,19 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile()
     nsAutoPtr<TagLib::MPC::File>    pTagFile;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+    
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
 
-    pTagFile = new TagLib::MPC::File();
+    pTagFile = new TagLib::MPC::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
@@ -2769,22 +2635,26 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile()
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
-    pTagFile = new TagLib::MPEG::File();
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
+
+    pTagFile = new TagLib::MPEG::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
     /* Guess the charset */
     nsCString charset;
     if (NS_SUCCEEDED(result)) {
-        GuessCharset(pTagFile->tag(), charset);
-        LOG(("sbMetadataHandlerTaglib::ReadMPEGFile: Guessed charset: %s",
-             charset.BeginReading()));
+        // We take UTF-8 for now, as the new taglib should handle the encoding
+        charset.AssignLiteral("UTF-8");
     }
 
     /* Read the base file metadata. */
@@ -2821,13 +2691,18 @@ PRBool sbMetadataHandlerTaglib::ReadASFFile()
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
-    pTagFile = new TagLib::ASF::File();
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
+
+    pTagFile = new TagLib::ASF::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
@@ -2856,13 +2731,18 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
-    pTagFile = new TagLib::MP4::File();
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
+
+    pTagFile = new TagLib::MP4::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
@@ -2990,13 +2870,18 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile()
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
-    pTagFile = new TagLib::Vorbis::File();
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
+
+    pTagFile = new TagLib::Vorbis::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
@@ -3062,13 +2947,18 @@ PRBool sbMetadataHandlerTaglib::ReadOGAFile()
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
-    pTagFile = new TagLib::Ogg::FLAC::File();
+    /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
+
+    pTagFile = new TagLib::Ogg::FLAC::File(filePath.BeginReading());
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
-    if (NS_SUCCEEDED(result))
-        result = OpenTagFile(pTagFile);
-    if (NS_SUCCEEDED(result))
-        pTagFile->read();
+    if (!pTagFile->isOpen())
+        result = NS_ERROR_INVALID_ARG;
     if (NS_SUCCEEDED(result))
         result = CheckChannelRestart();
 
@@ -3197,4 +3087,168 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
   result = mpMetadataPropertyArray->AppendProperty(NS_ConvertASCIItoUTF16(name),
                                                    value);
   return (result);
+}
+
+/*
+ * base64 encode/decode routines:
+ * Copyright (C) 2004-2008 René Nyffenegger
+ *
+ * This source code is provided 'as-is', without any express or implied
+ * warranty. In no event will the author be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this source code must not be misrepresented; you must not
+ *    claim that you wrote the original source code. If you use this source code
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original source code.
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
+ *
+ * René Nyffenegger rene.nyffenegger@adp-gmbh.ch
+*/
+
+static const std::string base64_chars = 
+             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+             "abcdefghijklmnopqrstuvwxyz"
+             "0123456789+/";
+
+std::string sbMetadataHandlerTaglib::base64_encode(unsigned char const* bytes_to_encode,
+                                       unsigned int in_len) {
+  std::string ret;
+  int i = 0;
+  int j = 0;
+  unsigned char char_array_3[3];
+  unsigned char char_array_4[4];
+
+  while (in_len--) {
+    char_array_3[i++] = *(bytes_to_encode++);
+    if (i == 3) {
+      char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+      char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+      char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+      char_array_4[3] = char_array_3[2] & 0x3f;
+
+      for(i = 0; (i <4) ; i++)
+        ret += base64_chars[char_array_4[i]];
+      i = 0;
+    }
+  }
+
+  if (i)
+  {
+    for(j = i; j < 3; j++)
+      char_array_3[j] = '\0';
+
+    char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+    char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+    char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+    char_array_4[3] = char_array_3[2] & 0x3f;
+
+    for (j = 0; (j < i + 1); j++)
+      ret += base64_chars[char_array_4[j]];
+
+    while((i++ < 3))
+      ret += '=';
+
+  }
+
+  return ret;
+
+}
+
+static const unsigned char base64lookup[256] = {
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff,   62, 0xff, 0xff, 0xff,   63,
+    52,   53,   54,   55,   56,   57,   58,   59,
+    60,   61, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff,    0,    1,    2,    3,    4,    5,    6,
+     7,    8,    9,   10,   11,   12,   13,   14,
+    15,   16,   17,   18,   19,   20,   21,   22,
+    23,   24,   25, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff,   26,   27,   28,   29,   30,   31,   32,
+    33,   34,   35,   36,   37,   38,   39,   40,
+    41,   42,   43,   44,   45,   46,   47,   48,
+    49,   50,   51, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+};
+
+std::string sbMetadataHandlerTaglib::base64_decode(std::string const& encoded_string) {
+  int i = 0;
+  std::string ret;
+
+  int in_len = encoded_string.size();
+  if (in_len % 4 != 0) {
+    // base-64 encoded data must always be a multiple of 4 bytes
+    return ret;
+  }
+
+  while (in_len > 0) 
+  {
+    unsigned char vals[4];
+
+    vals[0] = base64lookup[(unsigned char)encoded_string[i]];
+    vals[1] = base64lookup[(unsigned char)encoded_string[i+1]];
+    vals[2] = base64lookup[(unsigned char)encoded_string[i+2]];
+    vals[3] = base64lookup[(unsigned char)encoded_string[i+3]];
+
+    if (in_len > 4) 
+    {
+      /* Check that all input bytes are legal */
+      if (vals[0] == 0xff || vals[1] == 0xff || vals[2] == 0xff ||
+          vals[3] == 0xff) 
+        return std::string();
+    }
+    else {
+      // Final chunk may have one or two padding '=' bytes
+      if (vals[0] == 0xff || vals[1] == 0xff)
+        return std::string();
+      if (vals[2] == 0xff || vals[3] == 0xff)
+      {
+        if (encoded_string[i+3] != '=' || 
+            (vals[2] == 0xff && encoded_string[i+2] != '='))
+          return std::string();
+
+        ret += vals[0]<<2 | vals[1]>>4;
+        if (vals[2] != 0xff)
+          ret += (vals[1]&0x0F)<<4 | vals[2]>>2;
+        // Done!
+        return ret;
+      }
+    }
+
+    ret += vals[0]<<2 | vals[1]>>4;
+    ret += (vals[1]&0x0F)<<4 | vals[2]>>2;
+    ret += (vals[2]&0x03)<<6 | vals[3];
+
+    in_len -= 4;
+    i += 4;
+  }
+
+  return ret;
 }
