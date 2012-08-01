@@ -71,7 +71,7 @@ using namespace TagLib;
  * TagLibChannelFileIO class
  */
 
-class TagLibChannelFileIO : public TagLib::FileIO
+class TagLibChannelFileIO
 {
     /*
      * Public TagLib sbISeekableChannel file I/O services.
@@ -140,7 +140,7 @@ public:
 
     virtual int seek(
         long                        offset,
-        Position                    p = Beginning);
+        File::Position              p = File::Beginning);
 
     virtual void clear();
 
@@ -151,7 +151,7 @@ public:
     /*!
     * Return a temporary file to use, creating it if necessary
     */
-    virtual FileIO* tempFile();
+    virtual File* tempFile();
 
     /*!
     * Close any previously allocated temporary files
