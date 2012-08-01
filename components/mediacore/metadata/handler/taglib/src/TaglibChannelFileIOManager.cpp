@@ -270,8 +270,6 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::SetChannelRestart(
  */
 
 sbTagLibChannelFileIOManager::sbTagLibChannelFileIOManager()
-:
-    mpResolver(nsnull)
 {
 }
 
@@ -285,13 +283,6 @@ sbTagLibChannelFileIOManager::sbTagLibChannelFileIOManager()
 
 sbTagLibChannelFileIOManager::~sbTagLibChannelFileIOManager()
 {
-    /* Dispose of the nsIChannel file I/O type resolver. */
-    if (mpResolver)
-    {
-        File::removeFileIOTypeResolver(mpResolver);
-        delete(mpResolver);
-        mpResolver = nsnull;
-    }
 }
 
 
@@ -305,11 +296,6 @@ sbTagLibChannelFileIOManager::~sbTagLibChannelFileIOManager()
 nsresult sbTagLibChannelFileIOManager::FactoryInit()
 {
     PRBool                          success;
-
-    /* Add nsIChannel file I/O type resolver. */
-    mpResolver = new TagLibChannelFileIOTypeResolver();
-    NS_ENSURE_TRUE(mpResolver, NS_ERROR_OUT_OF_MEMORY);
-    File::addFileIOTypeResolver(mpResolver);
 
     /* Initialize the channel map. */
     success = mChannelMap.Init();
@@ -393,107 +379,3 @@ nsresult sbTagLibChannelFileIOManager::GetChannel(
 
     return (NS_OK);
 }
-
-
-/* *****************************************************************************
- *
- * TagLib sbISeekable file I/O manager File::FileIOTypeResolver interface
- * implementation.
- *
- ******************************************************************************/
-
-/*
- * TagLibChannelFileIOTypeResolver
- *
- *   This function constructs a TagLib sbISeekable file I/O manager
- * File::FileIOTypeResolver object.
- */
-
-TagLibChannelFileIOTypeResolver::TagLibChannelFileIOTypeResolver()
-{
-    MOZ_COUNT_CTOR(TagLibChannelFileIOTypeResolver);
-    TRACE(("TagLibChannelFileIOTypeResolver[0x%.8x] - ctor", this));
-}
-
-
-/*
- * ~TagLibChannelFileIOTypeResolver
- *
- *   This function is the destructor for TagLib sbISeekable file I/O manager
- * File::FileIOTypeResolver objects.
- */
-
-TagLibChannelFileIOTypeResolver::~TagLibChannelFileIOTypeResolver()
-{
-    MOZ_COUNT_DTOR(TagLibChannelFileIOTypeResolver);
-    TRACE(("TagLibChannelFileIOTypeResolver[0x%.8x] - dtor", this));
-}
-
-
-/*!
- * This method must be overriden to provide an additional file I/O type
- * resolver.  If the resolver is able to determine the file I/O type it
- * should return a valid File I/O object; if not it should return 0.
- *
- * \note The created file I/O is then owned by the File and should not be
- * deleted.  Deletion will happen automatically when the File passes out
- * of scope.
- */
-
-FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
-    FileName                    fileName) const
-{
-    nsCOMPtr<sbITagLibChannelFileIOManager>
-                                   pTagLibChannelFileIOManager;
-    nsCOMPtr<sbISeekableChannel>   pSeekableChannel;
-    nsCString                      channelID;
-    nsAutoPtr<TagLibChannelFileIO> pTagLibChannelFileIO;
-    nsresult                       result = NS_OK;
-
-    /* Assume the file name is a channel ID. */
-#if XP_WIN
-    if(wcslen((const wchar_t *) fileName) > 0)
-        CopyUTF16toUTF8(nsDependentString((const wchar_t *) fileName), channelID);
-    else
-        channelID.Assign(nsDependentCString((const char *) fileName));
-#else
-    channelID.Assign(nsDependentCString((const char *) fileName));
-#endif
-
-    /* Get the TagLib sbISeekableChannel file IO manager. */
-    pTagLibChannelFileIOManager =
-            do_GetService
-                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
-                 &result);
-
-    /* Get the metadata channel from the channel ID.  An error result */
-    /* indicates that either the file name was not a channel ID or no */
-    /* matching channels are available.                               */
-    if (NS_SUCCEEDED(result))
-    {
-        result = pTagLibChannelFileIOManager->GetChannel
-                                            (channelID,
-                                             getter_AddRefs(pSeekableChannel));
-    }
-
-    /* Create a channel file I/O object. */
-    if (NS_SUCCEEDED(result))
-    {
-        pTagLibChannelFileIO = new TagLibChannelFileIO(channelID,
-                                                       pSeekableChannel);
-        if (!pTagLibChannelFileIO)
-            result = NS_ERROR_UNEXPECTED;
-    }
-    if (NS_SUCCEEDED(result))
-        result = pTagLibChannelFileIO->Initialize();
-    if (NS_SUCCEEDED(result))
-        result = pTagLibChannelFileIO->seek(0);
-
-    /* Clean up on error. */
-    if (NS_FAILED(result))
-        pTagLibChannelFileIO = nsnull;
-
-    return (pTagLibChannelFileIO.forget());
-}
-
-

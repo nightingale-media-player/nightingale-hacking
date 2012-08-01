@@ -344,8 +344,7 @@ private:
     // and don't try to acquire twice in a thread without releasing.
     nsresult AcquireTaglibLock();
     nsresult ReleaseTaglibLock();
-
-    nsresult OpenTagFile(TagLib::File *pTagFile);
+    
     nsresult CheckChannelRestart();
 
     nsresult ReadMetadata();
@@ -412,6 +411,12 @@ private:
     // these apply only to the last thing being detected
     nsCString mLastCharset;
     nsDetectionConfident mLastConfidence;
+    
+private:
+    // Base64 en-/decoding
+    std::string base64_decode(std::string const& encoded_string);
+    std::string base64_encode(unsigned char const* bytes_to_encode,
+                              unsigned int in_len);
 };
 
 
