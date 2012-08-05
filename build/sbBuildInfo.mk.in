@@ -5,11 +5,11 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Nightingale
-SB_BUILD_ID=20120726014328
-BuildNumber=2328
+SB_BUILD_ID=20120803014403
+BuildNumber=2335
 SB_BUILD_NUMBER=$(BuildNumber)
-SB_MILESTONE=2.1.0a
-SB_MILESTONE_WINDOWS=2.0.80.0
+SB_MILESTONE=2.2.0a
+SB_MILESTONE_WINDOWS=2.1.90.1
 SB_BRANCHNAME=trunk
 SB_PROFILE_VERSION=2
 SB_MOZILLA_VERSION=
@@ -18,10 +18,10 @@ SB_MOZILLA_VERSION=
 # use them; we make a slight distinction between JS-only and binary extensions
 # for historical policy reasons; that's likely to change if/when we get
 # nightly addon update/1st run bundles working
-SB_BINARY_EXTENSION_MIN_VER=$(SB_MILESTONE)
-SB_BINARY_EXTENSION_MAX_VER=$(SB_MILESTONE)
-SB_JSONLY_EXTENSION_MIN_VER=$(SB_MILESTONE)
-SB_JSONLY_EXTENSION_MAX_VER=$(SB_MILESTONE)
+SB_BINARY_EXTENSION_MIN_VER=2.2.0a
+SB_BINARY_EXTENSION_MAX_VER=2.2.0a
+SB_JSONLY_EXTENSION_MIN_VER=2.2.0a
+SB_JSONLY_EXTENSION_MAX_VER=2.2.0a
 
 # Why is there no RepoRevisionClient, you ask? We have to treat client-pull
 # revisions slightly differently, because we modify the repo itself whenever
@@ -33,5 +33,5 @@ SB_JSONLY_EXTENSION_MAX_VER=$(SB_MILESTONE)
 # and if you want to be 100% sure/correct, so should you..
 #
 # RepoRevisionClient=$Rev$
-RepoRevisionVendor=11443
-RepoRevisionVendorBinaries=11932
+RepoRevisionVendor=11447
+RepoRevisionVendorBinaries=11933
