@@ -36,8 +36,6 @@ SUBDIRS = chrome \
           defaults \
           $(NULL)
 
-JAR_MANIFEST = jar.mn.in
-
 INSTALL_EXTENSION = 1
 
 CREATEDIRS = $(SONGBIRD_PREFERENCESDIR) \
