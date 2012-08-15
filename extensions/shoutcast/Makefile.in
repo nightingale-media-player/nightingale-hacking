@@ -42,4 +42,6 @@ SUBDIRS = chrome \
 
 CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)
 
+INSTALL_EXTENSION = 1
+
 include $(topsrcdir)/build/rules.mk

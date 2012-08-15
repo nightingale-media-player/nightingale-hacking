@@ -48,4 +48,6 @@ CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
              $(SONGBIRD_PREFERENCESDIR) \
              $(NULL)
 
+INSTALL_EXTENSION = 1
+
 include $(topsrcdir)/build/rules.mk
