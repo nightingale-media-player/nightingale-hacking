@@ -208,6 +208,7 @@
 ./components/sbProperties.dll
 ./components/sbProperties.xpt
 ./components/sbPublicPlaylistCommands.js
+./components/sbPushControllerService.js
 ./components/sbRemoveHelper.js
 ./components/sbSQLBuilder.dll
 ./components/sbSQLBuilder.xpt

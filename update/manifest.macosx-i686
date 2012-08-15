@@ -204,6 +204,7 @@
 ./components/sbProperties.dylib
 ./components/sbProperties.xpt
 ./components/sbPublicPlaylistCommands.js
+./components/sbPushControllerService.js
 ./components/sbRemoveHelper.js
 ./components/sbSQLBuilder.dylib
 ./components/sbSQLBuilder.xpt
