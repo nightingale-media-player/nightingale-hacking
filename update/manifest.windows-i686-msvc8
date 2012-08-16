@@ -520,9 +520,11 @@
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/DLNA_error_16x16.png
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/DLNA_off_16x16.png
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/DLNA_on_16x16.png
+./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/bg-volume-bar.png
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/button-min-volume.png
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/icon-busy.png
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/icon-busy0.png
+./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/playbutton-device-busy.gif
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/songbird-120.jpg
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/songbird-120.png
 ./extensions/sharing@songbirdnest.com/chrome/sbSharing/skin/images/songbird-128.jpg
