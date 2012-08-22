@@ -8,7 +8,7 @@ SB_APPNAME=Songbird
 SB_BUILD_ID=20120822101557
 BuildNumber=2348
 SB_BUILD_NUMBER=$(BuildNumber)
-SB_MILESTONE=2.1.0a
+SB_MILESTONE=2.1.0b
 SB_MILESTONE_WINDOWS=2.0.90.1
 SB_BRANCHNAME=trunk
 SB_PROFILE_VERSION=2
@@ -18,10 +18,10 @@ SB_MOZILLA_VERSION=
 # use them; we make a slight distinction between JS-only and binary extensions
 # for historical policy reasons; that's likely to change if/when we get
 # nightly addon update/1st run bundles working
-SB_BINARY_EXTENSION_MIN_VER=2.1.0a
-SB_BINARY_EXTENSION_MAX_VER=2.1.0a
-SB_JSONLY_EXTENSION_MIN_VER=2.1.0a
-SB_JSONLY_EXTENSION_MAX_VER=2.1.0a
+SB_BINARY_EXTENSION_MIN_VER=2.1.0b
+SB_BINARY_EXTENSION_MAX_VER=2.1.0b
+SB_JSONLY_EXTENSION_MIN_VER=2.1.0b
+SB_JSONLY_EXTENSION_MAX_VER=2.1.0b
 
 # Why is there no RepoRevisionClient, you ask? We have to treat client-pull
 # revisions slightly differently, because we modify the repo itself whenever
