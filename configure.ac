@@ -227,6 +227,19 @@ fi
 AC_SUBST(SB_SQLITE_DEBUG)
 
 #
+#  Check for --enable-device-drivers
+#
+
+AC_ARG_ENABLE(device-drivers,
+              [  --enable-device-drivers  include device drivers (default=yes)])
+if test "$enable_device_drivers" == "no"; then
+  SB_ENABLE_DEVICE_DRIVERS=0
+else
+  SB_ENABLE_DEVICE_DRIVERS=1
+fi
+AC_SUBST(SB_ENABLE_DEVICE_DRIVERS)
+
+#
 # Check platform
 #
 

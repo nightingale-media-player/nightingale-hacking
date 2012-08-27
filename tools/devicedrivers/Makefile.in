@@ -1,0 +1,102 @@
+#
+# BEGIN SONGBIRD GPL
+#
+# This file is part of the Songbird web player.
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# This file may be licensed under the terms of of the
+# GNU General Public License Version 2 (the "GPL").
+#
+# Software distributed under the License is distributed
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
+# governing rights and limitations.
+#
+# You should have received a copy of the GPL along with this
+# program. If not, go to http://www.gnu.org/licenses/gpl.html
+# or write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# END SONGBIRD GPL
+#
+
+DEPTH = ../..
+topsrcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+ifeq (1,$(SB_ENABLE_DEVICE_DRIVERS))
+CREATEDIRS += $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/amd64 \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/i386 \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/amd64 \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/i386 \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/vista \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/win7 \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/vista \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/win7 \
+              $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp \
+              $(NULL)
+endif
+
+include $(topsrcdir)/build/rules.mk
+
+libs::
+ifeq (1,$(SB_ENABLE_DEVICE_DRIVERS))
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/ActionsDriver.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Information.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Information.pdb $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/MSCMTPSwitch.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips  
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/androidwinusb86.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/androidwinusba64.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/android_winusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/dpinst.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/DPInst.xml $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/dpinst64.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/amd64/WdfCoInstaller01007.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/amd64/WinUSBCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/amd64/WUDFUpdate_01007.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/i386/WdfCoInstaller01007.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/i386/WinUSBCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/i386/WUDFUpdate_01007.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/DriverCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/imxusb.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/imxusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/imxusb.x64.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/amd64/DIFxAPI.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/amd64/DrvPreinst_x64.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/amd64/imxusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/amd64/WdfCoInstaller01009.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/i386/DIFxAPI.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/i386/DrvPreinst_x86.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/i386/imxusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3CNT_driver/i386/WdfCoInstaller01009.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3CNT_driver/i386
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/PreInstallDrive.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/DIFxAPI.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/RKDrvPreinst_amd64.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/vista/rockusb.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/vista/rockusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/vista/rockusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/vista/rockusbCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/win7/rockusb.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/win7/rockusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/win7/rockusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/amd64/win7/rockusbCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/amd64/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/DIFxAPI.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/RKDrvPreinst_x86.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/vista/rockusb.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/vista/rockusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/vista/rockusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/vista/rockusbCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/vista
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/win7/rockusb.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/win7/rockusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/win7/rockusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/win7/rockusbCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/win7
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusb.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusbCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
+endif

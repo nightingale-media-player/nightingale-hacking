@@ -99,6 +99,7 @@ RequestExecutionLevel user
 !include defines.nsi
 !include common.nsh
 !include sb-filelist.nsi
+!include sb-devicedrivers.nsi
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Product version information. 
