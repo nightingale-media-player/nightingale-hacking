@@ -52,6 +52,7 @@ endif
 
                       
 SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
+                        $(srcdir)/sb-devicedrivers.nsi.in \
                         $(NULL)
 
 # Win32 only supports a single installer suffix, so the pluralized suffixes

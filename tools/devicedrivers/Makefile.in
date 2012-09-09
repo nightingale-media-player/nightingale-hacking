@@ -39,6 +39,24 @@ CREATEDIRS += $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver/amd64 \
               $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/vista \
               $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/win7 \
               $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3VBE \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3ARA \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3MUS \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3CNT \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SDR \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SDV \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/PI7000 \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SPK \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4DOT \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4RGA \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA08KF_37 \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MUS \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4VBE \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4VBE04KF_37 \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MAX \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ACT \
+              $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3VBE04KX_94
               $(NULL)
 endif
 
@@ -49,7 +67,7 @@ ifeq (1,$(SB_ENABLE_DEVICE_DRIVERS))
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/ActionsDriver.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Information.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Information.pdb $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
-	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/MSCMTPSwitch.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips  
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/MSCMTPSwitch.exe $(SONGBIRD_DEVICEDRIVERSDIR)/Philips
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/androidwinusb86.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/androidwinusba64.cat $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/PI7000_driver/android_winusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/PI7000_driver
@@ -99,4 +117,48 @@ ifeq (1,$(SB_ENABLE_DEVICE_DRIVERS))
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusb.inf $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusb.sys $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
 	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/SA3MXX_driver/x86/xp/rockusbCoInstaller.dll $(SONGBIRD_DEVICEDRIVERSDIR)/Philips/SA3MXX_driver/x86/xp
+
+# Files needed for firmware loading
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3VBE/GoGearFWLibSA3VBE.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3VBE
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3VBE04KX_94/GoGearFWLibSA3VBE04KX_94.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3VBE04KX_94 
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3ARA/GoGearFWLibSA3ARA.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3ARA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3MUS/GoGearFWLibSA3MUS.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3MUS/RK28DLL.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3MUS/WmdmDll.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3CNT/GoGearFWLibSA3CNT.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3CNT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3SDR/GoGearFWLibSA3SDR.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SDR
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3SDR/Hardware.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SDR
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3SDR/ProBatch.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SDR
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3SDV/GoGearFWLibSA3SDV.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SDV
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/PI7000/GoGearFWLibPI7000.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/PI7000
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/PI7000/AdbWinApi.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/PI7000
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/PI7000/AdbWinUsbApi.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/PI7000
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA3SPK/GoGearFWLibSA3SPK.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA3SPK
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4DOT/GoGearFWLibSA4DOT.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4DOT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4DOT/DiskImg.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4DOT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4DOT/Hardware.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4DOT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4DOT/ProBatch.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4DOT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4RGA/GoGearFWLibSA4RGA.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4RGA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4RGA/Hardware.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4RGA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4RGA/ProBatch.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4RGA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ARA08KF_37/GoGearFWLibSA4ARA08KF_37.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA08KF_37
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ARA/GoGearFWLibSA4ARA.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ARA/DiskImg.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ARA/Hardware.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ARA/ProBatch.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ARA/WinMTP.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ARA
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4MUS/GoGearFWLibSA4MUS.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4MUS/DiskImg.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4MUS/Hardware.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4MUS/ProBatch.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4MUS/WinMTP.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MUS
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4VBE/GoGearFWLibSA4VBE.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4VBE
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4VBE04KF_37/GoGearFWLibSA4VBE04KF_37.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4VBE04KF_37
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4MAX/GoGearFWLibSA4MAX.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4MAX
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ACT/GoGearFWLibSA4ACT.dll $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ACT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ACT/Information.exe $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ACT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/SA4ACT/Information.pdb $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware/SA4ACT
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/defaults.xml $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/devices.xml $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware
+	$(INSTALL_PROG) $(DEPS_DIR)/private/devicedrivers/Philips/Devices/Firmware/DIT.xml $(SONGBIRD_PHILIPS_RESOURCES_DIR)/Firmware
 endif
