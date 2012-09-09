@@ -128,7 +128,9 @@ Section "-Application" Section1
 
    ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro InstallFiles
-
+   ; This macro is hiding in sb-devicdrivers.nsi.in
+   !insertmacro InstallDeviceDrivers
+   
    ${If} $UnpackMode == ${FALSE}
       Call InstallAppRegistryKeys
    

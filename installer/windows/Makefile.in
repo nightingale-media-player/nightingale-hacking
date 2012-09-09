@@ -52,6 +52,7 @@ endif
 
                       
 SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
+                        $(srcdir)/sb-devicedrivers.nsi.in \
                         $(NULL)
 
 # Win32 only supports a single installer suffix, so the pluralized suffixes
@@ -100,7 +101,7 @@ include $(topsrcdir)/build/rules.mk
 
 libs::
 	cd $(SONGBIRD_DISTDIR) && \
-	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "Apn*$(DLL_SUFFIX)" -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
+	  $(FIND) . '(' -name "extensions" -o -name "devicedrivers" -o -name "drivers" ')' -a -prune -o -name "Apn*$(DLL_SUFFIX)" -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
 	    sort -o rebase.txt && \
 	  $(REBASE) -v -b 62000000 @rebase.txt && \
 	  $(RM) rebase.txt
@@ -109,6 +110,7 @@ libs::
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
 	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
 	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-devicedrivers.nsi.in > $(CURDIR)/sb-devicedrivers.nsi
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-filelist.nsi.in > $(CURDIR)/sb-filelist.nsi
 	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
 	$(MV) $(SONGBIRD_DISTDIR)/$(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(FULL_INSTALLER_NAME)
