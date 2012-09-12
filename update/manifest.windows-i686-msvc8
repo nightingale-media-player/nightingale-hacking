@@ -1,4 +1,13 @@
 ./.autoreg
+./ApnIC.dll
+./ApnStub.exe
+./ApnToolbarInstaller.exe
+./AskToolbar.bmp
+./LICENSE.html
+./LICENSE.rtf
+./README.txt
+./TRADEMARK.txt
+./added-files
 ./application.ini
 ./blocklist.xml
 ./cdriphelper.exe
@@ -253,6 +262,7 @@
 ./components/sbiTunesImporter.xpt
 ./components/sbiTunesMediaImport.dll
 ./components/sbxpcom.dll
+./components/songbird.xpt
 ./defaults/preferences/browser-prefs.js
 ./defaults/preferences/songbird-channel-prefs.js
 ./defaults/preferences/songbird-prefs.js
