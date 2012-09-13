@@ -583,3 +583,4 @@
 ./ApnToolbarInstaller.exe
 ./ApnStub.exe
 ./ApnIC.dll
+./extensions/sharing@songbirdnest.com/modules/Timers.jsm

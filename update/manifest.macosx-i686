@@ -458,7 +458,6 @@
 ./extensions/sharing@songbirdnest.com/modules/PushPlayqueueItem.jsm
 ./extensions/sharing@songbirdnest.com/modules/PushTreeView.jsm
 ./extensions/sharing@songbirdnest.com/modules/Sequencer.jsm
-./extensions/sharing@songbirdnest.com/modules/Timers.jsm
 ./extensions/sharing@songbirdnest.com/modules/Tools.jsm
 ./extensions/sharing@songbirdnest.com/modules/UIManager.jsm
 ./extensions/sharing@songbirdnest.com/modules/sbSharingPushMediaRendererListener.jsm
