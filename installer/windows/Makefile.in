@@ -43,10 +43,7 @@ endif
 
 ifeq ($(SB_PLATFORM),windows)
 SONGBIRD_DIST += \
-    $(DEPS_DIR)/private/ask/ApnIC.dll \
-    $(DEPS_DIR)/private/ask/ApnStub.exe \
-    $(DEPS_DIR)/private/ask/ApnToolbarInstaller.exe \
-    $(DEPS_DIR)/private/ask/AskToolbar.bmp \
+    $(DEPS_DIR)/private/ask/PIP267_SGD4_.exe \
     $(NULL)
 endif
 
