@@ -28,63 +28,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Icon ${PreferredInstallerIcon}
 
-var Dialog
-
-var installAskToolbarCB
-var installAskToolbarState
-var setHomePageCB
-var setHomePageState
-var installingMessage
-var toolbarImage
-var askToolbarParam
-
-Function askToolbarPage
-   push $0
-   !insertmacro MUI_HEADER_TEXT "Songbird® Toolbar Installation" "Install the Songbird® Toolbar" 
-   ${If} $askInstallChecked == "0"
-     StrCpy $askInstallChecked "1"
-     call AskToolbarCheck
-   ${EndIf}
-   ${If} $alreadyInstalled == "1"
-      Abort
-   ${EndIf}
-   nsDialogs::Create 1018
-   Pop $Dialog
-   ${If} $Dialog == Error
-      Abort
-   ${EndIf}
-   ${NSD_CreateLabel} 0u 0u 100% 11u "• Quick link to Songbird® for Facebook right from your browser"
-   pop $0
-   ${NSD_CreateLabel} 0u 12u 100% 11u "• Get Songbird® for Android from Google Play"
-   pop $0
-   ${NSD_CreateLabel} 0u 24u 100% 11u "• Easy access to search"
-   pop $0
-   ${NSD_CreateLabel} 5u 37u 100% 11u "* Toolbar installs across all major browsers. Features, functionality, and appearance"
-   pop $0
-   ${NSD_CReateLabel} 10u 48u 100% 11u "may vary by version or browser."
-   
-   ${NSD_CreateBitmap} 0u 59u 100% 22 "" 
-   pop $0
-   ${NSD_SetImage} $0 $INSTDIR\AskToolbar.bmp $toolbarImage
-   
-   ${NSD_CreateCheckBox} 4u 82u 100% 11u "Install the Songbird® Toolbar and make Ask my default search provider."
-   pop $installAskToolbarCB
-   ${NSD_SetState} $installAskToolbarCB $installAskToolbarState
-   
-   ${NSD_CreateLabel} 5u 98u 100% 11u "By installing this application and associated updater, you agree to the"
-   ${NSD_CreateLink} 5u 109u 92u 11u "End User License Agreement"
-   pop $0
-   ${NSD_OnClick} $0 onEulaClick
-   ${NSD_CreateLabel} 100u 109u 12u 11u "and"
-   pop $0
-   ${NSD_CreateLink} 115u 109u 60u 11u "Privacy Policy."
-   pop $0
-   ${NSD_OnClick} $0 onPrivacyClick
-   ${NSD_CreateLabel} 5u 120u 100% 11u "You can remove this application easily at any time." 
-   nsDialogs::Show
-   ${NSD_FreeImage} $toolbarImage
-   pop $0
-FunctionEnd
+var askToolbarTimeout
+var askToolbarRunning
+var askInstallerPresent
 
 Function onEulaClick
    ExecShell "open" "http://about.ask.com/en/docs/about/ask_eula.shtml"
@@ -94,22 +40,89 @@ Function onPrivacyClick
    ExecShell "open" " http://about.ask.com/en/docs/about/privacy.shtml"
 FunctionEnd
 
-Function askToolbarLeave
-   push $0
-   ; Install Ask Toolbar?
-   ${NSD_GetState} $installAskToolbarCB $0
-   ${If} $0 == ${BST_CHECKED}
-      StrCpy $installAskToolbar "1"
-      
-      StrCpy $askInstallToolbarArg "/tbr"
-      StrCpy $askSetDefaultSearchEngineArg "/sa"
-   
-     ; Set home page
-     Strcpy $askToolbarParam "toolbar=SGD2 /local"
-     Exec '"$INSTDIR\${AskToolbarEXE}" /tbr /sa toolbar=SGD2 /local'
-     ${NSD_SetText} $installingMessage "Ask Toolbar installation complete"
-  ${EndIf}
+;========================================
+; This starts the installer process, the process does not actually start till
+; communication with registry occurs
+; It also checks for the installer if present sets askInstallerPresent to "1"
+; otherwise it sets it to "0"
+;========================================
+Function startAskToolbarInstaller
+   ;MessageBox MB_OK "startAskToolbar $INSTDIR\${AskToolbarEXE}"
+   ; If the ask toolbar installer exists then start it and set the flag
+   IfFileExists "$INSTDIR\${AskToolbarEXE}" StartAskInstaller SkipAskInstaller 
+
+StartAskInstaller:
+   DeleteRegKey HKCU "${AskInstallerRegistryKey}"
+   ;MessageBox MB_OK "Installer there"
+   StrCpy $askToolbarRunning "1"   
+   Exec '"$INSTDIR\${AskToolbarEXE}" -b -wui'
+   StrCpy $askInstallerPresent "1"
+   goto startAskToolbarExit
+SkipAskInstaller:
+   ;MessageBox MB_OK "Installer not there"
+   StrCpy $askInstallerPresent "0"
+startAskToolbarExit:
+FunctionEnd
+
+;==============================================
+; Waits for a given registry value to change
+; $0 registry entry
+; $1 existing registry value
+; $2 timeout
+; $3 is the new registry value
+;==============================================
+Function waitForAskToolbarRegistry
+  pop $2
+  pop $1
   pop $0
+  
+  ;MessageBox MB_OK "waitForAskToolbarRegistry 0=$0 1=$1 2=$2"
+  ; We want to skip the the wait initially, it's likely the registry may
+  ; have already been set
+  goto SkipDelay
+AskRegistryWaitLoop:
+  Sleep 1000
+SkipDelay:
+  ; Check if the timeout has expired
+  ${If} $2 != 0 
+    ; Decrement timeout counter
+    IntOp $2 $2 - 1
+    ; Check the registry value and loop if it hasn't changed
+    ReadRegStr $R3 HKCU "${AskInstallerRegistryKey}" $0
+    ;MessageBox MB_OK "ReadRegStr ${AskInstallerRegistryKey} <$R3>"
+    ${If} $R3 == $1
+      goto AskRegistryWaitLoop
+    ${EndIf}
+  ${EndIf}
+  ;MessageBox MB_OK "Exiting loop timeout = $2, value = $1 | $R3"
+  StrCpy $0 $R3
+FunctionEnd
+ 
+Function displayAskToolbarInstaller
+   push $0
+   push $1
+   
+   ; Wait for Ask to be ready
+   push "PIP_UI_Ready"
+   push ''
+   push 60 ; 60 seconds
+   Call waitForAskToolbarRegistry
+   ${If} $0 == "1"
+      ;MessageBox MB_OK "Hiding window"
+      HideWindow
+      WriteRegStr HKCU "${AskInstallerRegistryKey}" "Show_UI" "1"
+      ; Wait for ask to complete
+      push "PIP_UI_Complete"
+      push ''
+      push 600 ; 10 minutes 
+      Call waitForAskToolbarRegistry
+      ${If} $0 == "1"
+        WriteRegStr HKCU "${AskInstallerRegistryKey}" "Start_Install" "1"
+      ${EndIf}
+   ${EndIf}
+   StrCpy $askToolbarRunning "0"
+   pop $1
+   pop $0
 FunctionEnd
 
 ShowInstDetails hide
@@ -128,6 +141,9 @@ Section "-Application" Section1
 
    ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro InstallFiles
+
+   Call startAskToolbarInstaller
+
    ; This macro is hiding in sb-devicdrivers.nsi.in
    !insertmacro InstallDeviceDrivers
    
@@ -170,6 +186,9 @@ Section "-Application" Section1
       Call InstallCdrip
       ; Disabled for now; see bug 22964
       ; Call InstallRDSConfig
+      ${If} $askInstallerPresent == "1"
+        Call displayAskToolbarInstaller
+      ${EndIf}
    ${EndIf}
 
    IfRebootFlag 0 noReboot
@@ -551,31 +570,13 @@ recheck:
    ${EndIf}
 FunctionEnd
 
-Function AskToolbarCheck
-  push $R0
-  ; See if we need to install
-  ExecWait '"$INSTDIR\${AskToolbarEXE}" /tb=SGD' $R0
-  ; 0 means Ask is not installed
-  ${if} $R0 == "0"
-    StrCpy $alreadyInstalled "0"
-  ${Else}
-    StrCpy $alreadyInstalled "1"
-  ${EndIf}
-  pop $R0
-FunctionEnd
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Initialization Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
    ; preedTODO: Check drive space
-
-   StrCpy $installAskToolbarState ${BST_CHECKED}
-   StrCpy $setHomePageState ${BST_CHECKED}
-   StrCpy $askInstallChecked "0"
-   StrCpy $alreadyInstalled "0"
-   
+  
    ; May seem weird, but it's used for update testing; so ignore the man
    ; behind the curtain...
    ReadEnvStr $0 SB_FORCE_NO_UAC
@@ -641,4 +642,15 @@ overrideVersionCheck:
          Quit
       ${EndIf} 
    ${EndIf} 
+FunctionEnd
+
+Function AbortOperation
+  ${If} $askToolbarRunning == "1"
+      WriteRegStr HKCU "${AskInstallerRegistryKey}" "Cancel_PIP" "1"
+  ${EndIf}
+  ${UAC.Unload} 
+FunctionEnd
+
+Function un.AbortOperation
+  ${UAC.Unload} 
 FunctionEnd

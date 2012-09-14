@@ -260,6 +260,10 @@ sb-first-run-feedback {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunImportMedia.xml#sb-first-run-import-media");
 }
 
+#first_run_dlna_page {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstrunDLNA.xml#sb-first-run-dlna");
+}
+
 sb-first-run-install-add-ons {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunInstallAddOns.xml#sb-first-run-install-add-ons");
 }
@@ -290,4 +294,43 @@ sb-first-run-welcome {
 
 #first_run_app_update_failed_page {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAppUpdate.xml#sb-first-run-app-update-failed");
+}
+
+.sb-first-run-dlna-box {
+  -moz-box-flex: 1;
+}
+
+.sb-first-run-dlna-header {
+  font-weight:bold;
+  font-size:120%;
+}
+
+.sb-first-run-dlna-groupbox-header {
+  margin-top: 0px;
+  font-weight:bold;
+  font-size:110%;
+  color:#4169E1;
+}
+
+.sb-first-run-dlna-box > label.sb-first-run-dlna-header {
+  margin-bottom: 0px;
+}
+
+.sb-first-run-dlna-box > description#dlna-description {
+  margin-top: 10px;
+}
+.sb-first-run-dlna-box > description#dlna-line1 {
+  margin-top: 10px;
+}
+.sb-first-run-dlna-box > description#dlna-line2 {
+  margin-top: 0px;
+}
+
+.sb-first-run-dlna-image-box {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.sb-first-run-dlna-image {
+  list-style-image: url(chrome://songbird-branding/skin/first-run-dlna.png);
 }
