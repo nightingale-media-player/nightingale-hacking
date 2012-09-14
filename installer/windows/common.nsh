@@ -266,14 +266,6 @@ FunctionEnd
 !insertmacro Trim ""
 !insertmacro Trim "un."
 
-!macro AbortOperation un
-   Function ${un}AbortOperation
-      ${UAC.Unload} 
-   FunctionEnd
-!macroend
-!insertmacro AbortOperation ""
-!insertmacro AbortOperation "un."
-
 ;
 ; BE CAREFUL about changing this; it's used all over the place, so you'll have
 ; to match up all the cleanup routines in the uninstaller, etc.

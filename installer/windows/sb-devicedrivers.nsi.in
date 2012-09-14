@@ -208,6 +208,8 @@
     
    _endOfInstallDriver:
 
+   ; We don't need this now, and it causes issues with the firmware update
+   DeleteRegKey HKLM "Software\Philips Songbird\FirmwareImages\IniFile"
   ${EndIf}
 !macroend
 

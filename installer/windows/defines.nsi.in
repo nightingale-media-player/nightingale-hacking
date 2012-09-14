@@ -30,8 +30,9 @@
 !define CdripDriverInstallations "CdripDriverInstallations"
 !define CdripServiceRegKey    "SYSTEM\CurrentControlSet\Services\GEARAspiWDM"
 !define RDSConfigEXE          "rdsconfig.exe"
-!define AskToolbarEXE         "ApnStub.exe"
-
+!define AskToolbarEXE         "PIP267_SGD4_.exe"
+!define AskInstallerRegistryKey "Software\APN PIP\SGD4"
+   
 !define DistHelperLog         "disthelper.log"
 
 !define ApplicationIni        "application.ini"

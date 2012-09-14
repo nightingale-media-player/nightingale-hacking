@@ -44,16 +44,6 @@ var CheckOSVersion
 var DistributionMode
 var DistributionName
 
-;Ask toolbar installer variables
-var askInstallChecked
-var alreadyInstalled
-
-var askInstallToolbarArg
-var askSetDefaultSearchEngineArg
-var askSetHomePageArg
-var installAskToolbar
-
-
 ; Compressor settings
 SetCompressor /SOLID lzma
 SetCompressorDictSize 64
@@ -162,9 +152,6 @@ BrandingText " "
 
 ; Install Files Page
 !insertmacro MUI_PAGE_INSTFILES
-
-; Ask Toolbar Page
-Page Custom askToolbarPage askToolbarLeave
 
 ; Finish Page
 !define MUI_FINISHPAGE_RUN
