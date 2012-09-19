@@ -34,7 +34,6 @@ SUBDIRS += lib \
 
 ifeq (windows,$(SB_PLATFORM))
    SUBDIRS += win32 \
-              devicedrivers \
               $(NULL)
 endif
 
