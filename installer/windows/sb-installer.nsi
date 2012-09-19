@@ -28,105 +28,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Icon ${PreferredInstallerIcon}
 
-var askToolbarTimeout
-var askToolbarRunning
-var askInstallerPresent
-
-Function onEulaClick
-   ExecShell "open" "http://about.ask.com/en/docs/about/ask_eula.shtml"
-FunctionEnd
-
-Function onPrivacyClick
-   ExecShell "open" " http://about.ask.com/en/docs/about/privacy.shtml"
-FunctionEnd
-
-;========================================
-; This starts the installer process, the process does not actually start till
-; communication with registry occurs
-; It also checks for the installer if present sets askInstallerPresent to "1"
-; otherwise it sets it to "0"
-;========================================
-Function startAskToolbarInstaller
-   ;MessageBox MB_OK "startAskToolbar $INSTDIR\${AskToolbarEXE}"
-   ; If the ask toolbar installer exists then start it and set the flag
-   IfFileExists "$INSTDIR\${AskToolbarEXE}" StartAskInstaller SkipAskInstaller 
-
-StartAskInstaller:
-   DeleteRegKey HKCU "${AskInstallerRegistryKey}"
-   ;MessageBox MB_OK "Installer there"
-   StrCpy $askToolbarRunning "1"   
-   Exec '"$INSTDIR\${AskToolbarEXE}" -b -wui'
-   StrCpy $askInstallerPresent "1"
-   goto startAskToolbarExit
-SkipAskInstaller:
-   ;MessageBox MB_OK "Installer not there"
-   StrCpy $askInstallerPresent "0"
-startAskToolbarExit:
-FunctionEnd
-
-;==============================================
-; Waits for a given registry value to change
-; $0 registry entry
-; $1 existing registry value
-; $2 timeout
-; $3 is the new registry value
-;==============================================
-Function waitForAskToolbarRegistry
-  pop $2
-  pop $1
-  pop $0
-  
-  ;MessageBox MB_OK "waitForAskToolbarRegistry 0=$0 1=$1 2=$2"
-  ; We want to skip the the wait initially, it's likely the registry may
-  ; have already been set
-  goto SkipDelay
-AskRegistryWaitLoop:
-  Sleep 1000
-SkipDelay:
-  ; Check if the timeout has expired
-  ${If} $2 != 0 
-    ; Decrement timeout counter
-    IntOp $2 $2 - 1
-    ; Check the registry value and loop if it hasn't changed
-    ReadRegStr $R3 HKCU "${AskInstallerRegistryKey}" $0
-    ;MessageBox MB_OK "ReadRegStr ${AskInstallerRegistryKey} <$R3>"
-    ${If} $R3 == $1
-      goto AskRegistryWaitLoop
-    ${EndIf}
-  ${EndIf}
-  ;MessageBox MB_OK "Exiting loop timeout = $2, value = $1 | $R3"
-  StrCpy $0 $R3
-FunctionEnd
- 
-Function displayAskToolbarInstaller
-   push $0
-   push $1
-   
-   ; Wait for Ask to be ready
-   push "PIP_UI_Ready"
-   push ''
-   push 60 ; 60 seconds
-   Call waitForAskToolbarRegistry
-   ${If} $0 == "1"
-      ;MessageBox MB_OK "Hiding window"
-      HideWindow
-      WriteRegStr HKCU "${AskInstallerRegistryKey}" "Show_UI" "1"
-      ; Wait for ask to complete
-      push "PIP_UI_Complete"
-      push ''
-      push 600 ; 10 minutes 
-      Call waitForAskToolbarRegistry
-      ${If} $0 == "1"
-        WriteRegStr HKCU "${AskInstallerRegistryKey}" "Start_Install" "1"
-      ${EndIf}
-   ${EndIf}
-   StrCpy $askToolbarRunning "0"
-   pop $1
-   pop $0
-FunctionEnd
-
-ShowInstDetails hide
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,11 +42,6 @@ Section "-Application" Section1
 
    ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro InstallFiles
-
-   Call startAskToolbarInstaller
-
-   ; This macro is hiding in sb-devicdrivers.nsi.in
-   !insertmacro InstallDeviceDrivers
    
    ${If} $UnpackMode == ${FALSE}
       Call InstallAppRegistryKeys
@@ -186,9 +82,6 @@ Section "-Application" Section1
       Call InstallCdrip
       ; Disabled for now; see bug 22964
       ; Call InstallRDSConfig
-      ${If} $askInstallerPresent == "1"
-        Call displayAskToolbarInstaller
-      ${EndIf}
    ${EndIf}
 
    IfRebootFlag 0 noReboot
@@ -645,9 +538,6 @@ overrideVersionCheck:
 FunctionEnd
 
 Function AbortOperation
-  ${If} $askToolbarRunning == "1"
-      WriteRegStr HKCU "${AskInstallerRegistryKey}" "Cancel_PIP" "1"
-  ${EndIf}
   ${UAC.Unload} 
 FunctionEnd
 
