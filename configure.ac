@@ -783,8 +783,11 @@ case "$SB_PLATFORM" in
         15)
             _CC_SUITE=9
             ;;
+        16)
+            _CC_SUITE=10
+            ;;
     esac
-    if test "$_CC_MAJOR_VERSION" -ne "$_CC_SUPPORTED_MAJOR_VERSION"; then
+    if test "$_CC_MAJOR_VERSION" -lt "$_CC_SUPPORTED_MAJOR_VERSION"; then
         if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
             AC_MSG_WARN([This version of the MSVC compiler, $CC_VERSION, is unsupported. Songbird Bugzilla reports should not be filed against builds produced using it.])
         else
