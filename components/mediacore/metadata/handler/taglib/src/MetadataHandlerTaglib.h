@@ -88,6 +88,7 @@
 #include <mpegfile.h>
 #include <asffile.h>
 #include <vorbisfile.h>
+#include <id3v1tag.h>
 #include <id3v2tag.h>
 #include <mp4file.h>
 #include <mp4tag.h>
@@ -402,6 +403,25 @@ private:
     void FixTrackDiscNumber(
         nsString                    numberKey,
         nsString                    totalKey);
+
+private:
+    // Functions to write Metadata to tags
+    nsresult WriteBasic(
+      TagLib::PropertyMap           *properties);
+    nsresult WriteSeparatedNumbers(
+      TagLib::PropertyMap           *properties);
+    nsresult WriteAPE(
+        TagLib::APE::Tag            *tag);
+    nsresult WriteASF(
+        TagLib::ASF::Tag            *tag);
+    nsresult WriteID3v1(
+        TagLib::ID3v1::Tag          *tag);
+    nsresult WriteID3v2(
+        TagLib::ID3v2::Tag          *tag);
+    nsresult WriteMP4(
+        TagLib::MP4::Tag            *tag);
+    nsresult WriteXiphComment(
+        TagLib::Ogg::XiphComment    *tag);
 
     /*
      * Private charset detector members

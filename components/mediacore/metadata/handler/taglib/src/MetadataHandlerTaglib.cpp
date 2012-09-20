@@ -90,6 +90,7 @@
 #include <vorbisfile.h>
 #include <uniquefileidentifierframe.h>
 #include <textidentificationframe.h>
+#include <tpropertymap.h>
 
 /* C++ std imports. */
 #include <sstream>
@@ -99,32 +100,20 @@
   #include <windows.h>
 #endif
 
-#define WRITE_PROPERTY(result, SB_PROPERTY, method)         \
+#define WRITE_PROPERTY(tmp_result, SB_PROPERTY, taglibName) \
   PR_BEGIN_MACRO                                            \
-  result = mpMetadataPropertyArray->GetPropertyValue(       \
+  tmp_result = mpMetadataPropertyArray->GetPropertyValue(   \
     NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
-  if (NS_SUCCEEDED(result)) {                               \
-    f.tag()->set##method(TagLib::String(                    \
+  if (NS_SUCCEEDED(tmp_result)) {                           \
+    TagLib::String key = TagLib::String(taglibName);        \
+    TagLib::String value = TagLib::String(                  \
       NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),  \
-      TagLib::String::UTF8));                               \
-  }                                                         \
-  PR_END_MACRO
-
-#define WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY, method) \
-  PR_BEGIN_MACRO                                            \
-  result = mpMetadataPropertyArray->GetPropertyValue(       \
-    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
-  if (NS_SUCCEEDED(result)) {                               \
-    int method;                                             \
-    int numRead = PR_sscanf(                                \
-      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),  \
-      "%d",                                                 \
-      &method);                                             \
-    if (numRead == 1) {                                     \
-      f.tag()->set##method(method);                         \
-    }                                                       \
-    else {                                                  \
-      f.tag()->set##method(0);                              \
+      TagLib::String::UTF8);                                \
+    properties->erase(key);                                 \
+    if (!value.isEmpty()) {                                 \
+      TagLib::StringList valueList =                        \
+        TagLib::StringList(value);                          \
+      properties->insert(key, valueList);                   \
     }                                                       \
   }                                                         \
   PR_END_MACRO
@@ -542,6 +531,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     nsCString                   urlScheme;
     nsAutoString                filePath;
     nsresult                    result = NS_OK;
+    nsresult                    tmp_result;
 
     // Starting a new operation, so clear the completion flag
     mCompleted = PR_FALSE;
@@ -617,6 +607,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         fileExt.Equals(NS_LITERAL_CSTRING("ogv"))
     ) {
       return NS_OK; // don't write, don't warn.
+      // TODO: get rid of this
     }
 
     /* WRITE the metadata. */
@@ -637,69 +628,34 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
 
       nsAutoString propertyValue;
       
-      // Default Tags
-      // TODO: move some into format-specific, to support multiple values (?)
-      WRITE_PROPERTY(result, SB_PROPERTY_TRACKNAME, Title);
-      WRITE_PROPERTY(result, SB_PROPERTY_ARTISTNAME, Artist);
-      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMNAME, Album);
-      WRITE_PROPERTY(result, SB_PROPERTY_COMMENT, Comment);
-      WRITE_PROPERTY(result, SB_PROPERTY_GENRE, Genre);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_YEAR, Year);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TRACKNUMBER, Track);
-      
       // TODO: something better than looking at file extensions?!
-
-      /* TODO: This stuff is NOT HANDLED YET. Will need to move into the filetype-specific part
-      
-#define WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY, method) \
-  PR_BEGIN_MACRO                                            \
-  result = mpMetadataPropertyArray->GetPropertyValue(       \
-    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
-  if (NS_SUCCEEDED(result)) {                               \
-    if (propertyValue.EqualsLiteral("0"))                   \
-      f.tag()->set##method(false);                          \
-    else                                                    \
-      f.tag()->set##method(true);                           \
-  }                                                         \
-  PR_END_MACRO
-      
-      // WRITE_PROPERTY is a natty macro
-      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMARTISTNAME, AlbumArtist);
-      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMNAME, Album);
-      WRITE_PROPERTY(result, SB_PROPERTY_LYRICS, Lyrics);
-      
-      // Disable writing producer.
-      //      WRITE_PROPERTY(result, SB_PROPERTY_PRODUCERNAME, Producer);
-      WRITE_PROPERTY(result, SB_PROPERTY_COMPOSERNAME, Composer);
-      WRITE_PROPERTY(result, SB_PROPERTY_CONDUCTORNAME, Conductor);
-      WRITE_PROPERTY(result, SB_PROPERTY_LYRICISTNAME, Lyricist);
-      WRITE_PROPERTY(result, SB_PROPERTY_RECORDLABELNAME, RecordLabel);
-      WRITE_PROPERTY(result, SB_PROPERTY_RATING, Rating);
-      WRITE_PROPERTY(result, SB_PROPERTY_LANGUAGE, Language);
-      WRITE_PROPERTY(result, SB_PROPERTY_KEY, Key);
-      WRITE_PROPERTY(result, SB_PROPERTY_COPYRIGHT, License);
-      WRITE_PROPERTY(result, SB_PROPERTY_COPYRIGHTURL, LicenseUrl);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALTRACKS, TotalTracks);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_DISCNUMBER, Disc);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALDISCS, TotalDiscs);
-      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_BPM, Bpm);
-      WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY_ISPARTOFCOMPILATION,
-              IsCompilation);
-      // todo: Tests!
-      */
       
       // TODO: write other files' metadata.
+      // TODO: Move all suff here to the WriteXXX methods, for better code
+      // overview.
       if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
         LOG(("Writing MP3 Metadata"));
-        TagLib::MPEG::File* MPEGFile = static_cast<TagLib::MPEG::File*>(f.file());
-
+        TagLib::MPEG::File* MPEGFile =
+          static_cast<TagLib::MPEG::File*>(f.file());
+        
+        // Write tags for all possible tag types, if they exist
+        if (NS_SUCCEEDED(result) && MPEGFile->APETag()) {
+          result = WriteAPE(MPEGFile->APETag());
+        }
+        if (NS_SUCCEEDED(result) && MPEGFile->ID3v1Tag()) {
+          result = WriteID3v1(MPEGFile->ID3v1Tag());
+        }
+        if (NS_SUCCEEDED(result) && MPEGFile->ID3v2Tag()) {
+          result = WriteID3v2(MPEGFile->ID3v2Tag());
+        }
+        
         // Write Image Data
         nsAutoString imageSpec;
-        result = mpMetadataPropertyArray->GetPropertyValue(
+        tmp_result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
           imageSpec
         );
-        if (NS_SUCCEEDED(result)) {
+        if (NS_SUCCEEDED(tmp_result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteMP3Image(MPEGFile, imageType, imageSpec);
         }
@@ -712,12 +668,12 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           title
         );*/
         nsAutoString url;
-        result = mpMetadataPropertyArray->GetPropertyValue(
+        tmp_result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
           url
         );
         // if we have an origin page
-        if (NS_SUCCEEDED(result)) {
+        if (NS_SUCCEEDED(tmp_result)) {
           if (MPEGFile->ID3v2Tag()) {
             /*TagLib::String taglibTitle = TagLib::String(
               NS_ConvertUTF16toUTF8(title).BeginReading(),
@@ -765,17 +721,22 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
                  fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
         LOG(("Write OGG metadata"));
-        // Write ogg specific metadata
+        // Write ogg specific metadata / TODO: some ogg-expert please check why there is no Ogg::FLAC in here?
         TagLib::Ogg::Vorbis::File* oggFile =
                 static_cast<TagLib::Ogg::Vorbis::File*>(f.file());
+        
+        // Write tags for all possible tag types
+        if (NS_SUCCEEDED(result) && oggFile->tag()){
+          result = WriteXiphComment(oggFile->tag());
+        }
 
         // Write Image Data
         nsAutoString imageSpec;
-        result = mpMetadataPropertyArray->GetPropertyValue(
+        tmp_result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
           imageSpec
         );
-        if (NS_SUCCEEDED(result)) {
+        if (NS_SUCCEEDED(tmp_result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteOGGImage(oggFile, imageType, imageSpec);
         }
@@ -797,25 +758,34 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         LOG(("Writing MPEG-4 metadata"));
         // Write MP4 specific metadata
         TagLib::MP4::File* mp4File = static_cast<TagLib::MP4::File*>(f.file());
+        
+        // Write advanced tags for all possible tag types
+        if (NS_SUCCEEDED(result) && mp4File->tag()){
+          result = WriteMP4(mp4File->tag());
+        }
 
         // Write Image Data
         nsAutoString imageSpec;
-        result = mpMetadataPropertyArray->GetPropertyValue(
+        tmp_result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
           imageSpec
         );
-        if (NS_SUCCEEDED(result)) {
+        if (NS_SUCCEEDED(tmp_result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteMP4Image(mp4File, imageType, imageSpec);
         }
       }
 
-      // Attempt to save the metadata
-      if (f.save()) {
-        result = NS_OK;
+      // Attempt to save the metadata, if everything worked till here
+      if (NS_SUCCEEDED(result)){
+        if (f.save()) {
+          result = NS_OK;
+        } else {
+          LOG(("%s: failed to save!", __FUNCTION__));
+          result = NS_ERROR_FAILURE;
+        }
       } else {
-        LOG(("%s: failed to save!", __FUNCTION__));
-        result = NS_ERROR_FAILURE;
+        LOG(("%s: failed to update tags!", __FUNCTION__));
       }
     }
 
@@ -2463,9 +2433,8 @@ void sbMetadataHandlerTaglib::ConvertCharset(
         !strcmp("us-ascii", aCharset))
 
     {
-        LOG(("sbMetadataHandlerTaglib::ConvertCharset: not converting to \"%s\" (guess? %i)",
-             aCharset ? aCharset : "(null)",
-             aString.shouldGuessCharacterSet()
+        LOG(("sbMetadataHandlerTaglib::ConvertCharset: not converting to \"%s\"",
+             aCharset ? aCharset : "(null)"
              ));
 
         toMozString(aString, aResult);
@@ -3087,6 +3056,424 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
   result = mpMetadataPropertyArray->AppendProperty(NS_ConvertASCIItoUTF16(name),
                                                    value);
   return (result);
+}
+
+// Note on the WriteXXX functions
+// These functions take care of writing Tag-Specific values. You should look
+// into them if you plan to add new tags or want to fix issues with specific
+// tags not handled directly with taglib EXCEPT COVERS (they are handled
+// above). TODO in far future once the PropertyMap supports binary stuff:
+// Move covers here, too?
+// To prevent the same investigations again:
+// mpMetadataPropertyArray->GetPropertyValue gives us ALL CHANGED TAGS,
+// including the ones we should delete (empty string). This means it is safe to
+// copy existing data and simply change the values we get from the
+// PropertyArray.
+
+/*
+ * WriteBasic
+ * 
+ *   --> properties             PropertyMap to write the metadata to
+ *   This function adds basic metadata to the given PropertyMap. Basic metadata
+ * is defined as the values that have a unified key within TagLib's property
+ * map for all tags supporting that specific value.
+ */
+nsresult sbMetadataHandlerTaglib::WriteBasic(
+    TagLib::PropertyMap         *properties)
+{
+  LOG(("Writing Tag-unspecific values"));
+  nsresult result = NS_OK;
+  nsAutoString propertyValue;
+
+  // Basic stuff
+  nsresult tmp_result;
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_TRACKNAME, "TITLE");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_ARTISTNAME, "ARTIST");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_ALBUMNAME, "ALBUM");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_COMMENT, "COMMENT");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_GENRE, "GENRE");
+  // Taglib uses "DATE" internally, so I guess "YEAR" is deprecated.
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_YEAR, "DATE");
+  if (NS_SUCCEEDED(tmp_result)) {
+    TagLib::String key = TagLib::String("YEAR");
+    properties->erase(key);
+  }
+
+  // Advanced stuff that might not be handled by all formats, but is handled
+  // by TagLib
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_ALBUMARTISTNAME, "ALBUMARTIST");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_LYRICS, "LYRICS");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_COMPOSERNAME, "COMPOSER");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_CONDUCTORNAME, "CONDUCTOR");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_LYRICISTNAME, "LYRICIST");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_RECORDLABELNAME, "PUBLISHER");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_LANGUAGE, "LANGUAGE");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_COPYRIGHT, "COPYRIGHT");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_COPYRIGHTURL, "COPYRIGHTURL");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_BPM, "BPM");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_KEY, "INITIALKEY");
+
+  // The following is tag-specific due to us supporting the total number of
+  // tracks/discs, listed here for better code overview:
+  // WRITE_PROPERTY(tmp_result, SB_PROPERTY_TRACKNUMBER, "TRACKNUMBER");
+  // WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
+
+  return result;
+}
+
+/*
+ * WriteSeparatedNumbers
+ * 
+ *   --> properties             PropertyMap to write the metadata to
+ *   This function adds tracknumber, total track count, discnumber and total
+ * disc count as slash-combined values into the TRACKNUMBER and DISCNUMBER
+ * fields of the given PropertyMap. This preserves existing values when only
+ * one part of the tag is changed.
+ */
+nsresult sbMetadataHandlerTaglib::WriteSeparatedNumbers(
+  TagLib::PropertyMap         *properties)
+{
+  nsresult tmp_result;
+  TagLib::StringList valueList;
+  nsAutoString propertyValue;
+  bool changed;
+  TagLib::String TRACKNUM = TagLib::String("TRACKNUMBER");
+  TagLib::String DISCNUM = TagLib::String("DISCNUMBER");
+  TagLib::String SEP = TagLib::String("/");
+  TagLib::String DEFAULT = TagLib::String("0");
+
+  // Track number / count
+  changed = false;
+  TagLib::String tracknum = DEFAULT;
+  TagLib::String trackcount = DEFAULT;
+
+  valueList = (*properties)[TRACKNUM];
+  if (!valueList.isEmpty()){
+    TagLib::StringList old = valueList[0].split(SEP);
+    if (!old.isEmpty()){
+      tracknum = old[0];
+      if (old.size() > 1){
+        trackcount = old[1];
+      }
+    }
+  }
+
+  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), propertyValue);
+  if (NS_SUCCEEDED(tmp_result)) {
+    changed = true;
+    TagLib::String value = TagLib::String(
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+      TagLib::String::UTF8);
+    if (value.isEmpty()){
+      tracknum = DEFAULT;
+    } else {
+      tracknum = value;
+    }
+  }
+  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS), propertyValue);
+  if (NS_SUCCEEDED(tmp_result)) {
+    changed = true;
+    TagLib::String value = TagLib::String(
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+      TagLib::String::UTF8);
+    if (value.isEmpty()){
+      trackcount = DEFAULT;
+    } else {
+      trackcount = value;
+    }
+  }
+
+  if (changed){
+    if (trackcount != DEFAULT){
+      tracknum += SEP;
+      tracknum += trackcount;
+    }
+    properties->erase(TRACKNUM);
+    if (tracknum != DEFAULT){
+      properties->insert(TRACKNUM, tracknum);
+    }
+  }
+
+  // Disc number / count
+  changed = false;
+  TagLib::String discnum = DEFAULT;
+  TagLib::String disccount = DEFAULT;
+
+  valueList = (*properties)[DISCNUM];
+  if (!valueList.isEmpty()){
+    TagLib::StringList old = valueList[0].split(SEP);
+    if (!old.isEmpty()){
+      discnum = old[0];
+      if (old.size() > 1){
+        disccount = old[1];
+      }
+    }
+  }
+
+  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER), propertyValue);
+  if (NS_SUCCEEDED(tmp_result)) {
+    changed = true;
+    TagLib::String value = TagLib::String(
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+      TagLib::String::UTF8);
+    if (value.isEmpty()){
+      discnum = DEFAULT;
+    } else {
+      discnum = value;
+    }
+  }
+  tmp_result = mpMetadataPropertyArray->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS), propertyValue);
+  if (NS_SUCCEEDED(tmp_result)) {
+    changed = true;
+    TagLib::String value = TagLib::String(
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+      TagLib::String::UTF8);
+    if (value.isEmpty()){
+      disccount = DEFAULT;
+    } else {
+      disccount = value;
+    }
+  }
+
+  if (changed){
+    if (disccount != DEFAULT){
+      discnum += SEP;
+      discnum += disccount;
+    }
+    properties->erase(DISCNUM);
+    if (discnum != DEFAULT){
+      properties->insert(DISCNUM, discnum);
+    }
+  }
+
+  return NS_OK;
+}
+
+/*
+ * WriteAPE
+ *
+ *   --> tag                    Tag to write the metadata to
+ *   This function adds metadata to the given APE tag.
+ */
+nsresult sbMetadataHandlerTaglib::WriteAPE(
+    TagLib::APE::Tag						*tag)
+{
+  LOG(("Writing APE Tag"));
+  nsresult result = NS_OK;
+  nsAutoString propertyValue;
+
+  TagLib::PropertyMap prop = tag->properties();
+  TagLib::PropertyMap* properties = &prop;
+
+  // General Tags
+  result = WriteBasic(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Track- and discnumbers
+  result = WriteSeparatedNumbers(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Additional APE Tags, TODO: discuss APE mapping in general.
+  nsresult tmp_result;
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_RATING, "NIGHTINGALE-RATING");
+
+  tag->setProperties(prop);
+  
+  return result;
+}
+
+/*
+ * WriteASF
+ *
+ *   --> tag                    Tag to write the metadata to
+ *   This function adds metadata to the given ASF tag.
+ */
+nsresult sbMetadataHandlerTaglib::WriteASF(
+    TagLib::ASF::Tag						*tag)
+{
+  LOG(("Writing ASF Tag"));
+  nsresult result = NS_OK;
+  nsAutoString propertyValue;
+
+  TagLib::PropertyMap prop = tag->properties();
+  TagLib::PropertyMap* properties = &prop;
+
+  // General Tags
+  result = WriteBasic(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Track- and discnumbers
+  nsresult tmp_result;
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_TRACKNUMBER, "TRACKNUMBER");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
+
+  // TODO: ASF did not yet recive the update to PropertyMap for non-default
+  // tags. We probably should write the tags here using tag->removeItem() and
+  // tag->setAttribute()
+
+  tag->setProperties(prop);
+  
+  return result;
+}
+
+/*
+ * WriteID3v1
+ *
+ *   --> tag                    Tag to write the metadata to
+ *   This function adds metadata to the given ID3v1 tag..
+ */
+nsresult sbMetadataHandlerTaglib::WriteID3v1(
+    TagLib::ID3v1::Tag					*tag)
+{
+  LOG(("Writing ID3v1 Tag"));
+  nsresult result = NS_OK;
+  nsAutoString propertyValue;
+
+  TagLib::PropertyMap prop = tag->properties();
+  TagLib::PropertyMap* properties = &prop;
+
+  // General Tags
+  result = WriteBasic(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Track- and discnumbers
+  nsresult tmp_result;
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_TRACKNUMBER, "TRACKNUMBER");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
+
+  tag->setProperties(prop);
+  
+  return result;
+}
+
+/*
+ * WriteID3v2
+ *
+ *   --> tag                    Tag to write the metadata to
+ *   This function adds metadata to the given ID3v2 tag.
+ */
+nsresult sbMetadataHandlerTaglib::WriteID3v2(
+    TagLib::ID3v2::Tag					*tag)
+{
+  LOG(("Writing ID3v2 Tag"));
+  nsresult result = NS_OK;
+  
+  nsAutoString propertyValue;
+
+  TagLib::PropertyMap prop = tag->properties();
+  TagLib::PropertyMap* properties = &prop;
+
+  // General Tags
+  result = WriteBasic(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Track- and discnumbers
+  result = WriteSeparatedNumbers(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Additional ID3v2 Tags
+  nsresult tmp_result;
+  // Future: use popularimeter instead of a custom tag?
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_RATING, "NIGHTINGALE-RATING");
+  
+  // Disabled, as this is is for iTunes only, and NOT a standard:
+  // Note that this is also disabled for all other Tags for now.
+  // Also, we'd need a BOOLEAN version for this only ("0" = delete mapping)
+  // WRITE_BOOLEAN_PROPERTY(tmp_result, SB_PROPERTY_ISPARTOFCOMPILATION,
+  //        "TCMP");
+
+  tag->setProperties(prop);
+  
+  return result;
+}
+
+/*
+ * WriteMP4
+ *
+ *   --> tag                    Tag to write the metadata to
+ *   This function adds metadata to the given MP4 tag.
+ */
+nsresult sbMetadataHandlerTaglib::WriteMP4(
+    TagLib::MP4::Tag						*tag)
+{
+  LOG(("Writing MP4 Tag"));
+  nsresult result = NS_OK;
+  nsAutoString propertyValue;
+
+  TagLib::PropertyMap prop = tag->properties();
+  TagLib::PropertyMap* properties = &prop;
+
+  // General Tags
+  result = WriteBasic(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Track- and discnumbers
+  nsresult tmp_result;
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_TRACKNUMBER, "TRACKNUMBER");
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_DISCNUMBER, "DISCNUMBER");
+
+  // TODO: MP4 did not yet recive the update to PropertyMap for non-default
+  // tags. We probably should write the tags here using tag->itemListMap()
+
+  tag->setProperties(prop);
+  
+  return result;
+}
+
+/*
+ * WriteXiphComment
+ *
+ *   --> tag                    Tag to write the metadata to
+ *   This function adds metadata to the given XiphComment tag.
+ */
+nsresult sbMetadataHandlerTaglib::WriteXiphComment(
+    TagLib::Ogg::XiphComment		*tag)
+{
+  LOG(("Writing XiphComment"));
+  nsresult result = NS_OK;
+  nsAutoString propertyValue;
+
+  TagLib::PropertyMap prop = tag->properties();
+  TagLib::PropertyMap* properties = &prop;
+
+  // General Tags
+  result = WriteBasic(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Track- and discnumbers
+  result = WriteSeparatedNumbers(properties);
+  if (!NS_SUCCEEDED(result)) {
+    return result;
+  }
+
+  // Additional APE Tags, TODO: discuss XiphComment mapping in general.
+  nsresult tmp_result;
+  WRITE_PROPERTY(tmp_result, SB_PROPERTY_RATING, "NIGHTINGALE-RATING");
+
+  tag->setProperties(prop);
+  
+  return result;
 }
 
 /*
