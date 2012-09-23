@@ -52,13 +52,24 @@ case $OSTYPE in
     echo "linux $arch"
     cd dependencies
  
-    if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-      $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
-      md5_verify "$depdirn-$version.tar.lzma"
-    fi
-    
-    if [ ! -d "$depdirn" ] ; then
-		tar xvf "$depdirn-$version.tar.lzma"
+	if [ $arch == "x86_64" ]; then
+		if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
+		  $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/2.2.0-Build-Deps/x86_64/linux-x86_64-2.2.0-20120922-release.tar.lzma"
+		  md5_verify "$depdirn-$version.tar.lzma"
+		fi
+		
+		if [ ! -d "$depdirn" ] ; then
+			tar xvf "linux-x86_64-2.2.0-20120922-release.tar.lzma"
+		fi
+	else
+		if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
+		  $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
+		  md5_verify "$depdirn-$version.tar.lzma"
+		fi
+		
+		if [ ! -d "$depdirn" ] ; then
+			tar xvf "$depdirn-$version.tar.lzma"
+		fi
 	fi
 	
     cd ../
