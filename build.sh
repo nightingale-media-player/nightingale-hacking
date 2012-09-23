@@ -53,9 +53,9 @@ case $OSTYPE in
     cd dependencies
  
 	if [ $arch == "x86_64" ]; then
-		if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
+		if [ ! -f "linux-x86_64-2.2.0-20120922-release.tar.lzma" ] ; then
 		  $DOWNLOADER "http://downloads.sourceforge.net/project/ngale/2.2.0-Build-Deps/x86_64/linux-x86_64-2.2.0-20120922-release.tar.lzma"
-		  md5_verify "$depdirn-$version.tar.lzma"
+		  md5_verify "linux-x86_64-2.2.0-20120922-release.tar.lzma"
 		fi
 		
 		if [ ! -d "$depdirn" ] ; then
