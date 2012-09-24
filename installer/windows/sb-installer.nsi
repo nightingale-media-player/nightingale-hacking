@@ -28,7 +28,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Icon ${PreferredInstallerIcon}
 
-var askToolbarTimeout
 var askToolbarRunning
 var askInstallerPresent
 
