@@ -47,7 +47,7 @@ case $OSTYPE in
     arch=`uname -m|sed -e 's/.*64.*/x86_64/;/x86_64/!s/.*/i686/'`
     depdirn="linux-$arch"
     patch=1
-    export CXXFLAGS="-fpermissive"
+    export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
     cd dependencies
