@@ -272,7 +272,7 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.onInit
-  !insertmacro Init
+   ${UAC.U.Elevate.AdminOnly} ${FileUninstallEXE}
 
   !insertmacro MUI_UNGETLANGUAGE
    Call un.CommonInstallerInit

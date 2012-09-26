@@ -28,6 +28,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Icon ${PreferredInstallerIcon}
 
+var askToolbarTimeout
 var askToolbarRunning
 var askInstallerPresent
 
@@ -379,9 +380,14 @@ FunctionEnd
 ; Installer Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+Function LaunchAppUserPrivilege 
+   Exec '"$INSTDIR\${FileMainEXE}"'    
+FunctionEnd
+
 Function LaunchApp
    Call CloseApp
-   !insertmacro UAC_AsUser_ExecShell "" "${FileMainEXE}" "" "" ""
+   GetFunctionAddress $0 LaunchAppUserPrivilege 
+   UAC::ExecCodeSegment $0 
 FunctionEnd 
 
 ; Only valid for release and distribution installers
@@ -686,13 +692,13 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
-  InitPluginsDir
-    
+   ; preedTODO: Check drive space
+  
    ; May seem weird, but it's used for update testing; so ignore the man
    ; behind the curtain...
    ReadEnvStr $0 SB_FORCE_NO_UAC
    ${If} $0 == "" 
-    !insertmacro Init
+      ${UAC.I.Elevate.AdminOnly}
    ${EndIf}
 
    Call CommonInstallerInit
@@ -848,11 +854,12 @@ Function AbortOperation
   ${If} $askToolbarRunning == "1"
       WriteRegStr HKCU "${AskInstallerRegistryKey}" "Cancel_PIP" "1"
   ${EndIf}
+  ${UAC.Unload} 
 FunctionEnd
 
 Function un.AbortOperation
+  ${UAC.Unload} 
 FunctionEnd
-
 ;---------------------------------
 ; Get installation  options
 Function GetParameterValue
