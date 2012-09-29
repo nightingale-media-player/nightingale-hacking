@@ -8,7 +8,7 @@ set -e
 # to your nightingale.config file!
 build="release"
 buildir="$(pwd)"
-version=1.11
+version=2.2.0
 
 download() {
   if which wget &>/dev/null ; then
@@ -60,26 +60,18 @@ case $OSTYPE in
     esac
     depdirn="linux-$arch"
     patch=1
+    #if you have a dep built on a differing date for either arch, just use a conditional to set this
+    depdate=20120929
     export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
 
     echo "linux $arch"
     ( cd dependencies && {
-		if [ $arch == "x86_64" ]; then
-			if [ ! -d "$depdirn" ] ; then
-			if [ ! -f "linux-x86_64-2.2.0-20120926-release.tar.lzma" ] ; then
-			  download "http://downloads.sourceforge.net/project/ngale/2.2.0-Build-Deps/x86_64/linux-x86_64-2.2.0-20120926-release.tar.lzma"
-			  md5_verify "linux-x86_64-2.2.0-20120926-release.tar.lzma"
-			fi		
-				tar xvf "linux-x86_64-2.2.0-20120926-release.tar.lzma"
+		if [ ! -d "$depdirn" ] ; then
+			if [ ! -f "$depdirn-$version-$depdate-release.tar.lzma" ] ; then
+				download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version-$depdate-release.tar.lzma"
+				md5_verify "$depdirn-$version-$depdate-release.tar.lzma"
 			fi
-		else
-			if [ ! -d "$depdirn" ] ; then
-				if [ ! -f "$depdirn-$version.tar.lzma" ] ; then
-					download "http://downloads.sourceforge.net/project/ngale/$version-Build-Deps/$arch/$depdirn-$version.tar.lzma"
-					md5_verify "$depdirn-$version.tar.lzma"
-				fi
-				tar xvf "$depdirn-$version.tar.lzma"
-			fi
+			tar xvf "$depdirn-$version-$depdate-release.tar.lzma"
 		fi
 	} ; )
     
