@@ -8,7 +8,7 @@ set -e
 # to your nightingale.config file!
 build="release"
 buildir="$(pwd)"
-version=2.2.0
+version=1.11
 
 download() {
   if which wget &>/dev/null ; then
@@ -60,6 +60,7 @@ case $OSTYPE in
     esac
     depdirn="linux-$arch"
     patch=1
+    version=2.2.0
     #if you have a dep built on a differing date for either arch, just use a conditional to set this
     depdate=20120929
     export CXXFLAGS="-O2 -fomit-frame-pointer -pipe -fpermissive"
