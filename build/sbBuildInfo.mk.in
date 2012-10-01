@@ -4,11 +4,11 @@
 # messy, but makes it so we don't have to write 2 cases in the parser code;
 # this can be removed when we're not using the buildbots to building the
 # 1.1-branch anymore.
-SB_APPNAME=Nightingale
+SB_APPNAME=Nightingale-Alpha
 SB_BUILD_ID=20121002013145
 BuildNumber=2403
 SB_BUILD_NUMBER=$(BuildNumber)
-SB_MILESTONE=2.2.0a
+SB_MILESTONE=15.0.1a
 SB_MILESTONE_WINDOWS=2.2.90.1
 SB_BRANCHNAME=trunk
 SB_PROFILE_VERSION=2
