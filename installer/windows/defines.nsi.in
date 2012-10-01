@@ -134,3 +134,11 @@
 
 !define InstallRebootNow "${BrandShortName} has been installed, but your computer must be rebooted to complete the installation.$\n$\nReboot now?"
 
+!define MUI_LANGDLL_REGISTRY_ROOT "HKLM" 
+!define MUI_LANGDLL_REGISTRY_KEY "${RootAppRegistryKeyBase}" 
+!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
+!define MUI_LANGDLL_COUNTRY_REGISTRY_ROOT "HKLM"
+!define MUI_LANGDLL_COUNTRY_REGISTRY_KEY "${RootAppRegistryKeyBase}" 
+!define MUI_LANGDLL_COUNTRY_REGISTRY_VALUENAME "Installer Country"
+!define languagesFolderName       "Languages\"

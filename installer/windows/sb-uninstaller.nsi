@@ -63,6 +63,8 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
+   DeleteRegKey /ifempty HKCU "Software\Modern UI Test\Unicode"
+  
    ; Disabled for now; see bug 22964
    ; Call un.RDSConfigRemove
    Call un.RemoveCdrip
@@ -271,5 +273,7 @@ FunctionEnd
 
 Function un.onInit
    ${UAC.U.Elevate.AdminOnly} ${FileUninstallEXE}
+
+  !insertmacro MUI_UNGETLANGUAGE
    Call un.CommonInstallerInit
 FunctionEnd

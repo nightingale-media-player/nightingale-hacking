@@ -570,6 +570,123 @@ recheck:
    ${EndIf}
 FunctionEnd
 
+;---------------------------------
+; set Language manually or automaticly if /LANG commandline is set
+
+Function setLang
+
+  Call getSystemLanguage
+
+  IfSilent _checkCommandLine
+  
+  ;Set language manually if not in silent mode
+    !insertmacro MUI_LANGDLL_DISPLAY
+    Goto _endsetLang
+  
+  _checkCommandLine:
+    ClearErrors
+    Push "LANG"         ; push the search string onto the stack
+    Push "1033"   ; push a default value onto the stack
+    Call GetParameterValue
+    Pop $2
+    MessageBox MB_OK "$2"
+    ;Check if $2 is part of the language list
+    ; Czech         1029
+    ; Dutch         1043
+    ; English         1033
+    ; French          1036
+    ; German          1031
+    ; Italian         1040
+    ; Japanese        1041
+    ; Korean          1042
+    ; OTHER (Choose English)    1033
+    ; Polish          1045
+    ; Portuguese        2070
+    ; PortugueseBR        1046
+    ; Russian         1049
+    ; SimpChinese       2052
+    ; Spanish       1034
+    ; Swedish       1053
+    ; Thai          1054
+    ; TradChinese       1028
+    ; Turkish         1055
+    ; Greek         1032
+    ; Slovak          1051
+    ; Hungarian       1038
+    ; Norwegian       1044
+    ; Finnish         1035
+    ; Danish          1030
+    ; Arabic          1025
+    ; Hebrew          1037
+    StrCmp $2 "1029" _setLangFinal 0 
+    StrCmp $2 "1043" _setLangFinal 0
+    StrCmp $2 "1033" _setLangFinal 0
+    StrCmp $2 "1036" _setLangFinal 0
+    StrCmp $2 "1031" _setLangFinal 0
+    StrCmp $2 "1040" _setLangFinal 0
+    StrCmp $2 "1041" _setLangFinal 0
+    StrCmp $2 "1042" _setLangFinal 0
+    StrCmp $2 "1033" _setLangFinal 0
+    StrCmp $2 "1045" _setLangFinal 0
+    StrCmp $2 "2070" _setLangFinal 0
+    StrCmp $2 "1046" _setLangFinal 0
+    StrCmp $2 "1049" _setLangFinal 0
+    StrCmp $2 "2052" _setLangFinal 0
+    StrCmp $2 "1034" _setLangFinal 0
+    StrCmp $2 "1053" _setLangFinal 0
+    StrCmp $2 "1054" _setLangFinal 0
+    StrCmp $2 "1028" _setLangFinal 0
+    StrCmp $2 "1055" _setLangFinal 0
+    StrCmp $2 "1032" _setLangFinal 0
+    StrCmp $2 "1051" _setLangFinal 0
+    StrCmp $2 "1038" _setLangFinal 0
+    StrCmp $2 "1044" _setLangFinal 0
+    StrCmp $2 "1035" _setLangFinal 0
+    StrCmp $2 "1030" _setLangFinal 0
+    StrCmp $2 "1025" _setLangFinal 0
+    StrCmp $2 "1037" _setLangFinal 0    
+    StrCpy $2 "1033" ;English default
+    
+  _setLangFinal:
+    StrCpy $LANGUAGE $2
+    
+  _endsetLang:
+${If} $UnpackMode != ${TRUE}
+  ;Store the Language value set during the installation
+  WriteRegStr HKLM "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" "$LANGUAGE"
+  
+${EndIf}
+
+FunctionEnd
+
+;---------------------------------------------------------
+; set Country manually or automaticly if previously set
+
+Function setCountry
+  !insertmacro MUI_LANGDLL_COUNTRY_DISPLAY
+  WriteRegStr HKLM "${MUI_LANGDLL_COUNTRY_REGISTRY_KEY}" "${MUI_LANGDLL_COUNTRY_REGISTRY_VALUENAME}" "$COUNTRY"
+FunctionEnd
+
+;---------------------------------
+; get Language from the system and set the $LANGUAGE value based on that
+
+Function getSystemLanguage
+
+  Push $0
+ 
+  System::Alloc "${NSIS_MAX_STRLEN}"
+  Pop $0
+ 
+  ;uses LOCALE_SYSTEM_DEFAULT and LOCALE_SLANGUAGE defines
+ 
+  System::Call "Kernel32::GetLocaleInfo(i,i,t,i)i(2048,0x2,.r0,${NSIS_MAX_STRLEN})i"
+  
+  Exch $0
+  
+  Pop $R0 
+  
+FunctionEnd
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Initialization Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -587,9 +704,14 @@ Function .onInit
    Call CommonInstallerInit
 
    ${If} $UnpackMode == ${TRUE}
-      ; Force a silent installation if we're just /UNPACK'ing
+      StrCpy $LANGUAGE 1033 ; Unpack lang is EN
+      StrCpy $COUNTRY 1033  ; Unpack country is US      ; Force a silent installation if we're just /UNPACK'ing
       SetSilent silent
    ${Else}
+      Call setLang
+      ;Set country
+      ;MessageBox MB_OK|MB_TOPMOST "set country"
+      Call setCountry
       ; Version checks! This is not in CommonInstallerInit, because we always 
       ; want the uninstaller to be able to run.
       ${If} $CheckOSVersion == ${TRUE}
@@ -614,8 +736,92 @@ Function .onInit
    Goto overrideVersionCheck
 
 confirmUnsupportedWinVersion:
-   MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "${InstallUnsupportedWinVersion}" /SD IDCANCEL IDOK overrideVersionCheck
-   Quit
+  ${Switch} $LANGUAGE
+    ${Case} ${LANG_ENGLISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST  "${unsupportedWindowsVersion_1033}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_FRENCH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1036}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_GERMAN}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1031}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_ITALIAN}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1040}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_SPANISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_3082}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_DUTCH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1043}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_PORTUGUESE}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_2070}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_SWEDISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1053}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_CZECH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1029}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_PortugueseBr}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1046}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_POLISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1045}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_JAPANESE}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1041}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_SIMPCHINESE}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_2052}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_TRADCHINESE}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1028}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_KOREAN}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1042}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_THAI}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1054}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_RUSSIAN}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1049}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_TURKISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1055}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_GREEK}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1032}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_SLOVAK}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1051}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_HUNGARIAN}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1038}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_NORWEGIAN}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1044}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_FINNISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1035}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_DANISH}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1030}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_ARABIC}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1025}" IDOK overrideVersionCheck
+      ${Break}
+    ${Case} ${LANG_HEBREW}
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST "${unsupportedWindowsVersion_1037}" IDOK overrideVersionCheck
+      ${Break}
+    ${Default} ;Default: english version
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_TOPMOST  "${unsupportedWindowsVersion_1033}" IDOK overrideVersionCheck
+      ${Break}
+  ${EndSwitch}
+  
+  ;If version check is not override, we simply close the installer
+  Quit 
 
 overrideVersionCheck:
 
@@ -653,4 +859,176 @@ FunctionEnd
 
 Function un.AbortOperation
   ${UAC.Unload} 
+FunctionEnd
+;---------------------------------
+; Get installation  options
+Function GetParameterValue
+  Exch $R0  ; get the top of the stack(default parameter) into R0
+  Exch      ; exchange the top of the stack(default) with
+            ; the second in the stack(parameter to search for)
+  Exch $R1  ; get the top of the stack(search parameter) into $R1
+ 
+  ;Preserve on the stack the registers used in this function
+  Push $R2
+  Push $R3
+  Push $R4
+  Push $R5
+ 
+  Strlen $R2 $R1+2    ; store the length of the search string into R2
+ 
+  Call GetParameters  ; get the command line parameters
+  Pop $R3             ; store the command line string in R3
+ 
+  # search for quoted search string
+  StrCpy $R5 '"'      ; later on we want to search for a open quote
+  Push $R3            ; push the 'search in' string onto the stack
+  Push '"/$R1='       ; push the 'search for'
+  Call StrStr         ; search for the quoted parameter value
+  Pop $R4
+  StrCpy $R4 $R4 "" 1   ; skip over open quote character, "" means no maxlen
+  StrCmp $R4 "" "" next ; if we didn't find an empty string go to next
+ 
+  # search for non-quoted search string
+  StrCpy $R5 ' '      ; later on we want to search for a space since we
+                      ; didn't start with an open quote '"' we shouldn't
+                      ; look for a close quote '"'
+  Push $R3            ; push the command line back on the stack for searching
+  Push '/$R1='        ; search for the non-quoted search string
+  Call StrStr
+  Pop $R4
+ 
+  ; $R4 now contains the parameter string starting at the search string,
+  ; if it was found
+next:
+  StrCmp $R4 "" check_for_switch ; if we didn't find anything then look for
+                                 ; usage as a command line switch
+  # copy the value after /$R1= by using StrCpy with an offset of $R2,
+  # the length of '/OUTPUT='
+  StrCpy $R0 $R4 "" $R2  ; copy commandline text beyond parameter into $R0
+  # search for the next parameter so we can trim this extra text off
+  Push $R0
+  Push $R5            ; search for either the first space ' ', or the first
+                      ; quote '"'
+                      ; if we found '"/output' then we want to find the
+                      ; ending ", as in '"/output=somevalue"'
+                      ; if we found '/output' then we want to find the first
+                      ; space after '/output=somevalue'
+  Call StrStr         ; search for the next parameter
+  Pop $R4
+  StrCmp $R4 "" done  ; if 'somevalue' is missing, we are done
+  StrLen $R4 $R4      ; get the length of 'somevalue' so we can copy this
+                      ; text into our output buffer
+  StrCpy $R0 $R0 -$R4 ; using the length of the string beyond the value,
+                      ; copy only the value into $R0
+  goto done           ; if we are in the parameter retrieval path skip over
+                      ; the check for a command line switch
+ 
+; See if the parameter was specified as a command line switch, like '/output'
+check_for_switch:
+  Push $R3            ; push the command line back on the stack for searching
+  Push '/$R1'         ; search for the non-quoted search string
+  Call StrStr
+  Pop $R4
+  StrCmp $R4 "" done  ; if we didn't find anything then use the default
+  StrCpy $R0 ""       ; otherwise copy in an empty string since we found the
+                      ; parameter, just didn't find a value
+ 
+done:
+  Pop $R5
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Exch $R0 ; put the value in $R0 at the top of the stack
+FunctionEnd
+
+Function GetParameters
+ 
+  Push $R0
+  Push $R1
+  Push $R2
+  Push $R3
+ 
+  StrCpy $R2 1
+  StrLen $R3 $CMDLINE
+ 
+  ;Check for quote or space
+  StrCpy $R0 $CMDLINE $R2
+  StrCmp $R0 '"' 0 +3
+    StrCpy $R1 '"'
+    Goto loop
+  StrCpy $R1 " "
+ 
+  loop:
+    IntOp $R2 $R2 + 1
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 $R1 get
+    StrCmp $R2 $R3 get
+    Goto loop
+ 
+  get:
+    IntOp $R2 $R2 + 1
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 " " get
+    StrCpy $R0 $CMDLINE "" $R2
+ 
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Exch $R0
+ 
+FunctionEnd
+  
+Function StrStr
+/*After this point:
+  ------------------------------------------
+  $R0 = SubString (input)
+  $R1 = String (input)
+  $R2 = SubStringLen (temp)
+  $R3 = StrLen (temp)
+  $R4 = StartCharPos (temp)
+  $R5 = TempStr (temp)*/
+ 
+  ;Get input from user
+  Exch $R0
+  Exch
+  Exch $R1
+  Push $R2
+  Push $R3
+  Push $R4
+  Push $R5
+ 
+  ;Get "String" and "SubString" length
+  StrLen $R2 $R0
+  StrLen $R3 $R1
+  ;Start "StartCharPos" counter
+  StrCpy $R4 0
+ 
+  ;Loop until "SubString" is found or "String" reaches its end
+  ${Do}
+    ;Remove everything before and after the searched part ("TempStr")
+    StrCpy $R5 $R1 $R2 $R4
+ 
+    ;Compare "TempStr" with "SubString"
+    ${IfThen} $R5 == $R0 ${|} ${ExitDo} ${|}
+    ;If not "SubString", this could be "String"'s end
+    ${IfThen} $R4 >= $R3 ${|} ${ExitDo} ${|}
+    ;If not, continue the loop
+    IntOp $R4 $R4 + 1
+  ${Loop}
+ 
+/*After this point:
+  ------------------------------------------
+  $R0 = ResultVar (output)*/
+ 
+  ;Remove part before "SubString" on "String" (if there has one)
+  StrCpy $R0 $R1 `` $R4
+ 
+  ;Return output to user
+  Pop $R5
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Exch $R0
 FunctionEnd
