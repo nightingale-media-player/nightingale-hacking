@@ -64,7 +64,7 @@ sbBaseFileSystemWatcher::~sbBaseFileSystemWatcher()
 NS_IMETHODIMP 
 sbBaseFileSystemWatcher::Init(sbIFileSystemListener *aListener, 
                               const nsAString & aRootPath, 
-                              PRBool aIsRecursive)
+                              bool aIsRecursive)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   
@@ -146,7 +146,7 @@ sbBaseFileSystemWatcher::StartWatching()
 }
 
 NS_IMETHODIMP 
-sbBaseFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
+sbBaseFileSystemWatcher::StopWatching(bool aShouldSaveSession)
 {
   nsRefPtr<sbBaseFileSystemWatcher> kungFuDeathGrip(this);
   mIsWatching = PR_FALSE;
@@ -177,7 +177,7 @@ sbBaseFileSystemWatcher::DeleteSession(const nsACString & aSessionGuid)
 }
 
 NS_IMETHODIMP 
-sbBaseFileSystemWatcher::GetIsWatching(PRBool *aIsWatching)
+sbBaseFileSystemWatcher::GetIsWatching(bool *aIsWatching)
 {
   NS_ENSURE_ARG_POINTER(aIsWatching);
   *aIsWatching = mIsWatching;
@@ -201,7 +201,7 @@ sbBaseFileSystemWatcher::GetSessionGuid(nsACString & aSessionGuid)
 }
 
 NS_IMETHODIMP
-sbBaseFileSystemWatcher::GetIsSupported(PRBool *aIsSupported)
+sbBaseFileSystemWatcher::GetIsSupported(bool *aIsSupported)
 {
   NS_ENSURE_ARG_POINTER(aIsSupported);
   *aIsSupported = mIsSupported;

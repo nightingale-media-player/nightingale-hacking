@@ -199,7 +199,7 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
 
   // If aDeviceXMLInfoFile is a directory, scan it recursively for
   // device XML info files:
-  PRBool isDir = PR_FALSE;
+  bool isDir = PR_FALSE;
   rv = aDeviceXMLInfoFile->IsDirectory(&isDir);
   NS_ENSURE_SUCCESS(rv, rv);
   if (isDir) {
@@ -234,7 +234,7 @@ nsresult sbDeviceXMLInfo::Read(nsIFile *          aDeviceXMLInfoFile,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Enumerate files and filter by extension:
-    PRBool more = PR_FALSE;
+    bool more = PR_FALSE;
     while(NS_SUCCEEDED(rv = scanner->HasMoreElements(&more)) && more)
     {
       // Get the next file:
@@ -426,7 +426,7 @@ nsresult sbDeviceXMLInfo::Read(nsIDOMDocument* aDeviceXMLInfoDocument)
 //
 
 nsresult
-sbDeviceXMLInfo::GetDeviceInfoPresent(PRBool* aDeviceInfoPresent)
+sbDeviceXMLInfo::GetDeviceInfoPresent(bool* aDeviceInfoPresent)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDeviceInfoPresent);
@@ -799,7 +799,7 @@ sbDeviceXMLInfo::GetMountTimeout(PRUint32* aMountTimeout)
 //
 
 nsresult
-sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
+sbDeviceXMLInfo::GetDoesDeviceSupportReformat(bool *aOutSupportsReformat)
 {
   NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
   *aOutSupportsReformat = PR_FALSE;
@@ -845,7 +845,7 @@ sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
 //
 
 nsresult
-sbDeviceXMLInfo::GetOnlyMountMediaFolders(PRBool* aOnlyMountMediaFolders)
+sbDeviceXMLInfo::GetOnlyMountMediaFolders(bool* aOnlyMountMediaFolders)
 {
   // Validate arguments and ensure this is called on the main thread.
   NS_ENSURE_ARG_POINTER(aOnlyMountMediaFolders);
@@ -1135,7 +1135,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
     }
 
     // Check if the device matches the device node.
-    PRBool matches;
+    bool matches;
     rv = DeviceMatchesDeviceNode(childNode, properties, &matches);
     NS_ENSURE_SUCCESS(rv, rv);
     if (matches) {
@@ -1204,7 +1204,7 @@ nsresult sbDeviceXMLInfo::GetDeviceInfoVersion(
 nsresult
 sbDeviceXMLInfo::DeviceMatchesDeviceNode(nsIDOMNode*      aDeviceNode,
                                          nsIPropertyBag2* aDeviceProperties,
-                                         PRBool*          aDeviceMatches)
+                                         bool*          aDeviceMatches)
 {
   NS_ENSURE_ARG_POINTER(aDeviceNode);
   NS_ENSURE_ARG_POINTER(aDeviceProperties);
@@ -1218,7 +1218,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceNode(nsIDOMNode*      aDeviceNode,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if each device node attribute matches the device.
-  PRBool matches = PR_TRUE;
+  bool matches = PR_TRUE;
   PRUint32 attributeCount;
   rv = attributes->GetLength(&attributeCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1245,7 +1245,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceNode(nsIDOMNode*      aDeviceNode,
     deviceKey.Append(attributeName);
 
     // If the device property key does not exist, the device does not match.
-    PRBool hasKey;
+    bool hasKey;
     rv = aDeviceProperties->HasKey(deviceKey, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasKey) {
@@ -1260,7 +1260,7 @@ sbDeviceXMLInfo::DeviceMatchesDeviceNode(nsIDOMNode*      aDeviceNode,
 
     // If the device property value and the attribute value are not equal, the
     // device does not match.
-    PRBool equal;
+    bool equal;
     rv = sbVariantsEqual(deviceValue, sbNewVariant(attributeValue), &equal);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!equal) {
@@ -1287,7 +1287,7 @@ sbDeviceXMLInfo::GetDeviceInfoNodes
                     const nsAString&                  aTagName,
                     nsTArray< nsCOMPtr<nsIDOMNode> >& aNodeList)
 {
-  PRBool   success;
+  bool   success;
   nsresult rv;
 
   // Start with an empty node list.
@@ -1296,7 +1296,7 @@ sbDeviceXMLInfo::GetDeviceInfoNodes
   // Check for nodes that descend from the device node.
   nsCOMPtr<nsIDOMNodeList> nodeList;
   PRUint32                 nodeCount = 0;
-  PRBool                   areDeviceNodeDescendants = PR_TRUE;
+  bool                   areDeviceNodeDescendants = PR_TRUE;
   if (mDeviceElement) {
     rv = mDeviceElement->GetElementsByTagNameNS(aNameSpace,
                                                 aTagName,
@@ -1330,7 +1330,7 @@ sbDeviceXMLInfo::GetDeviceInfoNodes
 
     // If nodes didn't come from a device node, skip all that do.
     if (!areDeviceNodeDescendants) {
-      PRBool isDeviceNodeDescendant;
+      bool isDeviceNodeDescendant;
       rv = IsDeviceNodeDescendant(node, &isDeviceNodeDescendant);
       NS_ENSURE_SUCCESS(rv, rv);
       if (isDeviceNodeDescendant)
@@ -1367,7 +1367,7 @@ sbDeviceXMLInfo::GetDeviceInfoNodes(const nsAString&                  aTagName,
 
 nsresult
 sbDeviceXMLInfo::IsDeviceNodeDescendant(nsIDOMNode* aNode,
-                                        PRBool*     aIsDeviceNodeDescendant)
+                                        bool*     aIsDeviceNodeDescendant)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aNode);

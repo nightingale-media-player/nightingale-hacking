@@ -54,11 +54,11 @@
 // Static field initializers.
 //
 
-PRBool sbIPDLog::mInitialized = PR_FALSE;
+bool sbIPDLog::mInitialized = PR_FALSE;
 #ifdef PR_LOGGING
 PRLogModuleInfo* sbIPDLog::mLogModuleInfo = nsnull;
 #endif
-PRBool sbIPDLog::mFieldLoggingEnabled = PR_FALSE;
+bool sbIPDLog::mFieldLoggingEnabled = PR_FALSE;
 
 
 /**

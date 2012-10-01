@@ -48,7 +48,7 @@ sbTArrayStringEnumerator::sbTArrayStringEnumerator(const sbCStringArray* aString
 };
 
 NS_IMETHODIMP
-sbTArrayStringEnumerator::HasMore(PRBool *_retval)
+sbTArrayStringEnumerator::HasMore(bool *_retval)
 {
   *_retval = mNextIndex < mStringArray.Length();
   return NS_OK;
@@ -84,7 +84,7 @@ sbTArrayCStringEnumerator::sbTArrayCStringEnumerator(const sbCStringArray* aCStr
 };
 
 NS_IMETHODIMP
-sbTArrayCStringEnumerator::HasMore(PRBool *_retval)
+sbTArrayCStringEnumerator::HasMore(bool *_retval)
 {
   *_retval = mNextIndex < mCStringArray.Length();
   return NS_OK;

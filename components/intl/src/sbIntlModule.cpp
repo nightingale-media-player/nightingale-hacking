@@ -26,7 +26,7 @@
 
 #include "nsIGenericFactory.h"
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsServiceManagerUtils.h>
 
 #include "sbStringTransform.h"

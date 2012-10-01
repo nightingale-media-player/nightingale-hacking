@@ -71,9 +71,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
     nsString workingStr;
 
-    PRBool leadingOnly = aTransformFlags & 
+    bool leadingOnly = aTransformFlags & 
                          sbIStringTransform::TRANSFORM_IGNORE_LEADING;
-    PRBool bypassTest = PR_FALSE;
+    bool bypassTest = PR_FALSE;
 
     gchar* nonspaceStr = g_utf8_normalize(str.BeginReading(), 
                                           str.Length(), 
@@ -105,9 +105,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
     nsString workingStr;
 
-    PRBool leadingOnly = aTransformFlags & 
+    bool leadingOnly = aTransformFlags & 
                          sbIStringTransform::TRANSFORM_IGNORE_LEADING;
-    PRBool bypassTest = PR_FALSE;
+    bool bypassTest = PR_FALSE;
 
     gchar* nosymbolsStr = g_utf8_normalize(str.BeginReading(), 
                                            str.Length(), 
@@ -156,9 +156,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
      (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE)) {
     nsString workingStr;
 
-    PRBool leadingOnly = aTransformFlags & 
+    bool leadingOnly = aTransformFlags & 
                          sbIStringTransform::TRANSFORM_IGNORE_LEADING;
-    PRBool bypassTest = PR_FALSE;
+    bool bypassTest = PR_FALSE;
 
     gchar* nosymbolsStr = g_utf8_normalize(str.BeginReading(), 
                                            str.Length(), 

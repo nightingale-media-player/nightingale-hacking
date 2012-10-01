@@ -89,7 +89,7 @@ sbIPDSysDevice::Eject()
   // Try ejecting the device three times.
   WCHAR         vetoName[MAX_PATH];
   PNP_VETO_TYPE vetoType;
-  PRBool        ejected = PR_FALSE;
+  bool        ejected = PR_FALSE;
   for (int i = 0; i < 3; i++) {
     // Try ejecting using CM_Query_And_Remove_SubTree.
     cfgRet = CM_Query_And_Remove_SubTreeW(parentDevInst,

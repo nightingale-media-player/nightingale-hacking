@@ -89,7 +89,7 @@ SB_GetCategoryEntryValues(const char*          aCategory,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the value of each entry.
-  PRBool hasMore;
+  bool hasMore;
   rv = enumerator->HasMoreElements(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
   while (hasMore) {

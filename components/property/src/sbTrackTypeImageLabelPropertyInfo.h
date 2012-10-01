@@ -42,7 +42,7 @@ public:
                      PRUint32 aBoxHeight,
                      PRUint32 aMouseX,
                      PRUint32 aMouseY,
-                     PRBool* _retval);
+                     bool* _retval);
 };
 
 #endif /* __SBTRACKTYPEIMAGELABELPROPERTYINFO_H__ */

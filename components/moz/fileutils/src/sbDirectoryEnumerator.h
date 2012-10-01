@@ -56,6 +56,9 @@
 #include <nsCOMPtr.h>
 #include <nsISimpleEnumerator.h>
 
+namespace mozilla {
+  class sbMozHackMutex;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -136,14 +139,14 @@ private:
   // mFilesOnly                 If true, enumerate only files.
   //
 
-  PRBool                        mIsInitialized;
-  PRLock*                       mEnumeratorLock;
+  bool                          mIsInitialized;
+  mozilla::sbMozHackMutex*      mEnumeratorLock;
   nsCOMArray<nsISimpleEnumerator>
                                 mEntriesEnumStack;
   nsCOMPtr<nsIFile>             mNextFile;
   PRUint32                      mMaxDepth;
-  PRBool                        mDirectoriesOnly;
-  PRBool                        mFilesOnly;
+  bool                          mDirectoriesOnly;
+  bool                          mFilesOnly;
 
 
   //

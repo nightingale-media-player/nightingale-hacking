@@ -178,7 +178,7 @@ sbDeviceXMLCapabilities::GetCapabilities
 sbDeviceXMLCapabilities::AddCapabilities
                            (sbIDeviceCapabilities* aCapabilities,
                             const char*            aXMLCapabilitiesSpec,
-                            PRBool*                aAddedCapabilities,
+                            bool*                aAddedCapabilities,
                             sbIDevice*             aDevice)
 {
   // Validate arguments.
@@ -239,7 +239,7 @@ sbDeviceXMLCapabilities::AddCapabilities
 sbDeviceXMLCapabilities::AddCapabilities
                            (sbIDeviceCapabilities* aCapabilities,
                             nsIDOMNode*            aDeviceCapsRootNode,
-                            PRBool*                aAddedCapabilities,
+                            bool*                aAddedCapabilities,
                             sbIDevice*             aDevice)
 {
   // Validate arguments.
@@ -304,7 +304,7 @@ sbDeviceXMLCapabilities::ProcessCapabilities(nsIDOMNode* aRootNode)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Process device capabilities if they match device.
-    PRBool deviceMatches;
+    bool deviceMatches;
     rv = DeviceMatchesCapabilitiesNode(deviceCapsNode, &deviceMatches);
     NS_ENSURE_SUCCESS(rv, rv);
     if (deviceMatches) {
@@ -563,7 +563,7 @@ static
 nsresult
 GetFractionRangeValues(nsIDOMNode * aDOMNode,
                        nsIArray **aOutCapRangeArray,
-                       PRBool *aOutIsRange)
+                       bool *aOutIsRange)
 {
   NS_ENSURE_ARG_POINTER(aDOMNode);
   NS_ENSURE_ARG_POINTER(aOutCapRangeArray);
@@ -742,7 +742,7 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
     if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    PRBool isPreferred = isPreferredString.EqualsLiteral("true");
+    bool isPreferred = isPreferredString.EqualsLiteral("true");
 
     nsCOMPtr<nsIDOMNodeList> ranges;
     rv = domNode->GetChildNodes(getter_AddRefs(ranges));
@@ -1015,10 +1015,10 @@ sbDeviceXMLCapabilities::ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
   nsCOMPtr<sbIDevCapRange> heights;
   nsCOMPtr<sbIDevCapRange> bitRates;
 
-  PRBool parValuesAreRange = PR_TRUE;
+  bool parValuesAreRange = PR_TRUE;
   nsCOMPtr<nsIArray> parValueArray;
 
-  PRBool frameRateValuesAreRange = PR_TRUE;
+  bool frameRateValuesAreRange = PR_TRUE;
   nsCOMPtr<nsIArray> frameRateValuesArray;
 
   nsCOMPtr<nsIDOMNode> domNode;
@@ -1170,7 +1170,7 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
   if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  PRBool isPreferred = isPreferredString.EqualsLiteral("true");
+  bool isPreferred = isPreferredString.EqualsLiteral("true");
 
   // Retrieve the child nodes for the video node
   nsCOMPtr<nsIDOMNodeList> domNodes;
@@ -1361,7 +1361,7 @@ sbDeviceXMLCapabilities::ProcessPlaylist(nsIDOMNode * aPlaylistNode)
 nsresult
 sbDeviceXMLCapabilities::DeviceMatchesCapabilitiesNode
                            (nsIDOMNode * aCapabilitiesNode,
-                            PRBool * aDeviceMatches)
+                            bool * aDeviceMatches)
 {
   NS_ENSURE_ARG_POINTER(aCapabilitiesNode);
   NS_ENSURE_ARG_POINTER(aDeviceMatches);
@@ -1422,7 +1422,7 @@ sbDeviceXMLCapabilities::DeviceMatchesCapabilitiesNode
     }
 
     // Check if the device matches the device node.
-    PRBool matches;
+    bool matches;
     rv = DeviceMatchesDeviceNode(childNode, properties, &matches);
     NS_ENSURE_SUCCESS(rv, rv);
     if (matches) {
@@ -1441,7 +1441,7 @@ nsresult
 sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
                            (nsIDOMNode * aDeviceNode,
                             nsIPropertyBag2 * aDeviceProperties,
-                            PRBool * aDeviceMatches)
+                            bool * aDeviceMatches)
 {
   NS_ENSURE_ARG_POINTER(aDeviceNode);
   NS_ENSURE_ARG_POINTER(aDeviceProperties);
@@ -1455,7 +1455,7 @@ sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if each device node attribute matches the device.
-  PRBool matches = PR_TRUE;
+  bool matches = PR_TRUE;
   PRUint32 attributeCount;
   rv = attributes->GetLength(&attributeCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1482,7 +1482,7 @@ sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
     deviceKey.Append(attributeName);
 
     // If the device property key does not exist, the device does not match.
-    PRBool hasKey;
+    bool hasKey;
     rv = aDeviceProperties->HasKey(deviceKey, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasKey) {
@@ -1497,7 +1497,7 @@ sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
 
     // If the device property value and the attribute value are not equal, the
     // device does not match.
-    PRBool equal;
+    bool equal;
     rv = sbVariantsEqual(deviceValue, sbNewVariant(attributeValue), &equal);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!equal) {

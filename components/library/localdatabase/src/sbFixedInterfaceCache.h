@@ -28,7 +28,6 @@
 
 #include <utility>
 
-#include <nsAutoLock.h>
 #include <nsTArray.h>
 
 /**

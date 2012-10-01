@@ -165,56 +165,56 @@ sbAbstractPropertyBuilder::SetDisplayNameKey(const nsAString& aDisplayNameKey)
 }
 
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::GetUserViewable(PRBool* aUserViewable)
+sbAbstractPropertyBuilder::GetUserViewable(bool* aUserViewable)
 {
   NS_ENSURE_ARG_POINTER(aUserViewable);
   *aUserViewable = mUserViewable;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetUserViewable(PRBool aUserViewable)
+sbAbstractPropertyBuilder::SetUserViewable(bool aUserViewable)
 {
   mUserViewable = aUserViewable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::GetUserEditable(PRBool* aUserEditable)
+sbAbstractPropertyBuilder::GetUserEditable(bool* aUserEditable)
 {
   NS_ENSURE_ARG_POINTER(aUserEditable);
   *aUserEditable = mUserEditable;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetUserEditable(PRBool aUserEditable)
+sbAbstractPropertyBuilder::SetUserEditable(bool aUserEditable)
 {
   mUserEditable = aUserEditable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::GetRemoteReadable(PRBool* aRemoteReadable)
+sbAbstractPropertyBuilder::GetRemoteReadable(bool* aRemoteReadable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteReadable);
   *aRemoteReadable = mRemoteReadable;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetRemoteReadable(PRBool aRemoteReadable)
+sbAbstractPropertyBuilder::SetRemoteReadable(bool aRemoteReadable)
 {
   mRemoteReadable = aRemoteReadable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::GetRemoteWritable(PRBool* aRemoteWritable)
+sbAbstractPropertyBuilder::GetRemoteWritable(bool* aRemoteWritable)
 {
   NS_ENSURE_ARG_POINTER(aRemoteWritable);
   *aRemoteWritable = mRemoteWritable;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetRemoteWritable(PRBool aRemoteWritable)
+sbAbstractPropertyBuilder::SetRemoteWritable(bool aRemoteWritable)
 {
   mRemoteWritable = aRemoteWritable;
   return NS_OK;

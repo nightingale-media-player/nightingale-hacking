@@ -29,7 +29,6 @@
 #include <nsIURI.h>
 #include <nsIURL.h>
 
-#include <nsAutoLock.h>
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
@@ -41,7 +40,6 @@
 #include <sbIMediacoreFactory.h>
 #include <sbIPlaylistReader.h>
 #include <sbTArrayStringEnumerator.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 
 const char *gBannedWebExtensions[] = {"htm", "html", "php", "php3"};
@@ -77,7 +75,7 @@ sbMediacoreTypeSniffer::Init()
 
   factoryRegistrar.swap(mFactoryRegistrar);
 
-  PRBool success = mAudioExtensions.Init();
+  bool success = mAudioExtensions.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mVideoExtensions.Init();
@@ -118,7 +116,7 @@ sbMediacoreTypeSniffer::Init()
     rv = caps->GetAudioExtensions(getter_AddRefs(extensions));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool hasMore = PR_FALSE;
+    bool hasMore = PR_FALSE;
     while(NS_SUCCEEDED(extensions->HasMore(&hasMore)) &&
           hasMore) {
       nsString extension;
@@ -256,7 +254,7 @@ sbMediacoreTypeSniffer::GetFileExtensionFromURI(nsIURI* aURI,
 
 NS_IMETHODIMP
 sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL,
-                                        PRBool *_retval)
+                                        bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -302,7 +300,7 @@ sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL,
 }
 
 NS_IMETHODIMP
-sbMediacoreTypeSniffer::IsValidAudioURL(nsIURI *aURL, PRBool *aRetVal)
+sbMediacoreTypeSniffer::IsValidAudioURL(nsIURI *aURL, bool *aRetVal)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(aRetVal);
@@ -330,7 +328,7 @@ sbMediacoreTypeSniffer::IsValidAudioURL(nsIURI *aURL, PRBool *aRetVal)
 
 NS_IMETHODIMP
 sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
-                                        PRBool *_retval)
+                                        bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -368,7 +366,7 @@ sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
 
 NS_IMETHODIMP
 sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
-                                           PRBool *_retval)
+                                           bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -405,7 +403,7 @@ sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
 }
 
 NS_IMETHODIMP
-sbMediacoreTypeSniffer::IsValidImageURL(nsIURI *aURL, PRBool *aRetVal)
+sbMediacoreTypeSniffer::IsValidImageURL(nsIURI *aURL, bool *aRetVal)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(aRetVal);
@@ -432,7 +430,7 @@ sbMediacoreTypeSniffer::IsValidImageURL(nsIURI *aURL, PRBool *aRetVal)
 
 NS_IMETHODIMP
 sbMediacoreTypeSniffer::IsValidWebSafePlaylistURL(nsIURI *aURL,
-                                                  PRBool *_retval)
+                                                  bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);

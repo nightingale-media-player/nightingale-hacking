@@ -123,7 +123,7 @@ NS_IMETHODIMP nsImageToBitmap::ConvertImageToCursor(gfxImageSurface* aImage,
 }
 
 nsresult nsImageToBitmap::ImageToIcon(gfxImageSurface* aImage,
-  PRBool aIcon, PRUint32 aHotspotX, PRUint32 aHotspotY,
+  bool aIcon, PRUint32 aHotspotX, PRUint32 aHotspotY,
   HICON& _retval)
 {
   nsresult rv;

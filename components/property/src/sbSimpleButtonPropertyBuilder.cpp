@@ -47,7 +47,7 @@ sbSimpleButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   nsresult rv = GetFinalDisplayName(displayName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasLabel = PR_FALSE;
+  bool hasLabel = PR_FALSE;
   nsString label;
   if (!mLabelKey.IsEmpty()) {
     rv = GetStringFromName(mBundle, mLabelKey, label);

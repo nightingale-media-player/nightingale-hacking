@@ -88,7 +88,7 @@ protected:
   nsCOMPtr<nsITimer>                      mTimer;
   
   // Flag to indicate that the timer is running
-  PRBool                                  mRunning;
+  bool                                  mRunning;
 };
 
 #endif // SBMAINTHREADMETADATAPROCESSOR_H_

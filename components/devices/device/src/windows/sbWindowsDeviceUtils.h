@@ -88,7 +88,7 @@ nsresult sbWinCreateAncestorDeviceFile
 
 nsresult sbWinDeviceHasInterface(DEVINST     aDevInst,
                                  const GUID* aGUID,
-                                 PRBool*     aHasInterface);
+                                 bool*     aHasInterface);
 
 nsresult sbWinGetDevicePath(DEVINST     aDevInst,
                             const GUID* aGUID,
@@ -105,10 +105,10 @@ nsresult sbWinFindDevicesByInterface
            (nsTArray<DEVINST>& aDevInstList,
             DEVINST            aRootDevInst,
             const GUID*        aGUID,
-            PRBool             aSearchAncestors = PR_FALSE);
+            bool             aSearchAncestors = PR_FALSE);
 
 nsresult sbWinFindDeviceByClass(DEVINST*         aDevInst,
-                                PRBool*          aFound,
+                                bool*          aFound,
                                 DEVINST          aRootDevInst,
                                 const nsAString& aClass);
 
@@ -140,7 +140,7 @@ nsresult sbWinDeviceEject(nsAString const & aMountPath);
 
 nsresult sbWinDeviceIsDescendantOf(DEVINST aDevInst,
                                    DEVINST aDescendantDevInst,
-                                   PRBool* aIsDescendant);
+                                   bool* aIsDescendant);
 
 nsresult sbWinRegisterDeviceHandleNotification(HDEVNOTIFY* aDeviceNotification,
                                                HWND        aEventWindow,

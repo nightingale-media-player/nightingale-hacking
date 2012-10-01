@@ -132,7 +132,7 @@ sbSecurityMixin::Init(sbISecurityAggregator *aOuter,
                       const char **aMethodsArray, PRUint32 aMethodsArrayLength,
                       const char **aRPropsArray, PRUint32 aRPropsArrayLength,
                       const char **aWPropsArray, PRUint32 aWPropsArrayLength,
-                      PRBool aPrivileged)
+                      bool aPrivileged)
 {
   NS_ENSURE_ARG_POINTER(aOuter);
 
@@ -174,7 +174,7 @@ sbSecurityMixin::CanCreateWrapper(const nsIID *aIID, char **_retval)
   }
 
   // Make sure the interface requested is one of the approved interfaces
-  PRBool canCreate = PR_FALSE;
+  bool canCreate = PR_FALSE;
   for ( PRUint32 index = 0; index < mInterfacesCount; index++ ) {
     const nsIID* ifaceIID = mInterfaces[index];
     if ( aIID->Equals(*ifaceIID) ) {
@@ -391,13 +391,13 @@ sbSecurityMixin::GetCodebase(nsIURI **aCodebase) {
   return NS_OK;
 } 
 
-PRBool
+bool
 sbSecurityMixin::GetScopedName(nsTArray<nsCString> &aStringArray,
                                const nsAString &aMethodName,
                                nsAString &aScopedName)
 {
   LOG(( "sbSecurityMixin::GetScopedName()"));
-  PRBool approved = PR_FALSE;
+  bool approved = PR_FALSE;
   nsAutoString method; 
 
   nsCOMPtr<nsIStringEnumerator> methods = new sbTArrayStringEnumerator(&aStringArray);
@@ -414,9 +414,9 @@ sbSecurityMixin::GetScopedName(nsTArray<nsCString> &aStringArray,
   return approved;
 }
 
-PRBool
+bool
 sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
-                                            PRBool disableNotificationCheck)
+                                            bool disableNotificationCheck)
 {
   LOG(( "sbSecurityMixin::GetPermissionForScopedName()"));
 
@@ -425,7 +425,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
     return PR_TRUE;
   }
 
-  PRBool allowed = PR_FALSE;
+  bool allowed = PR_FALSE;
 
   nsCOMPtr<nsIURI> codebase;
   GetCodebase( getter_AddRefs(codebase) );
@@ -502,7 +502,7 @@ sbSecurityMixin::GetPermissionForScopedName(const nsAString &aScopedName,
         do_GetService( "@mozilla.org/preferences-service;1", &rv );
       NS_ENSURE_SUCCESS( rv, allowed );
       
-      PRBool notify;
+      bool notify;
       // look up the pref
       nsCString prefKey("songbird.rapi.");
       prefKey.Append(scope->name);
@@ -535,7 +535,7 @@ sbSecurityMixin::GetScopeForScopedName(const nsAString &aScopedName) {
   return NULL;
 }
 
-PRBool
+bool
 sbSecurityMixin::GetPermission(nsIURI *aURI, const struct Scope *aScope )
 {
   NS_ENSURE_TRUE( aURI, PR_FALSE );
@@ -556,7 +556,7 @@ sbSecurityMixin::GetPermission(nsIURI *aURI, const struct Scope *aScope )
   NS_ENSURE_SUCCESS( rv, PR_FALSE );
 
   // build the pref key to check
-  PRBool prefBlocked = PR_TRUE;
+  bool prefBlocked = PR_TRUE;
   nsCString prefKey("songbird.rapi.");
   prefKey.Append(aScope->name);
   prefKey.AppendLiteral("_disable");
@@ -622,7 +622,7 @@ sbSecurityMixin::SetPermission(nsIURI *aURI, const nsACString &aScopedName)
 nsresult
 sbSecurityMixin::DispatchNotificationEvent(const char* aNotificationType,
                                            const Scope* aScope,
-                                           PRBool aHasAccess)
+                                           bool aHasAccess)
 {
   // NOTE: This method only /tries/ to dispatch the notification event.
   // If there's no notification document then it fails mostly silently.
@@ -738,7 +738,7 @@ inline char* SB_CloneAllAccess()
 
 NS_IMETHODIMP
 sbSecurityMixin::GetPermissionForScopedNameWrapper( const nsAString& aRemotePermCategory,
-                                                    PRBool *_retval )
+                                                    bool *_retval )
 {
   // We need to prevent the notification from appearing when calling
   *_retval = GetPermissionForScopedName( aRemotePermCategory, PR_TRUE );

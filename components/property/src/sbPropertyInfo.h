@@ -68,21 +68,21 @@ NS_IMETHOD GetDisplayName(nsAString & aDisplayName) { return _to GetDisplayName(
 NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
 NS_IMETHOD GetLocalizationKey(nsAString & aLocalizationKey) { return _to GetLocalizationKey(aLocalizationKey); } \
 NS_IMETHOD SetLocalizationKey(const nsAString & aLocalizationKey) { return _to SetLocalizationKey(aLocalizationKey); } \
-NS_IMETHOD GetUserViewable(PRBool *aUserViewable) { return _to GetUserViewable(aUserViewable); } \
-NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
-NS_IMETHOD GetUserEditable(PRBool *aUserEditable) { return _to GetUserEditable(aUserEditable); } \
-NS_IMETHOD SetUserEditable(PRBool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
-NS_IMETHOD GetRemoteReadable(PRBool *aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
-NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
-NS_IMETHOD GetRemoteWritable(PRBool *aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
-NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } \
+NS_IMETHOD GetUserViewable(bool *aUserViewable) { return _to GetUserViewable(aUserViewable); } \
+NS_IMETHOD SetUserViewable(bool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
+NS_IMETHOD GetUserEditable(bool *aUserEditable) { return _to GetUserEditable(aUserEditable); } \
+NS_IMETHOD SetUserEditable(bool aUserEditable) { return _to SetUserEditable(aUserEditable); } \
+NS_IMETHOD GetRemoteReadable(bool *aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
+NS_IMETHOD SetRemoteReadable(bool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
+NS_IMETHOD GetRemoteWritable(bool *aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
+NS_IMETHOD SetRemoteWritable(bool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } \
 NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
 NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
 NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter) { return _to SetUnitConverter(aUnitConverter); } \
 NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); } \
-NS_IMETHOD GetUsedInIdentity(PRBool *aUsedInIdentity) { return _to GetUsedInIdentity(aUsedInIdentity); } \
-NS_IMETHOD SetUsedInIdentity(PRBool aUsedInIdentity) { return _to SetUsedInIdentity(aUsedInIdentity); }
+NS_IMETHOD GetUsedInIdentity(bool *aUsedInIdentity) { return _to GetUsedInIdentity(aUsedInIdentity); } \
+NS_IMETHOD SetUsedInIdentity(bool aUsedInIdentity) { return _to SetUsedInIdentity(aUsedInIdentity); }
 
 
 #define NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to) \
@@ -129,25 +129,25 @@ protected:
   nsString  mLocalizationKey;
 
   PRLock*   mUserViewableLock;
-  PRBool    mUserViewable;
+  bool    mUserViewable;
 
   PRLock*   mUserEditableLock;
-  PRBool    mUserEditable;
+  bool    mUserEditable;
 
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;
   
   PRLock*   mRemoteReadableLock;
-  PRBool    mRemoteReadable;
+  bool    mRemoteReadable;
   
   PRLock*   mRemoteWritableLock;
-  PRBool    mRemoteWritable;
+  bool    mRemoteWritable;
   
   PRLock*   mUnitConverterLock;
   nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
 
   PRLock*   mUsedInIdentityLock;
-  PRBool    mUsedInIdentity;
+  bool    mUsedInIdentity;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */

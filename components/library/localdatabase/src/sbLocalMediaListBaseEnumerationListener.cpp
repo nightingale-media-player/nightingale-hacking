@@ -74,7 +74,7 @@ sbLocalMediaListBaseEnumerationListener::GetArrayLength(PRUint32 *aLength)
 }
 
 nsresult
-sbLocalMediaListBaseEnumerationListener::SetHasItems(PRBool aHasItems)
+sbLocalMediaListBaseEnumerationListener::SetHasItems(bool aHasItems)
 {
   mHasItems = aHasItems;
   return NS_OK;

@@ -29,7 +29,7 @@
  * \brief Songbird Identity Service Component Factory and Main Entry Point.
  */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbIdentityService.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbIdentityService);

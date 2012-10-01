@@ -33,7 +33,6 @@
 // TODO clean up
 #include <nspr.h>
 #include <nscore.h>
-#include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
 #include <nsCRTGlue.h>
 #include <nsIFile.h>
@@ -106,7 +105,7 @@ nsresult sbMetadataCrashTracker::Init()
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   // Set up a map to track file URLs while logging
-  PRBool success = mURLToIndexMap.Init(DEFAULT_MAP_SIZE);
+  bool success = mURLToIndexMap.Init(DEFAULT_MAP_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // Set up the list of scary crashy URLs
@@ -231,7 +230,7 @@ sbMetadataCrashTracker::LogURLBegin(const nsACString& aURL)
   if (!mSimulateCrashURL.IsEmpty()) {
     if (output.Find(mSimulateCrashURL, PR_TRUE) != -1) {
       LOG(("LogURLBegin forcing a crash for %s", output.BeginReading()));
-      PRBool* crash;
+      bool* crash;
       crash = nsnull;
       *crash = PR_TRUE;
     }
@@ -251,7 +250,7 @@ sbMetadataCrashTracker::LogURLEnd(const nsACString& aURL)
   
   // Look up the index of this URL
   PRUint32 index = 0;
-  PRBool success = mURLToIndexMap.Get(aURL, &index);
+  bool success = mURLToIndexMap.Get(aURL, &index);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   mURLToIndexMap.Remove(aURL);
   
@@ -272,7 +271,7 @@ sbMetadataCrashTracker::LogURLEnd(const nsACString& aURL)
    
 nsresult 
 sbMetadataCrashTracker::IsURLBlacklisted(const nsACString& aURL,
-                                         PRBool* aIsBlackListed)
+                                         bool* aIsBlackListed)
 {
   // Look up the URL in the hash table.
   // No need to lock, since we only update mURLBlacklist on Init.
@@ -305,7 +304,7 @@ sbMetadataCrashTracker::ProcessExistingLog()
   nsresult rv = NS_OK;
   
   // Did we crash on last run?
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = mLogFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -324,10 +323,10 @@ sbMetadataCrashTracker::ProcessExistingLog()
   nsDataHashtable<nsCStringHashKey, nsCString> indexToURLMap;
   indexToURLMap.Init(DEFAULT_MAP_SIZE);
 
-  PRBool more = PR_TRUE;
+  bool more = PR_TRUE;
   nsCString line;
   nsCString url;
-  PRBool hashSuccess = PR_FALSE;
+  bool hashSuccess = PR_FALSE;
   do {
     rv = lineStream->ReadLine(line, &more);
     if (NS_SUCCEEDED(rv) && line.Length() >= 2) {
@@ -404,8 +403,8 @@ sbMetadataCrashTracker::AddURLsToBlacklist(nsCStringHashKey::KeyType aKey,
     NS_ERROR("Attempted to add an empty string to the blacklist");
     return PL_DHASH_NEXT;
   }
-  nsDataHashtable<nsCStringHashKey, PRBool>* blacklistHash =
-      static_cast<nsDataHashtable<nsCStringHashKey, PRBool>* >(aUserData);
+  nsDataHashtable<nsCStringHashKey, bool>* blacklistHash =
+      static_cast<nsDataHashtable<nsCStringHashKey, bool>* >(aUserData);
   NS_ENSURE_TRUE(blacklistHash, PL_DHASH_STOP);
 
   blacklistHash->Put(aEntry, PR_TRUE);
@@ -414,7 +413,7 @@ sbMetadataCrashTracker::AddURLsToBlacklist(nsCStringHashKey::KeyType aKey,
 
 /* static */ PLDHashOperator PR_CALLBACK
 sbMetadataCrashTracker::WriteBlacklistURLToFile(nsCStringHashKey::KeyType aKey,
-                                                PRBool aEntry,
+                                                bool aEntry,
                                                 void* aUserData)
 {
   nsresult rv = NS_OK;
@@ -445,7 +444,7 @@ sbMetadataCrashTracker::ReadBlacklist()
   nsresult rv = NS_OK;
 
   // If no blacklist, don't bother reading
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = mBlacklistFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!exists) {
@@ -459,7 +458,7 @@ sbMetadataCrashTracker::ReadBlacklist()
   nsCOMPtr<nsILineInputStream> lineStream(do_QueryInterface(inputStream, &rv));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool more = PR_TRUE;
+  bool more = PR_TRUE;
   nsCString line;
   
   // Skip the first line, as it should be a text description
@@ -472,7 +471,7 @@ sbMetadataCrashTracker::ReadBlacklist()
   do {
     rv = lineStream->ReadLine(line, &more);
     if (NS_SUCCEEDED(rv) && !line.IsEmpty()) {
-      PRBool blacklisted = PR_TRUE;
+      bool blacklisted = PR_TRUE;
       mURLBlacklist.Put(line, blacklisted);     
       LOG(("sbMetadataCrashTracker::ReadBlacklist() - found %s", 
            line.BeginReading()));

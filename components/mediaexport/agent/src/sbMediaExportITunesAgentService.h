@@ -28,7 +28,7 @@
 #define sbMediaExportITunesAgentService_h_
 
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
@@ -48,7 +48,7 @@ public:
   NS_DECL_SBIMEDIAEXPORTAGENTSERVICE
 
 protected:
-  nsresult RunAgent(PRBool aShouldUnregister);
+  nsresult RunAgent(bool aShouldUnregister);
 };
 
 #endif  // sbMediaExportITunesAgentService_h_

@@ -43,5 +43,5 @@ interface sbIMetadataHandlerWMA : nsISupports
    * \param aPath the local path of a file
    * \return True if the file is DRM protected, false otherwise
    */
-  PRBool isDRMProtected(in AString aPath);
+  boolean isDRMProtected(in AString aPath);
 };

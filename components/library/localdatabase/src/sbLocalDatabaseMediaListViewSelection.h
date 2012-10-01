@@ -56,7 +56,7 @@ public:
   nsresult Init(sbILibrary* aLibrary,
                 const nsAString& aListGUID,
                 sbILocalDatabaseGUIDArray* aArray,
-                PRBool aIsLibrary,
+                bool aIsLibrary,
                 sbLocalDatabaseMediaListViewSelectionState* aState);
 
   nsresult ConfigurationChanged();
@@ -97,7 +97,7 @@ private:
   sbObserverArray mObservers;
 
   sbSelectionList mSelection;
-  PRBool mSelectionIsAll;
+  bool mSelectionIsAll;
   PRInt32 mCurrentIndex;
   nsString mCurrentUID;
 
@@ -109,10 +109,10 @@ private:
   // A weak reference to the view's array.  We're owned by the view so this
   // will never go away
   sbILocalDatabaseGUIDArray* mArray;
-  PRBool mIsLibrary;
+  bool mIsLibrary;
 
   PRUint32 mLength;
-  PRBool mSelectionNotificationsSuppressed;
+  bool mSelectionNotificationsSuppressed;
 };
 
 /**
@@ -161,7 +161,7 @@ public:
 protected:
   PRInt32 mCurrentIndex;
   sbSelectionList mSelectionList;
-  PRBool mSelectionIsAll;
+  bool mSelectionIsAll;
 };
 
 class sbGUIDArrayToIndexedMediaItemEnumerator : public nsISimpleEnumerator,
@@ -184,7 +184,7 @@ private:
 
   nsresult GetNextItem();
 
-  PRBool mInitalized;
+  bool mInitalized;
   nsCOMPtr<sbILibrary> mLibrary;
   nsTArray<Item> mItems;
   PRUint32 mNextIndex;
@@ -210,7 +210,7 @@ private:
   nsCOMPtr<sbILibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mNextIndex;
-  PRBool mInitalized;
+  bool mInitalized;
 };
 
 /**

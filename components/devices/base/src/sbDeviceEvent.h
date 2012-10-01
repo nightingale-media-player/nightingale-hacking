@@ -57,7 +57,7 @@ protected:
 public:
   NS_DECLARE_STATIC_IID_ACCESSOR(SBDEVICEEVENT_IID)
   virtual void Dispatch() { mWasDispatched = PR_TRUE; }
-  virtual PRBool WasDispatched() { return mWasDispatched; }
+  virtual bool WasDispatched() { return mWasDispatched; }
   virtual nsresult SetTarget(sbIDeviceEventTarget* aTarget);
 
   // XXXAus: This static CreateEvent method is necessary
@@ -75,7 +75,7 @@ protected:
   nsCOMPtr<nsIVariant> mData;
   nsCOMPtr<sbIDeviceEventTarget> mTarget;
   nsCOMPtr<nsISupports> mOrigin;
-  PRBool mWasDispatched;
+  bool mWasDispatched;
   PRUint32 mDeviceState;
   PRUint32 mDeviceSubState;
 };
@@ -83,7 +83,7 @@ protected:
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
 #define NS_FORWARD_SAFE_SBDEVICEEVENT(_to) \
   void Dispatch() { NS_ASSERTION(_to, "_to is null"); if (_to) _to->Dispatch(); } \
-  PRBool WasDispatched() { NS_ASSERTION(_to, "_to is null"); return !_to ? PR_FALSE : _to->WasDispatched(); } \
+  bool WasDispatched() { NS_ASSERTION(_to, "_to is null"); return !_to ? PR_FALSE : _to->WasDispatched(); } \
   nsresult SetTarget(sbIDeviceEventTarget* aTarget) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetTarget(aTarget); }
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbDeviceEvent, SBDEVICEEVENT_IID)

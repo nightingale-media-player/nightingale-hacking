@@ -69,7 +69,7 @@ public:
      * Determines if the controller is the best.
      * Returns true  
      */
-    virtual PRBool Compare(sbIDeviceController* controller,
+    virtual bool Compare(sbIDeviceController* controller,
                          nsIPropertyBag* deviceParams);
     /**
      * Returns the controller that thus far is the best match
@@ -148,14 +148,14 @@ protected:
   /**
    * Derived classes can use this to determine whether or not monitoring is active
    */
-  PRBool IsMonitoring() const
+  bool IsMonitoring() const
   {
     return mIsMonitoring;
   }
 private:
   nsCOMPtr<nsIArray> mControllers;
   nsCString mCategoryName;
-  PRBool mIsMonitoring;
+  bool mIsMonitoring;
   /**
    * Retrieves the enumerator for our category with the name mCategoryName
    */

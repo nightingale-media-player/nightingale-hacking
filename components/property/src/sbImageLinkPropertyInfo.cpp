@@ -44,10 +44,10 @@ NS_IMPL_ISUPPORTS_INHERITED3(sbImageLinkPropertyInfo,
 sbImageLinkPropertyInfo::sbImageLinkPropertyInfo(const nsAString& aPropertyID,
                                                  const nsAString& aDisplayName,
                                                  const nsAString& aLocalizationKey,
-                                                 const PRBool aRemoteReadable,
-                                                 const PRBool aRemoteWritable,
-                                                 const PRBool aUserViewable,
-                                                 const PRBool aUserEditable,
+                                                 const bool aRemoteReadable,
+                                                 const bool aRemoteWritable,
+                                                 const bool aUserViewable,
+                                                 const bool aUserEditable,
                                                  const nsAString& aUrlPropertyID)
 {
   mID = aPropertyID;
@@ -139,7 +139,7 @@ sbImageLinkPropertyInfo::GetColumnType(nsAString& _retval)
 // sbIClickablePropertyInfo
 
 NS_IMETHODIMP
-sbImageLinkPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
+sbImageLinkPropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
   *aSuppressSelect = mSuppressSelect;
@@ -147,7 +147,7 @@ sbImageLinkPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 }
 
 NS_IMETHODIMP
-sbImageLinkPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
+sbImageLinkPropertyInfo::SetSuppressSelect(bool aSuppressSelect)
 {
   mSuppressSelect = aSuppressSelect;
   return NS_OK;
@@ -155,7 +155,7 @@ sbImageLinkPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
 
 NS_IMETHODIMP
 sbImageLinkPropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                    PRBool* _retval)
+                                    bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -169,7 +169,7 @@ sbImageLinkPropertyInfo::HitTest(const nsAString& aCurrentValue,
                                  PRUint32 aBoxHeight,
                                  PRUint32 aMouseX,
                                  PRUint32 aMouseY,
-                                 PRBool* _retval)
+                                 bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = aPart.EqualsLiteral("image");
@@ -194,7 +194,7 @@ NS_IMETHODIMP
 sbImageLinkPropertyInfo::OnClick(sbIMediaItem *aItem,
                                  nsISupports *aEvent,
                                  nsISupports *aContext,
-                                 PRBool *_retval NS_OUTPARAM)
+                                 bool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -224,7 +224,7 @@ sbImageLinkPropertyInfo::GetUrlProperty(nsAString& _retval)
 NS_IMETHODIMP
 sbImageLinkPropertyInfo::GetPreventNavigation(const nsAString& aImageValue,
                                               const nsAString& aUrlValue,
-                                              PRBool *_retval)
+                                              bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   

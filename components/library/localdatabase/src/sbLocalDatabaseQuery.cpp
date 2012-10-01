@@ -76,8 +76,8 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            const nsAString& aBaseForeignKeyColumn,
                                            nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
                                            nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
-                                           PRBool aIsDistinct,
-                                           PRBool aDistinctWithSortableValues,
+                                           bool aIsDistinct,
+                                           bool aDistinctWithSortableValues,
                                            sbILocalDatabasePropertyCache* aPropertyCache) :
   mBaseTable(aBaseTable),
   mBaseConstraintColumn(aBaseConstraintColumn),
@@ -469,7 +469,7 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   return NS_OK;
 }
 
-PRBool
+bool
 sbLocalDatabaseQuery::GetIsFullLibrary()
 {
   return mIsFullLibrary;
@@ -510,7 +510,7 @@ sbLocalDatabaseQuery::AddCountColumns()
 }
 
 nsresult
-sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
+sbLocalDatabaseQuery::AddGuidColumns(bool aIsNull)
 {
   nsresult rv;
 
@@ -643,7 +643,7 @@ sbLocalDatabaseQuery::AddFilters()
 
     if (!fs.isSearch) {
 
-      PRBool isTopLevelProperty = SB_IsTopLevelProperty(fs.property);
+      bool isTopLevelProperty = SB_IsTopLevelProperty(fs.property);
       nsCOMPtr<sbISQLBuilderCriterion> criterion;
 
       // If the property is the "is list" property, we handle this in a
@@ -747,7 +747,7 @@ sbLocalDatabaseQuery::AddFilters()
   // Add search constraints
 
   PRInt32 searchIndex = -1;
-  PRBool isEverythingSearch = PR_FALSE;
+  bool isEverythingSearch = PR_FALSE;
 
   for (PRUint32 i = 0; i < len; i++) {
     const sbLocalDatabaseGUIDArray::FilterSpec& fs = mFilters->ElementAt(i);

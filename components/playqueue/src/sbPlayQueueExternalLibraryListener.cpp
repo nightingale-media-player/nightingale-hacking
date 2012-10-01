@@ -174,7 +174,7 @@ sbPlayQueueExternalLibraryListener::AddExternalLibrary(sbILibrary* aLibrary)
   TRACE(("%s[%p]", __FUNCTION__, this));
   nsresult rv;
 
-  PRBool added = mExternalLibraries.AppendObject(aLibrary);
+  bool added = mExternalLibraries.AppendObject(aLibrary);
   NS_ENSURE_TRUE(added, NS_ERROR_FAILURE);
 
   rv = aLibrary->AddListener(this,
@@ -275,8 +275,8 @@ sbPlayQueueExternalLibraryListener::GenerateUpdates(
 NS_IMETHODIMP
 sbPlayQueueExternalLibraryListener::OnBeforeListCleared(
         sbIMediaList* aMediaList,
-        PRBool aExcludeLists,
-        PRBool *aNoMoreForBatch)
+        bool aExcludeLists,
+        bool *aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   if (aNoMoreForBatch) {
@@ -287,8 +287,8 @@ sbPlayQueueExternalLibraryListener::OnBeforeListCleared(
 
 NS_IMETHODIMP
 sbPlayQueueExternalLibraryListener::OnListCleared(sbIMediaList* aMediaList,
-                                                  PRBool aExcludeLists,
-                                                  PRBool* aNoMoreForBatch)
+                                                  bool aExcludeLists,
+                                                  bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   if (aNoMoreForBatch) {
@@ -316,7 +316,7 @@ NS_IMETHODIMP
 sbPlayQueueExternalLibraryListener::OnItemAdded(sbIMediaList* aMediaList,
                                                 sbIMediaItem* aMediaItem,
                                                 PRUint32 aIndex,
-                                                PRBool* aNoMoreForBatch)
+                                                bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   if (aNoMoreForBatch) {
@@ -330,7 +330,7 @@ sbPlayQueueExternalLibraryListener::OnBeforeItemRemoved(
         sbIMediaList* aMediaList,
         sbIMediaItem* aMediaItem,
         PRUint32 aIndex,
-        PRBool* aNoMoreForBatch)
+        bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   if (aNoMoreForBatch) {
@@ -343,7 +343,7 @@ NS_IMETHODIMP
 sbPlayQueueExternalLibraryListener::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                        sbIMediaItem* aMediaItem,
                                                        PRUint32 aIndex,
-                                                       PRBool* aNoMoreForBatch)
+                                                       bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   if (aNoMoreForBatch) {
@@ -356,7 +356,7 @@ NS_IMETHODIMP
 sbPlayQueueExternalLibraryListener::OnItemUpdated(sbIMediaList* aMediaList,
                                                   sbIMediaItem* aMediaItem,
                                                   sbIPropertyArray* aProperties,
-                                                  PRBool* aNoMoreForBatch)
+                                                  bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -412,7 +412,7 @@ NS_IMETHODIMP
 sbPlayQueueExternalLibraryListener::OnItemMoved(sbIMediaList* aMediaList,
                                                 PRUint32 aFromIndex,
                                                 PRUint32 aToIndex,
-                                                PRBool* aNoMoreForBatch)
+                                                bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   if (aNoMoreForBatch) {

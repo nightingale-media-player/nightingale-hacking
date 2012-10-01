@@ -76,7 +76,7 @@ template<class CHARTYPE> inline PRInt32 SB_GetCharType(const CHARTYPE *p) {
 
 template<class CHARTYPE> 
   inline void SB_ExtractLeadingNumber(const CHARTYPE *str,
-                                      PRBool *hasLeadingNumber,
+                                      bool *hasLeadingNumber,
                                       PRFloat64 *leadingNumber,
                                       PRInt32 *numberLength) {
 
@@ -86,13 +86,13 @@ template<class CHARTYPE>
   // to parse manually. also, we want to handle ',' as '.', which sscanf doesn't
   // do.
 
-  PRBool gotDecimalPoint = PR_FALSE;
-  PRBool gotExponent = PR_FALSE;
-  PRBool gotSign = PR_FALSE;
-  PRBool gotExponentSign = PR_FALSE;
-  PRBool gotDigit = PR_FALSE;
-  PRBool gotExponentDigit = PR_FALSE;
-  PRBool abortParsing = PR_FALSE;
+  bool gotDecimalPoint = PR_FALSE;
+  bool gotExponent = PR_FALSE;
+  bool gotSign = PR_FALSE;
+  bool gotExponentSign = PR_FALSE;
+  bool gotDigit = PR_FALSE;
+  bool gotExponentDigit = PR_FALSE;
+  bool abortParsing = PR_FALSE;
   PRFloat64 value = 0;
   PRInt32 expValue = 0;
   PRFloat64 decimalMul = 1;

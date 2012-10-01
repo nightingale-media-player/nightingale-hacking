@@ -284,7 +284,7 @@ nsresult CreateAndDispatchDeviceManagerEvent
                               nsIVariant*  aData = nsnull,
                               nsISupports* aOrigin = nsnull,
                               PRUint32     aDeviceState = sbIDevice::STATE_IDLE,
-                              PRBool       aAsync = PR_FALSE);
+                              bool       aAsync = PR_FALSE);
 
 
 #endif /* __SB_IPD_UTILS_H__ */

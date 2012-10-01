@@ -39,7 +39,6 @@
 #include <nsIWeakReferenceUtils.h>
 
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -66,7 +65,6 @@
 #include <sbLibraryCID.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
-#include <sbProxiedComponentManager.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
 #include <sbDebugUtils.h>
@@ -184,7 +182,7 @@ sbPlaybackHistoryService::AddListenersToCOMArrayCallback(nsISupportsHashKey::Key
   nsCOMArray<sbIPlaybackHistoryListener>* array =
     static_cast<nsCOMArray<sbIPlaybackHistoryListener>*>(aUserData);
 
-  PRBool success = array->AppendObject(aEntry);
+  bool success = array->AppendObject(aEntry);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
@@ -215,7 +213,7 @@ sbPlaybackHistoryService::Init()
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mLibraries.Init();
+  bool success = mLibraries.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mListeners.Init();
@@ -819,7 +817,7 @@ sbPlaybackHistoryService::CreateAnnotationsFromEntryId(
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString annotationId;
-    PRBool success = mPropertyDBIDToID.Get(propertyId, &annotationId);
+    bool success = mPropertyDBIDToID.Get(propertyId, &annotationId);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
     rv = annotations->AppendProperty(annotationId, annotationValue);
@@ -947,7 +945,7 @@ sbPlaybackHistoryService::EnsureHistoryDatabaseAvailable()
   rv = file->AppendRelativePath(dbFileName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = file->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1233,7 +1231,7 @@ sbPlaybackHistoryService::GetItem(const nsAString &aLibraryGuid,
     rv = libraryManager->GetLibrary(aLibraryGuid, getter_AddRefs(library));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool success = mLibraries.Put(aLibraryGuid, library);
+    bool success = mLibraries.Put(aLibraryGuid, library);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
   
@@ -1358,7 +1356,7 @@ sbPlaybackHistoryService::LoadPropertyIDs()
     rv = result->GetRowCell(i, 1, propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool success = mPropertyDBIDToID.Put(propertyDBID, propertyID);
+    bool success = mPropertyDBIDToID.Put(propertyDBID, propertyID);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     success = mPropertyIDToDBID.Put(propertyID, propertyDBID);
@@ -1634,7 +1632,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
       excludeFromHistoryStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool excludeFromHistory = excludeFromHistoryStr.EqualsLiteral("1");
+  bool excludeFromHistory = excludeFromHistoryStr.EqualsLiteral("1");
 
   // if we played for at least 240 seconds (matching audioscrobbler)
   // or more than half the track (matching audioscrobbler)
@@ -2284,7 +2282,7 @@ sbPlaybackHistoryService::GetEntriesByTimestamp(PRInt64 aStartTimestamp,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  PRBool isAscending = aStartTimestamp > aEndTimestamp;
+  bool isAscending = aStartTimestamp > aEndTimestamp;
   
   nsCOMPtr<sbIDatabaseQuery> query;
   nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
@@ -2630,7 +2628,7 @@ sbPlaybackHistoryService::AddListener(sbIPlaybackHistoryListener *aListener)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the proxy to the hash table, using the listener as the key.
-  PRBool success = mListeners.Put(aListener, proxy);
+  bool success = mListeners.Put(aListener, proxy);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;

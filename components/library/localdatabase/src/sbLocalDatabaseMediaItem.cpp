@@ -42,7 +42,6 @@
 #include <nsIFileURL.h>
 #include <nsIStringEnumerator.h>
 #include <nsIVariant.h>
-#include <nsAutoLock.h>
 #include <nsNetUtil.h>
 #include <nsXPCOM.h>
 #include <prprf.h>
@@ -109,7 +108,7 @@ sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 nsresult
 sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
                                const nsAString& aGuid,
-                               PRBool aOwnsLibrary)
+                               bool aOwnsLibrary)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG(!aGuid.IsEmpty());
@@ -312,7 +311,7 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
+sbLocalDatabaseMediaItem::GetUserEditable(bool* aUserEditable)
 {
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
@@ -362,11 +361,11 @@ sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
           nsCOMPtr<nsIFile> file;
           rv = fileUrl->GetFile(getter_AddRefs(file));
           if (NS_SUCCEEDED(rv)) {
-            PRBool exists;
+            bool exists;
             rv = file->Exists(&exists);
             NS_ENSURE_SUCCESS(rv, rv);
             
-            PRBool isWritable = PR_FALSE;
+            bool isWritable = PR_FALSE;
             if (exists) {
               rv = file->IsWritable(&isWritable);
               if (NS_FAILED(rv)) {
@@ -621,7 +620,7 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
  */
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::Equals(sbILibraryResource* aOtherLibraryResource,
-                                 PRBool* _retval)
+                                 bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -682,7 +681,7 @@ sbLocalDatabaseMediaItem::SetPropertyBag(sbILocalDatabaseResourcePropertyBag* aP
 }
 
 NS_IMETHODIMP_(void)
-sbLocalDatabaseMediaItem::SetSuppressNotifications(PRBool aSuppress)
+sbLocalDatabaseMediaItem::SetSuppressNotifications(bool aSuppress)
 {
   mSuppressNotifications = aSuppress;
 }
@@ -715,7 +714,7 @@ sbLocalDatabaseMediaItem::GetOriginLibrary(sbILibrary** aOriginLibrary)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
+sbLocalDatabaseMediaItem::GetIsMutable(bool* aIsMutable)
 {
   *aIsMutable = PR_TRUE;
   return NS_OK;
@@ -1011,7 +1010,7 @@ sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // try to get the canonical file name
-  PRBool exists;
+  bool exists;
   rv = file->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (exists) {

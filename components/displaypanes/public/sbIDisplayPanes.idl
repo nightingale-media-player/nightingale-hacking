@@ -123,7 +123,7 @@ interface sbIDisplayPaneInstantiator : nsISupports
   /**
    * collapse the pane (the user can uncollapse without loading new content)
    */
-  attribute PRBool collapsed;
+  attribute boolean collapsed;
 };
 
 /**
@@ -173,7 +173,7 @@ interface sbIDisplayPaneManager : nsISupports
                        in PRInt32 aDefaultWidth,
                        in PRInt32 aDefaultHeight,
                        in AString aSuggestedContentGroups,
-                       in PRBool aAutoShow);
+                       in boolean aAutoShow);
   
   /**
    * unregister content, so it is not presented to the user anymore.

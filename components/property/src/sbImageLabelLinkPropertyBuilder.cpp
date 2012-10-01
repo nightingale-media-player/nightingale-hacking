@@ -112,7 +112,7 @@ sbImageLabelLinkPropertyBuilder::AddImage(const nsACString & aKey,
                                           const nsACString & aImageUrl)
 {
   NS_ENSURE_TRUE(mImages, NS_ERROR_NOT_INITIALIZED);
-  PRBool success = mImages->Put(aKey, new nsCString(aImageUrl));
+  bool success = mImages->Put(aKey, new nsCString(aImageUrl));
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }
@@ -157,7 +157,7 @@ sbImageLabelLinkPropertyBuilder::AddLabel(const nsACString & aKey,
     value = SBLocalizedString(Substring(aLabel, 1, aLabel.Length() - 2));
   }
 
-  PRBool success = mLabels->Put(aKey, new nsString(value));
+  bool success = mLabels->Put(aKey, new nsString(value));
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }

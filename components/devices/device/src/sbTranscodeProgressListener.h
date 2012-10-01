@@ -89,8 +89,8 @@ public:
       StatusProperty const & aStatusProperty = StatusProperty(),
       sbIJobCancelable * aCancel = nsnull);
 
-  PRBool IsComplete() const { return mIsComplete; };
-  PRBool IsAborted() const { return mAborted; }
+  bool IsComplete() const { return mIsComplete; };
+  bool IsAborted() const { return mAborted; }
 private:
   inline
   sbTranscodeProgressListener(sbBaseDevice * aDeviceBase,
@@ -131,7 +131,7 @@ private:
   PRUint32 mTotal;
   StatusProperty mStatusProperty;
   nsCOMPtr<sbIJobCancelable> mCancel;
-  PRBool mAborted;
+  bool mAborted;
 };
 
 

@@ -67,7 +67,7 @@
 
 nsresult sbWinFindDevicesByStorageDevNum
            (STORAGE_DEVICE_NUMBER* aStorageDevNum,
-            PRBool                 aMatchPartitionNumber,
+            bool                 aMatchPartitionNumber,
             const GUID*            aGUID,
             nsTArray<DEVINST>&     aDevInstList);
 
@@ -86,10 +86,10 @@ nsresult sbWinGetStorageDevNum(LPCTSTR                aDevPath,
 //------------------------------------------------------------------------------
 
 nsresult sbWinVolumeIsReady(DEVINST aDevInst,
-                            PRBool* aIsReady);
+                            bool* aIsReady);
 
 nsresult sbWinVolumeGetIsReadOnly(const nsAString& aVolumeMountPath,
-                                  PRBool*          aIsReadOnly);
+                                  bool*          aIsReadOnly);
 
 nsresult sbWinGetVolumeGUIDPath(DEVINST    aDevInst,
                                 nsAString& aVolumeGUIDPath);

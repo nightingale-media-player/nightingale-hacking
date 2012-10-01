@@ -53,7 +53,7 @@ sbPlaylistTreeSelection::SetTree(nsITreeBoxObject* aTree)
 }
 
 NS_IMETHODIMP
-sbPlaylistTreeSelection::GetSingle(PRBool* aSingle)
+sbPlaylistTreeSelection::GetSingle(bool* aSingle)
 {
   return mTreeSelection->GetSingle(aSingle);
 }
@@ -65,7 +65,7 @@ sbPlaylistTreeSelection::GetCount(PRInt32* aCount)
 }
 
 NS_IMETHODIMP
-sbPlaylistTreeSelection::IsSelected(PRInt32 index, PRBool* _retval)
+sbPlaylistTreeSelection::IsSelected(PRInt32 index, bool* _retval)
 {
   return mViewSelection->IsIndexSelected(index, _retval);
 }
@@ -110,7 +110,7 @@ sbPlaylistTreeSelection::ToggleSelect(PRInt32 index)
 NS_IMETHODIMP
 sbPlaylistTreeSelection::RangedSelect(PRInt32 startIndex,
                                       PRInt32 endIndex,
-                                      PRBool augment)
+                                      bool augment)
 {
   nsresult rv;
   sbAutoSelectNotificationsSuppressed autoSelection(mViewSelection);
@@ -251,12 +251,12 @@ sbPlaylistTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 }
 
 NS_IMETHODIMP
-sbPlaylistTreeSelection::GetSelectEventsSuppressed(PRBool* aSelectEventsSuppressed)
+sbPlaylistTreeSelection::GetSelectEventsSuppressed(bool* aSelectEventsSuppressed)
 {
   return mTreeSelection->GetSelectEventsSuppressed(aSelectEventsSuppressed);
 }
 NS_IMETHODIMP
-sbPlaylistTreeSelection::SetSelectEventsSuppressed(PRBool aSelectEventsSuppressed)
+sbPlaylistTreeSelection::SetSelectEventsSuppressed(bool aSelectEventsSuppressed)
 {
   return mTreeSelection->SetSelectEventsSuppressed(aSelectEventsSuppressed);
 }

@@ -53,4 +53,4 @@ interface sbIMediaContainer : nsISupports
 %{C++
 #define SB_MEDIACONTAINER_CONTRACTID     \
   "@songbirdnest.com/Songbird/Mediacore/mediacontainer;1"
-%};
+%}

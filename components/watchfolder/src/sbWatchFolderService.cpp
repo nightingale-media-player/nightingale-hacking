@@ -101,7 +101,7 @@ sbWatchFolderService::Init()
   if (NS_FAILED(rv))
     return NS_OK;
 
-  PRBool isWatcherSupported = PR_FALSE;
+  bool isWatcherSupported = PR_FALSE;
   rv = fileSystemWatcher->GetIsSupported(&isWatcherSupported);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -111,7 +111,7 @@ sbWatchFolderService::Init()
       do_GetService(XULRUNTIME_SERVICE_CONTRACTID, &rv);
     // If we can't get or QI the runtime assume we're not in safe-mode
     if (NS_SUCCEEDED(rv)) {
-      PRBool isInSafeMode = PR_FALSE;
+      bool isInSafeMode = PR_FALSE;
       rv = appInfo->GetInSafeMode(&isInSafeMode);
       // If we're not in safe mode or we can't determine if we are, enable it
       isWatcherSupported = NS_FAILED(rv) || !isInSafeMode;
@@ -146,7 +146,7 @@ sbWatchFolderService::InitInternal()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // First, check to see if the service should be running.
-  PRBool shouldEnable = PR_FALSE;
+  bool shouldEnable = PR_FALSE;
   rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE, &shouldEnable);
   if (NS_FAILED(rv)) {
     shouldEnable = PR_FALSE;
@@ -464,7 +464,7 @@ sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
 
     // Don't add every type of file, have the mediacore sniffer validate this
     // is a URI that we can handle.
-    PRBool isValid = PR_FALSE;
+    bool isValid = PR_FALSE;
     rv = typeSniffer->IsValidMediaURL(fileURI, &isValid);
     if (NS_SUCCEEDED(rv) && isValid) {
       rv = uriArray->AppendElement(fileURI, PR_FALSE);
@@ -563,7 +563,7 @@ sbWatchFolderService::HandleSessionLoadError()
   // If the unit tests are running, don't show the dialog (Don't bother
   // checking result of call too).
   nsresult rv;
-  PRBool isUnitTestsRunning = PR_FALSE;
+  bool isUnitTestsRunning = PR_FALSE;
   mPrefMgr->GetIsUnitTestsRunning(&isUnitTestsRunning);
   if (isUnitTestsRunning) {
     return NS_OK;
@@ -617,7 +617,7 @@ sbWatchFolderService::HandleSessionLoadError()
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool shouldRescan = PR_FALSE;
+  bool shouldRescan = PR_FALSE;
   prompter->Confirm(songbirdWindow,
                     dialogTitle.BeginReading(),
                     dialogText.BeginReading(),
@@ -672,7 +672,7 @@ sbWatchFolderService::HandleRootPathMissing()
   // If the unit tests are running, don't show the dialog (Don't bother
   // checking result of call too).
   nsresult rv;
-  PRBool isUnitTestsRunning = PR_FALSE;
+  bool isUnitTestsRunning = PR_FALSE;
   mPrefMgr->GetIsUnitTestsRunning(&isUnitTestsRunning);
   if (isUnitTestsRunning) {
     return NS_OK;
@@ -707,7 +707,7 @@ sbWatchFolderService::HandleRootPathMissing()
 
 nsresult
 sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath,
-                                                PRBool *aIsIgnoredPath)
+                                                bool *aIsIgnoredPath)
 {
   NS_ENSURE_ARG_POINTER(aIsIgnoredPath);
 
@@ -789,7 +789,7 @@ sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
 
     // Remove the pref since the watch folder service does not want
     // to load the old session.
-    PRBool hasSavedSessionGUID;
+    bool hasSavedSessionGUID;
     rv = prefBranch->PrefHasUserValue(PREF_WATCHFOLDER_SESSIONGUID,
                                       &hasSavedSessionGUID);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -831,7 +831,7 @@ sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
     // The service has not started up internally, but the watch path
     // has changed. If the service has been set to be enabled, start
     // the delayed internal startup.
-    PRBool shouldEnable = PR_FALSE;
+    bool shouldEnable = PR_FALSE;
     rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE,
         &shouldEnable);
     if (NS_SUCCEEDED(rv) && shouldEnable) {
@@ -848,7 +848,7 @@ sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
 }
 
 nsresult
-sbWatchFolderService::OnEnableWatchFolderChanged(PRBool aShouldEnable)
+sbWatchFolderService::OnEnableWatchFolderChanged(bool aShouldEnable)
 {
   LOG(("%s: OnEnableWatchFolderChanged( aShouldEnable=%s )",
         __FUNCTION__,
@@ -888,7 +888,7 @@ sbWatchFolderService::OnEnableWatchFolderChanged(PRBool aShouldEnable)
 // sbIWatchFolderService
 
 NS_IMETHODIMP
-sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
+sbWatchFolderService::GetIsSupported(bool *aIsSupported)
 {
   NS_ENSURE_ARG_POINTER(aIsSupported);
   *aIsSupported = mServiceState != eNotSupported;
@@ -896,7 +896,7 @@ sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
+sbWatchFolderService::GetIsRunning(bool *aIsRunning)
 {
   NS_ENSURE_ARG_POINTER(aIsRunning);
   *aIsRunning = (mServiceState == eWatching);
@@ -1070,7 +1070,7 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
   LOG(("sbWatchFolderService::OnFileSystemChanged %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
-  PRBool isIgnoredPath = PR_FALSE;
+  bool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1120,7 +1120,7 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
   LOG(("sbWatchFolderService::OnFileSystemRemoved %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
-  PRBool isIgnoredPath = PR_FALSE;
+  bool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1141,7 +1141,7 @@ sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
   LOG(("sbWatchFolderService::OnFileSystemAdded %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
-  PRBool isIgnoredPath = PR_FALSE;
+  bool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1263,7 +1263,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
         continue;
       }
 
-      PRBool doesExist = PR_FALSE;
+      bool doesExist = PR_FALSE;
       rv = curFile->Exists(&doesExist);
       if (NS_FAILED(rv) || !doesExist) {
         mAddedPaths.erase(*next);

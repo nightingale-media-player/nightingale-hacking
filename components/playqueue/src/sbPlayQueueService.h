@@ -34,7 +34,7 @@
 #include <nsCOMPtr.h>
 #include <nsTArray.h>
 #include <nsIObserver.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIWeakReference.h>
 #include <nsTHashtable.h>
 #include <nsHashKeys.h>
@@ -84,7 +84,7 @@ public:
 
   nsresult Init();
 
-  void SetIgnoreListListener(PRBool aIgnore) {
+  void SetIgnoreListListener(bool aIgnore) {
     mIgnoreListListener = aIgnore;
   }
 
@@ -113,12 +113,12 @@ private:
    * \brief True if the service is fully initialized and Finalize() has not been
    *        called yet.
    */
-  PRBool mInitialized;
+  bool mInitialized;
 
   /**
    * \brief True if media core event EXPLICIT_STOP is fired right before.
    */
-  PRBool mExplicitStop;
+  bool mExplicitStop;
 
   /**
    * \brief A helper index to help track changes to mIndex during batch
@@ -130,27 +130,27 @@ private:
    * \brief Keeps track of whether or not all items in the queue were 'history'
    *        items at the beginning of a batch.
    */
-  PRBool mBatchBeginAllHistory;
+  bool mBatchBeginAllHistory;
 
   /**
    * \brief When true, the sbIMediaListListener notifications are ignored.
    */
-  PRBool mIgnoreListListener;
+  bool mIgnoreListListener;
 
   /**
    * \brief True if the sequencer is on a view of mMediaList. False if the
    *        sequencer is on any other view or not on a view.
    */
-  PRBool mSequencerOnQueue;
+  bool mSequencerOnQueue;
 
   /** \brief True if the sequencer is on a view of mMediaList AND the sequencer is
    *         in a playing or paused state.
    */
-  PRBool mSequencerPlayingOrPaused;
+  bool mSequencerPlayingOrPaused;
 
   /** \brief True if the play queue is having operation in progress.
    */
-  PRBool mOperationInProgress;
+  bool mOperationInProgress;
 
   /**
    * \brief Helper for batch operations on mMediaList.

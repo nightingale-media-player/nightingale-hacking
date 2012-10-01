@@ -188,7 +188,7 @@ NS_IMETHODIMP sbNativeWindowManager::BeginResizeDrag(nsISupports *aWindow, nsIDO
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsResizeDrag(PRBool *aSupportsResizeDrag)
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsResizeDrag(bool *aSupportsResizeDrag)
 {
   NS_ENSURE_ARG_POINTER(aSupportsResizeDrag);
   
@@ -225,7 +225,7 @@ NS_IMETHODIMP sbNativeWindowManager::SetMaximumWindowSize(nsISupports *aWindow, 
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSupportsMinimumWindowSize)
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(bool *aSupportsMinimumWindowSize)
 {
   NS_ENSURE_ARG_POINTER(aSupportsMinimumWindowSize);
   *aSupportsMinimumWindowSize = PR_TRUE;
@@ -233,7 +233,7 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSuppo
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSupportsMaximumWindowSize)
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(bool *aSupportsMaximumWindowSize)
 {
   NS_ENSURE_ARG_POINTER(aSupportsMaximumWindowSize);
   *aSupportsMaximumWindowSize = PR_FALSE;
@@ -241,7 +241,7 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSuppo
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTop)
+NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, bool aOnTop)
 {
   nsresult rv;
   GtkWindow* window = NULL;
@@ -263,12 +263,12 @@ NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTo
   return NS_OK;
 }
 
-NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool aShadowing)
+NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, bool aShadowing)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(bool *aSupportsOnTop)
 {
   NS_ENSURE_ARG_POINTER(aSupportsOnTop);
 
@@ -277,7 +277,7 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsShadowing(PRBool *aSupportsShadowing)
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsShadowing(bool *aSupportsShadowing)
 {
   NS_ENSURE_ARG_POINTER(aSupportsShadowing);
 

@@ -28,7 +28,6 @@
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceProperties, sbIDeviceProperties)
 
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIProperty.h>
@@ -191,7 +190,7 @@ sbDeviceProperties::InitDeviceProperties(nsIPropertyBag2 *aProperties)
   nsString name;
   nsCOMPtr<nsIVariant> value;
 
-  PRBool more;
+  bool more;
   while (NS_SUCCEEDED(enumerator->HasMoreElements(&more)) && more) {
     rv = enumerator->GetNext(getter_AddRefs(property));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -373,7 +372,7 @@ sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
 }
 
 NS_IMETHODIMP
-sbDeviceProperties::SetHidden(PRBool aHidden)
+sbDeviceProperties::SetHidden(bool aHidden)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
@@ -387,7 +386,7 @@ sbDeviceProperties::SetHidden(PRBool aHidden)
 }
 
 NS_IMETHODIMP
-sbDeviceProperties::GetHidden(PRBool *aHidden)
+sbDeviceProperties::GetHidden(bool *aHidden)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aHidden);

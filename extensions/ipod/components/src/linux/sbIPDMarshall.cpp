@@ -537,7 +537,7 @@ sbIPDMarshall::HandleRemovedEvent(const nsACString& aDeviceUDI,
 nsresult
 sbIPDMarshall::Initialize()
 {
-  PRBool   success;
+  bool   success;
   nsresult rv;
 
   // Create the device marshall services monitor.
@@ -674,7 +674,7 @@ sbIPDMarshall::ProbeDev(nsACString &aProbeUDI)
  * \return                      True if device is an iPod.
  */
 
-PRBool
+bool
 sbIPDMarshall::IsIPod(nsACString& aDeviceUDI)
 {
   nsresult                    rv;
@@ -717,13 +717,13 @@ sbIPDMarshall::IsIPod(nsACString& aDeviceUDI)
  *                              otherwise.
  */
 
-PRBool
+bool
 sbIPDMarshall::IsMediaPartition(nsACString& aDeviceUDI)
 {
   nsresult                    rv;
 
   // Check if device has a volume interface.
-  PRBool hasInterface;
+  bool hasInterface;
   rv = mSBLibHalCtx->DeviceHasInterface(aDeviceUDI,
                                         "org.freedesktop.Hal.Device.Volume",
                                         &hasInterface);

@@ -86,7 +86,7 @@ nsresult sbAppendnsCOMArray(T const & aSource,
 inline nsresult
 sbAppendnsIArray(nsIArray * aSrc,
                  nsIMutableArray * aDest,
-                 PRBool aWeak = PR_FALSE,
+                 bool aWeak = PR_FALSE,
                  PRUint32 aElementsToCopy = 0)
 {
   nsresult rv;
@@ -101,7 +101,7 @@ sbAppendnsIArray(nsIArray * aSrc,
   rv = aSrc->Enumerate(getter_AddRefs(it));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(it->HasMoreElements(&hasMore)) &&
          hasMore &&
          elementsToCopy--) {
@@ -122,7 +122,7 @@ sbAppendnsIArray(nsIArray * aSrc,
  * @param aWeak [in] Whether to store as a weak reference
  */
 inline nsresult
-sbClonensIArray(nsIArray * aSrc, nsIArray ** aClonedArray, PRBool aWeak = PR_FALSE)
+sbClonensIArray(nsIArray * aSrc, nsIArray ** aClonedArray, bool aWeak = PR_FALSE)
 {
   NS_ENSURE_ARG_POINTER(aSrc);
   NS_ENSURE_ARG_POINTER(aClonedArray);
@@ -161,13 +161,13 @@ sbClonensIArray(nsIArray * aSrc, nsCOMArray<T> & aDest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISupports> supports;
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(rv = it->HasMoreElements(&hasMore)) && hasMore) {
     rv = it->GetNext(getter_AddRefs(supports));
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<T> ptr = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    PRBool success = aDest.AppendObject(ptr);
+    bool success = aDest.AppendObject(ptr);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
   NS_ENSURE_SUCCESS(rv, rv);

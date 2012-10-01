@@ -55,10 +55,10 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
                                                            const nsAString& aLocalizationKey,
                                                            const nsAString& aLabel,
                                                            const nsAString& aRetryLabel,
-                                                           const PRBool aRemoteReadable,
-                                                           const PRBool aRemoteWritable,
-                                                           const PRBool aUserViewable,
-                                                           const PRBool aUserEditable)
+                                                           const bool aRemoteReadable,
+                                                           const bool aRemoteWritable,
+                                                           const bool aUserViewable,
+                                                           const bool aUserEditable)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -192,7 +192,7 @@ sbDownloadButtonPropertyInfo::GetColumnType(nsAString& _retval)
 // sbIClickablePropertyInfo
 
 NS_IMETHODIMP
-sbDownloadButtonPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
+sbDownloadButtonPropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
   *aSuppressSelect = mSuppressSelect;
@@ -200,7 +200,7 @@ sbDownloadButtonPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 }
 
 NS_IMETHODIMP
-sbDownloadButtonPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
+sbDownloadButtonPropertyInfo::SetSuppressSelect(bool aSuppressSelect)
 {
   mSuppressSelect = aSuppressSelect;
   return NS_OK;
@@ -208,7 +208,7 @@ sbDownloadButtonPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
 
 NS_IMETHODIMP
 sbDownloadButtonPropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                         PRBool* _retval)
+                                         bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -222,7 +222,7 @@ sbDownloadButtonPropertyInfo::HitTest(const nsAString& aCurrentValue,
                                       PRUint32 aBoxHeight,
                                       PRUint32 aMouseX,
                                       PRUint32 aMouseY,
-                                      PRBool* _retval)
+                                      bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = aPart.EqualsLiteral("text");
@@ -236,7 +236,7 @@ NS_IMETHODIMP
 sbDownloadButtonPropertyInfo::OnClick(sbIMediaItem *aItem,
                                       nsISupports *aEvent,
                                       nsISupports *aContext,
-                                      PRBool *_retval NS_OUTPARAM)
+                                      bool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

@@ -264,7 +264,7 @@ sbRemoteWebPlaylist::GetSelection( nsISimpleEnumerator **aSelection )
 }
 
 NS_IMETHODIMP
-sbRemoteWebPlaylist::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
+sbRemoteWebPlaylist::SetSelectionByIndex( PRUint32 aIndex, bool aSelected )
 {
   LOG(("sbRemoteWebPlaylist::SetSelectionByIndex()"));
 
@@ -300,7 +300,7 @@ sbRemoteWebPlaylist::GetPlaylistWidget( sbIPlaylistWidget **aWebPlaylist )
 }
 
 nsresult
-sbRemoteWebPlaylist::SetHidden(PRBool aHide)
+sbRemoteWebPlaylist::SetHidden(bool aHide)
 {
   LOG(("sbRemoteWebPlaylist::SetHidden()"));
   
@@ -316,13 +316,13 @@ sbRemoteWebPlaylist::SetHidden(PRBool aHide)
 }
 
 nsresult
-sbRemoteWebPlaylist::GetHidden(PRBool* aHidden)
+sbRemoteWebPlaylist::GetHidden(bool* aHidden)
 {
   NS_ENSURE_ARG_POINTER(aHidden);
   LOG(("sbRemoteWebPlaylist::GetHidden()"));
 
   nsresult rv = NS_OK;
-  PRBool showing;
+  bool showing;
   rv = mOwnerTab->GetOuterPlaylistShowing(&showing);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -39,14 +39,14 @@
 #define NS_FORWARD_SBISQLBUILDER_WITHOUT_TOSTRING_RESET(_to) \
   NS_IMETHOD GetLimit(PRInt32 *aLimit) { return _to GetLimit(aLimit); } \
   NS_IMETHOD SetLimit(PRInt32 aLimit) { return _to SetLimit(aLimit); } \
-  NS_IMETHOD GetLimitIsParameter(PRBool *aLimitIsParameter) { return _to GetLimitIsParameter(aLimitIsParameter); } \
-  NS_IMETHOD SetLimitIsParameter(PRBool aLimitIsParameter) { return _to SetLimitIsParameter(aLimitIsParameter); } \
+  NS_IMETHOD GetLimitIsParameter(bool *aLimitIsParameter) { return _to GetLimitIsParameter(aLimitIsParameter); } \
+  NS_IMETHOD SetLimitIsParameter(bool aLimitIsParameter) { return _to SetLimitIsParameter(aLimitIsParameter); } \
   NS_IMETHOD GetOffset(PRInt32 *aOffset) { return _to GetOffset(aOffset); } \
   NS_IMETHOD SetOffset(PRInt32 aOffset) { return _to SetOffset(aOffset); } \
-  NS_IMETHOD GetOffsetIsParameter(PRBool *aOffsetIsParameter) { return _to GetOffsetIsParameter(aOffsetIsParameter); } \
-  NS_IMETHOD SetOffsetIsParameter(PRBool aOffsetIsParameter) { return _to SetOffsetIsParameter(aOffsetIsParameter); } \
+  NS_IMETHOD GetOffsetIsParameter(bool *aOffsetIsParameter) { return _to GetOffsetIsParameter(aOffsetIsParameter); } \
+  NS_IMETHOD SetOffsetIsParameter(bool aOffsetIsParameter) { return _to SetOffsetIsParameter(aOffsetIsParameter); } \
   NS_IMETHOD AddJoin(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName) { return _to AddJoin(aJoinType, aJoinedTableName, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName); } \
-  NS_IMETHOD AddJoinWithIndexHint(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName, PRBool aRequiresFromTableIndexHint, PRBool aRequiresToTableIndexHint) { return _to AddJoinWithIndexHint(aJoinType, aJoinedTableName, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName, aRequiresFromTableIndexHint, aRequiresToTableIndexHint); } \
+  NS_IMETHOD AddJoinWithIndexHint(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName, bool aRequiresFromTableIndexHint, bool aRequiresToTableIndexHint) { return _to AddJoinWithIndexHint(aJoinType, aJoinedTableName, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName, aRequiresFromTableIndexHint, aRequiresToTableIndexHint); } \
   NS_IMETHOD AddSubqueryJoin(PRUint32 aJoinType, sbISQLSelectBuilder *aJoinedSubquery, const nsAString & aJoinedTableAlias, const nsAString & aJoinedColumnName, const nsAString & aJoinToTableName, const nsAString & aJoinToColumnName) { return _to AddSubqueryJoin(aJoinType, aJoinedSubquery, aJoinedTableAlias, aJoinedColumnName, aJoinToTableName, aJoinToColumnName); } \
   NS_IMETHOD AddJoinWithCriterion(PRUint32 aJoinType, const nsAString & aJoinedTableName, const nsAString & aJoinedTableAlias, sbISQLBuilderCriterion *aCriterion) { return _to AddJoinWithCriterion(aJoinType, aJoinedTableName, aJoinedTableAlias, aCriterion); } \
   NS_IMETHOD AddSubquery(sbISQLSelectBuilder *aSubquery, const nsAString & aAlias) { return _to AddSubquery(aSubquery, aAlias); } \
@@ -88,9 +88,9 @@ protected:
   };
 
   PRInt32 mLimit;
-  PRBool mLimitIsParameter;
+  bool mLimitIsParameter;
   PRInt32 mOffset;
-  PRBool mOffsetIsParameter;
+  bool mOffsetIsParameter;
   nsTArray<sbJoinInfo> mJoins;
   nsTArray<sbSubqueryInfo> mSubqueries;
 
@@ -103,7 +103,7 @@ SB_EscapeSQL(nsAString& str)
 
   PRInt32 pos = str.FindChar(QUOTE_CHAR, 0);
   PRInt32 lastPos = 0;
-  PRBool hasQuote = PR_FALSE;
+  bool hasQuote = PR_FALSE;
   while(pos >= 0) {
     dest.Append(Substring(str, lastPos, pos - lastPos + 1));
     dest.Append(QUOTE_CHAR);

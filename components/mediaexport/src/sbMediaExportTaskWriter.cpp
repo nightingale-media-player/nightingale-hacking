@@ -90,7 +90,7 @@ sbMediaExportTaskWriter::Init()
   rv = taskFile->Append(NS_LITERAL_STRING(TASKFILE_NAME));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = taskFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -208,7 +208,7 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylistHeader(sbIMediaList *aMediaLis
 }
 
 nsresult
-sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList, PRBool aIsMainLibrary)
+sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList, bool aIsMainLibrary)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
@@ -290,7 +290,7 @@ sbMediaExportTaskWriter::WriteAddedTrack(sbIMediaItem *aMediaItem)
   rv = contentFile->GetPath(itemContentPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = contentFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(exists, NS_ERROR_FILE_NOT_FOUND);
@@ -348,7 +348,7 @@ sbMediaExportTaskWriter::WriteUpdatedTrack(sbIMediaItem *aMediaItem)
   rv = contentFile->GetPath(itemContentPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = contentFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(exists, NS_ERROR_FILE_NOT_FOUND);

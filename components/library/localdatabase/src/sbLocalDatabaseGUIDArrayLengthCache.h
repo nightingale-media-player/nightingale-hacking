@@ -28,7 +28,6 @@
 #include <sbILocalDatabaseGUIDArray.h>
 
 #include <nsDataHashtable.h>
-#include <nsAutoLock.h>
 
 #include <set>
 #include <map>

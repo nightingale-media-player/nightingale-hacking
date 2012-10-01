@@ -133,7 +133,7 @@ sbBaseMediacoreMultibandEqualizer::EnsureBandIsCached(sbIMediacoreEqualizerBand 
   nsresult rv = aBand->GetIndex(&bandIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mBands.Get(bandIndex, nsnull);
+  bool success = mBands.Get(bandIndex, nsnull);
   if(!success) {
     success = mBands.Put(bandIndex, aBand);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -168,7 +168,7 @@ sbBaseMediacoreMultibandEqualizer::InitBaseMediacoreMultibandEqualizer()
   mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacoreMultibandEqualizer::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  PRBool success = mBands.Init(10);
+  bool success = mBands.Init(10);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = OnInitBaseMediacoreMultibandEqualizer();
@@ -189,7 +189,7 @@ sbBaseMediacoreMultibandEqualizer::OnInitBaseMediacoreMultibandEqualizer()
 }
 
 /*virtual*/ nsresult
-sbBaseMediacoreMultibandEqualizer::OnSetEqEnabled(PRBool aEqEnabled)
+sbBaseMediacoreMultibandEqualizer::OnSetEqEnabled(bool aEqEnabled)
 {
   /*
    * Here is where you would enable / disable the equalizer
@@ -239,7 +239,7 @@ sbBaseMediacoreMultibandEqualizer::OnSetBand(sbIMediacoreEqualizerBand *aBand)
 //
 /* attribute boolean eqEnabled; */
 NS_IMETHODIMP
-sbBaseMediacoreMultibandEqualizer::GetEqEnabled(PRBool *aEqEnabled)
+sbBaseMediacoreMultibandEqualizer::GetEqEnabled(bool *aEqEnabled)
 {
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - GetEqEnabled", this));
 
@@ -253,7 +253,7 @@ sbBaseMediacoreMultibandEqualizer::GetEqEnabled(PRBool *aEqEnabled)
 }
 
 NS_IMETHODIMP
-sbBaseMediacoreMultibandEqualizer::SetEqEnabled(PRBool aEqEnabled)
+sbBaseMediacoreMultibandEqualizer::SetEqEnabled(bool aEqEnabled)
 {
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - SetEqEnabled", this));
 
@@ -328,7 +328,7 @@ sbBaseMediacoreMultibandEqualizer::SetBands(nsISimpleEnumerator *aBands)
   NS_ENSURE_ARG_POINTER(aBands);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  PRBool hasMore = PR_FALSE;
+  bool hasMore = PR_FALSE;
 
   nsCOMPtr<nsISupports> element;
   while(NS_SUCCEEDED(aBands->HasMoreElements(&hasMore)) &&

@@ -42,7 +42,7 @@ sbTrackTypeImageLabelPropertyInfo::HitTest(const nsAString& aCurrentValue,
                                            PRUint32 aBoxHeight,
                                            PRUint32 aMouseX,
                                            PRUint32 aMouseY,
-                                           PRBool* _retval)
+                                           bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

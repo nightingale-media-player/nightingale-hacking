@@ -65,7 +65,7 @@ nsWindowUtil::~nsWindowUtil()
 }
 
 /* readonly attribute boolean hidden; */
-NS_IMETHODIMP nsWindowUtil::GetHidden(PRBool *aHidden)
+NS_IMETHODIMP nsWindowUtil::GetHidden(bool *aHidden)
 {
   NS_ENSURE_ARG(aHidden);
   if (!mGDKWindow) return NS_ERROR_NOT_INITIALIZED;

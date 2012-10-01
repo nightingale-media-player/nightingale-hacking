@@ -34,7 +34,6 @@
 
 #include <sbIMediacoreVolumeControl.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -54,7 +53,7 @@ public:
   virtual nsresult OnInitBaseMediacoreVolumeControl();
 
   // Override me, look in the cpp file for implementation notes;
-  virtual nsresult OnSetMute(PRBool aMute);
+  virtual nsresult OnSetMute(bool aMute);
 
   // Override me, look in the cpp file for implementation notes.
   virtual nsresult OnSetVolume(PRFloat64 aVolume);
@@ -64,7 +63,7 @@ protected:
 
   PRMonitor *mMonitor;
 
-  PRBool  mMute;
+  bool  mMute;
   double  mVolume;
 };
 

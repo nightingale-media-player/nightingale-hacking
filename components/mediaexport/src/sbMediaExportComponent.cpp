@@ -24,7 +24,7 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include <sbIMediaExportService.h>
 #include "sbMediaExportService.h"

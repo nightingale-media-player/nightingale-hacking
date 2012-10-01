@@ -52,10 +52,10 @@ public:
 
   nsresult IsValidSizeForRange(sbIDevCapRange *aRange,
                                PRInt32 aVal,
-                               PRBool *aIsValid);
+                               bool *aIsValid);
 
   nsresult IsValidSizeForFormat(sbIImageFormatType *aFormat,
-                                PRBool *aIsValid);
+                                bool *aIsValid);
 
 protected:
   virtual ~sbTranscodeAlbumArt();
@@ -66,7 +66,7 @@ private:
   nsCOMPtr<imgIContainer> mImgContainer;
   nsCOMPtr<nsIFileInputStream> mInputStream;
   nsCString               mImageMimeType;
-  PRBool                  mHasAlbumArt;
+  bool                  mHasAlbumArt;
   PRInt32                 mImageHeight;
   PRInt32                 mImageWidth;
 };

@@ -125,8 +125,8 @@ private:
   nsCString mDetectedCharset;
   nsCString mLastCharset;
   nsDetectionConfident mLastConfidence;
-  PRBool mIsCharsetFound;
-  PRBool mIsDone;
+  bool mIsCharsetFound;
+  bool mIsDone;
 };
 
 

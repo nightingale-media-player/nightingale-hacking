@@ -64,7 +64,7 @@ public:
   nsresult Init();
 
   static LRESULT CALLBACK CallWndProc(int aCode, WPARAM wParam, LPARAM lParam);
-  PRBool IsHooked(HWND aWnd);
+  bool IsHooked(HWND aWnd);
 
 protected:
   listeners_t mListeners;

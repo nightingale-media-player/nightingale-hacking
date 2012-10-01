@@ -27,12 +27,11 @@
 
 #include "sbTestMediacoreStressThreads.h"
 
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <sbBaseMediacoreEventTarget.h>
 
 #include <sbIMediacoreEvent.h>
@@ -101,7 +100,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool processed = PR_FALSE;
+  bool processed = PR_FALSE;
   while(mCounter > 0) {
     rv = target->ProcessNextEvent(PR_FALSE, &processed);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -110,7 +109,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
   // Now shutdown all the threads
   while (mThreads.Count()) {
     nsCOMPtr<nsIThread> thread = mThreads[0];
-    PRBool succeeded = mThreads.RemoveObjectAt(0);
+    bool succeeded = mThreads.RemoveObjectAt(0);
     NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
     rv = thread->Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -196,8 +195,8 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Shutdown()
 
 NS_IMETHODIMP
 sbTestMediacoreStressThreads::DispatchEvent(sbIMediacoreEvent *aEvent,
-                                            PRBool aAsync,
-                                            PRBool* _retval)
+                                            bool aAsync,
+                                            bool* _retval)
 {
   return mBaseEventTarget ? mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) : NS_ERROR_NULL_POINTER;
 }

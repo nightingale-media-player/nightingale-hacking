@@ -432,13 +432,13 @@ public:
    *
    * \return true               Property bag has key.
    */
-  PRBool HasKey(const char* aKey)
+  bool HasKey(const char* aKey)
   {
     // Validate state.
     NS_ENSURE_TRUE(mPropertyBag2, PR_FALSE);
 
     // Check for key.
-    PRBool hasKey;
+    bool hasKey;
     *mRV = mPropertyBag2->HasKey(sbAutoString(aKey), &hasKey);
     NS_ENSURE_SUCCESS(*mRV, PR_FALSE);
 

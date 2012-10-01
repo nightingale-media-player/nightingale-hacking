@@ -344,7 +344,7 @@ private:
 
 nsresult sbUSBDeviceImplementsClass(sbUSBDescriptorList& aDescriptorList,
                                     PRUint8              aUSBClass,
-                                    PRBool*              aImplementsClass);
+                                    bool*              aImplementsClass);
 
 nsresult sbUSBDeviceGetDescriptor(sbUSBDeviceRef*   aDeviceRef,
                                   PRUint8           aDescriptorType,

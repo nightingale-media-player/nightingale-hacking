@@ -126,7 +126,7 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
 
   nsString modifiedPref(aData);
   
-  PRBool modifiedValue = PR_FALSE;
+  bool modifiedValue = PR_FALSE;
   rv = prefBranch->GetBoolPref(NS_ConvertUTF16toUTF8(modifiedPref).get(),
                                &modifiedValue);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -158,7 +158,7 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
   return NS_OK;
 }
 
-PRBool
+bool
 sbMediaExportPrefController::GetShouldExportAnyMedia()
 {
   return mShouldExportTracks ||
@@ -166,31 +166,31 @@ sbMediaExportPrefController::GetShouldExportAnyMedia()
          mShouldExportSmartPlaylists;
 }
 
-PRBool
+bool
 sbMediaExportPrefController::GetShouldExportAnyPlaylists()
 {
   return mShouldExportPlaylists || mShouldExportSmartPlaylists;
 }
 
-PRBool
+bool
 sbMediaExportPrefController::GetShouldStartExportAgent()
 {
   return mShouldStartExportAgent; 
 }
 
-PRBool
+bool
 sbMediaExportPrefController::GetShouldExportTracks()
 {
   return mShouldExportTracks;
 }
 
-PRBool
+bool
 sbMediaExportPrefController::GetShouldExportPlaylists()
 {
   return mShouldExportPlaylists;
 }
 
-PRBool
+bool
 sbMediaExportPrefController::GetShouldExportSmartPlaylists()
 {
   return mShouldExportSmartPlaylists;

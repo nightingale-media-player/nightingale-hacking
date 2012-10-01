@@ -174,7 +174,7 @@ void sbPropertyUnitConverter::RegisterUnit(PRUint32 aUnitInternalID,
                                            const nsAString &aUnitExternalID, 
                                            const nsAString &aUnitName, 
                                            const nsAString &aUnitShortName, 
-                                           PRBool isNative)
+                                           bool isNative)
 {
   sbSimpleAutoLock lock(mLock);
   if (isNative) {

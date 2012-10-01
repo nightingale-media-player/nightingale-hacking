@@ -69,10 +69,10 @@ public:
                            nsIPrefBranch* aPrefs);
 };
 
-nsresult ImportProxySettings_Auto(PRBool *_retval);
+nsresult ImportProxySettings_Auto(bool *_retval);
 
 #ifdef XP_WIN
-nsresult ImportProxySettings_IE(PRBool *_retval);
+nsresult ImportProxySettings_IE(bool *_retval);
 #endif
 
 #endif // __NETWORKPROXYIMPORT_H__

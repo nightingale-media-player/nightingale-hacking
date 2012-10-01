@@ -167,7 +167,7 @@ sbTextPropertyInfo::InitializeOperators()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTextPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
+NS_IMETHODIMP sbTextPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -195,8 +195,8 @@ NS_IMETHODIMP sbTextPropertyInfo::Sanitize(const nsAString & aValue, nsAString &
 NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
-  PRBool valid = PR_FALSE;
-  PRBool isTrim = PR_FALSE;
+  bool valid = PR_FALSE;
+  bool isTrim = PR_FALSE;
 
   _retval = aValue;
 
@@ -298,7 +298,7 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
 NS_IMETHODIMP sbTextPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
-  PRBool valid = PR_FALSE;
+  bool valid = PR_FALSE;
 
   _retval = aValue;
   CompressWhitespace(_retval);
@@ -373,28 +373,28 @@ NS_IMETHODIMP sbTextPropertyInfo::SetMaxLength(PRUint32 aMaxLength)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTextPropertyInfo::GetEnforceLowercase(PRBool *aEnforceLowercase)
+NS_IMETHODIMP sbTextPropertyInfo::GetEnforceLowercase(bool *aEnforceLowercase)
 {
   NS_ENSURE_ARG_POINTER(aEnforceLowercase);
   sbSimpleAutoLock lock(mEnforceLowercaseLock);
   *aEnforceLowercase = mEnforceLowercase;
   return NS_OK;
 }
-NS_IMETHODIMP sbTextPropertyInfo::SetEnforceLowercase(PRBool aEnforceLowercase)
+NS_IMETHODIMP sbTextPropertyInfo::SetEnforceLowercase(bool aEnforceLowercase)
 {
   sbSimpleAutoLock lock(mEnforceLowercaseLock);
   mEnforceLowercase = aEnforceLowercase;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTextPropertyInfo::GetNoCompressWhitespace(PRBool *aNoCompressWhitespace)
+NS_IMETHODIMP sbTextPropertyInfo::GetNoCompressWhitespace(bool *aNoCompressWhitespace)
 {
   NS_ENSURE_ARG_POINTER(aNoCompressWhitespace);
   sbSimpleAutoLock lock(mNoCompressWhitespaceLock);
   *aNoCompressWhitespace = mNoCompressWhitespace;
   return NS_OK;
 }
-NS_IMETHODIMP sbTextPropertyInfo::SetNoCompressWhitespace(PRBool aNoCompressWhitespace)
+NS_IMETHODIMP sbTextPropertyInfo::SetNoCompressWhitespace(bool aNoCompressWhitespace)
 {
   sbSimpleAutoLock lock(mNoCompressWhitespaceLock);
   mNoCompressWhitespace = aNoCompressWhitespace;

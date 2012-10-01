@@ -208,7 +208,7 @@ public:
                      /* in */  sbIDeviceLibrary* aLibrary,
                      /* in */  PRInt64           aSpaceNeeded,
                      /* in */  PRInt64           aSpaceAvailable,
-                     /* out */ PRBool*           aAbort);
+                     /* out */ bool*           aAbort);
 
   /**
    * Ask the user if they wish to abort ripping the cd, this will be called
@@ -217,7 +217,7 @@ public:
    * \param aAbort          [out] True if user selected to stop rip.
    */
 
-  static nsresult QueryUserAbortRip(PRBool*     aAbort);
+  static nsresult QueryUserAbortRip(bool*     aAbort);
 
   /**
    * Ask the user if they wish to see the errors for a device before ejecting
@@ -416,7 +416,7 @@ public:
    * \param aMediaItem The media item to check for.
    * \return True if the media item is supported on the device.
    */
-  static PRBool
+  static bool
   IsMediaItemSupported(sbIDevice *aDevice,
                        sbIMediaItem *aMediaItem);
 
@@ -426,7 +426,7 @@ public:
    * \param aListContentType The list content type to check for.
    * \return True if the content type is supported on the device.
    */
-  static PRBool
+  static bool
   IsMediaListContentTypeSupported(sbIDevice *aDevice,
                                   PRUint16 aListContentType);
 
@@ -497,7 +497,7 @@ public:
    */
   static nsresult SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
                                            sbILibrary * aDevLibrary,
-                                           PRBool aMark);
+                                           bool aMark);
 
 /**
  * Return in aSyncItem the target sync media item in the target sync library
@@ -570,10 +570,10 @@ public:
   /**
    * Turns the listeners on or off if they are not already
    */
-  void SetIgnore(PRBool aIgnore);
+  void SetIgnore(bool aIgnore);
 private:
   sbBaseDevice * mDevice; // Non-owning pointer
-  PRBool mIgnoring;
+  bool mIgnoring;
   PRUint32 mListenerType;
   sbIMediaItem * mMediaItem; // nsCOMPtr required definition of sbIMediaItem
 

@@ -31,7 +31,6 @@
 #include "DeviceManager.h"
 #include "DeviceBase.h"
 
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIComponentRegistrar.h>
 #include <nsIObserverService.h>
@@ -57,13 +56,13 @@ static PRLogModuleInfo* gDevicemanagerLog = nsnull;
 #define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/OldDeviceImpl/"
 
 // This allows us to be initialized once and only once.
-PRBool sbDeviceManagerObsolete::sServiceInitialized = PR_FALSE;
+bool sbDeviceManagerObsolete::sServiceInitialized = PR_FALSE;
 
 // Whether or not we've already loaded all supported devices
-PRBool sbDeviceManagerObsolete::sDevicesLoaded = PR_FALSE;
+bool sbDeviceManagerObsolete::sDevicesLoaded = PR_FALSE;
 
 // This is a sanity check to make sure that we're finalizing properly
-PRBool sbDeviceManagerObsolete::sServiceFinalized = PR_FALSE;
+bool sbDeviceManagerObsolete::sServiceFinalized = PR_FALSE;
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceManagerObsolete,
                               sbIDeviceManager,
@@ -200,7 +199,7 @@ sbDeviceManagerObsolete::LoadSupportedDevices()
 
   // Enumerate through the contractIDs and look for our prefix
   nsCOMPtr<nsISupports> element;
-  PRBool more = PR_FALSE;
+  bool more = PR_FALSE;
   while(NS_SUCCEEDED(simpleEnumerator->HasMoreElements(&more)) && more) {
 
     rv = simpleEnumerator->GetNext(getter_AddRefs(element));
@@ -242,7 +241,7 @@ sbDeviceManagerObsolete::LoadSupportedDevices()
     }
 
     // If everything has succeeded then we can add it to our array
-    PRBool ok = mSupportedDevices.AppendObject(device);
+    bool ok = mSupportedDevices.AppendObject(device);
 
     // Make sure that our array is behaving properly. If not we're in trouble.
     NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
@@ -305,7 +304,7 @@ sbDeviceManagerObsolete::GetDeviceByIndex(PRUint32 aIndex,
 
 NS_IMETHODIMP
 sbDeviceManagerObsolete::HasDeviceForCategory(const nsAString& aCategory,
-                                              PRBool* _retval)
+                                              bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);

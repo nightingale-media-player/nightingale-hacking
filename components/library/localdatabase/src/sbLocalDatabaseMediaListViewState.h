@@ -91,7 +91,7 @@ public:
                                     sbLocalDatabaseCascadeFilterSetState* aFilterSet,
                                     sbLocalDatabaseTreeViewState* aTreeViewState);
 private:
-  PRBool mInitialized;
+  bool mInitialized;
   nsCOMPtr<sbIMutablePropertyArray> mSort;
   nsCOMPtr<sbILibraryConstraint> mSearch;
   nsCOMPtr<sbILibraryConstraint> mFilter;

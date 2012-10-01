@@ -350,7 +350,7 @@ sbIPDDevice::ReqHandleWriteTrack(TransferRequest * aRequest,
   sbAutoStatusItemFailure autoItemStatus(mIPDStatus);
 
   // Remove unsupported media items and report errors.
-  PRBool supported;
+  bool supported;
   rv = sbBaseDevice::SupportsMediaItem(aRequest->item,
                                        nsnull,
                                        PR_TRUE,
@@ -453,7 +453,7 @@ sbIPDDevice::ReqHandleDelete(TransferRequest* aRequest,
   nsresult rv;
 
   // Determine if the item to delete is a playlist.
-  PRBool deletePlaylist;
+  bool deletePlaylist;
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(aRequest->item, &rv);
   if (NS_SUCCEEDED(rv))
     deletePlaylist = PR_TRUE;
@@ -621,7 +621,7 @@ sbIPDDevice::ReqHandleUpdate(TransferRequest * aRequest)
 
   // Do nothing if the item to update no longer exists.
   nsCOMPtr<sbILibrary> library;
-  PRBool               exists;
+  bool               exists;
   rv = mediaItem->GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, /* void */);
   rv = library->Contains(mediaItem, &exists);
@@ -702,7 +702,7 @@ sbIPDDevice::ReqHandleFactoryReset(TransferRequest * aRequest)
   rv = mountDir->GetDirectoryEntries(getter_AddRefs(files));
   NS_ENSURE_SUCCESS(rv, /* void */);
 
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(files->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsIFile> file;
     rv = files->GetNext(getter_AddRefs(file));
@@ -741,7 +741,7 @@ sbIPDDevice::ReqHandleWritePrefs(TransferRequest * aRequest)
 
   // Function variables.
   GError* gError = NULL;
-  PRBool  success;
+  bool  success;
 
   // Operate under the preference lock.
   //XXXeps this can sometimes cause a potential deadlock assert because the

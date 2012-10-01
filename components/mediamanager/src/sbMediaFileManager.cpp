@@ -31,7 +31,6 @@
 #include <sbIPropertyInfo.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -127,7 +126,7 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
 
   nsresult rv;
 
-  PRBool hasKey;
+  bool hasKey;
   nsCOMPtr<nsIPropertyBag2> properties = aProperties;
   if (!properties) {
     properties = do_CreateInstance("@mozilla.org/hash-property-bag;1");
@@ -201,7 +200,7 @@ NS_IMETHODIMP
 sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
                                  unsigned short aManageType,
                                  nsIFile        *aForceTargetFile,
-                                 PRBool         *aRetVal)
+                                 bool         *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -255,7 +254,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure the original file exists before doing any organizing.
-  PRBool exists;
+  bool exists;
   rv = itemFile->Exists(&exists);
   if (NS_FAILED(rv) || !exists) {
     return NS_ERROR_FILE_NOT_FOUND;
@@ -328,7 +327,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   }
 
   // Check if we are already organized;
-  PRBool isOrganized = PR_FALSE;
+  bool isOrganized = PR_FALSE;
   rv = newFile->Equals(itemFile, &isOrganized);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -407,7 +406,7 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
 
   nsString filename;
   nsString path;
-  PRBool success;
+  bool success;
 
   // figure out the containing folder for the final path
   if (aManageType & sbIMediaFileManager::MANAGE_MOVE) {
@@ -479,14 +478,14 @@ sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
   // for video, and one to rule them all:
   mMediaFolders.Init(3);
 
-  PRBool ok = PR_FALSE;
+  bool ok = PR_FALSE;
 
   // Check the property bag for a custom media folder.  A custom
   // folder, if provided, will override the default folders:
   nsCOMPtr<nsIFile> customFolder;
   if (aProperties) {
     NS_NAMED_LITERAL_STRING(KEY_CUSTOM_MEDIA_FOLDER, "media-folder");
-    PRBool hasKey = PR_FALSE;
+    bool hasKey = PR_FALSE;
     rv = aProperties->HasKey(KEY_CUSTOM_MEDIA_FOLDER, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasKey) {
@@ -514,7 +513,7 @@ sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
   nsCOMPtr<nsIFile> musicDir = customFolder;
   if (aProperties) {
     NS_NAMED_LITERAL_STRING(KEY_CUSTOM_MUSIC_FOLDER, "media-folder:audio");
-    PRBool hasKey = PR_FALSE;
+    bool hasKey = PR_FALSE;
     rv = aProperties->HasKey(KEY_CUSTOM_MUSIC_FOLDER, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasKey) {
@@ -548,7 +547,7 @@ sbMediaFileManager::InitMediaFoldersMap(nsIPropertyBag2 * aProperties)
   nsCOMPtr<nsIFile> videoDir = customFolder;
   if (aProperties) {
     NS_NAMED_LITERAL_STRING(KEY_CUSTOM_VIDEO_FOLDER, "media-folder:video");
-    PRBool hasKey = PR_FALSE;
+    bool hasKey = PR_FALSE;
     rv = aProperties->HasKey(KEY_CUSTOM_VIDEO_FOLDER, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasKey) {
@@ -595,7 +594,7 @@ sbMediaFileManager::GetMediaFolder(sbIMediaItem * aMediaItem,
   rv = aMediaItem->GetContentType(contentType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool defined = mMediaFolders.Get(contentType, aFolder);
+  bool defined = mMediaFolders.Get(contentType, aFolder);
   if (!defined) {
     // No content type-specific media folder.  Try the default
     // folder for all content types:
@@ -650,7 +649,7 @@ namespace
     context->mFile->GetPath(itemPath);
 #endif
 
-    PRBool found = PR_FALSE;
+    bool found = PR_FALSE;
     rv = aData->Contains(context->mFile, PR_TRUE, &found);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
 
@@ -689,7 +688,7 @@ sbMediaFileManager::InitFolderNameTemplates(nsIPropertyBag2 * aProperties)
 
   NameTemplate nameTemplate;
   nsAutoString key;
-  PRBool ok = PR_FALSE;
+  bool ok = PR_FALSE;
   
   mFolderNameTemplates.Init();
 
@@ -697,7 +696,7 @@ sbMediaFileManager::InitFolderNameTemplates(nsIPropertyBag2 * aProperties)
   // A custom template, if provided, will override the default templates:
   if (aProperties) {
     NS_NAMED_LITERAL_STRING(KEY_CUSTOM_DIR_TEMPLATE, "dir-format");
-    PRBool hasKey = PR_FALSE;
+    bool hasKey = PR_FALSE;
     rv = aProperties->HasKey(KEY_CUSTOM_DIR_TEMPLATE, &hasKey);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasKey) {
@@ -854,7 +853,7 @@ nsresult
 sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
                                    nsIURI       *aItemUri,
                                    nsString     &aFilename,
-                                   PRBool       *aRetVal)
+                                   bool       *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -927,7 +926,7 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
 nsresult
 sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
                                nsString     &aPath,
-                               PRBool       *aRetVal)
+                               bool       *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1007,7 +1006,7 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
   defaultPrefKey.AssignLiteral(PREF_MFM_DEFPROPERTY);
   defaultPrefKey.Append(NS_ConvertUTF16toUTF8(aPropertyKey));
 
-  PRBool prefExists;
+  bool prefExists;
   rv = mPrefBranch->PrefHasUserValue(defaultPrefKey.get(), &prefExists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1085,8 +1084,8 @@ nsresult
 sbMediaFileManager::GetFormattedFileFolder(
                                       const NameTemplate &  aNameTemplate,
                                       sbIMediaItem*         aMediaItem,
-                                      PRBool                aAppendProperty,
-                                      PRBool                aTrimEachProperty,
+                                      bool                aAppendProperty,
+                                      bool                aTrimEachProperty,
                                       nsString              aFileExtension,
                                       nsString&             aRetVal)
 {
@@ -1125,7 +1124,7 @@ sbMediaFileManager::GetFormattedFileFolder(
 
         // Handle track number padding if the user has turned on the pref.
         // NOTE: Don't bother checking result value.
-        PRBool shouldPadTrackNum = PR_FALSE;
+        bool shouldPadTrackNum = PR_FALSE;
         mPrefBranch->GetBoolPref(PREF_MFM_PADTRACKNUM, &shouldPadTrackNum);
         if (shouldPadTrackNum &&
             configValue.EqualsLiteral(SB_PROPERTY_TRACKNUMBER))
@@ -1207,7 +1206,7 @@ sbMediaFileManager::CheckManagementFolder(sbIMediaItem * aMediaItem)
 
   // Always check that the media folder exists since it could have been
   // disconnected or removed from the system.
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = mediaFolder->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(exists, NS_ERROR_FILE_TARGET_DOES_NOT_EXIST);
@@ -1285,7 +1284,7 @@ nsresult
 sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
                                nsIFile      *aSrcFile,
                                nsIFile      *aDestFile,
-                               PRBool       *aRetVal)
+                               bool       *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1304,7 +1303,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure the Src and Dest files are not equal
-  PRBool isSrcDestSame = PR_FALSE;
+  bool isSrcDestSame = PR_FALSE;
   rv = aSrcFile->Equals(aDestFile, &isSrcDestSame);
   NS_ENSURE_SUCCESS(rv, rv);
   if (isSrcDestSame) {
@@ -1466,7 +1465,7 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
   nsCOMPtr<nsISimpleEnumerator> dirEntries;
   rv = aDirectory->GetDirectoryEntries(getter_AddRefs(dirEntries));
 
-  PRBool hasMoreElements;
+  bool hasMoreElements;
   rv = dirEntries->HasMoreElements(&hasMoreElements);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1499,7 +1498,7 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
  */
 nsresult
 sbMediaFileManager::Delete(nsIFile *aItemFile,
-                           PRBool  *aRetVal)
+                           bool  *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aItemFile);

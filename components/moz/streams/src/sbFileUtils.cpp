@@ -38,7 +38,6 @@
 #include <nsNetUtil.h>
 
 #include <sbMemoryUtils.h>
-#include <sbProxiedComponentManager.h>
 #include <sbURIUtils.h>
 
 /**
@@ -273,7 +272,7 @@ sbNewFileURI(nsIFile* aFile,
 
 void
 RemoveBadFileNameCharacters(nsAString& aFileName,
-                            PRBool     aAllPlatforms)
+                            bool     aAllPlatforms)
 {
   // Get the list of bad characters.
   const char* badCharacters;

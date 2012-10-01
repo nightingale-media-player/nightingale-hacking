@@ -83,10 +83,10 @@ protected:
   virtual ~sbSecurityMixin();
 
   // helpers for resolving the prefs and permissions
-  PRBool GetPermission(nsIURI *aURI, const struct Scope* aScope);
-  PRBool GetPermissionForScopedName(const nsAString &aScopedName,
-                                    PRBool disableNotificationCheck = PR_FALSE);
-  PRBool GetScopedName(nsTArray<nsCString> &aStringArray,
+  bool GetPermission(nsIURI *aURI, const struct Scope* aScope);
+  bool GetPermissionForScopedName(const nsAString &aScopedName,
+                                    bool disableNotificationCheck = PR_FALSE);
+  bool GetScopedName(nsTArray<nsCString> &aStringArray,
                        const nsAString &aMethodName,
                        nsAString &aScopedName);
   
@@ -95,7 +95,7 @@ protected:
   // helpers for dispatching notification events
   nsresult DispatchNotificationEvent(const char* aNotificationType, 
                                      const Scope* aScope,
-                                     PRBool aHasAccess);
+                                     bool aHasAccess);
 
   // helper function for allocating IID array 
   nsresult CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID ***aDestArray);
@@ -110,7 +110,7 @@ protected:
   // passed in to us by the mOuter ( in our Init() method )
   nsIID **mInterfaces;
   PRUint32 mInterfacesCount;
-  PRBool mPrivileged;
+  bool mPrivileged;
   nsTArray<nsCString> mMethods;
   nsTArray<nsCString> mRProperties;
   nsTArray<nsCString> mWProperties;

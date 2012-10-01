@@ -39,7 +39,6 @@
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -117,7 +116,7 @@ sbMockDeviceFirmwareHandler::OnGetCurrentFirmwareReadableVersion(nsAString &aCur
 }
 
 /*virtual*/ nsresult
-sbMockDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
+sbMockDeviceFirmwareHandler::OnGetRecoveryMode(bool *aRecoveryMode)
 {
   if(mDevice) {
     nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
@@ -130,7 +129,7 @@ sbMockDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
     rv = needsRecoveryModeVariant->GetDataType(&dataType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool needsRecoveryMode = PR_FALSE;
+    bool needsRecoveryMode = PR_FALSE;
     if(dataType == nsIDataType::VTYPE_BOOL) {
       rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -169,7 +168,7 @@ sbMockDeviceFirmwareHandler::OnGetDeviceVendor(nsAString &aDeviceVendor)
 sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
                                          PRUint32 aDeviceVendorID,
                                          PRUint32 aDeviceProductID,
-                                         PRBool *_retval)
+                                         bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -197,9 +196,9 @@ sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
                                       sbIDeviceEventListener *aListener,
-                                      PRBool *_retval)
+                                      bool *_retval)
 {
-  PRBool canHandleDevice = PR_FALSE;
+  bool canHandleDevice = PR_FALSE;
 
   *_retval = PR_FALSE;
 
@@ -261,7 +260,7 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
     rv = shouldFailVariant->GetDataType(&dataType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool shouldFail = PR_FALSE;
+    bool shouldFail = PR_FALSE;
     if(dataType == nsIDataType::VTYPE_BOOL) {
       rv = shouldFailVariant->GetAsBool(&shouldFail);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -503,7 +502,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
       rv = needsRecoveryModeVariant->GetDataType(&dataType);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool needsRecoveryMode = PR_FALSE;
+      bool needsRecoveryMode = PR_FALSE;
       if(dataType == nsIDataType::VTYPE_BOOL) {
         rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -525,7 +524,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     rv = shouldFailVariant->GetDataType(&dataType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool shouldFail = PR_FALSE;
+    bool shouldFail = PR_FALSE;
     if(dataType == nsIDataType::VTYPE_BOOL) {
       rv = shouldFailVariant->GetAsBool(&shouldFail);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -618,7 +617,7 @@ sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
     rv = shouldFailVariant->GetDataType(&dataType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool shouldFail = PR_FALSE;
+    bool shouldFail = PR_FALSE;
     if(dataType == nsIDataType::VTYPE_BOOL) {
       rv = shouldFailVariant->GetAsBool(&shouldFail);
       NS_ENSURE_SUCCESS(rv, rv);

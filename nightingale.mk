@@ -105,7 +105,6 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
-
 all: songbird_output build
 
 run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)

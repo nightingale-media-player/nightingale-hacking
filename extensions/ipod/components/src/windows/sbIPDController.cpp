@@ -50,7 +50,7 @@
 // Mozilla imports.
 #include <nsAutoPtr.h>
 #include <nsIClassInfoImpl.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIPropertyBag.h>
 #include <nsIVariant.h>
@@ -184,7 +184,7 @@ sbIPDController::CreateDevice(nsIPropertyBag* aParams,
 
 NS_IMETHODIMP
 sbIPDController::ControlsDevice(sbIDevice* aDevice,
-                                PRBool*    _retval)
+                                bool*    _retval)
 {
   return ControlsDeviceInternal(aDevice, _retval);
 }

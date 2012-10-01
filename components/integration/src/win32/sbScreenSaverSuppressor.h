@@ -35,7 +35,7 @@ public:
   sbScreenSaverSuppressor();
   virtual ~sbScreenSaverSuppressor();
 
-  virtual nsresult OnSuppress(PRBool aSuppress);
+  virtual nsresult OnSuppress(bool aSuppress);
 };
 
 #endif // __SB_SCREEN_SAVER_SUPPRESSOR_H__

@@ -90,7 +90,7 @@ public:
 
   sbILocalDatabaseGUIDArray* GetGUIDArray();
 
-  nsresult UpdateViewArrayConfiguration(PRBool aClearTreeSelection);
+  nsresult UpdateViewArrayConfiguration(bool aClearTreeSelection);
 
   void NotifyListenersFilterChanged() {
     NotifyListenersInternal(&sbIMediaListViewListener::OnFilterChanged);
@@ -137,7 +137,7 @@ private:
 
   nsresult CreateQueries();
 
-  nsresult Invalidate(PRBool aInvalidateLength = PR_FALSE);
+  nsresult Invalidate(bool aInvalidateLength = PR_FALSE);
 
   nsresult ClonePropertyArray(sbIPropertyArray* aSource,
                               sbIMutablePropertyArray** _retval);
@@ -154,16 +154,16 @@ private:
   nsresult HasCommonProperty(sbIPropertyArray* aBag1,
                              sbIPropertyArray* aBag2,
                              nsStringArray * aPropertiesToIgnore,
-                             PRBool* aHasCommonProperty);
+                             bool* aHasCommonProperty);
 
   nsresult HasCommonProperty(sbIPropertyArray* aBag,
                              sbILibraryConstraint* aConstraint,
-                             PRBool* aHasCommonProperty);
+                             bool* aHasCommonProperty);
 
   nsresult ShouldCauseInvalidation(sbIPropertyArray* aProperties,
-                                   PRBool* aShouldCauseInvalidation);
+                                   bool* aShouldCauseInvalidation);
 
-  nsresult UpdateListener(PRBool aRemoveListener);
+  nsresult UpdateListener(bool aRemoveListener);
 
   void NotifyListenersInternal(ListenerFunc aListenerFunc);
 

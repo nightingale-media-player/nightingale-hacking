@@ -97,8 +97,8 @@ nsresult nsSystemTrayIconBase::SetEventTarget(nsIDOMEventTarget *aEventTarget)
 
 void nsSystemTrayIconBase::DispatchEvent(const nsAString& aType,
                                          PRUint16 aButton, PRInt32 aDetail,
-                                         PRBool aCtrlKey, PRBool aAltKey,
-                                         PRBool aShiftKey, PRBool aMetaKey)
+                                         bool aCtrlKey, bool aAltKey,
+                                         bool aShiftKey, bool aMetaKey)
 {
   nsresult rv;
 
@@ -142,7 +142,7 @@ void nsSystemTrayIconBase::DispatchEvent(const nsAString& aType,
   if (NS_FAILED(rv)) return;
   
   // and dispatch it. (yes, return value is ignored; we can't do anything)
-  PRBool result;
+  bool result;
   mEventTarget->DispatchEvent(event, &result);
 }
 
@@ -177,7 +177,7 @@ nsSystemTrayService::OnStartFrame(imgIRequest *aRequest,
   in boolean aCurrentFrame, [const] in nsIntRect aRect); */
 NS_IMETHODIMP
 nsSystemTrayService::OnDataAvailable(imgIRequest *aRequest,
-                                     PRBool aCurrentFrame,
+                                     bool aCurrentFrame,
                                      const nsIntRect * aRect)
 {
   return NS_OK;
@@ -204,7 +204,7 @@ NS_IMETHODIMP nsSystemTrayIconBase::OnStopDecode(imgIRequest *aRequest, nsresult
 }
 
 /* void onStopRequest (in imgIRequest aRequest, in boolean aIsLastPart); */
-NS_IMETHODIMP nsSystemTrayIconBase::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
+NS_IMETHODIMP nsSystemTrayIconBase::OnStopRequest(imgIRequest *aRequest, bool aIsLastPart)
 {
   return NS_OK;
 }

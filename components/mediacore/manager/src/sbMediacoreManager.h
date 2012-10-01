@@ -86,14 +86,14 @@ public:
 
   // sbBaseMediacoreMultibandEqualizer overrides
   virtual nsresult OnInitBaseMediacoreMultibandEqualizer();
-  virtual nsresult OnSetEqEnabled(PRBool aEqEnabled);
+  virtual nsresult OnSetEqEnabled(bool aEqEnabled);
   virtual nsresult OnGetBandCount(PRUint32 *aBandCount);
   virtual nsresult OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand);
   virtual nsresult OnSetBand(sbIMediacoreEqualizerBand *aBand);
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();
-  virtual nsresult OnSetMute(PRBool aMute);
+  virtual nsresult OnSetMute(bool aMute);
   virtual nsresult OnSetVolume(PRFloat64 aVolume);
 
   nsresult SetVolumeDataRemote(PRFloat64 aVolume);
@@ -168,7 +168,7 @@ public:
   virtual ~sbMediacoreVideoWindowListener();
 
   nsresult Init(sbMediacoreManager *aManager, nsIDOMEventTarget *aTarget);
-  PRBool IsWindowReady();
+  bool IsWindowReady();
 
 protected:
   PRPackedBool                  mWindowReady;

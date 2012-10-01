@@ -115,7 +115,7 @@ sbMediacoreEvent::Dispatch()
   mDispatched = PR_TRUE;
 }
 
-PRBool
+bool
 sbMediacoreEvent::WasDispatched()
 {
   TRACE(("sbMediacoreEvent[0x%x] - WasDispatched", this));

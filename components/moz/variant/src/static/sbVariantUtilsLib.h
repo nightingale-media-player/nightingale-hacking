@@ -127,7 +127,7 @@ do_VariantQueryInterface(nsIVariant* aVariant, nsresult* aError)
 
 nsresult sbVariantsEqual(nsIVariant* aVariant1,
                          nsIVariant* aVariant2,
-                         PRBool*     aEqual);
+                         bool*     aEqual);
 
 #endif /* __SB_VARIANT_UTILS_LIB_H__ */
 

@@ -27,7 +27,6 @@
 
 #include "sbBaseDeviceController.h"
 
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 
 #include <sbDebugUtils.h>
@@ -92,7 +91,7 @@ sbBaseDeviceController::sbBaseDeviceController()
     nsAutoMonitor::NewMonitor("sbBaseDeviceController.mMonitor");
   NS_ASSERTION(mMonitor, "Failed to create monitor");
 
-  PRBool SB_UNUSED_IN_RELEASE(succeeded) = mDevices.Init();
+  bool SB_UNUSED_IN_RELEASE(succeeded) = mDevices.Init();
   NS_ASSERTION(succeeded, "Failed to initialize hashtable");
 }
 
@@ -153,7 +152,7 @@ sbBaseDeviceController::AddDeviceInternal(sbIDevice *aDevice) {
 
   nsAutoMonitor mon(mMonitor);
   
-  PRBool succeeded = mDevices.Put(*id, aDevice);
+  bool succeeded = mDevices.Put(*id, aDevice);
   mon.Exit();
 
   NS_Free(id);
@@ -187,7 +186,7 @@ sbBaseDeviceController::GetDeviceInternal(const nsID * aID,
 
   nsAutoMonitor mon(mMonitor);
 
-  PRBool succeeded = mDevices.Get(*aID, aDevice);
+  bool succeeded = mDevices.Get(*aID, aDevice);
   mon.Exit();
 
   return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
@@ -223,7 +222,7 @@ sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
 
 nsresult 
 sbBaseDeviceController::ControlsDeviceInternal(sbIDevice *aDevice, 
-                                               PRBool *_retval) {
+                                               bool *_retval) {
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 

@@ -84,7 +84,7 @@ class sbFileScanQuery : public sbIFileScanQuery
 public:
   sbFileScanQuery();
   sbFileScanQuery(const nsString & strDirectory,
-                  const PRBool & bRecurse,
+                  const bool & bRecurse,
                   sbIFileScanCallback *pCallback);
 
   virtual ~sbFileScanQuery();
@@ -96,8 +96,8 @@ public:
 
 protected:
   nsString GetExtensionFromFilename(const nsAString &strFilename);
-  PRBool VerifyFileExtension(const nsAString &strExtension,
-                             PRBool *aOutIsFlaggedExtension);
+  bool VerifyFileExtension(const nsAString &strExtension,
+                             bool *aOutIsFlaggedExtension);
 
   PRLock* m_pDirectoryLock;
   nsString m_strDirectory;
@@ -105,12 +105,12 @@ protected:
   PRLock* m_pCurrentPathLock;
   nsString m_strCurrentPath;
 
-  PRBool m_bSearchHidden;
-  PRBool m_bRecurse;
-  PRBool m_bWantLibraryContentURIs;
+  bool m_bSearchHidden;
+  bool m_bRecurse;
+  bool m_bWantLibraryContentURIs;
 
   PRLock* m_pScanningLock;
-  PRBool m_bIsScanning;
+  bool m_bIsScanning;
 
   PRLock* m_pCallbackLock;
   nsCOMPtr<sbIFileScanCallback> m_pCallback;
@@ -129,7 +129,7 @@ protected:
   nsString m_lastSeenExtension;
 
   PRLock* m_pCancelLock;
-  PRBool m_bCancel;
+  bool m_bCancel;
 };
 
 class sbIDirectoryEnumerator;
@@ -177,8 +177,8 @@ protected:
   PRInt32 m_ScanQueryProcessorIsRunning;
 
   nsCOMPtr<nsINetUtil> mNetUtil;
-  PRBool               m_ThreadShouldShutdown;
-  PRBool               m_Finalized;
+  bool               m_ThreadShouldShutdown;
+  bool               m_Finalized;
 };
 
 #endif // __FILE_SCAN_H__

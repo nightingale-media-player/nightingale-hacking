@@ -117,7 +117,7 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
     do_GetService(SB_MEDIACORETYPESNIFFER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isMediaURL = PR_FALSE;
+  bool isMediaURL = PR_FALSE;
   rv = typeSniffer->IsValidMediaURL(uri, 
                                     &isMediaURL);
   
@@ -139,7 +139,7 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
     return NS_OK;
   }
 
-  PRBool isPlaylistURL = PR_FALSE;
+  bool isPlaylistURL = PR_FALSE;
   rv = typeSniffer->IsValidWebSafePlaylistURL(uri, 
                                               &isPlaylistURL);
   if (NS_SUCCEEDED(rv) && isPlaylistURL) {

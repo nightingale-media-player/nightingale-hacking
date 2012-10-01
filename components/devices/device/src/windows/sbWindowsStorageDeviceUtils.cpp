@@ -77,7 +77,7 @@
 
 nsresult
 sbWinFindDevicesByStorageDevNum(STORAGE_DEVICE_NUMBER* aStorageDevNum,
-                                PRBool                 aMatchPartitionNumber,
+                                bool                 aMatchPartitionNumber,
                                 const GUID*            aGUID,
                                 nsTArray<DEVINST>&     aDevInstList)
 {
@@ -194,7 +194,7 @@ sbWinGetStorageDevNum(LPCTSTR                aDevPath,
   NS_ENSURE_ARG_POINTER(aStorageDevNum);
 
   // Function variables.
-  PRBool hasDevNum = PR_TRUE;
+  bool hasDevNum = PR_TRUE;
   BOOL   success;
 
   // Create a device file and set it up for auto-disposal.
@@ -248,13 +248,13 @@ sbWinGetStorageDevNum(LPCTSTR                aDevPath,
 
 nsresult
 sbWinVolumeIsReady(DEVINST aDevInst,
-                   PRBool* aIsReady)
+                   bool* aIsReady)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aIsReady);
 
   // Function variables.
-  PRBool   success;
+  bool   success;
   nsresult rv;
 
   // Get the volume device interface path.
@@ -310,7 +310,7 @@ sbWinVolumeIsReady(DEVINST aDevInst,
 
 nsresult
 sbWinVolumeGetIsReadOnly(const nsAString& aVolumeMountPath,
-                         PRBool*          aIsReadOnly)
+                         bool*          aIsReadOnly)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aIsReadOnly);

@@ -91,7 +91,7 @@ sbRemoteLibraryResource::GetProperty( const nsAString &aID,
   NS_ENSURE_SUCCESS( rv, rv );
 
   // ask if this property is remotely readable
-  PRBool readable;
+  bool readable;
   rv = propertyInfo->GetRemoteReadable(&readable);
   NS_ENSURE_SUCCESS( rv, rv );
 
@@ -150,7 +150,7 @@ sbRemoteLibraryResource::SetProperty( const nsAString &aID,
 
   // Check to see if we have the property first, if not we must create it with
   // the right settings so websites can modify it.
-  PRBool hasProp;
+  bool hasProp;
   rv = propertyManager->HasProperty( aID, &hasProp );
 
   // get the property info for the property being requested - this will create
@@ -162,7 +162,7 @@ sbRemoteLibraryResource::SetProperty( const nsAString &aID,
   // check to see if the prop already existed or if we created it
   if (hasProp) {
     // ask if this property is remotely writable
-    PRBool writable = PR_FALSE;
+    bool writable = PR_FALSE;
     rv = propertyInfo->GetRemoteWritable(&writable);
     NS_ENSURE_SUCCESS( rv, rv );
 

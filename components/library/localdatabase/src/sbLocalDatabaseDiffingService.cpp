@@ -118,7 +118,7 @@ nsID GetItemGUID(sbIMediaItem * aItem)
   nsString itemGUID;
   nsresult rv = aItem->GetGuid(itemGUID);
   NS_ENSURE_SUCCESS(rv, NULL_GUID);
-  PRBool success =
+  bool success =
     returnedID.Parse(NS_LossyConvertUTF16toASCII(itemGUID).BeginReading());
   NS_ENSURE_TRUE(success, NULL_GUID);
 
@@ -136,7 +136,7 @@ nsID GetGUIDProperty(sbIMediaItem * aItem, nsAString const & aProperty)
     return NULL_GUID;
   }
   NS_ENSURE_SUCCESS(rv, NULL_GUID);
-  PRBool success =
+  bool success =
     returnedID.Parse(NS_LossyConvertUTF16toASCII(guid).BeginReading());
   NS_ENSURE_TRUE(success, NULL_GUID);
 
@@ -439,7 +439,7 @@ sbLDBDSEnumerator::OnEnumeratedItem(sbIMediaList *aMediaList,
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  PRBool parsed = PR_FALSE;
+  bool parsed = PR_FALSE;
   nsID originGUID;
   if (!originID.IsEmpty()) {
    parsed = originGUID.Parse(
@@ -1003,7 +1003,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
   nsCOMPtr<sbIProperty> property;
   nsTHashtable<nsStringHashKey> sourcePropertyNamesFoundInDestination;
 
-  PRBool success = sourcePropertyNamesFoundInDestination.Init();
+  bool success = sourcePropertyNamesFoundInDestination.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // These properties are excluded from checking since they
@@ -1483,7 +1483,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
     // Ensure that we're seeing items from the same library
     else {
       nsCOMPtr<sbILibrary> testLibrary;
-      PRBool sameLibrary = PR_FALSE;
+      bool sameLibrary = PR_FALSE;
       rv = sourceItem->GetLibrary(getter_AddRefs(testLibrary));
       if (NS_SUCCEEDED(rv)) {
 

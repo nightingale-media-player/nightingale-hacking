@@ -55,7 +55,7 @@
 #include <nsCOMPtr.h>
 #include <nsICategoryManager.h>
 #include <nsIClassInfoImpl.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsServiceManagerUtils.h>
 
 

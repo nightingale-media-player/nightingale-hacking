@@ -55,7 +55,7 @@ class nsIDOMWindow;
 
 struct sbCloakInfo
 {
-  PRBool mVisible;
+  bool mVisible;
 };
 
 class sbWindowCloak : public sbIWindowCloak
@@ -67,7 +67,7 @@ public:
   ~sbWindowCloak();
   
 protected:
-  NS_IMETHOD SetVisibility(nsIDOMWindow* aDOMWindow, PRBool aVisible);
+  NS_IMETHOD SetVisibility(nsIDOMWindow* aDOMWindow, bool aVisible);
 
   nsClassHashtable<nsISupportsHashKey, sbCloakInfo> mCloakedWindows;
 };

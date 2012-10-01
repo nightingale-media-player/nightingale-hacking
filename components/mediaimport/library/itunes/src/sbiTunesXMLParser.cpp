@@ -35,7 +35,6 @@
 #include <nsThreadUtils.h>
 
 #include <sbIiTunesXMLParserListener.h>
-#include <sbProxiedComponentManager.h>
 
 #include <sbFileUtils.h>
 
@@ -486,7 +485,7 @@ NS_IMETHODIMP sbiTunesXMLParser::EndPrefixMapping(const nsAString & prefix) {
 NS_IMETHODIMP sbiTunesXMLParser::Error(nsISAXLocator *locator,
                                        const nsAString & error) {
   LogError("Error", locator, error);
-  PRBool continueParsing = PR_FALSE;
+  bool continueParsing = PR_FALSE;
   nsresult rv = mListener->OnError(BuildErrorMessage("Error", locator, error), &continueParsing);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -497,7 +496,7 @@ NS_IMETHODIMP sbiTunesXMLParser::Error(nsISAXLocator *locator,
 NS_IMETHODIMP sbiTunesXMLParser::FatalError(nsISAXLocator *locator,
                                             const nsAString & error) {
   LogError("Fatal error", locator, error);
-  PRBool continueParsing = PR_FALSE;
+  bool continueParsing = PR_FALSE;
   nsresult rv = mListener->OnError(BuildErrorMessage("Fatal error", locator, error), &continueParsing);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -508,7 +507,7 @@ NS_IMETHODIMP sbiTunesXMLParser::FatalError(nsISAXLocator *locator,
 NS_IMETHODIMP sbiTunesXMLParser::IgnorableWarning(nsISAXLocator *locator,
                                                   const nsAString & error) {
   LogError("Warning", locator, error);
-  PRBool continueParsing = PR_FALSE;
+  bool continueParsing = PR_FALSE;
   nsresult rv = mListener->OnError(BuildErrorMessage("Warning", locator, error), &continueParsing);
   NS_ENSURE_SUCCESS(rv, rv);
   

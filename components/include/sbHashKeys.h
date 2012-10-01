@@ -40,7 +40,7 @@ public:
   ~sbUint64HashKey() { }
 
   KeyType GetKey() const { return mValue; }
-  PRBool KeyEquals(KeyTypePointer aKey) const { return *aKey == mValue; }
+  bool KeyEquals(KeyTypePointer aKey) const { return *aKey == mValue; }
 
   static KeyTypePointer KeyToPointer(KeyType aKey) { return &aKey; }
   static PLDHashNumber HashKey(KeyTypePointer aKey) {

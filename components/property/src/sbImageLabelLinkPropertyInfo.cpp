@@ -121,28 +121,28 @@ sbImageLabelLinkPropertyInfo::SetLocalizationKey(const nsAString& aLocalizationK
 }
 
 NS_IMETHODIMP
-sbImageLabelLinkPropertyInfo::SetRemoteReadable(PRBool aRemoteReadable)
+sbImageLabelLinkPropertyInfo::SetRemoteReadable(bool aRemoteReadable)
 {
   mRemoteReadable = aRemoteReadable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbImageLabelLinkPropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
+sbImageLabelLinkPropertyInfo::SetRemoteWritable(bool aRemoteWritable)
 {
   mRemoteWritable = aRemoteWritable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbImageLabelLinkPropertyInfo::SetUserViewable(PRBool aUserViewable)
+sbImageLabelLinkPropertyInfo::SetUserViewable(bool aUserViewable)
 {
   mUserViewable = aUserViewable;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbImageLabelLinkPropertyInfo::SetUserEditable(PRBool aUserEditable)
+sbImageLabelLinkPropertyInfo::SetUserEditable(bool aUserEditable)
 {
   mUserEditable = aUserEditable;
   return NS_OK;
@@ -168,7 +168,7 @@ sbImageLabelLinkPropertyInfo::GetUrlProperty(nsAString& _retval)
 NS_IMETHODIMP
 sbImageLabelLinkPropertyInfo::GetPreventNavigation(const nsAString& aImageValue,
                                                    const nsAString& aUrlValue,
-                                                   PRBool *_retval)
+                                                   bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -191,7 +191,7 @@ sbImageLabelLinkPropertyInfo::AddImage(const nsACString & aKey,
     return NS_OK;
   }
 
-  PRBool success = mImages->Put(aKey, new nsCString(aImageUrl));
+  bool success = mImages->Put(aKey, new nsCString(aImageUrl));
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }
@@ -217,7 +217,7 @@ sbImageLabelLinkPropertyInfo::AddLabel(const nsACString & aKey,
     value = SBLocalizedString(Substring(aLabel, 1, aLabel.Length() - 2));
   }
 
-  PRBool success = mLabels->Put(aKey, new nsString(value));
+  bool success = mLabels->Put(aKey, new nsString(value));
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }
@@ -270,7 +270,7 @@ sbImageLabelLinkPropertyInfo::HitTest(const nsAString& aCurrentValue,
                                       PRUint32 aBoxHeight,
                                       PRUint32 aMouseX,
                                       PRUint32 aMouseY,
-                                      PRBool* _retval)
+                                      bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = aPart.EqualsLiteral("image") ||
@@ -282,7 +282,7 @@ NS_IMETHODIMP
 sbImageLabelLinkPropertyInfo::OnClick(sbIMediaItem *aItem,
                                       nsISupports *aEvent,
                                       nsISupports *aContext,
-                                      PRBool *_retval NS_OUTPARAM)
+                                      bool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -304,7 +304,7 @@ sbImageLabelLinkPropertyInfo::OnClick(sbIMediaItem *aItem,
   rv = handlers->Enumerate(getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  PRBool hasMore, result;
+  bool hasMore, result;
 
   while (NS_SUCCEEDED(rv = enumerator->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;

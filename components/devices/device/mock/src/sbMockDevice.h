@@ -46,7 +46,7 @@ public:
   nsresult ProcessBatch(Batch & aBatch);
 
 protected:
-  PRBool mIsConnected;
+  bool mIsConnected;
 
   nsCOMPtr<sbDeviceContent> mContent;
   nsCOMPtr<sbIDeviceProperties> mProperties;

@@ -65,10 +65,10 @@ public:
   NS_IMETHOD SetPropertyID(const nsAString& aPropertyID);
   NS_IMETHOD SetDisplayName(const nsAString& aDisplayName);
   NS_IMETHOD SetLocalizationKey(const nsAString& aLocalizationKey);
-  NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable);
-  NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable);
-  NS_IMETHOD SetUserViewable(PRBool aUserViewable);
-  NS_IMETHOD SetUserEditable(PRBool aUserEditable);
+  NS_IMETHOD SetRemoteReadable(bool aRemoteReadable);
+  NS_IMETHOD SetRemoteWritable(bool aRemoteWritable);
+  NS_IMETHOD SetUserViewable(bool aUserViewable);
+  NS_IMETHOD SetUserEditable(bool aUserEditable);
   NS_IMETHOD SetUrlPropertyID(const nsAString& aUrlPropertyID);
 
   /* partial implementation of sbITreeViewPropertyInfo */
@@ -82,11 +82,11 @@ public:
                      PRUint32 aBoxHeight,
                      PRUint32 aMouseX,
                      PRUint32 aMouseY,
-                     PRBool* _retval);
+                     bool* _retval);
   NS_IMETHOD OnClick(sbIMediaItem *aItem,
                      nsISupports *aEvent,
                      nsISupports *aContext,
-                     PRBool *_retval);
+                     bool *_retval);
 
   /* partial implementation of sbIPropertyInfo */
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);

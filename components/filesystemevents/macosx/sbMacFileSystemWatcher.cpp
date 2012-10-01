@@ -84,7 +84,7 @@ sbMacFileSystemWatcher::~sbMacFileSystemWatcher()
 NS_IMETHODIMP
 sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener, 
                              const nsAString & aRootPath, 
-                             PRBool aIsRecursive)
+                             bool aIsRecursive)
 {
   TRACE("%s: path=%s", __FUNCTION__, NS_ConvertUTF16toUTF8(aRootPath).get());
   if (!mIsSupported) {
@@ -107,7 +107,7 @@ sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
 }
 
 NS_IMETHODIMP 
-sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
+sbMacFileSystemWatcher::StopWatching(bool aShouldSaveSession)
 {
   TRACE("%s: save %i", __FUNCTION__, aShouldSaveSession);
   if (!mIsSupported) {

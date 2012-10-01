@@ -285,7 +285,7 @@ sbIPDProperties::GetIconUri(nsIURI** aIconUri)
 
 
 NS_IMETHODIMP
-sbIPDProperties::SetHidden(PRBool aHidden)
+sbIPDProperties::SetHidden(bool aHidden)
 {
   nsresult rv =
     mProperties2->SetPropertyAsBool(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
@@ -301,7 +301,7 @@ sbIPDProperties::SetHidden(PRBool aHidden)
 
 
 NS_IMETHODIMP
-sbIPDProperties::GetHidden(PRBool *aHidden)
+sbIPDProperties::GetHidden(bool *aHidden)
 {
   NS_ENSURE_ARG_POINTER(aHidden);
 

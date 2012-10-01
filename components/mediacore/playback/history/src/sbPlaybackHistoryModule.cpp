@@ -24,7 +24,7 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIServiceManager.h>
 
 #include "sbPlaybackHistoryEntry.h"

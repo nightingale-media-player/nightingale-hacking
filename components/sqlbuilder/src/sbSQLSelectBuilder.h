@@ -57,8 +57,8 @@ private:
   {
     nsString tableName;
     nsString columnName;
-    PRBool ascending;
-    PRBool random;
+    bool ascending;
+    bool random;
   };
 
   struct sbGroupInfo
@@ -73,7 +73,7 @@ private:
 
   nsString mBaseTableName;
   nsString mBaseTableAlias;
-  PRBool mIsDistinct;
+  bool mIsDistinct;
 
 };
 

@@ -29,7 +29,7 @@
 
 #include <nsIObserver.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIFile.h>
 #include <nsCOMPtr.h>
 

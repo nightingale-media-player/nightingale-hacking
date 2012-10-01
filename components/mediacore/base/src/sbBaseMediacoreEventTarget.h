@@ -75,10 +75,10 @@ public:
    */
   virtual
   nsresult DispatchEvent(sbIMediacoreEvent * aEvent,
-                         PRBool aAsync, PRBool * aDispatched);
+                         bool aAsync, bool * aDispatched);
 
 protected:
-  nsresult DispatchEventInternal(sbIMediacoreEvent *aEvent, PRBool* _retval);
+  nsresult DispatchEventInternal(sbIMediacoreEvent *aEvent, bool* _retval);
 
 private:
   sbIMediacoreEventTarget * mTarget;

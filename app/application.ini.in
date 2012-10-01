@@ -10,8 +10,8 @@ ID=nightingale@getnightingale.com
 Profile=@SB_APPNAME@
 
 [Gecko]
-MinVersion=1.9.2
-MaxVersion=1.9.2.*
+MinVersion=15.0.1
+MaxVersion=15.0.1.*
 
 [XRE]
 EnableExtensionManager=true

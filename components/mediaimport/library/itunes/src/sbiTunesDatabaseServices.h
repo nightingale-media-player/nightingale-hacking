@@ -99,7 +99,7 @@ private:
   /**
    * Flag to denote that a reset is pending
    */
-  PRBool mResetPending;
+  bool mResetPending;
   
   // Prevent copy/assignment
   sbiTunesDatabaseServices(sbiTunesDatabaseServices const &);

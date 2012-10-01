@@ -196,7 +196,7 @@ void nsSystemTrayIconGTK::DispatchEvent(const nsAString& aType, PRUint16 aButton
   if (NS_FAILED(rv)) return;
   
   // and dispatch it. (yes, return value is ignored; we can't do anything)
-  PRBool result;
+  bool result;
   mEventTarget->DispatchEvent(event, &result);
 }
 
@@ -231,7 +231,7 @@ nsSystemTrayIconGTK::OnStartFrame(imgIRequest *aRequest,
   in boolean aCurrentFrame, [const] in nsIntRect aRect); */
 NS_IMETHODIMP
 nsSystemTrayIconGTK::OnDataAvailable(imgIRequest *aRequest,
-                                     PRBool aCurrentFrame,
+                                     bool aCurrentFrame,
                                      const nsIntRect * aRect)
 {
   return NS_OK;
@@ -280,7 +280,7 @@ NS_IMETHODIMP nsSystemTrayIconGTK::OnStopDecode(imgIRequest *aRequest, nsresult 
 }
 
 /* void onStopRequest (in imgIRequest aRequest, in boolean aIsLastPart); */
-NS_IMETHODIMP nsSystemTrayIconGTK::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
+NS_IMETHODIMP nsSystemTrayIconGTK::OnStopRequest(imgIRequest *aRequest, bool aIsLastPart)
 {
   return NS_OK;
 }

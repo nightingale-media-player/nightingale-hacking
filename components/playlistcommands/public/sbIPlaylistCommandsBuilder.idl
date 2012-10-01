@@ -600,7 +600,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
                           in AString aShortcutKey,
                           in AString aShortcutKeyCode,
                           in AString aShortcutModifiers,
-                          in PRBool aShortcutIsLocal);
+                          in boolean aShortcutIsLocal);
 
   /**
   * \brief Assign a callback to a command item to dynamically determine its enabled status
@@ -772,7 +772,7 @@ interface sbIPlaylistCommandsBuilderGetBoolCallback : nsISupports
   * \param aData A string describing the data being requested
   * \return The boolean data to return
   */
-  PRBool handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
+  boolean handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                         in AString aSubMenuId,
                         in AString aCommandId,
                         in AString aHost,
@@ -884,7 +884,7 @@ interface sbIPlaylistCommandsBuilderPCCallback : nsISupports
   * \param aData A string describing the data being requested
   * \return The boolean value to return
   */
-  PRBool handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
+  boolean handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                         in AString aHost,
                         in AString aData);
 };

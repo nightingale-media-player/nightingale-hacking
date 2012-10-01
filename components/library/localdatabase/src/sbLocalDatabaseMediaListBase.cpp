@@ -49,7 +49,6 @@
 #include <sbISortableMediaListView.h>
 
 #include <DatabaseQuery.h>
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsHashKeys.h>
@@ -92,7 +91,7 @@ sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 nsresult
 sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
                                    const nsAString& aGuid,
-                                   PRBool aOwnsLibrary)
+                                   bool aOwnsLibrary)
 {
   mFullArrayMonitor =
     nsAutoMonitor::NewMonitor("sbLocalDatabaseMediaListBase::mFullArrayMonitor");
@@ -105,7 +104,7 @@ sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = sbLocalDatabaseMediaItem::Init(aLibrary, aGuid, aOwnsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mFilteredProperties.Init();
+  bool success = mFilteredProperties.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsStringHashKey *key = mFilteredProperties.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
@@ -292,7 +291,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
   rv = GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasContentType = PR_FALSE;
+  bool hasContentType = PR_FALSE;
   PRUint32 length;
   rv = aProperties->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -357,7 +356,7 @@ sbLocalDatabaseMediaListBase::GetOriginProperties(
   // and currently there are only main library listeners in place to update the
   // property in device libraries, so set SB_PROPERTY_ORIGIN_IS_IN_MAIN_LIBRARY
   // only if the the target list belongs to a device.
-  PRBool targetIsDevice = (NS_SUCCEEDED(rv) && (targetDev != NULL));
+  bool targetIsDevice = (NS_SUCCEEDED(rv) && (targetDev != NULL));
 
   // Get the origin library:
   nsCOMPtr<sbILibrary> originLib;
@@ -430,7 +429,7 @@ sbLocalDatabaseMediaListBase::GetOriginProperties(
   rv = GetLibrary(getter_AddRefs(thisLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool copyingToMainLibrary;
+  bool copyingToMainLibrary;
   rv = thisLibrary->Equals(mainLib, &copyingToMainLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -529,7 +528,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnu
   // Loop until we explicitly return.
   while (PR_TRUE) {
 
-    PRBool hasMore;
+    bool hasMore;
     nsresult rv = aEnumerator->HasMoreElements(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -616,7 +615,7 @@ sbLocalDatabaseMediaListBase::GetName(nsAString& aName)
     rv = NS_NewURI(getter_AddRefs(propertiesURI), propertiesURL);
 
     if (NS_SUCCEEDED(rv)) {
-      PRBool schemeIsChrome;
+      bool schemeIsChrome;
       rv = propertiesURI->SchemeIs("chrome", &schemeIsChrome);
 
       if (NS_SUCCEEDED(rv) && schemeIsChrome) {
@@ -991,13 +990,13 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     // Get the string array associated with the key. If it doesn't yet exist
     // then we need to create it.
     sbStringArray* stringArray;
-    PRBool arrayExists = propertyHash.Get(propertyID, &stringArray);
+    bool arrayExists = propertyHash.Get(propertyID, &stringArray);
     if (!arrayExists) {
       NS_NEWXPCOM(stringArray, sbStringArray);
       SB_CONTINUE_IF_FALSE(stringArray);
 
       // Try to add the array to the hash table.
-      PRBool success = propertyHash.Put(propertyID, stringArray);
+      bool success = propertyHash.Put(propertyID, stringArray);
       if (!success) {
         NS_WARNING("Failed to add string array to property hash!");
 
@@ -1228,13 +1227,13 @@ sbLocalDatabaseMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Contains(sbIMediaItem* aMediaItem,
-                                       PRBool* _retval)
+                                       bool* _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
+sbLocalDatabaseMediaListBase::GetIsEmpty(bool* aIsEmpty)
 {
   NS_ENSURE_ARG_POINTER(aIsEmpty);
 
@@ -1250,7 +1249,7 @@ sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetUserEditableContent(PRBool* aUserEditableContent)
+sbLocalDatabaseMediaListBase::GetUserEditableContent(bool* aUserEditableContent)
 {
   NS_ENSURE_ARG_POINTER(aUserEditableContent);
 
@@ -1297,7 +1296,7 @@ sbLocalDatabaseMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
                                             sbIAddMediaItemsListener * aListener,
-                                            PRBool aAsync)
+                                            bool aAsync)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -1333,7 +1332,7 @@ sbLocalDatabaseMediaListBase::Clear()
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener,
-                                          PRBool aOwnsWeak,
+                                          bool aOwnsWeak,
                                           PRUint32 aFlags,
                                           sbIPropertyArray* aPropertyFilter)
 {
@@ -1414,7 +1413,7 @@ sbGUIDArrayValueEnumerator::~sbGUIDArrayValueEnumerator()
 }
 
 NS_IMETHODIMP
-sbGUIDArrayValueEnumerator::HasMore(PRBool *_retval)
+sbGUIDArrayValueEnumerator::HasMore(bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 

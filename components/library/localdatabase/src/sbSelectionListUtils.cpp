@@ -61,7 +61,7 @@ SB_CopySelectionListCallback(nsStringHashKey::KeyType aKey,
     static_cast<sbSelectionList*>(aUserData);
   NS_ASSERTION(list, "Could not cast user data");
 
-  PRBool success = list->Put(aKey, aEntry);
+  bool success = list->Put(aKey, aEntry);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;

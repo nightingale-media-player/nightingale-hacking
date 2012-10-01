@@ -75,7 +75,7 @@ sbMediaListDuplicateFilter::~sbMediaListDuplicateFilter()
 NS_IMETHODIMP
 sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
                                        sbIMediaList * aDest,
-                                       PRBool aRemoveDuplicates)
+                                       bool aRemoveDuplicates)
 {
   NS_ENSURE_ARG_POINTER(aSource);
   NS_ENSURE_ARG_POINTER(aDest);
@@ -132,7 +132,7 @@ sbMediaListDuplicateFilter::GetTotalItems(PRUint32 * aTotalItems)
 // nsISimpleEnumerator implementation
 
 NS_IMETHODIMP
-sbMediaListDuplicateFilter::HasMoreElements(PRBool *aMore)
+sbMediaListDuplicateFilter::HasMoreElements(bool *aMore)
 {
   NS_ENSURE_ARG_POINTER(aMore);
   if (!mCurrentItem) {
@@ -273,7 +273,7 @@ sbMediaListDuplicateFilter::Advance()
     mInitialized = PR_TRUE;
   }
 
-  PRBool more;
+  bool more;
   rv = mSource->HasMoreElements(&more);
   NS_ENSURE_SUCCESS(rv, rv);
 

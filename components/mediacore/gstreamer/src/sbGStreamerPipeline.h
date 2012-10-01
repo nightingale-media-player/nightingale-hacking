@@ -34,7 +34,6 @@
 #include <nsITimer.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIStringBundle.h>
-#include <nsAutoLock.h>
 #include <nsIClassInfo.h>
 
 #include <sbBaseMediacoreEventTarget.h>
@@ -63,7 +62,7 @@ public:
   virtual ~sbGStreamerPipeline();
 
   virtual void HandleMessage(GstMessage *message);
-  virtual PRBool HandleSynchronousMessage(GstMessage *message);
+  virtual bool HandleSynchronousMessage(GstMessage *message);
 
   nsresult InitGStreamer();
 

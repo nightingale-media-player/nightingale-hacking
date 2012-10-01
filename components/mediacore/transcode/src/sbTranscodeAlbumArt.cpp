@@ -49,7 +49,6 @@
 #include <nsThreadUtils.h>
 
 #include <sbStandardProperties.h>
-#include <sbProxiedComponentManager.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbMemoryUtils.h>
 
@@ -117,7 +116,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
                             getter_AddRefs(proxiedURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isResource;
+  bool isResource;
   rv = proxiedURI->SchemeIs("resource", &isResource);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -201,7 +200,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
 
 nsresult
 sbTranscodeAlbumArt::IsValidSizeForRange(sbIDevCapRange *aRange, PRInt32 aVal,
-        PRBool *aIsValid)
+        bool *aIsValid)
 {
   NS_ENSURE_ARG_POINTER (aRange);
   NS_ENSURE_ARG_POINTER (aVal);
@@ -248,7 +247,7 @@ sbTranscodeAlbumArt::IsValidSizeForRange(sbIDevCapRange *aRange, PRInt32 aVal,
 
 nsresult
 sbTranscodeAlbumArt::IsValidSizeForFormat(sbIImageFormatType *aFormat,
-        PRBool *aIsValid)
+        bool *aIsValid)
 {
   NS_ENSURE_ARG_POINTER (aFormat);
   NS_ENSURE_ARG_POINTER (aIsValid);
@@ -262,7 +261,7 @@ sbTranscodeAlbumArt::IsValidSizeForFormat(sbIImageFormatType *aFormat,
     rv = aFormat->GetSupportedHeights(getter_AddRefs(heightRange));
     if (NS_SUCCEEDED (rv) && heightRange) {
       // Ok, we have ranges: check if we're within them.
-      PRBool validWidth, validHeight;
+      bool validWidth, validHeight;
       rv = IsValidSizeForRange(widthRange, mImageWidth, &validWidth);
       NS_ENSURE_SUCCESS (rv, rv);
 
@@ -308,7 +307,7 @@ sbTranscodeAlbumArt::IsValidSizeForFormat(sbIImageFormatType *aFormat,
 }
 
 NS_IMETHODIMP
-sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(PRBool *aNeedsConversion)
+sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(bool *aNeedsConversion)
 {
   NS_ENSURE_ARG_POINTER (aNeedsConversion);
   NS_ENSURE_STATE (mImageFormats);
@@ -345,7 +344,7 @@ sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(PRBool *aNeedsConversion)
 
     if (formatMimeType == mImageMimeType) {
       // Right format, now let's check sizes...
-      PRBool valid;
+      bool valid;
       rv = IsValidSizeForFormat(format, &valid);
       NS_ENSURE_SUCCESS (rv, rv);
       
@@ -360,7 +359,7 @@ sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(PRBool *aNeedsConversion)
   return NS_OK;
 }
 
-static nsresult HaveEncoderForFormat(nsCString mimeType, PRBool *haveEncoder)
+static nsresult HaveEncoderForFormat(nsCString mimeType, bool *haveEncoder)
 {
   nsresult rv;
   nsCString encoderCID = NS_LITERAL_CSTRING(
@@ -415,7 +414,7 @@ sbTranscodeAlbumArt::GetTargetFormat(
     rv = format->GetImageFormat(formatMimeType);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    PRBool haveEncoder;
+    bool haveEncoder;
     rv = HaveEncoderForFormat(formatMimeType, &haveEncoder);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -424,7 +423,7 @@ sbTranscodeAlbumArt::GetTargetFormat(
       continue;
     }
 
-    PRBool valid;
+    bool valid;
     rv = IsValidSizeForFormat(format, &valid);
     NS_ENSURE_SUCCESS (rv, rv);
       
@@ -448,7 +447,7 @@ sbTranscodeAlbumArt::GetTargetFormat(
     rv = format->GetImageFormat(formatMimeType);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    PRBool haveEncoder;
+    bool haveEncoder;
     rv = HaveEncoderForFormat(formatMimeType, &haveEncoder);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -523,7 +522,7 @@ sbTranscodeAlbumArt::GetTranscodedArt(nsIInputStream **aImageStream)
 {
   NS_ENSURE_ARG_POINTER(aImageStream);
 
-  PRBool needsConversion = PR_FALSE;
+  bool needsConversion = PR_FALSE;
   nsresult rv = GetNeedsAlbumArtConversion(&needsConversion);
   NS_ENSURE_SUCCESS(rv, rv);
   if (needsConversion) {
@@ -657,7 +656,7 @@ sbTranscodeAlbumArt::ConvertArt()
   // Wait until the metadata reading completes.  Poll instead of using
   // callbacks because in practice it'll always be very quick, and this is
   // simpler.
-  PRBool isRunning = PR_TRUE;
+  bool isRunning = PR_TRUE;
   while (isRunning) {
     // Check if the metadata job is running.
     PRUint16 status;

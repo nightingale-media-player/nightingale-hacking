@@ -35,9 +35,6 @@
 #include <sbIDatabaseResult.h>
 #include <sbIDatabasePreparedStatement.h>
 
-#include <sbProxiedComponentManager.h>
-
-
 char const SB_ITUNES_DB_GUID[] = "songbird";
 
 sbiTunesSignature::sbiTunesSignature() {}

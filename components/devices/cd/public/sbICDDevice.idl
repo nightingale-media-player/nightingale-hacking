@@ -117,12 +117,21 @@ interface sbICDDeviceEvent : sbIDeviceEvent
   //
   // @brief Request constants
   //
-  const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
-
+  // @warning Of xulrunner 1.9.2 this was defined as
+  // const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
+  // which is illegal according to pyxpidl ABNF of xulrunner 15.0.1
+  // According to Ms2ger at irc.mozilla.org #developers it is suspicious
+  // that it worked even with the old xpidl.exe 
+  // So it must be replaced with a constant
+  // @TODO keep consistent with sbIDevice declaration !!!
+  const unsigned long REQUEST_CDLOOKUP = 0x80000000 + 1;
+  
   //
   // @brief State constants
   //
-  const unsigned long STATE_LOOKINGUPCD = sbIDevice::STATE_USER + 1;
+  // ditto as above
+  // const unsigned long STATE_LOOKINGUPCD = sbIDevice::STATE_USER + 1;
+  const unsigned long STATE_LOOKINGUPCD = 0x20000000 + 1;
 };
 
 //------------------------------------------------------------------------------

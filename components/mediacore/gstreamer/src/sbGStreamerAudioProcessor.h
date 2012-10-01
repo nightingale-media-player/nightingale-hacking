@@ -107,7 +107,7 @@ private:
   nsresult ScheduleSendDataIfAvailable();
 
   // Do we have enough data in mAdapter to immediately send it to a listener?
-  PRBool HasEnoughData();
+  bool HasEnoughData();
 
   // If we can, get more data from the appsink or the pending buffer, and add it
   // to mAdapter. Must only be called if mBuffersAvailable is > 0.
@@ -167,34 +167,34 @@ private:
 
   // Track whether we're currently suspended or stopped - data will not be
   // sent to the listener when this is true.
-  PRBool mSuspended;
+  bool mSuspended;
 
   // Track if we've found an audio pad yet. If so, we ignore subsequent audio
   // tracks (e.g. in a video file with multiple audio tracks).
-  PRBool mFoundAudioPad;
+  bool mFoundAudioPad;
 
   // Set once we've fully initialised and sent the EVENT_START event to the
   // listener. At this point, the format being set is fully determined (see
   // mAudioFormat, mSampleRate, mChannels)
-  PRBool mHasStarted;
+  bool mHasStarted;
 
   // Set if we've reached EOS.
-  PRBool mIsEOS;
+  bool mIsEOS;
 
   // Set if we've reached the end of a 'section'. This is any sequence of
   // contiguous audio data (no gaps in the timestamps, nor explicit gaps from
   // the DISCONT flag on the audio buffers). We use this to know whether to
   // drain mAdapter, even if we don't have enough data to satisfy
   // mConstraintBlockSize, before sending a GAP event.
-  PRBool mIsEndOfSection;
+  bool mIsEndOfSection;
 
   // Set if we've already sent an error message, to tell us to suppress further
   // errors.
-  PRBool mHasSentError;
+  bool mHasSentError;
 
   // Set if we should send a GAP event before sending any other data. This will
   // be set after we've encountered a gap, then drained the data from mAdapter.
-  PRBool mSendGap;
+  bool mSendGap;
 
   // The sample number of the start of the data currently held in mAdapter, that
   // will be sent to listeners when data is next delivered.

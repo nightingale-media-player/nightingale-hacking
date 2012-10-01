@@ -26,83 +26,32 @@
 
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsICategoryManager.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDirectoryProvider, Init)
+NS_DEFINE_NAMED_CID(SONGBIRD_DIRECTORY_PROVIDER_CID);
 
-/**
- * Register the Songbird directory service provider component.
- */
-
-static NS_METHOD
-sbDirectoryProviderRegister(nsIComponentManager*         aCompMgr,
-                            nsIFile*                     aPath,
-                            const char*                  aLoaderStr,
-                            const char*                  aType,
-                            const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add self to the app-startup category.
-  rv = categoryManager->AddCategoryEntry
-                          ("app-startup",
-                           SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME,
-                           "service," SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID,
-                           PR_TRUE,
-                           PR_TRUE,
-                           nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-
-/**
- * Unregister the Songbird directory service provider component.
- */
-
-static NS_METHOD
-sbDirectoryProviderUnregister(nsIComponentManager*         aCompMgr,
-                              nsIFile*                     aPath,
-                              const char*                  aLoaderStr,
-                              const nsModuleComponentInfo* aInfo)
-{
-  nsresult rv;
-
-  // Get the category manager.
-  nsCOMPtr<nsICategoryManager> categoryManager =
-                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
-                                               &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delete self from the app-startup category.
-  rv = categoryManager->DeleteCategoryEntry("app-startup",
-                                            SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME,
-                                            PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-// fill out data struct to register with component system
-static const nsModuleComponentInfo components[] =
-{
-  {
-    SONGBIRD_DIRECTORY_PROVIDER_CLASSNAME,
-    SONGBIRD_DIRECTORY_PROVIDER_CID,
-    SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID,
-    sbDirectoryProviderConstructor,
-    sbDirectoryProviderRegister,
-    sbDirectoryProviderUnregister
-  }
+static const mozilla::Module::CIDEntry kDirectoryProviderCIDs[] = {
+  { &kSONGBIRD_DIRECTORY_PROVIDER_CID, false, NULL, sbDirectoryProviderConstructor },
+  { NULL }
 };
 
-// create the module info struct that is used to register
-NS_IMPL_NSGETMODULE(sbDirectoryProviderModule, components)
+static const mozilla::Module::ContractIDEntry kDirectoryProviderContracts[] = {
+  { SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID, &kSONGBIRD_DIRECTORY_PROVIDER_CID },
+  { NULL }
+};
+
+static const mozilla::Module::CategoryEntry kDirectoryProviderCategories[] = {
+  { "app-startup", "service", SONGBIRD_DIRECTORY_PROVIDER_CONTRACTID },
+  { NULL }
+};
+
+static const mozilla::Module kDirectoryProviderModule = {
+  mozilla::Module::kVersion,
+  kDirectoryProviderCIDs,
+  kDirectoryProviderContracts,
+  kDirectoryProviderCategories
+};
+
+NSMODULE_DEFN(sbDirectoryProviderModule) = &kDirectoryProviderModule;

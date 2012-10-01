@@ -81,9 +81,9 @@ public:
 /** nsIPrivateDOMEvent - this is non-XPCOM so no forward macro **/
   NS_IMETHOD DuplicatePrivateData();
   NS_IMETHOD SetTarget(nsIDOMEventTarget* aTarget);
-  NS_IMETHOD_(PRBool) IsDispatchStopped();
+  NS_IMETHOD_(bool) IsDispatchStopped();
   NS_IMETHOD_(nsEvent*) GetInternalNSEvent();
-  NS_IMETHOD SetTrusted(PRBool aTrusted);
+  NS_IMETHOD SetTrusted(bool aTrusted);
 
 public:
   sbRemoteSecurityEvent( );
@@ -93,7 +93,7 @@ public:
                         nsIURI *,
                         const nsAString &, 
                         const nsAString &,
-                        PRBool );
+                        bool );
 
 protected:
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
@@ -103,7 +103,7 @@ protected:
   
   // this is the actual event payload.
   nsCOMPtr<nsIURI> mScopeURI;
-  PRBool           mHasAccess;
+  bool           mHasAccess;
   nsString         mCategory;
   nsString         mCategoryID;
 };

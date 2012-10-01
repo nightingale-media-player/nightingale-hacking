@@ -79,8 +79,8 @@ public:
 private:
   nsCOMPtr<sbIWindowMoveListener> mListener;
   nsCOMPtr<nsITimer>              mTimer;
-  PRBool                          mIsTimerSet;
-  PRBool                          mShouldReArmTimer;
+  bool                          mIsTimerSet;
+  bool                          mShouldReArmTimer;
   PRInt32                         mPreviousX;
   PRInt32                         mPreviousY;
   PRInt32                         mConfigureHandlerID;

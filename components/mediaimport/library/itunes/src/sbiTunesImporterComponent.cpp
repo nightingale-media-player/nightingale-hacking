@@ -32,7 +32,7 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbiTunesXMLParser.h"
 #include "sbiTunesImporter.h"

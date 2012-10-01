@@ -155,7 +155,7 @@ sbSQLBuilderCriterionBetweenString::sbSQLBuilderCriterionBetweenString(const nsA
                                                                        const nsAString& aColumnName,
                                                                        const nsAString& aLeftValue,
                                                                        const nsAString& aRightValue,
-                                                                       PRBool aNegate) :
+                                                                       bool aNegate) :
   sbSQLBuilderCriterionBase(aTableName, aColumnName, 0, nsnull, nsnull),
   mLeftValue(aLeftValue),
   mRightValue(aRightValue),

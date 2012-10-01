@@ -39,10 +39,10 @@
   NS_IMETHOD GetGuid(nsAString & aGuid) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetGuid(aGuid); } \
   NS_IMETHOD GetCreated(PRInt64 *aCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreated(aCreated); } \
   NS_IMETHOD GetUpdated(PRInt64 *aUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUpdated(aUpdated); } \
-  NS_IMETHOD GetUserEditable(PRBool *aUserEditable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditable(aUserEditable); } \
+  NS_IMETHOD GetUserEditable(bool *aUserEditable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditable(aUserEditable); } \
   NS_IMETHOD GetPropertyIDs(nsIStringEnumerator * *aPropertyIDs) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyIDs(aPropertyIDs); } \
   NS_IMETHOD GetProperties(sbIPropertyArray *aPropertyIDs, sbIPropertyArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetProperties(aPropertyIDs, _retval); } \
-  NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, PRBool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
+  NS_IMETHOD Equals(sbILibraryResource *aOtherLibraryResource, bool *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Equals(aOtherLibraryResource, _retval); }
 
 #endif // __SB_REMOTEFORWARDINGMACROS_H__
 

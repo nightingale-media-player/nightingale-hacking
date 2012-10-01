@@ -76,7 +76,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbCharsetDetector,
 //------------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbCharsetDetector::GetIsCharsetFound(PRBool *aIsCharsetFound)
+sbCharsetDetector::GetIsCharsetFound(bool *aIsCharsetFound)
 {
   NS_ENSURE_ARG_POINTER(aIsCharsetFound);
 

@@ -15,7 +15,6 @@
 #include "sbGStreamerMediaContainer.h"
 #include "sbGStreamerMediacoreUtils.h"
 #include "sbIGStreamerService.h"
-#include "sbProxiedComponentManager.h"
 
 #include "nsThreadUtils.h"
 
