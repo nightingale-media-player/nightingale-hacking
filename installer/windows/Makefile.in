@@ -106,5 +106,5 @@ libs::
 	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
 	$(GENERATE_NSIS_MANIFEST) -f -i added-files -i .autoreg -d $(SONGBIRD_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-filelist.nsi.in > $(CURDIR)/sb-filelist.nsi
-	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
+	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.46/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
 	$(MV) $(SONGBIRD_DISTDIR)/$(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(FULL_INSTALLER_NAME)
