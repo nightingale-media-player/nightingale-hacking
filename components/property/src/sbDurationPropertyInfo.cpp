@@ -157,7 +157,7 @@ sbDurationPropertyInfo::InitializeOperators()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDurationPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
+NS_IMETHODIMP sbDurationPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -359,25 +359,25 @@ NS_IMETHODIMP sbDurationPropertyInfo::SetMaxDuration(PRInt64 aMaxDuration)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDurationPropertyInfo::GetDurationInverse(PRBool *aDurationInverse)
+NS_IMETHODIMP sbDurationPropertyInfo::GetDurationInverse(bool *aDurationInverse)
 {
   NS_ENSURE_ARG_POINTER(aDurationInverse);
   *aDurationInverse = mDurationInversed;
   return NS_OK;
 }
-NS_IMETHODIMP sbDurationPropertyInfo::SetDurationInverse(PRBool aDurationInverse)
+NS_IMETHODIMP sbDurationPropertyInfo::SetDurationInverse(bool aDurationInverse)
 {
   mDurationInversed = aDurationInverse;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDurationPropertyInfo::GetDurationWithMilliseconds(PRBool *aDurationWithMilliseconds)
+NS_IMETHODIMP sbDurationPropertyInfo::GetDurationWithMilliseconds(bool *aDurationWithMilliseconds)
 {
   NS_ENSURE_ARG_POINTER(aDurationWithMilliseconds);
   *aDurationWithMilliseconds = mDurationDisplayMillisec;
   return NS_OK;
 }
-NS_IMETHODIMP sbDurationPropertyInfo::SetDurationWithMilliseconds(PRBool aDurationWithMilliseconds)
+NS_IMETHODIMP sbDurationPropertyInfo::SetDurationWithMilliseconds(bool aDurationWithMilliseconds)
 {
   mDurationDisplayMillisec = aDurationWithMilliseconds;
   return NS_OK;

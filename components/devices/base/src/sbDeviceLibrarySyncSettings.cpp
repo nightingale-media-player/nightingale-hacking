@@ -27,7 +27,6 @@
 
 // Mozilla includes
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsILocalFile.h>
 #include <nsThreadUtils.h>
@@ -44,13 +43,12 @@
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
 extern PLDHashOperator ArrayBuilder(nsISupports * aKey,
-                                    PRBool aData,
+                                    bool aData,
                                     void* userArg);
 
 PRUint32 const LEGACY_MGMT_TYPE_MANUAL = 0x1;
@@ -314,7 +312,7 @@ sbDeviceLibrarySyncSettings::GetMgmtTypePref(sbIDevice * aDevice,
 nsresult
 sbDeviceLibrarySyncSettings::GetImportPref(sbIDevice * aDevice,
                                            PRUint32 aContentType,
-                                           PRBool & aImport)
+                                           bool & aImport)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
 
@@ -409,7 +407,7 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
   NS_ENSURE_TRUE(settings, NS_ERROR_OUT_OF_MEMORY);
 
   // Set the import flag
-  PRBool import;
+  bool import;
   rv = GetImportPref(aDevice, aMediaType, import);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = settings->SetImport(import);
@@ -442,7 +440,7 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
       nsCOMPtr<nsISupports> supports = do_QueryInterface(mediaList, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool added = settings->mPlaylistsSelection.Put(supports, PR_FALSE);
+      bool added = settings->mPlaylistsSelection.Put(supports, PR_FALSE);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
     rv = GetSyncListsPrefKey(aMediaType, prefKey);
@@ -472,10 +470,10 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
         NS_ENSURE_SUCCESS(rv, rv);
 
         // We don't want to add to this list just set them to true if they match
-        PRBool selected;
-        PRBool exists = settings->mPlaylistsSelection.Get(supports, &selected);
+        bool selected;
+        bool exists = settings->mPlaylistsSelection.Get(supports, &selected);
         if (exists) {
-          PRBool added = settings->mPlaylistsSelection.Put(supports, PR_TRUE);
+          bool added = settings->mPlaylistsSelection.Put(supports, PR_TRUE);
           NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
         }
       }

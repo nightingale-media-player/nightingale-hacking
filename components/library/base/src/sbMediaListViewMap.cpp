@@ -34,14 +34,13 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISupportsPrimitives.h>
 
 #include <nsArrayEnumerator.h>
-#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>
@@ -204,7 +203,7 @@ sbMediaListViewMap::SetView(nsISupports *aParentKey,
   NS_ENSURE_ARG_POINTER( aView );
 
   nsresult rv;
-  PRBool success;
+  bool success;
   sbViewMapInner *innerMap = nsnull;
 
   // If our inner map does not yet exist, create and stash it

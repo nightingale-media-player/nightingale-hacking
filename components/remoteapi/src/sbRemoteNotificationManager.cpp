@@ -78,7 +78,7 @@ sbRemoteNotificationManager::Init()
   TRACE(("sbRemoteNotificationManager[0x%.8x] - Init", this));
   nsresult rv;
 
-  PRBool success = mPriorityList.SetLength(eEditedPlaylist + 1);
+  bool success = mPriorityList.SetLength(eEditedPlaylist + 1);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mDataRemote =
@@ -132,7 +132,7 @@ sbRemoteNotificationManager::Action(ActionType aType, sbILibrary* aLibrary)
   nsString libraryName;
   if (aLibrary) {
     // Only include library-specific notifications from the main library
-    PRBool isMainLibrary;
+    bool isMainLibrary;
     rv = mMainLibrary->Equals(aLibrary, &isMainLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
 

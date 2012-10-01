@@ -28,7 +28,7 @@
 #include <sbILibraryDiffingService.h>
 
 #include <nsIClassInfo.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIThread.h>
 
 #include <sbILibrary.h>

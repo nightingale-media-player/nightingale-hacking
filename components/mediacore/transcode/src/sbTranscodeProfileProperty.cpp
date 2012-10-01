@@ -64,7 +64,7 @@ sbTranscodeProfileProperty::SetValueMax(nsIVariant * aValueMax)
 }
 
 nsresult
-sbTranscodeProfileProperty::SetHidden(const PRBool aHidden)
+sbTranscodeProfileProperty::SetHidden(const bool aHidden)
 {
   mHidden = aHidden;
   return NS_OK;
@@ -127,7 +127,7 @@ sbTranscodeProfileProperty::SetValue(nsIVariant * aValue)
 
 /* readonly attribute boolean hidden; */
 NS_IMETHODIMP
-sbTranscodeProfileProperty::GetHidden(PRBool *aHidden)
+sbTranscodeProfileProperty::GetHidden(bool *aHidden)
 {
   NS_ENSURE_ARG_POINTER(aHidden);
   *aHidden = mHidden;

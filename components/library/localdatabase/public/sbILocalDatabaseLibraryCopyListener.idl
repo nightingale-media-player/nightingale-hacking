@@ -44,9 +44,9 @@ interface sbIPropertyArray;
 *
 * \sa sbILibrary
 */
-[scriptable, uuid(1eeea812-3b3b-48a3-9da6-f426938fc1a1)]
+[scriptable, function, uuid(1eeea812-3b3b-48a3-9da6-f426938fc1a1)]
 interface sbILocalDatabaseLibraryCopyListener : nsISupports
 {
-  [function] void onItemCopied(in sbIMediaItem aSourceItem, 
-                               in sbIMediaItem aDestinationItem);
+  void onItemCopied(in sbIMediaItem aSourceItem, 
+                    in sbIMediaItem aDestinationItem);
 };

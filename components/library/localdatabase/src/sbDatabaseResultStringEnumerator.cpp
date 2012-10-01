@@ -41,7 +41,7 @@ sbDatabaseResultStringEnumerator::Init()
 }
 
 NS_IMETHODIMP
-sbDatabaseResultStringEnumerator::HasMore(PRBool *_retval)
+sbDatabaseResultStringEnumerator::HasMore(bool *_retval)
 {
   *_retval = mNextIndex < mLength;
   return NS_OK;

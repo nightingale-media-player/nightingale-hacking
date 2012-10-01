@@ -54,13 +54,13 @@
 #endif
 
 // Mozilla imports.
-#include <nsAutoLock.h>
-#include <nsAutoPtr.h>
+#include <sbMozHackMutex.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsILocalFile.h>
 #include <prerr.h>
 #include <prerror.h>
+#include <nsStringAPI.h>
 
 //------------------------------------------------------------------------------
 //
@@ -169,7 +169,7 @@ nsresult sbDirectoryEnumeratorHelper::Init(nsIFile * aDirectory)
 }
 
 NS_IMETHODIMP
-sbDirectoryEnumeratorHelper::HasMoreElements(PRBool *_retval NS_OUTPARAM)
+sbDirectoryEnumeratorHelper::HasMoreElements(bool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -340,15 +340,15 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
 
   // Function variables.
-  PRBool   success;
+  bool   success;
   nsresult rv;
 
   // Operate under the enumerator lock.
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
 
   // Ensure directory exists and is a directory.
-  PRBool exists;
-  PRBool isDirectory;
+  bool exists;
+  bool isDirectory;
   rv = aDirectory->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(exists, NS_ERROR_FILE_NOT_FOUND);
@@ -387,14 +387,14 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
  */
 
 NS_IMETHODIMP
-sbDirectoryEnumerator::HasMoreElements(PRBool* aHasMoreElements)
+sbDirectoryEnumerator::HasMoreElements(bool* aHasMoreElements)
 {
   // Validate arguments and state.
   NS_ENSURE_ARG_POINTER(aHasMoreElements);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
 
   // Operate under the enumerator lock.
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
 
   // Return results.
   *aHasMoreElements = (mEntriesEnumStack.Count() > 0);
@@ -420,7 +420,7 @@ sbDirectoryEnumerator::GetNext(nsIFile** aFile)
   nsresult rv;
 
   // Operate under the enumerator lock.
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
 
   // Return the next file.  Return error if no next file.
   if (mNextFile)
@@ -451,7 +451,7 @@ sbDirectoryEnumerator::GetMaxDepth(PRUint32* aMaxDepth)
 {
   NS_ENSURE_ARG_POINTER(aMaxDepth);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
   *aMaxDepth = mMaxDepth;
   return NS_OK;
 }
@@ -460,7 +460,7 @@ NS_IMETHODIMP
 sbDirectoryEnumerator::SetMaxDepth(PRUint32 aMaxDepth)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
   mMaxDepth = aMaxDepth;
   return NS_OK;
 }
@@ -471,20 +471,20 @@ sbDirectoryEnumerator::SetMaxDepth(PRUint32 aMaxDepth)
  */
 
 NS_IMETHODIMP
-sbDirectoryEnumerator::GetDirectoriesOnly(PRBool* aDirectoriesOnly)
+sbDirectoryEnumerator::GetDirectoriesOnly(bool* aDirectoriesOnly)
 {
   NS_ENSURE_ARG_POINTER(aDirectoriesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
   *aDirectoriesOnly = mDirectoriesOnly;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDirectoryEnumerator::SetDirectoriesOnly(PRBool aDirectoriesOnly)
+sbDirectoryEnumerator::SetDirectoriesOnly(bool aDirectoriesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
   mDirectoriesOnly = aDirectoriesOnly;
   return NS_OK;
 }
@@ -495,20 +495,20 @@ sbDirectoryEnumerator::SetDirectoriesOnly(PRBool aDirectoriesOnly)
  */
 
 NS_IMETHODIMP
-sbDirectoryEnumerator::GetFilesOnly(PRBool* aFilesOnly)
+sbDirectoryEnumerator::GetFilesOnly(bool* aFilesOnly)
 {
   NS_ENSURE_ARG_POINTER(aFilesOnly);
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
   *aFilesOnly = mFilesOnly;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDirectoryEnumerator::SetFilesOnly(PRBool aFilesOnly)
+sbDirectoryEnumerator::SetFilesOnly(bool aFilesOnly)
 {
   NS_PRECONDITION(mIsInitialized, "Directory enumerator not initialized");
-  nsAutoLock autoLock(mEnumeratorLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mEnumeratorLock);
   mFilesOnly = aFilesOnly;
   return NS_OK;
 }
@@ -555,11 +555,6 @@ sbDirectoryEnumerator::Initialize()
   if (mIsInitialized)
     return NS_OK;
 
-  // Create the directory enumerator lock.
-  mEnumeratorLock =
-    nsAutoLock::NewLock("sbDirectoryEnumerator.mEnumeratorLock");
-  NS_ENSURE_TRUE(mEnumeratorLock, NS_ERROR_OUT_OF_MEMORY);
-
   // Indicate that the directory enumerator has been initialized.
   mIsInitialized = PR_TRUE;
 
@@ -576,11 +571,6 @@ sbDirectoryEnumerator::Finalize()
 {
   // Indicate that the directory enumerator is no longer initialized.
   mIsInitialized = PR_FALSE;
-
-  // Dispose of the directory enumerator lock.
-  if (mEnumeratorLock)
-    nsAutoLock::DestroyLock(mEnumeratorLock);
-  mEnumeratorLock = nsnull;
 
   // Clear the directory entries enumeration stack.
   mEntriesEnumStack.Clear();
@@ -606,7 +596,7 @@ sbDirectoryEnumerator::Finalize()
 nsresult
 sbDirectoryEnumerator::ScanForNextFile()
 {
-  PRBool   success;
+  bool   success;
   nsresult rv;
 
   // Scan for the next file.
@@ -616,7 +606,7 @@ sbDirectoryEnumerator::ScanForNextFile()
       entriesEnum = mEntriesEnumStack.ObjectAt(mEntriesEnumStack.Count() - 1);
 
     // If there are no more entries, pop the stack and continue.
-    PRBool hasMoreElements;
+    bool hasMoreElements;
     rv = entriesEnum->HasMoreElements(&hasMoreElements);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasMoreElements) {
@@ -632,8 +622,8 @@ sbDirectoryEnumerator::ScanForNextFile()
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Skip file if it doesn't match enumerator criteria.
-    PRBool skipFile = PR_FALSE;
-    PRBool isDirectory;
+    bool skipFile = PR_FALSE;
+    bool isDirectory;
     rv = file->IsDirectory(&isDirectory);
     if (NS_FAILED(rv)) {
       NS_WARNING("IsDirectory failed, assuming not a directory");
@@ -644,7 +634,7 @@ sbDirectoryEnumerator::ScanForNextFile()
         skipFile = PR_TRUE;
     }
     if (mFilesOnly) {
-      PRBool isFile;
+      bool isFile;
       rv = file->IsFile(&isFile);
       if (NS_FAILED(rv)) {
         NS_WARNING("IsFile failed, assuming not a file");

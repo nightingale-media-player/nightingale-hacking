@@ -40,7 +40,6 @@
 
 #include <sbIPropertyArray.h>
 
-#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbThreadUtils.h>
 #include <sbVariantUtils.h>
@@ -248,7 +247,7 @@ sbMediacoreWrapper::OnSetPosition(PRUint64 aPosition)
 }
 
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
+sbMediacoreWrapper::OnGetIsPlayingAudio(bool *aIsPlayingAudio)
 {
   nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
 
@@ -271,7 +270,7 @@ sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 }
 
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
+sbMediacoreWrapper::OnGetIsPlayingVideo(bool *aIsPlayingVideo)
 {
   nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
 
@@ -343,7 +342,7 @@ sbMediacoreWrapper::OnInitBaseMediacoreVolumeControl()
 }
 
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnSetMute(PRBool aMute)
+sbMediacoreWrapper::OnSetMute(bool aMute)
 {
   nsresult rv = 
     SendDOMEvent(NS_LITERAL_STRING("setmute"), sbAutoString(aMute));
@@ -462,7 +461,7 @@ sbMediacoreWrapper::Initialize(const nsAString &aInstanceName,
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool processed = PR_FALSE;
+  bool processed = PR_FALSE;
   while(!mWindowIsReady) {
     rv = target->ProcessNextEvent(PR_FALSE, &processed);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -690,7 +689,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
                                  nsIDOMDataContainerEvent **aEvent)
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
-  PRBool isMainThread = NS_IsMainThread();
+  bool isMainThread = NS_IsMainThread();
 
   nsCOMPtr<nsIDOMDocumentEvent> documentEvent;
   if(isMainThread) {
@@ -799,7 +798,7 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
     eventTarget = mProxiedDOMEventTarget;
   }
 
-  PRBool handled = PR_FALSE;
+  bool handled = PR_FALSE;
   rv = eventTarget->DispatchEvent(dataEvent, &handled);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(handled, NS_ERROR_UNEXPECTED);

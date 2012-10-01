@@ -61,13 +61,13 @@ sbSQLBuilderBase::SetLimit(PRInt32 aLimit)
 }
 
 NS_IMETHODIMP
-sbSQLBuilderBase::GetLimitIsParameter(PRBool *aLimitIsParameter)
+sbSQLBuilderBase::GetLimitIsParameter(bool *aLimitIsParameter)
 {
   *aLimitIsParameter = mLimitIsParameter;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbSQLBuilderBase::SetLimitIsParameter(PRBool aLimitIsParameter)
+sbSQLBuilderBase::SetLimitIsParameter(bool aLimitIsParameter)
 {
   mLimitIsParameter = aLimitIsParameter;
   return NS_OK;
@@ -87,13 +87,13 @@ sbSQLBuilderBase::SetOffset(PRInt32 aOffset)
 }
 
 NS_IMETHODIMP
-sbSQLBuilderBase::GetOffsetIsParameter(PRBool *aOffsetIsParameter)
+sbSQLBuilderBase::GetOffsetIsParameter(bool *aOffsetIsParameter)
 {
   *aOffsetIsParameter = mOffsetIsParameter;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbSQLBuilderBase::SetOffsetIsParameter(PRBool aOffsetIsParameter)
+sbSQLBuilderBase::SetOffsetIsParameter(bool aOffsetIsParameter)
 {
   mOffsetIsParameter = aOffsetIsParameter;
   return NS_OK;
@@ -131,8 +131,8 @@ sbSQLBuilderBase::AddJoinWithIndexHint(PRUint32 aJoinType,
                                        const nsAString& aJoinedColumnName,
                                        const nsAString& aJoinToTableName,
                                        const nsAString& aJoinToColumnName,
-                                       PRBool aRequiresFromTableIndexHint,
-                                       PRBool aRequiresToTableIndexHint)
+                                       bool aRequiresFromTableIndexHint,
+                                       bool aRequiresToTableIndexHint)
 {
   sbJoinInfo* ji = mJoins.AppendElement();
   NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);

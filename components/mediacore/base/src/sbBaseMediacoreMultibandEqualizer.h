@@ -34,7 +34,6 @@
 
 #include <sbIMediacoreMultibandEqualizer.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
@@ -68,7 +67,7 @@ public:
   /* override me, see cpp file for implementation notes */
   virtual nsresult OnInitBaseMediacoreMultibandEqualizer();
   /* override me, see cpp file for implementation notes */
-  virtual nsresult OnSetEqEnabled(PRBool aEqEnabled);
+  virtual nsresult OnSetEqEnabled(bool aEqEnabled);
   /* override me, see cpp file for implementation notes */
   virtual nsresult OnGetBandCount(PRUint32 *aBandCount);
   /* override me, see cpp file for implementation notes */

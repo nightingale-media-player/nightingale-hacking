@@ -84,10 +84,10 @@ public:
   nsresult AddConfiguration(sbILocalDatabaseGUIDArray* aArray);
 
   nsresult AddFilters(sbILibraryConstraintBuilder* aBuilder,
-                      PRBool* aChanged);
+                      bool* aChanged);
 
   nsresult AddSearches(sbILibraryConstraintBuilder* aBuilder,
-                       PRBool* aChanged);
+                       bool* aChanged);
 
   nsresult ClearFilters();
 
@@ -108,7 +108,7 @@ private:
     {
     }
 
-    PRBool isSearch;
+    bool isSearch;
     nsString property;
     sbStringArray propertyList;
     sbStringArray values;
@@ -116,7 +116,7 @@ private:
     nsRefPtr<sbLocalDatabaseTreeView> treeView;
     nsRefPtr<sbLocalDatabaseCascadeFilterSetArrayListener> arrayListener;
     PRUint32 cachedValueCount;
-    PRBool invalidationPending;
+    bool invalidationPending;
   };
 
   nsresult ConfigureArray(PRUint32 aIndex);
@@ -126,7 +126,7 @@ private:
 
   nsresult InvalidateFilter(sbFilterSpec& aFilter);
 
-  nsresult UpdateListener(PRBool aRemoveListener = PR_TRUE);
+  nsresult UpdateListener(bool aRemoveListener = PR_TRUE);
 
   nsresult ApplyConstraintFilters(sbILocalDatabaseGUIDArray* aArray);
 
@@ -201,7 +201,7 @@ public:
   nsresult ToString(nsAString& aStr);
 
   struct Spec {
-    PRBool isSearch;
+    bool isSearch;
     nsString property;
     sbStringArray propertyList;
     sbStringArray values;

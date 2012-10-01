@@ -100,7 +100,7 @@ sbBooleanPropertyInfo::InitializeOperators()
 }
 
 NS_IMETHODIMP
-sbBooleanPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
+sbBooleanPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
@@ -134,7 +134,7 @@ NS_IMETHODIMP
 sbBooleanPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
-  PRBool valid = PR_FALSE;
+  bool valid = PR_FALSE;
 
   _retval = aValue;
 
@@ -187,7 +187,7 @@ sbBooleanPropertyInfo::GetCellValue(const nsAString& aValue,
                                     nsAString& _retval)
 {
   nsresult rv;
-  PRBool valid = PR_FALSE;
+  bool valid = PR_FALSE;
 
   _retval = aValue;
 
@@ -240,7 +240,7 @@ sbBooleanPropertyInfo::GetColumnType(nsAString& _retval)
 // sbIClickablePropertyInfo
 
 NS_IMETHODIMP
-sbBooleanPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
+sbBooleanPropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
   *aSuppressSelect = mSuppressSelect;
@@ -248,7 +248,7 @@ sbBooleanPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 }
 
 NS_IMETHODIMP
-sbBooleanPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
+sbBooleanPropertyInfo::SetSuppressSelect(bool aSuppressSelect)
 {
   mSuppressSelect = aSuppressSelect;
   return NS_OK;
@@ -256,7 +256,7 @@ sbBooleanPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
 
 NS_IMETHODIMP
 sbBooleanPropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                  PRBool* _retval)
+                                  bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
@@ -270,7 +270,7 @@ sbBooleanPropertyInfo::HitTest(const nsAString& aCurrentValue,
                                PRUint32 aBoxHeight,
                                PRUint32 aMouseX,
                                PRUint32 aMouseY,
-                               PRBool* _retval)
+                               bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
@@ -301,7 +301,7 @@ NS_IMETHODIMP
 sbBooleanPropertyInfo::OnClick(sbIMediaItem *aItem,
                                nsISupports *aEvent,
                                nsISupports *aContext,
-                               PRBool *_retval NS_OUTPARAM)
+                               bool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

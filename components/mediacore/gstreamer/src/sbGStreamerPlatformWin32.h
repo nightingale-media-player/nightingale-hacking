@@ -61,7 +61,7 @@ private:
                           // in fullscreen mode)
   HWND mParentWindow;     // Our parent window in windowed mode.
   
-  PRBool mCursorShowing;  // Are we currently showing the cursor? True = Yes
+  bool mCursorShowing;  // Are we currently showing the cursor? True = Yes
   
   PRInt32 mLastMouseX;
   PRInt32 mLastMouseY;
@@ -70,7 +70,7 @@ private:
           WPARAM wParam, LPARAM lParam);
 
   HWND SelectParentWindow(HWND hWnd);
-  PRBool HasMouseMoved(PRInt32 aX, PRInt32 aY);
+  bool HasMouseMoved(PRInt32 aX, PRInt32 aY);
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_WIN32_H_

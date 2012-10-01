@@ -34,7 +34,7 @@
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIComponentManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIFile.h>
 #include <nsIObserver.h>
 #include <prlock.h>

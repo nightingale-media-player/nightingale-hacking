@@ -49,7 +49,7 @@ NSGetModule(nsIComponentManager* aCompMgr,
             nsIModule* *aResult)
 {
   nsresult rv;
-  PRBool systemGst;
+  bool systemGst;
 
   // aLocation starts off pointing to this component.
   nsCOMPtr<nsIFile> parent;

@@ -37,7 +37,6 @@
 #include <nsIVariant.h>
 
 #include <nsAppDirectoryServiceDefs.h>
-#include <nsAutoLock.h>
 #include <nsCRT.h>
 #include <nsHashKeys.h>
 #include <nsServiceManagerUtils.h>
@@ -48,7 +47,6 @@
 #include <sbIDeviceEventTarget.h>
 #include <sbIDeviceProperties.h>
 
-#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
@@ -218,7 +216,7 @@ SB_Base64Decode( const char *src,
                  char       *dest )
 {
   PRStatus status;
-  PRBool allocated = PR_FALSE;
+  bool allocated = PR_FALSE;
 
   if( (char *)0 == src ) {
     return (char *)0;
@@ -526,8 +524,8 @@ sbDeviceFirmwareDownloader::CreateCacheRoot(nsIFile **aCacheRoot)
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Check whether the desired cache version directory exists:
-  PRBool exists = PR_FALSE;
-  PRBool isDirectory = PR_FALSE;
+  bool exists = PR_FALSE;
+  bool isDirectory = PR_FALSE;
 
   rv = cacheVersionDir->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -555,8 +553,8 @@ sbDeviceFirmwareDownloader::CreateCacheRoot(nsIFile **aCacheRoot)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool isReadable = PR_FALSE;
-  PRBool isWritable = PR_FALSE;
+  bool isReadable = PR_FALSE;
+  bool isWritable = PR_FALSE;
 
   rv = cacheVersionDir->IsReadable(&isReadable);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -622,8 +620,8 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice(
   rv = deviceCacheDir->Append(aCacheDirName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
-  PRBool isDirectory = PR_FALSE;
+  bool exists = PR_FALSE;
+  bool isDirectory = PR_FALSE;
 
   rv = deviceCacheDir->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -641,8 +639,8 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice(
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool isReadable = PR_FALSE;
-  PRBool isWritable = PR_FALSE;
+  bool isReadable = PR_FALSE;
+  bool isWritable = PR_FALSE;
 
   rv = deviceCacheDir->IsReadable(&isReadable);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -726,7 +724,7 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(
   rv = finalDestFile->Append(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = finalDestFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -805,8 +803,8 @@ sbDeviceFirmwareDownloader::CreateDirInCacheRoot(const nsAString &aDirName,
   rv = cacheDir->Append(aDirName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool exists = PR_FALSE;
-  PRBool isDirectory = PR_FALSE;
+  bool exists = PR_FALSE;
+  bool isDirectory = PR_FALSE;
 
   rv = cacheDir->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -824,8 +822,8 @@ sbDeviceFirmwareDownloader::CreateDirInCacheRoot(const nsAString &aDirName,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool isReadable = PR_FALSE;
-  PRBool isWritable = PR_FALSE;
+  bool isReadable = PR_FALSE;
+  bool isWritable = PR_FALSE;
 
   rv = cacheDir->IsReadable(&isReadable);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -841,7 +839,7 @@ sbDeviceFirmwareDownloader::CreateDirInCacheRoot(const nsAString &aDirName,
   return NS_OK;
 }
 
-PRBool
+bool
 sbDeviceFirmwareDownloader::IsAlreadyInCache()
 {
   NS_ENSURE_STATE(mDevice);
@@ -880,7 +878,7 @@ sbDeviceFirmwareDownloader::IsAlreadyInCache()
   nsCOMPtr<nsILocalFile> localFile;
   rv = NS_NewLocalFile(filePath, PR_FALSE, getter_AddRefs(localFile));
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = localFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -927,7 +925,7 @@ sbDeviceFirmwareDownloader::GetCachedFile(nsIFile **aFile)
   nsCOMPtr<nsILocalFile> localFile;
   rv = NS_NewLocalFile(filePath, PR_FALSE, getter_AddRefs(localFile));
 
-  PRBool exists = PR_FALSE;
+  bool exists = PR_FALSE;
   rv = localFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -952,7 +950,7 @@ sbDeviceFirmwareDownloader::Start()
   mIsBusy = PR_TRUE;
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  PRBool inCache = IsAlreadyInCache();
+  bool inCache = IsAlreadyInCache();
 
   if(!inCache) {
     // Not in cache, clean out cache dir first.
@@ -1068,7 +1066,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
   NS_ENSURE_STATE(mDownloader);
   NS_ENSURE_STATE(mDevice);
 
-  PRBool success = PR_FALSE;
+  bool success = PR_FALSE;
   nsresult rv = mDownloader->GetSucceeded(&success);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1246,7 +1244,7 @@ sbDeviceFirmwareDownloader::CreateDeviceEvent(PRUint32 aType,
 
 nsresult
 sbDeviceFirmwareDownloader::SendDeviceEvent(sbIDeviceEvent *aEvent,
-                                            PRBool aAsync /*= PR_TRUE*/)
+                                            bool aAsync /*= PR_TRUE*/)
 {
   NS_ENSURE_STATE(mDevice);
   NS_ENSURE_ARG_POINTER(aEvent);
@@ -1258,7 +1256,7 @@ sbDeviceFirmwareDownloader::SendDeviceEvent(sbIDeviceEvent *aEvent,
   nsCOMPtr<sbIDeviceEventTarget> target = do_QueryInterface(mDevice, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool dispatched = PR_FALSE;
+  bool dispatched = PR_FALSE;
   rv = target->DispatchEvent(aEvent, aAsync, &dispatched);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1275,7 +1273,7 @@ sbDeviceFirmwareDownloader::SendDeviceEvent(sbIDeviceEvent *aEvent,
 nsresult
 sbDeviceFirmwareDownloader::SendDeviceEvent(PRUint32 aType,
                                             nsIVariant *aData,
-                                            PRBool aAsync /*= PR_TRUE*/)
+                                            bool aAsync /*= PR_TRUE*/)
 {
   nsCOMPtr<sbIDeviceEvent> deviceEvent;
   nsresult rv = CreateDeviceEvent(aType, aData, getter_AddRefs(deviceEvent));

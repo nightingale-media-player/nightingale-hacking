@@ -47,7 +47,12 @@ CPP_EXTRA_INCLUDES += \
 CPP_EXTRA_DEFS += -DSB_LOG_TO_WINDOWS_EVENT_LOG \
                   $(NULL)
 
+
+SIMPLE_PROGRAM_IMPORT_PATHS += $(MOZSDK_LIB_DIR) \
+                               $(NULL)
+
 SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
+                               mozalloc \
                                $(NULL)
 
 SIMPLE_PROGRAM_STATIC_IMPORTS += \

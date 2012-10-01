@@ -29,7 +29,7 @@
 
 #include "sbPlayQueueService.h"
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPlayQueueService, Init)
 

@@ -28,7 +28,7 @@
 #include "sbMediaFileManager.h"
 
 // Mozilla imports.
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 // Songbird imports.
 #include <sbStandardProperties.h>

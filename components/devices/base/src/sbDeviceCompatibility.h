@@ -42,7 +42,7 @@ public:
                 PRUint32 aUserPreference);
 
 private:
-  PRBool    mInitialized;
+  bool    mInitialized;
   PRUint32  mCompatibility;
   PRUint32  mUserPreference;
 

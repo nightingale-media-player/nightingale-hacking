@@ -71,7 +71,7 @@ private:
   nsresult CompleteInspection();
 
   nsresult PadAdded(GstPad *srcPad);
-  nsresult FakesinkEvent(GstPad *srcPad, GstEvent *event, PRBool isAudio);
+  nsresult FakesinkEvent(GstPad *srcPad, GstEvent *event, bool isAudio);
   nsresult ProcessPipelineForInfo();
   nsresult ProcessContainerProperties(
              sbIMediaFormatContainerMutable *aContainerFormat,
@@ -106,9 +106,9 @@ private:
 
   nsString                                mSourceURI;
 
-  PRBool                                  mFinished;
-  PRBool                                  mIsPaused;
-  PRBool                                  mTooComplexForCurrentImplementation;
+  bool                                  mFinished;
+  bool                                  mIsPaused;
+  bool                                  mTooComplexForCurrentImplementation;
 
   GstElement                             *mDecodeBin;
   GstPad                                 *mVideoSrc;

@@ -46,7 +46,6 @@
 
 #include <DatabaseQuery.h>
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -80,7 +79,7 @@ static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
     NS_ASSERTION(NS_SUCCEEDED(rv), "Library won't QI to sbILibrary!");         \
                                                                                \
     if (NS_SUCCEEDED(rv)) {                                                    \
-      PRBool listIsLibrary;                                                    \
+      bool listIsLibrary;                                                    \
       rv = library->Equals(_mediaList, &listIsLibrary);                        \
       NS_ASSERTION(NS_SUCCEEDED(rv), "Equals failed!");                        \
                                                                                \
@@ -152,7 +151,7 @@ sbAddSomeEnumListener::OnItemAdded(sbIMediaItem * aMediaItem)
   NS_ASSERTION(mForeignItems.Get(existingItem, nsnull),
                "The old item should be in the hashtable!");
 
-  PRBool success = mForeignItems.Put(existingItem, aMediaItem);
+  bool success = mForeignItems.Put(existingItem, aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -165,7 +164,7 @@ sbAddSomeEnumListener::OnComplete()
 }
 
 NS_IMETHODIMP
-sbAddSomeEnumListener::OnProgress(PRUint32 aItemsCompleted, PRBool aCompleted)
+sbAddSomeEnumListener::OnProgress(PRUint32 aItemsCompleted, bool aCompleted)
 {
   return NS_OK;
 }
@@ -240,7 +239,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationBegin(sbIMediaList* 
   NS_ASSERTION(aMediaList != mFriendList,
                "Can't enumerate our friend media list!");
 
-  PRBool success = mItemsToCreateOrAdd.Init();
+  bool success = mItemsToCreateOrAdd.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = mFriendList->GetLibrary(getter_AddRefs(mListLibrary));
@@ -270,11 +269,11 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
   nsresult rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool sameLibrary;
+  bool sameLibrary;
   rv = itemLibrary->Equals(mListLibrary, &sameLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const PRBool itemIsInMainLibrary = sbIsMainLibrary(itemLibrary);
+  const bool itemIsInMainLibrary = sbIsMainLibrary(itemLibrary);
 
   nsString listLibGuid;
   rv = mListLibrary->GetGuid(listLibGuid);
@@ -282,7 +281,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aM
 
   nsCOMPtr<sbIMediaItem> foundItem;
 
-  PRBool success;
+  bool success;
   NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
   NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
   if (!sameLibrary && !mItemsToCreateOrAdd.Get(aMediaItem, nsnull)) {
@@ -386,7 +385,7 @@ sbSimpleMediaListInsertingEnumerationListener::UpdateItemsInForeignLib(
     NS_ASSERTION(mItemsToCreateOrAdd.Get(existingItem, nsnull),
                  "The old item should be in the hashtable!");
 
-    PRBool success = mItemsToCreateOrAdd.Put(existingItem, newItem);
+    bool success = mItemsToCreateOrAdd.Put(existingItem, newItem);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
 
@@ -444,7 +443,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
     //    the item needs to be created.
     // 3. The item is in mItemsToCreateOrAdd and has a value. This means the
     //    item exists in the main library and needs to be added to the target
-    const PRBool found = mItemsToCreateOrAdd.Get(item,
+    const bool found = mItemsToCreateOrAdd.Get(item,
                                                 getter_AddRefs(existing));
     if (found) {
       if (existing) {
@@ -563,7 +562,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
     // library. If there is no entry in mItemsInForeignLib then we can just use
     // the straight media item that was given
     nsCOMPtr<sbIMediaItem> newMediaItem;
-    PRBool success = mItemsToCreateOrAdd.Get(mediaItem,
+    bool success = mItemsToCreateOrAdd.Get(mediaItem,
                                               getter_AddRefs(newMediaItem));
     if (success) {
       //Call the copy listener for this media list at this time.
@@ -700,7 +699,7 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMe
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Remember this media item for later so we can notify with it
-  PRBool success = mNotificationList.AppendObject(aMediaItem);
+  bool success = mNotificationList.AppendObject(aMediaItem);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   PRUint32* added = mNotificationIndexes.AppendElement(index);
@@ -870,7 +869,7 @@ sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mShouldNotifyAfterRemove.Init();
+  bool success = mShouldNotifyAfterRemove.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -894,7 +893,7 @@ sbLocalDatabaseSimpleMediaList::GetItemByGuid(const nsAString& aGuid,
   rv = sbLocalDatabaseMediaListBase::GetItemByGuid(aGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool contains;
+  bool contains;
   rv = Contains(item, &contains);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -910,7 +909,7 @@ sbLocalDatabaseSimpleMediaList::GetItemByGuid(const nsAString& aGuid,
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
-                                         PRBool* _retval)
+                                         bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -1041,7 +1040,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::AddMediaItems(
                                            nsISimpleEnumerator* aMediaItems,
                                            sbIAddMediaItemsListener * aListener,
-                                           PRBool aAsync)
+                                           bool aAsync)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
@@ -1104,7 +1103,7 @@ sbLocalDatabaseSimpleMediaList::AddMediaItems(
 
     sbAutoBatchHelper batchHelper(*this);
 
-    PRBool hasMore;
+    bool hasMore;
     while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
       nsCOMPtr<nsISupports> supports;
       rv = aMediaItems->GetNext(getter_AddRefs(supports));
@@ -1156,7 +1155,7 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMedia
 
   sbAutoBatchHelper batchHelper(*this);
 
-  PRBool hasMore;
+  bool hasMore;
   PRUint32 itemsProcessed = 0;
 
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
@@ -1341,7 +1340,7 @@ sbLocalDatabaseSimpleMediaList::InsertSomeBefore(PRUint32 aIndex,
 
   sbAutoBatchHelper batchHelper(*this);
 
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = aMediaItems->GetNext(getter_AddRefs(supports));
@@ -1542,7 +1541,7 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
   nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
 
     nsCOMPtr<nsISupports> supports;
@@ -1726,7 +1725,7 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
-    PRBool isCached;
+    bool isCached;
     rv = GetArray()->IsIndexCached(i, &isCached);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1754,7 +1753,7 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::Invalidate(PRBool aInvalidateLength)
+sbLocalDatabaseSimpleMediaList::Invalidate(bool aInvalidateLength)
 {
   nsresult rv = GetArray()->Invalidate(aInvalidateLength);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1830,7 +1829,7 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersAfterItemRemoved(sbIMediaList* aL
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeListCleared
                                   (sbIMediaList* aList,
-                                   PRBool        aExcludeLists)
+                                   bool        aExcludeLists)
 {
   NS_ENSURE_ARG_POINTER(aList);
 
@@ -1842,7 +1841,7 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeListCleared
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyListenersListCleared
                                   (sbIMediaList* aList,
-                                   PRBool        aExcludeLists)
+                                   bool        aExcludeLists)
 {
   NS_ENSURE_ARG_POINTER(aList);
 
@@ -2088,7 +2087,7 @@ sbLocalDatabaseSimpleMediaList::GetNextOrdinal(nsAString& aValue)
     return NS_OK;
   }
 
-  PRBool cached;
+  bool cached;
   rv = GetArray()->IsIndexCached(length - 1, &cached);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2116,7 +2115,7 @@ sbLocalDatabaseSimpleMediaList::GetBeforeOrdinal(PRUint32 aIndex,
   // If we want to insert before the first index, get the ordinal of the
   // first index and trim off everything but the first path and subtract 1
   if (aIndex == 0) {
-    PRBool cached;
+    bool cached;
     rv = GetArray()->IsIndexCached(0, &cached);
     NS_ENSURE_SUCCESS(rv, rv);
 

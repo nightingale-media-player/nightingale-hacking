@@ -75,7 +75,7 @@ protected:
   nsresult BeginMarshallMonitoring();
   nsresult PrepareShutdown();
   nsresult FinalShutdown();
-  nsresult QuitApplicationRequested(PRBool *aShouldQuit);
+  nsresult QuitApplicationRequested(bool *aShouldQuit);
   nsresult QuitApplicationGranted();
   nsresult RemoveAllDevices();
 
@@ -84,7 +84,7 @@ protected:
   nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceController> mControllers;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDevice> mDevices;
   nsInterfaceHashtableMT<nsIDHashKey, sbIDeviceMarshall> mMarshalls;
-  PRBool mHasAllowedShutdown;
+  bool mHasAllowedShutdown;
 };
 
 #define SONGBIRD_DEVICEMANAGER2_DESCRIPTION                \

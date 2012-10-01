@@ -27,7 +27,6 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 
-#include <nsAutoLock.h>
 #include <nsMemory.h>
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceFirmwareUpdate)

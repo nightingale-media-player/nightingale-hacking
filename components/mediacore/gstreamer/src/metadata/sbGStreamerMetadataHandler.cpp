@@ -155,9 +155,9 @@ sbGStreamerMetadataHandler::SetProps(sbIMutablePropertyArray * aProps)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/* readonly attribute PRBool completed; */
+/* readonly attribute bool completed; */
 NS_IMETHODIMP
-sbGStreamerMetadataHandler::GetCompleted(PRBool *aCompleted)
+sbGStreamerMetadataHandler::GetCompleted(bool *aCompleted)
 {
   TRACE((__FUNCTION__));
   NS_ENSURE_ARG_POINTER(aCompleted);
@@ -166,9 +166,9 @@ sbGStreamerMetadataHandler::GetCompleted(PRBool *aCompleted)
   return NS_OK;
 }
 
-/* readonly attribute PRBool requiresMainThread; */
+/* readonly attribute bool requiresMainThread; */
 NS_IMETHODIMP
-sbGStreamerMetadataHandler::GetRequiresMainThread(PRBool *aRequiresMainThread)
+sbGStreamerMetadataHandler::GetRequiresMainThread(bool *aRequiresMainThread)
 {
   TRACE((__FUNCTION__));
   NS_ENSURE_ARG_POINTER(aRequiresMainThread);
@@ -211,14 +211,14 @@ sbGStreamerMetadataHandler::SetChannel(nsIChannel * aChannel)
   return NS_OK;
 }
 
-static PRBool
+static bool
 HasExtensionInEnumerator(const nsAString& aHaystack, nsIStringEnumerator *aEnum)
 {
   TRACE((__FUNCTION__));
   nsresult rv;
 
   while (PR_TRUE) {
-    PRBool hasMore;
+    bool hasMore;
     rv = aEnum->HasMore(&hasMore);
     NS_ENSURE_SUCCESS(rv, PR_FALSE);
     if (!hasMore) {
@@ -277,7 +277,7 @@ sbGStreamerMetadataHandler::Vote(const nsAString & aUrl, PRInt32 *_retval)
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<nsIStringEnumerator> strings;
-  PRBool found = PR_FALSE;
+  bool found = PR_FALSE;
   rv = caps->GetAudioExtensions(getter_AddRefs(strings));
   if (NS_SUCCEEDED(rv) && strings) {
     found |= HasExtensionInEnumerator(aUrl, strings);
@@ -585,7 +585,7 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
   }
 }
 
-PRBool
+bool
 sbGStreamerMetadataHandler::HandleSynchronousMessage(GstMessage *message)
 {
   /* we never want to handle any messages synchronously */
@@ -750,7 +750,7 @@ sbGStreamerMetadataHandler::HandleTagMessage(GstMessage *message)
 }
 
 nsresult
-sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
+sbGStreamerMetadataHandler::FinalizeTags(bool aSucceeded)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   nsresult rv;
@@ -808,7 +808,7 @@ sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIStringEnumerator> strings;
-    PRBool found = PR_FALSE;
+    bool found = PR_FALSE;
     rv = caps->GetVideoExtensions(getter_AddRefs(strings));
     if (NS_SUCCEEDED(rv) && strings) {
       found = HasExtensionInEnumerator(NS_ConvertUTF8toUTF16(mSpec), strings);

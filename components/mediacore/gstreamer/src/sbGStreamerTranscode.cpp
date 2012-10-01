@@ -362,7 +362,7 @@ sbGStreamerTranscode::StopPipeline()
 /* sbIJobCancelable interface implementation */
 
 NS_IMETHODIMP
-sbGStreamerTranscode::GetCanCancel(PRBool *aCanCancel)
+sbGStreamerTranscode::GetCanCancel(bool *aCanCancel)
 {
   NS_ENSURE_ARG_POINTER(aCanCancel);
 
@@ -429,7 +429,7 @@ sbGStreamerTranscode::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
-sbGStreamerTranscode::GetBlocked(PRBool *aBlocked)
+sbGStreamerTranscode::GetBlocked(bool *aBlocked)
 {
   NS_ENSURE_ARG_POINTER(aBlocked);
 
@@ -548,7 +548,7 @@ sbGStreamerTranscode::AddJobProgressListener(sbIJobProgressListener *aListener)
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  PRBool succeeded = mProgressListeners.AppendObject(aListener);
+  bool succeeded = mProgressListeners.AppendObject(aListener);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -569,7 +569,7 @@ sbGStreamerTranscode::RemoveJobProgressListener(
   }
 
   // remove the listener
-  PRBool succeeded = mProgressListeners.RemoveObjectAt(indexToRemove);
+  bool succeeded = mProgressListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -961,7 +961,7 @@ sbGStreamerTranscode::GetAvailableProfiles(nsIArray * *aAvailableProfiles)
   /* If we haven't already cached it, then figure out what we have */
 
   nsresult rv;
-  PRBool hasMoreElements;
+  bool hasMoreElements;
   nsCOMPtr<nsISimpleEnumerator> dirEnum;
 
   nsCOMPtr<nsIURI> profilesDirURI;

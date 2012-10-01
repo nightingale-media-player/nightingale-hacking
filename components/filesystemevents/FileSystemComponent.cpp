@@ -24,7 +24,7 @@
 //
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbFileSystemCID.h"
 #include "sbFileSystemNode.h"
 

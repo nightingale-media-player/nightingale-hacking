@@ -63,7 +63,7 @@ sbAutoIgnoreWatchFolderPath::Init(nsAString const & aWatchPath)
   mWFService = do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isRunning = PR_FALSE;
+  bool isRunning = PR_FALSE;
   rv = mWFService->GetIsRunning(&isRunning);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -34,7 +34,6 @@
 
 #include <sbIMediacoreMultibandEqualizer.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
 class sbMediacoreEqualizerBand : public sbIMediacoreEqualizerBand

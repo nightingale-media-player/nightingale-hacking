@@ -66,7 +66,7 @@ sbiTunesDatabaseServices::Initialize() {
   rv = mDBQuery->AddQuery(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool dbOK;
+  bool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
@@ -106,7 +106,7 @@ sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
   rv = mDBQuery->BindStringParameter(1, aSongbirdID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool dbOK;
+  bool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
@@ -152,7 +152,7 @@ sbiTunesDatabaseServices::RemoveSBIDEntry(nsAString const & aSongbirdID) {
   rv = mDBQuery->BindStringParameter(0, aSongbirdID);
   NS_ENSURE_SUCCESS(rv, rv);
    
-  PRBool dbOK;
+  bool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);

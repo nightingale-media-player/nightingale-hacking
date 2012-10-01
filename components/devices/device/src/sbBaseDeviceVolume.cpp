@@ -111,7 +111,7 @@ sbBaseDeviceVolume::SetGUID(const nsAString& aGUID)
 
 
 nsresult
-sbBaseDeviceVolume::GetIsMounted(PRBool* aIsMounted)
+sbBaseDeviceVolume::GetIsMounted(bool* aIsMounted)
 {
   NS_ENSURE_ARG_POINTER(aIsMounted);
   nsAutoLock autoVolumeLock(mVolumeLock);
@@ -120,7 +120,7 @@ sbBaseDeviceVolume::GetIsMounted(PRBool* aIsMounted)
 }
 
 nsresult
-sbBaseDeviceVolume::SetIsMounted(PRBool aIsMounted)
+sbBaseDeviceVolume::SetIsMounted(bool aIsMounted)
 {
   nsAutoLock autoVolumeLock(mVolumeLock);
   mIsMounted = aIsMounted;

@@ -27,7 +27,6 @@
 #include <nspr.h>
 #include "sbMetadataManager.h"
 
-#include <nsAutoLock.h>
 #include <nsXPCOM.h>
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
@@ -95,7 +94,7 @@ sbMetadataManager::sbMetadataManager()
   if (rv != NS_OK)
     return;
 
-  PRBool moreAvailable = PR_FALSE;
+  bool moreAvailable = PR_FALSE;
   while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK && moreAvailable)
   {
     nsCOMPtr<nsISupportsCString> contractString;

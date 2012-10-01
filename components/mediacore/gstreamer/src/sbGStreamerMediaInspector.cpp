@@ -29,7 +29,6 @@
 #include <sbTArrayStringEnumerator.h>
 #include <sbStringUtils.h>
 #include <sbStandardProperties.h>
-#include <sbProxiedComponentManager.h>
 
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
@@ -104,7 +103,7 @@ sbGStreamerMediaInspector::~sbGStreamerMediaInspector()
 /* sbIJobCancelable interface implementation */
 
 NS_IMETHODIMP
-sbGStreamerMediaInspector::GetCanCancel(PRBool *aCanCancel)
+sbGStreamerMediaInspector::GetCanCancel(bool *aCanCancel)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aCanCancel);
@@ -139,7 +138,7 @@ sbGStreamerMediaInspector::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
-sbGStreamerMediaInspector::GetBlocked(PRBool *aBlocked)
+sbGStreamerMediaInspector::GetBlocked(bool *aBlocked)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aBlocked);
@@ -249,7 +248,7 @@ sbGStreamerMediaInspector::AddJobProgressListener(sbIJobProgressListener *aListe
     // the listener already exists, do not re-add
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
-  PRBool succeeded = mProgressListeners.AppendObject(aListener);
+  bool succeeded = mProgressListeners.AppendObject(aListener);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -271,7 +270,7 @@ sbGStreamerMediaInspector::RemoveJobProgressListener(
   }
 
   // remove the listener
-  PRBool succeeded = mProgressListeners.RemoveObjectAt(indexToRemove);
+  bool succeeded = mProgressListeners.RemoveObjectAt(indexToRemove);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -344,8 +343,8 @@ sbGStreamerMediaInspector::InspectMediaURI(const nsAString & aURI,
   NS_ENSURE_ARG_POINTER (_retval);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  PRBool processed = PR_FALSE;
-  PRBool isMainThread = NS_IsMainThread();
+  bool processed = PR_FALSE;
+  bool isMainThread = NS_IsMainThread();
 
   nsCOMPtr<nsIThread> target;
   if (isMainThread) {
@@ -716,7 +715,7 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 
 nsresult
 sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
-                                         PRBool isAudio)
+                                         bool isAudio)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 

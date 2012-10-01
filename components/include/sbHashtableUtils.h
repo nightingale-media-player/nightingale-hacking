@@ -41,7 +41,7 @@ PLDHashOperator HashCopierEnumerator(typename T::KeyType aKey,
   NS_ASSERTION(userArg, "ArrayBuilder passed a null arg");
   typename T::Hashtable * table = reinterpret_cast<typename T::Hashtable*>(userArg);
 
-  PRBool added = table->Put(aKey, aData);
+  bool added = table->Put(aKey, aData);
   NS_ENSURE_TRUE(added, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;

@@ -155,8 +155,8 @@ private:
   nsCOMPtr<nsIConsoleService>   mConsoleService;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
   PRUint32                      mType;
-  PRBool                        mShutdown;
-  PRBool                        mIsFetching;
+  bool                          mShutdown;
+  bool                          mIsFetching;
 
   //
   // mListener                  Listener for the fetching.
@@ -188,7 +188,7 @@ private:
   //                            for the items requested.
   //
 
-  PRBool                        mFoundAllArtwork;
+  bool                        mFoundAllArtwork;
 
   //
   // Internal services.

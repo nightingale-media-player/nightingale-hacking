@@ -44,7 +44,7 @@ sbScreenSaverSuppressor::~sbScreenSaverSuppressor()
 }
 
 /*virtual*/ nsresult
-sbScreenSaverSuppressor::OnSuppress(PRBool aSuppress)
+sbScreenSaverSuppressor::OnSuppress(bool aSuppress)
 {
   NS_NAMED_LITERAL_STRING(regKeyPath, "Control Panel\\Desktop");
   NS_NAMED_LITERAL_STRING(regKeyValueName, "ScreenSaveActive");

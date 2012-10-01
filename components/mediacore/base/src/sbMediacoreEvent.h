@@ -40,7 +40,6 @@
 #include <sbIMediacoreError.h>
 #include <sbIMediacoreEventTarget.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
 class sbMediacoreEvent : public sbIMediacoreEvent
@@ -59,7 +58,7 @@ public:
   nsresult SetTarget(sbIMediacoreEventTarget *aTarget);
 
   void Dispatch();
-  PRBool WasDispatched();
+  bool WasDispatched();
 
   /**
    * Used to create an instance of a mediacore event with an error
@@ -82,7 +81,7 @@ protected:
   nsCOMPtr<sbIMediacore>            mOrigin;
   nsCOMPtr<sbIMediacoreEventTarget> mTarget;
 
-  PRBool mDispatched;
+  bool mDispatched;
 };
 
 #endif /* __SB_MEDIACOREEVENT_H__ */

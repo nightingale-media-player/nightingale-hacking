@@ -48,12 +48,12 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbSimpleButtonPropertyInfo,
 sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropertyID,
                                                        const nsAString& aDisplayName,
                                                        const nsAString& aLocalizationKey,
-                                                       PRBool aHasLabel,
+                                                       bool aHasLabel,
                                                        const nsAString& aLabel,
-                                                       const PRBool aRemoteReadable,
-                                                       const PRBool aRemoteWritable,
-                                                       const PRBool aUserViewable,
-                                                       const PRBool aUserEditable)
+                                                       const bool aRemoteReadable,
+                                                       const bool aRemoteWritable,
+                                                       const bool aUserViewable,
+                                                       const bool aUserEditable)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -132,7 +132,7 @@ sbSimpleButtonPropertyInfo::GetColumnType(nsAString& _retval)
 // sbIClickablePropertyInfo
 
 NS_IMETHODIMP
-sbSimpleButtonPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
+sbSimpleButtonPropertyInfo::GetSuppressSelect(bool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
   *aSuppressSelect = mSuppressSelect;
@@ -140,7 +140,7 @@ sbSimpleButtonPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 }
 
 NS_IMETHODIMP
-sbSimpleButtonPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
+sbSimpleButtonPropertyInfo::SetSuppressSelect(bool aSuppressSelect)
 {
   mSuppressSelect = aSuppressSelect;
   return NS_OK;
@@ -148,7 +148,7 @@ sbSimpleButtonPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
 
 NS_IMETHODIMP
 sbSimpleButtonPropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                       PRBool* _retval)
+                                       bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -170,11 +170,11 @@ sbSimpleButtonPropertyInfo::HitTest(const nsAString& aCurrentValue,
                                     PRUint32 aBoxHeight,
                                     PRUint32 aMouseX,
                                     PRUint32 aMouseY,
-                                    PRBool* _retval)
+                                    bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  PRBool isDisabled;
+  bool isDisabled;
   nsresult rv = IsDisabled(aCurrentValue, &isDisabled);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -205,7 +205,7 @@ NS_IMETHODIMP
 sbSimpleButtonPropertyInfo::OnClick(sbIMediaItem *aItem,
                                     nsISupports *aEvent,
                                     nsISupports *aContext,
-                                    PRBool *_retval NS_OUTPARAM)
+                                    bool *_retval NS_OUTPARAM)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

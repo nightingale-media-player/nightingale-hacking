@@ -87,13 +87,13 @@ public:
                                      const nsAString& aColumnName,
                                      const nsAString& aLeftValue,
                                      const nsAString& aRightValue,
-                                     PRBool aNegate);
+                                     bool aNegate);
 
   virtual ~sbSQLBuilderCriterionBetweenString() {};
 private:
   nsString mLeftValue;
   nsString mRightValue;
-  PRBool mNegate;
+  bool mNegate;
 };
 
 class sbSQLBuilderCriterionLong : public sbSQLBuilderCriterionBase

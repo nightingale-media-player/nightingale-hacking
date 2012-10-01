@@ -52,10 +52,10 @@ public:
   sbImageLinkPropertyInfo(const nsAString& aPropertyID,
                           const nsAString& aDisplayName,
                           const nsAString& aLocalizationKey,
-                          const PRBool aRemoteReadable,
-                          const PRBool aRemoteWritable,
-                          const PRBool aUserViewable,
-                          const PRBool aUserEditable,
+                          const bool aRemoteReadable,
+                          const bool aRemoteWritable,
+                          const bool aUserViewable,
+                          const bool aUserEditable,
                           const nsAString& aUrlPropertyID);
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
@@ -65,7 +65,7 @@ public:
   
 protected:
   nsString mUrlPropertyID;
-  PRBool mSuppressSelect;
+  bool mSuppressSelect;
 };
 
 #endif /* __SBIMAGELINKPROPERTYINFO_H__ */

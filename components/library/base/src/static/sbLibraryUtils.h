@@ -84,7 +84,7 @@ public:
     return (PRUint32) mDepth;
   }
 
-  PRBool IsActive()
+  bool IsActive()
   {
     return mDepth > 0;
   }
@@ -280,7 +280,7 @@ nsresult GetMainLibrary(sbILibrary ** aMainLibrary) {
  * Tests whether the library passed is the main library
  */
 inline
-PRBool sbIsMainLibrary(sbILibrary * aLibrary)
+bool sbIsMainLibrary(sbILibrary * aLibrary)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
 
@@ -290,7 +290,7 @@ PRBool sbIsMainLibrary(sbILibrary * aLibrary)
   rv = GetMainLibrary(getter_AddRefs(mainLibrary));
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-  PRBool isEqual;
+  bool isEqual;
   rv = mainLibrary->Equals(aLibrary, &isEqual);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 

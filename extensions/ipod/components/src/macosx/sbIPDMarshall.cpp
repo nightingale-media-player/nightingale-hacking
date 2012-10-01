@@ -598,7 +598,7 @@ sbIPDMarshall::ScanForConnectedDevices()
  * returns false.
  */
 
-PRBool 
+bool 
 sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
 {
   GetVolParmsInfoBuffer volumeParms;
@@ -607,7 +607,7 @@ sbIPDMarshall::IsIPod(FSVolumeRefNum volumeRefNum)
   CFMutableDictionaryRef dictionaryRef;
   io_service_t volNode = (io_service_t) NULL;
   io_registry_entry_t scsiNode = (io_registry_entry_t) NULL;
-  PRBool isIPod = PR_FALSE;
+  bool isIPod = PR_FALSE;
   OSStatus error = noErr;
 
   /* Trace execution. */

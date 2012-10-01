@@ -43,16 +43,16 @@ public:
   sbOriginPageImagePropertyInfo(const nsAString& aPropertyID,
                                 const nsAString& aDisplayName,
                                 const nsAString& aLocalizationKey,
-                                const PRBool aRemoteReadable,
-                                const PRBool aRemoteWritable,
-                                const PRBool aUserViewable,
-                                const PRBool aUserEditable);
+                                const bool aRemoteReadable,
+                                const bool aRemoteWritable,
+                                const bool aUserViewable,
+                                const bool aUserEditable);
 
   NS_IMETHOD GetCellProperties(const nsAString& aValue, nsAString& _retval);
   NS_IMETHOD GetImageSrc(const nsAString& aValue, nsAString& _retval);
   NS_IMETHOD GetPreventNavigation(const nsAString& aImageValue,
                                   const nsAString& aUrlValue,
-                                  PRBool *_retval);
+                                  bool *_retval);
 
   nsresult Init();
   virtual ~sbOriginPageImagePropertyInfo() {}

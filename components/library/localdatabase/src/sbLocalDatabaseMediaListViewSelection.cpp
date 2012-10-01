@@ -87,7 +87,7 @@ nsresult
 sbLocalDatabaseMediaListViewSelection::Init(sbILibrary* aLibrary,
                                             const nsAString& aListGUID,
                                             sbILocalDatabaseGUIDArray* aArray,
-                                            PRBool aIsLibrary,
+                                            bool aIsLibrary,
                                             sbLocalDatabaseMediaListViewSelectionState* aState)
 {
   NS_ASSERTION(aArray, "aArray is null");
@@ -99,7 +99,7 @@ sbLocalDatabaseMediaListViewSelection::Init(sbILibrary* aLibrary,
   mArray = aArray;
   mIsLibrary = aIsLibrary;
 
-  PRBool success = mSelection.Init();
+  bool success = mSelection.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   if (aState) {
@@ -223,7 +223,7 @@ sbLocalDatabaseMediaListViewSelection::GetCurrentMediaItem(sbIMediaItem** aCurre
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::IsIndexSelected(PRInt32 aIndex,
-                                                       PRBool* _retval)
+                                                       bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
@@ -251,7 +251,7 @@ sbLocalDatabaseMediaListViewSelection::IsIndexSelected(PRInt32 aIndex,
 static nsresult IsContentTypeEqual(nsAString &aGuid,
                                    sbILibrary* aLibrary,
                                    const nsAString &aContentType,
-                                   PRBool* aIsSame)
+                                   bool* aIsSame)
 {
   NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(aIsSame);
@@ -274,7 +274,7 @@ static nsresult IsContentTypeEqual(nsAString &aGuid,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::IsContentTypeSelected(
                                          const nsAString &aContentType,
-                                         PRBool* _retval)
+                                         bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
@@ -286,7 +286,7 @@ sbLocalDatabaseMediaListViewSelection::IsContentTypeSelected(
       rv = mArray->GetGuidByIndex(i, guid);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool isSame;
+      bool isSame;
       rv = IsContentTypeEqual(guid, mLibrary, aContentType, &isSame);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -301,7 +301,7 @@ sbLocalDatabaseMediaListViewSelection::IsContentTypeSelected(
 
     PRUint32 found = 0;
     for (PRUint32 i = 0; i < mLength && found < selectionCount; i++) {
-      PRBool isIndexCached;
+      bool isIndexCached;
       rv = mArray->IsIndexCached(i, &isIndexCached);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -312,7 +312,7 @@ sbLocalDatabaseMediaListViewSelection::IsContentTypeSelected(
 
         nsString guid;
         if (mSelection.Get(uid, &guid)) {
-          PRBool isSame;
+          bool isSame;
           rv = IsContentTypeEqual(guid, mLibrary, aContentType, &isSame);
           NS_ENSURE_SUCCESS(rv, rv);
 
@@ -341,7 +341,7 @@ sbLocalDatabaseMediaListViewSelection::IsContentTypeSelected(
 
       nsString guid;
       if (mSelection.Get(uid, &guid)) {
-        PRBool isSame;
+        bool isSame;
         rv = IsContentTypeEqual(guid, mLibrary, aContentType, &isSame);
         NS_ENSURE_SUCCESS(rv, rv);
 
@@ -383,7 +383,7 @@ sbLocalDatabaseMediaListViewSelection::GetSelectedIndexedMediaItems(nsISimpleEnu
 
   PRUint32 found = 0;
   for (PRUint32 i = 0; i < mLength && found < selectionCount; i++) {
-    PRBool isIndexCached;
+    bool isIndexCached;
     rv = mArray->IsIndexCached(i, &isIndexCached);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -501,7 +501,7 @@ sbLocalDatabaseMediaListViewSelection::SelectOnly(PRInt32 aIndex)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::TimedSelectOnly(PRInt32 aIndex, PRInt32 aDelay)
 {
-  PRBool suppressed = mSelectionNotificationsSuppressed;
+  bool suppressed = mSelectionNotificationsSuppressed;
   if (aDelay != -1)
     mSelectionNotificationsSuppressed = PR_TRUE;
   nsresult rv = SelectOnly(aIndex);
@@ -556,7 +556,7 @@ sbLocalDatabaseMediaListViewSelection::Toggle(PRInt32 aIndex)
   }
 
   // Otherwise, simply do the toggle
-  PRBool isSelected;
+  bool isSelected;
   rv = IsIndexSelected(aIndex, &isSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -739,7 +739,7 @@ sbLocalDatabaseMediaListViewSelection::AddListener(sbIMediaListViewSelectionList
 {
   NS_ENSURE_ARG_POINTER(aListener);
 
-  PRBool success = mObservers.AppendElementUnlessExists(aListener);
+  bool success = mObservers.AppendElementUnlessExists(aListener);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }
@@ -753,7 +753,7 @@ sbLocalDatabaseMediaListViewSelection::RemoveListener(sbIMediaListViewSelectionL
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::SetSelectionNotificationsSuppressed(PRBool aSelectionEventsSuppressed)
+sbLocalDatabaseMediaListViewSelection::SetSelectionNotificationsSuppressed(bool aSelectionEventsSuppressed)
 {
   mSelectionNotificationsSuppressed = aSelectionEventsSuppressed;
 
@@ -766,7 +766,7 @@ sbLocalDatabaseMediaListViewSelection::SetSelectionNotificationsSuppressed(PRBoo
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListViewSelection::GetSelectionNotificationsSuppressed(PRBool *aSelectionEventsSuppressed)
+sbLocalDatabaseMediaListViewSelection::GetSelectionNotificationsSuppressed(bool *aSelectionEventsSuppressed)
 {
   NS_ENSURE_ARG_POINTER(aSelectionEventsSuppressed);
   *aSelectionEventsSuppressed = mSelectionNotificationsSuppressed;
@@ -790,7 +790,7 @@ sbLocalDatabaseMediaListViewSelection::AddToSelection(PRUint32 aIndex)
   rv = mArray->GetGuidByIndex(aIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mSelection.Put(uid, guid);
+  bool success = mSelection.Put(uid, guid);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -948,11 +948,11 @@ sbLocalDatabaseMediaListViewSelectionState::Read(nsIObjectInputStream* aStream)
     rv = aStream->ReadString(entry);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool success = mSelectionList.Put(key, entry);
+    bool success = mSelectionList.Put(key, entry);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
-  PRBool selectionIsAll;
+  bool selectionIsAll;
   rv = aStream->ReadBoolean(&selectionIsAll);
   NS_ENSURE_SUCCESS(rv, rv);
   mSelectionIsAll = selectionIsAll;
@@ -984,7 +984,7 @@ sbLocalDatabaseMediaListViewSelectionState::Write(nsIObjectOutputStream* aStream
 nsresult
 sbLocalDatabaseMediaListViewSelectionState::Init()
 {
-  PRBool success = mSelectionList.Init();
+  bool success = mSelectionList.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -1074,7 +1074,7 @@ sbGUIDArrayToIndexedMediaItemEnumerator::GetNextItem()
 }
 
 NS_IMETHODIMP
-sbGUIDArrayToIndexedMediaItemEnumerator::HasMoreElements(PRBool *_retval)
+sbGUIDArrayToIndexedMediaItemEnumerator::HasMoreElements(bool *_retval)
 {
   if (!mInitalized) {
     GetNextItem();
@@ -1151,7 +1151,7 @@ sbIndexedGUIDArrayEnumerator::Init()
 }
 
 NS_IMETHODIMP
-sbIndexedGUIDArrayEnumerator::HasMoreElements(PRBool *_retval)
+sbIndexedGUIDArrayEnumerator::HasMoreElements(bool *_retval)
 {
   if (!mInitalized) {
     nsresult rv = Init();
@@ -1213,7 +1213,7 @@ sbIndexedToUnindexedMediaItemEnumerator::sbIndexedToUnindexedMediaItemEnumerator
 }
 
 NS_IMETHODIMP
-sbIndexedToUnindexedMediaItemEnumerator::HasMoreElements(PRBool *_retval)
+sbIndexedToUnindexedMediaItemEnumerator::HasMoreElements(bool *_retval)
 {
   NS_ENSURE_TRUE(mIndexedEnumerator, NS_ERROR_NOT_INITIALIZED);
   return mIndexedEnumerator->HasMoreElements(_retval);

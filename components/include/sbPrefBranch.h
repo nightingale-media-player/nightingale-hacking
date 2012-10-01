@@ -35,7 +35,6 @@
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
 
-#include <sbProxiedComponentManager.h>
 
 /**
  * Helper class for preferences to make the syntax a bit easier on the eyes
@@ -70,7 +69,7 @@ public:
     __ENSURE_SUCCESS(rv);
 
     // If we're not on the main thread proxy the service
-    PRBool const isMainThread = NS_IsMainThread();
+    bool const isMainThread = NS_IsMainThread();
     if (!isMainThread) {
       nsCOMPtr<nsIPrefService> proxy;
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
@@ -106,11 +105,11 @@ public:
 #undef __ENSURE_SUCCESS
   }
 
-  PRBool GetBoolPref(const char* aKey, PRBool aDefault) {
+  bool GetBoolPref(const char* aKey, bool aDefault) {
     NS_ASSERTION(PR_GetCurrentThread() == mCreatingThread, "sbPrefBranch used on multiple threads");
     NS_ASSERTION(mPrefBranch, "mPrefBranch is null in sbPrefBranch");
 
-    PRBool result;
+    bool result;
     nsresult rv = mPrefBranch->GetBoolPref(aKey, &result);
     if (NS_FAILED(rv)) {
       return aDefault;
@@ -118,7 +117,7 @@ public:
     return result;
   }
 
-  nsresult SetBoolPref(const char* aKey, PRBool aValue) {
+  nsresult SetBoolPref(const char* aKey, bool aValue) {
     NS_ASSERTION(PR_GetCurrentThread() == mCreatingThread, "sbPrefBranch used on multiple threads");
     NS_ASSERTION(mPrefBranch, "mPrefBranch is null in sbPrefBranch");
 
@@ -218,7 +217,7 @@ public:
         break;
       }
       case nsIPrefBranch::PREF_BOOL: {
-        PRBool value;
+        bool value;
         rv = mPrefBranch->GetBoolPref(prefNameASCII.get(), &value);
         NS_ENSURE_SUCCESS(rv, rv);
 

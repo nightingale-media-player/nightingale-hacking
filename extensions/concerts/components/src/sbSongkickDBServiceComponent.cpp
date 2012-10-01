@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include "sbSongkickDBService.h"
 
 

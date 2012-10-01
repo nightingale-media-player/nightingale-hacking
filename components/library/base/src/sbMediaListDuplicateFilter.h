@@ -28,7 +28,6 @@
 #define SBMEDIALISTDUPLICATEFILTER_H_
 
 // Mozilla includes
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsISimpleEnumerator.h>
@@ -79,7 +78,7 @@ private:
   PRMonitor* mMonitor;
 
   // Have we run enumerate items yet?
-  PRBool mInitialized;
+  bool mInitialized;
 
   // Contains a combination origin ID and URL's
   nsTHashtable<nsStringHashKey> mKeys;
@@ -109,7 +108,7 @@ private:
   PRUint32 mTotalItems;
 
   // Indicates whether to remove duplicates from the enumeration
-  PRBool mRemoveDuplicates;
+  bool mRemoveDuplicates;
 };
 
 #endif

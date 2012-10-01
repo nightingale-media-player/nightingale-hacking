@@ -201,7 +201,7 @@ sbRemoteMediaListBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
                                    jsval id,
                                    PRUint32 flags,
                                    JSObject **objp,
-                                   PRBool *_retval )
+                                   bool *_retval )
 {
   LOG_LIST(("sbRemoteMediaListBase::NewResolve()"));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -326,7 +326,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
                                         &access );
 
   // note that an error return value or empty access means access denied
-  PRBool canCallMethod = NS_SUCCEEDED(rv);
+  bool canCallMethod = NS_SUCCEEDED(rv);
   if (canCallMethod) {
     if (!access) {
       canCallMethod = PR_FALSE;
@@ -352,7 +352,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
 
   // Find out if we're targetting the main library early, to know if we should
   // download the track at the end, and have the arg ready for recursion.
-  PRBool isTargetMain = PR_FALSE;
+  bool isTargetMain = PR_FALSE;
   rv = SB_IsFromLibName( selfItem, NS_LITERAL_STRING("main"), &isTargetMain );
   SB_ENSURE_WITH_JSTHROW( cx, rv, "Not able to determine mainLibrariness." );
 
@@ -444,7 +444,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
       rv = remotePlayer->GetMainLibrary( getter_AddRefs(library) );
       SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get remote library.")
     } else {
-      PRBool isTargetWeb = PR_FALSE;
+      bool isTargetWeb = PR_FALSE;
       rv = SB_IsFromLibName( selfItem, NS_LITERAL_STRING("web"), &isTargetWeb );
       SB_ENSURE_WITH_JSTHROW( cx, rv, "Not able to determine webLibrariness." );
 
@@ -548,7 +548,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
       LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Downloading item."));
 
       // We need to know if this is the main library for downloading
-      PRBool isItemMain = PR_FALSE;
+      bool isItemMain = PR_FALSE;
       rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isItemMain );
       SB_ENSURE_WITH_JSTHROW( cx, rv, "Not able to determine mainLibrariness." );
 
@@ -709,7 +709,7 @@ sbRemoteMediaListBase::LastIndexOf(sbIMediaItem* aMediaItem,
 }
 
 NS_IMETHODIMP
-sbRemoteMediaListBase::Contains(sbIMediaItem* aMediaItem, PRBool* _retval)
+sbRemoteMediaListBase::Contains(sbIMediaItem* aMediaItem, bool* _retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -787,7 +787,7 @@ sbRemoteMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 NS_IMETHODIMP
 sbRemoteMediaListBase::AddMediaItems(nsISimpleEnumerator* aMediaItems,
                                      sbIAddMediaItemsListener * aListener,
-                                     PRBool aAsync)
+                                     bool aAsync)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
 
@@ -962,7 +962,7 @@ sbUnwrappingSimpleEnumerator::sbUnwrappingSimpleEnumerator(nsISimpleEnumerator* 
 }
 
 NS_IMETHODIMP
-sbUnwrappingSimpleEnumerator::HasMoreElements(PRBool *_retval)
+sbUnwrappingSimpleEnumerator::HasMoreElements(bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 

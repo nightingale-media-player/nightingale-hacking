@@ -37,7 +37,7 @@ public:
   sbScreenSaverSuppressor();
   virtual ~sbScreenSaverSuppressor();
 
-  virtual nsresult OnSuppress(PRBool aSuppress);
+  virtual nsresult OnSuppress(bool aSuppress);
 
   static void UpdateSystemActivityCallback(nsITimer* aTimer,
                                            void*     aClosure);

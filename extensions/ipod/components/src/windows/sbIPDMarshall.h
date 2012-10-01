@@ -52,7 +52,6 @@
 #include <sbIDeviceRegistrar.h>
 
 // Mozilla imports.
-#include <nsAutoLock.h>
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
 
@@ -191,7 +190,7 @@ private:
 
   nsresult ScanForConnectedDevices();
 
-  PRBool IsIPod(char aDriveLetter);
+  bool IsIPod(char aDriveLetter);
 };
 
 

@@ -73,7 +73,7 @@ CreateAndDispatchDeviceManagerEvent(PRUint32     aType,
                                     nsIVariant*  aData,
                                     nsISupports* aOrigin,
                                     PRUint32     aDeviceState,
-                                    PRBool       aAsync)
+                                    bool       aAsync)
 {
   nsresult rv;
 
@@ -97,7 +97,7 @@ CreateAndDispatchDeviceManagerEvent(PRUint32     aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Dispatch the event.
-  PRBool dispatched;
+  bool dispatched;
   rv = eventTarget->DispatchEvent(event, aAsync, &dispatched);
   NS_ENSURE_SUCCESS(rv, rv);
 

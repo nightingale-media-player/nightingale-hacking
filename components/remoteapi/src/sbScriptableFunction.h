@@ -57,7 +57,7 @@ public:
                    PRUint32 argc,
                    jsval *argv,
                    jsval *vp,
-                   PRBool *_retval ) = 0;
+                   bool *_retval ) = 0;
 
 protected:
   sbScriptableFunctionBase();
@@ -76,7 +76,7 @@ public:
                    PRUint32 argc,
                    jsval *argv,
                    jsval *vp,
-                   PRBool *_retval );
+                   bool *_retval );
 
   sbScriptableLibraryFunction( nsISupports *aObject, const nsIID& aIID );
 
@@ -99,7 +99,7 @@ public:
                    PRUint32 argc,
                    jsval * argv,
                    jsval * vp,
-                   PRBool *_retval );
+                   bool *_retval );
 
   sbScriptableMediaListFunction();
 

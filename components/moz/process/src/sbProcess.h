@@ -139,8 +139,8 @@ public :
   /**
    * If true, the process stdout will be piped to the output string.
    */
-  nsresult GetPipeStdoutString(PRBool* aPipeStdoutString);
-  nsresult SetPipeStdoutString(PRBool aPipeStdoutString);
+  nsresult GetPipeStdoutString(bool* aPipeStdoutString);
+  nsresult SetPipeStdoutString(bool aPipeStdoutString);
 
   /**
    * Monitor to apply to the Songbird process done flag.  The monitor will be
@@ -157,7 +157,7 @@ public :
    *   If an internal error occurs, it will be set in the done result and the
    * process exit code will not be valid.
    */
-  nsresult GetIsDone(PRBool* aIsDone);
+  nsresult GetIsDone(bool* aIsDone);
 
   /**
    * Songbird process object end result when done.  Only valid when done is
@@ -203,9 +203,9 @@ private:
 
   PRLock*                       mProcessLock;
   nsTArray<nsString>            mArgList;
-  PRBool                        mPipeStdinString;
+  bool                        mPipeStdinString;
   nsString                      mStdinString;
-  PRBool                        mPipeStdoutString;
+  bool                        mPipeStdoutString;
   nsString                      mStdoutString;
   nsresult                      mDoneResult;
   PRInt32                       mExitCode;
@@ -214,10 +214,10 @@ private:
   PRFileDesc*                   mStdoutReadFD;
   PRFileDesc*                   mStdoutWriteFD;
   nsCOMPtr<nsIThread>           mWaitForDoneThread;
-  PRBool                        mHasBeenKilled;
+  bool                        mHasBeenKilled;
 
   PRMonitor*                    mDoneMonitor;
-  PRBool                        mIsDone;
+  bool                        mIsDone;
 
 
   //
@@ -288,7 +288,7 @@ SB_AUTO_NULL_CLASS(sbAutoKillProcess,
 nsresult SB_RunProcess(sbProcess**         aProcess,
                        nsTArray<nsString>& aArgList,
                        const nsAString*    aStdin = nsnull,
-                       PRBool              aPipeStdoutString = PR_FALSE,
+                       bool              aPipeStdoutString = PR_FALSE,
                        PRMonitor*          aDoneMonitor = nsnull);
 
 

@@ -112,7 +112,7 @@ NS_IMETHODIMP sbMockDevice::GetId(nsID * *aId)
 
   nsID mockDeviceID;
 
-  PRBool success =
+  bool success =
     mockDeviceID.Parse("{3572E6FC-4954-4458-AFE7-0D0A65BF5F55}");
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
@@ -217,7 +217,7 @@ nsresult sbMockDevice::DeviceSpecificDisconnect()
                             getter_AddRefs(deviceEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool dispatched;
+  bool dispatched;
   rv = DispatchEvent(deviceEvent, PR_TRUE, &dispatched);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -225,7 +225,7 @@ nsresult sbMockDevice::DeviceSpecificDisconnect()
 }
 
 /* readonly attribute boolean connected; */
-NS_IMETHODIMP sbMockDevice::GetConnected(PRBool *aConnected)
+NS_IMETHODIMP sbMockDevice::GetConnected(bool *aConnected)
 {
   NS_ENSURE_ARG_POINTER(aConnected);
   *aConnected = mIsConnected;
@@ -233,7 +233,7 @@ NS_IMETHODIMP sbMockDevice::GetConnected(PRBool *aConnected)
 }
 
 /* readonly attribute boolean threaded; */
-NS_IMETHODIMP sbMockDevice::GetThreaded(PRBool *aThreaded)
+NS_IMETHODIMP sbMockDevice::GetThreaded(bool *aThreaded)
 {
   NS_ENSURE_ARG_POINTER(aThreaded);
   *aThreaded = PR_FALSE;
@@ -290,7 +290,7 @@ NS_IMETHODIMP sbMockDevice::GetPreference(const nsAString & aPrefName, nsIVarian
       break;
     }
     case nsIPrefBranch::PREF_BOOL: {
-      PRBool value;
+      bool value;
       rv = prefBranch->GetBoolPref(prefNameC.get(), &value);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = result->SetAsBool(value);
@@ -365,7 +365,7 @@ NS_IMETHODIMP sbMockDevice::SetPreference(const nsAString & aPrefName, nsIVarian
         rv = prefBranch->ClearUserPref(prefNameC.get());
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      PRBool value;
+      bool value;
       rv = aPrefValue->GetAsBool(&value);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = prefBranch->SetBoolPref(prefNameC.get(), value);
@@ -727,12 +727,12 @@ NS_IMETHODIMP sbMockDevice::Eject()
 }
 
 NS_IMETHODIMP
-sbMockDevice::GetIsDirectTranscoding(PRBool* aIsDirect)
+sbMockDevice::GetIsDirectTranscoding(bool* aIsDirect)
 {
   return sbBaseDevice::GetIsDirectTranscoding(aIsDirect);
 }
 
-NS_IMETHODIMP sbMockDevice::GetIsBusy(PRBool *aIsBusy)
+NS_IMETHODIMP sbMockDevice::GetIsBusy(bool *aIsBusy)
 {
   nsCOMPtr<nsIVariant> busyVariant;
   nsresult rv =
@@ -756,7 +756,7 @@ NS_IMETHODIMP sbMockDevice::GetIsBusy(PRBool *aIsBusy)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbMockDevice::GetCanDisconnect(PRBool *aCanDisconnect)
+NS_IMETHODIMP sbMockDevice::GetCanDisconnect(bool *aCanDisconnect)
 {
   return sbBaseDevice::GetCanDisconnect(aCanDisconnect);
 }
@@ -846,12 +846,12 @@ NS_IMETHODIMP sbMockDevice::PopRequest(nsIPropertyBag2 **_retval)
   return CallQueryInterface(bag, _retval);
 }
 
-NS_IMETHODIMP sbMockDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)
+NS_IMETHODIMP sbMockDevice::SetWarningDialogEnabled(const nsAString & aWarning, bool aEnabled)
 {
   return sbBaseDevice::SetWarningDialogEnabled(aWarning, aEnabled);
 }
 
-NS_IMETHODIMP sbMockDevice::GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval)
+NS_IMETHODIMP sbMockDevice::GetWarningDialogEnabled(const nsAString & aWarning, bool *_retval)
 {
   return sbBaseDevice::GetWarningDialogEnabled(aWarning, _retval);
 }
@@ -880,7 +880,7 @@ NS_IMETHODIMP sbMockDevice::Format()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 /* readonly attribute boolean supportsReformat; */
-NS_IMETHODIMP sbMockDevice::GetSupportsReformat(PRBool *_retval)
+NS_IMETHODIMP sbMockDevice::GetSupportsReformat(bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;

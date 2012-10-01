@@ -47,7 +47,7 @@ public:
   nsresult SetPropertyName(const nsAString & aPropertyName);
   nsresult SetValueMin(nsIVariant * aValueMin);
   nsresult SetValueMax(nsIVariant * aValueMax);
-  nsresult SetHidden(const PRBool aHidden);
+  nsresult SetHidden(const bool aHidden);
   nsresult SetMapping(const nsACString & aMapping);
   nsresult SetScale(const nsACString & aScale);
 
@@ -71,7 +71,7 @@ protected:
    * \brief If true, this property should not be output (instead it should
    * be used for calcuating a different property)
    */
-  PRBool mHidden;
+  bool mHidden;
 
   /**
    * string key for a mapping; if not empty, the value of this property should

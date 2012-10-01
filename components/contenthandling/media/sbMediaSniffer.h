@@ -27,7 +27,7 @@
 #ifndef __SB_MEDIASNIFFER_H__
 #define __SB_MEDIASNIFFER_H__
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsIContentSniffer.h>
 #include <nsStringGlue.h>
 

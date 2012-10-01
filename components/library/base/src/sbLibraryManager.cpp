@@ -31,7 +31,7 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsILocalFile.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
@@ -44,7 +44,6 @@
 #include <sbILibraryManagerListener.h>
 
 #include <nsArrayEnumerator.h>
-#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>
@@ -54,7 +53,6 @@
 #include <sbLibraryUtils.h>
 #include <sbDebugUtils.h>
 #include <sbThreadUtils.h>
-#include <sbProxiedComponentManager.h>
 
 /* for sbILibraryUtils::GetCanonicalPath */
 #if XP_WIN
@@ -133,7 +131,7 @@ sbLibraryManager::Init()
 
   nsresult rv;
 
-  PRBool success = mLibraryTable.Init();
+  bool success = mLibraryTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   success = mListeners.Init();
@@ -183,7 +181,7 @@ sbLibraryManager::AddLibrariesToCOMArrayCallback(nsStringHashKey::KeyType aKey,
   nsCOMArray<sbILibrary>* array =
     static_cast<nsCOMArray<sbILibrary>*>(aUserData);
 
-  PRBool success = array->AppendObject(aEntry->library);
+  bool success = array->AppendObject(aEntry->library);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
@@ -211,7 +209,7 @@ sbLibraryManager::AddStartupLibrariesToCOMArrayCallback(nsStringHashKey::KeyType
     static_cast<nsCOMArray<sbILibrary>*>(aUserData);
 
   if (aEntry->loader && aEntry->loadAtStartup) {
-    PRBool success = array->AppendObject(aEntry->library);
+    bool success = array->AppendObject(aEntry->library);
     NS_ENSURE_TRUE(success, PL_DHASH_STOP);
   }
 
@@ -239,7 +237,7 @@ sbLibraryManager::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKe
   nsCOMArray<sbILibraryManagerListener>* array =
     static_cast<nsCOMArray<sbILibraryManagerListener>*>(aUserData);
 
-  PRBool success = array->AppendObject(aEntry);
+  bool success = array->AppendObject(aEntry);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
@@ -419,7 +417,7 @@ sbLibraryManager::InvokeLoaders()
  */
 nsresult
 sbLibraryManager::SetLibraryLoadsAtStartupInternal(sbILibrary* aLibrary,
-                                                   PRBool aLoadAtStartup,
+                                                   bool aLoadAtStartup,
                                                    sbLibraryInfo** aInfo)
 {
   TRACE("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartupInternal", this);
@@ -555,7 +553,7 @@ sbLibraryManager::GetLibrary(const nsAString& aGuid,
     nsAutoLock lock(mLock);
 
     sbLibraryInfo* libraryInfo;
-    PRBool exists = mLibraryTable.Get(aGuid, &libraryInfo);
+    bool exists = mLibraryTable.Get(aGuid, &libraryInfo);
     NS_ENSURE_TRUE(exists, NS_ERROR_NOT_AVAILABLE);
 
     NS_ASSERTION(libraryInfo->library, "Null library in hash table!");
@@ -631,7 +629,7 @@ sbLibraryManager::GetStartupLibraries(nsISimpleEnumerator** _retval)
  */
 NS_IMETHODIMP
 sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
-                                  PRBool aLoadAtStartup)
+                                  bool aLoadAtStartup)
 {
   TRACE("sbLibraryManager[0x%x] - RegisterLibrary", this);
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -673,7 +671,7 @@ sbLibraryManager::RegisterLibrary(sbILibrary* aLibrary,
   {
     nsAutoLock lock(mLock);
 
-    PRBool success = mLibraryTable.Put(libraryGUID, newLibraryInfo);
+    bool success = mLibraryTable.Put(libraryGUID, newLibraryInfo);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
     newLibraryInfo.forget();
@@ -738,7 +736,7 @@ sbLibraryManager::UnregisterLibrary(sbILibrary* aLibrary)
  */
 NS_IMETHODIMP
 sbLibraryManager::SetLibraryLoadsAtStartup(sbILibrary* aLibrary,
-                                           PRBool aLoadAtStartup)
+                                           bool aLoadAtStartup)
 {
   TRACE("sbLibraryManager[0x%x] - SetLibraryLoadsAtStartup", this);
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -774,7 +772,7 @@ sbLibraryManager::SetLibraryLoadsAtStartup(sbILibrary* aLibrary,
     return NS_ERROR_UNEXPECTED;
   }
 
-  PRBool success = mLibraryTable.Put(libraryGUID, libraryInfo);
+  bool success = mLibraryTable.Put(libraryGUID, libraryInfo);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   
   libraryInfo.forget();
@@ -786,7 +784,7 @@ sbLibraryManager::SetLibraryLoadsAtStartup(sbILibrary* aLibrary,
  */
 NS_IMETHODIMP
 sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
-                                           PRBool* _retval)
+                                           bool* _retval)
 {
   TRACE("sbLibraryManager[0x%x] - GetLibraryLoadsAtStartup", this);
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -813,7 +811,7 @@ sbLibraryManager::GetLibraryLoadsAtStartup(sbILibrary* aLibrary,
  */
 NS_IMETHODIMP
 sbLibraryManager::HasLibrary(sbILibrary* aLibrary,
-                             PRBool* _retval)
+                             bool* _retval)
 {
   TRACE("sbLibraryManager[0x%x] - HasLibrary", this);
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -859,7 +857,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
   nsAutoLock lock(mLock);
 
   // Add the proxy to the hash table, using the listener as the key.
-  PRBool success = mListeners.Put(aListener, proxy);
+  bool success = mListeners.Put(aListener, proxy);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;

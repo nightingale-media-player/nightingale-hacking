@@ -123,7 +123,7 @@ interface sbIPlaylistReader : nsISupports
    */
   void read(in nsIFile aFile,
             in sbIMediaList aMediaList,
-            in PRBool aReplace,
+            in boolean aReplace,
             [optional] in sbIPlaylistFormatType aPlaylistFormatType);
 
   /**
@@ -200,7 +200,7 @@ interface sbIPlaylistReaderManager : nsISupports
   void read(in nsIFile aFile,
             in sbIMediaList aMediaList,
             in AString aContentType,
-            in PRBool aAddDistinctOnly,
+            in boolean aAddDistinctOnly,
             [optional] in sbIPlaylistFormatType aPlaylistFormatType);
 
   /**

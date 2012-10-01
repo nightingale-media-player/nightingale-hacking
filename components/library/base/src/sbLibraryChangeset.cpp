@@ -275,7 +275,7 @@ NS_IMETHODIMP sbLibraryChange::GetDestinationItem(sbIMediaItem * *aItem)
 }
 
 /* readonly attribute boolean itemIsList; */
-NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
+NS_IMETHODIMP sbLibraryChange::GetItemIsList(bool *aItemIsList)
 {
   NS_ENSURE_ARG_POINTER(aItemIsList);
 
@@ -306,7 +306,7 @@ NS_IMETHODIMP sbLibraryChange::GetListItems(nsIArray **aListItems)
 {
   NS_ENSURE_ARG_POINTER(aListItems);
 
-  PRBool isList;
+  bool isList;
   nsresult rv = GetItemIsList(&isList);
   NS_ENSURE_SUCCESS(rv, rv);
 

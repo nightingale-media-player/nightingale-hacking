@@ -283,7 +283,7 @@ BasePlatformInterface::DispatchDOMEvent(nsIDOMEvent *aEvent)
   nsCOMPtr<nsIDOMEventTarget> eventTarget(do_QueryInterface(mDocument, &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRBool dummy = PR_FALSE;
+  bool dummy = PR_FALSE;
   rv = eventTarget->DispatchEvent(aEvent, &dummy);
   NS_ENSURE_SUCCESS(rv, rv);
 

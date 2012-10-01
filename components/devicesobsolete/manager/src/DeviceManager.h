@@ -84,13 +84,13 @@ private:
   // This is a simple static to make sure that we aren't initialized more than
   // once. Consumers should use getService instead of createInstance, but we do
   // this just in case they forget. 
-  static PRBool sServiceInitialized;
+  static bool sServiceInitialized;
 
   // Set after our LoadSupportedDevices has been called. 
-  static PRBool sDevicesLoaded;
+  static bool sDevicesLoaded;
 
   // This is a sanity check to make sure that we're finalizing properly
-  static PRBool sServiceFinalized;
+  static bool sServiceFinalized;
 
   // The lock that protects mSupportedDevices
   PRLock* mLock;

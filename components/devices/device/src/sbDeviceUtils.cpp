@@ -67,11 +67,9 @@
 #include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
 #include <sbPrefBranch.h>
-#include <sbProxiedComponentManager.h>
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
 #include <sbVariantUtils.h>
-#include <sbProxiedComponentManager.h>
 #include <sbMemoryUtils.h>
 #include <sbArray.h>
 #include <sbIMediaInspector.h>
@@ -105,15 +103,15 @@ public:
                  sbIDeviceLibrary* aLibrary,
                  PRInt64           aSpaceNeeded,
                  PRInt64           aSpaceAvailable,
-                 PRBool*           aAbort);
+                 bool*           aAbort);
 
 private:
   nsCOMPtr<sbIDevice>        mDevice;
   nsCOMPtr<sbIDeviceLibrary> mLibrary;
-  PRBool                     mSync;
+  bool                     mSync;
   PRInt64                    mSpaceNeeded;
   PRInt64                    mSpaceAvailable;
-  PRBool*                    mAbort;
+  bool*                    mAbort;
 };
 
 /*static*/
@@ -195,7 +193,7 @@ public:
   {
     NS_ENSURE_ARG_POINTER(_retval);
 
-    PRBool abortRequests = PR_FALSE;
+    bool abortRequests = PR_FALSE;
     if (mAbortFlag)
       abortRequests = PR_AtomicAdd(mAbortFlag, 0);
 
@@ -214,7 +212,7 @@ public:
     NS_ENSURE_ARG_POINTER(aItem);
     NS_ENSURE_ARG_POINTER(_retval);
 
-    PRBool abortRequests = PR_FALSE;
+    bool abortRequests = PR_FALSE;
     if (mAbortFlag)
       abortRequests = PR_AtomicAdd(mAbortFlag, 0);
 
@@ -239,7 +237,7 @@ public:
 protected:
   nsString mId;
   nsString mValue;
-  PRBool *mAbortFlag;
+  bool *mAbortFlag;
   virtual ~sbDeviceUtilsBulkSetPropertyEnumerationListener() {}
 };
 
@@ -429,7 +427,7 @@ nsresult sbDeviceUtils::GetDeviceLibraryForLibrary(sbIDevice* aDevice,
     if (NS_FAILED(rv))
       continue;
 
-    PRBool equalsLibrary;
+    bool equalsLibrary;
     rv = aLibrary->Equals(deviceLib, &equalsLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -573,7 +571,7 @@ nsresult sbDeviceUtils::QueryUserSpaceExceeded
                            /* in */  sbIDeviceLibrary* aLibrary,
                            /* in */  PRInt64           aSpaceNeeded,
                            /* in */  PRInt64           aSpaceAvailable,
-                           /* out */ PRBool*           aAbort)
+                           /* out */ bool*           aAbort)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -592,7 +590,7 @@ nsresult sbDeviceUtils::QueryUserSpaceExceeded
 }
 
 /* static */
-nsresult sbDeviceUtils::QueryUserAbortRip(PRBool* aAbort)
+nsresult sbDeviceUtils::QueryUserAbortRip(bool* aAbort)
 {
   NS_ENSURE_ARG_POINTER(aAbort);
 
@@ -649,7 +647,7 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
       do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasErrors;
+  bool hasErrors;
   rv = errMonitor->DeviceHasErrors(aDevice, EmptyString(), 0, &hasErrors);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -784,7 +782,7 @@ nsresult sbDeviceUtils::SetLinkedSyncPartner(sbIDevice* aDevice)
 
   // Get the device sync partner ID and determine if the device is linked to a
   // sync partner.
-  PRBool               deviceIsLinked;
+  bool               deviceIsLinked;
   nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
   nsAutoString         deviceSyncPartnerID;
   rv = aDevice->GetPreference(NS_LITERAL_STRING("SyncPartner"),
@@ -803,7 +801,7 @@ nsresult sbDeviceUtils::SetLinkedSyncPartner(sbIDevice* aDevice)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Check if device is linked to local sync partner.
-  PRBool isLinkedLocally = PR_FALSE;
+  bool isLinkedLocally = PR_FALSE;
   if (deviceIsLinked)
     isLinkedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
 
@@ -874,7 +872,7 @@ sbDeviceUtilsQueryUserSpaceExceeded::HandleWindowCallback(nsIDOMWindow* aWindow)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // query the user
-  PRBool proceed;
+  bool proceed;
   rv = deviceHelper->QueryUserSpaceExceeded(aWindow,
                                             mDevice,
                                             mLibrary,
@@ -894,7 +892,7 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
                                            sbIDeviceLibrary* aLibrary,
                                            PRInt64           aSpaceNeeded,
                                            PRInt64           aSpaceAvailable,
-                                           PRBool*           aAbort)
+                                           bool*           aAbort)
 {
   nsresult rv;
 
@@ -1520,7 +1518,7 @@ bool IsValueInRange(PRInt32 aValue, sbIDevCapRange * aRange) {
   if (!aValue || !aRange) {
     return true;
   }
-  PRBool inRange;
+  bool inRange;
   nsresult rv = aRange->IsValueInRange(aValue, &inRange);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
@@ -1659,7 +1657,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(PRUint32 aTranscodeType,
   rv = devCompatible->Initialize(devCaps, aMediaFormat, devCapContentType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool compatible;
+  bool compatible;
   rv = devCompatible->Compare(&compatible);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1886,7 +1884,7 @@ sbDeviceUtils::GetDeviceCapsTypeFromListContentType(PRUint16 aListContentType,
   return NS_OK;
 };
 
-/* static */ PRBool
+/* static */ bool
 sbDeviceUtils::IsMediaItemSupported(sbIDevice *aDevice,
                                     sbIMediaItem *aMediaItem)
 {
@@ -1905,7 +1903,7 @@ sbDeviceUtils::IsMediaItemSupported(sbIDevice *aDevice,
   rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-  PRBool isSupported;
+  bool isSupported;
   rv = capabilities->SupportsContent(functionType,
                                      contentType,
                                      &isSupported);
@@ -1914,7 +1912,7 @@ sbDeviceUtils::IsMediaItemSupported(sbIDevice *aDevice,
   return isSupported;
 }
 
-/* static */ PRBool
+/* static */ bool
 sbDeviceUtils::IsMediaListContentTypeSupported(sbIDevice *aDevice,
                                                PRUint16 aListContentType)
 {
@@ -1932,7 +1930,7 @@ sbDeviceUtils::IsMediaListContentTypeSupported(sbIDevice *aDevice,
   rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
-  PRBool isSupported;
+  bool isSupported;
   rv = capabilities->SupportsContent(functionType,
                                      contentType,
                                      &isSupported);
@@ -2185,7 +2183,7 @@ nsresult sbDeviceUtils::GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
 
 nsresult sbDeviceUtils::SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
                                                  sbILibrary * aDevLibrary,
-                                                 PRBool aMark)
+                                                 bool aMark)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
@@ -2210,7 +2208,7 @@ nsresult sbDeviceUtils::SetOriginIsInMainLibrary(sbIMediaItem * aMediaItem,
       inMainLibrary = SB_PROPERTY_FALSE;
     }
     // If the flag is different than what we want change it
-    const PRBool isMarked =
+    const bool isMarked =
         !inMainLibrary.Equals(SB_PROPERTY_FALSE) ? PR_TRUE : PR_FALSE;
     if (aMark != isMarked) {
       rv = itemInDeviceLibrary->SetProperty(
@@ -2248,7 +2246,7 @@ sbDeviceListenerIgnore::~sbDeviceListenerIgnore() {
 /**
  * Turns the listners back on if they are turned off
  */
-void sbDeviceListenerIgnore::SetIgnore(PRBool aIgnore) {
+void sbDeviceListenerIgnore::SetIgnore(bool aIgnore) {
   // If we're changing the ignore state
   if (mIgnoring != aIgnore) {
 
@@ -2297,7 +2295,7 @@ static nsresult LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
 static nsresult LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule);
 
 static nsresult LogRange(sbIDevCapRange *aRange,
-                         PRBool aIsMinMax,
+                         bool aIsMinMax,
                          PRLogModuleInfo *aLogModule);
 
 
@@ -2521,7 +2519,7 @@ LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
   LOG_MODULE(aLogModule, (" * videostream bitrates:"));
   rv = LogRange(videoBitrates, PR_TRUE, aLogModule);
 
-  PRBool supportsPARRange = PR_FALSE;
+  bool supportsPARRange = PR_FALSE;
   rv = videoStream->GetDoesSupportPARRange(&supportsPARRange);
   if (NS_SUCCEEDED(rv) && supportsPARRange) {
     // Simply log the min and the max values here.
@@ -2571,7 +2569,7 @@ LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
     }
   }
 
-  PRBool supportsFrameRange = PR_FALSE;
+  bool supportsFrameRange = PR_FALSE;
   rv = videoStream->GetDoesSupportFrameRateRange(&supportsFrameRange);
   if (NS_SUCCEEDED(rv) && supportsFrameRange) {
     nsCOMPtr<sbIDevCapFraction> minFrameRate;
@@ -2743,7 +2741,7 @@ LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule)
 
 /* static */ nsresult
 LogRange(sbIDevCapRange *aRange,
-         PRBool aIsMinMax,
+         bool aIsMinMax,
          PRLogModuleInfo *aLogModule)
 {
   NS_ENSURE_ARG_POINTER(aRange);

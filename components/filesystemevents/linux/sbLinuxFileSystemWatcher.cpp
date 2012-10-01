@@ -139,7 +139,7 @@ sbLinuxFileSystemWatcher::AddInotifyHook(const nsAString & aDirPath)
 }
 
 NS_IMETHODIMP 
-sbLinuxFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
+sbLinuxFileSystemWatcher::StopWatching(bool aShouldSaveSession)
 {
   if (!mIsWatching) {
     return NS_OK;
@@ -227,12 +227,12 @@ sbLinuxFileSystemWatcher::OnChangeFound(const nsAString & aChangePath,
     rv = curPathFile->InitWithPath(aChangePath);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool exists;
+    bool exists;
     rv = curPathFile->Exists(&exists);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (exists) {
-      PRBool isDir;
+      bool isDir;
       rv = curPathFile->IsDirectory(&isDir);
 
       NS_ENSURE_SUCCESS(rv, rv);

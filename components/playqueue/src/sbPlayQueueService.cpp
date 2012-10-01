@@ -152,7 +152,7 @@ sbPlayQueueAsyncListener::Finalize()
 //-----------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbPlayQueueAsyncListener::OnProgress(PRUint32 aItemsProcessed, PRBool aComplete)
+sbPlayQueueAsyncListener::OnProgress(PRUint32 aItemsProcessed, bool aComplete)
 {
   nsresult rv;
 
@@ -251,7 +251,7 @@ sbPlayQueueService::Init()
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool success = mListeners.Init();
+  bool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mAsyncListener = new sbPlayQueueAsyncListener(this);
@@ -383,7 +383,7 @@ sbPlayQueueService::SetIndex(PRUint32 aIndex)
 }
 
 NS_IMETHODIMP
-sbPlayQueueService::GetOperationInProgress(PRBool *aOperationInProgress)
+sbPlayQueueService::GetOperationInProgress(bool *aOperationInProgress)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -426,7 +426,7 @@ sbPlayQueueService::QueueNext(sbIMediaItem* aMediaItem)
   rv = mMediaList->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool callQueueLast = (insertBeforeIndex >= length);
+  bool callQueueLast = (insertBeforeIndex >= length);
 
   nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
   if (NS_SUCCEEDED(rv)) {
@@ -804,7 +804,7 @@ sbPlayQueueService::InitLibrary()
   rv = libraryManager->GetStartupLibraries(getter_AddRefs(libEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(libEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> next;
     if (NS_SUCCEEDED(libEnum->GetNext(getter_AddRefs(next))) && next) {
@@ -976,7 +976,7 @@ sbPlayQueueService::OnBatchEnd(sbIMediaList* aMediaList)
         continue;
       }
 
-      PRBool contains;
+      bool contains;
       rv = mMediaList->Contains(item, &contains);
       if (NS_FAILED(rv)) {
         continue;
@@ -1000,7 +1000,7 @@ NS_IMETHODIMP
 sbPlayQueueService::OnItemAdded(sbIMediaList* aMediaList,
                                 sbIMediaItem* aMediaItem,
                                 PRUint32 aIndex,
-                                PRBool* aNoMoreForBatch)
+                                bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   nsresult rv;
@@ -1024,7 +1024,7 @@ sbPlayQueueService::OnItemAdded(sbIMediaList* aMediaList,
   // We need to know if the list was all 'history' items prior to the addition.
   // This should also be true if the list was empty, as logically they are the
   // same case (i.e. mIndex equals the length of the list)
-  PRBool wasAllHistory;
+  bool wasAllHistory;
   if (mBatchHelper.IsActive()) {
     wasAllHistory = mBatchBeginAllHistory;
   } else {
@@ -1053,7 +1053,7 @@ NS_IMETHODIMP
 sbPlayQueueService::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                         sbIMediaItem* aMediaItem,
                                         PRUint32 aIndex,
-                                        PRBool* aNoMoreForBatch)
+                                        bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1098,7 +1098,7 @@ NS_IMETHODIMP
 sbPlayQueueService::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                        sbIMediaItem* aMediaItem,
                                        PRUint32 aIndex,
-                                       PRBool* aNoMoreForBatch)
+                                       bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1121,7 +1121,7 @@ sbPlayQueueService::OnAfterItemRemoved(sbIMediaList* aMediaList,
       SetIndex(mIndex - 1);
     }
 
-    PRBool contains;
+    bool contains;
     rv = mMediaList->Contains(aMediaItem, &contains);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1140,7 +1140,7 @@ NS_IMETHODIMP
 sbPlayQueueService::OnItemUpdated(sbIMediaList* aMediaList,
                                   sbIMediaItem* aMediaItem,
                                   sbIPropertyArray* aProperties,
-                                  PRBool* aNoMoreForBatch)
+                                  bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -1153,7 +1153,7 @@ NS_IMETHODIMP
 sbPlayQueueService::OnItemMoved(sbIMediaList* aMediaList,
                                 PRUint32 aFromIndex,
                                 PRUint32 aToIndex,
-                                PRBool* aNoMoreForBatch)
+                                bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -1183,8 +1183,8 @@ sbPlayQueueService::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbPlayQueueService::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                        PRBool aExcludeLists,
-                                        PRBool* aNoMoreForBatch)
+                                        bool aExcludeLists,
+                                        bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -1200,8 +1200,8 @@ sbPlayQueueService::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbPlayQueueService::OnListCleared(sbIMediaList* aMediaList,
-                                  PRBool aExcludeLists,
-                                  PRBool* aNoMoreForBatch)
+                                  bool aExcludeLists,
+                                  bool* aNoMoreForBatch)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -1331,7 +1331,7 @@ sbPlayQueueService::OnViewChange(sbIMediacoreEvent* aEvent)
   rv = view->GetMediaList(getter_AddRefs(viewList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool onQueue;
+  bool onQueue;
   rv = viewList->Equals(mMediaList, &onQueue);
   NS_ENSURE_SUCCESS(rv, rv);
   LOG(("Is the view change a view of our list? %i", onQueue));

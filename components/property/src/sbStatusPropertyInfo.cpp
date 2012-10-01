@@ -53,10 +53,10 @@ sbStatusPropertyInfo::sbStatusPropertyInfo(const nsAString& aPropertyID,
                                            const nsAString& aLabel,
                                            const nsAString& aCompletedLabel,
                                            const nsAString& aFailedLabel,
-                                           const PRBool aRemoteReadable,
-                                           const PRBool aRemoteWritable,
-                                           const PRBool aUserViewable,
-                                           const PRBool aUserEditable)
+                                           const bool aRemoteReadable,
+                                           const bool aRemoteWritable,
+                                           const bool aUserViewable,
+                                           const bool aUserEditable)
 {
   // sbImmutablePropertyInfo initialization
   mID = aPropertyID;

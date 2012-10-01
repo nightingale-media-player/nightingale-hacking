@@ -39,7 +39,7 @@ nsresult SetItemsArtwork(nsIURI* aImageLocation, nsIArray* aMediaItems) {
   nsCOMPtr<nsISimpleEnumerator> listEnum;
   rv = aMediaItems->Enumerate(getter_AddRefs(listEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(listEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> next;
     if (NS_SUCCEEDED(listEnum->GetNext(getter_AddRefs(next))) && next) {

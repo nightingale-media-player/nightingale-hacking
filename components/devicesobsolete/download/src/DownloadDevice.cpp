@@ -48,7 +48,6 @@
 
 /* Mozilla imports. */
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
 #include <nsIDOMWindow.h>
@@ -321,7 +320,7 @@ char * SB_Base64Decode( const char *src,
                         char       *dest )
 {
   PRStatus status;
-  PRBool allocated = PR_FALSE;
+  bool allocated = PR_FALSE;
 
   if( (char *)0 == src )
   {
@@ -682,7 +681,7 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
     {
         nsCOMPtr<nsIProperties>     pProperties;
         PRUint32                    permissions;
-        PRBool                      exists;
+        bool                      exists;
 
         /* Get the system temporary directory. */
         pProperties = do_GetService("@mozilla.org/file/directory_service;1",
@@ -920,7 +919,7 @@ NS_IMETHODIMP sbDownloadDevice::TransferItems(
     nsIArray                    *aMediaItems,
     nsIURI                      *aDestinationPath,
     PRUint32                    aDeviceOperation,
-    PRBool                      aBeginTransferNow,
+    bool                      aBeginTransferNow,
     sbILibrary                  *aDestinationLibrary,
     PRUint32                    *aItemCount)
 {
@@ -1002,8 +1001,8 @@ NS_IMETHODIMP sbDownloadDevice::DeleteItems(
     nsCOMPtr<sbIMediaItem>      pMediaItem;
     PRUint32                    arrayLength;
     PRUint32                    i;
-    PRBool                      equals;
-    PRBool                      cancelSession = PR_FALSE;
+    bool                      equals;
+    bool                      cancelSession = PR_FALSE;
     PRUint32                    itemCount = 0;
     nsresult                    result1;
     nsresult                    result = NS_OK;
@@ -1296,7 +1295,7 @@ NS_IMETHODIMP sbDownloadDevice::GetSupportedFormats(
 
 NS_IMETHODIMP sbDownloadDevice::IsDownloadSupported(
     const nsAString             &aDeviceIdentifier,
-    PRBool                      *aDownloadSupported)
+    bool                      *aDownloadSupported)
 {
     LOG(("1: IsDownloadSupported\n"));
 
@@ -1316,7 +1315,7 @@ NS_IMETHODIMP sbDownloadDevice::IsDownloadSupported(
 
 NS_IMETHODIMP sbDownloadDevice::IsUploadSupported(
     const nsAString             &aDeviceIdentifier,
-    PRBool                      *aUploadSupported)
+    bool                      *aUploadSupported)
 {
     LOG(("1: IsUploadSupported\n"));
 
@@ -1334,7 +1333,7 @@ NS_IMETHODIMP sbDownloadDevice::IsUploadSupported(
 
 NS_IMETHODIMP sbDownloadDevice::IsDeleteSupported(
     const nsAString             &aDeviceIdentifier,
-    PRBool                      *aDeleteSupported)
+    bool                      *aDeleteSupported)
 {
     LOG(("1: IsDeleteSupported\n"));
 
@@ -1355,7 +1354,7 @@ NS_IMETHODIMP sbDownloadDevice::IsDeleteSupported(
 
 NS_IMETHODIMP sbDownloadDevice::IsUpdateSupported(
     const nsAString             &aDeviceIdentifier,
-    PRBool                      *aUpdateSupported)
+    bool                      *aUpdateSupported)
 {
     LOG(("1: IsUpdateSupported\n"));
 
@@ -1373,7 +1372,7 @@ NS_IMETHODIMP sbDownloadDevice::IsUpdateSupported(
 
 NS_IMETHODIMP sbDownloadDevice::IsEjectSupported(
     const nsAString             &aDeviceIdentifier,
-    PRBool                      *aEjectSupported)
+    bool                      *aEjectSupported)
 {
     LOG(("1: IsEjectSupported\n"));
 
@@ -1391,7 +1390,7 @@ NS_IMETHODIMP sbDownloadDevice::IsEjectSupported(
 
 NS_IMETHODIMP sbDownloadDevice::EjectDevice(
     const nsAString             &aDeviceIdentifier,
-    PRBool                      *aEjected)
+    bool                      *aEjected)
 {
     LOG(("1: EjectDevice\n"));
 
@@ -1573,7 +1572,7 @@ NS_IMETHODIMP sbDownloadDevice::OnItemAdded(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
     PRUint32                    aIndex,
-    PRBool                      *_retval)
+    bool                      *_retval)
 {
     /* Validate parameters. */
     NS_ENSURE_ARG_POINTER(_retval);
@@ -1596,7 +1595,7 @@ NS_IMETHODIMP sbDownloadDevice::OnBeforeItemRemoved(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
     PRUint32                    aIndex,
-    PRBool                      *_retval)
+    bool                      *_retval)
 {
     /* Validate parameters. */
     NS_ENSURE_ARG_POINTER(_retval);
@@ -1619,9 +1618,9 @@ NS_IMETHODIMP sbDownloadDevice::OnAfterItemRemoved(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
     PRUint32                    aIndex,
-    PRBool                      *_retval)
+    bool                      *_retval)
 {
-    PRBool                      isEqual;
+    bool                      isEqual;
     nsresult                    rv;
 
     /* Validate parameters. */
@@ -1653,7 +1652,7 @@ NS_IMETHODIMP sbDownloadDevice::OnItemUpdated(
     sbIMediaList                *aMediaList,
     sbIMediaItem                *aMediaItem,
     sbIPropertyArray            *aProperties,
-    PRBool                      *_retval)
+    bool                      *_retval)
 {
     /* Validate parameters. */
     NS_ENSURE_ARG_POINTER(_retval);
@@ -1666,7 +1665,7 @@ NS_IMETHODIMP sbDownloadDevice::OnItemMoved(
     sbIMediaList                *aMediaList,
     PRUint32                    aFromIndex,
     PRUint32                    aToIndex,
-    PRBool                      *_retval)
+    bool                      *_retval)
 {
     /* Validate parameters. */
     NS_ENSURE_ARG_POINTER(_retval);
@@ -1687,8 +1686,8 @@ NS_IMETHODIMP sbDownloadDevice::OnItemMoved(
 
 NS_IMETHODIMP sbDownloadDevice::OnListCleared(
     sbIMediaList                *aMediaList,
-    PRBool                      aExcludeLists,
-    PRBool                      *_retval)
+    bool                      aExcludeLists,
+    bool                      *_retval)
 {
     /* Validate parameters. */
     NS_ENSURE_ARG_POINTER(_retval);
@@ -1712,8 +1711,8 @@ NS_IMETHODIMP sbDownloadDevice::OnListCleared(
 
 NS_IMETHODIMP sbDownloadDevice::OnBeforeListCleared(
     sbIMediaList                *aMediaList,
-    PRBool                      aExcludeLists,
-    PRBool                      *_retval)
+    bool                      aExcludeLists,
+    bool                      *_retval)
 {
     /* Validate parameters. */
     NS_ENSURE_ARG_POINTER(_retval);
@@ -2094,7 +2093,7 @@ nsresult sbDownloadDevice::EnqueueItem(
 nsresult sbDownloadDevice::RunTransferQueue()
 {
     nsCOMPtr<sbIMediaItem>      pMediaItem;
-    PRBool                      initiated = PR_FALSE;
+    bool                      initiated = PR_FALSE;
     nsresult                    result = NS_OK;
 
     /* Lock the device. */
@@ -2155,7 +2154,7 @@ nsresult sbDownloadDevice::RunTransferQueue()
  * this function returns true; otherwise, it returns false.
  */
 
-PRBool sbDownloadDevice::GetNextTransferItem(
+bool sbDownloadDevice::GetNextTransferItem(
     sbIMediaItem                **appMediaItem)
 {
     nsCOMPtr<sbIMediaItem>          pMediaItem;
@@ -2377,7 +2376,7 @@ nsresult sbDownloadDevice::GetTmpFile(
     nsCOMPtr<nsIFile>           pTmpFile;
     nsString                    tmpFileName;
     PRInt32                     fileNum;
-    PRBool                      exists;
+    bool                      exists;
     nsresult                    result = NS_OK;
 
     /* Get a unique temporary download file. */
@@ -2429,7 +2428,7 @@ nsresult sbDownloadDevice::MakeFileUnique(
     PRInt32                     extOffset = -1;
     nsAutoString                uniqueStr;
     PRInt32                     uniqueNum = 1;
-    PRBool                      exists;
+    bool                      exists;
     nsresult                    result = NS_OK;
 
     /* Do nothing if file does not exist. */
@@ -2498,7 +2497,7 @@ nsresult sbDownloadDevice::OpenDialog(
     nsCOMPtr<nsIDOMWindow>      pWindow;
     nsCOMPtr<sbIDataRemote>     pDataRemote;
     nsCAutoString               chromeFeatures;
-    PRBool                      accessibilityEnabled;
+    bool                      accessibilityEnabled;
     nsresult                    result = NS_OK;
 
     /* Get the window watcher services. */
@@ -3033,7 +3032,7 @@ void sbDownloadSession::Shutdown()
  * otherwise, it returns PR_FALSE.
  */
 
-PRBool sbDownloadSession::IsSuspended()
+bool sbDownloadSession::IsSuspended()
 {
     /* Lock the session. */
     nsAutoLock lock(mpSessionLock);
@@ -3092,7 +3091,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
            "aStateFlags 0x%.8x aStatus 0x%.8x",
            this, aWebProgress, aRequest, aStateFlags, aStatus));
 
-    PRBool                      complete = PR_FALSE;
+    bool                      complete = PR_FALSE;
     nsresult                    status = aStatus;
     nsresult                    result = NS_OK;
 
@@ -3127,7 +3126,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
         if (NS_SUCCEEDED(status))
         {
             nsCOMPtr<nsIHttpChannel>    pHttpChannel;
-            PRBool                      requestSucceeded;
+            bool                      requestSucceeded;
 
             /* Try to get HTTP channel. */
             pHttpChannel = do_QueryInterface(aRequest, &result);
@@ -3388,8 +3387,8 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
     nsCOMPtr<nsIURI>            pSrcURI;
     nsCOMPtr<sbIMediaList>      pDstMediaList;
     nsresult                    result = NS_OK;
-    PRBool                      bIsDirectory;
-    PRBool                      bChangedDstFile = PR_FALSE;
+    bool                      bIsDirectory;
+    bool                      bChangedDstFile = PR_FALSE;
 
     // Get the the file name, if any, supplied in the MIME header:
     nsCString mimeFilename;
@@ -3597,7 +3596,7 @@ nsresult sbDownloadSession::UpdateDstLibraryMetadata()
                                 pLibraryMetadataUpdater;
     nsString                    durationStr;
     PRInt32                     duration = 0;
-    PRBool                      updateDstLibraryMetadata = PR_TRUE;
+    bool                      updateDstLibraryMetadata = PR_TRUE;
     nsresult                    result1;
     nsresult                    result = NS_OK;
 
@@ -4242,7 +4241,7 @@ NS_IMETHODIMP sbDownloadSession::WebLibraryUpdater::OnEnumerationEnd(
 
 sbAutoDownloadButtonPropertyValue::sbAutoDownloadButtonPropertyValue(sbIMediaItem* aMediaItem,
                                                                      sbIMediaItem* aStatusTarget,
-                                                                     PRBool aReadOnly) :
+                                                                     bool aReadOnly) :
   value(nsnull),
   mMediaItem(aMediaItem),
   mStatusTarget(aStatusTarget),

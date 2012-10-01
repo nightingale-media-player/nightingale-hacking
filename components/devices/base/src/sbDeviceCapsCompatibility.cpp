@@ -77,7 +77,7 @@ sbDeviceCapsCompatibility::~sbDeviceCapsCompatibility()
 }
 
 // Compare nsString to nsCString
-static inline PRBool
+static inline bool
 StringEqualsToCString(nsAString& string1, nsACString& string2)
 {
   return string1.Equals(NS_ConvertUTF8toUTF16(string2).BeginReading());
@@ -112,7 +112,7 @@ sbDeviceCapsCompatibility::Initialize(
 }
 
 NS_IMETHODIMP
-sbDeviceCapsCompatibility::Compare(PRBool* aCompatible)
+sbDeviceCapsCompatibility::Compare(bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aCompatible);
@@ -145,7 +145,7 @@ sbDeviceCapsCompatibility::Compare(PRBool* aCompatible)
 }
 
 nsresult
-sbDeviceCapsCompatibility::CompareAudioFormat(PRBool* aCompatible)
+sbDeviceCapsCompatibility::CompareAudioFormat(bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aCompatible);
@@ -296,13 +296,13 @@ sbDeviceCapsCompatibility::CompareAudioFormat(PRBool* aCompatible)
 }
 
 nsresult
-sbDeviceCapsCompatibility::CompareImageFormat(PRBool* aCompatible)
+sbDeviceCapsCompatibility::CompareImageFormat(bool* aCompatible)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 nsresult
-sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
+sbDeviceCapsCompatibility::CompareVideoFormat(bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aCompatible);
@@ -469,7 +469,7 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
 nsresult
 sbDeviceCapsCompatibility::CompareVideoStream(
                                sbIDevCapVideoStream* aVideoStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -524,7 +524,7 @@ sbDeviceCapsCompatibility::CompareVideoStream(
 nsresult
 sbDeviceCapsCompatibility::CompareAudioStream(
                                sbIDevCapAudioStream* aAudioStream,
-                               PRBool *aCompatible)
+                               bool *aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aAudioStream);
@@ -598,7 +598,7 @@ static nsresult GetDevCapRangeValues(sbIDevCapRange *aCapRange,
 nsresult
 sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
                                sbIDevCapVideoStream* aVideoStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -619,7 +619,7 @@ sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
 
   // Compare width and height
   if (deviceSupportedWidths && deviceSupportedHeights) {
-    PRBool inRange = PR_FALSE;
+    bool inRange = PR_FALSE;
     rv = deviceSupportedWidths->IsValueInRange(mMediaVideoWidth, &inRange);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -666,7 +666,7 @@ sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
     NS_ASSERTION(length > 0, "supported sizes must not be empty!");
 
     if (length > 1) {
-      PRBool match = PR_FALSE;
+      bool match = PR_FALSE;
       for (PRUint32 index = 0; index < length; ++index) {
         nsCOMPtr<sbIImageSize> supportedSize =
           do_QueryElementAt(deviceSupportedExplicitSizes, index, &rv);
@@ -707,7 +707,7 @@ sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
 nsresult
 sbDeviceCapsCompatibility::CompareVideoBitRate(
                                sbIDevCapVideoStream* aVideoStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -741,7 +741,7 @@ sbDeviceCapsCompatibility::CompareVideoBitRate(
 
 nsresult
 sbDeviceCapsCompatibility::CompareVideoPAR(sbIDevCapVideoStream *aVideoStream,
-                                           PRBool *aCompatible)
+                                           bool *aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -751,7 +751,7 @@ sbDeviceCapsCompatibility::CompareVideoPAR(sbIDevCapVideoStream *aVideoStream,
   *aCompatible = PR_FALSE;
 
   // Compare video PAR.
-  PRBool isRange = PR_FALSE;
+  bool isRange = PR_FALSE;
   rv = aVideoStream->GetDoesSupportPARRange(&isRange);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -835,7 +835,7 @@ sbDeviceCapsCompatibility::CompareVideoPAR(sbIDevCapVideoStream *aVideoStream,
 nsresult
 sbDeviceCapsCompatibility::CompareVideoFrameRate(
                                sbIDevCapVideoStream* aVideoStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -845,7 +845,7 @@ sbDeviceCapsCompatibility::CompareVideoFrameRate(
   *aCompatible = PR_FALSE;
 
   // Compare frame rates.
-  PRBool isRange = PR_FALSE;
+  bool isRange = PR_FALSE;
   rv = aVideoStream->GetDoesSupportFrameRateRange(&isRange);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -933,7 +933,7 @@ sbDeviceCapsCompatibility::CompareVideoFrameRate(
 nsresult
 sbDeviceCapsCompatibility::CompareAudioBitRate(
                                sbIDevCapAudioStream* aAudioStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aAudioStream);
@@ -968,7 +968,7 @@ sbDeviceCapsCompatibility::CompareAudioBitRate(
 nsresult
 sbDeviceCapsCompatibility::CompareAudioSampleRate(
                                sbIDevCapAudioStream* aAudioStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aAudioStream);
@@ -1004,7 +1004,7 @@ sbDeviceCapsCompatibility::CompareAudioSampleRate(
 nsresult
 sbDeviceCapsCompatibility::CompareAudioChannels(
                                sbIDevCapAudioStream* aAudioStream,
-                               PRBool* aCompatible)
+                               bool* aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aAudioStream);

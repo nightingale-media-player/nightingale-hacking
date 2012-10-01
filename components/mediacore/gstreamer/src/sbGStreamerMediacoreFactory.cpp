@@ -262,7 +262,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 #endif
 
       // Check for the 'qtvideowrapper' plugin to add mp4/m4v extensions.
-      PRBool foundQTPlugin = PR_FALSE;
+      bool foundQTPlugin = PR_FALSE;
       GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
       if (plugin) {
         foundQTPlugin = PR_TRUE;
@@ -350,7 +350,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     rv = caps->SetSupportsAudioPlayback(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool videoDisabled = PR_FALSE;
+    bool videoDisabled = PR_FALSE;
     rv = rootPrefBranch->GetBoolPref(
                                     "songbird.mediacore.gstreamer.disablevideo",
                                     &videoDisabled);

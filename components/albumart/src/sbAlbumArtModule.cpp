@@ -54,7 +54,7 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 #include <nsServiceManagerUtils.h>
 
 

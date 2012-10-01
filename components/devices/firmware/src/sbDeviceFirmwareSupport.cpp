@@ -30,7 +30,6 @@
 #include <nsISimpleEnumerator.h>
 #include <nsISupportsPrimitives.h>
 
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsXPCOMCID.h>
@@ -117,7 +116,7 @@ sbDeviceFirmwareSupport::Init(const nsAString & aDeviceName,
   mDeviceVendorID = aVendorID;
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  PRBool hasMore = PR_FALSE;
+  bool hasMore = PR_FALSE;
 
   nsCOMPtr<nsIMutableArray> productIDs =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);

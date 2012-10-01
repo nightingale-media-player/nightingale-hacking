@@ -35,7 +35,6 @@
 
 #include <sbIMediacoreError.h>
 #include <sbMediacoreError.h>
-#include <sbProxiedComponentManager.h>
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -184,7 +183,7 @@ sbGStreamerPipeline::DestroyPipeline()
   return NS_OK;
 }
 
-PRBool sbGStreamerPipeline::HandleSynchronousMessage(GstMessage *aMessage)
+bool sbGStreamerPipeline::HandleSynchronousMessage(GstMessage *aMessage)
 {
   // Subclasses will probably override this to handle some messages.
   return PR_FALSE;
@@ -430,8 +429,8 @@ sbGStreamerPipeline::GetRunningTime()
 
 NS_IMETHODIMP
 sbGStreamerPipeline::DispatchEvent(sbIMediacoreEvent *aEvent,
-                                   PRBool aAsync,
-                                   PRBool* _retval)
+                                   bool aAsync,
+                                   bool* _retval)
 {
   return mBaseEventTarget ?
          mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) :

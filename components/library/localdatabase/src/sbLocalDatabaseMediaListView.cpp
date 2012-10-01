@@ -28,7 +28,6 @@
 
 #include <DatabaseQuery.h>
 #include <nsArrayUtils.h>
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIClassInfoImpl.h>
@@ -196,7 +195,7 @@ sbLocalDatabaseMediaListView::AddListenersToCOMArray(nsISupportsHashKey* aEntry,
     }
   }
 
-  PRBool success = array->AppendObject(listener);
+  bool success = array->AppendObject(listener);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
@@ -276,7 +275,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     NS_ENSURE_SUCCESS(rv, NS_ERROR_INVALID_ARG);
   }
 
-  PRBool success = mListenerTable.Init();
+  bool success = mListenerTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   mListenerTableLock =
@@ -714,7 +713,7 @@ sbLocalDatabaseMediaListView::GetState(sbIMediaListViewState** _retval)
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::AddListener(sbIMediaListViewListener* aListener,
-                                          /* optional */ PRBool aOwnsWeak)
+                                          /* optional */ bool aOwnsWeak)
 {
   NS_ENSURE_ARG_POINTER(aListener);
 
@@ -868,11 +867,11 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
       rv = videoViewBuilder->Get(getter_AddRefs(videoViewConstraint));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool isEqualToAudioView = PR_FALSE;
+      bool isEqualToAudioView = PR_FALSE;
       rv = mViewFilter->Equals(audioViewConstraint, &isEqualToAudioView);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool isEqualToVideoView = PR_FALSE;
+      bool isEqualToVideoView = PR_FALSE;
       rv = mViewFilter->Equals(videoViewConstraint, &isEqualToVideoView);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -893,7 +892,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool cfsIsFiltering = PR_FALSE;
+  bool cfsIsFiltering = PR_FALSE;
 
   if(mCascadeFilterSet) {
     PRUint16 cfsCount = 0;
@@ -917,7 +916,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
     }
   }
 
-  PRBool isSelected = PR_FALSE;
+  bool isSelected = PR_FALSE;
   PRInt32 currentIndex;
   rv = mSelection->GetCurrentIndex(&currentIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -974,7 +973,7 @@ sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool strict;
+  bool strict;
   rv = aSource->GetValidated(&strict);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1010,7 +1009,7 @@ nsresult
 sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
                                                 sbIPropertyArray* aBag2,
                                                 nsStringArray * aPropertiesToIgnore,
-                                                PRBool* aHasCommonProperty)
+                                                bool* aHasCommonProperty)
 {
   NS_ASSERTION(aBag1, "aBag1 is null");
   NS_ASSERTION(aBag2, "aBag2 is null");
@@ -1048,7 +1047,7 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
 nsresult
 sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag,
                                                 sbILibraryConstraint* aConstraint,
-                                                PRBool* aHasCommonProperty)
+                                                bool* aHasCommonProperty)
 {
   NS_ASSERTION(aBag, "aBag is null");
   NS_ASSERTION(aConstraint, "aConstraint is null");
@@ -1076,7 +1075,7 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag,
       rv = aConstraint->GetGroup(j, getter_AddRefs(group));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool hasProperty;
+      bool hasProperty;
       rv = group->HasProperty(propertyID, &hasProperty);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1094,13 +1093,13 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag,
 
 nsresult
 sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aProperties,
-                                                      PRBool* aShouldCauseInvalidation)
+                                                      bool* aShouldCauseInvalidation)
 {
   NS_ASSERTION(aProperties, "aProperties is null");
   NS_ASSERTION(aShouldCauseInvalidation, "aShouldCauseInvalidation is null");
   nsresult rv;
 
-  PRBool hasCommon;
+  bool hasCommon;
   *aShouldCauseInvalidation = PR_TRUE;
 
   // If one of the updated properties is involved in the current filter,
@@ -1174,7 +1173,7 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
 }
 
 nsresult
-sbLocalDatabaseMediaListView::UpdateListener(PRBool aRemoveListener)
+sbLocalDatabaseMediaListView::UpdateListener(bool aRemoveListener)
 {
   nsresult rv;
 
@@ -1276,7 +1275,7 @@ sbLocalDatabaseMediaListView::GetFilterConstraint(sbILibraryConstraint** aFilter
   }
 
   // Add filters from the cascade filter list, if any
-  PRBool changed = PR_FALSE;
+  bool changed = PR_FALSE;
   if (mCascadeFilterSet) {
     rv = mCascadeFilterSet->AddFilters(builder, &changed);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1322,7 +1321,7 @@ sbLocalDatabaseMediaListView::SetFilterConstraint(sbILibraryConstraint* aFilterC
       rv = properties->GetNext(junk);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool HasMore;
+      bool HasMore;
       rv = properties->HasMore(&HasMore);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1367,7 +1366,7 @@ sbLocalDatabaseMediaListView::GetSearchConstraint(sbILibraryConstraint** aSearch
   }
 
   // Add searches from the cascade filter list, if any
-  PRBool changed = PR_FALSE;
+  bool changed = PR_FALSE;
   if (mCascadeFilterSet) {
     rv = mCascadeFilterSet->AddSearches(builder, &changed);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1417,7 +1416,7 @@ sbLocalDatabaseMediaListView::SetSearchConstraint(sbILibraryConstraint* aSearchC
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Only one property allowed
-    PRBool hasMore;
+    bool hasMore;
     rv = firstGroupProperties->HasMore(&hasMore);
     NS_ENSURE_FALSE(hasMore, NS_ERROR_INVALID_ARG);
 
@@ -1426,7 +1425,7 @@ sbLocalDatabaseMediaListView::SetSearchConstraint(sbILibraryConstraint* aSearchC
     rv = firstGroup->GetValues(property, getter_AddRefs(values));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool hasMoreValues;
+    bool hasMoreValues;
     while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
       nsString value;
       rv = values->GetNext(value);
@@ -1555,7 +1554,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
                                           sbIMediaItem* aMediaItem,
                                           PRUint32 aIndex,
-                                          PRBool* aNoMoreForBatch)
+                                          bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1579,7 +1578,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                   sbIMediaItem* aMediaItem,
                                                   PRUint32 aIndex,
-                                                  PRBool* aNoMoreForBatch)
+                                                  bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1595,7 +1594,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                  sbIMediaItem* aMediaItem,
                                                  PRUint32 aIndex,
-                                                 PRBool* aNoMoreForBatch)
+                                                 bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1619,7 +1618,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
                                             sbIMediaItem* aMediaItem,
                                             sbIPropertyArray* aProperties,
-                                            PRBool* aNoMoreForBatch)
+                                            bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -1637,7 +1636,7 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
 
   // If we are in a batch, we don't need any more notifications since we always
   // invalidate when a batch ends
-  PRBool shouldInvalidate;
+  bool shouldInvalidate;
   if (mBatchHelper.IsActive()) {
     shouldInvalidate = PR_FALSE;
     mInvalidatePending = PR_TRUE;
@@ -1678,7 +1677,7 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
                                           PRUint32 aFromIndex,
                                           PRUint32 aToIndex,
-                                          PRBool* aNoMoreForBatch)
+                                          bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -1699,8 +1698,8 @@ sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                                  PRBool aExcludeLists,
-                                                  PRBool* aNoMoreForBatch)
+                                                  bool aExcludeLists,
+                                                  bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -1713,8 +1712,8 @@ sbLocalDatabaseMediaListView::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
-                                            PRBool aExcludeLists,
-                                            PRBool* aNoMoreForBatch)
+                                            bool aExcludeLists,
+                                            bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -1774,7 +1773,7 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
 }
 
 nsresult
-sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSelection)
+sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(bool aClearTreeSelection)
 {
   nsresult rv;
 
@@ -1848,7 +1847,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     rv = firstGroup->GetProperties(getter_AddRefs(firstGroupProperties));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool hasMore;
+    bool hasMore;
     while (NS_SUCCEEDED(firstGroupProperties->HasMore(&hasMore)) && hasMore) {
       nsString property;
       rv = firstGroupProperties->GetNext(property);
@@ -1865,7 +1864,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
         rv = group->GetValues(property, getter_AddRefs(values));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        PRBool hasMoreValues;
+        bool hasMoreValues;
         while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
           nsString value;
           rv = values->GetNext(value);
@@ -1909,7 +1908,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
   rv = mArray->ClearSorts();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasSorts = PR_FALSE;
+  bool hasSorts = PR_FALSE;
   if (mViewSort) {
     PRUint32 propertyCount;
     rv = mViewSort->GetLength(&propertyCount);
@@ -2095,7 +2094,7 @@ sbLocalDatabaseMediaListView::CreateQueries()
 }
 
 nsresult
-sbLocalDatabaseMediaListView::Invalidate(PRBool aInvalidateLength)
+sbLocalDatabaseMediaListView::Invalidate(bool aInvalidateLength)
 {
   LOG(("sbLocalDatabaseMediaListView[0x%.8x] - Invalidate", this));
   nsresult rv;
@@ -2179,7 +2178,7 @@ sbMakeSortableStringEnumerator::sbMakeSortableStringEnumerator(sbIPropertyInfo* 
 }
 
 NS_IMETHODIMP
-sbMakeSortableStringEnumerator::HasMore(PRBool* _retval)
+sbMakeSortableStringEnumerator::HasMore(bool* _retval)
 {
   return mValues->HasMore(_retval);
 }

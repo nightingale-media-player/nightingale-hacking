@@ -320,7 +320,7 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
       }
 
       // Send an event to the CDDevice, if present.
-      PRBool hasCDDevice;
+      bool hasCDDevice;
       NS_NAMED_LITERAL_STRING(cdCategory, "Songbird CD Device");
 
       rv = deviceManager->HasDeviceForCategory(cdCategory, &hasCDDevice);
@@ -336,8 +336,8 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
           nsCOMPtr<sbICDDevice> cdDevice = do_QueryInterface(baseDevice, &rv);
           if (NS_SUCCEEDED(rv))
           {
-            PRBool retVal;
-            PRBool mediaInserted = DBT_DEVICEARRIVAL == wParam;
+            bool retVal;
+            bool mediaInserted = DBT_DEVICEARRIVAL == wParam;
             rv = cdDevice->OnCDDriveEvent(mediaInserted, &retVal);
           }
 #endif

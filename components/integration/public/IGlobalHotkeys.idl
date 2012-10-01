@@ -81,7 +81,13 @@ interface sbIGlobalHotkeys : nsISupports
    * \param cb The callback object to call when the hotkey is pressed
    * \sa removeHotkey, sbIGlobalHotkeyCallback, sbIGlobalHotkeyCallback::onHotkey()
    */
-  void addHotkey( in PRInt32 keyCode, in PRBool altKey, in PRBool ctrlKey, in PRBool shiftKey, in PRBool metaKey, in AString key_id, in sbIGlobalHotkeyCallback cb );
+  void addHotkey( in PRInt32 keyCode,
+                  in boolean altKey,
+                  in boolean ctrlKey,
+                  in boolean shiftKey,
+                  in boolean metaKey,
+                  in AString key_id,
+                  in sbIGlobalHotkeyCallback cb );
 
   /**
    * \brief Global hotkey unregistration method

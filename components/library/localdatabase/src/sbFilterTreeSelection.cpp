@@ -51,7 +51,7 @@ sbFilterTreeSelection::SetTree(nsITreeBoxObject* aTree)
 }
 
 NS_IMETHODIMP
-sbFilterTreeSelection::GetSingle(PRBool* aSingle)
+sbFilterTreeSelection::GetSingle(bool* aSingle)
 {
   return mTreeSelection->GetSingle(aSingle);
 }
@@ -63,7 +63,7 @@ sbFilterTreeSelection::GetCount(PRInt32* aCount)
 }
 
 NS_IMETHODIMP
-sbFilterTreeSelection::IsSelected(PRInt32 index, PRBool* _retval)
+sbFilterTreeSelection::IsSelected(PRInt32 index, bool* _retval)
 {
   return mTreeSelection->IsSelected(index, _retval);
 }
@@ -111,7 +111,7 @@ sbFilterTreeSelection::ToggleSelect(PRInt32 index)
 NS_IMETHODIMP
 sbFilterTreeSelection::RangedSelect(PRInt32 startIndex,
                                     PRInt32 endIndex,
-                                    PRBool augment)
+                                    bool augment)
 {
   sbAutoSuppressSelectionEvents suppress(mTreeSelection);
 
@@ -214,12 +214,12 @@ sbFilterTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 }
 
 NS_IMETHODIMP
-sbFilterTreeSelection::GetSelectEventsSuppressed(PRBool* aSelectEventsSuppressed)
+sbFilterTreeSelection::GetSelectEventsSuppressed(bool* aSelectEventsSuppressed)
 {
   return mTreeSelection->GetSelectEventsSuppressed(aSelectEventsSuppressed);
 }
 NS_IMETHODIMP
-sbFilterTreeSelection::SetSelectEventsSuppressed(PRBool aSelectEventsSuppressed)
+sbFilterTreeSelection::SetSelectEventsSuppressed(bool aSelectEventsSuppressed)
 {
   return mTreeSelection->SetSelectEventsSuppressed(aSelectEventsSuppressed);
 }
@@ -265,7 +265,7 @@ sbFilterTreeSelection::CheckIsSelectAll()
   rv = mTreeSelection->GetCount(&selectedCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isAllRowSelected;
+  bool isAllRowSelected;
   rv = mTreeSelection->IsSelected(0, &isAllRowSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -276,7 +276,7 @@ sbFilterTreeSelection::CheckIsSelectAll()
   // Note that having all rows selected except for the "all" row is not
   // considered an "all" selection because it does not include items that
   // have no value for the filtered property.
-  PRBool isSelectAll =
+  bool isSelectAll =
     isAllRowSelected ||
     selectedCount == 0 ||
     selectedCount == rowCount;

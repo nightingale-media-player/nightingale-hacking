@@ -109,7 +109,7 @@ sbDeviceStatusAutoOperationComplete::sbDeviceStatusAutoOperationComplete(
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation)
 {
-  PRBool copyAfterTranscode =
+  bool copyAfterTranscode =
     (mOperation == sbDeviceStatusHelper::OPERATION_TYPE_WRITE &&
      mRequest->destinationCompatibility ==
        sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING);
@@ -248,7 +248,7 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                                      PRInt32  aItemType,
                                      sbIMediaList* aMediaList,
                                      sbIMediaItem* aMediaItem,
-                                     PRBool aNewBatch)
+                                     bool aNewBatch)
 {
   // Check if we're already started. The initial batch item might have
   // completed but might not have been removed from the queue, thus
@@ -828,7 +828,7 @@ sbDeviceStatusHelper::ChangeState(PRUint32 aState)
   mMediaItem = nsnull;
 
   // Determine whether to change the main state or the sub-state.
-  PRBool changeMainState = PR_TRUE;
+  bool changeMainState = PR_TRUE;
   if (aState != sbIDevice::STATE_IDLE) {
     if (currentState == sbIDevice::STATE_SYNCING ||
         currentState == sbIDevice::STATE_CANCEL ||

@@ -85,7 +85,7 @@ CGlobalHotkeys::~CGlobalHotkeys()
 } // dtor
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP CGlobalHotkeys::AddHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey, const nsAString &keyid, sbIGlobalHotkeyCallback *callback)
+NS_IMETHODIMP CGlobalHotkeys::AddHotkey(PRInt32 keyCode, bool altKey, bool ctrlKey, bool shiftKey, bool metaKey, const nsAString &keyid, sbIGlobalHotkeyCallback *callback)
 {
   HOTKEY_HANDLE handle = registerHotkey(keyCode, altKey, ctrlKey, shiftKey, metaKey);
   if (handle == NULL) return NS_ERROR_FAILURE;
@@ -149,7 +149,7 @@ LRESULT CGlobalHotkeys::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
 
 //-----------------------------------------------------------------------------
-HOTKEY_HANDLE CGlobalHotkeys::registerHotkey(PRInt32 keyCode, PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey)
+HOTKEY_HANDLE CGlobalHotkeys::registerHotkey(PRInt32 keyCode, bool altKey, bool ctrlKey, bool shiftKey, bool metaKey)
 {
 #ifdef XP_WIN
   if (m_autoinc == 0xBFFF) return NULL;
@@ -193,7 +193,7 @@ GlobalHotkeyEntry *CGlobalHotkeys::findHotkeyByHandle(HOTKEY_HANDLE handle)
 
 #ifdef XP_WIN
 //-----------------------------------------------------------------------------
-UINT CGlobalHotkeys::makeWin32Mask(PRBool altKey, PRBool ctrlKey, PRBool shiftKey, PRBool metaKey)
+UINT CGlobalHotkeys::makeWin32Mask(bool altKey, bool ctrlKey, bool shiftKey, bool metaKey)
 {
   return (altKey   ? MOD_ALT     : 0) |
          (ctrlKey  ? MOD_CONTROL : 0) |

@@ -74,20 +74,20 @@ protected:
   
   nsresult GetNewPath(sbIMediaItem *aMediaItem,
                       nsString &aPath, 
-                      PRBool *aRetVal);
+                      bool *aRetVal);
 
   nsresult GetNewFilename(sbIMediaItem *aMediaItem, 
                           nsIURI *aItemUri,
                           nsString &aFilename, 
-                          PRBool *aRetVal);
+                          bool *aRetVal);
 
   nsresult CopyRename(sbIMediaItem *aMediaItem, 
                       nsIFile *aItemFile,
                       nsIFile *aNewFile,
-                      PRBool *aRetVal);
+                      bool *aRetVal);
   
   nsresult Delete(nsIFile *aItemFile, 
-                  PRBool *aRetVal);
+                  bool *aRetVal);
   
   nsresult CheckDirectoryForDeletion(nsIFile *aItemFile);
   
@@ -128,8 +128,8 @@ private:
 
   nsresult GetFormattedFileFolder(const NameTemplate &  aNameTemplate,
                                   sbIMediaItem*         aMediaItem,
-                                  PRBool                aAppendProperty,
-                                  PRBool                aTrimAtEnd,
+                                  bool                aAppendProperty,
+                                  bool                aTrimAtEnd,
                                   nsString              aFileExtension,
                                   nsString&             aRetVal);
 
@@ -154,6 +154,6 @@ private:
   NameTemplate                              mTrackNameTemplate;
   NameTemplateMap                           mFolderNameTemplates;
   
-  PRBool                                    mInitialized;
+  bool                                    mInitialized;
 };
 

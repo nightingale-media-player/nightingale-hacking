@@ -54,8 +54,9 @@
 #define SB_THREADSAFE_ARRAY_CONTRACTID \
   "@songbirdnest.com/moz/xpcom/threadsafe-array;1"
 
-struct PRLock;
-
+namespace mozilla {
+  class sbMozHackMutex;
+}
 // threadsafe (i.e. spuriously locked) version of nsArray, which is an
 // adapter class to map nsIArray->nsCOMArray
 // do NOT declare this as a stack or member variable, use
@@ -74,7 +75,7 @@ private:
     ~sbArray();
 
     sbCOMArray_base mArray;
-    PRLock* mLock;
+    mozilla::sbMozHackMutex* mLock;
 };
 
 #endif

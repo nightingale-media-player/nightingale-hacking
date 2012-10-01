@@ -94,7 +94,7 @@ interface sbIMetadataHandler : nsISupports
    * asynchronously or by blocking.  The user of the handler should not attempt
    * to get the sbIPropertyArray object before the operation is completed.
    */
-  readonly attribute PRBool completed;
+  readonly attribute boolean completed;
   
   /**
    * \brief Whether or not this handler MUST be run on the main thread.
@@ -102,7 +102,7 @@ interface sbIMetadataHandler : nsISupports
    * Since nsIChannel and other dependencies are not thread safe, some 
    * sbIMetadataHandler implementations can not be run on background threads.
    */
-  readonly attribute PRBool requiresMainThread;
+  readonly attribute boolean requiresMainThread;
 
   /**
    * \brief The object's nsIChannel

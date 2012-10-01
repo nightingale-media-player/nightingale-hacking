@@ -138,5 +138,5 @@ interface sbIPropertyOperator : nsISupports
    * \brief Initialize the operator.
    * \note This method may not be called more than once.
    */
-  void Init(in AString aOperator, in aString aOperatorReadable);
+  void Init(in AString aOperator, in AString aOperatorReadable);
 };

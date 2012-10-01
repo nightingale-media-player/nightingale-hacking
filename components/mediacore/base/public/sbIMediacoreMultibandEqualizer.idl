@@ -100,4 +100,4 @@ interface sbIMediacoreMultibandEqualizer : nsISupports
 #define SB_MEDIACORE_EQUALIZER_BAND_CID               \
   {0x2133a879, 0x337b, 0x4f64, {0x92, 0x4a, 0x2a, 0xd8, 0x51, 0x30, 0xae, 0x6c}}
   
-%};
+%}

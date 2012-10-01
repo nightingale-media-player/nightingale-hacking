@@ -37,7 +37,6 @@
 #include <nsITimer.h>
 
 #include <prlock.h>
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
@@ -54,7 +53,7 @@ public:
 
   /* sbGstreamerMessageHandler */
   virtual void HandleMessage(GstMessage *message);
-  virtual PRBool HandleSynchronousMessage(GstMessage *message);
+  virtual bool HandleSynchronousMessage(GstMessage *message);
 
   sbGStreamerMetadataHandler();
   
@@ -75,8 +74,8 @@ protected:
   GstTagList *mTags;
   nsCOMPtr<sbIMutablePropertyArray> mProperties;
 
-  PRBool mHasAudio;
-  PRBool mHasVideo;
+  bool mHasAudio;
+  bool mHasVideo;
   
   static void on_pad_added(GstElement *decodeBin,
                            GstPad *newPad,
@@ -91,7 +90,7 @@ protected:
   nsCOMPtr<nsITimer> mTimer; // for timeout
   nsCOMPtr<sbIMediacoreFactory> mFactory; // for voting
   nsCString mSpec;
-  PRBool mCompleted;
+  bool mCompleted;
   
   // the lock should be held when calling these methods
   
@@ -99,7 +98,7 @@ protected:
    * Prepare the tags for reporting to the caller
    * \param aSucceeded true if metadata scanning had succeded
    */
-  nsresult FinalizeTags(PRBool aSucceeded);
+  nsresult FinalizeTags(bool aSucceeded);
 };
 
 #define SB_GSTREAMER_METADATA_HANDLER_CLASSNAME \

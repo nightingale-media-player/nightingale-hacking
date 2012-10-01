@@ -48,8 +48,8 @@ public:
                          const nsAString& aBaseForeignKeyColumn,
                          nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
                          nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
-                         PRBool aIsDistinct,
-                         PRBool aDistinctWithSortableValues,
+                         bool aIsDistinct,
+                         bool aDistinctWithSortableValues,
                          sbILocalDatabasePropertyCache* aPropertyCache);
 
   nsresult GetFullCountQuery(nsAString& aQuery);
@@ -59,7 +59,7 @@ public:
   nsresult GetPrefixSearchQuery(nsAString& aQuery);
   nsresult GetResortQuery(nsAString& aQuery);
   nsresult GetNullResortQuery(nsAString& aQuery);
-  PRBool   GetIsFullLibrary();
+  bool   GetIsFullLibrary();
 
 private:
   struct sbAddJoinInfo {
@@ -77,7 +77,7 @@ private:
   };
 
   nsresult AddCountColumns();
-  nsresult AddGuidColumns(PRBool aIsNull);
+  nsresult AddGuidColumns(bool aIsNull);
   nsresult AddBaseTable();
   nsresult AddFilters();
   nsresult AddRange();
@@ -105,9 +105,9 @@ private:
   PRPackedBool mDistinctWithSortableValues;
 
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;
-  PRBool mIsFullLibrary;
+  bool mIsFullLibrary;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
-  PRBool mHasSearch;
+  bool mHasSearch;
 };
 
 #endif /* __SBLOCALDATABASEQUERY_H__ */

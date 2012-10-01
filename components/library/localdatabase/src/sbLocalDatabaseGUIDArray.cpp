@@ -54,7 +54,6 @@
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbMemoryUtils.h>
@@ -245,14 +244,14 @@ sbLocalDatabaseGUIDArray::SetFetchSize(PRUint32 aFetchSize)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetIsDistinct(PRBool *aIsDistinct)
+sbLocalDatabaseGUIDArray::GetIsDistinct(bool *aIsDistinct)
 {
   NS_ENSURE_ARG_POINTER(aIsDistinct);
   *aIsDistinct = mIsDistinct;
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
+sbLocalDatabaseGUIDArray::SetIsDistinct(bool aIsDistinct)
 {
   mIsDistinct = aIsDistinct;
 
@@ -262,7 +261,7 @@ sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetIsValid(PRBool *aIsValid)
+sbLocalDatabaseGUIDArray::GetIsValid(bool *aIsValid)
 {
   NS_ENSURE_ARG_POINTER(aIsValid);
   *aIsValid = mValid;
@@ -270,7 +269,7 @@ sbLocalDatabaseGUIDArray::GetIsValid(PRBool *aIsValid)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::GetDistinctWithSortableValues(PRBool *aDistinctWithSortableValues)
+sbLocalDatabaseGUIDArray::GetDistinctWithSortableValues(bool *aDistinctWithSortableValues)
 {
   NS_ENSURE_ARG_POINTER(aDistinctWithSortableValues);
   *aDistinctWithSortableValues = mDistinctWithSortableValues;
@@ -278,7 +277,7 @@ sbLocalDatabaseGUIDArray::GetDistinctWithSortableValues(PRBool *aDistinctWithSor
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SetDistinctWithSortableValues(PRBool aDistinctWithSortableValues)
+sbLocalDatabaseGUIDArray::SetDistinctWithSortableValues(bool aDistinctWithSortableValues)
 {
   mDistinctWithSortableValues = aDistinctWithSortableValues;
 
@@ -388,8 +387,8 @@ sbLocalDatabaseGUIDArray::GetLengthCache(
 }
 
 nsresult sbLocalDatabaseGUIDArray::AddSortInternal(const nsAString& aProperty,
-                                                   PRBool aAscending,
-                                                   PRBool aSecondary) {
+                                                   bool aAscending,
+                                                   bool aSecondary) {
 
   // TODO: Check for valid properties
   SortSpec* ss = mSorts.AppendElement();
@@ -507,7 +506,7 @@ sbLocalDatabaseGUIDArray::MayInvalidate(PRUint32 * aDirtyPropIDs,
 
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
-                                  PRBool aAscending)
+                                  bool aAscending)
 {
   nsresult rv;
 
@@ -623,7 +622,7 @@ sbLocalDatabaseGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
                                     nsIStringEnumerator *aValues,
-                                    PRBool aIsSearch)
+                                    bool aIsSearch)
 {
   NS_ENSURE_ARG_POINTER(aValues);
 
@@ -636,7 +635,7 @@ sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
   fs->isSearch = aIsSearch;
 
   // Copy the values from the enumerator into an array
-  PRBool hasMore;
+  bool hasMore;
   rv = aValues->HasMore(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
   while (hasMore) {
@@ -666,7 +665,7 @@ sbLocalDatabaseGUIDArray::ClearFilters()
 
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::IsIndexCached(PRUint32 aIndex,
-                                        PRBool *_retval)
+                                        bool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -796,7 +795,7 @@ sbLocalDatabaseGUIDArray::GetViewItemUIDByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::Invalidate(PRBool aInvalidateLength)
+sbLocalDatabaseGUIDArray::Invalidate(bool aInvalidateLength)
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
 
@@ -1079,7 +1078,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
 
   // If this is a guid array on a simple media list we can't do any
   // optimizations that depend on returning the first matching guid we find
-  PRBool uniqueGuids = PR_TRUE;
+  bool uniqueGuids = PR_TRUE;
   if (mBaseTable.EqualsLiteral("simple_media_lists")) {
     uniqueGuids = PR_FALSE;
   }
@@ -1100,7 +1099,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
     }
 
     // If it wasn't found, we need to find the first uncached row
-    PRBool found = PR_FALSE;
+    bool found = PR_FALSE;
     for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
       if (!mCache[i]) {
         firstUncached = i;
@@ -1117,7 +1116,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByGuid(const nsAString& aGuid,
   else {
     // Since we could have duplicate guids, just search the array for the guid
     // from the beginning to the first uncached item
-    PRBool foundFirstUncached = PR_FALSE;
+    bool foundFirstUncached = PR_FALSE;
     for (PRUint32 i = 0; !foundFirstUncached && i < mCache.Length(); i++) {
       ArrayItem* item = mCache[i];
       if (item) {
@@ -1182,7 +1181,7 @@ sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
 
   // If no, we need to cache the entire guid array.  Find the first uncached
   // row so we can trigger the load
-  PRBool found = PR_FALSE;
+  bool found = PR_FALSE;
   for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
     if (!mCache[i]) {
       firstUncached = i;
@@ -1209,7 +1208,7 @@ sbLocalDatabaseGUIDArray::GetIndexByViewItemUID
 
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
-                                       PRBool* _retval)
+                                       bool* _retval)
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - ContainsGuid", this));
   NS_ENSURE_ARG_POINTER(_retval);
@@ -1242,7 +1241,7 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   }
 
   // If it wasn't found, we need to find the first uncached row
-  PRBool found = PR_FALSE;
+  bool found = PR_FALSE;
   for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
     if (!mCache[i]) {
       firstUncached = i;
@@ -1269,7 +1268,7 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::SuppressInvalidation(PRBool aSuppress)
+sbLocalDatabaseGUIDArray::SuppressInvalidation(bool aSuppress)
 {
   if(aSuppress) {
     mSuppress++;
@@ -1308,12 +1307,12 @@ sbLocalDatabaseGUIDArray::Initialize()
   }
 
   if (!mGuidToFirstIndexMap.IsInitialized()) {
-    PRBool success = mGuidToFirstIndexMap.Init();
+    bool success = mGuidToFirstIndexMap.Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   if (!mViewItemUIDToIndexMap.IsInitialized()) {
-    PRBool success = mViewItemUIDToIndexMap.Init();
+    bool success = mViewItemUIDToIndexMap.Init();
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -1817,7 +1816,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
                                        PRUint32 aStartIndex,
                                        PRUint32 aCount,
                                        PRUint32 aDestIndexOffset,
-                                       PRBool aIsNull)
+                                       bool aIsNull)
 {
   nsresult rv;
   PRInt32 dbOk;
@@ -1876,7 +1875,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
    *   processing the null values: null values mean there was no row to hold
    *   the secondary sort data
    */
-  PRBool needsSorting = (mPrimarySortsCount > 1) ||
+  bool needsSorting = (mPrimarySortsCount > 1) ||
                         (mSorts.Length() > 1 && aIsNull);
 
   /*
@@ -1884,14 +1883,14 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
    */
   if (mCache.Length() < aDestIndexOffset + aCount) {
     LOG(("SetLength %d to %d", mCache.Length(), aDestIndexOffset + aCount));
-    PRBool success = mCache.SetLength(aDestIndexOffset + aCount);
+    bool success = mCache.SetLength(aDestIndexOffset + aCount);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
 
   nsAutoString lastSortedValue;
   PRUint32 firstIndex = 0;
-  PRBool isFirstValue = PR_TRUE;
-  PRBool isFirstSort = PR_TRUE;
+  bool isFirstValue = PR_TRUE;
+  bool isFirstSort = PR_TRUE;
   for (PRUint32 i = 0; i < rowCount; i++) {
     PRUint32 index = i + aDestIndexOffset;
 
@@ -1975,9 +1974,9 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
 
     // Add the new guid to the guid to first index map.
     PRUint32 firstGuidIndex;
-    PRBool found = mGuidToFirstIndexMap.Get(item->guid, &firstGuidIndex);
+    bool found = mGuidToFirstIndexMap.Get(item->guid, &firstGuidIndex);
     if (!found || index < firstGuidIndex) {
-      PRBool added = mGuidToFirstIndexMap.Put(item->guid, index);
+      bool added = mGuidToFirstIndexMap.Put(item->guid, index);
       NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
     }
 
@@ -1988,7 +1987,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
     viewItemUID.Append('-');
     viewItemUID.AppendInt(item->mediaItemId);
 
-    PRBool added = mViewItemUIDToIndexMap.Put(viewItemUID, index);
+    bool added = mViewItemUIDToIndexMap.Put(viewItemUID, index);
     NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
   }
 
@@ -2032,7 +2031,7 @@ sbLocalDatabaseGUIDArray::SortBags(const void* a, const void* b, void* closure)
   nsresult rv;
   for (PRUint32 i = 1; i < sorts->Length(); i++) {
     PRUint32 propertyId = sorts->ElementAt(i).propertyId;
-    PRBool ascending = sorts->ElementAt(i).ascending;
+    bool ascending = sorts->ElementAt(i).ascending;
 
     nsString valueA;
     rv = bagA->GetSortablePropertyByID(propertyId, valueA);
@@ -2072,10 +2071,10 @@ nsresult
 sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
                                    PRUint32 aEndIndex,
                                    const nsAString& aKey,
-                                   PRBool aIsFirst,
-                                   PRBool aIsLast,
-                                   PRBool aIsOnly,
-                                   PRBool aIsNull)
+                                   bool aIsFirst,
+                                   bool aIsLast,
+                                   bool aIsOnly,
+                                   bool aIsNull)
 {
   nsresult rv;
   PRInt32 dbOk;
@@ -2141,7 +2140,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
     // items that we are going to reorder, then update the cache in the order
     // of the sorted bags
     nsClassHashtable<nsStringHashKey, ArrayItem> lookup;
-    PRBool success = lookup.Init(bagsCount);
+    bool success = lookup.Init(bagsCount);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
     for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
@@ -2159,7 +2158,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
       NS_ENSURE_SUCCESS(rv, rv);
 
       ArrayItem* item;
-      PRBool found = lookup.Get(guid, &item);
+      bool found = lookup.Get(guid, &item);
       NS_ENSURE_TRUE(found, NS_ERROR_UNEXPECTED);
       nsAutoPtr<ArrayItem> copy(new ArrayItem(*item));
       NS_ENSURE_TRUE(copy, NS_ERROR_OUT_OF_MEMORY);
@@ -2552,7 +2551,7 @@ sbGUIDArrayEnumerator::~sbGUIDArrayEnumerator()
 }
 
 NS_IMETHODIMP
-sbGUIDArrayEnumerator::HasMoreElements(PRBool *_retval)
+sbGUIDArrayEnumerator::HasMoreElements(bool *_retval)
 {
   nsresult rv;
 
@@ -2611,7 +2610,7 @@ sbGUIDArrayStringEnumerator::~sbGUIDArrayStringEnumerator()
 }
 
 NS_IMETHODIMP
-sbGUIDArrayStringEnumerator::HasMore(PRBool *_retval)
+sbGUIDArrayStringEnumerator::HasMore(bool *_retval)
 {
   nsresult rv;
 

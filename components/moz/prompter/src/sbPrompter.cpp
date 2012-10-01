@@ -47,13 +47,11 @@
 #include "sbPrompter.h"
 
 // Mozilla imports.
-#include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
-#include <nsIDOMWindowInternal.h>
-#include <nsIProxyObjectManager.h>
+#include <nsIDOMWindow.h>
 #include <nsPIPromptService.h>
 #include <nsServiceManagerUtils.h>
-#include <nsThreadUtils.h>
+#include <sbThreadUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -110,24 +108,31 @@ sbPrompter::OpenDialog(nsIDOMWindow*    aParent,
                        nsISupports*     aExtraArgument,
                        nsIDOMWindow**   _retval)
 {
+  return OpenDialogImpl(aParent,aUrl,aName,aOptions,aExtraArgument,_retval);
+}
+
+nsresult
+sbPrompter::OpenDialogImpl(nsIDOMWindow*    aParent,
+                       const nsAString& aUrl,
+                       const nsAString& aName,
+                       const nsAString& aOptions,
+                       nsISupports*     aExtraArgument,
+                       nsIDOMWindow**   _retval)
+{
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod6_<nsresult,sbPrompter,
+        nsIDOMWindow*,const nsAString&,const nsAString&,const nsAString&,
+        nsISupports*,nsIDOMWindow**>(
+          *this,&sbPrompter::OpenDialogImpl,
+          aParent,aUrl,aName,aOptions,aExtraArgument,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->OpenDialog(aParent,
-                                aUrl,
-                                aName,
-                                aOptions,
-                                aExtraArgument,
-                                _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -194,24 +199,31 @@ sbPrompter::OpenWindow(nsIDOMWindow*    aParent,
                        nsISupports*     aExtraArgument,
                        nsIDOMWindow**   _retval)
 {
+  return OpenWindowImpl(aParent,aUrl,aName,aOptions,aExtraArgument,_retval);
+}
+
+nsresult
+sbPrompter::OpenWindowImpl(nsIDOMWindow*    aParent,
+                       const nsAString& aUrl,
+                       const nsAString& aName,
+                       const nsAString& aOptions,
+                       nsISupports*     aExtraArgument,
+                       nsIDOMWindow**   _retval)
+{
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod6_<nsresult,sbPrompter,
+        nsIDOMWindow*,const nsAString&,const nsAString&,const nsAString&,
+        nsISupports*,nsIDOMWindow**>(
+          *this,&sbPrompter::OpenWindowImpl,
+          aParent,aUrl,aName,aOptions,aExtraArgument,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->OpenWindow(aParent,
-                                aUrl,
-                                aName,
-                                aOptions,
-                                aExtraArgument,
-                                _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -253,23 +265,24 @@ sbPrompter::OpenWindow(nsIDOMWindow*    aParent,
 /**
  * Cancel and close the current prompter window.
  */
-
 NS_IMETHODIMP
 sbPrompter::Cancel()
 {
-  nsresult rv;
+  return CancelImpl();
+}
 
+nsresult
+sbPrompter::CancelImpl()
+{
+  nsresult rv;
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
-    // Call proxied prompter.
-    rv = prompter->Cancel();
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod0_<nsresult,sbPrompter>(
+      *this,&sbPrompter::CancelImpl);
+    NS_DispatchToMainThread(job);
+    rv = job->Wait();
     NS_ENSURE_SUCCESS(rv, rv);
-
     return NS_OK;
   }
 
@@ -298,7 +311,7 @@ sbPrompter::Cancel()
 NS_IMETHODIMP
 sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 {
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
   aParentWindowType.Assign(mParentWindowType);
   return NS_OK;
 }
@@ -306,7 +319,7 @@ sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 NS_IMETHODIMP
 sbPrompter::SetParentWindowType(const nsAString& aParentWindowType)
 {
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
   mParentWindowType.Assign(aParentWindowType);
   return NS_OK;
 }
@@ -318,18 +331,18 @@ sbPrompter::SetParentWindowType(const nsAString& aParentWindowType)
  */
 
 NS_IMETHODIMP
-sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
+sbPrompter::GetWaitForWindow(bool* aWaitForWindow)
 {
   NS_ENSURE_ARG_POINTER(aWaitForWindow);
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
   *aWaitForWindow = mWaitForWindow;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPrompter::SetWaitForWindow(PRBool aWaitForWindow)
+sbPrompter::SetWaitForWindow(bool aWaitForWindow)
 {
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
   mWaitForWindow = aWaitForWindow;
   return NS_OK;
 }
@@ -340,18 +353,18 @@ sbPrompter::SetWaitForWindow(PRBool aWaitForWindow)
  */
 
 NS_IMETHODIMP
-sbPrompter::GetRenderHTML(PRBool* aRenderHTML)
+sbPrompter::GetRenderHTML(bool* aRenderHTML)
 {
   NS_ENSURE_ARG_POINTER(aRenderHTML);
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
   *aRenderHTML = mRenderHTML;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPrompter::SetRenderHTML(PRBool aRenderHTML)
+sbPrompter::SetRenderHTML(bool aRenderHTML)
 {
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
   mRenderHTML = aRenderHTML;
   return NS_OK;
 }
@@ -375,19 +388,26 @@ sbPrompter::Alert(nsIDOMWindow*    aParent,
                   const PRUnichar* aDialogTitle,
                   const PRUnichar* aText)
 {
+  return AlertImpl(aParent,aDialogTitle,aText);
+}
+
+nsresult
+sbPrompter::AlertImpl(nsIDOMWindow*    aParent,
+                  const PRUnichar* aDialogTitle,
+                  const PRUnichar* aText)
+{
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
-    // Call proxied prompter until a window is available.
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod3_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*>(
+          *this,&sbPrompter::AlertImpl,aParent,aDialogTitle,aText);
     while (1) {
       // Call the proxied prompter.
-      rv = prompter->Alert(aParent, aDialogTitle, aText);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -447,7 +467,17 @@ sbPrompter::AlertCheck(nsIDOMWindow*    aParent,
                        const PRUnichar* aDialogTitle,
                        const PRUnichar* aText,
                        const PRUnichar* aCheckMsg,
-                       PRBool*          aCheckState)
+                       bool*          aCheckState)
+{
+  return AlertCheckImpl(aParent,aDialogTitle,aText,aCheckMsg,aCheckState);
+}
+
+nsresult
+sbPrompter::AlertCheckImpl(nsIDOMWindow*    aParent,
+                       const PRUnichar* aDialogTitle,
+                       const PRUnichar* aText,
+                       const PRUnichar* aCheckMsg,
+                       bool*          aCheckState)
 {
   nsresult rv;
 
@@ -456,19 +486,16 @@ sbPrompter::AlertCheck(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod5_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,
+        const PRUnichar*,bool*>(
+          *this,&sbPrompter::AlertCheckImpl,
+          aParent,aDialogTitle,aText,aCheckMsg,aCheckState);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->AlertCheck(aParent,
-                                aDialogTitle,
-                                aText,
-                                aCheckMsg,
-                                aCheckState);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -535,7 +562,16 @@ NS_IMETHODIMP
 sbPrompter::Confirm(nsIDOMWindow*    aParent,
                     const PRUnichar* aDialogTitle,
                     const PRUnichar* aText,
-                    PRBool*          _retval)
+                    bool*          _retval)
+{
+  return ConfirmImpl(aParent,aDialogTitle,aText,_retval);
+}
+
+nsresult
+sbPrompter::ConfirmImpl(nsIDOMWindow*    aParent,
+                    const PRUnichar* aDialogTitle,
+                    const PRUnichar* aText,
+                    bool*          _retval)
 {
   nsresult rv;
 
@@ -544,15 +580,14 @@ sbPrompter::Confirm(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod4_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,bool*>(
+          *this,&sbPrompter::ConfirmImpl,aParent,aDialogTitle,aText,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->Confirm(aParent, aDialogTitle, aText, _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -618,8 +653,19 @@ sbPrompter::ConfirmCheck(nsIDOMWindow*    aParent,
                          const PRUnichar* aDialogTitle,
                          const PRUnichar* aText,
                          const PRUnichar* aCheckMsg,
-                         PRBool*          aCheckState,
-                         PRBool*          _retval)
+                         bool*          aCheckState,
+                         bool*          _retval)
+{
+  return ConfirmCheckImpl(aParent,aDialogTitle,aText,aCheckMsg,aCheckState,_retval);
+}
+
+nsresult
+sbPrompter::ConfirmCheckImpl(nsIDOMWindow*    aParent,
+                         const PRUnichar* aDialogTitle,
+                         const PRUnichar* aText,
+                         const PRUnichar* aCheckMsg,
+                         bool*          aCheckState,
+                         bool*          _retval)
 {
   nsresult rv;
 
@@ -629,20 +675,16 @@ sbPrompter::ConfirmCheck(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod6_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,const PRUnichar*,
+        bool*,bool*>(
+          *this,&sbPrompter::ConfirmCheckImpl,
+          aParent,aDialogTitle,aText,aCheckMsg,aCheckState,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->ConfirmCheck(aParent,
-                                  aDialogTitle,
-                                  aText,
-                                  aCheckMsg,
-                                  aCheckState,
-                                  _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -721,31 +763,42 @@ sbPrompter::ConfirmEx(nsIDOMWindow*    aParent,
                       const PRUnichar* aButton1Title,
                       const PRUnichar* aButton2Title,
                       const PRUnichar* aCheckMsg,
-                      PRBool*          aCheckState,
+                      bool*          aCheckState,
+                      PRInt32*         _retval)
+{
+  return ConfirmExImpl(aParent,aDialogTitle,aText,aButtonFlags,
+      aButton0Title,aButton1Title,aButton2Title,
+      aCheckMsg,aCheckState,_retval);
+}
+
+nsresult
+sbPrompter::ConfirmExImpl(nsIDOMWindow*    aParent,
+                      const PRUnichar* aDialogTitle,
+                      const PRUnichar* aText,
+                      PRUint32         aButtonFlags,
+                      const PRUnichar* aButton0Title,
+                      const PRUnichar* aButton1Title,
+                      const PRUnichar* aButton2Title,
+                      const PRUnichar* aCheckMsg,
+                      bool*          aCheckState,
                       PRInt32*         _retval)
 {
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod10_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUint32,
+        const PRUnichar*,const PRUnichar*,const PRUnichar*,const PRUnichar*,
+        bool*,PRInt32*>(
+          *this,&sbPrompter::ConfirmExImpl,aParent,aDialogTitle,aText,
+          aButtonFlags,aButton0Title,aButton1Title,aButton2Title,
+          aCheckMsg,aCheckState,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->ConfirmEx(aParent,
-                               aDialogTitle,
-                               aText,
-                               aButtonFlags,
-                               aButton0Title,
-                               aButton1Title,
-                               aButton2Title,
-                               aCheckMsg,
-                               aCheckState,
-                               _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -802,28 +855,35 @@ sbPrompter::Prompt(nsIDOMWindow*    aParent,
                    const PRUnichar* aText,
                    PRUnichar**      aValue,
                    const PRUnichar* aCheckMsg,
-                   PRBool*          aCheckState,
-                   PRBool*          _retval)
+                   bool*          aCheckState,
+                   bool*          _retval)
+{
+  return PromptImpl(aParent,aDialogTitle,aText,aValue,aCheckMsg,aCheckState,_retval);
+}
+
+nsresult
+sbPrompter::PromptImpl(nsIDOMWindow*    aParent,
+                   const PRUnichar* aDialogTitle,
+                   const PRUnichar* aText,
+                   PRUnichar**      aValue,
+                   const PRUnichar* aCheckMsg,
+                   bool*          aCheckState,
+                   bool*          _retval)
 {
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod7_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUnichar**,
+        const PRUnichar*,bool*,bool*>(
+          *this,&sbPrompter::PromptImpl,aParent,aDialogTitle,aText,
+          aValue,aCheckMsg,aCheckState,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->Prompt(aParent,
-                            aDialogTitle,
-                            aText,
-                            aValue,
-                            aCheckMsg,
-                            aCheckState,
-                            _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -878,29 +938,39 @@ sbPrompter::PromptUsernameAndPassword(nsIDOMWindow*    aParent,
                                       PRUnichar**      aUsername,
                                       PRUnichar**      aPassword,
                                       const PRUnichar* aCheckMsg,
-                                      PRBool*          aCheckState,
-                                      PRBool*          _retval)
+                                      bool*          aCheckState,
+                                      bool*          _retval)
+{
+  return PromptUsernameAndPasswordImpl(aParent,aDialogTitle,aText,
+            aUsername,aPassword,aCheckMsg,aCheckState,_retval);
+}
+
+nsresult
+sbPrompter::PromptUsernameAndPasswordImpl(nsIDOMWindow*    aParent,
+                                      const PRUnichar* aDialogTitle,
+                                      const PRUnichar* aText,
+                                      PRUnichar**      aUsername,
+                                      PRUnichar**      aPassword,
+                                      const PRUnichar* aCheckMsg,
+                                      bool*          aCheckState,
+                                      bool*          _retval)
 {
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod8_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,
+        PRUnichar**,PRUnichar**,
+        const PRUnichar*,bool*,bool*>(
+          *this,&sbPrompter::PromptUsernameAndPasswordImpl,
+          aParent,aDialogTitle,aText,
+          aUsername,aPassword,aCheckMsg,aCheckState,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->PromptUsernameAndPassword(aParent,
-                                               aDialogTitle,
-                                               aText,
-                                               aUsername,
-                                               aPassword,
-                                               aCheckMsg,
-                                               aCheckState,
-                                               _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -955,28 +1025,38 @@ sbPrompter::PromptPassword(nsIDOMWindow*    aParent,
                            const PRUnichar* aText,
                            PRUnichar**      aPassword,
                            const PRUnichar* aCheckMsg,
-                           PRBool*          aCheckState,
-                           PRBool*          _retval)
+                           bool*          aCheckState,
+                           bool*          _retval)
+{
+  return PromptPasswordImpl(
+      aParent,aDialogTitle,aText,aPassword,aCheckMsg,aCheckState,_retval);
+}
+
+nsresult
+sbPrompter::PromptPasswordImpl(nsIDOMWindow*    aParent,
+                           const PRUnichar* aDialogTitle,
+                           const PRUnichar* aText,
+                           PRUnichar**      aPassword,
+                           const PRUnichar* aCheckMsg,
+                           bool*          aCheckState,
+                           bool*          _retval)
 {
   nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod7_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUnichar**,
+        const PRUnichar*,bool*,bool*>(
+          *this,&sbPrompter::PromptPasswordImpl,
+          aParent,aDialogTitle,aText,
+          aPassword,aCheckMsg,aCheckState,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
       // Call the proxied prompter.
-      rv = prompter->PromptPassword(aParent,
-                                    aDialogTitle,
-                                    aText,
-                                    aPassword,
-                                    aCheckMsg,
-                                    aCheckState,
-                                    _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -1031,27 +1111,36 @@ sbPrompter::Select(nsIDOMWindow*     aParent,
                    PRUint32          aCount,
                    const PRUnichar** aSelectList,
                    PRInt32*          aOutSelection,
-                   PRBool*           _retval)
+                   bool*           _retval)
 {
-  nsresult rv;
+  return SelectImpl(aParent,aDialogTitle,aText,
+      aCount,aSelectList,aOutSelection,_retval);
+}
+
+nsresult
+sbPrompter::SelectImpl(nsIDOMWindow*     aParent,
+                   const PRUnichar*  aDialogTitle,
+                   const PRUnichar*  aText,
+                   PRUint32          aCount,
+                   const PRUnichar** aSelectList,
+                   PRInt32*          aOutSelection,
+                   bool*           _retval)
+{
+nsresult rv;
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
-    // Get a main thread proxy.
-    nsCOMPtr<sbIPrompter> prompter;
-    rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-
+    nsRefPtr<sbRunnable_<nsresult>> job =
+      new sbRunnableMethod7_<nsresult,sbPrompter,
+        nsIDOMWindow*,const PRUnichar*,const PRUnichar*,PRUint32,
+        const PRUnichar**,PRInt32*,bool*>(
+          *this,&sbPrompter::SelectImpl,
+          aParent,aDialogTitle,aText,aCount,
+          aSelectList,aOutSelection,_retval);
     // Call proxied prompter until a window is available.
     while (1) {
-      // Call the proxied prompter.
-      rv = prompter->Select(aParent,
-                            aDialogTitle,
-                            aText,
-                            aCount,
-                            aSelectList,
-                            aOutSelection,
-                            _retval);
+      NS_DispatchToMainThread(job);
+      rv = job->Wait();
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -1156,7 +1245,7 @@ sbPrompter::~sbPrompter()
 {
   // Dispose of prompter lock.
   if (mPrompterLock)
-    nsAutoLock::DestroyLock(mPrompterLock);
+    delete mPrompterLock;
   mPrompterLock = nsnull;
 }
 
@@ -1171,12 +1260,11 @@ sbPrompter::Init()
   nsresult rv;
 
   // Create a lock for the prompter.
-  mPrompterLock = nsAutoLock::NewLock("sbPrompter::mPrompterLock");
-  NS_ENSURE_TRUE(mPrompterLock, NS_ERROR_OUT_OF_MEMORY);
+  mPrompterLock = new mozilla::sbMozHackMutex("sbPrompter::mPrompterLock");
 
   // Set defaults.
   {
-    nsAutoLock autoLock(mPrompterLock);
+    mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
     mWaitForWindow = PR_FALSE;
   }
 
@@ -1187,20 +1275,13 @@ sbPrompter::Init()
     rv = InitOnMainThread();
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
-    nsCOMPtr<nsIObserver> proxyObserver;
-    nsCOMPtr<nsIProxyObjectManager>
-      proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = proxyObjectManager->GetProxyForObject
-                               (NS_PROXY_TO_MAIN_THREAD,
-                                NS_GET_IID(nsIObserver),
-                                NS_ISUPPORTS_CAST(nsIObserver*, this),
-                                nsIProxyObjectManager::INVOKE_SYNC |
-                                nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                                getter_AddRefs(proxyObserver));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = proxyObserver->Observe(nsnull, "sbPrompter::InitOnMainThread", nsnull);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Create the job:
+    nsRefPtr<sbRunnable_<nsresult>> job = new sbRunnableMethod0_<nsresult,sbPrompter>(
+      *this,
+      &sbPrompter::InitOnMainThread);
+    NS_DispatchToMainThread(job);
+    rv = job->Wait();
+    NS_ENSURE_SUCCESS(rv,rv);
   }
 
   return NS_OK;
@@ -1255,11 +1336,11 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   nsresult rv;
 
   // Operate under lock.
-  nsAutoLock autoLock(mPrompterLock);
+  mozilla::sbMozHackMutexAutoLock autoLock(*mPrompterLock);
 
   // If the Songbird window watcher is shutting down, don't wait for a window.
   {
-    PRBool isShuttingDown;
+    bool isShuttingDown;
     rv = mSBWindowWatcher->GetIsShuttingDown(&isShuttingDown);
     NS_ENSURE_SUCCESS(rv, rv);
     if (isShuttingDown)
@@ -1284,39 +1365,6 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
 
   return NS_OK;
 }
-
-
-/**
- * Return this prompter proxied to the main thread in aPrompter.
- *
- * \param aPrompter             Returned proxied prompter.
- */
-
-nsresult
-sbPrompter::GetProxiedPrompter(sbIPrompter** aPrompter)
-{
-  // Validate arguments.
-  NS_ASSERTION(aPrompter, "aPrompter is null");
-
-  // Function variables.
-  nsresult rv;
-
-  // Create a main thread proxy for the prompter.
-  nsCOMPtr<nsIProxyObjectManager>
-    proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = proxyObjectManager->GetProxyForObject
-                             (NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbIPrompter),
-                              NS_ISUPPORTS_CAST(sbIPrompter*, this),
-                              nsIProxyObjectManager::INVOKE_SYNC |
-                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                              (void**) aPrompter);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 
 /**
  * Present the prompter dialog using the parent window specified by aParent and

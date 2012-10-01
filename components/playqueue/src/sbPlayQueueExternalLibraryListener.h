@@ -30,7 +30,6 @@
  * \brief Helper class to listen to external libraries and sync properties.
  */
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsVoidArray.h>

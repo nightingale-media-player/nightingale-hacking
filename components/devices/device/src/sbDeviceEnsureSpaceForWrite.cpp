@@ -147,7 +147,7 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
   if (totalChangeSize >= mFreeSpace) {
     // not everything fits, see what the user wants to do
     if (!mDevice->GetEnsureSpaceChecked()) {
-      PRBool abort;
+      bool abort;
       rv = sbDeviceUtils::QueryUserSpaceExceeded(mDevice,
                                                  mDevLibrary,
                                                  totalChangeSize,

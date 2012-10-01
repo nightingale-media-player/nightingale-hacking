@@ -120,9 +120,9 @@ public:
   /**
    * Get/set the volume mounted state.
    */
-  nsresult GetIsMounted(PRBool* aIsMounted);
+  nsresult GetIsMounted(bool* aIsMounted);
 
-  nsresult SetIsMounted(PRBool aIsMounted);
+  nsresult SetIsMounted(bool aIsMounted);
 
   /**
    * Get/set whether the volume is removable.  If this value is 1, the volume is
@@ -205,7 +205,7 @@ private:
 
   sbBaseDevice*                 mDevice;
   nsString                      mGUID;
-  PRBool                        mIsMounted;
+  bool                        mIsMounted;
   PRInt32                       mRemovable;
   nsCOMPtr<sbIDeviceLibrary>    mDeviceLibrary;
   nsRefPtr<sbDeviceStatistics>  mStatistics;

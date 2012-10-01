@@ -103,11 +103,11 @@ public:
   // mFieldLoggingEnabled       If true, field logging is enabled.
   //
 
-  static PRBool                 mInitialized;
+  static bool                 mInitialized;
 #ifdef PR_LOGGING
   static PRLogModuleInfo*       mLogModuleInfo;
 #endif
-  static PRBool                 mFieldLoggingEnabled;
+  static bool                 mFieldLoggingEnabled;
 };
 
 

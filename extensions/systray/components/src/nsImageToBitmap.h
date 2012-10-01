@@ -58,7 +58,7 @@ class nsImageToBitmap : public nsIImageToBitmap {
 
      protected:
         nsresult ImageToIcon(gfxImageSurface* aImage,
-          PRBool aIcon, PRUint32 aHotspotX, PRUint32 aHotspotY,
+          bool aIcon, PRUint32 aHotspotX, PRUint32 aHotspotY,
           HICON& _retval);
 };
 

@@ -28,7 +28,7 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbDeviceDeviceTesterUtils.h"
 #include "sbMockDevice.h"

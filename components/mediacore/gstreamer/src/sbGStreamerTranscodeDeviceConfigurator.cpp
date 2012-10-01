@@ -218,7 +218,7 @@ MakeCapsFromAttributes(enum sbGstCapsMapType aType,
   sbGstCaps caps = GetCapsForMimeType (aMimeType, aType);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(rv = attrsEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> attrSupports;
     rv = attrsEnum->GetNext(getter_AddRefs(attrSupports));
@@ -382,7 +382,7 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     elementNames.videoEncoder = videoEncoder;
   }
 
-  PRBool success = mElementNames.Put(aProfile, elementNames);
+  bool success = mElementNames.Put(aProfile, elementNames);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -504,7 +504,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
 
   sbAutoFreeXPCOMArrayByRef<char**> autoMimeTypes(mimeTypesCount, mimeTypes);
 
-  PRBool hasMoreProfiles;
+  bool hasMoreProfiles;
   while (NS_SUCCEEDED(profilesEnum->HasMoreElements(&hasMoreProfiles)) &&
          hasMoreProfiles)
   {
@@ -654,7 +654,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   mSelectedFormat = selectedFormat;
 
   EncoderProfileData elementNames;
-  PRBool success = mElementNames.Get(selectedProfile, &elementNames);
+  bool success = mElementNames.Get(selectedProfile, &elementNames);
   NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
   CopyASCIItoUTF16(elementNames.muxer, mMuxer);
   CopyASCIItoUTF16(elementNames.audioEncoder, mAudioEncoder);
@@ -716,7 +716,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
     rv = mSelectedFormat->GetAudioStream(getter_AddRefs(outputCaps));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool isInRange;
+    bool isInRange;
 
     nsCOMPtr<sbIDevCapRange> sampleRateRange;
     rv = outputCaps->GetSupportedSampleRates(getter_AddRefs(sampleRateRange));
@@ -815,7 +815,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
 
-    PRBool isFrameRatesRange;
+    bool isFrameRatesRange;
     rv = videoCaps->GetDoesSupportFrameRateRange(&isFrameRatesRange);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -916,7 +916,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
 
     // Check to see if the PAR values for the device caps is a min/max or a
     // set range of values.
-    PRBool supportsPARRange;
+    bool supportsPARRange;
     rv = outputCaps->GetDoesSupportPARRange(&supportsPARRange);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -991,7 +991,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
   }
 
   { /* scope - try to use ranges */
-    PRBool hasRange = PR_TRUE;
+    bool hasRange = PR_TRUE;
     std::vector<PRInt32> widths, heights;
     Dimensions output(0, 0);
     nsCOMPtr<sbIDevCapRange> range;
@@ -1102,7 +1102,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
   nsCOMPtr<nsISimpleEnumerator> sizeEnum;
   rv = explicitSizes->Enumerate(getter_AddRefs(sizeEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(rv = sizeEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = sizeEnum->GetNext(getter_AddRefs(supports));
@@ -1301,7 +1301,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetVideoProperties()
 nsresult
 sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcProps,
                                                               nsIWritablePropertyBag * aDstBag,
-                                                              PRBool aIsVideo)
+                                                              bool aIsVideo)
 {
   NS_ENSURE_ARG_POINTER(aSrcProps);
   NS_ENSURE_ARG_POINTER(aDstBag);
@@ -1311,7 +1311,7 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
   nsCOMPtr<nsISimpleEnumerator> propsEnum;
   rv = aSrcProps->Enumerate(getter_AddRefs(propsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool hasMore;
+  bool hasMore;
   while (NS_SUCCEEDED(rv = propsEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = propsEnum->GetNext(getter_AddRefs(supports));
@@ -1319,7 +1319,7 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
     nsCOMPtr<sbITranscodeProfileProperty> prop =
       do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    PRBool hidden;
+    bool hidden;
     rv = prop->GetHidden(&hidden);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hidden) {
@@ -1437,12 +1437,12 @@ sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvaila
   /* If we haven't already cached it, then figure out what we have */
 
   if (!mElementNames.IsInitialized()) {
-    PRBool initSuccess = mElementNames.Init();
+    bool initSuccess = mElementNames.Init();
     NS_ENSURE_TRUE(initSuccess, NS_ERROR_OUT_OF_MEMORY);
   }
 
   nsresult rv;
-  PRBool hasMoreElements;
+  bool hasMoreElements;
   nsCOMPtr<nsISimpleEnumerator> dirEnum;
 
   nsCOMPtr<nsIURI> profilesDirURI;

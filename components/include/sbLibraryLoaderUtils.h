@@ -74,7 +74,7 @@ SB_LoadLibraries(nsIFile* aManifest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCString line;
-  PRBool moreLines;
+  bool moreLines;
   do {
     rv = lis->ReadLine(line, &moreLines);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -121,7 +121,7 @@ SB_LoadLibraries(nsIFile* aManifest)
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
-      PRBool success;
+      bool success;
 
 #ifdef PR_LOGGING
       {

@@ -29,7 +29,6 @@
 #include "sbMediacoreFactoryWrapper.h"
 
 #include <nsThreadUtils.h>
-#include <sbProxiedComponentManager.h>
 
 /**
  * To log this module, set the following environment variable:

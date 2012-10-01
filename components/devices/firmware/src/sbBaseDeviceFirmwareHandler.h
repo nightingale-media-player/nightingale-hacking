@@ -119,14 +119,14 @@ public:
   /**
    * \brief Send a device event
    */
-  nsresult SendDeviceEvent(sbIDeviceEvent *aEvent, PRBool aAsync = PR_TRUE);
+  nsresult SendDeviceEvent(sbIDeviceEvent *aEvent, bool aAsync = PR_TRUE);
 
   /**
    * \brief Send a device event
    */
   nsresult SendDeviceEvent(PRUint32 aType,
                            nsIVariant *aData,
-                           PRBool aAsync = PR_TRUE);
+                           bool aAsync = PR_TRUE);
 
   /**
    * \brief Set internal state
@@ -157,7 +157,7 @@ public:
   // override me, see cpp file for implementation notes
   virtual nsresult OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion);
   // override me, see cpp file for implementation notes
-  virtual nsresult OnGetRecoveryMode(PRBool *aRecoveryMode);
+  virtual nsresult OnGetRecoveryMode(bool *aRecoveryMode);
 
   // override me, see cpp file for implementation notes
   virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
@@ -173,7 +173,7 @@ public:
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRUint32 aDeviceVendorID,
                                PRUint32 aDeviceProductID,
-                               PRBool *_retval);
+                               bool *_retval);
   // override me, see cpp file for implementation notes
   virtual nsresult OnBeginRecoveryModeSwitch(PRUint32 aDeviceVendorID,
                                              PRUint32 aDeviceProductID);
@@ -182,7 +182,7 @@ public:
   // override me, see cpp file for implementation notes
   virtual nsresult OnRebind(sbIDevice *aDevice,
                             sbIDeviceEventListener *aListener,
-                            PRBool *_retval);
+                            bool *_retval);
   // override me, see cpp file for implementation notes
   virtual nsresult OnCancel();
   // override me, see cpp file for implementation notes

@@ -118,7 +118,7 @@ ParseAndAddChunk(const nsAString& aString,
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    PRBool success = aMap.Put(NS_ConvertUTF8toUTF16(unescapedNameUtf8),
+    bool success = aMap.Put(NS_ConvertUTF8toUTF16(unescapedNameUtf8),
                               NS_ConvertUTF8toUTF16(unescapedValueUtf8));
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
@@ -325,7 +325,7 @@ sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
   nsresult rv;
 
   sbStringMap map;
-  PRBool success = map.Init();
+  bool success = map.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = map.Put(NS_LITERAL_STRING("property"), mPropertyID);
@@ -739,7 +739,7 @@ sbLocalDatabaseSmartMediaList::SetSelectPropertyID(const nsAString& aSelectPrope
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::GetSelectDirection(PRBool* aSelectDirection)
+sbLocalDatabaseSmartMediaList::GetSelectDirection(bool* aSelectDirection)
 {
   NS_ENSURE_ARG_POINTER(aSelectDirection);
 
@@ -749,7 +749,7 @@ sbLocalDatabaseSmartMediaList::GetSelectDirection(PRBool* aSelectDirection)
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::SetSelectDirection(PRBool aSelectDirection)
+sbLocalDatabaseSmartMediaList::SetSelectDirection(bool aSelectDirection)
 {
   nsAutoMonitor monitor(mConditionsMonitor);
   mSelectDirection = aSelectDirection;
@@ -761,7 +761,7 @@ sbLocalDatabaseSmartMediaList::SetSelectDirection(PRBool aSelectDirection)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::GetRandomSelection(PRBool* aRandomSelection)
+sbLocalDatabaseSmartMediaList::GetRandomSelection(bool* aRandomSelection)
 {
   NS_ENSURE_ARG_POINTER(aRandomSelection);
 
@@ -771,7 +771,7 @@ sbLocalDatabaseSmartMediaList::GetRandomSelection(PRBool* aRandomSelection)
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::SetRandomSelection(PRBool aRandomSelection)
+sbLocalDatabaseSmartMediaList::SetRandomSelection(bool aRandomSelection)
 {
   nsAutoMonitor monitor(mConditionsMonitor);
   mRandomSelection = aRandomSelection;
@@ -783,7 +783,7 @@ sbLocalDatabaseSmartMediaList::SetRandomSelection(PRBool aRandomSelection)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::GetAutoUpdate(PRBool* aAutoUpdate)
+sbLocalDatabaseSmartMediaList::GetAutoUpdate(bool* aAutoUpdate)
 {
   NS_ENSURE_ARG_POINTER(aAutoUpdate);
 
@@ -793,7 +793,7 @@ sbLocalDatabaseSmartMediaList::GetAutoUpdate(PRBool* aAutoUpdate)
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::SetAutoUpdate(PRBool aAutoUpdate)
+sbLocalDatabaseSmartMediaList::SetAutoUpdate(bool aAutoUpdate)
 {
   nsAutoMonitor monitor(mAutoUpdateMonitor);
   mAutoUpdate = aAutoUpdate;
@@ -1511,7 +1511,7 @@ sbLocalDatabaseSmartMediaList::GetRollingLimit(const nsAString& aSql,
 #include <stdio.h>
 nsresult
 sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aCondition,
-                                                     PRBool aAddOrderBy,
+                                                     bool aAddOrderBy,
                                                      nsAString& _retval)
 {
   nsresult rv;
@@ -1544,14 +1544,14 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
+  bool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
 
   rv = builder->SetBaseTableName(kMediaItems);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString mediaColumn;
   nsAutoString joinTable;
-  PRBool bIsMediaListMatch;
+  bool bIsMediaListMatch;
   
   bIsMediaListMatch = aCondition->mPropertyID.EqualsLiteral(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST);
   
@@ -1804,10 +1804,10 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   nsresult rv;
 
   // Get some stuff about the property
-  PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
+  bool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
   nsAutoString columnName;
 
-  PRBool bNeedOrIsNull;
+  bool bNeedOrIsNull;
   rv = GetConditionNeedsNull(aCondition, aInfo, bNeedOrIsNull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1860,7 +1860,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     leftValue = aCondition->mLeftValue;
   }
 
-  PRBool bNumericCondition = PR_FALSE;
+  bool bNumericCondition = PR_FALSE;
   if (aCondition->mPropertyID.EqualsLiteral(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST)) {
     columnName.Assign(kMediaItem);
     
@@ -1874,7 +1874,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     bNumericCondition = PR_TRUE;
   }
 
-  PRBool invertRange = PR_FALSE;
+  bool invertRange = PR_FALSE;
   
   rightValue = aCondition->mRightValue;
   
@@ -2215,7 +2215,7 @@ nsresult sbLocalDatabaseSmartMediaList::MediaListGuidToDB(nsAString &val, PRUint
 nsresult
 sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aCondition,
                                                      sbIPropertyInfo* aInfo,
-                                                     PRBool &bNeedIsNull)
+                                                     bool &bNeedIsNull)
 {
   nsresult rv;
   
@@ -2263,10 +2263,10 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
     }
   }
   
-  PRBool bIsEmpty = value.IsEmpty();
+  bool bIsEmpty = value.IsEmpty();
 
   PRInt64 fValue;
-  PRBool bIsNumber = PR_TRUE;
+  bool bIsNumber = PR_TRUE;
   rv = ScanfInt64(value, &fValue);
   if (rv != NS_OK) {
     fValue = 0;
@@ -2376,7 +2376,7 @@ sbLocalDatabaseSmartMediaList::CreateQueries()
 nsresult
 sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuilder,
                                                       const nsAString& aBaseTableAlias,
-                                                      PRBool aAddOrderBy)
+                                                      bool aAddOrderBy)
 {
   NS_ENSURE_ARG_POINTER(aBuilder);
 
@@ -2789,7 +2789,7 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   nsAutoMonitor monitor(mConditionsMonitor);
 
   sbStringMap map;
-  PRBool success = map.Init();
+  bool success = map.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   // Set up the defaults
@@ -2940,7 +2940,7 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
   PRUint32 count = mConditions.Length();
 
   sbStringMap map;
-  PRBool success = map.Init();
+  bool success = map.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString match;
@@ -3025,7 +3025,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemAdded(sbIMediaList* aMediaList,
                                            sbIMediaItem* aMediaItem,
                                            PRUint32 aIndex,
-                                           PRBool* aNoMoreForBatch)
+                                           bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -3040,7 +3040,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
                                                    sbIMediaItem* aMediaItem,
                                                    PRUint32 aIndex,
-                                                   PRBool* aNoMoreForBatch)
+                                                   bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -3051,12 +3051,12 @@ sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
   nsresult rv = GetLibrary(getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isOurLibrary;
+  bool isOurLibrary;
   rv = aMediaList->Equals(library, &isOurLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Is this notification about this smart media list?
-  PRBool isThis;
+  bool isThis;
   rv = aMediaItem->Equals(mItem, &isThis);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3083,7 +3083,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
                                                   sbIMediaItem* aMediaItem,
                                                   PRUint32 aIndex,
-                                                  PRBool* aNoMoreForBatch)
+                                                  bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -3098,7 +3098,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemUpdated(sbIMediaList* aMediaList,
                                              sbIMediaItem* aMediaItem,
                                              sbIPropertyArray* aProperties,
-                                             PRBool* aNoMoreForBatch)
+                                             bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -3114,7 +3114,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnItemMoved(sbIMediaList* aMediaList,
                                            PRUint32 aFromIndex,
                                            PRUint32 aToIndex,
-                                           PRBool* aNoMoreForBatch)
+                                           bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -3126,8 +3126,8 @@ sbLocalDatabaseSmartMediaList::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                                   PRBool aExcludeLists,
-                                                   PRBool* aNoMoreForBatch)
+                                                   bool aExcludeLists,
+                                                   bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -3139,8 +3139,8 @@ sbLocalDatabaseSmartMediaList::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnListCleared(sbIMediaList* aMediaList,
-                                             PRBool aExcludeLists,
-                                             PRBool* aNoMoreForBatch)
+                                             bool aExcludeLists,
+                                             bool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);

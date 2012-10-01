@@ -27,7 +27,7 @@
 * \brief Songbird GStreamer Mediacore Module Factory and Main Entry Point.
 */
 
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include "sbGStreamerMediacoreCID.h"
 #include "sbGStreamerMediacoreFactory.h"

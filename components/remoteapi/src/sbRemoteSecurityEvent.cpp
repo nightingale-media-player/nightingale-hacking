@@ -134,7 +134,7 @@ NS_IMETHODIMP sbRemoteSecurityEvent::InitEvent( nsIDOMEvent* aEvent,
                                                 nsIURI *aScopeURI,
                                                 const nsAString& aSecurityCategory,
                                                 const nsAString& aSecurityCategoryID,
-                                                PRBool aHasAccessToCategory )
+                                                bool aHasAccessToCategory )
 {
   NS_ENSURE_ARG_POINTER( aEvent );
   NS_ENSURE_ARG_POINTER( aScopeURI );
@@ -182,7 +182,7 @@ NS_IMETHODIMP sbRemoteSecurityEvent::GetCategoryID(nsAString & aCategoryID)
 }
 
 /* attribute boolean hasAccess; */
-NS_IMETHODIMP sbRemoteSecurityEvent::GetHasAccess(PRBool *aHasAccess)
+NS_IMETHODIMP sbRemoteSecurityEvent::GetHasAccess(bool *aHasAccess)
 {
   NS_ENSURE_ARG_POINTER(aHasAccess);
   *aHasAccess = mHasAccess;
@@ -195,7 +195,7 @@ sbRemoteSecurityEvent::InitSecurityEvent(nsIDOMDocument *aDoc,
                                          nsIURI *aSiteScope, 
                                          const nsAString & aCategory, 
                                          const nsAString & aCategoryID, 
-                                         PRBool aHasAccess)
+                                         bool aHasAccess)
 {
   NS_ENSURE_ARG_POINTER(aSiteScope);
   
@@ -249,6 +249,6 @@ sbRemoteSecurityEvent::InitSecurityEvent(nsIDOMDocument *aDoc,
 
 FORWARD_NSIPRIVATEDOMEVENT(DuplicatePrivateData, , , nsresult, rv)
 FORWARD_NSIPRIVATEDOMEVENT(SetTarget, nsIDOMEventTarget*, aTarget, nsresult, rv)
-FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, , , PRBool, PR_FALSE)
+FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, , , bool, PR_FALSE)
 FORWARD_NSIPRIVATEDOMEVENT(GetInternalNSEvent, , , nsEvent*, nsnull)
-FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, PRBool, aTrusted, nsresult, rv)
+FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, bool, aTrusted, nsresult, rv)

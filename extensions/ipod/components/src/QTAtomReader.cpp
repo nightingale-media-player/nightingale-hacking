@@ -470,7 +470,7 @@ QTAtomReader::AtomGet(PRUint32  aAtomType,
   PRUint64 endOffset = *aEndOffset;
 
   // Search for the specified atom.
-  PRBool found = PR_FALSE;
+  bool found = PR_FALSE;
   while (offset < endOffset) {
     // Seek to the current offset.
     rv = mSeekableStream->Seek(nsISeekableStream::NS_SEEK_SET, offset);

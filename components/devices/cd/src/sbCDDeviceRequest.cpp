@@ -39,12 +39,10 @@
 #include <sbITranscodeAlbumArt.h>
 #include <sbLibraryUtils.h>
 #include <sbPrefBranch.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
 #include <sbStringUtils.h>
 #include <sbMemoryUtils.h>
-#include <sbProxiedComponentManager.h>
 #include <sbStatusPropertyValue.h>
 #include <sbDeviceStatusHelper.h>
 #include <sbTranscodeProgressListener.h>
@@ -61,7 +59,6 @@
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
 #include <nsILocalFile.h>
-#include <nsIProxyObjectManager.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
@@ -82,7 +79,7 @@
 //                             item.
 //
 
-SB_AUTO_NULL_CLASS(sbCDAutoFalse, PRBool*, *mValue = PR_FALSE);
+SB_AUTO_NULL_CLASS(sbCDAutoFalse, bool*, *mValue = PR_FALSE);
 SB_AUTO_CLASS2(sbCDAutoIgnoreItem,
                sbCDDevice*,
                sbIMediaItem*,
@@ -105,7 +102,7 @@ public:
     // Only lock the device if it isn't already locked.
     if (mCDDevice) {
       nsresult rv;
-      PRBool isLocked = PR_FALSE;
+      bool isLocked = PR_FALSE;
       rv = mCDDevice->GetIsDeviceLocked(&isLocked);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
           "Could not get the device lock state!");
@@ -127,7 +124,7 @@ public:
     // Only unlock the device if it is already locked.
     if (mCDDevice) {
       nsresult rv;
-      PRBool isLocked = PR_FALSE;
+      bool isLocked = PR_FALSE;
       rv = mCDDevice->GetIsDeviceLocked(&isLocked);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
           "Could not get the device lock state!");
@@ -182,7 +179,7 @@ sbCDDevice::ProcessBatch(Batch & aBatch)
     // Check for abort.
     if (IsRequestAborted()) {
 
-      PRBool isDeviceLocked = PR_FALSE;
+      bool isDeviceLocked = PR_FALSE;
       rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
       NS_ENSURE_SUCCESS(rv, rv);
       if (isDeviceLocked) {
@@ -245,11 +242,11 @@ sbCDDevice::ProcessBatch(Batch & aBatch)
     }
   }
 
-  PRBool isAborted = (rv == NS_ERROR_ABORT);
+  bool isAborted = (rv == NS_ERROR_ABORT);
 
   // If the device is currently locked, unlock it here.
   // Always unlock before checking the result of the read request.
-  PRBool isDeviceLocked = PR_FALSE;
+  bool isDeviceLocked = PR_FALSE;
   rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
   NS_ENSURE_SUCCESS(rv, rv);
   if (isDeviceLocked) {
@@ -653,7 +650,7 @@ sbCDDevice::ProxyCDLookup() {
 nsresult
 sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
                                      nsISimpleEnumerator *aLookupResultsEnum,
-                                     PRBool aShouldReportEvents)
+                                     bool aShouldReportEvents)
 {
   NS_ENSURE_ARG_POINTER(aLookupDialogURI);
 
@@ -767,7 +764,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
 
     // There is only one returned item, so no need to loop through the
     // enumerator here.
-    PRBool hasMore = PR_FALSE;
+    bool hasMore = PR_FALSE;
     rv = metadataResultsEnum->HasMoreElements(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(hasMore, NS_ERROR_UNEXPECTED);
@@ -856,7 +853,7 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
   // If the device library album name is unknown, set the device friendly name
   // to the default album name.
   nsAutoString albumName;
-  PRBool       albumNameUnknown = PR_FALSE;
+  bool       albumNameUnknown = PR_FALSE;
   rv = mDeviceLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                                    albumName);
   if ((rv == NS_ERROR_NOT_AVAILABLE) || albumName.IsEmpty()) {
@@ -1210,7 +1207,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Wait until the transcode job is complete.
-  PRBool isComplete = PR_FALSE;
+  bool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
     nsAutoMonitor monitor(stopWaitMonitor);
@@ -1243,7 +1240,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest, PRUint32 aBatchCount)
 
     // Log each error.
     if (NS_SUCCEEDED(rv)) {
-      PRBool hasMore;
+      bool hasMore;
       rv = errorMessageEnum->HasMore(&hasMore);
       if (NS_FAILED(rv))
         hasMore = PR_FALSE;

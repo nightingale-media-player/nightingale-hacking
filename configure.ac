@@ -821,15 +821,10 @@ case "$SB_PLATFORM" in
 
     MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -EHsc -Zi -c"
 
-    if test "$_CC_SUITE" -ge "8"; then
-      # MSVC 8+ use native wchar_t, but Mozilla builds without it
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
-    fi
-
     if test "$enable_debug" = "yes"; then
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Od -RTC1 -RTCc"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Od -RTC1 -RTCc -MDd"
     else
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Ox"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Ox -MD"
     fi
 
     if test "$enable_debug" == "yes"; then
@@ -850,13 +845,7 @@ case "$SB_PLATFORM" in
     fi
 
     if test "$SB_USE_JEMALLOC" == "1"; then
-      if test "$enable_debug" == "yes"; then
-        MOZ_CRT_DLL_NAME="mozcrt19d"
-      else
-        MOZ_CRT_DLL_NAME="mozcrt19"
-      fi
-
-      MSVC_DLL_LINKER_FLAGS="-NODEFAULTLIB:MSVCRT -NODEFAULTLIB:MSVCRTD -NODEFAULTLIB:LIBCMT -NODEFAULTLIB:LIBCMTD -DEFAULTLIB:$MOZ_CRT_DLL_NAME"
+      MSVC_DLL_LINKER_FLAGS=""
     fi
 
     CFLAGS="$CFLAGS $MSVC_COMPILER_FLAGS -TC"
@@ -1314,7 +1303,7 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #
 
 . ${srcdir}/allmakefiles.sh
-echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla-1.9.2/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
+echo $MAKEFILES | ${PERL} $srcdir/$SB_DEPENDENCIES_DIR/mozilla-15.0.1/$SB_CONFIGURATION/scripts/acoutput-fast.pl --srcdir=${srcdir} > ./conftest.sh
 . ./conftest.sh
 rm -f ./conftest.sh
 

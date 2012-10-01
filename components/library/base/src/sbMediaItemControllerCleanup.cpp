@@ -44,7 +44,6 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaItemController.h>
 
-#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringAPI.h>
@@ -54,7 +53,6 @@
 #include <sbDebugUtils.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
-#include <sbProxiedComponentManager.h>
 
 #include <algorithm>
 
@@ -217,7 +215,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
     nsCOMPtr<nsISimpleEnumerator> libs;
     rv = libManager->GetLibraries(getter_AddRefs(libs));
     NS_ENSURE_SUCCESS(rv, rv);
-    PRBool hasLib;
+    bool hasLib;
     while (NS_SUCCEEDED(libs->HasMoreElements(&hasLib)) && hasLib) {
       nsCOMPtr<nsISupports> supports;
       rv = libs->GetNext(getter_AddRefs(supports));
@@ -284,7 +282,7 @@ sbMediaItemControllerCleanup::Run()
     rv = ProcessLibraries();
   }
 
-  PRBool complete = true;
+  bool complete = true;
   { /* scope */
     nsAutoLock lock(mLock);
     mListener = nsnull;
@@ -533,7 +531,7 @@ sbMediaItemControllerCleanup::OnLibraryUnregistered(sbILibrary *aLibrary)
   
   if (mListener) {
     nsCOMPtr<sbIMediaList> list = mListener->GetMediaList();
-    PRBool equals;
+    bool equals;
     if (list && NS_SUCCEEDED(list->Equals(aLibrary, &equals)) && equals) {
       mListener->Stop();
     }
@@ -569,7 +567,7 @@ sbMediaItemControllerCleanup::EnsureAvailableTypes()
   rv = registrar->EnumerateContractIDs(getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasMore;
+  bool hasMore;
   NS_NAMED_LITERAL_CSTRING(CONTRACT_PREFIX,
                            SB_MEDIAITEMCONTROLLER_PARTIALCONTRACTID);
   while (NS_SUCCEEDED(enumerator->HasMoreElements(&hasMore)) && hasMore) {

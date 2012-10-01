@@ -58,7 +58,7 @@ interface sbIMediaFormatContainer : nsISupports {
 #define SB_MEDIAFORMATCONTAINER_CID            \
   {0xcc3e80f3, 0x9dc4, 0x4f4f, {0xac, 0x17, 0xa7, 0x7e, 0xc3, 0xe6, 0x48, 0xc2}}
 
-%};
+%}
 
 /**
  * This interface is used to describe a video format
@@ -118,7 +118,7 @@ interface sbIMediaFormatVideo : nsISupports {
 #define SB_MEDIAFORMATVIDEO_CID            \
   {0x4b2257a8, 0xb60b, 0x4f5b, {0xab, 0xf1, 0x66, 0x75, 0x06, 0x30, 0x3e, 0x9f}}
 
-%};
+%}
 
 /**
  * This interface describes an audio format for the media inspection service
@@ -163,7 +163,7 @@ interface sbIMediaFormatAudio : nsISupports {
 #define SB_MEDIAFORMATAUDIO_CID            \
   {0xd301cef6, 0x4200, 0x4aab, {0xaa, 0x08, 0x1a, 0x3e, 0xa2, 0x71, 0x68, 0xf7}}
 
-%};
+%}
 
 /**
  * This interface provides information about the format of a media item.
@@ -202,7 +202,7 @@ interface sbIMediaFormat : nsISupports
 #define SB_MEDIAFORMAT_CID            \
   {0x6f12ea87, 0x5c0e, 0x4a39, {0x88, 0x79, 0x52, 0xab, 0xfa, 0x47, 0x5c, 0x01}}
 
-%};
+%}
 
 /**
  * This is the interface to the media inspector service. It provides information
@@ -275,4 +275,4 @@ interface sbIMediaInspector : nsISupports
 #define SB_MEDIAINSPECTOR_CID               \
   {0xd1c2b7d2, 0x7b3b, 0x40a5, {0xa1, 0x58, 0x4e, 0x8b, 0x90, 0x61, 0xb1, 0x0b}}
 
-%};
+%}

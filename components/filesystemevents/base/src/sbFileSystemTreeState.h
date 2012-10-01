@@ -55,7 +55,7 @@ public:
 
   nsresult LoadTreeState(nsID & aSessionID,
                          nsString & aSessionAbsolutePath,
-                         PRBool *aIsRecursiveWatch,
+                         bool *aIsRecursiveWatch,
                          sbFileSystemNode **aOutRootNode);
 
   static nsresult DeleteSavedTreeState(const nsID & aSessionID);
@@ -71,7 +71,7 @@ protected:
                                sbNodeIDMap & aParentGuidMap);
 
   static nsresult GetTreeSessionFile(const nsID & aSessionID,
-                                     PRBool aShouldCreate,
+                                     bool aShouldCreate,
                                      nsIFile **aOutFile);
 
   nsresult GetTreeNodeCount(sbFileSystemNode *aRootNode,

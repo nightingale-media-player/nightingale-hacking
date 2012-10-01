@@ -90,7 +90,7 @@ sbClipboardHelper::CopyImageFromClipboard(nsAString  &aMimeType,
   }
   
   // Check the clipboard if it has one of those flavors
-  PRBool clipboardHasData = PR_FALSE;
+  bool clipboardHasData = PR_FALSE;
   rv = nsClipboard->HasDataMatchingFlavors(flavorTypes,
                                            flavorTypesLen,
                                            nsIClipboard::kGlobalClipboard,
@@ -248,7 +248,7 @@ sbClipboardHelper::PasteImageToClipboard(const nsACString &aMimeType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // check whether the system supports the selection clipboard or not.
-  PRBool selectionSupported;
+  bool selectionSupported;
   rv = clipboard->SupportsSelectionClipboard(&selectionSupported);
   NS_ENSURE_SUCCESS(rv, rv);
 

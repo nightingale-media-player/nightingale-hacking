@@ -58,7 +58,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
-#include <nsIGenericFactory.h>
+#include <mozilla/ModuleUtils.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
@@ -210,7 +210,7 @@ nsresult sbDeviceEventTesterRemovalHelper::AddAction(ACTION aAction)
   return mActions.AppendElement(aAction) ? NS_OK : NS_ERROR_FAILURE;
 }
 
-nsresult sbDeviceEventTesterRemovalHelper::SetFlag(PRUint32 aFlag, PRBool aSet)
+nsresult sbDeviceEventTesterRemovalHelper::SetFlag(PRUint32 aFlag, bool aSet)
 {
   return mFlags.Put(aFlag, aSet) ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
 }
@@ -224,7 +224,7 @@ NS_IMETHODIMP sbDeviceEventTesterRemovalHelper::OnDeviceEvent(sbIDeviceEvent *aE
   }
 
   nsresult rv;
-  PRBool succeeded;
+  bool succeeded;
 
   int length = mActions.Length();
 
@@ -253,13 +253,13 @@ NS_IMETHODIMP sbDeviceEventTesterRemovalHelper::OnDeviceEvent(sbIDeviceEvent *aE
       case ACTION_CHECK_FLAG:
         if (mActions[index].set) {
           // check flag, fail if false
-          PRBool value = PR_FALSE; // value is not touched for missing keys
+          bool value = PR_FALSE; // value is not touched for missing keys
           succeeded = mFlags.Get(mActions[index].flag, &value);
           NS_ENSURE_TRUE(value, NS_ERROR_ABORT);
         } else {
           // check flag, if not set, do the next (n) actions
           // if set, do the rest
-          PRBool value = PR_FALSE; // value is not touched for missing keys
+          bool value = PR_FALSE; // value is not touched for missing keys
           succeeded = mFlags.Get(mActions[index].flag, &value);
           if (value) {
             // skip next (n) actions

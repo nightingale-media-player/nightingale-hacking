@@ -35,7 +35,6 @@
 #include <nsThreadUtils.h>
 
 // Songbird includes
-#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbLocalDatabaseMediaItem.h>
 
@@ -98,7 +97,7 @@ sbMediaListEnumeratorWrapper::Initialize(
 
 // nsISimpleEnumerator implementation
 NS_IMETHODIMP
-sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
+sbMediaListEnumeratorWrapper::HasMoreElements(bool *aMore)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mEnumerator, NS_ERROR_NOT_INITIALIZED);

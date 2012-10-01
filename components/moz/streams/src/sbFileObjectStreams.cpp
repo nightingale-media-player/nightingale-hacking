@@ -84,7 +84,7 @@ sbFileObjectOutputStream::InitWithFile(nsIFile *aStreamedFile)
 
 nsresult
 sbFileObjectOutputStream::WriteObject(nsISupports *aSupports, 
-                                      PRBool aIsStrongRef)
+                                      bool aIsStrongRef)
 {
   NS_ENSURE_ARG_POINTER(aSupports);
 
@@ -128,7 +128,7 @@ sbFileObjectOutputStream::WriteUint32(PRUint32 aOutInt)
 }
 
 nsresult
-sbFileObjectOutputStream::WritePRBool(PRBool aBoolean)
+sbFileObjectOutputStream::Writebool(bool aBoolean)
 {
   if (!mFileStreamIsActive || !mObjectStreamIsActive) {
     return NS_ERROR_NOT_IMPLEMENTED;
@@ -230,7 +230,7 @@ sbFileObjectInputStream::InitWithFile(nsIFile *aStreamedFile)
 }
 
 nsresult
-sbFileObjectInputStream::ReadObject(PRBool aIsStrongRef, 
+sbFileObjectInputStream::ReadObject(bool aIsStrongRef, 
                                     nsISupports **aOutObject)
 {
   NS_ENSURE_ARG_POINTER(aOutObject);
@@ -287,7 +287,7 @@ sbFileObjectInputStream::ReadUint32(PRUint32 *aReadInt)
 }
 
 nsresult
-sbFileObjectInputStream::ReadPRBool(PRBool *aReadBoolean)
+sbFileObjectInputStream::Readbool(bool *aReadBoolean)
 {
   NS_ENSURE_ARG_POINTER(aReadBoolean);
 

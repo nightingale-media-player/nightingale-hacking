@@ -37,7 +37,6 @@
 #include <nsStringAPI.h>
 #include <nsIWritablePropertyBag.h>
 #include <nsInterfaceHashtable.h>
-#include <nsAutoLock.h>
 #include <nsIThread.h>
 
 
@@ -78,7 +77,7 @@ protected:
   //
   // @brief Find out if a device is already in the device hash.
   //
-  nsresult GetHasDevice(nsAString const & aName, PRBool *aOutHasDevice);
+  nsresult GetHasDevice(nsAString const & aName, bool *aOutHasDevice);
 
   //
   // @brief Find and add all the devices that have media already.
@@ -91,7 +90,7 @@ protected:
   nsresult CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
                                                nsIVariant *aData = nsnull,
                                                nsISupports *aOrigin = nsnull,
-                                               PRBool aAsync = PR_FALSE);
+                                               bool aAsync = PR_FALSE);
 
   //
   // @brief Internal method for discovering plugged in devices on a

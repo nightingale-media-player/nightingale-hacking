@@ -59,30 +59,30 @@ private:
                             const nsAString& aDisplayKey,
                             PRInt32 aType,
                             nsIStringBundle* aStringBundle,
-                            PRBool aUserViewable,
-                            PRBool aUserEditable,
-                            PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
+                            bool aUserViewable,
+                            bool aUserEditable,
+                            bool aRemoteReadable,
+                            bool aRemoteWritable);
 
   nsresult RegisterDuration(const nsAString& aPropertyID,
                             const nsAString& aDisplayKey,
                             nsIStringBundle* aStringBundle,
-                            PRBool aUserViewable,
-                            PRBool aUserEditable,
-                            PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
+                            bool aUserViewable,
+                            bool aUserEditable,
+                            bool aRemoteReadable,
+                            bool aRemoteWritable);
 
   nsresult RegisterNumber(const nsAString& aPropertyID,
                           const nsAString& aDisplayKey,
                           nsIStringBundle* aStringBundle,
-                          PRBool aUserViewable,
-                          PRBool aUserEditable,
+                          bool aUserViewable,
+                          bool aUserEditable,
                           PRInt32 aMinValue,
-                          PRBool aHasMinValue,
+                          bool aHasMinValue,
                           PRInt32 aMaxValue,
-                          PRBool aHasMaxValue,
-                          PRBool aRemoteReadable,
-                          PRBool aRemoteWritable,
+                          bool aHasMaxValue,
+                          bool aRemoteReadable,
+                          bool aRemoteWritable,
                           sbIPropertyUnitConverter *aConverter,
                           sbIPropertyArray* aSecondarySort = nsnull);
 
@@ -91,10 +91,10 @@ private:
                             const nsAString& aModePropertyID,
                             const nsAString& aModeDisplayKey,
                             nsIStringBundle* aStringBundle,
-                            PRBool aUserViewable,
-                            PRBool aUserEditable,
-                            PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
+                            bool aUserViewable,
+                            bool aUserEditable,
+                            bool aRemoteReadable,
+                            bool aRemoteWritable);
 
   // Register a property for the sbIPropertyInfo interface. Use this
   // registration for:
@@ -104,68 +104,68 @@ private:
   nsresult RegisterBlob(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
-                        PRBool aUserViewable,
-                        PRBool aUserEditable,
-                        PRBool aUsedInIdentity,
+                        bool aUserViewable,
+                        bool aUserEditable,
+                        bool aUsedInIdentity,
                         PRUint32 aNullSort,
-                        PRBool aHasNullSort,
-                        PRBool aRemoteReadable,
-                        PRBool aRemoteWritable);
+                        bool aHasNullSort,
+                        bool aRemoteReadable,
+                        bool aRemoteWritable);
 
   nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
-                        PRBool aUserViewable,
-                        PRBool aUserEditable,
-                        PRBool aUsedInIdentity,
+                        bool aUserViewable,
+                        bool aUserEditable,
+                        bool aUsedInIdentity,
                         PRUint32 aNullSort,
-                        PRBool aHasNullSort,
-                        PRBool aRemoteReadable,
-                        PRBool aRemoteWritable,
-                        PRBool aCompressWhitespace = PR_TRUE,
+                        bool aHasNullSort,
+                        bool aRemoteReadable,
+                        bool aRemoteWritable,
+                        bool aCompressWhitespace = PR_TRUE,
                         sbIPropertyArray* aSecondarySort = nsnull);
 
   nsresult RegisterURI(const nsAString& aPropertyID,
                        const nsAString& aDisplayKey,
                        nsIStringBundle* aStringBundle,
-                       PRBool aUserViewable,
-                       PRBool aUserEditable,
-                       PRBool aRemoteReadable,
-                       PRBool aRemoteWritable);
+                       bool aUserViewable,
+                       bool aUserEditable,
+                       bool aRemoteReadable,
+                       bool aRemoteWritable);
 
   nsresult RegisterImage(const nsAString& aPropertyID,
                          const nsAString& aDisplayKey,
                          nsIStringBundle* aStringBundle,
-                         PRBool aUserViewable,
-                         PRBool aUserEditable,
-                         PRBool aRemoteReadable,
-                         PRBool aRemoteWritable);
+                         bool aUserViewable,
+                         bool aUserEditable,
+                         bool aRemoteReadable,
+                         bool aRemoteWritable);
 
   nsresult RegisterBoolean(const nsAString &aPropertyID,
                            const nsAString &aDisplayKey,
                            nsIStringBundle* aStringBundle,
-                           PRBool aUserViewable,
-                           PRBool aUserEditable,
-                           PRBool aRemoteReadable,
-                           PRBool aRemoteWritable,
-                           PRBool aShouldSuppress = PR_TRUE);
+                           bool aUserViewable,
+                           bool aUserEditable,
+                           bool aRemoteReadable,
+                           bool aRemoteWritable,
+                           bool aShouldSuppress = PR_TRUE);
 
   nsresult RegisterImageLink(const nsAString &aPropertyID,
                              const nsAString &aDisplayKey,
                              nsIStringBundle* aStringBundle,
-                             PRBool aUserViewable,
-                             PRBool aUserEditable,
-                             PRBool aRemoteReadable,
-                             PRBool aRemoteWritable,
+                             bool aUserViewable,
+                             bool aUserEditable,
+                             bool aRemoteReadable,
+                             bool aRemoteWritable,
                              const nsAString &aUrlPropertyID);
 
   nsresult RegisterTrackTypeImageLabel(const nsAString& aPropertyID,
                                        const nsAString& aDisplayKey,
                                        nsIStringBundle* aStringBundle,
-                                       PRBool aUserViewable,
-                                       PRBool aUserEditable,
-                                       PRBool aRemoteReadable,
-                                       PRBool aRemoteWritable,
+                                       bool aUserViewable,
+                                       bool aUserEditable,
+                                       bool aRemoteReadable,
+                                       bool aRemoteWritable,
                                        const nsAString &aUrlPropertyID);
 
   nsresult RegisterDummy(sbDummyPropertyInfo *aDummyProperty,
@@ -174,8 +174,8 @@ private:
                          nsIStringBundle* aStringBundle);
 
   nsresult SetRemoteAccess(sbIPropertyInfo* aProperty,
-                           PRBool aRemoteReadable,
-                           PRBool aRemoteWritable);
+                           bool aRemoteReadable,
+                           bool aRemoteWritable);
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
 

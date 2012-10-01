@@ -61,7 +61,7 @@ sbDummyPropertyInfo::Init() {
 }
 
 NS_IMETHODIMP 
-sbDummyPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
+sbDummyPropertyInfo::Validate(const nsAString & aValue, bool *_retval)
 {
   *_retval = PR_TRUE;
   return NS_OK;

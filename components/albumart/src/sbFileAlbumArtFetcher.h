@@ -155,7 +155,7 @@ private:
   //
 
   nsresult GetURLDirEntries(nsIURL*               aURL,
-                            PRBool*               aIsLocalFile,
+                            bool*               aIsLocalFile,
                             nsISimpleEnumerator** aDirEntries);
 
   nsresult FindAlbumArtFile(sbIMediaItem*        aMediaItem,

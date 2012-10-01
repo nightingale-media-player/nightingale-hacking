@@ -157,7 +157,7 @@ sbWindowMoveService::CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
   return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-PRBool 
+bool 
 sbWindowMoveService::IsHooked(HWND aWnd)
 {
   NS_ENSURE_ARG_POINTER(aWnd);

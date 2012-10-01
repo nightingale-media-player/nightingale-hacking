@@ -217,7 +217,7 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
   mSort = do_QueryInterface(supports, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasSearch;
+  bool hasSearch;
   rv = aStream->ReadBoolean(&hasSearch);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -228,7 +228,7 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool hasFilter;
+  bool hasFilter;
   rv = aStream->ReadBoolean(&hasFilter);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -248,7 +248,7 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
   rv = mSelection->Read(aStream);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasFilterSet;
+  bool hasFilterSet;
   rv = aStream->ReadBoolean(&hasFilterSet);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -260,7 +260,7 @@ sbLocalDatabaseMediaListViewState::Read(nsIObjectInputStream* aStream)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool hasTreeViewState;
+  bool hasTreeViewState;
   rv = aStream->ReadBoolean(&hasTreeViewState);
   NS_ENSURE_SUCCESS(rv, rv);
 

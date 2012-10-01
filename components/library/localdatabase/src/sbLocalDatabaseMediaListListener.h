@@ -63,7 +63,7 @@ public:
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
   
-  PRBool ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties = nsnull);
+  bool ShouldNotify(PRUint32 aFlag, sbIPropertyArray* aProperties = nsnull);
 
   void BeginBatch();
   void EndBatch();
@@ -74,12 +74,12 @@ private:
 
   nsresult InitPropertyFilter(sbIPropertyArray* aPropertyFilter);
 
-  PRBool mIsGone;
+  bool mIsGone;
   nsCOMPtr<nsISupports> mRef;
   nsCOMPtr<nsIWeakReference> mWeak;
   nsCOMPtr<sbIMediaListListener> mProxy;
   PRUint32 mFlags;
-  PRBool mHasPropertyFilter;
+  bool mHasPropertyFilter;
   nsTHashtable<nsStringHashKey> mPropertyFilter;
   nsTArray<PRUint32> mStopNotifiyingStack;
   nsString mDebugAddress;
@@ -119,14 +119,14 @@ class sbLocalDatabaseMediaListListener
   struct StopNotifyFlags {
     StopNotifyFlags(sbIMediaListListener* aListener,
                     PRUint32 aListenerFlags,
-                    PRBool aIsGone) :
+                    bool aIsGone) :
       listener(aListener),
       listenerFlags(aListenerFlags),
       isGone(aIsGone)
     {}
     nsCOMPtr<sbIMediaListListener> listener;
     PRUint32 listenerFlags;
-    PRBool isGone;
+    bool isGone;
   };
 
   typedef nsTArray<ListenerAndDebugAddress> sbMediaListListenersArray;
@@ -144,7 +144,7 @@ protected:
   // Add a listener to the array
   nsresult AddListener(sbLocalDatabaseMediaListBase* aList,
                        sbIMediaListListener* aListener,
-                       PRBool aOwnsWeak = PR_FALSE,
+                       bool aOwnsWeak = PR_FALSE,
                        PRUint32 aFlags = sbIMediaList::LISTENER_FLAGS_ALL,
                        sbIPropertyArray* aPropertyFilter = nsnull);
 
@@ -182,11 +182,11 @@ protected:
 
   // Enumerate listeners and call OnBeforeListCleared
   void NotifyListenersBeforeListCleared(sbIMediaList* aList,
-                                        PRBool        aExcludeLists);
+                                        bool        aExcludeLists);
 
   // Enumerate listeners and call OnListCleared
   void NotifyListenersListCleared(sbIMediaList* aList,
-                                  PRBool        aExcludeLists);
+                                  bool        aExcludeLists);
 
   // Enumerate listeners and call OnBatchBegin
   void NotifyListenersBatchBegin(sbIMediaList* aList);

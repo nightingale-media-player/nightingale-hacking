@@ -72,18 +72,18 @@ public:
   
   struct ACTION {
     ACTION_TYPE type;
-    PRBool set;
+    bool set;
     nsCOMPtr<sbIDeviceEventListener> listener;
     PRUint32 flag;    // for set/check, which flag to use
     PRUint32 count;
 
-    ACTION(ACTION_TYPE aType, PRBool aSet, sbIDeviceEventListener* aListener)
+    ACTION(ACTION_TYPE aType, bool aSet, sbIDeviceEventListener* aListener)
      : type(aType),
        set(aSet),
        listener(aListener)
     {}
     
-    ACTION(ACTION_TYPE aType, PRBool aSet, PRUint32 aFlag, PRUint32 aCount)
+    ACTION(ACTION_TYPE aType, bool aSet, PRUint32 aFlag, PRUint32 aCount)
      : type(aType),
        set(aSet),
        flag(aFlag),
@@ -94,13 +94,13 @@ public:
   sbDeviceEventTesterRemovalHelper(const char aName);
   
   nsresult AddAction(ACTION_TYPE aType,
-                     PRBool aSet,
+                     bool aSet,
                      sbIDeviceEventListener* aListener)
   { return AddAction(ACTION(aType, aSet, aListener)); }
-  nsresult AddAction(ACTION_TYPE aType, PRBool aSet, int aFlag, int aCount)
+  nsresult AddAction(ACTION_TYPE aType, bool aSet, int aFlag, int aCount)
   { return AddAction(ACTION(aType, aSet, aFlag, aCount)); }
   nsresult AddAction(ACTION aAction);
-  nsresult SetFlag(PRUint32 aFlag, PRBool aSet);
+  nsresult SetFlag(PRUint32 aFlag, bool aSet);
 
 private:
   ~sbDeviceEventTesterRemovalHelper() {}
@@ -108,5 +108,5 @@ private:
 protected:
   char mName;
   nsTArray<ACTION> mActions;
-  nsDataHashtableMT<nsUint32HashKey, PRBool> mFlags;
+  nsDataHashtableMT<nsUint32HashKey, bool> mFlags;
 };

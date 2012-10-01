@@ -166,9 +166,9 @@ public:
     PRUint32 itemType;               /* Item type: Audio, Video... */
 
     /* Write request fields. */
-    PRBool contentSrcSet;            /* if true, the content source URI for the
+    bool contentSrcSet;            /* if true, the content source URI for the
                                         destination item has been set */
-    PRBool destinationMediaPresent;  /* if true, the destination media is
+    bool destinationMediaPresent;  /* if true, the destination media is
                                         present on the device (e.g., it's been
                                         copied or transcoded to the device) */
     /* This determines how much this item will be transferred onto the device */
@@ -178,7 +178,7 @@ public:
       COMPAT_NEEDS_TRANSCODING       /* this item needs to be transcoded */
     } CompatibilityType;
     CompatibilityType destinationCompatibility;
-    PRBool transcoded;               /* if true, write item media was
+    bool transcoded;               /* if true, write item media was
                                         transcoded */
     nsCOMPtr<sbITranscodeAlbumArt> albumArt; /* Album art transcoding object,
                                                 or null if no album art
@@ -196,13 +196,13 @@ public:
      * then this is not a playlist request. If list is set AND list is not a
      * sbILibrary then this is a playlist request.
      */
-    PRBool IsPlaylist() const;
+    bool IsPlaylist() const;
 
     /**
      * Returns PR_TRUE if the request should be counted as part of the batch,
      * otherwise returns PR_FALSE
      */
-    PRBool IsCountable() const;
+    bool IsCountable() const;
 
     static TransferRequest * New(PRUint32 aType,
                                  sbIMediaItem * aItem,
@@ -224,9 +224,9 @@ public:
   NS_IMETHOD Disconnect();
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
   NS_IMETHOD SetPreference(const nsAString & aPrefName, nsIVariant *aPrefValue);
-  NS_IMETHOD GetIsDirectTranscoding(PRBool *aIsDirect);
-  NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
-  NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
+  NS_IMETHOD GetIsDirectTranscoding(bool *aIsDirect);
+  NS_IMETHOD GetIsBusy(bool *aIsBusy);
+  NS_IMETHOD GetCanDisconnect(bool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
   NS_IMETHOD SetState(PRUint32 aState);
   NS_IMETHOD GetPreviousState(PRUint32 *aState);
@@ -237,7 +237,7 @@ public:
    */
   NS_IMETHOD Eject(void);
   NS_IMETHOD Format(void);
-  NS_IMETHOD GetSupportsReformat(PRBool *_retval);
+  NS_IMETHOD GetSupportsReformat(bool *_retval);
   NS_IMETHOD SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                sbIDeviceSupportsItemCallback* aCallback);
   NS_IMETHOD GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary);
@@ -325,7 +325,7 @@ public:
   nsresult SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
                                  const nsAString& aPrefName,
                                  nsIVariant*      aPrefValue,
-                                 PRBool*          aHasChanged);
+                                 bool*          aHasChanged);
 
   /**
    * Return true in aHasPreference if the device has the preference specified by
@@ -334,7 +334,7 @@ public:
    * @aHasPreference Returned true if device has preference.
    */
   nsresult HasPreference(nsAString& aPrefName,
-                         PRBool*    aHasPreference);
+                         bool*    aHasPreference);
 
   /**
    * Process this batch of requests
@@ -450,14 +450,14 @@ public:
   * the library for this device.
   * \param aIgnoreListener Ignore flag value.
   */
-  nsresult SetIgnoreMediaListListeners(PRBool aIgnoreListener);
+  nsresult SetIgnoreMediaListListeners(bool aIgnoreListener);
 
   /**
    * Set the ignore flag on all library listeners registered for the
    * library for this device
    * \param aIgnoreListener Ignore flag value.
    */
-  nsresult SetIgnoreLibraryListener(PRBool aIgnoreListener);
+  nsresult SetIgnoreLibraryListener(bool aIgnoreListener);
 
   /**
    * Set all media lists in the library hidden. This is useful
@@ -465,7 +465,7 @@ public:
    * \param aLibrary The library containing the media lists you wish to hide.
    * \param aHidden True to hide, false to show.
    */
-  nsresult SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden);
+  nsresult SetMediaListsHidden(sbIMediaList *aLibrary, bool aHidden);
 
   /**
    * Ignores events for the given media item
@@ -523,7 +523,7 @@ public:
    */
   nsresult CreateAndDispatchEvent(PRUint32 aType,
                                   nsIVariant *aData,
-                                  PRBool aAsync = PR_TRUE,
+                                  bool aAsync = PR_TRUE,
                                   sbIDeviceEventTarget* aTarget = nsnull);
 
   /**
@@ -538,7 +538,7 @@ public:
    */
   nsresult CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
                                                nsIVariant *aData,
-                                               PRBool aAsync = PR_TRUE);
+                                               bool aAsync = PR_TRUE);
 
   /**
    * Regenerate the Media URL when the media management service is enabled.
@@ -602,8 +602,8 @@ public:
     mEnsureSpaceChecked = aChecked;
   }
 
-  NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled);
-  NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval);
+  NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, bool aEnabled);
+  NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, bool *_retval);
   NS_SCRIPTABLE NS_IMETHOD ResetWarningDialogs(void);
   NS_SCRIPTABLE NS_IMETHOD OpenInputStream(nsIURI*          aURI,
                                            nsIInputStream** retval);
@@ -614,7 +614,7 @@ public:
    * the caller should not call this again for the current request if it returns
    * true
    */
-  virtual PRBool IsRequestAborted();
+  virtual bool IsRequestAborted();
 
   sbDeviceTranscoding * GetDeviceTranscoding() const {
     return mDeviceTranscoding;
@@ -725,13 +725,13 @@ protected:
   //                            for the device thread
 
   PRRWLock* mConnectLock;
-  PRBool mConnected;
+  bool mConnected;
   nsCOMPtr<nsITimer> mDeferredSetupDeviceTimer;
   nsRefPtr<sbDeviceRequestThreadQueue> mRequestThreadQueue;
 
   // cache data for media management preferences
   struct OrganizeData {
-    PRBool    organizeEnabled;
+    bool    organizeEnabled;
     nsCString dirFormat;
     nsCString fileFormat;
     OrganizeData() : organizeEnabled(PR_FALSE) {}
@@ -827,10 +827,10 @@ protected:
    */
   nsresult SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                              sbDeviceSupportsItemHelper*    aCallback,
-                             PRBool                         aReportErrors,
-                             PRBool*                        _retval);
+                             bool                         aReportErrors,
+                             bool*                        _retval);
 
-  nsDataHashtableMT<nsStringHashKey, PRBool> mTrackSourceTable;
+  nsDataHashtableMT<nsStringHashKey, bool> mTrackSourceTable;
 
   /**
    * Update the destination compatibility for the streaming items in the batch.
@@ -852,8 +852,8 @@ protected:
    * \param _retval       Returned true if DRM is supported.
    */
   virtual nsresult SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
-                                        PRBool        aReportErrors,
-                                        PRBool*       _retval);
+                                        bool        aReportErrors,
+                                        bool*       _retval);
 
   //----------------------------------------------------------------------------
   //
@@ -1079,7 +1079,7 @@ protected:
   /* Set a preference, not sending an event if the preference changed */
   nsresult SetPreferenceInternalNoNotify(const nsAString & aPrefName,
                                          nsIVariant *aPrefValue,
-                                         PRBool *aPrefChanged);
+                                         bool *aPrefChanged);
 
 
   /**
@@ -1100,7 +1100,7 @@ protected:
    * \param aPrefName           Name of preference.
    * \return                    True if preference is a library preference.
    */
-  PRBool GetIsLibraryPreference(const nsAString& aPrefName);
+  bool GetIsLibraryPreference(const nsAString& aPrefName);
 
   /**
    * Return in aLibrary, if not null, the library corresponding to the library
@@ -1265,8 +1265,8 @@ protected:
    * \param aAbort              Abort sync if true.
    */
   nsresult EnsureSpaceForSync(sbILibraryChangeset* aChangeset,
-                              PRBool*              aCapacityExceeded,
-                              PRBool*              aAbort);
+                              bool*              aCapacityExceeded,
+                              bool*              aAbort);
 
   /**
    * Create a random subset of sync items from the list specified by
@@ -1382,7 +1382,7 @@ protected:
    *
    * \param aEject [out, retval]  Should the device be ejected?
    */
-  nsresult PromptForEjectDuringPlayback(PRBool* aEject);
+  nsresult PromptForEjectDuringPlayback(bool* aEject);
 
   /**
    * Update locations of folders containing media.
@@ -1491,7 +1491,7 @@ protected:
    * WARNING: This method expects to be under the |mPreferenceLock| when called.
    */
   nsresult GetShouldLimitMusicSpace(const nsAString & aPrefBase,
-                                    PRBool *aOutShouldLimitSpace);
+                                    bool *aOutShouldLimitSpace);
 
   /**
    * Return the current limited music space as a percentage that the device's
@@ -1629,8 +1629,8 @@ protected:
    * \param aImportVideo Returns whether video should be imported
    */
   static nsresult GetImportSettings(sbIDeviceLibrary * aDevLibrary,
-                                    PRBool * aImportAudio,
-                                    PRBool * aImportVideo);
+                                    bool * aImportAudio,
+                                    bool * aImportVideo);
 
   /**
    * Copies media items to a media list for a media list change.

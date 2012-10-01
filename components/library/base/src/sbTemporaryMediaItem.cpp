@@ -129,7 +129,7 @@ sbTemporaryMediaItem::SetProperties(sbIPropertyArray* aProperties)
 
 NS_IMETHODIMP
 sbTemporaryMediaItem::Equals(sbILibraryResource* aOtherLibraryResource,
-                             PRBool*             _retval)
+                             bool*             _retval)
 {
   NS_ENSURE_ARG_POINTER(aOtherLibraryResource);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -214,7 +214,7 @@ sbTemporaryMediaItem::GetPropertyIDs(nsIStringEnumerator** aPropertyIDs)
 //
 
 NS_IMETHODIMP
-sbTemporaryMediaItem::GetUserEditable(PRBool* aUserEditable)
+sbTemporaryMediaItem::GetUserEditable(bool* aUserEditable)
 {
   NS_ENSURE_ARG_POINTER(aUserEditable);
   *aUserEditable = PR_FALSE;
@@ -313,7 +313,7 @@ sbTemporaryMediaItem::GetLibrary(sbILibrary** aLibrary)
 //
 
 NS_IMETHODIMP
-sbTemporaryMediaItem::GetIsMutable(PRBool* aIsMutable)
+sbTemporaryMediaItem::GetIsMutable(bool* aIsMutable)
 {
   NS_ENSURE_ARG_POINTER(aIsMutable);
   *aIsMutable = PR_FALSE;

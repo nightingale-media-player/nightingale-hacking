@@ -44,8 +44,8 @@ sbTestDummyMediacoreManager::~sbTestDummyMediacoreManager()
 
 NS_IMETHODIMP
 sbTestDummyMediacoreManager::DispatchEvent(sbIMediacoreEvent *aEvent,
-                                    PRBool aAsync,
-                                    PRBool* _retval)
+                                    bool aAsync,
+                                    bool* _retval)
 {
   return mBaseEventTarget ? mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) : NS_ERROR_NULL_POINTER;
 }

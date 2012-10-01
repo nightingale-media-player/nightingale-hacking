@@ -201,7 +201,7 @@ sbIPDSysDevice::Initialize()
                                              "volume.fstype",
                                              fstype);
   NS_ENSURE_SUCCESS(rv, rv);
-  PRBool readonly;
+  bool readonly;
   rv = mSBLibHalCtx->DeviceGetPropertyBool(mMediaPartUDI,
                                            "volume.is_mounted_read_only",
                                            &readonly);

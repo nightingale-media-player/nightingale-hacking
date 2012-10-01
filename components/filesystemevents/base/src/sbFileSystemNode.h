@@ -66,7 +66,7 @@ public:
   // \param aParentNode The parent node to assign to this node.
   //
   nsresult Init(const nsAString & aLeafName,
-                PRBool aIsDir,
+                bool aIsDir,
                 PRUint64 aLastModify);
  
   //
@@ -84,8 +84,8 @@ public:
   //
   // \brief Setters and getters for the directory flag of this node.
   //
-  nsresult SetIsDir(const PRBool aIsDir);
-  nsresult GetIsDir(PRBool *aIsDir);
+  nsresult SetIsDir(const bool aIsDir);
+  nsresult GetIsDir(bool *aIsDir);
   
   //
   // \brief Setters and getters of the last modification time stamp of
@@ -135,7 +135,7 @@ private:
   nsString                   mLeafName;
   PRUint32                   mID;
   PRUint32                   mParentID;
-  PRBool                     mIsDir;
+  bool                     mIsDir;
   PRInt64                    mLastModify;
 };
 

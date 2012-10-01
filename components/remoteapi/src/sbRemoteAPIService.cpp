@@ -100,7 +100,7 @@ sbRemoteAPIService::Init()
 }
 
 NS_IMETHODIMP
-sbRemoteAPIService::HasPlaybackControl(nsIURI *aURI, PRBool *_retval)
+sbRemoteAPIService::HasPlaybackControl(nsIURI *aURI, bool *_retval)
 {
   NS_ENSURE_ARG(aURI);
   NS_ENSURE_ARG(_retval);

@@ -72,8 +72,8 @@ protected:
   nsCOMPtr<imgIRequest> mRequest;
   nsCOMPtr<nsIDOMEventTarget> mEventTarget;
   void DispatchEvent(const nsAString& aType, PRUint16 aButton, PRInt32 aDetail,
-                     PRBool aCtrlKey, PRBool aAltKey,
-                     PRBool aShiftKey, PRBool aMetaKey);
+                     bool aCtrlKey, bool aAltKey,
+                     bool aShiftKey, bool aMetaKey);
 };
 
 #endif /* nsSystemTrayIconBase_h__ */

@@ -142,7 +142,7 @@ sbTranscodingConfigurator::GetMuxer(nsAString &aMuxer)
  * \brief Returns whether a muxer is being used.
  */
 NS_IMETHODIMP
-sbTranscodingConfigurator::GetUseMuxer(PRBool *aUseMuxer)
+sbTranscodingConfigurator::GetUseMuxer(bool *aUseMuxer)
 {
   NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);
@@ -164,7 +164,7 @@ sbTranscodingConfigurator::GetFileExtension(nsACString & aFileExtension)
  * \brief Returns whether an audio encoder is being used.
  */
 NS_IMETHODIMP
-sbTranscodingConfigurator::GetUseAudioEncoder(PRBool *aUseAudioEncoder)
+sbTranscodingConfigurator::GetUseAudioEncoder(bool *aUseAudioEncoder)
 {
   NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);
@@ -190,7 +190,7 @@ sbTranscodingConfigurator::GetAudioEncoder(nsAString &aAudioEncoder)
  * \brief Returns whether an audio encoder is being used.
  */
 NS_IMETHODIMP
-sbTranscodingConfigurator::GetUseVideoEncoder(PRBool *aUseVideoEncoder)
+sbTranscodingConfigurator::GetUseVideoEncoder(bool *aUseVideoEncoder)
 {
   NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);

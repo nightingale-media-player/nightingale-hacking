@@ -116,7 +116,7 @@ sbiTunesImporterJob::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
-sbiTunesImporterJob::GetBlocked(PRBool *aBlocked)
+sbiTunesImporterJob::GetBlocked(bool *aBlocked)
 {
   NS_ENSURE_ARG_POINTER(aBlocked);
   *aBlocked = PR_FALSE;
@@ -182,7 +182,7 @@ NS_IMETHODIMP
 sbiTunesImporterJob::AddJobProgressListener(sbIJobProgressListener *aListener)
 {
   if (mListeners.IndexOfObject(aListener) == -1) {
-    PRBool const inserted = mListeners.AppendObject(aListener);
+    bool const inserted = mListeners.AppendObject(aListener);
     NS_ENSURE_TRUE(inserted, NS_ERROR_OUT_OF_MEMORY);
   }
   else {
@@ -201,7 +201,7 @@ sbiTunesImporterJob::RemoveJobProgressListener(sbIJobProgressListener *aListener
 }
 
 NS_IMETHODIMP 
-sbiTunesImporterJob::GetCanCancel(PRBool *aCanCancel)
+sbiTunesImporterJob::GetCanCancel(bool *aCanCancel)
 {
   *aCanCancel = mCanCancel; 
   return NS_OK;

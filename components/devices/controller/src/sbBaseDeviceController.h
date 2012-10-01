@@ -109,7 +109,7 @@ protected:
   /**
    * 
    */
-  nsresult ControlsDeviceInternal(sbIDevice *aDevice, PRBool *_retval);
+  nsresult ControlsDeviceInternal(sbIDevice *aDevice, bool *_retval);
 
   /**
    * 

@@ -96,7 +96,7 @@ public:
 
   // sbBaseMediacoreMultibandEqualizer overrides
   virtual nsresult OnInitBaseMediacoreMultibandEqualizer();
-  virtual nsresult OnSetEqEnabled(PRBool aEqEnabled);
+  virtual nsresult OnSetEqEnabled(bool aEqEnabled);
   virtual nsresult OnGetBandCount(PRUint32 *aBandCount);
   virtual nsresult OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand);
   virtual nsresult OnSetBand(sbIMediacoreEqualizerBand *aBand);
@@ -107,8 +107,8 @@ public:
   virtual nsresult OnGetDuration(PRUint64 *aDuration);
   virtual nsresult OnGetPosition(PRUint64 *aPosition);
   virtual nsresult OnSetPosition(PRUint64 aPosition);
-  virtual nsresult OnGetIsPlayingAudio(PRBool *aIsPlayingAudio);
-  virtual nsresult OnGetIsPlayingVideo(PRBool *aIsPlayingVideo);
+  virtual nsresult OnGetIsPlayingAudio(bool *aIsPlayingAudio);
+  virtual nsresult OnGetIsPlayingVideo(bool *aIsPlayingVideo);
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
@@ -116,12 +116,12 @@ public:
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();
-  virtual nsresult OnSetMute(PRBool aMute);
+  virtual nsresult OnSetMute(bool aMute);
   virtual nsresult OnSetVolume(PRFloat64 aVolume);
 
   // GStreamer message handling
   virtual void HandleMessage(GstMessage *message);
-  virtual PRBool HandleSynchronousMessage(GstMessage *message);
+  virtual bool HandleSynchronousMessage(GstMessage *message);
 
   // sbIGstAudioFilter interface
   virtual nsresult AddAudioFilter(GstElement *aElement);
@@ -182,7 +182,7 @@ protected:
   // Protects all access to mPipeline
   PRMonitor*  mMonitor;
 
-  PRBool mIsVideoSupported; // true if we have support for video on the current
+  bool mIsVideoSupported; // true if we have support for video on the current
                             // platform
 
   GstElement *mPipeline;
@@ -203,11 +203,11 @@ protected:
   nsCOMPtr<sbIPropertyArray> mProperties;
 
   // Distinguish between being stopped, and stopping due to reaching the end.
-  PRBool mStopped;
+  bool mStopped;
   // Track whether we're currently buffering
-  PRBool mBuffering;
+  bool mBuffering;
   // Track if we are using a live pipeline
-  PRBool mIsLive;
+  bool mIsLive;
 
   // If we've seen an error for the current file being played.
   // To be dispatched when we've shut down the pipeline.
@@ -226,7 +226,7 @@ protected:
   nsCOMPtr<sbIVideoBox> mVideoSize;
 
   // Various things read from preferences
-  PRBool mVideoDisabled; // Whether video is disabled via prefs
+  bool mVideoDisabled; // Whether video is disabled via prefs
 
   nsCString mVideoSinkDescription;
   nsCString mAudioSinkDescription;
@@ -234,20 +234,20 @@ protected:
   PRInt64 mAudioSinkBufferTime; // Audio sink buffer time in usecs
   PRInt32 mStreamingBufferSize; // Streaming buffer max size in bytes
 
-  PRBool mResourceIsLocal;   // True if the current resource is a local file.
+  bool mResourceIsLocal;   // True if the current resource is a local file.
   PRInt64 mResourceSize;     // Size of current playing file, or -1 if unknown.
 
-  PRBool mGaplessDisabled;   // If true, gapless playback is disabled for the
+  bool mGaplessDisabled;   // If true, gapless playback is disabled for the
                              // currently-in-use pipeline. Recreating the
                              // pipeline will re-enable gapless.
-  PRBool mPlayingGaplessly;  // Gapless playback is currently happening - we're
+  bool mPlayingGaplessly;  // Gapless playback is currently happening - we're
                              // on a second or subsequent file in a gapless
                              // sequence.
 
-  PRBool mAbortingPlayback;  // Playback is being aborted (not normally
+  bool mAbortingPlayback;  // Playback is being aborted (not normally
                              // stopped), and bus messages should not be
                              // processed.
-  PRBool mHasReachedPlaying; // If we've ever made it to PLAYING state while
+  bool mHasReachedPlaying; // If we've ever made it to PLAYING state while
                              // playing the current resource.
 
   nsCString mCurrentUri;     // UTF-8 String form (as used by GStreamer) of
@@ -257,8 +257,8 @@ protected:
 
   GstGhostPad *mAudioBinGhostPad;
 
-  PRBool mHasVideo;          // True if we're playing video currently.
-  PRBool mHasAudio;          // True if we're playing audio currently.
+  bool mHasVideo;          // True if we're playing video currently.
+  bool mHasAudio;          // True if we're playing audio currently.
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

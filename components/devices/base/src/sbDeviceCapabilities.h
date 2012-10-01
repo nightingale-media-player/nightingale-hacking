@@ -54,8 +54,8 @@ private:
   ~sbDeviceCapabilities();
 
 protected:
-  PRBool isInitialized;
-  PRBool isConfigured;
+  bool isInitialized;
+  bool isConfigured;
   typedef nsClassHashtable<nsUint32HashKey, nsTArray<PRUint32> > ContentTypes;
   typedef nsClassHashtable<nsUint32HashKey, nsTArray<nsCString> > SupportedMimeTypes;
   typedef nsClassHashtable<nsStringHashKey, nsTArray<nsCOMPtr<nsISupports> > > FormatTypes;
@@ -220,9 +220,9 @@ private:
   nsCOMPtr<nsIArray> mExplicitSizes;
   nsCOMPtr<sbIDevCapRange> mWidths;
   nsCOMPtr<sbIDevCapRange> mHeights;
-  PRBool                   mIsPARRange;
+  bool                   mIsPARRange;
   nsCOMPtr<nsIArray>       mVideoPARs;
-  PRBool                   mIsFrameRatesRange;
+  bool                   mIsFrameRatesRange;
   nsCOMPtr<nsIArray>       mVideoFrameRates;
   nsCOMPtr<sbIDevCapRange> mBitRates;
 };

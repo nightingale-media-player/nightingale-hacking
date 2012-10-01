@@ -34,7 +34,6 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIThread.h>
-#include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
 #include <nsThreadUtils.h>
@@ -219,7 +218,7 @@ sbMediaExportService::InitInternal()
         continue;
       }
 
-      PRBool shouldWatch = PR_FALSE;
+      bool shouldWatch = PR_FALSE;
       rv = GetShouldWatchMediaList(curMediaList, &shouldWatch);
       if (NS_SUCCEEDED(rv) && shouldWatch) {
         rv = ListenToMediaList(curMediaList);
@@ -256,7 +255,7 @@ sbMediaExportService::Shutdown()
     do_GetService("@mozilla.org/updates/update-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasPendingUpdates = PR_FALSE;
+  bool hasPendingUpdates = PR_FALSE;
   PRInt32 updateCount;
   rv = updateMgr->GetUpdateCount(&updateCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -376,7 +375,7 @@ sbMediaExportService::StopListeningMediaLists()
 
 NS_IMETHODIMP
 sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
-                                        const PRBool aNewPrefValue)
+                                        const bool aNewPrefValue)
 {
   LOG("%s: '%s' pref changed : %s",
         __FUNCTION__,
@@ -487,7 +486,7 @@ sbMediaExportService::ListenToMediaList(sbIMediaList *aMediaList)
 
 nsresult
 sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
-                                              PRBool *aShouldWatch)
+                                              bool *aShouldWatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aShouldWatch);
@@ -1023,7 +1022,7 @@ sbMediaExportService::NotifyListeners()
   return NS_OK;
 }
 
-PRBool
+bool
 sbMediaExportService::GetHasRecordedChanges()
 {
   return !mAddedItemsMap.empty() ||
@@ -1037,7 +1036,7 @@ sbMediaExportService::GetHasRecordedChanges()
 // sbIMediaExportService
 
 NS_IMETHODIMP
-sbMediaExportService::GetHasPendingChanges(PRBool *aHasPendingChanges)
+sbMediaExportService::GetHasPendingChanges(bool *aHasPendingChanges)
 {
   NS_ENSURE_ARG_POINTER(aHasPendingChanges);
   *aHasPendingChanges = GetHasRecordedChanges();
@@ -1111,7 +1110,7 @@ NS_IMETHODIMP
 sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
                                   sbIMediaItem *aMediaItem,
                                   PRUint32 aIndex,
-                                  PRBool *aRetVal)
+                                  bool *aRetVal)
 {
   LOG("%s: Media Item Added!", __FUNCTION__);
 
@@ -1131,7 +1130,7 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
         mPrefController->GetShouldExportSmartPlaylists())
     {
       // Only worry if this is a list that we should be watching
-      PRBool shouldWatchList = PR_FALSE;
+      bool shouldWatchList = PR_FALSE;
       rv = GetShouldWatchMediaList(itemAsList, &shouldWatchList);
       if (NS_SUCCEEDED(rv) && shouldWatchList) {
         rv = ListenToMediaList(itemAsList);
@@ -1186,7 +1185,7 @@ NS_IMETHODIMP
 sbMediaExportService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                           sbIMediaItem *aMediaItem,
                                           PRUint32 aIndex,
-                                          PRBool *aRetVal)
+                                          bool *aRetVal)
 {
   *aRetVal = PR_TRUE;
   return NS_OK;
@@ -1195,7 +1194,7 @@ sbMediaExportService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
 NS_IMETHODIMP
 sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
-                                         PRUint32 aIndex, PRBool *_retval)
+                                         PRUint32 aIndex, bool *_retval)
 {
   LOG("%s: After Media Item Removed!!", __FUNCTION__);
 
@@ -1256,7 +1255,7 @@ NS_IMETHODIMP
 sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList,
                                     sbIMediaItem *aMediaItem,
                                     sbIPropertyArray *aProperties,
-                                    PRBool *aRetVal)
+                                    bool *aRetVal)
 {
   LOG("%s: Media Item Updated!!", __FUNCTION__);
 
@@ -1317,15 +1316,15 @@ NS_IMETHODIMP
 sbMediaExportService::OnItemMoved(sbIMediaList *aMediaList,
                                   PRUint32 aFromIndex,
                                   PRUint32 aToIndex,
-                                  PRBool *aRetVal)
+                                  bool *aRetVal)
 {
   LOG("%s: Media Item Moved!", __FUNCTION__);
   return NS_OK;
 }
 NS_IMETHODIMP
 sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList,
-                                          PRBool aExcludeLists,
-                                          PRBool *aRetVal)
+                                          bool aExcludeLists,
+                                          bool *aRetVal)
 {
   LOG("%s: Media List Before Cleared!", __FUNCTION__);
   return NS_OK;
@@ -1333,8 +1332,8 @@ sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbMediaExportService::OnListCleared(sbIMediaList *aMediaList,
-                                    PRBool aExcludeLists,
-                                    PRBool *aRetVal)
+                                    bool aExcludeLists,
+                                    bool *aRetVal)
 {
   LOG("%s: Media List Cleared!", __FUNCTION__);
   return NS_OK;
@@ -1392,7 +1391,7 @@ sbMediaExportService::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
-sbMediaExportService::GetBlocked(PRBool *aBlocked)
+sbMediaExportService::GetBlocked(bool *aBlocked)
 {
   NS_ENSURE_ARG_POINTER(aBlocked);
   *aBlocked = PR_FALSE;
@@ -1468,7 +1467,7 @@ sbMediaExportService::RemoveJobProgressListener(sbIJobProgressListener *aListene
 // sbIShutdownTask
 
 NS_IMETHODIMP
-sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
+sbMediaExportService::GetNeedsToRunTask(bool *aNeedsToRunTask)
 {
   NS_ENSURE_ARG_POINTER(aNeedsToRunTask);
 
@@ -1493,8 +1492,8 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
     rv = taskFileParentFolder->GetDirectoryEntries(getter_AddRefs(dirEnum));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool hasTaskFile = PR_FALSE;
-    PRBool hasMore = PR_FALSE;
+    bool hasTaskFile = PR_FALSE;
+    bool hasMore = PR_FALSE;
     while ((NS_SUCCEEDED(dirEnum->HasMoreElements(&hasMore))) && hasMore) {
       nsCOMPtr<nsISupports> curItem;
       rv = dirEnum->GetNext(getter_AddRefs(curItem));
@@ -1524,7 +1523,7 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
       nsCOMPtr<sbIMediaExportAgentService> agentService =
         do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
       if (NS_SUCCEEDED(rv) && agentService) {
-        PRBool isAgentRunning = PR_FALSE;
+        bool isAgentRunning = PR_FALSE;
         rv = agentService->GetIsAgentRunning(&isAgentRunning);
         if (NS_SUCCEEDED(rv) && !isAgentRunning) {
           *aNeedsToRunTask = PR_TRUE;

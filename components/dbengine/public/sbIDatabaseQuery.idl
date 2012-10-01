@@ -187,7 +187,7 @@ interface sbIDatabaseQuery : nsISupports
    *
    * \param bAsyncQuery If true, do not block on execute (default: false)
    */
-  void setAsyncQuery(in PRBool bAsyncQuery);
+  void setAsyncQuery(in boolean bAsyncQuery);
 
   /**
    * \brief Return whether or not the query will run asynchronously
@@ -195,7 +195,7 @@ interface sbIDatabaseQuery : nsISupports
    * \return If the query will run asynchronously
    * \sa setAsyncQuery
    */
-  PRBool isAyncQuery();
+  boolean isAyncQuery();
   
   /**
    * \brief Add a sbIDatabaseSimpleQueryCallback instance to the query

@@ -66,14 +66,14 @@ public:
   /* nsIXPCScriptable */
   NS_IMETHOD GetClassName(char * *aClassName);
   NS_IMETHOD GetScriptableFlags(PRUint32 *aScriptableFlags);
-  NS_IMETHOD GetProperty(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, jsval id, jsval * vp, PRBool *_retval);
-  NS_IMETHOD NewEnumerate(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, PRUint32 enum_op, jsval * statep, jsid *idp, PRBool *_retval);
-  NS_IMETHOD NewResolve(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, jsval id, PRUint32 flags, JSObject * *objp, PRBool *_retval);
+  NS_IMETHOD GetProperty(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, jsval id, jsval * vp, bool *_retval);
+  NS_IMETHOD NewEnumerate(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, PRUint32 enum_op, jsval * statep, jsid *idp, bool *_retval);
+  NS_IMETHOD NewResolve(nsIXPConnectWrappedNative *wrapper, JSContext * cx, JSObject * obj, jsval id, PRUint32 flags, JSObject * *objp, bool *_retval);
   NS_IMETHOD Equality( nsIXPConnectWrappedNative *wrapper,
                        JSContext * cx,
                        JSObject * obj,
                        jsval val,
-                       PRBool *_retval );
+                       bool *_retval );
 
   sbScriptableFilterItems( sbIFilterableMediaListView *aFilterList,
                            sbRemotePlayer *aPlayer );
@@ -90,7 +90,7 @@ protected:
 protected:
   nsCOMPtr<sbIFilterableMediaListView> mListView;
   nsCOMArray<sbIMediaItem> mItems;
-  PRBool mHasItems;
+  bool mHasItems;
   nsRefPtr<sbRemotePlayer> mPlayer;
   PRUint32 mEnumerationIndex;
 };
